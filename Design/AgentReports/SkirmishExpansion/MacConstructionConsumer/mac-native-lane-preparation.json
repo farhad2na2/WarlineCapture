@@ -2,7 +2,7 @@
   "schema_version": 1,
   "observed_utc": "2026-10-18T13:02:21.788076+00:00",
   "task": "Prepare a separate clean Mac native worktree on exact stable5f; conditional rebuildable cache seeding only after complete native inventory is free; no Editor/build/mission launch until new stable candidate provided.",
-  "status": "IN PROGRESS: clean external native worktree fast-forwarded exactly to root-approved9f75. Full720authority rechecked. Cache/UPM/import/compile/native launch remain pending while P2c heavy lane is occupied.",
+  "status": "IN PROGRESS: exact current-stable9f plus only four reviewed3e source/meta paths committed locally on isolated testbranch; clean. Stable branch preserved9f. Cache/import/compile/native launch pending actual heavy-lane capacity and root launch authorization.",
   "stable_base": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
   "worktree": {
     "created": true,
@@ -10,13 +10,15 @@
     "proposal_root": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
     "proposal_source_commit_frozen": "6d6359c81b525b3d3b72a701b5d5ea4393b5c48b",
     "dirty_base_and_SCN13": "Not edited or reused for native validation.",
-    "next": "Keep exact9f75 clean/reserved; no probe proposal overlay or Editor/test/build launch. Recheck actual heavy capacity and idle donor/disk before cache-only preparation.",
+    "next": "Preserve clean isolated35projection and stable9fbranch; no other source overlay or launch. Reassess heavy capacity/idle donor/disk for cache-only prep; collect fresh actual source/build/config identities only after allowed import/compile.",
     "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
-    "branch": "codex/mac-native-s003",
-    "head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "branch": "codex/mac-native-tanker-probe35",
+    "head": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
     "clean": true,
     "app_managed": false,
-    "app_attach_result": "Rejected: The checkout exists but is not a managed worktree. Coordinator explicitly permits honestly reported external unmanaged worktree."
+    "app_attach_result": "Rejected: The checkout exists but is not a managed worktree. Coordinator explicitly permits honestly reported external unmanaged worktree.",
+    "stable_branch": "codex/mac-native-s003",
+    "stable_branch_head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf"
   },
   "live_native_owner_at_audit": {
     "editor_pid": 99809,
@@ -200,7 +202,7 @@
     "Packages/packages-lock.json": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51"
   },
   "readiness_credit": false,
-  "updated_utc": "2026-10-18T13:37:46.759642+00:00",
+  "updated_utc": "2026-10-18T13:41:50.231273+00:00",
   "stable_base_history": [
     "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
     "9f75b2f224cde04ea87f25b8c9fc097765889bcf"
@@ -225,5 +227,44 @@
     "T7_free_bytes": 43333545984,
     "sampling_plan_recheck": "Passed full720/22authoritypins; preparation only, native_runs0",
     "Windows_receipt": "Catalog2 + repair12/legacy17 reported passed; compile input closure still pending (Editor.ref changed), no mission qualification. Full native logs not copied/read by Mac."
+  },
+  "native_test_projection": {
+    "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "branch": "codex/mac-native-tanker-probe35",
+    "local_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+    "direct_parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "exact_four_paths": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta"
+    ],
+    "source_pins": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": {
+        "before_sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+        "after_sha256": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88"
+      },
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": {
+        "before_sha256": "0ee7d75371eee6c4fc540c84b40d96441051cec40e9c8eaece4eafc359450810",
+        "after_sha256": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175"
+      },
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": {
+        "before_sha256": null,
+        "after_sha256": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94"
+      },
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": {
+        "before_sha256": null,
+        "after_sha256": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+      }
+    },
+    "clean": true,
+    "all_six_stable_source_bytes_preserved": true,
+    "stable_branch": "codex/mac-native-s003",
+    "stable_branch_head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "no_other_report_or_source_commits": true,
+    "source_reference": "3e66c20ae612ea1a3a040afbce4394c513284095",
+    "remote_push": "not performed; local native test candidate only",
+    "native_launch_authorized": false,
+    "actual_complete_source_build_candidate_identity": "Not collected. Git commit and four file hashes are not native source/build/config census."
   }
 }

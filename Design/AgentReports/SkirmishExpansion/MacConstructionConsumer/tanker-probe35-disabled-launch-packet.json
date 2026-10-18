@@ -30,13 +30,15 @@
   },
   "reserved_native_root": {
     "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
-    "head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
-    "branch": "codex/mac-native-s003",
+    "head": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+    "branch": "codex/mac-native-tanker-probe35",
     "clean": true,
     "reserved": true,
-    "proposal_not_installed": true,
+    "proposal_not_installed": false,
     "Library_present": false,
-    "change_gate": "Root authorized and Mac completed exact clean fast-forward5f->9f75. Native launch and proposal overlay remain unauthorized;35controls remain separate exact3e source."
+    "change_gate": "Root authorized prep-only stable9f+exact4source/meta projection on separate testbranch; completed and clean. No Editor/test/build launch permission, normal evidence or main integration.",
+    "stable_branch_head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "reviewed_four_file_projection_installed": true
   },
   "environment_before_any_future_launch": {
     "editor_version": "6000.5.8f1",
@@ -70,7 +72,7 @@
     "reuse": "Not prepared; do not dispatch this fixture into P2c or any unrelated active Editor."
   },
   "admission_before_launch": [
-    "Root explicitly authorizes exact candidate/project and native focused execution after Windows terminal boundary; current permission is packet preparation only.",
+    "Root explicitly authorizes exact native test projection/candidate and focused execution after packet review/capacity; prep-only source projection is authorized and complete, launch still disabled.",
     "Verify real isolated branch/root, exact final source/meta byte pins and wrapper, candidate/source snapshot, actual fresh compiled Game.Editor/Game.Tests.Editor DLL identities and matching reference set. Do not borrow old native receipts or rewrite producer/claim paths.",
     "Full process/project inventory plus bounded load/status observations; one heavy job per machine. Preserve unrelated Editors and donor; do not terminate them to gain capacity.",
     "Idle Edit Mode only, no compiling/updating/Playing; focused entry enforces idle fixture. Verify existing harness active/pending-quit state is absent; controls refuse borrowing another harness.",
@@ -112,5 +114,44 @@
     "queue_success_enabled": false,
     "mission_ready": false
   },
-  "updated_utc": "2026-10-18T13:37:46.759642+00:00"
+  "updated_utc": "2026-10-18T13:41:50.231273+00:00",
+  "native_test_projection": {
+    "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "branch": "codex/mac-native-tanker-probe35",
+    "local_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+    "direct_parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "exact_four_paths": [
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta"
+    ],
+    "source_pins": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": {
+        "before_sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+        "after_sha256": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88"
+      },
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": {
+        "before_sha256": "0ee7d75371eee6c4fc540c84b40d96441051cec40e9c8eaece4eafc359450810",
+        "after_sha256": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175"
+      },
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": {
+        "before_sha256": null,
+        "after_sha256": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94"
+      },
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": {
+        "before_sha256": null,
+        "after_sha256": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+      }
+    },
+    "clean": true,
+    "all_six_stable_source_bytes_preserved": true,
+    "stable_branch": "codex/mac-native-s003",
+    "stable_branch_head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "no_other_report_or_source_commits": true,
+    "source_reference": "3e66c20ae612ea1a3a040afbce4394c513284095",
+    "remote_push": "not performed; local native test candidate only",
+    "native_launch_authorized": false,
+    "actual_complete_source_build_candidate_identity": "Not collected. Git commit and four file hashes are not native source/build/config census."
+  }
 }

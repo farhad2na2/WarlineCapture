@@ -139,8 +139,8 @@ namespace Game.UI.Runtime
             }
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            float titleHeight = pin ? 22f : gridSlots.Title > 1f ? gridSlots.Title : LibraryGridTitleHeight;
-            float subtitleHeight = pin ? LibraryPinSubtitleHeight : gridSlots.Subtitle > 1f ? gridSlots.Subtitle : LibraryGridSubtitleHeight;
+            float titleHeight = pin ? Mathf.Clamp(height * 0.11f, 22f, 30f) : gridSlots.Title > 1f ? gridSlots.Title : LibraryGridTitleHeight;
+            float subtitleHeight = pin ? Mathf.Clamp(height * 0.15f, LibraryPinSubtitleHeight, 44f) : gridSlots.Subtitle > 1f ? gridSlots.Subtitle : LibraryGridSubtitleHeight;
             float gridPreview = gridSlots.Preview;
             if (gridPreview <= 1f)
                 ResolveGridCard(740f, 4, out _, out gridPreview);
@@ -204,7 +204,7 @@ namespace Game.UI.Runtime
             title.textWrappingMode = TextWrappingModes.NoWrap;
             title.overflowMode = TextOverflowModes.Overflow;
             title.isRightToLeftText = fa;
-            SetCopy(title, objectiveLabel, pin ? 14f : 15f, pin ? 18f : 18f);
+            SetCopy(title, objectiveLabel, pin ? Mathf.Clamp(height * 0.075f, 14f, 20f) : 15f, pin ? Mathf.Clamp(height * 0.095f, 18f, 26f) : 18f); // v36: pin title scales with card height
             title.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             title.isRightToLeftText = fa && ContainsArabicScript(objectiveLabel);
             var subtitle = CreateLabel(button.transform, "Subtitle", 16f);

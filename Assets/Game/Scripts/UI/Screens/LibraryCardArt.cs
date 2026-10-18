@@ -409,7 +409,7 @@ namespace Game.UI.Runtime
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             subtitle.enableAutoSizing = true;
             subtitle.overflowMode = TextOverflowModes.Overflow;
-            for (float size = 20f; size >= 11f - 0.01f; size -= 1f)
+            for (float size = Mathf.Clamp(boxH * 0.6f, 20f, 26f); size >= 11f - 0.01f; size -= 1f) // v36: larger cards start larger
             {
                 if (!SubtitleFits(subtitle, source, size, boxW, boxH, false))
                     continue;

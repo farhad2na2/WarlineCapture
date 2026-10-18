@@ -77,7 +77,7 @@
     "mission_ready": false,
     "player_device_acceptance": "not performed"
   },
-  "next": "Continuous support active. S003 air/source-fit follow-up is complete in s003-air-source-fit-followup.json:50baseline pins/52citations, fixed3size budgets and9historical actor streams reviewed. Propose current-candidate native slot/source-fit observation then ordinary paid income/air cycle; preserve source and fixed budgets. Future native run awaits approved exact main candidate and free lane. Windows owns successor/C# controls; Mac consumer remainsa6eb.",
+  "next": "Windows should review/integrate tanker-probe-ownership-proposal.json at safe terminal boundary, verify exact before/after pins, compile and run focused controls through checked wrapper. Preserve active native owners and old evidence; no mission/device qualification from this proposal. Continuous Mac coordination remains active.",
   "source_compatibility": {
     "report": "source-compatibility.json",
     "result": "Passed",
@@ -100,5 +100,10 @@
     "tested_code_commit": "a6eb49e148afcbe131e35585327fa460cb12126c"
   },
   "updated_utc": "2026-10-18T12:19:19.857899+00:00",
-  "s003_air_followup": "s003-air-source-fit-followup.json"
+  "s003_air_followup": "s003-air-source-fit-followup.json",
+  "active_probe_proposal": {
+    "report": "tanker-probe-ownership-proposal.json",
+    "scope": "Only two disjoint Editor probe partials plus new test/meta; consumer code remains frozena6eb.",
+    "state": "Proposal ready;29declared synthetic controls, C# compile/native execution pending Windows terminal-boundary integration."
+  }
 }

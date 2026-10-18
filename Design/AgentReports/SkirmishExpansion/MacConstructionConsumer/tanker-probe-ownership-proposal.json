@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T12:49:40.960823+00:00",
+  "status": "Source proposal only; compilation/native controls pending Windows integration at terminal boundary.",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "proposal_parent": "30e0f650ef1c7b35920656b4d7608f7e6d310cfa",
+  "branch": "codex/mac-construction-ledger-admission",
+  "authorization": "Windows coordinator explicitly assigned disjoint probe-only ownership fix under user-authorized continuous support and confirmed exact two partials plus new test/meta do not overlap its six current source paths.",
+  "scope": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta"
+  ],
+  "problem": "HasCommittedTanker previously queried all faction1Tankers in default World and pending receipts across all session roots, allowing foreign/stale attempt evidence to satisfy S003/S004/S005 probe supply prerequisite. Entity index/version alone is not World identity.",
+  "change": [
+    "Capture one owning World reference, root Entity/version and session ID plus catalog/definition/content/setup/seed stamp at actual post-roster Playing boundary. Only explicit probe launch resets the capture attempt; repeated startup callbacks never adopt a later root.",
+    "Require current live exact World/root and matching Playing stamp. Permanently invalidate observation after an observed mismatch, end, missing root/component or disposed World.",
+    "Living actor must have matching attempt SessionId, owned and native player faction, nonstructure, unreleased capacity, live health and Tanker role. Starting tanker with ReservationId0 remains valid.",
+    "Pending receipts come only from captured root buffer, player tanker, Reserved/Producing with outstanding members; no scan of other roots.",
+    "Before any new frame touch action, lost context stops the local stage and retires only this probe virtual device using existing Dispose/device-removal cancellation. Do not call Finish or stop another attempt ARIA through a replacement World. Context-loss marker is failure; existing wrapper deadline/monitor may subsequently time out rather than touching another World. Normal completion clears owner.",
+    "No runtime/gameplay/economy/UI/geometry/source binding changes; construction consumer bytes remain exacta6eb."
+  ],
+  "controls": {
+    "path": "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs",
+    "declared_nunit_cases": 29,
+    "groups": [
+      "Current owned starting tanker accepted without paid reservation",
+      "10 foreign/stale/nonliving actor mutations rejected",
+      "Reserved/Producing exact-root pending receipt accepted; other-root pending rejected",
+      "All terminal phases, empty/delivered/negative-delivery/wrong faction/wrong role receipts rejected",
+      "10 root identity/lifecycle mutations rejected, including restored old fields and later root with reused text ID",
+      "Identical Entity index/version handle replay into another live World rejected without assuming allocator creates actual equal native IDs in both worlds",
+      "Destroyed/recreated root and directly disposed World rejected without accessing disposed manager",
+      "Null/missing/pre-Playing/ended/empty-ID capture rejected",
+      "Repeated observations preserve450Materials/120Oil/350Fuel, receipt costs/phase, default World, timeScale and command/input evidence counters"
+    ],
+    "entry": "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation",
+    "required_pass_marker": "[SkirmishAircraftProbeTankerOwnership] result=Passed",
+    "scope": "Synthetic idle Editor-world controls only, not native normal-input air lifecycle acceptance. Test fixture entities/reservations are synthetic and never gameplay evidence.",
+    "execution": "NOT RUN on Mac; no Unity dispatch/Library copy per coordinator scope."
+  },
+  "verification": {
+    "git_diff_check": "Passed",
+    "baseline_before_pin_check": "Passed",
+    "existing_source_path_disjoint_check": "Passed; changed existing sources exactly two authorized partials",
+    "source_review": "Playing caller boundary, persistent invalidation, query/NativeArray using disposal, exact-root reservation scope, original producer/truck owner joins inspected",
+    "brace_and_declared_case_count": "Passed as structural checks only; not C# compilation",
+    "csharp_compile": "NOT RUN; pending Windows",
+    "native_controls": "NOT RUN; pending Windows",
+    "normal_mission_playthrough": "NOT RUN",
+    "android_build": "NOT RUN",
+    "player_device": "NOT RUN",
+    "source_manifest_or_old_evidence_transfer": "Forbidden; new source proposal requires a fresh candidate identity after integration."
+  },
+  "integration": "Fetch proposal at safe terminal boundary; verify before SHA pins, copy/cherry-pick ONLY the two partials and new test/meta, compile exact Game.Editor and Game.Tests.Editor owners plus required dependencies using current Windows rules, run focused static entry through checked wrapper with new full log/timeout/pass marker, retain failures. Then assess normal probe behavior separately on approved frozen source; no branch-wide merge of review docs required.",
+  "source_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": {
+      "before_sha256": "280477dfd0f895bf33df36086cc450ceea88d50ba3921f815b49133b1206d44f",
+      "after_sha256": "c31b1438289ee43ef41b563ce5beec40f620dd5e0ad472b8268e86f332e1c606",
+      "status": "modified"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": {
+      "before_sha256": "0ee7d75371eee6c4fc540c84b40d96441051cec40e9c8eaece4eafc359450810",
+      "after_sha256": "1ab6b81ec8f46ec70a1fb336656aa5acc28cac7167ee5ecb36204230c209fa21",
+      "status": "modified"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": {
+      "before_sha256": null,
+      "after_sha256": "3d99455c635199fb373bbb5671509808f3f75b205e59899042a50e9c33bd50c1",
+      "status": "new"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": {
+      "before_sha256": null,
+      "after_sha256": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7",
+      "status": "new"
+    }
+  },
+  "unchanged_consumer_sha256": {
+    "Tools/CI/skirmish_construction_ledger_admission.py": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+    "Tools/CI/skirmish_construction_ledger_admission_test.py": "3feaa1e4a81a1d2b62e3c1640e8bb37f3ca7cec0da4aaf7eb9f415f5843f2b8e"
+  },
+  "authority_citations": [
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "line": 205,
+      "text": "private static bool HasLivingRole(EntityManager em, Entity session, SkirmishRoleKind role)",
+      "sha256": "68554955326328f72cb05d5324aafb8fcfe79ec36e68934932be76753bef7554"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs",
+      "line": 184,
+      "text": "private static int CountCommittedPlayerRole(EntityManager em, Entity session, SkirmishRoleKind role)",
+      "sha256": "68554955326328f72cb05d5324aafb8fcfe79ec36e68934932be76753bef7554"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "line": 107,
+      "text": "session.SpawnComplete = 1;",
+      "sha256": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "line": 109,
+      "text": "session.Phase = SkirmishSessionPhase.Playing;",
+      "sha256": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "line": 905,
+      "text": "if (!invalid && Environment.GetEnvironmentVariable(\"WARLINE_S003_HELIPAD_PROBE\") == \"1\")",
+      "sha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "line": 907,
+      "text": "StartNativeHelipadProbe(session);",
+      "sha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "line": 136,
+      "text": "public void Stop()",
+      "sha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "line": 142,
+      "text": "// Device removal uses InputSystemUIInputModule's stale-pointer purge, not Click.",
+      "sha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs",
+      "line": 38,
+      "text": "public struct SkirmishAttemptOwnedComponent : IComponentData",
+      "sha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs",
+      "line": 141,
+      "text": "public struct SkirmishProductionReservation : IBufferElementData",
+      "sha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327"
+    }
+  ],
+  "mission_ready": false
+}

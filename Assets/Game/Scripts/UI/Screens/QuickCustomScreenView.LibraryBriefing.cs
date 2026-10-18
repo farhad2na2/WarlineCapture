@@ -181,6 +181,19 @@ namespace Game.UI.Runtime
                 {
                     choice.overflowMode = TextOverflowModes.Overflow;
                     choice.fontSizeMin = LibraryFontFloor;
+                    // v38 4:3: COMMANDER overflowed its segment at the floor size; shrink only that label to fit.
+                    float segmentWidth = choice.rectTransform.rect.width - 6f;
+                    if (segmentWidth > 20f && !string.IsNullOrEmpty(choice.text))
+                    {
+                        choice.enableAutoSizing = false;
+                        choice.fontSize = Mathf.Min(choice.fontSize, 28f);
+                        float natural = choice.GetPreferredValues(choice.text, 9999f, 60f).x;
+                        if (natural > segmentWidth && natural > 1f)
+                        {
+                            choice.fontSize = Mathf.Max(14f, Mathf.Floor(choice.fontSize * segmentWidth / natural));
+                            choice.fontSizeMin = choice.fontSize;
+                        }
+                    }
                 }
             }
         }

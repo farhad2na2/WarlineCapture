@@ -270,6 +270,9 @@ namespace Game.UI.Runtime
             List<SkirmishBattleCatalogEntry> owned = OwnedPlayable();
             if (owned.Count == 0)
                 return string.Empty;
+            // Prefer a different battle from the one already selected when the ledger offers another.
+            if (owned.Count > 1 && !string.IsNullOrEmpty(_selectedScenarioId))
+                owned.RemoveAll(e => string.Equals(e.ScenarioId, _selectedScenarioId, StringComparison.Ordinal));
             int index = _randomIndex != null ? _randomIndex(owned.Count) : UnityEngine.Random.Range(0, owned.Count);
             if (index < 0 || index >= owned.Count)
                 index = 0;

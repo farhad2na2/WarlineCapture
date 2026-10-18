@@ -131,6 +131,7 @@ namespace Game.UI.Runtime
                 FitReadableLine(rest, thumbW, TheatreCompactMinText);
             }
 
+            VerifyTheatrePanelCounts(holder, selectedZone.MapId, battles.Count, "side");
             Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + shown +
@@ -229,6 +230,7 @@ namespace Game.UI.Runtime
                 FitReadableLine(rest, thumbW, TheatreCompactMinText);
             }
 
+            VerifyTheatrePanelCounts(holder, zone.MapId, battles.Count, "compact");
             Debug.Log("[TheatrePanel] map=" + zone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + shown +
@@ -352,6 +354,62 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>Panel-local rect converted to the panel parent's (plate) top-left coordinates, "x,y,w,h".</summary>
+        /// <summary>
+        /// v42: the drawn panel must account for every real battle exactly once - thumbnails actually built plus the
+        /// number printed on the "+N" tile equal the district's battle count. Logged as [TheatrePanelCheck]; a mismatch
+        /// is an error so the capture log flags it.
+        /// </summary>
+        private static void VerifyTheatrePanelCounts(RectTransform holder, string mapId, int battleCount, string layout)
+        {
+            if (holder == null)
+                return;
+            int drawn = 0;
+            int labelled = 0;
+            int labelledReversed = 0;
+            for (int i = 0; i < holder.childCount; i++)
+            {
+                Transform child = holder.GetChild(i);
+                if (child.name.StartsWith("TheatreBattle_", StringComparison.Ordinal))
+                    drawn++;
+                else if (child.name == "MoreBattles")
+                    labelled = ParseMoreCount(child.GetComponent<TMP_Text>(), out labelledReversed);
+            }
+
+            // RTL rendering can store the Persian digits in visual order, so the reversed reading also counts.
+            if (drawn + labelled != battleCount && drawn + labelledReversed == battleCount)
+                labelled = labelledReversed;
+            bool ok = drawn + labelled == battleCount;
+            string line = "[TheatrePanelCheck] map=" + mapId + " layout=" + layout + " battles=" + battleCount +
+                " drawn=" + drawn + " plusN=" + labelled + " hidden=" + (battleCount - drawn) + " ok=" + (ok ? "1" : "0");
+            if (ok)
+                Debug.Log(line);
+            else
+                Debug.LogError(line);
+        }
+
+        private static int ParseMoreCount(TMP_Text label, out int reversed)
+        {
+            reversed = 0;
+            if (label == null || string.IsNullOrEmpty(label.text))
+                return 0;
+            int value = 0;
+            int scale = 1;
+            foreach (char c in label.text)
+            {
+                int digit = c >= '0' && c <= '9' ? c - '0'
+                    : c >= '\u06F0' && c <= '\u06F9' ? c - '\u06F0'
+                    : c >= '\u0660' && c <= '\u0669' ? c - '\u0660'
+                    : -1;
+                if (digit < 0)
+                    continue;
+                value = value * 10 + digit;
+                reversed += digit * scale;
+                scale *= 10;
+            }
+
+            return value;
+        }
+
         private static string TheatrePanelRectCopy(RectTransform panel, Rect local)
         {
             float ox = panel.anchoredPosition.x;

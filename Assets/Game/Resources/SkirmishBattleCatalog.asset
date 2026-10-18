@@ -51,7 +51,7 @@ MonoBehaviour:
     Status: 1
     PlayableScenarioIndex: 4
     DefinitionId: skirmish.s002
-    ContentVersion: 1
+    ContentVersion: 2
     ReadinessManifestId: publication.skirmish.s002
   - ScenarioId: S003
     MapId: DB
@@ -74,7 +74,7 @@ MonoBehaviour:
     Status: 1
     PlayableScenarioIndex: 5
     DefinitionId: skirmish.s003
-    ContentVersion: 1
+    ContentVersion: 2
     ReadinessManifestId: publication.skirmish.s003
   - ScenarioId: S004
     MapId: DB

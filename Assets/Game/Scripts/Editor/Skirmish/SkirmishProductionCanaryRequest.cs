@@ -196,9 +196,75 @@ namespace Game.Editor
         }
         public static string Canonical(JToken value)
         {
+            // Preserve custom JsonConvert behavior and the old child reparse
+            // normalization outside the ordinary immutable JSON job fast path.
+            if (JsonConvert.DefaultSettings != null) return CanonicalLegacy(value);
+            using (var text = new StringWriter(System.Globalization.CultureInfo.InvariantCulture))
+            using (var writer = new JsonTextWriter(text) { Formatting = Formatting.None,
+                StringEscapeHandling = StringEscapeHandling.EscapeNonAscii, AutoCompleteOnClose = false })
+            {
+                if (TryWriteCanonical(writer,value,0))
+                {
+                    writer.Flush();
+                    return text.ToString();
+                }
+            }
+            return CanonicalLegacy(value);
+        }
+        private static bool TryWriteCanonical(JsonWriter writer,JToken value,int depth)
+        {
+            // This limits optimization, not accepted JSON: deeper input uses the
+            // unchanged oracle, including its existing parser-depth refusals.
+            if (depth>=32) return false;
+            if (value==null) { writer.WriteNull();return true; }
+            if (value.GetType()==typeof(JObject))
+            {
+                writer.WriteStartObject();
+                foreach (var property in ((JObject)value).Properties().OrderBy(p=>p.Name,StringComparer.Ordinal))
+                {
+                    if (!CanonicalStringIsStable(property.Name)) return false;
+                    writer.WritePropertyName(property.Name);
+                    if (!TryWriteCanonical(writer,property.Value,depth+1))return false;
+                }
+                writer.WriteEndObject();return true;
+            }
+            if (value.GetType()==typeof(JArray))
+            {
+                writer.WriteStartArray();
+                foreach (var child in (JArray)value)
+                    if (!TryWriteCanonical(writer,child,depth+1))return false;
+                writer.WriteEndArray();return true;
+            }
+            if (value.GetType()!=typeof(JValue))return false;
+            if (value.Type==JTokenType.String && !CanonicalStringIsStable((string)value))return false;
+            if (value.Type!=JTokenType.String && value.Type!=JTokenType.Integer &&
+                value.Type!=JTokenType.Boolean && value.Type!=JTokenType.Null)return false;
+            value.WriteTo(writer);return true;
+        }
+        private static bool CanonicalStringIsStable(string value)
+        {
+            if (string.IsNullOrEmpty(value))return true;
+            char first=value[0];
+            if (char.IsDigit(first)||char.IsWhiteSpace(first)||first=='/'||first=='\\'||first=='+'||first=='-')
+            {
+                // Source hashes are common digit-leading strings, never dates.
+                if (value.Length!=64 || value.Any(c=>!((c>='0'&&c<='9')||(c>='a'&&c<='f'))))return false;
+            }
+            for(int i=0;i<value.Length;i++)
+                if(char.IsSurrogate(value[i]))
+                {
+                    if(!char.IsHighSurrogate(value[i])||i+1>=value.Length||!char.IsLowSurrogate(value[i+1]))return false;
+                    i++;
+                }
+            return true;
+        }
+
+
+        private static string CanonicalLegacy(JToken value)
+        {
             var obj = value as JObject;
-            if (obj != null) value = new JObject(obj.Properties().OrderBy(p => p.Name, StringComparer.Ordinal).Select(p => new JProperty(p.Name, JToken.Parse(Canonical(p.Value)))));
-            else if (value is JArray) value = new JArray(((JArray)value).Select(t => JToken.Parse(Canonical(t))));
+            if (obj != null) value = new JObject(obj.Properties().OrderBy(p => p.Name, StringComparer.Ordinal).Select(p => new JProperty(p.Name, JToken.Parse(CanonicalLegacy(p.Value)))));
+            else if (value is JArray) value = new JArray(((JArray)value).Select(t => JToken.Parse(CanonicalLegacy(t))));
             return JsonConvert.SerializeObject(value, Formatting.None, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeNonAscii });
         }
         public static string Hash(byte[] bytes) { using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant(); }

@@ -23,6 +23,134 @@ namespace Game.Tests.Editor
     public sealed class SkirmishS002AriaHarnessTests
     {
 
+        private static string CanonicalOracle(Newtonsoft.Json.Linq.JToken value)
+        {
+            var method=typeof(SkirmishProductionCanaryRequest).GetMethod("CanonicalLegacy",
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            Assert.IsNotNull(method,"Unchanged old canonicalizer must remain an oracle");
+            try { return (string)method.Invoke(null,new object[]{value}); }
+            catch(System.Reflection.TargetInvocationException error) { throw error.InnerException??error; }
+        }
+        private static Tuple<string,Type> CanonicalOutcome(Func<string> action)
+        {
+            try { return Tuple.Create(action(),(Type)null); }
+            catch(Exception error) { return Tuple.Create((string)null,error.GetType()); }
+        }
+        private static void AssertCanonicalEquivalent(Newtonsoft.Json.Linq.JToken value)
+        {
+            var original=value?.DeepClone();
+            var old=CanonicalOutcome(()=>CanonicalOracle(value));
+            var current=CanonicalOutcome(()=>SkirmishProductionCanaryRequest.Canonical(value));
+            Assert.AreEqual(old.Item2,current.Item2,"Legacy refusal type must be preserved");
+            if(old.Item2==null)
+                CollectionAssert.AreEqual(System.Text.Encoding.UTF8.GetBytes(old.Item1),
+                    System.Text.Encoding.UTF8.GetBytes(current.Item1),"Exact canonical UTF8 bytes");
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(original,value),"Canonicalization must not mutate caller tokens");
+        }
+        public static void RunCanonicalJobWriterCompatibilityControls()
+        {
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Focused idle fixture only");
+            var savedDefaults=Newtonsoft.Json.JsonConvert.DefaultSettings;
+            int casesCount=0;
+            try
+            {
+                Newtonsoft.Json.JsonConvert.DefaultSettings=null;
+                var cases=new List<Newtonsoft.Json.Linq.JToken> {
+                    null,Newtonsoft.Json.Linq.JValue.CreateNull(),
+                    Newtonsoft.Json.Linq.JToken.Parse("{}"),Newtonsoft.Json.Linq.JToken.Parse("[]"),
+                    Newtonsoft.Json.Linq.JToken.Parse("{\"z\":[{\"y\":2,\"a\":1}],\"a\":{\"null\":null,\"bool\":true}}"),
+                    Newtonsoft.Json.Linq.JToken.Parse("[3,1,2,null,true,false]"),
+                    new Newtonsoft.Json.Linq.JObject { ["\ue000"]=1,["\ud83d\ude00"]=2,["A"]=3,["a"]=4 },
+                    new Newtonsoft.Json.Linq.JValue("quote\" slash\\ newline\n nul\0 tab\t <>& Persian \u0641"),
+                    new Newtonsoft.Json.Linq.JValue("paired \ud83d\ude00"),
+                    new Newtonsoft.Json.Linq.JValue("high \ud800"),new Newtonsoft.Json.Linq.JValue("low \udfff"),
+                    new Newtonsoft.Json.Linq.JValue("2026-10-18T12:34:56.1234567+02:00"),
+                    new Newtonsoft.Json.Linq.JArray("2026-10-18T12:34:56.1234567+02:00"),
+                    new Newtonsoft.Json.Linq.JObject { ["date"]="/Date(0+0200)/" },
+                    new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JValue((object)new DateTimeOffset(2026,10,18,12,34,56,TimeSpan.FromHours(2)))),
+                    new Newtonsoft.Json.Linq.JValue((object)new DateTime(2026,10,18,12,34,56,DateTimeKind.Utc)),
+                    new Newtonsoft.Json.Linq.JValue((object)1.2300m),
+                    new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JValue((object)1.2300m)),
+                    new Newtonsoft.Json.Linq.JValue((object)1e-7d),
+                    new Newtonsoft.Json.Linq.JArray(-0d,double.NaN,double.PositiveInfinity,double.Epsilon,double.MaxValue),
+                    new Newtonsoft.Json.Linq.JValue((object)long.MinValue),
+                    new Newtonsoft.Json.Linq.JValue((object)ulong.MaxValue),
+                    Newtonsoft.Json.Linq.JToken.Parse("12345678901234567890123456789012345678901234567890"),
+                    new Newtonsoft.Json.Linq.JObject { ["value"]=" 2026-10-18T12:34:56Z" },
+                    new Newtonsoft.Json.Linq.JValue((string)null),
+                    new Newtonsoft.Json.Linq.JRaw("{ \"z\":2, \"a\":1 }"),
+                    new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JRaw("{ \"z\":2, \"a\":1 }")),
+                    new Newtonsoft.Json.Linq.JConstructor("Ctor","2026-10-18T12:34:56Z"),
+                    new Newtonsoft.Json.Linq.JProperty("property",1)
+                };
+                Newtonsoft.Json.Linq.JToken deep=new Newtonsoft.Json.Linq.JValue("leaf");
+                for(int i=0;i<33;i++)deep=new Newtonsoft.Json.Linq.JArray(deep);
+                cases.Add(deep);
+                var sourceRows=new Newtonsoft.Json.Linq.JArray();
+                for(int i=0;i<5;i++)sourceRows.Add(new Newtonsoft.Json.Linq.JObject {
+                    ["sha256"]=new string((char)('a'+i),64),["path"]="Assets/Configs/native-"+i+".asset" });
+                var ordinary=new Newtonsoft.Json.Linq.JObject { ["source_manifest"]=sourceRows,["schema_version"]=1,
+                    ["catalog_id"]="S005",["seed"]=155926,["required_stages"]=new Newtonsoft.Json.Linq.JArray("return","compile"),
+                    ["candidate_sha256"]=new string('1',64),["locale"]="FA",["control_mode"]="aria" };
+                cases.Add(ordinary);
+                foreach(var value in cases) { AssertCanonicalEquivalent(value);casesCount++; }
+                Assert.AreEqual(31,casesCount,"Exact finite oracle table");
+                using(var text=new StringWriter(System.Globalization.CultureInfo.InvariantCulture))
+                using(var writer=new Newtonsoft.Json.JsonTextWriter(text) { Formatting=Newtonsoft.Json.Formatting.None,
+                    StringEscapeHandling=Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii,AutoCompleteOnClose=false })
+                {
+                    bool used=(bool)typeof(SkirmishProductionCanaryRequest).GetMethod("TryWriteCanonical",
+                        System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
+                        .Invoke(null,new object[]{writer,ordinary,0});
+                    Assert.IsTrue(used,"Ordinary path/hash manifest must exercise the writer, not the oracle fallback");
+                }
+                var before=SkirmishProductionCanaryRequest.Canonical(ordinary);
+                ordinary["seed"]=130368;
+                Assert.AreNotEqual(before,SkirmishProductionCanaryRequest.Canonical(ordinary),"No cross-call token/hash cache");
+                int refusals=0;
+                foreach(var invalid in new[]{"not_json","{bad"})
+                {
+                    var value=new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JRaw(invalid));
+                    Assert.IsNotNull(CanonicalOutcome(()=>CanonicalOracle(value)).Item2,"Actual old parse refusal required");
+                    AssertCanonicalEquivalent(value);refusals++;
+                }
+                Newtonsoft.Json.JsonConvert.DefaultSettings=()=>new Newtonsoft.Json.JsonSerializerSettings {
+                    DateFormatString="yyyyMMdd",Culture=System.Globalization.CultureInfo.GetCultureInfo("fr-FR") };
+                AssertCanonicalEquivalent(new Newtonsoft.Json.Linq.JArray(new DateTime(2026,10,18,12,0,0,DateTimeKind.Utc)));
+                Debug.Log("[CanonicalJobWriterControls] result=Passed oracleCases="+casesCount+
+                    " refusals="+refusals+" ordinaryFastPath=1 inputMutation=0 cache=0 missionReady=0");
+            }
+            finally { Newtonsoft.Json.JsonConvert.DefaultSettings=savedDefaults; }
+        }
+        public static void RunCanonicalCurrentJobByteEquivalence()
+        {
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Read-only owning validation after normal run");
+            Assert.IsNull(Newtonsoft.Json.JsonConvert.DefaultSettings,"Actual job must select the writer, not global-settings fallback");
+            string path=Environment.GetEnvironmentVariable("WARLINE_CANONICAL_JOB_EQUIVALENCE_INPUT");
+            string expected=Environment.GetEnvironmentVariable("WARLINE_CANONICAL_JOB_EQUIVALENCE_SHA256");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(path));Assert.IsTrue(Path.IsPathRooted(path));
+            Assert.IsTrue(System.Text.RegularExpressions.Regex.IsMatch(expected??"","^[a-f0-9]{64}$"));
+            Assert.LessOrEqual(new FileInfo(path).Length,16*1024*1024);
+            var bytes=File.ReadAllBytes(path);
+            Assert.Greater(bytes.Length,0);Assert.LessOrEqual(bytes.Length,16*1024*1024);
+            Assert.AreEqual(expected,SkirmishProductionCanaryRequest.Hash(bytes),"Actual pinned current job bytes required");
+            var value=SkirmishProductionCanaryRequest.ReadObject(path);
+            AssertCanonicalEquivalent(value);
+            using(var text=new StringWriter(System.Globalization.CultureInfo.InvariantCulture))
+            using(var writer=new Newtonsoft.Json.JsonTextWriter(text) { Formatting=Newtonsoft.Json.Formatting.None,
+                StringEscapeHandling=Newtonsoft.Json.StringEscapeHandling.EscapeNonAscii,AutoCompleteOnClose=false })
+                Assert.IsTrue((bool)typeof(SkirmishProductionCanaryRequest).GetMethod("TryWriteCanonical",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static)
+                    .Invoke(null,new object[]{writer,value,0}),"Actual pinned job must exercise the writer fast path");
+            Assert.AreEqual(expected,SkirmishProductionCanaryRequest.FileHash(path),"Job changed during equivalence observation");
+            string canonical=SkirmishProductionCanaryRequest.Canonical(value);
+            Debug.Log("[CanonicalCurrentJobByteEquivalence] result=ByteEquivalent rawBytes="+bytes.Length+
+                " sourceRows="+((Newtonsoft.Json.Linq.JArray)value["source_manifest"]).Count+
+                " ordinaryFastPath=1 canonicalSha256="+SkirmishProductionCanaryRequest.Hash(System.Text.Encoding.UTF8.GetBytes(canonical))+
+                " missionReady=0");
+        }
+
+
         private static Type NativeInputReadinessPolicyType()=>typeof(Game.Editor.SkirmishS002AriaRunHarness)
             .GetNestedType("ProductionNativeInputReadinessPolicy",System.Reflection.BindingFlags.NonPublic);
         private static object NewNativeInputReadinessPolicy()=>Activator.CreateInstance(NativeInputReadinessPolicyType(),

@@ -15,6 +15,70 @@ using UnityEngine;
 
 public sealed class SkirmishSessionTests
 {
+    public static void RunCodedLibraryRawLaunchParityControls()
+    {
+        var raw=Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);
+        Assert.NotNull(raw);Assert.AreEqual(120,raw.Entries.Count);
+        Assert.IsTrue(raw.TryGet("S002",out var packaged));
+        var project=packaged;SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref project);
+        var selectionMethod=typeof(Game.UI.Runtime.QuickCustomScreenView).GetMethod("LibrarySelection",
+            System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+        Assert.NotNull(selectionMethod);
+        var selected=(UiSkirmishLibrarySelection)selectionMethod.Invoke(null,new object[]{project});
+        int checks=0;
+        Assert.AreEqual(UiSkirmishLibraryLaunchKind.ExpandedDefinition,selected.Kind);
+        Assert.AreEqual("S002",selected.CatalogId);checks++;
+        bool Accept(SkirmishBattleCatalogConfig catalog,UiSkirmishLibrarySelection choice,int index)
+            =>SkirmishMissionDispatch.TryGetSelectedExpanded(catalog,choice.CatalogId,choice.DefinitionId,
+                choice.ContentVersion,index,out _);
+        Assert.IsTrue(Accept(raw,selected,packaged.PlayableScenarioIndex),
+            "Actual UI-projected identity must cross the RAW packaged launch boundary.");checks++;
+        var staleChoice=selected;staleChoice.ContentVersion=1;
+        Assert.IsFalse(Accept(raw,staleChoice,packaged.PlayableScenarioIndex));checks++;
+        var foreignChoice=selected;foreignChoice.DefinitionId="skirmish.foreign";
+        Assert.IsFalse(Accept(raw,foreignChoice,packaged.PlayableScenarioIndex));checks++;
+        Assert.IsFalse(Accept(raw,selected,packaged.PlayableScenarioIndex+1));checks++;
+        var owned=ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
+        try
+        {
+            void Set(params SkirmishBattleCatalogEntry[] rows)
+            {
+                var field=typeof(SkirmishBattleCatalogConfig).GetField("entries",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+                Assert.NotNull(field);field.SetValue(owned,rows);
+            }
+            // Reproduce the actual former split: displayed v2 versus raw positive v1.
+            var staleRow=packaged;staleRow.ContentVersion=1;Set(staleRow);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex),
+                "Do not repair a stale raw row by weakening the strict launch identity guard.");checks++;
+            Set(packaged,packaged);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex));checks++;
+            var planned=packaged;planned.Status=SkirmishBattleCatalogStatus.Planned;
+            planned.PlayableScenarioIndex=-1;Set(planned);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex));checks++;
+            Assert.IsTrue(raw.TryGet("S003",out var packaged3));
+            var project3=packaged3;SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref project3);
+            var selected3=(UiSkirmishLibrarySelection)selectionMethod.Invoke(null,new object[]{project3});
+            Assert.IsTrue(Accept(raw,selected3,packaged3.PlayableScenarioIndex),
+                "Actual S003 UI projection must cross the raw packaged launch boundary.");checks++;
+            var staleChoice3=selected3;staleChoice3.ContentVersion=1;
+            Assert.IsFalse(Accept(raw,staleChoice3,packaged3.PlayableScenarioIndex));checks++;
+            var staleRow3=packaged3;staleRow3.ContentVersion=1;Set(staleRow3);
+            Assert.IsFalse(Accept(owned,selected3,packaged3.PlayableScenarioIndex));checks++;
+        }
+        finally{UnityEngine.Object.DestroyImmediate(owned);}
+        Assert.AreEqual(11,checks);
+        Debug.Log("[CodedLibraryRawLaunchParityControls] result=Passed controls=11 catalogs=2 actualUiProjection=1 rawCatalogGuard=1 sourceFitCertified=0 missionReady=0");
+    }
+
+    public static void RunCodedLibraryAndCanonicalJobFocusedControls()
+    {
+        RunCodedLibraryRawLaunchParityControls();
+        Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunCanonicalJobWriterCompatibilityControls();
+        Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunCanonicalCurrentJobByteEquivalence();
+        Debug.Log("[CodedLibraryAndCanonicalJobFocusedControls] result=Passed rawCatalogControls=11 canonicalOracleCases=31 canonicalRefusals=2 actualJobByteEquivalent=1 missionReady=0");
+    }
+
     public static void RunCodedLibraryPreferenceIdentityControls()
     {
         var actual=SkirmishExpansionCatalogConfig.Load();Assert.NotNull(actual);

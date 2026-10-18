@@ -117,6 +117,8 @@ namespace Game.UI.Runtime
                     y = DetailMedalRow(root, pin, fa, pad, Mathf.Max(y, objectivesTop - DetailMedalRowHeight - 4f), inner);
                 DetailObjectives(root, fa, pad, Mathf.Max(y, objectivesTop), inner, objectivesHeight);
             }
+
+            BuildTheatrePanel(pin, root);
         }
 
         private const float DetailObjectiveRowHeight = 66f;

@@ -30,13 +30,13 @@
   },
   "reserved_native_root": {
     "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
-    "head": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
     "branch": "codex/mac-native-s003",
     "clean": true,
     "reserved": true,
     "proposal_not_installed": true,
     "Library_present": false,
-    "change_gate": "Do not check out proposal, fast-forward, copy files or execute here until root supplies exact approved new stable main/candidate. App attachment unsupported; external unmanaged status already authorized."
+    "change_gate": "Root authorized and Mac completed exact clean fast-forward5f->9f75. Native launch and proposal overlay remain unauthorized;35controls remain separate exact3e source."
   },
   "environment_before_any_future_launch": {
     "editor_version": "6000.5.8f1",
@@ -111,5 +111,6 @@
     "player_device": "not run",
     "queue_success_enabled": false,
     "mission_ready": false
-  }
+  },
+  "updated_utc": "2026-10-18T13:37:46.759642+00:00"
 }

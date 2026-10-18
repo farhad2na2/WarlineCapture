@@ -2,18 +2,18 @@
   "schema_version": 1,
   "observed_utc": "2026-10-18T13:02:21.788076+00:00",
   "task": "Prepare a separate clean Mac native worktree on exact stable5f; conditional rebuildable cache seeding only after complete native inventory is free; no Editor/build/mission launch until new stable candidate provided.",
-  "status": "IN PROGRESS: separate real external Git worktree is clean at exact5f. Cache copy not started because a new unrelated P2c Editor owns the heavy lane. No native launch.",
-  "stable_base": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "status": "IN PROGRESS: clean external native worktree fast-forwarded exactly to root-approved9f75. Full720authority rechecked. Cache/UPM/import/compile/native launch remain pending while P2c heavy lane is occupied.",
+  "stable_base": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
   "worktree": {
     "created": true,
     "reason": "External path selected after home space audit and authoritative free lane; no global Codex setting or Library symlink changed.",
     "proposal_root": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
     "proposal_source_commit_frozen": "6d6359c81b525b3d3b72a701b5d5ea4393b5c48b",
     "dirty_base_and_SCN13": "Not edited or reused for native validation.",
-    "next": "Await free full native inventory; verify idle6000.5.8donor and adequate disk before cache-only copy. No Editor/build/mission launch until exact new stablemain provided.",
+    "next": "Keep exact9f75 clean/reserved; no probe proposal overlay or Editor/test/build launch. Recheck actual heavy capacity and idle donor/disk before cache-only preparation.",
     "root": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
     "branch": "codex/mac-native-s003",
-    "head": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "head": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
     "clean": true,
     "app_managed": false,
     "app_attach_result": "Rejected: The checkout exists but is not a managed worktree. Coordinator explicitly permits honestly reported external unmanaged worktree."
@@ -139,7 +139,7 @@
       "layout": "layout.skirmish.db.ba"
     },
     "physical_source": "Existing Campaign source via preserved S003 compatibility resolution; default source identity2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900/content2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c. Actual define/Addressables/source metadata generation can change resolution and must be joined natively before fit/normal journey. Bounds/authoredPlayable do not certify it.",
-    "post_new_commit": "Only after Windows repair controls and exact new stable main provided, update clean native worktree at terminal boundary, redo package/import/compile and complete source/build/native config pins; do not transfer5f or closed-S005 receipts."
+    "post_new_commit": "Exact new stable9f75 approved for clean fast-forward only and now installed; actual native source/build/config census, import and any launch still require subsequent root authorization/capacity. No WindowsDLL or old-candidate proof transfer."
   },
   "profile_locale_and_settings_restore": [
     "Use owned per-attempt save-profile and record original/owned byte journals, original environment/effective root, original locale and Editor scene/settings baseline. Preserve unrelated player saves and dirty scenes.",
@@ -200,5 +200,30 @@
     "Packages/packages-lock.json": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51"
   },
   "readiness_credit": false,
-  "updated_utc": "2026-10-18T13:23:50.595480+00:00"
+  "updated_utc": "2026-10-18T13:37:46.759642+00:00",
+  "stable_base_history": [
+    "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "9f75b2f224cde04ea87f25b8c9fc097765889bcf"
+  ],
+  "stable_fast_forward": {
+    "authorized_by": "Direct Windows coordinator message after terminal catalog/repair controls",
+    "from": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+    "to": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+    "direct_parent_verified": true,
+    "method": "git merge --ff-only exactSHA",
+    "changed_paths_sha256": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Refinement.cs": "1d5a2bb0bc87d1a110de026dd395874466c3c383aecf57e2b9d1a344fe9e12fa",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+      "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs": "a2b55ae334e341a1fe8e4fea5ab2d5dfab1467a0cba59a23f0dbccaced7360c7",
+      "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs": "0273a9cae359375fcd28438409a452b37e76ba3da7b09006c43bd4d226b9bfe0",
+      "Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionRecipeTests.cs": "99915cebcbb0c4b40d4ec5f55323485f20096f657255f705a85941358a3783de",
+      "Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs": "5972c3cda9e314403cde4718e933e03c7bf597c1f1de9136b8a11f959fc122d8"
+    },
+    "post_status_clean": true,
+    "probe35_not_installed": true,
+    "Library_present": false,
+    "T7_free_bytes": 43333545984,
+    "sampling_plan_recheck": "Passed full720/22authoritypins; preparation only, native_runs0",
+    "Windows_receipt": "Catalog2 + repair12/legacy17 reported passed; compile input closure still pending (Editor.ref changed), no mission qualification. Full native logs not copied/read by Mac."
+  }
 }

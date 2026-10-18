@@ -357,17 +357,16 @@ namespace Game.UI.Runtime
                     tabWidth,
                     SkirmishZoneTabWidget.Height);
                 SkirmishZoneTabWidget.Apply(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
-                var label = CreateLabel(button.transform, "Label", 16f);
-                Stretch(label.rectTransform, 6f, 6f, 2f, 2f);
-                label.alignment = TextAlignmentOptions.Center;
-                label.textWrappingMode = TextWrappingModes.Normal;
-                label.overflowMode = TextOverflowModes.Ellipsis;
-                SetCopy(label, MapDisplayTitle(mapId, fa), 12f, 18f);
-                label.overflowMode = TextOverflowModes.Ellipsis;
-                label.textWrappingMode = TextWrappingModes.Normal;
-                SkirmishZoneTabWidget.StyleLabel(label);
-                StyleApproved3BattlefieldTab(button, label, mapId, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase),
+                // Merge #66 2e1321e52: P2's ZoneTabName (own line, 18px floor, [ZoneTab] log) inside P1's approved-3
+                // name strip; the won/playable count stays P1's TabCount, so no separate ZoneTabStatus here.
+                var name = CreateLabel(button.transform, "ZoneTabName", SkirmishZoneTabWidget.NameFontFloor);
+                KeepAuthoredSize(name.rectTransform);
+                name.alignment = TextAlignmentOptions.Center;
+                SetCopy(name, MapDisplayTitle(mapId, fa), SkirmishZoneTabWidget.NameFontFloor, SkirmishZoneTabWidget.NameFontFloor);
+                StyleApproved3BattlefieldTab(button, name, mapId, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase),
                     SkirmishZoneTabWidget.Left(i, gridWidth, tabCount), tabWidth, fa); // v37 P1
+                SkirmishZoneTabWidget.FitName(name);
+                RestoreApproved3TabNameColour(name, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }
@@ -388,6 +387,51 @@ namespace Game.UI.Runtime
             string pendingText = fa ? "پیش‌نمایش در راه" : "Preview pending";
             return SkirmishBattleCardWidget.BuildGridCell(parent, card, new Vector2(width, height), context, OnLibraryCard,
                 !IsEmptyCard(card) && dimmed, pendingText);
+        }
+
+        private void LockZoneTabs()
+        {
+            if (_libraryGrid == null || !_libraryGrid.gameObject.activeInHierarchy)
+                return;
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield || LibraryLayout != SkirmishBattlefieldLayout.Grid)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            for (int i = 0; i < _libraryGrid.childCount; i++)
+            {
+                Transform tab = _libraryGrid.GetChild(i);
+                if (tab == null || !tab.name.StartsWith("BattlefieldTab_", StringComparison.Ordinal))
+                    continue;
+                string mapId = tab.name.Substring("BattlefieldTab_".Length);
+                TMP_Text name = tab.Find("ZoneTabName")?.GetComponent<TMP_Text>();
+                TMP_Text status = tab.Find("ZoneTabStatus")?.GetComponent<TMP_Text>();
+                if (name != null)
+                {
+                    KeepAuthoredSize(name.rectTransform);
+                    SkirmishZoneTabWidget.FitName(name);
+                    if (tab.Find("TabScrim") != null)
+                        RestoreApproved3TabNameColour(name, string.Equals(mapId, _libraryViewModel?.Battlefield.MapId, StringComparison.OrdinalIgnoreCase)); // P1 approved-3: light name on the dark strip
+                    else
+                        SkirmishZoneTabWidget.StyleLabel(name);
+                }
+
+                if (status != null)
+                {
+                    KeepAuthoredSize(status.rectTransform);
+                    SkirmishZoneTabWidget.FitStatus(status);
+                    status.isRightToLeftText = fa && SkirmishBattleLibraryArt.IsRenderedComingSoon(status.text);
+                    SkirmishZoneTabWidget.StyleLabel(status);
+                }
+
+                SkirmishZoneTabWidget.Log(name, mapId, MapDisplayTitle(mapId, fa));
+            }
+        }
+
+        // P1 approved-3 tabs draw the name on a dark scrim, so P2's parchment StyleLabel colour would vanish there.
+        private static void RestoreApproved3TabNameColour(TMP_Text name, bool selected)
+        {
+            if (name == null)
+                return;
+            name.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
         }
 
         private void SelectGridBattlefield(string mapId)

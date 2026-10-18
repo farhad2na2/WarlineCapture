@@ -2583,8 +2583,8 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Capture's straddle rule, in one coordinate space. Inside its own hex with an
-        /// 8px sample inset, or fully outside every hex with at least 1px of gap.
+        /// Card-inside-territory rule. The card rests inside its own territory with an
+        /// 8px sample inset, and it stays off every other territory by at least 1px.
         /// </summary>
         public static bool SeatHolds(Box card, Vec2[] own, Vec2[][] districts)
         {
@@ -4209,6 +4209,114 @@ namespace Game.UI.Runtime
         public const float DistrictGlowReach = 19f;
 
         private const float PaintedHaloReach = DistrictGlowReach;
+
+        /// <summary>
+        /// Soft border from approved-1
+        /// (<c>Design/SkirmishUIConcepts/2026-10-14/approved-1-theater-map.jpg</c>).
+        /// The tint fades across this many plate pixels. It is not a neon stroke.
+        /// </summary>
+        public const float TerritoryFeather = 10f;
+
+        /// <summary>Peak alpha of the feathered border. The fill sits just under this.</summary>
+        public const float TerritoryBorderAlpha = 0.36f;
+
+        /// <summary>Fill alpha over the theatre painting. RGB stays a sampled district tint.</summary>
+        public const float TerritoryFillAlpha = 0.30f;
+
+        /// <summary>
+        /// Inward bay on each of the twelve edge samples, as a fraction of the way
+        /// from that sample to the territory centre. Order is the seated outline's
+        /// edges, two samples each. The fractions follow the approved-1 silhouettes:
+        /// Desert Base's plateau, Coastal City's inlet, the mountain ridge, the basin,
+        /// and Airfield Plains' southeast shore.
+        /// </summary>
+        private static readonly float[][] TerritoryBays =
+        {
+            new[] { 0.10f, 0.06f, 0.16f, 0.22f, 0.20f, 0.14f, 0.08f, 0.12f, 0.18f, 0.24f, 0.12f, 0.08f },
+            new[] { 0.18f, 0.26f, 0.14f, 0.08f, 0.12f, 0.20f, 0.22f, 0.16f, 0.10f, 0.18f, 0.24f, 0.12f },
+            new[] { 0.08f, 0.14f, 0.22f, 0.28f, 0.16f, 0.10f, 0.12f, 0.18f, 0.20f, 0.10f, 0.14f, 0.22f },
+            new[] { 0.20f, 0.14f, 0.10f, 0.16f, 0.22f, 0.18f, 0.12f, 0.08f, 0.16f, 0.24f, 0.18f, 0.12f },
+            new[] { 0.12f, 0.18f, 0.10f, 0.16f, 0.22f, 0.26f, 0.14f, 0.10f, 0.18f, 0.12f, 0.20f, 0.16f }
+        };
+
+        /// <summary>
+        /// The seated district with the approved-1 bays cut into its edges.
+        /// The card still has to rest inside by <see cref="InsideMargin"/>, and the
+        /// area stays on the 40000 floor. A bay that would break either rule is pulled back.
+        /// </summary>
+        public static Vec2[] TerritoryAround(Vec2[] hex, Box card, string mapId)
+        {
+            if (hex == null || hex.Length < 3)
+                return hex;
+            float[] bays = TerritoryBaysFor(mapId);
+            float scale = 1f;
+            for (int attempt = 0; attempt < 5; attempt++)
+            {
+                Vec2[] shape = BuildTerritory(hex, bays, scale);
+                bool areaOk = PolygonArea(shape) + 0.5f >= 40000f || PolygonArea(hex) + 0.5f < 40000f;
+                bool inside = card.W < 1f || card.H < 1f || RestsInside(card, shape, InsideMargin);
+                if (areaOk && inside)
+                    return shape;
+                scale *= 0.5f;
+            }
+
+            return BuildTerritory(hex, bays, 0f);
+        }
+
+        /// <summary>Card corners sit inside the territory, inset by the same 8px the hex rule used.</summary>
+        public static bool CardInsideTerritory(Box card, Vec2[] territory)
+        {
+            return RestsInside(card, territory, InsideMargin);
+        }
+
+        private static float[] TerritoryBaysFor(string mapId)
+        {
+            int index = IndexOf(mapId);
+            if (index < 0 || index >= TerritoryBays.Length)
+                index = 0;
+            return TerritoryBays[index];
+        }
+
+        private static Vec2[] BuildTerritory(Vec2[] hex, float[] bays, float scale)
+        {
+            int count = hex.Length;
+            var shape = new Vec2[count * 3];
+            float cx = 0f;
+            float cy = 0f;
+            for (int i = 0; i < count; i++)
+            {
+                cx += hex[i].X;
+                cy += hex[i].Y;
+            }
+
+            cx /= count;
+            cy /= count;
+            int write = 0;
+            for (int edge = 0; edge < count; edge++)
+            {
+                Vec2 a = hex[edge];
+                Vec2 b = hex[(edge + 1) % count];
+                shape[write++] = a;
+                shape[write++] = TerritorySample(a, b, 0.33f, cx, cy, bays, edge * 2, scale);
+                shape[write++] = TerritorySample(a, b, 0.66f, cx, cy, bays, edge * 2 + 1, scale);
+            }
+
+            return shape;
+        }
+
+        private static Vec2 TerritorySample(Vec2 a, Vec2 b, float t, float cx, float cy, float[] bays, int bayIndex, float scale)
+        {
+            float x = a.X + (b.X - a.X) * t;
+            float y = a.Y + (b.Y - a.Y) * t;
+            float fraction = 0f;
+            if (bays != null && bays.Length > 0 && scale > 0f)
+                fraction = bays[bayIndex % bays.Length] * scale;
+            if (fraction < 0f)
+                fraction = 0f;
+            if (fraction > 0.45f)
+                fraction = 0.45f;
+            return new Vec2(x + (cx - x) * fraction, y + (cy - y) * fraction);
+        }
 
         /// <summary>
         /// Scales each district about its card centre. 82% when that district's area

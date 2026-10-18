@@ -1706,6 +1706,7 @@ namespace Game.UI.Runtime
                 return false;
             if (text.name == "Subtitle" || text.name == "PendingLabel" || text.name == "ZoomCue" ||
                 text.name == "ZoneName" || text.name == "ZoneCount" ||
+                text.name == "ZoneTabName" || text.name == "ZoneTabStatus" ||
                 text.name.StartsWith("Column_", StringComparison.Ordinal))
                 return true;
             if (text.name.StartsWith("RowCount_", StringComparison.Ordinal) &&
@@ -2357,6 +2358,7 @@ namespace Game.UI.Runtime
                 }
             }
 
+            LockZoneTabs();
             FitZoomCue();
             if (scenarioDescription != null)
             {

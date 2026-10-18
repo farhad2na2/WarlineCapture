@@ -85,8 +85,6 @@ namespace Game.UI.Runtime
         private string _startFilter = string.Empty;
         private bool _missingMedalOnly;
         private bool _filtersOpen;
-        private bool _favouritesLit;
-        private Button _libraryFavouritesButton;
         private Button _libraryAdvancedButton;
         private static Sprite _libraryMedallion;
         private static Sprite _zoneMedallion;
@@ -213,7 +211,7 @@ namespace Game.UI.Runtime
             EnsureMedalSlots(_medalRow);
             EnsureDifficultyButtons(_difficultyRow);
             EnsureRecommended(_recommendedPanel);
-            _libraryFavouritesButton = EnsureFooterUtility(composition, "LibraryFavouritesButton");
+            RemoveRetiredFooterUtility(composition, "LibraryFavouritesButton");
             _libraryAdvancedButton = EnsureFooterUtility(composition, "LibraryAdvancedButton");
             EnsureStoreButton(rules);
             EnsureModeToggle(preview);
@@ -1835,8 +1833,6 @@ namespace Game.UI.Runtime
                 back.SetAsLastSibling();
             if (resetButton != null)
                 resetButton.transform.SetAsLastSibling();
-            if (_libraryFavouritesButton != null)
-                _libraryFavouritesButton.transform.SetAsLastSibling();
             if (_libraryAdvancedButton != null)
                 _libraryAdvancedButton.transform.SetAsLastSibling();
             if (randomizeSeedButton != null)
@@ -2261,7 +2257,6 @@ namespace Game.UI.Runtime
                     footerOwner == resetButton ||
                     footerOwner == launchButton ||
                     footerOwner == randomizeSeedButton ||
-                    footerOwner == _libraryFavouritesButton ||
                     footerOwner == _libraryAdvancedButton ||
                     footerOwner.name == "BackButton");
                 bool cardTitle = text.name == "Title" &&

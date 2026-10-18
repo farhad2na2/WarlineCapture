@@ -77,7 +77,6 @@ namespace Game.UI.Runtime
             {
                 back,
                 resetButton,
-                _libraryFavouritesButton,
                 _libraryAdvancedButton,
                 randomizeSeedButton,
                 launchButton
@@ -136,7 +135,7 @@ namespace Game.UI.Runtime
             Button[] shown = battlefield
                 ? new[] { back, randomizeSeedButton, launchButton, _libraryAdvancedButton }
                 : new[] { back, resetButton, randomizeSeedButton, launchButton };
-            Button[] all = { back, resetButton, _libraryFavouritesButton, _libraryAdvancedButton, randomizeSeedButton, launchButton };
+            Button[] all = { back, resetButton, _libraryAdvancedButton, randomizeSeedButton, launchButton };
             for (int i = 0; i < all.Length; i++)
             {
                 if (all[i] != null)
@@ -400,7 +399,7 @@ namespace Game.UI.Runtime
         /// </summary>
         private void ReassertFooterLabels()
         {
-            Button[] all = { backButtonRef(), resetButton, _libraryFavouritesButton, _libraryAdvancedButton, randomizeSeedButton, launchButton };
+            Button[] all = { backButtonRef(), resetButton, _libraryAdvancedButton, randomizeSeedButton, launchButton };
             for (int i = 0; i < all.Length; i++)
             {
                 Button button = all[i];
@@ -479,15 +478,6 @@ namespace Game.UI.Runtime
             }
 
             BindFooter(resetButton, OnLibraryFilters, fa ? "پالایه" : "FILTERS");
-            BindFooter(_libraryFavouritesButton, OnLibraryFavourites, fa ? "برگزیده‌ها" : "FAVOURITES");
-            // v41 audit (no-stub rule): there is no favourites data in the catalog, ledger or view model, so the
-            // button only lit itself. Shown in its disabled state until a real favourites store exists.
-            if (_libraryFavouritesButton != null)
-            {
-                _favouritesLit = false;
-                _libraryFavouritesButton.interactable = false;
-                AttachDisabledTap(_libraryFavouritesButton, UIAudioEventKind.ButtonDisabledTap);
-            }
             BindFooter(_libraryAdvancedButton, OnLibraryAdvanced, fa ? "پیشرفته" : "ADVANCED");
             if (battlefield)
             {
@@ -511,7 +501,6 @@ namespace Game.UI.Runtime
             }
 
             ClearFooterIcon(resetButton);
-            ClearFooterIcon(_libraryFavouritesButton);
             ClearFooterIcon(_libraryAdvancedButton);
             ClearFooterIcon(randomizeSeedButton);
         }
@@ -542,7 +531,6 @@ namespace Game.UI.Runtime
             button.onClick.RemoveListener(OnLibraryZoom);
             button.onClick.RemoveListener(OnLibraryTheater);
             button.onClick.RemoveListener(OnLibraryQuickBattle);
-            button.onClick.RemoveListener(OnLibraryFavourites);
             button.onClick.AddListener(action);
             if (!string.IsNullOrEmpty(label))
                 SetCopy(button.GetComponentInChildren<TMP_Text>(true), label);
@@ -557,7 +545,7 @@ namespace Game.UI.Runtime
             else if (action == LaunchMatch)
                 AliasControl(button, SkirmishLibraryControlNames.StartBattle);
 
-            bool localSound = action == OnLibraryFilters || action == OnLibraryAdvanced || action == OnLibraryFavourites;
+            bool localSound = action == OnLibraryFilters || action == OnLibraryAdvanced;
             if (localSound)
                 AttachAudio(button, UIAudioEventKind.ButtonSecondaryClick);
             else
@@ -571,12 +559,6 @@ namespace Game.UI.Runtime
             UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
             if (audio != null)
                 DestroyUi(audio);
-        }
-
-        private void OnLibraryFavourites()
-        {
-            _favouritesLit = !_favouritesLit;
-            TintButton(_libraryFavouritesButton, _favouritesLit, true);
         }
 
         private void OnLibraryFilters()
@@ -747,6 +729,17 @@ namespace Game.UI.Runtime
             rect.sizeDelta = new Vector2(nextWidth, nextHeight);
         }
 
+        /// <summary>
+        /// v41 Game PM: FAVOURITES is hidden for this merge (no favourites data, no disabled stub). Older generated
+        /// prefabs still carry the button, so it is removed at build time and the footer reflows without it.
+        /// </summary>
+        private void RemoveRetiredFooterUtility(Transform parent, string name)
+        {
+            Transform existing = parent != null ? parent.Find(name) : null;
+            if (existing != null)
+                DestroyUi(existing.gameObject);
+        }
+
         private Button EnsureFooterUtility(Transform parent, string name)
         {
             if (parent == null)
@@ -795,13 +788,11 @@ namespace Game.UI.Runtime
             if (_savedMatchAvailable)
                 return;
             TintCommand(resetButton, new Color(0.16f, 0.4f, 0.62f, 1f), new Color(0.06f, 0.18f, 0.32f, 1f));
-            TintCommand(_libraryFavouritesButton, new Color(0.42f, 0.28f, 0.1f, 1f), new Color(0.2f, 0.12f, 0.04f, 1f));
             TintCommand(_libraryAdvancedButton, new Color(0.22f, 0.32f, 0.36f, 1f), new Color(0.08f, 0.14f, 0.16f, 1f));
             TintCommand(randomizeSeedButton, new Color(0.14f, 0.46f, 0.7f, 1f), new Color(0.05f, 0.2f, 0.36f, 1f));
             TintCommand(launchButton, new Color(0.24f, 0.58f, 0.18f, 1f), new Color(0.08f, 0.28f, 0.08f, 1f));
 
             EnlargeButtonLabel(resetButton);
-            EnlargeButtonLabel(_libraryFavouritesButton);
             EnlargeButtonLabel(_libraryAdvancedButton);
             EnlargeButtonLabel(randomizeSeedButton);
             EnlargeButtonLabel(launchButton);

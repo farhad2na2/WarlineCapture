@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "kind": "DisabledSuccessorControllerCandidateContract",
+  "enabled": false,
+  "launch_authorized": false,
+  "restoration_authorized": false,
+  "source_mutation_authorized": false,
+  "review_status": "PendingRootReview_NoAdoption",
+  "prepared_utc": "2026-10-18T19:09:03.264253+00:00",
+  "observed_existing_project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "observed_existing_head": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "observed_entire_git_status": "?? ProjectSettings/ProjectAuditorSettings.asset",
+  "proposed_new_baseline": {
+    "status": "NamedExistingBytesOnly_NotAppliedOrApproved",
+    "must_be_treated_as_new": true,
+    "new_commit": null,
+    "new_parent": null,
+    "new_candidate_manifest": null,
+    "new_candidate_sha256": null,
+    "historical_r6_after_candidate_sha256": "4be1b986d75a29a805ac01087a44e0e1e228ca70f8adb8945fe8eea1bf9bae4b",
+    "historical_hash_is_not_fresh_baseline_admission": true,
+    "exact_four_named_paths": [
+      {
+        "scope": "ProjectSettings",
+        "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/ProjectSettings/ProjectAuditorSettings.asset",
+        "project_relative_path": "ProjectSettings/ProjectAuditorSettings.asset",
+        "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+        "size": 1036,
+        "proposal_only": true,
+        "adopted": false
+      },
+      {
+        "scope": "UserSettings",
+        "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/UserSettings/AI.Generators/DragAndDropCache.asset",
+        "project_relative_path": "UserSettings/AI.Generators/DragAndDropCache.asset",
+        "sha256": "7438ab184664f10c468643a50b70de9a5d995e5dc420fdaaa64e3348ebc5a1c3",
+        "size": 490,
+        "proposal_only": true,
+        "adopted": false
+      },
+      {
+        "scope": "UserSettings",
+        "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/UserSettings/Layouts/default-6000.dwlt",
+        "project_relative_path": "UserSettings/Layouts/default-6000.dwlt",
+        "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+        "size": 4500760,
+        "proposal_only": true,
+        "adopted": false
+      },
+      {
+        "scope": "GlobalGUI_ExactObservedPathOnly",
+        "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+        "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+        "size": 4500760,
+        "uid": 501,
+        "gid": 20,
+        "mode": "0o644",
+        "proposal_only": true,
+        "adopted": false
+      }
+    ],
+    "existing_other_source_and_settings_rows": "Must be fully inventoried and pinned from fresh actual bytes before future admission; this proposal does not assert full current-tree stability",
+    "project_auditor_gate": "Adopting existing Auditor bytes as source requires explicit source review, new tracked commit/candidate and clean strict preflight; no whitelist for the currently untracked file",
+    "user_and_global_state_gate": "Local exact bytes may be proposed without mutation; never commit session layout as portable source, normalize it, or silently omit it from snapshots"
+  },
+  "successor_controller_requirements": {
+    "implementation_supplied": false,
+    "implementation_sha256": null,
+    "test_sha256": null,
+    "independent_peer_receipt_sha256": null,
+    "old_controller_sha256_for_provenance_only": "1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6",
+    "cannot_execute_old_r6_controller_or_authorization": true,
+    "authorization_contract": "A newly reviewed controller must consume a fresh explicit Root authorization bound to new candidate HEAD,parent,complete source manifest,controller/test/peer receipt hashes,project path,checked wrapper,timeout and expiring unique nonce. This disabled JSON is never itself a launch packet.",
+    "exact_execution_mode_after_separate_approval": {
+      "platform": "macOS_GUI_Licensing",
+      "wrapper": "Tools/CI/invoke_unity_macos.sh",
+      "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+      "editor": "6000.5.8f1",
+      "target": "Android",
+      "timeout_seconds": 3600,
+      "entry": "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation",
+      "quit_for_this_synchronous_entry": true,
+      "batchmode": false,
+      "runnable_argv": null
+    },
+    "prelaunch_gates": [
+      "Reject this disabled/unapproved packet; do not derive execution authority from it",
+      "Require new exact reviewed source commit,parent,branch and entire tracked/untracked clean Git status; include Auditor config in source manifest if adopted",
+      "Require all fresh Assets/Packages/ProjectSettings and UserSettings rows plus explicit exact global-GUI scope; refuse unknown paths/types/symlinks/reparse/owner or byte mismatch",
+      "Require current Hub open/authenticated, exact actual Editor/Android/SDK/tool pins and current capacity; no project owner and no interference with SCN13 or any other Editor",
+      "Require independently reviewed successor controller/tests and exact fresh expiring one-use Root launch authorization; no consumed r6 reuse",
+      "Resolve global GUI scope and shared-writer risk before launch: no other Editor/profile writer may race observed shared settings, or a supported reviewed isolation mechanism must be proven. Defer without stopping other processes if ownership is uncertain"
+    ],
+    "runtime_and_terminal_contract": [
+      "Record tool session, controller PID/birth, original wrapper Popen PID/birth and project bindings before polling",
+      "Maintain same original Popen through actual exit and explicit reaping even if observation fails; preserve first failure latch and all raw evidence; never adopt/name-kill processes",
+      "Use two owned-worker absence samples plus final ownership check; no source/settings/global-GUI action before owned shutdown; protect unrelated Editors",
+      "Capture complete raw after project/source/settings and agreed global-GUI inventory; any added/removed/changed/unreadable/unexpected file or identity is a failed run. No ignore list, YAML normalizer or dirty whitelist",
+      "No automatic restoration, removal, source edits or baseline advancement. Preserve all unexpected bytes and report failure; any recovery needs a distinct reviewed scope",
+      "Compare original and terminal exact byte/existence hashes across the full declared scope; report observed boundary coverage honestly and do not claim detection of unobserved transient writes",
+      "Markers, actual wrapper exit, owned shutdown, source/settings stability, compiler consumption, in-process environment, frame/input lifecycle and normal mission/device acceptance remain separate gates"
+    ]
+  },
+  "mandatory_unresolved_gates": {
+    "root_baseline_adoption": false,
+    "new_source_candidate_commit_and_full_manifest": false,
+    "global_gui_scope_complete": false,
+    "global_gui_shared_writer_policy_reviewed": false,
+    "successor_controller_implemented_and_independently_reviewed": false,
+    "fresh_launch_authorization": false
+  },
+  "global_gui_scope_limit": {
+    "only_one_path_authorized_for_current_observation": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "complete_global_preferences_inventory_or_isolation_not_performed": true,
+    "must_block_launch_until_explicit_scope_policy_review": "The one-path hash cannot prove that all other GUI preferences are unchanged. No claim of every-global-file coverage is made. A complete approved inventory or proven supported isolation policy is required before the future lane can assert such coverage.",
+    "no_new_inventory_or_global_file_mutation_authorized_by_this_proposal": true
+  },
+  "original_evidence_immutable": {
+    "r5_failure": "Preserved; no retroactive upgrade",
+    "r6_result_sha256": "525ecbacefd179467b23a1506c5d0a82467e6ef447f9a5cdad90d50eb287b392",
+    "r6_operationalControlPassed": false,
+    "r6_errors": [
+      "Source changed",
+      "Project settings changed",
+      "User settings changed"
+    ],
+    "r6_wrapper_exit": 0,
+    "r6_wrapper_reaped": true,
+    "r6_owned_shutdown_closed": true,
+    "r6_assembly_scope": "All192RecordedDLLsUnchanged_RetainedOnly_NoFreshCompilerConsumptionProof",
+    "r6_source_or_settings_failure_not_waived": true,
+    "global_observation_not_r6_before_after_witness": true
+  },
+  "current_actions": {
+    "bounded_read_only_global_observation": true,
+    "settings_restorations": 0,
+    "native_source_mutations": 0,
+    "unity_launches": 0,
+    "new_claims": 0,
+    "library_copies": 0,
+    "file_deletions": 0
+  },
+  "acceptance": {
+    "normal_mission": false,
+    "paid_resources_qualified": false,
+    "queue": false,
+    "android_build": false,
+    "device": false
+  },
+  "unproved_claims_not_required_for_explicit_byte_baseline": {
+    "universal_project_auditor_defaults_proved": false,
+    "global_gui_transient_change_witness": false,
+    "rule": "Explicit reviewed config bytes do not require universal-default proof; boundary hashes cannot assert transient write detection. Neither unproved claim may be advertised as passed."
+  }
+}

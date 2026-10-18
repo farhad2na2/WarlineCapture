@@ -1,0 +1,7 @@
+This disabled contract names four existing files as a possible NEW baseline without adopting, editing, copying or restoring them. Its source candidate, successor controller/test/review receipt and fresh launch authorization are deliberately unresolved. The currently untracked Project Auditor file still fails strict clean-source preflight; there is no dirty whitelist.
+
+The exact global layout named in r6 log lines 54404-54406 was read with a 16 MiB cap, no-follow open, regular-file and ancestor checks, UID/GID/mode/inode/mtime observation, and two stable hash samples. It is owned by UID501 and its4,500,760 bytes match the project layout hash184317f0… . The observation is current, not an independent r6 global before/after witness. No Editor was observed in that process snapshot; future ownership/capacity gates must run again.
+
+One known global path does not establish complete global GUI coverage. The future controller must refuse launch until Root approves the exact global scope and shared-writer/isolation policy. It must fail on every unexpected change in the declared scope, perform no automatic restoration, and keep observation limits explicit. No supported preferences-isolation implementation or complete global inventory is claimed here.
+
+The r6 result remains failed, all raw files remain untouched, and all192 recorded DLL hashes retain their unchanged/retained-only meaning. This proposal performs no Unity execution, claim, source/settings mutation, deletion or Library copy.

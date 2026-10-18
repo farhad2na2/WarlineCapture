@@ -1,0 +1,119 @@
+{
+  "schema_version": 1,
+  "exact_path_derived_from_native_log": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+  "log_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/unity.log",
+  "log_sha256": "3fbd39270222bd69825de146799c91c9d85c3dd5bbd3683d6694e225a4ed2955",
+  "native_log_load_line": 54404,
+  "native_log_global_save_line": 54406,
+  "path_chain_observed": [
+    {
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o644"
+    },
+    {
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o755"
+    },
+    {
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o755"
+    },
+    {
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o755"
+    },
+    {
+      "path": "/Users/farhad/Library/Preferences/Unity",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o755"
+    },
+    {
+      "path": "/Users/farhad/Library/Preferences",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o700"
+    },
+    {
+      "path": "/Users/farhad/Library",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o700"
+    },
+    {
+      "path": "/Users/farhad",
+      "symlink": false,
+      "uid": 501,
+      "gid": 20,
+      "mode": "0o750"
+    },
+    {
+      "path": "/Users",
+      "symlink": false,
+      "uid": 0,
+      "gid": 80,
+      "mode": "0o755"
+    },
+    {
+      "path": "/",
+      "symlink": false,
+      "uid": 0,
+      "gid": 0,
+      "mode": "0o755"
+    }
+  ],
+  "samples": [
+    {
+      "observed_utc": "2026-10-18T19:07:39.954396+00:00",
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+      "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+      "size": 4500760,
+      "uid": 501,
+      "gid": 20,
+      "caller_uid": 501,
+      "owned_by_current_user": true,
+      "mode": "0o644",
+      "device": 16777233,
+      "inode": 173125617,
+      "birthtime": 1792348934.1107976,
+      "mtime_ns": 1792348934110797635,
+      "stable_during_bounded_read": true
+    },
+    {
+      "observed_utc": "2026-10-18T19:07:41.963936+00:00",
+      "path": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+      "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+      "size": 4500760,
+      "uid": 501,
+      "gid": 20,
+      "caller_uid": 501,
+      "owned_by_current_user": true,
+      "mode": "0o644",
+      "device": 16777233,
+      "inode": 173125617,
+      "birthtime": 1792348934.1107976,
+      "mtime_ns": 1792348934110797635,
+      "stable_during_bounded_read": true
+    }
+  ],
+  "two_observed_hashes_equal": true,
+  "actual_r6_global_before_or_after_bytes_captured": false,
+  "observation_is_current_not_r6_witness": true,
+  "current_editors": [],
+  "actions": "BoundedReadOnly_NoWriteCopyDeleteRestoreOrLaunch"
+}

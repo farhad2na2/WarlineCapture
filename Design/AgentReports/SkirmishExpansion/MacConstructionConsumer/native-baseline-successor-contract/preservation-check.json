@@ -1,0 +1,13 @@
+{
+  "observed_utc": "2026-10-18T19:09:32.138954+00:00",
+  "disabled_contract_checks_passed": true,
+  "exact_four_paths_hashes_and_bound_read_passed": true,
+  "three_project_file_inode_mtime_unchanged": true,
+  "global_file_inode_mtime_unchanged": true,
+  "r6_raw_result_logs_and_r5_preserved_file_unchanged": true,
+  "writes_to_observed_files": 0,
+  "launches_claims_source_mutations_deletions_restorations": 0,
+  "root_review_pending": true,
+  "contract_sha256": "654aaa3bad134cead98df5351bc462868ec88c643aee5e5712562ddd01b67cbd",
+  "global_observation_sha256": "45c8866d6b66db840a7edb316b3f45b36e9344f1c94c97074ee841b158b4b64c"
+}

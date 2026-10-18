@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "kind": "DisabledExistingApiPaidTransportSupplementPlan",
+  "enabled": false,
+  "launch_authorized": false,
+  "created_utc": "2026-10-18T16:28:56.701158+00:00",
+  "reviewed_source_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "reviewed_source_parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+  "scope": "One real normal-menu paid-Airport/Transport delivery plus parked Follow/Exit, legal friendly staging Move and native cruise; early scoped exit",
+  "runtime_producer_api_missing": false,
+  "native_source_edits_required": false,
+  "native35_authority_reusable": false,
+  "selected_source_pins": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "sha256": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "sha256": "e113a199acc0d132f2af7667afe28ed31e1a4e04fd7c7594a5e6ba1478e88ebc"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+      "sha256": "dc148376da3477abfa29eda303d9397c5d7880ce4900f875488c8cc76cf6c5e1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidTransportCruiseExtension.cs",
+      "sha256": "a248fab5f6385b4f02df073e4da3d2ddcd6b24cc7cc2343d2f53fb99ca0dc656"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneFollowTouchSeam.cs",
+      "sha256": "e97c1036069fb8f87c0d99309f6c7500de61f7a3a6c447d21c9b00f3aaf61fa0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.FixedWingCycleProbe.cs",
+      "sha256": "c28ce7edd0b384de3bfec762bd8e1df238aefc87b96b5460754361bcdc131b9b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+      "sha256": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+      "sha256": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraFramingMeasurement.cs",
+      "sha256": "0ec30d3c4e80fb8ae932abb7702e6f1698ee0e37d82c10ea17fa85e48b1c68b7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs",
+      "sha256": "1931e5073ecbbcfdd18e82ddae70bf6aa609f99733ba54aa84572c3411a7877f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs",
+      "sha256": "d46c0eb8fc3eb9436d0588b1020f856422eb9bd31b76e9e56493578fc79273e4"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishMissionViewProfile_S005.asset",
+      "sha256": "51197d45dd96e086321765ec4d12180eecf5c9cff6d57c6b480f0cda590e2e9d"
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_batch_canary_jobs.py",
+      "sha256": "f33cd58d00665517aac5e6760299b9056fde1b18f6af3d4bdb170c0b443e65f0"
+    },
+    {
+      "path": "Tools/CI/qualify_s005_plane_camera.py",
+      "sha256": "b287ad3507e433c03835c04e0aad5d1dfb74c212c19d80d0c76377e9e9bdaeef"
+    },
+    {
+      "path": "Tools/CI/s005_normal_transport_cruise_qualification.py",
+      "sha256": "a3078d7da57ec2eaffca2fa31fdc4140ca4e7180f953c68a2b8898ffa09a5c6c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleCatalogConfig.cs",
+      "sha256": "a2e4ec7d26fdd8dfe834a62dccaf5f8a324505e9035ca9af2387a66881a20273"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMaterialsService.cs",
+      "sha256": "a7da50462d1390425cb4406d0a715ba22ff42a3a15831d2511403d3348938c20"
+    }
+  ],
+  "subject": {
+    "catalog_id": "S005",
+    "seed": 155926,
+    "locale": "EN",
+    "size": "Standard",
+    "difficulty": "Regular",
+    "control_mode": "manual",
+    "packet_path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md"
+  },
+  "authority_template": {
+    "schema_version": 1,
+    "kind": "ScopedManualPaidPlaneSupplementAuthority-v1",
+    "approved": false,
+    "purpose": "NormalPaidTransportCruiseCameraOnly",
+    "subject": {
+      "catalog_id": "S005",
+      "seed": 155926,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "manual",
+      "packet_path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+      "packet_sha256": "<fresh exact DB_BA packet hash>"
+    },
+    "native_request": {
+      "path": "<actual owned native_request path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "native_census": {
+      "path": "<actual owned native_census path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "snapshot": {
+      "path": "<actual owned snapshot path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "integration_manifest": {
+      "path": "<actual owned integration_manifest path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "preparation_log": {
+      "path": "<actual owned preparation_log path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "wrapper_exit": {
+      "path": "<actual owned wrapper_exit path>",
+      "sha256": "<actual byte SHA256>"
+    },
+    "candidate_sha256": "<fresh complete source digest>",
+    "build_sha256": "<fresh actual DLL manifest digest>",
+    "queue_success_enabled": false,
+    "normal_mission_accepted": false
+  },
+  "execution": {
+    "selected_complete_existing_tool_route": "Windows_GUI_checked_wrapper_and_existing_qualifier; no capture run authorized by this plan",
+    "fresh_inputs": "All six authority refs must be actual same-current-candidate artifacts under project/Logs/SkirmishProduction. Native one-slot ARIA configuration census is static identity only; the manual supplemental authority is separate. Old job/census/builds may not be relabelled.",
+    "prepare_argv": [
+      "rtk",
+      "proxy",
+      "python",
+      "-B",
+      "Tools/CI/prepare_skirmish_batch_canary_jobs.py",
+      "--project",
+      "<project>",
+      "--preparation",
+      "<native_census>",
+      "--preparation-log",
+      "<preparation_log>",
+      "--snapshot",
+      "<snapshot>",
+      "--worker",
+      "mac-paid-transport-review",
+      "--integration-manifest",
+      "<integration_manifest>",
+      "--matrix-request",
+      "<native_request>",
+      "--matrix-exit-file",
+      "<wrapper_exit>",
+      "--manual-paid-plane-authority",
+      "<separately approved authority path>",
+      "--manual-paid-plane-authority-sha256",
+      "<actual authority bytes SHA>"
+    ],
+    "resolve_editor": "Read ProjectSettings/ProjectVersion.txt and use Tools/CI/ResolveUnityEditor.ps1; no guessed Editor path.",
+    "child_environment": {
+      "WARLINE_SKIRMISH_PRODUCTION_JOB": "<fresh prepared job_path>",
+      "WARLINE_SKIRMISH_PRODUCTION_CLAIM": "<fresh prepared claim_path>",
+      "WARLINE_S005_PLANE_CANARY_OUTPUT": "<claim.artifact_directory>/paid-plane.jsonl",
+      "WARLINE_PRODUCTION_RESOURCE_LEDGER": "1",
+      "WARLINE_REPAIR_RESOURCE_LEDGER": "0"
+    },
+    "environment_ownership": "Remove other inherited WARLINE_* in child environment only. Preserve parent. Do not set diagnostics, speed/funding/enemy disable or terminal outcome flags.",
+    "native_argv": [
+      "rtk",
+      "proxy",
+      "powershell.exe",
+      "-NoProfile",
+      "-ExecutionPolicy",
+      "Bypass",
+      "-File",
+      "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+      "-UnityExe",
+      "<checked version-resolved Editor>",
+      "-ProjectPath",
+      "<project>",
+      "-ExecuteMethod",
+      "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment",
+      "-LogFile",
+      "<fresh absolute unity log>",
+      "-RequiredPassMarker",
+      "[S005NormalPaidPlaneCruise] result=Passed scope=NormalPaidTransportCruiseCameraOnly fullMissionCertified=0 playerReady=0",
+      "-GuiLicensing",
+      "-TimeoutSeconds",
+      "3600"
+    ],
+    "native_capture_gate": "New separately reviewed capture authority, actual free project ownership/capacity, Hub signed in, same-current full source/build/config/setup/job/claim; record exact handles and actual exit. No second launch on failed observation.",
+    "mac_api_available": {
+      "entry": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment",
+      "checked_wrapper_argv": [
+        "rtk",
+        "proxy",
+        "Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "<project>",
+        "--timeout",
+        "3600",
+        "--log",
+        "<fresh native unity log>",
+        "--",
+        "-quit",
+        "-executeMethod",
+        "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment"
+      ],
+      "postprocess": "Use existing s005_normal_transport_cruise_qualification.qualify API with real wrapper returncode and independently established source_unchanged. Existing qualify_s005_plane_camera.py CLI hardcodes the genuine Windows [UnityInvoke] ExitCode:0 witness, which macOS wrapper does not emit; do not manufacture this line. A Mac CLI wrapper-receipt adapter would require separate review outside Assets. Runtime producers need no change."
+    }
+  },
+  "visible_input_sequence": [
+    {
+      "stage": "Airport",
+      "action": "Existing normal Menu S005 EN155926 manual run; collect native quote before normal paid Airport placement; observe exact constructed producer and cost delta"
+    },
+    {
+      "stage": "Plane",
+      "action": "Public aircraft catalog card Unit_Veh_Plane_Transport, actual440 Materials quote and primary action through PlayerResumeTap; native Queue/BindProducer/StartNativeQueue/Deliver; wait live actor parked at own runway"
+    },
+    {
+      "stage": "FuelIfNeeded",
+      "action": "Compare actual pooled faction Fuel to existing geometry-bound planningFuel. If insufficient, existing normal UI may retire empty paid Oil trucks, buy Tanker140 via vehicle catalog and use visible fabrication toggle/local logistics controls, preserving cap6 and native economy. Never add Fuel or synthesize tanker ownership. If branch is skipped, paid tanker acceptance remains pending."
+    },
+    {
+      "stage": "ParkedFollow",
+      "action": "Select exact paid plane through existing visible controls, 15 settled frames, touch visible Follow, capture native restore snapshot and15 parked Follow frames/PNG, touch Exit, verify both prior-pose baselines and zoom controls restored"
+    },
+    {
+      "stage": "FriendlyFlight",
+      "action": "Resolve existing typed staging.player GroundStaging pad faction1 and actual Campaign source/layout/grid binding; touch Move then actual world point, require exactly one native accepted GroupedManual request for same entity generation and goal; touch visible Follow"
+    },
+    {
+      "stage": "Cruise",
+      "action": "Observe takeoff rolling then >=15 consecutive normal-speed actual-moving airborne/cruise-height/Follow frames, native enabled consumption cells, real pooled Fuel decrease and same-frame PNG; no per-aircraft fuel attribution; early scoped Finish after CruiseCameraScopedComplete"
+    }
+  ],
+  "transaction_joins": {
+    "envelope": "Same job_sha256 and claim.attempt_id/worker; monotonic sequence/frame; exact native session/world/config/setup identity from context and native observations; no caller-written native facts.",
+    "queue": "NativeProductionTransaction facts.operation=Queue with after.reservation role TransportPlane,faction1,paid440,members1; decision.accepted true/materials440/same reservation; before/after same bank index+version,faction; Materials decrease exactly decision.materials, shared Fuel decrease exactly decision.fuel, LifetimeSpent and LifetimeProductionSpent increase440; other bank origins unchanged at committed boundary.",
+    "producer": "BindProducer assigns reservation.producer to paid-airport producerRuntimeId; join to PaidAirportHandoff airport entity generation/stable constructed.ID and typed NativeConstructionTransaction cost/commit receipt. StartNativeQueue for same reservation/producer precedes Deliver.",
+    "delivery": "Deliver after.reservation Live/delivered1/remaining1; actor index/version, session, stable production.<id>.0, faction1,reservation ID,shared_actor true,capacity_released0,role TransportPlane,source_key equal to the exact native resolved TransportPlane RuntimePrefabKey (default Unit_Veh_Plane_Transport; honor any actual Forces binding). Join to PaidPlaneDeliveredAtHome and all cruise/camera rows; never substitute an old actor or reservation.",
+    "tanker": "For every claimed paid tanker use its actual Queue140 -> BindProducer/StartNativeQueue -> Deliver actor reservation/entity generation/source_key equal to the exact native resolved Tanker RuntimePrefabKey (default Unit_Veh_Truck_Tanker). No observed chain means no paid-tanker claim; pooled Fuel observations do not prove physical-fuel history or onboard refuelling.",
+    "closure": "Exactly one NativeProductionLedgerStarted/Closed, capture_failed false, observer_faults0,sink_owned true, actual transaction count matches; no ledger failure; ContextRestored and real profile/scene/options/environment restoration evidence. Preserve all enemy transactions and all failures."
+  },
+  "postprocess": {
+    "existing_qualifier_argv": [
+      "rtk",
+      "proxy",
+      "python",
+      "-B",
+      "Tools/CI/qualify_s005_plane_camera.py",
+      "--raw",
+      "<artifact_directory>/paid-plane.jsonl",
+      "--cruise",
+      "<artifact_directory>/paid-plane.jsonl.cruise.jsonl",
+      "--log",
+      "<actual Windows wrapper-owned unity log>",
+      "--source-before",
+      "<complete current warm source/build before snapshot>",
+      "--source-after",
+      "<complete current source/build after snapshot>",
+      "--wrapper-exit",
+      "<actual checked wrapper exit, never guessed>",
+      "--output",
+      "<fresh qualification.json>",
+      "--pin",
+      "<repeat reviewed source pins path=sha including observer, collector, view profile>"
+    ],
+    "additional_transaction_evidence": "The existing cruise/lineage qualifier uses an aggregate expenditure threshold; scoped approval additionally requires the exact typed Queue/Deliver joins above in adapter-native-events.jsonl. Aggregate productionSpent>=440 alone is insufficient.",
+    "native_fingerprints": "LaunchCatalog and Finish each exactly one actual current source fingerprint, same complete source/build/config/job/claim. Before/after equivalence does not prove per-consumer compiler input bytes; keep compiler closure Pending.",
+    "artifacts": [
+      "adapter-native-events.jsonl",
+      "paid-plane.jsonl",
+      "paid-plane.jsonl.cruise.jsonl",
+      "paid-plane.jsonl.camera.jsonl",
+      "all actual PNG bytes+hashes",
+      "actual live trace .touch.jsonl and .commands.jsonl",
+      "complete before/after source+DLL manifests",
+      "actual wrapper log/exit and owned process shutdown",
+      "profile journal/restore records"
+    ]
+  },
+  "result_contract": {
+    "scoped_real_paid_production_and_cruise": "Unproven_UntilActualRunAndIndependentTypedJoins",
+    "paid_resources_qualified": false,
+    "aircraftFuelSpendAttributed": false,
+    "fuel_model": "FactionPooledFuel",
+    "normal_mission_accepted": false,
+    "fullMissionCertified": false,
+    "playerReady": false,
+    "queue_success_enabled": false,
+    "normal_720_credit": 0,
+    "pending": [
+      "actual supplemental native execution and typed transaction joins",
+      "owner readable screenshot review",
+      "physical Fuel history/per-origin completeness",
+      "cargo Board/Return/landing/unload",
+      "genuine normal Victory/result/return",
+      "full manual and ARIA acceptance",
+      "real player/device acceptance"
+    ]
+  },
+  "evidence": {
+    "public_entry": "ProductionCanary.cs:143-205",
+    "typed_production": "SkirmishProductionService.cs:15-79,248-270,770-782; .Native.cs:49-86",
+    "lineage": "NormalPaidPlaneLineageCanary.cs:149-175,178-220,270-293",
+    "staging_and_cruise": "NormalPaidTransportCruiseExtension.cs:120-149,163-292",
+    "fuel": "FixedWingCycleProbe.cs:369-475; cruise raw fuelScope=FactionPooledFuel/aircraftFuelSpendAttributed=false",
+    "camera_source_hash": "de882aa416c9e65c42fe6e33f383bd89ba1bb4985f0647f048da6630946a96aa",
+    "layout_content": "measured.db.ba.v2",
+    "map_policy": "Reuse existing unchanged Campaign geometry; do not change maps, layouts, budgets or deadlines to make this capture pass"
+  }
+}

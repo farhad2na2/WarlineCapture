@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "result": "PassedSourceOnlyDisabledPlanInspection",
+  "created_utc": "2026-10-18T16:30:05.148064+00:00",
+  "plan": "Tools/CI/SkirmishProductionDrafts/MacPaidTransportSupplement/paid-transport-native-supplement.disabled.json",
+  "plan_sha256": "de30a1d87b660f050aaed9e1a42c14adf4344c3adcc9c8cca89e8521abcdd737",
+  "selected_files_verified": 18,
+  "new_native_launches": 0,
+  "new_job_claims": 0,
+  "source_assets_modified": 0,
+  "r6_controller_unchanged": true,
+  "native35_authority_consumed": 0,
+  "missing_producer_field": false,
+  "qualification": "PendingActualNativeCaptureAndTypedJoins",
+  "platform_limit": "Existing qualifier CLI recognizes actual Windows wrapper exit witness; Mac runtime API exists, but CLI adaptation needs separate outside-Assets review. No forged marker.",
+  "map_policy_sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797"
+}

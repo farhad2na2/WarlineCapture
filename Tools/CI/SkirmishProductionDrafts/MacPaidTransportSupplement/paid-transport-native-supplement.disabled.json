@@ -3,7 +3,7 @@
   "kind": "DisabledExistingApiPaidTransportSupplementPlan",
   "enabled": false,
   "launch_authorized": false,
-  "created_utc": "2026-10-18T16:28:56.701158+00:00",
+  "created_utc": "2026-10-18T16:48:30.512682+00:00",
   "reviewed_source_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
   "reviewed_source_parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
   "scope": "One real normal-menu paid-Airport/Transport delivery plus parked Follow/Exit, legal friendly staging Move and native cruise; early scoped exit",
@@ -138,8 +138,8 @@
     "normal_mission_accepted": false
   },
   "execution": {
-    "selected_complete_existing_tool_route": "Windows_GUI_checked_wrapper_and_existing_qualifier; no capture run authorized by this plan",
-    "fresh_inputs": "All six authority refs must be actual same-current-candidate artifacts under project/Logs/SkirmishProduction. Native one-slot ARIA configuration census is static identity only; the manual supplemental authority is separate. Old job/census/builds may not be relabelled.",
+    "selected_complete_existing_tool_route": "DISABLED Windows generic GUI Android wrapper plus explicit outer actual-exit/scoped-marker audit; existing runtime APIs, no native launch authorized",
+    "fresh_inputs": "All six authority refs must be actual same-current-candidate artifacts under project/Logs/SkirmishProduction. Native one-slot ARIA configuration census is static identity only; the manual supplemental authority is separate. Old job/census/builds may not be relabelled. Actual static census, warm DLL snapshot and capture must use the same intended Android target/toolchain. A target-switch rebuild cannot be waived or relabelled as unchanged compiled bytes.",
     "prepare_argv": [
       "rtk",
       "proxy",
@@ -183,21 +183,8 @@
       "-NoProfile",
       "-ExecutionPolicy",
       "Bypass",
-      "-File",
-      "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
-      "-UnityExe",
-      "<checked version-resolved Editor>",
-      "-ProjectPath",
-      "<project>",
-      "-ExecuteMethod",
-      "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment",
-      "-LogFile",
-      "<fresh absolute unity log>",
-      "-RequiredPassMarker",
-      "[S005NormalPaidPlaneCruise] result=Passed scope=NormalPaidTransportCruiseCameraOnly fullMissionCertified=0 playerReady=0",
-      "-GuiLicensing",
-      "-TimeoutSeconds",
-      "3600"
+      "-Command",
+      "& {\n  $ErrorActionPreference = 'Stop'\n  $project = '<project>'\n  $unityExe = '<checked version-resolved Editor>'\n  $log = '<fresh absolute unity log>'\n  $audit = $log + '.outer-audit.json'\n  $stem = [IO.Path]::Combine([IO.Path]::GetDirectoryName($log), [IO.Path]::GetFileNameWithoutExtension($log))\n  foreach ($path in @($log, $audit, ($stem + '.stdout.log'), ($stem + '.stderr.log'))) {\n    if (Test-Path -LiteralPath $path) { throw ('Fresh evidence path required: ' + $path) }\n  }\n  $unityArguments = @('-buildTarget', 'Android', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment')\n  $requiredMarkers = @(\n    '[S005NormalPaidPlaneLineage] result=Passed scope=NormalAirportPlaneDeliveryOnly fullMissionCertified=0 playerReady=0',\n    '[S005NormalPaidPlaneCruise] result=Passed scope=NormalPaidTransportCruiseCameraOnly fullMissionCertified=0 playerReady=0'\n  )\n  $errors = [Collections.Generic.List[string]]::new()\n  $counts = @{}\n  $actualWrapperExit = $null\n  try {\n    $global:LASTEXITCODE = $null\n    & (Join-Path $project 'Tools/CI/InvokeUnity.ps1') -UnityExe $unityExe -ProjectPath $project -LogFile $log -NoProcessExit -GuiLicensing -TimeoutSeconds 3600 -UnityArguments $unityArguments\n    $actualWrapperExit = $LASTEXITCODE\n    if ($null -eq $actualWrapperExit -or $actualWrapperExit -ne 0) { $errors.Add('Actual checked wrapper exit is missing/nonzero/timeout') }\n    if (-not (Test-Path -LiteralPath $log -PathType Leaf)) { $errors.Add('Native wrapper log missing') }\n    else {\n      $text = [IO.File]::ReadAllText($log)\n      $lines = $text -split '\\r?\\n'\n      foreach ($marker in $requiredMarkers) {\n        $counts[$marker] = @($lines | Where-Object { $_ -ceq $marker }).Count\n        if ($counts[$marker] -ne 1) { $errors.Add('Missing or duplicated exact scoped marker: ' + $marker) }\n      }\n      if (@($lines | Where-Object { $_ -ceq '[UnityInvoke] ExitCode: 0' }).Count -ne 1) { $errors.Add('Exact real wrapper zero-exit log witness missing/duplicated') }\n      if ($text -match 'process exit code was unavailable') { $errors.Add('Wrapper inferred an exit from a marker; actual exit remains unproven') }\n      if ($text -match 'result=Failed|error CS\\d+|Unhandled Exception|AssertionException|StackOverflowException|executeMethod.*threw exception|Aborting.*failure|already open in another Unity instance') { $errors.Add('Actual failure/compiler/exception/project-lock evidence preserved') }\n    }\n  } catch { $errors.Add($_.Exception.Message) }\n  $receipt = @{ schema_version = 1; scope = 'PaidTransportSupplementOuterAuditOnly'; wrapper_exit = $actualWrapperExit; unity_arguments = $unityArguments; required_marker_counts = $counts; errors = $errors.ToArray(); outer_audit_passed = ($errors.Count -eq 0); native_qualification = 'PendingTypedTransactionJoinsSourceBuildClosureAndIndependentReview'; normal_mission_accepted = $false; queue_success_enabled = $false; normal_720_credit = 0 }\n  $bytes = [Text.UTF8Encoding]::new($false).GetBytes(($receipt | ConvertTo-Json -Depth 8) + [Environment]::NewLine)\n  $stream = [IO.File]::Open($audit, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::Read)\n  try { $stream.Write($bytes, 0, $bytes.Length) } finally { $stream.Dispose() }\n  if ($errors.Count -ne 0) { throw ('Paid transport outer audit failed; preserve receipt: ' + $audit) }\n}"
     ],
     "native_capture_gate": "New separately reviewed capture authority, actual free project ownership/capacity, Hub signed in, same-current full source/build/config/setup/job/claim; record exact handles and actual exit. No second launch on failed observation.",
     "mac_api_available": {
@@ -213,12 +200,41 @@
         "--log",
         "<fresh native unity log>",
         "--",
-        "-quit",
+        "-buildTarget",
+        "Android",
         "-executeMethod",
         "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment"
       ],
-      "postprocess": "Use existing s005_normal_transport_cruise_qualification.qualify API with real wrapper returncode and independently established source_unchanged. Existing qualify_s005_plane_camera.py CLI hardcodes the genuine Windows [UnityInvoke] ExitCode:0 witness, which macOS wrapper does not emit; do not manufacture this line. A Mac CLI wrapper-receipt adapter would require separate review outside Assets. Runtime producers need no change."
-    }
+      "postprocess": "Use existing s005_normal_transport_cruise_qualification.qualify API with real wrapper returncode and independently established source_unchanged. Existing qualify_s005_plane_camera.py CLI hardcodes the genuine Windows [UnityInvoke] ExitCode:0 witness, which macOS wrapper does not emit; do not manufacture this line. A Mac CLI wrapper-receipt adapter would require separate review outside Assets. Runtime producers need no change.",
+      "async_no_quit": true
+    },
+    "windows_wrapper_contract": {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "parameters_used": [
+        "UnityExe",
+        "ProjectPath",
+        "LogFile",
+        "NoProcessExit",
+        "GuiLicensing",
+        "TimeoutSeconds",
+        "UnityArguments"
+      ],
+      "unity_arguments": [
+        "-buildTarget",
+        "Android",
+        "-executeMethod",
+        "Game.Editor.SkirmishS002AriaRunHarness.RunProductionPaidPlaneSupplementFromEnvironment"
+      ],
+      "omitted_unity_arguments": [
+        "-quit",
+        "-batchmode",
+        "-nographics"
+      ],
+      "required_markers_audited_outside_wrapper": true,
+      "no_invented_generic_wrapper_parameters": true,
+      "actual_exit_fallback_rejected": true
+    },
+    "async_lifecycle": "RunOwnedProductionEntry starts BeginProductionNativeInputReadiness asynchronously. Do not add -quit to either platform. The existing harness Finish/owned restore owns eventual normal process exit; the checked wrapper owns explicit timeout. Do not terminate unrelated Editors."
   },
   "visible_input_sequence": [
     {
@@ -321,5 +337,55 @@
     "camera_source_hash": "de882aa416c9e65c42fe6e33f383bd89ba1bb4985f0647f048da6630946a96aa",
     "layout_content": "measured.db.ba.v2",
     "map_policy": "Reuse existing unchanged Campaign geometry; do not change maps, layouts, budgets or deadlines to make this capture pass"
+  },
+  "revision": 2,
+  "supersedes": {
+    "commit": "659e9b4473efae36e877219884453eedcdc4313e",
+    "packet_sha256": "de30a1d87b660f050aaed9e1a42c14adf4344c3adcc9c8cca89e8521abcdd737",
+    "reason": "Focused executeMethod wrapper prepends -quit, incompatible with this asynchronous input-readiness entry; no run was launched"
+  },
+  "source_scope": {
+    "selected_literal_pins": "Reviewed Mac a9/9f+3e only; not current Windows",
+    "windows_mismatches": [
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs",
+        "reviewed_mac_a9_sha256": "dc148376da3477abfa29eda303d9397c5d7880ce4900f875488c8cc76cf6c5e1",
+        "windows_reported_prefix": "1679fdb1",
+        "windows_full_sha256": null,
+        "status": "RootReportedMismatch_UnreviewedCurrentWindows_NoScopeTransfer"
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs",
+        "reviewed_mac_a9_sha256": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+        "windows_reported_prefix": "280477df",
+        "windows_full_sha256": null,
+        "status": "RootReportedMismatch_UnreviewedCurrentWindows_NoScopeTransfer"
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs",
+        "reviewed_mac_a9_sha256": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+        "windows_reported_prefix": "0ee7d753",
+        "windows_full_sha256": null,
+        "status": "RootReportedMismatch_UnreviewedCurrentWindows_NoScopeTransfer"
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCameraFramingMeasurement.cs",
+        "reviewed_mac_a9_sha256": "0ec30d3c4e80fb8ae932abb7702e6f1698ee0e37d82c10ea17fa85e48b1c68b7",
+        "windows_reported_prefix": "defab235",
+        "windows_full_sha256": null,
+        "status": "RootReportedMismatch_UnreviewedCurrentWindows_NoScopeTransfer"
+      },
+      {
+        "path": "Tools/CI/qualify_s005_plane_camera.py",
+        "reviewed_mac_a9_sha256": "b287ad3507e433c03835c04e0aad5d1dfb74c212c19d80d0c76377e9e9bdaeef",
+        "windows_reported_prefix": "5849a495",
+        "windows_full_sha256": null,
+        "status": "RootReportedMismatch_UnreviewedCurrentWindows_NoScopeTransfer"
+      }
+    ],
+    "windows_rebase_owner": "Windows coordinator after actual camera commit boundary",
+    "no_windows_asset_hunk_overwrite": true,
+    "no_invented_windows_hashes": true,
+    "readiness_credit_from_other_candidates": 0
   }
 }

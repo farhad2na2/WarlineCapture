@@ -1,0 +1,192 @@
+{
+  "published_commit": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "authority_kind": "Baseline720",
+  "authority_fields": [
+    "catalog_id",
+    "seed",
+    "locale",
+    "size",
+    "difficulty",
+    "control_mode"
+  ],
+  "authority_does_not_itself_choose_native_identity_schema": true,
+  "total_slots": 720,
+  "protected_slots": 18,
+  "other_slots": 702,
+  "all_slots_retained": true,
+  "mapping": [
+    {
+      "catalog_id": "S001",
+      "slot_count": 6,
+      "seeds": [
+        104730,
+        130364,
+        155922
+      ],
+      "locales": [
+        "EN",
+        "FA"
+      ],
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria",
+      "intended_protected_native_binding": {
+        "scenario_index": 0,
+        "preset_resource": "SkirmishBaseAssault",
+        "preset_asset_path": "Assets/Game/Resources/SkirmishBaseAssault.asset",
+        "job_schema_version": 2,
+        "native_identity_kind": "SkirmishLegacyPresetNativeIdentity",
+        "native_identity_schema_version": 2,
+        "definition_fields_forbidden": [
+          "definition_id",
+          "definition_version",
+          "native_setup_hash_uint32"
+        ]
+      },
+      "separate_counterpart": {
+        "job_schema_version": 3,
+        "definition_id": "skirmish.s001",
+        "authority_kind": "MeasuredExpandedCounterpartDevelopmentAuthority",
+        "development_resource_path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S001/Resources/SkirmishProtectedCounterpart_S001.asset",
+        "selection_kind": "ExpandedDefinition",
+        "selection_driver": "PublicSetupMethods_EditModeFixture",
+        "actual_normal_input_play": false,
+        "baseline_credit": 0,
+        "materialization_developmentOnly": true,
+        "normalMissionReady": false,
+        "practiceBindingChanged": false
+      },
+      "worker_disposition": "PendingBeforeClaim_NoSchema2CollectorAndNoSchema3Substitution_NoSlotExclusion"
+    },
+    {
+      "catalog_id": "S025",
+      "slot_count": 6,
+      "seeds": [
+        104754,
+        130388,
+        155946
+      ],
+      "locales": [
+        "EN",
+        "FA"
+      ],
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria",
+      "intended_protected_native_binding": {
+        "scenario_index": 1,
+        "preset_resource": "SkirmishCityCrossroads",
+        "preset_asset_path": "Assets/Game/Resources/SkirmishCityCrossroads.asset",
+        "job_schema_version": 2,
+        "native_identity_kind": "SkirmishLegacyPresetNativeIdentity",
+        "native_identity_schema_version": 2,
+        "definition_fields_forbidden": [
+          "definition_id",
+          "definition_version",
+          "native_setup_hash_uint32"
+        ]
+      },
+      "separate_counterpart": {
+        "job_schema_version": 3,
+        "definition_id": "skirmish.s025",
+        "authority_kind": "MeasuredExpandedCounterpartDevelopmentAuthority",
+        "development_resource_path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S025/Resources/SkirmishProtectedCounterpart_S025.asset",
+        "selection_kind": "ExpandedDefinition",
+        "selection_driver": "PublicSetupMethods_EditModeFixture",
+        "actual_normal_input_play": false,
+        "baseline_credit": 0,
+        "materialization_developmentOnly": true,
+        "normalMissionReady": false,
+        "practiceBindingChanged": false
+      },
+      "worker_disposition": "PendingBeforeClaim_NoSchema2CollectorAndNoSchema3Substitution_NoSlotExclusion"
+    },
+    {
+      "catalog_id": "S073",
+      "slot_count": 6,
+      "seeds": [
+        104802,
+        130436,
+        155994
+      ],
+      "locales": [
+        "EN",
+        "FA"
+      ],
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria",
+      "intended_protected_native_binding": {
+        "scenario_index": 3,
+        "preset_resource": "SkirmishIndustrialBasin",
+        "preset_asset_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+        "job_schema_version": 2,
+        "native_identity_kind": "SkirmishLegacyPresetNativeIdentity",
+        "native_identity_schema_version": 2,
+        "definition_fields_forbidden": [
+          "definition_id",
+          "definition_version",
+          "native_setup_hash_uint32"
+        ]
+      },
+      "separate_counterpart": {
+        "job_schema_version": 3,
+        "definition_id": "skirmish.s073",
+        "authority_kind": "MeasuredExpandedCounterpartDevelopmentAuthority",
+        "development_resource_path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S073/Resources/SkirmishProtectedCounterpart_S073.asset",
+        "selection_kind": "ExpandedDefinition",
+        "selection_driver": "PublicSetupMethods_EditModeFixture",
+        "actual_normal_input_play": false,
+        "baseline_credit": 0,
+        "materialization_developmentOnly": true,
+        "normalMissionReady": false,
+        "practiceBindingChanged": false
+      },
+      "worker_disposition": "PendingBeforeClaim_NoSchema2CollectorAndNoSchema3Substitution_NoSlotExclusion"
+    }
+  ],
+  "actual_dispatch_gap": "Native request has explicit schema2 legacy handling; published Python normal identity verifier only accepts definition-based v1, also used by profile/normal inspector. Typed legacy collector/profile bridge is pending. Schema3 development authority explicitly has zero baseline credit and is not a substitute.",
+  "required_resolution": "Separately review a typed legacy identity collector/profile adapter against the unchanged coded preset/source/seed/locale bindings; retain normal Menu/Touch/ARIA/outcome/return and all720 sampling requirements. No speculative API/source mutation in this task.",
+  "source_refs": {
+    "Tools/CI/skirmish_production_matrix_authority.py": {
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "lines": "7-8,30-33,47-63",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_production_matrix_authority.py#L7"
+    },
+    "Tools/CI/skirmish_production_queue.py": {
+      "sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "lines": "92-114,157-164",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_production_queue.py#L92"
+    },
+    "Tools/CI/prepare_skirmish_legacy_production_jobs.py": {
+      "sha256": "1c7f6fe474b9ab9a9308bb245597fff55c7dd9beca00b5b82e9e64901e27332e",
+      "lines": "14,40-56",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/prepare_skirmish_legacy_production_jobs.py#L14"
+    },
+    "Tools/CI/skirmish_counterpart_authority.py": {
+      "sha256": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc",
+      "lines": "33-45,83-94",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_counterpart_authority.py#L33"
+    },
+    "Tools/CI/skirmish_native_identity.py": {
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "lines": "11-13,31-33,74-81",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_native_identity.py#L11"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs": {
+      "sha256": "e113a199acc0d132f2af7667afe28ed31e1a4e04fd7c7594a5e6ba1478e88ebc",
+      "lines": "21,36-46,144",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs#L21"
+    },
+    "Tools/CI/skirmish_profile_journal_admission.py": {
+      "sha256": "70af53bd31151e395992f3651c544e24db27556742e839830e7566656ad47014",
+      "lines": "88-109",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_profile_journal_admission.py#L88"
+    },
+    "Tools/CI/skirmish_production_operational_inspector.py": {
+      "sha256": "c8835e1f769ee53d5acc561e2d3798052393c43518bd614e554fc4a9f19ee93f",
+      "lines": "297-304,339-340",
+      "url": "https://github.com/farhad2na2/WarlineCapture/blob/f2a1b825c12e9c5597789fdaf4da679ebb7761af/Tools/CI/skirmish_production_operational_inspector.py#L297"
+    }
+  }
+}

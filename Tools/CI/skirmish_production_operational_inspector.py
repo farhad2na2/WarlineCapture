@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 import re
 
-from invoke_skirmish_production_batch import verify_native_events, METHOD
+from invoke_skirmish_production_batch import verify_native_events, verify_mac_wrapper, METHOD
 from skirmish_native_identity import verify_job, normalize_native_locale
 from audit_skirmish_native_contacts import audit
 from skirmish_production_queue import fingerprint
@@ -221,7 +221,7 @@ def ownership(value):
     v["scenes"].sort(key=lambda s:(s["path"],s["name"]))
     return v
 
-def inspect(project,spec):
+def inspect(project,spec,*,wrapper_platform='windows'):
     result={"schema_version":1,"result":"Incomplete","wins":0,"attempts":[],
         "admission":{"result":"MissingAdmission","missing":list(MISSING)},
         "queue_success_enabled":False,"qualified":False,"mission_ready":False,"publication_changed":False,"errors":[]}
@@ -235,7 +235,11 @@ def inspect(project,spec):
         need(outer["descriptor_sha256"]==spec["descriptor"]["sha256"] and type(outer["checked_wrapper_exit"]) is int and
             outer["checked_wrapper_exit"]==0 and outer["execute_method"]==METHOD and outer["queue_success_enabled"] is False,
             "Actual outer wrapper/descriptor/method mismatch")
-        need(re.findall(r"\[UnityInvoke\] ExitCode: (-?\d+)",log)==["0"],"Unique actual checked exit0 required")
+        need(wrapper_platform in ('windows', 'macos'), 'Unknown wrapper platform')
+        if wrapper_platform == 'macos':
+            verify_mac_wrapper(descriptor, outer, project)
+        else:
+            need(re.findall(r"\[UnityInvoke\] ExitCode: (-?\d+)",log)==["0"],"Unique actual checked exit0 required")
         need(not re.search(r"Crash!!!|error CS\d+:|\[SkirmishProductionOperationalRun\] result=Failed",log),"Native failure retained")
         store_path=read.derived(descriptor["candidate_manifest_path"])
         need(digest(store_path)==descriptor["candidate_manifest_sha256"],"Immutable candidate store SHA differs")
@@ -250,7 +254,10 @@ def inspect(project,spec):
                 read.path(source["manifest_path"])==store_path and source["manifest_sha256"]==descriptor["candidate_manifest_sha256"],
                 "Actual full source/build endpoint differs")
         # Reuse actual whole-batch/runtime/exit/fingerprint verifier; never replace by a marker-only detector.
-        verify_native_events(descriptor,events,log,Path(project))
+        if wrapper_platform == 'macos':
+            verify_native_events(descriptor,events,log,Path(project),mac_wrapper_receipt=outer)
+        else:
+            verify_native_events(descriptor,events,log,Path(project))
         need(descriptor_path==read.path(Path(descriptor["artifact_directory"])/"batch.json"),"Noncanonical descriptor path")
         declared=spec["attempts"];need(isinstance(declared,list) and len(declared)==len(descriptor["jobs"]),"Every dispatched attempt required")
         baseline=one(events,"BatchCaptured")
@@ -352,7 +359,8 @@ def inspect(project,spec):
                 measured[i]["scenes"]==baseline["baseline_scenes"] and measured[i]["preview_count"]==baseline["baseline_preview_count"],
                 "Actual cleanup differs from captured baseline")
             # Pure validator consumes only the already Reader-pinned owned event stream.
-            profile=validate_profile_journal(job,claim,native)
+            profile=(validate_profile_journal(job,claim,native,path_platform='macos')
+                     if wrapper_platform == 'macos' else validate_profile_journal(job,claim,native))
             expected_profile={"admission":"profile_before_restore",
                 "result":"MeasuredProfilePreservedAndRootRestored","profile_restored":True,
                 "job_sha256":job_sha,"attempt_id":claim["attempt_id"],

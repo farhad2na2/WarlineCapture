@@ -467,11 +467,21 @@ namespace Game.UI.Runtime
             {
                 BindFooter(randomizeSeedButton, OnLibraryTheater, fa ? "نقشه صحنه" : "THEATRE MAP");
                 BindFooter(launchButton, LaunchMatch, fa ? "شروع نبرد" : "START BATTLE");
+                if (_quickBattleDisabledLaunch && launchButton != null)
+                    launchButton.interactable = true; // v37 P1: undo the Theatre-only Quick Battle disabled state
+                _quickBattleDisabledLaunch = false;
             }
             else
             {
                 BindFooter(randomizeSeedButton, OnLibraryZoom, ZoomFooterLabel(fa)); // approved-1: "ZOOM IN · DESERT BASE"
                 BindFooter(launchButton, OnLibraryQuickBattle, fa ? "نبرد سریع" : "QUICK BATTLE");
+                // v37 P1: Quick Battle is live only when the ledger has an owned playable battle (disabled state otherwise).
+                bool quickReady = HasQuickBattleTarget();
+                if (launchButton != null)
+                {
+                    launchButton.interactable = quickReady;
+                    _quickBattleDisabledLaunch = !quickReady;
+                }
             }
 
             ClearFooterIcon(resetButton);
@@ -570,19 +580,38 @@ namespace Game.UI.Runtime
             PresentScenarioChoices();
         }
 
+        private bool _quickBattleDisabledLaunch;
+
+        private bool HasQuickBattleTarget()
+        {
+            EnsureLibraryViewModel();
+            SkirmishTheaterPinState[] pins = _libraryViewModel != null ? _libraryViewModel.Theater.Pins : null;
+            for (int i = 0; pins != null && i < pins.Length; i++)
+            {
+                if (pins[i].HasOwnedPlayable && pins[i].PublishedCount > 0)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// v37 P1 (Game PM no-stub rule): Quick Battle picks a random owned playable battle from the ledger
+        /// (view model QuickBattle raises the primary-click sound), adopts it, then takes the real START BATTLE
+        /// launch path (LaunchMatch -> view model Launch). With nothing playable the button is disabled, never a stub.
+        /// </summary>
         private void OnLibraryQuickBattle()
         {
             EnsureLibraryViewModel();
             string catalogId = _libraryViewModel.QuickBattle();
             if (string.IsNullOrEmpty(catalogId))
             {
-                _libraryViewModel.ZoomIn();
-                _mapFilter = LibraryMapId;
-                PresentScenarioChoices();
+                UIAudioEventGateway.Raise(UIAudioEventKind.CardLocked);
                 return;
             }
 
             AdoptLibrarySelection(catalogId);
+            LaunchMatch();
         }
 
         private void EnsureFilterPanel(RectTransform panel)

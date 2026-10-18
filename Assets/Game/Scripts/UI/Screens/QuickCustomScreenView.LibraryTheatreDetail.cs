@@ -96,8 +96,9 @@ namespace Game.UI.Runtime
                 float y = pad;
                 y = DetailHeader(root, pin, fa, leadX + 4f, y, lead - 12f);
                 DetailPreview(root, pin, leadX + 4f, y, lead - 12f, Mathf.Max(40f, pad + innerH - y));
-                DetailCabinet(root, pin, fa, middleX + 6f, pad, middle - 12f, innerH, 8, 3);
-                DetailObjectives(root, fa, trailX + 6f, pad, trail - 12f, innerH);
+                // v37: no medal cabinet (per-battle medal states for a zone are not in the Theatre data; tier totals are
+                // shown in the medal row). Objective types take the middle and trailing columns.
+                DetailObjectives(root, fa, (fa ? trailX : middleX) + 6f, pad, middle + trail - 12f, innerH);
                 return;
             }
 
@@ -107,8 +108,9 @@ namespace Game.UI.Runtime
                 y = DetailHeader(root, pin, fa, pad, y, inner, frame.height);
                 float objectivesHeight = 32f + 2f * DetailObjectiveRowHeight;
                 float objectivesTop = frame.height - pad - objectivesHeight;
-                float cabinetHeight = Mathf.Max(60f, Mathf.Min(objectivesTop - y - 10f, inner * 0.5f + 12f));
-                y = DetailCabinet(root, pin, fa, pad, y, inner, cabinetHeight, 6, 3) + 10f;
+                // v37 (Game PM no-stub): the 6x3 medal cabinet was mostly empty dark squares. The Theatre data has no
+                // per-battle medal states or thumbnails for a zone (only tier totals, already in DetailMedalRow), so it is removed.
+                y += 6f;
                 // The zone's own subtitle copy fills the gap between cabinet and objective types (no invented data).
                 y = DetailBlurb(root, pin, fa, pad, y, inner, objectivesTop - y - 8f - DetailMedalRowHeight);
                 if (objectivesTop - y >= DetailMedalRowHeight)
@@ -282,51 +284,6 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>Medal cabinet: earned medals first (commander → recruit), the rest empty. Returns the bottom y.</summary>
-        private float DetailCabinet(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width, float height, int columns, int rows)
-        {
-            const float gap = 5f;
-            float cell = Mathf.Min((width - gap * (columns - 1)) / columns, (height - gap * (rows - 1)) / rows);
-            float gridWidth = cell * columns + gap * (columns - 1);
-            float gridX = x + (width - gridWidth) * 0.5f;
-            SkirmishDifficultyId[] tiers = { SkirmishDifficultyId.Commander, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Recruit };
-            int[] counts = { pin.Medals.Commander, pin.Medals.Veteran, pin.Medals.Regular, pin.Medals.Recruit };
-            int slot = 0;
-            for (int r = 0; r < rows; r++)
-            {
-                for (int c = 0; c < columns; c++)
-                {
-                    int visual = fa ? columns - 1 - c : c;
-                    var box = new GameObject("Cabinet_" + slot, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                    box.transform.SetParent(root, false);
-                    PlaceTopLeft(box.rectTransform, gridX + visual * (cell + gap), y + r * (cell + gap), cell, cell);
-                    box.color = new Color(0.08f, 0.1f, 0.11f, 1f);
-                    box.raycastTarget = false;
-                    var edge = box.gameObject.AddComponent<Outline>();
-                    edge.effectColor = new Color(0.3f, 0.32f, 0.33f, 0.9f);
-                    edge.effectDistance = new Vector2(1f, -1f);
-                    int remaining = slot;
-                    for (int t = 0; t < tiers.Length; t++)
-                    {
-                        if (remaining < counts[t])
-                        {
-                            var medal = new GameObject("Medal", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                            medal.transform.SetParent(box.transform, false);
-                            PlaceTopLeft(medal.rectTransform, cell * 0.12f, cell * 0.12f, cell * 0.76f, cell * 0.76f);
-                            medal.preserveAspect = true;
-                            ShowIcon(medal, SkirmishBattleLibraryArt.Medal(true, tiers[t]), Color.white);
-                            break;
-                        }
-
-                        remaining -= counts[t];
-                    }
-
-                    slot++;
-                }
-            }
-
-            return y + rows * (cell + gap) - gap;
-        }
-
         /// <summary>
         /// "OBJECTIVE TYPE" heading and a 2 x 2 block of icon + short name. The library text pass holds captions at the
         /// subtitle floor (~20 px), so each name gets half the panel width and its own row instead of four across.

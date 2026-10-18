@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Security.Cryptography;
 using Game.Configs;
 using Game.Runtime;
@@ -503,8 +504,8 @@ namespace Game.Editor
             bool wideFrame = IsWideLibraryFrame(grid);
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
             RejectGridCardsOutside(grid, viewport, content, scrolls, wideFrame, locale);
-            RejectGridZoneRows(grid, locale);
             RejectZoneTabNames(grid, locale);
+            RejectGridZoneRows(grid, locale);
             RejectVisibleGridRowTotals(root, locale);
         }
 
@@ -524,27 +525,25 @@ namespace Game.Editor
             if (grid == null)
                 return;
             bool fa = string.Equals(locale, "fa", StringComparison.OrdinalIgnoreCase);
-            int found = 0;
+            var tabs = new List<RectTransform>();
             for (int i = 0; i < grid.childCount; i++)
             {
                 Transform tab = grid.GetChild(i);
                 if (tab == null || !tab.gameObject.activeInHierarchy ||
                     !tab.name.StartsWith("BattlefieldTab_", StringComparison.Ordinal))
                     continue;
+                if (tab is RectTransform tabRect)
+                    tabs.Add(tabRect);
+            }
+
+            RejectZoneTabBand(grid, tabs, locale);
+
+            int found = 0;
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                RectTransform tab = tabs[i];
                 found++;
                 string mapId = tab.name.Substring("BattlefieldTab_".Length);
-                var tabRect = tab as RectTransform;
-                float height = 0f;
-                if (tabRect != null)
-                    height = Mathf.Max(tabRect.rect.height, tabRect.sizeDelta.y);
-                if (height > SkirmishZoneTabWidget.Height + 0.5f)
-                {
-                    throw new InvalidOperationException(
-                        "Zone tab is taller than 52px locale=" + locale +
-                        " map=" + mapId +
-                        " height=" + height.ToString("0.0") + ".");
-                }
-
                 TMP_Text name = tab.Find("ZoneTabName")?.GetComponent<TMP_Text>();
                 SkirmishBattleLibraryArt.Copy(mapId, fa, out string title, out _);
                 if (name == null || !name.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(name.text) ||
@@ -572,6 +571,178 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Grid is missing a zone tab locale=" + locale + " tabs=" + found + ".");
             }
+        }
+
+        /// <summary>
+        /// The tab strip may be 60px or 196px. What still has to hold is containment:
+        /// every tab inside the band, no neighbour overlap, and the band plus each
+        /// preview inside the grid while the preview stays at least 40% of its card.
+        /// </summary>
+        private static void RejectZoneTabBand(Transform grid, List<RectTransform> tabs, string locale)
+        {
+            var gridRect = grid as RectTransform;
+            Rect gridBounds = gridRect != null ? WorldBounds(gridRect) : new Rect();
+            Rect band = ZoneTabBand(grid, gridBounds);
+            var report = new StringBuilder();
+            string ratio = string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio) ? "unset" : TheatreSeatGeometry.ShotRatio;
+            report.Append("[ZoneTabBand] locale=").Append(locale);
+            report.Append(" ratio=").Append(ratio);
+            report.Append(" band=").Append(FormatRect(band));
+            report.Append(" tabs=").Append(tabs != null ? tabs.Count : 0);
+            if (tabs != null)
+            {
+                for (int i = 0; i < tabs.Count; i++)
+                {
+                    Rect tabBounds = WorldBounds(tabs[i]);
+                    report.Append(" ").Append(tabs[i].name).Append("=").Append(FormatRect(tabBounds));
+                }
+            }
+
+            Debug.Log(report.ToString());
+            const float slop = 2f;
+            if (gridRect == null || band.height < 1f || !Contains(gridBounds, band, slop))
+            {
+                throw new InvalidOperationException(
+                    "Zone tab band does not fit inside the card locale=" + locale +
+                    " band=" + FormatRect(band) +
+                    " card=" + FormatRect(gridBounds) + ".");
+            }
+
+            if (tabs == null)
+                return;
+            for (int i = 0; i < tabs.Count; i++)
+            {
+                Rect tabBounds = WorldBounds(tabs[i]);
+                if (!Contains(band, tabBounds, slop))
+                {
+                    throw new InvalidOperationException(
+                        "Zone tab is outside its band locale=" + locale +
+                        " tab=" + tabs[i].name +
+                        " tabRect=" + FormatRect(tabBounds) +
+                        " band=" + FormatRect(band) + ".");
+                }
+
+                for (int other = i + 1; other < tabs.Count; other++)
+                {
+                    if (!WorldOverlap(tabs[i], tabs[other], 1f))
+                        continue;
+                    throw new InvalidOperationException(
+                        "Zone tab overlaps a neighbour locale=" + locale +
+                        " tab=" + tabs[i].name +
+                        " other=" + tabs[other].name + ".");
+                }
+            }
+
+            var rows = new List<Transform>();
+            CollectZoneRows(grid, rows);
+            for (int rowIndex = 0; rowIndex < rows.Count; rowIndex++)
+            {
+                Transform row = rows[rowIndex];
+                for (int childIndex = 0; childIndex < row.childCount; childIndex++)
+                {
+                    Transform child = row.GetChild(childIndex);
+                    if (child == null || !child.gameObject.activeInHierarchy)
+                        continue;
+                    bool card = child.name == "EmptyCell" || child.name.StartsWith("BattleCard_", StringComparison.Ordinal);
+                    if (!card || child is not RectTransform cardRect)
+                        continue;
+                    Transform preview = cardRect.Find("Preview");
+                    var previewRect = preview as RectTransform;
+                    if (previewRect == null)
+                    {
+                        throw new InvalidOperationException(
+                            "Grid card has no preview locale=" + locale +
+                            " path=" + ImagePath(cardRect));
+                    }
+
+                    float cardHeight = Span(cardRect, false);
+                    float previewHeight = Span(previewRect, false);
+                    if (cardHeight < 2f || previewHeight < cardHeight * 0.40f)
+                    {
+                        throw new InvalidOperationException(
+                            "Grid preview is under 40% of the card locale=" + locale +
+                            " path=" + ImagePath(cardRect) +
+                            " preview=" + previewHeight.ToString("0.0") +
+                            " card=" + cardHeight.ToString("0.0"));
+                    }
+
+                    Rect cardBounds = WorldBounds(cardRect);
+                    Rect previewBounds = WorldBounds(previewRect);
+                    if (!Contains(cardBounds, previewBounds, slop))
+                    {
+                        throw new InvalidOperationException(
+                            "Grid preview does not fit inside the card locale=" + locale +
+                            " path=" + ImagePath(cardRect) +
+                            " preview=" + FormatRect(previewBounds) +
+                            " card=" + FormatRect(cardBounds) + ".");
+                    }
+
+                    Rect scrollBounds = GridScrollBounds(grid, gridBounds);
+                    bool previewShown = RectsOverlap(scrollBounds, previewBounds, 0f);
+                    if (band.height + previewBounds.height > gridBounds.height + slop ||
+                        (previewShown && RectsOverlap(band, previewBounds, 1f)))
+                    {
+                        throw new InvalidOperationException(
+                            "Zone tab band plus preview does not fit inside the card locale=" + locale +
+                            " path=" + ImagePath(cardRect) +
+                            " band=" + FormatRect(band) +
+                            " preview=" + FormatRect(previewBounds) +
+                            " card=" + FormatRect(gridBounds) + ".");
+                    }
+                }
+            }
+        }
+
+        private static Rect GridScrollBounds(Transform grid, Rect gridBounds)
+        {
+            if (grid == null)
+                return gridBounds;
+            for (int i = 0; i < grid.childCount; i++)
+            {
+                Transform child = grid.GetChild(i);
+                if (child != null && child.name == "GridScroll" && child is RectTransform scroll)
+                    return WorldBounds(scroll);
+            }
+
+            return gridBounds;
+        }
+
+        private static Rect ZoneTabBand(Transform grid, Rect gridBounds)
+        {
+            float seam = float.MinValue;
+            bool seamFound = false;
+            if (grid != null)
+            {
+                for (int i = 0; i < grid.childCount; i++)
+                {
+                    Transform child = grid.GetChild(i);
+                    if (child == null || !child.gameObject.activeInHierarchy || child is not RectTransform rect)
+                        continue;
+                    bool header = child.name.StartsWith("Column_", StringComparison.Ordinal);
+                    bool scroll = child.name == "GridScroll";
+                    if (!header && !scroll)
+                        continue;
+                    float top = WorldBounds(rect).yMax;
+                    if (!seamFound || top > seam)
+                    {
+                        seam = top;
+                        seamFound = true;
+                    }
+                }
+            }
+
+            float bottom = seamFound ? Mathf.Min(seam, gridBounds.yMax) : gridBounds.yMin;
+            if (bottom > gridBounds.yMax)
+                bottom = gridBounds.yMax;
+            return Rect.MinMaxRect(gridBounds.xMin, bottom, gridBounds.xMax, gridBounds.yMax);
+        }
+
+        private static string FormatRect(Rect rect)
+        {
+            return rect.x.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ","
+                + rect.y.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ","
+                + rect.width.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ","
+                + rect.height.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
         }
 
         private static void RejectGridZoneRows(Transform grid, string locale)

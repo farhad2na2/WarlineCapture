@@ -9532,14 +9532,26 @@ namespace Game.UI.Runtime
         {
             if (shape == null || shape.Length < 3)
                 return false;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                Vec2 next = shape[(i + 1) % shape.Length];
+                if (SegmentHitsRect(shape[i], next, card))
+                    return false;
+            }
+
             Vec2[] corners = Corners(card);
+            const float sample = 4f;
             for (int edge = 0; edge < corners.Length; edge++)
             {
                 Vec2 a = corners[edge];
                 Vec2 b = corners[(edge + 1) % corners.Length];
-                for (int step = 0; step < 4; step++)
+                float span = Distance(a, b);
+                int steps = (int)Math.Ceiling(span / sample);
+                if (steps < 1)
+                    steps = 1;
+                for (int step = 0; step < steps; step++)
                 {
-                    float t = step / 4f;
+                    float t = step / (float)steps;
                     var point = new Vec2(a.X + (b.X - a.X) * t, a.Y + (b.Y - a.Y) * t);
                     if (!PointInPolygon(point, shape) || EdgeCloserThan(point, shape, margin))
                         return false;

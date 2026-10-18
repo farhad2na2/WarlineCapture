@@ -343,13 +343,10 @@ namespace Game.UI.Runtime
                 SkirmishZoneTabWidget.Apply(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
                 float inner = Mathf.Max(48f, tabWidth - SkirmishZoneTabWidget.LabelInset * 2f);
                 var name = CreateLabel(button.transform, "ZoneTabName", SkirmishZoneTabWidget.NameFontFloor);
-                PlaceTopLeft(name.rectTransform, SkirmishZoneTabWidget.LabelInset, 0f, inner, SkirmishZoneTabWidget.NameBand);
-                KeepAuthoredSize(name.rectTransform);
                 name.alignment = TextAlignmentOptions.Center;
                 string title = MapDisplayTitle(mapId, fa);
                 SetCopy(name, title, SkirmishZoneTabWidget.NameFontFloor, SkirmishZoneTabWidget.NameFontFloor);
                 SkirmishZoneTabWidget.StyleLabel(name);
-                SkirmishZoneTabWidget.FitName(name);
                 bool pending = true;
                 int won = 0;
                 int published = 0;
@@ -362,19 +359,22 @@ namespace Game.UI.Runtime
                 }
 
                 var status = CreateLabel(button.transform, "ZoneTabStatus", SkirmishZoneTabWidget.StatusFont);
-                PlaceTopLeft(
-                    status.rectTransform,
-                    SkirmishZoneTabWidget.LabelInset,
-                    SkirmishZoneTabWidget.NameBand,
-                    inner,
-                    SkirmishZoneTabWidget.StatusBand);
-                KeepAuthoredSize(status.rectTransform);
                 status.alignment = TextAlignmentOptions.Center;
                 string statusCopy = SkirmishZoneTabWidget.StatusCopy(fa, pending, won, published);
                 SetCopy(status, statusCopy, SkirmishZoneTabWidget.StatusFont, SkirmishZoneTabWidget.StatusFont);
                 status.isRightToLeftText = pending && fa;
                 SkirmishZoneTabWidget.StyleLabel(status);
                 SkirmishZoneTabWidget.FitStatus(status);
+                float countWidth = SkirmishZoneTabWidget.CountStripWidth(status, inner);
+                float nameWidth = Mathf.Max(8f, inner - countWidth);
+                float nameX = fa ? SkirmishZoneTabWidget.LabelInset + countWidth : SkirmishZoneTabWidget.LabelInset;
+                float countX = fa ? SkirmishZoneTabWidget.LabelInset : SkirmishZoneTabWidget.LabelInset + nameWidth;
+                float statusY = (SkirmishZoneTabWidget.NameBand - SkirmishZoneTabWidget.StatusBand) * 0.5f;
+                PlaceTopLeft(name.rectTransform, nameX, 0f, nameWidth, SkirmishZoneTabWidget.NameBand);
+                PlaceTopLeft(status.rectTransform, countX, statusY, countWidth, SkirmishZoneTabWidget.StatusBand);
+                KeepAuthoredSize(name.rectTransform);
+                KeepAuthoredSize(status.rectTransform);
+                SkirmishZoneTabWidget.FitName(name);
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }

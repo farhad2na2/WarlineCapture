@@ -2304,32 +2304,60 @@ namespace Game.UI.Runtime
                 return;
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, width);
             rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, height);
-            if (Mathf.Abs(rect.rect.width - width) <= 0.75f && Mathf.Abs(rect.rect.height - height) <= 0.75f)
-                return;
-            Canvas.ForceUpdateCanvases();
+        }
+
+        private struct CueAttemptNote
+        {
+            public int Count;
+            public bool Seen;
+            public bool Fits;
+            public float Size;
+            public string Phase;
+            public string Why;
+        }
+
+        private static CueAttemptNote _cueAttempt;
+
+        private static void BeginCueAttempts()
+        {
+            _cueAttempt = default;
         }
 
         /// <summary>
-        /// One attempt. <c>why</c> is the failure (or the path that fitted) so the next
-        /// capture log shows which check rejected 22–26.
+        /// Records one attempt. The cue logs a single summary once the fit returns:
+        /// the winning attempt, or the latest miss, plus how many attempts ran.
         /// </summary>
         private static void LogCueAttempt(TMP_Text cue, string phase, float size, bool fits, string why)
         {
+            _cueAttempt.Count++;
+            bool keep = !_cueAttempt.Seen || fits || !_cueAttempt.Fits;
+            _cueAttempt.Seen = true;
+            if (!keep)
+                return;
+            _cueAttempt.Fits = fits;
+            _cueAttempt.Size = size;
+            _cueAttempt.Phase = phase;
+            _cueAttempt.Why = why;
+        }
+
+        private static void FlushCueAttempt(TMP_Text cue)
+        {
+            if (!_cueAttempt.Seen)
+                return;
             RectTransform rect = cue != null ? cue.rectTransform : null;
             float liveW = rect != null ? rect.rect.width : 0f;
             float liveH = rect != null ? rect.rect.height : 0f;
-            float authoredW = rect != null ? rect.sizeDelta.x : 0f;
-            float authoredH = rect != null ? rect.sizeDelta.y : 0f;
             string ratio = string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio) ? "unset" : TheatreSeatGeometry.ShotRatio;
             string locale = string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale) ? "en" : TheatreSeatGeometry.ShotLocale;
             Debug.Log("[ZoomCueAttempt] ratio=" + ratio
                 + " locale=" + locale
                 + " rect=" + F(liveW) + "x" + F(liveH)
-                + " sizeDelta=" + F(authoredW) + "x" + F(authoredH)
-                + " size=" + F(size)
-                + " fits=" + (fits ? "1" : "0")
-                + " why=" + why
-                + " phase=" + phase);
+                + " size=" + F(_cueAttempt.Size)
+                + " fits=" + (_cueAttempt.Fits ? "1" : "0")
+                + " why=" + _cueAttempt.Why
+                + " phase=" + _cueAttempt.Phase
+                + " attempts=" + _cueAttempt.Count.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            _cueAttempt = default;
         }
 
         /// <summary>
@@ -2341,6 +2369,9 @@ namespace Game.UI.Runtime
         {
             if (cue == null || cue.rectTransform == null)
                 return;
+            BeginCueAttempts();
+            try
+            {
             RectTransform rect = cue.rectTransform;
             MatchCueRect(rect);
             float boxW = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
@@ -2350,6 +2381,9 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
+            // One canvas pass before the Farsi sizes. Later attempts read the mesh
+            // they just built and must not rebuild the whole canvas again.
+            Canvas.ForceUpdateCanvases();
             // The overflow flag reads the live rect. Commit the seated tab into that
             // rect before the 22–26 attempts, or a stale narrow box fails every one
             // and the search below stops at 17–18 again.
@@ -2409,6 +2443,11 @@ namespace Game.UI.Runtime
             ApplyCueFloor(cue, source, cueFloor, boxW);
             ZoomCueFitReason = "fallback";
             LogCueAttempt(cue, "fallback", cueFloor, false, "floor");
+            }
+            finally
+            {
+                FlushCueAttempt(cue);
+            }
         }
 
         /// <summary>

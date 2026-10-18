@@ -114,6 +114,7 @@ namespace Game.Editor
 
             ConfigureAndroidBuild(buildType == "AAB");
             OperationMapAddressablesBuildReportBuilder.Run();
+            ReleasePostAddressablesMemory();
 
             var buildPlayerOptions = new BuildPlayerOptions
             {
@@ -134,6 +135,110 @@ namespace Game.Editor
                 report,
                 buildType,
                 buildProvenance);
+        }
+
+
+        [Serializable]
+        private sealed class AndroidMemoryBoundaryPoint
+        {
+            public long privateBytes;
+            public long workingSetBytes;
+            public long unityAllocatedBytes;
+            public long unityReservedBytes;
+            public long monoUsedBytes;
+            public long managedHeapBytes;
+        }
+
+        [Serializable]
+        private sealed class AndroidMemoryBoundaryReport
+        {
+            public int schemaVersion = 1;
+            public string status;
+            public string utc;
+            public int processId;
+            public double releaseMilliseconds;
+            public AndroidMemoryBoundaryPoint before;
+            public AndroidMemoryBoundaryPoint after;
+            public bool buildPlayerInvoked;
+            public bool sceneSetupUnchanged;
+            public bool memoryReductionRequired;
+        }
+
+        private static AndroidMemoryBoundaryPoint ReadAndroidMemoryBoundaryPoint()
+        {
+            using var process = System.Diagnostics.Process.GetCurrentProcess();
+            process.Refresh();
+            return new AndroidMemoryBoundaryPoint {
+                privateBytes = process.PrivateMemorySize64,
+                workingSetBytes = process.WorkingSet64,
+                unityAllocatedBytes = UnityEngine.Profiling.Profiler.GetTotalAllocatedMemoryLong(),
+                unityReservedBytes = UnityEngine.Profiling.Profiler.GetTotalReservedMemoryLong(),
+                monoUsedBytes = UnityEngine.Profiling.Profiler.GetMonoUsedSizeLong(),
+                managedHeapBytes = GC.GetTotalMemory(false)
+            };
+        }
+
+        private static AndroidMemoryBoundaryReport ReleasePostAddressablesMemory()
+        {
+            using var process = System.Diagnostics.Process.GetCurrentProcess();
+            var report = new AndroidMemoryBoundaryReport {
+                utc = DateTime.UtcNow.ToString("O", System.Globalization.CultureInfo.InvariantCulture),
+                processId = process.Id,
+                before = ReadAndroidMemoryBoundaryPoint()
+            };
+            var timer = System.Diagnostics.Stopwatch.StartNew();
+            GC.Collect();
+            // Parameterless overload retains script/static references in Unity6000.5.
+            EditorUtility.UnloadUnusedAssetsImmediate();
+            GC.Collect();
+            timer.Stop();
+            report.after = ReadAndroidMemoryBoundaryPoint();
+            report.releaseMilliseconds = timer.Elapsed.TotalMilliseconds;
+            report.status = "CollectedPostAddressablesMemory_NoBuildOrAcceptance";
+            UnityEngine.Debug.Log("[AndroidPrePlayerMemoryBoundary] " + UnityEngine.JsonUtility.ToJson(report));
+            return report;
+        }
+
+        // Diagnostic stops at the real synchronous content/report -> player boundary.
+        public static void RunAndroidAddressablesMemoryBoundaryDiagnostic()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling ||
+                EditorUserBuildSettings.activeBuildTarget != BuildTarget.Android)
+                throw new InvalidOperationException("Idle Android Editor required for memory boundary diagnostic.");
+            string output = Environment.GetEnvironmentVariable("WARLINE_ANDROID_MEMORY_BOUNDARY_OUTPUT");
+            if (string.IsNullOrWhiteSpace(output) || !Path.IsPathRooted(output))
+                throw new InvalidOperationException("Fresh absolute owned diagnostic output required.");
+            output = Path.GetFullPath(output);
+            string contentReport = Environment.GetEnvironmentVariable("WARLINE_ANDROID_MEMORY_BOUNDARY_CONTENT_REPORT");
+            if (string.IsNullOrWhiteSpace(contentReport) || !Path.IsPathRooted(contentReport))
+                throw new InvalidOperationException("Fresh absolute owned Design/AgentReports output required.");
+            contentReport = Path.GetFullPath(contentReport);
+            if (!Directory.Exists(Path.GetDirectoryName(output)) || !Directory.Exists(Path.GetDirectoryName(contentReport)) ||
+                File.Exists(output) || File.Exists(contentReport) ||
+                string.Equals(output, contentReport, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException("Existing parent and two fresh diagnostic paths required.");
+            var before = UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup();
+            const string reportVariable = OperationMapAddressablesBuildReportBuilder.OutputPathEnvironmentVariable;
+            string previous = Environment.GetEnvironmentVariable(reportVariable);
+            AndroidMemoryBoundaryReport report;
+            try
+            {
+                Environment.SetEnvironmentVariable(reportVariable, contentReport);
+                // Enforce the existing Design/AgentReports JSON guard BEFORE content work.
+                OperationMapAddressablesBuildReportBuilder.ResolveOutputPath();
+                OperationMapAddressablesBuildReportBuilder.Run();
+                report = ReleasePostAddressablesMemory();
+            }
+            finally { Environment.SetEnvironmentVariable(reportVariable, previous); }
+            var after = UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup();
+            report.sceneSetupUnchanged = before.Length == after.Length && before.Zip(after, (a, b) =>
+                a.path == b.path && a.isLoaded == b.isLoaded && a.isActive == b.isActive).All(equal => equal);
+            if (!report.sceneSetupUnchanged)
+                throw new InvalidOperationException("Diagnostic must preserve actual scene setup.");
+            using (var stream = new FileStream(output, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
+            using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false)))
+                writer.Write(UnityEngine.JsonUtility.ToJson(report, true));
+            UnityEngine.Debug.Log("[AndroidAddressablesMemoryBoundaryDiagnostic] result=Collected buildPlayerInvoked=0 sceneSetupUnchanged=1 memoryReductionRequired=0");
         }
 
         public static void BuildDenseCityCandidateAndroidApk()

@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T18:53:49.582965+00:00",
+  "platform": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.9.6 (default, Aug 25 2026, 21:26:21) \n[Clang 21.0.0 (clang-2100.3.34.2)]",
+  "published_commit": "3a38730df1721fe38c7aaa2a239fc412dfc44be1",
+  "published_parent": "754e96e09c2cfaf365514e06191e961a09a70fce",
+  "projected_pins": {
+    "skirmish_paid_transport_join_admission_test": {
+      "path": "Tools/CI/skirmish_paid_transport_join_admission_test.py",
+      "sha256": "02b0d8f63705891c649bd8953a9417127b3ec1cd9857d0333e4112ed5f1638fe",
+      "size": 22881
+    },
+    "skirmish_native_identity": {
+      "path": "Tools/CI/skirmish_native_identity.py",
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "size": 4134
+    },
+    "skirmish_paid_transport_join_admission": {
+      "path": "Tools/CI/skirmish_paid_transport_join_admission.py",
+      "sha256": "156c8a6324b4430783780340ed91dba8c51376ae87f73b95c78b919da1abf322",
+      "size": 23608
+    },
+    "skirmish_construction_ledger_admission": {
+      "path": "Tools/CI/skirmish_construction_ledger_admission.py",
+      "sha256": "f1d9279dc628034e6267475f00c6bfe709ea1c4e78f0e959494a2a5667cb2b24",
+      "size": 32565
+    },
+    "s005_windows_source_snapshot": {
+      "path": "Tools/CI/s005_windows_source_snapshot.py",
+      "sha256": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba",
+      "size": 4387
+    },
+    "skirmish_production_queue": {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "size": 20352
+    },
+    "skirmish_production_matrix_authority": {
+      "path": "Tools/CI/skirmish_production_matrix_authority.py",
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "size": 7726
+    },
+    "skirmish_counterpart_authority": {
+      "path": "Tools/CI/skirmish_counterpart_authority.py",
+      "sha256": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc",
+      "size": 10942
+    },
+    "audit_skirmish_native_contacts": {
+      "path": "Tools/CI/audit_skirmish_native_contacts.py",
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "size": 4201
+    }
+  },
+  "tests_run": 37,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "actual_symlink_subtests": [
+    {
+      "test": "skirmish_paid_transport_join_admission_test.ArtifactTests.test_lineage_symlink_and_parent_symlink_refused",
+      "subtest": "test_lineage_symlink_and_parent_symlink_refused (skirmish_paid_transport_join_admission_test.ArtifactTests) (parent=False)",
+      "passed": true
+    },
+    {
+      "test": "skirmish_paid_transport_join_admission_test.ArtifactTests.test_lineage_symlink_and_parent_symlink_refused",
+      "subtest": "test_lineage_symlink_and_parent_symlink_refused (skirmish_paid_transport_join_admission_test.ArtifactTests) (parent=True)",
+      "passed": true
+    }
+  ],
+  "source_bytes_unchanged": true,
+  "scope": "MacConstructedControlsOnly_NoNativeOrMissionCredit",
+  "normal_mission": false,
+  "paid_resources_qualified": false,
+  "queue_success_enabled": false,
+  "android_build": false,
+  "device": false,
+  "log_sha256": "e9fe16a55e2408077f8d43af3b50dd9489a6b6df7c34ad3c70f2326c34c0cec2"
+}

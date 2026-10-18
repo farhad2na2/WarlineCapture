@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T12:26:07.268107+00:00",
+  "scope": "READ-ONLY preparation requested by Windows coordinator. No Unity/CLI dispatch, Editor launch, install, Library copy, source/assets/settings changes or native test performed. Report file only.",
+  "future_candidate": {
+    "status": "Not supplied or approved for native launch",
+    "required": "Coordinator/root must approve exact immutable main commit and candidate/build/setup/physical source identities before checkout or execution. Current report worktree is not an accepted future native candidate.",
+    "audit_baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf"
+  },
+  "native_ownership": {
+    "observed_processes": [
+      {
+        "pid": 55563,
+        "ppid": 1,
+        "user": "farhad",
+        "elapsed": "03-17:23:42",
+        "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+      },
+      {
+        "pid": 83102,
+        "ppid": 81764,
+        "user": "farhad",
+        "elapsed": "26:11",
+        "command": "bash /Users/farhad/unity-p1/scn13cap.sh"
+      },
+      {
+        "pid": 83106,
+        "ppid": 83102,
+        "user": "farhad",
+        "elapsed": "26:11",
+        "command": "bash Tools/CI/invoke_unity_macos.sh --project /Volumes/T7/Projects/WarlineCapture-wt-p1-scn13 --timeout 4200 --log /private/tmp/scn13-capture.log -- -quit -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunFocusedValidation"
+      },
+      {
+        "pid": 83113,
+        "ppid": 83106,
+        "user": "farhad",
+        "elapsed": "26:11",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/WarlineCapture-wt-p1-scn13 -logFile /private/tmp/scn13-capture.log -quit -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunFocusedValidation"
+      }
+    ],
+    "editor_instance": {
+      "process_id": 83113,
+      "version": "6000.5.8f1",
+      "app_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app",
+      "app_contents_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents"
+    },
+    "active_project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+    "active_project_head": "1440823bc0ec22b21578401cf36cae08949c7230",
+    "execute_method": "Game.Editor.SkirmishBattleLibraryCapture.RunFocusedValidation",
+    "wrapper_timeout_seconds": 4200,
+    "log": "/private/tmp/scn13-capture.log",
+    "log_size_bytes": 8525105,
+    "log_mtime_ns": 1792326364666498997,
+    "capture_terminal_markers": [],
+    "status": "Wrapper and owned Editor live at observation; capture terminal marker absent",
+    "logical_chat_owner": "Not identified from process evidence; unrelated SCN13 owner is preserved. OS owner farhad and exact parent/project chain verified; do not claim a chat identity.",
+    "lane_decision": "No competing dense native Play/build run. Recheck process ownership immediately before any future run. Do not terminate Editors/Hub/licensing or remove IPC/locks."
+  },
+  "runtime_prerequisites": {
+    "project_editor_version": "6000.5.8f1",
+    "editor_app": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app",
+    "editor_executable_present": true,
+    "hub_version": "3.22.3",
+    "hub_running": true,
+    "hub_signed_in": "Not independently verified in this read-only check; must remain open and signed in for a future run.",
+    "hub_licensing_client_version": "1.18.3+d7ffd15",
+    "current_active_capture_log_client_version": "1.18.3+d7ffd15",
+    "licensing_update_note": "Hub now exceeds old3.19.5 and client>=1.18.1 threshold. Read-only version comparison performed. Editor helper Info.plist reports1.2.0, which is bundle metadata rather than a comparable protocol/file version. Re-test of batchmode has NOT been performed; current checked wrapper explicitly rejects it. Keep GUI route and no reset/bypass. Any future licensing-rule re-test is a separate explicit maintenance scope, not permission to change this validation route.",
+    "unity_cli_path": "/opt/homebrew/bin/unity",
+    "pipeline_manifest": "0.6.0-exp.1",
+    "pipeline_lock": {
+      "version": "0.6.0-exp.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.test-framework": "1.1.33",
+        "com.unity.nuget.mono-cecil": "1.11.6",
+        "com.unity.modules.uielements": "1.0.0",
+        "com.unity.modules.jsonserialize": "1.0.0",
+        "com.unity.modules.screencapture": "1.0.0",
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "pipeline_commands": "Before any authorized reuse dispatch, verify unity pipeline list, unity status --project-path <approved-root>, unity list --project-path <approved-root>, unity command --project-path <approved-root>. None invoked here."
+  },
+  "cache_and_space": {
+    "observations": [
+      {
+        "project": "/Users/farhad/.codex/worktrees/mac-construction-ledger/WarlineCapture",
+        "git_head": "6d5dff8b75ead4f92552f854cf11239ba12904be",
+        "Library_present": false,
+        "ScriptAssemblies_present": false,
+        "Artifacts_present": false,
+        "UnityLockfile_present": false,
+        "filesystem_available_bytes": 13580218368
+      },
+      {
+        "project": "/Volumes/T7/Projects/WarlineCapture",
+        "git_head": "4f854f3b97e1046f56a82be9061f6d8c6daaccdf",
+        "Library_present": true,
+        "ScriptAssemblies_present": true,
+        "Artifacts_present": true,
+        "UnityLockfile_present": false,
+        "filesystem_available_bytes": 105588465664
+      },
+      {
+        "project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+        "git_head": "1440823bc0ec22b21578401cf36cae08949c7230",
+        "Library_present": true,
+        "ScriptAssemblies_present": true,
+        "Artifacts_present": true,
+        "UnityLockfile_present": true,
+        "filesystem_available_bytes": 105588465664
+      }
+    ],
+    "limitations": [
+      "Mac review worktree has no Library: future native use would require its own verified package/import/compile cache; cold import cost is unmeasured.",
+      "Warm Library on dirty base and occupied SCN13 root is not transferable validation evidence. No Library copy performed or proposed.",
+      "Free-space snapshot is capacity observation only, not proof that a full import/Addressables/Android build fits. Prefer future coordinator-approved root/location with measured headroom. Do not clear caches or unrelated outputs for this preparation.",
+      "Existing native/Editor locks must be resolved by owner completion, not deleted."
+    ]
+  },
+  "settings_prerequisites": {
+    "enabled_scenes": [
+      "Assets/Game/Scenes/Menu.unity",
+      "Assets/Game/Scenes/Match.unity"
+    ],
+    "activeInputHandler": 1,
+    "runInBackground": 1,
+    "render_pipeline_guid": "4b83569d67af61e458304325a23e5dfd",
+    "candidate_define": "WARLINE_DENSE_CITY_CANDIDATE changes source resolution; record exact define/backend/build target/Addressables state for approved candidate. Do not silently flip defines or reuse stale baked source.",
+    "checklist": [
+      "Re-read approved commit AGENTS and wrapper plus package lock/editor version; preserve disjoint owner changes.",
+      "Confirm exact S003 v2/Standard/Regular payload, seed104732 and localeen, physical source, compiled setup/config and source/build hash. Never equate shared logical operation-map ID with physical geometry.",
+      "Verify no compiler errors, correct package resolution and native baked EntityScene/Addressables references for selected Campaign source. Cache folder presence alone is insufficient.",
+      "Use unique full log/output paths, explicit timeout and frozen before/after source/build identities; preserve failed attempt logs."
+    ]
+  },
+  "future_launch_template": {
+    "status": "Illustrative argv only; NOT executed; re-review method/pins at future approved commit.",
+    "argv": [
+      "rtk",
+      "proxy",
+      "env",
+      "WARLINE_SKIRMISH_CATALOG=S003",
+      "WARLINE_S002_SEED=104732",
+      "WARLINE_S002_LOCALE=en",
+      "<approved-project>/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "<approved-project>",
+      "--timeout",
+      "1800",
+      "--log",
+      "<unique-full-log-path>",
+      "--",
+      "-executeMethod",
+      "Game.Editor.SkirmishS002AriaRunHarness.RunFocusedAriaAndExit"
+    ],
+    "why_no_quit": "Checked harness194 keeps Editor alive for Play Mode and exits after terminal row; its own comment explicitly forbids -quit for this method. This differs from the unrelated capture owner method.",
+    "reuse": "Do not dispatch this self-quitting harness into an unrelated existing Editor. Wrapper --reuse is only for an agreed exact-project compatible static method and positive timeout, and never permits stealing the active SCN13 lane.",
+    "timeout_note": "1800s is a proposed import+journey budget, not measured completion time. Root should choose explicit candidate-appropriate timeout before launch."
+  },
+  "acceptance_plan": [
+    "Require wrapper process terminal exit and full logs; timeout/nonzero/missing expected evidence is failure, not licensing blocker after Editor starts.",
+    "Expected baseline harness evidence includes exact selected configuration, native startup roster Passed, [SkirmishS002AriaRun] appended=1 countedWin=1, [SkirmishValidationExit] result=Requested code=0 and matching immutable runs row/trace/source/build identities. Confirm actual marker semantics at approved commit; a lone marker or exit0 cannot establish complete mission acceptance.",
+    "Inspect normal-time input provenance (measured zero interventions/violations), complete native mission objective/result/return and actual gameplay trace. Native win alone does not prove air cycle/refuel, both-side infrastructure fit, visual acceptance or complete seed/locale matrix.",
+    "No production queue qualification without its exact owned job/claim/attempt and operational inspector. The example simple harness is not a production admission command.",
+    "Keep automated/static/native normal-input/visual review/player/device gates separate; Android is not requested by this outline and remains unbuilt."
+  ],
+  "source_sha256": {
+    "Tools/CI/invoke_unity_macos.sh": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+    "Tools/CI/wait_existing_unity_validation.py": "50a3d3c8ca8254d0b8db9320d8f7e186c0be3ed751ef18ca27a8a76ebcbbe16d",
+    "ProjectSettings/ProjectVersion.txt": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+    "Packages/manifest.json": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683",
+    "Packages/packages-lock.json": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51",
+    "ProjectSettings/EditorBuildSettings.asset": "e018699f6506773a33fd1ae551df563773a1dd4ca22a2d4be87250dc85832c41",
+    "ProjectSettings/ProjectSettings.asset": "8b1e1954704772234e5cdb31636a028118a0da7ca24630c9438d4d021bb93de1",
+    "ProjectSettings/GraphicsSettings.asset": "6ba4e72fbb70b82a14792cf54ed64b053ffc1534bf9945d7076adfe3e7ed466a",
+    "ProjectSettings/QualitySettings.asset": "c9262d2e43ac2691a563737472666dc3bff8b3d86bd8552f9fa7b29ae3dc7a39",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishAcceptanceScaffolding.cs": "dbf438473d6b0602dce203e5ebda22d5a9ea51a17202f7be028aad7bb62c4005",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs": "3556c591ab5e21acf1057a9d44af1c646edb6200111dd868ba532353c9dd7a6c"
+  }
+}

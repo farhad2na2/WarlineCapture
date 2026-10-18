@@ -1675,6 +1675,13 @@ namespace Game.Editor
                     "Theatre zone thumbnail is the placeholder for " + mapId + " locale=" + locale + ".");
             }
 
+            if (thumb.color.a < 0.99f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone plate is translucent for " + mapId + " locale=" + locale +
+                    " alpha=" + thumb.color.a.ToString("0.00") + ".");
+            }
+
             Image art = card.Find("ThumbFrame/CardArt")?.GetComponent<Image>()
                 ?? card.Find("CardArt")?.GetComponent<Image>();
             string spriteName = art != null && art.sprite != null ? art.sprite.name : string.Empty;
@@ -1683,6 +1690,14 @@ namespace Game.Editor
                 throw new InvalidOperationException(
                     "Theatre card art for " + mapId + " is not the district plate locale=" + locale +
                     " sprite=" + (string.IsNullOrEmpty(spriteName) ? "none" : spriteName) + ".");
+            }
+
+            if (art != null && (art.color.a < 0.99f || art.color.r < 0.95f || art.color.g < 0.95f || art.color.b < 0.95f))
+            {
+                throw new InvalidOperationException(
+                    "Theatre card art for " + mapId + " is tinted locale=" + locale +
+                    " tint=" + art.color.r.ToString("0.00") + "," + art.color.g.ToString("0.00") + "," + art.color.b.ToString("0.00") +
+                    " alpha=" + art.color.a.ToString("0.00") + ".");
             }
 
             Transform disc = card.Find("RingDisc");
@@ -1699,6 +1714,14 @@ namespace Game.Editor
                 throw new InvalidOperationException("Theatre zone card is missing its progress arc for " + mapId + " locale=" + locale + ".");
             if (fill.type != Image.Type.Filled || fill.fillMethod != Image.FillMethod.Radial360)
                 throw new InvalidOperationException("Theatre progress for " + mapId + " is not a circular arc locale=" + locale + ".");
+            RectTransform progress = card.Find("ProgressRing") as RectTransform;
+            float share = ProgressAreaShare(card, progress);
+            if (share > 0.25f && ProgressMarkIsCentred(card, progress))
+            {
+                throw new InvalidOperationException(
+                    "Theatre progress arc for " + mapId + " is a centred ring covering " +
+                    share.ToString("0.00") + " of the card locale=" + locale + ".");
+            }
 
             SkirmishTheaterPinState pin = default;
             bool found = false;
@@ -1753,6 +1776,38 @@ namespace Game.Editor
                     "Theatre progress arc for " + mapId + " is " + fill.fillAmount.ToString("0.00") +
                     " locale=" + locale + ". Expected " + ratio.ToString("0.00") + ".");
             }
+        }
+
+        /// <summary>
+        /// Badge area over the card. A centred mark above a quarter of the card is the
+        /// old ring; a corner badge stays under that share.
+        /// </summary>
+        private static float ProgressAreaShare(RectTransform card, RectTransform ring)
+        {
+            if (card == null || ring == null)
+                return 0f;
+            float cardArea = card.sizeDelta.x * card.sizeDelta.y;
+            if (cardArea < 1f)
+                return 0f;
+            return Mathf.Max(0f, ring.sizeDelta.x) * Mathf.Max(0f, ring.sizeDelta.y) / cardArea;
+        }
+
+        /// <summary>
+        /// True when the progress centre sits in the middle half of the card on both axes.
+        /// A corner badge is outside that box.
+        /// </summary>
+        private static bool ProgressMarkIsCentred(RectTransform card, RectTransform ring)
+        {
+            if (card == null || ring == null)
+                return false;
+            float cardW = card.sizeDelta.x;
+            float cardH = card.sizeDelta.y;
+            if (cardW < 1f || cardH < 1f)
+                return false;
+            float centreX = ring.anchoredPosition.x + ring.sizeDelta.x * 0.5f;
+            float centreY = -ring.anchoredPosition.y + ring.sizeDelta.y * 0.5f;
+            return centreX >= cardW * 0.25f && centreX <= cardW * 0.75f
+                && centreY >= cardH * 0.25f && centreY <= cardH * 0.75f;
         }
 
         private static bool IsDistrictPlateSpriteName(string spriteName, string mapId)

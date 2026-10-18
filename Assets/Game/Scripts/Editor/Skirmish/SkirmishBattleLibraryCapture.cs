@@ -1611,9 +1611,9 @@ namespace Game.Editor
                 if (ink == null || !ink.enabled)
                     continue;
                 float thickness = Mathf.Max(edge.sizeDelta.x, edge.sizeDelta.y);
-                float maxChannel = Mathf.Max(ink.color.r, Mathf.Max(ink.color.g, ink.color.b));
-                float minChannel = Mathf.Min(ink.color.r, Mathf.Min(ink.color.g, ink.color.b));
-                float strokeSaturation = maxChannel <= 0.001f ? 0f : (maxChannel - minChannel) / maxChannel;
+                float strokeMax = Mathf.Max(ink.color.r, Mathf.Max(ink.color.g, ink.color.b));
+                float strokeMin = Mathf.Min(ink.color.r, Mathf.Min(ink.color.g, ink.color.b));
+                float strokeSaturation = strokeMax <= 0.001f ? 0f : (strokeMax - strokeMin) / strokeMax;
                 if (thickness >= 3f && ink.color.a >= 0.75f && strokeSaturation >= 0.55f)
                 {
                     throw new InvalidOperationException(

@@ -1,0 +1,37 @@
+{
+  "command": [
+    "rtk",
+    "proxy",
+    "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/invoke_unity_macos.sh",
+    "--project",
+    "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+    "--timeout",
+    "3600",
+    "--log",
+    "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log",
+    "--",
+    "-quit",
+    "-executeMethod",
+    "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey"
+  ],
+  "env": {
+    "WARLINE_GROUND_SOURCE_SURVEY_GROUPS": "CC",
+    "WARLINE_GROUND_SOURCE_SURVEY_OUTPUT": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/RequestedSourceSurvey/78a889179aa846c4ae9b6d13584eda8f/report.json"
+  },
+  "grant_sha256": "0751323833cb6dd671893bc2b6c1947dbd919e8be8d7c12e80704c015b353e5a",
+  "prior_actual_control_evidence": {
+    "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+    "evidence_commit": "531fcd42e920a5433a68922e7b067cca13104130",
+    "result_sha256": "27a60a842c05b4e887d3fc1617ec15dad433b1a307aa5d57185b9aff0f893f14",
+    "marker_once": true,
+    "actual_controls": 29,
+    "native_queries": 0,
+    "source_worlds": 0,
+    "operational_aggregate": "FAILED_GlobalGUI_NotRelabelled",
+    "GameEditorDLL_sha256": "fdd5596dcef8aa4e39b1f12c786457851625feb821dcbf0f83231f2d44ed3f07",
+    "GameEditorRSP_sha256": "40a64da9f387e3311828aaf99a983896f26bdfa423d7507a96e508c916e3875e",
+    "do_not_repeat_unchanged_29": true,
+    "relevant_scope_equivalence_sha256": "850ba7ebdb7ca56dcff0513fba05a781dccff5c08579daf666de2410c330f4de",
+    "scope_reuse": "4127relevantrows,856RSPinputs,fullretainedDLLmanifest and sameGameEditorDLL/RSP actual proof; generated cache meta retained as own newepoch, no native scene/Windows equivalence."
+  }
+}

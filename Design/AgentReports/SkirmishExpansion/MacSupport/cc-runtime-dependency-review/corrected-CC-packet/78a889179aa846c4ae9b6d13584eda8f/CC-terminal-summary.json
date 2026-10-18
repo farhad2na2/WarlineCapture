@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "state": "CollectedUnqualifiedCC_OperationalSourceStabilityFAILED",
+  "created_utc": "2026-10-18T23:39:34.966115+00:00",
+  "nonce": "78a889179aa846c4ae9b6d13584eda8f",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "original_tool_session": 72613,
+  "controller_exit": 1,
+  "wrapper_exit": 0,
+  "wrapper_reaped": true,
+  "target_editor_observed": true,
+  "owned_shutdown_closed": true,
+  "owned_shutdown_absence_samples": 2,
+  "host_lease_released": true,
+  "operational_collection_control_passed": false,
+  "collection": {
+    "result": "CollectedUnqualified",
+    "requested": [
+      "CC"
+    ],
+    "attempted": [
+      "CC"
+    ],
+    "measured": [
+      "CC"
+    ],
+    "errors": 0,
+    "exact_scope": true,
+    "exact_marker_count": 1,
+    "facts": {
+      "bakedGridCount": 1,
+      "bakedSurfaceCount": 1,
+      "nativeQueryStatus": "BakedGridSurfaceQueries_NoRuntimeOccupancyCertificate",
+      "surfacePublicationScope": "ExactRuntimeOwnerDecodedPinnedAsset_IsolatedWorldOnly",
+      "runtimeDecodedSurfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+      "runtimeDecodedSurfaceBlobHash": "8810a336a366016217a73bf104b45a3a",
+      "runtimeDecodedSurfaceOwner": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper",
+      "liveOccupancyStatus": "NotMeasured_NoGameplaySystemsRun",
+      "paidHeliReconStatus": "PostMaterializationNormalPaidProductionFlightReturnPending",
+      "layoutStatus": "UnmeasuredReuseCandidate"
+    },
+    "array_counts": {
+      "canonicalRequests": 1,
+      "projectedAnchors": 24,
+      "projectedPads": 18,
+      "allSizeFacilities": 64,
+      "heavyRouteQueries": 45,
+      "logicalEndpointCandidates": 14,
+      "endpointCandidateRouteQueries": 45,
+      "failedRouteDetourProposals": 2,
+      "nativeThreeApproachIndependence": 3,
+      "allSizeForcePacking": 48,
+      "normalTerrainFallbackForcePacking": 48
+    }
+  },
+  "before_source": {
+    "rows": 41741,
+    "candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8"
+  },
+  "after_source": {
+    "rows": 41742,
+    "candidate_sha256": "52e5229790f557a0363598b6e374e56217fb341439eb4ea9f1c53b14ffe185d2"
+  },
+  "source_delta": {
+    "added": [
+      {
+        "path": "Assets/SceneDependencyCache/c4f8c91329530ce6f383a99579ad8402.sceneWithBuildSettings.meta",
+        "after_sha256": "213e24d8df8d740eecaba039134d74d70fd4146749d8a44c178ed4e1ee8e5b94"
+      }
+    ],
+    "removed": [],
+    "changed": []
+  },
+  "invariants": {
+    "runtime_inputs_unchanged": true,
+    "actual_tool_pins_unchanged": true,
+    "auth_observations": {
+      "before_logged_in": true,
+      "after_logged_in": true
+    },
+    "source_unchanged": false,
+    "project_settings_unchanged": true,
+    "user_settings_unchanged": true,
+    "all_global_layouts_restored_unchanged": true,
+    "compiler_identity_unchanged": true
+  },
+  "restoration": {
+    "before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "observed_owned_post_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+    "actual_after_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "restored": true,
+    "atomic_replace": true
+  },
+  "limits": [
+    "Collected raw native queries only; actual surface publication/decode scope retained verbatim, never flattened into baked-source or fit authority.",
+    "Additional generated scene-cache meta is preserved; source stability failed despite no old source row changing. No cleanup, rebaseline, waiver or retry authority inferred.",
+    "No source-fit/strict-service/camera/normal mission/paid lifecycle/queue/APK/device/player acceptance. No historical survey11 compatibility or payload transfer.",
+    "Original failed95cb/compile3731/r6 evidence remains immutable."
+  ],
+  "one_use_grant_consumed": true,
+  "retry_authorized": false,
+  "CSharp29_repeated": false
+}

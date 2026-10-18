@@ -1,0 +1,55 @@
+{
+  "samples": [
+    [
+      {
+        "pid": 55563,
+        "ppid": 1,
+        "started": "Wed Oct 14 21:02:25 2026",
+        "cpu": 0.0,
+        "rss_kib": 72816,
+        "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "identity_verified": true,
+        "start_sec": 1792004545,
+        "start_usec": 746735,
+        "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "arguments_observed": false
+      }
+    ],
+    [
+      {
+        "pid": 55563,
+        "ppid": 1,
+        "started": "Wed Oct 14 21:02:25 2026",
+        "cpu": 0.0,
+        "rss_kib": 74144,
+        "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "identity_verified": true,
+        "start_sec": 1792004545,
+        "start_usec": 746735,
+        "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "arguments_observed": false
+      }
+    ],
+    [
+      {
+        "pid": 55563,
+        "ppid": 1,
+        "started": "Wed Oct 14 21:02:25 2026",
+        "cpu": 0.1,
+        "rss_kib": 74800,
+        "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "identity_verified": true,
+        "start_sec": 1792004545,
+        "start_usec": 746735,
+        "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+        "arguments_observed": false
+      }
+    ]
+  ],
+  "free_bytes": 35207139328,
+  "vm_stat": "Mach Virtual Memory Statistics: (page size of 16384 bytes)\nPages free:                                     8535.\nPages active:                                 341913.\nPages inactive:                               315656.\nPages speculative:                             25291.\nPages throttled:                                   0.\nPages wired down:                             181520.\nPages purgeable:                                1318.\n\"Translation faults\":                    13706949547.\nPages copy-on-write:                       219345322.\nPages zero filled:                        8920005948.\nPages reactivated:                        4353711669.\nPages purged:                              281088808.\nFile-backed pages:                            297598.\nAnonymous pages:                              385262.\nPages stored in compressor:                   827832.\nPages occupied by compressor:                 133219.\nDecompressions:                           5656097760.\nCompressions:                             6450591721.\nPageins:                                  1207690296.\nPageouts:                                    4220464.\nSwapins:                                   401599933.\nSwapouts:                                  452063609.\nPages tagged:                                 110509.\nPages tagged resident:                         89031.\nPages tagged compressed:                       21478.\nPages tag-storage:                             32768.\nPages tag-storage holding tags:                 3833.\nPages tag-storage free:                          231.\nPages tag-storage non-tag pageable:            28692.\nPages tag-storage non-tag wired:                  12.\nBytes of compressed tags:                    3650560.\nTagged compressions:                        77140743.\nTagged decompressions:                      75050288.\n",
+  "memory_pressure": "The system has 17179869184 (1048576 pages with a page size of 16384).\nSystem-wide memory free percentage: 68%\n"
+}

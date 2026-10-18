@@ -1,0 +1,17 @@
+{
+  "runid": "78a889179aa846c4ae9b6d13584eda8f",
+  "scope": "FreshCCCollectionOnly_Unqualified",
+  "wrapper_started": true,
+  "wrapper_reaped": false,
+  "qualified": false,
+  "prior_compile29_operational_failure_preserved": true,
+  "operational_collection_control_passed": false,
+  "immediate_launch_pins": {
+    "grant_sha256": "0751323833cb6dd671893bc2b6c1947dbd919e8be8d7c12e80704c015b353e5a",
+    "plan_sha256": "a60b25b282a22dd496179af391add6cafc75cc5804fa0864fb41989da83b51d2",
+    "controller_sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+    "restoration_sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf"
+  },
+  "wrapper_pid": 96781,
+  "controller_pid": 96704
+}

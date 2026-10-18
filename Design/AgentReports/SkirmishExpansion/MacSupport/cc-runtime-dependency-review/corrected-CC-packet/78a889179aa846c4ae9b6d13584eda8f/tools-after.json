@@ -1,0 +1,118 @@
+{
+  "auth_logged_in": true,
+  "versions": {
+    "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Info.plist": "Unity version 6000.5.8f1",
+    "/Applications/Unity Hub.app/Contents/Info.plist": "3.22.3"
+  },
+  "actual_tool_pins": [
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/modules.json",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/modules.json",
+      "sha256": "cd537d8b363506b0bd85709a21101262e31cd9580cecc138f5cf611451686b2d",
+      "size": 47834
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/metadata.hub.json",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/metadata.hub.json",
+      "sha256": "3146c1f3f5183bcf5d7d453f9c052ec3c4ce9e579f7a0e3bdc4f38675de323ca",
+      "size": 120
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Info.plist",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Info.plist",
+      "sha256": "c98e544367143f5554c520899881cd2ae2bc84d5c2acc533674a696c952db4c2",
+      "size": 4964
+    },
+    {
+      "path": "/Applications/Unity Hub.app/Contents/Info.plist",
+      "resolved_path": "/Applications/Unity Hub.app/Contents/Info.plist",
+      "sha256": "6f8f471ae830637ccd8ae3596bfc5daad553efa29220582358b028e391d2e216",
+      "size": 3668
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/source.properties",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/source.properties",
+      "sha256": "70f1c5165e6d997b18782a49cff71da7a3caacd0c4cd811da24c43359fb83cf6",
+      "size": 108
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/release",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/release",
+      "sha256": "382ba84027b8c4c011c3ff244593c26e135517d581bf4a2c31eace5efe15ecd1",
+      "size": 1625
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/NDK/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang-18",
+      "sha256": "f3060ee130cf6f162a739dbd9cbd9f4fae552890f59bf82e8c65176eb7887e22",
+      "size": 169477200
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/java",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/java",
+      "sha256": "9107becdd5a7b4ad8e9136df729aa02b92ebf65d58506baf308ac9751c8185b3",
+      "size": 70464
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/javac",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/OpenJDK/bin/javac",
+      "sha256": "12a056bebf82fb98ff38b71367ff2bc2adf9a937aea94fe0d9ededdf54820063",
+      "size": 70464
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb",
+      "sha256": "0e8bb380b1993eac9d2433a05d92a33035971cd25542b1c36b3537ddd6defe94",
+      "size": 15577280
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-34/android.jar",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-34/android.jar",
+      "sha256": "6cea1df3efb77103ac3e2beb9bf4718964b0e0869ab16d39d29d5cbae1c147ad",
+      "size": 26361808
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-36/android.jar",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-36/android.jar",
+      "sha256": "d9eb9da824d9e247a352f570f01e1169e725b2954bca9e283a71786c59b59f9a",
+      "size": 27768026
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-37.0/android.jar",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/platforms/android-37.0/android.jar",
+      "sha256": "bf1b4387cc7ca94fc6ef684f040d9d16fbf16248e181819f020736ea2053f177",
+      "size": 43044472
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/aapt2",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/aapt2",
+      "sha256": "a8844d4089b442b034aed8953deee1893253053c900e03141ae7173e3edd8157",
+      "size": 10682288
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/apksigner",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/build-tools/36.0.0/apksigner",
+      "sha256": "b47549e373b895ce6ca620d0c7887e674d9615ffa837a86ac601dcfd04adb0f0",
+      "size": 2959
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/cmdline-tools/16.0/bin/sdkmanager",
+      "resolved_path": "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/SDK/cmdline-tools/16.0/bin/sdkmanager",
+      "sha256": "02d935912121139ccfeb1f19357f0ac914f1892ab7a4e852aeefd0a4cab50bb2",
+      "size": 5759
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/manifest.json",
+      "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/manifest.json",
+      "sha256": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683",
+      "size": 2256
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/packages-lock.json",
+      "resolved_path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/packages-lock.json",
+      "sha256": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51",
+      "size": 17132
+    }
+  ],
+  "android_build_performed": false
+}

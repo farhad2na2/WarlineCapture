@@ -1,0 +1,3330 @@
+{
+  "runid": "78a889179aa846c4ae9b6d13584eda8f",
+  "scope": "FreshCCCollectionOnly_Unqualified",
+  "wrapper_started": true,
+  "wrapper_reaped": true,
+  "qualified": false,
+  "prior_compile29_operational_failure_preserved": true,
+  "operational_collection_control_passed": false,
+  "immediate_launch_pins": {
+    "grant_sha256": "0751323833cb6dd671893bc2b6c1947dbd919e8be8d7c12e80704c015b353e5a",
+    "plan_sha256": "a60b25b282a22dd496179af391add6cafc75cc5804fa0864fb41989da83b51d2",
+    "controller_sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+    "restoration_sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf"
+  },
+  "wrapper_pid": 96781,
+  "controller_pid": 96704,
+  "wrapper_exit": 0,
+  "shutdown": {
+    "closed": true,
+    "observed_absence_samples": 2,
+    "samples": [
+      {
+        "owned_survivors": [
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96883,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:12 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366572,
+            "start_usec": 982302,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96882",
+            "arguments_observed": true
+          }
+        ],
+        "protected_native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 1.6,
+            "rss_kib": 37408,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          },
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96883,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:12 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366572,
+            "start_usec": 982302,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96882",
+            "arguments_observed": true
+          }
+        ]
+      },
+      {
+        "owned_survivors": [
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          }
+        ],
+        "protected_native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 1.3,
+            "rss_kib": 58240,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          },
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          }
+        ]
+      },
+      {
+        "owned_survivors": [
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          }
+        ],
+        "protected_native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.0,
+            "rss_kib": 58240,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          },
+          {
+            "pid": 96819,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:35:59 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366559,
+            "start_usec": 122242,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+            "arguments_observed": true
+          },
+          {
+            "pid": 96867,
+            "ppid": 1,
+            "started": "Mon Oct 19 01:36:09 2026",
+            "cpu": 0.0,
+            "rss_kib": 704,
+            "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "identity_verified": true,
+            "start_sec": 1792366569,
+            "start_usec": 651172,
+            "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+            "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+            "arguments_observed": true
+          }
+        ]
+      },
+      {
+        "owned_survivors": [],
+        "protected_native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.0,
+            "rss_kib": 58256,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ]
+      },
+      {
+        "owned_survivors": [],
+        "protected_native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.3,
+            "rss_kib": 61984,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ]
+      }
+    ],
+    "survivors": []
+  },
+  "process_tree": [
+    {
+      "birth": [
+        96781,
+        1792366555,
+        164482
+      ],
+      "first_observation": {
+        "pid": 96781,
+        "ppid": 96704,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.0,
+        "rss_kib": 8352,
+        "comm": "rtk",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 164482,
+        "executable": "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk",
+        "command": "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk"
+      ],
+      "last_observation": {
+        "pid": 96781,
+        "ppid": 96704,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.0,
+        "rss_kib": 5872,
+        "comm": "rtk",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 164482,
+        "executable": "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk",
+        "command": "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96783,
+        1792366555,
+        170281
+      ],
+      "first_observation": {
+        "pid": 96783,
+        "ppid": 96781,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.0,
+        "rss_kib": 0,
+        "comm": "bash",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 170281,
+        "executable": "/bin/bash",
+        "command": "/bin/bash",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/bash"
+      ],
+      "last_observation": {
+        "pid": 96783,
+        "ppid": 96781,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.1,
+        "rss_kib": 1632,
+        "comm": "bash",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 170281,
+        "executable": "/bin/bash",
+        "command": "/bin/bash",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96790,
+        1792366555,
+        206068
+      ],
+      "first_observation": {
+        "pid": 96790,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 81.5,
+        "rss_kib": 213968,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 206068,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile /Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log -quit -executeMethod Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity"
+      ],
+      "last_observation": {
+        "pid": 96790,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.8,
+        "rss_kib": 2522000,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 206068,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile /Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log -quit -executeMethod Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96794,
+        1792366555,
+        858524
+      ],
+      "first_observation": {
+        "pid": 96794,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 32.5,
+        "rss_kib": 101248,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 858524,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager"
+      ],
+      "last_observation": {
+        "pid": 96794,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.0,
+        "rss_kib": 31008,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 858524,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96810,
+        1792366557,
+        229379
+      ],
+      "first_observation": {
+        "pid": 96810,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:57 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366557,
+        "start_usec": 229379,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96810,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:57 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366557,
+        "start_usec": 229379,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96813,
+        1792366558,
+        238679
+      ],
+      "first_observation": {
+        "pid": 96813,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:58 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366558,
+        "start_usec": 238679,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96813,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:58 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366558,
+        "start_usec": 238679,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96818,
+        1792366559,
+        117908
+      ],
+      "first_observation": {
+        "pid": 96818,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 19.8,
+        "rss_kib": 53952,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 117908,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner /tmp/ilpp.sock-f90b3165307125f6e9dfaba13dfb3b9b -name ILPP",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner"
+      ],
+      "last_observation": {
+        "pid": 96818,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 0.3,
+        "rss_kib": 25680,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 117908,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner /tmp/ilpp.sock-f90b3165307125f6e9dfaba13dfb3b9b -name ILPP",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96819,
+        1792366559,
+        122242
+      ],
+      "first_observation": {
+        "pid": 96819,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 0.1,
+        "rss_kib": 1296,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 122242,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter"
+      ],
+      "last_observation": {
+        "pid": 96819,
+        "ppid": 1,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 0.0,
+        "rss_kib": 704,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 122242,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96818",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96820,
+        1792366559,
+        124924
+      ],
+      "first_observation": {
+        "pid": 96820,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 8.4,
+        "rss_kib": 40336,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 124924,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger /tmp/ilpp.sock-f90b3165307125f6e9dfaba13dfb3b9b ping",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger"
+      ],
+      "last_observation": {
+        "pid": 96820,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 8.4,
+        "rss_kib": 40336,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 124924,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Trigger/Unity.ILPP.Trigger /tmp/ilpp.sock-f90b3165307125f6e9dfaba13dfb3b9b ping",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96821,
+        1792366559,
+        250222
+      ],
+      "first_observation": {
+        "pid": 96821,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 250222,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96821,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:59 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366559,
+        "start_usec": 250222,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96829,
+        1792366560,
+        259609
+      ],
+      "first_observation": {
+        "pid": 96829,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:00 2026",
+        "cpu": 0.4,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366560,
+        "start_usec": 259609,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96829,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:00 2026",
+        "cpu": 0.4,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366560,
+        "start_usec": 259609,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96832,
+        1792366561,
+        266617
+      ],
+      "first_observation": {
+        "pid": 96832,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:01 2026",
+        "cpu": 0.2,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366561,
+        "start_usec": 266617,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96832,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:01 2026",
+        "cpu": 0.2,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366561,
+        "start_usec": 266617,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96837,
+        1792366562,
+        281475
+      ],
+      "first_observation": {
+        "pid": 96837,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:02 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366562,
+        "start_usec": 281475,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96837,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:02 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366562,
+        "start_usec": 281475,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96842,
+        1792366563,
+        296099
+      ],
+      "first_observation": {
+        "pid": 96842,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:03 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366563,
+        "start_usec": 296099,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96842,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:03 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366563,
+        "start_usec": 296099,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96845,
+        1792366564,
+        307921
+      ],
+      "first_observation": {
+        "pid": 96845,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:04 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366564,
+        "start_usec": 307921,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96845,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:04 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366564,
+        "start_usec": 307921,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96849,
+        1792366565,
+        320134
+      ],
+      "first_observation": {
+        "pid": 96849,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:05 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366565,
+        "start_usec": 320134,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96849,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:05 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366565,
+        "start_usec": 320134,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96854,
+        1792366566,
+        323641
+      ],
+      "first_observation": {
+        "pid": 96854,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:06 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366566,
+        "start_usec": 323641,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96854,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:06 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366566,
+        "start_usec": 323641,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96858,
+        1792366567,
+        332793
+      ],
+      "first_observation": {
+        "pid": 96858,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:07 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366567,
+        "start_usec": 332793,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96858,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:07 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366567,
+        "start_usec": 332793,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96861,
+        1792366568,
+        350453
+      ],
+      "first_observation": {
+        "pid": 96861,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:08 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366568,
+        "start_usec": 350453,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96861,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:08 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366568,
+        "start_usec": 350453,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96865,
+        1792366569,
+        362691
+      ],
+      "first_observation": {
+        "pid": 96865,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 362691,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96865,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 362691,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96866,
+        1792366569,
+        650862
+      ],
+      "first_observation": {
+        "pid": 96866,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 63.8,
+        "rss_kib": 219712,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 650862,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile Logs/AssetImportWorkerHW0.log -srvPort 57342 -parentPid 96790 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense <redacted> -cbmMachineId <redacted> -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity"
+      ],
+      "last_observation": {
+        "pid": 96866,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.3,
+        "rss_kib": 1199712,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 650862,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile Logs/AssetImportWorkerHW0.log -srvPort 57342 -parentPid 96790 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense <redacted> -cbmMachineId <redacted> -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96867,
+        1792366569,
+        651172
+      ],
+      "first_observation": {
+        "pid": 96867,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.1,
+        "rss_kib": 1280,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 651172,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter"
+      ],
+      "last_observation": {
+        "pid": 96867,
+        "ppid": 1,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.0,
+        "rss_kib": 704,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 651172,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96866",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96871,
+        1792366569,
+        963961
+      ],
+      "first_observation": {
+        "pid": 96871,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.3,
+        "rss_kib": 15104,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 963961,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-UnityShaderCompiler-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96790-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler"
+      ],
+      "last_observation": {
+        "pid": 96871,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:09 2026",
+        "cpu": 0.0,
+        "rss_kib": 19744,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366569,
+        "start_usec": 963961,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-UnityShaderCompiler-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96790-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96872,
+        1792366570,
+        368944
+      ],
+      "first_observation": {
+        "pid": 96872,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:10 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366570,
+        "start_usec": 368944,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96872,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:10 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366570,
+        "start_usec": 368944,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96877,
+        1792366571,
+        378586
+      ],
+      "first_observation": {
+        "pid": 96877,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:11 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366571,
+        "start_usec": 378586,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96877,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:11 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366571,
+        "start_usec": 378586,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96880,
+        1792366572,
+        389446
+      ],
+      "first_observation": {
+        "pid": 96880,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 389446,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96880,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 389446,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96882,
+        1792366572,
+        981805
+      ],
+      "first_observation": {
+        "pid": 96882,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.0,
+        "rss_kib": 128048,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 981805,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW1 -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile Logs/AssetImportWorkerHW1.log -srvPort 57342 -parentPid 96790 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense <redacted> -cbmMachineId <redacted> -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity"
+      ],
+      "last_observation": {
+        "pid": 96882,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.8,
+        "rss_kib": 197888,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 981805,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW1 -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile Logs/AssetImportWorkerHW1.log -srvPort 57342 -parentPid 96790 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense <redacted> -cbmMachineId <redacted> -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96883,
+        1792366572,
+        982302
+      ],
+      "first_observation": {
+        "pid": 96883,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.0,
+        "rss_kib": 1280,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 982302,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96882",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter"
+      ],
+      "last_observation": {
+        "pid": 96883,
+        "ppid": 1,
+        "started": "Mon Oct 19 01:36:12 2026",
+        "cpu": 0.0,
+        "rss_kib": 704,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "identity_verified": true,
+        "start_sec": 1792366572,
+        "start_usec": 982302,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 96882",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96886,
+        1792366573,
+        401786
+      ],
+      "first_observation": {
+        "pid": 96886,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:13 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366573,
+        "start_usec": 401786,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96886,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:13 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366573,
+        "start_usec": 401786,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96891,
+        1792366574,
+        407467
+      ],
+      "first_observation": {
+        "pid": 96891,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:14 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366574,
+        "start_usec": 407467,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96891,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:14 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366574,
+        "start_usec": 407467,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96895,
+        1792366575,
+        419831
+      ],
+      "first_observation": {
+        "pid": 96895,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:15 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366575,
+        "start_usec": 419831,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96895,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:15 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366575,
+        "start_usec": 419831,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96899,
+        1792366575,
+        831723
+      ],
+      "first_observation": {
+        "pid": 96899,
+        "ppid": 96866,
+        "started": "Mon Oct 19 01:36:15 2026",
+        "cpu": 2.5,
+        "rss_kib": 38224,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366575,
+        "start_usec": 831723,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-AssetImportWorkerHW0-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96866-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler"
+      ],
+      "last_observation": {
+        "pid": 96899,
+        "ppid": 96866,
+        "started": "Mon Oct 19 01:36:15 2026",
+        "cpu": 0.0,
+        "rss_kib": 10368,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366575,
+        "start_usec": 831723,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-AssetImportWorkerHW0-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96866-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96902,
+        1792366576,
+        429403
+      ],
+      "first_observation": {
+        "pid": 96902,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:16 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366576,
+        "start_usec": 429403,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96902,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:16 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366576,
+        "start_usec": 429403,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96907,
+        1792366577,
+        435527
+      ],
+      "first_observation": {
+        "pid": 96907,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366577,
+        "start_usec": 435527,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96907,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:17 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366577,
+        "start_usec": 435527,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96910,
+        1792366578,
+        213721
+      ],
+      "first_observation": {
+        "pid": 96910,
+        "ppid": 96882,
+        "started": "Mon Oct 19 01:36:18 2026",
+        "cpu": 0.0,
+        "rss_kib": 38320,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366578,
+        "start_usec": 213721,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-AssetImportWorkerHW1-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96882-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler"
+      ],
+      "last_observation": {
+        "pid": 96910,
+        "ppid": 96882,
+        "started": "Mon Oct 19 01:36:18 2026",
+        "cpu": 0.0,
+        "rss_kib": 10336,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "identity_verified": true,
+        "start_sec": 1792366578,
+        "start_usec": 213721,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-AssetImportWorkerHW1-0.log 0 -local-ipc-stream=ShaderCompilerIPC-96882-8527946112 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        96913,
+        1792366578,
+        446130
+      ],
+      "first_observation": {
+        "pid": 96913,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:18 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366578,
+        "start_usec": 446130,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96913,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:18 2026",
+        "cpu": 0.0,
+        "rss_kib": 496,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366578,
+        "start_usec": 446130,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96929,
+        1792366579,
+        451816
+      ],
+      "first_observation": {
+        "pid": 96929,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:19 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366579,
+        "start_usec": 451816,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96929,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:19 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366579,
+        "start_usec": 451816,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96937,
+        1792366581,
+        522907
+      ],
+      "first_observation": {
+        "pid": 96937,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:21 2026",
+        "cpu": 0.0,
+        "rss_kib": 112,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366581,
+        "start_usec": 522907,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96937,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:21 2026",
+        "cpu": 0.0,
+        "rss_kib": 112,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366581,
+        "start_usec": 522907,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96941,
+        1792366582,
+        528072
+      ],
+      "first_observation": {
+        "pid": 96941,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:22 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366582,
+        "start_usec": 528072,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96941,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:22 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366582,
+        "start_usec": 528072,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96944,
+        1792366583,
+        539035
+      ],
+      "first_observation": {
+        "pid": 96944,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:23 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366583,
+        "start_usec": 539035,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96944,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:23 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366583,
+        "start_usec": 539035,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96948,
+        1792366584,
+        546798
+      ],
+      "first_observation": {
+        "pid": 96948,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:24 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366584,
+        "start_usec": 546798,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96948,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:24 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366584,
+        "start_usec": 546798,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96953,
+        1792366585,
+        550322
+      ],
+      "first_observation": {
+        "pid": 96953,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:25 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366585,
+        "start_usec": 550322,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96953,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:25 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366585,
+        "start_usec": 550322,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96956,
+        1792366586,
+        562374
+      ],
+      "first_observation": {
+        "pid": 96956,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:26 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366586,
+        "start_usec": 562374,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96956,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:26 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366586,
+        "start_usec": 562374,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96959,
+        1792366587,
+        578000
+      ],
+      "first_observation": {
+        "pid": 96959,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:27 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366587,
+        "start_usec": 578000,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96959,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:27 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366587,
+        "start_usec": 578000,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96962,
+        1792366588,
+        588273
+      ],
+      "first_observation": {
+        "pid": 96962,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:28 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366588,
+        "start_usec": 588273,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96962,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:28 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366588,
+        "start_usec": 588273,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96967,
+        1792366589,
+        600218
+      ],
+      "first_observation": {
+        "pid": 96967,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:29 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366589,
+        "start_usec": 600218,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96967,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:29 2026",
+        "cpu": 0.3,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366589,
+        "start_usec": 600218,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96971,
+        1792366590,
+        603708
+      ],
+      "first_observation": {
+        "pid": 96971,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:30 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366590,
+        "start_usec": 603708,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96971,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:30 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366590,
+        "start_usec": 603708,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96975,
+        1792366591,
+        613154
+      ],
+      "first_observation": {
+        "pid": 96975,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:31 2026",
+        "cpu": 0.2,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366591,
+        "start_usec": 613154,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96975,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:31 2026",
+        "cpu": 0.2,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366591,
+        "start_usec": 613154,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96978,
+        1792366592,
+        627989
+      ],
+      "first_observation": {
+        "pid": 96978,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:32 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366592,
+        "start_usec": 627989,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96978,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:32 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366592,
+        "start_usec": 627989,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96983,
+        1792366593,
+        638655
+      ],
+      "first_observation": {
+        "pid": 96983,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:33 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366593,
+        "start_usec": 638655,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96983,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:33 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366593,
+        "start_usec": 638655,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96987,
+        1792366594,
+        645332
+      ],
+      "first_observation": {
+        "pid": 96987,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:34 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366594,
+        "start_usec": 645332,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96987,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:34 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366594,
+        "start_usec": 645332,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96991,
+        1792366595,
+        656386
+      ],
+      "first_observation": {
+        "pid": 96991,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:35 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366595,
+        "start_usec": 656386,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96991,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:35 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366595,
+        "start_usec": 656386,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96994,
+        1792366596,
+        661232
+      ],
+      "first_observation": {
+        "pid": 96994,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:36 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366596,
+        "start_usec": 661232,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96994,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:36 2026",
+        "cpu": 0.1,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366596,
+        "start_usec": 661232,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        96997,
+        1792366597,
+        673347
+      ],
+      "first_observation": {
+        "pid": 96997,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:37 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366597,
+        "start_usec": 673347,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 96997,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:37 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366597,
+        "start_usec": 673347,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97000,
+        1792366598,
+        684199
+      ],
+      "first_observation": {
+        "pid": 97000,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:38 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366598,
+        "start_usec": 684199,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97000,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:38 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366598,
+        "start_usec": 684199,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97005,
+        1792366599,
+        688544
+      ],
+      "first_observation": {
+        "pid": 97005,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:39 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366599,
+        "start_usec": 688544,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97005,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:39 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366599,
+        "start_usec": 688544,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97009,
+        1792366600,
+        692460
+      ],
+      "first_observation": {
+        "pid": 97009,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:40 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366600,
+        "start_usec": 692460,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97009,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:40 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366600,
+        "start_usec": 692460,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97012,
+        1792366601,
+        706145
+      ],
+      "first_observation": {
+        "pid": 97012,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:41 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366601,
+        "start_usec": 706145,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97012,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:41 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366601,
+        "start_usec": 706145,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97018,
+        1792366602,
+        718404
+      ],
+      "first_observation": {
+        "pid": 97018,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:42 2026",
+        "cpu": 0.0,
+        "rss_kib": 480,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366602,
+        "start_usec": 718404,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97018,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:42 2026",
+        "cpu": 0.0,
+        "rss_kib": 480,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366602,
+        "start_usec": 718404,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97021,
+        1792366603,
+        730558
+      ],
+      "first_observation": {
+        "pid": 97021,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:43 2026",
+        "cpu": 0.0,
+        "rss_kib": 480,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366603,
+        "start_usec": 730558,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97021,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:43 2026",
+        "cpu": 0.0,
+        "rss_kib": 480,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366603,
+        "start_usec": 730558,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97024,
+        1792366604,
+        737283
+      ],
+      "first_observation": {
+        "pid": 97024,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:44 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366604,
+        "start_usec": 737283,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97024,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:44 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366604,
+        "start_usec": 737283,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97027,
+        1792366605,
+        746312
+      ],
+      "first_observation": {
+        "pid": 97027,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:45 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366605,
+        "start_usec": 746312,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97027,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:45 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366605,
+        "start_usec": 746312,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97030,
+        1792366606,
+        752070
+      ],
+      "first_observation": {
+        "pid": 97030,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:46 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366606,
+        "start_usec": 752070,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97030,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:46 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366606,
+        "start_usec": 752070,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97034,
+        1792366607,
+        762790
+      ],
+      "first_observation": {
+        "pid": 97034,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:47 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366607,
+        "start_usec": 762790,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97034,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:47 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366607,
+        "start_usec": 762790,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97038,
+        1792366608,
+        772012
+      ],
+      "first_observation": {
+        "pid": 97038,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:48 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366608,
+        "start_usec": 772012,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97038,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:48 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366608,
+        "start_usec": 772012,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97043,
+        1792366609,
+        778571
+      ],
+      "first_observation": {
+        "pid": 97043,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:49 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366609,
+        "start_usec": 778571,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97043,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:49 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366609,
+        "start_usec": 778571,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97048,
+        1792366610,
+        790163
+      ],
+      "first_observation": {
+        "pid": 97048,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:50 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366610,
+        "start_usec": 790163,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97048,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:50 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366610,
+        "start_usec": 790163,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97053,
+        1792366611,
+        793042
+      ],
+      "first_observation": {
+        "pid": 97053,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:51 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366611,
+        "start_usec": 793042,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97053,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:51 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366611,
+        "start_usec": 793042,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97056,
+        1792366612,
+        796269
+      ],
+      "first_observation": {
+        "pid": 97056,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:52 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366612,
+        "start_usec": 796269,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97056,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:52 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366612,
+        "start_usec": 796269,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97060,
+        1792366613,
+        805905
+      ],
+      "first_observation": {
+        "pid": 97060,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:53 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366613,
+        "start_usec": 805905,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97060,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:53 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366613,
+        "start_usec": 805905,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97065,
+        1792366614,
+        812909
+      ],
+      "first_observation": {
+        "pid": 97065,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:54 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366614,
+        "start_usec": 812909,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97065,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:54 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366614,
+        "start_usec": 812909,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97074,
+        1792366617,
+        837563
+      ],
+      "first_observation": {
+        "pid": 97074,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:57 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366617,
+        "start_usec": 837563,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97074,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:57 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366617,
+        "start_usec": 837563,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97078,
+        1792366618,
+        760624
+      ],
+      "first_observation": {
+        "pid": 97078,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:58 2026",
+        "cpu": 0.4,
+        "rss_kib": 32624,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet",
+        "identity_verified": true,
+        "start_sec": 1792366618,
+        "start_usec": 760624,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet build-server shutdown",
+        "arguments_observed": true
+      },
+      "executable_history": [
+        "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet"
+      ],
+      "last_observation": {
+        "pid": 97078,
+        "ppid": 96790,
+        "started": "Mon Oct 19 01:36:58 2026",
+        "cpu": 0.4,
+        "rss_kib": 32624,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet",
+        "identity_verified": true,
+        "start_sec": 1792366618,
+        "start_usec": 760624,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/DotNetSdk/dotnet build-server shutdown",
+        "arguments_observed": true
+      }
+    },
+    {
+      "birth": [
+        97079,
+        1792366618,
+        841540
+      ],
+      "first_observation": {
+        "pid": 97079,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:58 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366618,
+        "start_usec": 841540,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97079,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:58 2026",
+        "cpu": 0.0,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366618,
+        "start_usec": 841540,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97085,
+        1792366619,
+        844735
+      ],
+      "first_observation": {
+        "pid": 97085,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:59 2026",
+        "cpu": 0.6,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366619,
+        "start_usec": 844735,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97085,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:36:59 2026",
+        "cpu": 0.6,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366619,
+        "start_usec": 844735,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    },
+    {
+      "birth": [
+        97095,
+        1792366620,
+        848314
+      ],
+      "first_observation": {
+        "pid": 97095,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:37:00 2026",
+        "cpu": 0.4,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366620,
+        "start_usec": 848314,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      },
+      "executable_history": [
+        "/bin/sleep"
+      ],
+      "last_observation": {
+        "pid": 97095,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:37:00 2026",
+        "cpu": 0.4,
+        "rss_kib": 1152,
+        "comm": "sleep",
+        "identity_verified": true,
+        "start_sec": 1792366620,
+        "start_usec": 848314,
+        "executable": "/bin/sleep",
+        "command": "/bin/sleep",
+        "arguments_observed": false
+      }
+    }
+  ],
+  "target_editor_observed": true,
+  "layout_restoration": {
+    "started_utc": "2026-10-18T23:37:06.247983+00:00",
+    "target": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+    "reason": "Reviewed new CC collection finally; exact owned target only; preserve prior failed compile29 result",
+    "original_compile29_result_changed": false,
+    "restored": true,
+    "atomic_replace_performed": true,
+    "owner_checks": [
+      {
+        "native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.3,
+            "rss_kib": 61984,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ],
+        "layout_lsof_exit": 1,
+        "layout_lsof_output_empty": true
+      },
+      {
+        "native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.0,
+            "rss_kib": 62000,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ],
+        "layout_lsof_exit": 1,
+        "layout_lsof_output_empty": true
+      }
+    ],
+    "observed_current_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+    "saved_before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "preserved_after_copy": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/finally-layout-restoration/observed-layout-before-restoration.bytes",
+      "bytes": 4500760,
+      "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e"
+    },
+    "owner_recheck": [
+      {
+        "native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.0,
+            "rss_kib": 62000,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ],
+        "layout_lsof_exit": 1,
+        "layout_lsof_output_empty": true
+      },
+      {
+        "native_processes": [
+          {
+            "pid": 55563,
+            "ppid": 1,
+            "started": "Wed Oct 14 21:02:25 2026",
+            "cpu": 0.0,
+            "rss_kib": 61904,
+            "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "identity_verified": true,
+            "start_sec": 1792004545,
+            "start_usec": 746735,
+            "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+            "arguments_observed": false
+          }
+        ],
+        "layout_lsof_exit": 1,
+        "layout_lsof_output_empty": true
+      }
+    ],
+    "actual_after_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "actual_after_bytes": 4500940,
+    "finished_utc": "2026-10-18T23:37:08.739172+00:00"
+  },
+  "runtime_inputs_unchanged": true,
+  "actual_tool_pins_unchanged": true,
+  "auth_observations": {
+    "before_logged_in": true,
+    "after_logged_in": true
+  },
+  "source_unchanged": false,
+  "project_settings_unchanged": true,
+  "user_settings_unchanged": true,
+  "all_global_layouts_restored_unchanged": true,
+  "exact_marker_count": 1,
+  "native_query_status": [
+    "BakedGridSurfaceQueries_NoRuntimeOccupancyCertificate"
+  ],
+  "exact_unqualified_report_scope": true,
+  "compiler_identity_unchanged": true,
+  "host_lease_released": true,
+  "finished_utc": "2026-10-18T23:37:28.015730+00:00"
+}

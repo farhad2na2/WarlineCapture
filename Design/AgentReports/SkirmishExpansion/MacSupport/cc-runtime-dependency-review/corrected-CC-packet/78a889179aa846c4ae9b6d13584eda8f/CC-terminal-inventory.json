@@ -1,0 +1,209 @@
+{
+  "scope": "Exact raw corrected terminal evidence; layout byte preimages local only",
+  "files": [
+    {
+      "path": "CC-terminal-summary.json",
+      "bytes": 3962,
+      "sha256": "b156175fda00457387c6f4b954813b864664a0878f0244c58e589044099f8ec8",
+      "publish": true
+    },
+    {
+      "path": "__pycache__/layout-restoration.py.cpython-312.pyc",
+      "bytes": 10226,
+      "sha256": "3be622199a84aa1d83a12c9f75ad2d7ea228db05b12e07202dd9d0410d1195fa",
+      "publish": true
+    },
+    {
+      "path": "capacity-at-launch.json",
+      "bytes": 3648,
+      "sha256": "af1079055e6d1c5d3204c4c4acc3d37fb50102d5882229ea45d26193414b8b71",
+      "publish": true
+    },
+    {
+      "path": "capacity-before.json",
+      "bytes": 3651,
+      "sha256": "89f3bf4da3ca29db3c3967d67bd86bddfbe8b5f401ed595f81926c45557226b2",
+      "publish": true
+    },
+    {
+      "path": "controller-r2-to-corrected.diff",
+      "bytes": 10303,
+      "sha256": "1189b6bf8269cf3a5bf5beb0e39f1440ecb4c37cd542821be2199b811d18690e",
+      "publish": true
+    },
+    {
+      "path": "finally-layout-restoration/observed-layout-before-restoration.bytes",
+      "bytes": 4500760,
+      "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+      "publish": false
+    },
+    {
+      "path": "finally-layout-restoration/restoration-journal.json",
+      "bytes": 3798,
+      "sha256": "8aeb5ee5c203a522551cdb2d9d50692fe3788812ee62b092315e7b8964cd71fc",
+      "publish": true
+    },
+    {
+      "path": "generated-cache-meta.evidence.txt",
+      "bytes": 152,
+      "sha256": "213e24d8df8d740eecaba039134d74d70fd4146749d8a44c178ed4e1ee8e5b94",
+      "publish": true
+    },
+    {
+      "path": "global-GUI-after-restoration.json",
+      "bytes": 2776,
+      "sha256": "d6dbbe9493f54ee391d790271ca0ac95a5fb15f585d63fa1561a0a20e1b57230",
+      "publish": true
+    },
+    {
+      "path": "global-GUI-before-restoration.json",
+      "bytes": 2776,
+      "sha256": "3a63b588a3f5c0a74973a72ae7f1e8a0cc80fd3f3ad858f4bca19fff8b2aa7a7",
+      "publish": true
+    },
+    {
+      "path": "global-GUI-before.json",
+      "bytes": 2776,
+      "sha256": "d6dbbe9493f54ee391d790271ca0ac95a5fb15f585d63fa1561a0a20e1b57230",
+      "publish": true
+    },
+    {
+      "path": "launch-intent.json",
+      "bytes": 1871,
+      "sha256": "b9a37c012fb3dfb41febf7598ffd25144b2170aa12de646cad99a1aa4be2142e",
+      "publish": true
+    },
+    {
+      "path": "layout-restoration.py.proposal",
+      "bytes": 4244,
+      "sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf",
+      "publish": true
+    },
+    {
+      "path": "live-original-handle.json",
+      "bytes": 727,
+      "sha256": "92bcf8c4e0e69d842fd5e4351fe1e50c7f28eb0e28ddd0c42abf7a16b325e90d",
+      "publish": true
+    },
+    {
+      "path": "native-report-copy.json",
+      "bytes": 407917,
+      "sha256": "fccbe752522f74ee07e37256afdb1765f8d249186686aacc581823afca23dcec",
+      "publish": true
+    },
+    {
+      "path": "native-report.original.json",
+      "bytes": 407924,
+      "sha256": "075de718026b934dc99fc781d258b1277256dd70356405f9fbd33f190ba05a02",
+      "publish": true
+    },
+    {
+      "path": "one-use-grant.json",
+      "bytes": 1103,
+      "sha256": "0751323833cb6dd671893bc2b6c1947dbd919e8be8d7c12e80704c015b353e5a",
+      "publish": true
+    },
+    {
+      "path": "owned-layout-preimage.bytes",
+      "bytes": 4500940,
+      "sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+      "publish": false
+    },
+    {
+      "path": "plan.disabled.json",
+      "bytes": 10585,
+      "sha256": "a60b25b282a22dd496179af391add6cafc75cc5804fa0864fb41989da83b51d2",
+      "publish": true
+    },
+    {
+      "path": "requested-CC-controller.py.proposal",
+      "bytes": 16554,
+      "sha256": "d16796da7699a61d5d7e4925ddebb54850bd402a3c3edc2f2d11d5d0d484dfd7",
+      "publish": true
+    },
+    {
+      "path": "result.json",
+      "bytes": 103045,
+      "sha256": "80135157008db95024ea94b98579f442b5498057a87b71609db4bef68c36ebb5",
+      "publish": true
+    },
+    {
+      "path": "runtime-input-controls.log",
+      "bytes": 2136,
+      "sha256": "203c7b35d6f179ef7146e9b096eb150d4682b9d7e6920799cbf579366734daaa",
+      "publish": true
+    },
+    {
+      "path": "runtime-input-controls.py",
+      "bytes": 4493,
+      "sha256": "7165d2292fecd629075c4596c51a0a4c92c632eb59dc4a0f1f50f27ac47c55e9",
+      "publish": true
+    },
+    {
+      "path": "runtime-inputs-after.json",
+      "bytes": 4585,
+      "sha256": "c651183366fc0f840e59bdf9ca8d2f9ad9fcc42d056718e440318d78bc0378d2",
+      "publish": true
+    },
+    {
+      "path": "runtime-inputs-at-launch.json",
+      "bytes": 4585,
+      "sha256": "c651183366fc0f840e59bdf9ca8d2f9ad9fcc42d056718e440318d78bc0378d2",
+      "publish": true
+    },
+    {
+      "path": "runtime-inputs-before.json",
+      "bytes": 4585,
+      "sha256": "c651183366fc0f840e59bdf9ca8d2f9ad9fcc42d056718e440318d78bc0378d2",
+      "publish": true
+    },
+    {
+      "path": "runtime-inputs.json",
+      "bytes": 8227,
+      "sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b",
+      "publish": true
+    },
+    {
+      "path": "source-terminal-delta.json",
+      "bytes": 262,
+      "sha256": "fccb3c2d8eeb9cec0638a4c5b45ab5e133ef852c86bdfa8f67584f48acd88be4",
+      "publish": true
+    },
+    {
+      "path": "state-after.json",
+      "bytes": 9435388,
+      "sha256": "0a7f508aba2c6a2bbc64104aacffc5e07054bcb5e4bb39a6e679ac806e21a02f",
+      "publish": true
+    },
+    {
+      "path": "state-before.json",
+      "bytes": 9435186,
+      "sha256": "9bfd5d47609b9caa3ca43f8b971aff13814322e580c5dc3995b8b93a16ce717e",
+      "publish": true
+    },
+    {
+      "path": "tools-after.json",
+      "bytes": 6409,
+      "sha256": "65e39f07e9821fb8880578d98b4a39212efecdea62e5eef3e4c4dc51c61254ee",
+      "publish": true
+    },
+    {
+      "path": "tools-before.json",
+      "bytes": 6409,
+      "sha256": "65e39f07e9821fb8880578d98b4a39212efecdea62e5eef3e4c4dc51c61254ee",
+      "publish": true
+    },
+    {
+      "path": "unity-CC.log",
+      "bytes": 49783,
+      "sha256": "c713d30f5a05f45ceb1a0b5950e0aa45bdfd54b49c6456ce59c872d7867742a3",
+      "publish": true
+    },
+    {
+      "path": "wrapper.log",
+      "bytes": 867,
+      "sha256": "bb6de6bbe76fa04ae5c9671a177c64c1a7b681a96c11fd7092746005ff249e9a",
+      "publish": true
+    }
+  ]
+}

@@ -610,7 +610,10 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            AdoptLibrarySelection(catalogId);
+            // v38 fix: select exactly as a card tap does (SelectScenarioId also records the launch selection that
+            // LaunchMatch checks; AdoptLibrarySelection did not, so LaunchMatch returned early and nothing launched).
+            SelectScenarioId(catalogId);
+            LibraryLaunchRequested = false;
             LaunchMatch();
             Debug.Log("[QuickBattle] scenario=" + catalogId + " selected=" + _selectedScenarioId + " launchRequested=" + LibraryLaunchRequested);
         }

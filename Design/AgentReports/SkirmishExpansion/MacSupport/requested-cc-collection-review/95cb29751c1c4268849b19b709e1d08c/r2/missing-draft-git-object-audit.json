@@ -1,0 +1,22 @@
+{
+  "scope": "ReadOnlyKnownGitRefsAndReachablePathHistory_NoCopyOrTransfer",
+  "path": "Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+  "expected_raw_sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+  "primary_file_exists": false,
+  "isolated_file_exists": false,
+  "known_refs": {
+    "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63": {
+      "path_object_exists": false
+    },
+    "a9eb0b4814ebb9c6c0d81ebb851df0917b970973": {
+      "path_object_exists": false
+    },
+    "b05a6ebe97ad18e0fe39020edb175bad57e755ff": {
+      "path_object_exists": false
+    }
+  },
+  "all_fetched_refs_path_history_exit": 0,
+  "all_fetched_refs_path_history": "",
+  "limits": "No claim about unreachable/unfetched Git objects. Windows current file10728B/SHA3755 supplied sender-only; not retrieved/verified as Mac input.",
+  "copied_or_injected": false
+}

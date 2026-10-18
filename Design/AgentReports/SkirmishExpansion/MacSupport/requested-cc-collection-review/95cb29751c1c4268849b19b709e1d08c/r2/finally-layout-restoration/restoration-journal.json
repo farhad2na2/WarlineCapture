@@ -1,0 +1,102 @@
+{
+  "started_utc": "2026-10-18T23:06:13.020356+00:00",
+  "target": "/Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt",
+  "reason": "Reviewed new CC collection finally; exact owned target only; preserve prior failed compile29 result",
+  "original_compile29_result_changed": false,
+  "restored": true,
+  "atomic_replace_performed": true,
+  "owner_checks": [
+    {
+      "native_processes": [
+        {
+          "pid": 55563,
+          "ppid": 1,
+          "started": "Wed Oct 14 21:02:25 2026",
+          "cpu": 0.0,
+          "rss_kib": 57312,
+          "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "identity_verified": true,
+          "start_sec": 1792004545,
+          "start_usec": 746735,
+          "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "arguments_observed": false
+        }
+      ],
+      "layout_lsof_exit": 1,
+      "layout_lsof_output_empty": true
+    },
+    {
+      "native_processes": [
+        {
+          "pid": 55563,
+          "ppid": 1,
+          "started": "Wed Oct 14 21:02:25 2026",
+          "cpu": 0.0,
+          "rss_kib": 57360,
+          "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "identity_verified": true,
+          "start_sec": 1792004545,
+          "start_usec": 746735,
+          "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "arguments_observed": false
+        }
+      ],
+      "layout_lsof_exit": 1,
+      "layout_lsof_output_empty": true
+    }
+  ],
+  "observed_current_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+  "saved_before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+  "preserved_after_copy": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/requested-cc-collection-review/95cb29751c1c4268849b19b709e1d08c/r2/finally-layout-restoration/observed-layout-before-restoration.bytes",
+    "bytes": 4500760,
+    "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e"
+  },
+  "owner_recheck": [
+    {
+      "native_processes": [
+        {
+          "pid": 55563,
+          "ppid": 1,
+          "started": "Wed Oct 14 21:02:25 2026",
+          "cpu": 0.0,
+          "rss_kib": 57264,
+          "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "identity_verified": true,
+          "start_sec": 1792004545,
+          "start_usec": 746735,
+          "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "arguments_observed": false
+        }
+      ],
+      "layout_lsof_exit": 1,
+      "layout_lsof_output_empty": true
+    },
+    {
+      "native_processes": [
+        {
+          "pid": 55563,
+          "ppid": 1,
+          "started": "Wed Oct 14 21:02:25 2026",
+          "cpu": 0.0,
+          "rss_kib": 57264,
+          "comm": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "identity_verified": true,
+          "start_sec": 1792004545,
+          "start_usec": 746735,
+          "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "command": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+          "arguments_observed": false
+        }
+      ],
+      "layout_lsof_exit": 1,
+      "layout_lsof_output_empty": true
+    }
+  ],
+  "actual_after_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+  "actual_after_bytes": 4500940,
+  "finished_utc": "2026-10-18T23:06:15.510932+00:00"
+}

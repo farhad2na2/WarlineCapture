@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "scope": "OneAuthorizedCCCollection_NewMacOwnSource_Failed_NoRetry",
+  "created_utc": "2026-10-18T23:09:49.675521+00:00",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "nonce": "95cb29751c1c4268849b19b709e1d08c",
+  "controller_tool_session": 24311,
+  "controller_exit": 1,
+  "wrapper_exit": 0,
+  "wrapper_reaped": true,
+  "target_editor_observed": true,
+  "owned_shutdown_closed": true,
+  "owned_shutdown_absence_samples": 2,
+  "host_lease_released": true,
+  "operational_collection_control_passed": false,
+  "before_candidate_sha256": "37157ae86b3c9bc167c516e3792d591e0ea361495a1ea61345f88443c60c8f06",
+  "before_source_files": 41740,
+  "after_candidate_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+  "after_source_files": 41741,
+  "invariants": {
+    "source_unchanged": false,
+    "project_settings_unchanged": true,
+    "user_settings_unchanged": true,
+    "actual_tool_pins_unchanged": true,
+    "auth_observations": {
+      "before_logged_in": true,
+      "after_logged_in": true
+    },
+    "compiler_identity_unchanged": true,
+    "all_global_layouts_restored_unchanged": true
+  },
+  "collection": {
+    "result": "FailedRequestedGroupCollection",
+    "requested": [
+      "CC"
+    ],
+    "attempted": [
+      "CC"
+    ],
+    "measured": [],
+    "errors": 1,
+    "requested_scope_complete": false,
+    "success_marker_count": 0,
+    "native_query_status": [
+      null
+    ],
+    "actual_error": "System.IO.DirectoryNotFoundException: Could not find a part of the path \"/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt\".\n  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share, System.Int32 bufferSize, System.Boolean anonymous, System.IO.FileOptions options) [0x00164] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at System.IO.FileStream..ctor (System.String path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at (wrapper remoting-invoke-with-check) System.IO.FileStream..ctor(string,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare)\n  at System.IO.File.OpenRead (System.String path) [0x00000] in <299d5c9ae27b4d27af003e5f456f4b13>:0 \n  at Game.Editor.SkirmishGroundSourceFitSurvey.Hash (System.String path) [0x00000] in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs:506 \n  at Game.Editor.SkirmishGroundSourceFitSurvey.SurveyGroup (Newtonsoft.Json.Linq.JObject input, System.String group, Newtonsoft.Json.Linq.JObject row) [0x0037c] in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs:205 \n  at Game.Editor.SkirmishGroundSourceFitSurvey.CollectRequestedSourceSurveyGroup (Newtonsoft.Json.Linq.JObject input, System.String text, Newtonsoft.Json.Linq.JObject report, System.Action`3[T1,T2,T3] collect) [0x000c5] in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:67 "
+  },
+  "source_drift": "Exactly one added ignored SceneDependencyCache meta; zero removed/changed. Original addition preserved, no waiver/deletion. See source-terminal-delta.json.",
+  "restoration": {
+    "restored": true,
+    "atomic_replace": true,
+    "before_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "observed_post_sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e",
+    "verified_after_sha256": "531c07db0215e3cb8d3e88dab18685bb56a1d8c798c69dbaa4417b3453e5e8ee",
+    "original_compile29_result_unchanged": true
+  },
+  "admission_gap": "Preflight full Assets/Packages/ProjectSettings census plus asmdef graph failed to enumerate the collector runtime Tools candidateDraft dependency. The pinned draft was absent; no substitute/copy/readiness inference made.",
+  "input_audit": "runtime-input-dependency-audit.json is bounded explicit-input inventory, not yet a complete dynamic Unity/GUID/reflection closure. Continued cheap call-path audit required.",
+  "one_use_grant_consumed": true,
+  "retry_authority": false,
+  "old_failures_preserved": [
+    "compile29 operational GUI drift/controller3731exit1",
+    "r6 native35 settings drift",
+    "preparation396b dirty-check failure"
+  ],
+  "acceptance": {
+    "CollectedUnqualified": false,
+    "source_fit": false,
+    "strict_service": false,
+    "normal_mission": false,
+    "paid_resources": false,
+    "queue": false,
+    "APK_device_player": false,
+    "Windows_equivalence": false,
+    "historical_survey11_compatibility_or_transfer": false
+  }
+}

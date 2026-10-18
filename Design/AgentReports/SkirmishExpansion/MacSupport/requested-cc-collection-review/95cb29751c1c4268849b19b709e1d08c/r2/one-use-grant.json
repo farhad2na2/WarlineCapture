@@ -1,0 +1,18 @@
+{
+  "launch_authorized": true,
+  "nonce": "95cb29751c1c4268849b19b709e1d08c",
+  "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+  "source_commit": "36c6e45839bcaa88e5e1f5b66ab5c9cc18971e63",
+  "candidate_sha256": "37157ae86b3c9bc167c516e3792d591e0ea361495a1ea61345f88443c60c8f06",
+  "issued_utc": "2026-10-18T23:04:24.210515+00:00",
+  "expires_utc": "2026-10-19T01:04:24.210515+00:00",
+  "review_receipt_sha256": "5fcd8f653d4dafd513025332681c476ff262ce4248bd1ac95adc259d33615c05",
+  "controller_sha256": "5c97eea4009815ae2eee58fed2d3c969ff5a3ebf9323f23d4726adf0d5801e3d",
+  "plan_sha256": "3a4338240d761e19aba8425ae5abfb8684427d852de8dee14e6616328fe7c494",
+  "allowed_runs": 1,
+  "method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+  "allowed_selector": "CC",
+  "native_fit_or_readiness_credit": false,
+  "permission_source": "Exact Windows coordinator one-fresh-CC delegation in this chat; receipt MacRequestedCcCollectionR2RootReview_20261019/ROOT_REVIEW.json",
+  "restore_exact_owned_layout": true
+}

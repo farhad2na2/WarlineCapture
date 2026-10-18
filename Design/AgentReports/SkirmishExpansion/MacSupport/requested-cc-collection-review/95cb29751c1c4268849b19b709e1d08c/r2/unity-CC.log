@@ -1,0 +1,602 @@
+Unity Editor version:    6000.5.8f1 (5cb7df797b7d)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-10-18T23:05:36Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-10-18T23:05:36.676727Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Volumes/T7/Projects/WarlineCapture-mac-native-s003
+-logFile
+/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/requested-cc-collection-review/95cb29751c1c4268849b19b709e1d08c/r2/unity-CC.log
+-quit
+-executeMethod
+Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey
+Successfully changed project path to: /Volumes/T7/Projects/WarlineCapture-mac-native-s003
+/Volumes/T7/Projects/WarlineCapture-mac-native-s003
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              403eb2c9bde84b6cae23e6bba343fd53
+  Correlation Id:          0964780465aa0298093c646eca7c51cb
+  External correlation Id: 5081247748714560713
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.30s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-10-18T23:05:36.977855Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+Player connection [8527946112]  Target information:
+
+Player connection [8527946112]  * "[IP] 192.168.2.175 [Port] 55504 [Flags] 2 [Guid] 2245778112 [EditorId] 2245778112 [Version] 1048832 [Id] OSXEditor(0,Farhads-Air-2) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8527946112] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8527946112] Host joined alternative multi-casting on [225.0.0.222:34997]...
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.31s
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-94155" after 0.1 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Licensing::Client] Successfully resolved entitlement details
+Initialize engine version: 6000.5.8f1 (5cb7df797b7d)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56155
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
+Registered in 0.003017 seconds.
+[usbmuxd] Start listen thread
+[usbmuxd] Listen thread started
+[usbmuxd] Send listen message
+Native extension for iOS target not found
+2026-10-19 01:05:38.507 Unity[94155:15234843] [XcodeApplications] Failed to read NSDictionary from path /Contents/Info.plist
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.671 seconds
+Domain Reload Profiling: 952ms
+	BeginReloadAssembly (81ms)
+		CreateAndSetChildDomain (6ms)
+	RebuildNativeTypeToScriptingClass (13ms)
+	initialDomainReloadingComplete (33ms)
+	LoadAllAssembliesAndSetupDomain (152ms)
+		LoadAssemblies (75ms)
+		AnalyzeDomain (115ms)
+			TypeCache.Refresh (115ms)
+				TypeCache.ScanAssembly (104ms)
+	FinalizeReload (671ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (111ms)
+			BeforeProcessingInitializeOnLoad (37ms)
+			ProcessInitializeOnLoadAttributes (48ms)
+			ProcessInitializeOnLoadMethodAttributes (438ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.30 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.burst@2f3d916873ea)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.5 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.searcher@a463122f2c00)
+    com.unity.settings-manager@2.1.1 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities@ef040875dea9)
+    com.unity.entities.graphics@6.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.entities.graphics@d145f0960701)
+    com.unity.multiplayer.center@1.0.1 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal@73b4c4ff130e)
+    com.unity.serialization@6.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.shadergraph@8d7376ec43ee)
+    com.unity.test-framework@1.7.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ugui@1c4864518158)
+    com.unity.modules.accessibility@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.core@a4c9a9793789)
+    com.unity.collections@6.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.collections@ec2c217e4cb2)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-f90b3165307125f6e9dfaba13dfb3b9b
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Volumes/T7/Projects/WarlineCapture-mac-native-s003
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 23.3074ms
+Refreshing native plugins compatible for Editor in 3.73 ms, found 3 plugins.
+Starting: /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/1300b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Volumes/T7/Projects/WarlineCapture-mac-native-s003
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly unityeditor.ios.extensions.xcode has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.Xcode.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.iOS.Extensions.Xcode.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@2f3d916873ea/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 20.4757ms
+ExitCode: 0 Duration: 0s775ms
+[1135/2008  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.75 seconds), 1 items updated, 2008 evaluated
+AssetDatabase: script compilation time: 1.343909s
+Total cache size 268310760
+Total cache size after purge 268310760, took 00:00:00.2141099
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for iOS target not found
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 136ms
+The assembly Game.Authoring is using the BakingVersion attribute. But the following Baker/Baking systems/EntitySceneOptimizations systems are missing the attribute:
+Game.Authoring.SupportAbilityCatalogAuthoring+SupportBaker.
+
+Updating these bakers/systems won't trigger a scene import automatically. Please add a BakingVersion attribute on them and update their version number everytime you want them to be rerun before an import. 
+Or don't use the attribute at all in their assembly to trigger scene import automatically after each changes in the assembly.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Scenes.Editor.TypeDependencyCache:PrintMissingBakingVersionAttributesWarning (System.Collections.Generic.Dictionary`2<string, System.Collections.Generic.List`1<System.Type>>) (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/TypeDependencyCache.cs:305)
+Unity.Scenes.Editor.TypeDependencyCache:RegisterBakingAssemblies () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/TypeDependencyCache.cs:284)
+Unity.Scenes.Editor.TypeDependencyCache:.cctor () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/TypeDependencyCache.cs:61)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+Start HTTP server: port:7801
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  7.456 seconds
+Domain Reload Profiling: 8249ms
+	BeginReloadAssembly (85ms)
+		DisableScriptedObjects (9ms)
+		CreateAndSetChildDomain (20ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (7ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (662ms)
+		LoadAssemblies (294ms)
+		AnalyzeDomain (320ms)
+			TypeCache.Refresh (262ms)
+				TypeCache.ScanAssembly (241ms)
+			BuildScriptInfoCaches (53ms)
+			ResolveRequiredComponents (3ms)
+	FinalizeReload (7457ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (10ms)
+			BeforeProcessingInitializeOnLoad (43ms)
+			ProcessInitializeOnLoadAttributes (3197ms)
+			ProcessInitializeOnLoadMethodAttributes (3871ms)
+		AwakeInstancesAfterBackupRestoration (11ms)
+Starting new worker id: 0 with log in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=aa4347218686d4ee987516f60f7dc6f9): Total: 12.181 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=9930 ms
+		Asset DB Callback time: managed=22 ms, native=9 ms
+		Scripting: domain reloads=1, domain reload time=821 ms, compile time=1345 ms, other=51 ms
+		Project Asset Count: scripts=3535, non-scripts=25203
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 10.022ms
+	ApplyChangesToAssetFolders: 0.311ms
+	Scan: 1325.990ms
+	Collect global state as custom dependencies: 15.505ms
+	CategorizeScriptCompilationAssets: 142.922ms
+	ProcessAssetsWithTransientArtifactChanges: 79.059ms
+	CategorizeAssets: 413.848ms
+	CompileScripts: 1344.635ms
+	ImportOutOfDateAssets: 7636.334ms (7481.420ms without children)
+		ReloadNativeAssets: 0.326ms
+		UnloadImportedAssets: 5.275ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.184ms
+		ImportSchedulerStart: 147.122ms
+	PostProcessAllAssets: 22.651ms
+		MonoPostProcessAllAssets: 22.618ms
+			SyncVS.PostprocessSyncProject 6.018ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 5.531ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 1.061ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.020ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.853ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.808ms
+			EditModeScopePostprocessor.OnPostprocessAllAssets 0.435ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.379ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.292ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.248ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.183ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.119ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.100ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.065ms
+	UnloadStreamsBegin: 0.631ms
+	PersistCurrentRevisions: 0.539ms
+	GenerateScriptTypeHashes: 3.515ms
+	GenerateScriptTypeSerializationHashes: 5.019ms
+	Untracked: 1186.477ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.06 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.096ms
+Initializing Unity extensions:
+2026-10-19 01:05:52.436 Unity[94155:15234843] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x8dda79c20 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-19 01:05:52.436 Unity[94155:15234843] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x8dda79d60 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-19 01:05:52.436 Unity[94155:15234843] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x8dda79e00 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-19 01:05:52.440 Unity[94155:15234843] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x8ddada8a0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 151 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 15897 unused Assets / (28.3 MB). Loaded Objects now: 16495.
+Memory consumption went from 0.55 GB to 0.52 GB.
+Total: 69.114209 ms (FindLiveObjects: 0.439500 ms CreateObjectMapping: 3.701625 ms MarkObjects: 52.517209 ms  DeleteObjects: 12.454584 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+Worker ready: AssetImportWorkerHW0 0
+[LAYOUT] About to save layout /Volumes/T7/Projects/WarlineCapture-mac-native-s003/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+[SkirmishPilotLogicalAuthoringControls] result=Passed controls=8 fitCertified=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunPilotLogicalAuthoringControls () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs:186)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunRequestedSourceGroupSurvey () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:112)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotLogicalCandidates.cs Line: 186)
+
+[BuildingInitialPlacement] failed prefab= preferred=(8, 8) footprint=(4, 4) effectiveRect=(x:8, y:8, width:4, height:4) searchRadius=80 cachedRejected=0 placementRejected=25921
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper:TryFindValidInitialBuildingOrigin (Game.Runtime.BuildingRuntimeSpawnCompositionSystemHelper/Context,Game.Runtime.BuildingDefinition,UnityEngine.Vector2Int,bool,Game.Components.GridConfig,Unity.Entities.DynamicBuffer`1<Game.Components.GridRoad>,Game.Components.DynamicBlockerComponent,UnityEngine.Vector2Int&,bool,bool) (at Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs:108)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunPilotCompoundReservationControls () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs:439)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunRequestedSourceGroupSurvey () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:113)
+
+(Filename: Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs Line: 108)
+
+[SkirmishPilotCompoundReservationControls] result=Passed controls=6 sourceFitCertified=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunPilotCompoundReservationControls () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs:450)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunRequestedSourceGroupSurvey () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:113)
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs Line: 450)
+
+Importing 'GUID: e4e00d5e92a7e6706d16595c4c32f1cf - Path: Assets/SceneDependencyCache/e4e00d5e92a7e6706d16595c4c32f1cf.sceneWithBuildSettings' with importer (DefaultImporter)
+Imported 'GUID: e4e00d5e92a7e6706d16595c4c32f1cf' -> (Import Result ID: '39ca5d90010d1372725821ada5650608') in 0.081 seconds [static dependencies only]. Details - ImportResultOutputID=90faca5d191cc71dc15e7448a565d3c5 DependenciesID=a63c749bef18db27a393f6b3464296af StaticDependenciesID=84e607626f46e17b76177d15ce69c31d 
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.EditorApplication:Internal_CallProjectHasChanged () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:461)
+UnityEditor.AssetDatabase:Refresh () (at /Users/bokken/build/output/unity/unity/Modules/AssetDatabase/Editor/ScriptBindings/AssetDatabase.bindings.cs:539)
+Unity.Scenes.AssetDependencyTracker`1<Unity.Entities.Entity>:AddCompleted (Unity.Collections.NativeList`1<Unity.Scenes.AssetDependencyTracker`1/Completed<Unity.Entities.Entity>>) (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/AssetDependencyTracker.cs:190)
+Unity.Scenes.AssetDependencyTracker`1<Unity.Entities.Entity>:GetCompleted (Unity.Collections.NativeList`1<Unity.Scenes.AssetDependencyTracker`1/Completed<Unity.Entities.Entity>>) (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/AssetDependencyTracker.cs:167)
+Unity.Scenes.ResolveSceneReferenceSystem:OnUpdate () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/ResolveSceneReferenceSystem.cs:167)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.InitializationSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/DefaultWorld.cs:169)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.World:Update () (at ./Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/World.cs:1418)
+Game.Editor.SkirmishGroundSourceFitSurvey:Load (Unity.Entities.World,string) (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs:450)
+Game.Editor.SkirmishGroundSourceFitSurvey:RegistryHierarchies () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs:83)
+Game.Editor.SkirmishGroundSourceFitSurvey:RunRequestedSourceGroupSurvey () (at Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:121)
+
+(Filename: Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs Line: 46)
+
+
+Asset Pipeline Refresh (id=597e4b3cb795047b18c1015b15e4cc7d): Total: 1.442 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=1051 ms
+		Asset DB Callback time: managed=387 ms, native=2 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3535, non-scripts=25204
+		Asset File Changes: new=1, changed=1, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.452ms
+	Scan: 664.121ms
+	Collect global state as custom dependencies: 0.427ms
+	OnSourceAssetsModified: 0.438ms
+	ProcessAssetsWithTransientArtifactChanges: 1.587ms
+	CategorizeAssets: 106.634ms
+	ImportOutOfDateAssets: 227.147ms (20.855ms without children)
+		ImportManagerImport: 86.470ms (2.029ms without children)
+		ReloadNativeAssets: 0.245ms
+		UnloadImportedAssets: 0.073ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.038ms
+		InitializingProgressBar: 2.668ms
+		ImportSchedulerStart: 114.797ms
+	PostProcessAllAssets: 373.733ms
+		XRBuildSystem.XRAssetImported 0.748ms
+		MonoPostProcessAllAssets: 372.550ms
+			AssetPostprocessor.OnPostprocessAllAssets 278.382ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 9.925ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 3.027ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 1.808ms
+			AssetChangedListener.OnPostprocessAllAssets 1.781ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 1.366ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.140ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 0.715ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.556ms
+			SyncVS.PostprocessSyncProject 0.459ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.391ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.376ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.347ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.266ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.187ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.160ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.146ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.138ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.133ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.132ms
+			PostProcessor.OnPostprocessAllAssets 0.121ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.108ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 0.090ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.077ms
+			AssetEvents.OnPostprocessAllAssets 0.075ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.071ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.061ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.057ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.054ms
+	PostAssetChangesProfiler: 232.591ms
+	GatherAllCurrentPrimaryImportResultRevisions: 4.747ms
+	UnloadStreamsBegin: 11.968ms
+	PersistCurrentRevisions: 0.572ms
+	UnloadStreamsEnd: 0.079ms
+	Untracked: 32.007ms
+
+Starting new worker id: 1 with log in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/AssetImportWorkerHW1.log
+Worker ready: AssetImportWorkerHW1 1
+[Worker0] Imported GUID: e4e00d5e92a7e6706d16595c4c32f1cf - Path: Assets/SceneDependencyCache/e4e00d5e92a7e6706d16595c4c32f1cf.sceneWithBuildSettings - Importer: ScriptedImporter/Unity.Scenes.Editor:Unity.Scenes.Editor:SubSceneImporter -> (ImportResultId: 'd1de36f1b05524209d4ee74ea49bfb8a') in 2.710972 seconds
+xcrun: error: unable to find utility "metal", not a developer tool or in PATH
+xcrun: error: unable to find utility "metal-objdump", not a developer tool or in PATH
+InvalidOperationException: Requested source survey failed; partial evidence retained at /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/RequestedSourceSurvey/95cb29751c1c4268849b19b709e1d08c/report.json
+  at Game.Editor.SkirmishGroundSourceFitSurvey.Require (System.Boolean condition, System.String message) [0x0000a] in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs:507 
+  at Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey () [0x002f8] in /Volumes/T7/Projects/WarlineCapture-mac-native-s003/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs:134 
+
+(Filename: Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs Line: 507)
+
+executeMethod method Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey threw exception.
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Unloading 219 Unused Serialized files (Serialized files now loaded: 0)
+Killing ADB server in 0.22221 seconds.
+Unloading 72 unused Assets / (325.7 KB). Loaded Objects now: 24591.
+Memory consumption went from 0.84 GB to 0.84 GB.
+Total: 59.802000 ms (FindLiveObjects: 0.445333 ms CreateObjectMapping: 2.706417 ms MarkObjects: 56.084083 ms  DeleteObjects: 0.564500 ms)
+
+Thread 0x39aefb000 may have been prematurely finalized
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+VB/C# compiler server shut down successfully.
+MSBuild server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+Leftover web requests after shut down
+
+Leak detected: 2 preview scene(s) were not closed prior to shutdown. This indicates a leak of preview scenes
+- To track who caused the leak make sure to enable the diagnostics switch: 'Preview Scene Activity'
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+Thread 0x16e063000 may have been prematurely finalized
+Thread 0x16dfd7000 may have been prematurely finalized
+Thread 0x16df4b000 may have been prematurely finalized
+Thread 0x16e207000 may have been prematurely finalized
+Thread 0x16e0ef000 may have been prematurely finalized
+Thread 0x16e17b000 may have been prematurely finalized
+Thread 0x16e31f000 may have been prematurely finalized
+Thread 0x16e3ab000 may have been prematurely finalized
+Thread 0x16e293000 may have been prematurely finalized
+Lingering sessions upon destruction of worker manager
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x17c43f000 may have been prematurely finalized
+Cleanup mono
+CodeReloadManager destroyed
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 4 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 34
+[usbmuxd] Stop listen thread
+[usbmuxd] Error: 
+[usbmuxd] Listen thread exiting
+Exiting batchmode successfully now!
+[Package Manager] Server process was shutdown

@@ -1,0 +1,17 @@
+{
+  "runid": "95cb29751c1c4268849b19b709e1d08c",
+  "scope": "FreshCCCollectionOnly_Unqualified",
+  "wrapper_started": true,
+  "wrapper_reaped": false,
+  "qualified": false,
+  "prior_compile29_operational_failure_preserved": true,
+  "operational_collection_control_passed": false,
+  "immediate_launch_pins": {
+    "grant_sha256": "b38d5670089d9ae169ba1c4429a53d91a7e18fcac37f41cf1aeaf4e41b0c59f9",
+    "plan_sha256": "3a4338240d761e19aba8425ae5abfb8684427d852de8dee14e6616328fe7c494",
+    "controller_sha256": "5c97eea4009815ae2eee58fed2d3c969ff5a3ebf9323f23d4726adf0d5801e3d",
+    "restoration_sha256": "d8766de2c5feff948e7cbf6d7938eb920ee6455c7b9acc0c2e23693ae79d7ecf"
+  },
+  "wrapper_pid": 94146,
+  "controller_pid": 94050
+}

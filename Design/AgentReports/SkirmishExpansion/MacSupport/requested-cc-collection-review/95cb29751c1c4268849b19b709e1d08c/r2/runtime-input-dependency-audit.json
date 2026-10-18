@@ -1,0 +1,225 @@
+{
+  "scope": "ReadOnlyBoundedExplicitRuntimeFileInputAudit_NotCompleteUnityGUIDOrReflectionClosure",
+  "cause": "Assets/Packages/ProjectSettings census and asmdef graph did not cover runtime Tools/Design file dependencies; missing CC candidate draft escaped preflight and failed actual Hash at SurveyGroup205",
+  "constants": [
+    {
+      "name": "Inventory",
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json"
+    },
+    {
+      "name": "Support",
+      "path": "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity"
+    },
+    {
+      "name": "PilotFacts",
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "reasons": [
+        "CC measurement or shared logical MP/IB controls: CC"
+      ],
+      "expected_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+          "bytes": 5519
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+          "bytes": 5519
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "reasons": [
+        "SurveyGroup CC layout snapshot templatePath"
+      ],
+      "expected_sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+          "bytes": 10653
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+          "bytes": 10653
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+      "reasons": [
+        "CC measurement or shared logical MP/IB controls: MP"
+      ],
+      "expected_sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+          "bytes": 9364
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+          "bytes": 9364
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+      "reasons": [
+        "CC measurement or shared logical MP/IB controls: IB"
+      ],
+      "expected_sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+          "bytes": 4030
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+          "bytes": 4030
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity",
+      "reasons": [
+        "Actual called-path constant Support"
+      ],
+      "expected_sha256": null,
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "637752a992d6a08bf4bcc273b2a05a57ad33d1c15032b73752b13309a27c07f5",
+          "bytes": 10785
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "637752a992d6a08bf4bcc273b2a05a57ad33d1c15032b73752b13309a27c07f5",
+          "bytes": 10785
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+      "reasons": [
+        "Requested entry reads original inventory",
+        "Actual called-path constant Inventory"
+      ],
+      "expected_sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+          "bytes": 119329
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+          "bytes": 119329
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+      "reasons": [
+        "Actual called-path constant PilotFacts"
+      ],
+      "expected_sha256": null,
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b",
+          "bytes": 110006
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b",
+          "bytes": 110006
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+      "reasons": [
+        "Requested entry hashes matrix"
+      ],
+      "expected_sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+          "bytes": 90201
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+          "bytes": 90201
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "reasons": [
+        "CC canonical request S026"
+      ],
+      "expected_sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "observation": {
+        "isolated": {
+          "exists": true,
+          "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+          "bytes": 39505
+        },
+        "primary": {
+          "exists": true,
+          "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+          "bytes": 39505
+        }
+      },
+      "isolated_matches_expected": true
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+      "reasons": [
+        "SurveyGroup CC layout snapshot candidateDraftPath"
+      ],
+      "expected_sha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+      "observation": {
+        "isolated": {
+          "exists": false,
+          "sha256": null,
+          "bytes": null
+        },
+        "primary": {
+          "exists": false,
+          "sha256": null,
+          "bytes": null
+        }
+      },
+      "isolated_matches_expected": false
+    }
+  ],
+  "historical_survey11_payload_read_or_transferred": false,
+  "source_changes": 0,
+  "retry": false,
+  "no_fit_credit": true
+}

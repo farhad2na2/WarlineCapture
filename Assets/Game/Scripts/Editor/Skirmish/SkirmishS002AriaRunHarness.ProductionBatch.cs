@@ -24,6 +24,137 @@ namespace Game.Editor
         private static double productionBatchFinishHashMilliseconds=-1;
         private static ProductionBatchContext productionBatchExitOwner;
 
+        // Installed InputSystem1.19 restores native devices on its zero-input initial
+        // update. Establish that real package-owned state before the strict baseline.
+        private static JObject PrepareProductionNativeInputBaseline()
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                productionCanary!=null||SessionState.GetBool(Key,false))
+                throw new InvalidOperationException("Native input preparation requires idle pre-dispatch Editor state.");
+            var type=typeof(UnityEngine.InputSystem.InputSystem);
+            var package=UnityEditor.PackageManager.PackageInfo.FindForAssembly(type.Assembly);
+            if(package==null||package.name!="com.unity.inputsystem"||package.version!="1.19.0"||
+                SkirmishProductionCanaryRequest.FileHash(Path.Combine(package.resolvedPath,"InputSystem","InputSystem.cs"))!="c6a32a4cd7af54de398e3d71ee89317d7b69af78176087c409890c7973b731eb"||
+                SkirmishProductionCanaryRequest.FileHash(Path.Combine(package.resolvedPath,"InputSystem","InputManager.cs"))!="71c69ea70d421d7c44c890fd8a7c6ee9d2c20990a1a00265071db9c9f691dbb4")
+                throw new InvalidOperationException("Unsupported InputSystem package/source contract; zero-input preparation requires revalidation.");
+            var method=type.GetMethod("RunInitialUpdate",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static,
+                null,Type.EmptyTypes,null);
+            if(method==null||method.DeclaringType!=type||method.ReturnType!=typeof(void))
+                throw new InvalidOperationException("Reviewed InputSystem zero-input initialization API unavailable; no normal-update fallback.");
+            var before=SkirmishProductionBatchOwnershipCensus.Capture();
+            method.Invoke(null,null);
+            var after=SkirmishProductionBatchOwnershipCensus.Capture();
+            return new JObject { ["schema_version"]=1,["initialization"]="InputSystem.RunInitialUpdate",
+                ["update_type"]="None",["input_events_processed"]=false,["unity_version"]=Application.unityVersion,
+                ["input_assembly"]=type.Assembly.FullName,["package_name"]=package.name,["package_version"]=package.version,["before_devices"]=before["input_devices"].DeepClone(),
+                ["after_devices"]=after["input_devices"].DeepClone() };
+        }
+
+        private const string ProductionInputPreparationKey="Warline.Production.NativeInputPreparation";
+        private static bool productionInputPreparationPending;
+        private sealed class ProductionNativeInputReadinessPolicy
+        {
+            private readonly double started;
+            private double last;
+            private JArray previous;
+            internal int Observations { get; private set; }
+            internal ProductionNativeInputReadinessPolicy(double now)
+            {
+                if(double.IsNaN(now)||double.IsInfinity(now))throw new InvalidDataException("Finite native input preparation time required.");
+                started=last=now;
+            }
+            internal static bool HasWindowsNativeDevices(JArray devices)
+            {
+                if(devices==null)return false;
+                bool Has(string layout)=>devices.OfType<JObject>().Any(d=>
+                    d["layout"]?.Type==JTokenType.String&&(string)d["layout"]==layout&&
+                    d["native"]?.Type==JTokenType.Boolean&&(bool)d["native"]&&
+                    d["enabled"]?.Type==JTokenType.Boolean&&(bool)d["enabled"]&&
+                    d["added"]?.Type==JTokenType.Boolean&&(bool)d["added"]);
+                return Has("Keyboard")&&Has("Mouse");
+            }
+            internal bool Observe(double now,JArray devices)
+            {
+                if(double.IsNaN(now)||double.IsInfinity(now)||now<=last)
+                    throw new InvalidDataException("Distinct increasing genuine Editor update observation required.");
+                if(now-started>=120)throw new TimeoutException("Native input initialization exceeded120s before mission dispatch.");
+                last=now;Observations++;
+                if(!HasWindowsNativeDevices(devices)){previous=null;return false;}
+                bool stable=previous!=null&&JToken.DeepEquals(previous,devices);
+                previous=(JArray)devices.DeepClone();
+                return stable;
+            }
+        }
+        private static void BeginProductionNativeInputReadiness(Action<JObject> ready,Action<Exception> failed)
+        {
+            if(ready==null||failed==null||productionInputPreparationPending||
+                SessionState.GetBool(ProductionInputPreparationKey,false)||productionBatch!=null||productionCanary!=null||
+                SessionState.GetBool(Key,false)||SessionState.GetBool(QuitPendingKey,false)||
+                EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                throw new InvalidOperationException("Fresh idle unowned native input initialization required.");
+            var initial=PrepareProductionNativeInputBaseline();
+            double start=EditorApplication.timeSinceStartup;
+            var policy=new ProductionNativeInputReadinessPolicy(start);
+            EditorApplication.CallbackFunction tick=null;
+            Action quitting=null;
+            productionInputPreparationPending=true;SessionState.SetBool(ProductionInputPreparationKey,true);
+            void Detach()
+            {
+                EditorApplication.update-=tick;EditorApplication.quitting-=quitting;
+                productionInputPreparationPending=false;SessionState.SetBool(ProductionInputPreparationKey,false);
+            }
+            quitting=()=>{Detach();UnityEngine.Debug.Log("[ProductionNativeInputReadiness] result=Abandoned missionDispatched=0");};
+            tick=()=>
+            {
+                try
+                {
+                    if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                        productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false))
+                        throw new InvalidOperationException("Native input initialization lost idle ownership.");
+                    var devices=(JArray)SkirmishProductionBatchOwnershipCensus.Capture()["input_devices"];
+                    double now=EditorApplication.timeSinceStartup;
+                    if(!policy.Observe(now,devices))return;
+                    var report=new JObject { ["initial"]=initial,["stable_devices"]=devices.DeepClone(),
+                        ["genuine_editor_updates"]=policy.Observations,["stable_observations"]=2,
+                        ["elapsed_seconds"]=now-start,["initialization_timeout_seconds"]=120,
+                        ["ordinary_input_update_invoked"]=false,["mission_dispatched"]=false };
+                    Detach();
+                    UnityEngine.Debug.Log("[ProductionNativeInputReadiness] result=Ready "+report.ToString(Newtonsoft.Json.Formatting.None));
+                    ready(report);
+                }
+                catch(Exception error){Detach();failed(error);}
+            };
+            EditorApplication.quitting+=quitting;EditorApplication.update+=tick;
+        }
+        private static void FailProductionNativeInputReadiness(Exception error)
+        {
+            UnityEngine.Debug.LogException(error);
+            // Existing dispatch exception handling owns an already-started Play teardown.
+            if(!EditorApplication.isPlayingOrWillChangePlaymode)EditorApplication.Exit(2);
+        }
+        private static Action PreflightProductionBatchInputRequests(string path)
+        {
+            var pins=new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
+            void Pin(string p){p=Path.GetFullPath(p);pins[p]=SkirmishProductionCanaryRequest.FileHash(p);}
+            var descriptor=SkirmishProductionCanaryRequest.ReadObject(path);Pin(path);
+            var jobs=descriptor["jobs"]as JArray;
+            if(jobs==null||jobs.Count<1||jobs.Count>1200)throw new InvalidDataException("Finite actual batch requests required before input initialization.");
+            var root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            var matrix=(int?)descriptor["schema_version"]==2
+                ?new SkirmishProductionMatrixAuthority(root,(string)descriptor["sampling_plan_path"],(string)descriptor["sampling_plan_sha256"]):null;
+            foreach(JObject row in jobs)
+            {
+                var request=SkirmishProductionCanaryRequest.Read(root,(string)row["job_path"],(string)row["claim_path"],false,matrix);
+                Pin(request.JobPath);Pin(request.ClaimPath);
+            }
+            return ()=>
+            {
+                foreach(var row in pins)
+                    if(SkirmishProductionCanaryRequest.FileHash(row.Key)!=row.Value)
+                        throw new InvalidDataException("Actual batch request changed during native input initialization.");
+            };
+        }
+
         // Run through a focused checked wrapper BEFORE the candidate is frozen.
         // It warms the exact native sources and exports real compiled setup facts;
         // it never enters Play, reserves jobs or establishes mission acceptance.
@@ -95,10 +226,18 @@ namespace Game.Editor
                 EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
                 (EditorSettings.enterPlayModeOptions&EnterPlayModeOptions.DisableSceneReload)!=0)
                 throw new InvalidOperationException("Batch requires an idle unowned Editor with native scene reload enabled.");
-            var context=new ProductionBatchContext(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"));
-            productionBatch=context;
-            SessionState.SetString(ProductionBatchOwnerKey,context.OutputDirectory);
-            context.DispatchNext();
+            string path=Path.GetFullPath(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"));
+            var validateRequests=PreflightProductionBatchInputRequests(path);
+            BeginProductionNativeInputReadiness(report=>
+            {
+                if(Path.GetFullPath(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"))!=path)
+                    throw new InvalidDataException("Batch owner environment changed during input initialization.");
+                validateRequests();
+                var context=new ProductionBatchContext(path);
+                productionBatch=context;
+                SessionState.SetString(ProductionBatchOwnerKey,context.OutputDirectory);
+                context.DispatchNext();
+            },FailProductionNativeInputReadiness);
         }
 
         private static void RecordProductionBatchFingerprint(string endpoint,string actualSource,double elapsedMilliseconds)
@@ -249,6 +388,7 @@ namespace Game.Editor
                 var preparationTimer=Stopwatch.StartNew();
                 PrepareNativeSceneBaseline(jobs.Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text((JObject)v,"job_path"))));
                 preparationTimer.Stop();
+                Write("NativeInputBaselinePrepared",PrepareProductionNativeInputBaseline());
                 RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
                 var ownership=SkirmishProductionBatchOwnershipCensus.Capture();
                 baselineOwnership=SkirmishProductionBatchOwnershipCensus.CleanupSignature(ownership);

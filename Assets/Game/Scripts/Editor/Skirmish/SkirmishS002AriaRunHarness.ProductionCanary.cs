@@ -155,6 +155,25 @@ namespace Game.Editor
         }
         private static void RunOwnedProductionEntry(bool paidPlaneSupplement)
         {
+            if(productionBatch!=null){RunOwnedProductionEntryReady(paidPlaneSupplement);return;}
+            string job=Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_JOB");
+            string claim=Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM");
+            string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            var request=SkirmishProductionCanaryRequest.Read(root,job,claim,true,null);
+            string rawJobHash=SkirmishProductionCanaryRequest.FileHash(request.JobPath);
+            string claimHash=SkirmishProductionCanaryRequest.FileHash(request.ClaimPath);
+            BeginProductionNativeInputReadiness(report=>
+            {
+                if(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_JOB")!=job||
+                    Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_CLAIM")!=claim||
+                    SkirmishProductionCanaryRequest.FileHash(request.JobPath)!=rawJobHash||
+                    SkirmishProductionCanaryRequest.FileHash(request.ClaimPath)!=claimHash)
+                    throw new InvalidDataException("Actual owned request changed during input initialization.");
+                RunOwnedProductionEntryReady(paidPlaneSupplement);
+            },FailProductionNativeInputReadiness);
+        }
+        private static void RunOwnedProductionEntryReady(bool paidPlaneSupplement)
+        {
             if (productionCanary != null || SessionState.GetBool(Key, false) ||
                 EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating)
                 throw new InvalidOperationException("Production canary requires an idle unowned Editor.");

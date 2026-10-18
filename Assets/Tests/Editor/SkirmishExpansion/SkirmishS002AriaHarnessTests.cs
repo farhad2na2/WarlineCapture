@@ -23,6 +23,137 @@ namespace Game.Tests.Editor
     public sealed class SkirmishS002AriaHarnessTests
     {
 
+        private static Type NativeInputReadinessPolicyType()=>typeof(Game.Editor.SkirmishS002AriaRunHarness)
+            .GetNestedType("ProductionNativeInputReadinessPolicy",System.Reflection.BindingFlags.NonPublic);
+        private static object NewNativeInputReadinessPolicy()=>Activator.CreateInstance(NativeInputReadinessPolicyType(),
+            System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic,null,new object[]{0d},null);
+        private static bool ObserveNativeInputReadiness(object policy,double time,Newtonsoft.Json.Linq.JArray devices)
+            =>(bool)NativeInputReadinessPolicyType().GetMethod("Observe",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                .Invoke(policy,new object[]{time,devices});
+        public static void RunProductionNativeInputReadinessReducerControls()
+        {
+            Newtonsoft.Json.Linq.JObject Row(string layout,int id)=>new Newtonsoft.Json.Linq.JObject {
+                ["layout"]=layout,["device_id"]=id,["name"]=layout,["native"]=true,["enabled"]=true,["added"]=true };
+            Newtonsoft.Json.Linq.JArray Pair()=>new Newtonsoft.Json.Linq.JArray(Row("Keyboard",1),Row("Mouse",2));
+            var cold=NewNativeInputReadinessPolicy();
+            Assert.IsFalse(ObserveNativeInputReadiness(cold,1,new Newtonsoft.Json.Linq.JArray()));
+            Assert.IsFalse(ObserveNativeInputReadiness(cold,2,new Newtonsoft.Json.Linq.JArray()));
+            Assert.IsFalse(ObserveNativeInputReadiness(cold,3,Pair()));
+            Assert.IsTrue(ObserveNativeInputReadiness(cold,4,Pair()));
+            int controls=1;
+            var warm=NewNativeInputReadinessPolicy();var devices=Pair();
+            Assert.IsFalse(ObserveNativeInputReadiness(warm,1,devices));
+            Assert.IsTrue(ObserveNativeInputReadiness(warm,2,(Newtonsoft.Json.Linq.JArray)devices.DeepClone()));controls++;
+            var change=NewNativeInputReadinessPolicy();Assert.IsFalse(ObserveNativeInputReadiness(change,1,Pair()));
+            var extra=Pair();extra.Add(Row("Gamepad",3));
+            Assert.IsFalse(ObserveNativeInputReadiness(change,2,extra));
+            Assert.IsTrue(ObserveNativeInputReadiness(change,3,(Newtonsoft.Json.Linq.JArray)extra.DeepClone()));controls++;
+            foreach(string field in new[]{"native","enabled","added"})
+            {
+                var refused=Pair();refused[1][field]=false;
+                var policy=NewNativeInputReadinessPolicy();
+                Assert.IsFalse(ObserveNativeInputReadiness(policy,1,refused));
+                Assert.IsFalse(ObserveNativeInputReadiness(policy,2,refused));controls++;
+            }
+            foreach(string layout in new[]{"Keyboard","Mouse"})
+            {
+                var missing=new Newtonsoft.Json.Linq.JArray(Row(layout,1));var policy=NewNativeInputReadinessPolicy();
+                Assert.IsFalse(ObserveNativeInputReadiness(policy,1,missing));
+                Assert.IsFalse(ObserveNativeInputReadiness(policy,2,missing));controls++;
+            }
+            foreach(double stale in new[]{1d,.5d,double.NaN,double.PositiveInfinity})
+            {
+                var policy=NewNativeInputReadinessPolicy();Assert.IsFalse(ObserveNativeInputReadiness(policy,1,Pair()));
+                var error=Assert.Throws<System.Reflection.TargetInvocationException>(()=>ObserveNativeInputReadiness(policy,stale,Pair()));
+                Assert.IsInstanceOf<InvalidDataException>(error.InnerException);controls++;
+            }
+            var timeout=NewNativeInputReadinessPolicy();Assert.IsFalse(ObserveNativeInputReadiness(timeout,119,Pair()));
+            var expired=Assert.Throws<System.Reflection.TargetInvocationException>(()=>ObserveNativeInputReadiness(timeout,120,Pair()));
+            Assert.IsInstanceOf<TimeoutException>(expired.InnerException);controls++;
+            var immutable=NewNativeInputReadinessPolicy();var aliased=Pair();
+            Assert.IsFalse(ObserveNativeInputReadiness(immutable,1,aliased));aliased[0]["name"]="changed";
+            Assert.IsFalse(ObserveNativeInputReadiness(immutable,2,aliased));
+            Assert.IsTrue(ObserveNativeInputReadiness(immutable,3,(Newtonsoft.Json.Linq.JArray)aliased.DeepClone()));controls++;
+            Assert.AreEqual(14,controls);
+            Debug.Log("[ProductionNativeInputReadinessReducerControls] result=Passed controls=14 syntheticSnapshotsOnly=1 actualDeviceProof=0 missionReady=0");
+        }
+        public static void RunProductionNativeInputReadinessRefusalControls()
+        {
+            var method=typeof(Game.Editor.SkirmishS002AriaRunHarness).GetMethod("BeginProductionNativeInputReadiness",
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            const string key="Warline.Production.NativeInputPreparation";
+            bool previous=UnityEditor.SessionState.GetBool(key,false);
+            Assert.IsFalse(previous,"Exclusive idle refusal fixture required.");
+            int callbacks=0;Action<Newtonsoft.Json.Linq.JObject> ready=report=>callbacks++;
+            Action<Exception> failed=error=>callbacks++;
+            var before=Game.Editor.SkirmishProductionBatchOwnershipCensus.Capture()["input_devices"].DeepClone();
+            try
+            {
+                UnityEditor.SessionState.SetBool(key,true);
+                var busy=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{ready,failed}));
+                Assert.IsInstanceOf<InvalidOperationException>(busy.InnerException);
+                UnityEditor.SessionState.SetBool(key,false);
+                var missing=Assert.Throws<System.Reflection.TargetInvocationException>(()=>method.Invoke(null,new object[]{null,failed}));
+                Assert.IsInstanceOf<InvalidOperationException>(missing.InnerException);
+                Assert.AreEqual(0,callbacks);
+                Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(before,Game.Editor.SkirmishProductionBatchOwnershipCensus.Capture()["input_devices"]));
+            }
+            finally{UnityEditor.SessionState.SetBool(key,previous);}
+            Debug.Log("[ProductionNativeInputReadinessRefusalControls] result=Passed controls=2 actualGuard=1 callbacks=0 missionReady=0");
+        }
+
+        private static void BeginActualNativeInputReadinessControl(Action<Newtonsoft.Json.Linq.JObject> ready)
+        {
+            var method=typeof(Game.Editor.SkirmishS002AriaRunHarness).GetMethod("BeginProductionNativeInputReadiness",
+                System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            Action<Exception> failed=error=>{Debug.LogException(error);UnityEditor.EditorApplication.Exit(1);};
+            method.Invoke(null,new object[]{ready,failed});
+        }
+        private static void AssertActualNativeInputReadinessReport(Newtonsoft.Json.Linq.JObject report)
+        {
+            Assert.AreEqual(2,(int)report["stable_observations"]);
+            Assert.GreaterOrEqual((int)report["genuine_editor_updates"],2);
+            Assert.Less((double)report["elapsed_seconds"],120);
+            Assert.IsFalse((bool)report["ordinary_input_update_invoked"]);
+            Assert.GreaterOrEqual(((Newtonsoft.Json.Linq.JArray)report["stable_devices"]).Count,2);
+            foreach(string layout in new[]{"Keyboard","Mouse"})
+                Assert.IsTrue(System.Linq.Enumerable.Any((Newtonsoft.Json.Linq.JArray)report["stable_devices"],
+                    d=>(string)d["layout"]==layout&&(bool)d["native"]&&(bool)d["enabled"]&&(bool)d["added"]));
+        }
+        public static void RunProductionNativeInputReadinessWarmControls()
+        {
+            RunProductionNativeInputReadinessReducerControls();
+            RunProductionNativeInputReadinessRefusalControls();
+            BeginActualNativeInputReadinessControl(report=>
+            {
+                AssertActualNativeInputReadinessReport(report);
+                Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(report["initial"]["before_devices"],report["initial"]["after_devices"]));
+                Assert.GreaterOrEqual(((Newtonsoft.Json.Linq.JArray)report["initial"]["before_devices"]).Count,2,
+                    "This entry requires an already warm real native inventory; it is not cold proof.");
+                Debug.Log("[ProductionNativeInputReadinessWarmControls] result=Passed actualWarm=1 coldPending=1 missionReady=0");
+                UnityEditor.EditorApplication.Exit(0);
+            });
+        }
+        public static void RunProductionNativeInputReadinessColdThenWarmControls()
+        {
+            RunProductionNativeInputReadinessReducerControls();
+            RunProductionNativeInputReadinessRefusalControls();
+            BeginActualNativeInputReadinessControl(cold=>
+            {
+                AssertActualNativeInputReadinessReport(cold);
+                Assert.AreEqual(0,((Newtonsoft.Json.Linq.JArray)cold["initial"]["before_devices"]).Count,
+                    "Actual empty native inventory required; do not relabel warm execution as cold.");
+                BeginActualNativeInputReadinessControl(warm=>
+                {
+                    AssertActualNativeInputReadinessReport(warm);
+                    Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(cold["stable_devices"],warm["initial"]["before_devices"]));
+                    Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(cold["stable_devices"],warm["stable_devices"]));
+                    Debug.Log("[ProductionNativeInputReadinessColdWarmControls] result=Passed actualCold=1 actualWarm=1 exactInventory=1 missionReady=0");
+                    UnityEditor.EditorApplication.Exit(0);
+                });
+            });
+        }
+
         private static System.Reflection.MethodInfo FinishRecoveryMethod(string name)
         {
             var method=typeof(SkirmishS002AriaRunHarness).GetMethod(name,

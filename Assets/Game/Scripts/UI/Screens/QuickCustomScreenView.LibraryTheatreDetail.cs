@@ -99,6 +99,7 @@ namespace Game.UI.Runtime
                 // v37: no medal cabinet (per-battle medal states for a zone are not in the Theatre data; tier totals are
                 // shown in the medal row). Objective types take the middle and trailing columns.
                 DetailObjectives(root, fa, (fa ? trailX : middleX) + 6f, pad, middle + trail - 12f, innerH);
+                BuildTheatrePanel(pin, root);
                 return;
             }
 

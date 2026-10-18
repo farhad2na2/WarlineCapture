@@ -45,6 +45,13 @@ namespace Game.UI.Runtime
                     battles.Add(field.GridCards[i]);
             }
 
+            bool sheet = IsTheatreBottomSheet(parent);
+            if (sheet)
+            {
+                BuildTheatreSheetStrip(selectedZone, parent, battles, fa);
+                return;
+            }
+
             if (!TryTheatrePanelArea(parent, out Rect area, out Transform blurb))
             {
                 Debug.Log("[TheatrePanel] map=" + selectedZone.MapId + " battles=" + battles.Count + " skipped=no-area");
@@ -87,8 +94,144 @@ namespace Game.UI.Runtime
                     won++;
                 medals += MedalCount(card.Medals);
 
+                AddTheatreThumb(holder, card, x, y, thumbW, thumbH, fa);
+            }
+
+            Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
+                " battles=" + battles.Count +
+                " playable=" + playable +
+                " won=" + won +
+                " medals=" + medals +
+                " pinWon=" + selectedZone.WonCount + "/" + selectedZone.PublishedCount +
+                " thumb=" + thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") +
+                " layout=side rect=" + TheatrePanelRectCopy(parent, area) +
+                " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>The 4:3 detail panel is a wide, short bottom sheet (PresentTheatreDetailPanel's bottomSheet branch).</summary>
+        private static bool IsTheatreBottomSheet(RectTransform panel)
+        {
+            Vector2 size = panel.sizeDelta;
+            return size.y > 1f && size.y <= 260f && size.x >= size.y * 2.2f;
+        }
+
+        /// <summary>
+        /// 4:3 bottom sheet: the objective-type block (2 x 2 over the sheet's middle+trail columns) is re-flowed into one row
+        /// of four at the top of that column, and the district's battles run below it as a single horizontally scrolling
+        /// row inside the sheet. Everything stays inside the sheet rect, which PresentTheatreDetailPanel already keeps clear
+        /// of the territories and the zoom pill.
+        /// </summary>
+        private void BuildTheatreSheetStrip(SkirmishTheaterPinState zone, RectTransform sheet, List<SkirmishBattleCardState> battles, bool fa)
+        {
+            RectTransform heading = sheet.Find("ObjectiveHeading") as RectTransform;
+            if (heading == null || battles.Count == 0)
+            {
+                Debug.Log("[TheatrePanel] map=" + zone.MapId + " battles=" + battles.Count + " layout=sheet skipped=" + (heading == null ? "no-objectives" : "no-battles"));
+                return;
+            }
+
+            const float pad = 12f;
+            float colX = heading.anchoredPosition.x;
+            float colW = heading.sizeDelta.x;
+            float headingY = -heading.anchoredPosition.y;
+            float sheetH = sheet.sizeDelta.y;
+
+            // Objective types: one row of four (icon + caption), mirrored in FA.
+            float rowTop = headingY + heading.sizeDelta.y + 2f;
+            const float iconSize = 22f;
+            const float captionH = 22f;
+            float cellW = colW / 4f;
+            string[] objectives = SkirmishBattleLibraryArt.ObjectiveIds;
+            var captions = new List<RectTransform>();
+            for (int i = 0; i < sheet.childCount; i++)
+            {
+                if (sheet.GetChild(i) is RectTransform c && c.name == "Subtitle")
+                    captions.Add(c);
+            }
+
+            for (int i = 0; i < objectives.Length; i++)
+            {
+                int visual = fa ? objectives.Length - 1 - i : i;
+                float cellX = colX + visual * cellW;
+                if (sheet.Find("ObjectiveType_" + objectives[i]) is RectTransform icon)
+                    PlaceTopLeft(icon, fa ? cellX + cellW - iconSize - 4f : cellX + 4f, rowTop, iconSize, iconSize);
+                if (i < captions.Count)
+                {
+                    float capX = fa ? cellX + 2f : cellX + iconSize + 8f;
+                    PlaceTopLeft(captions[i], capX, rowTop, Mathf.Max(30f, cellW - iconSize - 10f), captionH);
+                }
+            }
+
+            float stripTop = rowTop + Mathf.Max(iconSize, captionH) + 6f;
+            float stripH = sheetH - pad - stripTop;
+            if (stripH < TheatrePanelMinThumb)
+            {
+                Debug.Log("[TheatrePanel] map=" + zone.MapId + " battles=" + battles.Count + " layout=sheet skipped=too-small strip=" + stripH.ToString("0"));
+                return;
+            }
+
+            float thumbH = Mathf.Min(stripH, 64f);
+            float thumbW = thumbH * 4f / 3f;
+            var area = new Rect(colX, stripTop, colW, thumbH);
+
+            // Masked viewport + ScrollRect so more battles than fit scroll sideways instead of spilling out of the sheet.
+            var viewport = new GameObject(TheatrePanelBattlesName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image), typeof(RectMask2D), typeof(ScrollRect)).GetComponent<RectTransform>();
+            viewport.SetParent(sheet, false);
+            PlaceTopLeft(viewport, area.x, area.y, area.width, area.height);
+            Image hit = viewport.GetComponent<Image>();
+            hit.color = new Color(0f, 0f, 0f, 0.01f);
+            var content = new GameObject("Content", typeof(RectTransform)).GetComponent<RectTransform>();
+            content.SetParent(viewport, false);
+            float contentW = battles.Count * thumbW + Mathf.Max(0, battles.Count - 1) * TheatrePanelGap;
+            PlaceTopLeft(content, fa ? Mathf.Min(0f, area.width - contentW) : 0f, 0f, contentW, thumbH);
+            ScrollRect scroll = viewport.GetComponent<ScrollRect>();
+            scroll.content = content;
+            scroll.viewport = viewport;
+            scroll.horizontal = true;
+            scroll.vertical = false;
+            scroll.movementType = ScrollRect.MovementType.Clamped;
+
+            int playable = 0, won = 0, medals = 0;
+            for (int i = 0; i < battles.Count; i++)
+            {
+                int visual = fa ? battles.Count - 1 - i : i;
+                SkirmishBattleCardState card = battles[i];
+                if (card.Access == SkirmishCardAccess.Playable) playable++;
+                if (card.Medals != SkirmishMedalMask.None) won++;
+                medals += MedalCount(card.Medals);
+                AddTheatreThumb(content, card, visual * (thumbW + TheatrePanelGap), 0f, thumbW, thumbH, fa);
+            }
+
+            int visible = Mathf.Min(battles.Count, Mathf.FloorToInt((area.width + TheatrePanelGap) / (thumbW + TheatrePanelGap)));
+            Debug.Log("[TheatrePanel] map=" + zone.MapId +
+                " battles=" + battles.Count +
+                " visible=" + visible +
+                " playable=" + playable +
+                " won=" + won +
+                " medals=" + medals +
+                " pinWon=" + zone.WonCount + "/" + zone.PublishedCount +
+                " thumb=" + thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") +
+                " layout=sheet rect=" + TheatrePanelRectCopy(sheet, area) +
+                " sheet=" + TheatrePanelRectCopy(sheet, new Rect(0f, 0f, sheet.sizeDelta.x, sheetH)) +
+                " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>Panel-local rect converted to the panel parent's (plate) top-left coordinates, "x,y,w,h".</summary>
+        private static string TheatrePanelRectCopy(RectTransform panel, Rect local)
+        {
+            float ox = panel.anchoredPosition.x;
+            float oy = -panel.anchoredPosition.y;
+            return (ox + local.x).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "," +
+                (oy + local.y).ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "," +
+                local.width.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + "," +
+                local.height.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private void AddTheatreThumb(RectTransform parent, SkirmishBattleCardState card, float x, float y, float thumbW, float thumbH, bool fa)
+        {
+            bool open = card.Access == SkirmishCardAccess.Playable;
                 var thumb = new GameObject("TheatreBattle_" + card.ScenarioId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
-                thumb.transform.SetParent(holder, false);
+                thumb.transform.SetParent(parent, false);
                 thumb.raycastTarget = false;
                 Texture2D preview = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
                 PlaceCoverPreview(thumb, thumbW, thumbH, preview, dimmed || !open);
@@ -124,16 +267,6 @@ namespace Game.UI.Runtime
                     PlaceTopLeft(lockIcon.rectTransform, (thumbW - lockSize) * 0.5f, (thumbH - lockSize) * 0.5f, lockSize, lockSize);
                     ShowIcon(lockIcon, SkirmishBattleLibraryArt.ResourceRoot + "icon_lock", Color.white);
                 }
-            }
-
-            Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
-                " battles=" + battles.Count +
-                " playable=" + playable +
-                " won=" + won +
-                " medals=" + medals +
-                " pinWon=" + selectedZone.WonCount + "/" + selectedZone.PublishedCount +
-                " thumb=" + thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") +
-                " locale=" + (fa ? "fa-IR" : "en"));
         }
 
         /// <summary>Space between the header block (Title/Stats/Rule/Preview) and the medal row or objective heading.</summary>

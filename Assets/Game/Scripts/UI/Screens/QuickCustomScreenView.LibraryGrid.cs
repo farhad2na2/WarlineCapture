@@ -24,14 +24,15 @@ namespace Game.UI.Runtime
             float cardWidth = GridCardWidth(gridWidth, columns, LibraryGridRightPad);
             bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
             float headerTop = SkirmishZoneTabWidget.BandBottom + 2f;
-            float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 34f;
+            float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 40f; // v37: two-line approved-3 headers
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
             // The text block under the picture used to consume the height the tabs gave up,
             // so a 155px card kept a 62px preview. Shorter title and subtitle leave the
             // picture at about half the card while the four rows still fit a wide frame.
-            float titleHeight = roomy ? LibraryGridRoomyTitleHeight : 20f;
-            float subtitleHeight = roomy ? LibraryGridRoomySubtitleHeight : 30f;
+            // v37 approved-3 (P1): cells carry no text block, so the art takes the whole cell (StyleApproved3Cell).
+            float titleHeight = 2f;
+            float subtitleHeight = 2f;
             bool stayInView = IsWideLibraryFrame(_libraryGrid);
             ResolveGridCard(viewport, objectives, titleHeight, subtitleHeight, stayInView, out float cardHeight, out float previewHeight);
             float stack = objectives * cardHeight + Mathf.Max(0, objectives - 1) * LibraryGridRowGap;
@@ -66,6 +67,7 @@ namespace Game.UI.Runtime
                     string headerCopy = fa || roomy ? armyLabel + " · " + startLabel : armyLabel + "\n" + startLabel;
                     SetCopy(header, headerCopy, roomy ? 18f : 16f, roomy ? 26f : 22f);
                     ShowColumnHeader(header, fa);
+                    StyleApproved3ColumnHeader(_libraryGrid, headerIcon, header, armyLabel, startLabel, columnX, headerTop, cardWidth, headerHeight, fa); // v37 P1
                 }
             }
 
@@ -85,6 +87,7 @@ namespace Game.UI.Runtime
                 zone.SetParent(content, false);
                 PlaceTopLeft(zone, 0f, y, gridWidth, cardHeight);
                 PresentGridRowLabel(zone, objective, fa, 0f);
+                StyleApproved3RowLabel(zone, objective, string.Equals(objective.ObjectiveId, field.SelectedObjectiveId, StringComparison.OrdinalIgnoreCase), cardHeight, fa); // v37 P1
                 for (int column = 0; column < columns; column++)
                 {
                     int index = row * columns + column;
@@ -100,6 +103,7 @@ namespace Game.UI.Runtime
                     AddSiblingShadow(widget);
                     if (!IsEmptyCard(card))
                         ApplyGridCardAccess(widget, card);
+                    StyleApproved3Cell(widget, card, IsEmptyCard(card), cardWidth, cardHeight, fa); // v37 P1
                 }
             }
 

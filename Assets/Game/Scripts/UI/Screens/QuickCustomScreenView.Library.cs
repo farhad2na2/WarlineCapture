@@ -14,10 +14,10 @@ namespace Game.UI.Runtime
         private const float LibraryFontFloor = 22f;
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
-        private const float LibraryGridCardGap = 3f;
+        private const float LibraryGridCardGap = 6f; // v37 approved-3 framed cells (was 3)
         private const float LibraryGridRightPad = 6f;
-        private const float LibraryGridOriginX = 84f;
-        private const float LibraryGridRowGap = 2f;
+        private const float LibraryGridOriginX = 112f; // v37 approved-3 row tiles (was 84)
+        private const float LibraryGridRowGap = 6f; // v37 approved-3 framed cells (was 2)
         private const float LibraryGridTitleHeight = 28f;
         private const float LibraryGridSubtitleHeight = 44f;
         private const float LibraryGridMedalSize = 14f;

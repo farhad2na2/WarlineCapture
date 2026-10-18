@@ -216,11 +216,8 @@ namespace Game.Editor
                 var serialized = new SerializedObject(view);
                 serialized.FindProperty("baseAssaultPreset").boolValue = true;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
-                view.Bind(default);
-                TheatreSeatGeometry.SeatingReady = false;
-                view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
-                var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
-                safeFrame?.ClearSimulatedInsets();
+                // Bind presents the library, and that presentation fits the cue. The shot
+                // locale has to be current first, or the opening Farsi 16:9 pass logs en.
                 string ratio = string.IsNullOrEmpty(size.Name) ? "unset" : size.Name.Replace('x', ':');
                 string shotLocale = GameLocalization.IsRightToLeft ? "fa" : "en";
                 float insetLeft = notch ? 132f : 0f;
@@ -236,6 +233,11 @@ namespace Game.Editor
                     insetTop,
                     0f,
                     0f);
+                view.Bind(default);
+                TheatreSeatGeometry.SeatingReady = false;
+                view.ApplyLibraryCaptureDemo(difficulty => SkirmishLibraryLaunchContext.Difficulty = difficulty);
+                var safeFrame = instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true);
+                safeFrame?.ClearSimulatedInsets();
                 Canvas.ForceUpdateCanvases();
                 instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
                 Canvas.ForceUpdateCanvases();
@@ -1817,6 +1819,24 @@ namespace Game.Editor
                     "Theatre card art for " + mapId + " is tinted locale=" + locale +
                     " tint=" + art.color.r.ToString("0.00") + "," + art.color.g.ToString("0.00") + "," + art.color.b.ToString("0.00") +
                     " alpha=" + art.color.a.ToString("0.00") + ".");
+            }
+
+            float nameShare = QuickCustomScreenView.NameStripShare(card);
+            if (nameShare > 0.25f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre name strip covers more than 25% of the card locale=" + locale +
+                    " card=ZoneCard_" + mapId +
+                    " share=" + nameShare.ToString("0.00") + ".");
+            }
+
+            float contrast = QuickCustomScreenView.PlateLuminanceContrast(mapId);
+            if (contrast < 0.07f)
+            {
+                throw new InvalidOperationException(
+                    "Theatre plate luminance contrast is under the floor locale=" + locale +
+                    " map=" + mapId +
+                    " contrast=" + contrast.ToString("0.000") + ".");
             }
 
             Transform disc = card.Find("RingDisc");

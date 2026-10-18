@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "kind": "DisabledS026ExistingCampaignNativeFitMeasurementPlan",
+  "enabled": false,
+  "status": "Disabled_FailedActualPreflight_NoNativeLaunch",
+  "created_utc": "2026-10-18T21:10:58.905936+00:00",
+  "project": "/Volumes/T7/Projects/WarlineCapture",
+  "head": "d88439d63e614cc379896eb023070c5e4878b6dc",
+  "branch": "main",
+  "unrelated_tracked_changes": [
+    "M \"Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset\"",
+    " M Design/AgentReports/SkirmishExpansion/S005/TECHNICAL_READINESS_CURRENT.json"
+  ],
+  "frozen_bfbc_checkout_untouched": true,
+  "project_editor_version": "6000.5.8f1",
+  "pipeline_package": "0.6.0-exp.1",
+  "complete_observed_source_dll_snapshot": {
+    "path": "/private/tmp/warline-mac-support-20261018/s026-disabled-native-fit/current-source-dll-observation.json",
+    "sha256": "ebef3a5eac44947cf4b45d8c95176aab15aa5533784787fda07ccbcc9c16065e",
+    "bytes": 9507312,
+    "source_rows": 44228,
+    "candidate_sha256": "80e4846c385330a3c712169f88b67a5f58fa194a9236270c2b21cc0b63c707b2",
+    "dll_rows": 192,
+    "build_sha256": "fc9ddf796bbb701f37cd95b205c5011ce81de91c26c8ebd2a9ff61592a6152eb",
+    "scope": "Single read-only observation; retained DLLs not proof of current compiler consumption; refresh actual pins after reviewed prerequisites before any launch."
+  },
+  "editor_dll_observation": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Library/ScriptAssemblies/Game.Editor.dll",
+    "sha256": "7d63b3b18813357cf8a2e2fdd3783554011d1a4c1e57b786423c0be21685b435",
+    "bytes": 8887296,
+    "mtime_ns": 1792181999921382000,
+    "method_names_present_as_binary_bytes_only": {
+      "InspectBoundedMaterializedPilotInputs": true,
+      "RunBoundedMaterializedPilot": true,
+      "RunAll120RequestedSourceLogicalRefinement": false,
+      "TryCreateGroundBa10Candidate": true,
+      "MpPilotServiceAccess": false,
+      "PreferencePathsIndependent": true
+    },
+    "current_compiler_consumption_proven": false
+  },
+  "input_authority_checks": [
+    {
+      "role": "full_index",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+      "sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+      "actual_sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+      "matches": true
+    },
+    {
+      "role": "logical_inputs_manifest",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/manifest.json",
+      "sha256": "ffcb26db314df6cc47df9c30fcc85b7262c4a88cb058338f8db110dc851a2c2f",
+      "actual_sha256": "ffcb26db314df6cc47df9c30fcc85b7262c4a88cb058338f8db110dc851a2c2f",
+      "matches": true
+    },
+    {
+      "role": "pilot_candidates",
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/measured-pad-bounds-proposals-survey11-v2.json",
+      "sha256": "9303662a122caaa1256f67fc21eeb8bd684364958ecd5f42ae8753d626ef7634",
+      "actual_sha256": "9303662a122caaa1256f67fc21eeb8bd684364958ecd5f42ae8753d626ef7634",
+      "matches": true
+    },
+    {
+      "role": "source_survey",
+      "path": "Logs/SkirmishProduction/ground-source-fit-20261015-11.json",
+      "sha256": "18b520ff6cb45a25f645502cba1787b27375cb52a20843195dd501e3b7029f73",
+      "actual_sha256": null,
+      "matches": false
+    }
+  ],
+  "source": {
+    "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+    "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+    "gridAssetSha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+    "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+    "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+    "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0"
+  },
+  "source_raw_pin_checks": [
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+      "expected_sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+      "actual_sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+      "matches": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "expected_sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "actual_sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "expected_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "actual_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "matches": true
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+      "expected_sha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+      "actual_sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+      "matches": false
+    },
+    {
+      "path": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+      "expected_sha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+      "actual_sha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+      "matches": true
+    }
+  ],
+  "physical_scene_pins": {
+    "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity": {
+      "sha256": "f84d4301477a588cc7c324170aec2d767729d32730d81493bc1336b09e5ef08f",
+      "bytes": 2501562,
+      "meta_sha256": "f07b2e83e504b519389c8ac740a8bbe7c6423f6b9e3acf6f108a18b39256d6b8"
+    },
+    "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity": {
+      "sha256": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+      "bytes": 375895414,
+      "meta_sha256": "44f0ba1b5c8f8038d7e4dcda9669c7ea6be1e32d6165635f41c0b0e88036e40d"
+    },
+    "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity": {
+      "sha256": "637752a992d6a08bf4bcc273b2a05a57ad33d1c15032b73752b13309a27c07f5",
+      "bytes": 10785,
+      "meta_sha256": "6a3ed2e2a005f4f5d3befd95dca7818c6e25f8c18ef3f32943a27482eae7de6f"
+    }
+  },
+  "code_and_policy_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedPilot.cs": "6cae095dc59f805df01e11dbac07900b7c9c5847b7e4396adce2ced62239082b",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs": "aad0003e7f795091a84d0146afb2009e61664b28e25a29a9a20cfb79c916f109",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.All120Refinement.cs": "1d5a2bb0bc87d1a110de026dd395874466c3c383aecf57e2b9d1a344fe9e12fa",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs": "c00fddd9eb6b6b5b53f56912ed1966de42605ba3a4ba8887d31202214a344576",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs": "afd09342084fc5b5139af2c54dce7780fa7d14337ccbaa541300b5671051fd5c",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RouteIndependence.cs": "808c794027640122fecd37114940c4c2e76600c93155eb84b7bd6a4bf48cf2a2",
+    "Tools/CI/invoke_unity_macos.sh": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+    "ProjectSettings/ProjectVersion.txt": "09292e3f32140b54a6f8b5b377812ef2a19fd855ee0a3cb30d2a5fa5f421b10a",
+    "Packages/manifest.json": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683",
+    "AGENTS.md": "c0e4bea7e0c40cc397656210594c1aeea85cbc34554404be3629dc7140cddbcf",
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+    "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+    "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252"
+  },
+  "mission": {
+    "catalog_id": "S026",
+    "definition_id": "skirmish.s026",
+    "scenario_setup_id": "scenario.skirmish.s026",
+    "tuple": {
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E"
+    },
+    "catalog_status": "Planned",
+    "protected_binding": null,
+    "persisted_S026_assets_present": false,
+    "template_catalog_id": "S032",
+    "template_usage": "Existing CC/G/E/FC logical frame/source only; own S026 BA objective, three budgets, forces, caps, grants, deadlines and packets retained.",
+    "own_budget_rows_sha256": "6c9c35526c0168edfdceafec3f8079362b0fd237b6d422016dbacfbc03bad77b",
+    "packet_baseline_seeds": [
+      104755,
+      130389,
+      155947
+    ],
+    "canonical_locales": [
+      "EN",
+      "FA"
+    ],
+    "both_direct_and_flank_required": true,
+    "all_three_existing_authored_routes_retained": true
+  },
+  "observed_process_state": {
+    "initial_unrelated_SCN13_editor": {
+      "pid": 76525,
+      "project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "observed_start_local": "2026-10-18 23:02:45",
+      "later_no_longer_observed": true,
+      "outcome": "Unknown_NotOurValidation"
+    },
+    "later_unrelated_SCN13_editor": {
+      "pid": 77479,
+      "ppid": 77472,
+      "project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13",
+      "observed_start_local": "2026-10-18 23:05:26",
+      "mode": "Focused library capture",
+      "child_import_worker_pid": 77527,
+      "touched": false
+    },
+    "primary_editor_pid_observed": null,
+    "primary_lockfile": "Absent at ownership check",
+    "pipeline_inventory": "Claims primary isRunning but unreachable; SafeMode null; not authoritative ownership proof",
+    "status": "STATUS_NO_INSTANCES",
+    "list_command": "No Pipeline instance for exact primary project",
+    "scope": "Observations at different times; revalidate full PID/birth/argv/project/tree before any future action. No termination or launch performed.",
+    "hub": {
+      "pid": 55563,
+      "version": "3.22.3",
+      "licensing_bundle_version": "1.18.3+d7ffd15",
+      "open": true,
+      "fresh_signed_in_state": "Pending; startup metadata indicates signed-in but is not a fresh auth check."
+    }
+  },
+  "existing_api_scope": {
+    "bounded_method": "RunBoundedMaterializedPilot",
+    "bounded_scope": "StaticPlacementOnly_NotSourceFit; not selected as full-fit producer.",
+    "selected_method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120RequestedSourceLogicalRefinement",
+    "source_present": true,
+    "method_name_absent_in_current_GameEditor_binary": true,
+    "collector_scope": "Exact one source group CC, one requested mission S026, one source world, all3 durable sizes and cleanup; bounded logical placement/normal compiler outputs stay unqualified.",
+    "service_and_route_gap": "SimultaneousRefinement exact profile independence and complete per-member service proof are activated only by replay/MP/AP flags. Ordinary CC does not obtain MP/AP full service/profile evidence. No per-S026 switch or permission controller is proposed.",
+    "authored_sizes_compile_seed": 1,
+    "actual_packet_seed_native_fit": "Not measured; seed1 compiler/logical snapshots are not actual seed104755/130389/155947 fit authority."
+  },
+  "disabled_invocation_reference": {
+    "cwd": "/Volumes/T7/Projects/WarlineCapture",
+    "argv": [
+      "rtk",
+      "proxy",
+      "/Volumes/T7/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "/Volumes/T7/Projects/WarlineCapture",
+      "--timeout",
+      "900",
+      "--log",
+      "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS026Fit/proposal-8d7b7e35465e45bca1627badd8d4051c/unity.log",
+      "--",
+      "-quit",
+      "-executeMethod",
+      "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120RequestedSourceLogicalRefinement"
+    ],
+    "environment": {
+      "WARLINE_ALL120_REFINEMENT_SOURCE_GROUP": "CC",
+      "WARLINE_ALL120_REFINEMENT_CATALOG_IDS": "S026",
+      "WARLINE_ALL120_REFINEMENT_OUTPUT": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS026Fit/proposal-8d7b7e35465e45bca1627badd8d4051c/report.json"
+    },
+    "output_directory_created": false,
+    "timeout_seconds": 900,
+    "required_unique_marker": "[All120RequestedSourceLogicalRefinement] result=CollectedUnqualified source=CC missions=1 distinctSizeRows=3 sourceWorlds=1 sourceFitCertified=0 cameraAccepted=0 normalMissionReady=0",
+    "required_wrapper_exit": 0,
+    "marker_is_not_full_fit_proof": true,
+    "fresh_gui_wrapper_only": true,
+    "reuse_editor_or_eval_controller": false
+  },
+  "failed_or_pending_gates": [
+    {
+      "gate": "original_survey11",
+      "state": "FailedMissingAuthority",
+      "path": "Logs/SkirmishProduction/ground-source-fit-20261015-11.json",
+      "expected_sha256": "18b520ff6cb45a25f645502cba1787b27375cb52a20843195dd501e3b7029f73"
+    },
+    {
+      "gate": "host_raw_grid_pin",
+      "state": "FailedCurrentProducerExactHash",
+      "bridge_observation": "grid-host-representation.disabled.json",
+      "bridge_supported_by_current_producer": false
+    },
+    {
+      "gate": "current_compiled_api",
+      "state": "PendingFreshCheckedCompilationAndActualCallability",
+      "existing_DLL_not_fresh": true
+    },
+    {
+      "gate": "CC_full_service_profile_and_route_independence",
+      "state": "FailedForFullFit_UnsupportedOrdinaryCCPath",
+      "must_not_emit_FullTupleNativeFitPassed": true
+    },
+    {
+      "gate": "new_run_review_and_exact_source_settings_GUI_baseline",
+      "state": "PendingSeparateReview_NoReuseOfConsumedR6"
+    },
+    {
+      "gate": "Hub_fresh_signin_and_process_ownership",
+      "state": "PendingRecheckBeforeAnyLaunch"
+    }
+  ],
+  "required_future_native_evidence": [
+    "Actual one loaded source grid/surface matches source dimensions2048x1024/cell1/origin0, correct scenes/identity and complete Campaign geometry.",
+    "Each own size has exact complete facilities by native prefab whole-footprint/clearance, no decorative duplicate, no truncated facility set.",
+    "All requested combat/logistics/support actors packed inside legal typed pads on traversable surface, with full actor footprint and same facility reservations; no force/budget/cap reductions.",
+    "Exact full native paths for authored main/flank_a/flank_b and both packet attack approaches, all required profiles, with actual facilities/occupancy; independent interior corridors/endpoints, no shared bottleneck hidden by query status.",
+    "Complete required service ingress AND return for each actual member under same native source grid/placement; unsupported proof is failed, not inferred from MP/AP fixture.",
+    "Both designated bases/ownership and BA direct+flank geometry retained; no outcomes injected.",
+    "All3 durable size artifacts and mission JSON match source/layout/setup identities; pre/post source/settings/globalGUI and scene/world/owned-actor cleanup compare exactly.",
+    "Partial, timeout, missing marker, failed size, project lock or unavailable path stays failed/unqualified; retain all evidence.",
+    "Normal mission/ARIA/paid lifecycle/camera/view/device/checkpoint acceptance and real native tuple-fit authority remain separate."
+  ],
+  "prohibited": [
+    "New physical Campaign derivatives/terrain/roads/bridges/runways",
+    "AI/army/economy/camera shortcuts or source-grid rewriting",
+    "Changing historical survey or global authority",
+    "Permission C# controller/new fit-authority producer",
+    "Production queue claims or normal-mission launches",
+    "Copying Library, direct Unity, macOS batchmode, licensing reset, or touching unrelated SCN13 Editor"
+  ],
+  "native_jobs": 0,
+  "queue_claims": 0,
+  "source_fit_certified": false,
+  "FullTupleNativeFitPassed": false,
+  "normal_mission_ready": false,
+  "qualified": false,
+  "fresh_survey_replacement_proposal": {
+    "path": "fresh-source-survey.disabled.json",
+    "sha256": "6c5382477784fe506615167e53a87bc5654427912e7b71e2ac796830785792a5",
+    "existing_API_fixed_four_sources": true,
+    "single_CC_public_producer_available": false,
+    "historical_input_not_reconstructed_or_transferred": true,
+    "new_reviewed_generation_required": true
+  },
+  "historical_transfer_status": {
+    "source": "DirectWindowsRootMessage",
+    "action": "Publishing historical survey11 to an auxiliary Git branch",
+    "outcome": "Automatic approval review rejected; transfer not performed",
+    "detailed_reason_supplied": false,
+    "do_not_attempt_indirect_transfer_or_workaround": true,
+    "historical_input_gate_remains_missing": true
+  }
+}

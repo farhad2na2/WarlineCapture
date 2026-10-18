@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kind": "ScopedHostRepresentationObservation_NotAcceptedAuthority",
+  "enabled": false,
+  "scope": {
+    "catalog_id": "S026",
+    "source_group": "CC",
+    "exact_path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+    "no_global_normalization": true
+  },
+  "original_windows_authority": {
+    "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+    "sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+    "grid_raw_sha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+    "grid_bytes": 1439,
+    "CRLF_count": 42,
+    "independent_windows_raw_observation": "Root reports1439bytes/42CRLF/raw20f6f29; original Windows bytes not copied to Mac."
+  },
+  "actual_mac": {
+    "raw_sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+    "bytes": 1397,
+    "CRLF_count": 0,
+    "LF_count": 42,
+    "head_git_blob": "074363dc57b212def3d5dd96426ee9c74294b34f",
+    "published_b05_git_blob": "074363dc57b212def3d5dd96426ee9c74294b34f",
+    "working_bytes_equal_HEAD_blob": true
+  },
+  "exact_transform_proof": "Read actual1397byte LF file, require zero CR and exactly42LF, replace only LF with CRLF in memory; derived1439bytes SHA equals original20f6f29. Removing only inserted CR bytes is inverse. No file rewritten.",
+  "existing_producer_support": false,
+  "actual_rejection_sites": [
+    "GroundObjective30.cs:109 and187 raw source/grid/surface Hash equality",
+    "GroundObjective30Authoring.cs:100-101 grid/surface raw hash preflight",
+    "BoundedPilot.cs:52-57 raw source and candidate pin equality"
+  ],
+  "smallest_shared_producer_gap": "A separately reviewed exact-path/authority-pinned host-representation adapter at existing pre/post raw-pin readers; retain original Windows raw digest and actual Mac raw/Git blob/strict EOL proof. Existing frozen producer has no such input and cannot consume this observation. Do not rewrite grid, historical survey or global authority and do not silently normalize arbitrary assets.",
+  "source_fit_certified": false,
+  "authority_issued": false
+}

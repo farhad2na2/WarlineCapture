@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "kind": "DisabledFreshMacSourceSurveyPlan_NotHistoricalTransfer",
+  "enabled": false,
+  "existing_method": "Game.Editor.SkirmishGroundSourceFitSurvey.Run",
+  "source_path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs",
+  "source_sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+  "source_lines": "31-60,175-240",
+  "inventory": {
+    "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+    "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+    "matrix_path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+    "matrix_expected_sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+    "matrix_actual_sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97"
+  },
+  "existing_scope": {
+    "source_groups": [
+      "CC",
+      "AP",
+      "MP",
+      "IB"
+    ],
+    "source_group_filter_supported": false,
+    "requested_id_filter_supported": false,
+    "registry_hierarchy_worlds": 1,
+    "source_worlds": 4,
+    "worlds_sequential": true,
+    "requests": [
+      {
+        "catalog_id": "S026",
+        "group": "CC"
+      },
+      {
+        "catalog_id": "S049",
+        "group": "MP"
+      },
+      {
+        "catalog_id": "S050",
+        "group": "MP"
+      },
+      {
+        "catalog_id": "S074",
+        "group": "IB"
+      },
+      {
+        "catalog_id": "S097",
+        "group": "AP"
+      },
+      {
+        "catalog_id": "S098",
+        "group": "AP"
+      }
+    ],
+    "mandatory_internal_controls": [
+      "RunPilotLogicalAuthoringControls",
+      "RunPilotCompoundReservationControls"
+    ]
+  },
+  "why_legitimate_fresh_producer": "Uses actual local pinned physical assets and new native source worlds. SurveyGroup records actual grid/surface raw hashes at188-189 and actual prefab/facility/packing/path observations. It does not require historical survey11 to produce a new report. New report is separately reviewed new provenance, never historical18b520ff data or a transfer substitute.",
+  "scope_gate": "Existing Run is fixed4source, not the singleCC/S026 lane. No launch authorized. If a one-source producer is required, smallest gap is a shared explicit source-group/request subset entry calling existing SurveyGroup with same checks; no such public entry is supplied by current code. Do not invent its API or add a per-S026 permission controller.",
+  "disabled_invocation_reference": {
+    "argv": [
+      "rtk",
+      "proxy",
+      "/Volumes/T7/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "/Volumes/T7/Projects/WarlineCapture",
+      "--timeout",
+      "900",
+      "--log",
+      "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS026Fit/proposal-8d7b7e35465e45bca1627badd8d4051c/fresh-source-survey-unity.log",
+      "--",
+      "-quit",
+      "-executeMethod",
+      "Game.Editor.SkirmishGroundSourceFitSurvey.Run"
+    ],
+    "environment": {
+      "WARLINE_GROUND_SOURCE_SURVEY_OUTPUT": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS026Fit/proposal-8d7b7e35465e45bca1627badd8d4051c/fresh-source-survey-new-generation.json"
+    },
+    "unique_collected_marker": "[SkirmishGroundSourceFitSurvey] result=Collected sources=4 runtimeFitCertified=0 paidAircraftLifecycleCertified=0",
+    "wrapper_exit_required": 0,
+    "no_command_executed": true
+  },
+  "strict_review_after_any_future_run": [
+    "collectionErrors0 is necessary, not source-fit proof. Every needed source row must contain actual BakedGridSurfaceQueries_NoRuntimeOccupancyCertificate and exact one grid/surface; decoded/unavailable fallback is not admissible native fit.",
+    "Validate all own S026 budgets/prefab lineages/facilities/packing/paths/service independently; full-fit missing remains failed.",
+    "Preserve actual Mac raw grid hash8ef1b3 and original Windows20f6f29 with scoped proof; no historical/global pin rewriting.",
+    "A genuinely new local survey has new content/SHA and requires a new reviewed authority generation and consumer integration; old constant-pinned envelopes do not silently accept it.",
+    "Retain pre/post actual source/settings/globalGUI/process/world/scene/actor evidence, owned wrapper return and output exclusivity."
+  ],
+  "transfer_rejection": {
+    "source": "DirectWindowsRootMessage",
+    "action": "Publishing historical survey11 to an auxiliary Git branch",
+    "outcome": "Automatic approval review rejected; transfer not performed",
+    "detailed_reason_supplied": false,
+    "do_not_attempt_indirect_transfer_or_workaround": true,
+    "historical_input_gate_remains_missing": true
+  },
+  "current_compilation_verified": false,
+  "native_authorized": false,
+  "native_jobs": 0,
+  "source_fit_certified": false,
+  "authority_issued": false
+}

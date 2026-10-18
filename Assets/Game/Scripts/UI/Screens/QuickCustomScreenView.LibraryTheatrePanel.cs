@@ -19,7 +19,8 @@ namespace Game.UI.Runtime
     public sealed partial class QuickCustomScreenView
     {
         private const string TheatrePanelBattlesName = "TheatreBattles";
-        private const int TheatrePanelColumns = 6;
+        private const float TheatrePanelSideMinW = 64f;
+        private const int TheatrePanelSideMaxColumns = 4;
         private const float TheatrePanelMinThumb = 28f;
         private const float TheatrePanelGap = 4f;
         private const int TheatreCompactColumns = 3;
@@ -63,19 +64,32 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            int rowsNeeded = Mathf.Max(1, Mathf.CeilToInt(battles.Count / (float)TheatrePanelColumns));
-            float thumbW = (area.width - TheatrePanelGap * (TheatrePanelColumns - 1)) / TheatrePanelColumns;
-            float thumbH = Mathf.Min(thumbW * 0.75f, (area.height - TheatrePanelGap * (rowsNeeded - 1)) / rowsNeeded);
             if (battles.Count == 0)
             {
                 Debug.Log("[TheatrePanel] map=" + selectedZone.MapId + " battles=0 skipped=no-battles");
                 return;
             }
 
-            if (thumbH < TheatrePanelMinThumb)
+            // v41b (Game PM v90 review): approved-1 grid of readable thumbnails. As many columns as keep a thumbnail
+            // >= 64px wide (3-4 in the 16:9 side panel), as many rows as fit; when battles remain the last slot is "+N".
+            int columns = Mathf.Clamp(Mathf.FloorToInt((area.width + TheatrePanelGap) / (TheatrePanelSideMinW + TheatrePanelGap)), 1, TheatrePanelSideMaxColumns);
+            float thumbW = (area.width - TheatrePanelGap * (columns - 1)) / columns;
+            float thumbH = thumbW * 0.75f;
+            int rows = Mathf.FloorToInt((area.height + TheatrePanelGap) / (thumbH + TheatrePanelGap));
+            if (thumbW < TheatrePanelSideMinW || rows < 1)
             {
                 BuildTheatreCompact(selectedZone, parent, area, blurb, battles, fa);
                 return;
+            }
+
+            rows = Mathf.Min(rows, Mathf.CeilToInt(battles.Count / (float)columns));
+            int slots = rows * columns;
+            int shown = Mathf.Min(battles.Count, slots);
+            int more = battles.Count - shown;
+            if (more > 0)
+            {
+                shown--;
+                more++;
             }
 
             // The zone blurb sat in this space; the battle list replaces it (it is still the zone's own copy elsewhere).
@@ -91,24 +105,37 @@ namespace Game.UI.Runtime
             int medals = 0;
             for (int i = 0; i < battles.Count; i++)
             {
-                SkirmishBattleCardState card = battles[i];
-                int column = i % TheatrePanelColumns;
-                int row = i / TheatrePanelColumns;
-                int visual = fa ? TheatrePanelColumns - 1 - column : column;
-                float x = visual * (thumbW + TheatrePanelGap);
-                float y = row * (thumbH + TheatrePanelGap);
-                bool open = card.Access == SkirmishCardAccess.Playable;
-                if (open)
+                if (battles[i].Access == SkirmishCardAccess.Playable)
                     playable++;
-                if (card.Medals != SkirmishMedalMask.None)
+                if (battles[i].Medals != SkirmishMedalMask.None)
                     won++;
-                medals += MedalCount(card.Medals);
+                medals += MedalCount(battles[i].Medals);
+            }
 
-                AddTheatreThumb(holder, card, x, y, thumbW, thumbH, fa);
+            for (int i = 0; i < shown; i++)
+            {
+                int column = i % columns;
+                int visual = fa ? columns - 1 - column : column;
+                AddTheatreThumb(holder, battles[i], visual * (thumbW + TheatrePanelGap), (i / columns) * (thumbH + TheatrePanelGap), thumbW, thumbH, fa);
+            }
+
+            if (more > 0)
+            {
+                int column = shown % columns;
+                int visual = fa ? columns - 1 - column : column;
+                TMP_Text rest = CreateLabel(holder, "MoreBattles", 18f);
+                PlaceTopLeft(rest.rectTransform, visual * (thumbW + TheatrePanelGap), (shown / columns) * (thumbH + TheatrePanelGap), thumbW, thumbH);
+                string moreCopy = "+" + more;
+                SetCopy(rest, fa ? SkirmishWidgetContext.ToPersianDigits(moreCopy) : moreCopy, TheatreCompactMinText, 18f);
+                rest.textWrappingMode = TextWrappingModes.NoWrap;
+                FitReadableLine(rest, thumbW, TheatreCompactMinText);
             }
 
             Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
                 " battles=" + battles.Count +
+                " visible=" + shown +
+                " more=" + Mathf.Max(0, more) +
+                " columns=" + columns + " rows=" + rows +
                 " playable=" + playable +
                 " won=" + won +
                 " medals=" + medals +

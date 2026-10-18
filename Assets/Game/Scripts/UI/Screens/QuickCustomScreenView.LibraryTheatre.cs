@@ -1694,10 +1694,47 @@ namespace Game.UI.Runtime
             PlaceDistrictHalo(root, local, color);
         }
 
+        /// <summary>
+        /// Hot band measured from the stroke. It stays inside the 19px reach, so the gap does not move.
+        /// </summary>
+        private const float GlowCoreBand = 6f;
+
+        /// <summary>
+        /// White mix at the stroke. v73 (<c>575998cbd</c>) put a 0.22 lift on the 4px ink and drew it
+        /// over the halo. This halo is painted last and opaque, so the core carries that heat itself.
+        /// </summary>
+        private const float GlowCoreLift = 0.38f;
+
+        /// <summary>
+        /// v73's outer stroke is <see cref="DistrictNeon"/> with no white lift: the peak-normalized
+        /// district hue. The flat halo tint pulled that hue 5% toward white.
+        /// </summary>
+        private static Color DistrictGlowEdge(Color zone)
+        {
+            return DistrictNeon(zone, 0f);
+        }
+
+        private static Color DistrictGlowCore(Color zone)
+        {
+            return Color.Lerp(DistrictGlowEdge(zone), Color.white, GlowCoreLift);
+        }
+
+        private static float GlowLuminance(Color color)
+        {
+            return color.r * 0.299f + color.g * 0.587f + color.b * 0.114f;
+        }
+
+        private static float GlowSaturation(Color color)
+        {
+            float max = Mathf.Max(color.r, Mathf.Max(color.g, color.b));
+            float min = Mathf.Min(color.r, Mathf.Min(color.g, color.b));
+            return max > 0.001f ? (max - min) / max : 0f;
+        }
+
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
         {
             const float pad = 22f;
-            Sprite halo = BuildDistrictHalo(localPoints, pad);
+            Sprite halo = BuildDistrictHalo(localPoints, pad, color);
             if (halo == null || root == null)
                 return;
             BoundsOf(localPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
@@ -1706,16 +1743,15 @@ namespace Game.UI.Runtime
             image.sprite = halo;
             image.type = Image.Type.Simple;
             image.material = null;
-            Color glow = DistrictNeon(color, 0.05f);
-            glow.a = 1f;
-            image.color = glow;
+            // The sprite holds the district hue. A tint here would wash the core and the edge again.
+            image.color = Color.white;
             image.raycastTarget = false;
             PlaceTopLeft(image.rectTransform, minX - pad, minY - pad, (maxX - minX) + pad * 2f, (maxY - minY) + pad * 2f);
             image.rectTransform.localScale = Vector3.one;
             image.rectTransform.SetAsLastSibling();
         }
 
-        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad)
+        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad, Color color)
         {
             if (localPoints == null || localPoints.Length < 3)
                 return null;
@@ -1726,11 +1762,12 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            // Solid out to the reach the gap math subtracts. The 22px pad still
-            // holds the capture rect. No fade inside the reach, so the bloom
-            // stays as thick as the painted halo.
+            // Alpha stays solid out to the reach the gap math subtracts. The 22px pad
+            // still holds the capture rect. Intensity changes inside that reach:
+            // a brightened core on the stroke, then the saturated district hue.
             float reach = TheatreSeatGeometry.DistrictGlowReach;
-            float shoulder = TheatreSeatGeometry.DistrictGlowReach;
+            Color edge = DistrictGlowEdge(color);
+            Color core = DistrictGlowCore(color);
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -1741,12 +1778,25 @@ namespace Game.UI.Runtime
                 {
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
-                    float band = 1f;
-                    float span = reach - shoulder;
-                    if (dist > shoulder)
-                        band = span > 0.01f ? 1f - Mathf.Clamp01((dist - shoulder) / span) : 0f;
-                    byte alpha = (byte)Mathf.Clamp(Mathf.RoundToInt(band * 255f), 0, 255);
-                    pixels[target + x] = new Color32(255, 255, 255, alpha);
+                    if (dist > reach)
+                    {
+                        // Keep the hue in the clear texels so bilinear filtering does not darken the rim.
+                        pixels[target + x] = new Color32(
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.r * 255f), 0, 255),
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.g * 255f), 0, 255),
+                            (byte)Mathf.Clamp(Mathf.RoundToInt(edge.b * 255f), 0, 255),
+                            0);
+                        continue;
+                    }
+
+                    float along = GlowCoreBand > 0.01f ? Mathf.Clamp01(dist / GlowCoreBand) : 1f;
+                    along = along * along * (3f - 2f * along);
+                    Color rgb = Color.Lerp(core, edge, along);
+                    pixels[target + x] = new Color32(
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.r * 255f), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.g * 255f), 0, 255),
+                        (byte)Mathf.Clamp(Mathf.RoundToInt(rgb.b * 255f), 0, 255),
+                        255);
                 }
             }
 
@@ -2246,10 +2296,13 @@ namespace Game.UI.Runtime
             shadow.gameObject.SetActive(false);
         }
 
+        /// <summary>Why the zoom cue kept its size. Captured as <c>[ZoomCue] reason=</c>.</summary>
+        private static string ZoomCueFitReason = "unset";
+
         /// <summary>
         /// Zoom label at 16–26px inside the 36–52px tab. One line when the card width holds it,
         /// otherwise a split at a space. Tracking stays at 0 until the line needs −12.
-        /// Farsi tries 22–26 on two tighter lines before that search. The size never drops under 16.
+        /// Farsi stays on 22–26. The size never drops under 16.
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
@@ -2275,41 +2328,74 @@ namespace Game.UI.Runtime
                     cue.maxVisibleLines = 1;
                     cue.ForceMeshUpdate();
                     if (cue.preferredHeight <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
+                    {
+                        ZoomCueFitReason = "fallback";
                         return;
+                    }
                 }
 
                 cue.characterSpacing = 0f;
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
+                {
+                    ZoomCueFitReason = "fallback";
                     return;
+                }
+
                 cue.characterSpacing = -12f;
                 if (CueLabelSplits(cue, source, size, boxW, boxH))
+                {
+                    ZoomCueFitReason = "fallback";
                     return;
+                }
             }
 
             // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
             // settle this cue at 12–13px once the longest Farsi word missed the box.
             ApplyCueFloor(cue, source, cueFloor, boxW);
+            ZoomCueFitReason = "fallback";
         }
 
         /// <summary>
-        /// The Farsi phrase fits one line near 18 inside a 160px tab, so the ordinary
-        /// search stops there. Two lines at 22–26 fit the width. Line spacing tightens
-        /// until the pair sits in the tab, and the name under the tab does not move.
+        /// Farsi stays at 22–26. Two lines are tried first, with the leading pulled in
+        /// until the pair sits in the tab. A single tracked line is the second choice.
+        /// Neither path hands the phrase to the 16px search, which was stopping at 17–18
+        /// once auto-size refit the unsplit line.
         /// </summary>
         private static bool TryFitFaCue(TMP_Text cue, string source, float boxW, float boxH)
         {
-            float[] spacing = { 0f, -12f, -24f, -36f };
+            cue.enableAutoSizing = false;
+            float[] spacing = { 0f, -24f, -48f, -72f, -96f, -120f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
             {
                 for (int i = 0; i < spacing.Length; i++)
                 {
                     cue.lineSpacing = spacing[i];
                     cue.characterSpacing = 0f;
-                    if (CueLabelSplits(cue, source, size, boxW, boxH))
-                        return true;
-                    cue.characterSpacing = -12f;
-                    if (CueLabelSplits(cue, source, size, boxW, boxH))
-                        return true;
+                    if (!CueLabelSplits(cue, source, size, boxW, boxH))
+                    {
+                        cue.characterSpacing = -12f;
+                        if (!CueLabelSplits(cue, source, size, boxW, boxH))
+                            continue;
+                    }
+
+                    HoldCueSize(cue, size);
+                    ZoomCueFitReason = "fa-two-line";
+                    return true;
+                }
+            }
+
+            float[] tracking = { -36f, -72f, -108f };
+            for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
+            {
+                for (int i = 0; i < tracking.Length; i++)
+                {
+                    if (!FitsNameLine(cue, source, size, boxW, tracking[i]))
+                        continue;
+                    cue.lineSpacing = 0f;
+                    cue.maxVisibleLines = 1;
+                    HoldCueSize(cue, size);
+                    ZoomCueFitReason = "fa-track";
+                    return true;
                 }
             }
 
@@ -2317,6 +2403,17 @@ namespace Game.UI.Runtime
             cue.characterSpacing = 0f;
             cue.text = source;
             return false;
+        }
+
+        private static void HoldCueSize(TMP_Text cue, float size)
+        {
+            V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            cue.enableAutoSizing = false;
+            cue.fontSizeMin = size;
+            cue.fontSizeMax = size;
+            cue.fontSize = size;
         }
 
         private static void ApplyCueFloor(TMP_Text cue, string source, float size, float boxW)
@@ -2432,7 +2529,7 @@ namespace Game.UI.Runtime
         /// Grows a short Farsi tab upward, bottom still flush with the card, when the
         /// district stroke still clears. The name under the card does not move.
         /// </summary>
-        private static Rect RaiseFaCueTab(RectTransform parent, Rect spot)
+        private static Rect RaiseFaCueTab(RectTransform parent, Rect spot, string selectedId)
         {
             if (parent == null || spot.height >= 51.5f || spot.height < 8f)
                 return spot;
@@ -2445,12 +2542,47 @@ namespace Game.UI.Runtime
                 if (top < 1f)
                     continue;
                 var grown = new Rect(spot.x, top, spot.width, heights[i]);
-                if (PillHitsLiveHex(parent, InflateRect(grown, TheatreSeatGeometry.CueHexStroke)))
+                // The selected district fails on the stroke edge, the same test capture uses.
+                // An interior overlap was rejecting a tab the cue rule still allows.
+                if (FaCueTabBlocked(parent, grown, selectedId))
                     continue;
                 return grown;
             }
 
             return spot;
+        }
+
+        private static bool FaCueTabBlocked(RectTransform parent, Rect spot, string selectedId)
+        {
+            Rect inflated = InflateRect(spot, TheatreSeatGeometry.CueHexStroke);
+            string own = string.IsNullOrEmpty(selectedId) ? null : "ZoneOutline_" + selectedId;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneOutline_", StringComparison.Ordinal) || child is not RectTransform outline)
+                    continue;
+                if (!outline.gameObject.activeInHierarchy)
+                    continue;
+                Vector2[] shape = OutlinePlatePoints(outline);
+                if (shape.Length < 3)
+                    continue;
+                bool selected = own != null && string.Equals(child.name, own, StringComparison.Ordinal);
+                if (selected ? EdgesHitRect(shape, inflated) : RectHitsPolygon(inflated, shape))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool EdgesHitRect(Vector2[] shape, Rect rect)
+        {
+            for (int i = 0; i < shape.Length; i++)
+            {
+                if (SegmentHitsRect(shape[i], shape[(i + 1) % shape.Length], rect))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -2523,7 +2655,7 @@ namespace Game.UI.Runtime
 
             var spot = new Rect(seated.X, seated.Y, seated.W, seated.H);
             if (fa)
-                spot = RaiseFaCueTab(parent, spot);
+                spot = RaiseFaCueTab(parent, spot, selectedId);
             PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
             KeepAuthoredSize(cue.rectTransform);
             SyncCuePlate(parent, spot);
@@ -2598,6 +2730,7 @@ namespace Game.UI.Runtime
             string drawn = cue.text;
             int lines = cue.maxVisibleLines;
             float spacing = cue.characterSpacing;
+            float leading = cue.lineSpacing;
             V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(size, size);
@@ -2611,6 +2744,7 @@ namespace Game.UI.Runtime
             cue.text = drawn;
             cue.maxVisibleLines = lines > 0 ? lines : 2;
             cue.characterSpacing = spacing;
+            cue.lineSpacing = leading;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.alignment = TextAlignmentOptions.Center;
@@ -3048,6 +3182,7 @@ namespace Game.UI.Runtime
             Debug.Log("[ZoomCue] fontSize=" + F(cue.fontSize * cueScale)
                 + " local=" + F(cue.fontSize)
                 + " scale=" + F(cueScale)
+                + " reason=" + ZoomCueFitReason
                 + ShotTag());
             if (cue.transform.parent is not RectTransform parent)
                 return;
@@ -3099,7 +3234,9 @@ namespace Game.UI.Runtime
         /// What the camera composites for the soft halo. Reach is
         /// <see cref="TheatreSeatGeometry.DistrictGlowReach"/> times the outline scale.
         /// Alpha is the image tint. The material is the shader actually on the halo,
-        /// not the multiply shader on the fill.
+        /// not the multiply shader on the fill. <c>coreAlpha</c> is the sprite alpha on
+        /// the stroke, <c>brightness</c> is that core's luminance, and <c>saturation</c>
+        /// is the district hue painted out to the reach.
         /// </summary>
         private static void LogDistrictGlow(RectTransform outline)
         {
@@ -3115,10 +3252,25 @@ namespace Game.UI.Runtime
             string shader = "none";
             if (halo != null && halo.material != null && halo.material.shader != null)
                 shader = halo.material.shader.name;
+            float coreAlpha = 0f;
+            float brightness = 0f;
+            float saturation = 0f;
+            if (halo != null)
+            {
+                Color zone = RegionZoneColor(OutlineMapId(outline));
+                Color edge = DistrictGlowEdge(zone);
+                coreAlpha = 1f;
+                brightness = GlowLuminance(DistrictGlowCore(zone));
+                saturation = GlowSaturation(edge);
+            }
+
             Debug.Log("[DistrictGlow] " + OutlineMapId(outline) + ShotTag()
                 + " reach=" + F(localReach * scale)
                 + " alpha=" + F(alpha)
-                + " material=" + shader);
+                + " material=" + shader
+                + " coreAlpha=" + coreAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " brightness=" + brightness.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " saturation=" + saturation.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
         }
 
         private static string ShotTag()

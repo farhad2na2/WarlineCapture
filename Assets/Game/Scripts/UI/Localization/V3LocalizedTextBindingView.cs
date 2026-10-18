@@ -83,7 +83,9 @@ namespace Game.UI.Runtime
             // The zoom cue inserts its own line break while fitting. That edit is layout,
             // not a new translation. Reapplying here turned auto-size back on at 16–26 and
             // the single-line fit settled at 17–22.
-            if (target.name == "ZoomCue" || target.name == "ZoneTabName" || target.name == "ZoneTabStatus")
+            // Zone names insert their own line break while fitting. That edit is layout,
+            // not a new translation. Reapplying here put auto-size back at 25 on one line.
+            if (target.name == "ZoomCue" || target.name == "ZoneName" || target.name == "ZoneTabName" || target.name == "ZoneTabStatus")
                 return;
 
             string current = ReadAuthoredText();

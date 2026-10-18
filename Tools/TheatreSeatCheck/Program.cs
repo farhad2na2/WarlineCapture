@@ -108,6 +108,21 @@ internal static class Program
                             faults.Add(ratio + " aspect " + part.Trim());
                         if (blocked < 8)
                             faults.Add(ratio + " interior " + part.Trim());
+                        if (ratio == "20:9" && part.IndexOf("AP card=", StringComparison.Ordinal) >= 0)
+                        {
+                            int notchAt = part.IndexOf("notchIn=", StringComparison.Ordinal);
+                            int notchSamples = 0;
+                            if (notchAt >= 0)
+                            {
+                                int end = notchAt + 8;
+                                while (end < part.Length && char.IsDigit(part[end]))
+                                    end++;
+                                int.TryParse(part.Substring(notchAt + 8, Math.Max(0, end - (notchAt + 8))), NumberStyles.Integer, CultureInfo.InvariantCulture, out notchSamples);
+                            }
+
+                            if (notchAt >= 0 && notchSamples < 8)
+                                faults.Add(ratio + " notch interior " + part.Trim());
+                        }
                     }
                 }
             }

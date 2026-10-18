@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T21:36:04.118304+00:00",
+  "project": "/Volumes/T7/Projects/WarlineCapture",
+  "actual_head": "d88439d63e614cc379896eb023070c5e4878b6dc",
+  "existing_full_survey_raw_sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+  "existing_Run_raw_block_sha256": "c04b98862022a57834bf9d7ecdeaa6b3cf217ec78a3376f9b85408a7d2ee6a2c",
+  "existing_Run_raw_block_bytes": 2615,
+  "existing_file_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.cs": {
+      "sha256": "c710dfa298a14ef41183f2ee588325a76eff96d6deb2f456f3d28a30b8e3140c",
+      "bytes": 44342
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs": {
+      "sha256": "c00fddd9eb6b6b5b53f56912ed1966de42605ba3a4ba8887d31202214a344576",
+      "bytes": 53968
+    },
+    "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json": {
+      "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252",
+      "bytes": 119329
+    },
+    "Tools/CI/invoke_unity_macos.sh": {
+      "sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+      "bytes": 7736
+    },
+    "AGENTS.md": {
+      "sha256": "c0e4bea7e0c40cc397656210594c1aeea85cbc34554404be3629dc7140cddbcf",
+      "bytes": 12132
+    },
+    "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs": {
+      "sha256": "0273a9cae359375fcd28438409a452b37e76ba3da7b09006c43bd4d226b9bfe0",
+      "bytes": 32190
+    }
+  },
+  "proposed_import_path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.cs",
+  "proposed_controls_import_path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs",
+  "imported_or_staged_into_Assets": false,
+  "excluded_service_and_MP_files_edited": false,
+  "existing_Run_modified": false,
+  "native_jobs": 0,
+  "Csc_runs": 0
+}

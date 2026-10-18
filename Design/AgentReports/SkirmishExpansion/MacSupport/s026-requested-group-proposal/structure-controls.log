@@ -1,0 +1,13 @@
+test_actual_proposal_structure_and_frozen_Run (__main__.ProposalStructureControls.test_actual_proposal_structure_and_frozen_Run) ... ok
+test_existing_Run_redefinition_is_detected (__main__.ProposalStructureControls.test_existing_Run_redefinition_is_detected) ... ok
+test_fit_promotion_is_detected (__main__.ProposalStructureControls.test_fit_promotion_is_detected) ... ok
+test_missing_failure_preservation_control_is_detected (__main__.ProposalStructureControls.test_missing_failure_preservation_control_is_detected) ... ok
+test_mutated_original_source_is_detected (__main__.ProposalStructureControls.test_mutated_original_source_is_detected) ... ok
+test_native_world_shortcut_is_detected (__main__.ProposalStructureControls.test_native_world_shortcut_is_detected) ... ok
+test_real_excluded_before_pins_still_match (__main__.ProposalStructureControls.test_real_excluded_before_pins_still_match) ... ok
+test_removed_existing_collector_is_detected (__main__.ProposalStructureControls.test_removed_existing_collector_is_detected) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.007s
+
+OK

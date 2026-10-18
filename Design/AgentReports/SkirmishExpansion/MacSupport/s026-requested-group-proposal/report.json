@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "kind": "SourceOnlyRequestedGroupFreshSurveyProposal",
+  "created_utc": "2026-10-18T21:38:14.933627+00:00",
+  "enabled": false,
+  "status": "ReadyForSourceReview_NotCompiled",
+  "proposal_files": {
+    "before-pins.json": {
+      "sha256": "d202b7c59fe8513c32ce038d9f01d228f2b061dab7c750ad331394ad8c07a2db",
+      "bytes": 1957
+    },
+    "structure-controls.log": {
+      "sha256": "cf2013e1f86ddec9c929924668120248e38b2c995732768835e9228f25283e7c",
+      "bytes": 1132
+    },
+    "SkirmishGroundSourceFitSurvey.RequestedGroup.cs.proposal": {
+      "sha256": "780ae780f42e28f7996701f3bbe1ab7a0bb26669d59539fe5d7b91979de6618e",
+      "bytes": 9186
+    },
+    "README.md": {
+      "sha256": "659999260932eef2d033697b22884eb65e328a47252f9c4d7c39b50ebbb00b79",
+      "bytes": 4941
+    },
+    "SkirmishGroundSourceFitSurvey.RequestedGroup.Controls.cs.proposal": {
+      "sha256": "5914837e976596a9e4415c756c7479aff62888635a95357c2f4f61f0b43b87fc",
+      "bytes": 5837
+    },
+    "proposal_structure_controls.py": {
+      "sha256": "009163a8069ffdf40fd0bf26d64b1471432b4978dc579e9136eafe65751e9204",
+      "bytes": 6099
+    }
+  },
+  "production_imported": false,
+  "existing_Run_and_raw_file_unchanged": true,
+  "service_MP_unchanged": true,
+  "new_method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+  "control_method": "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurveyControls",
+  "selector": "WARLINE_GROUND_SOURCE_SURVEY_GROUPS",
+  "allowed_single_groups": [
+    "CC",
+    "AP",
+    "MP",
+    "IB"
+  ],
+  "intended_group": "CC",
+  "measurement_callback": "Existing SurveyGroup(input,group,row), unchanged inventory and predicates",
+  "shared_registry_callback": "Existing RegistryHierarchies, unchanged",
+  "pure_CSharp_controls": {
+    "cases": 29,
+    "compiled": false,
+    "executed": false,
+    "native_callbacks": 0,
+    "expected_future_marker": "[RequestedSourceGroupSurveyControls] result=Passed controls=29 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0"
+  },
+  "local_structure_controls": {
+    "tests": 8,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log": "structure-controls.log",
+    "sha256": "cf2013e1f86ddec9c929924668120248e38b2c995732768835e9228f25283e7c",
+    "scope": "Source-structure/mutation controls only; not C# execution or parsing"
+  },
+  "future_reference_only": {
+    "method_must_be_reviewed_and_imported_first": true,
+    "environment": {
+      "WARLINE_GROUND_SOURCE_SURVEY_GROUPS": "CC",
+      "WARLINE_GROUND_SOURCE_SURVEY_OUTPUT": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/RequestedSourceSurvey/353fd2d2f02641ef8e21f8e1a28e0e93/report.json"
+    },
+    "argv": [
+      "rtk",
+      "proxy",
+      "/Volumes/T7/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+      "--project",
+      "/Volumes/T7/Projects/WarlineCapture",
+      "--timeout",
+      "900",
+      "--log",
+      "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/RequestedSourceSurvey/353fd2d2f02641ef8e21f8e1a28e0e93-unity.log",
+      "--",
+      "-quit",
+      "-executeMethod",
+      "Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey"
+    ],
+    "output_not_created": true
+  },
+  "native_runs": 0,
+  "queue_claims": 0,
+  "Csc_runs": 0,
+  "new_fit_authority": false,
+  "source_bridge_implemented": false,
+  "historical_survey_payload_transferred": false,
+  "normal_mission_ready": false,
+  "qualified": false
+}

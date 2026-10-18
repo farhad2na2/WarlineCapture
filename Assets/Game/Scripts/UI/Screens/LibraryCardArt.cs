@@ -14,11 +14,128 @@ namespace Game.UI.Runtime
         /// </summary>
         private static Texture2D PaintedPlate(string mapId)
         {
+            Sprite sprite = DistrictPlateSprite(mapId);
+            if (sprite != null && sprite.texture != null)
+                return sprite.texture;
             string id = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
             Texture2D plate = SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(id));
             if (plate != null)
                 return plate;
             return SkirmishLibraryPreviewAssets.Load("skirmish.plate." + id);
+        }
+
+        /// <summary>
+        /// The painted district plate from the library art folder. A generated disc,
+        /// a bullseye, or the placeholder texture is not a plate.
+        /// </summary>
+        private static Sprite DistrictPlateSprite(string mapId)
+        {
+            string id = string.IsNullOrEmpty(mapId) ? "DB" : mapId;
+            SkirmishLibrarySpriteRegistry registry = SkirmishLibrarySpriteRegistry.Load();
+            if (registry == null)
+                return null;
+            string[] keys =
+            {
+                SkirmishLibraryPreviewAssets.ResolvePlateKey(id),
+                SkirmishLibraryPreviewAssets.PlatePath(id),
+                "skirmish.plate." + id
+            };
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (!registry.TryGetSprite(keys[i], out Sprite sprite) || !IsDistrictPlateSprite(sprite, id))
+                    continue;
+                return sprite;
+            }
+
+            return null;
+        }
+
+        private static bool IsDistrictPlateSprite(Sprite sprite, string mapId)
+        {
+            if (sprite == null || string.IsNullOrEmpty(mapId))
+                return false;
+            string name = sprite.name ?? string.Empty;
+            if (name.IndexOf("placeholder", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            if (name.IndexOf("bullseye", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            if (name.IndexOf("disc", StringComparison.OrdinalIgnoreCase) >= 0)
+                return false;
+            return name.IndexOf("skirmish.plate." + mapId, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        /// <summary>
+        /// Draws the district plate across the whole card. The progress arc stays; the
+        /// filled disc that read as an eye does not.
+        /// </summary>
+        private static void PaintDistrictCard(RectTransform card, float cardW, float cardH)
+        {
+            if (card == null)
+                return;
+            string mapId = card.name.StartsWith("ZoneCard_", StringComparison.Ordinal)
+                ? card.name.Substring("ZoneCard_".Length)
+                : string.Empty;
+            Sprite plate = DistrictPlateSprite(mapId);
+            RectTransform frame = card.Find("ThumbFrame") as RectTransform;
+            if (frame == null)
+                return;
+            PlaceTopLeft(frame, 0f, 0f, cardW, cardH);
+            frame.localScale = Vector3.one;
+            KeepAuthoredSize(frame);
+            if (frame.TryGetComponent<Image>(out Image frameImage))
+            {
+                frameImage.sprite = ZoneSolidSprite();
+                frameImage.color = Color.white;
+                frameImage.type = Image.Type.Simple;
+            }
+
+            Image art = EnsureDistrictCardArt(frame);
+            art.sprite = plate;
+            art.color = Color.white;
+            art.type = Image.Type.Simple;
+            art.preserveAspect = false;
+            art.raycastTarget = false;
+            art.enabled = plate != null;
+            PlaceTopLeft(art.rectTransform, 0f, 0f, cardW, cardH);
+            art.rectTransform.localScale = Vector3.one;
+            KeepAuthoredSize(art.rectTransform);
+
+            if (frame.Find("Thumbnail") is RectTransform preview)
+            {
+                PlaceTopLeft(preview, 0f, 0f, cardW, cardH);
+                preview.localScale = Vector3.one;
+                KeepAuthoredSize(preview);
+                RawImage picture = preview.GetComponent<RawImage>();
+                if (picture != null)
+                {
+                    picture.texture = plate != null ? plate.texture : null;
+                    picture.color = Color.white;
+                    picture.raycastTarget = false;
+                    picture.enabled = plate != null && plate.texture != null;
+                    if (picture.enabled)
+                        CoverCrop(picture, cardW, cardH);
+                }
+
+                preview.SetAsLastSibling();
+            }
+
+            Transform disc = card.Find("RingDisc");
+            if (disc != null)
+                DestroyUi(disc.gameObject);
+        }
+
+        private static Image EnsureDistrictCardArt(RectTransform frame)
+        {
+            RectTransform node = frame.Find("CardArt") as RectTransform;
+            Image image;
+            if (node == null)
+            {
+                image = new GameObject("CardArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                image.transform.SetParent(frame, false);
+            }
+            else if (!node.TryGetComponent(out image))
+                image = node.gameObject.AddComponent<Image>();
+            return image;
         }
 
         /// <summary>

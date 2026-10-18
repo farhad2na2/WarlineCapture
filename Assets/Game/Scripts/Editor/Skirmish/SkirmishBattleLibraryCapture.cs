@@ -612,6 +612,7 @@ namespace Game.Editor
             Color tint = picture.color;
             bool finalArt = tint.r > 0.9f && tint.g > 0.9f && tint.b > 0.9f;
             RejectPendingPreviewTag(card, finalArt, locale, zone);
+            RejectGridLockWrap(card, locale, zone);
 
             float cardWidth = Span(card, true);
             float cardHeight = Span(card, false);
@@ -658,6 +659,118 @@ namespace Game.Editor
                     "Grid preview is not at the top of the card locale=" + locale +
                     " zone=" + zone +
                     " path=" + ImagePath(card));
+            }
+        }
+
+        /// <summary>World bounds of the drawn glyph quads (line metrics excluded: FA fonts report tall ascenders).</summary>
+        private static bool TryInkBounds(TMP_Text text, out Rect ink)
+        {
+            ink = default;
+            text.ForceMeshUpdate();
+            TMP_TextInfo info = text.textInfo;
+            if (info == null || info.characterInfo == null)
+                return false;
+            bool any = false;
+            float minX = 0f, minY = 0f, maxX = 0f, maxY = 0f;
+            int count = Mathf.Min(info.characterCount, info.characterInfo.Length);
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo c = info.characterInfo[i];
+                if (!c.isVisible)
+                    continue;
+                Vector3 bl = text.rectTransform.TransformPoint(c.bottomLeft);
+                Vector3 tr = text.rectTransform.TransformPoint(c.topRight);
+                float x0 = Mathf.Min(bl.x, tr.x), x1 = Mathf.Max(bl.x, tr.x), y0 = Mathf.Min(bl.y, tr.y), y1 = Mathf.Max(bl.y, tr.y);
+                if (!any) { minX = x0; maxX = x1; minY = y0; maxY = y1; any = true; }
+                else { minX = Mathf.Min(minX, x0); maxX = Mathf.Max(maxX, x1); minY = Mathf.Min(minY, y0); maxY = Mathf.Max(maxY, y1); }
+            }
+
+            if (any)
+                ink = Rect.MinMaxRect(minX, minY, maxX, maxY);
+            return any;
+        }
+
+        /// <summary>Theatre detail panel: no visible text may overlap another text, icon, preview or cabinet slot in the panel.</summary>
+        private static void RejectTheatreDetailOverlap(Transform root, string locale)
+        {
+            Transform panel = root != null ? FindNamed(root, QuickCustomScreenView.TheatreDetailPanelName) : null;
+            if (panel == null || !panel.gameObject.activeInHierarchy)
+                return;
+            TMP_Text[] texts = panel.GetComponentsInChildren<TMP_Text>(false);
+            Graphic[] graphics = panel.GetComponentsInChildren<Graphic>(false);
+            foreach (TMP_Text text in texts)
+            {
+                if (text == null || !text.isActiveAndEnabled || string.IsNullOrWhiteSpace(text.text))
+                    continue;
+                if (!TryInkBounds(text, out Rect ink))
+                    continue;
+                foreach (Graphic other in graphics)
+                {
+                    if (other == null || other == text || !other.isActiveAndEnabled || other.transform == panel)
+                        continue;
+                    if (other.transform.IsChildOf(text.transform) || text.transform.IsChildOf(other.transform))
+                        continue;
+                    if (other.name == "Rule")
+                        continue;
+                    Rect box;
+                    if (other is TMP_Text otherText)
+                    {
+                        if (string.IsNullOrWhiteSpace(otherText.text) || !TryInkBounds(otherText, out box))
+                            continue;
+                    }
+                    else
+                    {
+                        box = WorldBounds(other.rectTransform);
+                    }
+
+                    float w = Mathf.Min(ink.xMax, box.xMax) - Mathf.Max(ink.xMin, box.xMin);
+                    float h = Mathf.Min(ink.yMax, box.yMax) - Mathf.Max(ink.yMin, box.yMin);
+                    if (w > 2f && h > 2f)
+                        TheatreViolations.Add(
+                            "Theatre detail text overlaps another element locale=" + locale +
+                            " text=" + ImagePath(text.transform) + " '" + text.text + "' other=" + ImagePath(other.transform) + ".");
+                }
+            }
+        }
+
+        /// <summary>Counts are won/playable; an empty zone reads "Coming soon". Any visible 0/0 is a regression.</summary>
+        private static void RejectZeroOverZero(Transform root, string locale)
+        {
+            if (root == null)
+                return;
+            foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(false))
+            {
+                if (text == null || !text.isActiveAndEnabled || string.IsNullOrEmpty(text.text))
+                    continue;
+                string value = text.text.Replace("\u2066", string.Empty).Replace("\u2069", string.Empty).Replace("\u200f", string.Empty)
+                    .Replace('\u06F0', '0').Replace('\u0660', '0').Replace(" ", string.Empty);
+                if (System.Text.RegularExpressions.Regex.IsMatch(value, @"(^|[^0-9])0/0($|[^0-9])"))
+                {
+                    throw new InvalidOperationException(
+                        "A zero-playable count shows 0/0 instead of Coming soon locale=" + locale +
+                        " path=" + ImagePath(text.transform) + " text=" + text.text);
+                }
+            }
+        }
+
+        private static void RejectGridLockWrap(RectTransform card, string locale, string zone)
+        {
+            Transform locked = card.Find("Locked");
+            if (locked == null || !locked.gameObject.activeInHierarchy)
+                return;
+            TMP_Text reason = locked.GetComponentInChildren<TMP_Text>(true);
+            if (reason == null || string.IsNullOrWhiteSpace(reason.text))
+                return;
+            reason.ForceMeshUpdate();
+            int lines = reason.textInfo != null ? reason.textInfo.lineCount : 0;
+            if (reason.maxVisibleLines > 2 || lines > 2 || reason.isTextTruncated)
+            {
+                throw new InvalidOperationException(
+                    "Grid lock text does not fit in two lines locale=" + locale +
+                    " zone=" + zone +
+                    " lines=" + lines +
+                    " path=" + ImagePath(reason.transform) +
+                    " text=" + reason.text);
             }
         }
 
@@ -2850,6 +2963,8 @@ namespace Game.Editor
             RejectBriefingOverlap(root);
             RejectNarrowGreyOverText(root);
             RejectMedalOverForeignText(root);
+            RejectZeroOverZero(root, GameLocalization.IsRightToLeft ? "fa" : "en");
+            RejectTheatreDetailOverlap(root, GameLocalization.IsRightToLeft ? "fa" : "en");
             RejectBriefingStack(root, state);
         }
 
@@ -3595,17 +3710,19 @@ namespace Game.Editor
             float height = compositionRect != null ? compositionRect.rect.height : 0f;
             QuickCustomScreenView view = instance.GetComponent<QuickCustomScreenView>();
             bool theatre = view != null && view.Library != null && view.Library.Level != SkirmishLibraryLevel.Battlefield;
+            // Map and Grid seat the briefing on the trailing side (approved-2/3); the Theatre keeps the frame default.
+            bool briefingOnLeft = theatre ? !fa : fa;
             SkirmishLibraryFrame.Resolve(
                 width,
                 height,
-                !fa,
+                briefingOnLeft,
                 out float mapX,
                 out float mapWidth,
                 out float briefingX,
                 out float briefingWidth,
                 out float panelY,
                 out float panelHeight);
-            SkirmishLibraryFrame.CloseTheatreSeam(theatre, !fa, ref mapX, ref mapWidth, ref briefingX, briefingWidth);
+            SkirmishLibraryFrame.CloseTheatreSeam(theatre, briefingOnLeft, ref mapX, ref mapWidth, ref briefingX, briefingWidth);
             ExpectPanel(map, "map", mapX, -panelY, mapWidth, panelHeight);
             ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingWidth, panelHeight);
             RequireFilled(map, "map");

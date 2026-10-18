@@ -275,6 +275,7 @@ namespace Game.UI.Runtime
                 {
                     PresentGrid(_libraryViewModel.Battlefield, fa);
                     FinishLibraryText();
+                    foreach (LibraryFixedTextSize held in GetComponentsInChildren<LibraryFixedTextSize>(true)) held.Apply(); // P1: fixed-size labels opt out of the refit text pass
                 }
                 finally
                 {

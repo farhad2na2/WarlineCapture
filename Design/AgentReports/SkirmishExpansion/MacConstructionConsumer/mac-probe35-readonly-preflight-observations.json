@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:43:21.564486+00:00",
+  "scope": "ReadOnlyActualPreflightObservations_NoNativeExecution",
+  "controller_commit": "68eced6aee772c99f883c091394ffc4e6dd53c4e",
+  "controller_sha256": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+  "observations": [
+    {
+      "path": "/private/tmp/warline-mac-support-20261018/controller-os-probe-compatibility.json",
+      "sha256": "f21dd5ba5b9f797458698f0f58459a36a07d29fa3d3bfd3a60f2c6455836bdc9",
+      "facts": {
+        "observed_utc": "2026-10-18T14:36:48.176552+00:00",
+        "scope": "ActualReadOnlyOSProbeCompatibility_NotNativeOrLaunchAdmission",
+        "controller_sha256": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+        "memory_pressure": {
+          "exit": 0,
+          "matched_expected_format": true,
+          "free_percentage": 34
+        },
+        "vm_stat": {
+          "exit": 0,
+          "has_page_size_header": true
+        },
+        "disk_free_bytes": 42329260032,
+        "Hub_open": true,
+        "editor_observations": [
+          {
+            "pid": 12287,
+            "parent": 12280,
+            "started": "Sun Oct 18 16:31:33 2026",
+            "cpu": 99.1,
+            "project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13"
+          },
+          {
+            "pid": 12355,
+            "parent": 12287,
+            "started": "Sun Oct 18 16:31:49 2026",
+            "cpu": 0.0,
+            "project": "/Volumes/T7/Projects/WarlineCapture-wt-p1-scn13"
+          }
+        ],
+        "native_launch": false,
+        "gate": "DeferredForActualCapacity",
+        "reason": "Editor/worker CPU workload active; preserve it"
+      }
+    },
+    {
+      "path": "/private/tmp/warline-mac-support-20261018/controller-reserved-projection-preflight.json",
+      "sha256": "f327502164d426dfa27f440b1f94aeb32450892a46e9c862585221770d925f5f",
+      "facts": {
+        "observed_utc": "2026-10-18T14:42:06.023078+00:00",
+        "scope": "ActualReadOnlyReservedProjectionAndExternalDependencyPreflight",
+        "native_launch": false,
+        "controller_sha256": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+        "dependency_checks": {
+          "skirmish_construction_ledger_admission.py": {
+            "expected": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+            "actual": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36"
+          },
+          "s005_windows_source_snapshot.py": {
+            "expected": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba",
+            "actual": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba"
+          },
+          "skirmish_native_identity.py": {
+            "expected": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+            "actual": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5"
+          },
+          "skirmish_production_queue.py": {
+            "expected": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+            "actual": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd"
+          }
+        },
+        "actual_projection": {
+          "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+          "parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+          "branch": "codex/mac-native-tanker-probe35",
+          "pins": {
+            "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+            "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+            "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+            "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+          },
+          "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608"
+        },
+        "result": "ExactReservedProjectionAndExternalDependenciesPassed_NoLaunchAuthority"
+      }
+    }
+  ],
+  "actual_default_cli": {
+    "argv": [
+      "/Library/Developer/CommandLineTools/usr/bin/python3",
+      "-B",
+      "Tools/CI/mac_tanker_probe35_controller.py"
+    ],
+    "exit": 0,
+    "stdout_sha256": "a9cae61aaa8bc0d6a854ca3f1610f564f261aeda9f76c87bca1e40b9d5942f90",
+    "plan": {
+      "enabled": false,
+      "launch_performed": false,
+      "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+      "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+      "source_pins": {
+        "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+        "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+        "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+        "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+      },
+      "argv_template": [
+        "rtk",
+        "proxy",
+        "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+        "--timeout",
+        "3600",
+        "--log",
+        "<new-owned-log>",
+        "--",
+        "-buildTarget",
+        "Android",
+        "-quit",
+        "-executeMethod",
+        "Game.Tests.Editor.SkirmishAircraftProbeTankerOwnershipTests.RunFocusedValidation"
+      ],
+      "cold_timeout_seconds": 3600,
+      "required_authorization_schema": {
+        "schema_version": 1,
+        "launch_authorized": false,
+        "project": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003",
+        "commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+        "controller_sha256": "e49b6ba4402c7b19fad0452a56b26b2ede3fef22646b944599d3d7e0450e508d",
+        "review_receipt_sha256": "<reviewed-receipt-sha256>",
+        "scope": "Synthetic35Only_NoMissionCredit",
+        "timeout_seconds": 3600
+      },
+      "native_compiler_input_consumption_closure": "Pending",
+      "normal_mission_ready": false
+    }
+  },
+  "Windows_coordinator_receipt": {
+    "origin": "Direct coordinator report; main publication not independently fetched in this receipt",
+    "repair_shipping_commit": "1c133cb9b94df737c6432d2573573988dc49aff2",
+    "construction_shipping_commit": "4beb8dfc6b7f30e9d82df50240aec68bb280b9c3",
+    "tests": "Windows45+49 passed, Mac45+49 compatibility receipt separately published",
+    "camera": "Independently reviewed generic camera r2 sevenfiles staging; changed C# candidate requires fresh evidence, no prior-win transfer"
+  },
+  "result": "ReadOnlyPreflightPassed_ActiveOwnerCapacityDeferred_ControllerPeerPending",
+  "native_launch": false,
+  "cache_copy": false,
+  "full_sdk_tool_byte_census": "Deferred behind capacity; actual metadata paths and auth were separately verified",
+  "native_compiler_input_consumption_closure": "Pending",
+  "normal_mission_ready": false,
+  "queue_success_enabled": false,
+  "Android_build": false,
+  "player_device": false
+}

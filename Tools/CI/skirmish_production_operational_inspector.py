@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 import re
 
-from invoke_skirmish_production_batch import verify_native_events, METHOD
+from invoke_skirmish_production_batch import verify_native_events, verify_mac_wrapper, METHOD
 from skirmish_native_identity import verify_job, normalize_native_locale
 from audit_skirmish_native_contacts import audit
 from skirmish_production_queue import fingerprint
@@ -205,6 +205,22 @@ def read_only_observer_receipt(job,claim,native):
     return answer
 
 
+def sampling_scope(job):
+    """Classify existing request contracts; never upgrade development evidence."""
+    schema=job.get("schema_version")
+    catalog=job.get("catalog_id")
+    protected=catalog in ("S001","S025","S073")
+    need(type(schema) is int,"Typed production job schema required")
+    if schema==3:
+        need(protected,"Schema3 development counterpart requires a protected catalog")
+        return "DevelopmentCounterpartZeroBaselineCredit"
+    if schema==2:
+        need(protected,"Schema2 legacy preset requires a protected catalog")
+        return "LegacyPresetZeroBaselineCredit"
+    need(schema==1 and not protected,"New normal counterpart dispatch authority requires separate review")
+    return "ExpandedNormalUnqualified"
+
+
 def ownership(value):
     need(value["preview_census_complete"] is True and type(value["actual_preview_count"]) is int and
         value["actual_preview_count"]==value["measured_preview_count"],"Unknown preview ownership")
@@ -221,7 +237,7 @@ def ownership(value):
     v["scenes"].sort(key=lambda s:(s["path"],s["name"]))
     return v
 
-def inspect(project,spec):
+def inspect(project,spec,*,wrapper_platform='windows'):
     result={"schema_version":1,"result":"Incomplete","wins":0,"attempts":[],
         "admission":{"result":"MissingAdmission","missing":list(MISSING)},
         "queue_success_enabled":False,"qualified":False,"mission_ready":False,"publication_changed":False,"errors":[]}
@@ -235,7 +251,11 @@ def inspect(project,spec):
         need(outer["descriptor_sha256"]==spec["descriptor"]["sha256"] and type(outer["checked_wrapper_exit"]) is int and
             outer["checked_wrapper_exit"]==0 and outer["execute_method"]==METHOD and outer["queue_success_enabled"] is False,
             "Actual outer wrapper/descriptor/method mismatch")
-        need(re.findall(r"\[UnityInvoke\] ExitCode: (-?\d+)",log)==["0"],"Unique actual checked exit0 required")
+        need(wrapper_platform in ('windows', 'macos'), 'Unknown wrapper platform')
+        if wrapper_platform == 'macos':
+            verify_mac_wrapper(descriptor, outer, project)
+        else:
+            need(re.findall(r"\[UnityInvoke\] ExitCode: (-?\d+)",log)==["0"],"Unique actual checked exit0 required")
         need(not re.search(r"Crash!!!|error CS\d+:|\[SkirmishProductionOperationalRun\] result=Failed",log),"Native failure retained")
         store_path=read.derived(descriptor["candidate_manifest_path"])
         need(digest(store_path)==descriptor["candidate_manifest_sha256"],"Immutable candidate store SHA differs")
@@ -250,7 +270,10 @@ def inspect(project,spec):
                 read.path(source["manifest_path"])==store_path and source["manifest_sha256"]==descriptor["candidate_manifest_sha256"],
                 "Actual full source/build endpoint differs")
         # Reuse actual whole-batch/runtime/exit/fingerprint verifier; never replace by a marker-only detector.
-        verify_native_events(descriptor,events,log,Path(project))
+        if wrapper_platform == 'macos':
+            verify_native_events(descriptor,events,log,Path(project),mac_wrapper_receipt=outer)
+        else:
+            verify_native_events(descriptor,events,log,Path(project))
         need(descriptor_path==read.path(Path(descriptor["artifact_directory"])/"batch.json"),"Noncanonical descriptor path")
         declared=spec["attempts"];need(isinstance(declared,list) and len(declared)==len(descriptor["jobs"]),"Every dispatched attempt required")
         baseline=one(events,"BatchCaptured")
@@ -264,6 +287,7 @@ def inspect(project,spec):
             need(isinstance(item,dict) and set(item)==ATTEMPT,"Exact attempt refs required")
             jp,job=read.obj(item["job"]);cp,claim=read.obj(item["claim"]);ip,immutable=read.obj(item["immutable_claim"])
             need(jp==read.path(entry["job_path"]) and cp==read.path(entry["claim_path"]),"Descriptor job/claim path splice")
+            evidence_scope=sampling_scope(job)
             job_sha=fingerprint(job)
             need(claim==immutable and claim["job_sha256"]==job_sha,"Canonical/immutable claim differs")
             folder=Path(claim["artifact_directory"])
@@ -352,7 +376,8 @@ def inspect(project,spec):
                 measured[i]["scenes"]==baseline["baseline_scenes"] and measured[i]["preview_count"]==baseline["baseline_preview_count"],
                 "Actual cleanup differs from captured baseline")
             # Pure validator consumes only the already Reader-pinned owned event stream.
-            profile=validate_profile_journal(job,claim,native)
+            profile=(validate_profile_journal(job,claim,native,path_platform='macos')
+                     if wrapper_platform == 'macos' else validate_profile_journal(job,claim,native))
             expected_profile={"admission":"profile_before_restore",
                 "result":"MeasuredProfilePreservedAndRootRestored","profile_restored":True,
                 "job_sha256":job_sha,"attempt_id":claim["attempt_id"],
@@ -375,7 +400,9 @@ def inspect(project,spec):
                 observer_errors.append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"errors":observer.get("errors",["Observer receipt differs from inspected subject"]) if isinstance(observer,dict) else ["Malformed observer receipt"]})
             result["attempts"].append({"job_sha256":job_sha,"attempt_id":claim["attempt_id"],"catalog_id":job["catalog_id"],
                 "run_id":run["run_id"],"session":session,"native_config_sha256":config,"outcome":outcome,"result":"NormalCompletedUnqualified",
-                "wins":int(outcome=="Victory"),"input_audit":contact_audit,"qualified":False})
+                "wins":int(outcome=="Victory" and evidence_scope=="ExpandedNormalUnqualified"),
+                "actual_native_wins":int(outcome=="Victory"),"evidence_scope":evidence_scope,
+                "sampling_coverage_credit":0,"input_audit":contact_audit,"qualified":False})
         read.stable()
         # Credit this one facet only after EVERY declared normal attempt and all stable reads succeed.
         result["admission"]["profile_receipts"]=profile_receipts

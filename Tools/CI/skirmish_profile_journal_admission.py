@@ -1,5 +1,6 @@
 """One measured profile-preservation admission only; never qualifies a job."""
 import ntpath
+import posixpath
 import csv
 from itertools import islice
 from pathlib import Path
@@ -10,7 +11,13 @@ from skirmish_production_queue import fingerprint
 def need(ok, message):
     if not ok: raise ValueError(message)
 
-def normal(path):
+def normal(path, path_platform='windows'):
+    need(path_platform in ('windows', 'macos'), 'Unknown native profile path platform')
+    if path_platform == 'macos':
+        need(isinstance(path, str) and path.startswith('/') and not path.startswith('//')
+             and '\\' not in path and '\x00' not in path and '..' not in path.split('/'),
+             'Absolute nontraversing POSIX native profile root required')
+        return posixpath.normpath(path)
     need(isinstance(path, str) and ntpath.isabs(path) and ".." not in path.replace("\\", "/").split("/"),
          "Absolute nontraversing native profile root required")
     need(bool(ntpath.splitdrive(path)[0]), "Fully qualified native Windows root required")
@@ -40,12 +47,12 @@ def original_catalog_names(value, catalog, names):
     return names+[f"skirmish-{ident}-native.json{suffix}"
                   for ident in sorted(groups) for suffix in ("",".tmp",".bak",".lock")]
 
-def snapshot(value, catalog, scope=None, version=2):
+def snapshot(value, catalog, scope=None, version=2, *, path_platform='windows'):
     keys={"root", "directory_exists", "directory_entries", "enumeration_limit", "files", "observed_bytes"}
     if scope is not None:keys|={"namespace_scope","excluded_non_save_entries","total_directory_entries"}
     need(isinstance(value, dict) and set(value) == keys,
          "Exact profile snapshot schema")
-    normal(value["root"]); need(type(value["directory_exists"]) is bool, "Actual directory existence")
+    normal(value["root"], path_platform); need(type(value["directory_exists"]) is bool, "Actual directory existence")
     names = [name + suffix for name in ("profile.json", "settings.json", "quickgame.json",
         "skirmish-" + catalog.lower() + "-native.json") for suffix in ("", ".tmp", ".bak", ".lock")]
     if version==3 and scope=="original":names=original_catalog_names(value,catalog,names)
@@ -85,8 +92,10 @@ def snapshot(value, catalog, scope=None, version=2):
 def save_projection(value):
     return {k:v for k,v in value.items() if k not in {"namespace_scope","excluded_non_save_entries","total_directory_entries"}}
 
-def validate_profile_journal(job, claim, events):
+def validate_profile_journal(job, claim, events, *, path_platform='windows'):
     try:
+        normalize = lambda path: normal(path, path_platform)
+        path_module = posixpath if path_platform == 'macos' else ntpath
         need(all(isinstance(job.get(k), str) and re.fullmatch("[a-f0-9]{64}", job[k])
                  for k in ("candidate_sha256", "build_sha256")), "Actual source/build SHA required")
         h = fingerprint(job)
@@ -129,31 +138,37 @@ def validate_profile_journal(job, claim, events):
                  "Original environment type")
             need(stage["actual_environment"] is None or isinstance(stage["actual_environment"], str),
                  "Actual environment type")
-            originals.append(snapshot(stage["original"], job["catalog_id"],"original" if version>=2 else None,version))
-            owned.append(snapshot(stage["owned"], job["catalog_id"],"owned" if version>=2 else None,version))
-        expected_owned = normal(ntpath.join(claim["artifact_directory"], "save-profile"))
-        need(normal(menu["actual_save_root"]) == expected_owned, "Actual launch profile root splice")
+            originals.append(snapshot(stage["original"], job["catalog_id"],"original" if version>=2 else None,version,path_platform=path_platform))
+            owned.append(snapshot(stage["owned"], job["catalog_id"],"owned" if version>=2 else None,version,path_platform=path_platform))
+        expected_owned = normalize(path_module.join(claim["artifact_directory"], "save-profile"))
+        need(normalize(menu["actual_save_root"]) == expected_owned, "Actual launch profile root splice")
         need("actual_save_root" in restored and restored["actual_save_root"] == after["actual_environment"],
              "Actual restored context root missing/different")
-        original_root = normal(originals[0]["root"])
+        original_root = normalize(originals[0]["root"])
         original_environment = begin["original_environment"]
         if isinstance(original_environment, str) and original_environment.strip():
-            need(normal(original_environment) == original_root, "Original environment/effective-root mismatch")
-        need(original_root != expected_owned and not original_root.startswith(expected_owned + "\\")
-             and not expected_owned.startswith(original_root + "\\"), "Profile roots overlap")
-        need(all(normal(o["root"]) == expected_owned for o in owned), "Owned profile path splice")
+            need(normalize(original_environment) == original_root, "Original environment/effective-root mismatch")
+        if path_platform == 'macos':
+            # '/' is already terminated: appending '/' would turn its prefix
+            # into '//' and incorrectly admit every descendant save-profile.
+            need(posixpath.commonpath((original_root,expected_owned)) not in (original_root,expected_owned),
+                 'Profile roots overlap')
+        else:
+            need(original_root != expected_owned and not original_root.startswith(expected_owned + path_module.sep)
+                 and not expected_owned.startswith(original_root + path_module.sep), "Profile roots overlap")
+        need(all(normalize(o["root"]) == expected_owned for o in owned), "Owned profile path splice")
         need(save_projection(originals[0]) == save_projection(originals[1]) == save_projection(originals[2]), "Original profile bytes/existence changed")
         need(not owned[0]["directory_exists"] and not any(r["exists"] for r in owned[0]["files"]),
              "Preexisting isolated profile is not a fresh owned lease")
         need(owned[1] == owned[2] and owned[1]["directory_exists"]
              and next(r for r in owned[1]["files"] if r["name"] == "profile.json")["exists"],
              "Isolated profile missing or changed during restoration")
-        need(normal(begin["actual_effective_root"]) == original_root
-             and normal(pre["actual_effective_root"]) == expected_owned
-             and normal(after["actual_effective_root"]) == original_root, "Actual effective profile root not restored")
+        need(normalize(begin["actual_effective_root"]) == original_root
+             and normalize(pre["actual_effective_root"]) == expected_owned
+             and normalize(after["actual_effective_root"]) == original_root, "Actual effective profile root not restored")
         need(begin["actual_environment"] == begin["original_environment"]
              == pre["original_environment"] == after["original_environment"] == after["actual_environment"]
-             and normal(pre["actual_environment"]) == expected_owned, "Actual save-root environment mismatch")
+             and normalize(pre["actual_environment"]) == expected_owned, "Actual save-root environment mismatch")
         return {"admission": "profile_before_restore", "result": "MeasuredProfilePreservedAndRootRestored",
                 "profile_restored": True, "job_sha256": h, "attempt_id": claim["attempt_id"],
                 "native_session_id": menu["native_session_id"], "native_world_sequence": menu["native_world_sequence"],

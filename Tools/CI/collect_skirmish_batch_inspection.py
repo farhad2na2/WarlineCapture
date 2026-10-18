@@ -77,10 +77,11 @@ def build_spec(project, descriptor_ref):
     return spec
 
 
-def collect_and_inspect(project, descriptor_ref):
+def collect_and_inspect(project, descriptor_ref, *, wrapper_platform='windows'):
     try:
         spec = build_spec(project, descriptor_ref)
-        result = inspect(project, spec)
+        result = (inspect(project, spec) if wrapper_platform == 'windows'
+                  else inspect(project, spec, wrapper_platform=wrapper_platform))
         result["collection"] = {"result": "RecordedReferencesJoined", "descriptor": descriptor_ref,
                                 "attempts": len(spec["attempts"])}
         return result

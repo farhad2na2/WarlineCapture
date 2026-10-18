@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "result": "SourceProposalAndConstructedControlsPassed_Unqualified",
+  "parent": "b490f0e7760b537d3f1d4d9f2c1e2e8d8b06dc4c",
+  "published_source": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "code_sha256": {
+    "Tools/CI/skirmish_production_operational_inspector.py": "33b8c2c0bafed7606490a56b88e1bb2a981cf73b13802424adc63beb7611e9ac",
+    "Tools/CI/skirmish_protected_evidence_scope_test.py": "40c48e2055f7528eae16505b963bb480d0a476bbeaeea322543a31adb0c3d2d1"
+  },
+  "review_validation": {
+    "tests": 67,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log": "review-controls.log",
+    "sha256": "b6f419615e2587d77d7bbc9aed801231d9bb0687159840a81edfb23d9bb2b515"
+  },
+  "shipping_dependency_validation": {
+    "tests": 67,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log": "shipping-f2a-controls.log",
+    "sha256": "c19971bf696ba620da84d7d6d923cc8146d6d1a17d7999e1b08e280303f51fcd",
+    "reader_dependencies": {
+      "skirmish_construction_ledger_admission.py": "f1d9279dc628034e6267475f00c6bfe709ea1c4e78f0e959494a2a5667cb2b24",
+      "skirmish_production_operational_inspector.py": "33b8c2c0bafed7606490a56b88e1bb2a981cf73b13802424adc63beb7611e9ac"
+    }
+  },
+  "python": {
+    "path": "/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "version": "3.12.14",
+    "sha256": "54f31dd7440a150d5ad7ec4c51d19658b3b5c8b047969bcae09948b8990346ba"
+  },
+  "initial_failed_fixture_run": {
+    "tests": 5,
+    "failures": 2,
+    "errors": 1,
+    "reason": "S001/S073 fixture retained S026 packet family; failed before attempt inspection. Dependent later-attempt assertion had no prior attempt. Corrected fixture packet_path/sha using existing canonical SamplingAuthority; production validation unchanged."
+  },
+  "new_authority_issued": false,
+  "new_normal_schema_accepted": false,
+  "worker_enabled": false,
+  "native_jobs": 0,
+  "qualified": false,
+  "queue_success_enabled": false,
+  "mission_ready": false,
+  "camera_witness": "PendingActualRequiredNativeBoundaries",
+  "visual_review": "NotPerformed",
+  "normal_playthrough": "NotPerformed",
+  "device_acceptance": "NotPerformed",
+  "apk": "NotBuilt"
+}

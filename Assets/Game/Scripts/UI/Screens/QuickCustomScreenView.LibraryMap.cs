@@ -576,6 +576,10 @@ namespace Game.UI.Runtime
             const float top = 12f;
             float availWidth = width - left - 12f;
             float availHeight = height - top * 2f;
+            // v39: 4:3-class map areas (FA mirroring put S002/S004/S006 ~15px from the frame) keep a 16px extra safe
+            // margin on both sides of the centred block; 16:9 and 20:9 areas are wider than 1.45 and stay unchanged.
+            if (height > 1f && width / height < 1.45f)
+                availWidth -= 32f;
             if (availWidth < 200f || availHeight < 200f)
                 return false;
             float aspect = SkirmishBattleCardWidget.PinReferenceSize.y / SkirmishBattleCardWidget.PinReferenceSize.x;

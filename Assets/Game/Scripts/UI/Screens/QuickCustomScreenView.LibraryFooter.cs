@@ -48,6 +48,9 @@ namespace Game.UI.Runtime
             float y = compositionHeight - 112f;
             float gap = 6f;
             float side = 10f;
+            // v39: 4:3-class compositions get a wider safe margin so ADVANCED/BACK clear the screen edge; 16:9+ unchanged.
+            if (compositionWidth / compositionHeight < 1.6f)
+                side = 24f;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (!_savedMatchAvailable && back != null)
             {

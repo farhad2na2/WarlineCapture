@@ -44,6 +44,10 @@ UNCOVERED = ['PlayerWallMemberIdentities', 'AlternateConstructionEntryPoints',
              'RepairEconomyFuelOrigins', 'WholeAttemptConservation']
 I32, U32 = 2147483647, 4294967295
 MAX_BYTES, MAX_ROWS = 16*1024*1024, 25000
+MAX_SOURCE_FILES = 131072
+MAX_PIN_FILE_BYTES = 512*1024*1024
+MAX_PIN_TOTAL_BYTES = 8*1024*1024*1024
+HASH_CHUNK_BYTES = 65536
 ENVELOPE = set('schema_version sequence job_sha256 attempt_id worker frame utc kind facts'.split())
 ECONOMY = set('FactionId Money MaterialsOnlyConstruction Oil Fuel OilIncomeRate FuelIncomeRate LastSellTime LastLogTime'.split())
 BANK = set('FactionId Current Capacity LifetimeFabricated LifetimeImported LifetimeRewarded LifetimeExported LifetimeSpent LifetimeConstructionSpent LifetimeRepairSpent LifetimeInfrastructureSpent LifetimeUpgradeSpent LifetimeProductionSpent Version'.split())
@@ -101,8 +105,11 @@ class Reader:
     def __init__(self, root):
         self.root=Path(root).resolve(strict=True)
         self.pins={}
+        self.pin_sizes={}
+        self.pin_total=0
 
-    def path(self, value):
+    def path(self, value, byte_limit=None, allow_empty=False):
+        if byte_limit is None:byte_limit=MAX_BYTES
         string(str(value),4096)
         raw=str(value).replace('\\','/')
         need(not raw.startswith(('//?/','//./')) and '..' not in raw.split('/'), 'Device/traversal path refused')
@@ -118,7 +125,7 @@ class Reader:
                  'Artifact symlink/junction/reparse path refused')
             cursor=cursor.parent
         need(p.resolve(strict=True)==p and p.is_file(), 'Missing/escaped artifact')
-        need(0<p.stat().st_size<=MAX_BYTES,'Empty/oversized bounded artifact')
+        need((0 if allow_empty else 1)<=p.stat().st_size<=byte_limit,'Empty/oversized bounded artifact')
         return p
 
     def blob(self,ref):
@@ -128,9 +135,31 @@ class Reader:
             data=stream.read(MAX_BYTES+1)
         need(0<len(data)<=MAX_BYTES,'Bounded read exceeded')
         need(hashlib.sha256(data).hexdigest()==ref['sha256'],'Artifact hash mismatch')
-        need(p not in self.pins or self.pins[p]==ref['sha256'],'Conflicting artifact aliases')
-        self.pins[p]=ref['sha256']
+        self.remember(p,ref['sha256'],MAX_BYTES,False)
         return p,data
+
+    def remember(self,p,digest,limit,allow_empty):
+        need(p not in self.pins or self.pins[p][0]==digest,'Conflicting artifact aliases')
+        self.pins[p]=(digest,limit,allow_empty)
+
+    def verify(self,ref,byte_limit=MAX_PIN_FILE_BYTES,allow_empty=True):
+        """Hash large source/DLL pins with fixed working memory and a total budget."""
+        exact(ref,{'path','sha256'});sha(ref['sha256'])
+        p=self.path(ref['path'],byte_limit,allow_empty)
+        if p not in self.pin_sizes:
+            size=p.stat().st_size
+            need(self.pin_total+size<=MAX_PIN_TOTAL_BYTES,'Total source/build byte budget exceeded')
+            self.pin_total+=size;self.pin_sizes[p]=size
+        h=hashlib.sha256();total=0
+        with p.open('rb') as stream:
+            while True:
+                data=stream.read(HASH_CHUNK_BYTES)
+                if not data:break
+                total+=len(data);need(total<=byte_limit,'Bounded streamed read exceeded')
+                h.update(data)
+        need((allow_empty or total>0) and h.hexdigest()==ref['sha256'],'Artifact hash mismatch')
+        self.remember(p,ref['sha256'],byte_limit,allow_empty)
+        return p
 
     def read(self,ref):
         p,data=self.blob(ref)
@@ -142,8 +171,8 @@ class Reader:
 
     def stable(self):
         # Recheck paths as well as hashes: a late reparse replacement must fail.
-        for p,h in list(self.pins.items()):
-            self.blob({'path':str(p),'sha256':h})
+        for p,(h,limit,allow_empty) in list(self.pins.items()):
+            self.verify({'path':str(p),'sha256':h},limit,allow_empty)
 
 
 def point(p,session):
@@ -375,12 +404,12 @@ def inspect(project,descriptor):
     exact(store,{'source_manifest','candidate_sha256','build_manifest','build_sha256'})
     need(store['source_manifest']==job['source_manifest'] and store['candidate_sha256']==job['candidate_sha256']
          and store['build_sha256']==job['build_sha256'], 'Candidate store/job source or build splice')
-    pins=job['source_manifest'];need(isinstance(pins,list) and 0<len(pins)<=25000,'Bounded source manifest')
+    pins=job['source_manifest'];need(isinstance(pins,list) and 0<len(pins)<=MAX_SOURCE_FILES,'Bounded source manifest')
     seen={}
     for ref in pins:
         exact(ref,{'path','sha256'});need(ref['path'] not in seen,'Duplicate source manifest path')
         need(isinstance(ref['path'],str) and not Path(ref['path']).is_absolute() and '\\' not in ref['path'], 'Relative forward-slash source row required')
-        reader.blob(ref);seen[ref['path']]=ref['sha256']
+        reader.verify(ref);seen[ref['path']]=ref['sha256']
     need(all(seen.get(p)==h for p,h in POLICY_PINS.items()),'Literal reviewed source/policy pins differ or missing')
     need(candidate_hash(pins)==job['candidate_sha256'], 'Source manifest does not derive candidate identity')
     builds=store['build_manifest']
@@ -389,7 +418,7 @@ def inspect(project,descriptor):
     for ref in builds:
         exact(ref,{'path','sha256'})
         name=ref['path'];need(isinstance(name,str) and re.fullmatch(r'Library/ScriptAssemblies/[^/\\]+[.]dll',name), 'Compiled DLL row outside ScriptAssemblies')
-        reader.blob(ref);build_paths.append(name)
+        reader.verify(ref,allow_empty=False);build_paths.append(name)
     need(build_paths==sorted(set(build_paths)), 'Unique ordered compiled DLL manifest required')
     _,text=reader.read(d['native_events']);need(text.endswith('\n'),'Truncated journal without final newline')
     lines=text.splitlines();need(0<len(lines)<=MAX_ROWS and all(0<len(s)<=262144 for s in lines),'Bounded JSONL required')

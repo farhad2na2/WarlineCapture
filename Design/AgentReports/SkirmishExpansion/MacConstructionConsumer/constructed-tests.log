@@ -18,19 +18,23 @@ test_strict_types_nonfinite_and_unknown_fields (__main__.AdmissionTests) ... ok
 test_bounded_oversized_file (__main__.ArtifactTests) ... ok
 test_build_bytes_and_derived_identity_fail_closed (__main__.ArtifactTests) ... ok
 test_candidate_hash_cannot_be_caller_only (__main__.ArtifactTests) ... ok
+test_empty_source_allowed_but_empty_artifact_or_dll_refused (__main__.ArtifactTests) ... ok
 test_final_barrier_rechecks_source_and_dll_bytes (__main__.ArtifactTests) ... ok
 test_final_barrier_rejects_change_after_validation (__main__.ArtifactTests) ... ok
 test_final_barrier_rejects_reparse_replacement (__main__.ArtifactTests) ... ok
+test_large_source_streams_and_final_barrier_rechecks_it (__main__.ArtifactTests) ... ok
 test_literal_policy_pins_cannot_be_caller_replaced (__main__.ArtifactTests) ... ok
 test_mutated_artifact_or_source (__main__.ArtifactTests) ... ok
 test_pinned_constructed_file_admission (__main__.ArtifactTests) ... ok
 test_rehashed_journal_outside_attempt_is_rejected (__main__.ArtifactTests) ... ok
+test_source_row_bound_covers_measured_project (__main__.ArtifactTests) ... ok
+test_streamed_pin_file_and_total_limits (__main__.ArtifactTests) ... ok
 test_symlink_traversal_and_escape (__main__.ArtifactTests) ... ok
 test_truncated_journal_even_rehashed (__main__.ArtifactTests) ... ok
 test_unknown_event_and_capture_fault_are_retained (__main__.ArtifactTests) ... ok
 test_wrong_immutable_claim_even_rehashed (__main__.ArtifactTests) ... ok
 
 ----------------------------------------------------------------------
-Ran 31 tests in 0.112s
+Ran 35 tests in 0.157s
 
 OK

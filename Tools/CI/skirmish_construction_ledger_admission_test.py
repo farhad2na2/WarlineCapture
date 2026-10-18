@@ -331,6 +331,34 @@ class ArtifactTests(unittest.TestCase):
                 with self.assertRaises(ValueError):self.inspect()
             self.file(name).write_bytes(before)
 
+    def test_large_source_streams_and_final_barrier_rechecks_it(self):
+        path=self.root/'large.asset';h=hashlib.sha256();chunk=b'a'*65536
+        with path.open('wb') as stream:
+            for _ in range(257):stream.write(chunk);h.update(chunk)
+        ref=dict(path='large.asset',sha256=h.hexdigest())
+        reader=admission.Reader(self.root)
+        reader.verify(ref);reader.stable()
+        with self.assertRaises(ValueError):reader.blob(ref) # Large pins are not parsed artifacts.
+        with path.open('r+b') as stream:stream.write(b'b')
+        with self.assertRaises(ValueError):reader.stable()
+
+    def test_empty_source_allowed_but_empty_artifact_or_dll_refused(self):
+        self.write('empty.cs','');ref=self.ref('empty.cs');reader=admission.Reader(self.root)
+        reader.verify(ref);reader.stable()
+        with self.assertRaises(ValueError):reader.blob(ref)
+        with self.assertRaises(ValueError):reader.verify(ref,allow_empty=False)
+
+    def test_streamed_pin_file_and_total_limits(self):
+        ref=self.ref('source.cs')
+        with self.assertRaises(ValueError):admission.Reader(self.root).verify(ref,byte_limit=2)
+        with patch.object(admission,'MAX_PIN_TOTAL_BYTES',2):
+            with self.assertRaises(ValueError):admission.Reader(self.root).verify(ref)
+
+    def test_source_row_bound_covers_measured_project(self):
+        # Baseline stat audit: 41,733 tracked source rows; journal row bound stays separate.
+        self.assertGreaterEqual(admission.MAX_SOURCE_FILES,41733)
+        self.assertEqual(admission.MAX_ROWS,25000)
+
     def test_bounded_oversized_file(self):
         with patch.object(admission,'MAX_BYTES',10):
             with self.assertRaises(ValueError):self.inspect()

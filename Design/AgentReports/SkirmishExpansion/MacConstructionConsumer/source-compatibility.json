@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "observed_utc": "2026-10-18T11:38:30.467333+00:00",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "scope": "Complete current source snapshot captured by existing native-source scope helper; streaming verification and final path/hash recheck only. No native events or compiled DLLs admitted.",
+  "result": "Passed",
+  "source_files": 41733,
+  "source_bytes": 1473030402,
+  "largest_source_bytes": 38322897,
+  "empty_source_files": 0,
+  "files_above_artifact_parse_limit": 17,
+  "candidate_sha256": "49014479b5bca3380e0e579ad600ffcb385920c7948fa0fbac37fb5299462668",
+  "literal_reviewed_pins": 12,
+  "elapsed_seconds": 23.079,
+  "qualified": false,
+  "paid_resources_qualified": false,
+  "mission_ready": false
+}

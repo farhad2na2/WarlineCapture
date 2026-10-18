@@ -13,7 +13,7 @@
   ],
   "test_command": "rtk proxy python3 Tools/CI/skirmish_construction_ledger_admission_test.py",
   "tests": {
-    "passed": 31,
+    "passed": 35,
     "fixtures": "Constructed Python fixtures only, not native evidence. Fixture-only pins are monkeypatched in tests; CLI uses 12 literal reviewed source/policy pins.",
     "log": "constructed-tests.log"
   },
@@ -61,7 +61,7 @@
     "Enemy pad source fit, reserve-policy thresholds, hidden intent fields and actor health are not present in these events and cannot be proved here.",
     "Unsettled player reservations fail closed; enemy outstanding debt/materials are reported separately and never treated as paid-resource credit.",
     "Reused player transaction IDs after an unobserved helper reset fail closed; no reset event exists in this reviewed schema.",
-    "16 MiB per artifact/source/DLL, 25000 journal rows/source rows, 4096 construction transactions, 1024 DLL rows; larger inputs fail closed.",
+    "Parsed artifacts/journals: 16 MiB and 25000 journal rows. Source/DLL pins: streamed with 64 KiB chunks, 512 MiB individual bound and 8 GiB total budget, 131072 source rows, 1024 DLL rows. Larger inputs fail closed.",
     "Canonical absolute claim paths refer to the actual candidate project. No cross-machine path rewrite or relocated-claim admission.",
     "Windows reparse handling is implemented but has only been executed on macOS; native Windows verification remains pending."
   ],
@@ -76,5 +76,17 @@
     "mission_ready": false,
     "player_device_acceptance": "not performed"
   },
-  "next": "Coordinator should review/cherry-pick after frozen Windows run cleanup, run on current traces, and retain any failed receipts. Changes to pinned producer/policy bytes require explicit source review and updated literal pins. Keep active producer/assets untouched."
+  "next": "Coordinator should review/cherry-pick after frozen Windows run cleanup, run on current traces, and retain any failed receipts. Changes to pinned producer/policy bytes require explicit source review and updated literal pins. Keep active producer/assets untouched.",
+  "source_compatibility": {
+    "report": "source-compatibility.json",
+    "result": "Passed",
+    "scope": "Actual complete baseline source bytes and final path/hash barrier; no live journal or compiled DLL admission.",
+    "source_files": 41733,
+    "source_bytes": 1473030402,
+    "large_files_above_16mib": 17,
+    "elapsed_seconds": 23.079
+  },
+  "corrections": [
+    "Initial source bounds would reject this real project. Repaired reader streams source/DLL pins separately from parsed artifacts and retains bounded total reads and the final barrier. Empty source pins are supported; empty parsed artifacts and DLLs remain refused."
+  ]
 }

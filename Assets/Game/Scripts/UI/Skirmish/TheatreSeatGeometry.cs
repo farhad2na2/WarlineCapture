@@ -159,6 +159,11 @@ namespace Game.UI.Runtime
         public const float PortraitMaxSlop = 0.5f;
         public const float PortraitMinHeight = 140f;
         public const float PortraitMaxHeight = 212f;
+        /// <summary>
+        /// Industrial Basin stops short of the 212 cap. At 4:3 that tile was the tallest
+        /// card and its hex bottom sat on Airfield Plains.
+        /// </summary>
+        private const float IndustrialPortraitCap = 170f;
         /// <summary>Compact 112-wide tiles may step one point under <see cref="NameFontFloor"/> so the longest Persian word still fits.</summary>
         public const float PortraitCompactFontFloor = 15f;
         public const float NameFontCeiling = 22f;
@@ -2854,9 +2859,28 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Shortens Industrial Basin toward <see cref="IndustrialPortraitCap"/> from the
+        /// bottom. The top stays put, so the Coastal City gap does not close.
+        /// </summary>
+        private static void CapIndustrialBasin(Vec2[][] hexes, Box[] cards)
+        {
+            const int ib = 3;
+            if (hexes == null || cards == null || cards.Length <= ib || hexes[ib] == null)
+                return;
+            Box card = cards[ib];
+            if (card.H <= IndustrialPortraitCap + 0.5f)
+                return;
+            var shorter = new Box(card.X, card.Y, card.W, IndustrialPortraitCap);
+            if (!SeatHolds(shorter, hexes[ib], hexes) || !CentreOwns(shorter, hexes[ib]))
+                return;
+            cards[ib] = shorter;
+        }
+
+        /// <summary>
         /// Grows each portrait toward 160×212 while the hex still holds it. A card
         /// that is already at the portrait minimum keeps growing; the hex is not shrunk
-        /// to make room. The capture maximum stays 160×212.
+        /// to make room. The capture maximum stays 160×212. Industrial Basin stops at
+        /// <see cref="IndustrialPortraitCap"/>.
         /// </summary>
         private static void GrowSeatedPortrait(
             Vec2[][] hexes,
@@ -3014,7 +3038,9 @@ namespace Game.UI.Runtime
             const int ib = 3;
             if (hexes == null || pins == null || cards == null || hexes.Length <= ib)
                 return;
-            float need = GlowEdgeNeed();
+            // Plates that already cleared the reach-18 floor stay with the flat pulls.
+            // Rebuilding them for the thicker halo packed Airfield Plains.
+            float need = 18f * 2f + 12f / SectionDrawScale();
             if (DistrictEdgeGap(hexes[cc], hexes[ib]) + 0.05f >= need)
                 return;
             Vec2[][] savedHex = CloneDistricts(hexes);
@@ -3090,6 +3116,8 @@ namespace Game.UI.Runtime
             Box savedCue,
             float need)
         {
+            if (savedHex == null || savedHex.Length <= 4 || savedHex[3] == null || savedHex[4] == null)
+                return false;
             for (int step = 2; step <= 16; step += 2)
             {
                 ResetBasin(savedHex, hexes, savedCards, cards, savedCue, ref cue);
@@ -3247,6 +3275,448 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Opens the 4:3 Industrial Basin / Airfield Plains gap, and Coastal City when
+        /// the thicker halo drops it under the floor. Unity logs that plate gap with
+        /// lossyScale 1; the harness multiplies by the section scale, so the edge this
+        /// chases is <see cref="GlowEdgeNeed"/>. A plate that already clears both pairs
+        /// returns before the pulls. The card on Airfield Plains then tries one wider step.
+        /// </summary>
+        private static void OpenIndustrialAirfield(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null || pins == null || cards == null || hexes.Length < 5 || !ShotIsFourByThree())
+                return;
+            const int cc = 1;
+            const int ib = 3;
+            const int ap = 4;
+            if (hexes[cc] == null || hexes[ib] == null || hexes[ap] == null)
+                return;
+            float need = GlowEdgeNeed();
+            if (DistrictEdgeGap(hexes[cc], hexes[ib]) + 0.05f < need
+                || DistrictEdgeGap(hexes[ib], hexes[ap]) + 0.05f < need)
+                LiftBasinOffAirfield(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, need);
+            WidenAirfield(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected);
+        }
+
+        /// <summary>
+        /// Opens Industrial Basin's two neighbours up to the Unity plate floor (12px
+        /// between halos). Airfield Plains slides down with its card so the basin card
+        /// can stay put. A short Coastal City gap only lowers the basin's top flat.
+        /// Pulling the basin's bottom flat stays the fallback: that move shortens the
+        /// hex the basin card sits in.
+        /// </summary>
+        private static void LiftBasinOffAirfield(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            float need)
+        {
+            const int cc = 1;
+            const int ib = 3;
+            const int ap = 4;
+            Vec2[] saved = CloneShape(hexes[ib]);
+            Box savedCard = cards[ib];
+            Vec2[] savedAir = CloneShape(hexes[ap]);
+            Box savedAirCard = cards[ap];
+            Box savedCue = cue;
+            float[] before = PairGapList(hexes);
+            cue = CueIfLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+            // Unity logs this plate gap at lossyScale 1. The last capture read about a
+            // pixel under the harness, so the pull aims at 14 and the floor stays 12.
+            float unityFloor = DistrictGlowReach * 2f + 14f;
+            if (SlideAirfieldDown(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, before, unityFloor)
+                && OpenCoastalFlat(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, before, unityFloor))
+                return;
+
+            hexes[ib] = CloneShape(saved);
+            cards[ib] = savedCard;
+            hexes[ap] = CloneShape(savedAir);
+            cards[ap] = savedAirCard;
+            cue = savedCue;
+            cue = CueIfLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected);
+            float[] extra = { 0f, 4f, 8f };
+            for (int g = 0; g < extra.Length; g++)
+            {
+                hexes[ib] = CloneShape(saved);
+                cards[ib] = savedCard;
+                float ibShort = Math.Max(0f, unityFloor - DistrictEdgeGap(hexes[ib], hexes[ap]) + 1f);
+                float ccShort = Math.Max(0f, unityFloor - DistrictEdgeGap(hexes[cc], hexes[ib]) + 1f);
+                if (ccShort > 0.5f)
+                    RetractFlat(hexes[ib], true, ccShort + extra[g]);
+                if (ibShort > 0.5f)
+                    RetractFlat(hexes[ib], false, ibShort + extra[g]);
+                EaseAspect(hexes[ib], "IB");
+                bool seated = SeatHolds(cards[ib], hexes[ib], hexes) && CentreOwns(cards[ib], hexes[ib]);
+                if (!seated && !FitIndustrialCard(hexes, cards, pins[ib]))
+                    continue;
+                if (DistrictEdgeGap(hexes[cc], hexes[ib]) + 0.05f < unityFloor)
+                    continue;
+                if (DistrictEdgeGap(hexes[ib], hexes[ap]) + 0.05f < unityFloor)
+                    continue;
+                if (!SparedPairsHold(hexes, before, need))
+                    continue;
+                if (!DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                    continue;
+                return;
+            }
+
+            hexes[ib] = saved;
+            cards[ib] = savedCard;
+            hexes[ap] = CloneShape(savedAir);
+            cards[ap] = savedAirCard;
+            cue = savedCue;
+        }
+
+        /// <summary>
+        /// Moves Airfield Plains down, card with it, until the basin halo clears
+        /// <paramref name="unityFloor"/>. The pin stays. A move that misses the floor
+        /// or another pair is put back.
+        /// </summary>
+        private static bool SlideAirfieldDown(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            float[] before,
+            float unityFloor)
+        {
+            const int ib = 3;
+            const int ap = 4;
+            float gap = DistrictEdgeGap(hexes[ib], hexes[ap]);
+            if (gap + 0.05f >= unityFloor)
+                return true;
+            Vec2[] savedHex = CloneShape(hexes[ap]);
+            Box savedCard = cards[ap];
+            Box savedCue = cue;
+            float[] backs = { 0f, 2f, 4f };
+            bool mirror = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+            for (int b = 0; b < backs.Length; b++)
+            {
+                hexes[ap] = CloneShape(savedHex);
+                cards[ap] = savedCard;
+                cue = savedCue;
+                float distance = Math.Max(0.6f, unityFloor + 0.4f - gap - backs[b]);
+                OffsetShape(hexes[ap], distance);
+                cards[ap] = new Box(savedCard.X, savedCard.Y + distance, savedCard.W, savedCard.H);
+                Box tab = cue;
+                if (selected == ap)
+                {
+                    if (!TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out tab)
+                        || (mirror && !SameCue(savedCue, tab)))
+                        continue;
+                    cue = tab;
+                }
+
+                if (DistrictEdgeGap(hexes[ib], hexes[ap]) + 0.05f < unityFloor)
+                    continue;
+                if (!SparedPairsHold(hexes, before, unityFloor))
+                    continue;
+                if (!DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                    continue;
+                return true;
+            }
+
+            hexes[ap] = savedHex;
+            cards[ap] = savedCard;
+            cue = savedCue;
+            return false;
+        }
+
+        /// <summary>
+        /// Lowers only the top flat of Industrial Basin. The card stays. Aspect is left
+        /// alone: squeezing the hex after a one-pixel pull pushed the card onto its pin.
+        /// </summary>
+        private static bool OpenCoastalFlat(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected,
+            float[] before,
+            float unityFloor)
+        {
+            const int cc = 1;
+            const int ib = 3;
+            float gap = DistrictEdgeGap(hexes[cc], hexes[ib]);
+            if (gap + 0.05f >= unityFloor)
+                return true;
+            Vec2[] saved = CloneShape(hexes[ib]);
+            float[] extra = { 0f, 1.5f, 3f };
+            for (int g = 0; g < extra.Length; g++)
+            {
+                hexes[ib] = CloneShape(saved);
+                float pull = Math.Max(0.6f, unityFloor + 0.4f - gap + extra[g]);
+                RetractFlat(hexes[ib], true, pull);
+                if (!SeatHolds(cards[ib], hexes[ib], hexes) || !CentreOwns(cards[ib], hexes[ib]))
+                    continue;
+                if (DistrictEdgeGap(hexes[cc], hexes[ib]) + 0.05f < unityFloor)
+                    continue;
+                if (!SparedPairsHold(hexes, before, unityFloor))
+                    continue;
+                if (!DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                    continue;
+                return true;
+            }
+
+            hexes[ib] = saved;
+            return false;
+        }
+
+        private static void OffsetShape(Vec2[] shape, float dy)
+        {
+            if (shape == null)
+                return;
+            for (int i = 0; i < shape.Length; i++)
+                shape[i] = new Vec2(shape[i].X, shape[i].Y + dy);
+        }
+
+        /// <summary>
+        /// Pulls the Industrial Basin card back inside the shortened hex. The top
+        /// stays when it still seats; otherwise the card shrinks about its centre.
+        /// </summary>
+        private static bool FitIndustrialCard(Vec2[][] hexes, Box[] cards, Box pin)
+        {
+            const int ib = 3;
+            Box card = cards[ib];
+            if (card.H < 140f || card.W < 112f)
+                return false;
+            float[] widths = { card.W, Math.Max(112f, card.W - 8f), Math.Max(112f, card.W - 16f), 124f, 112f };
+            float[] shifts = { 0f, -8f, 8f, -16f, 16f };
+            for (int w = 0; w < widths.Length; w++)
+            {
+                float width = widths[w];
+                if (width < 112f - 0.1f)
+                    continue;
+                for (float height = card.H; height >= 140f - 0.1f; height -= 8f)
+                {
+                    for (int s = 0; s < shifts.Length; s++)
+                    {
+                        var held = new Box(card.X + shifts[s], card.Y, width, height);
+                        var centred = new Box(card.X + shifts[s], card.Center.Y - height * 0.5f, width, height);
+                        if (CardClearsPin(held, pin) && SeatHolds(held, hexes[ib], hexes) && CentreOwns(held, hexes[ib]))
+                        {
+                            cards[ib] = held;
+                            return true;
+                        }
+
+                        if (CardClearsPin(centred, pin) && SeatHolds(centred, hexes[ib], hexes) && CentreOwns(centred, hexes[ib]))
+                        {
+                            cards[ib] = centred;
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool CardClearsPin(Box card, Box pin)
+        {
+            return Leader(pin, card) + 0.05f >= LeaderMin && Separation(card, pin) + 0.05f >= PinGap;
+        }
+
+        /// <summary>
+        /// A cue that is already off its tab or on the stroke must not block a gap
+        /// repair. The cue rect itself is left where the seating pass put it.
+        /// </summary>
+        private static Box CueIfLegal(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (cue.W <= 1f)
+                return cue;
+            if (DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+                return cue;
+            string why = OpenBlock ?? string.Empty;
+            if (why == "tab" || why == "near" || why == "stroke" || why == "cueDetail")
+                return default;
+            return cue;
+        }
+
+        /// <summary>Moves the top or bottom flat. The pull stops before it passes the waist.</summary>
+        private static void RetractFlat(Vec2[] shape, bool top, float distance)
+        {
+            if (shape == null || shape.Length < 3 || distance < 0.5f)
+                return;
+            float minY = shape[0].Y;
+            float maxY = shape[0].Y;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minY = Math.Min(minY, shape[i].Y);
+                maxY = Math.Max(maxY, shape[i].Y);
+            }
+
+            float edge = top ? minY : maxY;
+            float limit = (maxY - minY) * 0.42f;
+            if (distance > limit)
+                distance = limit;
+            if (distance < 0.5f)
+                return;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                if (Math.Abs(shape[i].Y - edge) > 2.5f)
+                    continue;
+                float y = top ? shape[i].Y + distance : shape[i].Y - distance;
+                shape[i] = new Vec2(shape[i].X, y);
+            }
+        }
+
+        /// <summary>Pulls a hex that left the ±10% aspect rail back to its expected width.</summary>
+        private static void EaseAspect(Vec2[] shape, string mapId)
+        {
+            if (shape == null || shape.Length < 3)
+                return;
+            float expect = HexAspect(mapId, RatioPlateWidth, RatioPlateHeight);
+            float measured = MeasuredHexAspect(shape);
+            if (expect < 0.2f || measured < 0.2f)
+                return;
+            float ratio = measured / expect;
+            if (ratio <= 1.09f && ratio >= 0.91f)
+                return;
+            // Stop at the rail. Pulling all the way to the expected ratio
+            // dropped Industrial Basin under the 40000 area floor.
+            float target = ratio > 1f ? 1.09f : 0.91f;
+            float factor = target / ratio;
+            if (factor < 0.8f)
+                factor = 0.8f;
+            if (factor > 1.2f)
+                factor = 1.2f;
+            float cx = 0f;
+            for (int i = 0; i < shape.Length; i++)
+                cx += shape[i].X;
+            cx /= shape.Length;
+            for (int i = 0; i < shape.Length; i++)
+                shape[i] = new Vec2(cx + (shape[i].X - cx) * factor, shape[i].Y);
+        }
+
+        /// <summary>
+        /// Coastal City / Industrial Basin and Industrial Basin / Airfield Plains may move.
+        /// Every other pair that already clears the floor stays there.
+        /// </summary>
+        private static bool SparedPairsHold(Vec2[][] hexes, float[] before, float need)
+        {
+            if (before == null)
+                return false;
+            int n = 0;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                for (int j = i + 1; j < hexes.Length; j++)
+                {
+                    if (n >= before.Length)
+                        return false;
+                    float after = DistrictEdgeGap(hexes[i], hexes[j]);
+                    float was = before[n++];
+                    if (was + 0.05f >= need && after + 0.05f < need)
+                        return false;
+                    if (was + 0.05f < need && after + 0.35f < was)
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Airfield Plains is 136–144 wide on the 4:3 reserve-off shot. One more step
+        /// when the hex still holds it. The cue on any other card stays where it is.
+        /// </summary>
+        private static void WidenAirfield(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            const int ap = 4;
+            if (cards.Length <= ap || hexes[ap] == null || cards[ap].W + 0.5f >= PortraitMaxWidth)
+                return;
+            Box savedCard = cards[ap];
+            Box savedCue = cue;
+            float[] shift = { 0f, 8f, -8f, 16f, -16f };
+            float width = savedCard.W;
+            float originX = savedCard.X;
+            float originY = savedCard.Y;
+            float height = savedCard.H;
+            bool mirror = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+            for (int step = 0; step < 3; step++)
+            {
+                float nextW = Math.Min(PortraitMaxWidth, width + 8f);
+                if (nextW <= width + 0.5f)
+                    break;
+                bool grown = false;
+                for (int yStep = 0; yStep < shift.Length && !grown; yStep++)
+                {
+                    for (int xStep = 0; xStep < shift.Length; xStep++)
+                    {
+                        var trial = new Box(originX + shift[xStep], originY + shift[yStep], nextW, height);
+                        if (!SeatHolds(trial, hexes[ap], hexes))
+                            continue;
+                        cards[ap] = trial;
+                        Box tab = cue;
+                        if (selected == ap
+                            && (!TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out tab)
+                                || (mirror && !SameCue(savedCue, tab))))
+                        {
+                            cards[ap] = new Box(originX, originY, width, height);
+                            continue;
+                        }
+
+                        if (!DistrictsStayLegal(hexes, pins, cards, tab, detail, plateWidth, plateHeight, selected))
+                        {
+                            cards[ap] = new Box(originX, originY, width, height);
+                            continue;
+                        }
+
+                        cue = tab;
+                        width = nextW;
+                        originX = trial.X;
+                        originY = trial.Y;
+                        grown = true;
+                        break;
+                    }
+                }
+
+                if (!grown)
+                    break;
+            }
+
+            if (cards[ap].W <= savedCard.W + 0.5f)
+            {
+                cards[ap] = savedCard;
+                cue = savedCue;
+            }
+        }
+
+        /// <summary>
         /// Opens DB-MP, MP-AP and IB-AP on a 4:3 reserve plate when a facing edge is
         /// still inside the 12px drawn floor. The hex becomes a wide flat so the same
         /// bounding box keeps its area, and the move is one short list of pulls. A plate
@@ -3265,19 +3735,21 @@ namespace Game.UI.Runtime
         {
             if (hexes == null || pins == null || cards == null || !ShotIsFourByThree())
                 return;
-            if (detail.W < 1f || DrawnGlowGapsHold(hexes))
+            // This walk keeps the reach-18 floor. The thicker paint is opened
+            // afterwards on Industrial Basin, so a solved column is not rebuilt.
+            float need = 18f * 2f + 12f / SectionDrawScale();
+            if (detail.W < 1f || LegacyColumnGapsHold(hexes, need))
                 return;
             Vec2[][] saved = CloneDistricts(hexes);
             int[] lower = { 4, 4, 2 };
             int[] upper = { 2, 3, 0 };
-            float need = GlowEdgeNeed();
-            for (int round = 0; round < 2 && !DrawnGlowGapsHold(hexes); round++)
+            for (int round = 0; round < 2 && !LegacyColumnGapsHold(hexes, need); round++)
             {
                 for (int pair = 0; pair < lower.Length; pair++)
                 {
                     if (lower[pair] >= hexes.Length || upper[pair] >= hexes.Length)
                         continue;
-                    if (DrawnDistrictGap(hexes[upper[pair]], hexes[lower[pair]]) + 0.05f >= 12f)
+                    if (DistrictEdgeGap(hexes[upper[pair]], hexes[lower[pair]]) + 0.05f >= need)
                         continue;
                     if (PullColumnEdge(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected, lower[pair], upper[pair], need, true))
                         continue;
@@ -3287,9 +3759,25 @@ namespace Game.UI.Runtime
                 }
             }
 
-            if (!DrawnGlowGapsHold(hexes)
+            if (!LegacyColumnGapsHold(hexes, need)
                 || !DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
                 CopyDistricts(saved, hexes);
+        }
+
+        private static bool LegacyColumnGapsHold(Vec2[][] hexes, float need)
+        {
+            if (hexes == null)
+                return false;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                for (int j = i + 1; j < hexes.Length; j++)
+                {
+                    if (DistrictEdgeGap(hexes[i], hexes[j]) + 0.05f < need)
+                        return false;
+                }
+            }
+
+            return true;
         }
 
         private static bool PullColumnEdge(
@@ -3609,7 +4097,7 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Painted halo reaches 18px past the fill. Centres walk into the open pairs
+        /// Painted halo reaches <see cref="DistrictGlowReach"/> past the fill. Centres walk into the open pairs
         /// until every drawn glow-to-glow gap clears the 12px floor with margin.
         /// Unity's logged CC-IB gap sat about 14px under this harness, so the walk
         /// aims 14 drawn pixels past the floor. Spare pairs may shrink back to the
@@ -3713,8 +4201,14 @@ namespace Game.UI.Runtime
 
         private static string OpenBlock;
 
-        /// <summary>Outer painted halo, in plate pixels. The capture clip stays at <see cref="HaloReach"/>.</summary>
-        private const float PaintedHaloReach = 18f;
+        /// <summary>
+        /// Outer painted halo, in plate pixels. Unity's <c>[DistrictGlow] reach</c> is this
+        /// value times outline.lossyScale, which stays 1 in capture. The clip pad stays
+        /// at <see cref="HaloReach"/>, so the paint cannot grow past 22 without clipping.
+        /// </summary>
+        public const float DistrictGlowReach = 19f;
+
+        private const float PaintedHaloReach = DistrictGlowReach;
 
         /// <summary>
         /// Scales each district about its card centre. 82% when that district's area
@@ -3837,12 +4331,13 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Local gap the solver chases. Fourteen drawn pixels past the 12px floor,
-        /// because the logged CC-IB gap was that far under the harness figure.
+        /// Local gap the centre walk chases. It stays on the reach-18 target.
+        /// Raising it with the painted halo reshuffled plates that were already
+        /// solved. The flat pulls open the extra halo afterwards.
         /// </summary>
         private static float GlowEdgeAim()
         {
-            return GlowEdgeNeed() + 14f / SectionDrawScale();
+            return 18f * 2f + 26f / SectionDrawScale();
         }
 
         /// <summary>Section scale that turns a plate pixel into a drawn pixel. 4:3 is the stricter fallback.</summary>
@@ -3859,8 +4354,12 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Drawn gap between outer halos. Negative when the 18px halos overlap.
-        /// Matches <c>[DistrictGap]</c>: fill edge, minus two halos, times the section scale.
+        /// Drawn gap between outer halos. Negative when the halos overlap.
+        /// Unity logs the plate gap itself: capture outlines sit at lossyScale 1, so
+        /// <c>[DistrictGap]</c> is the fill edge minus two <see cref="DistrictGlowReach"/>
+        /// halos. This harness value is that plate gap times the section scale
+        /// (0.86 at 4:3, 1.15 at 16:9 and 20:9). A 4:3 harness figure of 12 is a
+        /// Unity log of about 14.
         /// </summary>
         public static float DrawnDistrictGap(Vec2[] left, Vec2[] right)
         {
@@ -4494,7 +4993,9 @@ namespace Game.UI.Runtime
                     if (i == left && j == right)
                         continue;
                     float after = DistrictEdgeGap(hexes[i], hexes[j]);
-                    float floor = GlowEdgeNeed();
+                    // The centre walk keeps the reach-18 floor. The thicker paint is
+                    // opened by the flat pulls, which run after this walk.
+                    float floor = 18f * 2f + 12f / SectionDrawScale();
                     if (was + 0.02f >= floor && after + 0.02f < floor)
                         return false;
                     if (was + 0.25f < floor && after + 0.35f < was)
@@ -4982,6 +5483,8 @@ namespace Game.UI.Runtime
                 OpenCityBasinGap(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
                 GrowSeatedPortrait(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
                 OpenColumnGaps(hexes, pins, placed, cue, detail, plateWidth, plateHeight, selected);
+                CapIndustrialBasin(hexes, placed);
+                OpenIndustrialAirfield(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
             }
 
             bool cardsLegal = placed != null;

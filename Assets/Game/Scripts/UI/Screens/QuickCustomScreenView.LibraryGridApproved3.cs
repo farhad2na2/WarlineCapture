@@ -174,6 +174,8 @@ namespace Game.UI.Runtime
         private const float GridA3TabWide = 196f;
         private const float GridA3HeaderWide = 82f;
         private const float GridA3MinRow = 112f;
+        private const float GridA3CompactHeader = 50f;
+        private const float GridA3MinReadable = 14f;
 
         /// <summary>v38: sets this build's tab band and returns the column header height (approved-3 proportions on wide frames).</summary>
         private static float ResolveGridA3Bands(bool wide, float gridHeight, float defaultHeader, int rows)
@@ -181,7 +183,7 @@ namespace Game.UI.Runtime
             if (!wide)
             {
                 GridA3TabHeight = 60f;
-                return defaultHeader;
+                return Mathf.Max(defaultHeader, GridA3CompactHeader); // v40: 4:3 two 14px lines (FA line box ~23px)
             }
 
             float header = GridA3HeaderWide;
@@ -279,15 +281,15 @@ namespace Game.UI.Runtime
                 if (stacked)
                 {
                     // Count badge in the top corner, above the name strip, on its own small scrim over the art.
-                    float badgeH = Mathf.Clamp(h - strip - 4f, 14f, 18f);
+                    float badgeH = Mathf.Clamp(h - strip - 2f, 16f, 20f); // v40: room for a 14px count
                     float bx = fa ? 4f : width - 4f - countW;
                     var badge = new GameObject("TabCountScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     badge.transform.SetParent(button.transform, false);
-                    PlaceTopLeft(badge.rectTransform, bx, 2f, countW, badgeH);
+                    PlaceTopLeft(badge.rectTransform, bx, 0f, countW, badgeH);
                     badge.color = new Color(0.02f, 0.03f, 0.04f, 0.82f);
                     badge.raycastTarget = false;
                     count.transform.SetAsLastSibling();
-                    PlaceTopLeft(count.rectTransform, bx + 2f, 2f, countW - 4f, badgeH);
+                    PlaceTopLeft(count.rectTransform, bx + 2f, 0f, countW - 4f, badgeH);
                 }
                 else
                     PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
@@ -298,6 +300,13 @@ namespace Game.UI.Runtime
                 count.isRightToLeftText = comingSoon && fa;
                 count.color = new Color(1f, 0.86f, 0.42f, 1f);
                 count.raycastTarget = false;
+                if (stacked)
+                {
+                    // v40: 4:3 badge text was 9-13px. Hold it at 14px; tighten tracking rather than shrink or truncate.
+                    FitReadableLine(count, countW - 4f, GridA3MinReadable);
+                    Debug.Log("[GridA3] tabCount map=" + mapId + " font=" + count.fontSize.ToString("0.0") +
+                        " width=" + (countW - 4f).ToString("0.0") + " locale=" + (fa ? "fa-IR" : "en"));
+                }
             }
 
             if (selected)
@@ -351,6 +360,12 @@ namespace Game.UI.Runtime
             edge.effectDistance = new Vector2(1f, -1f);
             plate.transform.SetSiblingIndex(Mathf.Max(0, (icon != null ? icon.transform.GetSiblingIndex() : header.transform.GetSiblingIndex())));
 
+            if (height < 64f)
+            {
+                StyleCompactColumnHeader(parent, icon, header, armyLabel, startLabel, columnX, top, width, height, fa);
+                return;
+            }
+
             float iconSize = Mathf.Clamp(height * 0.5f, 16f, 38f); // v38: grows with the approved-3 header height
             if (icon != null)
                 PlaceTopLeft(icon.rectTransform, fa ? columnX + width - iconSize - 4f : columnX + 4f, top + (height - iconSize) * 0.5f, iconSize, iconSize);
@@ -371,6 +386,83 @@ namespace Game.UI.Runtime
             V3LocalizedTextBindingView binding = header.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
                 binding.ConfigureFontBounds(11f, headerMax);
+        }
+
+        /// <summary>
+        /// v40 4:3 header: the 40px plate squeezed "FORCE / BASE" beside a 20px icon to 11px and clipped the FA second
+        /// line. Now a 16px icon sits in the leading corner beside the force line, and the base line takes the full
+        /// column width; both lines hold 14px or more (tracking tightens before anything shrinks).
+        /// </summary>
+        private void StyleCompactColumnHeader(Transform parent, Image icon, TMP_Text header, string armyLabel, string startLabel,
+            float columnX, float top, float width, float height, bool fa)
+        {
+            const float iconSize = 16f;
+            float line = height * 0.5f;
+            if (icon != null)
+                PlaceTopLeft(icon.rectTransform, fa ? columnX + width - iconSize - 3f : columnX + 3f, top + (line - iconSize) * 0.5f, iconSize, iconSize);
+            float firstX = fa ? columnX + 3f : columnX + iconSize + 5f;
+            float firstW = Mathf.Max(30f, width - iconSize - 8f);
+            PlaceTopLeft(header.rectTransform, firstX, top, firstW, line);
+            SetCopy(header, armyLabel, GridA3MinReadable, 16f);
+            StyleCompactHeaderLine(header, fa);
+            FitReadableLine(header, firstW, GridA3MinReadable);
+
+            string startName = "HeaderStart_" + header.name.Substring(Mathf.Min(header.name.Length, "Column_".Length));
+            Transform existing = parent.Find(startName);
+            TMP_Text start = existing != null ? existing.GetComponent<TMP_Text>() : CreateLabel(parent, startName, GridA3MinReadable);
+            float secondW = Mathf.Max(30f, width - 6f);
+            PlaceTopLeft(start.rectTransform, columnX + 3f, top + line, secondW, height - line);
+            SetCopy(start, startLabel, GridA3MinReadable, 16f);
+            StyleCompactHeaderLine(start, fa);
+            start.alignment = TextAlignmentOptions.Center;
+            FitReadableLine(start, secondW, GridA3MinReadable);
+            Debug.Log("[GridA3] header col=" + header.name + " force=" + header.fontSize.ToString("0.0") +
+                " base=" + start.fontSize.ToString("0.0") + " width=" + width.ToString("0.0") +
+                " height=" + height.ToString("0.0") + " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        private static void StyleCompactHeaderLine(TMP_Text text, bool fa)
+        {
+            text.color = new Color(0.96f, 0.93f, 0.82f, 1f);
+            text.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+            text.isRightToLeftText = fa;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.maxVisibleLines = 1;
+            text.raycastTarget = false;
+        }
+
+        /// <summary>
+        /// Single line at a fixed readable size: starts at min(16, current max), tightens tracking to -12 before dropping
+        /// toward the floor, never below <paramref name="floor"/>, and pins the size against the refit pass.
+        /// </summary>
+        private static void FitReadableLine(TMP_Text text, float boxWidth, float floor)
+        {
+            if (text == null)
+                return;
+            float size = Mathf.Max(floor, Mathf.Min(16f, text.fontSizeMax > 0f ? text.fontSizeMax : 16f));
+            float[] tracks = { 0f, -4f, -8f, -12f };
+            bool fits = false;
+            while (!fits)
+            {
+                for (int i = 0; i < tracks.Length && !fits; i++)
+                {
+                    text.enableAutoSizing = false;
+                    text.fontSize = text.fontSizeMin = text.fontSizeMax = size;
+                    text.characterSpacing = tracks[i];
+                    fits = boxWidth <= 1f || text.GetPreferredValues(text.text, 9999f, 100f).x <= boxWidth + 0.5f;
+                }
+
+                if (fits || size <= floor + 0.01f)
+                    break;
+                size = Mathf.Max(floor, size - 1f);
+            }
+
+            V3LocalizedTextBindingView binding = text.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            LibraryFixedTextSize held = text.GetComponent<LibraryFixedTextSize>() ?? text.gameObject.AddComponent<LibraryFixedTextSize>();
+            held.Size = size;
         }
 
         /// <summary>Gap 4: framed row tile the full row height; gold fill on the selected objective; larger icon and name.</summary>

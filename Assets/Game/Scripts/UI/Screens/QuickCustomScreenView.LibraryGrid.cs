@@ -23,8 +23,10 @@ namespace Game.UI.Runtime
             int objectives = field.Tabs.Length;
             float cardWidth = GridCardWidth(gridWidth, columns, LibraryGridRightPad);
             bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
-            float headerTop = GridA3TabBandBottom + 2f; // v37 P1: 60px image tabs (widget stays 52)
-            float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 40f; // v37: two-line approved-3 headers
+            bool wideBands = IsWideLibraryFrame(_libraryGrid);
+            // v38 P1: approved-3 tab and header heights on 16:9 / 20:9 (4:3 keeps the 60px tabs and 40px headers).
+            float headerHeight = ResolveGridA3Bands(wideBands, gridHeight, roomy ? LibraryGridRoomyHeaderHeight : 40f, objectives);
+            float headerTop = GridA3TabBandBottom + 2f; // v37 P1: image tabs (widget stays 52)
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
             // The text block under the picture used to consume the height the tabs gave up,

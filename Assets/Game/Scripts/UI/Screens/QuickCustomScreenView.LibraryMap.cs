@@ -64,6 +64,7 @@ namespace Game.UI.Runtime
             ClearChildren(_libraryPins);
             if (field.MapCards == null)
                 return;
+            _pinWideFrame = IsWideLibraryFrame(_libraryPins); // v38: 16:9 and wider enforce the 24px clear row gap in both layouts
             var routePins = new System.Collections.Generic.List<RectTransform>();
             for (int i = 0; i < field.MapCards.Length; i++)
             {
@@ -509,6 +510,11 @@ namespace Game.UI.Runtime
         private static float PinMedalSize(float pinHeight) => Mathf.Clamp(pinHeight * 0.185f, 20f, LibraryPinMedalSize);
         private const float PinGutter = 14f;
         private const float PinWideRowGap = 24f; // v37: min clear gap between staggered rows at 16:9 and wider
+        /// <summary>v38: the selection glow reaches 4px past the card edge and the frame outline 1px, so the slot pitch adds
+        /// that on both cards to keep a clear 24px between the visible frames.</summary>
+        private const float PinFrameOverhang = 5f;
+        private static bool _pinWideFrame;
+        private static float PinRowPitchGap(float gutter) => _pinWideFrame ? Mathf.Max(gutter, PinWideRowGap + 2f * PinFrameOverhang) : gutter;
         private const float ObjectiveListWidth = 224f;
         private const float PinRailReserve = ObjectiveListWidth + 8f + 14f;
 
@@ -576,10 +582,12 @@ namespace Game.UI.Runtime
             float g = PinGutter;
             float k = PinStaggerFraction;
 
-            // A: 2 cols x 3 rows, odd rows shifted right by k*w.  width = (2+k)w + g, height = 3h + 2g.
-            float wA = Mathf.Min((availWidth - g) / (2f + k), (availHeight - 2f * g) / 3f / aspect, PinMaxWidth);
-            // B: 3 cols x 2 rows, odd columns dropped by k*h.  width = 3w + 2g, height = (2+k)h + rg (rg = 24px row gap; cards shrink to fit).
-            float rg = PinWideRowGap;
+            // v38: the 2x3 branch (A) is the one 16:9 picks; it used the 14px gutter between rows, so S003/S004 touched the
+            // S001/S002 frames. Both branches now take the row gap from PinRowPitchGap (>= 24px clear at 16:9 and wider).
+            float rg = PinRowPitchGap(g);
+            // A: 2 cols x 3 rows, odd rows shifted right by k*w.  width = (2+k)w + g, height = 3h + 2rg.
+            float wA = Mathf.Min((availWidth - g) / (2f + k), (availHeight - 2f * rg) / 3f / aspect, PinMaxWidth);
+            // B: 3 cols x 2 rows, odd columns dropped by k*h.  width = 3w + 2g, height = (2+k)h + rg (cards shrink to fit).
             float wB = Mathf.Min((availWidth - 2f * g) / 3f, (availHeight - rg) / (2f + k) / aspect, PinMaxWidth);
             bool wide = wB > wA;
             float w = Mathf.Max(80f, wide ? wB : wA);
@@ -603,31 +611,50 @@ namespace Game.UI.Runtime
             {
                 column = ordinal % 2;
                 row = ordinal / 2;
-                float blockW = (2f + k) * w + g;
-                float blockH = 3f * h + 2f * g;
+                // v38: spare width widens the column gutter (up to 56px) so the route between the two columns shows.
+                float ga = Mathf.Clamp(availWidth - (2f + k) * w, g, 56f);
+                float blockW = (2f + k) * w + ga;
+                float blockH = 3f * h + 2f * rg;
                 float x0 = left + (availWidth - blockW) * 0.5f;
                 float y0 = top + (availHeight - blockH) * 0.5f;
-                x = x0 + column * (w + g) + (row % 2 == 1 ? k * w : 0f);
-                y = y0 + row * (h + g);
+                x = x0 + column * (w + ga) + (row % 2 == 1 ? k * w : 0f);
+                y = y0 + row * (h + rg);
             }
 
             slot = new Rect(x, y, w, h);
             return true;
         }
 
-        /// <summary>v37: approved-2 route lines joining pin centres in battle order, behind the cards: a 4px bright gold core
-        /// over a 7px dark outline so they read on sand. All outlines sit below all cores.</summary>
+        /// <summary>
+        /// approved-2 route lines joining the pins in battle order: a 4px bright gold core over a 7px dark outline.
+        /// v38 fix (v37 capture showed none): the lines were the first siblings, under every DepthShadow, and ran centre to
+        /// centre, so the only visible part (the 14px gutter) was covered by the neighbouring card's 18px shadow overhang.
+        /// Now every DepthShadow goes to the bottom, the routes sit above all shadows and below all cards, and each segment
+        /// is clipped to the open sand between the two card frames.
+        /// </summary>
         private void AddPinRoutes(System.Collections.Generic.List<RectTransform> pins)
         {
             if (_libraryPins == null || pins == null || pins.Count < 2)
                 return;
-            AddPinRouteLayer(pins, "PinRoute", 4f, new Color(1f, 0.84f, 0.36f, 0.95f));
-            AddPinRouteLayer(pins, "PinRouteOutline", 7f, new Color(0.12f, 0.07f, 0.02f, 0.85f));
+            var shadowList = new System.Collections.Generic.List<Transform>();
+            for (int i = 0; i < _libraryPins.childCount; i++)
+            {
+                Transform child = _libraryPins.GetChild(i);
+                if (child.name == "DepthShadow")
+                    shadowList.Add(child);
+            }
+
+            for (int i = 0; i < shadowList.Count; i++)
+                shadowList[i].SetSiblingIndex(i);
+            int shadows = shadowList.Count;
+            int insertAt = shadows;
+            insertAt = AddPinRouteLayer(pins, "PinRouteOutline", 7f, new Color(0.12f, 0.07f, 0.02f, 0.9f), insertAt);
+            AddPinRouteLayer(pins, "PinRoute", 4f, new Color(1f, 0.86f, 0.38f, 1f), insertAt);
         }
 
-        private void AddPinRouteLayer(System.Collections.Generic.List<RectTransform> pins, string name, float thickness, Color colour)
+        private int AddPinRouteLayer(System.Collections.Generic.List<RectTransform> pins, string name, float thickness, Color colour, int insertAt)
         {
-            for (int i = pins.Count - 1; i >= 1; i--)
+            for (int i = 1; i < pins.Count; i++)
             {
                 RectTransform a = pins[i - 1];
                 RectTransform b = pins[i];
@@ -636,9 +663,16 @@ namespace Game.UI.Runtime
                 Vector2 pa = a.anchoredPosition;
                 Vector2 pb = b.anchoredPosition;
                 Vector2 d = pb - pa;
-                float length = d.magnitude;
-                if (length < 1f)
+                if (d.magnitude < 1f)
                     continue;
+                // Clip the centre line to the gap between the two frames (2px into each card so the ends tuck under).
+                float ta = ExitFraction(d, a.sizeDelta * 0.5f) - 2f / d.magnitude;
+                float tb = 1f - ExitFraction(-d, b.sizeDelta * 0.5f) + 2f / d.magnitude;
+                if (tb - ta < 0.5f / d.magnitude)
+                    continue; // the cards touch along this line: nothing visible to draw
+                Vector2 start = pa + d * ta;
+                Vector2 end = pa + d * tb;
+                Vector2 seg = end - start;
                 var line = new GameObject(name + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                 line.transform.SetParent(_libraryPins, false);
                 line.raycastTarget = false;
@@ -647,11 +681,22 @@ namespace Game.UI.Runtime
                 r.anchorMin = a.anchorMin;
                 r.anchorMax = a.anchorMax;
                 r.pivot = new Vector2(0.5f, 0.5f);
-                r.sizeDelta = new Vector2(length, thickness);
-                r.anchoredPosition = (pa + pb) * 0.5f;
-                r.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg);
-                line.transform.SetAsFirstSibling();
+                r.sizeDelta = new Vector2(seg.magnitude, thickness);
+                r.anchoredPosition = (start + end) * 0.5f;
+                r.localRotation = Quaternion.Euler(0f, 0f, Mathf.Atan2(seg.y, seg.x) * Mathf.Rad2Deg);
+                line.transform.SetSiblingIndex(Mathf.Min(insertAt, _libraryPins.childCount - 1));
+                insertAt++;
             }
+
+            return insertAt;
+        }
+
+        /// <summary>Fraction of d at which a ray from a rect centre leaves a rect of the given half size.</summary>
+        private static float ExitFraction(Vector2 d, Vector2 half)
+        {
+            float tx = Mathf.Abs(d.x) > 0.001f ? half.x / Mathf.Abs(d.x) : float.MaxValue;
+            float ty = Mathf.Abs(d.y) > 0.001f ? half.y / Mathf.Abs(d.y) : float.MaxValue;
+            return Mathf.Min(tx, ty);
         }
     }
 }

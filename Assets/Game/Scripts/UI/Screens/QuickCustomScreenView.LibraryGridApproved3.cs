@@ -62,11 +62,18 @@ namespace Game.UI.Runtime
                 }
                 else
                 {
-                    // Locked/empty: dark plate. The art stays assigned (capture requires real art) but is not drawn;
-                    // tint is final-white so no pending tag is expected.
+                    // v38 locked/unplayed (S007 on, and empty slots): the real art the shared path resolved (scenario preview,
+                    // else the zone's district plate via ResolveGridPreview) is drawn full-bleed and dimmed by a separate dark
+                    // scrim. The RawImage tint stays final-white, so RejectPendingPreviewTag expects no pending tag, and the
+                    // preview still fills the cell (RejectGridPreviewDominant / 40% floor).
+                    Texture2D texture = preview.texture as Texture2D;
+                    if (texture == null || texture.name == "SkirmishLibraryPlaceholder")
+                        texture = ResolveGridPreview(empty ? null : card.PreviewSpriteKey, empty ? null : card.ScenarioId, card.MapId, out _);
+                    PlaceCoverPreview(preview, width - GridA3Inset * 2f, height - GridA3Inset * 2f, texture, false);
+                    PlaceTopLeft(preview.rectTransform, GridA3Inset, GridA3Inset, width - GridA3Inset * 2f, height - GridA3Inset * 2f);
                     preview.color = Color.white;
-                    preview.enabled = false;
                     HideCellChild(cell, "PreviewPending");
+                    AddGridA3LockOverlay(cell, preview.transform.GetSiblingIndex() + 1, width, height);
                 }
                 LogGridA3PreviewShare(preview.rectTransform.rect.height > 0f ? preview.rectTransform.sizeDelta.y : 0f, height, fa);
             }
@@ -121,6 +128,30 @@ namespace Game.UI.Runtime
                 AddGridA3Frame(cell, width, height);
         }
 
+        private static readonly Color GridA3LockScrim = new Color(0.02f, 0.03f, 0.04f, 0.64f);
+
+        /// <summary>v38: dark scrim over the locked art (just above the preview, below badge and medal) and a centred lock icon.</summary>
+        private static void AddGridA3LockOverlay(RectTransform cell, int siblingIndex, float width, float height)
+        {
+            var scrim = new GameObject("LockScrimA3", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            scrim.transform.SetParent(cell, false);
+            scrim.transform.SetSiblingIndex(Mathf.Min(siblingIndex, cell.childCount - 1));
+            PlaceTopLeft(scrim.rectTransform, GridA3Inset, GridA3Inset, width - GridA3Inset * 2f, height - GridA3Inset * 2f);
+            scrim.color = GridA3LockScrim;
+            scrim.raycastTarget = false;
+
+            float size = Mathf.Clamp(Mathf.Min(width, height) * 0.3f, 18f, 44f);
+            var icon = new GameObject("LockIconA3", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            icon.transform.SetParent(cell, false);
+            PlaceTopLeft(icon.rectTransform, (width - size) * 0.5f, (height - size) * 0.5f, size, size);
+            ShowIcon(icon, GridA3LockIcon, new Color(0.86f, 0.86f, 0.84f, 0.92f));
+            icon.raycastTarget = false;
+            icon.transform.SetAsLastSibling();
+        }
+
+        /// <summary>Existing V3 equipment lock art, copied into the library resources (Resources/SkirmishBattleLibrary/icon_lock.png).</summary>
+        private const string GridA3LockIcon = SkirmishBattleLibraryArt.ResourceRoot + "icon_lock";
+
         private static bool _gridA3ShareLogged;
 
         /// <summary>Logs the preview share of a Grid cell once per Grid build (Game PM: keep >= 40% with the 60px tab band).</summary>
@@ -134,8 +165,37 @@ namespace Game.UI.Runtime
                 " tabBand=" + GridA3TabHeight.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
         }
 
-        /// <summary>v37 P1 Grid tab band: 60px (SkirmishZoneTabWidget.Height stays 52; P2 agreed option b).</summary>
-        private const float GridA3TabHeight = 60f;
+        /// <summary>
+        /// Grid tab band height for this build. v37: 60px (SkirmishZoneTabWidget.Height stays 52; P2 agreed option b).
+        /// v38: on 16:9 and wider it follows approved-3 (tab strip ~18% and column headers ~7.6% of the 1080 frame),
+        /// shrinking if four rows would drop under GridA3MinRow; 4:3 keeps 60/40.
+        /// </summary>
+        private static float GridA3TabHeight = 60f;
+        private const float GridA3TabWide = 196f;
+        private const float GridA3HeaderWide = 82f;
+        private const float GridA3MinRow = 112f;
+
+        /// <summary>v38: sets this build's tab band and returns the column header height (approved-3 proportions on wide frames).</summary>
+        private static float ResolveGridA3Bands(bool wide, float gridHeight, float defaultHeader, int rows)
+        {
+            if (!wide)
+            {
+                GridA3TabHeight = 60f;
+                return defaultHeader;
+            }
+
+            float header = GridA3HeaderWide;
+            float tab = GridA3TabWide;
+            int count = Mathf.Max(1, rows);
+            float rowsNeed = count * GridA3MinRow + (count - 1) * LibraryGridRowGap + LibraryGridContentTop + LibraryGridContentBottom;
+            float spare = gridHeight - SkirmishZoneTabWidget.OriginY - 2f - header - 4f - rowsNeed;
+            if (spare < tab)
+                tab = Mathf.Max(60f, spare);
+            if (tab <= 60f && spare < 60f)
+                header = Mathf.Max(defaultHeader, header - (60f - spare));
+            GridA3TabHeight = tab;
+            return header;
+        }
         private static float GridA3TabBandBottom => SkirmishZoneTabWidget.OriginY + GridA3TabHeight;
 
         /// <summary>
@@ -171,7 +231,8 @@ namespace Game.UI.Runtime
             PlaceTopLeft(image.rectTransform, 2f, 2f, width - 4f, h - 4f);
             image.color = selected || dimmed ? image.color : new Color(0.82f, 0.82f, 0.82f, 1f);
 
-            float strip = Mathf.Clamp(h * 0.4f, 20f, 26f);
+            float strip = Mathf.Clamp(h * 0.24f, 20f, 46f); // v38: approved-3 name strip (~24% of the tab)
+            float nameMax = h >= 120f ? 22f : 15f;
             var scrim = new GameObject("TabScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             scrim.transform.SetParent(button.transform, false);
             scrim.transform.SetSiblingIndex(1);
@@ -188,7 +249,7 @@ namespace Game.UI.Runtime
                 string ratio = pin.WonCount + "/" + pin.PublishedCount;
                 countCopy = fa ? SkirmishWidgetContext.ToPersianDigits(ratio) : ratio;
             }
-            float countW = string.IsNullOrEmpty(countCopy) ? 0f : comingSoon ? Mathf.Clamp(width * 0.42f, 60f, 104f) : Mathf.Clamp(width * 0.26f, 34f, 52f);
+            float countW = string.IsNullOrEmpty(countCopy) ? 0f : comingSoon ? Mathf.Clamp(width * 0.42f, 60f, 104f) : Mathf.Clamp(width * 0.26f, 34f, h >= 120f ? 64f : 52f);
             if (label != null)
             {
                 label.transform.SetAsLastSibling();
@@ -200,18 +261,18 @@ namespace Game.UI.Runtime
                 label.maxVisibleLines = 1;
                 label.enableAutoSizing = true;
                 label.fontSizeMin = 10f;
-                label.fontSizeMax = 15f;
+                label.fontSizeMax = nameMax;
                 label.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
                 V3LocalizedTextBindingView binding = label.GetComponent<V3LocalizedTextBindingView>();
                 if (binding != null)
-                    binding.ConfigureFontBounds(10f, 15f);
+                    binding.ConfigureFontBounds(10f, nameMax);
             }
 
             if (countW > 0f)
             {
                 var count = CreateLabel(button.transform, comingSoon ? "ComingSoon" : "TabCount", 14f);
                 PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
-                SetCopy(count, countCopy, comingSoon ? 9f : 11f, comingSoon ? 13f : 15f);
+                SetCopy(count, countCopy, comingSoon ? 9f : 11f, comingSoon ? (h >= 120f ? 16f : 13f) : nameMax);
                 count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.overflowMode = TextOverflowModes.Overflow;
@@ -271,14 +332,15 @@ namespace Game.UI.Runtime
             edge.effectDistance = new Vector2(1f, -1f);
             plate.transform.SetSiblingIndex(Mathf.Max(0, (icon != null ? icon.transform.GetSiblingIndex() : header.transform.GetSiblingIndex())));
 
-            float iconSize = Mathf.Clamp(height * 0.6f, 16f, 26f);
+            float iconSize = Mathf.Clamp(height * 0.5f, 16f, 38f); // v38: grows with the approved-3 header height
             if (icon != null)
                 PlaceTopLeft(icon.rectTransform, fa ? columnX + width - iconSize - 4f : columnX + 4f, top + (height - iconSize) * 0.5f, iconSize, iconSize);
             float textX = fa ? columnX + 2f : columnX + iconSize + 8f;
             float textW = Mathf.Max(40f, width - iconSize - 10f);
             PlaceTopLeft(header.rectTransform, textX, top, textW, height);
             header.color = new Color(0.96f, 0.93f, 0.82f, 1f);
-            SetCopy(header, armyLabel + "\n" + startLabel, 11f, 16f);
+            float headerMax = height >= 64f ? 21f : 16f;
+            SetCopy(header, armyLabel + "\n" + startLabel, 11f, headerMax);
             header.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
             header.isRightToLeftText = fa;
             header.textWrappingMode = TextWrappingModes.NoWrap;
@@ -286,10 +348,10 @@ namespace Game.UI.Runtime
             header.maxVisibleLines = 2;
             header.enableAutoSizing = true;
             header.fontSizeMin = 11f;
-            header.fontSizeMax = 16f;
+            header.fontSizeMax = headerMax;
             V3LocalizedTextBindingView binding = header.GetComponent<V3LocalizedTextBindingView>();
             if (binding != null)
-                binding.ConfigureFontBounds(11f, 16f);
+                binding.ConfigureFontBounds(11f, headerMax);
         }
 
         /// <summary>Gap 4: framed row tile the full row height; gold fill on the selected objective; larger icon and name.</summary>

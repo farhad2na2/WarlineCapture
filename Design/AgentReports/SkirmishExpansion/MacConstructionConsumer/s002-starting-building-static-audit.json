@@ -1,0 +1,1102 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T11:52:33.922532+00:00",
+  "baseline": "5f7308fb330bed1fe1a693bb9058a24ee43f4ecf",
+  "scope": "Read-only static production-source and Unity YAML reference audit. No Unity job, gameplay, geometry, asset or producer changes.",
+  "runtime_facts_from_coordinator": {
+    "attribution": "Windows coordinator latest commentary, not independently observed by this audit",
+    "S002": "Selected v2 setup reached; expandedStartupFailure=MissingReference before gameplay",
+    "S005": "Fresh normal-time win reported, result/menu/profile return completed"
+  },
+  "finding": {
+    "status": "Static catalog coverage gap confirmed on preserved legacy Ground Maneuver path; failed live branch still requires native attribution",
+    "summary": "S002 Established requires SatelliteDish. Its Desert Base baseline has seven buildings and omits the dish. Match scene asset contains the dish, but SkirmishProductionCatalog copies baseline plus role producers rather than unioning all scene buildings or all required starting structures. With preserved legacy Ground Maneuver overlays, no Drone/IntelStation role adds the dish. Its normalized starting key has no configured row on that path.",
+    "condition": "SkirmishMeasuredLayoutBinder.PreservesPackagedLegacyBinding returns true for packaged reviewed S002 layout; static reviewed path documented, not recomputed using Unity JsonUtility here. If a changed setup disables legacy preservation, generic Ground Maneuver adds drone/IntelStation and this omission is avoided.",
+    "candidate_gate": "SkirmishStartingBuildingsService.Step missing configured footprint key. Normal publication clamps published footprints to >=1 so an absent row is the specific static gap, not a zero/negative authored footprint.",
+    "not_a_key_typo": "VisualKey and actual prefab consistently use Building_Satelite_Dish; normalization trims/lowercases only."
+  },
+  "source_chain": [
+    {
+      "path": "Assets/Game/Scenes/Match.unity",
+      "line": 178,
+      "needle": "buildingPlacementConfig:"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs",
+      "line": 16,
+      "needle": "var baseline = SkirmishPreset.buildingPlacement;"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs",
+      "line": 26,
+      "needle": "SkirmishProductionCatalog.Create(setup, baseline"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
+      "line": 34,
+      "needle": "public static SkirmishPresetConfig Load("
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBaseAssault.asset",
+      "line": 32,
+      "needle": "buildingPlacement:"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Construction.asset",
+      "line": 21,
+      "needle": "spawnables:"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 37,
+      "needle": "var buildings = new List<GameObject>(baseline.Spawnables);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 47,
+      "needle": "foreach (var prefab in scene.Spawnables)"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 57,
+      "needle": "foreach (var overlay in setup.RoleOverlays)"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 65,
+      "needle": "if (!buildings.Contains(producer)) buildings.Add(producer);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 91,
+      "needle": "baseline, result.registry, buildings, recipes.ToArray()"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 393,
+      "needle": "bool preserveLegacyBinding ="
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 576,
+      "needle": "SkirmishStructureIds.SatelliteDish, \"service.player\""
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 80,
+      "needle": "GroundManeuver && !preserveLegacyGround"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "line": 82,
+      "needle": "return CreateS002GroundSlice();"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "line": 109,
+      "needle": "SkirmishProducerKind.IntelStation =>"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "line": 305,
+      "needle": "return \"Building_Satelite_Dish\";"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SpawnableKeyText.cs",
+      "line": 28,
+      "needle": "return value.Trim().ToLowerInvariant();"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs",
+      "line": 46,
+      "needle": "footprints[i].x <= 0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "line": 714,
+      "needle": "internal void PublishConfiguredSpawnablesReadModel"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "line": 737,
+      "needle": "Mathf.Max(1, definition.FootprintCells.x)"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "line": 1759,
+      "needle": "string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name);"
+    }
+  ],
+  "scene_configuration": {
+    "scene": "Assets/Game/Scenes/Match.unity",
+    "config": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+    "guid": "b2010000000000000000000000000004",
+    "dish_present": true
+  },
+  "skirmish_baseline": {
+    "preset": "Assets/Game/Resources/SkirmishBaseAssault.asset",
+    "config": "Assets/Game/Configs/Skirmish/Construction.asset",
+    "guid": "7542c1da61e97460e893f4634d428b37",
+    "spawnables": [
+      {
+        "guid": "683195b1e21c94df7add42ab26cd2a33",
+        "path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab"
+      },
+      {
+        "guid": "93fba5e426a2347d4821b7b7112064f9",
+        "path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab"
+      },
+      {
+        "guid": "2855f5d3fe13f49c89f79a6914af636b",
+        "path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab"
+      },
+      {
+        "guid": "0012eb42b25984abdbd97abd513b16de",
+        "path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab"
+      },
+      {
+        "guid": "93f73d4f2fb8e428c887ae423fbfe4f3",
+        "path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab"
+      },
+      {
+        "guid": "60d6c2b9b0e504ae898d745fa2ace790",
+        "path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab"
+      },
+      {
+        "guid": "7e4c91b0a2d34f6e8b1c5d9e3a0f2468",
+        "path": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab"
+      }
+    ],
+    "dish_present": false
+  },
+  "starting_structure_coverage": [
+    {
+      "symbol": "Barracks",
+      "structure_id": "building.barracks",
+      "visual_key": "Building_Barrack",
+      "normalized_key": "building_barrack",
+      "prefab_guid": "683195b1e21c94df7add42ab26cd2a33",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "GroundStaging",
+      "structure_id": "building.ground_staging",
+      "visual_key": "Building_GroundStaging",
+      "normalized_key": "building_groundstaging",
+      "prefab_guid": "7e4c91b0a2d34f6e8b1c5d9e3a0f2468",
+      "prefab_path": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": false,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "OilPump",
+      "structure_id": "building.oil_pump",
+      "visual_key": "Building_OilPump",
+      "normalized_key": "building_oilpump",
+      "prefab_guid": "0012eb42b25984abdbd97abd513b16de",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "Refinery",
+      "structure_id": "building.refinery",
+      "visual_key": "Building_Refinery",
+      "normalized_key": "building_refinery",
+      "prefab_guid": "93f73d4f2fb8e428c887ae423fbfe4f3",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "FuelBladder",
+      "structure_id": "building.fuel_bladder",
+      "visual_key": "Building_Fuel_Bladder",
+      "normalized_key": "building_fuel_bladder",
+      "prefab_guid": "60d6c2b9b0e504ae898d745fa2ace790",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "FabricationDepot",
+      "structure_id": "building.fabrication_depot",
+      "visual_key": "Building_Ammunition_Depot",
+      "normalized_key": "building_ammunition_depot",
+      "prefab_guid": "2855f5d3fe13f49c89f79a6914af636b",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "Watchtower",
+      "structure_id": "building.watchtower",
+      "visual_key": "Building_GuardTower",
+      "normalized_key": "building_guardtower",
+      "prefab_guid": "93fba5e426a2347d4821b7b7112064f9",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": true,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "WatchtowerApproach",
+      "structure_id": "building.watchtower.approach",
+      "visual_key": "Building_GuardTower",
+      "normalized_key": "building_guardtower",
+      "prefab_guid": "93fba5e426a2347d4821b7b7112064f9",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "in_skirmish_baseline": true,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": false,
+      "baseline_coverage": "Present"
+    },
+    {
+      "symbol": "SatelliteDish",
+      "structure_id": "building.satellite_dish",
+      "visual_key": "Building_Satelite_Dish",
+      "normalized_key": "building_satelite_dish",
+      "prefab_guid": "77550b2e24f244cdfac66cc7bacec90a",
+      "prefab_path": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab",
+      "in_skirmish_baseline": false,
+      "in_match_scene_spawnables": true,
+      "required_by_S002_Established": true,
+      "required_by_S005_Field": false,
+      "baseline_coverage": "Missing; needs production overlay addition"
+    }
+  ],
+  "prefab_details": [
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "prefab_guid": "683195b1e21c94df7add42ab26cd2a33",
+      "base_prefab_guids": [
+        "08227b777a0434ef0a51c22d122def63",
+        "7f40f52c9aed94fefb3dda0fc58866c0",
+        "c0efe1046735042d9bdf3d642a512ca7"
+      ],
+      "overrides": [
+        {
+          "field": "m_Name",
+          "value": "Enemy C compound",
+          "object_reference": "{fileID: 0}",
+          "line": 101
+        },
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: b3010000000000000000000000000005, type: 2}",
+          "line": 180
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "28",
+          "object_reference": "{fileID: 0}",
+          "line": 213
+        },
+        {
+          "field": "footprintCells.y",
+          "value": "15",
+          "object_reference": "{fileID: 0}",
+          "line": 217
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_Barrack",
+          "object_reference": "{fileID: 0}",
+          "line": 261
+        },
+        {
+          "field": "m_Name",
+          "value": "Masonry compound",
+          "object_reference": "{fileID: 0}",
+          "line": 326
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "b3010000000000000000000000000005",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset",
+          "fields": {
+            "displayName": "Barracks",
+            "canRequest": "1",
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "0",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "0",
+            "materialFabricationEnabled": "0"
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab",
+      "prefab_guid": "7e4c91b0a2d34f6e8b1c5d9e3a0f2468",
+      "base_prefab_guids": [],
+      "overrides": [],
+      "config_assets": [
+        {
+          "guid": "e6c58e75eb676422b8b24e937cbb1097",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset",
+          "fields": {
+            "displayName": "Ground Staging",
+            "canRequest": "0",
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "0",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "0",
+            "materialFabricationEnabled": "0"
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "prefab_guid": "0012eb42b25984abdbd97abd513b16de",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: 7324cd1a656df4aada5a074c7eafd236, type: 2}",
+          "line": 510
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "15",
+          "object_reference": "{fileID: 0}",
+          "line": 534
+        },
+        {
+          "field": "footprintCells.y",
+          "value": "4",
+          "object_reference": "{fileID: 0}",
+          "line": 538
+        },
+        {
+          "field": "oilBarrelsPerDay",
+          "value": "50",
+          "object_reference": "{fileID: 0}",
+          "line": 542
+        },
+        {
+          "field": "oilStorageCapacity",
+          "value": "200",
+          "object_reference": "{fileID: 0}",
+          "line": 546
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_OilPump",
+          "object_reference": "{fileID: 0}",
+          "line": 566
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "7324cd1a656df4aada5a074c7eafd236",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilPump_Config.asset",
+          "fields": {
+            "displayName": "Oil Pump",
+            "canRequest": null,
+            "oilBarrelsPerDay": "50",
+            "oilStorageCapacity": "200",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "0",
+            "materialFabricationEnabled": null
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "prefab_guid": "93f73d4f2fb8e428c887ae423fbfe4f3",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: 1f235e6b1ad2441939af25f88d506af1, type: 2}",
+          "line": 2212
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "25",
+          "object_reference": "{fileID: 0}",
+          "line": 2236
+        },
+        {
+          "field": "footprintCells.y",
+          "value": "15",
+          "object_reference": "{fileID: 0}",
+          "line": 2240
+        },
+        {
+          "field": "fuelBarrelsPerDay",
+          "value": "100",
+          "object_reference": "{fileID: 0}",
+          "line": 2244
+        },
+        {
+          "field": "oilStorageCapacity",
+          "value": "5000",
+          "object_reference": "{fileID: 0}",
+          "line": 2248
+        },
+        {
+          "field": "fuelStorageCapacity",
+          "value": "5000",
+          "object_reference": "{fileID: 0}",
+          "line": 2256
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_Refinery",
+          "object_reference": "{fileID: 0}",
+          "line": 2272
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "1f235e6b1ad2441939af25f88d506af1",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset",
+          "fields": {
+            "displayName": "Oil Refinery",
+            "canRequest": "1",
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "5000",
+            "fuelBarrelsPerDay": "100",
+            "fuelStorageCapacity": "5000",
+            "materialFabricationEnabled": null
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "prefab_guid": "60d6c2b9b0e504ae898d745fa2ace790",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: ce27600d951b541a6b42eecfa673f158, type: 2}",
+          "line": 306
+        },
+        {
+          "field": "FootprintCells.y",
+          "value": "20",
+          "object_reference": "{fileID: 0}",
+          "line": 340
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "14",
+          "object_reference": "{fileID: 0}",
+          "line": 344
+        },
+        {
+          "field": "fuelStorageCapacity",
+          "value": "5000",
+          "object_reference": "{fileID: 0}",
+          "line": 352
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_Fuel_Bladder",
+          "object_reference": "{fileID: 0}",
+          "line": 432
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "ce27600d951b541a6b42eecfa673f158",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset",
+          "fields": {
+            "displayName": "Fuel Bladder",
+            "canRequest": null,
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "0",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "5000",
+            "materialFabricationEnabled": null
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "prefab_guid": "2855f5d3fe13f49c89f79a6914af636b",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: b980392114c1142cea5b43e3c45dafe2, type: 2}",
+          "line": 1056
+        },
+        {
+          "field": "FootprintCells.x",
+          "value": "30",
+          "object_reference": "{fileID: 0}",
+          "line": 1089
+        },
+        {
+          "field": "FootprintCells.y",
+          "value": "40",
+          "object_reference": "{fileID: 0}",
+          "line": 1093
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "19",
+          "object_reference": "{fileID: 0}",
+          "line": 1097
+        },
+        {
+          "field": "footprintCells.y",
+          "value": "16",
+          "object_reference": "{fileID: 0}",
+          "line": 1101
+        },
+        {
+          "field": "oilStorageCapacity",
+          "value": "24",
+          "object_reference": "{fileID: 0}",
+          "line": 1105
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_Ammunition_Depot",
+          "object_reference": "{fileID: 0}",
+          "line": 1189
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "b980392114c1142cea5b43e3c45dafe2",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset",
+          "fields": {
+            "displayName": "Field Fabrication Depot",
+            "canRequest": "1",
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "24",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "0",
+            "materialFabricationEnabled": "1"
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "prefab_guid": "93fba5e426a2347d4821b7b7112064f9",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: 243575a10c0a948d4a3ee14955fa160a, type: 2}",
+          "line": 147
+        },
+        {
+          "field": "FootprintCells.x",
+          "value": "30",
+          "object_reference": "{fileID: 0}",
+          "line": 192
+        },
+        {
+          "field": "FootprintCells.y",
+          "value": "40",
+          "object_reference": "{fileID: 0}",
+          "line": 196
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "3",
+          "object_reference": "{fileID: 0}",
+          "line": 200
+        },
+        {
+          "field": "footprintCells.y",
+          "value": "4",
+          "object_reference": "{fileID: 0}",
+          "line": 204
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_GuardTower",
+          "object_reference": "{fileID: 0}",
+          "line": 292
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "243575a10c0a948d4a3ee14955fa160a",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset",
+          "fields": {
+            "displayName": "Guard Tower",
+            "canRequest": "1",
+            "oilBarrelsPerDay": "0",
+            "oilStorageCapacity": "0",
+            "fuelBarrelsPerDay": "0",
+            "fuelStorageCapacity": "0",
+            "materialFabricationEnabled": null
+          }
+        }
+      ]
+    },
+    {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab",
+      "prefab_guid": "77550b2e24f244cdfac66cc7bacec90a",
+      "base_prefab_guids": [
+        "7f40f52c9aed94fefb3dda0fc58866c0"
+      ],
+      "overrides": [
+        {
+          "field": "config",
+          "value": "",
+          "object_reference": "{fileID: 11400000, guid: 2b70db4780979459fab85ddbb4e401df, type: 2}",
+          "line": 328
+        },
+        {
+          "field": "FootprintCells.y",
+          "value": "20",
+          "object_reference": "{fileID: 0}",
+          "line": 358
+        },
+        {
+          "field": "footprintCells.x",
+          "value": "10",
+          "object_reference": "{fileID: 0}",
+          "line": 362
+        },
+        {
+          "field": "m_Name",
+          "value": "Building_Satelite_Dish",
+          "object_reference": "{fileID: 0}",
+          "line": 406
+        }
+      ],
+      "config_assets": [
+        {
+          "guid": "2b70db4780979459fab85ddbb4e401df",
+          "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset",
+          "fields": {
+            "displayName": "Satellite Dish",
+            "canRequest": null,
+            "oilBarrelsPerDay": null,
+            "oilStorageCapacity": null,
+            "fuelBarrelsPerDay": null,
+            "fuelStorageCapacity": null,
+            "materialFabricationEnabled": null
+          }
+        }
+      ]
+    }
+  ],
+  "S005_comparison": {
+    "army": "CombinedArms",
+    "start": "Field",
+    "required_start_structures": "Seven-structure backbone; no Established approach tower or SatelliteDish. War/LargeWar add a refinery module alias.",
+    "catalog_behavior": "CombinedArms overlays include Drone/IntelStation so producer augmentation also brings the dish even though Field startup does not need it.",
+    "implication": "S005 startup success does not establish S002 Established starting-key coverage."
+  },
+  "supply_branch": {
+    "static_result": "No authored Standard capacity shortfall found for either compared package, assuming intended buildings are created, bound and storage components are projected. Live capacity/readiness not proved.",
+    "required_per_faction": {
+      "S002_Standard": {
+        "oil": 240,
+        "usable_fuel": 700
+      },
+      "S005_Standard": {
+        "oil": 120,
+        "usable_fuel": 350
+      }
+    },
+    "nominal_shared_start_storage_per_faction": {
+      "oil_pump_oil": 200,
+      "refinery_oil": 5000,
+      "fabrication_depot_oil": 24,
+      "total_oil_capacity": 5224,
+      "fuel_bladder_usable_fuel": 5000,
+      "refinery_fuel_excluded_from_usable": 5000
+    },
+    "usable_fuel_rule": "FuelStorageCapacity > 0 AND FuelBarrelsPerDay <= 0 AND OilBarrelsPerDay <= 0; refinery output fuel is excluded.",
+    "runtime_gates": "Actual SkirmishSharedBuildingsReady marker, session ownership, faction identity, storage existence, Stored/ReservedInbound headroom, and current metadata projection still require native evidence.",
+    "references": [
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+        "line": 17,
+        "needle": "if (!em.HasComponent<SkirmishSharedBuildingsReady>"
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+        "line": 44,
+        "needle": "oilRoom < setup.OilEach"
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+        "line": 75,
+        "needle": "storage.FuelStorageCapacity > 0"
+      },
+      {
+        "path": "Assets/Game/Scripts/Authorings/BuildingDefinitionAuthoring.cs",
+        "line": 182,
+        "needle": "oilStorageCapacity = config.OilStorageCapacity;"
+      },
+      {
+        "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs",
+        "line": 18,
+        "needle": "authoring.ApplyConfigIfAvailable();"
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
+        "line": 251,
+        "needle": "StoredOilBarrels = 0f,"
+      }
+    ]
+  },
+  "other_affected_families": {
+    "confirmed_current_packaged_missing_dish_path": [
+      "S002 preserved legacy GroundManeuver + Established"
+    ],
+    "no_additional_same_omission_confirmed": "S003 is AirMobile/Field, S004 AirMobile/Established, S005 CombinedArms/Field. AirMobile and CombinedArms overlays include Drone/IntelStation; generic non-preserved GroundManeuver also adds drone through filtered CombinedArms overlays. No claim that all 120 entries are runnable.",
+    "shared_design_risk": "Any future required starting facility not already in preset and not used by an allowed production role can be omitted by producer-only augmentation. Enumerate required starting keys when reviewing the shared fix; do not alter geometry or fixed mission budgets."
+  },
+  "additional_MissingReference_paths": {
+    "warning": "MissingReference alone is not unique to building/supply failure. This source also assigns it to typed launch constraints, original objective hooks, and post-spawn binding/opening-view failures. Runtime reviewer must locate the actual branch.",
+    "references": [
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "line": 157,
+        "needle": "if(!SkirmishTypedSpawnConstraint.TryForLaunch"
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "line": 163,
+        "needle": "if (!SkirmishOriginalObjectiveSpawnHooks.TryPlan"
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "line": 130,
+        "needle": "!SkirmishMissionLogicalBindingProvider.TryAttachAfterActualSpawn"
+      },
+      {
+        "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "line": 131,
+        "needle": "!SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn"
+      }
+    ]
+  },
+  "next_runtime_evidence": [
+    "Capture actual S002 preserveLegacyBinding/role-producer set and effective runtime Config.Spawnables.",
+    "Capture configured BuildingId/FootprintCells census and identify first unmatched required key.",
+    "If all keys are present, inspect actual owned storage headroom and marker before supply Initialize; retain other MissingReference branch probes.",
+    "Implement any correction in its owning integration lane after frozen-run cleanup, then repin candidate/compiled identity and run affected normal-input startup; this report does not implement or certify a fix."
+  ],
+  "acceptance": {
+    "static_source_audit": "Passed with confirmed conditional coverage gap",
+    "runtime_root_cause": "pending runner_review",
+    "native_validation": "not run",
+    "normal_input_playthrough": "not run by Mac",
+    "real_player_device_acceptance": "pending",
+    "mission_ready": false,
+    "paid_resources_qualified": false
+  },
+  "source_pins": [
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset",
+      "sha256": "a2f735866085e00eb25395d329657d8b44b871516eeb6b94c55f5f980f4d69ac"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset.meta",
+      "sha256": "8aaf8557f2c84df9477ccda4a55a287e4a55c23505cef87dce50c4e1ac1e731f"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset",
+      "sha256": "5b1074fda52a417fa1177491f5a19b03457508869e3d0be0b54075de5e466672"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset.meta",
+      "sha256": "c91db7ba904be7cc1ac5331d9abe6a64e79c19d711a17c0447ba539b9fb09b51"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset",
+      "sha256": "8489bff4eba03347b2ca444442a665b40b03da5659333ece7c8e656acb01871c"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset.meta",
+      "sha256": "d2cfd0a08ac237b94e47de68cf2dc9a00e5948ac26d7e455c1e338db55ee819c"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset",
+      "sha256": "060dc80659bceb46c7688bdbf50b561802429dd71eedf39753308fd9fb8b298c"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset.meta",
+      "sha256": "3697937470e0ff8bf8d7d344ac68ad6b8621992d93b5dc03ad383c67ab043fbf"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset",
+      "sha256": "0cfec908a817157285da7f6a0038c49ab570a629852462036a0a0741fab74016"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset.meta",
+      "sha256": "0a2955863872c8da3af8ec189c75e1bfe8857ebb826bd44af975f4443b55b544"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset",
+      "sha256": "0d998e6d33f2c59108dae0be496e9680757eeecad71c81de15166428217cb46e"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset.meta",
+      "sha256": "da348c98710c7cc844611193f92f60ca11f0a434f535d6c44f8515a3434cd19e"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilPump_Config.asset",
+      "sha256": "79e1d50fc14d971b0dff735bcb5917a42c0361cedf80d6970bda1033a5e953c0"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilPump_Config.asset.meta",
+      "sha256": "fbf070d0a81d801eca01f3d173a0fc85a33f9d55264898b1e422290ef5c49c1b"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset",
+      "sha256": "3cfd46b274959c3b86f6f54f0fbfb23f5e5bae5036c0826180e6fd96fdf59ae1"
+    },
+    {
+      "path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset.meta",
+      "sha256": "5ce411c61cd2eb1c47b5a8f45d17d8ab872b99790b6797fa4ad61c23535f7f2f"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+      "sha256": "a8d7ec905936c889fd39142d223562cea40b85edf42405e71b08baa8332c07e6"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset.meta",
+      "sha256": "cd100bb57aeb584cbb25e7d1cee0a2a707c037aa016598b735eef2758565278d"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Construction.asset",
+      "sha256": "6ca70f7d92c2e0fbf13c797a6f98a98192f1b11a601702a8c31f3cb286d9a97d"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Construction.asset.meta",
+      "sha256": "64c32c50a95aa593fdc7825302319c523db1ff020c097cd4c8bcf6f836aadc4f"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset",
+      "sha256": "1d19889ee0f2689acb23d7d460f3f92bd3d1a7234c62f849ffe2a1dbc6aea89a"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_CombinedArms.asset",
+      "sha256": "29f118816e2f0e0cb5855c64dd4e8caac266af6527a58c9c25ea87070c984417"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+      "sha256": "10c4dc052bcdb51bf8209dfb89b4cc90f5a8ebea102fefd353dae44650f91571"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+      "sha256": "88c3234d6e673999765b6f9faac76d5530e6c8ae41633c06dc6476efdc67a66b"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+      "sha256": "ba22dc27165807e102eb4fc757b70c3545499b85e34719bda8a2fc4b34a467ab"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset",
+      "sha256": "1740ac38ae155acbd08b34c5ac3e9902973e4e7097f6124eb39f08509c5f460c"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab.meta",
+      "sha256": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "sha256": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab.meta",
+      "sha256": "285ace58c011c369fc89cb2f78354c27f2f189243451160ca3b19cdf7bf9f6e1"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "sha256": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab.meta",
+      "sha256": "7e78163c5322d52a796f7b92e8ca66aefbb21ce3a2b2db20206ccb731b32a00b"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab.meta",
+      "sha256": "002346b190a736f3c15990a5f52bc7fb66580ff5f7726fcd32b7a804d2fdf3f4"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "sha256": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab.meta",
+      "sha256": "4372acd5dec1e1cc08d074094c5287b605c7a204f6d9006e145f27e97023b921"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab.meta",
+      "sha256": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab",
+      "sha256": "5e1fde7405baa7258e96fabc1528416b08182b034ec99d41cc5002d108e3b462"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab.meta",
+      "sha256": "c08c51269d5bafaaf7adcb7ee2d82e398ad7b7ba20264730f39d358220c82f97"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab",
+      "sha256": "1041515d1178ae44769023fa3834d8603b25f95de776b8142e6683c9c1c9fed2"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab.meta",
+      "sha256": "8998daa8c17612bb45bc1c6ba50553241c41036c0427c641d9833330c5ef3916"
+    },
+    {
+      "path": "Assets/Game/Resources/Skirmish/S002Definition.asset",
+      "sha256": "7a4c879f1a86ba25980dbfa1929c300217dd1a013576ef6db0fb09e53e6ba4bb"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBaseAssault.asset",
+      "sha256": "ff020b7c082ecbede2e0383731f0ca11443b715e8f625336174ebddf89c412fe"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+      "sha256": "e206b57a16d0876d504dab66cf5f8f93de13fa96844c5b2e30a234637885e6a8"
+    },
+    {
+      "path": "Assets/Game/Scenes/Match.unity",
+      "sha256": "cc8a67dee8510f38f3a35fdcac1b4045893debe92cbc8a50eb824f2fdd530bc0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Authorings/BuildingDefinitionAuthoring.cs",
+      "sha256": "b58a3fb07ae08111f70822fd128f617bbb890e998eb09494c33455c89574132d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/BuildingDefinitionAuthoringMetadataPrefabSystemHelper.cs",
+      "sha256": "f665d86128be5868da0be239cf67e6bff7543f986a4562e6e70c4f74bcd78703"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.Skirmish.cs",
+      "sha256": "ef20e46d9bdc737d20b20dbc86a7fb22a0e11a89b268d12193c3dadea1b15b94"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+      "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishLegacyLayoutBaselineContract.cs",
+      "sha256": "b02906542a2bdfd71209a0134456365b1200dcdfbb5867016c8f268f10963293"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishRoleOverlayCatalog.cs",
+      "sha256": "9f39a6f373ed5574fa0513d297db947d014c3f502474ab3197bcf27d877748b2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
+      "sha256": "4fe4ad05fa67f362eb5f0be29562dc741d276230887d1bdcc48a6e488740a009"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+      "sha256": "6a09a7a84a05e1617c12784ceba57a9849ee4fa3add73f944583f9501ef844a3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+      "sha256": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs",
+      "sha256": "4f27a8008616f5817592710eefbac93cb115149458fb40906edd0d4f544f79ad"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs",
+      "sha256": "7402f89d8151a463deb518a5ab4c0287b2d18824d69e44ec1608dbebf2b8fb4b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "sha256": "4b72ea8fd6a591539d1025b09b64ab086da96494e09b741e7dfb2084e5fda228"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs",
+      "sha256": "51e38dc5a24a66c7b1efcc283182e9240aeee26ac16ace79bd9c3af109a0c5b4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "sha256": "24fb0a5dd66a0c02371ed58b043500ec4f9b63f087d1652c2cd4bf2f97da68e5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SpawnableKeyText.cs",
+      "sha256": "424547625a12322c9a3925baf5baf6f7c50b1ee1f47be69609cd82212f060452"
+    }
+  ],
+  "source_verification": {
+    "files": 64,
+    "all_equal_to_baseline_git_blob": true,
+    "all_unchanged_at_end": true
+  }
+}

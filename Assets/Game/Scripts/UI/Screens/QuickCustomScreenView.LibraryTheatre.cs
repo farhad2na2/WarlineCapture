@@ -1038,26 +1038,57 @@ namespace Game.UI.Runtime
             if (slots == null)
                 return;
             TryApplyArrangedSeats(slots, plateWidth, plateHeight, fa);
+            var seated = new TheatreSeatGeometry.Vec2[slots.Count][];
+            for (int i = 0; i < slots.Count; i++)
+            {
+                Vector2[] hex = slots[i].Hex;
+                if (hex == null || hex.Length < 3)
+                    continue;
+                var shape = new TheatreSeatGeometry.Vec2[hex.Length];
+                for (int p = 0; p < hex.Length; p++)
+                    shape[p] = new TheatreSeatGeometry.Vec2(hex[p].x, hex[p].y);
+                seated[i] = shape;
+            }
+
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
-                slot.Hex = AsTerritory(slot.Hex, slot.Card, slot.MapId);
+                slot.Hex = AsTerritory(slot.Hex, slot.Card, slot.Cue, slot.MapId, seated, i);
                 slots[i] = slot;
             }
         }
 
         /// <summary>
-        /// Seated district outline with the approved-1 bays. The card rect is unchanged.
+        /// Seated district turned into an irregular territory. The card rect is unchanged.
         /// </summary>
-        private static Vector2[] AsTerritory(Vector2[] hex, Rect card, string mapId)
+        private static Vector2[] AsTerritory(
+            Vector2[] hex,
+            Rect card,
+            Rect cue,
+            string mapId,
+            TheatreSeatGeometry.Vec2[][] seated,
+            int index)
         {
             if (hex == null || hex.Length < 3)
                 return hex;
             var shape = new TheatreSeatGeometry.Vec2[hex.Length];
             for (int i = 0; i < hex.Length; i++)
                 shape[i] = new TheatreSeatGeometry.Vec2(hex[i].x, hex[i].y);
+            TheatreSeatGeometry.Vec2[][] others = null;
+            if (seated != null)
+            {
+                others = new TheatreSeatGeometry.Vec2[seated.Length][];
+                for (int i = 0; i < seated.Length; i++)
+                {
+                    if (i == index)
+                        continue;
+                    others[i] = seated[i];
+                }
+            }
+
             var box = new TheatreSeatGeometry.Box(card.x, card.y, card.width, card.height);
-            TheatreSeatGeometry.Vec2[] terrain = TheatreSeatGeometry.TerritoryAround(shape, box, mapId);
+            var pill = new TheatreSeatGeometry.Box(cue.x, cue.y, cue.width, cue.height);
+            TheatreSeatGeometry.Vec2[] terrain = TheatreSeatGeometry.TerritoryAround(shape, box, mapId, others, pill);
             if (terrain == null || terrain.Length < 3)
                 return hex;
             var points = new Vector2[terrain.Length];
@@ -1757,7 +1788,12 @@ namespace Game.UI.Runtime
 
         private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
         {
-            float pad = TheatreSeatGeometry.TerritoryFeather;
+            // The outline widget already sits ZoneHexPad past the territory. The feather
+            // has to clear that widget by a full TerritoryFeather, so the soft edge is
+            // visibly past the region and not only the leftover 4px. One extra pixel
+            // keeps the rect strictly outside the capture test, which rejects a halo
+            // that stops on the feather line.
+            float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color);
             if (halo == null || root == null)
                 return;
@@ -1786,7 +1822,7 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            float reach = TheatreSeatGeometry.TerritoryFeather;
+            float reach = pad > 1f ? pad : TheatreSeatGeometry.TerritoryFeather;
             if (reach < 1f)
                 reach = 1f;
             float peak = TheatreSeatGeometry.TerritoryBorderAlpha;
@@ -2353,9 +2389,14 @@ namespace Game.UI.Runtime
             string locale = string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale) ? "en" : TheatreSeatGeometry.ShotLocale;
             // The first Farsi shot used to fit while ShotLocale was still the previous English pass.
             string copy = cue != null ? FlattenCopy(cue.text) : string.Empty;
-            if (CueCopyIsFarsi(cue, copy)
-                && !locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase))
-                locale = "fa";
+            bool copyFarsi = CueCopyIsFarsi(cue, copy);
+            if (copyFarsi)
+            {
+                if (!locale.StartsWith("fa", StringComparison.OrdinalIgnoreCase))
+                    locale = "fa";
+            }
+            else if (copy.Length > 0)
+                locale = "en";
             Debug.Log("[ZoomCueAttempt] ratio=" + ratio
                 + " locale=" + locale
                 + " rect=" + F(liveW) + "x" + F(liveH)
@@ -2388,6 +2429,10 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(cue.text);
             if (source.Length == 0)
                 return;
+            // The right-to-left flag survives an English shot and was sending
+            // "Tap to zoom" down the Farsi path (fa-floor / fa-track, size 22).
+            bool copyFarsi = CueCopyIsFarsi(cue, source);
+            cue.isRightToLeftText = copyFarsi;
             // One canvas pass before the Farsi sizes. Later attempts read the mesh
             // they just built and must not rebuild the whole canvas again.
             Canvas.ForceUpdateCanvases();
@@ -2396,12 +2441,11 @@ namespace Game.UI.Runtime
             // and the search below stops at 17–18 again.
             float seatedW = rect.sizeDelta.x > 1f ? rect.sizeDelta.x : boxW;
             float seatedH = rect.sizeDelta.y > 1f ? rect.sizeDelta.y : boxH;
-            bool farsi = CueCopyIsFarsi(cue, source);
+            bool farsi = copyFarsi;
             if (!farsi)
             {
-                LogCueAttempt(cue, "fa-gate", cue.fontSize, false,
-                    "not-farsi rtl=" + (cue.isRightToLeftText ? "1" : "0")
-                    + " arabic=" + (ContainsArabicLetter(source) ? "1" : "0")
+                LogCueAttempt(cue, "en-gate", cue.fontSize, false,
+                    "latin rtl=" + (cue.isRightToLeftText ? "1" : "0")
                     + " chars=" + source.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
             }
             else if (TryFitFaCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
@@ -2414,6 +2458,8 @@ namespace Game.UI.Runtime
                 LogCueAttempt(cue, "fa-floor", 22f, false, "floor");
                 return;
             }
+            if (TryLockEnglishCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
+                return;
             const float cueCeiling = 26f;
             const float cueFloor = 16f;
             for (float size = cueCeiling; size >= cueFloor - 0.01f; size -= 1f)
@@ -2461,6 +2507,7 @@ namespace Game.UI.Runtime
             }
             finally
             {
+                SlideCueClearOfDistricts(cue);
                 FlushCueAttempt(cue);
             }
         }
@@ -2537,6 +2584,8 @@ namespace Game.UI.Runtime
                 }
             }
 
+            if (TryWidenLiveFaCue(cue, source))
+                return true;
             cue.lineSpacing = 0f;
             cue.characterSpacing = 0f;
             cue.text = source;
@@ -2544,17 +2593,247 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Farsi when the cue is marked right-to-left, the phrase still contains the
-        /// zoom word, or the glyphs are already Arabic presentation forms. The locale
-        /// alone must not lock an English line that has not been translated yet.
+        /// Farsi when the phrase contains the zoom word or the glyphs are Arabic.
+        /// A stale right-to-left flag on the Latin "Tap to zoom" line is not Farsi.
         /// </summary>
         private static bool CueCopyIsFarsi(TMP_Text cue, string source)
         {
-            if (cue != null && cue.isRightToLeftText)
-                return true;
             if (!string.IsNullOrEmpty(source) && source.IndexOf("بزرگنمایی", StringComparison.Ordinal) >= 0)
                 return true;
             return ContainsArabicLetter(source);
+        }
+
+        /// <summary>
+        /// English stays at 26. The 20:9 tab is 160px wide, and "Tap to zoom" at 26
+        /// needs more than that, so the tab widens until the line fits. It does not
+        /// step down to 22.
+        /// </summary>
+        private static bool TryLockEnglishCue(TMP_Text cue, string source, float boxW, float boxH)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return false;
+            Rect origin = PlateRect(cue.rectTransform);
+            string selected = CueSelectedMap(parent, origin.x);
+            if (TryCommitEnglishCue(cue, source, parent, selected, boxW, boxH, origin))
+                return true;
+            // A 160px tab cannot hold "Tap to zoom" at 26, and widening it meets
+            // Industrial Basin. Drop the card, then the tab, and lock 26 before
+            // the shrink loop is allowed to stop at 22.
+            if (!string.IsNullOrEmpty(selected)
+                && parent.Find("ZoneCard_" + selected) is RectTransform seated
+                && parent.Find("ZoneOutline_" + selected) is RectTransform outline)
+            {
+                float seatX = seated.anchoredPosition.x;
+                float seatY = -seated.anchoredPosition.y;
+                float seatW = seated.sizeDelta.x > 2f ? seated.sizeDelta.x : seated.rect.width;
+                float seatH = seated.sizeDelta.y > 2f ? seated.sizeDelta.y : seated.rect.height;
+                Vector2[] points = OutlinePlatePoints(outline);
+                if (points.Length >= 3)
+                {
+                    var shape = new TheatreSeatGeometry.Vec2[points.Length];
+                    for (int i = 0; i < points.Length; i++)
+                        shape[i] = new TheatreSeatGeometry.Vec2(points[i].x, points[i].y);
+                    for (float drop = 4f; drop <= 40f; drop += 4f)
+                    {
+                        var moved = new TheatreSeatGeometry.Box(seatX, seatY + drop, seatW, seatH);
+                        if (!TheatreSeatGeometry.CardInsideTerritory(moved, shape))
+                            continue;
+                        PlaceTopLeft(seated, seatX, seatY + drop, seatW, seatH);
+                        KeepAuthoredSize(seated);
+                        var dropped = new Rect(origin.x, origin.y + drop, origin.width, origin.height);
+                        if (TryCommitEnglishCue(cue, source, parent, selected, boxW, boxH, dropped))
+                            return true;
+                        PlaceTopLeft(seated, seatX, seatY, seatW, seatH);
+                        KeepAuthoredSize(seated);
+                    }
+                }
+            }
+
+            PlaceTopLeft(cue.rectTransform, origin.x, origin.y, origin.width, origin.height);
+            KeepAuthoredSize(cue.rectTransform);
+            SyncCuePlate(parent, origin);
+            return false;
+        }
+
+        /// <summary>Places a widened tab and locks the English zoom line at 26.</summary>
+        private static bool TryCommitEnglishCue(
+            TMP_Text cue,
+            string source,
+            RectTransform parent,
+            string selected,
+            float boxW,
+            float boxH,
+            Rect origin)
+        {
+            float[] widths = { Mathf.Max(boxW, origin.width), 176f, 196f, 220f };
+            float[] heights = { Mathf.Max(boxH, origin.height, 36f), 40f, 44f, 48f };
+            for (int h = 0; h < heights.Length; h++)
+            {
+                if (heights[h] < 26f)
+                    continue;
+                for (int w = 0; w < widths.Length; w++)
+                {
+                    if (!TryPlaceCueBox(cue, parent, selected, widths[w], heights[h], origin))
+                        continue;
+                    Rect placed = PlateRect(cue.rectTransform);
+                    cue.characterSpacing = 0f;
+                    cue.lineSpacing = 0f;
+                    if (!FitsNameLine(cue, source, 26f, placed.width, -8f))
+                        continue;
+                    cue.ForceMeshUpdate();
+                    if (cue.preferredHeight > placed.height + 2f || cue.isTextTruncated || cue.isTextOverflowing)
+                        continue;
+                    HoldCueSize(cue, 26f);
+                    ZoomCueFitReason = "fallback";
+                    LogCueAttempt(cue, "fallback", 26f, true, "en-26");
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Widens the live Farsi tab when a taller one is blocked, so the phrase is
+        /// not clipped at 16:9. Size stays in 22–26.
+        /// </summary>
+        private static bool TryWidenLiveFaCue(TMP_Text cue, string source)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return false;
+            Rect origin = PlateRect(cue.rectTransform);
+            string selected = CueSelectedMap(parent, origin.x);
+            float[] widths = { 176f, 196f, 220f, 240f };
+            float[] heights = { 62f, 56f, 48f, 44f, 40f };
+            for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
+            {
+                for (int h = 0; h < heights.Length; h++)
+                {
+                    float pair = size * 1.65f * 2f - 48f * size * 0.01f;
+                    if (heights[h] + 2f < pair && heights[h] + 2f < size * 1.4f)
+                        continue;
+                    for (int w = 0; w < widths.Length; w++)
+                    {
+                        if (!TryPlaceCueBox(cue, parent, selected, widths[w], heights[h], origin))
+                            continue;
+                        Rect placed = PlateRect(cue.rectTransform);
+                        cue.lineSpacing = -48f;
+                        cue.characterSpacing = 0f;
+                        if (CueLabelSplits(cue, source, size, placed.width, placed.height))
+                        {
+                            cue.ForceMeshUpdate();
+                            float fitted = size * 1.65f * 2f + cue.lineSpacing * size * 0.01f;
+                            if (fitted <= placed.height + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
+                            {
+                                HoldCueSize(cue, size);
+                                ZoomCueFitReason = "fa-two-line";
+                                LogCueAttempt(cue, "fa-two-line", size, true, "widened");
+                                return true;
+                            }
+                        }
+
+                        if (FaCueLineFits(cue, source, size, placed.width, placed.height, -36f))
+                        {
+                            HoldCueSize(cue, size);
+                            ZoomCueFitReason = "fa-track";
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            PlaceTopLeft(cue.rectTransform, origin.x, origin.y, origin.width, origin.height);
+            KeepAuthoredSize(cue.rectTransform);
+            SyncCuePlate(parent, origin);
+            cue.text = source;
+            return false;
+        }
+
+        /// <summary>
+        /// Puts the tab on the card's top edge at the requested size, shifted to the
+        /// side that still clears every district.
+        /// </summary>
+        private static bool TryPlaceCueBox(
+            TMP_Text cue,
+            RectTransform parent,
+            string selected,
+            float width,
+            float height,
+            Rect origin)
+        {
+            if (cue == null || parent == null || width < 32f || height < 32f)
+                return false;
+            if (string.IsNullOrEmpty(selected) || parent.Find("ZoneCard_" + selected) is not RectTransform card)
+                return false;
+            float cardX = card.anchoredPosition.x;
+            float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+            if (width + 0.5f < cardW)
+                return false;
+            float xLo = cardX + cardW - width;
+            float xHi = cardX;
+            float bottom = origin.y + origin.height;
+            float top = bottom - height;
+            if (top < 1f)
+                return false;
+            float[] xs = { Mathf.Clamp(origin.x, Mathf.Min(xLo, xHi), Mathf.Max(xLo, xHi)), xLo, xHi };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                var grown = new Rect(xs[i], top, width, height);
+                if (FaCueTabBlocked(parent, grown, selected))
+                    continue;
+                PlaceTopLeft(cue.rectTransform, grown.x, grown.y, grown.width, grown.height);
+                KeepAuthoredSize(cue.rectTransform);
+                MatchCueRect(cue.rectTransform);
+                SyncCuePlate(parent, grown);
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// The seated tab can still meet Industrial Basin once it has been widened.
+        /// Slide it, then the card, until the 26px stroke is clear.
+        /// </summary>
+        private static void SlideCueClearOfDistricts(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return;
+            Rect spot = PlateRect(cue.rectTransform);
+            string selected = CueSelectedMap(parent, spot.x);
+            if (string.IsNullOrEmpty(selected) || !FaCueTabBlocked(parent, spot, selected))
+                return;
+            if (TryPlaceCueBox(cue, parent, selected, spot.width, spot.height, spot))
+                return;
+            if (parent.Find("ZoneCard_" + selected) is not RectTransform card)
+                return;
+            float cardX = card.anchoredPosition.x;
+            float cardY = -card.anchoredPosition.y;
+            float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+            float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+            if (parent.Find("ZoneOutline_" + selected) is not RectTransform outline)
+                return;
+            Vector2[] points = OutlinePlatePoints(outline);
+            if (points.Length < 3)
+                return;
+            var shape = new TheatreSeatGeometry.Vec2[points.Length];
+            for (int i = 0; i < points.Length; i++)
+                shape[i] = new TheatreSeatGeometry.Vec2(points[i].x, points[i].y);
+            for (float drop = 4f; drop <= 40f; drop += 4f)
+            {
+                var moved = new TheatreSeatGeometry.Box(cardX, cardY + drop, cardW, cardH);
+                if (!TheatreSeatGeometry.CardInsideTerritory(moved, shape))
+                    continue;
+                var trial = new Rect(spot.x, spot.y + drop, spot.width, spot.height);
+                if (FaCueTabBlocked(parent, trial, selected))
+                    continue;
+                PlaceTopLeft(card, cardX, cardY + drop, cardW, cardH);
+                KeepAuthoredSize(card);
+                PlaceTopLeft(cue.rectTransform, trial.x, trial.y, trial.width, trial.height);
+                KeepAuthoredSize(cue.rectTransform);
+                SyncCuePlate(parent, trial);
+                return;
+            }
         }
 
         /// <summary>
@@ -4025,6 +4304,12 @@ namespace Game.UI.Runtime
                     TryCommitPortraitName(names[i], cards[i], shared, wide, script);
                 LockDrawnZoneName(names[i], shared, script);
                 RecordDrawnZoneName(names[i]);
+                if (names[i].rectTransform != null && cards[i] != null)
+                {
+                    float cardW = cards[i].sizeDelta.x > 2f ? cards[i].sizeDelta.x : cards[i].rect.width;
+                    float cardH = cards[i].sizeDelta.y > 2f ? cards[i].sizeDelta.y : cards[i].rect.height;
+                    ClampNameInsideCard(names[i].rectTransform, cardW, cardH);
+                }
             }
         }
 
@@ -4409,12 +4694,20 @@ namespace Game.UI.Runtime
                 DestroyUi(bullseye.gameObject);
 
             RectTransform ring = card.Find("ProgressRing") as RectTransform;
+            float countReserve = 0f;
+            Transform countPreview = card.Find("ZoneCount");
+            if (countPreview == null && ring != null)
+                countPreview = ring.Find("ZoneCount");
+            if (countPreview != null)
+                countReserve = ZoneCountColumn(countPreview.GetComponent<TMP_Text>(), cardW);
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
                 // Corner badge. A 68–104px ring sat on the painting and read as the eye.
                 const float badge = 34f;
                 float ringSide = badge;
+                if (countReserve > 40f && pad + countReserve + 4f + ringSide + pad > cardW)
+                    ringSide = Mathf.Max(22f, cardW - pad * 2f - 4f - countReserve);
                 if (ringSide > cardW - pad * 2f - 8f)
                     ringSide = Mathf.Max(24f, cardW - pad * 2f - 8f);
                 if (ringSide > stripY - pad - 4f)
@@ -4453,11 +4746,18 @@ namespace Game.UI.Runtime
                 countNode.SetParent(card, false);
             if (countNode is RectTransform countRect)
             {
-                float countW = ZoneCountColumn(countNode.GetComponent<TMP_Text>(), cardW);
-                float countX = farsi ? pad : Mathf.Max(pad, cardW - pad - countW);
-                PlaceTopLeft(countRect, countX, stripY, countW, stripH);
+                float countW = countReserve > 1f ? countReserve : ZoneCountColumn(countNode.GetComponent<TMP_Text>(), cardW);
+                const float countH = 18f;
+                float countX = farsi ? Mathf.Max(pad, cardW - pad - countW) : pad;
+                float countY = Mathf.Max(pad, stripY - countH - 2f);
+                if (countX + countW > cardW - pad)
+                    countW = Mathf.Max(8f, cardW - pad - countX);
+                PlaceTopLeft(countRect, countX, countY, countW, countH);
                 if (countNode.TryGetComponent<TMP_Text>(out TMP_Text countLabel))
-                    countLabel.alignment = TextAlignmentOptions.Bottom;
+                {
+                    countLabel.alignment = TextAlignmentOptions.Center;
+                    countLabel.characterSpacing = 0f;
+                }
             }
             RectTransform thumb = card.Find("ThumbFrame") as RectTransform;
             if (thumb != null)
@@ -4547,18 +4847,20 @@ namespace Game.UI.Runtime
             bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (card.Find("ZoneName") is RectTransform title)
             {
-                float countW = ZoneCountColumn(card.Find("ZoneCount")?.GetComponent<TMP_Text>(), cardW);
-                float titleX = farsi ? 2f + countW : 2f;
-                float titleW = Mathf.Max(8f, cardW - countW - 4f);
+                float titleX = 2f;
+                float titleW = Mathf.Max(8f, cardW - 4f);
                 PlaceTopLeft(title, titleX, stripY, titleW, stripH);
                 title.localScale = Vector3.one;
                 KeepAuthoredSize(title);
+                ClampNameInsideCard(title, cardW, cardH);
                 if (title.TryGetComponent<TMP_Text>(out TMP_Text titleText))
                 {
                     titleText.alignment = farsi
                         ? TextAlignmentOptions.BottomRight
                         : TextAlignmentOptions.BottomLeft;
+                    titleText.isRightToLeftText = farsi && ZoneNameIsFarsi(titleText);
                     SeatNameCopyInStrip(titleText, stripH);
+                    ClampNameInsideCard(title, cardW, cardH);
                 }
             }
 
@@ -4584,17 +4886,21 @@ namespace Game.UI.Runtime
         {
             string copy = count != null ? FlattenCopy(count.text) : string.Empty;
             bool word = copy.Length > 5;
-            float column = word ? Mathf.Min(cardW * 0.42f, 100f) : 44f;
-            if (column > cardW * 0.5f)
+            // "Coming soon" measures 74.9px. A 0.42 share of the card stopped at 60–67.
+            float column = word ? 78f : 44f;
+            if (word && column > cardW - 8f)
+                column = Mathf.Max(8f, cardW - 8f);
+            if (!word && column > cardW * 0.5f)
                 column = cardW * 0.5f;
-            if (column < 28f)
+            if (column < 28f && !word)
                 column = Mathf.Min(28f, Mathf.Max(8f, cardW * 0.4f));
             return column;
         }
 
         /// <summary>
-        /// Keeps the authored size and pulls the leading, then tracking, until the title
-        /// sits in the strip. The font floor is left alone.
+        /// Two readable lines in the strip. Tracking stays at 0 so the glyphs do not
+        /// collapse into each other. Leading may tighten. The font steps down only as
+        /// far as the compact floor.
         /// </summary>
         private static void SeatNameCopyInStrip(TMP_Text name, float stripH)
         {
@@ -4603,45 +4909,65 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(name.text);
             if (source.Length == 0)
                 return;
-            if (PortraitNameFitsRect(name, source))
-                return;
-            float size = name.fontSize > 1f ? name.fontSize : name.fontSizeMax;
-            if (size < 1f)
-                size = 16f;
-            float[] lead = { 0f, -24f, -48f, -72f, -100f };
-            for (int i = 0; i < lead.Length; i++)
+            name.characterSpacing = 0f;
+            float width = name.rectTransform != null
+                ? (name.rectTransform.rect.width > 1f ? name.rectTransform.rect.width : name.rectTransform.sizeDelta.x)
+                : 0f;
+            bool narrow = width > 1f && width <= TheatreSeatGeometry.PortraitMinWidth + 8f;
+            float floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : LatinNameFloor;
+            if (ZoneNameIsFarsi(name))
+                floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : TheatreSeatGeometry.NameFontFloor;
+            // Tracking stays at 0. Leading may close until two lines sit in the strip.
+            // Character spacing at −48 was what turned the titles into 'MONTAS'.
+            float[] lead = { 0f, -16f, -32f, -48f, -64f, -80f, -96f, -112f };
+            for (float size = DrawnNameTarget; size >= floor - 0.01f; size -= 1f)
             {
-                name.lineSpacing = lead[i];
-                name.characterSpacing = 0f;
-                if (!WrapZoneName(name, size))
-                    continue;
-                name.ForceMeshUpdate();
-                if (name.preferredHeight <= stripH + 1.5f && !name.isTextTruncated && !name.isTextOverflowing)
-                    return;
+                for (int i = 0; i < lead.Length; i++)
+                {
+                    name.lineSpacing = lead[i];
+                    name.characterSpacing = 0f;
+                    if (!WrapZoneName(name, size))
+                        continue;
+                    name.ForceMeshUpdate();
+                    if (name.preferredHeight <= stripH + 1.5f && !name.isTextTruncated && !name.isTextOverflowing)
+                        return;
+                }
             }
 
-            float[] track = { 0f, -8f, -12f, -24f, -36f, -48f };
-            for (int i = 0; i < track.Length; i++)
+            name.lineSpacing = -48f;
+            name.characterSpacing = 0f;
+            if (!WrapZoneName(name, floor))
             {
-                name.lineSpacing = 0f;
-                name.characterSpacing = track[i];
                 name.text = source;
-                name.maxVisibleLines = 1;
-                name.textWrappingMode = TextWrappingModes.NoWrap;
+                name.maxVisibleLines = 2;
+                name.textWrappingMode = TextWrappingModes.Normal;
                 name.overflowMode = TextOverflowModes.Overflow;
-                name.fontSizeMin = size;
-                name.fontSizeMax = size;
-                name.fontSize = size;
-                name.ForceMeshUpdate();
-                float width = name.rectTransform.rect.width > 1f
-                    ? name.rectTransform.rect.width
-                    : name.rectTransform.sizeDelta.x;
-                if (MeasuredNameWidth(name) <= width + 2f
-                    && name.preferredHeight <= stripH + 1.5f
-                    && !name.isTextTruncated
-                    && !name.isTextOverflowing)
-                    return;
+                name.fontSizeMin = floor;
+                name.fontSizeMax = floor;
+                name.fontSize = floor;
             }
+
+            name.ForceMeshUpdate();
+        }
+
+        /// <summary>The title rect stays inside the card. A later fitter must not push it past the edge.</summary>
+        private static void ClampNameInsideCard(RectTransform title, float cardW, float cardH)
+        {
+            if (title == null)
+                return;
+            float x = title.anchoredPosition.x;
+            float y = -title.anchoredPosition.y;
+            float w = title.sizeDelta.x;
+            float h = title.sizeDelta.y;
+            if (x < 1f)
+                x = 1f;
+            if (y < 1f)
+                y = 1f;
+            if (w > cardW - x - 1f)
+                w = Mathf.Max(8f, cardW - x - 1f);
+            if (h > cardH - y - 1f)
+                h = Mathf.Max(8f, cardH - y - 1f);
+            PlaceTopLeft(title, x, y, w, h);
         }
 
         /// <summary>Gradient, opaque at the bottom of the texture. The strip's top fades into the painting.</summary>
@@ -5402,15 +5728,12 @@ namespace Game.UI.Runtime
 
         private static void GrowZoneNameBox(TMP_Text name)
         {
-            RectTransform rect = name.rectTransform;
-            if (rect == null)
+            RectTransform rect = name != null ? name.rectTransform : null;
+            if (rect == null || rect.parent is not RectTransform card)
                 return;
-            float limit = ZoneNameHeightLimit(rect);
-            float needed = Mathf.Ceil(name.preferredHeight + 2f);
-            float height = Mathf.Min(limit, Mathf.Max(rect.sizeDelta.y, needed));
-            if (height > rect.sizeDelta.y + 0.5f)
-                rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
-            NudgeRingBelowName(rect);
+            float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+            float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+            ClampNameInsideCard(rect, cardW, cardH);
         }
 
         private static float ZoneNameHeightLimit(RectTransform name)
@@ -6071,13 +6394,13 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.68f, 0.36f, 0.28f, 1f);
-                case "MP": return new Color(0.80f, 0.50f, 0.24f, 1f);
-                case "IB": return new Color(0.58f, 0.48f, 0.22f, 1f);
-                case "AP": return new Color(0.30f, 0.56f, 0.50f, 1f);
-                case "DB": return new Color(0.74f, 0.56f, 0.30f, 1f);
+                case "CC": return new Color(0.90f, 0.42f, 0.16f, 1f);
+                case "MP": return new Color(0.62f, 0.32f, 0.78f, 1f);
+                case "IB": return new Color(0.22f, 0.48f, 0.86f, 1f);
+                case "AP": return new Color(0.28f, 0.70f, 0.36f, 1f);
+                case "DB": return new Color(0.92f, 0.72f, 0.18f, 1f);
                 default:
-                    return fallback.a > 0f ? fallback : new Color(0.74f, 0.56f, 0.30f, 1f);
+                    return fallback.a > 0f ? fallback : new Color(0.92f, 0.72f, 0.18f, 1f);
             }
         }
 
@@ -6085,11 +6408,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.82f, 0.32f, 0.28f, 1f);
-                case "MP": return new Color(0.92f, 0.46f, 0.12f, 1f);
-                case "IB": return new Color(0.78f, 0.56f, 0.16f, 1f);
-                case "AP": return new Color(0.14f, 0.55f, 0.50f, 1f);
-                default: return new Color(0.88f, 0.62f, 0.18f, 1f);
+                case "CC": return new Color(0.90f, 0.42f, 0.16f, 1f);
+                case "MP": return new Color(0.62f, 0.32f, 0.78f, 1f);
+                case "IB": return new Color(0.22f, 0.48f, 0.86f, 1f);
+                case "AP": return new Color(0.28f, 0.70f, 0.36f, 1f);
+                default: return new Color(0.92f, 0.72f, 0.18f, 1f);
             }
         }
 
@@ -6471,11 +6794,10 @@ namespace Game.UI.Runtime
             var pixels = new Color32[width * height];
             for (int y = 0; y < height; y++)
             {
-                // Texture y 0 is the bottom of the strip. That edge stays dark; the top fades out.
-                float fromBottom = y / (float)(height - 1);
-                float fade = Mathf.InverseLerp(0.72f, 1f, fromBottom);
-                fade = fade * fade * (3f - 2f * fade);
-                byte a = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(232f, 0f, fade)), 0, 255);
+                // The strip is only the bottom 22%. Keep that whole band opaque so the
+                // glyphs sit on ink, not on the painting. A fade that started at 72%
+                // left the contrast at 2.71 and 3.74.
+                byte a = 250;
                 for (int x = 0; x < width; x++)
                     pixels[y * width + x] = new Color32(3, 4, 6, a);
             }

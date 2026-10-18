@@ -2423,7 +2423,12 @@ namespace Game.Editor
                 float bottom = top + halo.sizeDelta.y;
                 float width = outline.rect.width > 2f ? outline.rect.width : outline.sizeDelta.x;
                 float height = outline.rect.height > 2f ? outline.rect.height : outline.sizeDelta.y;
-                if (left > -6f || top > -6f || right < width + 6f || bottom < height + 6f)
+                // The feather has to extend at least its own width past the region.
+                // TerritoryFeather is 10, which is stricter than the old 6px test.
+                float feather = TheatreSeatGeometry.TerritoryFeather;
+                if (feather < 10f)
+                    feather = 10f;
+                if (left > -feather || top > -feather || right < width + feather || bottom < height + feather)
                 {
                     throw new InvalidOperationException(
                         "Theatre district glow for " + mapIds[h] + " does not extend past the region locale=" + locale +

@@ -276,7 +276,7 @@ class OwnedProcessTree:
     cannot inherit ownership. Missing/ambiguous identity never proves shutdown.
     """
     def __init__(self,wrapper_pid,baseline):
-        self.wrapper_pid=wrapper_pid;self.root_key=None;self.records={};self.saw_target_editor=False;self.identity_transitions=[];self.project_bindings={}
+        self.wrapper_pid=wrapper_pid;self.root_key=None;self.records={};self.saw_target_editor=False;self.identity_transitions=[];self.project_bindings={};self.unresolved_orphans=[]
         self.baseline={r['pid']:process_key(r) if r.get('identity_verified') is True else None for r in baseline}
         for row in baseline:
             if editor(row) and row.get('arguments_observed',True) is True:
@@ -339,7 +339,11 @@ class OwnedProcessTree:
         for row in rows:
             if native_kind(row) not in ('worker','uncertain_worker') or row['pid'] in attached:continue
             key=process_key(row)
-            need(key in live or self.baseline.get(row['pid'])==key,'New orphan native worker has unresolved ownership')
+            if key not in live and self.baseline.get(row['pid'])!=key:
+                # Exact inventory rows have already had credentials redacted.
+                diagnostic=dict(birth=list(key),row=dict(row),ownership='Unresolved_NotAdopted')
+                if diagnostic not in self.unresolved_orphans:self.unresolved_orphans.append(diagnostic)
+                raise ValueError('New orphan native worker has unresolved ownership')
         return [r for r in rows if r.get('identity_verified') is True and process_key(r) in live]
 
     def evidence(self):return list(self.records.values())
@@ -354,6 +358,29 @@ def owned_shutdown_barrier(tree,root,timeout=15):
         if empty>=2:return dict(closed=True,observed_absence_samples=empty,samples=samples,survivors=[]),rows
         if time.monotonic()>=deadline:return dict(closed=False,observed_absence_samples=empty,samples=samples,survivors=survivors),rows
         time.sleep(1)
+
+
+def lifecycle_error(result,phase,error):
+    message=type(error).__name__+': '+str(error)
+    result.setdefault('controller_error',message)
+    result.setdefault('lifecycle_errors',[]).append(dict(phase=phase,error=message))
+    result['operationalControlPassed']=False
+
+
+def wait_original_wrapper(child,tree,root,result):
+    """Retain original Popen despite observation failure; never signal processes.
+
+    The checked wrapper alone owns its timeout. Later successful observations
+    cannot erase an earlier failure. Explicit wait reaps this exact child.
+    """
+    while child.poll() is None:
+        try:tree.observe(processes(),root)
+        except BaseException as error:lifecycle_error(result,'wrapper_observation',error)
+        try:time.sleep(1)
+        except (InterruptedError,KeyboardInterrupt) as error:lifecycle_error(result,'wrapper_wait_interrupted',error)
+    result['wrapper_exit']=child.wait()
+    result['wrapper_reaped']=True
+    return result['wrapper_exit']
 
 
 def android_module(editor_install):
@@ -479,10 +506,7 @@ def execute(auth_path):
             child=subprocess.Popen(argv,cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
             result['launch_performed']=True;result['wrapper_pid']=child.pid
             tree=OwnedProcessTree(child.pid,beforep)
-            while child.poll() is None:
-                tree.observe(processes(),root)
-                time.sleep(1)
-            result['wrapper_exit']=child.returncode
+            wait_original_wrapper(child,tree,root,result)
         need(tree.saw_target_editor,'No owned target Editor lifecycle observed')
         shutdown,finalp=owned_shutdown_barrier(tree,root);result['owned_shutdown']=shutdown
         result['observed_owned_processes']=tree.evidence()
@@ -497,13 +521,31 @@ def execute(auth_path):
             any(hub(r) for r in finalp)))
         result['logs']=[checked_file(p) for p in (log,folder/'wrapper.log') if p.is_file()]
     except BaseException as error:
-        result['controller_error']=type(error).__name__+': '+str(error)
+        lifecycle_error(result,'execute',error)
         result.setdefault('owned_shutdown',dict(closed=False,status='Pending' if child is not None and child.poll() is None else 'NoAbsenceProof_NoControllerTermination'))
         result['operationalControlPassed']=False
         # Never terminate a borrowed/unknown Editor, Hub, licensing client or even a still-owned wrapper here.
         # The mandatory wrapper owns its explicit timeout and its own Editor process tree.
     finally:
+        if child is not None:
+            # Exceptions elsewhere must not detach the launched wrapper.
+            if not result.get('wrapper_reaped'):
+                wait_original_wrapper(child,tree,root,result)
+            if 'owned_shutdown' not in result or not result['owned_shutdown'].get('closed'):
+                try:
+                    shutdown,_=owned_shutdown_barrier(tree,root)
+                    result['owned_shutdown']=shutdown
+                except BaseException as error:
+                    lifecycle_error(result,'shutdown_observation',error)
+                    result['owned_shutdown']=dict(closed=False,status='UnresolvedObservation_NoAbsenceProof')
+            if 'after' not in result:
+                try:result['after']=state_snapshot(root)
+                except BaseException as error:lifecycle_error(result,'post_state_capture',error)
+            # Capturing post-state never repairs failed lifecycle/consumer/ENV proof.
+            result['logs']=[checked_file(p) for p in (folder/'unity.log',folder/'wrapper.log') if p.is_file()]
+        if result.get('lifecycle_errors'):result['operationalControlPassed']=False
         if tree is not None:
+            result['unresolved_orphan_observations']=tree.unresolved_orphans
             result['observed_owned_processes']=tree.evidence()
             result['owned_process_identity_transitions']=tree.identity_transitions
             result['observed_owned_editor_project_bindings']=[dict(birth=list(k),project=v) for k,v in tree.project_bindings.items() if k in tree.records]

@@ -5,7 +5,10 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, Mock
+from contextlib import ExitStack
+import subprocess
+import sys
 import mac_tanker_probe35_controller as c
 
 
@@ -145,6 +148,70 @@ class ControllerTests(unittest.TestCase):
     def test_new_unattributed_orphan_is_not_silently_assumed_unrelated(self):
         tree,baseline,rows=self.initial_tree();orphan=self.row(200,1,'/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/bee_backend')
         with self.assertRaisesRegex(ValueError,'unresolved ownership'):tree.observe(baseline+[orphan],Path(c.ROOT))
+    def test_orphan_failure_records_exact_birth_without_adopting(self):
+        tree,baseline,rows=self.initial_tree()
+        orphan=self.row(200,1,'/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/bee_backend',usec=7)
+        with self.assertRaisesRegex(ValueError,'unresolved ownership'):
+            tree.observe(baseline+[orphan],Path(c.ROOT))
+        self.assertEqual(tree.unresolved_orphans,[dict(birth=list(c.process_key(orphan)),row=orphan,ownership='Unresolved_NotAdopted')])
+        self.assertNotIn(c.process_key(orphan),tree.records)
+
+    def test_observation_failures_wait_original_child_and_latch_failure(self):
+        child=Mock(pid=100);child.poll.side_effect=[None,None,0];child.wait.return_value=0
+        tree=Mock();tree.observe.side_effect=[ValueError('unresolved ownership'),[]]
+        result=dict(operationalControlPassed=True)
+        with patch.object(c,'processes',return_value=[]),patch.object(c.time,'sleep'),patch.object(c.os,'kill') as signal:
+            self.assertEqual(c.wait_original_wrapper(child,tree,Path(c.ROOT),result),0)
+            child.wait.assert_called_once_with();child.terminate.assert_not_called();child.kill.assert_not_called();signal.assert_not_called()
+        self.assertFalse(result['operationalControlPassed']);self.assertTrue(result['wrapper_reaped'])
+        self.assertEqual(len(result['lifecycle_errors']),1);self.assertEqual(tree.observe.call_count,2)
+
+    def test_inventory_failure_preserves_nonzero_original_exit(self):
+        child=Mock();child.poll.side_effect=[None,17];child.wait.return_value=17
+        with patch.object(c,'processes',side_effect=OSError('inventory unavailable')),patch.object(c.time,'sleep'):
+            result={};c.wait_original_wrapper(child,Mock(),Path(c.ROOT),result)
+        self.assertEqual(result['wrapper_exit'],17);self.assertIn('inventory unavailable',result['controller_error'])
+
+    def test_wait_interruption_is_failure_but_does_not_detach_child(self):
+        child=Mock();child.poll.side_effect=[None,0];child.wait.return_value=0
+        with patch.object(c,'processes',return_value=[]),patch.object(c.time,'sleep',side_effect=KeyboardInterrupt):
+            result={};c.wait_original_wrapper(child,Mock(),Path(c.ROOT),result)
+        child.wait.assert_called_once_with();self.assertFalse(result['operationalControlPassed'])
+
+    def test_real_benign_child_reaped_after_monitor_failure_and_post_state_saved(self):
+        self.benign_execute_case()
+
+    def test_persistent_shutdown_failure_keeps_unknown_shutdown_and_actual_exit(self):
+        self.benign_execute_case(shutdown_error=True)
+
+    def test_post_state_retry_does_not_erase_original_capture_failure(self):
+        self.benign_execute_case(post_error=True)
+
+    def benign_execute_case(self,shutdown_error=False,post_error=False):
+        # Only a short Python sleep is launched. No Unity or native project access.
+        with tempfile.TemporaryDirectory() as td,ExitStack() as stack:
+            root=Path(td);auth=root/'auth.json';auth.write_text(json.dumps(self.authorization()))
+            tree=Mock(saw_target_editor=True,records={},identity_transitions=[],project_bindings={},unresolved_orphans=[])
+            tree.evidence.return_value=[];tree.observe.side_effect=[ValueError('synthetic orphan'),[]]
+            for name,value in [('ROOT',td),('DEPENDENCY_PINS',{}),('authorization',Mock()),('digest',Mock(return_value='a'*64)),
+                ('git_preflight',Mock(return_value={})),('capacity',Mock(return_value={})),('tools_state',Mock(return_value={})),
+                ('state_snapshot',Mock(side_effect=[self.state(),OSError('post-state capture failed'),self.state()]) if post_error else Mock(return_value=self.state())),('processes',Mock(return_value=[self.hub()])),
+                ('OwnedProcessTree',Mock(return_value=tree)),('owned_shutdown_barrier',Mock(side_effect=ValueError('persistent orphan')) if shutdown_error else Mock(return_value=(dict(closed=True),[self.hub()]))),
+                ('assess',Mock(return_value=dict(operationalControlPassed=True))),
+                ('command',Mock(return_value=[sys.executable,'-c','import time; time.sleep(0.2)']))]:
+                stack.enter_context(patch.object(c,name,value))
+            stack.enter_context(patch.object(c.sys,'platform','darwin'))
+            output=stack.enter_context(patch('sys.stdout',new_callable=io.StringIO))
+            self.assertEqual(c.execute(auth),1)
+            receipt=json.loads(Path(json.loads(output.getvalue())['result_path']).read_text())
+            self.assertIn('wrapper_exit',receipt,receipt)
+            self.assertEqual(receipt['wrapper_exit'],0);self.assertTrue(receipt['wrapper_reaped'])
+            self.assertIn('after',receipt);self.assertEqual(receipt['owned_shutdown']['closed'],not shutdown_error)
+            if shutdown_error:self.assertEqual(receipt['owned_shutdown']['status'],'UnresolvedObservation_NoAbsenceProof')
+            if post_error:self.assertTrue(any('post-state capture failed' in e['error'] for e in receipt['lifecycle_errors']))
+            self.assertFalse(receipt['operationalControlPassed']);self.assertIn('synthetic orphan',receipt['controller_error'])
+            self.assertFalse(receipt['readiness']['normal_mission'])
+
     def test_shutdown_requires_two_complete_observed_absence_samples(self):
         tree,baseline,rows=self.initial_tree()
         with patch.object(c,'processes',side_effect=[baseline,baseline]) as snapshots,patch.object(c.time,'sleep'),patch.object(c.time,'monotonic',return_value=0):

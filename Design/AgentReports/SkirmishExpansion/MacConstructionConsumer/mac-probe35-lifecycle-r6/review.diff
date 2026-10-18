@@ -1,0 +1,188 @@
+diff --git a/Tools/CI/mac_tanker_probe35_controller.py b/Tools/CI/mac_tanker_probe35_controller.py
+index 2154c8375..8a8468c2d 100644
+--- a/Tools/CI/mac_tanker_probe35_controller.py
++++ b/Tools/CI/mac_tanker_probe35_controller.py
+@@ -276,7 +276,7 @@ class OwnedProcessTree:
+     cannot inherit ownership. Missing/ambiguous identity never proves shutdown.
+     """
+     def __init__(self,wrapper_pid,baseline):
+-        self.wrapper_pid=wrapper_pid;self.root_key=None;self.records={};self.saw_target_editor=False;self.identity_transitions=[];self.project_bindings={}
++        self.wrapper_pid=wrapper_pid;self.root_key=None;self.records={};self.saw_target_editor=False;self.identity_transitions=[];self.project_bindings={};self.unresolved_orphans=[]
+         self.baseline={r['pid']:process_key(r) if r.get('identity_verified') is True else None for r in baseline}
+         for row in baseline:
+             if editor(row) and row.get('arguments_observed',True) is True:
+@@ -339,7 +339,11 @@ class OwnedProcessTree:
+         for row in rows:
+             if native_kind(row) not in ('worker','uncertain_worker') or row['pid'] in attached:continue
+             key=process_key(row)
+-            need(key in live or self.baseline.get(row['pid'])==key,'New orphan native worker has unresolved ownership')
++            if key not in live and self.baseline.get(row['pid'])!=key:
++                # Exact inventory rows have already had credentials redacted.
++                diagnostic=dict(birth=list(key),row=dict(row),ownership='Unresolved_NotAdopted')
++                if diagnostic not in self.unresolved_orphans:self.unresolved_orphans.append(diagnostic)
++                raise ValueError('New orphan native worker has unresolved ownership')
+         return [r for r in rows if r.get('identity_verified') is True and process_key(r) in live]
+ 
+     def evidence(self):return list(self.records.values())
+@@ -356,6 +360,29 @@ def owned_shutdown_barrier(tree,root,timeout=15):
+         time.sleep(1)
+ 
+ 
++def lifecycle_error(result,phase,error):
++    message=type(error).__name__+': '+str(error)
++    result.setdefault('controller_error',message)
++    result.setdefault('lifecycle_errors',[]).append(dict(phase=phase,error=message))
++    result['operationalControlPassed']=False
++
++
++def wait_original_wrapper(child,tree,root,result):
++    """Retain original Popen despite observation failure; never signal processes.
++
++    The checked wrapper alone owns its timeout. Later successful observations
++    cannot erase an earlier failure. Explicit wait reaps this exact child.
++    """
++    while child.poll() is None:
++        try:tree.observe(processes(),root)
++        except BaseException as error:lifecycle_error(result,'wrapper_observation',error)
++        try:time.sleep(1)
++        except (InterruptedError,KeyboardInterrupt) as error:lifecycle_error(result,'wrapper_wait_interrupted',error)
++    result['wrapper_exit']=child.wait()
++    result['wrapper_reaped']=True
++    return result['wrapper_exit']
++
++
+ def android_module(editor_install):
+     # Hub macOS modules are siblings of Unity.app, confirmed on this installation.
+     return Path(editor_install)/'PlaybackEngines/AndroidPlayer'
+@@ -479,10 +506,7 @@ def execute(auth_path):
+             child=subprocess.Popen(argv,cwd=root,env=env,stdout=output,stderr=subprocess.STDOUT)
+             result['launch_performed']=True;result['wrapper_pid']=child.pid
+             tree=OwnedProcessTree(child.pid,beforep)
+-            while child.poll() is None:
+-                tree.observe(processes(),root)
+-                time.sleep(1)
+-            result['wrapper_exit']=child.returncode
++            wait_original_wrapper(child,tree,root,result)
+         need(tree.saw_target_editor,'No owned target Editor lifecycle observed')
+         shutdown,finalp=owned_shutdown_barrier(tree,root);result['owned_shutdown']=shutdown
+         result['observed_owned_processes']=tree.evidence()
+@@ -497,13 +521,31 @@ def execute(auth_path):
+             any(hub(r) for r in finalp)))
+         result['logs']=[checked_file(p) for p in (log,folder/'wrapper.log') if p.is_file()]
+     except BaseException as error:
+-        result['controller_error']=type(error).__name__+': '+str(error)
++        lifecycle_error(result,'execute',error)
+         result.setdefault('owned_shutdown',dict(closed=False,status='Pending' if child is not None and child.poll() is None else 'NoAbsenceProof_NoControllerTermination'))
+         result['operationalControlPassed']=False
+         # Never terminate a borrowed/unknown Editor, Hub, licensing client or even a still-owned wrapper here.
+         # The mandatory wrapper owns its explicit timeout and its own Editor process tree.
+     finally:
++        if child is not None:
++            # Exceptions elsewhere must not detach the launched wrapper.
++            if not result.get('wrapper_reaped'):
++                wait_original_wrapper(child,tree,root,result)
++            if 'owned_shutdown' not in result or not result['owned_shutdown'].get('closed'):
++                try:
++                    shutdown,_=owned_shutdown_barrier(tree,root)
++                    result['owned_shutdown']=shutdown
++                except BaseException as error:
++                    lifecycle_error(result,'shutdown_observation',error)
++                    result['owned_shutdown']=dict(closed=False,status='UnresolvedObservation_NoAbsenceProof')
++            if 'after' not in result:
++                try:result['after']=state_snapshot(root)
++                except BaseException as error:lifecycle_error(result,'post_state_capture',error)
++            # Capturing post-state never repairs failed lifecycle/consumer/ENV proof.
++            result['logs']=[checked_file(p) for p in (folder/'unity.log',folder/'wrapper.log') if p.is_file()]
++        if result.get('lifecycle_errors'):result['operationalControlPassed']=False
+         if tree is not None:
++            result['unresolved_orphan_observations']=tree.unresolved_orphans
+             result['observed_owned_processes']=tree.evidence()
+             result['owned_process_identity_transitions']=tree.identity_transitions
+             result['observed_owned_editor_project_bindings']=[dict(birth=list(k),project=v) for k,v in tree.project_bindings.items() if k in tree.records]
+diff --git a/Tools/CI/mac_tanker_probe35_controller_test.py b/Tools/CI/mac_tanker_probe35_controller_test.py
+index ec2fa79a0..19fea8f54 100644
+--- a/Tools/CI/mac_tanker_probe35_controller_test.py
++++ b/Tools/CI/mac_tanker_probe35_controller_test.py
+@@ -5,7 +5,10 @@ import json
+ from pathlib import Path
+ import tempfile
+ import unittest
+-from unittest.mock import patch
++from unittest.mock import patch, Mock
++from contextlib import ExitStack
++import subprocess
++import sys
+ import mac_tanker_probe35_controller as c
+ 
+ 
+@@ -145,6 +148,70 @@ class ControllerTests(unittest.TestCase):
+     def test_new_unattributed_orphan_is_not_silently_assumed_unrelated(self):
+         tree,baseline,rows=self.initial_tree();orphan=self.row(200,1,'/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/bee_backend')
+         with self.assertRaisesRegex(ValueError,'unresolved ownership'):tree.observe(baseline+[orphan],Path(c.ROOT))
++    def test_orphan_failure_records_exact_birth_without_adopting(self):
++        tree,baseline,rows=self.initial_tree()
++        orphan=self.row(200,1,'/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/bee_backend',usec=7)
++        with self.assertRaisesRegex(ValueError,'unresolved ownership'):
++            tree.observe(baseline+[orphan],Path(c.ROOT))
++        self.assertEqual(tree.unresolved_orphans,[dict(birth=list(c.process_key(orphan)),row=orphan,ownership='Unresolved_NotAdopted')])
++        self.assertNotIn(c.process_key(orphan),tree.records)
++
++    def test_observation_failures_wait_original_child_and_latch_failure(self):
++        child=Mock(pid=100);child.poll.side_effect=[None,None,0];child.wait.return_value=0
++        tree=Mock();tree.observe.side_effect=[ValueError('unresolved ownership'),[]]
++        result=dict(operationalControlPassed=True)
++        with patch.object(c,'processes',return_value=[]),patch.object(c.time,'sleep'),patch.object(c.os,'kill') as signal:
++            self.assertEqual(c.wait_original_wrapper(child,tree,Path(c.ROOT),result),0)
++            child.wait.assert_called_once_with();child.terminate.assert_not_called();child.kill.assert_not_called();signal.assert_not_called()
++        self.assertFalse(result['operationalControlPassed']);self.assertTrue(result['wrapper_reaped'])
++        self.assertEqual(len(result['lifecycle_errors']),1);self.assertEqual(tree.observe.call_count,2)
++
++    def test_inventory_failure_preserves_nonzero_original_exit(self):
++        child=Mock();child.poll.side_effect=[None,17];child.wait.return_value=17
++        with patch.object(c,'processes',side_effect=OSError('inventory unavailable')),patch.object(c.time,'sleep'):
++            result={};c.wait_original_wrapper(child,Mock(),Path(c.ROOT),result)
++        self.assertEqual(result['wrapper_exit'],17);self.assertIn('inventory unavailable',result['controller_error'])
++
++    def test_wait_interruption_is_failure_but_does_not_detach_child(self):
++        child=Mock();child.poll.side_effect=[None,0];child.wait.return_value=0
++        with patch.object(c,'processes',return_value=[]),patch.object(c.time,'sleep',side_effect=KeyboardInterrupt):
++            result={};c.wait_original_wrapper(child,Mock(),Path(c.ROOT),result)
++        child.wait.assert_called_once_with();self.assertFalse(result['operationalControlPassed'])
++
++    def test_real_benign_child_reaped_after_monitor_failure_and_post_state_saved(self):
++        self.benign_execute_case()
++
++    def test_persistent_shutdown_failure_keeps_unknown_shutdown_and_actual_exit(self):
++        self.benign_execute_case(shutdown_error=True)
++
++    def test_post_state_retry_does_not_erase_original_capture_failure(self):
++        self.benign_execute_case(post_error=True)
++
++    def benign_execute_case(self,shutdown_error=False,post_error=False):
++        # Only a short Python sleep is launched. No Unity or native project access.
++        with tempfile.TemporaryDirectory() as td,ExitStack() as stack:
++            root=Path(td);auth=root/'auth.json';auth.write_text(json.dumps(self.authorization()))
++            tree=Mock(saw_target_editor=True,records={},identity_transitions=[],project_bindings={},unresolved_orphans=[])
++            tree.evidence.return_value=[];tree.observe.side_effect=[ValueError('synthetic orphan'),[]]
++            for name,value in [('ROOT',td),('DEPENDENCY_PINS',{}),('authorization',Mock()),('digest',Mock(return_value='a'*64)),
++                ('git_preflight',Mock(return_value={})),('capacity',Mock(return_value={})),('tools_state',Mock(return_value={})),
++                ('state_snapshot',Mock(side_effect=[self.state(),OSError('post-state capture failed'),self.state()]) if post_error else Mock(return_value=self.state())),('processes',Mock(return_value=[self.hub()])),
++                ('OwnedProcessTree',Mock(return_value=tree)),('owned_shutdown_barrier',Mock(side_effect=ValueError('persistent orphan')) if shutdown_error else Mock(return_value=(dict(closed=True),[self.hub()]))),
++                ('assess',Mock(return_value=dict(operationalControlPassed=True))),
++                ('command',Mock(return_value=[sys.executable,'-c','import time; time.sleep(0.2)']))]:
++                stack.enter_context(patch.object(c,name,value))
++            stack.enter_context(patch.object(c.sys,'platform','darwin'))
++            output=stack.enter_context(patch('sys.stdout',new_callable=io.StringIO))
++            self.assertEqual(c.execute(auth),1)
++            receipt=json.loads(Path(json.loads(output.getvalue())['result_path']).read_text())
++            self.assertIn('wrapper_exit',receipt,receipt)
++            self.assertEqual(receipt['wrapper_exit'],0);self.assertTrue(receipt['wrapper_reaped'])
++            self.assertIn('after',receipt);self.assertEqual(receipt['owned_shutdown']['closed'],not shutdown_error)
++            if shutdown_error:self.assertEqual(receipt['owned_shutdown']['status'],'UnresolvedObservation_NoAbsenceProof')
++            if post_error:self.assertTrue(any('post-state capture failed' in e['error'] for e in receipt['lifecycle_errors']))
++            self.assertFalse(receipt['operationalControlPassed']);self.assertIn('synthetic orphan',receipt['controller_error'])
++            self.assertFalse(receipt['readiness']['normal_mission'])
++
+     def test_shutdown_requires_two_complete_observed_absence_samples(self):
+         tree,baseline,rows=self.initial_tree()
+         with patch.object(c,'processes',side_effect=[baseline,baseline]) as snapshots,patch.object(c.time,'sleep'),patch.object(c.time,'monotonic',return_value=0):

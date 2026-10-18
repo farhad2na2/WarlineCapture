@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "scope": "Isolated controller lifecycle repair proposal; no Unity launch",
+  "created_utc": "2026-10-18T15:59:02.269643+00:00",
+  "base_commit": "35127e270059d0eca245d1d4832d7a70afffbace",
+  "branch": "codex/mac-probe35-lifecycle-repair",
+  "files": [
+    {
+      "path": "Tools/CI/mac_tanker_probe35_controller.py",
+      "bytes": 34354,
+      "sha256": "1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6"
+    },
+    {
+      "path": "Tools/CI/mac_tanker_probe35_controller_test.py",
+      "bytes": 25794,
+      "sha256": "9b8ff2184630989c1139f4b450201951e2c87bab4578b5d8a9ba742c3b2d3cfc"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/mac-probe35-lifecycle-r6/mac-tests.log",
+      "bytes": 5893,
+      "sha256": "fd8ca1c120ae3ef4bc5cd176dc6d88cfefc0767712556be4b969f34fae245f45"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacConstructionConsumer/mac-probe35-lifecycle-r6/review.diff",
+      "bytes": 12825,
+      "sha256": "53bfd334c2337ef859425f8b536a5da1f124cbc513a44e60e2db4834d2786dbb"
+    }
+  ],
+  "tests": {
+    "python_mac_passed": 49,
+    "native_Unity35": "NotRun",
+    "windows": "PendingIndependentReview"
+  },
+  "changes": [
+    "Latch inventory/ownership errors while continuing original Popen monitoring and explicit wait/reap",
+    "Retain offending orphan row and kernel birth without adoption or termination",
+    "Preserve actual wrapper exit independently from shutdown proof",
+    "Attempt post-state capture separately; failures cannot be erased by subsequent success"
+  ],
+  "unchanged_gates": [
+    "Default disabled and exact new authorization/controller hash required",
+    "Native wrapper/entry/timeout/source/dependency/tool/ENV pins unchanged",
+    "No kill/restart/source or native checkout edits",
+    "Compiler consumption/in-process ENV/native frame proof Pending",
+    "No mission/queue/Android/device credit"
+  ],
+  "prior_run": {
+    "controller": "b71f212b946dae511656e24d85e559d77869b13aea84f78c1b7fa0ce278a0a8e",
+    "result_sha256": "80b9b2b62cb6b18f1605efc10e48fb3f2bf91a3226f13f3a6c7e7985c7177cd1",
+    "wrapper_exit": "Unknown",
+    "marker_count": 0,
+    "outcome": "Unproven_NoRetryAuthority"
+  },
+  "retained_setup_failures": [
+    "Initial real benign child fixture omitted timeout_seconds in its mocked authorization; first run error and diagnostic run failure occurred before child launch. Fixture corrected; no production-code relaxation."
+  ],
+  "limits": [
+    "Cannot reconstruct previous missing wrapper exit or identify unrecorded original orphan",
+    "SIGKILL/controller crash cannot be handled by Python finally",
+    "Pending review; no native rerun authorized"
+  ]
+}

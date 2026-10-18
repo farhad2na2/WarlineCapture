@@ -209,7 +209,7 @@ namespace Game.Editor
                 Transform quickTransition = instance.transform.Find("SkirmishSetupComposition/LaunchTransition");
                 AssertStep(quickTransition != null && quickTransition.gameObject.activeInHierarchy, "Quick Battle did not show the launch transition.");
                 TMP_Text quickLabel = quickTransition.Find("LaunchLabel")?.GetComponent<TMP_Text>();
-                AssertStep(quickLabel != null && quickLabel.text.Contains(quickId), "Quick Battle banner does not name " + quickId + ".");
+                AssertStep(quickLabel != null && BannerNames(quickLabel.text, quickId), "Quick Battle banner does not name " + quickId + ": '" + (quickLabel != null ? quickLabel.text : "<null>") + "'.");
                 Debug.Log("[QuickBattle] flow locale=" + suffix + " button=" + quick.name + " scenario=" + quickId + " launchRequested=True");
                 Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "08-quickbattle-" + suffix + ".png"), "launch", suffix, shots);
                 return 8;
@@ -394,6 +394,26 @@ namespace Game.Editor
             public bool TryGetSourceByLocalized(string value, out string key, out string source) =>
                 GameLocalization.TryGetSourceByLocalized(value, out key, out source);
         }
+
+        // fa-IR banners are shaped for RTL (Persian digits, possibly reversed runs), so compare on normalised ASCII.
+        private static bool BannerNames(string label, string scenarioId)
+        {
+            if (string.IsNullOrEmpty(label) || string.IsNullOrEmpty(scenarioId))
+                return false;
+            var sb = new System.Text.StringBuilder(label.Length);
+            foreach (char c in label)
+            {
+                if (c >= '\u06F0' && c <= '\u06F9') sb.Append((char)('0' + (c - '\u06F0')));
+                else if (c >= '\u0660' && c <= '\u0669') sb.Append((char)('0' + (c - '\u0660')));
+                else if (char.IsLetterOrDigit(c) && c < 128) sb.Append(c);
+                else sb.Append(' ');
+            }
+            string flat = sb.ToString();
+            char[] rev = scenarioId.ToCharArray();
+            System.Array.Reverse(rev);
+            return flat.Contains(scenarioId) || flat.Contains(new string(rev));
+        }
+
     }
 }
 #endif

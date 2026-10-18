@@ -232,6 +232,11 @@ namespace Game.UI.Runtime
             image.color = selected || dimmed ? image.color : new Color(0.82f, 0.82f, 0.82f, 1f);
 
             float strip = Mathf.Clamp(h * 0.24f, 20f, 46f); // v38: approved-3 name strip (~24% of the tab)
+            // v39: short (4:3) tabs stack the count above the name so the name gets the full tab width and a band
+            // tall enough for the 18px floor; wide tabs keep name + count side by side in one strip.
+            bool stacked = h < 120f;
+            if (stacked)
+                strip = Mathf.Min(h - 4f, Mathf.Max(strip, SkirmishZoneTabWidget.NameBand));
             float nameMax = h >= 120f ? 22f : 15f;
             var scrim = new GameObject("TabScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             scrim.transform.SetParent(button.transform, false);
@@ -249,13 +254,13 @@ namespace Game.UI.Runtime
                 string ratio = pin.WonCount + "/" + pin.PublishedCount;
                 countCopy = fa ? SkirmishWidgetContext.ToPersianDigits(ratio) : ratio;
             }
-            float countW = string.IsNullOrEmpty(countCopy) ? 0f : comingSoon ? Mathf.Clamp(width * 0.42f, 60f, 104f) : Mathf.Clamp(width * 0.26f, 34f, h >= 120f ? 64f : 52f);
+            float countW = string.IsNullOrEmpty(countCopy) ? 0f : stacked ? Mathf.Clamp(width * (comingSoon ? 0.62f : 0.34f), 34f, width - 8f) : comingSoon ? Mathf.Clamp(width * 0.42f, 60f, 104f) : Mathf.Clamp(width * 0.26f, 34f, h >= 120f ? 64f : 52f);
             if (label != null)
             {
                 label.transform.SetAsLastSibling();
-                float nameW = Mathf.Max(30f, width - 12f - countW);
-                PlaceTopLeft(label.rectTransform, fa ? 6f + countW : 6f, h - 2f - strip, nameW, strip);
-                label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                float nameW = stacked ? Mathf.Max(30f, width - 8f) : Mathf.Max(30f, width - 12f - countW);
+                PlaceTopLeft(label.rectTransform, stacked ? 4f : fa ? 6f + countW : 6f, h - 2f - strip, nameW, strip);
+                label.alignment = stacked ? TextAlignmentOptions.Center : fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 label.textWrappingMode = TextWrappingModes.NoWrap;
                 label.overflowMode = TextOverflowModes.Ellipsis;
                 label.maxVisibleLines = 1;
@@ -271,9 +276,23 @@ namespace Game.UI.Runtime
             if (countW > 0f)
             {
                 var count = CreateLabel(button.transform, comingSoon ? "ComingSoon" : "TabCount", 14f);
-                PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
+                if (stacked)
+                {
+                    // Count badge in the top corner, above the name strip, on its own small scrim over the art.
+                    const float badgeH = 18f;
+                    float bx = fa ? 4f : width - 4f - countW;
+                    var badge = new GameObject("TabCountScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                    badge.transform.SetParent(button.transform, false);
+                    PlaceTopLeft(badge.rectTransform, bx, 3f, countW, badgeH);
+                    badge.color = new Color(0.02f, 0.03f, 0.04f, 0.82f);
+                    badge.raycastTarget = false;
+                    count.transform.SetAsLastSibling();
+                    PlaceTopLeft(count.rectTransform, bx + 2f, 3f, countW - 4f, badgeH);
+                }
+                else
+                    PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
                 SetCopy(count, countCopy, comingSoon ? 9f : 11f, comingSoon ? (h >= 120f ? 16f : 13f) : nameMax);
-                count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
+                count.alignment = stacked ? TextAlignmentOptions.Center : fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
                 count.textWrappingMode = TextWrappingModes.NoWrap;
                 count.overflowMode = TextOverflowModes.Overflow;
                 count.isRightToLeftText = comingSoon && fa;

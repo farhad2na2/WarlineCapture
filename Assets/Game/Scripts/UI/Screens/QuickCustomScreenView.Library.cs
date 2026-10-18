@@ -2132,27 +2132,75 @@ namespace Game.UI.Runtime
             float compositionHeight = compositionRect != null && compositionRect.rect.height > 200f
                 ? compositionRect.rect.height
                 : 941f;
-            float bannerWidth = Mathf.Clamp(compositionWidth * 0.28f, 280f, 440f);
-            // v39: the v38 banner centred on the OperationPreview and covered the S002-S004 tiles. It now sits in the
-            // footer band (same 100px band LibraryFooter lays out at compositionHeight - 112), centred horizontally,
-            // so it never touches the header or any battle card/tile at any aspect; the buttons are idle while launching.
-            const float footerBand = 100f;
-            const float bannerHeight = 52f;
+            // v39b: a compact pill over the bottom of the briefing preview picture (the selected battle's own image),
+            // clear of the header, every battle card/tile and the footer buttons. Fallback when no preview is laid out:
+            // a small pill in the footer band's top edge, centred.
+            float bannerHeight = 40f;
+            float bannerWidth = 300f;
             float bannerX = (compositionWidth - bannerWidth) * 0.5f;
-            float bannerY = compositionHeight - 112f + (footerBand - bannerHeight) * 0.5f;
-            PlaceTopLeft(plate, bannerX, bannerY, bannerWidth, 52f);
+            float bannerY = compositionHeight - 112f - bannerHeight - 4f;
+            RectTransform preview = _briefingPreview != null && _briefingPreview.gameObject.activeInHierarchy
+                ? _briefingPreview.rectTransform
+                : null;
+            if (compositionRect != null && preview != null && preview.rect.width > 120f && preview.rect.height > 60f)
+            {
+                var corners = new Vector3[4];
+                preview.GetWorldCorners(corners);
+                Vector3 topLeft = compositionRect.InverseTransformPoint(corners[1]);
+                Vector3 bottomRight = compositionRect.InverseTransformPoint(corners[3]);
+                Rect area = compositionRect.rect;
+                float left = topLeft.x - area.xMin;
+                float top = area.yMax - topLeft.y;
+                float w = bottomRight.x - topLeft.x;
+                float h = topLeft.y - bottomRight.y;
+                bannerWidth = Mathf.Min(300f, Mathf.Max(120f, w - 16f));
+                bannerHeight = Mathf.Min(40f, Mathf.Max(28f, h * 0.3f));
+                bannerX = left + (w - bannerWidth) * 0.5f;
+                bannerY = top + h - bannerHeight - 8f;
+            }
+
+            PlaceTopLeft(plate, bannerX, bannerY, bannerWidth, bannerHeight);
             plate.gameObject.SetActive(true);
+            if (plateImage != null)
+                plateImage.color = new Color(0.07f, 0.08f, 0.09f, 0.88f);
             RaiseLaunchTransition();
             TMP_Text text = plate.Find("LaunchLabel")?.GetComponent<TMP_Text>();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            SetCopy(text, fa ? "در حال اعزام " + scenarioId : "LAUNCHING " + scenarioId, 16f, 24f);
             if (text != null)
             {
-                Stretch(text.rectTransform, 16f, 12f, 8f, 8f);
+                // v39b: the FA toast rendered blank: the raw (unshaped) Farsi string was set with isRightToLeftText=false,
+                // and the Farsi TMP atlas only bakes presentation forms, so no glyph drew. The label now opts out of the
+                // localisation binding/refit pass, takes the live footer font, and gets shaped RTL text directly.
+                V3LocalizedTextBindingView binding = text.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                {
+                    if (Application.isPlaying)
+                        Destroy(binding);
+                    else
+                        DestroyImmediate(binding);
+                }
+                LibraryFixedTextSize held = text.GetComponent<LibraryFixedTextSize>() ?? text.gameObject.AddComponent<LibraryFixedTextSize>();
+                TMP_Text fontSource = launchButton != null ? launchButton.GetComponentInChildren<TMP_Text>(true) : null;
+                if (fontSource != null && fontSource.font != null)
+                    text.font = fontSource.font;
+                Stretch(text.rectTransform, 10f, 10f, 4f, 4f);
+                string copy = fa ? "در حال اعزام " + scenarioId : "LAUNCHING " + scenarioId;
+                text.text = fa ? V3LocalizedTextBindingView.ShapeForRendering(copy) : copy;
+                text.enableAutoSizing = false;
+                text.fontSize = Mathf.Min(20f, bannerHeight * 0.5f);
+                held.Size = text.fontSize;
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+                text.overflowMode = TextOverflowModes.Overflow;
                 text.alignment = TextAlignmentOptions.Center;
-                text.isRightToLeftText = false;
+                text.isRightToLeftText = fa;
                 text.color = new Color(0.96f, 0.93f, 0.84f, 1f);
-                text.overflowMode = TextOverflowModes.Ellipsis;
+                text.alpha = 1f;
+                text.gameObject.SetActive(true);
+                text.enabled = true;
+                text.transform.SetAsLastSibling();
+                text.ForceMeshUpdate();
+                Debug.Log("[LaunchToast] locale=" + (fa ? "fa-IR" : "en") + " text=" + scenarioId +
+                    " chars=" + text.textInfo.characterCount + " rect=" + bannerWidth.ToString("0") + "x" + bannerHeight.ToString("0"));
             }
         }
 

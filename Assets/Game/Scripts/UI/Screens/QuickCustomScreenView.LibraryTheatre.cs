@@ -1052,10 +1052,13 @@ namespace Game.UI.Runtime
                 seated[i] = shape;
             }
 
+            Rect detailRect = SeatingDetailRect(plateWidth, plateHeight, fa);
+            var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
-                slot.Hex = AsTerritory(slot.Hex, slot.Card, slot.Cue, slot.MapId, seated, i);
+                slot.Hex = AsTerritory(slot.Hex, slot.Card, slot.Pin, slot.Cue, slot.MapId, seated, i, fa, plateWidth, plateHeight, detail, hint);
                 slots[i] = slot;
             }
         }
@@ -1066,10 +1069,16 @@ namespace Game.UI.Runtime
         private static Vector2[] AsTerritory(
             Vector2[] hex,
             Rect card,
+            Rect pin,
             Rect cue,
             string mapId,
             TheatreSeatGeometry.Vec2[][] seated,
-            int index)
+            int index,
+            bool fa,
+            float plateWidth,
+            float plateHeight,
+            TheatreSeatGeometry.Box detail,
+            TheatreSeatGeometry.Box hint)
         {
             if (hex == null || hex.Length < 3)
                 return hex;
@@ -1089,8 +1098,29 @@ namespace Game.UI.Runtime
             }
 
             var box = new TheatreSeatGeometry.Box(card.x, card.y, card.width, card.height);
+            var pinBox = new TheatreSeatGeometry.Box(pin.x, pin.y, pin.width, pin.height);
             var pill = new TheatreSeatGeometry.Box(cue.x, cue.y, cue.width, cue.height);
-            TheatreSeatGeometry.Vec2[] terrain = TheatreSeatGeometry.TerritoryAround(shape, box, mapId, others, pill);
+            if (fa && pill.W > 1f)
+            {
+                // First width TryWidenLiveFaCue places. بزرگنمایی at 22px needs this shelf.
+                const float needW = 220f;
+                const float needH = 64f;
+                float width = Mathf.Max(pill.W, needW);
+                float height = Mathf.Max(pill.H, needH);
+                float bottom = pill.Y + pill.H;
+                float x = pill.X + pill.W * 0.5f - width * 0.5f;
+                if (x < 12f)
+                    x = 12f;
+                if (x + width > plateWidth - 12f)
+                    x = plateWidth - 12f - width;
+                float y = bottom - height;
+                if (y < 12f)
+                    y = 12f;
+                pill = new TheatreSeatGeometry.Box(x, y, width, height);
+            }
+
+            TheatreSeatGeometry.Vec2[] terrain = TheatreSeatGeometry.FinishTerritory(
+                shape, box, pinBox, mapId, others, pill, plateWidth, plateHeight, detail, hint);
             if (terrain == null || terrain.Length < 3)
                 return hex;
             var points = new Vector2[terrain.Length];
@@ -2742,7 +2772,7 @@ namespace Game.UI.Runtime
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
             string selected = CueSelectedMap(parent, origin.x);
-            float[] widths = { 176f, 196f, 220f, 240f };
+            float[] widths = { 220f, 204f, 196f, 240f };
             float[] heights = { 62f, 56f, 48f, 44f, 40f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
             {
@@ -5023,9 +5053,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Two readable lines in the strip. Tracking stays at 0 so the glyphs do not
-        /// collapse into each other. Leading may tighten. The font steps down only as
-        /// far as the compact floor.
+        /// Fits the title in the strip. A wide strip keeps one line. A tall strip
+        /// (24% of a larger card) keeps two lines broken on a space. The rect stays
+        /// the strip height: growing it and then clamping it is what cut the second word.
         /// </summary>
         private static void SeatNameCopyInStrip(TMP_Text name, float stripH)
         {
@@ -5034,7 +5064,6 @@ namespace Game.UI.Runtime
             string source = FlattenCopy(name.text);
             if (source.Length == 0)
                 return;
-            name.characterSpacing = 0f;
             float width = name.rectTransform != null
                 ? (name.rectTransform.rect.width > 1f ? name.rectTransform.rect.width : name.rectTransform.sizeDelta.x)
                 : 0f;
@@ -5042,41 +5071,183 @@ namespace Game.UI.Runtime
             float floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : LatinNameFloor;
             if (ZoneNameIsFarsi(name))
                 floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : TheatreSeatGeometry.NameFontFloor;
-            // A 20px pair does not fit a 24% strip on a 140px tile. Stepping under
-            // that floor keeps the line inside the strip instead of overflowing it.
+            // A 20px pair does not fit a 24% strip on a 140px tile.
             if (stripH < 46f && floor > 12f)
                 floor = 12f;
-            // Tracking stays at 0. Leading may close until two lines sit in the strip.
-            // Character spacing at −48 was what turned the titles into 'MONTAS'.
-            float[] lead = { 0f, -16f, -32f, -48f, -64f, -80f, -96f, -112f };
+            float twoLineCap = stripH > 4f ? (stripH - 4f) / 2.3f : floor;
+            if (twoLineCap > DrawnNameTarget)
+                twoLineCap = DrawnNameTarget;
+            if (twoLineCap < floor)
+                twoLineCap = floor;
+            float bestSize = 0f;
+            float bestLead = 0f;
+            bool bestWrap = false;
             for (float size = DrawnNameTarget; size >= floor - 0.01f; size -= 1f)
             {
-                for (int i = 0; i < lead.Length; i++)
+                if (size + 0.01f < bestSize)
+                    break;
+                if (TrySeatNameLine(name, source, size, 0f, width, stripH, false))
                 {
-                    name.lineSpacing = lead[i];
-                    name.characterSpacing = 0f;
-                    if (!WrapZoneName(name, size))
-                        continue;
-                    name.ForceMeshUpdate();
-                    if (name.preferredHeight <= stripH + 1.5f && !name.isTextTruncated && !name.isTextOverflowing)
-                        return;
+                    bestSize = size;
+                    bestLead = 0f;
+                    bestWrap = false;
+                    break;
                 }
             }
 
-            name.lineSpacing = -48f;
-            name.characterSpacing = 0f;
-            if (!WrapZoneName(name, floor))
+            // Leading stays modest. −48 and below was crushing the glyphs together.
+            float[] lead = { 0f, -16f, -32f, -48f };
+            for (float size = twoLineCap; size >= floor - 0.01f; size -= 1f)
             {
-                name.text = source;
-                name.maxVisibleLines = 2;
-                name.textWrappingMode = TextWrappingModes.Normal;
-                name.overflowMode = TextOverflowModes.Overflow;
-                name.fontSizeMin = floor;
-                name.fontSizeMax = floor;
-                name.fontSize = floor;
+                if (size + 0.01f < bestSize)
+                    break;
+                for (int i = 0; i < lead.Length; i++)
+                {
+                    if (!TrySeatNameLine(name, source, size, lead[i], width, stripH, true))
+                        continue;
+                    bestSize = size;
+                    bestLead = lead[i];
+                    bestWrap = true;
+                    break;
+                }
+
+                if (bestWrap && bestSize + 0.01f >= size)
+                    break;
             }
 
+            if (bestSize >= floor - 0.01f && TrySeatNameLine(name, source, bestSize, bestLead, width, stripH, bestWrap))
+                return;
+            for (float size = floor - 1f; size >= 10f - 0.01f; size -= 1f)
+            {
+                if (TrySeatNameLine(name, source, size, 0f, width, stripH, false))
+                    return;
+                if (TrySeatNameLine(name, source, size, 0f, width, stripH, true))
+                    return;
+            }
+
+            name.text = source;
+            name.lineSpacing = 0f;
+            name.characterSpacing = 0f;
+            name.textWrappingMode = TextWrappingModes.NoWrap;
+            name.maxVisibleLines = 1;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.enableAutoSizing = false;
+            name.fontSizeMin = floor;
+            name.fontSizeMax = floor;
+            name.fontSize = floor;
+            PinNameToStrip(name, stripH);
             name.ForceMeshUpdate();
+        }
+
+        /// <summary>
+        /// One line across the full strip, or two lines broken on a space.
+        /// Rejects a mesh the strip cannot show and a break through a word.
+        /// </summary>
+        private static bool TrySeatNameLine(
+            TMP_Text name,
+            string source,
+            float size,
+            float leading,
+            float width,
+            float stripH,
+            bool allowWrap)
+        {
+            if (name == null || size < 1f)
+                return false;
+            name.text = source;
+            name.lineSpacing = leading;
+            name.characterSpacing = 0f;
+            name.textWrappingMode = allowWrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            name.overflowMode = TextOverflowModes.Overflow;
+            name.maxVisibleLines = allowWrap ? 2 : 1;
+            name.enableAutoSizing = false;
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
+            PinNameToStrip(name, stripH);
+            name.ForceMeshUpdate();
+            if (name.isTextTruncated || name.isTextOverflowing)
+                return false;
+            if (name.preferredHeight > stripH + 1.5f)
+                return false;
+            float line = WidestDrawnLine(name);
+            if (width > 1f && line > width + 2f)
+                return false;
+            if (allowWrap && NameBreaksMidWord(name))
+                return false;
+            if (!allowWrap && name.textInfo != null && name.textInfo.lineCount > 1)
+                return false;
+            return true;
+        }
+
+        private static void PinNameToStrip(TMP_Text name, float stripH)
+        {
+            if (name == null || name.rectTransform == null || stripH < 1f)
+                return;
+            Vector2 size = name.rectTransform.sizeDelta;
+            if (Mathf.Abs(size.y - stripH) <= 0.5f)
+                return;
+            name.rectTransform.sizeDelta = new Vector2(size.x, stripH);
+        }
+
+        private static float WidestDrawnLine(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            TMP_TextInfo info = name.textInfo;
+            if (info != null && info.lineCount > 1 && info.lineInfo != null)
+            {
+                float widest = 0f;
+                int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+                for (int i = 0; i < lines; i++)
+                    widest = Mathf.Max(widest, info.lineInfo[i].length);
+                if (widest > 0.5f)
+                    return widest;
+            }
+
+            float preferred = name.preferredWidth;
+            if (preferred < 0.5f && !string.IsNullOrEmpty(name.text))
+            {
+                Vector2 values = name.GetPreferredValues(name.text);
+                preferred = Mathf.Max(preferred, values.x);
+            }
+
+            return preferred;
+        }
+
+        private static bool NameBreaksMidWord(TMP_Text name)
+        {
+            if (name == null || name.textInfo == null || name.textInfo.lineCount <= 1 || name.textInfo.lineInfo == null)
+                return false;
+            string source = name.text ?? string.Empty;
+            TMP_TextInfo info = name.textInfo;
+            int lines = Mathf.Min(info.lineCount, info.lineInfo.Length);
+            for (int line = 0; line < lines - 1; line++)
+            {
+                TMP_LineInfo row = info.lineInfo[line];
+                TMP_LineInfo next = info.lineInfo[line + 1];
+                if (row.characterCount <= 0 || next.characterCount <= 0)
+                    continue;
+                int last = row.lastCharacterIndex;
+                int firstNext = next.firstCharacterIndex;
+                if (last < 0 || firstNext < 0 || last >= info.characterCount || firstNext >= info.characterCount)
+                    continue;
+                int leftIndex = info.characterInfo[last].index;
+                int rightIndex = info.characterInfo[firstNext].index;
+                if (leftIndex < 0 || rightIndex <= leftIndex || leftIndex >= source.Length || rightIndex >= source.Length)
+                    continue;
+                if (IsNameWordChar(source[leftIndex]) && IsNameWordChar(source[rightIndex]))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsNameWordChar(char value)
+        {
+            if (char.IsWhiteSpace(value) || value == '-' || value == '/' || value == '·')
+                return false;
+            return char.IsLetterOrDigit(value);
         }
 
         /// <summary>The title rect stays inside the card. A later fitter must not push it past the edge.</summary>

@@ -918,12 +918,18 @@ namespace Game.UI.Runtime
             hint.isRightToLeftText = fa;
             hint.textWrappingMode = TextWrappingModes.NoWrap;
             hint.overflowMode = TextOverflowModes.Overflow;
-            hint.enableAutoSizing = true;
-            hint.fontSizeMin = 18f;
-            hint.fontSizeMax = 30f;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", 18f, 30f);
-            hint.overflowMode = TextOverflowModes.Overflow;
+            // Autosize with Overflow was drawing the Farsi line at 30px and clipping بزرگنمایی.
+            // Lock 22, the library floor, on one line. The rect is the preview width.
+            hint.enableAutoSizing = false;
             hint.fontSizeMin = LibraryFontFloor;
+            hint.fontSizeMax = LibraryFontFloor;
+            hint.fontSize = LibraryFontFloor;
+            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", LibraryFontFloor, LibraryFontFloor);
+            hint.overflowMode = TextOverflowModes.Overflow;
+            hint.enableAutoSizing = false;
+            hint.fontSizeMin = LibraryFontFloor;
+            hint.fontSizeMax = LibraryFontFloor;
+            hint.fontSize = LibraryFontFloor;
             hint.isRightToLeftText = fa;
         }
 

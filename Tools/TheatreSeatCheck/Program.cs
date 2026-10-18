@@ -7,12 +7,26 @@ internal static class Program
 {
     private const string ReplayRoot = "Design/AgentReports/SkirmishBattleLibrary/2026-10-14";
 
-    private static int Main()
+    private static int Main(string[] args)
     {
         int seated = 0;
         int blocked = 0;
         int failed = 0;
-        if (!StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds() || !ReplayFourByThreeFaIb())
+        if (args != null && args.Length > 0 && args[0] == "probe")
+        {
+            string path = args.Length > 1 ? args[1] : "probe-territory.txt";
+            using (var writer = new StreamWriter(path, false))
+            {
+                writer.AutoFlush = true;
+                Probe(writer, "16:9", 1920f, 1080f);
+                Probe(writer, "20:9", 2400f, 1080f);
+                Probe(writer, "4:3", 1440f, 1080f);
+            }
+
+            Console.WriteLine("probe wrote " + path);
+            return 0;
+        }
+        if (!DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds() || !ReplayFourByThreeFaIb())
             failed++;
 
         RunCanvasPlates(ref seated, ref blocked, ref failed);
@@ -35,6 +49,86 @@ internal static class Program
 
         Console.WriteLine("TheatreSeatCheck result=Failed count=" + failed + " seated=" + seated + " blocked=" + blocked);
         return 1;
+    }
+
+    private static bool DrawnFramesHold()
+    {
+        var faults = new System.Collections.Generic.List<string>();
+        NoteFrame(faults, "16:9", 1920f, 1080f);
+        NoteFrame(faults, "20:9", 2400f, 1080f);
+        NoteFrame(faults, "4:3", 1440f, 1080f);
+        if (faults.Count == 0)
+        {
+            Console.WriteLine("PASS drawn territories");
+            return true;
+        }
+
+        for (int i = 0; i < faults.Count; i++)
+            Console.WriteLine(faults[i]);
+        return false;
+    }
+
+    private static void NoteFrame(System.Collections.Generic.List<string> faults, string ratio, float canvasWidth, float canvasHeight)
+    {
+        TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out float plateWidth, out float plateHeight);
+        string[] selected = ratio == "4:3" ? TheatreSeatGeometry.MapIds : new[] { "DB" };
+        foreach (bool fa in new[] { false, true })
+        {
+            foreach (bool reserve in new[] { false, true })
+            {
+                for (int i = 0; i < selected.Length; i++)
+                {
+                    string report = TheatreSeatGeometry.ProbePlate(plateWidth, plateHeight, fa, reserve, selected[i]);
+                    if (report.Contains(" OUT") || report.Contains(" GLOW") || report.Contains(" HINT") || report.Contains(" PANEL"))
+                        faults.Add(ratio + " " + report);
+                    foreach (string part in report.Split('|'))
+                    {
+                        int aspect = part.IndexOf("aspect=", StringComparison.Ordinal);
+                        int slash = aspect < 0 ? -1 : part.IndexOf('/', aspect);
+                        int hex = slash < 0 ? -1 : part.IndexOf(" hex=", slash, StringComparison.Ordinal);
+                        int samples = part.IndexOf(" in=", StringComparison.Ordinal);
+                        int cut = samples < 0 ? -1 : part.IndexOf('/', samples + 4);
+                        if (aspect < 0 || slash < 0 || hex < 0 || samples < 0 || cut < 0)
+                            continue;
+                        if (!float.TryParse(part.Substring(aspect + 7, slash - (aspect + 7)), NumberStyles.Float, CultureInfo.InvariantCulture, out float measured))
+                            continue;
+                        if (!float.TryParse(part.Substring(slash + 1, hex - (slash + 1)), NumberStyles.Float, CultureInfo.InvariantCulture, out float expected))
+                            continue;
+                        if (!int.TryParse(part.Substring(cut + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out int blocked))
+                        {
+                            int end = cut + 1;
+                            while (end < part.Length && char.IsDigit(part[end]))
+                                end++;
+                            int.TryParse(part.Substring(cut + 1, end - (cut + 1)), NumberStyles.Integer, CultureInfo.InvariantCulture, out blocked);
+                        }
+
+                        // Capture rejects a ratio more than 10% off. A 2-decimal print of a
+                        // value sitting on the line parses back a hair over 0.10.
+                        if (expected >= 0.2f && Math.Abs(measured / expected - 1f) > 0.101f)
+                            faults.Add(ratio + " aspect " + part.Trim());
+                        if (blocked < 8)
+                            faults.Add(ratio + " interior " + part.Trim());
+                    }
+                }
+            }
+        }
+    }
+
+    private static void Probe(StreamWriter writer, string ratio, float canvasWidth, float canvasHeight)
+    {
+        TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out float plateWidth, out float plateHeight);
+        foreach (bool fa in new[] { false, true })
+        {
+            foreach (bool reserve in new[] { false, true })
+            {
+                writer.WriteLine(ratio + " " + TheatreSeatGeometry.ProbePlate(plateWidth, plateHeight, fa, reserve, "DB"));
+                if (ratio != "4:3")
+                    continue;
+                writer.WriteLine(ratio + " " + TheatreSeatGeometry.ProbePlate(plateWidth, plateHeight, fa, reserve, "AP"));
+                writer.WriteLine(ratio + " " + TheatreSeatGeometry.ProbePlate(plateWidth, plateHeight, fa, reserve, "CC"));
+                writer.WriteLine(ratio + " " + TheatreSeatGeometry.ProbePlate(plateWidth, plateHeight, fa, reserve, "IB"));
+            }
+        }
     }
 
     private static void RunCanvasPlates(ref int seated, ref int blocked, ref int failed)

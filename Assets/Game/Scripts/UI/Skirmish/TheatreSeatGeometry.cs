@@ -6220,10 +6220,21 @@ namespace Game.UI.Runtime
             Box pill = cue.W > 1f
                 ? new Box(cue.X - CueHexStroke, cue.Y - CueHexStroke, cue.W + CueHexStroke * 2f, cue.H + CueHexStroke * 2f)
                 : default;
+            // A rounded hex is the same template on every seat. Each district cuts its own
+            // bays, and the compass points stay on the seated box so the aspect holds.
+            // The strongest coastline that still clears the card, the pill, and the area floor wins.
+            float[] strength = { 1f, 0.62f, 0.34f };
+            for (int step = 0; step < strength.Length; step++)
+            {
+                Vec2[] coast = SmoothTerritory(hex, card, cx, cy, phase, strength[step], pill, others, true, district, true);
+                if (SmoothWhy(coast, card, hex, others, pill) == null && RadialRoughness(coast) <= 1.15f)
+                    return coast;
+            }
+
             float[] depth = { 0.16f, 0.10f, 0.06f };
             for (int step = 0; step < depth.Length; step++)
             {
-                Vec2[] shape = SmoothTerritory(hex, card, cx, cy, phase, depth[step], pill, others, true);
+                Vec2[] shape = SmoothTerritory(hex, card, cx, cy, phase, depth[step], pill, others, true, district, false);
                 if (SmoothWhy(shape, card, hex, others, pill) == null && RadialRoughness(shape) <= 0.22f)
                     return shape;
             }
@@ -6449,7 +6460,51 @@ namespace Game.UI.Runtime
             cy /= hex.Length;
         }
 
+        /// <summary>
+        /// 1 on the four compass headings, so those samples stay on the seated hex
+        /// and the drawn box keeps the hex aspect. Zero on the diagonals, where the bay sits.
+        /// </summary>
+        private static float CompassKeep(float angle)
+        {
+            const float tau = 6.2831853f;
+            float wrapped = angle % tau;
+            if (wrapped < 0f)
+                wrapped += tau;
+            const float quarter = 1.5707963f;
+            float nearest = Math.Abs(wrapped / quarter - (float)Math.Round(wrapped / quarter));
+            if (nearest > 0.16f)
+                return 0f;
+            return 1f - nearest / 0.16f;
+        }
+
+        /// <summary>
+        /// How far this heading pulls in from the seated hex, as a fraction of the radius.
+        /// Each district uses a different lobe count and depth, so the five seats are not one template.
+        /// </summary>
+        private static float CoastCut(int district, float angle, float strength)
+        {
+            int band = district < 0 ? 0 : district % 5;
+            float freq = 1f + band;
+            float spin = band * 1.17f;
+            float lobe = 0.5f + 0.5f * (float)Math.Sin(freq * angle + spin);
+            lobe *= lobe;
+            float second = 0.5f + 0.5f * (float)Math.Sin((freq + 2f) * angle * 0.5f + spin * 1.6f);
+            float mix = 0.72f * lobe + 0.28f * second;
+            float depth = 0.20f + 0.045f * band;
+            float cut = mix * depth * strength;
+            if (cut < 0f)
+                cut = 0f;
+            if (cut > 0.42f)
+                cut = 0.42f;
+            return cut;
+        }
+
         private static Vec2[] SmoothTerritory(Vec2[] hex, Box card, float cx, float cy, float phase, float depth, Box pill, Vec2[][] others, bool spline)
+        {
+            return SmoothTerritory(hex, card, cx, cy, phase, depth, pill, others, spline, 0, false);
+        }
+
+        private static Vec2[] SmoothTerritory(Vec2[] hex, Box card, float cx, float cy, float phase, float depth, Box pill, Vec2[][] others, bool spline, int district, bool organic)
         {
             const int count = 36;
             const float tau = 6.2831853f;
@@ -6481,21 +6536,44 @@ namespace Game.UI.Runtime
                     spare = cap;
                 reach[i] = spare > 2f ? far - 1.5f : far;
                 limit[i] = reach[i] - spare;
-                float floor = far * 0.64f;
+                if (organic)
+                {
+                    float keep = CompassKeep(angle[i]);
+                    float cut = CoastCut(district, angle[i], depth) * (1f - keep);
+                    float room = far > 1f ? spare / far : 0f;
+                    if (room < 0f)
+                        room = 0f;
+                    if (cut > room)
+                        cut = room;
+                    float radius = far * (1f - cut);
+                    float floorOrganic = far * (1f - 0.36f * depth);
+                    if (radius < floorOrganic)
+                        radius = floorOrganic;
+                    if (radius > far)
+                        radius = far;
+                    reach[i] = far;
+                    limit[i] = radius;
+                }
+
+                float floor = organic ? far * (1f - 0.36f * depth) : far * 0.64f;
                 if (limit[i] < floor)
                     limit[i] = floor;
                 if (limit[i] > reach[i])
                     limit[i] = reach[i];
             }
 
-            BlurCircular(limit, 2);
+            BlurCircular(limit, organic ? 3 : 2);
             for (int i = 0; i < count; i++)
             {
                 if (limit[i] > reach[i])
                     limit[i] = reach[i];
-                float floor = reach[i] * 0.64f;
+                float floor = organic ? reach[i] * (1f - 0.36f * depth) : reach[i] * 0.64f;
                 if (limit[i] < floor)
                     limit[i] = floor;
+                // The blur pulls the compass samples off the seated box. Pin them back
+                // so the drawn aspect stays on the hex and the bays stay in between.
+                if (organic && CompassKeep(angle[i]) >= 0.85f)
+                    limit[i] = reach[i];
             }
 
             var controls = new Vec2[count];
@@ -6504,6 +6582,8 @@ namespace Game.UI.Runtime
                 float wave = 0.55f
                     + 0.30f * (float)Math.Sin(2f * angle[i] + phase)
                     + 0.15f * (float)Math.Sin(3f * angle[i] + phase * 1.7f);
+                if (organic)
+                    wave = 1f;
                 if (wave < 0f)
                     wave = 0f;
                 if (wave > 1f)

@@ -330,8 +330,11 @@
       "refinery_modules_each": 1,
       "status": "Planned",
       "light_air_minimum_620_starting_balance": -170,
-      "existing_probe_chain_860_starting_balance": -410,
-      "existing_probe_chain_minimum_additional_net_income": 410
+      "initial_tankers_each": 1,
+      "initial_logistics_trucks_each": 1,
+      "both_support_replacements_860_starting_balance": -410,
+      "both_support_replacements_minimum_additional_net_income": 410,
+      "healthy_starting_support_core_minimum_additional_net_income": 170
     },
     {
       "size_id": "War",
@@ -358,8 +361,11 @@
       "refinery_modules_each": 1,
       "status": "Planned",
       "light_air_minimum_620_starting_balance": 55,
-      "existing_probe_chain_860_starting_balance": -185,
-      "existing_probe_chain_minimum_additional_net_income": 185
+      "initial_tankers_each": 1,
+      "initial_logistics_trucks_each": 2,
+      "both_support_replacements_860_starting_balance": -185,
+      "both_support_replacements_minimum_additional_net_income": 185,
+      "healthy_starting_support_core_minimum_additional_net_income": 0
     },
     {
       "size_id": "LargeWar",
@@ -386,8 +392,11 @@
       "refinery_modules_each": 1,
       "status": "Planned",
       "light_air_minimum_620_starting_balance": 280,
-      "existing_probe_chain_860_starting_balance": 40,
-      "existing_probe_chain_minimum_additional_net_income": 0
+      "initial_tankers_each": 1,
+      "initial_logistics_trucks_each": 2,
+      "both_support_replacements_860_starting_balance": 40,
+      "both_support_replacements_minimum_additional_net_income": 0,
+      "healthy_starting_support_core_minimum_additional_net_income": 0
     }
   ],
   "economy_arithmetic": {
@@ -399,10 +408,11 @@
       "additional_tanker": 140
     },
     "minimal_readiness_pad_light_air": 620,
-    "existing_probe_chain": 860,
-    "scope": "Per faction and one paid order each; excludes additional troops/defenses, losses, caps/reservations, production time, repairs and income. Existing starting logistics actors may reduce extra purchases only if native public ownership and required role/service are actually verified; do not silently count all support as a committed truck/tanker.",
+    "scope": "Per faction, one paid Readiness/pad/light-air order each:620core;860only if both a new/replacement truck100 and tanker140 are needed. Compiler already assigns Standard1tanker+1truck, War/Large1tanker+2trucks each side. Existing probe can reuse living starting support. Neither620nor860includes other troops/defenses/losses, production time, repairs or income. Authored initial actors must still be observed live and working.",
     "historical_failure": "Two dedicated normal-touch probes placed pad and bought truck but match ended at stage10 before aircraft. Reported stock170afterpad70aftertruck150later is not a direct breakdown of every spend/income. canQueueAir=false alone does not identify producer vs readiness vs Materials/cap failure.",
-    "no_shortcuts": "Do not alter fixed450/675/900 grants, readiness or role costs/deadlines/caps, grant extra starting Helipad/aircraft, use a larger uncertified size or inject stock/outcomes. Establish and protect ordinary oil haul/fabrication income and choose a bounded route/test sequence before committing the sortie."
+    "no_shortcuts": "Do not alter fixed450/675/900 grants, readiness or role costs/deadlines/caps, grant extra starting Helipad/aircraft, use a larger uncertified size or inject stock/outcomes. Establish and protect ordinary oil haul/fabrication income and choose a bounded route/test sequence before committing the sortie.",
+    "both_support_replacements_chain": 860,
+    "current_support_vs_historical": "Current frozen compiler explicitly adds starting support; historical probes that bought trucks do not imply current healthy candidate must buy them. Minimum current Standard net income is170for620core;410only with both100+140support replacement purchases. Preserve actual candidate-specific costs/ledger evidence."
   },
   "fuel_and_service": {
     "meaning": "OwnAirFuel is SkirmishStartingSupplyService.ReadFuel for faction1, not an aircraft onboard tank. VehicleFuelConsumptionSystem drains eligible owned storage with outbound/civilian reserves excluded; safety return reacts to shared usable stock. Other units can spend the same pool.",
@@ -415,7 +425,8 @@
       "Lost aircraft",
       "Stop/Replay cleanup",
       "Match ends before landing or income threshold"
-    ]
+    ],
+    "starting_support": "Frozen compiler grants1Tanker per side and support-1LogisticsTrucks. Probe HasCommittedTanker accepts a living faction1Tanker without checking attempt/session, then scans reservations across all session roots. Public truck/role projection is session-joined. A future diagnostic must prove exact attempt-owned tanker/truck and delivery route rather than accept a global tanker presence."
   },
   "historical_committed_evidence": {
     "run_summaries": [
@@ -819,7 +830,7 @@
     "negative_scope": "All baseline-tracked candidate actor streams listed here were inspected for their recorded air flag and role set. Absence of samples is not proof aircraft can never spawn; older trace schema coverage is limited."
   },
   "smallest_legal_next_step": {
-    "first": "At a root-approved exact frozen candidate and free native lane, run an explicitly diagnostic observational source-fit/startup pass for S003Standard/Regular; preserve current source/settings and legacy binding. Record both factions native grid/occupancy, typed source/active metadata generation, structures/staging/service, actual3source pad owner/slot joins and any new touched pad slot/home relation, actual recipe/readiness/cost/cap decisions and public controls. Do not spawn/teleport/grant/force outcomes; if diagnostic injection is used by an existing probe keep it separate from normal acceptance.",
+    "first": "At a root-approved exact frozen candidate and free native lane, run an explicitly diagnostic observational source-fit/startup pass for S003Standard/Regular; preserve current source/settings and legacy binding. Record both factions native grid/occupancy, typed source/active metadata generation, structures/staging/service, actual3source pad owner/slot joins and any new touched pad slot/home relation, actual recipe/readiness/cost/cap decisions and public controls. Do not spawn/teleport/grant/force outcomes; if diagnostic injection is used by an existing probe keep it separate from normal acceptance. Verify initial support counts and exact ownership before deciding any replacement purchase; test/observe same-faction stale/unrelated tanker rejection separately from normal journey evidence.",
     "then": "Use normal input to protect the starting base and establish verified oil haul/fabrication/fuel delivery; wait for actual free Materials and queue/cap acceptance, purchase readiness/pad/light air through normal controls, use a measured short legal sortie/return/land/paid service/second sortie and complete result/return. Existing seed104732 or130366 remains exact declared candidate; preserve failures and end early with a concrete decision/field when infeasible.",
     "logical_change_only_after_native_observation": "If actual pad/service/egress placement fails, propose the smallest mission-owned logical anchor/route/placement adjustment on existing Campaign geometry with measured both-side grid/collider/army fit. Current report does not authorize implementation. Preserve shared S002/S003 map and coded semantic binding; any successor must be explicitly reviewed and revalidated. If no existing source supports fit, record unresolved source-fit gate or select an existing allowed Campaign source through approved binding work, never create physical derivatives.",
     "release_gate": "A successful small diagnostic or sortie does not establish full mission readiness, all sizes/seed/locale matrix, visual approval, checkpoint, Android or real player/device acceptance."
@@ -1084,6 +1095,16 @@
       "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
       "line": 53,
       "text": "| Skirmish DB | Shared desert/dense-city world; preserve S004's current CityEdgeAirfield binding |"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 316,
+      "text": "AddForce(forces, definition, 1, SkirmishRoleIds.Tanker, vector.PlayerLogisticsSupport > 0 ? 1 : 0, \"staging.player\", reasons);"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 317,
+      "text": "AddForce(forces, definition, 1, SkirmishRoleIds.LogisticsTruck, System.Math.Max(0, vector.PlayerLogisticsSupport - 1), \"staging.player\", reasons);"
     }
   ],
   "source_sha256": {
@@ -1136,12 +1157,19 @@
     "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/runs.csv": "a0a2041c1f90050e4def65e26024772fcee659cc8b6f15b69dac78c01d6403bf",
     "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/runs.csv": "95cb563eeb5552b3b90a82e9ee476e4b99976d93d643684d387497a4acc6b302",
     "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/f8675d870abeedf9c9386dc2990eb5fdbc94dcd0c228f456d29603935d62c186/s003-aria-rs-104732-en-1.jsonl.actors.jsonl": "e56f604f4a01ebc48ef1152702eb5d3a33e290c010e9bbc3af59cf54e8cc118d",
-    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/s003-aria-rs-104732-en-1.jsonl": "9c48573c9eb0964d350ea86b39a384d446562baaff01040752501080e28cd211"
+    "Design/AgentReports/SkirmishExpansion/S003/_Evidence/candidates/ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5/s003-aria-rs-104732-en-1.jsonl": "9c48573c9eb0964d350ea86b39a384d446562baaff01040752501080e28cd211",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f"
   },
   "validation": {
     "baseline_and_final_bytes_checked": true,
     "native_run": false,
     "logical_or_physical_assets_changed": false,
     "mission_ready_claimed": false
+  },
+  "refinement": {
+    "recorded_utc": "2026-10-18T12:38:45.864122+00:00",
+    "reason": "Additional compiler/startup-role check resolves earlier conditional extra-support spending caveat;860must not be treated as mandatory healthy probe cost.",
+    "source_changes": false,
+    "native_reproduction": false
   }
 }

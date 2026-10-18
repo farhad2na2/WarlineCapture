@@ -100,6 +100,147 @@ namespace Game.Editor
 
         // Passive normal-frame diagnostic. Does not select, move, spawn, pause,
         // focus, change a camera, or send ARIA any hidden state.
+
+        static OperationMapDefinition ResolveCodedCameraObservationSource(EntityManager em,
+            SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition, int scenarioIndex)
+        {
+            Require(em.World != null && em.World.IsCreated && definition != null &&
+                definition.CatalogId == setup.CatalogId && definition.DefinitionId == setup.DefinitionId &&
+                definition.ContentVersion == setup.ContentVersion &&
+                SkirmishMissionDispatch.TryGetLegacyIndex(setup.CatalogId, out int expectedIndex) &&
+                expectedIndex == scenarioIndex, "Coded observation must retain actual packaged launch identity");
+            var source = SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition);
+            Require(MatchSceneView.OperationMapLaunchResolver.TryResolve(em.World,
+                SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
+                SkirmishLaunchProjection.OperationMapId, out var selected, out _, out _),
+                "Actual normal operation-map resolver refused coded observation");
+            var catalogs = UnityEngine.Object.FindObjectsByType<MatchSceneView>(FindObjectsInactive.Exclude)
+                .Select(view => view.OperationMapCatalog).ToArray();
+            ValidateCodedCameraObservationSource(setup.CatalogId, source, selected.Definition,
+                selected.OperationMapId.ToString(), selected.MissionId.ToString(),
+                selected.ScenarioId.ToString(), catalogs);
+            return source;
+        }
+
+        static void ValidateCodedCameraObservationSource(string catalogId, OperationMapDefinition source,
+            OperationMapDefinition selectedDefinition, string mapId, string missionId, string scenarioId,
+            OperationMapCatalogConfig[] liveCatalogs)
+        {
+            Require(source != null && mapId == source.OperationMapId &&
+                mapId == SkirmishLaunchProjection.OperationMapId &&
+                missionId == SkirmishLaunchProjection.MissionId &&
+                scenarioId == SkirmishLaunchProjection.ScenarioId,
+                "Actual normal selected map/mission/scenario differs from coded Campaign source");
+            if (selectedDefinition != null)
+            {
+                Require(selectedDefinition == source, "Explicit normal source differs from strict source");
+                return;
+            }
+            Require((catalogId == "S002" || catalogId == "S003") &&
+                liveCatalogs != null && liveCatalogs.Length > 0,
+                "Compatibility source requires an actual live MatchScene catalog");
+            foreach (var catalog in liveCatalogs)
+                Require(catalog != null && catalog.TryResolve(source.OperationMapId, out var actual) &&
+                    actual == source, "Live MatchScene catalog differs from serialized normal source");
+        }
+
+        public static void RunCodedCameraSourceResolutionControls()
+        {
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            Require(catalog != null, "Actual packaged catalog required for source controls");
+            int controls = 0;
+            foreach (string id in new[] { "S002", "S003", "S004" })
+            {
+                Require(catalog.TryGetDefinition(id, out var definition) && definition != null,
+                    "Actual coded definition required");
+                var source = SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(definition);
+                Require(source != null && source.OperationMapId == definition.OperationMapId &&
+                    source.TryValidateMetadata(out _), "Actual strict packaged source must resolve");
+                Require(SkirmishMissionDispatch.TryGetLegacyIndex(id, out int index),
+                    "Actual coded index required");
+                using var world = new World("coded-camera-source-controls");
+                var entity = world.EntityManager.CreateEntity();
+                world.EntityManager.AddComponentData(entity, new SkirmishMatchState { ScenarioIndex = index });
+                Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string matrixError), matrixError);
+                Require(SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular,
+                    SkirmishSizeId.Standard, 155925, new SkirmishContentManifest
+                    { RequiredFeatureIds = definition.RequiredFeatureIds }, matrix, out var setup, out _),
+                    "Actual packaged coded setup must compile");
+                world.EntityManager.AddComponentData(entity, new SkirmishExpandedSessionComponent
+                {
+                    IsLegacy = 0, CatalogId = setup.CatalogId, DefinitionId = setup.DefinitionId,
+                    ContentVersion = setup.ContentVersion, SetupHash = setup.SetupHash,
+                    SizeId = setup.SizeId, DifficultyId = setup.DifficultyId, Seed = setup.Seed
+                });
+                world.EntityManager.AddComponentObject(entity, new SkirmishResolvedSetupRecord { Setup = setup });
+                Require(MatchSceneView.OperationMapLaunchResolver.TryResolve(world,
+                    SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
+                    SkirmishLaunchProjection.OperationMapId, out var selected, out _, out _),
+                    "Actual normal coded resolver required");
+                Require(selected.OperationMapId.ToString() == source.OperationMapId &&
+                    (id == "S004" ? selected.Definition == source :
+                        selected.Definition == null || selected.Definition == source),
+                    "Normal resolver must retain strict packaged source");
+                controls++;
+                var transient = ScriptableObject.CreateInstance<OperationMapCatalogConfig>();
+                try
+                {
+                    var serialized = new SerializedObject(transient);
+                    var entries = serialized.FindProperty("definitions");
+                    Require(entries != null && entries.isArray, "Actual catalog definitions schema required");
+                    entries.arraySize = 1;
+                    entries.GetArrayElementAtIndex(0).objectReferenceValue = source;
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                    ValidateCodedCameraObservationSource(id, source, source, source.OperationMapId,
+                        SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId, null);
+                    controls++;
+                    if (id != "S004")
+                    {
+                        ValidateCodedCameraObservationSource(id, source, null, source.OperationMapId,
+                            SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
+                            new[] { transient });
+                        controls++;
+                    }
+                    Action<Action> refuses = action =>
+                    {
+                        bool refused = false;
+                        try { action(); } catch (Exception) { refused = true; }
+                        Require(refused, "Changed or absent normal source must refuse");
+                        controls++;
+                    };
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, null,
+                        source.OperationMapId, SkirmishLaunchProjection.MissionId,
+                        SkirmishLaunchProjection.ScenarioId, System.Array.Empty<OperationMapCatalogConfig>()));
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, null,
+                        source.OperationMapId, SkirmishLaunchProjection.MissionId,
+                        SkirmishLaunchProjection.ScenarioId, new OperationMapCatalogConfig[] { null }));
+                    Require(catalog.TryGetDefinition(id == "S004" ? "S002" : "S004", out var other),
+                        "Actual different coded source definition required");
+                    var foreign = SkirmishS002AriaRunHarness.ResolveProductionBatchWarmupSource(other);
+                    Require(foreign != source && foreign.OperationMapId == source.OperationMapId,
+                        "Control must use genuinely different physical sources sharing the coded map ID");
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, foreign,
+                        source.OperationMapId, SkirmishLaunchProjection.MissionId,
+                        SkirmishLaunchProjection.ScenarioId, null));
+                    entries.GetArrayElementAtIndex(0).objectReferenceValue = foreign;
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, null,
+                        source.OperationMapId, SkirmishLaunchProjection.MissionId,
+                        SkirmishLaunchProjection.ScenarioId, new[] { transient }));
+                    entries.arraySize = 0;
+                    serialized.ApplyModifiedPropertiesWithoutUndo();
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, null,
+                        source.OperationMapId, SkirmishLaunchProjection.MissionId,
+                        SkirmishLaunchProjection.ScenarioId, new[] { transient }));
+                    refuses(() => ValidateCodedCameraObservationSource(id, source, source, "foreign",
+                        SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId, null));
+                }
+                finally { UnityEngine.Object.DestroyImmediate(transient); }
+            }
+            Debug.Log("[CodedCameraSourceResolutionControls] result=Passed controls=" + controls +
+                " nativeVisualAccepted=0");
+        }
+
         public static void CaptureCodedBaCameraObservation(EntityManager em, Entity session,
             in SkirmishMatchState match, bool simulationActive, float elapsed)
         {
@@ -133,9 +274,13 @@ namespace Game.Editor
             Require(active.OperationMapId.Equals(blob.OperationMapId), "Actual active map and metadata identity must agree");
             Require(SkirmishLaunchProjection.TryGet(em, out var selectedSession, out var selectedMatch) &&
                 selectedSession == session, "Actual normal launch projection required");
-            var preset = SkirmishPresetConfig.Load(selectedMatch.ScenarioIndex);
-            var selectedSource = SkirmishS004Environment.LoadMapForSession(em) ?? (preset != null ? preset.operationMap : null);
-            Require(selectedSource != null, "Existing normal map resolver has no inspectable definition; do not guess source");
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            Require(catalog != null, "Actual packaged catalog required");
+            Require(catalog.TryGetDefinition(setup.CatalogId, out var definition) &&
+                definition != null && definition.DefinitionId == setup.DefinitionId &&
+                definition.ContentVersion == setup.ContentVersion && !EditorUtility.IsDirty(definition),
+                "Actual packaged coded definition required");
+            var selectedSource = ResolveCodedCameraObservationSource(em, setup, definition, selectedMatch.ScenarioIndex);
             Require(selectedSource.TryValidateMetadata(out string sourceError), sourceError);
             Require(active.OperationMapId.ToString() == selectedSource.OperationMapId &&
                 blob.ContentHash.ToString() == selectedSource.ContentHash &&
@@ -148,12 +293,6 @@ namespace Game.Editor
                 "Actual native metadata must join unchanged normal selected Campaign source");
             var grid = grids.GetSingleton<GridConfig>(); var surface = surfaces.GetSingleton<MapSurfaceComponent>();
             if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated) return;
-            var catalog = SkirmishExpansionCatalogConfig.Load();
-            Require(catalog != null, "Actual packaged catalog required");
-            Require(catalog.TryGetDefinition(setup.CatalogId, out var definition) &&
-                definition != null && definition.DefinitionId == setup.DefinitionId &&
-                definition.ContentVersion == setup.ContentVersion && !EditorUtility.IsDirty(definition),
-                "Actual packaged coded definition required");
             Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string matrixError), matrixError);
             Require(SkirmishSetupCompiler.TryCompile(definition, setup.DifficultyId, setup.SizeId, setup.Seed,
                 new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds }, matrix,

@@ -323,6 +323,7 @@ namespace Game.Tests.Editor
         public static void RunGenericOwnedOpeningValidation()
         {
             var t=new SkirmishS005OpeningViewPolicyTests();
+            Game.Editor.SkirmishGroundSourceFitSurvey.RunCodedCameraSourceResolutionControls();
             Game.Editor.SkirmishS002AriaRunHarness.RunCodedOpeningSettleControls();
             t.ActualS002SpawnReachesPublicProfileAndOpeningQueueOnlyAfterCompleteSource();
             t.GenericProfileIdentityIsDataDrivenAndDoesNotAdmitAnUnboundLegacyProfile();

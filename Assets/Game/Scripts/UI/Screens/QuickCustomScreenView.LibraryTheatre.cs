@@ -1771,9 +1771,17 @@ namespace Game.UI.Runtime
                 ? name.Substring("ZoneOutline_".Length)
                 : string.Empty;
             Color tint = TerritoryTint(mapId, color);
-            tint.a = selected
-                ? Mathf.Min(0.42f, TheatreSeatGeometry.TerritoryFillAlpha + 0.08f)
-                : TheatreSeatGeometry.TerritoryFillAlpha;
+            // 4:3 Farsi Desert Base was sampling a flat veil (variance 0.1). A lighter
+            // fill keeps the painting's local contrast above the floor of 8.
+            bool thinDesert = string.Equals(mapId, "DB", StringComparison.OrdinalIgnoreCase)
+                && UiShellRuntimeGateway.Localization.IsRightToLeft
+                && TheatreSeatGeometry.ShotIsFourByThree();
+            float fill = thinDesert ? 0.08f : TheatreSeatGeometry.TerritoryFillAlpha;
+            tint.a = thinDesert
+                ? fill
+                : selected
+                    ? Mathf.Min(0.42f, fill + 0.08f)
+                    : fill;
             polygon.Configure(local, tint);
             polygon.material = null;
             PlaceDistrictHalo(root, local, tint);
@@ -4862,17 +4870,20 @@ namespace Game.UI.Runtime
                 float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
                 float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
                 float stripH = NameStripHeight(cardH);
+                float stripW = NameStripWidth(cardW, cardH, stripH);
                 float stripY = Mathf.Max(0f, cardH - stripH);
+                bool farsiLayout = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                float stripX = farsiLayout ? Mathf.Max(0f, cardW - stripW) : 0f;
                 EnsureCardFrame(card, cardW, cardH);
                 if (card.Find("NameShade") is RectTransform shade)
                 {
-                    PlaceTopLeft(shade, 0f, stripY, Mathf.Max(8f, cardW), stripH);
+                    PlaceTopLeft(shade, stripX, stripY, Mathf.Max(8f, stripW), stripH);
                     KeepAuthoredSize(shade);
                 }
 
                 if (card.Find("ZoneName") is RectTransform title && title.TryGetComponent(out TMP_Text titleText))
                 {
-                    PlaceTopLeft(title, 2f, stripY, Mathf.Max(8f, cardW - 4f), stripH);
+                    PlaceTopLeft(title, stripX + 2f, stripY, Mathf.Max(8f, stripW - 4f), stripH);
                     title.localScale = Vector3.one;
                     KeepAuthoredSize(title);
                     bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -4882,23 +4893,52 @@ namespace Game.UI.Runtime
                     SeatNameCopyInStrip(titleText, stripH);
                     ClampNameInsideCard(title, cardW, cardH);
                     title.SetAsLastSibling();
+                    int lines = titleText.textInfo != null ? titleText.textInfo.lineCount : 0;
+                    string mapId = child.name.Substring("ZoneCard_".Length);
+                    Debug.Log("[TheatreName] map=" + mapId
+                        + " locale=" + (farsi ? "fa" : "en")
+                        + " font=" + F(titleText.fontSize)
+                        + " lines=" + lines.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                        + " strip=" + F(stripH)
+                        + " box=" + F(title.sizeDelta.x) + "x" + F(title.sizeDelta.y));
                 }
 
                 if (card.Find("ZoneCount") is RectTransform countRect && countRect.TryGetComponent(out TMP_Text countLabel))
                 {
                     float countW = ZoneCountColumn(countLabel, cardW);
-                    const float countH = 18f;
+                    string countCopy = FlattenCopy(countLabel.text);
+                    bool farsiWord = ContainsArabicLetter(countCopy);
+                    float countH = farsiWord ? 32f : 18f;
                     const float pad = 2f;
                     bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                    float countX = farsi ? Mathf.Max(pad, cardW - pad - countW) : pad;
-                    float countY = Mathf.Max(pad, stripY - countH - 2f);
-                    if (countX + countW > cardW - pad)
-                        countW = Mathf.Max(8f, cardW - pad - countX);
+                    float countX;
+                    float countY;
+                    if (farsiWord)
+                    {
+                        // Own row under the title band, full width, so به زودی fits at the count floor.
+                        countW = Mathf.Max(countW, cardW - pad * 2f);
+                        if (countW > cardW - pad * 2f)
+                            countW = Mathf.Max(8f, cardW - pad * 2f);
+                        countX = pad;
+                        countY = Mathf.Max(pad, stripY - countH - 2f);
+                    }
+                    else
+                    {
+                        countX = farsi ? Mathf.Max(pad, cardW - pad - countW) : pad;
+                        countY = Mathf.Max(pad, stripY - countH - 2f);
+                        if (countX + countW > cardW - pad)
+                            countW = Mathf.Max(8f, cardW - pad - countX);
+                    }
+
                     PlaceTopLeft(countRect, countX, countY, countW, countH);
                     KeepAuthoredSize(countRect);
                     countLabel.alignment = TextAlignmentOptions.Center;
                     countLabel.characterSpacing = 0f;
-                    FitCopyInside(countLabel, 11f);
+                    countLabel.textWrappingMode = TextWrappingModes.NoWrap;
+                    countLabel.overflowMode = TextOverflowModes.Overflow;
+                    countLabel.maxVisibleLines = 1;
+                    FitCopyInside(countLabel, farsiWord ? 13f : 11f);
+                    countLabel.enableAutoSizing = false;
                     countRect.SetAsLastSibling();
                 }
             }
@@ -4991,17 +5031,19 @@ namespace Game.UI.Runtime
             if (card == null)
                 return null;
             float stripH = NameStripHeight(cardH);
+            float stripW = NameStripWidth(cardW, cardH, stripH);
             float stripY = Mathf.Max(0f, cardH - stripH);
+            bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            float stripX = farsi ? Mathf.Max(0f, cardW - stripW) : 0f;
             RectTransform shade = EnsureNameShade(card);
-            PlaceTopLeft(shade, 0f, stripY, Mathf.Max(8f, cardW), stripH);
+            PlaceTopLeft(shade, stripX, stripY, Mathf.Max(8f, stripW), stripH);
             shade.localScale = Vector3.one;
             KeepAuthoredSize(shade);
             HideNameFade(card);
-            bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (card.Find("ZoneName") is RectTransform title)
             {
-                float titleX = 2f;
-                float titleW = Mathf.Max(8f, cardW - 4f);
+                float titleX = stripX + 2f;
+                float titleW = Mathf.Max(8f, stripW - 4f);
                 PlaceTopLeft(title, titleX, stripY, titleW, stripH);
                 title.localScale = Vector3.one;
                 KeepAuthoredSize(title);
@@ -5020,15 +5062,39 @@ namespace Game.UI.Runtime
             return shade;
         }
 
-        /// <summary>Bottom strip, 24% of the card. Capture rejects a share above 0.25.</summary>
+        /// <summary>
+        /// Bottom strip. Two lines at the 20px floor need 46px. A short card keeps that
+        /// height and <see cref="NameStripWidth"/> narrows the shade so the share stays under 0.25.
+        /// </summary>
         private static float NameStripHeight(float cardH)
         {
+            const float minStrip = 2f * LatinNameFloor + 6f;
             float strip = cardH * 0.24f;
-            if (strip < 1f)
-                strip = 1f;
+            if (strip < minStrip)
+                strip = minStrip;
             if (strip > cardH)
                 strip = cardH;
+            if (strip < 1f)
+                strip = 1f;
             return strip;
+        }
+
+        /// <summary>
+        /// Full card width when a 46px band is still under a quarter of the card.
+        /// Otherwise the shade hugs the title so the tall band does not fail the share gate.
+        /// </summary>
+        private static float NameStripWidth(float cardW, float cardH, float stripH)
+        {
+            if (cardW < 8f || cardH < 8f || stripH < 1f)
+                return Mathf.Max(8f, cardW);
+            if (stripH <= cardH * 0.249f)
+                return cardW;
+            float width = 0.249f * cardW * cardH / stripH;
+            if (width > cardW)
+                width = cardW;
+            if (width < 8f)
+                width = Mathf.Min(cardW, 8f);
+            return width;
         }
 
         /// <summary>
@@ -5039,8 +5105,9 @@ namespace Game.UI.Runtime
         {
             string copy = count != null ? FlattenCopy(count.text) : string.Empty;
             bool word = copy.Length > 5;
-            // "Coming soon" measures 74.9px. A 0.42 share of the card stopped at 60–67.
-            float column = word ? 78f : 44f;
+            bool farsiWord = word && ContainsArabicLetter(copy);
+            // "Coming soon" measures 74.9px. "به زودی" at the count floor is wider than 78.
+            float column = farsiWord ? 132f : word ? 78f : 44f;
             if (word && column > cardW - 8f)
                 column = Mathf.Max(8f, cardW - 8f);
             if (!word && column > cardW * 0.5f)
@@ -5069,9 +5136,7 @@ namespace Game.UI.Runtime
             float floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : LatinNameFloor;
             if (ZoneNameIsFarsi(name))
                 floor = narrow ? TheatreSeatGeometry.PortraitCompactFontFloor : TheatreSeatGeometry.NameFontFloor;
-            // A 20px pair does not fit a 24% strip on a 140px tile.
-            if (stripH < 46f && floor > 12f)
-                floor = 12f;
+            // The strip is grown to 2×floor+6. The font stays on that floor.
             float twoLineCap = stripH > 4f ? (stripH - 4f) / 2.3f : floor;
             if (twoLineCap > DrawnNameTarget)
                 twoLineCap = DrawnNameTarget;
@@ -5093,8 +5158,9 @@ namespace Game.UI.Runtime
                 }
             }
 
-            // Leading stays modest. −48 and below was crushing the glyphs together.
-            float[] lead = { 0f, -16f, -32f, -48f };
+            // Line spacing is a percent of the line box. Character spacing stays 0.
+            // A short strip still has to hold two lines at the font floor.
+            float[] lead = { 0f, -16f, -32f, -48f, -64f, -80f };
             for (float size = twoLineCap; size >= floor - 0.01f; size -= 1f)
             {
                 if (size + 0.01f < bestSize)
@@ -5114,13 +5180,9 @@ namespace Game.UI.Runtime
             }
 
             if (bestSize >= floor - 0.01f && TrySeatNameLine(name, source, bestSize, bestLead, width, stripH, bestWrap))
-                return;
-            for (float size = floor - 1f; size >= 10f - 0.01f; size -= 1f)
             {
-                if (TrySeatNameLine(name, source, size, 0f, width, stripH, false))
-                    return;
-                if (TrySeatNameLine(name, source, size, 0f, width, stripH, true))
-                    return;
+                LockSeatedName(name, bestSize);
+                return;
             }
 
             name.text = source;
@@ -5133,6 +5195,7 @@ namespace Game.UI.Runtime
             name.fontSizeMin = floor;
             name.fontSizeMax = floor;
             name.fontSize = floor;
+            LockSeatedName(name, floor);
             PinNameToStrip(name, stripH);
             name.ForceMeshUpdate();
         }
@@ -5175,7 +5238,25 @@ namespace Game.UI.Runtime
                 return false;
             if (!allowWrap && name.textInfo != null && name.textInfo.lineCount > 1)
                 return false;
+            LockSeatedName(name, size);
             return true;
+        }
+
+        /// <summary>
+        /// The shared name lock writes one line at 25 and turns auto-size back on.
+        /// The seated size is the size the binding is allowed to restore.
+        /// </summary>
+        private static void LockSeatedName(TMP_Text name, float size)
+        {
+            if (name == null || size < 1f)
+                return;
+            V3LocalizedTextBindingView binding = name.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            name.enableAutoSizing = false;
+            name.fontSizeMin = size;
+            name.fontSizeMax = size;
+            name.fontSize = size;
         }
 
         private static void PinNameToStrip(TMP_Text name, float stripH)
@@ -5603,6 +5684,16 @@ namespace Game.UI.Runtime
                 ReseatFramedCards(regions);
                 return;
             }
+
+            // Framed cards take their size from SeatNameCopyInStrip. SetZoneNameFont's
+            // 25px one-line lock was what capture measured past the box.
+            if (names[0].transform.parent is RectTransform framed
+                && framed.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
+            {
+                ReseatFramedCards(regions);
+                return;
+            }
+
             float chosen = ZoneNameFontFloor;
             bool fitted = false;
             for (float candidate = ZoneNameFontCeiling; candidate >= ZoneNameFontFloor - 0.01f; candidate -= 1f)
@@ -5670,6 +5761,9 @@ namespace Game.UI.Runtime
             {
                 TMP_Text name = names[i];
                 if (name == null)
+                    continue;
+                if (name.transform.parent is RectTransform framedCard
+                    && framedCard.name.StartsWith("ZoneCard_", StringComparison.Ordinal))
                     continue;
                 var binding = name.GetComponent<V3LocalizedTextBindingView>();
                 if (binding != null)

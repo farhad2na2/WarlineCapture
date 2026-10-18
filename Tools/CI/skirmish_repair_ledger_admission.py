@@ -100,7 +100,12 @@ def point(p, policy, session):
     h=p['health']
     if h is not None:
         exact(h,{'current','maximum'});integer(h['current'],-I32-1);integer(h['maximum'],0)
-    if p['state'] is not None:state(p['state'],True)
+    if p['state'] is not None:
+        old=state(p['state'],True)
+        if old['phase']!='None':
+            need(old['attempt_id']==session and old['actor_stable_id']==o['stable_id'] and old['faction']==o['faction']
+                 and all(old[k]==policy[k] for k in ('session_index','session_version','setup_hash','bank_index','bank_version')),
+                 'Current receipt does not belong to actual actor/session/setup/bank')
     return p
 
 
@@ -160,7 +165,7 @@ def validate_repair_ledger(job,claim,events):
         need(not any('Repair' in r['kind'] and r['kind'] not in {'NativeRepairLedgerStarted','NativeRepairTransaction','NativeRepairLedgerClosed'} for r in events),'Repair failure/unknown event')
         rows=[(i,r['facts']) for i,r in enumerate(events) if r['kind']=='NativeRepairTransaction']
         need(len(rows)==end['transactions'],'Repair count/truncation')
-        actors={};stable={};banks={};session_entity=None;counts={op:0 for op in sorted(OPS)}
+        actors={};stable={};actor_identities={};banks={};session_entity=None;counts={op:0 for op in sorted(OPS)}
         for n,(i,f) in enumerate(rows,1):
             need(mi<i<ei,'Transaction outside capture');exact(f,TRANSACTION);scope(f);integer(f['ledger_sequence'],n,n)
             need(f['operation'] in OPS,'Unknown operation')
@@ -175,6 +180,9 @@ def validate_repair_ledger(job,claim,events):
             faction=p['faction'];need(faction not in banks or banks[faction]==be,'Faction bank generation changed');banks[faction]=be
             need(len(set(banks.values()))==len(banks),'Shared foreign bank')
             sid=p['actor_stable_id'];need(sid not in stable or stable[sid]==key,'Stable actor rebound');stable[sid]=key
+            identity=tuple(p[k] for k in ('actor_stable_id','faction','attempt_id','setup_hash','session_index','session_version'))
+            need(key not in actor_identities or actor_identities[key]==identity,'Actor entity generation changed stable/faction/session/setup identity')
+            actor_identities[key]=identity
             prior=actors.get(key);x=a['state'];op=f['operation'];counts[op]+=1
             if prior is not None:
                 need(x is not None,'Recorded receipt erased');progressed(prior,x)
@@ -211,6 +219,10 @@ def validate_repair_ledger(job,claim,events):
                         and p['remaining_ticks']==p['refund_due']==p['refunded']==p['incoming_damage']==p['new_movement']==0
                         and p['request_id']==x['request_id'] and a['owner']['capacity_released']==0,'Completion policy')
                     need((p['last_health'],p['last_maximum'])==(hp['current'],hp['maximum']),'Completion last health')
+                    # Pinned VehicleRepairRules.TookDamage, including nearest integer health research scaling.
+                    need(x['last_maximum']>0 and hp['maximum']>0 and hp['current']>0,'Invalid completion health basis')
+                    expected=(x['last_health']*hp['maximum']+x['last_maximum']//2)//x['last_maximum']
+                    need(hp['current']>=expected,'Native damage predicate requires cancellation before completion')
                     heal=max(0,min(hp['maximum']-hp['current'],hp['maximum']*p['fraction_numerator']//p['fraction_denominator']))
                     expectedhealth=dict(current=hp['current']+heal,maximum=hp['maximum']);y['phase']='Completed'
                 else:

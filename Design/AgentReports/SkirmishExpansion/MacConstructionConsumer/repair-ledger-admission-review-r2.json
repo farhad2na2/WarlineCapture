@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-10-18T14:11:10.299264+00:00",
+  "result": "SuccessorConstructed49Passed_PeerReviewPending",
+  "supersedes": {
+    "commit": "f9ad4c0da7bc270458e284b7fd80bca9b083c0e5",
+    "report": "repair-ledger-admission-review.json",
+    "status": "RejectedForThreeConfirmedCounterexamples",
+    "Mac42": "Passed constructed suite did not cover these holes",
+    "Windows42": {
+      "result": "Passed constructed only, zero skips",
+      "reported_log_sha256": "05f1fd7ab1641b6474ee1a4dce225bfecfe13f1c5ef3bcfadb5de0b2eb75d68d"
+    }
+  },
+  "peer_finding_receipt": {
+    "origin": "Windows coordinator direct report; original Windows findings not opened on Mac",
+    "path": "MacRepairLedgerConsumerPeerReview_20261018/SOURCE_API_FINDINGS.json",
+    "sha256": "bc520fd153801a4c2bc7c5c197ccb496505350e69eb4ef8acf98df113cefcf4c"
+  },
+  "local_pre_fix_results": {
+    "same_entity_stable_rename": "ConsistentRecordedRepairBoundaries",
+    "same_entity_faction_bank_rebind": "ConsistentRecordedRepairBoundaries",
+    "damaged_completion": "ConsistentRecordedRepairBoundaries"
+  },
+  "local_pre_fix_record_sha256": "57a8a26d0fa54b55edc97c4d70faa4c8df3c08be3094474af90c7e3c017b511f",
+  "changes": [
+    "Invariant actor Entity+generation to stable actor/faction/session/setup identity in addition to stable-ID-to-entity map",
+    "Every nondefault before/after receipt bound to actual owner/faction/session/setup/bank before any operation, including a new repair after terminal settlement",
+    "Completed uses exact pinned TookDamage nearest-integer percentage predicate against before.state last health/max; damaged actor cannot receive completion heal",
+    "New repair may select a different facility/entity/position/pad/quote/request; valid max-health research scaling retained"
+  ],
+  "validation": {
+    "command": "rtk proxy python3 -B -m unittest discover -s Tools/CI -p skirmish_repair_ledger_admission_test.py -v",
+    "passed": 49,
+    "added_controls": [
+      "Stable rename witness rejected",
+      "Faction/bank reassignment witness rejected",
+      "Current prior receipt ownership even first observed debit",
+      "Legitimate changed facility/positions/pad/quote on repeat repair accepted",
+      "100->90/200 damage completion witness rejected",
+      "Nearest-integer max-health scaling accepted",
+      "Scaled health damage rejected"
+    ],
+    "native": false
+  },
+  "implementation_pins": {
+    "Tools/CI/skirmish_repair_ledger_admission.py": "26edcc7deb4425aeac9363c2baa7b34a45976be3777c31252c04e9ee17c3f072",
+    "Tools/CI/skirmish_repair_ledger_admission_test.py": "0fbd662f4e6c4c58b5f75c761d4ca2cbc6b1fe966195bb05748d89a4c6aa0fca"
+  },
+  "reviewed_baseline": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+  "reviewed_source_pins": {
+    "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs": "0273a9cae359375fcd28438409a452b37e76ba3da7b09006c43bd4d226b9bfe0",
+    "Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs": "43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b",
+    "Assets/Game/Scripts/Components/VehicleRepairComponents.cs": "07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3",
+    "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0",
+    "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+    "Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs": "5972c3cda9e314403cde4718e933e03c7bf597c1f1de9136b8a11f959fc122d8"
+  },
+  "unchanged_dependency_pins": {
+    "Tools/CI/skirmish_construction_ledger_admission.py": "fb0306e02c2342d5606a0fa3cb25d8ed9fd5611fb6774049e925599e3d528a36",
+    "Tools/CI/skirmish_native_identity.py": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+    "Tools/CI/skirmish_production_queue.py": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+    "Tools/CI/s005_windows_source_snapshot.py": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba"
+  },
+  "preserved_limits": [
+    "Between-row progress, bank mutations and unchanged failed retries not measured; no whole-attempt conservation",
+    "No proof of starting material origin, current geometry/facility validity or actual clock/pause history beyond exposed boundary",
+    "Fixture12+legacy17 and this Python suite are synthetic controls, not native normal-input repair credit",
+    "No actual normal repair journal supplied; repair flag remains OFF in Windows normal run",
+    "No queue integration, 720 qualification, mission/player/device readiness"
+  ],
+  "strict_subset": [
+    "Bank and owner DTO must exist and match faction at every boundary; absent/foreign bank cases fail closed as unsupported, including a legitimately deferred missing-bank boundary",
+    "Only literal reviewed LF source bytes admitted; independent Windows CRLF receipt needs peer-reviewed explicit pins",
+    "Normal queue request progression only; manual fabricated request-ID jumps unsupported",
+    "Initial paid receipt without earlier observed debit cannot establish paid history"
+  ],
+  "paid_resources_qualified": false,
+  "queue_success_enabled": false,
+  "normal_mission_ready": false,
+  "whole_attempt_conservation": false
+}

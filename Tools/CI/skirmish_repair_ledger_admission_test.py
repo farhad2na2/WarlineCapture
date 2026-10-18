@@ -110,6 +110,36 @@ class AdmissionTests(unittest.TestCase):
         b=f.debit(a,paid=1,fraction_numerator=4,last_health=199,duration_ticks=4000000,remaining_ticks=4000000)
         p=dict(b['state'],phase='Cancelled',refund_due=0,remaining_ticks=3000000,last_clock_seconds=.1)
         c=copy.deepcopy(b);c['state']=p;f.transaction('CancelledNoRefund',b,c,p);self.good(f)
+    def test_settled_actor_generation_cannot_rename_stable_id(self):
+        f=Fixture();b=f.cancel(f.debit());b['owner']['stable_id']='vehicle.2'
+        f.debit(b,request_id=2,actor_stable_id='vehicle.2',last_clock_seconds=1.0);self.bad(f)
+    def test_settled_actor_generation_cannot_change_faction_or_bank(self):
+        f=Fixture();b=f.cancel(f.debit());b['owner']['faction']=2;b['bank_index']=12;b['bank']['FactionId']=2
+        f.debit(b,request_id=2,faction=2,bank_index=12,last_clock_seconds=1.0);self.bad(f)
+    def test_prior_receipt_must_bind_actual_point_even_for_first_observed_debit(self):
+        for key,value in [('actor_stable_id','foreign'),('faction',2),('attempt_id','foreign'),('session_version',2),('setup_hash',43),('bank_index',12)]:
+            f=Fixture();b=f.cancel(f.debit());f.transactions=[];b['state'][key]=value
+            f.debit(b,request_id=2,last_clock_seconds=1.0);self.bad(f)
+    def test_new_repair_may_change_facility_positions_and_quote(self):
+        f=Fixture();b=f.cancel(f.debit());b['health']['current']=199
+        f.debit(b,request_id=2,facility_index=31,facility_version=2,facility_stable_id='facility.2',pad_id='pad.2',
+            accepted_position=[1.0,2.0,3.0],pad_position=[1.0,0.0,3.0],facility_position=[4.0,5.0,6.0],
+            fraction_numerator=4,paid=1,last_health=199,duration_ticks=4000000,remaining_ticks=4000000,last_clock_seconds=1.0)
+        self.good(f)
+    def test_completion_damage_cancels_instead_of_healing(self):
+        f=Fixture();b=f.debit();b['health']['current']=90;f.complete(b)
+        t=f.transactions[-1];t['policy_state']['last_health']=90;t['after']['state']['last_health']=90;self.bad(f)
+    def test_completion_health_research_nearest_integer_rescale_is_valid(self):
+        for current,maximum in [(150,300),(101,201),(67,133)]:
+            f=Fixture();b=f.debit();b['health']=dict(current=current,maximum=maximum);f.complete(b)
+            t=f.transactions[-1];t['policy_state'].update(last_health=current,last_maximum=maximum)
+            t['after']['state'].update(last_health=current,last_maximum=maximum)
+            t['after']['health']=dict(current=current+maximum//4,maximum=maximum);self.good(f)
+    def test_completion_damage_uses_rescaled_percentage(self):
+        f=Fixture();b=f.debit();b['health']=dict(current=149,maximum=300);f.complete(b)
+        t=f.transactions[-1];t['policy_state'].update(last_health=149,last_maximum=300)
+        t['after']['state'].update(last_health=149,last_maximum=300);t['after']['health']=dict(current=224,maximum=300);self.bad(f)
+
     def test_local_boundary_accrual_and_cancel_history(self):
         for k,v in [('remaining_ticks',1),('fractional_ticks',.5),('last_clock_seconds',999.0),('last_health',99),('incoming_damage',1)]:
             f=Fixture();f.cancel(f.debit());f.transactions[-1]['policy_state'][k]=v;self.bad(f)

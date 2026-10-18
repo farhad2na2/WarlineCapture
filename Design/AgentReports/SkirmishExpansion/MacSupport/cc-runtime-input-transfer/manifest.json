@@ -1,0 +1,13 @@
+{
+  "schema": 1,
+  "sourcePath": "Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+  "destinationRuntimePath": "Tools/CI/SkirmishProductionDrafts/GroundPilots/SkirmishLayout_CC_BA_G_Candidate.asset.txt",
+  "rawSha256": "3755aa1ccab3addaae19f3cbda0fd77eadfa35f306dbbb1889575f2ab167345e",
+  "bytes": 10728,
+  "sourceHeadContext": "189e7beb80b09c16bf7b310070e0e0ae15d9f39a",
+  "scope": "Exact already-authored logical draft runtime dependency; independently verify own Mac expected authority before staging; raw bytes preserved",
+  "sameProjectSharingAuthorized": true,
+  "sourceFitCertified": false,
+  "normalMissionReady": false,
+  "windowsEvidenceTransferred": false
+}

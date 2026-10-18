@@ -52,18 +52,23 @@ namespace Game.UI.Runtime
             {
                 if (playable)
                 {
+                    // Capture rules (SkirmishBattleLibraryCapture.RejectGridPreviewDominant / RejectPendingPreviewTag):
+                    // full width (inset <= 2 each side), top-aligned, >= 40% of the card; a dimmed tint keeps its pending tag.
                     Texture2D texture = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
-                    PlaceCoverPreview(preview, width - GridA3Inset * 2f, height - GridA3Inset * 2f, texture, false);
+                    PlaceCoverPreview(preview, width - GridA3Inset * 2f, height - GridA3Inset * 2f, texture, dimmed);
                     PlaceTopLeft(preview.rectTransform, GridA3Inset, GridA3Inset, width - GridA3Inset * 2f, height - GridA3Inset * 2f);
-                    preview.color = Color.white;
                     if (!dimmed)
                         HideCellChild(cell, "PreviewPending");
                 }
                 else
                 {
+                    // Locked/empty: dark plate. The art stays assigned (capture requires real art) but is not drawn;
+                    // tint is final-white so no pending tag is expected.
+                    preview.color = Color.white;
                     preview.enabled = false;
                     HideCellChild(cell, "PreviewPending");
                 }
+                LogGridA3PreviewShare(preview.rectTransform.rect.height > 0f ? preview.rectTransform.sizeDelta.y : 0f, height, fa);
             }
 
             // Small S-number badge (top leading corner); none on empty cells.
@@ -114,6 +119,111 @@ namespace Game.UI.Runtime
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
             if (selected)
                 AddGridA3Frame(cell, width, height);
+        }
+
+        private static bool _gridA3ShareLogged;
+
+        /// <summary>Logs the preview share of a Grid cell once per Grid build (Game PM: keep >= 40% with the 60px tab band).</summary>
+        private static void LogGridA3PreviewShare(float previewHeight, float cardHeight, bool fa)
+        {
+            if (_gridA3ShareLogged || cardHeight < 1f)
+                return;
+            _gridA3ShareLogged = true;
+            Debug.Log("[GridA3] previewShare=" + (previewHeight / cardHeight).ToString("0.000") +
+                " preview=" + previewHeight.ToString("0.0") + " card=" + cardHeight.ToString("0.0") +
+                " tabBand=" + GridA3TabHeight.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>v37 P1 Grid tab band: 60px (SkirmishZoneTabWidget.Height stays 52; P2 agreed option b).</summary>
+        private const float GridA3TabHeight = 60f;
+        private static float GridA3TabBandBottom => SkirmishZoneTabWidget.OriginY + GridA3TabHeight;
+
+        /// <summary>
+        /// Gap 5: battlefield image tile inside the existing tab button with the name and the ledger count
+        /// (won / published playable, from the Theatre pin state), and a heavy gold frame on the selected tab.
+        /// </summary>
+        private void StyleApproved3BattlefieldTab(Button button, TMP_Text label, string mapId, bool selected, float left, float width, bool fa)
+        {
+            if (button == null)
+                return;
+            _gridA3ShareLogged = false;
+            var rect = button.GetComponent<RectTransform>();
+            float h = GridA3TabHeight;
+            PlaceTopLeft(rect, left, SkirmishZoneTabWidget.OriginY, width, h);
+
+            SkirmishTheaterPinState pin = default;
+            bool havePin = false;
+            if (_libraryViewModel != null)
+            {
+                SkirmishTheaterPinState[] pins = _libraryViewModel.Theater.Pins;
+                for (int i = 0; pins != null && i < pins.Length; i++)
+                {
+                    if (string.Equals(pins[i].MapId, mapId, StringComparison.OrdinalIgnoreCase)) { pin = pins[i]; havePin = true; break; }
+                }
+            }
+
+            var image = new GameObject("TabArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
+            image.transform.SetParent(button.transform, false);
+            image.transform.SetAsFirstSibling();
+            image.transform.SetSiblingIndex(0);
+            Texture2D plate = ResolveGridPreview(havePin ? pin.PlatePreviewKey : null, null, mapId, out bool dimmed);
+            PlaceCoverPreview(image, width - 4f, h - 4f, plate, dimmed);
+            PlaceTopLeft(image.rectTransform, 2f, 2f, width - 4f, h - 4f);
+            image.color = selected || dimmed ? image.color : new Color(0.82f, 0.82f, 0.82f, 1f);
+
+            float strip = Mathf.Clamp(h * 0.4f, 20f, 26f);
+            var scrim = new GameObject("TabScrim", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            scrim.transform.SetParent(button.transform, false);
+            scrim.transform.SetSiblingIndex(1);
+            PlaceTopLeft(scrim.rectTransform, 2f, h - 2f - strip, width - 4f, strip);
+            scrim.color = new Color(0.02f, 0.03f, 0.04f, 0.86f);
+            scrim.raycastTarget = false;
+
+            string countCopy = string.Empty;
+            if (havePin)
+            {
+                string ratio = pin.WonCount + "/" + pin.PublishedCount;
+                countCopy = fa ? SkirmishWidgetContext.ToPersianDigits(ratio) : ratio;
+            }
+            float countW = string.IsNullOrEmpty(countCopy) ? 0f : Mathf.Clamp(width * 0.26f, 34f, 52f);
+            if (label != null)
+            {
+                label.transform.SetAsLastSibling();
+                float nameW = Mathf.Max(30f, width - 12f - countW);
+                PlaceTopLeft(label.rectTransform, fa ? 6f + countW : 6f, h - 2f - strip, nameW, strip);
+                label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                label.textWrappingMode = TextWrappingModes.NoWrap;
+                label.overflowMode = TextOverflowModes.Ellipsis;
+                label.maxVisibleLines = 1;
+                label.enableAutoSizing = true;
+                label.fontSizeMin = 10f;
+                label.fontSizeMax = 15f;
+                label.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
+                V3LocalizedTextBindingView binding = label.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                    binding.ConfigureFontBounds(10f, 15f);
+            }
+
+            if (countW > 0f)
+            {
+                var count = CreateLabel(button.transform, "TabCount", 14f);
+                PlaceTopLeft(count.rectTransform, fa ? 4f : width - 4f - countW, h - 2f - strip, countW, strip);
+                SetCopy(count, countCopy, 11f, 15f);
+                count.alignment = fa ? TextAlignmentOptions.MidlineLeft : TextAlignmentOptions.MidlineRight;
+                count.textWrappingMode = TextWrappingModes.NoWrap;
+                count.overflowMode = TextOverflowModes.Overflow;
+                count.isRightToLeftText = false;
+                count.color = new Color(1f, 0.86f, 0.42f, 1f);
+                count.raycastTarget = false;
+            }
+
+            if (selected)
+                AddGridA3Frame(rect, width, h);
+            Outline edge = button.GetComponent<Outline>();
+            if (edge == null)
+                edge = button.gameObject.AddComponent<Outline>();
+            edge.effectColor = selected ? GridA3Gold : GridA3Edge;
+            edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
         }
 
         private static void AddGridA3Frame(RectTransform cell, float width, float height)

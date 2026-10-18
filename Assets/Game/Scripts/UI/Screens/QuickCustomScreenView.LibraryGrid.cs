@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
             int objectives = field.Tabs.Length;
             float cardWidth = GridCardWidth(gridWidth, columns, LibraryGridRightPad);
             bool roomy = cardWidth >= LibraryGridRoomyCardWidth;
-            float headerTop = SkirmishZoneTabWidget.BandBottom + 2f;
+            float headerTop = GridA3TabBandBottom + 2f; // v37 P1: 60px image tabs (widget stays 52)
             float headerHeight = roomy ? LibraryGridRoomyHeaderHeight : 40f; // v37: two-line approved-3 headers
             float scrollTop = headerTop + headerHeight + 4f;
             float viewport = Mathf.Max(120f, gridHeight - scrollTop);
@@ -364,6 +364,8 @@ namespace Game.UI.Runtime
                 label.overflowMode = TextOverflowModes.Ellipsis;
                 label.textWrappingMode = TextWrappingModes.Normal;
                 SkirmishZoneTabWidget.StyleLabel(label);
+                StyleApproved3BattlefieldTab(button, label, mapId, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase),
+                    SkirmishZoneTabWidget.Left(i, gridWidth, tabCount), tabWidth, fa); // v37 P1
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
             }

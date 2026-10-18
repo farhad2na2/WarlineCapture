@@ -1,0 +1,5 @@
+The synthetic ownership fixture executed and emitted its pass marker and both expected negative markers. The checked GUI wrapper exited 0, the original child was reaped, and the owned process shutdown barrier closed. The r6 controller exited 1 and rejected operational control because import created Project Auditor settings plus two user-settings files. Those files remain preserved; no restoration or rerun was performed.
+
+All 192 recorded assembly hashes were identical before and after. This run does not prove fresh compiler execution, compiler input consumption, a native in-process environment witness, or a real domain/player-frame lifecycle. It grants no normal mission, queue, paid-resource, Android build or device acceptance.
+
+report.json records the exact terminal evidence paths and hashes on the Mac. The complete 20 MB controller result and 13 MB native log remain there; this compact report does not independently replace or verify their contents on Windows. The earlier r5 failure remains unchanged.

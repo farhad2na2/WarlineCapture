@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "scope": "TerminalObservationOnly_SyntheticFixture_NotOperationalOrMissionAcceptance",
+  "recorded_utc": "2026-10-18T18:46:27.861541+00:00",
+  "source_commit": "a9eb0b4814ebb9c6c0d81ebb851df0917b970973",
+  "source_parent": "9f75b2f224cde04ea87f25b8c9fc097765889bcf",
+  "source_branch": "codex/mac-native-tanker-probe35",
+  "source_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.AircraftCycleProbe.cs": "4d89e081aa4ec84fc3a0fd7d8f84d5433200e4fb6d07936c3fcb3b9eb9020f88",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.HelipadProbe.cs": "9ecd272926f905afcfd92dfaf4d4115fb0c90cf08042d1887d89eae29fda5175",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs": "b3fd454e7ec8192a6a7b4039bc3a389d777a4cc44014277e22dfe3a55489ea94",
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishAircraftProbeTankerOwnershipTests.cs.meta": "f93bc63f9311f746cb0b96f90016541c92b490af17da1b6752a22a188ca0bec7"
+  },
+  "controller_sha256": "1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6",
+  "test_sha256": "9b8ff2184630989c1139f4b450201951e2c87bab4578b5d8a9ba742c3b2d3cfc",
+  "windows_source_peer_sha256": "b0e241bb38a96211003e5f9f82a16bae6c50da6639d45e9e18d38980c7a6a57e",
+  "consumed_native_authorizations": 1,
+  "tool_session": 89623,
+  "controller_tool_exit": 1,
+  "wrapper_pid": 51272,
+  "wrapper_exit": 0,
+  "wrapper_reaped": true,
+  "owned_shutdown": {
+    "closed": true,
+    "observed_absence_samples": 2,
+    "survivors": []
+  },
+  "owned_births_observed": 443,
+  "unresolved_orphan_observations": [],
+  "operationalControlPassed": false,
+  "errors": [
+    "Source changed",
+    "Project settings changed",
+    "User settings changed"
+  ],
+  "settings_restored": false,
+  "parent_environment_unchanged": true,
+  "markers": [
+    "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerCaptureRejected",
+    "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerContextChanged",
+    "[SkirmishAircraftProbeTankerOwnership] result=Passed fixture=SyntheticWorldAndOwnedEditorDispatch normalMissionReady=0"
+  ],
+  "exact_snapshot_drift": {
+    "source_manifest": {
+      "added": [
+        {
+          "path": "ProjectSettings/ProjectAuditorSettings.asset",
+          "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85"
+        }
+      ],
+      "removed": [],
+      "changed": []
+    },
+    "project_settings": {
+      "added": [
+        {
+          "path": "ProjectSettings/ProjectAuditorSettings.asset",
+          "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85"
+        }
+      ],
+      "removed": [],
+      "changed": []
+    },
+    "user_settings": {
+      "added": [
+        {
+          "path": "UserSettings/AI.Generators/DragAndDropCache.asset",
+          "sha256": "7438ab184664f10c468643a50b70de9a5d995e5dc420fdaaa64e3348ebc5a1c3"
+        },
+        {
+          "path": "UserSettings/Layouts/default-6000.dwlt",
+          "sha256": "184317f0500c3e11cf397a452c736072f9764a99ed569d163295bdd418eee03e"
+        }
+      ],
+      "removed": [],
+      "changed": []
+    }
+  },
+  "assembly_byte_observation": {
+    "before_count": 192,
+    "after_count": 192,
+    "added": [],
+    "removed": [],
+    "changed": [],
+    "interpretation": "Retained recorded assembly set; no fresh compiler execution or input consumption proven"
+  },
+  "proof_limits": {
+    "actual_build_manifest": true,
+    "active_target": "InvocationAndroid_ObservedRSPOnly",
+    "native_compiler_input_consumption_closure": "Pending",
+    "native_in_process_environment_witness": "Pending",
+    "callback_world_input_restoration": "FixtureAssertionsOnly_NoIndependentPostprocessWitness",
+    "actual_native_domain_reload_player_frame": "Pending",
+    "normal_UPM": "RecordedActualPackageLockAndCache_NotIndependentNativeWitness"
+  },
+  "readiness": {
+    "normal_mission": false,
+    "paid_resources_qualified": false,
+    "queue_success_enabled": false,
+    "Android_build": false,
+    "player_device": false
+  },
+  "original_evidence_retained_on_mac": [
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/controller-result.json",
+      "sha256": "525ecbacefd179467b23a1506c5d0a82467e6ef447f9a5cdad90d50eb287b392",
+      "size": 20135992
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/unity.log",
+      "sha256": "3fbd39270222bd69825de146799c91c9d85c3dd5bbd3683d6694e225a4ed2955",
+      "size": 13577937
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Logs/SkirmishProduction/MacProbe35/run-190e7b9f1b774058899daa6dc6474e6b/wrapper.log",
+      "sha256": "d50a50242e1b04337dd7b6620d2f0d15c0cc997986e91484d367f7ff8c247392",
+      "size": 805
+    },
+    {
+      "path": "/private/tmp/warline-mac-support-20261018/native35-r6-terminal-drift.json",
+      "sha256": "9a4abc32929decee3816b2482c082bb501714bf9b7a459b492f87a54cbea49e7",
+      "size": 2835
+    },
+    {
+      "path": "/private/tmp/warline-mac-support-20261018/native35-r6-86dd05d2b3c8407b8e6d094cfd7735bf/run-packet.json",
+      "sha256": "e62f980d21a896ba24bd2783e6b413c96d4c6daf4ce5184c6f66f96316ba0b3f",
+      "size": 6353
+    }
+  ],
+  "report_does_not_replace_raw_evidence": true,
+  "preservation": {
+    "original_r5_failure_unchanged": true,
+    "r6_result_and_logs_unchanged": true,
+    "generated_settings_retained": true,
+    "no_second_native_retry": true,
+    "no_ignore_or_baseline_waiver": true
+  },
+  "pre_controller_failure": {
+    "reason": "Bootstrap initially used nonexistent kernel_identity helper",
+    "actual_native_launch": false,
+    "correction": "Use exact reviewed kernel_process_identity helper; fresh gates and new expiring packet before controller invocation"
+  },
+  "other_observations": {
+    "soldier_animator_missing_source_errors": 12,
+    "compiler_errors_CS": 0,
+    "all_existing_source_and_settings_rows_unchanged": true
+  },
+  "next_required_decision": "Coordinator review of generated settings drift and separate scope for any restoration or next native execution; no new launch authority inferred",
+  "marker_exact_counts": {
+    "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerCaptureRejected": 1,
+    "[SkirmishS003AircraftCycleProbe] result=Failed reason=tankerOwnerContextChanged": 1,
+    "[SkirmishAircraftProbeTankerOwnership] result=Passed fixture=SyntheticWorldAndOwnedEditorDispatch normalMissionReady=0": 1
+  }
+}

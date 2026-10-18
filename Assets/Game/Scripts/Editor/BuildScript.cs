@@ -159,7 +159,7 @@ namespace Game.Editor
                 ["schema"]=1,["scope"]="PreparedAndroidAddressables_NoPlayerOrAcceptance",
                 ["editorVersion"]=UnityEngine.Application.unityVersion,["target"]="Android",["processId"]=PreparedProcessId(),
                 ["settingsPath"]=AssetDatabase.GetAssetPath(settings),["profile"]=settings.activeProfileId,
-                ["settingsSerialized"]=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings)),
+                ["settingsSerialized"]=CapturePreparedSettingsJson(settings),
                 ["builder"]=settings.ActivePlayerDataBuilderIndex,["contentSettingsPath"]=Path.GetFullPath(settingsOutput),
                 ["buildPath"]=Path.GetFullPath(UnityEngine.AddressableAssets.Addressables.BuildPath),
                 ["reportPath"]=Path.GetFullPath(reportPath),["reportSha256"]=PreparedFileHash(reportPath),
@@ -337,7 +337,7 @@ namespace Game.Editor
                 receipt.Value<int>("builder")!=settings.ActivePlayerDataBuilderIndex||
                 Path.GetFullPath((string)receipt["buildPath"])!=Path.GetFullPath(UnityEngine.AddressableAssets.Addressables.BuildPath))
                 throw new InvalidOperationException("Actual prepared target/profile/builder identity differs");
-            ValidatePreparedSettings((Newtonsoft.Json.Linq.JObject)receipt["settingsSerialized"],Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings)),scoped);
+            ValidatePreparedSettings((Newtonsoft.Json.Linq.JObject)receipt["settingsSerialized"],CapturePreparedSettingsJson(settings),scoped);
             if(!OperationMapAddressablesLayoutValidator.TryValidateCurrentLayout(true,out string error))throw new InvalidOperationException(error);
             var link=(Newtonsoft.Json.Linq.JObject)receipt["playerLink"];
             string expectedLink=Path.Combine(settings.ConfigFolder,"link.xml").Replace('\\','/');
@@ -355,6 +355,23 @@ namespace Game.Editor
 
         internal static void RequirePreparedEqual(Newtonsoft.Json.Linq.JToken expected,Newtonsoft.Json.Linq.JToken actual,string kind)
         {if(expected==null||actual==null||!Newtonsoft.Json.Linq.JToken.DeepEquals(expected,actual))throw new InvalidOperationException("Prepared "+kind+" bytes differ");}
+        // The installed public getter initializes its serialized lazy cache.
+        // Capture the same initialized state in BOTH Editors; never substitute
+        // a receipt value or remove any field from whole-settings comparison.
+        internal static Newtonsoft.Json.Linq.JObject CapturePreparedSettingsJson(UnityEditor.AddressableAssets.Settings.AddressableAssetSettings settings)
+        {
+            if(settings==null)throw new InvalidOperationException("Actual persisted prepared settings required");
+            string path=AssetDatabase.GetAssetPath(settings);
+            if(string.IsNullOrEmpty(path))throw new InvalidOperationException("Persisted prepared settings path required");
+            string assetBefore=PreparedFileHash(path),metaBefore=PreparedFileHash(path+".meta");
+            bool dirtyBefore=EditorUtility.IsDirty(settings);
+            _=settings.currentHash;
+            var captured=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings));
+            if(EditorUtility.IsDirty(settings)!=dirtyBefore||PreparedFileHash(path)!=assetBefore||PreparedFileHash(path+".meta")!=metaBefore)
+                throw new InvalidOperationException("Prepared settings capture changed asset/meta bytes or dirty state");
+            return captured;
+        }
+
         internal static void ValidatePreparedSettings(Newtonsoft.Json.Linq.JObject expected,Newtonsoft.Json.Linq.JObject actual,bool scoped)
         {
             if(expected==null||actual==null)throw new InvalidOperationException("Actual serialized settings objects required");

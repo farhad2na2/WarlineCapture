@@ -7,6 +7,130 @@ using UnityEditor.AddressableAssets.Build.Layout;
 
 public sealed class OperationMapAddressablesBuildReportBuilderTests
 {
+    public static void RunPreparedSettingsCurrentHashInitialization()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling)throw new InvalidOperationException("Idle installed Editor required");
+        string receiptPath=PreparedSettingsObservedPath("WARLINE_PREPARED_SETTINGS_RECEIPT",false),output=PreparedSettingsObservedPath("WARLINE_PREPARED_SETTINGS_HASH_OBSERVATION_OUTPUT",true);
+        string receiptHash=Environment.GetEnvironmentVariable("WARLINE_PREPARED_SETTINGS_RECEIPT_SHA256");
+        if(receiptHash==null||!System.Text.RegularExpressions.Regex.IsMatch(receiptHash,"\\A[a-f0-9]{64}\\z")||BuildScript.PreparedFileHash(receiptPath)!=receiptHash)throw new InvalidOperationException("Exact original prepared receipt bytes required");
+        var receipt=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(receiptPath));
+        if(receipt.Value<int>("schema")!=1||(string)receipt["scope"]!="PreparedAndroidAddressables_NoPlayerOrAcceptance"||(string)receipt["target"]!="Android"||(string)receipt["editorVersion"]!=UnityEngine.Application.unityVersion||receipt.Value<bool>("buildPlayerInvoked")||receipt.Value<bool>("packageAccepted"))throw new InvalidOperationException("Actual original prepared receipt identity required");
+        var expected=receipt["settingsSerialized"]as Newtonsoft.Json.Linq.JObject;if(expected==null)throw new InvalidOperationException("Actual expected settings object required");
+        var settings=UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;if(settings==null)throw new InvalidOperationException("Actual persisted default settings required");
+        string path=AssetDatabase.GetAssetPath(settings);if(string.IsNullOrEmpty(path)||(string)receipt["settingsPath"]!=path)throw new InvalidOperationException("Actual persisted settings path differs");
+        var callback=global::AddressablesPlayerBuildProcessor.BuildAddressablesOverride;
+        Newtonsoft.Json.Linq.JObject Capture()=>new Newtonsoft.Json.Linq.JObject{
+            ["assetPath"]=path,["assetGuid"]=AssetDatabase.AssetPathToGUID(path),["assetSha256"]=BuildScript.PreparedFileHash(path),["metaSha256"]=BuildScript.PreparedFileHash(path+".meta"),
+            ["profile"]=settings.activeProfileId,["builder"]=settings.ActivePlayerDataBuilderIndex,["publicPlayerBuildOption"]=(int)settings.BuildAddressablesWithPlayerBuild,
+            ["entityId"]=settings.GetEntityId().ToString(),["dirty"]=EditorUtility.IsDirty(settings),["serialized"]=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings))};
+        Newtonsoft.Json.Linq.JObject Identity(Newtonsoft.Json.Linq.JObject point){var result=(Newtonsoft.Json.Linq.JObject)point.DeepClone();result.Remove("serialized");return result;}
+        var before=Capture();
+        // Public installed lazy getter derives its value from actual settings.
+        // No field assignment, reflection, FromJson, SetDirty or asset save.
+        string firstHash=settings.currentHash.ToString();var after=Capture();
+        string secondHash=settings.currentHash.ToString();var repeat=Capture();
+        var changes=PreparedSettingsDiff(before["serialized"],after["serialized"]);bool onlyCacheChanged=true;
+        foreach(Newtonsoft.Json.Linq.JObject row in changes)if((string)row["path"]!="/MonoBehaviour/m_currentHash/Hash")onlyCacheChanged=false;
+        bool rawStable=Newtonsoft.Json.Linq.JToken.DeepEquals(Identity(before),Identity(after))&&Newtonsoft.Json.Linq.JToken.DeepEquals(Identity(before),Identity(repeat));
+        bool repeatStable=firstHash==secondHash&&Newtonsoft.Json.Linq.JToken.DeepEquals(after,repeat);
+        bool matches=Newtonsoft.Json.Linq.JToken.DeepEquals(expected,after["serialized"]);
+        bool owned=ReferenceEquals(settings,UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings)&&ReferenceEquals(callback,global::AddressablesPlayerBuildProcessor.BuildAddressablesOverride)&&BuildScript.PreparedFileHash(receiptPath)==receiptHash;
+        string expectedHash=(string)expected["MonoBehaviour"]?["m_currentHash"]?["Hash"],observedHash=(string)after["serialized"]?["MonoBehaviour"]?["m_currentHash"]?["Hash"];
+        bool getterMatchesSerialized=firstHash==observedHash&&System.Text.RegularExpressions.Regex.IsMatch(firstHash,"\\A[a-f0-9]{32}\\z")&&firstHash!=new string('0',32);
+        using var process=System.Diagnostics.Process.GetCurrentProcess();
+        var report=new Newtonsoft.Json.Linq.JObject{["schema"]=1,["scope"]="PersistedAddressablesCurrentHashInitialization_NoBuildOrAcceptance",["editorVersion"]=UnityEngine.Application.unityVersion,["processId"]=process.Id,
+            ["receiptPath"]=receiptPath,["receiptSha256"]=receiptHash,["expectedSettings"]=expected.DeepClone(),["expectedHash"]=expectedHash,
+            ["before"]=before,["after"]=after,["repeat"]=repeat,["firstGetterHash"]=firstHash,["secondGetterHash"]=secondHash,
+            ["beforeWasZeroCache"]=(string)before["serialized"]?["MonoBehaviour"]?["m_currentHash"]?["Hash"]==new string('0',32),
+            ["differencesBeforeToAfter"]=changes,["differencesExpectedToAfter"]=PreparedSettingsDiff(expected,after["serialized"]),
+            ["onlySerializedCacheChanged"]=onlyCacheChanged,["rawIdentityDirtyStable"]=rawStable,["repeatStable"]=repeatStable,["expectedSettingsMatch"]=matches,["getterMatchesSerialized"]=getterMatchesSerialized,["ownedSettingsAndCallbackStable"]=owned,
+            ["publicGetterInvoked"]=true,["settingsNormalized"]=false,["assetWritesInvoked"]=false,["contentBuildInvoked"]=false,["playerBuildInvoked"]=false,["missionAccepted"]=false};
+        using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))using(var writer=new System.IO.StreamWriter(stream,new System.Text.UTF8Encoding(false)))writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+        if(!onlyCacheChanged||!rawStable||!repeatStable||!matches||!getterMatchesSerialized||!owned)throw new InvalidOperationException("Actual getter initialization did not preserve exact prepared settings; diagnostic retained");
+        UnityEngine.Debug.Log("[PreparedSettingsCurrentHashInitialization] result=Collected fullSettingsEqual=1 repeatStable=1 rawBytesUnchanged=1 contentBuild=0 playerBuild=0 acceptance=0");
+    }
+
+    public static void RunPreparedSettingsHashAndStrictValidation()
+    {
+        // First prove the actual persisted cross-Editor cache transition. A
+        // failed proof must stop before helper/strict-control success markers.
+        RunPreparedSettingsCurrentHashInitialization();
+        string output=PreparedSettingsObservedPath("WARLINE_PREPARED_SETTINGS_HASH_OBSERVATION_OUTPUT",false);
+        var observed=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(output));
+        var settings=UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;
+        string path=AssetDatabase.GetAssetPath(settings),asset=BuildScript.PreparedFileHash(path),meta=BuildScript.PreparedFileHash(path+".meta");bool dirty=EditorUtility.IsDirty(settings);
+        var actual=BuildScript.CapturePreparedSettingsJson(settings);var repeat=BuildScript.CapturePreparedSettingsJson(settings);
+        Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(observed["expectedSettings"],actual));
+        Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(observed["after"]["serialized"],actual));
+        Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(actual,repeat));
+        Assert.AreEqual(asset,BuildScript.PreparedFileHash(path));Assert.AreEqual(meta,BuildScript.PreparedFileHash(path+".meta"));Assert.AreEqual(dirty,EditorUtility.IsDirty(settings));
+        UnityEngine.Debug.Log("[PreparedSettingsHashCaptureHelperControls] result=Passed controls=1 fullSettingsEqual=1 rawBytesUnchanged=1");
+        RunPreparedContentFocusedValidation();
+        UnityEngine.Debug.Log("[PreparedSettingsHashAndStrictControls] result=Passed initialization=1 helper=1 strict=20 actualContentBuild=0 actualPlayerBuild=0 acceptance=0");
+    }
+
+    private static Newtonsoft.Json.Linq.JArray PreparedSettingsDiff(Newtonsoft.Json.Linq.JToken expected,Newtonsoft.Json.Linq.JToken actual)
+    {
+        var rows=new Newtonsoft.Json.Linq.JArray();int nodes=0;
+        string Escape(string value)=>value.Replace("~","~0").Replace("/","~1");
+        void Walk(Newtonsoft.Json.Linq.JToken a,bool ap,Newtonsoft.Json.Linq.JToken b,bool bp,string path,int depth){
+            if(++nodes>100000||depth>128||rows.Count>=20000)throw new InvalidOperationException("Bounded exact settings differences required");
+            if(ap&&bp&&Newtonsoft.Json.Linq.JToken.DeepEquals(a,b))return;
+            if(ap&&bp&&a.Type==Newtonsoft.Json.Linq.JTokenType.Object&&b.Type==Newtonsoft.Json.Linq.JTokenType.Object){
+                var keys=new SortedSet<string>(StringComparer.Ordinal);foreach(var p in ((Newtonsoft.Json.Linq.JObject)a).Properties())keys.Add(p.Name);foreach(var p in ((Newtonsoft.Json.Linq.JObject)b).Properties())keys.Add(p.Name);
+                foreach(string key in keys){var pa=((Newtonsoft.Json.Linq.JObject)a).Property(key);var pb=((Newtonsoft.Json.Linq.JObject)b).Property(key);Walk(pa?.Value,pa!=null,pb?.Value,pb!=null,path+"/"+Escape(key),depth+1);}return;
+            }
+            if(ap&&bp&&a.Type==Newtonsoft.Json.Linq.JTokenType.Array&&b.Type==Newtonsoft.Json.Linq.JTokenType.Array){
+                var aa=(Newtonsoft.Json.Linq.JArray)a;var bb=(Newtonsoft.Json.Linq.JArray)b;
+                for(int i=0;i<Math.Max(aa.Count,bb.Count);i++)Walk(i<aa.Count?aa[i]:null,i<aa.Count,i<bb.Count?bb[i]:null,i<bb.Count,path+"/"+i.ToString(System.Globalization.CultureInfo.InvariantCulture),depth+1);return;
+            }
+            rows.Add(new Newtonsoft.Json.Linq.JObject{["path"]=path,["expectedPresent"]=ap,["actualPresent"]=bp,["expectedType"]=ap?a.Type.ToString():"Missing",["actualType"]=bp?b.Type.ToString():"Missing",["expected"]=ap?a.DeepClone():null,["actual"]=bp?b.DeepClone():null});
+        }
+        Walk(expected,expected!=null,actual,actual!=null,"",0);return rows;
+    }
+    [Test] public void PreparedSettingsDiffExactHasNoRows()
+    {var value=Newtonsoft.Json.Linq.JObject.Parse("{\"MonoBehaviour\":{\"value\":null,\"items\":[1,2]}}");Assert.AreEqual(0,PreparedSettingsDiff(value,value.DeepClone()).Count);}
+    [Test] public void PreparedSettingsDiffDistinguishesMissingAndNull()
+    {var rows=PreparedSettingsDiff(Newtonsoft.Json.Linq.JObject.Parse("{}"),Newtonsoft.Json.Linq.JObject.Parse("{\"value\":null}"));Assert.AreEqual(1,rows.Count);Assert.AreEqual("/value",(string)rows[0]["path"]);Assert.IsFalse((bool)rows[0]["expectedPresent"]);Assert.AreEqual("Null",(string)rows[0]["actualType"]);}
+    [Test] public void PreparedSettingsDiffKeepsArrayOrderAndTypes()
+    {var rows=PreparedSettingsDiff(Newtonsoft.Json.Linq.JArray.Parse("[1,2]"),Newtonsoft.Json.Linq.JArray.Parse("[2,1,null]"));Assert.AreEqual(3,rows.Count);Assert.AreEqual("/0",(string)rows[0]["path"]);Assert.AreEqual("/2",(string)rows[2]["path"]);Assert.AreEqual(1,PreparedSettingsDiff(new Newtonsoft.Json.Linq.JValue(1),new Newtonsoft.Json.Linq.JValue("1")).Count);}
+    [Test] public void PreparedSettingsDiffEscapesExactPropertyNames()
+    {var rows=PreparedSettingsDiff(Newtonsoft.Json.Linq.JObject.Parse("{\"a/b~c\":1}"),Newtonsoft.Json.Linq.JObject.Parse("{\"a/b~c\":2}"));Assert.AreEqual("/a~1b~0c",(string)rows[0]["path"]);Assert.AreEqual(1,(int)rows[0]["expected"]);Assert.AreEqual(2,(int)rows[0]["actual"]);}
+    private static string PreparedSettingsObservedPath(string variable,bool fresh)
+    {
+        string value=Environment.GetEnvironmentVariable(variable),root=System.IO.Path.GetFullPath("Logs/SkirmishProduction/Offline")+System.IO.Path.DirectorySeparatorChar;
+        if(string.IsNullOrWhiteSpace(value)||!System.IO.Path.IsPathRooted(value))throw new InvalidOperationException("Explicit absolute observed settings path required");
+        value=System.IO.Path.GetFullPath(value);
+        if(!value.StartsWith(root,StringComparison.OrdinalIgnoreCase)||!System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(value))||System.IO.Directory.Exists(value)||(!fresh&&!System.IO.File.Exists(value))||(fresh&&System.IO.File.Exists(value)))throw new InvalidOperationException("Exact owned settings input/fresh output required");
+        for(string parent=fresh?System.IO.Path.GetDirectoryName(value):value;!string.IsNullOrEmpty(parent);parent=System.IO.Path.GetDirectoryName(parent))BuildScript.RequirePreparedNonReparse(System.IO.File.GetAttributes(parent));
+        return value;
+    }
+    public static void RunPreparedSettingsCrossEditorCapture()
+    {
+        if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling)throw new InvalidOperationException("Idle installed Editor required");
+        string receiptPath=PreparedSettingsObservedPath("WARLINE_PREPARED_SETTINGS_RECEIPT",false),output=PreparedSettingsObservedPath("WARLINE_PREPARED_SETTINGS_OBSERVATION_OUTPUT",true);
+        string receiptHash=Environment.GetEnvironmentVariable("WARLINE_PREPARED_SETTINGS_RECEIPT_SHA256");
+        if(receiptHash==null||!System.Text.RegularExpressions.Regex.IsMatch(receiptHash,"\\A[a-f0-9]{64}\\z")||BuildScript.PreparedFileHash(receiptPath)!=receiptHash)throw new InvalidOperationException("Exact original prepared receipt bytes required");
+        var receipt=Newtonsoft.Json.Linq.JObject.Parse(System.IO.File.ReadAllText(receiptPath));
+        if(receipt.Value<int>("schema")!=1||(string)receipt["scope"]!="PreparedAndroidAddressables_NoPlayerOrAcceptance"||(string)receipt["target"]!="Android"||(string)receipt["editorVersion"]!=UnityEngine.Application.unityVersion||receipt.Value<bool>("buildPlayerInvoked")||receipt.Value<bool>("packageAccepted"))throw new InvalidOperationException("Actual original prepared receipt identity required");
+        var expected=receipt["settingsSerialized"]as Newtonsoft.Json.Linq.JObject;if(expected==null)throw new InvalidOperationException("Actual expected settings object required");
+        var t=new OperationMapAddressablesBuildReportBuilderTests();t.PreparedSettingsDiffExactHasNoRows();t.PreparedSettingsDiffDistinguishesMissingAndNull();t.PreparedSettingsDiffKeepsArrayOrderAndTypes();t.PreparedSettingsDiffEscapesExactPropertyNames();
+        var settings=UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings;if(settings==null)throw new InvalidOperationException("Actual persisted default settings required");
+        string path=AssetDatabase.GetAssetPath(settings);if(string.IsNullOrEmpty(path)||(string)receipt["settingsPath"]!=path)throw new InvalidOperationException("Actual persisted settings path differs");
+        var callback=global::AddressablesPlayerBuildProcessor.BuildAddressablesOverride;
+        Newtonsoft.Json.Linq.JObject Capture(){
+            return new Newtonsoft.Json.Linq.JObject{["assetPath"]=path,["assetGuid"]=AssetDatabase.AssetPathToGUID(path),["assetSha256"]=BuildScript.PreparedFileHash(path),["metaSha256"]=BuildScript.PreparedFileHash(path+".meta"),["profile"]=settings.activeProfileId,["builder"]=settings.ActivePlayerDataBuilderIndex,["publicPlayerBuildOption"]=(int)settings.BuildAddressablesWithPlayerBuild,["entityId"]=settings.GetEntityId().ToString(),["dirty"]=EditorUtility.IsDirty(settings),["serialized"]=Newtonsoft.Json.Linq.JObject.Parse(EditorJsonUtility.ToJson(settings))};
+        }
+        var before=Capture();var after=Capture();
+        bool stable=Newtonsoft.Json.Linq.JToken.DeepEquals(before,after)&&ReferenceEquals(settings,UnityEditor.AddressableAssets.AddressableAssetSettingsDefaultObject.Settings)&&ReferenceEquals(callback,global::AddressablesPlayerBuildProcessor.BuildAddressablesOverride)&&BuildScript.PreparedFileHash(receiptPath)==receiptHash;
+        var differences=PreparedSettingsDiff(expected,before["serialized"]);var afterDifferences=PreparedSettingsDiff(expected,after["serialized"]);
+        using var process=System.Diagnostics.Process.GetCurrentProcess();
+        var report=new Newtonsoft.Json.Linq.JObject{["schema"]=1,["scope"]="PersistedAddressablesSettingsCrossEditorCapture_NoBuildOrAcceptance",["editorVersion"]=UnityEngine.Application.unityVersion,["processId"]=process.Id,["receiptPath"]=receiptPath,["receiptSha256"]=receiptHash,["expectedProcessId"]=receipt["processId"],["expectedProfile"]=receipt["profile"],["expectedBuilder"]=receipt["builder"],["expectedSettings"]=expected.DeepClone(),["actualBefore"]=before,["actualAfter"]=after,["differencesBefore"]=differences,["differencesAfter"]=afterDifferences,["expectedMatchesActual"]=Newtonsoft.Json.Linq.JToken.DeepEquals(expected,before["serialized"]),["captureStable"]=stable,["callbackUnchanged"]=ReferenceEquals(callback,global::AddressablesPlayerBuildProcessor.BuildAddressablesOverride),["contentBuildInvoked"]=false,["playerBuildInvoked"]=false,["settingsNormalized"]=false,["missionAccepted"]=false};
+        using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))using(var writer=new System.IO.StreamWriter(stream,new System.Text.UTF8Encoding(false)))writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+        if(!stable)throw new InvalidOperationException("Settings capture changed; exact diagnostic retained without equivalence claim");
+        UnityEngine.Debug.Log("[PreparedSettingsCrossEditorCapture] result=Collected helperControls=4 stable=1 differences="+differences.Count+" contentBuild=0 playerBuild=0 acceptance=0");
+    }
+
     private static string PreparedManagedOracle(string path)
     {using var stream=System.IO.File.OpenRead(path);using var sha=System.Security.Cryptography.SHA256.Create();return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
     [Test] public void PreparedCngKnownVectors()

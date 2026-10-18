@@ -83,7 +83,7 @@ namespace Game.UI.Runtime
             // The zoom cue inserts its own line break while fitting. That edit is layout,
             // not a new translation. Reapplying here turned auto-size back on at 16–26 and
             // the single-line fit settled at 17–22.
-            if (target.name == "ZoomCue")
+            if (target.name == "ZoomCue" || target.name == "ZoneTabName" || target.name == "ZoneTabStatus")
                 return;
 
             string current = ReadAuthoredText();
@@ -277,7 +277,7 @@ namespace Game.UI.Runtime
         {
             // The zoom tab owns a 16–26px lock. This fitter's 12px short-rect floor
             // was the size that reached the screen on the 4:3 Farsi cue.
-            if (target != null && target.name == "ZoomCue")
+            if (target != null && (target.name == "ZoomCue" || target.name == "ZoneTabName" || target.name == "ZoneTabStatus"))
                 return;
             float height = target.rectTransform != null ? target.rectTransform.rect.height : 0f;
             if (height < 16f)

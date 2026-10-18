@@ -504,6 +504,7 @@ namespace Game.Editor
             string locale = GameLocalization.IsRightToLeft ? "fa" : "en";
             RejectGridCardsOutside(grid, viewport, content, scrolls, wideFrame, locale);
             RejectGridZoneRows(grid, locale);
+            RejectZoneTabNames(grid, locale);
             RejectVisibleGridRowTotals(root, locale);
         }
 
@@ -516,6 +517,61 @@ namespace Game.Editor
             if (rect == null || rect.rect.height < 200f)
                 return false;
             return rect.rect.width / rect.rect.height >= 1.6f;
+        }
+
+        private static void RejectZoneTabNames(Transform grid, string locale)
+        {
+            if (grid == null)
+                return;
+            bool fa = string.Equals(locale, "fa", StringComparison.OrdinalIgnoreCase);
+            int found = 0;
+            for (int i = 0; i < grid.childCount; i++)
+            {
+                Transform tab = grid.GetChild(i);
+                if (tab == null || !tab.gameObject.activeInHierarchy ||
+                    !tab.name.StartsWith("BattlefieldTab_", StringComparison.Ordinal))
+                    continue;
+                found++;
+                string mapId = tab.name.Substring("BattlefieldTab_".Length);
+                var tabRect = tab as RectTransform;
+                float height = 0f;
+                if (tabRect != null)
+                    height = Mathf.Max(tabRect.rect.height, tabRect.sizeDelta.y);
+                if (height > SkirmishZoneTabWidget.Height + 0.5f)
+                {
+                    throw new InvalidOperationException(
+                        "Zone tab is taller than 52px locale=" + locale +
+                        " map=" + mapId +
+                        " height=" + height.ToString("0.0") + ".");
+                }
+
+                TMP_Text name = tab.Find("ZoneTabName")?.GetComponent<TMP_Text>();
+                SkirmishBattleLibraryArt.Copy(mapId, fa, out string title, out _);
+                if (name == null || !name.gameObject.activeInHierarchy || string.IsNullOrWhiteSpace(name.text) ||
+                    !SkirmishBattleLibraryArt.SameRenderedText(name.text, title))
+                {
+                    throw new InvalidOperationException(
+                        "Zone tab is missing its name locale=" + locale +
+                        " map=" + mapId +
+                        " text=" + (name != null ? name.text : string.Empty) + ".");
+                }
+
+                bool visible = SkirmishZoneTabWidget.NameIsVisible(name, title, out bool truncated, out _, out float local);
+                if (!visible || truncated || local < SkirmishZoneTabWidget.NameFontFloor - 0.05f)
+                {
+                    throw new InvalidOperationException(
+                        "Zone tab name is truncated locale=" + locale +
+                        " map=" + mapId +
+                        " font=" + local.ToString("0.0") +
+                        " text=" + name.text + ".");
+                }
+            }
+
+            if (found != SkirmishBattleLibraryArt.MapIds.Length)
+            {
+                throw new InvalidOperationException(
+                    "Grid is missing a zone tab locale=" + locale + " tabs=" + found + ".");
+            }
         }
 
         private static void RejectGridZoneRows(Transform grid, string locale)

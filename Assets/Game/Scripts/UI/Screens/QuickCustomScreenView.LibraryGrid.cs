@@ -341,17 +341,76 @@ namespace Game.UI.Runtime
                     tabWidth,
                     SkirmishZoneTabWidget.Height);
                 SkirmishZoneTabWidget.Apply(button, string.Equals(mapId, selectedMapId, StringComparison.OrdinalIgnoreCase));
-                var label = CreateLabel(button.transform, "Label", 16f);
-                Stretch(label.rectTransform, 6f, 6f, 2f, 2f);
-                label.alignment = TextAlignmentOptions.Center;
-                label.textWrappingMode = TextWrappingModes.Normal;
-                label.overflowMode = TextOverflowModes.Ellipsis;
-                SetCopy(label, MapDisplayTitle(mapId, fa), 12f, 18f);
-                label.overflowMode = TextOverflowModes.Ellipsis;
-                label.textWrappingMode = TextWrappingModes.Normal;
-                SkirmishZoneTabWidget.StyleLabel(label);
+                float inner = Mathf.Max(48f, tabWidth - SkirmishZoneTabWidget.LabelInset * 2f);
+                var name = CreateLabel(button.transform, "ZoneTabName", SkirmishZoneTabWidget.NameFontFloor);
+                PlaceTopLeft(name.rectTransform, SkirmishZoneTabWidget.LabelInset, 0f, inner, SkirmishZoneTabWidget.NameBand);
+                KeepAuthoredSize(name.rectTransform);
+                name.alignment = TextAlignmentOptions.Center;
+                string title = MapDisplayTitle(mapId, fa);
+                SetCopy(name, title, SkirmishZoneTabWidget.NameFontFloor, SkirmishZoneTabWidget.NameFontFloor);
+                SkirmishZoneTabWidget.StyleLabel(name);
+                SkirmishZoneTabWidget.FitName(name);
+                bool pending = true;
+                int won = 0;
+                int published = 0;
+                if (_libraryViewModel != null &&
+                    TryFindTheaterPin(_libraryViewModel.Theater, mapId, out SkirmishTheaterPinState pin))
+                {
+                    won = pin.WonCount;
+                    published = pin.PublishedCount;
+                    pending = published <= 0;
+                }
+
+                var status = CreateLabel(button.transform, "ZoneTabStatus", SkirmishZoneTabWidget.StatusFont);
+                PlaceTopLeft(
+                    status.rectTransform,
+                    SkirmishZoneTabWidget.LabelInset,
+                    SkirmishZoneTabWidget.NameBand,
+                    inner,
+                    SkirmishZoneTabWidget.StatusBand);
+                KeepAuthoredSize(status.rectTransform);
+                status.alignment = TextAlignmentOptions.Center;
+                string statusCopy = SkirmishZoneTabWidget.StatusCopy(fa, pending, won, published);
+                SetCopy(status, statusCopy, SkirmishZoneTabWidget.StatusFont, SkirmishZoneTabWidget.StatusFont);
+                status.isRightToLeftText = pending && fa;
+                SkirmishZoneTabWidget.StyleLabel(status);
+                SkirmishZoneTabWidget.FitStatus(status);
                 string captured = mapId;
                 button.onClick.AddListener(() => SelectGridBattlefield(captured));
+            }
+        }
+
+        private void LockZoneTabs()
+        {
+            if (_libraryGrid == null || !_libraryGrid.gameObject.activeInHierarchy)
+                return;
+            if (LibraryLevel != SkirmishLibraryLevel.Battlefield || LibraryLayout != SkirmishBattlefieldLayout.Grid)
+                return;
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            for (int i = 0; i < _libraryGrid.childCount; i++)
+            {
+                Transform tab = _libraryGrid.GetChild(i);
+                if (tab == null || !tab.name.StartsWith("BattlefieldTab_", StringComparison.Ordinal))
+                    continue;
+                string mapId = tab.name.Substring("BattlefieldTab_".Length);
+                TMP_Text name = tab.Find("ZoneTabName")?.GetComponent<TMP_Text>();
+                TMP_Text status = tab.Find("ZoneTabStatus")?.GetComponent<TMP_Text>();
+                if (name != null)
+                {
+                    KeepAuthoredSize(name.rectTransform);
+                    SkirmishZoneTabWidget.FitName(name);
+                    SkirmishZoneTabWidget.StyleLabel(name);
+                }
+
+                if (status != null)
+                {
+                    KeepAuthoredSize(status.rectTransform);
+                    SkirmishZoneTabWidget.FitStatus(status);
+                    status.isRightToLeftText = fa && SkirmishBattleLibraryArt.IsRenderedComingSoon(status.text);
+                    SkirmishZoneTabWidget.StyleLabel(status);
+                }
+
+                SkirmishZoneTabWidget.Log(name, mapId, MapDisplayTitle(mapId, fa));
             }
         }
 

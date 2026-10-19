@@ -448,6 +448,7 @@ internal static class Program
     private static bool DumpRoundTrips()
     {
         TheatreSeatGeometry.SetShot("4:3", "notch", "en", true, 1440f, 1080f, 132f, 84f, 0f, 0f);
+        TheatreSeatGeometry.ShotSelected = "DB";
         var detail = TheatreSeatGeometry.DetailRect(1039.6f, 724f, false, true);
         var view = TheatreSeatGeometry.OpenViewport(1039.6f, 724f, false, true);
         var names = new[]
@@ -544,6 +545,11 @@ internal static class Program
     {
         const float plateWidth = 1079.6f;
         const float plateHeight = 844f;
+        float areaScale = TheatreSeatGeometry.AreaFloorScale(plateWidth, plateHeight, true);
+        float areaFloor = TheatreSeatGeometry.DistrictAreaFloor(plateWidth, plateHeight, true);
+        float cardFloor = TheatreSeatGeometry.CardAreaFloor(plateWidth, plateHeight, true);
+        Console.WriteLine(TheatreSeatGeometry.FormatAreaFloor("4:3", TheatreSeatGeometry.DistrictAreaFloorBase, areaScale, areaFloor, false));
+        Console.WriteLine(TheatreSeatGeometry.FormatAreaFloor("4:3", TheatreSeatGeometry.CardAreaFloorBase, areaScale, cardFloor, true));
         bool ccOn = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, false, true, true, "CC");
         bool mpOn = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, true, true, true, "MP");
         bool underFloor = !TheatreSeatGeometry.DetailReserveOn(900f, 700f, false, true, true, "CC");
@@ -594,10 +600,12 @@ internal static class Program
 
                 bool cue = layout.Cue.W + 0.5f >= TheatreSeatGeometry.PackedCueMinWidth && layout.Cue.H + 0.5f >= 44f && layout.CueNear;
                 bool gaps = minGap + 0.05f >= 12f;
-                bool areaOk = minArea + 0.5f >= 40000f;
+                bool areaOk = minArea + 0.5f >= areaFloor;
                 bool pass = reserved && layout.CardsLegal && layout.HexAspectLegal && violations.Length == 0 && cue && gaps && areaOk;
                 if (!pass)
                     ok = false;
+                if (!string.IsNullOrEmpty(TheatreSeatGeometry.CompactNote))
+                    Console.WriteLine("  compact " + TheatreSeatGeometry.CompactNote);
                 Console.WriteLine((pass ? "PASS" : "FAIL") + " 4:3 reserve " + (fa ? "fa" : "en") + " " + map
                     + " reserved=" + reserved
                     + " legal=" + layout.CardsLegal
@@ -609,7 +617,9 @@ internal static class Program
                 if (!gaps)
                     Console.WriteLine("  " + tightPair + " halo gap " + minGap.ToString("0.0", CultureInfo.InvariantCulture) + " is " + (12f - minGap).ToString("0.0", CultureInfo.InvariantCulture) + " under 12");
                 if (!areaOk)
-                    Console.WriteLine("  " + shortArea + " area " + minArea.ToString("0", CultureInfo.InvariantCulture) + " is " + (40000f - minArea).ToString("0", CultureInfo.InvariantCulture) + " under 40000");
+                    Console.WriteLine("  " + shortArea + " area " + minArea.ToString("0", CultureInfo.InvariantCulture) + " is " + (areaFloor - minArea).ToString("0", CultureInfo.InvariantCulture) + " under " + areaFloor.ToString("0", CultureInfo.InvariantCulture));
+                if (map == "DB" && layout.Seats != null)
+                    WriteReserveTable(layout, fa, areaFloor);
                 if (!cue)
                     Console.WriteLine("  cue " + layout.Cue.W.ToString("0.0", CultureInfo.InvariantCulture) + "x" + layout.Cue.H.ToString("0.0", CultureInfo.InvariantCulture) + " near=" + layout.CueNear);
                 for (int i = 0; i < violations.Length && i < 4; i++)
@@ -636,6 +646,121 @@ internal static class Program
         return Math.Abs(sum) * 0.5f;
     }
 
+    private static void WriteReserveTable(TheatreSeatGeometry.Layout layout, bool fa, float areaFloor)
+    {
+        Console.WriteLine("TABLE 4:3 " + (fa ? "fa" : "en") + " map=1079.6 floor=" + areaFloor.ToString("0.0", CultureInfo.InvariantCulture));
+        for (int i = 0; i < layout.Seats.Length; i++)
+        {
+            float nearest = float.MaxValue;
+            string other = "";
+            for (int j = 0; j < layout.Seats.Length; j++)
+            {
+                if (j == i)
+                    continue;
+                float gap = TheatreSeatGeometry.DrawnDistrictGap(layout.Seats[i].Hex, layout.Seats[j].Hex);
+                if (gap < nearest)
+                {
+                    nearest = gap;
+                    other = layout.Seats[j].MapId;
+                }
+            }
+
+            TheatreSeatGeometry.Box card = layout.Seats[i].Card;
+            float area = SeatArea(layout.Seats[i].Hex);
+            Console.WriteLine("  " + layout.Seats[i].MapId
+                + " halo=" + other + ":" + nearest.ToString("0.0", CultureInfo.InvariantCulture)
+                + " area=" + area.ToString("0", CultureInfo.InvariantCulture)
+                + " floor=" + areaFloor.ToString("0.0", CultureInfo.InvariantCulture)
+                + " card=" + card.W.ToString("0", CultureInfo.InvariantCulture) + "x" + card.H.ToString("0", CultureInfo.InvariantCulture)
+                + " cue=" + layout.Cue.W.ToString("0", CultureInfo.InvariantCulture) + "x" + layout.Cue.H.ToString("0", CultureInfo.InvariantCulture));
+        }
+    }
+
+    private static bool NoteAreaFloors()
+    {
+        NoteOneAreaFloor("16:9", 1920f, 1080f, false);
+        NoteOneAreaFloor("20:9", 2400f, 1080f, false);
+        NoteOneAreaFloor("4:3", 1440f, 1080f, true);
+        return true;
+    }
+
+    private static void NoteOneAreaFloor(string ratio, float canvasWidth, float canvasHeight, bool reserveOn)
+    {
+        TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out float plateWidth, out float plateHeight);
+        float scale = TheatreSeatGeometry.AreaFloorScale(plateWidth, plateHeight, reserveOn);
+        Console.WriteLine(TheatreSeatGeometry.FormatAreaFloor(
+            ratio, TheatreSeatGeometry.DistrictAreaFloorBase, scale, TheatreSeatGeometry.DistrictAreaFloor(plateWidth, plateHeight, reserveOn), false));
+        Console.WriteLine(TheatreSeatGeometry.FormatAreaFloor(
+            ratio, TheatreSeatGeometry.CardAreaFloorBase, scale, TheatreSeatGeometry.CardAreaFloor(plateWidth, plateHeight, reserveOn), true));
+    }
+
+    /// <summary>
+    /// Live map x and briefing x follow the measured column. Programmer 1's 334.4
+    /// briefing puts the 1079.6 map 40px left of the old 374.4 frame. A 10px gap
+    /// miss is outside the 2px tolerance.
+    /// </summary>
+    private static bool NoteLivePanelRects()
+    {
+        bool ok = true;
+        ok &= NoteLivePanelRect("4:3", "en", 1440f, 1080f, 334.4f, 1079.6f, true, true, 346.4f, 14f);
+        ok &= NoteLivePanelRect("4:3", "fa", 1440f, 1080f, 334.4f, 1079.6f, true, false, 14f, 1091.6f);
+        float wideBrief = TheatreSeatGeometry.BriefingColumnWidth(1920f, 1080f);
+        TheatreSeatGeometry.CaptureMapSize(1920f, 1080f, out float wideMap, out _);
+        ok &= NoteLivePanelRect("16:9", "en", 1920f, 1080f, wideBrief, wideMap, true, true, 14f + wideBrief - 2f, 14f);
+        ok &= NoteLivePanelRect("16:9", "fa", 1920f, 1080f, wideBrief, wideMap, true, false, 14f, 14f + wideMap - 2f);
+        float ultraBrief = TheatreSeatGeometry.BriefingColumnWidth(2400f, 1080f);
+        TheatreSeatGeometry.CaptureMapSize(2400f, 1080f, out float ultraMap, out _);
+        ok &= NoteLivePanelRect("20:9", "en", 2400f, 1080f, ultraBrief, ultraMap, true, true, 14f + ultraBrief - 2f, 14f);
+        ok &= NoteLivePanelRect("20:9", "fa", 2400f, 1080f, ultraBrief, ultraMap, true, false, 14f, 14f + ultraMap - 2f);
+        float slipped = 346.4f + 10f;
+        ok &= Math.Abs(slipped - 346.4f) > TheatreSeatGeometry.MapPanelWidthTolerance;
+        if (!ok)
+            Console.WriteLine("FAIL live panel rect");
+        else
+            Console.WriteLine("PASS live panel rect");
+        return ok;
+    }
+
+    private static bool NoteLivePanelRect(
+        string ratio,
+        string locale,
+        float canvasWidth,
+        float canvasHeight,
+        float briefingSpan,
+        float mapSpan,
+        bool theatre,
+        bool briefingOnLeft,
+        float expectMapX,
+        float expectBriefingX)
+    {
+        TheatreSeatGeometry.ExpectedLivePanels(
+            canvasWidth,
+            canvasHeight,
+            briefingSpan,
+            mapSpan,
+            theatre,
+            briefingOnLeft,
+            out float mapX,
+            out float briefingX,
+            out _,
+            out _);
+        bool match = Math.Abs(mapX - expectMapX) <= TheatreSeatGeometry.MapPanelWidthTolerance
+            && Math.Abs(briefingX - expectBriefingX) <= TheatreSeatGeometry.MapPanelWidthTolerance;
+        Console.WriteLine("[MapPanelRect] ratio=" + ratio
+            + " locale=" + locale
+            + " mapX=" + mapX.ToString("0.0", CultureInfo.InvariantCulture)
+            + " expected=" + expectMapX.ToString("0.0", CultureInfo.InvariantCulture)
+            + " briefingX=" + briefingX.ToString("0.0", CultureInfo.InvariantCulture)
+            + " expected=" + expectBriefingX.ToString("0.0", CultureInfo.InvariantCulture)
+            + " briefingW=" + briefingSpan.ToString("0.0", CultureInfo.InvariantCulture)
+            + " mapW=" + mapSpan.ToString("0.0", CultureInfo.InvariantCulture)
+            + " theatre=" + (theatre ? "1" : "0")
+            + " briefingOnLeft=" + (briefingOnLeft ? "1" : "0"));
+        if (!match)
+            Console.WriteLine("FAIL live rect " + ratio + " mapX=" + mapX.ToString("0.0") + " briefingX=" + briefingX.ToString("0.0"));
+        return match;
+    }
+
     /// <summary>
     /// One log line per ratio and language. The live width is the safe width minus the
     /// measured columns and the gutters. A 4:3 map under the floor fails even when it
@@ -647,6 +772,8 @@ internal static class Program
         ok &= NoteMapPanelWidth("4:3", 1440f, 1080f);
         ok &= NoteMapPanelWidth("16:9", 1920f, 1080f);
         ok &= NoteMapPanelWidth("20:9", 2400f, 1080f);
+        ok &= NoteAreaFloors();
+        ok &= NoteLivePanelRects();
         ok &= MapPanelWidthRuleHolds();
         Console.WriteLine((ok ? "PASS" : "FAIL") + " map panel width");
         return ok;

@@ -134,6 +134,7 @@ namespace Game.UI.Runtime
             }
 
             VerifyTheatrePanelCounts(holder, selectedZone.MapId, battles.Count, "side");
+            LogTheatreGrid(selectedZone.MapId, "side", columns, rows, shown, battles.Count, Mathf.Max(0, more), fa);
             Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + shown +
@@ -233,6 +234,7 @@ namespace Game.UI.Runtime
             }
 
             VerifyTheatrePanelCounts(holder, zone.MapId, battles.Count, "compact");
+            LogTheatreGrid(zone.MapId, "compact", TheatreCompactColumns, rows, shown, battles.Count, Mathf.Max(0, more), fa);
             Debug.Log("[TheatrePanel] map=" + zone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + shown +
@@ -346,6 +348,8 @@ namespace Game.UI.Runtime
             }
 
             int visible = Mathf.Min(battles.Count, Mathf.FloorToInt((area.width + TheatrePanelGap) / (thumbW + TheatrePanelGap)));
+            // Sheet: every battle is a real tile in one scrolling row, no "+N" tile.
+            LogTheatreGrid(zone.MapId, "sheet", battles.Count, 1, battles.Count, battles.Count, 0, fa); // all drawn; ~visible in view logged by [TheatrePanel]
             Debug.Log("[TheatrePanel] map=" + zone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + visible +
@@ -466,6 +470,33 @@ namespace Game.UI.Runtime
                     PlaceTopLeft(lockIcon.rectTransform, (thumbW - lockSize) * 0.5f, (thumbH - lockSize) * 0.5f, lockSize, lockSize);
                     ShowIcon(lockIcon, SkirmishBattleLibraryArt.ResourceRoot + "icon_lock", Color.white);
                 }
+        }
+
+        /// <summary>
+        /// v47b (Game PM C: 2x3 at 4:3, 3x3 at 16:9+): grid proof for the capture logs. visible = real battle tiles drawn
+        /// (the "+N" tile takes the last slot when battles remain), overflow = total - visible, ratio from the live
+        /// composition size.
+        /// </summary>
+        private void LogTheatreGrid(string mapId, string layout, int columns, int rows, int visible, int total, int overflow, bool fa)
+        {
+            Debug.Log("[TheatreGrid] map=" + mapId + " layout=" + layout + " columns=" + columns + " rows=" + rows +
+                " visible=" + visible + " total=" + total + " overflow=" + overflow +
+                " slots=" + (columns * rows) + " plusTile=" + (overflow > 0 && layout != "sheet" ? "1" : "0") +
+                " ok=" + (visible + overflow == total ? "1" : "0") +
+                " locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel());
+        }
+
+        /// <summary>v47b: "4:3" / "16:9" / "20:9" (else W:H rounded) from the composition rect.</summary>
+        private string TheatreRatioLabel()
+        {
+            var composition = transform.Find("SkirmishSetupComposition") as RectTransform;
+            if (composition == null || composition.rect.height < 1f)
+                return "unknown";
+            float aspect = composition.rect.width / composition.rect.height;
+            if (Mathf.Abs(aspect - 4f / 3f) < 0.06f) return "4:3";
+            if (Mathf.Abs(aspect - 16f / 9f) < 0.06f) return "16:9";
+            if (Mathf.Abs(aspect - 20f / 9f) < 0.06f) return "20:9";
+            return composition.rect.width.ToString("0") + ":" + composition.rect.height.ToString("0");
         }
 
         /// <summary>v47: clear space between the OBJECTIVE TYPE heading's ink and the objective rows.</summary>

@@ -118,6 +118,89 @@ namespace Game.Editor
                 " gameplayCertified=0 queueSuccessEnabled=0 output=" + output);
         }
 
+
+        // Pure persisted setup export. No dispatch, private availability, fit authority or publication gate.
+        public static void ExportPersistedTypedConfigDigests()
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating)
+                throw new InvalidOperationException("Idle native Edit mode required.");
+            string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            string requestPath=CensusEvidencePath(root,Environment.GetEnvironmentVariable("WARLINE_TYPED_CONFIG_REQUEST"));
+            string requestSha=Environment.GetEnvironmentVariable("WARLINE_TYPED_CONFIG_REQUEST_SHA256");
+            string output=CensusEvidencePath(root,Environment.GetEnvironmentVariable("WARLINE_TYPED_CONFIG_OUTPUT"));
+            CensusNeed(Directory.Exists(Path.GetDirectoryName(output))&&!File.Exists(output)&&!Directory.Exists(output)&&output!=requestPath,"Fresh distinct output/parent required.");
+            CensusNeed(System.Text.RegularExpressions.Regex.IsMatch(requestSha??"","^[a-f0-9]{64}$")&&SkirmishProductionCanaryRequest.FileHash(requestPath)==requestSha,"Exact request required.");
+            var request=SkirmishProductionCanaryRequest.ReadObject(requestPath);
+            CensusExact(request,"schema_version catalog_id seed locale candidate_manifest_path candidate_manifest_sha256");
+            CensusNeed(request["schema_version"]?.Type==JTokenType.Integer&&(int)request["schema_version"]==1&&
+                request["seed"]?.Type==JTokenType.Integer&&(int)request["seed"]==155926&&
+                request["locale"]?.Type==JTokenType.String&&(string)request["locale"]=="en","Exact schema/seed155926/native EN scope.");
+            string id=(string)request["catalog_id"];
+            CensusNeed(System.Text.RegularExpressions.Regex.IsMatch(id??"","^S(00[1-9]|0[1-9][0-9]|1[01][0-9]|120)$"),"Canonical catalog required.");
+            string snapshotPath=CensusEvidencePath(root,(string)request["candidate_manifest_path"]);
+            string snapshotSha=(string)request["candidate_manifest_sha256"];
+            CensusNeed(System.Text.RegularExpressions.Regex.IsMatch(snapshotSha??"","^[a-f0-9]{64}$")&&
+                SkirmishProductionCanaryRequest.FileHash(snapshotPath)==snapshotSha,"Exact source/build snapshot required.");
+            var snapshot=SkirmishProductionCanaryRequest.ReadObject(snapshotPath);
+            CensusExact(snapshot,"source_manifest candidate_sha256 build_manifest build_sha256");
+            SkirmishProductionBatchManifest.Validate(snapshot);CheckCensusNativePins(root,snapshot);
+            var catalog=SkirmishExpansionCatalogConfig.Load();
+            SkirmishScenarioDefinitionConfig definition=null;
+            CensusNeed(catalog!=null&&ReferenceEquals(catalog,Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName))&&
+                catalog.TryGetDefinition(id,out definition)&&definition!=null&&EditorUtility.IsPersistent(definition),"Persistent normal definition required.");
+            string asset=AssetDatabase.GetAssetPath(definition);
+            CensusNeed(!string.IsNullOrEmpty(asset)&&AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(asset)==definition,"Actual packaged asset identity.");
+            CensusNeed(definition.CampaignMap!=null&&definition.CampaignMap.TryValidateMetadata(out _)&&
+                definition.CampaignMap.TryValidateLocalContentReferences(out _),"Actual Campaign source required.");
+            string assetSha=SkirmishProductionCanaryRequest.FileHash(Path.Combine(root,asset));
+            bool dirty=EditorUtility.IsDirty(definition);
+            if(!SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error))throw new InvalidDataException(error);
+            string previous=GameLocalization.CurrentLocaleCode;var rows=new JArray();
+            try
+            {
+                CensusNeed(GameLocalization.SetLocale("en",false)&&GameLocalization.CurrentLocaleCode=="en","Actual EN locale.");
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    var manifest=new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds};
+                    if(!SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,size,155926,manifest,matrix,out var setup,out var reasons))
+                        throw new InvalidDataException("Actual persisted normal compile refused "+id+"/"+size+": "+string.Join(";",reasons));
+                    CensusNeed(setup.CatalogId==id&&setup.DefinitionId==definition.DefinitionId&&setup.ContentVersion==definition.ContentVersion&&
+                        setup.Seed==155926&&setup.SizeId==size&&setup.DifficultyId==SkirmishDifficultyId.Regular&&
+                        setup.MeasuredLayoutBound&&setup.SetupHash==SkirmishSetupCompiler.ComputeHash(setup,setup.Seed),"Actual source-bound setup required.");
+                    CensusNeed(global::Game.Runtime.SkirmishMissionLogicalBindingProvider.TryCompileForLaunch(definition,setup,out var logical,out var logicalError),logicalError);
+                    string raw=JsonUtility.ToJson(setup);
+                    rows.Add(new JObject{
+                        ["CatalogId"]=setup.CatalogId,["DefinitionId"]=setup.DefinitionId,["ContentVersion"]=setup.ContentVersion,
+                        ["Difficulty"]=setup.DifficultyId.ToString(),["Size"]=setup.SizeId.ToString(),["Seed"]=setup.Seed,
+                        ["Locale"]=GameLocalization.CurrentLocaleCode,["SetupHash"]=setup.SetupHash.ToString("X8",System.Globalization.CultureInfo.InvariantCulture),
+                        ["ConfigDigest"]=SkirmishProductionCanaryRequest.Hash(Encoding.UTF8.GetBytes(raw)),
+                        ["ConfigDigestAlgorithm"]="UnityJsonResolvedSetupUtf8Sha256-v1",["ResolvedSetupJson"]=raw,
+                        ["LegacyCensusConfigDigest"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),
+                        ["LayoutBindingFingerprint"]=setup.LayoutBindingFingerprint,
+                        ["MissionLogicalBindingFingerprint"]=logical.Fingerprint,["ViewFingerprint"]=logical.ViewFingerprint,
+                        ["MissionLogicalBindingJson"]=JsonUtility.ToJson(definition.MissionLogicalBinding),
+                        ["ResolvedViewJson"]=JsonUtility.ToJson(logical.View),
+                        ["LayoutSemanticFingerprint"]=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout),
+                        ["PhysicalOperationMapId"]=definition.CampaignMap.OperationMapId,
+                        ["SourceIdentityHash"]=definition.CampaignMap.SourceIdentityHash,["SourceContentHash"]=definition.CampaignMap.ContentHash,
+                        ["FullTupleNativeFitPassed"]=false,["PrivateLaunchAuthorized"]=false});
+                }
+            }
+            finally { CensusNeed(GameLocalization.SetLocale(previous,false)&&GameLocalization.CurrentLocaleCode==previous,"Actual locale restoration."); }
+            CensusNeed(EditorUtility.IsDirty(definition)==dirty&&SkirmishProductionCanaryRequest.FileHash(Path.Combine(root,asset))==assetSha,"Persisted definition changed.");
+            CensusNeed(SkirmishProductionCanaryRequest.FileHash(requestPath)==requestSha&&SkirmishProductionCanaryRequest.FileHash(snapshotPath)==snapshotSha,"Inputs changed.");
+            CheckCensusNativePins(root,snapshot);
+            var report=new JObject{["schema_version"]=1,["collector_kind"]="PersistedTypedConfigDigestExport-v1",
+                ["request_path"]=requestPath,["request_sha256"]=requestSha,["candidate_manifest_path"]=snapshotPath,["candidate_manifest_sha256"]=snapshotSha,
+                ["candidate_sha256"]=snapshot["candidate_sha256"].DeepClone(),["build_sha256"]=snapshot["build_sha256"].DeepClone(),
+                ["definition_asset_path"]=asset,["definition_asset_sha256"]=assetSha,["definition_asset_guid"]=AssetDatabase.AssetPathToGUID(asset),
+                ["locale_before"]=previous,["locale_after"]=GameLocalization.CurrentLocaleCode,["entries"]=rows,
+                ["FullTupleNativeFitPassed"]=false,["PrivateLaunchAuthorized"]=false,["missionAccepted"]=false};
+            using(var stream=new FileStream(output,FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+            using(var writer=new StreamWriter(stream,new UTF8Encoding(false)))writer.Write(report.ToString(Formatting.Indented));
+            Debug.Log("[PersistedTypedConfigDigestExport] result=Passed rows=3 privateAuthorized=0 fullTupleFit=0 output="+output);
+        }
+
         private static void CheckCensusNativePins(string root, JObject snapshot)
         {
             CensusNeed(SkirmishCandidateSourceHash.Compute(root) == (string)snapshot["candidate_sha256"],

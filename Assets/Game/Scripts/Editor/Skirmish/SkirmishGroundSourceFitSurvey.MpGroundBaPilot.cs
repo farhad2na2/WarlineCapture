@@ -20,7 +20,7 @@ namespace Game.Editor
     {
 
         // Proposal: six logical anchors only; native legality and later hulls remain gates.
-        static JObject ApplyMpPilotEndpointRevision(SkirmishScenarioDefinitionConfig definition,GridConfig grid)
+        static JObject ApplyMpPilotEndpointRevision(SkirmishScenarioDefinitionConfig definition,GridConfig grid,bool preparedAuthoring=false)
         {
             var layout=definition.MapLayout;
             Require(!UnityEditor.EditorUtility.IsPersistent(definition)&&!UnityEditor.EditorUtility.IsPersistent(layout),
@@ -36,6 +36,26 @@ namespace Game.Editor
                 "Exact reviewed ArmorBreak grid required");
             Require(layout.Routes.Length==3&&layout.Routes.Select(r=>r.RouteId).OrderBy(v=>v)
                 .SequenceEqual(new[]{"route.pilot.0","route.pilot.1","route.pilot.2"}),"Exact three pilot routes required");
+            if(preparedAuthoring)
+            {
+                bool preparedAccepted=TryPreflightAuthoredRouteEndpoints(layout,grid,out var preparedPolicy);
+                Require(preparedAccepted,
+                    "Prepared logical routes must retain actual authored endpoint admission before native replay"+
+                    (preparedAccepted?"":" actualPreparedBoundary="+new JObject{
+                        ["scope"]="ActualPreparedEndpointRefusal_NotNativeFit",
+                        ["catalogId"]=definition.CatalogId,["layoutId"]=layout.LayoutId,
+                        ["grid"]=new JObject{["width"]=grid.Width,["height"]=grid.Height,["cellSize"]=grid.CellSize,
+                            ["originXZ"]=new JArray(grid.Origin.x,grid.Origin.z)},
+                        ["endpointPolicy"]=preparedPolicy,["layoutJson"]=JsonUtility.ToJson(layout),
+                        ["inputPath"]=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT"),
+                        ["inputSha256"]=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256"),
+                        ["sourceFitCertified"]=false}.ToString(Newtonsoft.Json.Formatting.None)));
+                return new JObject{["scope"]="PreparedMpPilotRouteEndpointValidation_NoRevision_NotNativeFit",
+                    ["preparedAuthoring"]=true,["revisionApplied"]=false,["changes"]=new JArray(),
+                    ["endpointPolicy"]=preparedPolicy,["padsUnchanged"]=true,["geometryProved"]=false,
+                    ["sourceFitCertified"]=false,["missionReady"]=false,
+                    ["laterHullRequirement"]="Every prepared layout still requires full native routes, packing, facilities, profile independence and service gates"};
+            }
             var before=JObject.Parse(JsonUtility.ToJson(layout));
             var anchors=(JArray)before["anchors"].DeepClone();var changed=new JArray();
             for(int route=0;route<3;route++)
@@ -78,6 +98,201 @@ namespace Game.Editor
                 ["laterHullRequirement"]="Every later actual layout must pass shared endpoint policy again; no pad resize or recenter waiver"};
         }
 
+
+
+        // Necessary configuration preflight only. No source world or native query is created.
+        public static void RunS050ReviewedPadEndpointControls()
+        {
+            Require(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode&&!UnityEditor.EditorApplication.isCompiling&&!UnityEditor.EditorApplication.isUpdating,
+                "Idle Edit Mode endpoint configuration controls required");
+            const string sourcePath="Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset";
+            Require(Hash(sourcePath)=="181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+                "Existing exact MP physical source required");
+            var source=UnityEditor.AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            Require(source!=null&&!UnityEditor.EditorUtility.IsDirty(source),"Clean existing Campaign source required");
+            var grid=new GridConfig{Width=1280,Height=520,CellSize=1,Origin=new float3(740,0,260)};
+            var authority=GroundBa10Rows().Single(m=>(string)m["catalog_id"]=="S050");
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            string oldInput=Path.GetFullPath("Logs/SkirmishProduction/Offline/S050OwnEstablishedLogicalPadProposal_20261019/logical-pad-input.json");
+            string newInput=Path.GetFullPath("Logs/SkirmishProduction/Offline/S050ReviewedPadEndpointAlignmentProposal_20261019/logical-pad-input.json");
+            const string oldSha="c0602fee9744b432df16a37004cea5e93f0137594c534f2628dc35ae663debe8";
+            const string newSha="17b3013d6cba8ebd6a738f5d43c7d301fd6407d4935b7b1272c9021cf580ccce";
+            string inputEnv=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT");
+            string shaEnv=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256");
+            int controls=0;
+            void Check(bool value,string why){Require(value,why);controls++;}
+            JObject Read(string path,string hash)
+            {
+                Environment.SetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT",path);
+                Environment.SetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256",hash);
+                return ReadReviewedFacilityPadInput(mission); // Same real subject/source/budget/hash reader.
+            }
+            try
+            {
+                var old=Read(oldInput,oldSha);var next=Read(newInput,newSha);
+                foreach(var input in new[]{old,next}){input.Remove("observedInputPath");input.Remove("observedInputSha256");}
+                var inverse=(JObject)next.DeepClone();
+                ((JArray)inverse["padOverrides"]).OfType<JObject>().Single(p=>(string)p["padId"]=="pad.skirmish.db.staging_player")["after"]["CenterX"]=1364.0;
+                Check(JToken.DeepEquals(old,inverse),"Exactly one input centre scalar; no dimensions/budgets/other overrides changed");
+                Require(TryCreateGroundBa10Candidate(authority,source,out var owner,out string error),error);
+                using(owner)
+                {
+                    var definition=owner.Definition;var layout=owner.Layout;
+                    var initial=ApplyMpPilotEndpointRevision(definition,grid);
+                    Check((bool)initial["endpointPolicy"]["accepted"],"Actual candidate initial strict endpoint admission");
+                    Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
+                    JArray Budgets()
+                    {
+                        var rows=new JArray();
+                        foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                        {
+                            Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(definition,SkirmishDifficultyId.Regular,size,1,
+                                new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                                budget.ExactCanonicalQuantities,string.Join(";",reasons));
+                            rows.Add(ApPreferenceBudgetKey(budget));
+                        }
+                        return rows;
+                    }
+                    var budgets=Budgets();string original=JsonUtility.ToJson(layout);
+                    var compounds=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
+                    Check(TryNextRefinementLogicalFrame(original,compounds,(int)old["fixedLogicalFrameAttempt"],layout,source,grid,
+                        out var actualCompounds,out error),"Actual legal frame writer: "+error);
+                    string framed=JsonUtility.ToJson(layout);
+                    Check(TryEncodeReviewedFacilityPads(framed,old,grid,actualCompounds,out string rejectedLayout,out error),
+                        "Actual old input encoder: "+error);
+                    JsonUtility.FromJsonOverwrite(rejectedLayout,layout);
+                    Check(!TryPreflightAuthoredRouteEndpoints(layout,grid,out var rejected)&&
+                        (string)rejected["rejection"]=="Native path endpoint is outside actual authored compound entry/exit",
+                        "Actual old post-pad writer must reproduce endpoint-zone inconsistency");
+                    Check(TryEncodeReviewedFacilityPads(framed,next,grid,actualCompounds,out string correctedLayout,out error),
+                        "Actual corrected input encoder: "+error);
+                    JsonUtility.FromJsonOverwrite(correctedLayout,layout);
+                    Check(TryPreflightAuthoredRouteEndpoints(layout,grid,out var accepted),"Corrected actual-writer endpoint preflight");
+                    var encodedInverse=JObject.Parse(correctedLayout);
+                    ((JArray)encodedInverse["pads"]).OfType<JObject>().Single(p=>(string)p["PadId"]=="pad.skirmish.db.staging_player")["CenterX"]=1364.0;
+                    Check(JToken.DeepEquals(JObject.Parse(rejectedLayout),encodedInverse),"Only same staging centre changes; anchors/routes/frame unchanged");
+                    Check(JToken.DeepEquals(budgets,Budgets()),"All three actual canonical budget signatures unchanged");
+                    string stable=JsonUtility.ToJson(layout);
+                    void Move(JObject data,int side,int dx,int dz,bool oneRoute=false,bool beyond=false)
+                    {
+                        var routes=((JArray)data["routes"]).OfType<JObject>().ToArray();
+                        foreach(var route in routes.Take(oneRoute?1:routes.Length))
+                        {
+                            var ids=(JArray)route["WaypointAnchorIds"];
+                            string id=(string)ids[side==0?0:ids.Count-1];
+                            var anchor=((JArray)data["anchors"]).OfType<JObject>().Single(a=>(string)a["AnchorId"]==id);
+                            float x=(float)anchor["WorldX"]+dx,z=(float)anchor["WorldZ"]+dz;
+                            if(beyond)x=1383.5f; // Corrected clipped player zone max cell642; cell643 still refuses.
+                            anchor["WorldX"]=x;anchor["WorldZ"]=z;
+                            anchor["NormalizedU"]=(x-layout.OriginX)/layout.WorldWidthMetres;
+                            anchor["NormalizedV"]=(z-layout.OriginZ)/layout.WorldDepthMetres;
+                        }
+                    }
+                    for(int side=0;side<2;side++)foreach(var delta in RepairNeighborOffsets)
+                    {
+                        var data=JObject.Parse(stable);Move(data,side,delta.x,delta.y);
+                        JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),layout);
+                        Check(TryPreflightAuthoredRouteEndpoints(layout,grid,out _),"Every bounded local endpoint offset inside unchanged shared zone cap");
+                    }
+                    var outside=JObject.Parse(stable);Move(outside,0,0,0,beyond:true);
+                    JsonUtility.FromJsonOverwrite(outside.ToString(Newtonsoft.Json.Formatting.None),layout);
+                    Check(!TryPreflightAuthoredRouteEndpoints(layout,grid,out _),"Endpoint beyond same clipped zone refuses");
+                    var mismatch=JObject.Parse(stable);Move(mismatch,0,-1,0,oneRoute:true);
+                    JsonUtility.FromJsonOverwrite(mismatch.ToString(Newtonsoft.Json.Formatting.None),layout);
+                    Check(!TryPreflightAuthoredRouteEndpoints(layout,grid,out _),"Different entry across the three routes still refuses");
+                    JsonUtility.FromJsonOverwrite(stable,layout);
+                    var replay=ApplyMpPilotEndpointRevision(definition,grid,true);
+                    Check((bool)replay["endpointPolicy"]["accepted"]&&JsonUtility.ToJson(layout)==stable,
+                        "Actual prepared branch validates without moving endpoints or pads");
+                    Debug.Log("[S050ReviewedPadEndpointControls] evidence="+new JObject{
+                        ["oldPostPadPolicy"]=rejected,["correctedPostPadPolicy"]=accepted,["correctedLayoutJson"]=stable,
+                        ["actualCompounds"]=actualCompounds,["canonicalBudgets"]=budgets,["nativeQueries"]=0,
+                        ["sourceFitCertified"]=false}.ToString(Newtonsoft.Json.Formatting.None));
+                }
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT",inputEnv);
+                Environment.SetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256",shaEnv);
+            }
+            Require(controls==30,"Exact thirty real-writer endpoint configuration controls");
+            Debug.Log("[S050ReviewedPadEndpointControls] result=Passed controls=30 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+
+        public static void RunMpGroundBaPreparedReplayControls()
+        {
+            Require(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Edit Mode only");
+            const string sourcePath="Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset";
+            Require(Hash(sourcePath)=="181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4","Actual MP source required");
+            var source=UnityEditor.AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            var grid=new GridConfig{Width=1280,Height=520,CellSize=1,Origin=new float3(740,0,260)};
+            int controls=0;
+            void Check(bool value,string message){Require(value,message);controls++;}
+            foreach(string id in new[]{"S049","S050"})
+            {
+                var mission=GroundBa10Rows().Single(m=>(string)m["catalog_id"]==id);
+                Require(TryCreateGroundBa10Candidate(mission,source,out var owner,out string error),error);
+                using(owner)
+                {
+                    var definition=owner.Definition;var layout=owner.Layout;
+                    var initial=ApplyMpPilotEndpointRevision(definition,grid);
+                    Check((bool)initial["endpointPolicy"]["accepted"],"Original four-point path still revised with actual source guards");
+                    var data=JObject.Parse(JsonUtility.ToJson(layout));
+                    var route=((JArray)data["routes"]).OfType<JObject>().Single(r=>(string)r["RouteId"]=="route.pilot.0");
+                    var ids=(JArray)route["WaypointAnchorIds"];
+                    var anchors=(JArray)data["anchors"];
+                    var a=anchors.OfType<JObject>().Single(x=>(string)x["AnchorId"]==(string)ids[0]);
+                    var b=anchors.OfType<JObject>().Single(x=>(string)x["AnchorId"]==(string)ids[1]);
+                    var steer=(JObject)b.DeepClone();steer["AnchorId"]="anchor.control.prepared.steer";
+                    steer["WorldX"]=((float)a["WorldX"]+(float)b["WorldX"])*.5f;
+                    steer["WorldZ"]=((float)a["WorldZ"]+(float)b["WorldZ"])*.5f;
+                    steer["NormalizedU"]=((float)steer["WorldX"]-layout.OriginX)/layout.WorldWidthMetres;
+                    steer["NormalizedV"]=((float)steer["WorldZ"]-layout.OriginZ)/layout.WorldDepthMetres;
+                    anchors.Add(steer);ids.Insert(1,"anchor.control.prepared.steer");
+                    JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),layout);
+                    Check(layout.Routes.Single(r=>r.RouteId=="route.pilot.0").WaypointAnchorIds.Length==5&&TryPreflightAuthoredRouteEndpoints(layout,grid,out _),
+                        "Steering-point shape preserves actual authored endpoints; no native fit claim");
+                    string stable=JsonUtility.ToJson(layout);
+                    var prepared=ApplyMpPilotEndpointRevision(definition,grid,true);
+                    Check(JsonUtility.ToJson(layout)==stable&&(bool)prepared["preparedAuthoring"]&&!(bool)prepared["revisionApplied"]&&
+                        ((JArray)prepared["changes"]).Count==0&&(bool)prepared["endpointPolicy"]["accepted"],"Prepared replay validates without any layout change");
+                    ApplyMpPilotEndpointRevision(definition,grid,true);
+                    Check(JsonUtility.ToJson(layout)==stable,"Repeated prepared replay is exactly immutable");
+                    bool refused=false;
+                    try{ApplyMpPilotEndpointRevision(definition,grid);}catch(InvalidOperationException){refused=true;}
+                    Check(refused&&JsonUtility.ToJson(layout)==stable,"Initial four-point guard remains strict on prepared shape");
+                    void RefuseLayout(Action<JObject> change)
+                    {
+                        var invalid=JObject.Parse(stable);change(invalid);
+                        JsonUtility.FromJsonOverwrite(invalid.ToString(Newtonsoft.Json.Formatting.None),layout);
+                        string before=JsonUtility.ToJson(layout);bool rejected=false;
+                        try{ApplyMpPilotEndpointRevision(definition,grid,true);}catch(InvalidOperationException){rejected=true;}
+                        finally{bool unchanged=JsonUtility.ToJson(layout)==before;JsonUtility.FromJsonOverwrite(stable,layout);Check(rejected&&unchanged,"Malformed prepared input refuses without mutation");}
+                    }
+                    RefuseLayout(x=>x["routes"][0]["WaypointAnchorIds"][0]="missing.endpoint");
+                    RefuseLayout(x=>x["routes"][0]["RouteId"]="foreign.route");
+                    var wrongGrid=grid;wrongGrid.Width--;
+                    refused=false;try{ApplyMpPilotEndpointRevision(definition,wrongGrid,true);}catch(InvalidOperationException){refused=true;}
+                    Check(refused&&JsonUtility.ToJson(layout)==stable,"Prepared grid/source guard remains exact");
+                    RefuseLayout(x=>{
+                        string endpoint=(string)x["routes"][0]["WaypointAnchorIds"][0];
+                        var anchor=((JArray)x["anchors"]).OfType<JObject>().Single(v=>(string)v["AnchorId"]==endpoint);
+                        anchor["WorldX"]=1402f;anchor["WorldZ"]=676f;
+                    });
+                    string definitionBefore=JsonUtility.ToJson(definition);
+                    try
+                    {
+                        JsonUtility.FromJsonOverwrite("{\"catalogId\":\"S026\"}",definition);
+                        refused=false;try{ApplyMpPilotEndpointRevision(definition,grid,true);}catch(InvalidOperationException){refused=true;}
+                        Check(refused&&JsonUtility.ToJson(layout)==stable,"Prepared foreign catalog refuses; no MP source-policy bypass");
+                    }
+                    finally{JsonUtility.FromJsonOverwrite(definitionBefore,definition);}
+                }
+            }
+            Require(controls==20,"Exact twenty initial/prepared route replay controls");
+            Debug.Log("[MpGroundBaPreparedReplayControls] result=Passed controls=20 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0");
+        }
 
         public static void RunMpGroundBaEndpointAdmissionControls()
         {

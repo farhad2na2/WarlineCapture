@@ -427,7 +427,15 @@ def inspect(project,spec,*,wrapper_platform='windows'):
 
 if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--project",type=Path,required=True);p.add_argument("--input",type=Path,required=True)
+    p.add_argument("--compile-admission",action="store_true",help="Read schema3 immutable attempt receipts; base inspection remains unchanged")
     a=p.parse_args()
-    try: answer=inspect(a.project,parse(_io_path(a.input).read_text(encoding="utf-8-sig")))
-    except (OSError,ValueError) as e:answer={"result":"Incomplete","errors":[str(e)],"wins":0,"queue_success_enabled":False,"qualified":False}
-    print(json.dumps(answer,indent=2));raise SystemExit(0 if answer["result"]=="NormalCompletedUnqualified" else 1)
+    try:
+        spec=parse(_io_path(a.input).read_text(encoding="utf-8-sig"))
+        if a.compile_admission:
+            from skirmish_operational_compile_connector import inspect as inspect_compile
+            answer=inspect_compile(a.project,spec)
+        else: answer=inspect(a.project,spec)
+    except (OSError,ValueError,KeyError,TypeError,IndexError,AttributeError,UnicodeError) as e:answer={"result":"Incomplete","errors":[str(e)],"wins":0,"queue_success_enabled":False,"qualified":False,"mission_ready":False,"publication_changed":False}
+    complete=answer["result"]=="NormalCompletedUnqualified"
+    compile_ok=not a.compile_admission or "compile" not in answer.get("admission",{}).get("missing",["compile"])
+    print(json.dumps(answer,indent=2));raise SystemExit(0 if complete and compile_ok else 1)

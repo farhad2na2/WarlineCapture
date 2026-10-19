@@ -1,39 +1,46 @@
-import re
-"""Read-only optional compile connector; operational outcomes and five gates stay intact."""
-from skirmish_production_operational_inspector import inspect as inspect_operational,Reader,need,digest
-from skirmish_production_queue import fingerprint
-from skirmish_native_compile_admission import admit
+"""Read-only attempt-bound compile connector; all acceptance gates stay separate.
 
-def merge_proof_pins(read,refs):
- need(isinstance(refs,list)and refs,"Complete earlier proof pins required")
- for ref in refs:
-  need(isinstance(ref,dict)and set(ref)=={"path","sha256"},"Exact earlier proof pin")
-  need(isinstance(ref["sha256"],str)and re.fullmatch("[a-f0-9]{64}",ref["sha256"]),"Exact earlier proof digest")
-  p=read.path(ref["path"])
-  need(p not in read.pins or read.pins[p]==ref["sha256"],"Conflicting earlier proof pin")
-  # read verifies literal hash and namespace now; final stable rechecks the full union.
-  need(digest(p)==ref["sha256"],"Earlier proof bytes changed")
-  read.pins[p]=ref["sha256"]
+Schema3 consumes hash-pinned immutable receipt files, not an asserted backend
+return value. Existing schema2 inputs are deliberately refused, never upgraded.
+"""
+from pathlib import Path
+from skirmish_production_operational_inspector import need
+from skirmish_compile_attempt_adapter import (checked_operational, evaluate_attempt,
+    normalized_ref, receipt_path, canonical, merge_proof_pins, ERRORS)
 
-def inspect(project,spec):
- need(isinstance(spec,dict)and set(spec)=={'schema_version','operational','compile_proof'}and type(spec['schema_version'])is int and spec['schema_version']==2,'Exact connector spec')
- result=inspect_operational(project,spec['operational'])
- if result['result']!='NormalCompletedUnqualified':return result
- read=Reader(project);receipts=[];errors=[]
- try:
-  merge_proof_pins(read,result.get('proof_pins'))
-  items=spec['operational']['attempts'];need(len(items)==len(result['attempts'])and items,'Exact actual operational attempt set')
-  for item,actual in zip(items,result['attempts']):
-   _,job=read.obj(item['job'])
-   need(fingerprint(job)==actual['job_sha256'],'Compile subject is actual inspected job')
-   receipt=admit(project,job,spec['compile_proof']);receipts.append(receipt)
-   need(receipt.get('admission')=='compile'and receipt.get('result')=='MeasuredNativeEditorCompileForExactCandidate'and receipt.get('job_sha256')==actual['job_sha256']and receipt.get('candidate_sha256')==job['candidate_sha256']and receipt.get('build_sha256')==job['build_sha256']and isinstance(actual.get('native_config_sha256'),str)and re.fullmatch('[a-f0-9]{64}',actual['native_config_sha256'])and receipt.get('native_config_sha256')==actual['native_config_sha256']and receipt.get('qualified')is False and receipt.get('queue_success_enabled')is False,'Exact per-job measured compile receipt')
-   merge_proof_pins(read,receipt.get('proof_pins'))
-  read.stable()
-  result["proof_pins"]=[dict(path=str(p),sha256=h)for p,h in read.pins.items()]
-  result['admission'].update(missing=[x for x in result['admission']['missing']if x!='compile'],compile_receipts=receipts)
- except (ValueError,OSError,KeyError,TypeError,IndexError,AttributeError)as e:
-  errors.append(str(e));result['admission']['compile_errors']=errors;result['admission']['compile_receipts']=receipts
- # No completed operational loss/draw becomes a win and no missing gate is inferred.
- result.update(qualified=False,queue_success_enabled=False,mission_ready=False,publication_changed=False)
- return result
+
+def inspect(project, spec):
+    need(isinstance(spec, dict) and set(spec) == {"schema_version", "operational", "compile_receipts"} and
+         type(spec["schema_version"]) is int and spec["schema_version"] == 3,
+         "Exact connector schema3 with immutable attempt receipt references required")
+    result, read = checked_operational(project, spec["operational"])
+    receipts = []
+    try:
+        refs = spec["compile_receipts"]
+        need(isinstance(refs, list) and len(refs) == len(result["attempts"]), "Every actual attempt needs exactly one compile receipt")
+        paths = set()
+        for item, actual, ref in zip(spec["operational"]["attempts"], result["attempts"], refs):
+            stored_ref, stored = normalized_ref(read, ref)
+            need(set(stored) == {"schema_version", "admission", "result", "subject", "compile_proof", "backend_sha256", "evidence",
+                                "qualified", "queue_success_enabled", "mission_ready", "publication_changed", "sampling_coverage_credit"},
+                 "Exact typed immutable compile receipt")
+            need(type(stored["schema_version"]) is int and stored["schema_version"] == 1, "Exact receipt schema1")
+            expected, folder = evaluate_attempt(read, item, actual, stored["compile_proof"])
+            path = Path(stored_ref["path"])
+            need(path not in paths and path == receipt_path(folder, expected), "Unique canonical per-attempt compile receipt path")
+            paths.add(path)
+            need(canonical(stored) == canonical(expected), "Stored receipt disagrees with independently validated actual subject/proof")
+            receipts.append(dict(receipt=stored_ref, subject=expected["subject"], result=expected["result"]))
+            need(expected["result"] == "MeasuredNativeEditorCompileForExactCandidate", "Compile proof remains missing or failed: " + str(expected["evidence"].get("errors")))
+        # The full batch union includes old operational pins, all receipt/proof bytes
+        # and every backend source/output pin; a later attempt cannot mutate earlier proof.
+        read.stable()
+        result["proof_pins"] = [dict(path=str(p), sha256=h) for p, h in read.pins.items()]
+        result["admission"].update(missing=[x for x in result["admission"]["missing"] if x != "compile"],
+                                   compile_receipts=receipts)
+    except ERRORS as error:
+        # Preserve operational result, wins and every other admission facet.
+        result["admission"]["compile_errors"] = [str(error)]
+        result["admission"]["compile_receipts"] = receipts
+    result.update(qualified=False, queue_success_enabled=False, mission_ready=False, publication_changed=False)
+    return result

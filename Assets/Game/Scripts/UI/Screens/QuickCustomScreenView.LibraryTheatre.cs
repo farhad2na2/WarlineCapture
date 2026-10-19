@@ -1075,8 +1075,10 @@ namespace Game.UI.Runtime
             Rect card = slot.Card;
             Rect seated = slot.Cue;
             // The seater already parked a 206×56 pill above the card or on a side shelf.
+            bool insideMap = seated.xMin >= 12f && seated.yMin >= 12f
+                && seated.xMax <= plateWidth - 12f && seated.yMax <= plateHeight - 12f;
             bool parked = seated.width + 0.5f >= 206f && seated.height + 0.5f >= height
-                && seated.yMin >= 1f
+                && insideMap
                 && (seated.yMax <= card.yMin + 1.5f
                     || seated.xMin + 1f >= card.xMax
                     || seated.xMax <= card.xMin + 1f
@@ -1099,7 +1101,7 @@ namespace Game.UI.Runtime
             }
 
             float cueTop = card.y - height;
-            if (cueTop < 1f)
+            if (cueTop < 12f)
                 return;
             float cueX = card.xMax - width;
             if (cueX > card.x)
@@ -1227,6 +1229,7 @@ namespace Game.UI.Runtime
             Debug.Log("[Territory] map=" + slot.MapId
                 + " vertices=" + slot.Hex.Length.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 + " alpha=" + TheatreSeatGeometry.TerritoryBorderAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " fill=" + TheatreSeatGeometry.TerritoryFillAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
                 + " feather=" + TheatreSeatGeometry.TerritoryFeather.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
                 + " inside=" + (inside ? "1" : "0"));
         }
@@ -1925,7 +1928,7 @@ namespace Game.UI.Runtime
             // keeps the rect strictly outside the capture test, which rejects a halo
             // that stops on the feather line.
             float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
-            float peak = selected || desert ? 0.96f : TheatreSeatGeometry.TerritoryBorderAlpha;
+            float peak = 0.96f;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color, peak);
             if (halo == null || root == null)
                 return;
@@ -1994,7 +1997,7 @@ namespace Game.UI.Runtime
             float originY = minY - pad;
             var pixels = new Color32[width * height];
             // The rim is the same hue, lifted toward white so the edge glows brighter than the fill.
-            const float rimLift = 0.34f;
+            const float rimLift = 0.62f;
             float rimR = color.r + (1f - color.r) * rimLift;
             float rimG = color.g + (1f - color.g) * rimLift;
             float rimB = color.b + (1f - color.b) * rimLift;
@@ -3817,6 +3820,21 @@ namespace Game.UI.Runtime
 
             Rect detailRect = SeatingDetailRect(frameW, frameH, fa);
             var detail = new TheatreSeatGeometry.Box(detailRect.x, detailRect.y, detailRect.width, detailRect.height);
+            Rect liveCue = PlateRect(cue.rectTransform);
+            var liveBox = new TheatreSeatGeometry.Box(liveCue.x, liveCue.y, liveCue.width, liveCue.height);
+            if (TheatreSeatGeometry.ParkedCueHolds(
+                liveBox, cards[selected], hexes, pins, cards, selected, detail, frameW, frameH, fa))
+            {
+                FitCueInsidePackedRect(cue);
+                LockCueFont(cue);
+                SyncCuePlate(parent, PlateRect(cue.rectTransform));
+                LogTheatreCue(cue);
+                return true;
+            }
+
+            var cardSnapshot = new TheatreSeatGeometry.Box[cards.Length];
+            for (int i = 0; i < cards.Length; i++)
+                cardSnapshot[i] = cards[i];
             float cardXBefore = cards[selected].X;
             float cardYBefore = cards[selected].Y;
             float cardHBefore = cards[selected].H;
@@ -3824,6 +3842,28 @@ namespace Game.UI.Runtime
                 ? TheatreSeatGeometry.TryAttachFarsiCue(frameW, frameH, pins, cards, hexes, detail, selected, out TheatreSeatGeometry.Box seated)
                     || TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out seated)
                 : TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out seated);
+            if (attached)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (hexes[i] == null || cards[i].W < 1f)
+                        continue;
+                    if (TheatreSeatGeometry.CardInsideTerritory(cards[i], hexes[i]))
+                        continue;
+                    cards[i] = cardSnapshot[i];
+                }
+
+                if (!TheatreSeatGeometry.ParkedCueHolds(
+                    seated, cards[selected], hexes, pins, cards, selected, detail, frameW, frameH, fa)
+                    && TheatreSeatGeometry.ParkedCueHolds(
+                        liveBox, cards[selected], hexes, pins, cards, selected, detail, frameW, frameH, fa))
+                {
+                    seated = liveBox;
+                    for (int i = 0; i < cards.Length; i++)
+                        cards[i] = cardSnapshot[i];
+                }
+            }
+
             if (!attached)
                 return false;
             if ((Mathf.Abs(cards[selected].X - cardXBefore) > 0.5f
@@ -4495,6 +4535,7 @@ namespace Game.UI.Runtime
                 + " alpha=" + F(alpha)
                 + " material=" + shader
                 + " coreAlpha=" + coreAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
+                + " fill=" + TheatreSeatGeometry.TerritoryFillAlpha.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
                 + " brightness=" + brightness.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)
                 + " saturation=" + saturation.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
         }
@@ -7641,7 +7682,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                case "DB": return new Color(1.00f, 0.55f, 0.06f, 1f);
+                case "DB": return new Color(1.00f, 0.40f, 0.02f, 1f);
                 default:
                     return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
             }
@@ -7655,7 +7696,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                default: return new Color(1.00f, 0.55f, 0.06f, 1f);
+                default: return new Color(1.00f, 0.40f, 0.02f, 1f);
             }
         }
 

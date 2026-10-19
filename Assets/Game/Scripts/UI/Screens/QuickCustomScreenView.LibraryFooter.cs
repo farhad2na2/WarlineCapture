@@ -91,6 +91,8 @@ namespace Game.UI.Runtime
                 }
 
                 FitFooterLabel(button, fa, buttonWidth);
+                if (button == randomizeSeedButton)
+                    FitZoomInLabel(button, buttonWidth);
                 TMP_Text footerLabel = button.GetComponentInChildren<TMP_Text>(true);
                 if (footerLabel != null)
                     footerLabel.isRightToLeftText = ContainsArabicScript(footerLabel.text);
@@ -98,6 +100,68 @@ namespace Game.UI.Runtime
                     AttachAudio(back, UIAudioEventKind.ScreenBack);
                 x += buttonWidth + gap;
             }
+        }
+
+        /// <summary>
+        /// "ZOOM IN · INDUSTRIAL BASIN" is wider than a 4:3 footer button at 20px.
+        /// One line when it fits, otherwise the two sides of the dot, at 16px or the floor.
+        /// </summary>
+        private static void FitZoomInLabel(Button button, float buttonWidth)
+        {
+            TMP_Text label = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+            if (label == null || string.IsNullOrEmpty(label.text) || label.text.IndexOf("ZOOM IN", StringComparison.Ordinal) < 0)
+                return;
+            float size = 16f;
+            string source = label.text.Replace("\n", " ");
+            int dot = source.IndexOf('·');
+            float inner = buttonWidth - 16f;
+            bool oneLine = dot > 0 && MeasureFooterLine(source, size) <= inner + 0.5f;
+            if (!oneLine && dot > 0)
+            {
+                string left = source.Substring(0, dot).Trim();
+                string right = source.Substring(dot + 1).Trim();
+                source = left + "\n" + right;
+            }
+
+            while (size > 11.1f && !FooterLinesFit(source, size, inner))
+                size -= 1f;
+            label.enableAutoSizing = false;
+            label.fontSize = size;
+            label.fontSizeMin = size;
+            label.fontSizeMax = size;
+            label.textWrappingMode = source.IndexOf('\n') >= 0 ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.maxVisibleLines = source.IndexOf('\n') >= 0 ? 2 : 1;
+            label.alignment = TextAlignmentOptions.Center;
+            label.text = source;
+        }
+
+        private static bool FooterLinesFit(string source, float size, float inner)
+        {
+            if (string.IsNullOrEmpty(source) || inner < 8f)
+                return false;
+            string[] lines = source.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (MeasureFooterLine(lines[i], size) > inner + 0.5f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static float MeasureFooterLine(string text, float size)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0f;
+            float width = 0f;
+            for (int i = 0; i < text.Length; i++)
+            {
+                float factor = text[i] <= 127 ? 0.62f : 0.95f;
+                width += size * factor;
+            }
+
+            return width;
         }
 
         private static void FitFooterLabel(Button button, bool fa, float buttonWidth)
@@ -161,7 +225,9 @@ namespace Game.UI.Runtime
             }
             else
             {
-                BindFooter(randomizeSeedButton, OnLibraryZoom, fa ? "نزدیک‌تر" : "ZOOM IN");
+                string district = MapDisplayTitle(LibraryMapId, fa);
+                string zoom = fa ? "نزدیک‌تر" : "ZOOM IN · " + district;
+                BindFooter(randomizeSeedButton, OnLibraryZoom, zoom);
                 BindFooter(launchButton, OnLibraryQuickBattle, fa ? "نبرد سریع" : "QUICK BATTLE");
             }
 

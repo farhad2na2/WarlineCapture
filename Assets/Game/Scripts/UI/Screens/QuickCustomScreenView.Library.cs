@@ -2505,7 +2505,9 @@ namespace Game.UI.Runtime
                 }
                 else if (footer && !_refittingGrid)
                 {
-                    RelaxLibraryText(text, 11f, 20f, text.rectTransform.rect.width < 150f);
+                    bool zoomDistrict = text.text != null && text.text.IndexOf("ZOOM IN", StringComparison.Ordinal) >= 0;
+                    if (!zoomDistrict)
+                        RelaxLibraryText(text, 11f, 20f, text.rectTransform.rect.width < 150f);
                     text.alignment = TextAlignmentOptions.Center;
                     text.isRightToLeftText = ContainsArabicScript(text.text);
                 }

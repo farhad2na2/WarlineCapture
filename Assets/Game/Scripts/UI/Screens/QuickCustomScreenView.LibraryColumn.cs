@@ -1135,6 +1135,32 @@ namespace Game.UI.Runtime
                 heading.fontSizeMin = 18f;
                 heading.fontSizeMax = 30f; // Game PM: larger BATTLES WON heading (was forced to 22)
                 heading.maxVisibleLines = 1;
+                // v45: in fa-IR, V3LocalizedTextBindingView.FitArabicLineBox capped the 32 px box at 32 / 1.65 = 19.4 px
+                // (autosize then settled lower), so the Farsi heading drew far smaller than en's ~25 px. Like the
+                // Recommended-next heading fix, fa is sized from en: the en pass's settled size (else what the 32 px box
+                // gives Oxanium, 32 / 1.25) x the 1.15 Farsi allowance, pinned by LibraryFixedTextSize. The rect stays put.
+                string headingSource;
+                float headingSize;
+                if (fa)
+                {
+                    float enSize = EnMedalHeadingSize > 0f ? EnMedalHeadingSize : Mathf.Min(30f, 32f / 1.25f);
+                    headingSource = EnMedalHeadingSize > 0f ? "en-cache" : "en-box";
+                    headingSize = Mathf.Min(30f, enSize * FaTierNameAllowance);
+                    PinFixedSize(heading, headingSize);
+                }
+                else
+                {
+                    heading.ForceMeshUpdate();
+                    headingSize = heading.fontSize;
+                    if (headingSize > 1f)
+                        EnMedalHeadingSize = headingSize;
+                    headingSource = "autosize";
+                }
+
+                Debug.Log("[MedalHeading] font=" + headingSize.ToString("0.0") + " source=" + headingSource +
+                    " en=" + (EnMedalHeadingSize > 0f ? EnMedalHeadingSize.ToString("0.0") : "-") +
+                    " box=" + heading.rectTransform.rect.width.ToString("0") + "x" + heading.rectTransform.rect.height.ToString("0") +
+                    " locale=" + (fa ? "fa-IR" : "en"));
             }
 
             TMP_Text summary = plate.Find("Summary")?.GetComponent<TMP_Text>();
@@ -1247,6 +1273,14 @@ namespace Game.UI.Runtime
             // the taller tile instead of leaving a gap under the grid.
             float tileHeight = Mathf.Max(baseTileHeight * scale, wanted);
             float contentTop = (tileHeight - baseTileHeight * scale) * 0.5f;
+            // v45: when the width cap stops the scale and the tile is much taller than its content (4:3: 172 px of
+            // content in a 251 px tile), spread the spare height between icon, name and count instead of centring the
+            // block. Small spares (16:9: 15 px) stay centred, so 16:9 is unchanged.
+            float spare = tileHeight - baseTileHeight * scale;
+            bool spread = spare > TheatreMedalSpreadThreshold;
+            float iconTop = spread ? spare * 0.25f : contentTop;
+            float nameTop = spread ? spare * 0.5f : contentTop;
+            float countTop = spread ? spare * 0.75f : contentTop;
             float leftover = Mathf.Max(0f, plateHeight - (top + tileRows * tileHeight + gap * (tileRows - 1) + bottomPad));
             var tierNames = new List<TMP_Text>(4);
             var tierCounts = new List<TMP_Text>(4);
@@ -1287,7 +1321,7 @@ namespace Game.UI.Runtime
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
                 iconRect.pivot = new Vector2(0.5f, 1f);
                 iconRect.sizeDelta = new Vector2(54f * scale, 54f * scale); // sprite has ~14% padding: ~46 px drawn, clears TierName at y58
-                iconRect.anchoredPosition = new Vector2(0f, -(2f * scale + contentTop));
+                iconRect.anchoredPosition = new Vector2(0f, -(2f * scale + iconTop));
                 Image iconImage = iconRect.GetComponent<Image>();
                 if (iconImage != null)
                 {
@@ -1299,7 +1333,7 @@ namespace Game.UI.Runtime
                 TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
                 if (tierName != null)
                 {
-                    PlaceTileLine(tierName.rectTransform, contentTop + 58f * scale, 28f * scale);
+                    PlaceTileLine(tierName.rectTransform, nameTop + 58f * scale, 28f * scale);
                     SetCopy(tierName, fa ? faNames[i] : en[i], (fa ? 30f : 26f) * scale, (fa ? 32f : 28f) * scale); // FA glyphs run small: higher floor
                     tierName.alignment = TextAlignmentOptions.Center;
                     tierName.isRightToLeftText = fa;
@@ -1323,7 +1357,7 @@ namespace Game.UI.Runtime
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
                 if (tierCount != null)
                 {
-                    PlaceTileLine(tierCount.rectTransform, contentTop + 84f * scale, 34f * scale);
+                    PlaceTileLine(tierCount.rectTransform, countTop + 84f * scale, 34f * scale);
                     SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), (fa ? 36f : 32f) * scale, (fa ? 40f : 38f) * scale);
                     tierCount.alignment = TextAlignmentOptions.Center;
                     tierCount.isRightToLeftText = false;
@@ -1413,12 +1447,19 @@ namespace Game.UI.Runtime
                 " enSource=" + enSource +
                 " countFont=" + countFont.ToString("0.0") + " enCount=" + enCount.ToString("0.0") +
                 " tiles=" + tileColumns + "x" + tileRows + " width=" + widthSource +
+                " spare=" + spare.ToString("0") + " content=" + (spread ? "spread" : "centred") +
                 (fa ? " faAllowance=" + FaTierNameAllowance.ToString("0.00") + " faMax=" + faMax.ToString("0.0") +
                     " nameLineH=" + (tierNames.Count > 0 ? tierNames[0].rectTransform.rect.height.ToString("0.0") : "-") : "") +
                 " plate=" + plateWidth.ToString("0") + "x" + plateHeight.ToString("0") +
                 " leftover=" + leftover.ToString("0") +
                 " locale=" + (fa ? "fa-IR" : "en"));
         }
+
+        /// <summary>v45: the en Battles-won heading's settled autosize, so fa-IR can match it.</summary>
+        private static float EnMedalHeadingSize;
+
+        /// <summary>v45: tile spare height (px) above which icon/name/count spread out instead of centring.</summary>
+        private const float TheatreMedalSpreadThreshold = 24f;
 
         /// <summary>v44: narrowest medal tile; below this the 2 x 2 grid reflows to one column of four.</summary>
         private const float TheatreMedalTileMinWidth = 96f;
@@ -1746,10 +1787,13 @@ namespace Game.UI.Runtime
 
             if (_recommendedPanel.Find("Body") is RectTransform body)
             {
+                // v45: fa-IR's taller Arabic line box put the second wrapped line on the column's bottom ornament
+                // (4:3); keep the body clear of it.
+                float bodyHeight = fa ? Mathf.Max(40f, frameHeight - RecommendedFaBottomInset) : frameHeight;
                 if (showPreview)
-                    PlaceTopLeft(body, captionX, previewY, captionW, frameHeight);
+                    PlaceTopLeft(body, captionX, previewY, captionW, bodyHeight);
                 else
-                    PlaceTopLeft(body, 8f, previewY, textWidth, frameHeight);
+                    PlaceTopLeft(body, 8f, previewY, textWidth, bodyHeight);
                 body.SetAsLastSibling();
                 TMP_Text bodyText = body.GetComponent<TMP_Text>();
                 if (bodyText != null)
@@ -1784,6 +1828,8 @@ namespace Game.UI.Runtime
         }
 
         private const float RecommendedHeadingHeight = 38f;
+        /// <summary>v45: fa-IR Recommended-next body bottom inset (clears the column's bottom ornament).</summary>
+        private const float RecommendedFaBottomInset = 12f;
         private const float RecommendedCompactHeight = 124f; // v42: heading 38 + 76px minimum thumbnail row + padding (v41b 112, was 272)
         private const float RecommendedHeadingMax = 22f;
         private const float RecommendedHeadingMin = 16f;

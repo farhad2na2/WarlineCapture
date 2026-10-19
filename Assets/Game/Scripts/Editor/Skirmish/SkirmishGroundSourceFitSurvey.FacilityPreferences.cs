@@ -382,20 +382,234 @@ namespace Game.Editor
             Debug.Log("[ReviewedBoundedRouteDeltaControls] result=Passed controls=46 nativeQueries=0 sourceFitCertified=0 missionAccepted=0");
         }
 
+
+        // Runs existing pure subject checks followed by the genuine no-World serializer producer.
+        // Context request controls remain separate until a real schema2 fixture is available.
+        public static void RunNormalOriginSubjectAndRouteSerializerControls()
+        {
+            RunNormalOriginSubjectControls();
+            RunReviewedRouteSerializerBoundaryPreflight();
+            Debug.Log("[NormalOriginSubjectAndRouteSerializer] result=Collected subjectControls=12 serializedSizes=3 worldsCreated=0 nativeQueries=0 contextControlsExecuted=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        public static void RunReviewedRouteSerializerBoundaryPreflight()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&
+                completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&normalFacilityOriginExportRequest==null&&
+                finiteFacilityOriginExportRequest==null&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv)),
+                "Idle unowned serializer preflight, before any route override");
+            string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
+            Require(id!="S049"&&id!="S050","Dedicated MP endpoint revision path is not this generic serializer boundary");
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);ValidateCompleteGroundBaAuthorityRow(authority);
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            var pin=(JObject)mission["source_candidate"];
+            var pad=ReadReviewedFacilityPadInput(mission);Require(pad!=null,"Actual reviewed frame/pad input required");
+            string output=Environment.GetEnvironmentVariable("WARLINE_REVIEWED_ROUTE_BOUNDARY_OUTPUT");
+            Require(!string.IsNullOrEmpty(output)&&System.IO.Path.IsPathRooted(output)&&
+                !output.Split(System.IO.Path.DirectorySeparatorChar,System.IO.Path.AltDirectorySeparatorChar).Contains(".."),
+                "Explicit owned serializer output required");
+            string project=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            string logs=System.IO.Path.Combine(project,"Logs","SkirmishProduction")+System.IO.Path.DirectorySeparatorChar;
+            output=System.IO.Path.GetFullPath(output);string layoutPath=output+".layout.json";
+            Require(output.StartsWith(logs,StringComparison.OrdinalIgnoreCase)&&
+                !System.IO.File.Exists(output)&&!System.IO.Directory.Exists(output)&&
+                !System.IO.File.Exists(layoutPath)&&!System.IO.Directory.Exists(layoutPath)&&
+                System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(output)),"Fresh files under existing owned Logs directory required");
+            string current=System.IO.Path.GetDirectoryName(output);
+            while(!string.Equals(current,project,StringComparison.OrdinalIgnoreCase))
+            {
+                Require(current!=null&&(System.IO.File.GetAttributes(current)&System.IO.FileAttributes.ReparsePoint)==0,
+                    "No serializer output reparse ancestry");current=System.IO.Path.GetDirectoryName(current);
+            }
+            var worlds=CaptureMaterializationWorldCensus();var defaultWorld=Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            var scenes=Ground30SceneOwnership();byte[] bytes;JObject result;
+            string sourcePath=(string)pin["sourcePath"];var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            Require(source!=null&&!EditorUtility.IsDirty(source)&&Hash(sourcePath)==(string)pin["sourceAssetSha256"]&&
+                Hash((string)pin["gridPath"])==(string)pin["gridAssetSha256"]&&
+                Hash((string)pin["surfacePath"])==(string)pin["surfaceAssetSha256"],"Actual clean pinned Campaign source/grid/surface required");
+            var metadata=source.GridMetadata;
+            var grid=new GridConfig{Width=metadata.Dimensions.x,Height=metadata.Dimensions.y,
+                CellSize=metadata.CellSize,Origin=(float3)metadata.Origin};
+            Require(grid.Width>0&&grid.Height>0&&float.IsFinite(grid.CellSize)&&grid.CellSize>0&&math.all(math.isfinite(grid.Origin))&&
+                AssetDatabase.GUIDToAssetPath(metadata.AssetGuid)==(string)pin["gridPath"],
+                "Actual pinned authored source grid metadata required; not a loaded-native-grid observation");
+            Require(TryCreateGroundBa10Candidate(authority,source,out var owner,out string error),error);
+            using(owner)
+            {
+                Require(owner.Definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault&&
+                    owner.Layout.OperationMapId==source.OperationMapId&&owner.Layout.WorldBinding.SourceHash==source.ContentHash,
+                    "Actual generic BA factory and source binding required");
+                string original=JsonUtility.ToJson(owner.Layout);
+                var compounds=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
+                Require(TryNextRefinementLogicalFrame(original,compounds,(int)pad["fixedLogicalFrameAttempt"],owner.Layout,source,grid,
+                    out var framedCompounds,out string refused),refused);
+                string afterFrame=JsonUtility.ToJson(owner.Layout);
+                Require(TryEncodeReviewedFacilityPads(afterFrame,pad,grid,framedCompounds,out string encoded,out refused),refused);
+                JsonUtility.FromJsonOverwrite(encoded,owner.Layout);
+                // This is precisely the r4 encoder's pre-route string, not JObject reserialization.
+                string boundary=JsonUtility.ToJson(owner.Layout);bytes=new System.Text.UTF8Encoding(false).GetBytes(boundary);
+                Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
+                var budgets=new JArray();
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,size,1,
+                        new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                        budget.ExactCanonicalQuantities,"Actual canonical static authoring budget required: "+string.Join(";",reasons));
+                    budgets.Add(ApPreferenceBudgetKey(budget));
+                }
+                Require(boundary==JsonUtility.ToJson(owner.Layout),"Static budget inspection must preserve exact serializer boundary");
+                result=new JObject{["schema"]=1,["scope"]="ExactFactoryFramePadSerializerBoundary_NoWorldOrPlacement",
+                    ["catalogId"]=id,["definitionId"]=owner.Definition.DefinitionId,["scenarioSetupId"]=owner.Definition.ScenarioSetupId,
+                    ["sourcePins"]=pin.DeepClone(),["sourceGridMetadata"]=new JObject{["scope"]="AuthoredPinnedMetadata_NotLoadedNativeWorld",
+                        ["width"]=grid.Width,["height"]=grid.Height,["cellSize"]=grid.CellSize,
+                        ["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z)},
+                    ["authorityIndex"]=new JObject{["path"]=All120RefinementIndex,["sha256"]=All120RefinementIndexSha},
+                    ["canonical_size_rows"]=authority["canonical_size_rows"].DeepClone(),["canonicalStaticBudgets"]=budgets,
+                    ["logicalPadInput"]=new JObject{["path"]=pad["observedInputPath"].DeepClone(),["sha256"]=pad["observedInputSha256"].DeepClone()},
+                    ["frameAttempt"]=pad["fixedLogicalFrameAttempt"].DeepClone(),["originalCompounds"]=compounds,["appliedCompounds"]=framedCompounds,
+                    ["originalFactoryLayoutSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(original)),
+                    ["postFrameLayoutSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(afterFrame)),
+                    ["layoutBeforeRouteInput"]=new JObject{["path"]=layoutPath,["sha256"]=RouteDeltaSha(bytes),["bytes"]=bytes.Length},
+                    ["worldsCreated"]=0,["nativeQueries"]=0,["placementMeasured"]=false,["sourceFitCertified"]=false,
+                    ["normalMissionReady"]=false,["missionAccepted"]=false};
+            }
+            Require(worlds.SequenceEqual(CaptureMaterializationWorldCensus())&&ReferenceEquals(defaultWorld,Unity.Entities.World.DefaultGameObjectInjectionWorld)&&
+                JToken.DeepEquals(scenes,Ground30SceneOwnership())&&!EditorUtility.IsDirty(source)&&
+                Hash(sourcePath)==(string)pin["sourceAssetSha256"]&&Hash((string)pin["gridPath"])==(string)pin["gridAssetSha256"]&&
+                Hash((string)pin["surfacePath"])==(string)pin["surfaceAssetSha256"]&&
+                Hash((string)pad["observedInputPath"])==(string)pad["observedInputSha256"],
+                "Exact World/scene/default/source/grid/surface/input restoration before output");
+            void WriteNew(string path,byte[] data)
+            {
+                string ancestor=System.IO.Path.GetDirectoryName(path);
+                while(!string.Equals(ancestor,project,StringComparison.OrdinalIgnoreCase))
+                {
+                    Require(ancestor!=null&&(System.IO.File.GetAttributes(ancestor)&System.IO.FileAttributes.ReparsePoint)==0,
+                        "Output ancestry must remain ordinary immediately before each create");ancestor=System.IO.Path.GetDirectoryName(ancestor);
+                }
+                using var stream=new System.IO.FileStream(path,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read);
+                stream.Write(data,0,data.Length);stream.Flush(true);
+            }
+            WriteNew(layoutPath,bytes);
+            Require(Hash(layoutPath)==(string)result["layoutBeforeRouteInput"]["sha256"],"Durable exact boundary bytes required");
+            WriteNew(output,new System.Text.UTF8Encoding(false).GetBytes(result.ToString(Newtonsoft.Json.Formatting.None)));
+            Debug.Log("[ReviewedRouteSerializerBoundary] result=Collected catalog="+id+
+                " sizes=3 worldsCreated=0 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0 output="+output);
+        }
+
         const string NormalOriginRequestEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST";
         const string NormalOriginRequestShaEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST_SHA256";
         static JObject normalFacilityOriginExportRequest;
 
         // This is a replay of one recorded allocator prefix, not independent capacity.
         static JToken NormalOriginJson(JToken value)=>JToken.Parse(value.ToString(Newtonsoft.Json.Formatting.None));
+
+        static bool NormalOriginOriginalFc(JObject request,JObject mission)
+            =>request?["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==2&&
+                (string)mission?["tuple"]?["army_profile"]=="G"&&(string)mission?["tuple"]?["objective_id"]=="FC";
+        static void ValidateNormalOriginFcSubject(JObject authority,JObject candidate,JObject original)
+        {
+            Require(authority!=null&&candidate!=null&&original!=null&&
+                authority["protected_binding"]?.Type==JTokenType.Null&&!ProtectedRefinementCatalog((string)authority["catalog_id"])&&
+                (string)authority["tuple"]?["army_profile"]=="G"&&(string)authority["tuple"]?["objective_id"]=="FC"&&
+                JToken.DeepEquals(candidate,original)&&candidate["publication_enabled"]?.Type==JTokenType.Boolean&&
+                !(bool)candidate["publication_enabled"],"Exact unprotected immutable ground FC subject required");
+            foreach(string key in new[]{"catalog_id","definition_id","scenario_setup_id","tuple","packet","canonical_size_rows"})
+                Require(JToken.DeepEquals(authority[key],candidate[key]),"FC normal-prefix canonical subject mismatch: "+key);
+            var canonical=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>()
+                .SingleOrDefault(r=>(string)r["catalog_id"]==(string)authority["catalog_id"]);
+            Require(canonical!=null&&JToken.DeepEquals(authority,canonical),"Exact pinned Full120 FC authority required");
+            var capabilities=canonical["required_capabilities"] as JArray;
+            Require(capabilities!=null&&capabilities.Count>0&&
+                capabilities.All(v=>v.Type==JTokenType.String&&!string.IsNullOrEmpty((string)v))&&
+                capabilities.Select(v=>(string)v).Distinct(StringComparer.Ordinal).Count()==capabilities.Count,
+                "Canonical typed nonempty unique FC capabilities required");
+            // Ground30 never authored this field. Preserve that immutable row and
+            // validate the existing Full120 overlay actually consumed by refinement.
+            var effective=All120MeasurementMission(authority,candidate);
+            Require(JToken.DeepEquals(effective["required_capabilities"],capabilities),
+                "Effective FC measurement must retain exact canonical capability order and values");
+
+        }
+        static void ResolveNormalOriginSubject(string id,out JObject authority,out JObject mission,out bool groundBa)
+        {
+            var found=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().SingleOrDefault(r=>(string)r["catalog_id"]==id);
+            Require(found!=null&&found["protected_binding"]?.Type==JTokenType.Null&&!ProtectedRefinementCatalog(id)&&
+                (string)found["tuple"]?["army_profile"]=="G","One real unprotected ground authority required");
+            groundBa=(string)found["tuple"]["objective_id"]=="BA";
+            if(groundBa)
+            {
+                authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);ValidateCompleteGroundBaAuthorityRow(authority);
+                mission=All120MeasurementMission(authority,GroundBaTemplate(authority));return;
+            }
+            Require((string)found["tuple"]["objective_id"]=="FC","Only existing BA or FC normal-prefix diagnostic subjects allowed");
+            var original=((JArray)ReadGround30Envelope()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]==id);
+            ValidateNormalOriginFcSubject(found,original,original);
+            authority=(JObject)found.DeepClone();mission=All120MeasurementMission(authority,original);
+        }
+        public static void RunNormalOriginSubjectControls()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Idle normal-origin subject controls required");
+            int controls=0;void Check(bool ok,string why){Require(ok,why);controls++;}
+            ResolveNormalOriginSubject("S008",out var fc,out var mission,out bool ba);
+            var original=((JArray)ReadGround30Envelope()["missions"]).OfType<JObject>().Single(r=>(string)r["catalog_id"]=="S008");
+            Check(!ba&&JToken.DeepEquals(mission["source_candidate"],original["source_candidate"])&&
+                JToken.DeepEquals(mission["canonical_size_rows"],original["canonical_size_rows"])&&
+                (string)mission["tuple"]["objective_id"]=="FC"&&
+                JToken.DeepEquals(mission["required_capabilities"],fc["required_capabilities"]),"Real S008 FC source/budgets/objective/capabilities retained");
+            ResolveNormalOriginSubject("S074",out var previous,out var unchanged,out ba);
+            Check(ba&&JToken.DeepEquals(unchanged,All120MeasurementMission(previous,GroundBaTemplate(previous))),"Existing BA resolution unchanged");
+            Check(completeGroundBaAuthority==null&&completeGroundBaSourcePins==null,"Resolver cannot install BA service authority");
+            void BadCandidate(Action<JObject> mutate)
+            {
+                var bad=(JObject)original.DeepClone();mutate(bad);bool refused=false;
+                try{ValidateNormalOriginFcSubject(fc,bad,original);}catch(InvalidOperationException){refused=true;}
+                Check(refused,"Immutable FC candidate mutation refused");
+            }
+            BadCandidate(v=>v["source_candidate"]["gridAssetSha256"]=new string('0',64));
+            BadCandidate(v=>v["canonical_size_rows"][0]["player_rifle"]="999");
+            BadCandidate(v=>v["tuple"]["objective_id"]="BA");BadCandidate(v=>v["publication_enabled"]=true);
+            BadCandidate(v=>v["definition_id"]="foreign");
+            var authorityMutations=new Action<JObject>[]{
+                v=>v["canonical_size_rows"][1]["enemy_tank"]="999",
+                v=>v.Remove("required_capabilities"),
+                v=>v["required_capabilities"]=JValue.CreateNull(),
+                v=>v["required_capabilities"]="ground",
+                v=>v["required_capabilities"]=new JArray(),
+                v=>v["required_capabilities"][0]="foreign",
+                v=>v["required_capabilities"]=new JArray(((JArray)v["required_capabilities"]).Reverse().Select(x=>x.DeepClone())),
+                v=>((JArray)v["required_capabilities"]).Add(v["required_capabilities"][0].DeepClone())};
+            bool denied=true;
+            foreach(var mutate in authorityMutations)
+            {
+                var foreign=(JObject)fc.DeepClone();mutate(foreign);bool refused=false;
+                try{ValidateNormalOriginFcSubject(foreign,original,original);}catch(InvalidOperationException){refused=true;}
+                denied&=refused;
+            }
+            Check(denied,"All eight canonical authority/capability mutations refused by actual subject validator");
+            foreach(string id in new[]{"S999","S001","S013"})
+            {
+                bool refused=false;try{ResolveNormalOriginSubject(id,out _,out _,out _);}catch(InvalidOperationException){refused=true;}
+                Check(refused,"Unknown/protected/other-family subject refused");
+            }
+            Require(controls==12,"Exactly12 subject controls");
+            Debug.Log("[NormalOriginSubjectControls] result=Passed controls=12 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
         static void ValidateNormalOriginRequest(JObject request,JObject mission)
         {
+            bool originalFc=NormalOriginOriginalFc(request,mission);
             string[] fields={"schema","scope","catalogId","canonicalSizes","faction","structureId","sourcePins","canonical_size_rows",
                 "logicalPadInputSha256","maximumOriginsPerRow","maximumOriginsTotal","layout","approachClearance","budgets","contexts",
                 "sourceFitCertified","normalMissionReady"};
+            if(originalFc)fields=fields.Where(f=>f!="logicalPadInputSha256").Concat(new[]{"originalAuthoringEnvelopeSha256","layoutPolicy"}).ToArray();
             Require(request!=null&&request.Properties().Select(p=>p.Name).OrderBy(p=>p,StringComparer.Ordinal)
                 .SequenceEqual(fields.OrderBy(p=>p,StringComparer.Ordinal)),"Exact normal-prefix diagnostic request shape required");
-            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==(originalFc?2:1)&&
                 (string)request["scope"]=="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit"&&
                 request["catalogId"]?.Type==JTokenType.String&&(string)request["catalogId"]==(string)mission["catalog_id"]&&
                 request["faction"]?.Type==JTokenType.Integer&&new[]{1,2}.Contains((int)request["faction"])&&
@@ -403,8 +617,13 @@ namespace Game.Editor
                 JToken.DeepEquals(request["canonicalSizes"],new JArray("Standard","War","LargeWar"))&&
                 JToken.DeepEquals(request["sourcePins"],mission["source_candidate"])&&
                 JToken.DeepEquals(request["canonical_size_rows"],mission["canonical_size_rows"])&&
-                request["logicalPadInputSha256"]?.Type==JTokenType.String&&((string)request["logicalPadInputSha256"]).Length==64&&
-                ((string)request["logicalPadInputSha256"]).All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&
+                (originalFc
+                    ?request["originalAuthoringEnvelopeSha256"]?.Type==JTokenType.String&&
+                        (string)request["originalAuthoringEnvelopeSha256"]==GroundObjective30InputsSha&&
+                        request["layoutPolicy"]?.Type==JTokenType.String&&
+                        (string)request["layoutPolicy"]=="ImmutableAuthoredOriginal_NoPadOrRouteOverride"
+                    :request["logicalPadInputSha256"]?.Type==JTokenType.String&&((string)request["logicalPadInputSha256"]).Length==64&&
+                        ((string)request["logicalPadInputSha256"]).All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f')))&&
                 request["maximumOriginsPerRow"]?.Type==JTokenType.Integer&&(int)request["maximumOriginsPerRow"]>0&&
                 (int)request["maximumOriginsPerRow"]<=100000&&
                 request["maximumOriginsTotal"]?.Type==JTokenType.Integer&&
@@ -441,8 +660,7 @@ namespace Game.Editor
         public static void RunNormalFacilityOriginRequestControls()
         {
             string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
-            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);
-            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            ResolveNormalOriginSubject(id,out _,out var mission,out _);
             string path=Environment.GetEnvironmentVariable(NormalOriginRequestEnv),digest=Environment.GetEnvironmentVariable(NormalOriginRequestShaEnv);
             RequireFiniteOriginRequestPath(path);
             Require(digest!=null&&digest.Length==64&&Hash(path)==digest&&new System.IO.FileInfo(path).Length<=1048576,
@@ -476,8 +694,13 @@ namespace Game.Editor
                 Require(refused,"Actual allocator-context mutation must refuse");controls++;
             }
             Require(Hash(path)==digest,"Actual reviewed context fixture unchanged after controls");
-            Require(controls==22,"Exactly 22 normal-prefix request/context controls");
-            Debug.Log("[NormalFacilityOriginRequestControls] result=Passed controls=22 worldQueries=0 sourceFitCertified=0 normalMissionReady=0");
+            if(NormalOriginOriginalFc(request,mission))
+            {
+                Reject(r=>r["originalAuthoringEnvelopeSha256"]=new string('0',64));
+                Reject(r=>r["layoutPolicy"]="widen-or-rewrite");
+            }
+            Require(controls==(NormalOriginOriginalFc(request,mission)?24:22),"Exact normal-prefix request/context controls");
+            Debug.Log("[NormalFacilityOriginRequestControls] result=Passed controls="+controls+" worldQueries=0 sourceFitCertified=0 normalMissionReady=0");
         }
 
         public static void RunReviewedNormalFacilityOriginExport()
@@ -490,8 +713,7 @@ namespace Game.Editor
                 !EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,
                 "Fresh exclusive idle normal-origin diagnostic scope required");
             string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
-            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);ValidateCompleteGroundBaAuthorityRow(authority);
-            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            ResolveNormalOriginSubject(id,out var authority,out var mission,out bool groundBa);
             string path=Environment.GetEnvironmentVariable(NormalOriginRequestEnv),digest=Environment.GetEnvironmentVariable(NormalOriginRequestShaEnv);
             RequireFiniteOriginRequestPath(path);
             Require(digest!=null&&digest.Length==64&&digest.All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&Hash(path)==digest,
@@ -499,18 +721,27 @@ namespace Game.Editor
             Require(new System.IO.FileInfo(path).Length<=1048576,"Bounded diagnostic request bytes required");
             var request=JObject.Parse(System.IO.File.ReadAllText(path));ValidateNormalOriginRequest(request,mission);
             var pad=ReadReviewedFacilityPadInput(mission);
-            Require(pad!=null&&(string)pad["observedInputSha256"]==(string)request["logicalPadInputSha256"]&&Hash(path)==digest,
-                "Exact reviewed logical-pad input and unchanged request required");
-            RunNormalFacilityOriginRequestControls();
+            Require((groundBa
+                    ?pad!=null&&(string)pad["observedInputSha256"]==(string)request["logicalPadInputSha256"]
+                    :pad==null&&NormalOriginOriginalFc(request,mission)&&
+                        string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
+                        string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv)))&&Hash(path)==digest,
+                "Exact BA pad input or immutable original FC layout; no FC pad/route override");
+            RunNormalOriginSubjectControls();RunNormalFacilityOriginRequestControls();
             normalFacilityOriginExportRequest=(JObject)request.DeepClone();
-            completeGroundBaAuthority=(JObject)authority.DeepClone();
-            completeGroundBaSourcePins=(JObject)mission["source_candidate"].DeepClone();
+            if(groundBa)
+            {
+                completeGroundBaAuthority=(JObject)authority.DeepClone();
+                completeGroundBaSourcePins=(JObject)mission["source_candidate"].DeepClone();
+            }
             try{RunAll120BoundedFacilityPreferences();}
             finally
             {
                 normalFacilityOriginExportRequest=null;completeGroundBaAuthority=null;completeGroundBaSourcePins=null;
-                Require(Hash(path)==digest&&Hash((string)pad["observedInputPath"])==(string)request["logicalPadInputSha256"],
-                    "Diagnostic inputs unchanged after collection");
+                Require(Hash(path)==digest&&(groundBa
+                    ?Hash((string)pad["observedInputPath"])==(string)request["logicalPadInputSha256"]
+                    :Hash(GroundObjective30Inputs)==GroundObjective30InputsSha),
+                    "Diagnostic original inputs unchanged after collection");
             }
             var output=JObject.Parse(System.IO.File.ReadAllText(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")));
             var collected=output.SelectTokens("$..normalPrefixOriginExport").OfType<JObject>().ToArray();
@@ -837,7 +1068,15 @@ namespace Game.Editor
             JObject reviewedRouteProof=null;
             int frameAttempt=logicalPadInput==null?3:(int)logicalPadInput["fixedLogicalFrameAttempt"];
             JObject compounds;string error;
-            bool frameReady=apGroundJointPreferencesRequested
+            bool originalFc=normalFacilityOriginExportRequest!=null&&NormalOriginOriginalFc(normalFacilityOriginExportRequest,mission);
+            bool frameReady;
+            if(originalFc)
+            {
+                Require(logicalPadInput==null&&reviewedRouteInput==null,"FC prefix uses exact original layout, never optional geometry hints");
+                compounds=(JObject)originalCompounds.DeepClone();error=null;frameReady=true;
+                report["immutableOriginalFcPrefixDiagnostic"]=true;
+            }
+            else frameReady=apGroundJointPreferencesRequested
                 ?TryNextApJointLogicalFrame(before,originalCompounds,owner.Layout,source,grid,out compounds,out error)
                 :TryNextRefinementLogicalFrame(before,originalCompounds,frameAttempt,owner.Layout,source,grid,out compounds,out error);
             if(!frameReady)
@@ -872,7 +1111,7 @@ namespace Game.Editor
                 report["apJointRouteSeed"]=PrepareApJointRouteSeed(owner,budgets,em,gridEntity,grid,surface);
                 if(report["apJointRouteSeed"]["selectedCandidate"]==null)return report;
             }
-            else if(reviewedRouteInput==null)
+            else if(reviewedRouteInput==null&&!originalFc)
             {
                 var routes=ProposeBoundedNativeRouteRepair(owner.Layout,budgets,baselineRoutes,em,gridEntity,grid,surface);
                 report["boundedRouteProposal"]=routes;
@@ -887,7 +1126,8 @@ namespace Game.Editor
             if(normalFacilityOriginExportRequest!=null)
             {
                 var request=normalFacilityOriginExportRequest;ValidateNormalOriginRequest(request,mission);
-                Require(logicalPadInput!=null&&(string)logicalPadInput["observedInputSha256"]==(string)request["logicalPadInputSha256"]&&
+                Require((originalFc?logicalPadInput==null:
+                    logicalPadInput!=null&&(string)logicalPadInput["observedInputSha256"]==(string)request["logicalPadInputSha256"])&&
                     JToken.DeepEquals(NormalOriginJson(JObject.Parse(JsonUtility.ToJson(owner.Layout))),NormalOriginJson(request["layout"]))&&
                     JToken.DeepEquals(NormalOriginJson(new JArray(clearance.Select(RectJson))),NormalOriginJson(request["approachClearance"]))&&
                     JToken.DeepEquals(NormalOriginJson(new JArray(budgets.Select(ApPreferenceBudgetKey))),NormalOriginJson(request["budgets"])),
@@ -900,7 +1140,7 @@ namespace Game.Editor
                         ["candidateCompoundWorldRects"]=compounds.DeepClone(),
                         ["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
                     ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                        em,gridEntity,grid,surface,row,true,true,clearance,false,serviceAuthority:owner.Definition);
+                        em,gridEntity,grid,surface,row,true,true,clearance,false,serviceAuthority:originalFc?null:owner.Definition);
                     var targets=((JArray)row["normalFacilityRelocationProposals"]).OfType<JObject>()
                         .Where(r=>r["normalPrefixFiniteOrigins"] is JObject).ToArray();
                     Require(targets.Length==1&&(bool)targets[0]["normalPrefixFiniteOrigins"]["enumerationComplete"],

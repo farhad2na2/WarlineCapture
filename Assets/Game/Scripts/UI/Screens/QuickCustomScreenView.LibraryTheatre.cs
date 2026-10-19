@@ -23,6 +23,7 @@ namespace Game.UI.Runtime
             LogTheatreBase(painted);
             map.texture = painted != null ? painted : SkirmishLibraryPreviewAssets.Placeholder();
             map.color = TheatrePaintDim();
+            BrightenTheatrePlate(map);
             Stretch(map.rectTransform);
             map.rectTransform.localScale = Vector3.one;
             ApplyTheatreCover(map, plateWidth, plateHeight);
@@ -103,6 +104,7 @@ namespace Game.UI.Runtime
                 Stretch(raw.rectTransform);
                 raw.texture = painted;
                 raw.color = TheatrePaintDim();
+                BrightenTheatrePlate(raw);
                 raw.raycastTarget = false;
                 raw.rectTransform.localScale = Vector3.one;
                 ApplyTheatreCover(raw, plateWidth, plateHeight);
@@ -212,7 +214,7 @@ namespace Game.UI.Runtime
                 theatrePaint.uvRect = new Rect(u, uv.y, w, uv.height);
             }
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
-            PlaceTheatreSurround(fit, slots, plateWidth, plateHeight);
+            // The desert plate is the map. A surround veil was dimming the roads between districts.
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
             for (int i = 0; i < slots.Count; i++)
@@ -267,69 +269,21 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Dark, desaturated veil over the plate with holes at the districts. The hex fills
-        /// multiply the bright painting through those holes; the surround stays dull.
+        /// Lifts the theatre painting toward the approved warm desert. The name strips
+        /// stay on their own dark shades, so this does not touch the 4.5 name contrast.
         /// </summary>
-        private static void PlaceTheatreSurround(Transform parent, List<TheatreZoneSlot> slots, float plateWidth, float plateHeight)
+        private static void BrightenTheatrePlate(RawImage plate)
         {
-            if (parent == null || slots == null || plateWidth < 32f || plateHeight < 32f)
+            if (plate == null)
                 return;
-            var polys = new List<Vector2[]>(slots.Count);
-            for (int i = 0; i < slots.Count; i++)
-            {
-                Vector2[] hex = slots[i].Hex;
-                if (hex != null && hex.Length >= 3)
-                    polys.Add(hex);
-            }
-
-            if (polys.Count == 0)
+            Shader shader = Shader.Find("Game/UI/TheatrePlate");
+            if (shader == null)
                 return;
-            const int maxDim = 480;
-            float scale = Mathf.Min(1f, maxDim / Mathf.Max(plateWidth, plateHeight));
-            int texW = Mathf.Max(8, Mathf.RoundToInt(plateWidth * scale));
-            int texH = Mathf.Max(8, Mathf.RoundToInt(plateHeight * scale));
-            var texture = new Texture2D(texW, texH, TextureFormat.RGBA32, false);
-            var pixels = new Color32[texW * texH];
-            // A light warm veil. The desert, roads, and river stay readable between districts.
-            var dark = new Color32(72, 48, 28, 28);
-            var clear = new Color32(0, 0, 0, 0);
-            const float hole = 6f;
-            for (int py = 0; py < texH; py++)
-            {
-                float plateY = plateHeight - (py + 0.5f) / scale;
-                int row = py * texW;
-                for (int px = 0; px < texW; px++)
-                {
-                    float plateX = (px + 0.5f) / scale;
-                    var point = new Vector2(plateX, plateY);
-                    bool open = false;
-                    for (int h = 0; h < polys.Count; h++)
-                    {
-                        Vector2[] poly = polys[h];
-                        if (PointInsidePolygon(point, poly) || DistanceToPolygonEdge(point, poly) <= hole)
-                        {
-                            open = true;
-                            break;
-                        }
-                    }
-
-                    pixels[row + px] = open ? clear : dark;
-                }
-            }
-
-            texture.SetPixels32(pixels);
-            texture.Apply(false, true);
-            texture.hideFlags = HideFlags.HideAndDontSave;
-            var image = new GameObject("TheatreSurround", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            image.transform.SetParent(parent, false);
-            Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, texW, texH), new Vector2(0.5f, 0.5f), 100f);
-            sprite.hideFlags = HideFlags.HideAndDontSave;
-            image.sprite = sprite;
-            image.type = Image.Type.Simple;
-            image.color = Color.white;
-            image.raycastTarget = false;
-            Stretch(image.rectTransform);
-            image.rectTransform.localScale = Vector3.one;
+            var mat = new Material(shader) { hideFlags = HideFlags.HideAndDontSave };
+            mat.SetFloat("_Gain", 1.12f);
+            mat.SetFloat("_Sat", 1.26f);
+            mat.SetFloat("_Lift", 0.025f);
+            plate.material = mat;
         }
 
         /// <summary>
@@ -5634,7 +5588,10 @@ namespace Game.UI.Runtime
                 return;
             string selected = CueSelectedMap(parent, cueBox.x);
             if (string.IsNullOrEmpty(selected) || parent.Find("ZoneCard_" + selected) is not RectTransform card)
+            {
+                NudgeCueOffEveryTitle(cue);
                 return;
+            }
             float cardX = card.anchoredPosition.x;
             float cardY = -card.anchoredPosition.y;
             float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
@@ -5645,7 +5602,10 @@ namespace Game.UI.Runtime
             bool covers = cueBox.xMax > cardX + 2f && cueBox.xMin < cardX + cardW - 2f
                 && cueBox.yMax > titleTop + 0.5f && cueBox.yMin < titleBottom - 0.5f;
             if (!covers)
+            {
+                NudgeCueOffEveryTitle(cue);
                 return;
+            }
             float frameH = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
             float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
             TheatreSeatGeometry.Vec2[] shape = null;
@@ -5695,8 +5655,77 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(cue.rectTransform, lifted.x, lifted.y, lifted.width, lifted.height);
                 KeepAuthoredSize(cue.rectTransform);
                 SyncCuePlate(parent, lifted);
+                NudgeCueOffEveryTitle(cue);
                 return;
             }
+
+            NudgeCueOffEveryTitle(cue);
+        }
+
+        /// <summary>
+        /// The zoom pill stays off every zone title, not only the selected card.
+        /// A shared edge is not a cover. The pill does not move onto another card.
+        /// </summary>
+        private static void NudgeCueOffEveryTitle(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return;
+            Rect cueBox = PlateRect(cue.rectTransform);
+            if (cueBox.height < 8f || cueBox.width < 8f || CueClearsEveryTitle(parent, cueBox))
+                return;
+            string selected = CueSelectedMap(parent, cueBox.x);
+            float frameH = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
+            float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
+            float[] dxs = { 0f, -24f, 24f, -48f, 48f, -72f, 72f };
+            float[] dys = { -8f, -16f, -28f, -40f, -56f, 8f, 16f, -4f };
+            for (int y = 0; y < dys.Length; y++)
+            {
+                for (int x = 0; x < dxs.Length; x++)
+                {
+                    float nx = cueBox.x + dxs[x];
+                    float ny = cueBox.y + dys[y];
+                    if (ny < 1f || nx < 1f)
+                        continue;
+                    if (nx + cueBox.width > frameW - 1f || ny + cueBox.height > frameH - 1f)
+                        continue;
+                    var spot = new Rect(nx, ny, cueBox.width, cueBox.height);
+                    if (!CueClearsEveryTitle(parent, spot))
+                        continue;
+                    if (FaCueTabBlocked(parent, spot, selected) || FaCueHitsOtherCard(parent, spot, selected))
+                        continue;
+                    PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+                    KeepAuthoredSize(cue.rectTransform);
+                    SyncCuePlate(parent, spot);
+                    return;
+                }
+            }
+        }
+
+        private static bool CueClearsEveryTitle(RectTransform parent, Rect cueBox)
+        {
+            if (parent == null)
+                return true;
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                    continue;
+                if (!card.gameObject.activeInHierarchy)
+                    continue;
+                float cardX = card.anchoredPosition.x;
+                float cardY = -card.anchoredPosition.y;
+                float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
+                float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
+                float stripH = NameStripHeight(cardH);
+                float titleTop = cardY + TitleBarInset;
+                float titleBottom = titleTop + stripH;
+                bool overTitle = cueBox.xMax > cardX + 2f && cueBox.xMin < cardX + cardW - 2f
+                    && cueBox.yMax > titleTop - 6f && cueBox.yMin < titleBottom - 0.5f;
+                if (overTitle)
+                    return false;
+            }
+
+            return true;
         }
 
         /// <summary>

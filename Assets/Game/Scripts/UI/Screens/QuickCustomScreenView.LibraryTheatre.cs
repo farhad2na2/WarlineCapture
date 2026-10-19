@@ -2684,6 +2684,11 @@ namespace Game.UI.Runtime
 
         private static CueAttemptNote _cueAttempt;
 
+        /// <summary>Stops a layout callback from starting another fa-track search while one is running.</summary>
+        private static bool _fittingCue;
+
+        private static bool _fittingZoomCue;
+
         private static void BeginCueAttempts()
         {
             _cueAttempt = default;
@@ -2743,8 +2748,13 @@ namespace Game.UI.Runtime
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
-            if (cue == null || cue.rectTransform == null)
+            if (cue == null || cue.rectTransform == null || _fittingCue)
                 return;
+            if (TheatreSeatGeometry.ZoomCueSealed && CueCycleMatches(cue))
+                return;
+            if (TheatreSeatGeometry.ZoomCueRefits >= TheatreSeatGeometry.ZoomCueRefitCap)
+                return;
+            _fittingCue = true;
             BeginCueAttempts();
             try
             {
@@ -2776,76 +2786,157 @@ namespace Game.UI.Runtime
             float seatedW = rect.sizeDelta.x > 1f ? rect.sizeDelta.x : boxW;
             float seatedH = rect.sizeDelta.y > 1f ? rect.sizeDelta.y : boxH;
             bool farsi = copyFarsi;
-            if (!farsi)
-            {
-                LogCueAttempt(cue, "en-gate", cue.fontSize, false,
-                    "latin rtl=" + (cue.isRightToLeftText ? "1" : "0")
-                    + " chars=" + source.Length.ToString(System.Globalization.CultureInfo.InvariantCulture));
-            }
-            else if (TryFitFaCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
+            float probeW = Mathf.Max(boxW, seatedW);
+            float probeH = Mathf.Max(boxH, seatedH);
+            if (!TheatreSeatGeometry.NoteZoomCueRefit())
                 return;
-            if (farsi)
+            TheatreSeatGeometry.ZoomCueStep won = default;
+            int count = TheatreSeatGeometry.WalkZoomCueAttempts(
+                farsi,
+                probeW,
+                probeH,
+                step =>
+                {
+                    if (!ProbeCueStep(cue, source, step))
+                        return false;
+                    won = step;
+                    return true;
+                },
+                out bool fits,
+                out string why,
+                out float size);
+            if (fits)
+                ApplyCueStep(cue, source, won);
+            else
+                ApplyCueFloor(cue, source, farsi ? 22f : 16f, probeW, probeH);
+            float appliedW = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
+            float appliedH = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
+            RememberCueCycle(farsi, source, appliedW, appliedH);
+            ZoomCueFitReason = string.IsNullOrEmpty(why) ? "none" : why;
+            _cueAttempt.Count = count;
+            _cueAttempt.Seen = count > 0;
+            _cueAttempt.Fits = fits;
+            _cueAttempt.Size = size;
+            _cueAttempt.Phase = why;
+            _cueAttempt.Why = TheatreSeatGeometry.ZoomCueCapped ? "cap" : why;
+            if (!fits
+                && !string.IsNullOrEmpty(TheatreSeatGeometry.ShotRatio)
+                && !string.Equals(TheatreSeatGeometry.ShotRatio, "unset", StringComparison.Ordinal))
             {
-                // A missed 22–26 fit stays at 22. The English search below stops at 16.
-                // Do not plant a newline in a tab shorter than the pair: that is the
-                // clipped "لمس برای / بزرگنمایی" line flow measured at 16:9.
-                ApplyCueFloor(cue, source, 22f, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH));
-                ZoomCueFitReason = "fa-floor";
-                LogCueAttempt(cue, "fa-floor", 22f, false, "floor");
-                return;
+                throw new InvalidOperationException(TheatreSeatGeometry.FormatZoomCueAttempt(
+                    TheatreSeatGeometry.ShotRatio,
+                    farsi ? "fa" : "en",
+                    appliedW,
+                    appliedH));
             }
-            if (TryLockEnglishCue(cue, source, Mathf.Max(boxW, seatedW), Mathf.Max(boxH, seatedH)))
-                return;
-            const float cueCeiling = 26f;
-            const float cueFloor = 16f;
-            for (float size = cueCeiling; size >= cueFloor - 0.01f; size -= 1f)
-            {
-                if (FitsNameLine(cue, source, size, boxW, -12f))
-                {
-                    cue.maxVisibleLines = 1;
-                    cue.ForceMeshUpdate();
-                    if (cue.preferredHeight <= boxH + 2f && !cue.isTextTruncated && !cue.isTextOverflowing)
-                    {
-                        ZoomCueFitReason = "fallback";
-                        LogCueAttempt(cue, "fallback", size, true, "line");
-                        return;
-                    }
-
-                    LogCueAttempt(cue, "fallback", size, false, "line-height");
-                }
-                else
-                    LogCueAttempt(cue, "fallback", size, false, "line-width");
-
-                cue.characterSpacing = 0f;
-                if (CueLabelSplits(cue, source, size, boxW, boxH))
-                {
-                    ZoomCueFitReason = "fallback";
-                    LogCueAttempt(cue, "fallback", size, true, "split");
-                    return;
-                }
-
-                cue.characterSpacing = -12f;
-                if (CueLabelSplits(cue, source, size, boxW, boxH))
-                {
-                    ZoomCueFitReason = "fallback";
-                    LogCueAttempt(cue, "fallback", size, true, "split-track");
-                    return;
-                }
-
-                LogCueAttempt(cue, "fallback", size, false, "split");
-            }
-
-            // The rect cannot hold 16px without a clip. Still lock 16. Autosize used to
-            // settle this cue at 12–13px once the longest Farsi word missed the box.
-            ApplyCueFloor(cue, source, cueFloor, boxW, boxH);
-            ZoomCueFitReason = "fallback";
-            LogCueAttempt(cue, "fallback", cueFloor, false, "floor");
             }
             finally
             {
                 SlideCueClearOfDistricts(cue);
                 FlushCueAttempt(cue);
+                _fittingCue = false;
             }
+        }
+
+        private static string _cueCycleKey;
+
+        private static string CueCycleKey(bool farsi, string source, float width, float height)
+        {
+            int w = Mathf.RoundToInt(width * 2f);
+            int h = Mathf.RoundToInt(height * 2f);
+            return (farsi ? "fa|" : "en|")
+                + w.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                + "x"
+                + h.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                + "|"
+                + (source ?? string.Empty);
+        }
+
+        private static bool CueCycleMatches(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null || string.IsNullOrEmpty(_cueCycleKey))
+                return false;
+            string source = FlattenCopy(cue.text);
+            RectTransform rect = cue.rectTransform;
+            float width = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
+            float height = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
+            return string.Equals(
+                _cueCycleKey,
+                CueCycleKey(CueCopyIsFarsi(cue, source), source, width, height),
+                StringComparison.Ordinal);
+        }
+
+        private static void RememberCueCycle(bool farsi, string source, float width, float height)
+        {
+            _cueCycleKey = CueCycleKey(farsi, source, width, height);
+        }
+
+        /// <summary>
+        /// One schedule step, measured against that step's box. The live rect stays put
+        /// until the winning step is applied, so a miss does not rebuild the layout.
+        /// </summary>
+        private static bool ProbeCueStep(TMP_Text cue, string source, TheatreSeatGeometry.ZoomCueStep step)
+        {
+            if (cue == null || step.Size < 1f || step.BoxW < 8f || step.BoxH < 8f)
+                return false;
+            string phase = step.Phase ?? string.Empty;
+            bool split = phase.IndexOf("split", StringComparison.Ordinal) >= 0
+                || phase.IndexOf("two", StringComparison.Ordinal) >= 0;
+            cue.enableAutoSizing = false;
+            cue.characterSpacing = step.Tracking;
+            cue.lineSpacing = 0f;
+            if (split)
+                return CueLabelSplits(cue, source, step.Size, step.BoxW, step.BoxH);
+            V3LocalizedTextBindingView binding = cue.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(step.Size, step.Size);
+            cue.fontSizeMin = step.Size;
+            cue.fontSizeMax = step.Size;
+            cue.fontSize = step.Size;
+            cue.text = source;
+            cue.textWrappingMode = TextWrappingModes.NoWrap;
+            cue.overflowMode = TextOverflowModes.Overflow;
+            cue.maxVisibleLines = 1;
+            cue.ForceMeshUpdate();
+            float line = MeasuredNameWidth(cue);
+            float height = cue.preferredHeight;
+            if (height < 0.5f)
+                height = cue.GetPreferredValues(source).y;
+            return line > 0.5f && line <= step.BoxW + 2f && height <= step.BoxH + 2f;
+        }
+
+        private static void ApplyCueStep(TMP_Text cue, string source, TheatreSeatGeometry.ZoomCueStep step)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            RectTransform rect = cue.rectTransform;
+            float liveW = rect.rect.width > 1f ? rect.rect.width : rect.sizeDelta.x;
+            float liveH = rect.rect.height > 1f ? rect.rect.height : rect.sizeDelta.y;
+            if (Mathf.Abs(liveW - step.BoxW) > 0.5f || Mathf.Abs(liveH - step.BoxH) > 0.5f)
+            {
+                PlaceTopLeft(rect, rect.anchoredPosition.x, -rect.anchoredPosition.y, step.BoxW, step.BoxH);
+                KeepAuthoredSize(rect);
+                MatchCueRect(rect);
+            }
+
+            HoldCueSize(cue, step.Size);
+            cue.characterSpacing = step.Tracking;
+            cue.lineSpacing = 0f;
+            string phase = step.Phase ?? string.Empty;
+            bool split = phase.IndexOf("split", StringComparison.Ordinal) >= 0
+                || phase.IndexOf("two", StringComparison.Ordinal) >= 0;
+            if (split)
+                CueLabelSplits(cue, source, step.Size, step.BoxW, step.BoxH);
+            else
+            {
+                cue.text = source;
+                cue.maxVisibleLines = 1;
+                cue.textWrappingMode = TextWrappingModes.NoWrap;
+                cue.overflowMode = TextOverflowModes.Overflow;
+                cue.ForceMeshUpdate();
+            }
+
+            ZoomCueFitReason = phase;
         }
 
         /// <summary>
@@ -2856,6 +2947,8 @@ namespace Game.UI.Runtime
         /// </summary>
         private static bool TryFitFaCue(TMP_Text cue, string source, float boxW, float boxH)
         {
+            if (!TheatreSeatGeometry.ZoomCueSearchOpen)
+                return false;
             cue.enableAutoSizing = false;
             float[] spacing = { 0f, -24f, -48f, -72f, -96f, -120f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
@@ -2967,6 +3060,8 @@ namespace Game.UI.Runtime
         /// </summary>
         private static bool TryLockEnglishCue(TMP_Text cue, string source, float boxW, float boxH)
         {
+            if (!TheatreSeatGeometry.ZoomCueSearchOpen)
+                return false;
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
@@ -3056,6 +3151,8 @@ namespace Game.UI.Runtime
         /// </summary>
         private static bool TryPlaceFaTrack(TMP_Text cue, string source)
         {
+            if (!TheatreSeatGeometry.ZoomCueSearchOpen)
+                return false;
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
@@ -3206,6 +3303,8 @@ namespace Game.UI.Runtime
         /// </summary>
         private static bool TryWidenLiveFaCue(TMP_Text cue, string source)
         {
+            if (!TheatreSeatGeometry.ZoomCueSearchOpen)
+                return false;
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
@@ -4049,7 +4148,7 @@ namespace Game.UI.Runtime
                 float boxH = cue.rectTransform.rect.height > 1f ? cue.rectTransform.rect.height : cue.rectTransform.sizeDelta.y;
                 bool clipped = cue.isTextTruncated || cue.isTextOverflowing || cue.preferredHeight > boxH + 1.5f;
                 if (clipped && CueCopyIsFarsi(cue, FlattenCopy(cue.text)))
-                    TryFitFaCue(cue, FlattenCopy(cue.text), boxW, boxH);
+                    FitCueInsidePackedRect(cue);
             }
 
             float size = CueLocalSize(cue);
@@ -4437,6 +4536,21 @@ namespace Game.UI.Runtime
         }
 
         private void FitZoomCue()
+        {
+            if (_fittingZoomCue)
+                return;
+            _fittingZoomCue = true;
+            try
+            {
+                FitZoomCueOnce();
+            }
+            finally
+            {
+                _fittingZoomCue = false;
+            }
+        }
+
+        private void FitZoomCueOnce()
         {
             FitBattleCardSubtitles();
             if (_libraryRegions == null || !_libraryRegions.gameObject.activeInHierarchy)

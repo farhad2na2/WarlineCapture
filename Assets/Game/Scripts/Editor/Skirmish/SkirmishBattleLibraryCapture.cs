@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
@@ -4022,19 +4023,24 @@ namespace Game.Editor
             float height = compositionRect != null ? compositionRect.rect.height : 0f;
             QuickCustomScreenView view = instance.GetComponent<QuickCustomScreenView>();
             bool theatre = view != null && view.Library != null && view.Library.Level != SkirmishLibraryLevel.Battlefield;
-            // Map and Grid seat the briefing on the trailing side (approved-2/3); the Theatre keeps the frame default.
             bool briefingOnLeft = theatre ? !fa : fa;
             SkirmishLibraryFrame.Resolve(
                 width,
                 height,
                 briefingOnLeft,
-                out float mapX,
-                out float mapWidth,
-                out float briefingX,
-                out float briefingWidth,
-                out float panelY,
-                out float panelHeight);
-            SkirmishLibraryFrame.CloseTheatreSeam(theatre, briefingOnLeft, ref mapX, ref mapWidth, ref briefingX, briefingWidth);
+                out float seamMapX,
+                out float seamMapWidth,
+                out float seamBriefingX,
+                out float seamBriefingWidth,
+                out float _,
+                out float _);
+            SkirmishLibraryFrame.CloseTheatreSeam(
+                theatre,
+                briefingOnLeft,
+                ref seamMapX,
+                ref seamMapWidth,
+                ref seamBriefingX,
+                seamBriefingWidth);
             MeasureSideColumns(compositionRect, map, out float leftWidth, out float rightWidth);
             float expectedWidth = TheatreSeatGeometry.ExpectedMapPanelWidth(width, leftWidth, rightWidth, theatre);
             int sideCount = (leftWidth > 1f ? 1 : 0) + (rightWidth > 1f ? 1 : 0);
@@ -4042,24 +4048,66 @@ namespace Game.Editor
             float floor = TheatreSeatGeometry.MapPanelWidthFloor(width);
             bool fourByThree = TheatreSeatGeometry.MapPanelWidthFourByThree(width, height);
             float actualWidth = map != null ? PlacedSpan(map) : 0f;
-            if (theatre && !string.Equals(TheatreSeatGeometry.ShotNotch, "notch", StringComparison.Ordinal))
+            float briefingSpan = briefing != null ? PlacedSpan(briefing) : 0f;
+            TheatreSeatGeometry.ExpectedLivePanels(
+                width,
+                height,
+                briefingSpan,
+                expectedWidth,
+                theatre,
+                briefingOnLeft,
+                out float mapX,
+                out float briefingX,
+                out float panelY,
+                out float panelHeight);
+            if (!string.Equals(TheatreSeatGeometry.ShotNotch, "notch", StringComparison.Ordinal))
             {
-                Debug.Log(TheatreSeatGeometry.FormatMapPanelWidth(
-                    TheatreSeatGeometry.ShotRatio,
-                    fa ? "fa" : "en",
-                    actualWidth,
-                    expectedWidth,
-                    leftWidth,
-                    rightWidth,
-                    gutters,
-                    floor));
+                if (theatre)
+                {
+                    Debug.Log(TheatreSeatGeometry.FormatMapPanelWidth(
+                        TheatreSeatGeometry.ShotRatio,
+                        fa ? "fa" : "en",
+                        actualWidth,
+                        expectedWidth,
+                        leftWidth,
+                        rightWidth,
+                        gutters,
+                        floor));
+                }
+
+                float actualMapX = map != null ? map.anchoredPosition.x : 0f;
+                float actualBriefingX = briefing != null ? briefing.anchoredPosition.x : 0f;
+                Debug.Log("[MapPanelRect] ratio=" + TheatreSeatGeometry.ShotRatio
+                    + " locale=" + (fa ? "fa" : "en")
+                    + " mapX=" + actualMapX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " expected=" + mapX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " briefingX=" + actualBriefingX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " expected=" + briefingX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " briefingW=" + briefingSpan.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " mapW=" + actualWidth.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " theatre=" + (theatre ? "1" : "0")
+                    + " briefingOnLeft=" + (briefingOnLeft ? "1" : "0")
+                    + " frameMapX=" + seamMapX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " frameMapW=" + seamMapWidth.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " frameBriefingX=" + seamBriefingX.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " frameBriefingW=" + seamBriefingWidth.ToString("0.0", CultureInfo.InvariantCulture));
             }
 
             if (map != null && !TheatreSeatGeometry.MapPanelWidthHolds(
                     actualWidth, expectedWidth, floor, theatre && fourByThree, out string widthFailure))
                 throw new InvalidOperationException(widthFailure);
             ExpectPanel(map, "map", mapX, -panelY, expectedWidth, panelHeight);
-            ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingWidth, panelHeight);
+            ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingSpan, panelHeight);
+            if (theatre && TheatreSeatGeometry.ZoomCueAttemptFailed)
+            {
+                string cueFailure = TheatreSeatGeometry.FormatZoomCueAttempt(
+                    TheatreSeatGeometry.ShotRatio,
+                    fa ? "fa" : "en",
+                    actualWidth,
+                    panelHeight);
+                Debug.Log(cueFailure);
+                throw new InvalidOperationException(cueFailure);
+            }
             RequireFilled(map, "map");
             RequireFilled(briefing, "briefing");
             var plate = composition.Find("OperationPreview/MapPreviewClip") as RectTransform;

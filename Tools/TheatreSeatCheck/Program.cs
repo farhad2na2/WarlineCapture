@@ -26,7 +26,8 @@ internal static class Program
             Console.WriteLine("probe wrote " + path);
             return 0;
         }
-        if (!DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds() || !ReplayFourByThreeFaIb())
+        if (!DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
+            || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill())
             failed++;
 
         RunCanvasPlates(ref seated, ref blocked, ref failed);
@@ -557,6 +558,108 @@ internal static class Program
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
             + " stored=" + storedHeight.ToString("0.0", CultureInfo.InvariantCulture));
         return ok;
+    }
+
+    /// <summary>
+    /// 16:9 Farsi with Industrial Basin selected, and the same plate with Desert Base
+    /// selected (the flow shot). The 206×56 pill has to clear Desert Base and stay off
+    /// the selected title. Both cards have to sit inside the finished coast.
+    /// </summary>
+    private static bool ReplaySixteenByNineFaPill()
+    {
+        TheatreSeatGeometry.CaptureMapSize(1920f, 1080f, out float plateW, out float plateH);
+        bool ib = ReplayFaPill("IB", plateW, plateH);
+        bool db = ReplayFaPill("DB", plateW, plateH);
+        bool ok = ib && db;
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " replay 16:9 fa pill IB=" + ib + " DB=" + db);
+        return ok;
+    }
+
+    private static bool ReplayFaPill(string selected, float plateW, float plateH)
+    {
+        bool reserve = TheatreSeatGeometry.DetailReserveOn(plateW, plateH, true, plateW >= 600f, false, selected);
+        TheatreSeatGeometry.NoteDetailReserve(reserve);
+        TheatreSeatGeometry.SetShot("16:9", "none", "fa", reserve, 1920f, 1080f, 0f, 0f, 0f, 0f);
+        TheatreSeatGeometry.ShotSelected = selected;
+        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateW, plateH, true, reserve, selected);
+        if (layout.Seats == null)
+            return false;
+        var hexes = new TheatreSeatGeometry.Vec2[layout.Seats.Length][];
+        var cards = new TheatreSeatGeometry.Box[layout.Seats.Length];
+        int own = -1;
+        int db = -1;
+        int ib = -1;
+        for (int i = 0; i < layout.Seats.Length; i++)
+        {
+            hexes[i] = layout.Seats[i].Hex;
+            cards[i] = layout.Seats[i].Card;
+            if (layout.Seats[i].MapId == selected)
+                own = i;
+            if (layout.Seats[i].MapId == "DB")
+                db = i;
+            if (layout.Seats[i].MapId == "IB")
+                ib = i;
+        }
+
+        if (own < 0 || db < 0 || ib < 0)
+            return false;
+        TheatreSeatGeometry.Box pill = layout.Cue;
+        TheatreSeatGeometry.Box card = cards[own];
+        bool parked = pill.W + 0.5f >= 206f && pill.H + 0.5f >= 56f;
+        if (!parked)
+        {
+            float width = Math.Max(206f, card.W);
+            float top = card.Y - 56f;
+            float x = card.X + card.W - width;
+            if (x > card.X)
+                x = card.X;
+            pill = new TheatreSeatGeometry.Box(x, top, width, 56f);
+        }
+
+        bool insideCard = pill.X >= card.X - 1f && pill.Y >= card.Y + 8f
+            && pill.X + pill.W <= card.X + card.W + 1f
+            && pill.Y + pill.H <= card.Y + card.H + 1f;
+        bool offTitle = insideCard
+            || pill.Y + pill.H <= card.Y + 1f
+            || pill.X >= card.X + card.W - 1f
+            || pill.X + pill.W <= card.X + 1f;
+        TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateW, plateH, true, reserve);
+        TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateW, plateH);
+        bool inside = true;
+        bool clear = true;
+        for (int i = 0; i < layout.Seats.Length; i++)
+        {
+            var others = new TheatreSeatGeometry.Vec2[hexes.Length][];
+            for (int j = 0; j < hexes.Length; j++)
+            {
+                if (j != i)
+                    others[j] = hexes[j];
+            }
+
+            TheatreSeatGeometry.Vec2[] shape = TheatreSeatGeometry.FinishTerritory(
+                hexes[i], cards[i], layout.Seats[i].Pin, layout.Seats[i].MapId, others, pill, plateW, plateH, detail, hint);
+            if ((layout.Seats[i].MapId == "DB" || layout.Seats[i].MapId == "IB")
+                && !TheatreSeatGeometry.CardInsideTerritory(cards[i], shape))
+                inside = false;
+            // A seater-parked pill has to clear its own stroke. The UI hang above a
+            // card that has no shelf is the capture-clean case: it must clear Desert
+            // Base, and it may sit on the selected district's own stroke.
+            if (i == own && (insideCard || !parked))
+                continue;
+            if (!TheatreSeatGeometry.FarsiPillClearsDistrict(pill, shape, i == own))
+                clear = false;
+        }
+
+        Console.WriteLine((inside && clear && offTitle ? "PASS" : "FAIL")
+            + " replay 16:9 fa " + selected
+            + " pill=" + pill.W.ToString("0", CultureInfo.InvariantCulture)
+            + "x" + pill.H.ToString("0", CultureInfo.InvariantCulture)
+            + " at=" + pill.X.ToString("0", CultureInfo.InvariantCulture)
+            + "," + pill.Y.ToString("0", CultureInfo.InvariantCulture)
+            + " title=" + offTitle
+            + " clear=" + clear
+            + " inside=" + inside);
+        return inside && clear && offTitle && layout.CardsLegal && layout.HexAspectLegal;
     }
 
     /// <summary>

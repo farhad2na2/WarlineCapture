@@ -1311,7 +1311,10 @@ namespace Game.UI.Runtime
                     tierName.rectTransform.offsetMax = new Vector2(-8f, tierName.rectTransform.offsetMax.y);
                     // v43c: fa-IR no longer pins its own 30 x scale. It measures the English name of the same tier in this
                     // tile (same 16..28 x scale fit as en) and is sized from that after the loop.
-                    enEquivalent = Mathf.Min(enEquivalent, TierNameFit(tierName, en[i], 16f, 28f * scale));
+                    if (!fa)
+                        enEquivalent = Mathf.Min(enEquivalent, TierNameFit(tierName, en[i], 16f, 28f * scale));
+                    else if (!EnTierNameSizeByTile.ContainsKey(TierTileKey(tileWidth, scale)))
+                        enEquivalent = Mathf.Min(enEquivalent, TierNameFitLatin(tierName, en[i], 16f, 28f * scale));
                     if (!fa && tierName.rectTransform.rect.width > 40f)
                         FitDetailLine(tierName, 16f, 28f * scale);
                     tierNames.Add(tierName);
@@ -1334,6 +1337,12 @@ namespace Game.UI.Runtime
             // wider than its tile. Noto Sans Arabic's alef/keheh stand ~64/90 em against Oxanium's 62/90 cap, but most
             // name letters sit ~45/90 em, so 1.15 keeps the ascenders <= ~1.19x the Latin cap (not oversized) while the
             // letter bodies reach ~0.83x of it.
+            string enSource = fa ? "measure" : "en";
+            if (fa && EnTierNameSizeByTile.TryGetValue(TierTileKey(tileWidth, scale), out float cachedEn))
+            {
+                enEquivalent = cachedEn;
+                enSource = "en-cache";
+            }
             float faMax = enEquivalent < float.MaxValue ? Mathf.Max(16f, enEquivalent * FaTierNameAllowance) : 28f * scale;
             if (fa)
             {
@@ -1361,7 +1370,7 @@ namespace Game.UI.Runtime
                 c.fontSizeMin = countFont;
                 c.fontSizeMax = countFont;
                 if (fa)
-                    HoldArabicLineBox(c.rectTransform, countFont);
+                    PinFixedSize(c, countFont);
                 V3LocalizedTextBindingView countBinding = c.GetComponent<V3LocalizedTextBindingView>();
                 if (countBinding != null)
                     countBinding.ConfigureFontBounds(countFont, countFont);
@@ -1380,18 +1389,21 @@ namespace Game.UI.Runtime
                 t.fontSizeMin = shared;
                 t.fontSizeMax = shared;
                 if (fa)
-                    HoldArabicLineBox(t.rectTransform, shared);
+                    PinFixedSize(t, shared);
                 V3LocalizedTextBindingView binding = t.GetComponent<V3LocalizedTextBindingView>();
                 if (binding != null)
                     binding.ConfigureFontBounds(shared, shared);
                 t.ForceMeshUpdate();
             }
 
+            if (!fa && shared < float.MaxValue && tierNames.Count > 0 && tierNames[0].rectTransform.rect.width > 40f)
+                EnTierNameSizeByTile[TierTileKey(tileWidth, scale)] = shared;
             Debug.Log("[MedalGrid] icon=" + (54f * scale).ToString("0.0") +
                 " scale=" + scale.ToString("0.00") +
                 " tile=" + tileWidth.ToString("0") + "x" + tileHeight.ToString("0") +
                 " nameFont=" + (shared < float.MaxValue ? shared.ToString("0.0") : "-") +
                 " enEquivalent=" + (enEquivalent < float.MaxValue ? enEquivalent.ToString("0.0") : "-") +
+                " enSource=" + enSource +
                 " countFont=" + countFont.ToString("0.0") + " enCount=" + enCount.ToString("0.0") +
                 " tiles=" + tileColumns + "x" + tileRows + " width=" + widthSource +
                 (fa ? " faAllowance=" + FaTierNameAllowance.ToString("0.00") + " faMax=" + faMax.ToString("0.0") +
@@ -1431,6 +1443,20 @@ namespace Game.UI.Runtime
 
         /// <summary>v43c: the single-line size <paramref name="copy"/> would get in <paramref name="text"/>'s rect, using
         /// the same rule as FitDetailLine (max, shrunk to the width minus 2 px, floored at min), without changing the text.</summary>
+        /// <summary>v44b: TierNameFit with a Latin-capable font when the label's font has no glyphs for the copy.</summary>
+        private static float TierNameFitLatin(TMP_Text text, string copy, float min, float max)
+        {
+            TMP_FontAsset own = text.font;
+            TMP_FontAsset latin = TMP_Settings.defaultFontAsset;
+            bool swap = own != null && latin != null && own != latin && !own.HasCharacters(copy);
+            if (swap)
+                text.font = latin;
+            float size = TierNameFit(text, copy, min, max);
+            if (swap)
+                text.font = own;
+            return size;
+        }
+
         private static float TierNameFit(TMP_Text text, string copy, float min, float max)
         {
             float width = text.rectTransform.rect.width;
@@ -1445,18 +1471,22 @@ namespace Game.UI.Runtime
             return max;
         }
 
-        /// <summary>v43c: V3LocalizedTextBindingView.FitArabicLineBox caps Arabic-script size at rect height / 1.65 on any
-        /// later localization pass, so the line box grows (about its centre) only as far as that size needs.</summary>
-        private static void HoldArabicLineBox(RectTransform rect, float size)
+        /// <summary>v44b: V3LocalizedTextBindingView.FitArabicLineBox caps Arabic-script size at rect height / 1.65 on a
+        /// later localization pass. Growing the line box (v43c) pushed TierName under the medal icon, so the size is held
+        /// by LibraryFixedTextSize (re-applied each frame and by LibraryPass) and the rect stays where it was.</summary>
+        private static void PinFixedSize(TMP_Text text, float size)
         {
-            float need = size * 1.65f + 0.5f;
-            float have = rect.rect.height;
-            if (have <= 0f || have >= need)
-                return;
-            float extra = (need - have) * 0.5f;
-            rect.offsetMin = new Vector2(rect.offsetMin.x, rect.offsetMin.y - extra);
-            rect.offsetMax = new Vector2(rect.offsetMax.x, rect.offsetMax.y + extra);
+            LibraryFixedTextSize held = text.GetComponent<LibraryFixedTextSize>() ?? text.gameObject.AddComponent<LibraryFixedTextSize>();
+            held.Size = size;
+            held.Apply();
         }
+
+        /// <summary>v44b: the en tier-name size last fitted per tile geometry, so fa-IR derives from the real en result.
+        /// Measuring the English names in the Farsi label used the Farsi font (no Latin glyphs) and never shrank them.</summary>
+        private static readonly Dictionary<int, float> EnTierNameSizeByTile = new Dictionary<int, float>();
+
+        private static int TierTileKey(float tileWidth, float scale) =>
+            Mathf.RoundToInt(tileWidth) * 1000 + Mathf.RoundToInt(scale * 100f);
 
         private static void PlaceTileLine(RectTransform rect, float y, float height)
         {

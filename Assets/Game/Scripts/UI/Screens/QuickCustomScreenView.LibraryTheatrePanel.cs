@@ -131,6 +131,7 @@ namespace Game.UI.Runtime
                 SetCopy(rest, fa ? SkirmishWidgetContext.ToPersianDigits(moreCopy) : moreCopy, TheatreCompactMinText, 18f);
                 rest.textWrappingMode = TextWrappingModes.NoWrap;
                 FitReadableLine(rest, thumbW, TheatreCompactMinText);
+                WireTheatreMoreTile(rest, selectedZone.MapId, fa);
             }
 
             VerifyTheatrePanelCounts(holder, selectedZone.MapId, battles.Count, "side");
@@ -231,6 +232,7 @@ namespace Game.UI.Runtime
                 SetCopy(rest, fa ? SkirmishWidgetContext.ToPersianDigits(moreCopy) : moreCopy, TheatreCompactMinText, 16f);
                 rest.textWrappingMode = TextWrappingModes.NoWrap;
                 FitReadableLine(rest, thumbW, TheatreCompactMinText);
+                WireTheatreMoreTile(rest, zone.MapId, fa);
             }
 
             VerifyTheatrePanelCounts(holder, zone.MapId, battles.Count, "compact");
@@ -435,7 +437,7 @@ namespace Game.UI.Runtime
             bool open = card.Access == SkirmishCardAccess.Playable;
                 var thumb = new GameObject("TheatreBattle_" + card.ScenarioId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 thumb.transform.SetParent(parent, false);
-                thumb.raycastTarget = false;
+                thumb.raycastTarget = true; // v47c: the tile is the tap target; its badges stay raycastTarget=false
                 Texture2D preview = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
                 PlaceCoverPreview(thumb, thumbW, thumbH, preview, dimmed || !open);
                 PlaceTopLeft(thumb.rectTransform, x, y, thumbW, thumbH);
@@ -470,6 +472,90 @@ namespace Game.UI.Runtime
                     PlaceTopLeft(lockIcon.rectTransform, (thumbW - lockSize) * 0.5f, (thumbH - lockSize) * 0.5f, lockSize, lockSize);
                     ShowIcon(lockIcon, SkirmishBattleLibraryArt.ResourceRoot + "icon_lock", Color.white);
                 }
+
+            WireTheatreBattleTile(thumb, card, open, fa);
+        }
+
+        /// <summary>
+        /// v47c (Game PM): Theatre right-panel tiles are tappable in every layout (side, compact, sheet), en and fa.
+        /// Visuals are the stock uGUI Button ColorTint on the tile image, the same pressed/highlighted treatment as the
+        /// Grid/Map battle cards (SkirmishBattleCardWidget.CardRoot). A playable tile zooms into its district's Map view
+        /// and selects the battle through the map pin's own path (OnLibraryCard, Library.cs), which raises the view
+        /// model's CardSelect sound. A locked tile keeps the pressed state, plays CardLocked (the disabled-tap sound
+        /// ApplyGridCardAccess gives locked Grid cards) through AttachAudio, and does not navigate.
+        /// </summary>
+        private void WireTheatreBattleTile(RawImage thumb, SkirmishBattleCardState card, bool open, bool fa)
+        {
+            if (thumb == null || string.IsNullOrEmpty(card.ScenarioId))
+                return;
+            Button button = thumb.gameObject.AddComponent<Button>();
+            button.targetGraphic = thumb;
+            button.transition = Selectable.Transition.ColorTint;
+            button.interactable = true; // locked tiles still show the pressed state; the click only plays the locked tap
+            string scenarioId = card.ScenarioId;
+            string mapId = card.MapId;
+            if (open)
+            {
+                AttachDisabledTap(button, UIAudioEventKind.CardLocked); // enabled click stays silent: the view model sounds it
+                button.onClick.AddListener(() => OnTheatreTileBattle(mapId, scenarioId, fa));
+            }
+            else
+            {
+                AttachAudio(button, UIAudioEventKind.CardLocked);
+                button.onClick.AddListener(() => LogTheatreGridTap("locked:" + scenarioId, mapId, fa));
+            }
+        }
+
+        /// <summary>v47c: the "+N" tile opens the Grid for that district (SelectGridBattlefield, LibraryGrid.cs).</summary>
+        private void WireTheatreMoreTile(TMP_Text rest, string mapId, bool fa)
+        {
+            if (rest == null || string.IsNullOrEmpty(mapId))
+                return;
+            rest.raycastTarget = true;
+            Button button = rest.gameObject.AddComponent<Button>();
+            button.targetGraphic = rest;
+            button.transition = Selectable.Transition.ColorTint;
+            AttachDisabledTap(button, UIAudioEventKind.ButtonDisabledTap); // enabled click: SelectGridBattlefield's TabSelect
+            string captured = mapId;
+            button.onClick.AddListener(() =>
+            {
+                LogTheatreGridTap("grid:" + captured, captured, fa);
+                SelectGridBattlefield(captured);
+            });
+        }
+
+        /// <summary>
+        /// v47c: same end state as tapping the battle's pin on that district's Map: Battlefield level, Map layout, the
+        /// district selected, then the pin's own OnLibraryCard (SelectScenarioId: view-model selection, config, Bind).
+        /// Only the pin tap's sound (CardSelect) is heard; the zoom/layout steps are muted as in SelectTheaterRegion.
+        /// </summary>
+        private void OnTheatreTileBattle(string mapId, string scenarioId, bool fa)
+        {
+            LogTheatreGridTap("battle:" + scenarioId, mapId, fa);
+            EnsureLibraryViewModel();
+            bool wired = _libraryNotificationsWired;
+            if (wired)
+                _libraryViewModel.Interaction -= OnLibraryInteraction;
+            try
+            {
+                if (_libraryViewModel.Battlefield.Layout != SkirmishBattlefieldLayout.Map)
+                    _libraryViewModel.SetLayout(SkirmishBattlefieldLayout.Map);
+                if (!string.IsNullOrEmpty(mapId))
+                    _libraryViewModel.SelectMapCollection(mapId);
+            }
+            finally
+            {
+                if (wired)
+                    _libraryViewModel.Interaction += OnLibraryInteraction;
+            }
+
+            OnLibraryCard(scenarioId);
+        }
+
+        private void LogTheatreGridTap(string target, string mapId, bool fa)
+        {
+            Debug.Log("[TheatreGridTap] target=" + target + " district=" + (mapId ?? string.Empty) +
+                " locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel());
         }
 
         /// <summary>

@@ -16,6 +16,14 @@ internal static class Program
         int seated = 0;
         int blocked = 0;
         int failed = 0;
+        if (args != null && Array.IndexOf(args, "composition") >= 0)
+        {
+            RunComposition("4:3", 1440f, 1080f, ref seated, ref blocked, ref failed);
+            Console.WriteLine("composition seated=" + seated + " failed=" + failed);
+            return failed == 0 ? 0 : 1;
+        }
+        if (args != null && Array.IndexOf(args, "frames") >= 0)
+            return DrawnFramesHold() ? 0 : 1;
         if (args != null && args.Length > 0 && args[0] == "probe")
         {
             string path = args.Length > 1 ? args[1] : "probe-territory.txt";
@@ -34,7 +42,9 @@ internal static class Program
             return FourByThreeReserveHolds() ? 0 : 1;
         if (args != null && Array.IndexOf(args, "diag") >= 0)
             return Diagnose();
-        if (!MapPanelWidthsHold() || !FourByThreeReserveHolds() || !DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
+        if (args != null && Array.IndexOf(args, "cover") >= 0)
+            return Cover();
+        if (!RectangularTerritoryRejected() || !MapPanelWidthsHold() || !FourByThreeReserveHolds() || !DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
             || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill() || !ReplayRuntimeCards()
             || !ReplayZoomInLabel())
             failed++;
@@ -66,6 +76,47 @@ internal static class Program
 
         Console.WriteLine("TheatreSeatCheck result=Failed count=" + failed + " seated=" + seated + " blocked=" + blocked);
         return 1;
+    }
+
+    private static int Cover()
+    {
+        CoverOne("16:9", 1920f, 1080f, false, false);
+        CoverOne("16:9", 1920f, 1080f, true, false);
+        CoverOne("16:9", 1920f, 1080f, false, true);
+        CoverOne("20:9", 2400f, 1080f, false, false);
+        CoverOne("20:9", 2400f, 1080f, true, false);
+        CoverOne("20:9", 2400f, 1080f, false, true);
+        CoverOne("4:3", 1440f, 1080f, false, true);
+        CoverOne("4:3", 1440f, 1080f, true, true);
+        CoverOne("4:3", 1079.6f, 844f, false, true);
+        CoverOne("4:3", 1440f, 1080f, false, false);
+        return 0;
+    }
+
+    private static void CoverOne(string ratio, float canvasWidth, float canvasHeight, bool fa, bool reserve)
+    {
+        float plateWidth;
+        float plateHeight;
+        if (Math.Abs(canvasWidth - 1079.6f) < 0.1f)
+        {
+            plateWidth = 1079.6f;
+            plateHeight = canvasHeight;
+        }
+        else
+            TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out plateWidth, out plateHeight);
+        bool four = ratio == "4:3";
+        bool applied = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, reserve, four, "DB");
+        TheatreSeatGeometry.SetShot(ratio, "none", fa ? "fa" : "en", applied, canvasWidth, canvasHeight, 0f, 0f, 0f, 0f);
+        TheatreSeatGeometry.ShotSelected = "DB";
+        TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, applied, "DB");
+        float coverage = TheatreSeatGeometry.DrawnTerritoryCoverage(layout, plateWidth, plateHeight, fa, applied);
+        TheatreSeatGeometry.Box view = TheatreSeatGeometry.OpenViewport(plateWidth, plateHeight, fa, applied);
+        Console.WriteLine(TheatreSeatGeometry.FormatTerritoryCoverage(ratio, fa ? "fa" : "en", coverage, applied)
+            + " plate=" + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
+            + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)
+            + " view=" + view.W.ToString("0.0", CultureInfo.InvariantCulture)
+            + "x" + view.H.ToString("0.0", CultureInfo.InvariantCulture)
+            + " reserve=" + (applied ? "on" : "off"));
     }
 
     private static int Diagnose()
@@ -313,7 +364,8 @@ internal static class Program
                         if (expected >= 0.2f && Math.Abs(measured / expected - 1f) > 0.101f)
                             faults.Add(ratio + " aspect " + part.Trim());
                         if (blocked < 8)
-                            faults.Add(ratio + " interior " + part.Trim());
+                            faults.Add(ratio + " interior " + (fa ? "fa " : "en ")
+                                + (reserve ? "reserve " : "open ") + "sel=" + selected[i] + " " + part.Trim());
                         if (ratio == "20:9" && part.IndexOf("AP card=", StringComparison.Ordinal) >= 0)
                         {
                             int notchAt = part.IndexOf("notchIn=", StringComparison.Ordinal);
@@ -569,8 +621,15 @@ internal static class Program
             + " sel=" + selected
             + " DB=" + card
             + " violations=" + violations.Length);
+        WriteCardCentres();
         if (!ok)
         {
+            Console.WriteLine("  why outlines=" + outlines
+                + " full=" + full
+                + " cueBound=" + cueBound
+                + " fields=" + FieldsHold(violations)
+                + " reserved=" + (TheatreSeatGeometry.TheatreDetailReserved == applied)
+                + " compact=" + TheatreSeatGeometry.CompactNote);
             int shown = Math.Min(violations.Length, 8);
             for (int i = 0; i < shown; i++)
                 Console.WriteLine("  " + violations[i]);
@@ -742,6 +801,80 @@ internal static class Program
         return ok;
     }
 
+    private static void WriteCardCentres()
+    {
+        string[] lines = TheatreSeatGeometry.CardCentreLines;
+        if (lines == null)
+            return;
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (!string.IsNullOrEmpty(lines[i]))
+                Console.WriteLine(lines[i]);
+        }
+    }
+
+    /// <summary>
+    /// A plain rectangle and an 8-point chamfer fail. The six-point desert hex passes.
+    /// The same predicate is applied to every drawn coast inside CollectViolations.
+    /// </summary>
+    private static bool RectangularTerritoryRejected()
+    {
+        var rectangle = new[]
+        {
+            new TheatreSeatGeometry.Vec2(10f, 20f),
+            new TheatreSeatGeometry.Vec2(310f, 20f),
+            new TheatreSeatGeometry.Vec2(310f, 220f),
+            new TheatreSeatGeometry.Vec2(10f, 220f)
+        };
+        const float chamfer = 4f;
+        float cx = 160f;
+        float cy = 120f;
+        float halfW = 150f;
+        float halfH = 100f;
+        var clipped = new[]
+        {
+            new TheatreSeatGeometry.Vec2(cx - halfW + chamfer, cy - halfH),
+            new TheatreSeatGeometry.Vec2(cx + halfW - chamfer, cy - halfH),
+            new TheatreSeatGeometry.Vec2(cx + halfW, cy - halfH + chamfer),
+            new TheatreSeatGeometry.Vec2(cx + halfW, cy + halfH - chamfer),
+            new TheatreSeatGeometry.Vec2(cx + halfW - chamfer, cy + halfH),
+            new TheatreSeatGeometry.Vec2(cx - halfW + chamfer, cy + halfH),
+            new TheatreSeatGeometry.Vec2(cx - halfW, cy + halfH - chamfer),
+            new TheatreSeatGeometry.Vec2(cx - halfW, cy - halfH + chamfer)
+        };
+        float dx = halfH / 1.7320508f;
+        var hex = new[]
+        {
+            new TheatreSeatGeometry.Vec2(cx - halfW + dx, cy - halfH),
+            new TheatreSeatGeometry.Vec2(cx + halfW - dx, cy - halfH),
+            new TheatreSeatGeometry.Vec2(cx + halfW, cy),
+            new TheatreSeatGeometry.Vec2(cx + halfW - dx, cy + halfH),
+            new TheatreSeatGeometry.Vec2(cx - halfW + dx, cy + halfH),
+            new TheatreSeatGeometry.Vec2(cx - halfW, cy)
+        };
+        var sampled = new TheatreSeatGeometry.Vec2[24];
+        for (int i = 0; i < 6; i++)
+            sampled[i] = new TheatreSeatGeometry.Vec2(10f + 300f * (i / 6f), 20f);
+        for (int i = 0; i < 6; i++)
+            sampled[6 + i] = new TheatreSeatGeometry.Vec2(310f, 20f + 200f * (i / 6f));
+        for (int i = 0; i < 6; i++)
+            sampled[12 + i] = new TheatreSeatGeometry.Vec2(310f - 300f * (i / 6f), 220f);
+        for (int i = 0; i < 6; i++)
+            sampled[18 + i] = new TheatreSeatGeometry.Vec2(10f, 220f - 200f * (i / 6f));
+        bool rectFails = TheatreSeatGeometry.TerritoryReadsRectangular(rectangle);
+        bool chamferFails = TheatreSeatGeometry.TerritoryReadsRectangular(clipped);
+        bool sampledFails = TheatreSeatGeometry.TerritoryReadsRectangular(sampled);
+        bool hexPasses = !TheatreSeatGeometry.TerritoryReadsRectangular(hex);
+        bool ok = rectFails && chamferFails && sampledFails && hexPasses;
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " rectangular coast"
+            + " rect=" + TheatreSeatGeometry.EdgeIrregularity(rectangle).ToString("0.000", CultureInfo.InvariantCulture)
+            + " chamfer=" + TheatreSeatGeometry.EdgeIrregularity(clipped).ToString("0.000", CultureInfo.InvariantCulture)
+            + " sampled=" + TheatreSeatGeometry.EdgeIrregularity(sampled).ToString("0.000", CultureInfo.InvariantCulture)
+            + " hex=" + TheatreSeatGeometry.EdgeIrregularity(hex).ToString("0.000", CultureInfo.InvariantCulture)
+            + " floor=" + TheatreSeatGeometry.EdgeIrregularityFloor.ToString("0.00", CultureInfo.InvariantCulture));
+        return ok;
+    }
+
     /// <summary>
     /// P1's 4:3 map is 1079.6. The detail reserve stays on for every district, and the
     /// seats still have to clear the existing area, halo gap, and cue floors.
@@ -820,6 +953,7 @@ internal static class Program
                     + " gap=" + tightPair + ":" + minGap.ToString("0.0", CultureInfo.InvariantCulture)
                     + " area=" + shortArea + ":" + minArea.ToString("0", CultureInfo.InvariantCulture)
                     + " violations=" + violations.Length);
+                WriteCardCentres();
                 if (!gaps)
                     Console.WriteLine("  " + tightPair + " halo gap " + minGap.ToString("0.0", CultureInfo.InvariantCulture) + " is " + (12f - minGap).ToString("0.0", CultureInfo.InvariantCulture) + " under 12");
                 if (!areaOk)
@@ -877,6 +1011,7 @@ internal static class Program
                 + " halo=" + other + ":" + nearest.ToString("0.0", CultureInfo.InvariantCulture)
                 + " area=" + area.ToString("0", CultureInfo.InvariantCulture)
                 + " floor=" + areaFloor.ToString("0.0", CultureInfo.InvariantCulture)
+                + " edge=" + TheatreSeatGeometry.EdgeIrregularity(layout.Seats[i].Hex).ToString("0.00", CultureInfo.InvariantCulture)
                 + " card=" + card.W.ToString("0", CultureInfo.InvariantCulture) + "x" + card.H.ToString("0", CultureInfo.InvariantCulture)
                 + " cue=" + layout.Cue.W.ToString("0", CultureInfo.InvariantCulture) + "x" + layout.Cue.H.ToString("0", CultureInfo.InvariantCulture));
         }

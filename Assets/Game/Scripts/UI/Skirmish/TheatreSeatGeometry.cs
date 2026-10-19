@@ -199,14 +199,24 @@ namespace Game.UI.Runtime
         /// in <c>PlaceLibraryChrome</c> (top 8, bottom 8). The old 128px strip band is
         /// part of the plate; a replay that still stores that short plate is reseated here.
         /// </summary>
+        public const float MapPanelOriginX = 14f;
+        public const float MapPanelGap = 14f;
+        public const float MapPanelSeam = 2f;
+        public const float MapPanelNarrowAspect = 1.55f;
+        /// <summary>ExpectPanel's existing slack. A map that misses the column formula by more than this still fails.</summary>
+        public const float MapPanelWidthTolerance = 2f;
+        /// <summary>
+        /// Minimum 4:3 map width on the 1440-wide capture. Plates of 1012 drop the drawn
+        /// halo gap below 12, and 1018 Farsi still overlaps, so the floor is 1020.
+        /// At 1020 both languages keep every district polygon at or above 40000, the halo
+        /// gap at or above 12, and the name floors. 60% of this canvas is 864 and does not.
+        /// </summary>
+        public const float MapPanelWidthFloorPx = 1020f;
+
         public static void CaptureMapSize(float canvasWidth, float canvasHeight, out float mapWidth, out float mapHeight)
         {
-            const float originX = 14f;
             const float headerBand = 108f;
             const float footerBand = 112f;
-            const float gap = 14f;
-            const float narrowAspect = 1.55f;
-            const float seam = 2f;
             const float clipTop = 8f;
             const float clipBottom = 8f;
             if (canvasWidth < 200f)
@@ -214,20 +224,113 @@ namespace Game.UI.Runtime
             if (canvasHeight < 200f)
                 canvasHeight = 941f;
             float panelHeight = Math.Max(480f, canvasHeight - headerBand - footerBand);
-            bool narrow = canvasWidth / Math.Max(1f, canvasHeight) < narrowAspect;
+            float briefingWidth = BriefingColumnWidth(canvasWidth, canvasHeight);
+            mapWidth = ExpectedMapPanelWidth(canvasWidth, briefingWidth, 0f, true);
+            mapHeight = panelHeight - clipTop - clipBottom;
+        }
+
+        /// <summary>
+        /// Briefing column the shared frame places when the live rects are not measured yet.
+        /// A squarer canvas uses the narrower share. The 480px map minimum can shrink the column.
+        /// </summary>
+        public static float BriefingColumnWidth(float safeWidth, float safeHeight)
+        {
+            if (safeWidth < 200f)
+                safeWidth = 1672f;
+            if (safeHeight < 200f)
+                safeHeight = 941f;
+            bool narrow = safeWidth / Math.Max(1f, safeHeight) < MapPanelNarrowAspect;
             float share = narrow ? 0.26f : 0.32f;
             float minBriefing = narrow ? 280f : 460f;
             float maxBriefing = narrow ? 380f : 600f;
-            float briefingWidth = Clamp(canvasWidth * share, minBriefing, maxBriefing);
-            mapWidth = canvasWidth - originX * 2f - gap - briefingWidth;
-            if (mapWidth < 480f)
+            float briefing = Clamp(safeWidth * share, minBriefing, maxBriefing);
+            float map = safeWidth - MapPanelOriginX * 2f - MapPanelGap - briefing;
+            if (map < 480f)
+                briefing = Math.Max(240f, safeWidth - MapPanelOriginX * 2f - MapPanelGap - 480f);
+            return briefing;
+        }
+
+        /// <summary>
+        /// Side margins plus one gap per column. Theatre draws the map across one gap and the 2px seam,
+        /// so that overlap is not part of the gutter.
+        /// </summary>
+        public static float MapPanelGutters(int sideCount, bool theatre)
+        {
+            if (sideCount < 0)
+                sideCount = 0;
+            float gutters = MapPanelOriginX * 2f + MapPanelGap * sideCount;
+            if (theatre && sideCount > 0)
+                gutters -= MapPanelGap + MapPanelSeam;
+            return gutters;
+        }
+
+        /// <summary>
+        /// Map panel width implied by the safe width, the measured columns, and the gutters.
+        /// A missing side is zero. This is the capture expected width, not a ratio constant.
+        /// </summary>
+        public static float ExpectedMapPanelWidth(float safeWidth, float leftWidth, float rightWidth, bool theatre)
+        {
+            float left = leftWidth > 1f ? leftWidth : 0f;
+            float right = rightWidth > 1f ? rightWidth : 0f;
+            int sides = (left > 1f ? 1 : 0) + (right > 1f ? 1 : 0);
+            return safeWidth - left - right - MapPanelGutters(sides, theatre);
+        }
+
+        public static float MapPanelWidthFloor(float safeWidth)
+        {
+            if (safeWidth <= 0f)
+                return 0f;
+            return Math.Min(safeWidth, MapPanelWidthFloorPx);
+        }
+
+        public static bool MapPanelWidthFourByThree(float safeWidth, float safeHeight)
+        {
+            if (safeHeight < 1f)
+                return false;
+            return safeWidth / safeHeight < MapPanelNarrowAspect;
+        }
+
+        /// <summary>
+        /// True when the map width is the column formula, and a 4:3 map is still at or above the floor.
+        /// </summary>
+        public static bool MapPanelWidthHolds(float actual, float expected, float floor, bool enforceFloor, out string failure)
+        {
+            failure = null;
+            if (Math.Abs(actual - expected) > MapPanelWidthTolerance)
             {
-                mapWidth = 480f;
-                briefingWidth = Math.Max(240f, canvasWidth - originX * 2f - gap - mapWidth);
+                failure = "Map panel width is " + actual.ToString("0.#", CultureInfo.InvariantCulture)
+                    + "; expected " + expected.ToString("0.#", CultureInfo.InvariantCulture) + ".";
+                return false;
             }
 
-            mapWidth += gap + seam;
-            mapHeight = panelHeight - clipTop - clipBottom;
+            if (enforceFloor && actual + 0.01f < floor)
+            {
+                failure = "Map panel width is " + actual.ToString("0.#", CultureInfo.InvariantCulture)
+                    + "; floor is " + floor.ToString("0.#", CultureInfo.InvariantCulture) + ".";
+                return false;
+            }
+
+            return true;
+        }
+
+        public static string FormatMapPanelWidth(
+            string ratio,
+            string locale,
+            float actual,
+            float expected,
+            float left,
+            float right,
+            float gutters,
+            float floor)
+        {
+            return "[MapPanelWidth] ratio=" + ratio
+                + " actual=" + actual.ToString("0.0", CultureInfo.InvariantCulture)
+                + " expected=" + expected.ToString("0.0", CultureInfo.InvariantCulture)
+                + " left=" + left.ToString("0.0", CultureInfo.InvariantCulture)
+                + " right=" + right.ToString("0.0", CultureInfo.InvariantCulture)
+                + " gutters=" + gutters.ToString("0.0", CultureInfo.InvariantCulture)
+                + " floor=" + floor.ToString("0.0", CultureInfo.InvariantCulture)
+                + " locale=" + locale;
         }
 
         /// <summary>
@@ -640,8 +743,10 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Detail reserve. A 4:3 canvas leaves it off when the open viewport is under <see cref="ReserveViewportFloor"/>.
-        /// Any ratio also leaves it off when the reserved plate cannot hold full portraits
+        /// Detail reserve. A 4:3 plate that clears <see cref="ReserveViewportFloor"/> keeps the
+        /// panel for every district. The full-portrait gate no longer turns City Crossroads
+        /// or Mountain Pass off. A 4:3 viewport under that floor still leaves the panel off.
+        /// Wider ratios still drop it when the reserved plate cannot hold full portraits
         /// (at least <see cref="FullPortraitMinWidth"/> by <see cref="FullPortraitMinHeight"/>, names fitting, no word breaks).
         /// The detail panel is then a bottom sheet and the seats use the full plate.
         /// </summary>
@@ -655,10 +760,13 @@ namespace Game.UI.Runtime
         {
             if (!requested || plateWidth < 600f || plateHeight < 2f)
                 return false;
-            Box view = OpenViewport(plateWidth, plateHeight, fa, true);
-            bool holds = view.W + 0.5f >= ReserveViewportFloor.X && view.H + 0.5f >= ReserveViewportFloor.Y;
-            if (!holds && fourByThree)
-                return false;
+            if (fourByThree)
+            {
+                Box view = OpenViewport(plateWidth, plateHeight, fa, true);
+                bool holds = view.W + 0.5f >= ReserveViewportFloor.X && view.H + 0.5f >= ReserveViewportFloor.Y;
+                return holds;
+            }
+
             if (string.IsNullOrEmpty(selected))
                 selected = "DB";
             return FullPortraitSeatsHold(plateWidth, plateHeight, fa, selected);
@@ -9280,6 +9388,51 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// 4:3 reserve plates still have to keep a 12px drawn halo. Slide the tightest
+        /// pair apart, and stop when a pair cannot move without breaking a floor.
+        /// </summary>
+        private static void OpenReserveHaloGaps(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null)
+                return;
+            float need = GlowEdgeNeed();
+            for (int pass = 0; pass < hexes.Length; pass++)
+            {
+                int tightA = -1;
+                int tightB = -1;
+                float worst = float.MaxValue;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    for (int j = i + 1; j < hexes.Length; j++)
+                    {
+                        float gap = DistrictEdgeGap(hexes[i], hexes[j]);
+                        if (gap + 0.05f >= need)
+                            continue;
+                        if (gap >= worst)
+                            continue;
+                        worst = gap;
+                        tightA = i;
+                        tightB = j;
+                    }
+                }
+
+                if (tightA < 0)
+                    return;
+                if (!SlidePairApart(
+                    hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, selected, tightA, tightB, need))
+                    return;
+            }
+        }
+
+        /// <summary>
         /// Slides one district of a tight pair into the open side. A solved pair may
         /// shrink until it is still 12px; an unsolved pair may not get tighter.
         /// </summary>
@@ -11992,6 +12145,17 @@ namespace Game.UI.Runtime
             {
                 EnlargeBoardDistricts(hexes, pins, placed, cue, selected, detail, plateWidth, plateHeight, fa);
                 if (cue.W > 1f)
+                    cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
+            }
+
+            bool narrowReserve = reserveOn && plateHeight > 2f && plateWidth / plateHeight < 1.45f;
+            if (narrowReserve && placed != null && detail.W > 1f)
+            {
+                ClearDetailGlow(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
+                OpenReserveHaloGaps(hexes, pins, placed, ref cue, detail, plateWidth, plateHeight, selected);
+                if (cue.W < 1f && TryAttachCueToCard(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue))
+                    cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
+                else if (cue.W > 1f)
                     cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
             }
 

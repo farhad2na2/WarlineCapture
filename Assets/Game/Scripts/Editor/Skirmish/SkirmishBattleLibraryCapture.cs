@@ -4035,7 +4035,30 @@ namespace Game.Editor
                 out float panelY,
                 out float panelHeight);
             SkirmishLibraryFrame.CloseTheatreSeam(theatre, briefingOnLeft, ref mapX, ref mapWidth, ref briefingX, briefingWidth);
-            ExpectPanel(map, "map", mapX, -panelY, mapWidth, panelHeight);
+            MeasureSideColumns(compositionRect, map, out float leftWidth, out float rightWidth);
+            float expectedWidth = TheatreSeatGeometry.ExpectedMapPanelWidth(width, leftWidth, rightWidth, theatre);
+            int sideCount = (leftWidth > 1f ? 1 : 0) + (rightWidth > 1f ? 1 : 0);
+            float gutters = TheatreSeatGeometry.MapPanelGutters(sideCount, theatre);
+            float floor = TheatreSeatGeometry.MapPanelWidthFloor(width);
+            bool fourByThree = TheatreSeatGeometry.MapPanelWidthFourByThree(width, height);
+            float actualWidth = map != null ? PlacedSpan(map) : 0f;
+            if (theatre && !string.Equals(TheatreSeatGeometry.ShotNotch, "notch", StringComparison.Ordinal))
+            {
+                Debug.Log(TheatreSeatGeometry.FormatMapPanelWidth(
+                    TheatreSeatGeometry.ShotRatio,
+                    fa ? "fa" : "en",
+                    actualWidth,
+                    expectedWidth,
+                    leftWidth,
+                    rightWidth,
+                    gutters,
+                    floor));
+            }
+
+            if (map != null && !TheatreSeatGeometry.MapPanelWidthHolds(
+                    actualWidth, expectedWidth, floor, theatre && fourByThree, out string widthFailure))
+                throw new InvalidOperationException(widthFailure);
+            ExpectPanel(map, "map", mapX, -panelY, expectedWidth, panelHeight);
             ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingWidth, panelHeight);
             RequireFilled(map, "map");
             RequireFilled(briefing, "briefing");
@@ -4045,6 +4068,59 @@ namespace Game.Editor
                 LayoutRebuilder.ForceRebuildLayoutImmediate(column);
             RequireFilled(plate, "map plate");
             RequireFilled(column, "briefing column");
+        }
+
+        /// <summary>
+        /// Left and right column widths from the placed panels. The briefing is one side.
+        /// A second tall panel on the other side is the detail column. An absent side is zero.
+        /// </summary>
+        private static void MeasureSideColumns(RectTransform composition, RectTransform map, out float left, out float right)
+        {
+            left = 0f;
+            right = 0f;
+            if (composition == null || map == null)
+                return;
+            float mapWidth = PlacedSpan(map);
+            float mapLeft = map.anchoredPosition.x;
+            float mapCentre = mapLeft + mapWidth * 0.5f;
+            for (int i = 0; i < composition.childCount; i++)
+            {
+                var child = composition.GetChild(i) as RectTransform;
+                if (child == null || child == map || !child.gameObject.activeInHierarchy)
+                    continue;
+                string name = child.name ?? string.Empty;
+                if (name.IndexOf("Shadow", StringComparison.Ordinal) >= 0 || name == "LibraryFilters")
+                    continue;
+                float span = PlacedSpan(child);
+                float height = child.rect.height > 1f ? child.rect.height : child.sizeDelta.y;
+                bool briefing = name == "BaseAssaultRules";
+                bool detail = name.IndexOf("Detail", StringComparison.Ordinal) >= 0
+                    || name.IndexOf("Objective", StringComparison.Ordinal) >= 0
+                    || name.IndexOf("District", StringComparison.Ordinal) >= 0;
+                if (!briefing && !detail)
+                    continue;
+                if (!briefing && (span < 160f || height < 400f))
+                    continue;
+                if (span < 1f)
+                    continue;
+                float centre = child.anchoredPosition.x + span * 0.5f;
+                if (centre < mapCentre)
+                    left = Mathf.Max(left, span);
+                else
+                    right = Mathf.Max(right, span);
+            }
+        }
+
+        private static float PlacedSpan(RectTransform rect)
+        {
+            if (rect == null)
+                return 0f;
+            bool point = Mathf.Abs(rect.anchorMax.x - rect.anchorMin.x) < 0.01f;
+            if (point && rect.sizeDelta.x > 1f)
+                return rect.sizeDelta.x;
+            if (rect.rect.width > 1f)
+                return rect.rect.width;
+            return Mathf.Max(0f, rect.sizeDelta.x);
         }
 
         private static void ExpectPanel(RectTransform rect, string label, float x, float y, float width, float height)

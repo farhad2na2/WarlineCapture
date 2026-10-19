@@ -1343,6 +1343,13 @@ namespace Game.UI.Runtime
                 enEquivalent = cachedEn;
                 enSource = "en-cache";
             }
+            else if (fa && TryNearestEnTierSize(tileWidth, scale, out float nearEn))
+            {
+                // v44c: the first pass (column height not settled, e.g. 536x584 at scale 1.97) has no exact key; the
+                // Latin measure in the Farsi label never shrank (fa 63.6 vs en 36), so use the same-width en fit.
+                enEquivalent = Mathf.Min(enEquivalent, nearEn);
+                enSource = "en-near";
+            }
             float faMax = enEquivalent < float.MaxValue ? Mathf.Max(16f, enEquivalent * FaTierNameAllowance) : 28f * scale;
             if (fa)
             {
@@ -1484,6 +1491,28 @@ namespace Game.UI.Runtime
         /// <summary>v44b: the en tier-name size last fitted per tile geometry, so fa-IR derives from the real en result.
         /// Measuring the English names in the Farsi label used the Farsi font (no Latin glyphs) and never shrank them.</summary>
         private static readonly Dictionary<int, float> EnTierNameSizeByTile = new Dictionary<int, float>();
+
+        /// <summary>v44c: en fit for the same tile width at another scale, rescaled (the fit is linear in scale).</summary>
+        private static bool TryNearestEnTierSize(float tileWidth, float scale, out float size)
+        {
+            size = 0f;
+            int width = Mathf.RoundToInt(tileWidth);
+            float best = float.MaxValue;
+            foreach (KeyValuePair<int, float> pair in EnTierNameSizeByTile)
+            {
+                if (pair.Key / 1000 != width)
+                    continue;
+                float cachedScale = (pair.Key % 1000) / 100f;
+                float distance = Mathf.Abs(cachedScale - scale);
+                if (cachedScale > 0f && distance < best)
+                {
+                    best = distance;
+                    size = Mathf.Max(16f, pair.Value * scale / cachedScale);
+                }
+            }
+
+            return best < float.MaxValue;
+        }
 
         private static int TierTileKey(float tileWidth, float scale) =>
             Mathf.RoundToInt(tileWidth) * 1000 + Mathf.RoundToInt(scale * 100f);

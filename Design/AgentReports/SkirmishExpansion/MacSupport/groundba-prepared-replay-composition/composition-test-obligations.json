@@ -1,0 +1,69 @@
+{
+  "state": "RequiredFutureChecks_NotExecuted",
+  "generic_controls_provided": 47,
+  "generic_controls_executed": false,
+  "Windows_controls_reported": 20,
+  "Windows_controls_source_unavailable": true,
+  "obligations": [
+    {
+      "id": "provenance",
+      "requirement": "Require exact Windows committed MP/Sim raw hashes and dependency closure; test entry and marker must come from actual source, never guess.",
+      "result": "Pending"
+    },
+    {
+      "id": "source_api",
+      "requirement": "Both optional default=false signature and prepared flag forwarding must match reviewed Windows source; inspect every existing callsite and argument binding.",
+      "result": "Pending"
+    },
+    {
+      "id": "unprepared_regression",
+      "requirement": "Original MP/S049 endpoint admission and four-point provisional controls remain distinct. Verify idempotence and all original negative source/grid/route/endpoint conditions.",
+      "result": "Pending"
+    },
+    {
+      "id": "prepared_nonmutation",
+      "requirement": "Windows20 must include actual valid repaired-route replay and unchanged full layout before/after, including anchors/routes/pads/bindings; passing preflight must not revise endpoints or steering waypoints.",
+      "result": "Pending"
+    },
+    {
+      "id": "prepared_rejections",
+      "requirement": "Verify rejected prepared inputs also leave layout unchanged. Retain malformed/foreign endpoint, source/grid, coordinate/projection/envelope and shared endpoint-policy rejection controls. Confirm actual20 coverage against source; add missing cases only by separate reviewed proposal.",
+      "result": "Pending"
+    },
+    {
+      "id": "receipt",
+      "requirement": "Prepared scope exact; geometry/sourcefit/mission credit false. Preserve default endpoint revision receipt and later actual native geometry gates.",
+      "result": "Pending"
+    },
+    {
+      "id": "generic47",
+      "requirement": "Execute all47 proposed generic tuple/signature controls only after owning compile. Preserve independently compiled expected signatures before allocator and exact role/prefab/supply/structure comparisons; same-count mutations still refuse.",
+      "result": "Pending"
+    },
+    {
+      "id": "scope_isolation",
+      "requirement": "Generic S026 does not set MP flag or call MP geometry; S049/S050 remain dedicated. Exception paths clear context and prepared flag does not leak into other runs.",
+      "result": "Pending"
+    },
+    {
+      "id": "service_routes",
+      "requirement": "Retain nine exposed profiles, actual grid pins, exact canonical route coverage, all-profile independence, every member service ingress/return and strict three-size normal compiler predicates.",
+      "result": "Pending"
+    },
+    {
+      "id": "compiler_consumption",
+      "requirement": "For composed epoch require actual owning assembly RSP and four exact file inputs/reference closure, fresh compiler result, unchanged Runtime source and complete source/build provenance. Source/API PASS, old47 proposal and failed Windows64818 are not composed compile proof.",
+      "result": "Pending"
+    },
+    {
+      "id": "execution_reporting",
+      "requirement": "Record actual47 and actual20 results with full logs and their real markers separately; neither a combined67 claim nor a pass is allowed until actual execution evidence exists. Preserve errors, timeout, missing markers and prior failed compilation.",
+      "result": "Pending"
+    },
+    {
+      "id": "acceptance",
+      "requirement": "Native47/20 controls confer no normal-mission/paid/queue/APK/device readiness. Fresh no-heavy-job and separate Root-reviewed launch packet remain required.",
+      "result": "Pending"
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "state": "DocsOnly_CompositionProposal_ExactWindowsBytesPending",
+  "created_utc": "2026-10-19T01:37:49.608430+00:00",
+  "evidence_parent": "b4fc03bb25389e73cc54d6fd204effb26c05f29d",
+  "Mac_source_commit": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "Mac_base": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "Mac_proposal": "e54b376d4e6b555f9014ad32679b502119145133",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+      "raw_sha256": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "bytes": 78435,
+      "methods": [
+        {
+          "method": "ApplyMpPilotEndpointRevision",
+          "line": 23,
+          "method_sha256_utf8": "fea01b1899507daf0ba6ae9aad92aeaba54964ffade63c55e9c345a67e78b8c6",
+          "method_bytes_utf8": 4673
+        },
+        {
+          "method": "RunMpGroundBaEndpointAdmissionControls",
+          "line": 82,
+          "method_sha256_utf8": "464b1bbc0d8e69b6fb61d265ee3934d8915713f2e94c7eb2a29465609a7979d2",
+          "method_bytes_utf8": 7018
+        },
+        {
+          "method": "MpPilotServiceAccess",
+          "line": 817,
+          "method_sha256_utf8": "879ef779a27d6ef53d9fa3fde3d7e8cecba84c5e8619cf2a4aa301a0e6293740",
+          "method_bytes_utf8": 10937
+        },
+        {
+          "method": "CompileCompleteGroundBaExpectedSignatures",
+          "line": 398,
+          "method_sha256_utf8": "1e9a7c597b152d5d5438a552576f957abeafb8617253f878ce4d39b519b11592",
+          "method_bytes_utf8": 1359
+        },
+        {
+          "method": "ValidateCompleteGroundBaBudgetReceipt",
+          "line": 418,
+          "method_sha256_utf8": "147c94297d844e6c0b544fb67e5ef6befbdfb1dbefb51abce0e56a33d74b222b",
+          "method_bytes_utf8": 4151
+        },
+        {
+          "method": "RunGroundBaCompleteStaticPilot",
+          "line": 470,
+          "method_sha256_utf8": "2344f7f294cf573824b612ffc02d7d89d33b0c15d481012411ab88b113769ca1",
+          "method_bytes_utf8": 1922
+        },
+        {
+          "method": "RunCompleteGroundBaTupleControls",
+          "line": 494,
+          "method_sha256_utf8": "69114b51e3e5f525e9ba2cf9de69e51d526cee8f121006d776691011dc436c5b",
+          "method_bytes_utf8": 8154
+        },
+        {
+          "method": "RunMpGroundBaCompleteStaticPilot",
+          "line": 582,
+          "method_sha256_utf8": "5f433d74d3a76bfb57dac7aa11f249dc0fc86894d0311d5986a15d43e1ad235b",
+          "method_bytes_utf8": 856
+        },
+        {
+          "method": "ApplyS049NativeCorridorMainSegments",
+          "line": 639,
+          "method_sha256_utf8": "dd88d37dadc4771c20809bf050a03c3202b081894fc0edd6dafe5564f4a9de92",
+          "method_bytes_utf8": 5748
+        },
+        {
+          "method": "RequireCompleteGroundBaStaticPass",
+          "line": 744,
+          "method_sha256_utf8": "b61f04c2a9ec4804efb8c66f1d98295b2742eefa478a1ac63b0f57593b07da28",
+          "method_bytes_utf8": 1560
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "raw_sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "bytes": 40709,
+      "methods": [
+        {
+          "method": "RefineLoadedCandidateCore",
+          "line": 64,
+          "method_sha256_utf8": "71e6512d25e2d1628d9e2557cb2326cd994e058c31ba167fc84aad6a6f44dea8",
+          "method_bytes_utf8": 18725
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "raw_sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "bytes": 64630,
+      "methods": [
+        {
+          "method": "RefineFacilityPreferences",
+          "line": 215,
+          "method_sha256_utf8": "ae1998ac1bc8ff12821dd73f7702da1cf3b13734817122be93ff9cca1203296e",
+          "method_bytes_utf8": 8015
+        },
+        {
+          "method": "ApPreferenceBudgetKey",
+          "line": 413,
+          "method_sha256_utf8": "86155396e9143b364042dd92438ee7eb0c4247756622472ab02668105bb03802",
+          "method_bytes_utf8": 622
+        }
+      ]
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "raw_sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "bytes": 41844,
+      "methods": [
+        {
+          "method": "ProbePilotNormalFacilityRelocation",
+          "line": 22,
+          "method_sha256_utf8": "f323d37b305f1f13c8e0ac2b92f65b0902228b2f0b8d0ac121cc5df0cd256841",
+          "method_bytes_utf8": 25175
+        }
+      ]
+    }
+  ],
+  "Windows_patch": {
+    "provenance": "Coordinator description only; raw bytes and committed source not supplied",
+    "commit": null,
+    "raw_hashes": null,
+    "reported_signature": "ApplyMpPilotEndpointRevision(definition,grid,bool preparedAuthoring=false)",
+    "reported_prepared_scope": "PreparedMpPilotRouteEndpointValidation_NoRevision_NotNativeFit",
+    "reported_behavior": "Prepared path validates existing typed route endpoints via existing preflight without mutating layout; Simultaneous forwards preparedAuthoring; default four-point revision and later gates unchanged",
+    "reported_controls": 20,
+    "test_method": null,
+    "test_marker": null,
+    "execution_result": "Not known on Mac; coordinator says native20 next; clean4 compiler64818 failed under audit"
+  },
+  "execution": {
+    "source_modified": false,
+    "source_branch_modified": false,
+    "CSharp47_executed": false,
+    "Windows20_executed_by_Mac": false,
+    "heavy_checkout": false,
+    "compiler": false,
+    "native": false,
+    "acceptance": false
+  }
+}

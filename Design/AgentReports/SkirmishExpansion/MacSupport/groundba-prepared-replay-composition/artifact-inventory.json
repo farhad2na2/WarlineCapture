@@ -1,0 +1,19 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/groundba-prepared-replay-composition/composition-proposal.md",
+      "sha256": "321b919069492ec453b6d7324ceaf09cfa97696d89c6b41c5fefde08f24b8047",
+      "bytes": 6080
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/groundba-prepared-replay-composition/composition-source-api.json",
+      "sha256": "8cc30e31924a5e7cd1d12e826580b179ead002f59460eff194db640c5e0a7a5b",
+      "bytes": 5768
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/groundba-prepared-replay-composition/composition-test-obligations.json",
+      "sha256": "0b57f3f24b51daeb6813fa923653024314a30fb9548cfd5a28b3298bc74ace0e",
+      "bytes": 3724
+    }
+  ]
+}

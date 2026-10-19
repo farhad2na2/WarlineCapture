@@ -113,6 +113,7 @@ namespace Game.Editor
                 candidateCatalogScope = SkirmishBattleCatalogConfig.UseEditorValidationCatalog(candidateCatalog);
                 Debug.Log("[S005CandidateAvailability] fixture=EditorMemoryOnly publication=InProgress shippedCatalogModified=0");
             }
+            RecordProductionPostProjectionLibraryParity(selectedCatalog);
             SessionState.SetBool("S004EditorJourney.OptionsSaved", true);
             SessionState.SetBool("S004EditorJourney.OptionsEnabled", EditorSettings.enterPlayModeOptionsEnabled);
             SessionState.SetInt("S004EditorJourney.Options", (int)EditorSettings.enterPlayModeOptions);

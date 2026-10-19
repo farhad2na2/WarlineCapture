@@ -1,0 +1,46 @@
+{
+  "catalog_count": 120,
+  "matrix_count": 360,
+  "six_pilot_ids_exact": true,
+  "all18_budget_rows_equal_matrix_Full120_inventory": true,
+  "all6_tuple_capability_joins_exact": true,
+  "protected_GroundBA": [
+    "S001",
+    "S002",
+    "S025",
+    "S073"
+  ],
+  "families_cover120": true,
+  "families_cover360": true,
+  "source_raw_mismatch_groups": [],
+  "grid_raw_mismatch_groups": [
+    "CC"
+  ],
+  "missing_intended_definition_assets": [
+    "S050",
+    "S098",
+    "S097",
+    "S026",
+    "S074"
+  ],
+  "shared_field_guids_unresolved": [],
+  "source_or_native_readiness_claims": 0,
+  "LFS_source_and_grid_payloads_uninspected_groups": [
+    "AP",
+    "IB"
+  ],
+  "LFS_payload_OIDs_equal_authority": true,
+  "S049_actual_serialized_reference_audit": {
+    "objectiveConfig": "ResolvedTrackedReference_NoAcceptance",
+    "armyProfileConfig": "ResolvedTrackedReference_NoAcceptance",
+    "startPackageConfig": "ResolvedTrackedReference_NoAcceptance",
+    "economyConfig": "ResolvedTrackedReference_NoAcceptance",
+    "upgradeCatalog": "ResolvedTrackedReference_NoAcceptance",
+    "intelConfig": "ResolvedTrackedReference_NoAcceptance",
+    "roleCatalog": "ResolvedTrackedReference_NoAcceptance",
+    "mapLayout": "ResolvedTrackedReference_NoAcceptance",
+    "missionLogicalBinding": "ResolvedTrackedReference_NoAcceptance",
+    "campaignMap": "ResolvedTrackedReference_NoAcceptance"
+  },
+  "initial_failed_join_diagnosis": "Raw pointer blob SHA differs from payload SHA. No authored AP/IB drift claimed; pointer provenance matches, actual payload inspection pending."
+}

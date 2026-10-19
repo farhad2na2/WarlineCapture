@@ -1,0 +1,24 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/skirmish-pilot-config-dependencies/authority-input-pins.json",
+      "sha256": "064593696d4d7bec2875f4598b9f861ddbd2980faedb47950d4ef56d44ca89c0",
+      "bytes": 11565
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/skirmish-pilot-config-dependencies/offline-authority-join-checks.json",
+      "sha256": "6f84f3e181cf8e394450eeba3ac54b2da41ac03c01486e1bb25bc5abbde4c133",
+      "bytes": 1575
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/skirmish-pilot-config-dependencies/pilot-config-dependency-plan.json",
+      "sha256": "51efec76b304a035bc593a10e3d5049307491b1a0654c5a4d796d4e26e4bff9e",
+      "bytes": 112869
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/skirmish-pilot-config-dependencies/priority-notes.md",
+      "sha256": "8f79bc23a751ef40d37ce5bf4797c3d1a143af231d3411e50adf50599fc7fed3",
+      "bytes": 2820
+    }
+  ]
+}

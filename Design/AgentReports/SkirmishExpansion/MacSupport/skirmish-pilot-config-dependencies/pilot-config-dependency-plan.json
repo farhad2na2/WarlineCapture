@@ -1,0 +1,3055 @@
+{
+  "schema_version": 1,
+  "state": "DocsOnlyPlanning_SourceBindingGatesOpen_NotExecutionQueue",
+  "source_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "Mac_source_overlay": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "evidence_parent": "a0bbebb8f2254349aee8220b77b299af033d53bb",
+  "created_utc": "2026-10-19T01:53:02.852264+00:00",
+  "coverage": {
+    "missions": 120,
+    "size_vectors": 360,
+    "GroundBA": 10,
+    "unprotected_pilots": 6,
+    "pilot_vectors": 18
+  },
+  "priority_order": [
+    "S049",
+    "S050",
+    "S098",
+    "S097",
+    "S026",
+    "S074"
+  ],
+  "ordering_rationale": "Pair reuse and capability coverage first: MP F/E, AP E/F, then CC/IB singleton unresolved dependencies. All source hash mismatches are hard prerequisites, not waived to follow priority. Current Windows MP ownership preserved.",
+  "objective_army_shared": {
+    "objective": "BA",
+    "army": "G",
+    "required_capabilities": [
+      "ground",
+      "intel",
+      "transport",
+      "advanced_ground",
+      "objective_ba"
+    ],
+    "Ground16_allowed_roles": [
+      "Rifle",
+      "Gunner",
+      "Marksman",
+      "Breacher",
+      "Rocketeer",
+      "Car",
+      "ApcFast",
+      "ApcArmored",
+      "ApcHeavy",
+      "Tank",
+      "Radar",
+      "Siege",
+      "TransportHeli",
+      "Drone",
+      "LogisticsTruck",
+      "Tanker"
+    ],
+    "fixed_wing_required": false,
+    "later_transportHeli_Drone_and_full_production_required": true
+  },
+  "shared_catalog": {
+    "path": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+    "fields": {
+      "objectiveBa": {
+        "guid": "c68e97d46042477882a82718ce98061a",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset",
+        "resolved": true
+      },
+      "armyGround": {
+        "guid": "a7e29fa83f1c4735acd2aa8a75df7d60",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+        "resolved": true
+      },
+      "startField": {
+        "guid": "b8548c84df564fc4ab8587d9151b3de0",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset",
+        "resolved": true
+      },
+      "startEstablished": {
+        "guid": "8032585b22bd4dbfb4d0c58ead392aaf",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+        "resolved": true
+      },
+      "economy": {
+        "guid": "a80273e4faab4a8699e8ec8cc63e6d9e",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+        "resolved": true
+      },
+      "upgrades": {
+        "guid": "4cc33e81f1714b1990c22147ede7d678",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset",
+        "resolved": true
+      },
+      "intel": {
+        "guid": "04b7de727d214decb18d44a0a1156838",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+        "resolved": true
+      },
+      "roles": {
+        "guid": "576ea8bf79b7478480428278cdb00745",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset",
+        "resolved": true
+      },
+      "groundStaging": {
+        "guid": "b8d2e4f6a0c1427395e1d8c7b6a4f203",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishGroundStaging.asset",
+        "resolved": true
+      },
+      "publication": {
+        "guid": "27bf4370caeb44bfaf5f6127584cb352",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset",
+        "resolved": true
+      },
+      "sizeStandard": {
+        "guid": "771e27043a4544c3b56f7fa27a6512db",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_Standard.asset",
+        "resolved": true
+      },
+      "sizeWar": {
+        "guid": "956106c242024f5aa0e58fb7fc7f28d0",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_War.asset",
+        "resolved": true
+      },
+      "sizeLargeWar": {
+        "guid": "48b5ecc6b09f4ff3aa32a480c56b8419",
+        "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_LargeWar.asset",
+        "resolved": true
+      }
+    }
+  },
+  "source_dependencies": {
+    "MP": {
+      "authority": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+        "sourceAssetSha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset",
+        "gridAssetSha256": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Surface.asset",
+        "surfaceAssetSha256": "219420a7ab9069ffbda9d48409a665b4b819853b192a3a553e85588250b67fa0",
+        "operationMapId": "opmap.ch04.armor_break",
+        "sourceIdentityHash": "83f10bf819165f5fa2a6b325f9a73df3780e14b023b1cf95d44e2f8c242cb368",
+        "contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+        "sourceSceneGuid": "b7c6bb84a6d0c4ed78be897c552f6ac1",
+        "authoredSubSceneGuid": "cff37b7367eda4910ab737672c2fe51b"
+      },
+      "observed_at_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "actual_source_raw_sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+      "source_raw_matches_authority": true,
+      "actual_operationMapId": "opmap.ch04.armor_break",
+      "actual_sourceIdentityHash": "83f10bf819165f5fa2a6b325f9a73df3780e14b023b1cf95d44e2f8c242cb368",
+      "actual_contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+      "identity_fields_match_authority": true,
+      "actual_grid_raw_sha256": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+      "grid_raw_matches_authority": true,
+      "surface_tracked": true,
+      "surface_bulk_payload_read": false,
+      "surface_native_proof": false,
+      "missing_binding_action": "Pin exact current Campaign source through explicit reviewed provenance; no guessed EOL normalization, raw waiver or geometry change.",
+      "source_representation": {
+        "kind": "InlineTrackedPayload",
+        "git_blob_sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+        "referenced_payload_sha256": null,
+        "referenced_payload_size": 9364,
+        "pointer_oid_equals_authority": null,
+        "payload_inspected": true,
+        "payload_fetch_performed": false
+      },
+      "grid_representation": {
+        "kind": "InlineTrackedPayload",
+        "git_blob_sha256": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+        "referenced_payload_sha256": null,
+        "referenced_payload_size": 1272832,
+        "pointer_oid_equals_authority": null,
+        "payload_inspected": true,
+        "payload_fetch_performed": false
+      }
+    },
+    "AP": {
+      "authority": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+        "sourceAssetSha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+        "gridAssetSha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+        "surfaceAssetSha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+        "operationMapId": "opmap.skirmish.cityedgeairfield_prepared",
+        "sourceIdentityHash": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+        "contentHash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+        "sourceSceneGuid": "915718fcf0cd7422db987b388cd0d925",
+        "authoredSubSceneGuid": "cd836ff2ddd2a440e81db4a20332d266"
+      },
+      "observed_at_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "actual_source_raw_sha256": null,
+      "source_raw_matches_authority": null,
+      "actual_operationMapId": null,
+      "actual_sourceIdentityHash": null,
+      "actual_contentHash": null,
+      "identity_fields_match_authority": null,
+      "actual_grid_raw_sha256": null,
+      "grid_raw_matches_authority": null,
+      "surface_tracked": true,
+      "surface_bulk_payload_read": false,
+      "surface_native_proof": false,
+      "missing_binding_action": "Materialize exact existing LFS payload only after approved source/ownership/resource scope; verify payload hash/typed scene-grid-source identities. Pointer OID agreement is provenance, not native source fit.",
+      "source_representation": {
+        "kind": "GitLfsPointer",
+        "git_blob_sha256": "a7b5c48e08f7ff6df344810c6124e7cfd605c490743fa9f8d11b6f6a62a63b1c",
+        "referenced_payload_sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+        "referenced_payload_size": 4032,
+        "pointer_oid_equals_authority": true,
+        "payload_inspected": false,
+        "payload_fetch_performed": false
+      },
+      "grid_representation": {
+        "kind": "GitLfsPointer",
+        "git_blob_sha256": "d98e28903078910ece470e365a4e57be62e97e908f225cfa43afcd6e3a2ac429",
+        "referenced_payload_sha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+        "referenced_payload_size": 481040,
+        "pointer_oid_equals_authority": true,
+        "payload_inspected": false,
+        "payload_fetch_performed": false
+      },
+      "identity_field_status": "Unknown_UnresolvedLfsPayload_NotEvidenceOfIdentityDrift"
+    },
+    "CC": {
+      "authority": {
+        "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+        "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+        "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+        "gridAssetSha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+        "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+        "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+        "operationMapId": "opmap.skirmish.desert_base_01",
+        "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+        "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+        "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+        "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0"
+      },
+      "observed_at_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "actual_source_raw_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "source_raw_matches_authority": true,
+      "actual_operationMapId": "opmap.skirmish.desert_base_01",
+      "actual_sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+      "actual_contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+      "identity_fields_match_authority": true,
+      "actual_grid_raw_sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+      "grid_raw_matches_authority": false,
+      "surface_tracked": true,
+      "surface_bulk_payload_read": false,
+      "surface_native_proof": false,
+      "missing_binding_action": "Pin exact current Campaign source through explicit reviewed provenance; no guessed EOL normalization, raw waiver or geometry change.",
+      "source_representation": {
+        "kind": "InlineTrackedPayload",
+        "git_blob_sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+        "referenced_payload_sha256": null,
+        "referenced_payload_size": 5519,
+        "pointer_oid_equals_authority": null,
+        "payload_inspected": true,
+        "payload_fetch_performed": false
+      },
+      "grid_representation": {
+        "kind": "InlineTrackedPayload",
+        "git_blob_sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+        "referenced_payload_sha256": null,
+        "referenced_payload_size": 1397,
+        "pointer_oid_equals_authority": null,
+        "payload_inspected": true,
+        "payload_fetch_performed": false
+      }
+    },
+    "IB": {
+      "authority": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+        "sourceAssetSha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Grid.asset",
+        "gridAssetSha256": "0044ec7726416f0569393b9da8c19550c40c946181020cc25bac4ec1511b945a",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Surface.asset",
+        "surfaceAssetSha256": "02bd6bb3b7e623daf5358247a562d963653a4199b1e2d8a8df639a764fa03e2b",
+        "operationMapId": "opmap.skirmish.refinerydistrict_prepared",
+        "sourceIdentityHash": "f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d",
+        "contentHash": "2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778",
+        "sourceSceneGuid": "2f9acf3e55e194fb8941de959613dd4f",
+        "authoredSubSceneGuid": "4f2791431607a46dba63d71c60633f71"
+      },
+      "observed_at_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "actual_source_raw_sha256": null,
+      "source_raw_matches_authority": null,
+      "actual_operationMapId": null,
+      "actual_sourceIdentityHash": null,
+      "actual_contentHash": null,
+      "identity_fields_match_authority": null,
+      "actual_grid_raw_sha256": null,
+      "grid_raw_matches_authority": null,
+      "surface_tracked": true,
+      "surface_bulk_payload_read": false,
+      "surface_native_proof": false,
+      "missing_binding_action": "Materialize exact existing LFS payload only after approved source/ownership/resource scope; verify payload hash/typed scene-grid-source identities. Pointer OID agreement is provenance, not native source fit.",
+      "source_representation": {
+        "kind": "GitLfsPointer",
+        "git_blob_sha256": "162c370482c5fc514a4b6adb53482ba1082dfb32d91cf59ab15571abe5537663",
+        "referenced_payload_sha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+        "referenced_payload_size": 4030,
+        "pointer_oid_equals_authority": true,
+        "payload_inspected": false,
+        "payload_fetch_performed": false
+      },
+      "grid_representation": {
+        "kind": "GitLfsPointer",
+        "git_blob_sha256": "821d85e429df4424ef0f066a9ba513e358501e3d3009cd0bbdb9e53f746585d2",
+        "referenced_payload_sha256": "0044ec7726416f0569393b9da8c19550c40c946181020cc25bac4ec1511b945a",
+        "referenced_payload_size": 840728,
+        "pointer_oid_equals_authority": true,
+        "payload_inspected": false,
+        "payload_fetch_performed": false
+      },
+      "identity_field_status": "Unknown_UnresolvedLfsPayload_NotEvidenceOfIdentityDrift"
+    }
+  },
+  "pilots": [
+    {
+      "priority": 1,
+      "catalog_id": "S049",
+      "tuple": {
+        "map_id": "MP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "F"
+      },
+      "priority_reason": "MP Field provenance reference before own Established variation; shared physical source with S050; do not duplicate current Windows lane.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 50,
+          "row_id": "S049"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 146,
+              "row_id": "S049/Standard"
+            },
+            {
+              "line": 147,
+              "row_id": "S049/War"
+            },
+            {
+              "line": 148,
+              "row_id": "S049/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 48,
+          "row_id": "S049"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/48"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/1"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+          "sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+          "section": "s049"
+        }
+      },
+      "definition_id": "skirmish.s049",
+      "scenario_setup_id": "scenario.skirmish.s049",
+      "queue_layout_id": "layout.skirmish.mp.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "9945c8eb718f7fa1cfc21e7e38f016dea690e4393c97b865cab1e33190fb45f0",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S049",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1080",
+          "player_rifle": "8",
+          "player_gunner": "0",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "12",
+          "player_ground": "2",
+          "player_air": "0",
+          "player_combat": "14",
+          "player_supply": "20",
+          "player_logistics_support": "2",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "8",
+          "enemy_gunner": "0",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "12",
+          "enemy_ground": "2",
+          "enemy_air": "0",
+          "enemy_combat": "14",
+          "enemy_supply": "20",
+          "enemy_logistics_support": "2",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "450",
+          "oil_each": "120",
+          "usable_fuel_each": "350",
+          "materials_capacity_each": "800",
+          "oil_capacity_each": "500",
+          "fuel_capacity_each": "800",
+          "infantry_queues_each": "1",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S049",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1500",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "32",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "32",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "675",
+          "oil_each": "180",
+          "usable_fuel_each": "525",
+          "materials_capacity_each": "1200",
+          "oil_capacity_each": "750",
+          "fuel_capacity_each": "1200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S049",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1800",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "24",
+          "player_ground": "4",
+          "player_air": "0",
+          "player_combat": "28",
+          "player_supply": "40",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "24",
+          "enemy_ground": "4",
+          "enemy_air": "0",
+          "enemy_combat": "28",
+          "enemy_supply": "40",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1600",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "intended_definition_tracked": true,
+      "existing_definition_inventory": null,
+      "binding_status": "TrackedSerializedReferencesResolved_ActualCompilerAndAcceptanceGatesRemainSeparate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": null,
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S055",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/12",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startField",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "MP",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/2",
+        "next_step": "Use measured exact centers as proposed base anchors; derive typed logical pads and three approaches on this existing geometry, then run all canonical facilities/force packing/scenery gates.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false,
+      "serialized_definition_at_baseline": {
+        "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+        "sha256": "cd8526de610c7018a0fd15d102891c231f42021fbbf690460ed394271fa44cd7",
+        "references": {
+          "objectiveConfig": {
+            "guid": "5c9dba4692a18eb4ea80a1faf0afa6c0",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Objective_S049.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "armyProfileConfig": {
+            "guid": "a7e29fa83f1c4735acd2aa8a75df7d60",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "startPackageConfig": {
+            "guid": "b8548c84df564fc4ab8587d9151b3de0",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "economyConfig": {
+            "guid": "a80273e4faab4a8699e8ec8cc63e6d9e",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "upgradeCatalog": {
+            "guid": "4cc33e81f1714b1990c22147ede7d678",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "intelConfig": {
+            "guid": "04b7de727d214decb18d44a0a1156838",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "roleCatalog": {
+            "guid": "576ea8bf79b7478480428278cdb00745",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "mapLayout": {
+            "guid": "475794ed6caccaf47934d10b9eac4f8d",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Layout_S049.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "missionLogicalBinding": {
+            "guid": "05d7ce460c6183e469dffaf12392e55a",
+            "asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Binding_S049.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          },
+          "campaignMap": {
+            "guid": "be0f1c8c7ae1940d6a679b258bf79f7b",
+            "asset": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+            "status": "ResolvedTrackedReference_NoAcceptance"
+          }
+        },
+        "serialized_mapLayoutId": "layout.s049.measured-pad-candidate.v2",
+        "queue_layout_id_is_planning_alias_not_actual_serialized_layout": true,
+        "serialized_allowedCertifiedSizeIds": "01",
+        "no_actual_three_size_or_readiness_inferred": true
+      },
+      "existing_definition_inventory_is_stale_null": true
+    },
+    {
+      "priority": 2,
+      "catalog_id": "S050",
+      "tuple": {
+        "map_id": "MP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "E"
+      },
+      "priority_reason": "Immediate Established variant on same MP source exercises additional facilities/readiness/queues and prepared replay.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 51,
+          "row_id": "S050"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 149,
+              "row_id": "S050/Standard"
+            },
+            {
+              "line": 150,
+              "row_id": "S050/War"
+            },
+            {
+              "line": 151,
+              "row_id": "S050/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 49,
+          "row_id": "S050"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/49"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/2"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+          "sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+          "section": "s050"
+        }
+      },
+      "definition_id": "skirmish.s050",
+      "scenario_setup_id": "scenario.skirmish.s050",
+      "queue_layout_id": "layout.skirmish.mp.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "f36d473ba02b0f7847d6ec589f47ad352698aa890ea2415f682be1281e09305a",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S050",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "34",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "34",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S050",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "0",
+          "player_combat": "33",
+          "player_supply": "52",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "0",
+          "enemy_combat": "33",
+          "enemy_supply": "52",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S050",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "0",
+          "player_combat": "47",
+          "player_supply": "74",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "0",
+          "enemy_combat": "47",
+          "enemy_supply": "74",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S050/SkirmishScenario_S050.asset",
+      "intended_definition_tracked": false,
+      "existing_definition_inventory": null,
+      "binding_status": "MissingAcceptedSerializedBinding_NotInferredFromSourceCandidate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": null,
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S056",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/13",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startEstablished",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "MP",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/2",
+        "next_step": "Use measured exact centers as proposed base anchors; derive typed logical pads and three approaches on this existing geometry, then run all canonical facilities/force packing/scenery gates.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false
+    },
+    {
+      "priority": 3,
+      "catalog_id": "S098",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "E"
+      },
+      "priority_reason": "AP Established half of a two-mission source batch exercises larger service/facility needs; exact LFS payload materialization/verification is a hard predecessor.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [
+        "materialize_exact_LFS_payload_AP"
+      ],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 99,
+          "row_id": "S098"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 293,
+              "row_id": "S098/Standard"
+            },
+            {
+              "line": 294,
+              "row_id": "S098/War"
+            },
+            {
+              "line": 295,
+              "row_id": "S098/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 96,
+          "row_id": "S098"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/97"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/5"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+          "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+          "section": "s098"
+        }
+      },
+      "definition_id": "skirmish.s098",
+      "scenario_setup_id": "scenario.skirmish.s098",
+      "queue_layout_id": "layout.skirmish.ap.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "27b382ac3a70eb3417884290a1ee08d749ea4116008c011e5624398d329fe8a8",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S098",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "34",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "34",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S098",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "0",
+          "player_combat": "33",
+          "player_supply": "52",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "0",
+          "enemy_combat": "33",
+          "enemy_supply": "52",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S098",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "0",
+          "player_combat": "47",
+          "player_supply": "74",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "0",
+          "enemy_combat": "47",
+          "enemy_supply": "74",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S098/SkirmishScenario_S098.asset",
+      "intended_definition_tracked": false,
+      "existing_definition_inventory": null,
+      "binding_status": "MissingAcceptedSerializedBinding_NotInferredFromSourceCandidate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": "AP",
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S104",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/25",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startEstablished",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "AP",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/1",
+        "next_step": "Retain known successful paths; revise disconnected approaches and invalid surface spawn choices before materialization. Nearest legal endpoints alone did not prove all routes.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false
+    },
+    {
+      "priority": 4,
+      "catalog_id": "S097",
+      "tuple": {
+        "map_id": "AP",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "F"
+      },
+      "priority_reason": "Reuse AP source validation for Field variation but preserve own budgets/readiness; gated with S098 on source reconciliation.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [
+        "materialize_exact_LFS_payload_AP"
+      ],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 98,
+          "row_id": "S097"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 290,
+              "row_id": "S097/Standard"
+            },
+            {
+              "line": 291,
+              "row_id": "S097/War"
+            },
+            {
+              "line": 292,
+              "row_id": "S097/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 95,
+          "row_id": "S097"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/96"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/4"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+          "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+          "section": "s097"
+        }
+      },
+      "definition_id": "skirmish.s097",
+      "scenario_setup_id": "scenario.skirmish.s097",
+      "queue_layout_id": "layout.skirmish.ap.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "5689b666a881b019dd438c99f2c34adc6c176392efdc6c8ecb09a780338e6455",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S097",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1080",
+          "player_rifle": "8",
+          "player_gunner": "0",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "12",
+          "player_ground": "2",
+          "player_air": "0",
+          "player_combat": "14",
+          "player_supply": "20",
+          "player_logistics_support": "2",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "8",
+          "enemy_gunner": "0",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "12",
+          "enemy_ground": "2",
+          "enemy_air": "0",
+          "enemy_combat": "14",
+          "enemy_supply": "20",
+          "enemy_logistics_support": "2",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "450",
+          "oil_each": "120",
+          "usable_fuel_each": "350",
+          "materials_capacity_each": "800",
+          "oil_capacity_each": "500",
+          "fuel_capacity_each": "800",
+          "infantry_queues_each": "1",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S097",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1500",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "32",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "32",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "675",
+          "oil_each": "180",
+          "usable_fuel_each": "525",
+          "materials_capacity_each": "1200",
+          "oil_capacity_each": "750",
+          "fuel_capacity_each": "1200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S097",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "F",
+          "objective_id": "BA",
+          "readiness": "1",
+          "deadline_seconds": "1800",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "0",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "24",
+          "player_ground": "4",
+          "player_air": "0",
+          "player_combat": "28",
+          "player_supply": "40",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "7",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "0",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "24",
+          "enemy_ground": "4",
+          "enemy_air": "0",
+          "enemy_combat": "28",
+          "enemy_supply": "40",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "7",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1600",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S097/SkirmishScenario_S097.asset",
+      "intended_definition_tracked": false,
+      "existing_definition_inventory": null,
+      "binding_status": "MissingAcceptedSerializedBinding_NotInferredFromSourceCandidate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": "AP",
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S103",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/24",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startField",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "AP",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/1",
+        "next_step": "Retain known successful paths; revise disconnected approaches and invalid surface spawn choices before materialization. Nearest legal endpoints alone did not prove all routes.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false
+    },
+    {
+      "priority": 5,
+      "catalog_id": "S026",
+      "tuple": {
+        "map_id": "CC",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "E"
+      },
+      "priority_reason": "CC singleton with dense-city placement/independent-route and raw-grid provenance dependencies; generic entry47 still unexecuted.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [
+        "reconcile_exact_raw_grid_CC"
+      ],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 27,
+          "row_id": "S026"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 77,
+              "row_id": "S026/Standard"
+            },
+            {
+              "line": 78,
+              "row_id": "S026/War"
+            },
+            {
+              "line": 79,
+              "row_id": "S026/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 25,
+          "row_id": "S026"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/25"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/0"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+          "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+          "section": "s026"
+        }
+      },
+      "definition_id": "skirmish.s026",
+      "scenario_setup_id": "scenario.skirmish.s026",
+      "queue_layout_id": "layout.skirmish.cc.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "6c9c35526c0168edfdceafec3f8079362b0fd237b6d422016dbacfbc03bad77b",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S026",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "34",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "34",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S026",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "0",
+          "player_combat": "33",
+          "player_supply": "52",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "0",
+          "enemy_combat": "33",
+          "enemy_supply": "52",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S026",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "0",
+          "player_combat": "47",
+          "player_supply": "74",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "0",
+          "enemy_combat": "47",
+          "enemy_supply": "74",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S026/SkirmishScenario_S026.asset",
+      "intended_definition_tracked": false,
+      "existing_definition_inventory": null,
+      "binding_status": "MissingAcceptedSerializedBinding_NotInferredFromSourceCandidate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": "CC",
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S032",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/7",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startEstablished",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "CC",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/0",
+        "next_step": "Retain known successful paths; revise disconnected approaches and invalid surface spawn choices before materialization. Nearest legal endpoints alone did not prove all routes.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false
+    },
+    {
+      "priority": 6,
+      "catalog_id": "S074",
+      "tuple": {
+        "map_id": "IB",
+        "objective_id": "BA",
+        "army_profile": "G",
+        "start_profile": "E"
+      },
+      "priority_reason": "IB singleton has uninspected LFS source/grid payload plus industrial layout/source-fit gates and no paired unprotected GroundBA pilot.",
+      "priority_is_planning_not_executable_queue": true,
+      "predecessors": [
+        "materialize_exact_LFS_payload_IB"
+      ],
+      "references": {
+        "catalog": {
+          "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+          "line": 75,
+          "row_id": "S074"
+        },
+        "matrix": {
+          "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+          "rows": [
+            {
+              "line": 221,
+              "row_id": "S074/Standard"
+            },
+            {
+              "line": 222,
+              "row_id": "S074/War"
+            },
+            {
+              "line": 223,
+              "row_id": "S074/LargeWar"
+            }
+          ]
+        },
+        "queue": {
+          "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+          "line": 72,
+          "row_id": "S074"
+        },
+        "Full120": {
+          "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+          "json_pointer": "/missions/73"
+        },
+        "six_pilot_inventory": {
+          "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+          "json_pointer": "/requests/3"
+        },
+        "packet": {
+          "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md",
+          "sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1",
+          "section": "s074"
+        }
+      },
+      "definition_id": "skirmish.s074",
+      "scenario_setup_id": "scenario.skirmish.s074",
+      "queue_layout_id": "layout.skirmish.ib.ba",
+      "objective_system": "SkirmishBaseAssaultObjectiveSystem",
+      "required_capabilities": [
+        "ground",
+        "intel",
+        "transport",
+        "advanced_ground",
+        "objective_ba"
+      ],
+      "canonical_size_rows_sha256_authority": "41d7c789fb1c700844b99ad34721d464ab1ad842441600878a36656279cc44f6",
+      "canonical_size_rows": [
+        {
+          "catalog_id": "S074",
+          "size_id": "Standard",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1080",
+          "player_rifle": "12",
+          "player_gunner": "4",
+          "player_rocketeer": "4",
+          "player_car": "1",
+          "player_apc": "1",
+          "player_tank": "1",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "20",
+          "player_ground": "3",
+          "player_air": "0",
+          "player_combat": "23",
+          "player_supply": "34",
+          "player_logistics_support": "3",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "10",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "12",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "4",
+          "enemy_car": "1",
+          "enemy_apc": "1",
+          "enemy_tank": "1",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "20",
+          "enemy_ground": "3",
+          "enemy_air": "0",
+          "enemy_combat": "23",
+          "enemy_supply": "34",
+          "enemy_logistics_support": "3",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "10",
+          "enemy_designated_rifles": "0",
+          "materials_each": "900",
+          "oil_each": "240",
+          "usable_fuel_each": "700",
+          "materials_capacity_each": "1800",
+          "oil_capacity_each": "1000",
+          "fuel_capacity_each": "1600",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "1",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "1",
+          "infantry_cap_each": "48",
+          "ground_cap_each": "8",
+          "tactical_air_cap_each": "2",
+          "supply_cap_each": "128",
+          "logistics_support_cap_each": "6",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "20",
+          "barrier_segment_cap_each": "40",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S074",
+          "size_id": "War",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1500",
+          "player_rifle": "16",
+          "player_gunner": "4",
+          "player_rocketeer": "8",
+          "player_car": "1",
+          "player_apc": "2",
+          "player_tank": "2",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "28",
+          "player_ground": "5",
+          "player_air": "0",
+          "player_combat": "33",
+          "player_supply": "52",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "16",
+          "enemy_gunner": "4",
+          "enemy_rocketeer": "8",
+          "enemy_car": "1",
+          "enemy_apc": "2",
+          "enemy_tank": "2",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "28",
+          "enemy_ground": "5",
+          "enemy_air": "0",
+          "enemy_combat": "33",
+          "enemy_supply": "52",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1350",
+          "oil_each": "360",
+          "usable_fuel_each": "1050",
+          "materials_capacity_each": "2700",
+          "oil_capacity_each": "1500",
+          "fuel_capacity_each": "2400",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "96",
+          "ground_cap_each": "12",
+          "tactical_air_cap_each": "4",
+          "supply_cap_each": "200",
+          "logistics_support_cap_each": "8",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "30",
+          "barrier_segment_cap_each": "60",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        },
+        {
+          "catalog_id": "S074",
+          "size_id": "LargeWar",
+          "army_profile": "G",
+          "start_profile": "E",
+          "objective_id": "BA",
+          "readiness": "2",
+          "deadline_seconds": "1800",
+          "player_rifle": "24",
+          "player_gunner": "8",
+          "player_rocketeer": "8",
+          "player_car": "2",
+          "player_apc": "2",
+          "player_tank": "3",
+          "player_aa": "0",
+          "player_transport_heli": "0",
+          "player_infantry": "40",
+          "player_ground": "7",
+          "player_air": "0",
+          "player_combat": "47",
+          "player_supply": "74",
+          "player_logistics_support": "4",
+          "player_objective_trucks": "0",
+          "player_starting_structures": "11",
+          "player_designated_rifles": "0",
+          "enemy_rifle": "24",
+          "enemy_gunner": "8",
+          "enemy_rocketeer": "8",
+          "enemy_car": "2",
+          "enemy_apc": "2",
+          "enemy_tank": "3",
+          "enemy_aa": "0",
+          "enemy_transport_heli": "0",
+          "enemy_infantry": "40",
+          "enemy_ground": "7",
+          "enemy_air": "0",
+          "enemy_combat": "47",
+          "enemy_supply": "74",
+          "enemy_logistics_support": "4",
+          "enemy_objective_trucks": "0",
+          "enemy_starting_structures": "11",
+          "enemy_designated_rifles": "0",
+          "materials_each": "1800",
+          "oil_each": "480",
+          "usable_fuel_each": "1400",
+          "materials_capacity_each": "3600",
+          "oil_capacity_each": "2000",
+          "fuel_capacity_each": "3200",
+          "infantry_queues_each": "2",
+          "vehicle_queues_each": "2",
+          "logistics_queues_each": "1",
+          "refinery_modules_each": "2",
+          "infantry_cap_each": "144",
+          "ground_cap_each": "20",
+          "tactical_air_cap_each": "6",
+          "supply_cap_each": "320",
+          "logistics_support_cap_each": "10",
+          "delivery_carrier_cap_each": "2",
+          "objective_support_extra_player": "0",
+          "player_built_structure_cap_each": "40",
+          "barrier_segment_cap_each": "80",
+          "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+          "status": "Planned"
+        }
+      ],
+      "intended_definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset",
+      "intended_definition_tracked": false,
+      "existing_definition_inventory": null,
+      "binding_status": "MissingAcceptedSerializedBinding_NotInferredFromSourceCandidate",
+      "legacy_pilot_inventory_fields": {
+        "candidateLayoutSnapshot": null,
+        "reviewedMeasuredLayoutPath": null,
+        "reviewedMeasuredLayoutSha256": null,
+        "sourceFitReceiptPath": null,
+        "sourceFitReceiptSha256": null,
+        "cameraProfilePath": null
+      },
+      "latest_Full120_hints_present": true,
+      "hints_not_materialized_ready_asset": true,
+      "logical_FC_template": {
+        "catalog_id": "S080",
+        "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+        "json_pointer": "/missions/19",
+        "not_budget_or_sourcefit_authority": true
+      },
+      "shared_config_fields": {
+        "ObjectiveConfig": "own BA objective/deadlines from objectiveBa clone",
+        "ArmyProfileConfig": "armyGround",
+        "StartPackageConfig": "startEstablished",
+        "EconomyConfig": "economy",
+        "UpgradeCatalog": "upgrades",
+        "IntelConfig": "intel",
+        "RoleCatalog": "roles",
+        "RequiredFeatureIds": [
+          "ground",
+          "intel",
+          "transport",
+          "advanced_ground",
+          "objective_ba"
+        ],
+        "CampaignMap": "Exact reviewed existing source; mission binding not implied by candidate pin",
+        "MapLayout": "Own typed frame/anchors/routes/pads clone; all-size native fit pending",
+        "MissionLogicalBinding": "Own compiler-required BA binding/proof pending; no foreign copied receipt"
+      },
+      "source_dependency_group": "IB",
+      "baseline_required_logical_inputs": {
+        "view_profile": "MissingPerSourceElevationRoleFocusReadabilityAndAircraftFacts",
+        "typed_objective_areas": "NotRequiredForBA",
+        "route_independence": "Unqualified",
+        "ordinary_facility_and_all_size_force_fit": "Unqualified",
+        "camera_scalars": null
+      },
+      "historical_sourcefit_facts": {
+        "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+        "json_pointer": "/sources/3",
+        "next_step": "Use measured exact centers as proposed base anchors; derive typed logical pads and three approaches on this existing geometry, then run all canonical facilities/force packing/scenery gates.",
+        "pending_gates": [
+          "exact typed pads/all canonical facilities",
+          "full canonical force packing",
+          "three distinct native legal approaches",
+          "actual packed scenery overlap",
+          "resource and service access",
+          "normal opening/min/max camera with readable native infantry",
+          "normal paid heli/recon lifecycle",
+          "normal ARIA/result/Main Menu journey"
+        ],
+        "not_current_acceptance": true
+      },
+      "remaining_gates": [
+        {
+          "id": "actual_serialized_definition_and_source_layout_binding",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_BA_objective_deadlines_required_features",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "own_three_size_canonical_compiler_signature",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "source_definition_grid_surface_scene_provenance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "ordinary_facilities_native_footprints_foundation_road_scenery_clearance",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "initial_and_max_force_packing_inside_pads",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "three_independent_heavy_routes_endpoints_and_timings",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "nine_exposed_ground_logistics_profiles_each_member_service_ingress_return",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "Ground16_production_research_transportHeli_Drone_and_logistics",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "paid_resources_and_queue_receipts",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "opening_min_max_camera_readability_ground_and_owned_heli_recon",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "normal_input_BA_ARIA_result_return_checkpoint",
+          "result": "Pending_NoCreditFromThisPlan"
+        },
+        {
+          "id": "device_player_acceptance",
+          "result": "Pending_NoCreditFromThisPlan"
+        }
+      ],
+      "ready_for_batch": false
+    }
+  ],
+  "all120_family_dependencies": [
+    {
+      "objective_id": "BA",
+      "army_profile": "A",
+      "catalog_ids": [
+        "S003",
+        "S004",
+        "S027",
+        "S028",
+        "S051",
+        "S052",
+        "S075",
+        "S076",
+        "S099",
+        "S100"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "ground",
+        "intel",
+        "objective_ba",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "BA",
+      "army_profile": "C",
+      "catalog_ids": [
+        "S005",
+        "S006",
+        "S029",
+        "S030",
+        "S053",
+        "S054",
+        "S077",
+        "S078",
+        "S101",
+        "S102"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_ba",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "BA",
+      "army_profile": "G",
+      "catalog_ids": [
+        "S001",
+        "S002",
+        "S025",
+        "S026",
+        "S049",
+        "S050",
+        "S073",
+        "S074",
+        "S097",
+        "S098"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_ba",
+        "transport"
+      ],
+      "six_pilot_ids": [
+        "S049",
+        "S050",
+        "S098",
+        "S097",
+        "S026",
+        "S074"
+      ],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "BT",
+      "army_profile": "A",
+      "catalog_ids": [
+        "S015",
+        "S016",
+        "S039",
+        "S040",
+        "S063",
+        "S064",
+        "S087",
+        "S088",
+        "S111",
+        "S112"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "ground",
+        "intel",
+        "objective_bt",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "BT",
+      "army_profile": "C",
+      "catalog_ids": [
+        "S017",
+        "S018",
+        "S041",
+        "S042",
+        "S065",
+        "S066",
+        "S089",
+        "S090",
+        "S113",
+        "S114"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_bt",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "BT",
+      "army_profile": "G",
+      "catalog_ids": [
+        "S013",
+        "S014",
+        "S037",
+        "S038",
+        "S061",
+        "S062",
+        "S085",
+        "S086",
+        "S109",
+        "S110"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_bt",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "CE",
+      "army_profile": "A",
+      "catalog_ids": [
+        "S021",
+        "S022",
+        "S045",
+        "S046",
+        "S069",
+        "S070",
+        "S093",
+        "S094",
+        "S117",
+        "S118"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "ground",
+        "intel",
+        "objective_ce",
+        "offensive_air",
+        "transport",
+        "vehicle_repair"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "CE",
+      "army_profile": "C",
+      "catalog_ids": [
+        "S023",
+        "S024",
+        "S047",
+        "S048",
+        "S071",
+        "S072",
+        "S095",
+        "S096",
+        "S119",
+        "S120"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_ce",
+        "offensive_air",
+        "transport",
+        "vehicle_repair"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "CE",
+      "army_profile": "G",
+      "catalog_ids": [
+        "S019",
+        "S020",
+        "S043",
+        "S044",
+        "S067",
+        "S068",
+        "S091",
+        "S092",
+        "S115",
+        "S116"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_ce",
+        "transport",
+        "vehicle_repair"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "FC",
+      "army_profile": "A",
+      "catalog_ids": [
+        "S009",
+        "S010",
+        "S033",
+        "S034",
+        "S057",
+        "S058",
+        "S081",
+        "S082",
+        "S105",
+        "S106"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "ground",
+        "intel",
+        "objective_fc",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "FC",
+      "army_profile": "C",
+      "catalog_ids": [
+        "S011",
+        "S012",
+        "S035",
+        "S036",
+        "S059",
+        "S060",
+        "S083",
+        "S084",
+        "S107",
+        "S108"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_air",
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_fc",
+        "offensive_air",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    },
+    {
+      "objective_id": "FC",
+      "army_profile": "G",
+      "catalog_ids": [
+        "S007",
+        "S008",
+        "S031",
+        "S032",
+        "S055",
+        "S056",
+        "S079",
+        "S080",
+        "S103",
+        "S104"
+      ],
+      "size_vectors": 30,
+      "capabilities": [
+        "advanced_ground",
+        "ground",
+        "intel",
+        "objective_fc",
+        "transport"
+      ],
+      "six_pilot_ids": [],
+      "acceptance_transfers": false
+    }
+  ],
+  "protected_bindings": [
+    {
+      "catalog_id": "S001",
+      "binding": {
+        "policy": "PreserveActualCodedBindingAndExistingGUIDs",
+        "legacy_runtime_index": 0,
+        "definition_asset": null
+      }
+    },
+    {
+      "catalog_id": "S002",
+      "binding": {
+        "policy": "PreserveActualCodedBindingAndExistingGUIDs",
+        "legacy_runtime_index": null,
+        "definition_asset": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset",
+        "definition_sha256": "1d19889ee0f2689acb23d7d460f3f92bd3d1a7234c62f849ffe2a1dbc6aea89a",
+        "definition_meta_sha256": "4544b3918d9806582b1f3b2be069cb1647b5cbbafeec47f269e825004cfec92e",
+        "campaign_source_asset": null,
+        "campaign_source_guid": null,
+        "native_source_identity_census_required": true,
+        "source_binding_authority": "Existing factory/runtime binding; serialized campaignMap field absent. Preserve, do not replace with the family candidate."
+      }
+    },
+    {
+      "catalog_id": "S025",
+      "binding": {
+        "policy": "PreserveActualCodedBindingAndExistingGUIDs",
+        "legacy_runtime_index": 1,
+        "definition_asset": null
+      }
+    },
+    {
+      "catalog_id": "S073",
+      "binding": {
+        "policy": "PreserveActualCodedBindingAndExistingGUIDs",
+        "legacy_runtime_index": 3,
+        "definition_asset": null
+      }
+    }
+  ],
+  "map_policy": {
+    "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+    "new_geometry_authorized": false,
+    "budget_deadline_changes_authorized": false,
+    "fallback": "Select another already-existing Campaign source only through explicit repinning review; record unresolved fit instead of constructing new geometry."
+  },
+  "provenance_limits": {
+    "historical_survey11_payload_not_retrieved": true,
+    "rejected_transfer_not_worked_around": true,
+    "Full120_source_status_unqualified": true,
+    "pilot_nulls_are_baseline_missing_not_overwritten_by_later_handoffs": true,
+    "later_Windows20_pass_and_S049_export_reported_separately": "Coordinator reported, raw receipts not independently audited here; no baseline binding or readiness transfer",
+    "LFS_representation": "AP/IB source/grid are tracked LFS pointers with authority-equal payload OIDs; actual payloads not fetched/read. CC grid is inline tracked8ef1 vs declared20f6; no raw bridge accepted."
+  },
+  "execution": {
+    "source_changes": 0,
+    "heavy_checkout": false,
+    "compiler": false,
+    "native": false,
+    "acceptance": false
+  }
+}

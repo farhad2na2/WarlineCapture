@@ -1,0 +1,276 @@
+{
+  "source_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "scope": "NarrowTrackedTextReads_NoLibraryNoSurfacePayload",
+  "inputs": [
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "bytes": 5519,
+      "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+      "bytes": 1397,
+      "sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_AirMobile.asset.meta",
+      "bytes": 189,
+      "sha256": "b617a6b52de6b39e192707032aa1f47a79ae2b23fe7fdf6d0dc4beb513a46343"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_CombinedArms.asset.meta",
+      "bytes": 189,
+      "sha256": "fc6d73f4db8917ed95a915bed6cab8b5740d66bcf7137fb98243fa82f57c01ae"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset.meta",
+      "bytes": 189,
+      "sha256": "71a46e50dea5f04bcacb18c4663c29f3a541870860279cbe352e6f59a045486a"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Commander.asset.meta",
+      "bytes": 189,
+      "sha256": "0b15953d919dfe5e79adbdc72cddee333badf518d204b49cc81e873d41ce9586"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Recruit.asset.meta",
+      "bytes": 189,
+      "sha256": "08c630030885fb0fc488f46d9a49ab1445ed771cca8ebbe3616236f21e1fbe08"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Regular.asset.meta",
+      "bytes": 189,
+      "sha256": "31cc1a3e3d6ab3266496fa668f7e1b81968c82969596fc1a4e9d199c5465fa61"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Veteran.asset.meta",
+      "bytes": 189,
+      "sha256": "accbf20b397800dea2d7d10f49034bd33c54981e380ea3003b531fb319bc6ac8"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset.meta",
+      "bytes": 189,
+      "sha256": "2799bffcceb2f65eb94b9008f76ffb9a12f14692793e09c9537a2874d6009670"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishGroundStaging.asset.meta",
+      "bytes": 189,
+      "sha256": "2aac07ac1df8330c32c8c390650cd9e62e4a2f4e0745884619eafe51681af61a"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset.meta",
+      "bytes": 189,
+      "sha256": "190c178df3a71412736e0eacb1c88655ece2f496a4e52a4fa685e7fc8d8b0b47"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset.meta",
+      "bytes": 189,
+      "sha256": "a6e3e84e0afa32e2b7f63ac0e81fc417649ec6c2222c57d05e6ea329bc44042d"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset.meta",
+      "bytes": 189,
+      "sha256": "9ab49f1e729575aa443011dcd6c220e0c58932f0f8858e6d60ec7ca41a6e50ff"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset.meta",
+      "bytes": 189,
+      "sha256": "60decff2e038f953fc31ee5df457d0374a15af4402d4f9a6d28b965fe4a2ee7a"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset.meta",
+      "bytes": 189,
+      "sha256": "c4bc6577d0059a924bccdd0fd1dca3b6071a7b7f4f84cd836354172b9a81f3a3"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_LargeWar.asset.meta",
+      "bytes": 189,
+      "sha256": "0a5429823b935872a866408c78725cddbb19c8176452f0882923cec21ab97073"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_Standard.asset.meta",
+      "bytes": 189,
+      "sha256": "5d56189be7d6935e326713fb5eee407d12fbc6c102eb4c1dbe7a3c5c4f696500"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_War.asset.meta",
+      "bytes": 189,
+      "sha256": "20200df052de9bc0257977d47289f6176dd835dfddaf98dd1fc66ab5986a20fd"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset.meta",
+      "bytes": 189,
+      "sha256": "35e8b79e1bb35508e377544e5797f025d3db9bfb83dd7ecf1d6afc621614dc1e"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset.meta",
+      "bytes": 189,
+      "sha256": "288f20f746c020d52c9121dcd265ad01c79af111c1b5d0504e72c63475bfea23"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset.meta",
+      "bytes": 189,
+      "sha256": "ea7a0c72af3da8661b79435998785aa24d57d92338210e44eb6d7f2d7091fbdd"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+      "bytes": 9364,
+      "sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset",
+      "bytes": 1272832,
+      "sha256": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+      "bytes": 129,
+      "sha256": "a7b5c48e08f7ff6df344810c6124e7cfd605c490743fa9f8d11b6f6a62a63b1c"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+      "bytes": 131,
+      "sha256": "d98e28903078910ece470e365a4e57be62e97e908f225cfa43afcd6e3a2ac429"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+      "bytes": 129,
+      "sha256": "162c370482c5fc514a4b6adb53482ba1082dfb32d91cf59ab15571abe5537663"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Grid.asset",
+      "bytes": 131,
+      "sha256": "821d85e429df4424ef0f066a9ba513e358501e3d3009cd0bbdb9e53f746585d2"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+      "bytes": 2427,
+      "sha256": "c443da5fdfb4cd19f95223385d9de8935cd2331b65b987807f387e0007db1032"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+      "bytes": 5981,
+      "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "bytes": 8343,
+      "sha256": "baefc65b6672de32d6fa7b944410348d4de23bb648e65502ffcba293bbb5decf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs",
+      "bytes": 7126,
+      "sha256": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+      "bytes": 1302003,
+      "sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/six-ba-ground-pilot-inputs-20261014.json",
+      "bytes": 119329,
+      "sha256": "4e579be7dc85c042f2f63711ff577357dbf978fbc9a9bbeb842d862970a68252"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/GroundPilots/source-fit-next-logical-inputs-20261015-01.json",
+      "bytes": 110006,
+      "sha256": "854b8b7cd7dbc47d2ab4dc6a4ab6829eee7b5f1830aabcc31f00dfb3890bbc2b"
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "bytes": 8563,
+      "sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+      "bytes": 90201,
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+      "bytes": 15918,
+      "sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+      "bytes": 39926,
+      "sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "bytes": 39505,
+      "sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md",
+      "bytes": 39258,
+      "sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+      "bytes": 39856,
+      "sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/WORK_QUEUE_004_120.csv",
+      "bytes": 56251,
+      "sha256": "52765f7cf12e989a4905d382729a78fbe30697160dd8aebfbf973149e3627395"
+    },
+    {
+      "path": "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json",
+      "bytes": 1569861,
+      "sha256": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "bytes": 2091,
+      "sha256": "cd8526de610c7018a0fd15d102891c231f42021fbbf690460ed394271fa44cd7"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical.meta",
+      "bytes": 172,
+      "sha256": "717e60420e707f8697d52c2c87e53600ed33fba96c860b889851c57c8fe561a8"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Binding_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "824c271fcbf1434d9e09b2384cd9787a48d3300f604268e9b3c13c3e5efd50ac"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Layout_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "a2ff13132c645b895df112edc70b45bb7d23b1f71228d5406a1829e4e005ab4e"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Objective_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "4f688bfe1bd0370aef4858107d1d67a533b186849ccb2ca67aab21bdaf5e2f54"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/View_S049_LargeWar_Regular.asset.meta",
+      "bytes": 189,
+      "sha256": "2ff661a8f02d9c8408ca04b952407bdd7083c6c2e91684a2b16588ba05891554"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/View_S049_Standard_Regular.asset.meta",
+      "bytes": 189,
+      "sha256": "b2b0c1f1ee6f23a3e447238312f0c466f960152079af293491e4a1edc5cb256e"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/View_S049_War_Regular.asset.meta",
+      "bytes": 189,
+      "sha256": "4db67df77d55b1b3a0913a4b83e811119ca94603883ab1ce19d68960cbbd256a"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "7d1fc7ac118e9d1641e162cc325f4e20095461acfc2b256091bbcdc16cabd229"
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset.meta",
+      "bytes": 189,
+      "sha256": "467965444dc5383bd047c9a6a0c6aada2a6260f7c120b7dcbc9dc1073239d2ef"
+    }
+  ]
+}

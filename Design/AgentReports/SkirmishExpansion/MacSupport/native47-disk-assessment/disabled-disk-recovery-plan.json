@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "state": "DISABLED_READ_ONLY_ASSESSMENT_NoDeletionNoMoveNoExpansion",
+  "utc": "2026-10-19T03:14:05.316145+00:00",
+  "evidence_parent": "a5807e4ea0b143c98d6ffab3f7f1eda9a6191ed7",
+  "sparse_source_preserved": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "scope": "Exact known scratch paths, two tiny Python caches, three exact inactive same-project T7 cache subdirectories for size reference only, saved projected manifest; no broad filesystem scan.",
+  "native_process_audit": "Immediate prior read-only ps audit observed no Editor/compiler; no owner terminated or job success inferred. This is not durable future admission.",
+  "cleanup_candidates": [
+    {
+      "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__",
+      "kind": "RegenerablePythonBytecodeOnly",
+      "owner": "Mac Skirmish support review/controls scratch",
+      "device": 16777233,
+      "allocated_bytes_du": 393216,
+      "files": [
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_native_identity.cpython-312.pyc",
+          "bytes": 5560
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_protected_evidence_scope_test.cpython-312.pyc",
+          "bytes": 11456
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_production_operational_inspector_test.cpython-312.pyc",
+          "bytes": 41086
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/collect_skirmish_batch_inspection.cpython-312.pyc",
+          "bytes": 8813
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/s005_windows_source_snapshot.cpython-312.pyc",
+          "bytes": 7445
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/mac_tanker_probe35_controller.cpython-312.pyc",
+          "bytes": 55803
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_production_operational_inspector.cpython-312.pyc",
+          "bytes": 51946
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_production_matrix_authority.cpython-312.pyc",
+          "bytes": 16219
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_construction_ledger_admission.cpython-312.pyc",
+          "bytes": 48915
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/collect_skirmish_batch_inspection_test.cpython-312.pyc",
+          "bytes": 11509
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_production_queue.cpython-312.pyc",
+          "bytes": 31087
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/audit_skirmish_native_contacts.cpython-312.pyc",
+          "bytes": 5677
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/invoke_skirmish_production_batch.cpython-312.pyc",
+          "bytes": 25282
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_operational_test_fixture.cpython-312.pyc",
+          "bytes": 23824
+        },
+        {
+          "path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/__pycache__/skirmish_profile_journal_admission.cpython-312.pyc",
+          "bytes": 20867
+        }
+      ],
+      "lsof_exit": 1,
+      "open_handle_rows": [],
+      "lsof_stderr": "",
+      "ownership_status": "NoOpenHandlesObserved",
+      "future_cleanup_candidate_only": true,
+      "deletion_authorized": false,
+      "deletion_performed": false,
+      "evidence_to_retain": "All .py sources, test logs, JSON receipts, before/after evidence and frozen Git branches; remove only exact .pyc cache entries if later explicitly authorized.",
+      "potential_gain_upper_bound_bytes": 393216,
+      "space_gain_not_guaranteed": "du allocation is a measured upper bound; APFS snapshots/shared blocks and recreation may reduce net gain."
+    },
+    {
+      "path": "/private/tmp/warline-mac-support-20261018/__pycache__",
+      "kind": "RegenerablePythonBytecodeOnly",
+      "owner": "Mac Skirmish support review/controls scratch",
+      "device": 16777233,
+      "allocated_bytes_du": 53248,
+      "files": [
+        {
+          "path": "/private/tmp/warline-mac-support-20261018/__pycache__/published-inspector-before-credit-guard.cpython-312.pyc",
+          "bytes": 50782
+        }
+      ],
+      "lsof_exit": 1,
+      "open_handle_rows": [],
+      "lsof_stderr": "",
+      "ownership_status": "NoOpenHandlesObserved",
+      "future_cleanup_candidate_only": true,
+      "deletion_authorized": false,
+      "deletion_performed": false,
+      "evidence_to_retain": "All .py sources, test logs, JSON receipts, before/after evidence and frozen Git branches; remove only exact .pyc cache entries if later explicitly authorized.",
+      "potential_gain_upper_bound_bytes": 53248,
+      "space_gain_not_guaranteed": "du allocation is a measured upper bound; APFS snapshots/shared blocks and recreation may reduce net gain."
+    }
+  ],
+  "internal_capacity": {
+    "free_bytes": 21736787968,
+    "reserve_bytes": 26843545600,
+    "shortfall_bytes": 5106757632,
+    "potential_candidate_gain_upper_bound_bytes": 446464,
+    "shortfall_after_max_gain_bytes": 5106311168,
+    "admitted": false
+  },
+  "retained_paths": [
+    {
+      "path": "/private/tmp/warline-mac-support-20261018",
+      "reason": "Contains native35/controller failures, capacity records, regressions and source probes; no blanket deletion."
+    },
+    {
+      "path": "/private/tmp/warline-mac-probe35-lifecycle-review",
+      "reason": "Frozen source/Git review worktree and evidence; preserve except separately reviewed bytecode cache."
+    },
+    {
+      "path": "/private/tmp/warline-mac-groundba-api-native-validation",
+      "reason": "Current exact owned sparse923ed, four source files; not obsolete."
+    },
+    {
+      "path": "/private/tmp/p2-v91",
+      "reason": "Unrelated P2c failed capture evidence; preserve log and original owner records."
+    },
+    {
+      "path": "/Users/farhad/Projects/WarlineCapture-P2c/Library",
+      "reason": "Unrelated owner cache; excluded from scan, cleanup and reuse."
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture-mac-native-s003/Library",
+      "reason": "Existing native history owns retained DLL/RSP/build/source/failure provenance; measured only three named subdirectories for estimate, no deletion/copy/reuse granted."
+    }
+  ],
+  "obsolete_build_outputs": "None verified safe/obsolete in the narrowly owned internal paths; no other deletion candidate identified.",
+  "T7_distinct_future_project": {
+    "created": false,
+    "existing_sparse_moved": false,
+    "free_bytes": 35077398528,
+    "reserve_bytes": 26843545600,
+    "headroom_above_reserve_bytes": 8233852928,
+    "tracked_checkout_lower_bound": {
+      "saved_manifest": "Design/AgentReports/SkirmishExpansion/MacSupport/groundba-native47-staging/projected-source-tree.json",
+      "manifest_sha256": "7a54d7423079343a772c577dcd361fc925b10e8bd17b8aadf9543cdc114c2315",
+      "rows": 50900,
+      "git_blob_bytes": 4438864914,
+      "limitations": "Git blob sizes include unresolved LFS pointers. Not expanded payload size; excludes additional import outputs."
+    },
+    "existing_inactive_T7_reference_cache_allocated_bytes": {
+      "Bee": 389500928,
+      "ScriptAssemblies": 82292736,
+      "PackageCache": 2403942400
+    },
+    "cache_reference_limits": "Size proxies only, not a cache provenance or compatibility claim. Existing source36c6 differs from923ed. No stale RSP paths or DLL consumption transferable; no Library copying proposed.",
+    "temporary_workspace_allowance_bytes": 2147483648,
+    "temporary_allowance_basis": "Illustrative reviewer planning allowance, not a measured peak or accepted reserve change. Native/temp growth remains unknown.",
+    "illustrative_partial_import_model_bytes": 9462084626,
+    "post_model_free_bytes": 25615313902,
+    "post_model_reserve_shortfall_bytes": 1228231698,
+    "other_unmeasured_growth": [
+      "LFS expanded physical payloads",
+      "Library/Artifacts and other import caches",
+      "Package restore/toolchain temporary writes",
+      "Project Temp and compiler peaks",
+      "internal TMPDIR unless explicitly scoped to owned T7 directory"
+    ],
+    "assessment": "Not admitted. Even lower-bound checkout plus three observed cache categories and illustrative2GiB temporary allowance exceeds current T7 headroom; actual payload/import peak may be higher. Internal reserve shortfall also unresolved.",
+    "future_conditions": [
+      "Fresh exact project/cache/temp volume budget with after-import25GiB reserve",
+      "Separate reviewed source/ownership scope for a distinct T7 worktree; no moving existing sparse branch",
+      "No unrelated Editor or native heavy job; fresh capacity and Hub/SDK/source/settings controls",
+      "Exact source commit and actual owning RSP/build closure; no stale candidate reuse",
+      "Root-reviewed disabled one-use packet before any native launch"
+    ]
+  },
+  "actions": {
+    "deletion": false,
+    "move": false,
+    "cache_copy": false,
+    "payload_fetch": false,
+    "full_tree_scan": false,
+    "project_import": false,
+    "compiler": false,
+    "native": false,
+    "native_launch_authorized": false
+  }
+}

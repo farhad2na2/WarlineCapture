@@ -1,0 +1,7 @@
+# Disabled native47 disk assessment
+
+Only two exact Python bytecode caches were identified as obvious regenerable internal candidates. Their measured allocation is less than1MiB, far below the internal reserve gap. No obsolete build output was verified. All source files, failed native/controller evidence, logs and frozen worktrees remain retained. No deletion or moving is authorized/performed; open-handle checks are observation-time only.
+
+A distinct T7 project is also unadmitted. The saved tracked checkout manifest gives only a lower bound because LFS pointers are not expanded payloads. A partial import model adds the measured sizes of three inactive same-project T7 cache categories and an explicitly illustrative2GiB temporary allowance. Even that partial model consumes more than the current headroom above25GiB, before unmeasured Artifacts/LFS/import peaks. Existing native cache/RSP history belongs to a different source epoch and is not reusable compiler proof. No Library copying or stale candidate reuse is proposed.
+
+Exact bytes, paths, lsof results, per-file cache inventory, capacity arithmetic and unresolved project/cache/temp volume conditions are recorded in the machine-readable plan. New T7 worktree creation or expansion requires a separate reviewed scope and fresh resource evidence. This assessment changes Docs only and confers no launch, source-fit, compiler, mission or device acceptance.

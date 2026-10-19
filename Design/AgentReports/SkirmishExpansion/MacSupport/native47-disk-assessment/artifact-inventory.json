@@ -1,0 +1,14 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/native47-disk-assessment/assessment-notes.md",
+      "bytes": 1421,
+      "sha256": "4f4a6f184773954bbfb866dbfe7d7e97747747804b49f85b4e7542b4fbef3a6b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/native47-disk-assessment/disabled-disk-recovery-plan.json",
+      "bytes": 9811,
+      "sha256": "d9be985e71f2089c04fa61930b87bb8f3eedd7321b932bd56dbbd7c693b39002"
+    }
+  ]
+}

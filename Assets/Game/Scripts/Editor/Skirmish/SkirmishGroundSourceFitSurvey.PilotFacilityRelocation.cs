@@ -25,7 +25,7 @@ namespace Game.Editor
         {
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
-            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
+            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority)||CompleteGroundBaServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
                 "Exact MP or authority-bound AP disposable service authoring context required");
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";
@@ -169,6 +169,21 @@ namespace Game.Editor
                         result["existingTypedPadIgnoredForHintsOnly"]=true;
                         result["additionalQaClearanceScope"]="WholeDeclaredCompound_OriginalTypedPadNotCertified_FixedSpawnRallyRepairAndActualApproachClearance";
                         if(faction!=2){result["status"]="NotRequested_PlayerPreferencesFixed";continue;}
+                        JArray allOrigins=null;
+                        if(finiteFacilityOriginExportRequest!=null)
+                        {
+                            Require(configuration.Key.Item1=="S050","Exact owned finite-origin subject");
+                            if(faction!=2||!FiniteOriginStructures.Contains((string)preferred["structureId"]))
+                            {result["status"]="NotRequested_FiniteOriginExport";continue;}
+                            Require((long)compound.width*compound.height<=(int)finiteFacilityOriginExportRequest["maximumOriginsPerRow"],
+                                "Finite original compound enumeration bound required");
+                            allOrigins=new JArray();result["allSourceQaLegalOrigins"]=allOrigins;
+                            result["allOriginsEnumerationComplete"]=false;
+                            result["sameQaKeepClearCells"]=new JArray(serviceKeepClear.Select(RectJson));
+                            result["originGrid"]=new JObject{["width"]=grid.Width,["height"]=grid.Height,
+                                ["cellSize"]=grid.CellSize,["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z)};
+                        }
+
                         var plots=new JArray();var representatives=new List<RectInt>();
                         result["representativePlots"]=plots;
                         var hintFootprint=geometry.GetPlacementFootprint(definition,false);
@@ -185,6 +200,11 @@ namespace Game.Editor
                             if(serviceKeepClear.Any(rect.Overlaps)||!serviceAvailable[faction]){qaRejected++;continue;}
                             if(!NativeValid(definition,originHint,hintFootprint,false,grid,roads,blocker)){nativeRejected++;continue;}
                             sourceLegal++;
+                            if(allOrigins!=null)
+                            {
+                                var measuredOrigin=RectJson(rect);measuredOrigin["originCell"]=new JArray(originHint.x,originHint.y);
+                                allOrigins.Add(measuredOrigin);
+                            }
                             if(representatives.Count>=32||representatives.Any(rect.Overlaps))continue;
                             representatives.Add(rect);var plot=RectJson(rect);
                             plot["preferredOriginCell"]=new JArray(originHint.x,originHint.y);plots.Add(plot);
@@ -194,6 +214,12 @@ namespace Game.Editor
                         result["outsideFullCompound"]=outsideFullCompound;result["nativeSourceRejected"]=nativeRejected;
                         result["staticPrefixRejected"]=prefixRejected;result["qaRejected"]=qaRejected;
                         result["independentlySourceQaLegalOriginCount"]=sourceLegal;
+                        if(allOrigins!=null)
+                        {
+                            Require(allOrigins.Count==sourceLegal,"Every legal origin recorded without truncation");
+                            result["allOriginsEnumerationComplete"]=true;
+                            result["allOriginsAreIndependentNotJointPacking"]=true;
+                        }
                         result["representativeLimit"]=32;
                         result["representativesAreExhaustivePacking"]=false;
                         result["maximumRepresentativeLimitReached"]=representatives.Count==32;

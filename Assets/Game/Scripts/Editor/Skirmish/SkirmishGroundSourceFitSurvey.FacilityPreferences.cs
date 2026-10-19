@@ -15,6 +15,114 @@ namespace Game.Editor
 {
     public static partial class SkirmishGroundSourceFitSurvey
     {
+
+        const string FiniteOriginRequestEnv="WARLINE_FINITE_FACILITY_ORIGIN_REQUEST";
+        const string FiniteOriginRequestShaEnv="WARLINE_FINITE_FACILITY_ORIGIN_REQUEST_SHA256";
+        const string FiniteOriginPadSha="17b3013d6cba8ebd6a738f5d43c7d301fd6407d4935b7b1272c9021cf580ccce";
+        static JObject finiteFacilityOriginExportRequest;
+        static readonly string[] FiniteOriginStructures={"building.barracks","building.refinery","building.refinery.module"};
+
+        static void ValidateFiniteOriginRequest(JObject request,JObject mission)
+        {
+            string[] fields={"schema","scope","catalogId","canonicalSizes","faction","structureIds","sourcePins","canonical_size_rows",
+                "logicalPadInputSha256","maximumOriginsPerRow","sourceFitCertified","normalMissionReady"};
+            Require(request!=null&&request.Properties().Select(p=>p.Name).OrderBy(p=>p,StringComparer.Ordinal).SequenceEqual(fields.OrderBy(p=>p,StringComparer.Ordinal)),
+                "Exact finite-origin diagnostic request shape required");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="IndependentFullFiniteOriginExport_NotConfigurationFit"&&
+                (string)request["catalogId"]=="S050"&&(string)mission["catalog_id"]=="S050"&&
+                request["faction"]?.Type==JTokenType.Integer&&(int)request["faction"]==2&&
+                JToken.DeepEquals(request["canonicalSizes"],new JArray("Standard","War","LargeWar"))&&
+                JToken.DeepEquals(request["structureIds"],new JArray(FiniteOriginStructures))&&
+                JToken.DeepEquals(request["sourcePins"],mission["source_candidate"])&&
+                JToken.DeepEquals(request["canonical_size_rows"],mission["canonical_size_rows"])&&
+                (string)request["logicalPadInputSha256"]==FiniteOriginPadSha&&
+                request["maximumOriginsPerRow"]?.Type==JTokenType.Integer&&(int)request["maximumOriginsPerRow"]==20850&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["normalMissionReady"]?.Type==JTokenType.Boolean&&!(bool)request["normalMissionReady"],
+                "Exact S050 own source/three budgets/input/faction/finite bound required");
+        }
+
+        static void RequireFiniteOriginRequestPath(string path)
+        {
+            string root=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            string logs=System.IO.Path.Combine(root,"Logs","SkirmishProduction")+System.IO.Path.DirectorySeparatorChar;
+            Require(!string.IsNullOrEmpty(path)&&System.IO.Path.IsPathRooted(path)&&
+                !path.Split(System.IO.Path.DirectorySeparatorChar,System.IO.Path.AltDirectorySeparatorChar).Contains("..")&&
+                System.IO.Path.GetFullPath(path).StartsWith(logs,StringComparison.OrdinalIgnoreCase)&&System.IO.File.Exists(path),
+                "Existing owned Logs request path required");
+            string current=System.IO.Path.GetFullPath(path);
+            while(!string.Equals(current,root,StringComparison.OrdinalIgnoreCase))
+            {
+                Require((System.IO.File.GetAttributes(current)&System.IO.FileAttributes.ReparsePoint)==0,"No request reparse ancestry");
+                current=System.IO.Path.GetDirectoryName(current);Require(current!=null,"Owned request ancestry required");
+            }
+        }
+
+        static JObject FiniteOriginControlRequest(JObject mission)=>new JObject{
+            ["schema"]=1,["scope"]="IndependentFullFiniteOriginExport_NotConfigurationFit",["catalogId"]="S050",
+            ["canonicalSizes"]=new JArray("Standard","War","LargeWar"),["faction"]=2,["structureIds"]=new JArray(FiniteOriginStructures),
+            ["sourcePins"]=mission["source_candidate"].DeepClone(),["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+            ["logicalPadInputSha256"]=FiniteOriginPadSha,["maximumOriginsPerRow"]=20850,["sourceFitCertified"]=false,["normalMissionReady"]=false};
+
+        public static void RunFiniteFacilityOriginRequestControls()
+        {
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]=="S050");
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            var valid=FiniteOriginControlRequest(mission);int controls=0;
+            ValidateFiniteOriginRequest(valid,mission);controls++;
+            void Refuse(Action<JObject> change)
+            {
+                var bad=(JObject)valid.DeepClone();change(bad);bool refused=false;
+                try{ValidateFiniteOriginRequest(bad,mission);}catch(InvalidOperationException){refused=true;}
+                Require(refused,"Malformed finite-origin request must refuse before native work");controls++;
+            }
+            Refuse(x=>x["schema"]="1");Refuse(x=>x["schema"]=1.0);
+            Refuse(x=>x["faction"]="2");Refuse(x=>x["faction"]=1);
+            Refuse(x=>x["catalogId"]="S049");Refuse(x=>x["scope"]="ConfigurationFit");
+            Refuse(x=>x["canonicalSizes"]=new JArray("War","Standard","LargeWar"));
+            Refuse(x=>((JArray)x["structureIds"]).RemoveAt(2));
+            Refuse(x=>x["structureIds"][2]="building.refinery");
+            Refuse(x=>x["sourcePins"]["contentHash"]="foreign");
+            Refuse(x=>x["canonical_size_rows"][0]["materials_each"]=(string)x["canonical_size_rows"][0]["materials_each"]+".corrupt");
+            Refuse(x=>x["logicalPadInputSha256"]=new string('0',64));
+            Refuse(x=>x["maximumOriginsPerRow"]=20851);
+            Refuse(x=>x["sourceFitCertified"]=true);Refuse(x=>x["extra"]=true);
+            Refuse(x=>x["normalMissionReady"]="false");
+            bool missing=false;try{ValidateFiniteOriginRequest(null,mission);}catch(InvalidOperationException){missing=true;}
+            Require(missing,"Missing finite-origin request refused");controls++;
+            Require(controls==18,"Exact eighteen finite-origin request controls");
+            Debug.Log("[FiniteFacilityOriginRequestControls] result=Passed controls=18 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        public static void RunReviewedFiniteFacilityOriginExport()
+        {
+            Require(finiteFacilityOriginExportRequest==null&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&!strictLogicalCandidatesRequested&&
+                !apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                !EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,
+                "Fresh idle unowned finite-origin diagnostic scope required");
+            Require(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG")=="S050","Exact S050 diagnostic subject");
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]=="S050");
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            string path=Environment.GetEnvironmentVariable(FiniteOriginRequestEnv),digest=Environment.GetEnvironmentVariable(FiniteOriginRequestShaEnv);
+            RequireFiniteOriginRequestPath(path);
+            Require(digest!=null&&digest.Length==64&&digest.All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&Hash(path)==digest,"Exact request byte pin required");
+            var request=JObject.Parse(System.IO.File.ReadAllText(path));ValidateFiniteOriginRequest(request,mission);
+            Require(Hash(path)==digest,"Request unchanged after read");
+            var pad=ReadReviewedFacilityPadInput(mission);
+            Require(pad!=null&&(string)pad["observedInputSha256"]==FiniteOriginPadSha,"Exact unchanged reviewed S050 pad input required");
+            RunFiniteFacilityOriginRequestControls();
+            finiteFacilityOriginExportRequest=(JObject)request.DeepClone();mpGroundBaPilotRequested=true;
+            try{RunAll120BoundedFacilityPreferences();}
+            finally
+            {
+                finiteFacilityOriginExportRequest=null;mpGroundBaPilotRequested=false;
+                Require(Hash(path)==digest&&Hash((string)pad["observedInputPath"])==FiniteOriginPadSha,"Diagnostic inputs unchanged; no authority renewal");
+            }
+            Debug.Log("[ReviewedFiniteFacilityOriginExport] result=Collected catalog=S050 canonicalSizes=3 originConfigurations=1 faction=2 structures=3 fullRouteAcceptance=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
         static bool refinementFacilityPreferencesRequested,refinementPreferenceReplay;
         static bool apGroundJointPreferencesRequested;
         const string ApJointPadInputEnv="WARLINE_AP_JOINT_PAD_INPUT";
@@ -260,8 +368,28 @@ namespace Game.Editor
             var inventory=new JObject{["newLogicalCandidateMaterialized"]=true,["candidateCompoundWorldRects"]=compounds.DeepClone(),
                 ["allSizeFacilities"]=Ground30PreferredFacilities(maxBudget,owner.Layout,grid)};
             ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                em,gridEntity,grid,surface,inventory,true,true,clearance,true,serviceAuthority:(mpGroundBaPilotRequested||ApPairServiceAuthority(owner.Definition))?owner.Definition:null);
+                em,gridEntity,grid,surface,inventory,true,true,clearance,true,serviceAuthority:(mpGroundBaPilotRequested||ApPairServiceAuthority(owner.Definition)||CompleteGroundBaServiceAuthority(owner.Definition))?owner.Definition:null);
             report["independentSourceQaCapacityHints"]=inventory;
+            if(finiteFacilityOriginExportRequest!=null)
+            {
+                ValidateFiniteOriginRequest(finiteFacilityOriginExportRequest,mission);
+                var exports=((JArray)inventory["normalFacilityRelocationProposals"]).OfType<JObject>()
+                    .Where(row=>(int?)row["faction"]==2&&FiniteOriginStructures.Contains((string)row["structureId"])).ToArray();
+                Require(exports.Length==3&&exports.Select(row=>(string)row["structureId"]).OrderBy(x=>x,StringComparer.Ordinal)
+                    .SequenceEqual(FiniteOriginStructures.OrderBy(x=>x,StringComparer.Ordinal))&&
+                    exports.All(row=>row["allSourceQaLegalOrigins"] is JArray&&
+                        (long)row["independentlySourceQaLegalOriginCount"]==((JArray)row["allSourceQaLegalOrigins"]).Count),
+                    "Complete three requested independent origin inventories required");
+                report["finiteOriginExport"]=new JObject{["scope"]="IndependentFullFiniteOriginExport_NotConfigurationFit",
+                    ["request"]=finiteFacilityOriginExportRequest.DeepClone(),["canonicalBudgets"]=new JArray(budgets.Select(ApPreferenceBudgetKey)),
+                    ["originConfigurationSize"]=maxBudget.Size.ToString(),["canonicalSizeCount"]=budgets.Count,
+                    ["origins"]=new JArray(exports.Select(row=>row.DeepClone())),["priorFacilityReservationsIncluded"]=false,
+                    ["nativeRoutePreflightMayHaveRun"]=true,["forcePackingMeasured"]=false,["strictFacilityReplayMeasured"]=false,
+                    ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                report["result"]="CollectedFiniteOrigins_NoConfigurationFit";
+                return report;
+            }
+
             var hints=(JArray)inventory["normalFacilityRelocationProposals"];
             var assignments=logicalPadInput==null?BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds):
                 new JArray(new JObject{["score"]=0,["pads"]=new JArray()});

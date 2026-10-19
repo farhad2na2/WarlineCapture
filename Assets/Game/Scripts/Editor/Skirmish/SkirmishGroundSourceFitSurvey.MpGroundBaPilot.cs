@@ -12,6 +12,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEditor;
 
 namespace Game.Editor
 {
@@ -447,7 +448,7 @@ namespace Game.Editor
         }
         static SkirmishRoleBindingConfig[] MpPilotExposedServiceRoles(SkirmishScenarioDefinitionConfig definition)
         {
-            Require(((definition.CatalogId=="S049"||definition.CatalogId=="S050")&&definition.ArmyProfileConfig.ProfileId=="G")||ApPairServiceAuthority(definition),
+            Require(((definition.CatalogId=="S049"||definition.CatalogId=="S050")&&definition.ArmyProfileConfig.ProfileId=="G")||ApPairServiceAuthority(definition)||CompleteGroundBaServiceAuthority(definition),
                 "Exact MP or authority-bound AP Ground BA authoring required");
             var rows=definition.RoleCatalog.Roles.Where(r=>definition.ArmyProfileConfig.Allows(r.RoleId)&&
                 (SkirmishRoleIds.Category(r.Kind)==SkirmishPopulationCategory.Ground||
@@ -525,6 +526,300 @@ namespace Game.Editor
                 cells.All(c=>MpPilotRepairWorldInRange(GridUtils.CellToWorldCenter(grid,c).xz,new float2(20,20))),
                 "Bounded unique cell-center region enumeration required");
             Debug.Log("[MpGroundBaServiceRegionControls] result=Passed controls=6 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        // Generic Ground BA scope only. MP/S049 geometry remains in its dedicated entries.
+        static JObject completeGroundBaAuthority;
+        static JObject completeGroundBaSourcePins;
+        static bool CompleteGroundBaTrue(JToken value)=>value?.Type==JTokenType.Boolean&&(bool)value;
+
+        static void ValidateCompleteGroundBaAuthorityRow(JObject authority)
+        {
+            var tuple=authority?["tuple"] as JObject;var rows=authority?["canonical_size_rows"] as JArray;
+            string id=(string)authority?["catalog_id"];
+            Require(!string.IsNullOrEmpty(id)&&authority["protected_binding"]?.Type==JTokenType.Null&&
+                !ProtectedRefinementCatalog(id)&&tuple!=null&&(string)tuple["army_profile"]=="G"&&
+                (string)tuple["objective_id"]=="BA"&&new[]{"F","E"}.Contains((string)tuple["start_profile"])&&
+                new[]{"DB","CC","MP","IB","AP"}.Contains((string)tuple["map_id"])&&
+                (string)authority["definition_id"]=="skirmish."+id.ToLowerInvariant()&&
+                (string)authority["scenario_setup_id"]=="scenario.skirmish."+id.ToLowerInvariant(),
+                "Exact unprotected Ground BA tuple and saved identity required");
+            Require(rows!=null&&rows.Count==3&&rows.OfType<JObject>().Count()==3&&
+                rows.Select(r=>(string)r["size_id"]).SequenceEqual(new[]{"Standard","War","LargeWar"})&&
+                rows.All(r=>(string)r["catalog_id"]==id&&(string)r["army_profile"]=="G"&&
+                    (string)r["objective_id"]=="BA"&&(string)r["start_profile"]==(string)tuple["start_profile"])&&
+                CanonicalBudgetHash(rows)==(string)authority["canonical_size_rows_sha256"],
+                "Exact own three canonical string budgets required; no template quantities");
+        }
+
+        static bool CompleteGroundBaServiceAuthority(SkirmishScenarioDefinitionConfig definition)
+        {
+            if(completeGroundBaAuthority==null)return false;
+            var authority=completeGroundBaAuthority;var pin=completeGroundBaSourcePins;
+            Require(definition!=null&&pin!=null,"Owned Ground BA source scope required");
+            ValidateCompleteGroundBaAuthorityRow(authority);
+            var source=definition.CampaignMap;var layout=definition.MapLayout;
+            var catalog=Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Require(catalog!=null&&UnityEditor.EditorUtility.IsPersistent(catalog)&&!UnityEditor.EditorUtility.IsDirty(catalog),
+                "Actual clean persistent profile catalog required");
+            var profiles=catalog.ToAuthoredSet();
+            Require(definition.CatalogId==(string)authority["catalog_id"]&&
+                definition.DefinitionId==(string)authority["definition_id"]&&
+                definition.ScenarioSetupId==(string)authority["scenario_setup_id"]&&
+                definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault&&
+                definition.ArmyProfileConfig==profiles.ArmyGround&&definition.ArmyProfileConfig.ProfileId=="G"&&
+                definition.StartPackageConfig==((string)authority["tuple"]["start_profile"]=="F"?profiles.StartField:profiles.StartEstablished)&&
+                definition.StartPackageConfig.PackageId==(string)authority["tuple"]["start_profile"]&&
+                definition.RoleCatalog==profiles.Roles&&definition.EconomyConfig==profiles.Economy&&definition.UpgradeCatalog==profiles.Upgrades&&definition.IntelConfig==profiles.Intel&&
+                definition.RequiredFeatureIds!=null&&definition.RequiredFeatureIds.SequenceEqual(authority["required_capabilities"].ToObject<string[]>())&&
+                source!=null&&layout!=null&&definition.MissionLogicalBinding==null&&
+                !UnityEditor.EditorUtility.IsPersistent(definition)&&!UnityEditor.EditorUtility.IsPersistent(layout)&&
+                UnityEditor.EditorUtility.IsPersistent(source)&&!UnityEditor.EditorUtility.IsDirty(source)&&
+                UnityEditor.AssetDatabase.GetAssetPath(source)==(string)pin["sourcePath"]&&
+                source.OperationMapId==(string)pin["operationMapId"]&&source.SourceIdentityHash==(string)pin["sourceIdentityHash"]&&
+                source.ContentHash==(string)pin["contentHash"]&&source.SourceSceneReference.AssetGUID==(string)pin["sourceSceneGuid"]&&
+                source.NavigationMetadata.AuthoredSubSceneGuid==(string)pin["authoredSubSceneGuid"]&&
+                UnityEditor.AssetDatabase.GUIDToAssetPath(source.GridMetadata.AssetGuid)==(string)pin["gridPath"]&&
+                UnityEditor.AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID)==(string)pin["surfacePath"]&&
+                Hash((string)pin["sourcePath"])==(string)pin["sourceAssetSha256"]&&
+                Hash((string)pin["gridPath"])==(string)pin["gridAssetSha256"]&&
+                Hash((string)pin["surfacePath"])==(string)pin["surfaceAssetSha256"]&&
+                source.GridMetadata.CellSize==1&&layout.OperationMapId==source.OperationMapId&&
+                layout.WorldBinding.SourceHash==source.ContentHash&&!layout.WorldBinding.HasMeasuredDeployments&&!layout.WorldBinding.BindAllConfigurations,
+                "Exact caller-owned Ground BA source/grid/profile/binding required; no raw-hash normalization");
+            return true;
+        }
+
+        static JObject CompleteGroundBaBudgetReceipt(SkirmishScenarioDefinitionConfig definition,SkirmishStaticAuthoringBudget budget,GridConfig grid)
+        {
+            Require(CompleteGroundBaServiceAuthority(definition)&&budget.CatalogId==definition.CatalogId&&budget.ExactCanonicalQuantities,
+                "Actual exact canonical compiler budget and owned source required");
+            var source=definition.CampaignMap;var expected=source.GridMetadata;
+            Require(grid.Width==expected.Dimensions.x&&grid.Height==expected.Dimensions.y&&grid.CellSize==expected.CellSize&&
+                math.all(grid.Origin==(float3)expected.Origin)&&math.all(math.isfinite(grid.Origin)),"Actual native grid must match own source metadata");
+            var row=((JArray)completeGroundBaAuthority["canonical_size_rows"]).OfType<JObject>().Single(r=>(string)r["size_id"]==budget.Size.ToString());
+            var exposed=MpPilotExposedServiceRoles(definition); // unchanged nine-profile producer/readiness contract
+            return new JObject{["catalogId"]=definition.CatalogId,["definitionId"]=definition.DefinitionId,
+                ["scenarioSetupId"]=definition.ScenarioSetupId,["group"]=completeGroundBaAuthority["tuple"]["map_id"].DeepClone(),
+                ["armyProfile"]=definition.ArmyProfileConfig.ProfileId,["startProfile"]=definition.StartPackageConfig.PackageId,
+                ["objective"]= "BA",["canonicalSizeRow"]=row.DeepClone(),["canonicalRowsSha256"]=CanonicalBudgetHash(completeGroundBaAuthority["canonical_size_rows"]),
+                ["exactCanonicalQuantities"]=budget.ExactCanonicalQuantities,["budgetSignature"]=ApPreferenceBudgetKey(budget),
+                ["sourcePins"]=completeGroundBaSourcePins.DeepClone(),["actualGridMatchesSource"]=true,
+                ["exposedProfileKinds"]=new JArray(exposed.Select(r=>r.Kind.ToString())),
+                ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+        }
+
+        // Independent expected signatures: actual clean candidate + canonical compiler,
+        // captured before the allocator runs, never reconstructed from its report.
+        static JObject CompileCompleteGroundBaExpectedSignatures(JObject authority,JObject sourcePins)
+        {
+            var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)sourcePins["sourcePath"]);
+            Require(TryCreateGroundBa10Candidate(authority,source,out var owner,out string error),error);
+            using(owner)
+            {
+                Require(CompleteGroundBaServiceAuthority(owner.Definition),"Own canonical signature candidate required");
+                Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
+                var signatures=new JObject();
+                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                {
+                    Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,size,1,
+                        new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                        budget.ExactCanonicalQuantities,"Actual expected canonical compiler signature required: "+string.Join(";",reasons));
+                    signatures[size.ToString()]=ApPreferenceBudgetKey(budget).DeepClone();
+                }
+                return signatures;
+            }
+        }
+
+        static void ValidateCompleteGroundBaBudgetReceipt(JObject receipt,JObject authority,JObject sourcePins,string size,JObject expectedSignatures)
+        {
+            ValidateCompleteGroundBaAuthorityRow(authority);
+            var own=((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(r=>(string)r["size_id"]==size);
+            string id=(string)authority["catalog_id"];
+            Require(receipt!=null&&(string)receipt["catalogId"]==id&&(string)receipt["definitionId"]==(string)authority["definition_id"]&&
+                (string)receipt["scenarioSetupId"]==(string)authority["scenario_setup_id"]&&(string)receipt["group"]==(string)authority["tuple"]["map_id"]&&
+                (string)receipt["armyProfile"]=="G"&&(string)receipt["startProfile"]==(string)authority["tuple"]["start_profile"]&&(string)receipt["objective"]=="BA"&&
+                JToken.DeepEquals(receipt["canonicalSizeRow"],own)&&(string)receipt["canonicalRowsSha256"]==(string)authority["canonical_size_rows_sha256"]&&
+                CompleteGroundBaTrue(receipt["exactCanonicalQuantities"])&&CompleteGroundBaTrue(receipt["actualGridMatchesSource"])&&
+                JToken.DeepEquals(receipt["sourcePins"],sourcePins)&&receipt["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)receipt["sourceFitCertified"]&&
+                receipt["normalMissionReady"]?.Type==JTokenType.Boolean&&!(bool)receipt["normalMissionReady"],"Own typed tuple/source/grid/budget receipt required");
+            var kinds=receipt["exposedProfileKinds"] as JArray;
+            var expected=new[]{"Car","ApcFast","ApcArmored","ApcHeavy","Tank","Radar","Siege","LogisticsTruck","Tanker"};
+            Require(kinds!=null&&kinds.Count==9&&kinds.All(k=>k.Type==JTokenType.String)&&
+                kinds.Select(k=>(string)k).OrderBy(k=>k,StringComparer.Ordinal).SequenceEqual(expected.OrderBy(k=>k,StringComparer.Ordinal)),
+                "All nine exposed Ground profiles required, not only starting actors");
+            var signature=receipt["budgetSignature"] as JObject;
+            Require(signature!=null&&(string)signature["catalog"]==id&&(string)signature["definition"]==(string)authority["definition_id"]&&
+                (string)signature["size"]==size&&signature["structures"] is JArray&&signature["forces"] is JArray,"Actual existing compiler signature required");
+            var expectedSignature=expectedSignatures?[size] as JObject;
+            Require(expectedSignatures!=null&&expectedSignatures.Properties().Count()==3&&expectedSignature!=null&&
+                (string)expectedSignature["catalog"]==id&&(string)expectedSignature["definition"]==(string)authority["definition_id"]&&
+                (string)expectedSignature["size"]==size&&JToken.DeepEquals(signature,expectedSignature),
+                "Exact independently compiled force/structure signature required; totals alone confer no authority");
+            var structures=((JArray)signature["structures"]).OfType<JObject>().ToArray();var forces=((JArray)signature["forces"]).OfType<JObject>().ToArray();
+            Require(structures.Length==((JArray)signature["structures"]).Count&&forces.Length==((JArray)signature["forces"]).Count&&
+                structures.All(s=>(int?)s["FactionId"]==1||(int?)s["FactionId"]==2)&&forces.All(f=>(int?)f["FactionId"]==1||(int?)f["FactionId"]==2),
+                "Exact typed two-faction compiler rows required");
+            foreach(int side in new[]{1,2})
+            {
+                string prefix=side==1?"player_":"enemy_";
+                int actors=int.Parse((string)own[prefix+"combat"])+int.Parse((string)own[prefix+"logistics_support"])+int.Parse((string)own[prefix+"objective_trucks"]);
+                Require(structures.Count(s=>(int)s["FactionId"]==side)==int.Parse((string)own[prefix+"starting_structures"])&&
+                    forces.Where(f=>(int)f["FactionId"]==side).All(f=>f["Quantity"]?.Type==JTokenType.Integer&&(int)f["Quantity"]>0)&&
+                    forces.Where(f=>(int)f["FactionId"]==side).Sum(f=>(int)f["Quantity"])==actors,"Exact own facilities and actor totals required for each faction");
+            }
+        }
+
+        static void ValidateCompleteGroundBaReport(JObject report,JObject authority,JObject sourcePins,JObject expectedSignatures)
+        {
+            string id=(string)authority["catalog_id"];var pass=RequireCompleteGroundBaStaticPass(report,id);
+            Require(pass["discoveryOnly"]?.Type==JTokenType.Boolean&&!(bool)pass["discoveryOnly"],"Non-discovery pass required");
+            var measured=(JObject)report["missions"][0]["measurement"];
+            Require((string)measured["catalogId"]==id&&JToken.DeepEquals(measured["sourcePins"],sourcePins),"Actual own measured source pins required");
+            foreach(JObject row in (JArray)pass["sizes"])
+            {
+                Require((string)row["catalogId"]==id&&(string)row["group"]==(string)authority["tuple"]["map_id"],"No cross-catalog or source-group size splice");
+                ValidateCompleteGroundBaBudgetReceipt((JObject)row["completeGroundBaAuthority"],authority,sourcePins,(string)row["size"],expectedSignatures);
+            }
+        }
+
+        public static void RunGroundBaCompleteStaticPilot()
+        {
+            string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
+            Require(completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !strictLogicalCandidatesRequested&&!refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&!refinementJointPadSearchRequested&&
+                !refinementCompoundSearchRequested&&!refinementLogicalFrameSearchRequested&&!apGroundJointPreferencesRequested&&
+                !EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,"Idle unowned Ground BA authoring scope required");
+            if(id=="S049"||id=="S050"){RunMpGroundBaCompleteStaticPilot();return;}
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);
+            ValidateCompleteGroundBaAuthorityRow(authority);
+            var pin=(JObject)GroundBaTemplate(authority)["source_candidate"].DeepClone();
+            completeGroundBaAuthority=(JObject)authority.DeepClone();completeGroundBaSourcePins=pin;
+            JObject expectedSignatures;
+            try
+            {
+                expectedSignatures=CompileCompleteGroundBaExpectedSignatures(authority,pin);
+                RunAll120BoundedFacilityPreferences();
+            }
+            finally{completeGroundBaAuthority=null;completeGroundBaSourcePins=null;}
+            var report=JObject.Parse(File.ReadAllText(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")));
+            ValidateCompleteGroundBaReport(report,authority,pin,expectedSignatures);
+            Debug.Log("[GroundBaCompleteStaticPilot] result=Passed catalog="+id+" group="+(string)authority["tuple"]["map_id"]+" sizes=3 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        public static void RunCompleteGroundBaTupleControls()
+        {
+            // Synthetic JSON controls only: no source world, native query or fit certificate.
+            var authority=(JObject)GroundBa10Rows().Single(r=>(string)r["catalog_id"]=="S026").DeepClone();
+            var pins=new JObject{["controlFixtureOnly"]=true};int controls=0;
+            ValidateCompleteGroundBaAuthorityRow(authority);controls++;
+            var sizes=new JArray();var expectedSignatures=new JObject();
+            foreach(JObject own in (JArray)authority["canonical_size_rows"])
+            {
+                var structures=new JArray();var forces=new JArray();
+                foreach(int side in new[]{1,2})
+                {
+                    string prefix=side==1?"player_":"enemy_";
+                    for(int i=0;i<int.Parse((string)own[prefix+"starting_structures"]);i++)structures.Add(new JObject{["FactionId"]=side,["StructureId"]="fixture.structure."+i,["SpawnAnchorId"]="fixture.anchor."+side,["ObjectiveRoleId"]="fixture.base",["DesignatedBase"]=i==0,["AcrossOffsetMetres"]=i,["ForwardOffsetMetres"]=0});
+                    forces.Add(new JObject{["FactionId"]=side,["RoleId"]="fixture.rifle",["RoleKind"]=1,["RuntimePrefabKey"]="fixture.rifle.prefab",["SupplyCost"]=3,["SpawnAnchorId"]="fixture.anchor."+side,["ObjectiveRoleId"]="fixture.force",["Quantity"]=int.Parse((string)own[prefix+"combat"])+int.Parse((string)own[prefix+"logistics_support"])+int.Parse((string)own[prefix+"objective_trucks"])});
+                }
+                var receipt=new JObject{["catalogId"]="S026",["definitionId"]="skirmish.s026",["scenarioSetupId"]="scenario.skirmish.s026",["group"]="CC",
+                    ["armyProfile"]="G",["startProfile"]="E",["objective"]="BA",["canonicalSizeRow"]=own.DeepClone(),
+                    ["canonicalRowsSha256"]=authority["canonical_size_rows_sha256"].DeepClone(),["exactCanonicalQuantities"]=true,
+                    ["budgetSignature"]=new JObject{["catalog"]="S026",["definition"]="skirmish.s026",["size"]=own["size_id"].DeepClone(),["structures"]=structures,["forces"]=forces},
+                    ["sourcePins"]=pins.DeepClone(),["actualGridMatchesSource"]=true,["exposedProfileKinds"]=new JArray("Car","ApcFast","ApcArmored","ApcHeavy","Tank","Radar","Siege","LogisticsTruck","Tanker"),
+                    ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                expectedSignatures[(string)own["size_id"]]=receipt["budgetSignature"].DeepClone();
+                sizes.Add(new JObject{["catalogId"]="S026",["group"]="CC",["size"]=own["size_id"].DeepClone(),["completeFacilities"]=true,["allActorsInsidePads"]=true,
+                    ["mpPilotCanonicalRouteCoverage"]=true,["actualProfileRouteIndependence"]=new JObject{["allProfilesIndependent"]=true},
+                    ["mpPilotServiceAccess"]=new JObject{["allMembersHaveExactServiceIngressAndReturn"]=true},["completeGroundBaAuthority"]=receipt});
+            }
+            var report=new JObject{["cleanupVerified"]=true,["sourcePinsRecheckedAfterMeasurement"]=true,["missions"]=new JArray(new JObject{["catalogId"]="S026",
+                ["measurement"]=new JObject{["catalogId"]="S026",["sourcePins"]=pins.DeepClone(),["strictThreeSizePlacementPass"]=0,["normalThreeSizeCompilerPassed"]=true,
+                    ["passes"]=new JArray(new JObject{["pass"]=0,["discoveryOnly"]=false,["sizes"]=sizes})}})};
+            ValidateCompleteGroundBaReport(report,authority,pins,expectedSignatures);controls++;
+            void Refuse(Action action){bool refused=false;try{action();}catch(InvalidOperationException){refused=true;}Require(refused,"Malformed tuple/strict receipt must fail closed");controls++;}
+            void Authority(Action<JObject> change){var a=(JObject)authority.DeepClone();change(a);Refuse(()=>ValidateCompleteGroundBaAuthorityRow(a));}
+            void Report(Action<JObject> change){var r=(JObject)report.DeepClone();change(r);Refuse(()=>ValidateCompleteGroundBaReport(r,authority,pins,expectedSignatures));}
+            JObject Row(JObject r)=>(JObject)r["missions"][0]["measurement"]["passes"][0]["sizes"][0];
+            JObject Receipt(JObject r)=>(JObject)Row(r)["completeGroundBaAuthority"];
+            Authority(a=>a["tuple"]["army_profile"]="C");
+            Authority(a=>a["tuple"]["objective_id"]="FC");
+            Authority(a=>a["tuple"]["start_profile"]="unknown");
+            Authority(a=>a["tuple"]["map_id"]="foreign");
+            Authority(a=>a["protected_binding"]=new JObject());
+            Authority(a=>a["definition_id"]="foreign");
+            Authority(a=>((JArray)a["canonical_size_rows"]).RemoveAt(0));
+            Authority(a=>a["canonical_size_rows"][0]["size_id"]="War");
+            Authority(a=>a["canonical_size_rows"][0]["catalog_id"]="S050");
+            Authority(a=>a["canonical_size_rows"][0]["materials_each"]="901");
+            Report(r=>r["cleanupVerified"]=false);
+            Report(r=>r["missions"][0]["measurement"]["normalThreeSizeCompilerPassed"]=false);
+            Report(r=>((JArray)r["missions"][0]["measurement"]["passes"][0]["sizes"]).RemoveAt(0));
+            Report(r=>r["missions"][0]["measurement"]["passes"][0]["discoveryOnly"]=true);
+            Report(r=>Row(r)["catalogId"]="S050");
+            Report(r=>Row(r)["group"]="MP");
+            Report(r=>r["missions"][0]["measurement"]["sourcePins"]["foreign"]=true);
+            Report(r=>Receipt(r)["canonicalSizeRow"]["materials_each"]="901");
+            Report(r=>Receipt(r)["exactCanonicalQuantities"]="true");
+            Report(r=>Receipt(r)["actualGridMatchesSource"]=false);
+            Report(r=>((JArray)Receipt(r)["exposedProfileKinds"]).RemoveAt(0));
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["Quantity"]=1);
+            Report(r=>((JArray)Receipt(r)["budgetSignature"]["structures"]).RemoveAt(0));
+            Report(r=>Row(r)["allActorsInsidePads"]=false);
+            Report(r=>Row(r)["mpPilotCanonicalRouteCoverage"]=false);
+            Report(r=>Row(r)["actualProfileRouteIndependence"]["allProfilesIndependent"]=false);
+            Report(r=>Row(r)["mpPilotServiceAccess"]["allMembersHaveExactServiceIngressAndReturn"]=false);
+            Report(r=>Receipt(r)["sourceFitCertified"]=true);
+            Report(r=>Receipt(r)["normalMissionReady"]=true);
+            Report(r=>Row(r)["size"]="War");
+            // Same-count swaps must reject even with exactCanonicalQuantities still true.
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RoleId"]="fixture.tank");
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RoleKind"]=99);
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RuntimePrefabKey"]="foreign.prefab");
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SupplyCost"]=999);
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SpawnAnchorId"]="foreign.anchor");
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["ObjectiveRoleId"]="foreign.objective");
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["StructureId"]="foreign.structure");
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["SpawnAnchorId"]="foreign.anchor");
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["ObjectiveRoleId"]="foreign.objective");
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["DesignatedBase"]=false);
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["AcrossOffsetMetres"]=999);
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["ForwardOffsetMetres"]=999);
+            Report(r=>((JObject)Receipt(r)["budgetSignature"]["forces"][0]).Remove("RoleId"));
+            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SupplyCost"]="3");
+            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["FactionId"]=2);
+            Require(controls==47,"Exact forty-seven tuple/receipt controls");
+            Debug.Log("[CompleteGroundBaTupleControls] result=Passed controls=47 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0");
+        }
+
+
+        public static void RunCombinedGroundBaAuthoringControls()
+        {
+            Require(completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&finiteFacilityOriginExportRequest==null&&
+                !mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&!strictLogicalCandidatesRequested&&
+                !refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&!refinementJointPadSearchRequested&&
+                !refinementCompoundSearchRequested&&!refinementLogicalFrameSearchRequested&&!apGroundJointPreferencesRequested&&
+                !EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,
+                "Idle unowned composed authoring controls required");
+            string input=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT");
+            string digest=Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256");
+            try
+            {
+                RunCompleteGroundBaTupleControls();
+                RunMpGroundBaPreparedReplayControls();
+                RunS050ReviewedPadEndpointControls();
+                RunFiniteFacilityOriginRequestControls();
+            }
+            finally
+            {
+                Require(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT")==input&&
+                    Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256")==digest&&
+                    completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&finiteFacilityOriginExportRequest==null&&
+                    !mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&!refinementFacilityPreferencesRequested&&!refinementPreferenceReplay,
+                    "Every composed control must restore its own environment and scoped authority");
+            }
+            Debug.Log("[CombinedGroundBaAuthoringControls] result=Passed controls=115 groups=47,20,30,18 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0");
         }
 
         static bool mpGroundBaPilotRequested;
@@ -691,10 +986,8 @@ namespace Game.Editor
                 ["entersCoverageOrIndependenceGate"]=false,["sourceFitCertified"]=false};
         }
 
-        static void ValidateMpGroundBaStaticPilotResult(string id)
+        static JObject RequireCompleteGroundBaStaticPass(JObject report,string id)
         {
-            string path=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT");
-            var report=JObject.Parse(File.ReadAllText(path));
             Require((bool?)report["cleanupVerified"]==true&&(bool?)report["sourcePinsRecheckedAfterMeasurement"]==true,"Source cleanup and physical pins must pass");
             var missions=(JArray)report["missions"];Require(missions.Count==1&&(string)missions[0]["catalogId"]==id,"Exact one mission receipt required");
             var measured=(JObject)missions[0]["measurement"];
@@ -706,6 +999,14 @@ namespace Game.Editor
                 sizes.All(r=>(bool?)r["completeFacilities"]==true&&(bool?)r["allActorsInsidePads"]==true&&
                     (bool?)r["mpPilotCanonicalRouteCoverage"]==true&&(bool?)(r["actualProfileRouteIndependence"]?["allProfilesIndependent"])==true&&
                     (bool?)(r["mpPilotServiceAccess"]?["allMembersHaveExactServiceIngressAndReturn"])==true),"Exact non-discovery facilities/actors/routes/service/corridors required for all sizes");
+            return pass;
+        }
+
+        static void ValidateMpGroundBaStaticPilotResult(string id)
+        {
+            string path=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT");
+            var report=JObject.Parse(File.ReadAllText(path));
+            RequireCompleteGroundBaStaticPass(report,id);
             Debug.Log("[MpGroundBaCompleteStaticPilot] result=Passed catalog="+id+" sizes=3 sourceFitCertified=0 normalMissionReady=0");
         }
 

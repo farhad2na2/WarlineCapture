@@ -723,9 +723,6 @@ namespace Game.UI.Runtime
         }
 
         /// <param name="briefingOnLeftOverride">Null keeps the default side (left in LTR, right in RTL).</param>
-        /// <summary>v45: px the 4:3 Theatre briefing column gives the map so P2's detail reserve holds.</summary>
-        private const float TheatreFourByThreeColumnNarrow = 40f;
-
         private void ApplyLibraryFrame(bool? briefingOnLeftOverride = null)
         {
             RectTransform composition = transform.Find("SkirmishSetupComposition") as RectTransform;
@@ -746,22 +743,10 @@ namespace Game.UI.Runtime
                 out float panelY,
                 out float panelHeight);
             bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
-            // v45 (Game PM, approved-1 keeps the district panel at 4:3): P2's seating only reserves the trailing detail
-            // column when every portrait still seats (TheatreSeatGeometry.DetailReserveOn / FullPortraitSeatsHold), and
-            // LibraryTheatre hides the panel when it doesn't. The 4:3 plate was 1039.6 px, just under that; giving the
-            // map 40 px from the briefing column makes it ~1080 px, where the reserve holds for every district in en
-            // and fa (checked offline against TheatreSeatGeometry at 1070-1085 px).
-            float theatreNarrow = 0f;
-            if (theater && composition.rect.height > 1f && composition.rect.width / composition.rect.height < 1.6f)
-            {
-                theatreNarrow = TheatreFourByThreeColumnNarrow;
-                briefingWidth -= theatreNarrow;
-                mapWidth += theatreNarrow;
-                if (briefingOnLeft)
-                    mapX -= theatreNarrow;
-                else
-                    briefingX += theatreNarrow;
-            }
+            // v45c: the 4:3 right-panel restore (narrow the briefing 40 px so P2's detail reserve holds) is blocked: P2's
+            // SkirmishBattleLibraryCapture.RejectCollapsedLayout (4026-4039) re-derives the split from SkirmishLibraryFrame
+            // and rejects any other map width ("Map panel width is 1079.6; expected 1039.6"). Logged only.
+            const float theatreNarrow = 0f;
 
             SkirmishLibraryFrame.CloseTheatreSeam(
                 theater,

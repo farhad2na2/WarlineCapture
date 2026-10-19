@@ -214,7 +214,8 @@ namespace Game.UI.Runtime
                 theatrePaint.uvRect = new Rect(u, uv.y, w, uv.height);
             }
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
-            // The desert plate is the map. A surround veil was dimming the roads between districts.
+            // Shade the sand outside the regions. The bright plate stays under the fills.
+            PlaceTerrainShade(fit, slots, plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
             for (int i = 0; i < slots.Count; i++)
@@ -252,6 +253,79 @@ namespace Game.UI.Runtime
                 button.onClick.AddListener(() => SelectTheaterRegion(captured));
                 _regionButtons.Add(button);
             }
+        }
+
+        /// <summary>
+        /// Darkens the sand outside the districts. The hole follows each coast so the
+        /// fill and its rim stay on the bright plate. This is not the old full-board veil.
+        /// </summary>
+        private static void PlaceTerrainShade(RectTransform parent, List<TheatreZoneSlot> slots, float plateWidth, float plateHeight)
+        {
+            if (parent == null || slots == null || slots.Count == 0 || plateWidth < 32f || plateHeight < 32f)
+                return;
+            const int width = 180;
+            int height = Mathf.Max(48, Mathf.RoundToInt(width * plateHeight / plateWidth));
+            var pixels = new Color32[width * height];
+            var shapes = new Vector2[slots.Count][];
+            for (int i = 0; i < slots.Count; i++)
+                shapes[i] = slots[i].Hex;
+            for (int y = 0; y < height; y++)
+            {
+                float plateY = plateHeight - (y + 0.5f) / height * plateHeight;
+                for (int x = 0; x < width; x++)
+                {
+                    float plateX = (x + 0.5f) / width * plateWidth;
+                    var point = new Vector2(plateX, plateY);
+                    bool inside = false;
+                    float outside = float.MaxValue;
+                    for (int s = 0; s < shapes.Length; s++)
+                    {
+                        Vector2[] shape = shapes[s];
+                        if (shape == null || shape.Length < 3)
+                            continue;
+                        if (PointInsidePolygon(point, shape))
+                        {
+                            inside = true;
+                            break;
+                        }
+
+                        outside = Mathf.Min(outside, DistanceToPolygonEdge(point, shape));
+                    }
+
+                    if (inside || outside > 100000f)
+                    {
+                        pixels[y * width + x] = new Color32(0, 0, 0, 0);
+                        continue;
+                    }
+
+                    // The luminous rim sits on the bright sand. The shade starts past that rim.
+                    const float rimClear = 12f;
+                    float t = Mathf.Clamp01((outside - rimClear) / 26f);
+                    t = t * t * (3f - 2f * t);
+                    float edgeX = Mathf.Min(plateX, plateWidth - plateX) / Mathf.Max(1f, plateWidth);
+                    float edgeY = Mathf.Min(plateY, plateHeight - plateY) / Mathf.Max(1f, plateHeight);
+                    float edge = Mathf.Clamp01(1f - Mathf.Min(edgeX, edgeY) * 8f);
+                    float alpha = Mathf.Lerp(0.16f, 0.42f, Mathf.Max(t, edge * 0.85f));
+                    pixels[y * width + x] = new Color32(24, 16, 8, (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 255f), 0, 255));
+                }
+            }
+
+            var texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.wrapMode = TextureWrapMode.Clamp;
+            texture.filterMode = FilterMode.Bilinear;
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
+            sprite.hideFlags = HideFlags.HideAndDontSave;
+            var shade = new GameObject("TerrainShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            shade.transform.SetParent(parent, false);
+            shade.sprite = sprite;
+            shade.type = Image.Type.Simple;
+            shade.color = Color.white;
+            shade.raycastTarget = false;
+            Stretch(shade.rectTransform);
+            shade.rectTransform.localScale = Vector3.one;
         }
 
         private static void HideTheaterLabels(RawImage map)
@@ -1928,7 +2002,7 @@ namespace Game.UI.Runtime
             // keeps the rect strictly outside the capture test, which rejects a halo
             // that stops on the feather line.
             float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
-            float peak = 0.96f;
+            float peak = 1f;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color, peak);
             if (halo == null || root == null)
                 return;
@@ -1997,7 +2071,7 @@ namespace Game.UI.Runtime
             float originY = minY - pad;
             var pixels = new Color32[width * height];
             // The rim is the same hue, lifted toward white so the edge glows brighter than the fill.
-            const float rimLift = 0.62f;
+            const float rimLift = 0.88f;
             float rimR = color.r + (1f - color.r) * rimLift;
             float rimG = color.g + (1f - color.g) * rimLift;
             float rimB = color.b + (1f - color.b) * rimLift;
@@ -2011,7 +2085,7 @@ namespace Game.UI.Runtime
                     bool interior = PointInsidePolygon(point, localPoints);
                     // The sprite rect still clears the 10px feather test. The visible
                     // tint is a 5px soft border, inside the 3–6px band.
-                    const float glowBand = 5f;
+                    const float glowBand = 9f;
                     float along = interior ? 1f : Mathf.Clamp01(dist / glowBand);
                     along = along * along * (3f - 2f * along);
                     float alpha = peak * (1f - along);

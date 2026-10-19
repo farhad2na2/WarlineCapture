@@ -103,32 +103,40 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// "ZOOM IN · INDUSTRIAL BASIN" is wider than a 4:3 footer button at 20px.
-        /// One line when it fits, otherwise the two sides of the dot, at 16px or the floor.
+        /// "ZOOM IN · INDUSTRIAL BASIN" is wider than a 4:3 footer button.
+        /// Autosize stays at or above the 16px command floor. When one line does not
+        /// fit there, the label breaks at the dot. The district name is the shorter form.
         /// </summary>
         private static void FitZoomInLabel(Button button, float buttonWidth)
         {
             TMP_Text label = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
             if (label == null || string.IsNullOrEmpty(label.text) || label.text.IndexOf("ZOOM IN", StringComparison.Ordinal) < 0)
                 return;
-            float size = 16f;
+            const float floor = 16f;
             string source = label.text.Replace("\n", " ");
             int dot = source.IndexOf('·');
             float inner = buttonWidth - 16f;
-            bool oneLine = dot > 0 && MeasureFooterLine(source, size) <= inner + 0.5f;
-            if (!oneLine && dot > 0)
+            string district = dot > 0 ? source.Substring(dot + 1).Trim() : source;
+            bool oneLine = MeasureFooterLine(source, floor) <= inner + 0.5f;
+            bool split = !oneLine && dot > 0 && FooterLinesFit(
+                source.Substring(0, dot).Trim() + "\n" + district, floor, inner);
+            if (!oneLine && split)
+                source = source.Substring(0, dot).Trim() + "\n" + district;
+            else if (!oneLine)
+                source = district;
+            float max = floor;
+            for (float size = 22f; size >= floor - 0.01f; size -= 1f)
             {
-                string left = source.Substring(0, dot).Trim();
-                string right = source.Substring(dot + 1).Trim();
-                source = left + "\n" + right;
+                if (!FooterLinesFit(source, size, inner))
+                    continue;
+                max = size;
+                break;
             }
 
-            while (size > 11.1f && !FooterLinesFit(source, size, inner))
-                size -= 1f;
-            label.enableAutoSizing = false;
-            label.fontSize = size;
-            label.fontSizeMin = size;
-            label.fontSizeMax = size;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = floor;
+            label.fontSizeMax = max;
+            label.fontSize = max;
             label.textWrappingMode = source.IndexOf('\n') >= 0 ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
             label.overflowMode = TextOverflowModes.Overflow;
             label.maxVisibleLines = source.IndexOf('\n') >= 0 ? 2 : 1;

@@ -26,7 +26,9 @@ internal static class Program
             Console.WriteLine("probe wrote " + path);
             return 0;
         }
-        if (!DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
+        if (args != null && Array.IndexOf(args, "reserve") >= 0)
+            return FourByThreeReserveHolds() ? 0 : 1;
+        if (!MapPanelWidthsHold() || !FourByThreeReserveHolds() || !DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
             || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill() || !ReplayRuntimeCards()
             || !ReplayZoomInLabel())
             failed++;
@@ -38,11 +40,9 @@ internal static class Program
         ReplayDumps(ref seated, ref blocked, ref failed);
 
         Console.WriteLine(
-            "THRESHOLD ReserveViewportFloor "
-            + TheatreSeatGeometry.ReserveViewportFloor.X.ToString("0", CultureInfo.InvariantCulture)
-            + "x"
-            + TheatreSeatGeometry.ReserveViewportFloor.Y.ToString("0", CultureInfo.InvariantCulture)
-            + " skips the 4:3 reserve when either axis is under the floor.");
+            "THRESHOLD 4:3 detail reserve stays on for every district. Map floor "
+            + TheatreSeatGeometry.MapPanelWidthFloorPx.ToString("0", CultureInfo.InvariantCulture)
+            + ".");
         if (failed == 0 && blocked == 0)
         {
             Console.WriteLine("TheatreSeatCheck result=Passed seated=" + seated + " blocked=0");
@@ -536,6 +536,187 @@ internal static class Program
         return ok;
     }
 
+    /// <summary>
+    /// P1's 4:3 map is 1079.6. The detail reserve stays on for every district, and the
+    /// seats still have to clear the existing area, halo gap, and cue floors.
+    /// </summary>
+    private static bool FourByThreeReserveHolds()
+    {
+        const float plateWidth = 1079.6f;
+        const float plateHeight = 844f;
+        bool ok = true;
+        foreach (bool fa in new[] { false, true })
+        {
+            foreach (string map in TheatreSeatGeometry.MapIds)
+            {
+                TheatreSeatGeometry.SetShot("4:3", "none", fa ? "fa" : "en", true, 1440f, 1080f, 0f, 0f, 0f, 0f);
+                TheatreSeatGeometry.ShotSelected = map;
+                bool reserved = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, fa, true, true, map);
+                TheatreSeatGeometry.NoteDetailReserve(reserved);
+                TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateWidth, plateHeight, fa, true, map);
+                string[] violations = TheatreSeatGeometry.CollectViolations(plateWidth, plateHeight, fa, true, map);
+                float minGap = float.MaxValue;
+                float minArea = float.MaxValue;
+                string shortArea = "";
+                string tightPair = "";
+                if (layout.Seats != null)
+                {
+                    var hexes = new TheatreSeatGeometry.Vec2[layout.Seats.Length][];
+                    for (int i = 0; i < layout.Seats.Length; i++)
+                    {
+                        hexes[i] = layout.Seats[i].Hex;
+                        float area = SeatArea(layout.Seats[i].Hex);
+                        if (area < minArea)
+                        {
+                            minArea = area;
+                            shortArea = layout.Seats[i].MapId;
+                        }
+                    }
+
+                    for (int i = 0; i < layout.Seats.Length; i++)
+                    {
+                        for (int j = i + 1; j < layout.Seats.Length; j++)
+                        {
+                            float gap = TheatreSeatGeometry.DrawnDistrictGap(layout.Seats[i].Hex, layout.Seats[j].Hex);
+                            if (gap < minGap)
+                            {
+                                minGap = gap;
+                                tightPair = layout.Seats[i].MapId + "-" + layout.Seats[j].MapId;
+                            }
+                        }
+                    }
+                }
+
+                bool cue = layout.Cue.W + 0.5f >= TheatreSeatGeometry.PackedCueMinWidth && layout.Cue.H + 0.5f >= 44f && layout.CueNear;
+                bool gaps = minGap + 0.05f >= 12f;
+                bool areaOk = minArea + 0.5f >= 40000f;
+                bool pass = reserved && layout.CardsLegal && layout.HexAspectLegal && violations.Length == 0 && cue && gaps && areaOk;
+                if (!pass)
+                    ok = false;
+                Console.WriteLine((pass ? "PASS" : "FAIL") + " 4:3 reserve " + (fa ? "fa" : "en") + " " + map
+                    + " reserved=" + reserved
+                    + " legal=" + layout.CardsLegal
+                    + " cue=" + layout.Cue.W.ToString("0", CultureInfo.InvariantCulture)
+                    + "x" + layout.Cue.H.ToString("0", CultureInfo.InvariantCulture)
+                    + " gap=" + tightPair + ":" + minGap.ToString("0.0", CultureInfo.InvariantCulture)
+                    + " area=" + shortArea + ":" + minArea.ToString("0", CultureInfo.InvariantCulture)
+                    + " violations=" + violations.Length);
+                if (!gaps)
+                    Console.WriteLine("  " + tightPair + " halo gap " + minGap.ToString("0.0", CultureInfo.InvariantCulture) + " is " + (12f - minGap).ToString("0.0", CultureInfo.InvariantCulture) + " under 12");
+                if (!areaOk)
+                    Console.WriteLine("  " + shortArea + " area " + minArea.ToString("0", CultureInfo.InvariantCulture) + " is " + (40000f - minArea).ToString("0", CultureInfo.InvariantCulture) + " under 40000");
+                if (!cue)
+                    Console.WriteLine("  cue " + layout.Cue.W.ToString("0.0", CultureInfo.InvariantCulture) + "x" + layout.Cue.H.ToString("0.0", CultureInfo.InvariantCulture) + " near=" + layout.CueNear);
+                for (int i = 0; i < violations.Length && i < 4; i++)
+                    Console.WriteLine("  " + violations[i]);
+            }
+        }
+
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " 4:3 reserve panel");
+        return ok;
+    }
+
+    private static float SeatArea(TheatreSeatGeometry.Vec2[] shape)
+    {
+        if (shape == null || shape.Length < 3)
+            return 0f;
+        float sum = 0f;
+        for (int i = 0; i < shape.Length; i++)
+        {
+            TheatreSeatGeometry.Vec2 a = shape[i];
+            TheatreSeatGeometry.Vec2 b = shape[(i + 1) % shape.Length];
+            sum += a.X * b.Y - b.X * a.Y;
+        }
+
+        return Math.Abs(sum) * 0.5f;
+    }
+
+    /// <summary>
+    /// One log line per ratio and language. The live width is the safe width minus the
+    /// measured columns and the gutters. A 4:3 map under the floor fails even when it
+    /// matches that formula. The 2px tolerance is the existing panel slack.
+    /// </summary>
+    private static bool MapPanelWidthsHold()
+    {
+        bool ok = true;
+        ok &= NoteMapPanelWidth("4:3", 1440f, 1080f);
+        ok &= NoteMapPanelWidth("16:9", 1920f, 1080f);
+        ok &= NoteMapPanelWidth("20:9", 2400f, 1080f);
+        ok &= MapPanelWidthRuleHolds();
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " map panel width");
+        return ok;
+    }
+
+    private static bool NoteMapPanelWidth(string ratio, float canvasWidth, float canvasHeight)
+    {
+        TheatreSeatGeometry.CaptureMapSize(canvasWidth, canvasHeight, out float actual, out _);
+        bool ok = true;
+        foreach (bool fa in new[] { false, true })
+        {
+            float column = TheatreSeatGeometry.BriefingColumnWidth(canvasWidth, canvasHeight);
+            float left = fa ? 0f : column;
+            float right = fa ? column : 0f;
+            int sides = column > 1f ? 1 : 0;
+            float gutters = TheatreSeatGeometry.MapPanelGutters(sides, true);
+            float expected = TheatreSeatGeometry.ExpectedMapPanelWidth(canvasWidth, left, right, true);
+            float floor = TheatreSeatGeometry.MapPanelWidthFloor(canvasWidth);
+            bool fourByThree = TheatreSeatGeometry.MapPanelWidthFourByThree(canvasWidth, canvasHeight);
+            Console.WriteLine(TheatreSeatGeometry.FormatMapPanelWidth(
+                ratio, fa ? "fa" : "en", actual, expected, left, right, gutters, floor));
+            if (!TheatreSeatGeometry.MapPanelWidthHolds(actual, expected, floor, fourByThree, out string failure))
+            {
+                Console.WriteLine("FAIL " + failure);
+                ok = false;
+            }
+        }
+
+        return ok;
+    }
+
+    private static bool MapWidthMatchesColumns(float canvasWidth, float canvasHeight, float actual)
+    {
+        float column = TheatreSeatGeometry.BriefingColumnWidth(canvasWidth, canvasHeight);
+        float expected = TheatreSeatGeometry.ExpectedMapPanelWidth(canvasWidth, column, 0f, true);
+        float floor = TheatreSeatGeometry.MapPanelWidthFloor(canvasWidth);
+        bool fourByThree = TheatreSeatGeometry.MapPanelWidthFourByThree(canvasWidth, canvasHeight);
+        return TheatreSeatGeometry.MapPanelWidthHolds(actual, expected, floor, fourByThree, out _);
+    }
+
+    /// <summary>
+    /// The column formula still rejects a map that is not the measured remainder, and a
+    /// 4:3 map under the floor. A missing side stays zero. An extra column costs its width
+    /// plus one more gap.
+    /// </summary>
+    private static bool MapPanelWidthRuleHolds()
+    {
+        const float canvas = 1440f;
+        float floor = TheatreSeatGeometry.MapPanelWidthFloor(canvas);
+        float tip = TheatreSeatGeometry.ExpectedMapPanelWidth(canvas, 374.4f, 0f, true);
+        float narrowed = TheatreSeatGeometry.ExpectedMapPanelWidth(canvas, 334.4f, 0f, true);
+        float withRight = TheatreSeatGeometry.ExpectedMapPanelWidth(canvas, 334.4f, 200f, true);
+        float guttersTwo = TheatreSeatGeometry.MapPanelGutters(2, true);
+        bool ok = Math.Abs(tip - 1039.6f) < 0.05f
+            && Math.Abs(narrowed - 1079.6f) < 0.05f
+            && Math.Abs(withRight - (canvas - 334.4f - 200f - guttersTwo)) < 0.05f
+            && withRight < narrowed - 14f
+            && Math.Abs(TheatreSeatGeometry.ExpectedMapPanelWidth(canvas, 374.4f, 0.4f, true) - tip) < 0.05f
+            && !TheatreSeatGeometry.MapPanelWidthHolds(1079.6f, 1039.6f, floor, true, out _)
+            && TheatreSeatGeometry.MapPanelWidthHolds(1039.6f, 1041.6f, floor, true, out _)
+            && !TheatreSeatGeometry.MapPanelWidthHolds(1039.6f, 1041.8f, floor, true, out _)
+            && !TheatreSeatGeometry.MapPanelWidthHolds(floor - 1f, floor - 1f, floor, true, out _)
+            && TheatreSeatGeometry.MapPanelWidthHolds(floor, floor, floor, true, out _)
+            && TheatreSeatGeometry.MapPanelWidthHolds(floor - 1f, floor - 1f, floor, false, out _)
+            && Math.Abs(floor - 1020f) < 0.05f
+            && 1039.6f + 0.01f >= floor;
+        if (!ok)
+            Console.WriteLine("FAIL map panel width rule tip="
+                + tip.ToString("0.0", CultureInfo.InvariantCulture)
+                + " narrowed=" + narrowed.ToString("0.0", CultureInfo.InvariantCulture)
+                + " withRight=" + withRight.ToString("0.0", CultureInfo.InvariantCulture)
+                + " floor=" + floor.ToString("0.0", CultureInfo.InvariantCulture));
+        return ok;
+    }
+
     private static bool ReplayPlateHolds()
     {
         TheatreSeatGeometry.CaptureMapSize(1440f, 1080f, out float liveWidth, out float liveHeight);
@@ -553,7 +734,7 @@ internal static class Program
             && Math.Abs(plateWidth - liveWidth) < 0.1f
             && Math.Abs(plateHeight - liveHeight) < 0.1f
             && plateHeight > 800f
-            && Math.Abs(liveWidth - 1039.6f) < 0.2f;
+            && MapWidthMatchesColumns(1440f, 1080f, liveWidth);
         Console.WriteLine((ok ? "PASS" : "FAIL") + " replay 4:3 plate "
             + plateWidth.ToString("0.0", CultureInfo.InvariantCulture)
             + "x" + plateHeight.ToString("0.0", CultureInfo.InvariantCulture)

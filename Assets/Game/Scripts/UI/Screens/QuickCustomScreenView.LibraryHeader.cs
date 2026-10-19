@@ -87,6 +87,7 @@ namespace Game.UI.Runtime
             ReassertRailLabels();
             ReassertFooterLabels();
             FitTheatreDetailHeadings();
+            ReflowTheatreObjectives(); // v47: objective rows below the fitted heading's ink
             ReassertBriefingPanel();
             ReassertTheatreColumn();
             Transform composition = transform.Find("SkirmishSetupComposition");

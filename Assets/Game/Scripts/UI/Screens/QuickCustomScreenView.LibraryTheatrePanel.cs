@@ -33,6 +33,8 @@ namespace Game.UI.Runtime
             if (parent == null || _libraryViewModel == null)
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            if (!IsTheatreBottomSheet(parent))
+                LayoutTheatreObjectives(parent, fa);
             Transform old = parent.Find(TheatrePanelBattlesName);
             if (old != null)
                 DestroyUi(old.gameObject);
@@ -273,8 +275,12 @@ namespace Game.UI.Runtime
             float headingY = -heading.anchoredPosition.y;
             float sheetH = sheet.sizeDelta.y;
 
-            // Objective types: one row of four (icon + caption), mirrored in FA.
-            float rowTop = headingY + heading.sizeDelta.y + 2f;
+            // Objective types: one row of four (icon + caption), mirrored in FA. v47: below the heading's measured ink
+            // (one line, fitted to its box), not a fixed offset from its rect.
+            TMP_Text headingText = heading.GetComponent<TMP_Text>();
+            if (headingText != null)
+                FitDetailLine(headingText, 16f, 24f);
+            float rowTop = Mathf.Max(headingY + heading.sizeDelta.y, TextInkBottom(sheet, headingText)) + ObjectiveHeadingGap;
             const float iconSize = 22f;
             const float captionH = 22f;
             float cellW = colW / 4f;
@@ -460,6 +466,121 @@ namespace Game.UI.Runtime
                     PlaceTopLeft(lockIcon.rectTransform, (thumbW - lockSize) * 0.5f, (thumbH - lockSize) * 0.5f, lockSize, lockSize);
                     ShowIcon(lockIcon, SkirmishBattleLibraryArt.ResourceRoot + "icon_lock", Color.white);
                 }
+        }
+
+        /// <summary>v47: clear space between the OBJECTIVE TYPE heading's ink and the objective rows.</summary>
+        private const float ObjectiveHeadingGap = 4f;
+
+        /// <summary>
+        /// v47 (P2 v96 RejectTheatreDetailOverlap, 4:3 en): the heading is made by CreateLabel with wrapping on and the
+        /// rows sat at a fixed 32 px under a 30 px box. In the 4:3 side panel (~173 px inner) "OBJECTIVE TYPE" at the
+        /// 22 px floor wraps to two lines and its ink runs into ObjectiveType_BA/FC whenever the panel is rebuilt after
+        /// FitTheatreDetailHeadings. The heading is fitted to one line in its box (same rule as FitTheatreDetailHeadings,
+        /// so the later pass keeps the size) and the 2 x 2 block is laid out below its measured ink plus a gap, in the
+        /// space left down to the panel's bottom pad. Columns (and the FA mirror) are kept from DetailObjectives.
+        /// </summary>
+        private void LayoutTheatreObjectives(RectTransform panel, bool fa)
+        {
+            TMP_Text heading = panel != null ? panel.Find("ObjectiveHeading")?.GetComponent<TMP_Text>() : null;
+            if (heading == null)
+                return;
+            RectTransform headingRect = heading.rectTransform;
+            FitDetailLine(heading, 16f, 24f);
+            float boxBottom = -headingRect.anchoredPosition.y + headingRect.sizeDelta.y;
+            float inkBottom = TextInkBottom(panel, heading);
+            float rowsTop = Mathf.Max(boxBottom, inkBottom) + ObjectiveHeadingGap;
+
+            string[] ids = SkirmishBattleLibraryArt.ObjectiveIds;
+            var icons = new List<RectTransform>(ids.Length);
+            for (int i = 0; i < ids.Length; i++)
+                icons.Add(panel.Find("ObjectiveType_" + ids[i]) as RectTransform);
+            var captions = new List<RectTransform>(ids.Length);
+            int headingIndex = headingRect.GetSiblingIndex();
+            for (int i = headingIndex + 1; i < panel.childCount && captions.Count < ids.Length; i++)
+            {
+                if (panel.GetChild(i) is RectTransform child && child.name == "Subtitle")
+                    captions.Add(child);
+            }
+
+            float blockBottom = 0f;
+            float oldIcon = 0f;
+            float captionH = 26f;
+            for (int i = 0; i < ids.Length; i++)
+            {
+                if (icons[i] != null)
+                {
+                    blockBottom = Mathf.Max(blockBottom, -icons[i].anchoredPosition.y + icons[i].sizeDelta.y);
+                    oldIcon = Mathf.Max(oldIcon, icons[i].sizeDelta.y);
+                }
+
+                if (i < captions.Count)
+                {
+                    blockBottom = Mathf.Max(blockBottom, -captions[i].anchoredPosition.y + captions[i].sizeDelta.y);
+                    captionH = captions[i].sizeDelta.y;
+                }
+            }
+
+            float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
+            float limit = Mathf.Max(panelH - 12f, Mathf.Min(blockBottom, panelH - 4f));
+            int rows = Mathf.Max(1, (ids.Length + 1) / 2);
+            float pitch = Mathf.Min(DetailObjectiveRowHeight, (limit - rowsTop) / rows);
+            float icon = Mathf.Clamp(pitch - captionH - 4f, 16f, oldIcon > 1f ? oldIcon : 32f);
+            for (int i = 0; i < ids.Length; i++)
+            {
+                float top = rowsTop + (i / 2) * pitch;
+                RectTransform iconRect = icons[i];
+                if (iconRect != null)
+                {
+                    float oldX = iconRect.anchoredPosition.x;
+                    float x = fa ? oldX + iconRect.sizeDelta.x - icon : oldX;
+                    PlaceTopLeft(iconRect, x, top, icon, icon);
+                }
+
+                if (i < captions.Count)
+                    PlaceTopLeft(captions[i], captions[i].anchoredPosition.x, top + icon + 2f, captions[i].sizeDelta.x, captionH);
+            }
+
+            bool fits = pitch >= 16f + captionH + 2f;
+            string line = "[TheatreObjectives] headingFont=" + heading.fontSize.ToString("0.0") +
+                " box=" + headingRect.sizeDelta.x.ToString("0") + "x" + headingRect.sizeDelta.y.ToString("0") +
+                " inkBottom=" + inkBottom.ToString("0.0") + " boxBottom=" + boxBottom.ToString("0.0") +
+                " rowsTop=" + rowsTop.ToString("0.0") + " pitch=" + pitch.ToString("0.0") + " icon=" + icon.ToString("0.0") +
+                " panelH=" + panelH.ToString("0") + " fits=" + (fits ? "1" : "0") + " locale=" + (fa ? "fa-IR" : "en");
+            if (fits)
+                Debug.Log(line);
+            else
+                Debug.LogWarning(line);
+        }
+
+        /// <summary>v47: depth from <paramref name="panel"/>'s top of the lowest visible glyph quad of <paramref name="text"/>.</summary>
+        private static float TextInkBottom(RectTransform panel, TMP_Text text)
+        {
+            if (panel == null || text == null)
+                return 0f;
+            text.ForceMeshUpdate();
+            TMP_TextInfo info = text.textInfo;
+            float bottom = 0f;
+            int count = info != null && info.characterInfo != null ? Mathf.Min(info.characterCount, info.characterInfo.Length) : 0;
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo c = info.characterInfo[i];
+                if (!c.isVisible)
+                    continue;
+                Vector3 local = panel.InverseTransformPoint(text.rectTransform.TransformPoint(c.bottomLeft));
+                bottom = Mathf.Max(bottom, panel.rect.yMax - local.y);
+            }
+
+            return bottom;
+        }
+
+        /// <summary>v47: re-run after FitTheatreDetailHeadings (PlaceLibraryHeader) so the rows follow the final heading size.</summary>
+        private void ReflowTheatreObjectives()
+        {
+            if (_libraryRegions == null || !(_libraryRegions.Find(TheatreDetailPanelName) is RectTransform panel))
+                return;
+            if (IsTheatreBottomSheet(panel))
+                return;
+            LayoutTheatreObjectives(panel, UiShellRuntimeGateway.Localization.IsRightToLeft);
         }
 
         /// <summary>Space between the header block (Title/Stats/Rule/Preview) and the medal row or objective heading.</summary>

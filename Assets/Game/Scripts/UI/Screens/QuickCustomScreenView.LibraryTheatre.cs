@@ -183,16 +183,31 @@ namespace Game.UI.Runtime
                 });
             }
 
+            if (fa
+                && (string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale)
+                    || !TheatreSeatGeometry.ShotLocale.StartsWith("fa", StringComparison.OrdinalIgnoreCase)))
+                TheatreSeatGeometry.ShotLocale = "fa";
             PlaceZoneSlots(slots, safe, plateWidth, plateHeight, fa);
+            // The row slides clear of the side column. Moving the paint rect with it
+            // left a black band on the uncovered side. Keep the rect on the plate and
+            // shift the crop so the districts stay on the same pixels.
             if (theatrePaint != null && Mathf.Abs(TheatreSeatGeometry.ReserveSlideX) > 0.5f)
             {
-                RectTransform paintRect = theatrePaint.rectTransform;
-                PlaceTopLeft(
-                    paintRect,
-                    TheatreSeatGeometry.ReserveSlideX,
-                    0f,
-                    plateWidth,
-                    plateHeight);
+                Rect uv = theatrePaint.uvRect;
+                float du = TheatreSeatGeometry.ReserveSlideX / Mathf.Max(1f, plateWidth) * uv.width;
+                float u = uv.x - du;
+                float w = uv.width;
+                if (u < 0f)
+                {
+                    w += u;
+                    u = 0f;
+                }
+
+                if (w < 0.02f)
+                    w = 0.02f;
+                if (u + w > 1f)
+                    w = Mathf.Max(0.02f, 1f - u);
+                theatrePaint.uvRect = new Rect(u, uv.y, w, uv.height);
             }
             bool wideFrame = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
             PlaceTheatreSurround(fit, slots, plateWidth, plateHeight);
@@ -1103,21 +1118,32 @@ namespace Game.UI.Runtime
             var box = new TheatreSeatGeometry.Box(card.x, card.y, card.width, card.height);
             var pinBox = new TheatreSeatGeometry.Box(pin.x, pin.y, pin.width, pin.height);
             var pill = new TheatreSeatGeometry.Box(cue.x, cue.y, cue.width, cue.height);
-                if (fa && pill.W > 1f)
+            if (fa && pill.W > 1f)
             {
                 // First width TryWidenLiveFaCue places. بزرگنمایی at 22px needs this shelf.
                 // 76 is two line boxes at the 22px floor with the leading still at 0.
+                // The extra width hangs inward so the 26px stroke stays inside the halo.
                 const float needW = 220f;
                 const float needH = 76f;
                 float width = Mathf.Max(pill.W, needW);
                 float height = Mathf.Max(pill.H, needH);
                 float bottom = pill.Y + pill.H;
-                float x = pill.X + pill.W * 0.5f - width * 0.5f;
+                float x = pill.XMax - width;
+                if (x > pill.X)
+                    x = pill.X;
+                float y = bottom - height;
+                float limitL = 1f + TheatreSeatGeometry.HaloReach + TheatreSeatGeometry.CueHexStroke + 2f;
+                float limitR = plateWidth - limitL;
+                if (x + width > limitR)
+                    x = limitR - width;
+                if (x < limitL)
+                    x = limitL;
+                if (y < limitL)
+                    y = limitL;
                 if (x < 12f)
                     x = 12f;
                 if (x + width > plateWidth - 12f)
                     x = plateWidth - 12f - width;
-                float y = bottom - height;
                 if (y < 12f)
                     y = 12f;
                 pill = new TheatreSeatGeometry.Box(x, y, width, height);
@@ -1790,9 +1816,11 @@ namespace Game.UI.Runtime
                     : fill;
             polygon.Configure(local, tint);
             polygon.material = null;
-            PlaceDistrictHalo(root, local, tint);
+            PlaceDistrictHalo(root, local, tint, selected);
             Color dash = tint;
-            dash.a = 0.5f;
+            dash.a = selected ? 0.92f : 0.5f;
+            if (selected)
+                dash = Color.Lerp(dash, Color.white, 0.35f);
             PlaceSoftDashes(root, local, dash);
         }
 
@@ -1833,7 +1861,7 @@ namespace Game.UI.Runtime
             return max > 0.001f ? (max - min) / max : 0f;
         }
 
-        private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color)
+        private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color, bool selected)
         {
             // The outline widget already sits ZoneHexPad past the territory. The feather
             // has to clear that widget by a full TerritoryFeather, so the soft edge is
@@ -1841,7 +1869,8 @@ namespace Game.UI.Runtime
             // keeps the rect strictly outside the capture test, which rejects a halo
             // that stops on the feather line.
             float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
-            Sprite halo = BuildDistrictHalo(localPoints, pad, color);
+            float peak = selected ? 0.86f : TheatreSeatGeometry.TerritoryBorderAlpha;
+            Sprite halo = BuildDistrictHalo(localPoints, pad, color, peak);
             if (halo == null || root == null)
                 return;
             BoundsOf(localPoints, 0f, out float minX, out float minY, out float maxX, out float maxY);
@@ -1892,7 +1921,7 @@ namespace Game.UI.Runtime
             }
         }
 
-        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad, Color color)
+        private static Sprite BuildDistrictHalo(Vector2[] localPoints, float pad, Color color, float peak)
         {
             if (localPoints == null || localPoints.Length < 3)
                 return null;
@@ -1906,7 +1935,8 @@ namespace Game.UI.Runtime
             float reach = pad > 1f ? pad : TheatreSeatGeometry.TerritoryFeather;
             if (reach < 1f)
                 reach = 1f;
-            float peak = TheatreSeatGeometry.TerritoryBorderAlpha;
+            if (peak < 0.05f)
+                peak = TheatreSeatGeometry.TerritoryBorderAlpha;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -2177,6 +2207,67 @@ namespace Game.UI.Runtime
             cue.maxVisibleLines = 2;
             cue.fontStyle = FontStyles.Bold;
             cue.color = CueInkColor();
+            AttachZoomPointer(cue.rectTransform);
+        }
+
+        /// <summary>
+        /// Small downward mark on the zoom tab, pointing at the selected card.
+        /// It stays inside the cue box, so the pill's seat and the stroke tests do not move.
+        /// </summary>
+        private static void AttachZoomPointer(RectTransform cue)
+        {
+            if (cue == null)
+                return;
+            Image mark = cue.Find("ZoomPointer") as RectTransform is RectTransform existing
+                ? existing.GetComponent<Image>()
+                : null;
+            if (mark == null)
+            {
+                mark = new GameObject("ZoomPointer", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                mark.transform.SetParent(cue, false);
+            }
+
+            mark.sprite = ZonePointerSprite();
+            mark.color = CueInkColor();
+            mark.raycastTarget = false;
+            mark.type = Image.Type.Simple;
+            const float side = 12f;
+            float x = Mathf.Max(0f, (cue.sizeDelta.x - side) * 0.5f);
+            float y = Mathf.Max(0f, cue.sizeDelta.y - side);
+            PlaceTopLeft(mark.rectTransform, x, y, side, side);
+            mark.rectTransform.localScale = Vector3.one;
+            mark.rectTransform.SetAsLastSibling();
+        }
+
+        private static Sprite _zonePointer;
+
+        private static Sprite ZonePointerSprite()
+        {
+            if (_zonePointer != null)
+                return _zonePointer;
+            const int size = 16;
+            var texture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+            var pixels = new Color32[size * size];
+            for (int y = 0; y < size; y++)
+            {
+                float t = y / (float)(size - 1);
+                int half = Mathf.RoundToInt(t * (size * 0.5f));
+                int mid = size / 2;
+                for (int x = 0; x < size; x++)
+                {
+                    bool ink = y >= 1 && x >= mid - half && x <= mid + half;
+                    pixels[y * size + x] = ink
+                        ? new Color32(255, 255, 255, 255)
+                        : new Color32(255, 255, 255, 0);
+                }
+            }
+
+            texture.SetPixels32(pixels);
+            texture.Apply(false, true);
+            texture.hideFlags = HideFlags.HideAndDontSave;
+            _zonePointer = Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), size);
+            _zonePointer.hideFlags = HideFlags.HideAndDontSave;
+            return _zonePointer;
         }
 
         /// <summary>Gold tab, distinct from the charcoal portrait, so the cue is not another line of the name.</summary>
@@ -2243,7 +2334,7 @@ namespace Game.UI.Runtime
             track.transform.SetParent(card.transform, false);
             track.sprite = ZoneThinArcSprite();
             track.type = Image.Type.Simple;
-            track.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
+            track.color = new Color(0.96f, 0.93f, 0.84f, 0.96f);
             track.material = null;
             track.raycastTarget = false;
             var fill = new GameObject("ProgressFill", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
@@ -2529,6 +2620,12 @@ namespace Game.UI.Runtime
             // "Tap to zoom" down the Farsi path (fa-floor / fa-track, size 22).
             bool copyFarsi = CueCopyIsFarsi(cue, source);
             cue.isRightToLeftText = copyFarsi;
+            // Flow lays the Farsi pill out before SetShot, so ShotLocale is still en.
+            // The copy is the locale. An English line must not stamp the shot as fa.
+            if (copyFarsi
+                && (string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale)
+                    || !TheatreSeatGeometry.ShotLocale.StartsWith("fa", StringComparison.OrdinalIgnoreCase)))
+                TheatreSeatGeometry.ShotLocale = "fa";
             // One canvas pass before the Farsi sizes. Later attempts read the mesh
             // they just built and must not rebuild the whole canvas again.
             Canvas.ForceUpdateCanvases();
@@ -2682,6 +2779,10 @@ namespace Game.UI.Runtime
                 LogCueAttempt(cue, "fa-two-line", size, false, "split box=" + F(boxW) + "x" + F(boxH));
             }
 
+            // 16:9 was stopping on the 160×36 fa-floor tab. The other ratios hold one
+            // line at 22 in a 160×56 fa-track pill. Place that before the short box wins.
+            if (boxH + 0.5f < 56f && TryPlaceFaTrack(cue, source))
+                return true;
             // FitsNameLine turns auto-size on. On a 36px tab that flag stays set for every
             // 22–26 size, so this attempt was returning false and the 16px search drew 17–18.
             float[] tracking = { -12f, -24f, -36f, -48f, -72f, -108f };
@@ -2809,6 +2910,44 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// One Farsi line at 22–26 in the 160×56 tab the other ratios already use.
+        /// A 36px box clips the line even when the font is on the floor.
+        /// </summary>
+        private static bool TryPlaceFaTrack(TMP_Text cue, string source)
+        {
+            if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
+                return false;
+            Rect origin = PlateRect(cue.rectTransform);
+            string selected = CueSelectedMap(parent, origin.x);
+            float[] widths = { 160f, Mathf.Max(160f, origin.width) };
+            float[] tracking = { -12f, -36f, -72f, -108f, 0f };
+            const float height = 56f;
+            for (int w = 0; w < widths.Length; w++)
+            {
+                if (!TryPlaceCueBox(cue, parent, selected, widths[w], height, origin))
+                    continue;
+                Rect placed = PlateRect(cue.rectTransform);
+                for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
+                {
+                    for (int t = 0; t < tracking.Length; t++)
+                    {
+                        if (!FaCueLineFits(cue, source, size, placed.width, placed.height, tracking[t]))
+                            continue;
+                        HoldCueSize(cue, size);
+                        ZoomCueFitReason = "fa-track";
+                        return true;
+                    }
+                }
+            }
+
+            PlaceTopLeft(cue.rectTransform, origin.x, origin.y, origin.width, origin.height);
+            KeepAuthoredSize(cue.rectTransform);
+            SyncCuePlate(parent, origin);
+            cue.text = source;
+            return false;
+        }
+
+        /// <summary>
         /// Widens the live Farsi tab when a taller one is blocked, so the phrase is
         /// not clipped at 16:9. Size stays in 22–26.
         /// </summary>
@@ -2818,8 +2957,8 @@ namespace Game.UI.Runtime
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
             string selected = CueSelectedMap(parent, origin.x);
-            float[] widths = { 220f, 240f, 280f, 320f, 360f };
-            float[] heights = { 76f, 72f, 68f, 64f, 62f, 56f, 48f, 44f, 40f };
+            float[] widths = { 160f, 176f, 220f, 240f, 280f, 320f, 360f };
+            float[] heights = { 56f, 62f, 76f, 72f, 68f, 64f, 48f, 44f, 40f };
             float[] lead = { 0f, -24f, -48f, -72f, -96f, -120f };
             for (float size = 26f; size >= 22f - 0.01f; size -= 1f)
             {
@@ -3673,6 +3812,7 @@ namespace Game.UI.Runtime
             if (cue == null || cue.name != "ZoomCue")
                 return;
             LockCueFont(cue);
+            AttachZoomPointer(cue.rectTransform);
             if (cue.transform.parent is not RectTransform parent)
                 return;
             float cueX = cue.rectTransform.anchoredPosition.x;
@@ -4013,6 +4153,7 @@ namespace Game.UI.Runtime
             if (cue == null)
             {
                 RaiseTheatreReadability(_libraryRegions);
+                ReseatFramedCards(_libraryRegions);
                 LogTheatreSeats(_libraryRegions, UiShellRuntimeGateway.Localization.IsRightToLeft);
                 return;
             }
@@ -4026,6 +4167,7 @@ namespace Game.UI.Runtime
                 FitCueInsidePackedRect(cue);
                 InkZoneNames(_libraryRegions);
                 FinishCuePaint(cue, heldSelection);
+                ReseatFramedCards(_libraryRegions);
                 LogTheatreCue(cue);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
@@ -4033,6 +4175,7 @@ namespace Game.UI.Runtime
 
             RaiseTheatreReadability(_libraryRegions);
             FinishCuePaint(cue, heldSelection);
+            ReseatFramedCards(_libraryRegions);
             LogTheatreCue(cue);
             LogTheatreSeats(cue.transform.parent, fa);
         }
@@ -4049,6 +4192,7 @@ namespace Game.UI.Runtime
             LockCueFont(cue);
             if (!string.IsNullOrEmpty(selectedId))
                 DropNameBelowCue(cue, selectedId);
+            AttachZoomPointer(cue.rectTransform);
             LogRenderedMeasures(cue);
         }
 
@@ -4066,6 +4210,10 @@ namespace Game.UI.Runtime
             if (cueScale < 0.001f)
                 cueScale = 1f;
             cue.ForceMeshUpdate();
+            if (CueCopyIsFarsi(cue, FlattenCopy(cue.text))
+                && (string.IsNullOrEmpty(TheatreSeatGeometry.ShotLocale)
+                    || !TheatreSeatGeometry.ShotLocale.StartsWith("fa", StringComparison.OrdinalIgnoreCase)))
+                TheatreSeatGeometry.ShotLocale = "fa";
             int cueLines = cue.textInfo != null ? cue.textInfo.lineCount : 0;
             float cueBoxW = cue.rectTransform.rect.width > 1f ? cue.rectTransform.rect.width : cue.rectTransform.sizeDelta.x;
             float cueBoxH = cue.rectTransform.rect.height > 1f ? cue.rectTransform.rect.height : cue.rectTransform.sizeDelta.y;
@@ -4881,8 +5029,9 @@ namespace Game.UI.Runtime
             if (ring != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                // Corner badge. A 68–104px ring sat on the painting and read as the eye.
-                const float badge = 34f;
+                // Corner badge, larger than the old 34px tick so the arc reads on the tile.
+                // It stays off the middle half, so the centred-ring share gate does not apply.
+                const float badge = 56f;
                 float ringSide = badge;
                 if (countReserve > 40f && pad + countReserve + 4f + ringSide + pad > cardW)
                     ringSide = Mathf.Max(22f, cardW - pad * 2f - 4f - countReserve);
@@ -4902,7 +5051,7 @@ namespace Game.UI.Runtime
                 if (ring.TryGetComponent<Image>(out Image track))
                 {
                     track.sprite = ZoneThinArcSprite();
-                    track.color = new Color(0.05f, 0.04f, 0.03f, 0.92f);
+                    track.color = new Color(0.96f, 0.93f, 0.84f, 0.96f);
                     track.material = null;
                     track.type = Image.Type.Simple;
                 }
@@ -4964,16 +5113,27 @@ namespace Game.UI.Runtime
         {
             if (regions == null)
                 return;
-            for (int i = 0; i < regions.childCount; i++)
+            // Zone cards live under TheaterFit, not as direct children of LibraryRegions.
+            // A direct walk never seated the title, so [TheatreName] was missing and the
+            // one-line autosize still drew past the box.
+            var cards = new List<RectTransform>(8);
+            CollectZoneCards(regions, cards);
+            for (int i = 0; i < cards.Count; i++)
             {
-                Transform child = regions.GetChild(i);
-                if (child == null || !child.name.StartsWith("ZoneCard_", StringComparison.Ordinal) || child is not RectTransform card)
+                RectTransform card = cards[i];
+                if (card == null)
                     continue;
                 float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
                 float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
                 float stripH = NameStripHeight(cardH);
                 float stripW = NameStripWidth(cardW, cardH, stripH);
-                float stripY = Mathf.Max(0f, cardH - stripH);
+                float stripY = TitleBarInset;
+                if (card.TryGetComponent<Image>(out Image cardPlate))
+                {
+                    cardPlate.sprite = ZoneSolidSprite();
+                    cardPlate.color = new Color(0.11f, 0.09f, 0.07f, 1f);
+                    cardPlate.type = Image.Type.Simple;
+                }
                 bool farsiLayout = UiShellRuntimeGateway.Localization.IsRightToLeft;
                 float stripX = farsiLayout ? Mathf.Max(0f, cardW - stripW) : 0f;
                 EnsureCardFrame(card, cardW, cardH);
@@ -5005,40 +5165,45 @@ namespace Game.UI.Runtime
 
                     title.SetAsLastSibling();
                     int lines = titleText.textInfo != null ? titleText.textInfo.lineCount : 0;
-                    string mapId = child.name.Substring("ZoneCard_".Length);
+                    string mapId = card.name.Substring("ZoneCard_".Length);
                     Debug.Log("[TheatreName] map=" + mapId
                         + " locale=" + (farsi ? "fa" : "en")
                         + " font=" + F(titleText.fontSize)
                         + " lines=" + lines.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                        + " strip=" + F(stripH)
+                        + " stripH=" + F(stripH)
                         + " box=" + F(title.sizeDelta.x) + "x" + F(title.sizeDelta.y));
                 }
 
+                string countCopy = card.Find("ZoneCount") is RectTransform previewCount && previewCount.TryGetComponent(out TMP_Text previewLabel)
+                    ? FlattenCopy(previewLabel.text)
+                    : string.Empty;
+                bool farsiWord = ContainsArabicLetter(countCopy);
+                const float pad = 2f;
+                float footerH = farsiWord ? 36f : 44f;
+                if (footerH > cardH * 0.30f)
+                    footerH = cardH * 0.30f;
+                float footerY = Mathf.Max(stripY + stripH + 8f, cardH - footerH);
+                float thumbY = stripY + stripH + 2f;
+                float thumbH = Mathf.Max(8f, footerY - 2f - thumbY);
+                PaintDistrictCard(card, 3f, thumbY, Mathf.Max(8f, cardW - 6f), thumbH);
                 if (card.Find("ZoneCount") is RectTransform countRect && countRect.TryGetComponent(out TMP_Text countLabel))
                 {
-                    float countW = ZoneCountColumn(countLabel, cardW);
-                    string countCopy = FlattenCopy(countLabel.text);
-                    bool farsiWord = ContainsArabicLetter(countCopy);
-                    float countH = farsiWord ? 32f : 18f;
-                    const float pad = 2f;
                     bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
+                    float ringSide = Mathf.Min(52f, Mathf.Max(28f, footerH - 4f));
+                    float countH = farsiWord ? 32f : Mathf.Max(28f, footerH - 6f);
+                    float countW;
                     float countX;
-                    float countY;
+                    float countY = footerY + Mathf.Max(0f, (footerH - countH) * 0.5f);
                     if (farsiWord)
                     {
-                        // Own row under the title band, full width, so به زودی fits at the count floor.
-                        countW = Mathf.Max(countW, cardW - pad * 2f);
-                        if (countW > cardW - pad * 2f)
-                            countW = Mathf.Max(8f, cardW - pad * 2f);
+                        // Own row across the footer. به زودی does not share the row with the ring.
+                        countW = Mathf.Max(8f, cardW - pad * 2f);
                         countX = pad;
-                        countY = Mathf.Max(pad, stripY - countH - 2f);
                     }
                     else
                     {
-                        countX = farsi ? Mathf.Max(pad, cardW - pad - countW) : pad;
-                        countY = Mathf.Max(pad, stripY - countH - 2f);
-                        if (countX + countW > cardW - pad)
-                            countW = Mathf.Max(8f, cardW - pad - countX);
+                        countW = Mathf.Max(8f, cardW - pad * 3f - ringSide);
+                        countX = farsi ? pad + ringSide + pad : pad;
                     }
 
                     PlaceTopLeft(countRect, countX, countY, countW, countH);
@@ -5048,11 +5213,39 @@ namespace Game.UI.Runtime
                     countLabel.textWrappingMode = TextWrappingModes.NoWrap;
                     countLabel.overflowMode = TextOverflowModes.Overflow;
                     countLabel.maxVisibleLines = 1;
-                    FitCopyInside(countLabel, farsiWord ? 13f : 11f);
+                    countLabel.fontSize = farsiWord ? 18f : 28f;
+                    countLabel.fontSizeMin = farsiWord ? 13f : 16f;
+                    countLabel.fontSizeMax = farsiWord ? 22f : 28f;
+                    FitCopyInside(countLabel, farsiWord ? 13f : 16f);
                     countLabel.enableAutoSizing = false;
                     countRect.SetAsLastSibling();
+                    if (card.Find("ProgressRing") is RectTransform ring)
+                    {
+                        float ringX = farsi ? pad : Mathf.Max(pad, cardW - pad - ringSide);
+                        float ringY = farsiWord
+                            ? Mathf.Max(thumbY, footerY - ringSide - 2f)
+                            : footerY + Mathf.Max(0f, (footerH - ringSide) * 0.5f);
+                        PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
+                        KeepAuthoredSize(ring);
+                        ring.SetSiblingIndex(countRect.GetSiblingIndex());
+                    }
                 }
             }
+        }
+
+        /// <summary>Zone cards are parented to TheaterFit. Walk every descendant once.</summary>
+        private static void CollectZoneCards(Transform node, List<RectTransform> cards)
+        {
+            if (node == null || cards == null)
+                return;
+            if (node.name.StartsWith("ZoneCard_", StringComparison.Ordinal) && node is RectTransform card)
+            {
+                cards.Add(card);
+                return;
+            }
+
+            for (int i = 0; i < node.childCount; i++)
+                CollectZoneCards(node.GetChild(i), cards);
         }
 
         private static void EnsureCardFrame(RectTransform card, float cardW, float cardH)
@@ -5143,7 +5336,9 @@ namespace Game.UI.Runtime
                 return null;
             float stripH = NameStripHeight(cardH);
             float stripW = NameStripWidth(cardW, cardH, stripH);
-            float stripY = Mathf.Max(0f, cardH - stripH);
+            // Title bar above the thumbnail. Eight pixels under the top tab keeps the
+            // name ink clear of the zoom cue even when both lines fill the strip.
+            float stripY = TitleBarInset;
             bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
             float stripX = farsi ? Mathf.Max(0f, cardW - stripW) : 0f;
             RectTransform shade = EnsureNameShade(card);
@@ -5172,9 +5367,12 @@ namespace Game.UI.Runtime
             return shade;
         }
 
+        /// <summary>Gap under the zoom tab before the title bar, so the name ink stays 6px clear.</summary>
+        private const float TitleBarInset = 8f;
+
         /// <summary>
-        /// Bottom strip. Two lines at the 20px floor need 46px. A short card keeps that
-        /// height and <see cref="NameStripWidth"/> narrows the shade so the share stays under 0.25.
+        /// Title bar above the thumbnail. Two lines at the 20px floor need 46px. A short card
+        /// keeps that height and <see cref="NameStripWidth"/> narrows the shade so the share stays under 0.25.
         /// </summary>
         private static float NameStripHeight(float cardH)
         {
@@ -5355,7 +5553,7 @@ namespace Game.UI.Runtime
                             liveW = rectW;
                     }
 
-                    float line = WidestDrawnLine(name);
+                    float line = ZoneNameIsFarsi(name) ? WidestDrawnLine(name) : CapturedLineWidth(name);
                     if (line > liveW + 2f)
                         continue;
                     if (NameBreaksMidWord(name))
@@ -5474,7 +5672,7 @@ namespace Game.UI.Runtime
                 return false;
             if (name.preferredHeight > stripH + 1.5f)
                 return false;
-            float line = WidestDrawnLine(name);
+            float line = ZoneNameIsFarsi(name) ? WidestDrawnLine(name) : CapturedLineWidth(name);
             if (width > 1f && line > width + 2f)
                 return false;
             if (allowWrap && NameBreaksMidWord(name))
@@ -5510,6 +5708,25 @@ namespace Game.UI.Runtime
             if (Mathf.Abs(size.y - stripH) <= 0.5f)
                 return;
             name.rectTransform.sizeDelta = new Vector2(size.x, stripH);
+        }
+
+        /// <summary>
+        /// Longest line after the dark outline capture measures. Preferred width
+        /// misses that ink, which is the 5–20px the narrow boxes were failing by.
+        /// </summary>
+        private static float CapturedLineWidth(TMP_Text name)
+        {
+            if (name == null)
+                return 0f;
+            float saved = name.outlineWidth;
+            Color savedColor = name.outlineColor;
+            name.outlineWidth = 0.22f;
+            name.outlineColor = new Color(0.01f, 0.01f, 0.02f, 1f);
+            name.ForceMeshUpdate();
+            float line = WidestDrawnLine(name);
+            name.outlineWidth = saved;
+            name.outlineColor = savedColor;
+            return line;
         }
 
         private static float WidestDrawnLine(TMP_Text name)
@@ -5592,7 +5809,7 @@ namespace Game.UI.Runtime
             PlaceTopLeft(title, x, y, w, h);
         }
 
-        /// <summary>Gradient, opaque at the bottom of the texture. The strip's top fades into the painting.</summary>
+        /// <summary>Solid title bar above the thumbnail. The name is no longer a caption on the painting.</summary>
         private static RectTransform EnsureNameShade(RectTransform card)
         {
             RectTransform shade = card.Find("NameShade") as RectTransform;
@@ -5605,10 +5822,10 @@ namespace Game.UI.Runtime
             }
             else if (!shade.TryGetComponent(out image))
                 image = shade.gameObject.AddComponent<Image>();
-            image.sprite = NameVeilSprite();
+            image.sprite = ZoneSolidSprite();
             image.type = Image.Type.Simple;
             image.raycastTarget = false;
-            image.color = Color.white;
+            image.color = new Color(0.14f, 0.11f, 0.08f, 0.96f);
             shade.gameObject.SetActive(true);
             return shade;
         }
@@ -7322,7 +7539,7 @@ namespace Game.UI.Runtime
                 for (int x = 0; x < size; x++)
                 {
                     float distance = Vector2.Distance(new Vector2(x, y), center) / (size * 0.5f);
-                    const float inner = 0.78f;
+                    const float inner = 0.62f;
                     const float outer = 0.96f;
                     float ring = 0f;
                     if (distance >= inner && distance <= outer)

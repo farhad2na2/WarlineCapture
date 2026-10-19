@@ -66,13 +66,20 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Draws the district plate across the whole card, opaque and untinted.
-        /// The progress mark is a separate corner badge; this paint does not dim the plate.
+        /// Framed district plate. The title bar and the count sit outside this rect.
+        /// The plate stays opaque and untinted.
         /// </summary>
         private static void PaintDistrictCard(RectTransform card, float cardW, float cardH)
         {
+            PaintDistrictCard(card, 0f, 0f, cardW, cardH);
+        }
+
+        private static void PaintDistrictCard(RectTransform card, float x, float y, float w, float h)
+        {
             if (card == null)
                 return;
+            float cardW = w;
+            float cardH = h;
             string mapId = card.name.StartsWith("ZoneCard_", StringComparison.Ordinal)
                 ? card.name.Substring("ZoneCard_".Length)
                 : string.Empty;
@@ -80,13 +87,16 @@ namespace Game.UI.Runtime
             RectTransform frame = card.Find("ThumbFrame") as RectTransform;
             if (frame == null)
                 return;
-            PlaceTopLeft(frame, 0f, 0f, cardW, cardH);
+            PlaceTopLeft(frame, x, y, cardW, cardH);
             frame.localScale = Vector3.one;
             KeepAuthoredSize(frame);
+            const float rim = 2f;
+            float innerW = Mathf.Max(4f, cardW - rim * 2f);
+            float innerH = Mathf.Max(4f, cardH - rim * 2f);
             if (frame.TryGetComponent<Image>(out Image frameImage))
             {
                 frameImage.sprite = ZoneSolidSprite();
-                frameImage.color = new Color(1f, 1f, 1f, 1f);
+                frameImage.color = new Color(0.86f, 0.78f, 0.58f, 1f);
                 frameImage.material = null;
                 frameImage.type = Image.Type.Simple;
             }
@@ -99,13 +109,13 @@ namespace Game.UI.Runtime
             art.preserveAspect = false;
             art.raycastTarget = false;
             art.enabled = plate != null;
-            PlaceTopLeft(art.rectTransform, 0f, 0f, cardW, cardH);
+            PlaceTopLeft(art.rectTransform, rim, rim, innerW, innerH);
             art.rectTransform.localScale = Vector3.one;
             KeepAuthoredSize(art.rectTransform);
 
             if (frame.Find("Thumbnail") is RectTransform preview)
             {
-                PlaceTopLeft(preview, 0f, 0f, cardW, cardH);
+                PlaceTopLeft(preview, rim, rim, innerW, innerH);
                 preview.localScale = Vector3.one;
                 KeepAuthoredSize(preview);
                 RawImage picture = preview.GetComponent<RawImage>();
@@ -117,7 +127,7 @@ namespace Game.UI.Runtime
                     picture.raycastTarget = false;
                     picture.enabled = plate != null && plate.texture != null;
                     if (picture.enabled)
-                        CoverCrop(picture, cardW, cardH);
+                        CoverCrop(picture, innerW, innerH);
                 }
 
                 preview.SetAsLastSibling();

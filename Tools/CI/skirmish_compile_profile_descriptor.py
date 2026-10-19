@@ -2,6 +2,7 @@
 
 create: --project ROOT --context context.json --output ROOT/Logs/SkirmishProduction/new.json
 verify: --project ROOT --verify descriptor.json --expected-sha256 <descriptor_sha256>
+diagnose only: --project ROOT --checkout-provenance
 
 Context/evidence references are structural, UNVERIFIED pointers. Even complete pointers
 stay Pending; this tool cannot establish RSP consumption, retained origin or freshness.
@@ -295,6 +296,80 @@ def write_immutable(project, path, value):
                 descriptor_sha256=value["descriptor_sha256"], status="MetadataOnly_PendingEvidence")
 
 
+def _checkout_row(path, git_raw, checkout_raw):
+    """Diagnostic only: never substitutes normalized bytes for immutable raw pins."""
+    is_meta = path.endswith(".meta")
+    authority_path = path[:-5] if is_meta else path
+    need(authority_path in METADATA_PINS, "Unknown immutable authority path")
+    expected = METADATA_PINS[authority_path][1 if is_meta else 0]
+    need(isinstance(git_raw, bytes) and hashlib.sha256(git_raw).hexdigest() == expected,
+         "Immutable Git raw authority unavailable or changed")
+    need(checkout_raw is None or isinstance(checkout_raw, bytes), "Checkout bytes or missing")
+
+    def details(raw):
+        if raw is None:
+            return None
+        crlf = raw.count(b"\r\n")
+        return dict(raw_sha256=hashlib.sha256(raw).hexdigest(), bytes=len(raw), crlf_count=crlf,
+                    bare_lf_count=raw.count(b"\n") - crlf, bare_cr_count=raw.count(b"\r") - crlf,
+                    diagnostic_crlf_to_lf_sha256=hashlib.sha256(raw.replace(b"\r\n", b"\n")).hexdigest())
+
+    exact = checkout_raw == git_raw
+    equivalent = (checkout_raw is not None and
+                  checkout_raw.replace(b"\r\n", b"\n") == git_raw.replace(b"\r\n", b"\n"))
+    classification = ("MissingCheckoutFile" if checkout_raw is None else
+                      "ExactRawMatch" if exact else
+                      "DifferentRawBytes_CrlfLfEquivalent" if equivalent else "ContentDrift")
+    return dict(path=path, immutable_git_raw_pin=expected, immutable_git=details(git_raw),
+                checkout_observation=details(checkout_raw), raw_identity_equal=exact,
+                diagnostic_crlf_lf_equivalent=equivalent, classification=classification,
+                status="MetadataOnly_PendingCheckoutProvenance", source_identity_proved=False)
+
+
+def checkout_provenance(project, git_reader=None):
+    """Separate companion. Strict metadata()/descriptor behavior is unchanged.
+
+    Read only fixed historical blobs and metadata paths. Test reader injection does
+    not bypass any raw authority pin. No checkout rewrite or admission backend call.
+    """
+    root = Path(project).resolve(strict=True)
+    if git_reader is None:
+        import subprocess
+
+        def git_reader(path):
+            return subprocess.check_output(["git", "show", AUTHORITY_COMMIT + ":" + path], cwd=root, timeout=10)
+
+    observed_paths = set()
+    for scope in ("Assets/Game/Scripts", "Assets/Tests"):
+        for path in (root / scope).rglob("*"):
+            need(not path.is_symlink() and not getattr(path, "is_junction", lambda: False)(),
+                 "Checkout metadata scope contains a reparse path")
+            if path.suffix in (".asmdef", ".asmref"):
+                observed_paths.add(path.relative_to(root).as_posix())
+    rows = []
+    for definition in sorted(METADATA_PINS):
+        for path in (definition, definition + ".meta"):
+            git_raw = git_reader(path)
+            candidate = root / path
+            need(not candidate.is_symlink() and not getattr(candidate, "is_junction", lambda: False)(),
+                 "Checkout metadata reparse file")
+            live = ordinary(root, path).read_bytes() if candidate.exists() else None
+            rows.append(_checkout_row(path, git_raw, live))
+    result = dict(schema_version=1, kind="CompileProfileCheckoutProvenance-v1",
+                  status="MetadataOnly_PendingCheckoutProvenance", flags=copy.deepcopy(FLAGS),
+                  authority_commit=AUTHORITY_COMMIT,
+                  producer_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+                  diagnostic_rule="CRLF-to-LF bytes only; no bare-CR, whitespace, BOM or authority normalization",
+                  strict_descriptor_behavior="Unchanged: differing raw metadata refuses strict descriptor",
+                  missing_definition_paths=sorted(set(METADATA_PINS) - observed_paths),
+                  unexpected_definition_paths=sorted(observed_paths - set(METADATA_PINS)),
+                  observations=rows, native_compile_authority=False,
+                  pending=["Checkout observations are not compiler consumption or source identity proof",
+                           "EOL equivalence never substitutes for immutable raw authority or admission"])
+    result["provenance_sha256"] = fingerprint(result)
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project", type=Path, required=True)
@@ -303,8 +378,14 @@ def main():
     parser.add_argument("--output", type=Path)
     parser.add_argument("--verify", type=Path)
     parser.add_argument("--expected-sha256")
+    parser.add_argument("--checkout-provenance", action="store_true",
+                        help="Print separate Pending raw-checkout/EOL diagnostics; strict producer unchanged")
     args = parser.parse_args()
-    if args.verify:
+    if args.checkout_provenance:
+        need(args.context is None and args.observations is None and args.output is None
+             and args.verify is None and args.expected_sha256 is None, "Checkout diagnostic mode only")
+        result = checkout_provenance(args.project)
+    elif args.verify:
         need(args.context is None and args.observations is None and args.output is None, "Verify mode only")
         result = validate_descriptor(json.loads(args.verify.read_bytes()), args.project, args.expected_sha256)
     else:

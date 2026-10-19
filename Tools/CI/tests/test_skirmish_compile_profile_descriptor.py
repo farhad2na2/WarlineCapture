@@ -1,6 +1,7 @@
 """Synthetic metadata controls, not compiler/native receipts. Sparse fixtures use immutable Git blobs."""
 import copy
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -30,6 +31,27 @@ def observation(layer="native-selected-rsp", state="ReportedFreshCsc"):
                 refs={key: None for key in profile.EVIDENCE_REFS}, source_paths=[], input_drift=False)
 
 
+# Source-attributed Windows review ee2b60b0b94753302b46e6125512897ed0647765b643624f125ab1db07be7a0f.
+# Exact reported bytes reconstructed here; no Windows execution is claimed by these tests.
+WINDOWS_META_FIXTURES = (
+    ("Assets/Game/Scripts/Editor/Game.Editor.asmdef.meta", "f904b4f32c8634430b43f82380f2405f",
+     "067108409c1a06a304e510162bb4b7e387283c0c5f774cfc4193bcc01e804540",
+     "9017754e152c81c549ace3e241f970c7f21f6c9fac7b4fb885bb8aff07b084ec"),
+    ("Assets/Game/Scripts/Game.Runtime.asmdef.meta", "361d0433287ed4a42bf3fd161956446a",
+     "6a7cc30139d637263c214e4f51636b6efc8088fafe8afec58267034a168e7573",
+     "840593dd66b6dc031b9740936ac8f7fd4fae4f1f2e61e7a79ca196b6baea203d"),
+    ("Assets/Tests/Editor/Game.Tests.Editor.asmdef.meta", "75d949434cfb844baba7f313bdfe96db",
+     "e8603d2b95c2c28344a467f5442a64e58d36a6046f3a39d99b99ad217648354b",
+     "002c45d5c773129d194c891d0036945d0a5ca3e6ecd2a5b65ad97e92474a3547"),
+)
+
+
+def reported_windows_bytes(guid):
+    return ("fileFormatVersion: 2\r\nguid: " + guid + "\r\nAssemblyDefinitionImporter:\r\n"
+            "  externalObjects: {}\r\n  userData: \r\n  assetBundleName: \r\n"
+            "  assetBundleVariant: \r\n").encode("utf-8")
+
+
 class DescriptorControls(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -44,6 +66,9 @@ class DescriptorControls(unittest.TestCase):
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(raw)
         cls.definitions = profile.metadata(cls.root)
+        cls.authority_raw = {relative: (cls.root / relative).read_bytes()
+                             for path in profile.METADATA_PINS
+                             for relative in (path, path + ".meta")}
 
     @classmethod
     def tearDownClass(cls):
@@ -231,6 +256,94 @@ class DescriptorControls(unittest.TestCase):
         self.assertIn("Descriptor pin differs", bad.stderr)
         target.unlink()
         ctx.unlink()
+
+    def test_three_exact_windows_crlf_fixtures_keep_both_raw_identities(self):
+        for path, guid, git_hash, windows_hash in WINDOWS_META_FIXTURES:
+            with self.subTest(path=path):
+                raw = reported_windows_bytes(guid)
+                self.assertEqual(hashlib.sha256(raw).hexdigest(), windows_hash)
+                self.assertEqual(hashlib.sha256(self.authority_raw[path]).hexdigest(), git_hash)
+                row = profile._checkout_row(path, self.authority_raw[path], raw)
+                self.assertEqual(row["classification"], "DifferentRawBytes_CrlfLfEquivalent")
+                self.assertEqual(row["immutable_git"]["raw_sha256"], git_hash)
+                self.assertEqual(row["checkout_observation"]["raw_sha256"], windows_hash)
+                self.assertEqual(row["checkout_observation"]["crlf_count"], 7)
+                self.assertFalse(row["raw_identity_equal"])
+                self.assertFalse(row["source_identity_proved"])
+                self.assertTrue(row["diagnostic_crlf_lf_equivalent"])
+
+    def test_crlf_companion_does_not_relax_strict_producer(self):
+        originals = {}
+        try:
+            for path, guid, _, _ in WINDOWS_META_FIXTURES:
+                target = self.root / path
+                originals[path] = target.read_bytes()
+                target.write_bytes(reported_windows_bytes(guid))
+            with self.assertRaisesRegex(ValueError, "raw assembly metadata"):
+                self.make()
+            report = profile.checkout_provenance(self.root, self.authority_raw.__getitem__)
+            actual = {x["path"]: x for x in report["observations"]}
+            for path, _, _, _ in WINDOWS_META_FIXTURES:
+                self.assertEqual(actual[path]["classification"], "DifferentRawBytes_CrlfLfEquivalent")
+            self.assertEqual(report["flags"], profile.FLAGS)
+            self.assertFalse(report["native_compile_authority"])
+            self.assertEqual(report["status"], "MetadataOnly_PendingCheckoutProvenance")
+            with self.assertRaisesRegex(ValueError, "raw assembly metadata"):
+                self.make()
+        finally:
+            for path, raw in originals.items():
+                (self.root / path).write_bytes(raw)
+
+    def test_content_guid_whitespace_bare_cr_and_bom_drift_are_not_equivalent(self):
+        path, guid, _, _ = WINDOWS_META_FIXTURES[0]
+        raw = reported_windows_bytes(guid)
+        mutations = [raw.replace(b"guid: f9", b"guid: e9"),
+                     raw.replace(b"externalObjects: {}", b"externalObjects: {x: 1}"),
+                     raw.replace(b"userData: ", b"userData:  "),
+                     raw.replace(b"\r\n", b"\r"), b"\xef\xbb\xbf" + raw]
+        for mutated in mutations:
+            row = profile._checkout_row(path, self.authority_raw[path], mutated)
+            self.assertEqual(row["classification"], "ContentDrift")
+            self.assertFalse(row["diagnostic_crlf_lf_equivalent"])
+            self.assertFalse(row["source_identity_proved"])
+
+    def test_git_authority_cannot_be_normalized_or_substituted(self):
+        path, guid, _, _ = WINDOWS_META_FIXTURES[0]
+        windows = reported_windows_bytes(guid)
+        for wrong_git in (windows, self.authority_raw[path] + b"\n"):
+            with self.assertRaisesRegex(ValueError, "Immutable Git raw authority"):
+                profile._checkout_row(path, wrong_git, windows)
+
+    def test_exact_and_missing_checkout_rows_are_still_pending(self):
+        path = WINDOWS_META_FIXTURES[0][0]
+        exact = profile._checkout_row(path, self.authority_raw[path], self.authority_raw[path])
+        missing = profile._checkout_row(path, self.authority_raw[path], None)
+        self.assertEqual(exact["classification"], "ExactRawMatch")
+        self.assertTrue(exact["raw_identity_equal"])
+        self.assertFalse(exact["source_identity_proved"])
+        self.assertEqual(missing["classification"], "MissingCheckoutFile")
+        self.assertIsNone(missing["checkout_observation"])
+        self.assertEqual(missing["status"], "MetadataOnly_PendingCheckoutProvenance")
+
+    def test_companion_cli_is_separate_pending_diagnostic(self):
+        result = subprocess.run([sys.executable, str(SOURCE), "--project", str(PROJECT),
+                                 "--checkout-provenance"], capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(report["authority_commit"], profile.AUTHORITY_COMMIT)
+        self.assertEqual(len(report["observations"]), len(profile.METADATA_PINS) * 2)
+        self.assertEqual(report["flags"], profile.FLAGS)
+        self.assertEqual(report["status"], "MetadataOnly_PendingCheckoutProvenance")
+
+    def test_companion_cannot_substitute_for_descriptor_or_mixed_cli_mode(self):
+        report = profile.checkout_provenance(self.root, self.authority_raw.__getitem__)
+        with self.assertRaisesRegex(ValueError, "Descriptor pin differs"):
+            profile.validate_descriptor(report, self.root, report["provenance_sha256"])
+        mixed = subprocess.run([sys.executable, str(SOURCE), "--project", str(PROJECT),
+                                "--checkout-provenance", "--output", "not-written.json"],
+                               capture_output=True, text=True, timeout=20)
+        self.assertNotEqual(mixed.returncode, 0)
+        self.assertIn("Checkout diagnostic mode only", mixed.stderr)
 
     def test_omitted_scope_and_source_traversal_remain_explicit(self):
         value = self.make()

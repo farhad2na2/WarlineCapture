@@ -78,7 +78,7 @@ namespace Game.Editor
                     "AP service queries require actual pinned source grid metadata");
             string error;
             JObject mpEndpointRevision=null;
-            if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid);
+            if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid,preparedAuthoring);
             JObject s049MainRouteRevision=s049BoundedCompoundRouteRequested?ApplyS049NativeCorridorMainSegments(owner.Definition,grid):null;
             if(strictCandidatePreparation!=null)
             {

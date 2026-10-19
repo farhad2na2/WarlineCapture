@@ -114,6 +114,8 @@ namespace Game.UI.Runtime
                 }
 
                 FitFooterLabel(button, fa, buttonWidth);
+                if (button == randomizeSeedButton)
+                    FitZoomInLabel(button, buttonWidth);
                 TMP_Text footerLabel = button.GetComponentInChildren<TMP_Text>(true);
                 if (footerLabel != null)
                     footerLabel.isRightToLeftText = ContainsArabicScript(footerLabel.text);
@@ -425,6 +427,76 @@ namespace Game.UI.Runtime
         private Button _footerPrimary;
 
         private Button backButtonRef() => transform.Find("SkirmishSetupComposition/BackButton")?.GetComponent<Button>();
+
+        /// <summary>
+        /// "ZOOM IN · INDUSTRIAL BASIN" is wider than a 4:3 footer button.
+        /// Autosize stays at or above the 16px command floor. When one line does not
+        /// fit there, the label breaks at the dot. The district name is the shorter form.
+        /// </summary>
+        private static void FitZoomInLabel(Button button, float buttonWidth)
+        {
+            TMP_Text label = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+            if (label == null || string.IsNullOrEmpty(label.text) || label.text.IndexOf("ZOOM IN", StringComparison.Ordinal) < 0)
+                return;
+            const float floor = 16f;
+            string source = label.text.Replace("\n", " ");
+            int dot = source.IndexOf('·');
+            float inner = buttonWidth - 16f;
+            string district = dot > 0 ? source.Substring(dot + 1).Trim() : source;
+            bool oneLine = MeasureFooterLine(source, floor) <= inner + 0.5f;
+            bool split = !oneLine && dot > 0 && FooterLinesFit(
+                source.Substring(0, dot).Trim() + "\n" + district, floor, inner);
+            if (!oneLine && split)
+                source = source.Substring(0, dot).Trim() + "\n" + district;
+            else if (!oneLine)
+                source = district;
+            float max = floor;
+            for (float size = 22f; size >= floor - 0.01f; size -= 1f)
+            {
+                if (!FooterLinesFit(source, size, inner))
+                    continue;
+                max = size;
+                break;
+            }
+
+            label.enableAutoSizing = true;
+            label.fontSizeMin = floor;
+            label.fontSizeMax = max;
+            label.fontSize = max;
+            label.textWrappingMode = source.IndexOf('\n') >= 0 ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.maxVisibleLines = source.IndexOf('\n') >= 0 ? 2 : 1;
+            label.alignment = TextAlignmentOptions.Center;
+            label.text = source;
+        }
+
+        private static bool FooterLinesFit(string source, float size, float inner)
+        {
+            if (string.IsNullOrEmpty(source) || inner < 8f)
+                return false;
+            string[] lines = source.Split('\n');
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (MeasureFooterLine(lines[i], size) > inner + 0.5f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static float MeasureFooterLine(string text, float size)
+        {
+            if (string.IsNullOrEmpty(text))
+                return 0f;
+            float width = 0f;
+            for (int i = 0; i < text.Length; i++)
+            {
+                float factor = text[i] <= 127 ? 0.62f : 0.95f;
+                width += size * factor;
+            }
+
+            return width;
+        }
 
         private static void FitFooterLabel(Button button, bool fa, float buttonWidth)
         {

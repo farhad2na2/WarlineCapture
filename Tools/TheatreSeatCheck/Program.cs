@@ -27,7 +27,8 @@ internal static class Program
             return 0;
         }
         if (!DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
-            || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill())
+            || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill() || !ReplayRuntimeCards()
+            || !ReplayZoomInLabel())
             failed++;
 
         RunCanvasPlates(ref seated, ref blocked, ref failed);
@@ -605,7 +606,35 @@ internal static class Program
             return false;
         TheatreSeatGeometry.Box pill = layout.Cue;
         TheatreSeatGeometry.Box card = cards[own];
-        bool parked = pill.W + 0.5f >= 206f && pill.H + 0.5f >= 56f;
+        bool wide = pill.W + 0.5f >= 206f && pill.H + 0.5f >= 56f;
+        bool onMap = pill.X >= 12f && pill.Y >= 12f
+            && pill.X + pill.W <= plateW - 12f
+            && pill.Y + pill.H <= plateH - 12f;
+        // Desert Base must be the real 206×56 pill, inside the map. Industrial Basin
+        // capture stays on the seated tab; a missing shelf still hangs the wide pill
+        // above that card, and that hang has to clear Desert Base.
+        if (wide && !onMap)
+        {
+            Console.WriteLine("FAIL replay 16:9 fa " + selected
+                + " pill=" + pill.W.ToString("0", CultureInfo.InvariantCulture)
+                + "x" + pill.H.ToString("0", CultureInfo.InvariantCulture)
+                + " at=" + pill.X.ToString("0", CultureInfo.InvariantCulture)
+                + "," + pill.Y.ToString("0", CultureInfo.InvariantCulture)
+                + " not inside the map");
+            return false;
+        }
+
+        bool parked = wide && onMap;
+        if (selected == "DB" && !parked)
+        {
+            Console.WriteLine("FAIL replay 16:9 fa DB pill="
+                + pill.W.ToString("0", CultureInfo.InvariantCulture)
+                + "x" + pill.H.ToString("0", CultureInfo.InvariantCulture)
+                + " at=" + pill.X.ToString("0", CultureInfo.InvariantCulture)
+                + "," + pill.Y.ToString("0", CultureInfo.InvariantCulture));
+            return false;
+        }
+
         if (!parked)
         {
             float width = Math.Max(206f, card.W);
@@ -851,6 +880,158 @@ internal static class Program
                 ref blocked,
                 ref failed);
         }
+    }
+
+    /// <summary>
+    /// The coast is finished, then the runtime attach may move a card. The inside
+    /// check uses that later rect against the coast that was already drawn.
+    /// </summary>
+    private static bool ReplayRuntimeCards()
+    {
+        bool ok = true;
+        ok &= ReplayRuntimePlate(1440f, 1080f, "4:3");
+        ok &= ReplayRuntimePlate(1920f, 1080f, "16:9");
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " replay runtime cards");
+        return ok;
+    }
+
+    private static bool ReplayRuntimePlate(float canvasW, float canvasH, string ratio)
+    {
+        TheatreSeatGeometry.CaptureMapSize(canvasW, canvasH, out float plateW, out float plateH);
+        bool ok = true;
+        foreach (bool fa in new[] { false, true })
+        {
+            foreach (string selected in new[] { "DB", "IB", "CC" })
+            {
+                bool reserve = TheatreSeatGeometry.DetailReserveOn(plateW, plateH, fa, true, ratio == "4:3", selected);
+                TheatreSeatGeometry.NoteDetailReserve(reserve);
+                TheatreSeatGeometry.SetShot(ratio, "none", fa ? "fa" : "en", reserve, canvasW, canvasH, 0f, 0f, 0f, 0f);
+                TheatreSeatGeometry.ShotSelected = selected;
+                TheatreSeatGeometry.Layout layout = TheatreSeatGeometry.Arrange(plateW, plateH, fa, reserve, selected);
+                if (layout.Seats == null)
+                    return false;
+                var hexes = new TheatreSeatGeometry.Vec2[layout.Seats.Length][];
+                var cards = new TheatreSeatGeometry.Box[layout.Seats.Length];
+                var pins = new TheatreSeatGeometry.Box[layout.Seats.Length];
+                int own = 0;
+                for (int i = 0; i < layout.Seats.Length; i++)
+                {
+                    hexes[i] = layout.Seats[i].Hex;
+                    cards[i] = layout.Seats[i].Card;
+                    pins[i] = layout.Seats[i].Pin;
+                    if (layout.Seats[i].MapId == selected)
+                        own = i;
+                }
+
+                TheatreSeatGeometry.Box detail = TheatreSeatGeometry.DetailRect(plateW, plateH, fa, reserve);
+                TheatreSeatGeometry.Box hint = TheatreSeatGeometry.ZoomHintRect(plateW, plateH);
+                var coasts = new TheatreSeatGeometry.Vec2[layout.Seats.Length][];
+                for (int i = 0; i < layout.Seats.Length; i++)
+                {
+                    var others = new TheatreSeatGeometry.Vec2[hexes.Length][];
+                    for (int j = 0; j < hexes.Length; j++)
+                    {
+                        if (j != i)
+                            others[j] = hexes[j];
+                    }
+
+                    coasts[i] = TheatreSeatGeometry.FinishTerritory(
+                        hexes[i], cards[i], pins[i], layout.Seats[i].MapId, others, layout.Cue, plateW, plateH, detail, hint);
+                }
+
+                var snapshot = new TheatreSeatGeometry.Box[cards.Length];
+                for (int i = 0; i < cards.Length; i++)
+                    snapshot[i] = cards[i];
+                var drawn = new TheatreSeatGeometry.Vec2[coasts.Length][];
+                for (int i = 0; i < coasts.Length; i++)
+                    drawn[i] = coasts[i] != null ? coasts[i] : hexes[i];
+                bool attached = fa
+                    ? TheatreSeatGeometry.TryAttachFarsiCue(plateW, plateH, pins, cards, drawn, detail, own, out TheatreSeatGeometry.Box seated)
+                        || TheatreSeatGeometry.TryAttachCueToCard(plateW, plateH, pins, cards, drawn, detail, own, out seated)
+                    : TheatreSeatGeometry.TryAttachCueToCard(plateW, plateH, pins, cards, drawn, detail, own, out seated);
+                if (attached)
+                {
+                    for (int i = 0; i < cards.Length; i++)
+                    {
+                        if (coasts[i] == null || cards[i].W < 1f)
+                            continue;
+                        if (!TheatreSeatGeometry.CardInsideTerritory(cards[i], coasts[i]))
+                            cards[i] = snapshot[i];
+                    }
+                }
+
+                TheatreSeatGeometry.Box pill = layout.Cue;
+                bool pillOk = true;
+                if (selected == "DB" && ratio == "16:9")
+                {
+                    float minW = fa ? 206f : 176f;
+                    float minH = fa ? 56f : 44f;
+                    pillOk = pill.W + 0.5f >= minW && pill.H + 0.5f >= minH
+                        && pill.X >= 12f && pill.Y >= 12f
+                        && pill.X + pill.W <= plateW - 12f
+                        && pill.Y + pill.H <= plateH - 12f
+                        && TheatreSeatGeometry.FarsiPillClearsDistrict(pill, coasts[own], true);
+                }
+
+                bool inside = true;
+                bool centred = true;
+                for (int i = 0; i < layout.Seats.Length; i++)
+                {
+                    if (coasts[i] == null || !TheatreSeatGeometry.CardInsideTerritory(cards[i], coasts[i]))
+                        inside = false;
+                    if (layout.Seats[i].MapId != "DB" && layout.Seats[i].MapId != "CC")
+                        continue;
+                    BoundsCentre(coasts[i], out float cx, out float cy);
+                    float dx = Math.Abs(cards[i].X + cards[i].W * 0.5f - cx);
+                    float dy = Math.Abs(cards[i].Y + cards[i].H * 0.5f - cy);
+                    if (dx > 36f || dy > 36f)
+                        centred = false;
+                }
+
+                if (!pillOk || !inside || !centred)
+                {
+                    Console.WriteLine("FAIL runtime " + ratio + " " + (fa ? "fa" : "en") + " sel=" + selected
+                        + " pill=" + pill.W.ToString("0") + "x" + pill.H.ToString("0")
+                        + " at=" + pill.X.ToString("0") + "," + pill.Y.ToString("0")
+                        + " pillOk=" + pillOk + " inside=" + inside + " centre=" + centred);
+                    ok = false;
+                }
+            }
+        }
+
+        return ok;
+    }
+
+    private static void BoundsCentre(TheatreSeatGeometry.Vec2[] shape, out float cx, out float cy)
+    {
+        cx = 0f;
+        cy = 0f;
+        if (shape == null || shape.Length == 0)
+            return;
+        float minX = shape[0].X;
+        float maxX = shape[0].X;
+        float minY = shape[0].Y;
+        float maxY = shape[0].Y;
+        for (int i = 1; i < shape.Length; i++)
+        {
+            if (shape[i].X < minX) minX = shape[i].X;
+            if (shape[i].X > maxX) maxX = shape[i].X;
+            if (shape[i].Y < minY) minY = shape[i].Y;
+            if (shape[i].Y > maxY) maxY = shape[i].Y;
+        }
+
+        cx = (minX + maxX) * 0.5f;
+        cy = (minY + maxY) * 0.5f;
+    }
+
+    /// <summary>4:3 English footer. The Industrial Basin zoom label has to sit inside the button.</summary>
+    private static bool ReplayZoomInLabel()
+    {
+        float width = TheatreSeatGeometry.FooterButtonWidth(1440f, 6);
+        bool fits = TheatreSeatGeometry.ZoomInBasinFits(width, 16f);
+        Console.WriteLine((fits ? "PASS" : "FAIL") + " replay 4:3 en zoom label width="
+            + width.ToString("0.0", CultureInfo.InvariantCulture));
+        return fits;
     }
 
     private static bool OutlinesHold(TheatreSeatGeometry.Layout layout, float width, float height)

@@ -1202,8 +1202,23 @@ namespace Game.UI.Runtime
             string[] en = { "RECRUIT", "REGULAR", "VETERAN", "COMMANDER" };
             string[] faNames = { "تازه‌کار", "عادی", "کهنه‌کار", "فرمانده" };
             const float top = 106f;
-            const float tileHeight = 118f; // v33 approved-1: big medal over name over count
+            const float baseTileHeight = 118f; // v33 approved-1: big medal over name over count
             const float gap = 8f;
+            const float bottomPad = 4f;
+            // v43 (Game PM, approved-1): the Theatre summary plate takes the column's spare height, and the four tiles
+            // grow into it evenly - icon, name, count and their offsets all scale by the same factor (capped so the
+            // icon stays inside half the tile width).
+            float plateHeight = plate.rect.height > 1f ? plate.rect.height : TheatreSummaryHeight;
+            float plateWidth = plate.rect.width > 1f ? plate.rect.width : 300f;
+            float wanted = (plateHeight - top - gap - bottomPad) * 0.5f;
+            float scale = Mathf.Max(1f, wanted / baseTileHeight);
+            float tileWidth = (plateWidth - 16f - gap) * 0.5f;
+            scale = Mathf.Min(scale, Mathf.Max(1f, tileWidth * 0.55f / 54f), 2f);
+            // Tiles always fill the spare height; if the width cap stops the content scale, the content is centred in
+            // the taller tile instead of leaving a gap under the grid.
+            float tileHeight = Mathf.Max(baseTileHeight * scale, wanted);
+            float contentTop = (tileHeight - baseTileHeight * scale) * 0.5f;
+            float leftover = Mathf.Max(0f, plateHeight - (top + 2f * tileHeight + gap + bottomPad));
             var tierNames = new List<TMP_Text>(4);
             for (int i = 0; i < tiers.Length; i++)
             {
@@ -1238,8 +1253,8 @@ namespace Game.UI.Runtime
                 var iconRect = tile.Find("Icon") as RectTransform;
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0.5f, 1f);
                 iconRect.pivot = new Vector2(0.5f, 1f);
-                iconRect.sizeDelta = new Vector2(54f, 54f); // sprite has ~14% padding: ~46 px drawn, clears TierName at y58
-                iconRect.anchoredPosition = new Vector2(0f, -2f);
+                iconRect.sizeDelta = new Vector2(54f * scale, 54f * scale); // sprite has ~14% padding: ~46 px drawn, clears TierName at y58
+                iconRect.anchoredPosition = new Vector2(0f, -(2f * scale + contentTop));
                 Image iconImage = iconRect.GetComponent<Image>();
                 if (iconImage != null)
                 {
@@ -1251,8 +1266,8 @@ namespace Game.UI.Runtime
                 TMP_Text tierName = tile.Find("TierName")?.GetComponent<TMP_Text>();
                 if (tierName != null)
                 {
-                    PlaceTileLine(tierName.rectTransform, 58f, 28f);
-                    SetCopy(tierName, fa ? faNames[i] : en[i], fa ? 30f : 26f, fa ? 32f : 28f); // FA glyphs run small: higher floor
+                    PlaceTileLine(tierName.rectTransform, contentTop + 58f * scale, 28f * scale);
+                    SetCopy(tierName, fa ? faNames[i] : en[i], (fa ? 30f : 26f) * scale, (fa ? 32f : 28f) * scale); // FA glyphs run small: higher floor
                     tierName.alignment = TextAlignmentOptions.Center;
                     tierName.isRightToLeftText = fa;
                     tierName.textWrappingMode = TextWrappingModes.NoWrap;
@@ -1263,21 +1278,21 @@ namespace Game.UI.Runtime
                         // V3LocalizedTextBindingView.FitArabicLineBox caps Arabic-script max at rect height / 1.65
                         // (26 px line -> ~16 px). Pin a fixed size after SetCopy so the floor holds.
                         tierName.enableAutoSizing = false;
-                        tierName.fontSize = 30f; // +25%
+                        tierName.fontSize = 30f * scale; // +25%
                     }
                     // Per-tile fit: keep the bigger size, but shrink a long name (4:3 VETERAN/COMMANDER) to its tile with a gap.
                     tierName.rectTransform.offsetMin = new Vector2(8f, tierName.rectTransform.offsetMin.y);
                     tierName.rectTransform.offsetMax = new Vector2(-8f, tierName.rectTransform.offsetMax.y);
                     if (tierName.rectTransform.rect.width > 40f)
-                        FitDetailLine(tierName, 16f, fa ? 30f : 28f);
+                        FitDetailLine(tierName, 16f, (fa ? 30f : 28f) * scale);
                     tierNames.Add(tierName);
                 }
 
                 TMP_Text tierCount = tile.Find("TierCount")?.GetComponent<TMP_Text>();
                 if (tierCount != null)
                 {
-                    PlaceTileLine(tierCount.rectTransform, 84f, 34f);
-                    SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), fa ? 36f : 32f, fa ? 40f : 38f);
+                    PlaceTileLine(tierCount.rectTransform, contentTop + 84f * scale, 34f * scale);
+                    SetCopy(tierCount, fa ? SkirmishWidgetContext.ToPersianDigits(counts[i].ToString()) : counts[i].ToString(), (fa ? 36f : 32f) * scale, (fa ? 40f : 38f) * scale);
                     tierCount.alignment = TextAlignmentOptions.Center;
                     tierCount.isRightToLeftText = false;
                     tierCount.fontStyle = FontStyles.Bold;
@@ -1285,7 +1300,7 @@ namespace Game.UI.Runtime
                     if (fa)
                     {
                         tierCount.enableAutoSizing = false;
-                        tierCount.fontSize = 38f; // +25%
+                        tierCount.fontSize = 38f * scale; // +25%
                     }
                 }
             }
@@ -1306,6 +1321,14 @@ namespace Game.UI.Runtime
                     binding.ConfigureFontBounds(shared, shared);
                 t.ForceMeshUpdate();
             }
+
+            Debug.Log("[MedalGrid] icon=" + (54f * scale).ToString("0.0") +
+                " scale=" + scale.ToString("0.00") +
+                " tile=" + tileWidth.ToString("0") + "x" + tileHeight.ToString("0") +
+                " nameFont=" + (shared < float.MaxValue ? shared.ToString("0.0") : "-") +
+                " plate=" + plateWidth.ToString("0") + "x" + plateHeight.ToString("0") +
+                " leftover=" + leftover.ToString("0") +
+                " locale=" + (fa ? "fa-IR" : "en"));
         }
 
         private static void PlaceTileLine(RectTransform rect, float y, float height)
@@ -1463,7 +1486,9 @@ namespace Game.UI.Runtime
             const float headingHeight = RecommendedHeadingHeight;
             const float rowGap = 10f;
             float panelHeight = _recommendedPanel.rect.height > 1f ? _recommendedPanel.rect.height : RecommendedCompactHeight;
-            float rowHeight = Mathf.Clamp(panelHeight - headingHeight - 8f, 76f, 220f);
+            // v43 (Game PM): fixed compact row again (~96x72 thumbnail + 2-line copy) pinned under the medal tiles; the
+            // spare column height goes to the medal tiles (PresentTheatreMedalTiles), not to this row.
+            const float rowHeight = 76f;
             float thumbW = Mathf.Min((rowHeight - 4f) * 4f / 3f, textWidth * 0.5f);
             float thumbH = thumbW * 0.75f;
             float frameW = thumbW + 4f;

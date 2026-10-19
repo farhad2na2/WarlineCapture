@@ -1663,9 +1663,9 @@ namespace Game.UI.Runtime
                     break;
                 }
 
-                // v42: on the Theatre the Recommended next row takes the column's leftover height (approved-1 fills the
-                // left panel); its layout scales the thumbnail to that height.
-                bool absorb = !battlefield && order[nameIndex] == "RecommendedNext";
+                // v43 (Game PM): on the Theatre the summary plate (battles won + medal tiles) takes the column's spare
+                // height and its tiles scale into it; Recommended next stays a compact row at the column bottom.
+                bool absorb = !battlefield && order[nameIndex] == "TheatreSummary";
                 index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null, absorb);
             }
 

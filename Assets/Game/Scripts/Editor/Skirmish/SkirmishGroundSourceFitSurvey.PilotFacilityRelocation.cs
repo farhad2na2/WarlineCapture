@@ -25,7 +25,7 @@ namespace Game.Editor
         {
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
-            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
+            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority)||CompleteGroundBaServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
                 "Exact MP or authority-bound AP disposable service authoring context required");
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";

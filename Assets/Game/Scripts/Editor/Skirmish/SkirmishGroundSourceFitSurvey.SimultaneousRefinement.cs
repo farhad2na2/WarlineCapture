@@ -71,7 +71,8 @@ namespace Game.Editor
                 owner.Layout.OperationMapId==source.OperationMapId&&owner.Layout.WorldBinding.SourceHash==source.ContentHash&&
                 owner.Definition.CatalogId==(string)mission["catalog_id"],"Exact caller-owned source/definition/layout identity required");
             bool apPairServiceRequested=ApPairServiceAuthority(owner.Definition);
-            if(apPairServiceRequested)
+            bool completeGroundBaServiceRequested=CompleteGroundBaServiceAuthority(owner.Definition);
+            if(apPairServiceRequested||completeGroundBaServiceRequested)
                 Require(grid.Width==source.GridMetadata.Dimensions.x&&grid.Height==source.GridMetadata.Dimensions.y&&
                     grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin),
                     "AP service queries require actual pinned source grid metadata");
@@ -173,11 +174,12 @@ namespace Game.Editor
                             ["logicalFrameSearch"]=refinementLogicalFrameSearchRequested,
                             ["actualLogicalFrameJson"]=refinementLogicalFrameSearchRequested?JsonUtility.ToJson(owner.Layout):null,
                             ["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
+                        if(completeGroundBaServiceRequested)row["completeGroundBaAuthority"]=CompleteGroundBaBudgetReceipt(owner.Definition,budget,grid);
                         sizes.Add(row);
                         try
                         {
                         ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                            em,gridEntity,grid,surface,row,true,discovery,routeClearance,serviceAuthority:(mpGroundBaPilotRequested||apPairServiceRequested)?owner.Definition:null);
+                            em,gridEntity,grid,surface,row,true,discovery,routeClearance,serviceAuthority:(mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)?owner.Definition:null);
                         var facilities=(JArray)row["normalFacilityRelocationProposals"];
                         bool allFacilities=facilities!=null&&facilities.Count==budget.Structures.Length&&
                             facilities.All(f=>(bool?)f["entireConfigurationFound"]==true);
@@ -196,15 +198,15 @@ namespace Game.Editor
                         if((bool?)row["routeQueriesWithSameFacilityReservations"]?["endpointPolicyPreflight"]?["accepted"]!=true)
                         {row["jointRouteRefused"]="Authored endpoint policy preflight refused; no native route queries";complete=false;}
 
-                        if((requireExactJointRoutes||apPairServiceRequested)&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
+                        if((requireExactJointRoutes||apPairServiceRequested||completeGroundBaServiceRequested)&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
                         {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
-                        if(refinementPreferenceReplay||mpGroundBaPilotRequested||apPairServiceRequested)
+                        if(refinementPreferenceReplay||mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)
                         {
                             bool independent=PreferencePathsIndependent(owner.Layout,grid,(JObject)row["routeQueriesWithSameFacilityReservations"],out var independence);
                             row["actualProfileRouteIndependence"]=independence;
                             if(!independent)complete=false;
                         }
-                        if(mpGroundBaPilotRequested||apPairServiceRequested)
+                        if(mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)
                         {
                             bool coverage=MpPilotCanonicalRouteCoverage(budget,owner.Layout,em,grid,(JObject)row["routeQueriesWithSameFacilityReservations"]);
                             row["mpPilotCanonicalRouteCoverage"]=coverage;

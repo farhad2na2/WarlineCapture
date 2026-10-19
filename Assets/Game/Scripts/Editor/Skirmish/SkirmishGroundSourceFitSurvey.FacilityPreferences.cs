@@ -260,7 +260,7 @@ namespace Game.Editor
             var inventory=new JObject{["newLogicalCandidateMaterialized"]=true,["candidateCompoundWorldRects"]=compounds.DeepClone(),
                 ["allSizeFacilities"]=Ground30PreferredFacilities(maxBudget,owner.Layout,grid)};
             ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                em,gridEntity,grid,surface,inventory,true,true,clearance,true,serviceAuthority:(mpGroundBaPilotRequested||ApPairServiceAuthority(owner.Definition))?owner.Definition:null);
+                em,gridEntity,grid,surface,inventory,true,true,clearance,true,serviceAuthority:(mpGroundBaPilotRequested||ApPairServiceAuthority(owner.Definition)||CompleteGroundBaServiceAuthority(owner.Definition))?owner.Definition:null);
             report["independentSourceQaCapacityHints"]=inventory;
             var hints=(JArray)inventory["normalFacilityRelocationProposals"];
             var assignments=logicalPadInput==null?BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds):

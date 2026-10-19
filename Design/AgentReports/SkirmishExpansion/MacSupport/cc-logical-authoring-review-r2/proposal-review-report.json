@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "state": "FrozenDisabledSourceAPIAndS026DataProposal_NoImportCompileNativeAuthority",
+  "created_utc": "2026-10-19T00:24:16.707423+00:00",
+  "reference_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "purpose": "Reuse existing generic allocator and nine-profile service/strict validator for unprotected own Ground BA tuple; keep MP49/50/S049 special geometry dedicated; no new engine.",
+  "proposed_entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundBaCompleteStaticPilot",
+  "catalog_selector": "WARLINE_ALL120_REFINEMENT_CATALOG=S026",
+  "output_selector": "WARLINE_ALL120_REFINEMENT_OUTPUT=<fresh owned reviewed output>",
+  "pad_input_selectors": [
+    "WARLINE_ALL120_LOGICAL_PAD_INPUT",
+    "WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256"
+  ],
+  "API_delta": [
+    "Only four existing Game.Editor partial files; no new asmdef/meta/Runtime/schema producer engine.",
+    "Private owned authority/source-pin context selected from original GroundBa10Rows/Full120 pinned index; protected/foreign/non-G/BA/source/start/profile/budget identity rejects.",
+    "Generic entry delegates S049/S050 to unchanged dedicated entry. Other exact unprotected GroundBA tuples use existing RunAll120BoundedFacilityPreferences; no MP geometry flag activated. Context resets in finally.",
+    "Generic full-service context is passed through existing facility preference/relocation and simultaneous path. Actual grid/source equality, all exact routes, all-profile independence, full nine exposed ground/logistics service profiles and per-member ingress/return remain mandatory.",
+    "Original complete3size strict predicates moved verbatim into one reusable core; old MP validator still uses it/keeps marker. New generic report joins own tuple/source/size/canonical budget/hash/compiler signature and full-profile exposure, never template quantities.",
+    "No radius/predicate/solver/search-cap/geometry/budget/deadline policy reimplemented. Runtime source radius helper unchanged. GroundBA template source/grid/surface raw hashes stay exact.",
+    "Root-owned mode-aware disabled-air-route guard and typed exporter are NOT duplicated. Existing f90 caller may still fail ground-only AirTransitSeconds0 until separately reviewed upstream fix integrated.",
+    "Independent expected signatures compiled before allocator from actual owned GroundBA candidate, packaged matrix and existing static compiler; full ordered ApPreferenceBudgetKey DeepEquals in report validation. Expected authority is never loaded from report or user input."
+  ],
+  "preimage_and_proposed_hashes": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "22816c78968066fcaecd692056c3fa1f2392ae78be484fdcaf02cbc79a84d5c5",
+      "proposal_sha256": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "proposal_bytes": 78435
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1",
+      "proposal_sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "proposal_bytes": 40709
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c",
+      "proposal_sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "proposal_bytes": 64630
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4",
+      "proposal_sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "proposal_bytes": 41844
+    }
+  ],
+  "preservation": {
+    "dedicated_MP_S049_methods_byte_identical": 12,
+    "strict_legacy_predicate_block_verbatim": true,
+    "nine_profile_role_producer_readiness_checks_unchanged": true,
+    "no_imported_Assets_written": true,
+    "no_native_Csc": true,
+    "native_Runtime_helpers_untouched": true
+  },
+  "focused_controls": {
+    "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunCompleteGroundBaTupleControls",
+    "provided": 47,
+    "compiled": false,
+    "executed": false,
+    "expected_future_marker": "[CompleteGroundBaTupleControls] result=Passed controls=47 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0",
+    "coverage": "Own tuple/protected/identity/3budget/hash rejection; same strict non-discovery source/compiler/3sizes gates; cross-catalog/source/size/budget splice, typedtrue/grid, missing late exposed profiles, actual totals, exactroutes/independence/member-service, false-credit flags. Synthetic JSON controls never native evidence. Fifteen additional same-count RoleId/RoleKind/prefab/supply/anchor/objective/StructureId/base/offset/faction/missing/type swaps reject against independently held expected fixtures. Synthetic fixtures test comparator only, not actual compiler correctness."
+  },
+  "actual_local_verification": {
+    "scope": "TextStructureAndDeliberateSourceMutationControls_NotCSharpCompilerOrRuntimeProof",
+    "passed": 12,
+    "failures": 0,
+    "preserved_dedicated_method_blocks": 12,
+    "CSharp_controls_provided": 47,
+    "CSharp_controls_compiled": false,
+    "CSharp_controls_executed": false,
+    "native_runs": 0,
+    "cases": [
+      {
+        "case": "all_four_preimages_and_proposal_guards",
+        "passed": true
+      },
+      {
+        "case": "same_count_signature_swap",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "report_self_authority",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "foreign_MP_geometry",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "activate_MP_geometry_for_generic",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "skip_strict_service",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "raw_grid_hash_waiver",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "reduce_later_profiles",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "budget_splice",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "missing_preference_service_owner",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "missing_relocation_service_owner",
+        "passed": true,
+        "mutant_rejected": true
+      },
+      {
+        "case": "skip_generic_route_independence",
+        "passed": true,
+        "mutant_rejected": true
+      }
+    ]
+  },
+  "cache_analysis": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/cache-producer-and-dependency-review.json",
+    "sha256": "8036c9bb94e5124b0e85d41b065fe89a40a8a52c2ee79a35573fc9e8c43ccd5e",
+    "classification": "Engine-generated descriptor/identity metadata output that becomes a derived asset-pipeline/cache input; not authored physical/layout/config input. Do not call it unconsumed or waive original fullsource gate.",
+    "source_scene_GUID": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "Root_source_epoch_acceptance": false,
+    "original_aggregate_still_failed": true
+  },
+  "S026_data": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/S026-logical-repair.disabled.json",
+    "sha256": "5bd16bf2392f2b2ed875e7878e1439bbf2730436005b346a88afa32c1f2c5286",
+    "actual_catalogs": [
+      "S026"
+    ],
+    "exact_3budget_hash": "6c9c35526c0168edfdceafec3f8079362b0fd237b6d422016dbacfbc03bad77b",
+    "three_candidate_concepts": "Existing frameattempt1/2/3(32/64/128m logical margins) and observation-derived8source-space seed envelopes only; not physical map expansion or ready engine padOverrides.",
+    "required_exporter": "Actual S026/S032 clone baseline/prepared-frame typed pad beforeimages and roundtrip; measured S005frame cannot be silently substituted.",
+    "priority": "64preferredfootprints not accepted placement; target32road/sidewalk and5foundation conflicts;40/48normalfallback outside/rejected pads;12/45heavyroutefailures/all3independencefalse.",
+    "normal_or_fit_credit": false
+  },
+  "host_and_provenance_gates": [
+    "Original actual CC075de report/nonce78a before79d5\u2192after52e5/controller1 source-stability failure retained; measured facts only engineering reuse with dependency evidence and Root review.",
+    "Mac actual grid8ef1 LF != existing template authority20f6 Windows raw; original historical producer payload still absent/rejected transfer. No raw normalization/bridge or historical compatibility claim; generic source proposal intentionally retains fail-closed raw pins.",
+    "Existing GroundBA10/S032 source corpus and exact complete3size compiler authoring pipeline remain prerequisites on chosen reviewed host. No sources merged into nativeMac36c6 or Windowscurrent.",
+    "New shared code needs actual owner compilation/callability and47focused controls after peer review; prior29proof doesnot certify this uncompiled proposal.",
+    "Next logical-source-fit/authoring scope requires independent grant/fresh input/source/tool/settings/ownership receipts. No repeatedCCcollection or unchanged29 controls authorized.",
+    "Any prospective derived-cache output classification/new source epoch belongs Root; no deletion/rebaseline/retry or retroactive pass."
+  ],
+  "source_imports": 0,
+  "Csc_runs": 0,
+  "native_runs": 0,
+  "physical_geometry_changes": 0,
+  "sourceFitCertified": false,
+  "normalMissionReady": false,
+  "predecessor": {
+    "commit": "e719a48966d7ae52faf73f96581adabcd78994cf",
+    "report_sha256": "8a2b40fa1453e9644cdc47046b9c55c94528fa6be85370021ccf8cdbadb7d96f",
+    "preserved": true,
+    "peer_finding": "Totals-only signature join admitted same-count role/prefab/supply/structure swaps."
+  },
+  "revision": 2,
+  "expected_signature_authority": {
+    "reference": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+    "compiler_path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+    "compiler_sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+    "entry": "SkirmishSetupCompiler.TryInspectStaticAuthoringBudget",
+    "candidate_factory": "TryCreateGroundBa10Candidate",
+    "matrix": "SkirmishSetupMatrixTable.TryLoadPackaged",
+    "parameters": "Regular; own Standard/War/LargeWar; seed1; own RequiredFeatureIds",
+    "projection": "unchanged ApPreferenceBudgetKey (all force and structure fields, original order)",
+    "inspection_normal_compile_caveat": "TryInspectStaticAuthoringBudget can expose canonical budget when later normal source/proof gates reject; ExactCanonicalQuantities required and original normalThreeSizeCompilerPassed gate remains mandatory. No normal acceptance inferred.",
+    "expected_signature_capture": "Before RunAll120BoundedFacilityPreferences, owned candidate disposed with using; local JObject passed explicitly after scope cleanup. No report-sourced expectations.",
+    "CSharp_compiled_or_executed": false
+  }
+}

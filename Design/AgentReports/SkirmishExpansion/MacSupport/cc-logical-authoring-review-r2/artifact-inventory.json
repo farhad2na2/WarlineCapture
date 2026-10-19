@@ -1,0 +1,101 @@
+{
+  "scope": "DisabledSourceProposalOnly_NoAssetsImportCompileOrNative",
+  "predecessor": "e719a48966d7ae52faf73f96581adabcd78994cf",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/FacilityPreferences.f90.reference.cs.txt",
+      "sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c",
+      "bytes": 64578
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/MpGroundBaPilot.f90.reference.cs.txt",
+      "sha256": "22816c78968066fcaecd692056c3fa1f2392ae78be484fdcaf02cbc79a84d5c5",
+      "bytes": 54093
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/PilotFacilityRelocation.f90.reference.cs.txt",
+      "sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4",
+      "bytes": 41792
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/S026-logical-repair.disabled.json",
+      "sha256": "5bd16bf2392f2b2ed875e7878e1439bbf2730436005b346a88afa32c1f2c5286",
+      "bytes": 65896
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/S026-own-three-size-budgets.json",
+      "sha256": "3c568912be6975368d26d00528b58b516e6f70fa1c5b738d4866ccd780c65622",
+      "bytes": 6571
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/SimultaneousRefinement.f90.reference.cs.txt",
+      "sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1",
+      "bytes": 40283
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/SkirmishSetupCompiler.f90.reference.cs.txt",
+      "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "bytes": 45973
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/cache-producer-and-dependency-review.json",
+      "sha256": "8036c9bb94e5124b0e85d41b065fe89a40a8a52c2ee79a35573fc9e8c43ccd5e",
+      "bytes": 16385
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs.proposal",
+      "sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "bytes": 64630
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs.proposal",
+      "sha256": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "bytes": 78435
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.proposal",
+      "sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "bytes": 41844
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.proposal",
+      "sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "bytes": 40709
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/proposal-structure-controls.py",
+      "sha256": "6763c5beec5bdf81c1e2ceb9b6af08de5e5be4e1c9cafb5805ff615989ab5fc1",
+      "bytes": 8746
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/source-api.diff",
+      "sha256": "5d40aaa74c569988c902638f9dff1d1f89095a4bfd1357da2cf2f668d29f37bf",
+      "bytes": 33831
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/source-pins.json",
+      "sha256": "92d4a60cf909794b95a8c1efcf61e1eca3d1f7009030fff65922f58d8b9289c2",
+      "bytes": 1696
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/complete-groundba-api-proposal/structure-controls.log",
+      "sha256": "7993f7b5e9dee9d661d83f48e36c85cb1ac13964efc0d26e68bdd28dd5d21e73",
+      "bytes": 1587
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/peer-repair-r2.diff",
+      "sha256": "9b5a156392981af274fd008cb0a78235184cd7b457c69b05ab4fc2e2c983f8f1",
+      "bytes": 12871
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/proposal-review-report.json",
+      "sha256": "3cfa2ab37c8586efec4b839bf7e178964f0a171336ebbf7911cd207b2a42bf33",
+      "bytes": 11724
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review-r2/review-inventory.json",
+      "sha256": "4b58d42319ea17feacf5e4173ba3149d687ca801c4892681121a21ee73b19430",
+      "bytes": 3134
+    }
+  ]
+}

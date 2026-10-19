@@ -1,0 +1,85 @@
+{
+  "scope": "SourceOnlyOutsideAssets_CacheAnalysis_DisabledS026Data",
+  "files": [
+    {
+      "path": "FacilityPreferences.f90.reference.cs.txt",
+      "bytes": 64578,
+      "sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c"
+    },
+    {
+      "path": "MpGroundBaPilot.f90.reference.cs.txt",
+      "bytes": 54093,
+      "sha256": "22816c78968066fcaecd692056c3fa1f2392ae78be484fdcaf02cbc79a84d5c5"
+    },
+    {
+      "path": "PilotFacilityRelocation.f90.reference.cs.txt",
+      "bytes": 41792,
+      "sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4"
+    },
+    {
+      "path": "S026-logical-repair.disabled.json",
+      "bytes": 65896,
+      "sha256": "5bd16bf2392f2b2ed875e7878e1439bbf2730436005b346a88afa32c1f2c5286"
+    },
+    {
+      "path": "S026-own-three-size-budgets.json",
+      "bytes": 6571,
+      "sha256": "3c568912be6975368d26d00528b58b516e6f70fa1c5b738d4866ccd780c65622"
+    },
+    {
+      "path": "SimultaneousRefinement.f90.reference.cs.txt",
+      "bytes": 40283,
+      "sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1"
+    },
+    {
+      "path": "cache-producer-and-dependency-review.json",
+      "bytes": 16385,
+      "sha256": "8036c9bb94e5124b0e85d41b065fe89a40a8a52c2ee79a35573fc9e8c43ccd5e"
+    },
+    {
+      "path": "complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs.proposal",
+      "bytes": 64630,
+      "sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8"
+    },
+    {
+      "path": "complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs.proposal",
+      "bytes": 74003,
+      "sha256": "fd33c2a9b08ceecb01706a56fc12066431e7c86570e370a6ffb5f005e3ff29d6"
+    },
+    {
+      "path": "complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.proposal",
+      "bytes": 41844,
+      "sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85"
+    },
+    {
+      "path": "complete-groundba-api-proposal/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.proposal",
+      "bytes": 40709,
+      "sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf"
+    },
+    {
+      "path": "complete-groundba-api-proposal/proposal-structure-controls.py",
+      "bytes": 7780,
+      "sha256": "65e941f46cdba7766383666494dc999e8dd872705f066c179bb52af23953e50b"
+    },
+    {
+      "path": "complete-groundba-api-proposal/source-api.diff",
+      "bytes": 29350,
+      "sha256": "d75d7372358dc18f85c9f854e3481c3fe40bb99e8c0ed63938970331ac689d7e"
+    },
+    {
+      "path": "complete-groundba-api-proposal/source-pins.json",
+      "bytes": 1696,
+      "sha256": "0f1bd8e5f0a6fc05155ae3bfca42229d2a78e0a15e0e2726a4e33eda1297990b"
+    },
+    {
+      "path": "complete-groundba-api-proposal/structure-controls.log",
+      "bytes": 1375,
+      "sha256": "afa42d6227a816d629afddea9dbdcc15df000bf59c35786d245e580fb7c47efa"
+    },
+    {
+      "path": "proposal-review-report.json",
+      "bytes": 9459,
+      "sha256": "8a2b40fa1453e9644cdc47046b9c55c94528fa6be85370021ccf8cdbadb7d96f"
+    }
+  ]
+}

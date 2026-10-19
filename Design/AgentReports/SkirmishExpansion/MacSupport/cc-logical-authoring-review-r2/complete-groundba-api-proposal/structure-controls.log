@@ -1,0 +1,71 @@
+{
+  "scope": "TextStructureAndDeliberateSourceMutationControls_NotCSharpCompilerOrRuntimeProof",
+  "passed": 12,
+  "failures": 0,
+  "preserved_dedicated_method_blocks": 12,
+  "CSharp_controls_provided": 47,
+  "CSharp_controls_compiled": false,
+  "CSharp_controls_executed": false,
+  "native_runs": 0,
+  "cases": [
+    {
+      "case": "all_four_preimages_and_proposal_guards",
+      "passed": true
+    },
+    {
+      "case": "same_count_signature_swap",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "report_self_authority",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "foreign_MP_geometry",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "activate_MP_geometry_for_generic",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "skip_strict_service",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "raw_grid_hash_waiver",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "reduce_later_profiles",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "budget_splice",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "missing_preference_service_owner",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "missing_relocation_service_owner",
+      "passed": true,
+      "mutant_rejected": true
+    },
+    {
+      "case": "skip_generic_route_independence",
+      "passed": true,
+      "mutant_rejected": true
+    }
+  ]
+}

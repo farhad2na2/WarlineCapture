@@ -1,0 +1,148 @@
+--- e719/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs.proposal
++++ r2/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs.proposal
+@@ -393,7 +393,29 @@
+                 ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+         }
+ 
+-        static void ValidateCompleteGroundBaBudgetReceipt(JObject receipt,JObject authority,JObject sourcePins,string size)
++        // Independent expected signatures: actual clean candidate + canonical compiler,
++        // captured before the allocator runs, never reconstructed from its report.
++        static JObject CompileCompleteGroundBaExpectedSignatures(JObject authority,JObject sourcePins)
++        {
++            var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)sourcePins["sourcePath"]);
++            Require(TryCreateGroundBa10Candidate(authority,source,out var owner,out string error),error);
++            using(owner)
++            {
++                Require(CompleteGroundBaServiceAuthority(owner.Definition),"Own canonical signature candidate required");
++                Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
++                var signatures=new JObject();
++                foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
++                {
++                    Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,size,1,
++                        new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
++                        budget.ExactCanonicalQuantities,"Actual expected canonical compiler signature required: "+string.Join(";",reasons));
++                    signatures[size.ToString()]=ApPreferenceBudgetKey(budget).DeepClone();
++                }
++                return signatures;
++            }
++        }
++
++        static void ValidateCompleteGroundBaBudgetReceipt(JObject receipt,JObject authority,JObject sourcePins,string size,JObject expectedSignatures)
+         {
+             ValidateCompleteGroundBaAuthorityRow(authority);
+             var own=((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(r=>(string)r["size_id"]==size);
+@@ -413,6 +435,11 @@
+             var signature=receipt["budgetSignature"] as JObject;
+             Require(signature!=null&&(string)signature["catalog"]==id&&(string)signature["definition"]==(string)authority["definition_id"]&&
+                 (string)signature["size"]==size&&signature["structures"] is JArray&&signature["forces"] is JArray,"Actual existing compiler signature required");
++            var expectedSignature=expectedSignatures?[size] as JObject;
++            Require(expectedSignatures!=null&&expectedSignatures.Properties().Count()==3&&expectedSignature!=null&&
++                (string)expectedSignature["catalog"]==id&&(string)expectedSignature["definition"]==(string)authority["definition_id"]&&
++                (string)expectedSignature["size"]==size&&JToken.DeepEquals(signature,expectedSignature),
++                "Exact independently compiled force/structure signature required; totals alone confer no authority");
+             var structures=((JArray)signature["structures"]).OfType<JObject>().ToArray();var forces=((JArray)signature["forces"]).OfType<JObject>().ToArray();
+             Require(structures.Length==((JArray)signature["structures"]).Count&&forces.Length==((JArray)signature["forces"]).Count&&
+                 structures.All(s=>(int?)s["FactionId"]==1||(int?)s["FactionId"]==2)&&forces.All(f=>(int?)f["FactionId"]==1||(int?)f["FactionId"]==2),
+@@ -427,7 +454,7 @@
+             }
+         }
+ 
+-        static void ValidateCompleteGroundBaReport(JObject report,JObject authority,JObject sourcePins)
++        static void ValidateCompleteGroundBaReport(JObject report,JObject authority,JObject sourcePins,JObject expectedSignatures)
+         {
+             string id=(string)authority["catalog_id"];var pass=RequireCompleteGroundBaStaticPass(report,id);
+             Require(pass["discoveryOnly"]?.Type==JTokenType.Boolean&&!(bool)pass["discoveryOnly"],"Non-discovery pass required");
+@@ -436,7 +463,7 @@
+             foreach(JObject row in (JArray)pass["sizes"])
+             {
+                 Require((string)row["catalogId"]==id&&(string)row["group"]==(string)authority["tuple"]["map_id"],"No cross-catalog or source-group size splice");
+-                ValidateCompleteGroundBaBudgetReceipt((JObject)row["completeGroundBaAuthority"],authority,sourcePins,(string)row["size"]);
++                ValidateCompleteGroundBaBudgetReceipt((JObject)row["completeGroundBaAuthority"],authority,sourcePins,(string)row["size"],expectedSignatures);
+             }
+         }
+ 
+@@ -452,10 +479,15 @@
+             ValidateCompleteGroundBaAuthorityRow(authority);
+             var pin=(JObject)GroundBaTemplate(authority)["source_candidate"].DeepClone();
+             completeGroundBaAuthority=(JObject)authority.DeepClone();completeGroundBaSourcePins=pin;
+-            try{RunAll120BoundedFacilityPreferences();}
++            JObject expectedSignatures;
++            try
++            {
++                expectedSignatures=CompileCompleteGroundBaExpectedSignatures(authority,pin);
++                RunAll120BoundedFacilityPreferences();
++            }
+             finally{completeGroundBaAuthority=null;completeGroundBaSourcePins=null;}
+             var report=JObject.Parse(File.ReadAllText(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")));
+-            ValidateCompleteGroundBaReport(report,authority,pin);
++            ValidateCompleteGroundBaReport(report,authority,pin,expectedSignatures);
+             Debug.Log("[GroundBaCompleteStaticPilot] result=Passed catalog="+id+" group="+(string)authority["tuple"]["map_id"]+" sizes=3 sourceFitCertified=0 normalMissionReady=0");
+         }
+ 
+@@ -465,15 +497,15 @@
+             var authority=(JObject)GroundBa10Rows().Single(r=>(string)r["catalog_id"]=="S026").DeepClone();
+             var pins=new JObject{["controlFixtureOnly"]=true};int controls=0;
+             ValidateCompleteGroundBaAuthorityRow(authority);controls++;
+-            var sizes=new JArray();
++            var sizes=new JArray();var expectedSignatures=new JObject();
+             foreach(JObject own in (JArray)authority["canonical_size_rows"])
+             {
+                 var structures=new JArray();var forces=new JArray();
+                 foreach(int side in new[]{1,2})
+                 {
+                     string prefix=side==1?"player_":"enemy_";
+-                    for(int i=0;i<int.Parse((string)own[prefix+"starting_structures"]);i++)structures.Add(new JObject{["FactionId"]=side});
+-                    forces.Add(new JObject{["FactionId"]=side,["Quantity"]=int.Parse((string)own[prefix+"combat"])+int.Parse((string)own[prefix+"logistics_support"])+int.Parse((string)own[prefix+"objective_trucks"])});
++                    for(int i=0;i<int.Parse((string)own[prefix+"starting_structures"]);i++)structures.Add(new JObject{["FactionId"]=side,["StructureId"]="fixture.structure."+i,["SpawnAnchorId"]="fixture.anchor."+side,["ObjectiveRoleId"]="fixture.base",["DesignatedBase"]=i==0,["AcrossOffsetMetres"]=i,["ForwardOffsetMetres"]=0});
++                    forces.Add(new JObject{["FactionId"]=side,["RoleId"]="fixture.rifle",["RoleKind"]=1,["RuntimePrefabKey"]="fixture.rifle.prefab",["SupplyCost"]=3,["SpawnAnchorId"]="fixture.anchor."+side,["ObjectiveRoleId"]="fixture.force",["Quantity"]=int.Parse((string)own[prefix+"combat"])+int.Parse((string)own[prefix+"logistics_support"])+int.Parse((string)own[prefix+"objective_trucks"])});
+                 }
+                 var receipt=new JObject{["catalogId"]="S026",["definitionId"]="skirmish.s026",["scenarioSetupId"]="scenario.skirmish.s026",["group"]="CC",
+                     ["armyProfile"]="G",["startProfile"]="E",["objective"]="BA",["canonicalSizeRow"]=own.DeepClone(),
+@@ -481,6 +513,7 @@
+                     ["budgetSignature"]=new JObject{["catalog"]="S026",["definition"]="skirmish.s026",["size"]=own["size_id"].DeepClone(),["structures"]=structures,["forces"]=forces},
+                     ["sourcePins"]=pins.DeepClone(),["actualGridMatchesSource"]=true,["exposedProfileKinds"]=new JArray("Car","ApcFast","ApcArmored","ApcHeavy","Tank","Radar","Siege","LogisticsTruck","Tanker"),
+                     ["sourceFitCertified"]=false,["normalMissionReady"]=false};
++                expectedSignatures[(string)own["size_id"]]=receipt["budgetSignature"].DeepClone();
+                 sizes.Add(new JObject{["catalogId"]="S026",["group"]="CC",["size"]=own["size_id"].DeepClone(),["completeFacilities"]=true,["allActorsInsidePads"]=true,
+                     ["mpPilotCanonicalRouteCoverage"]=true,["actualProfileRouteIndependence"]=new JObject{["allProfilesIndependent"]=true},
+                     ["mpPilotServiceAccess"]=new JObject{["allMembersHaveExactServiceIngressAndReturn"]=true},["completeGroundBaAuthority"]=receipt});
+@@ -488,10 +521,10 @@
+             var report=new JObject{["cleanupVerified"]=true,["sourcePinsRecheckedAfterMeasurement"]=true,["missions"]=new JArray(new JObject{["catalogId"]="S026",
+                 ["measurement"]=new JObject{["catalogId"]="S026",["sourcePins"]=pins.DeepClone(),["strictThreeSizePlacementPass"]=0,["normalThreeSizeCompilerPassed"]=true,
+                     ["passes"]=new JArray(new JObject{["pass"]=0,["discoveryOnly"]=false,["sizes"]=sizes})}})};
+-            ValidateCompleteGroundBaReport(report,authority,pins);controls++;
++            ValidateCompleteGroundBaReport(report,authority,pins,expectedSignatures);controls++;
+             void Refuse(Action action){bool refused=false;try{action();}catch(InvalidOperationException){refused=true;}Require(refused,"Malformed tuple/strict receipt must fail closed");controls++;}
+             void Authority(Action<JObject> change){var a=(JObject)authority.DeepClone();change(a);Refuse(()=>ValidateCompleteGroundBaAuthorityRow(a));}
+-            void Report(Action<JObject> change){var r=(JObject)report.DeepClone();change(r);Refuse(()=>ValidateCompleteGroundBaReport(r,authority,pins));}
++            void Report(Action<JObject> change){var r=(JObject)report.DeepClone();change(r);Refuse(()=>ValidateCompleteGroundBaReport(r,authority,pins,expectedSignatures));}
+             JObject Row(JObject r)=>(JObject)r["missions"][0]["measurement"]["passes"][0]["sizes"][0];
+             JObject Receipt(JObject r)=>(JObject)Row(r)["completeGroundBaAuthority"];
+             Authority(a=>a["tuple"]["army_profile"]="C");
+@@ -524,8 +557,24 @@
+             Report(r=>Receipt(r)["sourceFitCertified"]=true);
+             Report(r=>Receipt(r)["normalMissionReady"]=true);
+             Report(r=>Row(r)["size"]="War");
+-            Require(controls==32,"Exact thirty-two tuple/receipt controls");
+-            Debug.Log("[CompleteGroundBaTupleControls] result=Passed controls=32 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0");
++            // Same-count swaps must reject even with exactCanonicalQuantities still true.
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RoleId"]="fixture.tank");
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RoleKind"]=99);
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["RuntimePrefabKey"]="foreign.prefab");
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SupplyCost"]=999);
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SpawnAnchorId"]="foreign.anchor");
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["ObjectiveRoleId"]="foreign.objective");
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["StructureId"]="foreign.structure");
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["SpawnAnchorId"]="foreign.anchor");
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["ObjectiveRoleId"]="foreign.objective");
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["DesignatedBase"]=false);
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["AcrossOffsetMetres"]=999);
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["ForwardOffsetMetres"]=999);
++            Report(r=>((JObject)Receipt(r)["budgetSignature"]["forces"][0]).Remove("RoleId"));
++            Report(r=>Receipt(r)["budgetSignature"]["forces"][0]["SupplyCost"]="3");
++            Report(r=>Receipt(r)["budgetSignature"]["structures"][0]["FactionId"]=2);
++            Require(controls==47,"Exact forty-seven tuple/receipt controls");
++            Debug.Log("[CompleteGroundBaTupleControls] result=Passed controls=47 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0");
+         }
+ 
+         static bool mpGroundBaPilotRequested;

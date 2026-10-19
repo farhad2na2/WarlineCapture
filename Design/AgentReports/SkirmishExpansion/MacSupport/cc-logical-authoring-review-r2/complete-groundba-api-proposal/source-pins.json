@@ -1,0 +1,33 @@
+{
+  "scope": "SourceProposalOnly_OutsideAssets_Uncompiled_Unexecuted",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "22816c78968066fcaecd692056c3fa1f2392ae78be484fdcaf02cbc79a84d5c5",
+      "proposal_sha256": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "proposal_bytes": 78435
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1",
+      "proposal_sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "proposal_bytes": 40709
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c",
+      "proposal_sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "proposal_bytes": 64630
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "preimage_ref": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+      "preimage_sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4",
+      "proposal_sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "proposal_bytes": 41844
+    }
+  ]
+}

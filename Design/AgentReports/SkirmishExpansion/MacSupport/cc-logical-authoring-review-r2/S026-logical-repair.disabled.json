@@ -1,0 +1,2144 @@
+{
+  "schema_version": 1,
+  "kind": "S026LogicalRepairProposal_DISABLED_NotEngineInput",
+  "enabled": false,
+  "catalog_ids_from_actual_report": [
+    "S026"
+  ],
+  "definition_id": "skirmish.s026",
+  "scenario_setup_id": "scenario.skirmish.s026",
+  "tuple": {
+    "map_id": "CC",
+    "objective_id": "BA",
+    "army_profile": "G",
+    "start_profile": "E"
+  },
+  "budget_file": "/Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-logical-authoring-review/S026-own-three-size-budgets.json",
+  "own_three_size_budget_hash": "6c9c35526c0168edfdceafec3f8079362b0fd237b6d422016dbacfbc03bad77b",
+  "report_reuse": {
+    "terminal_commit": "e62047f7323dbe2f4dc4ea9595448244272ab423",
+    "raw_report_sha256": "075de718026b934dc99fc781d258b1277256dd70356405f9fbd33f190ba05a02",
+    "original_nonce": "78a889179aa846c4ae9b6d13584eda8f",
+    "original_before_source_candidate": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "original_after_source_candidate": "52e5229790f557a0363598b6e374e56217fb341439eb4ea9f1c53b14ffe185d2",
+    "operational_aggregate_failed": true,
+    "role": "Engineering observations only pending Root dependency/source-epoch review; no retroactive pass/fit authority",
+    "surfacePublicationScope": "ExactRuntimeOwnerDecodedPinnedAsset_IsolatedWorldOnly",
+    "runtimeDecodedSurfaceOwner": "Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper",
+    "liveOccupancyStatus": "NotMeasured_NoGameplaySystemsRun",
+    "bakedGridCount": 1,
+    "bakedSurfaceCount": 1
+  },
+  "physical_source": {
+    "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+    "operationMapId": "opmap.skirmish.desert_base_01",
+    "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+    "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+    "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+    "gridAssetSha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+    "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+    "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d"
+  },
+  "Campaign_policy_sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+  "source_reuse_policy": "Existing Campaign shared desert/dense-city source is explicitly inventoried; unchanged physical scene/source. New logical config only after review. No terrain/roads/runways/scenery/physical derivatives or budget reductions. If full mission cannot fit, choose another existing Campaign source under reviewed binding.",
+  "logical_frame_authority": {
+    "measured_template": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+    "measured_template_sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+    "actual_declared_GroundBa_FC_template": "S032",
+    "join_pending": "S005 measured snapshot is not the S032/S026 owner baseline. Source-space hints require typed baseline/clone/prepared-frame exporter and exact projection/roundtrip. Do not overwrite either coded template/binding."
+  },
+  "actual_failures": {
+    "facilities": "64 preferred footprints are measurements, not accepted placement.32 intersect roads/sidewalk;5 failfoundation. packedscenery overlap pending.",
+    "facility_rows_requiring_relocation": [
+      {
+        "index": 1,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.barracks",
+        "padId": "pad.skirmish.db.base_enemy",
+        "originX": 1373,
+        "originZ": 643,
+        "widthCells": 28,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 216,
+        "sidewalkCells": 216,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 3,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.ground_staging",
+        "padId": "pad.skirmish.db.staging_enemy",
+        "originX": 1342,
+        "originZ": 643,
+        "widthCells": 20,
+        "depthCells": 14,
+        "foundationLevel": true,
+        "roadCells": 128,
+        "sidewalkCells": 128,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 6,
+        "size": "Standard",
+        "faction": 1,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 903,
+        "originZ": 613,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 7,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1410,
+        "originZ": 631,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 100,
+        "sidewalkCells": 100,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 8,
+        "size": "Standard",
+        "faction": 1,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 926,
+        "originZ": 591,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 9,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1433,
+        "originZ": 657,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 14,
+        "sidewalkCells": 14,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 10,
+        "size": "Standard",
+        "faction": 1,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 924,
+        "originZ": 612,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": false,
+        "roadCells": 0,
+        "sidewalkCells": 0,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 11,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1431,
+        "originZ": 630,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": true,
+        "roadCells": 76,
+        "sidewalkCells": 76,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 13,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.watchtower",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 629,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 15,
+        "size": "Standard",
+        "faction": 2,
+        "structureId": "building.watchtower.approach",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 609,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 18,
+        "size": "Standard",
+        "faction": 1,
+        "structureId": "building.helipad",
+        "padId": "pad.skirmish.db.air_player",
+        "originX": 897,
+        "originZ": 687,
+        "widthCells": 16,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 99,
+        "sidewalkCells": 99,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 21,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.barracks",
+        "padId": "pad.skirmish.db.base_enemy",
+        "originX": 1373,
+        "originZ": 643,
+        "widthCells": 28,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 216,
+        "sidewalkCells": 216,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 23,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.ground_staging",
+        "padId": "pad.skirmish.db.staging_enemy",
+        "originX": 1342,
+        "originZ": 643,
+        "widthCells": 20,
+        "depthCells": 14,
+        "foundationLevel": true,
+        "roadCells": 128,
+        "sidewalkCells": 128,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 26,
+        "size": "War",
+        "faction": 1,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 903,
+        "originZ": 613,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 27,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1410,
+        "originZ": 631,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 100,
+        "sidewalkCells": 100,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 28,
+        "size": "War",
+        "faction": 1,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 926,
+        "originZ": 591,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 29,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1433,
+        "originZ": 657,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 14,
+        "sidewalkCells": 14,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 30,
+        "size": "War",
+        "faction": 1,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 924,
+        "originZ": 612,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": false,
+        "roadCells": 0,
+        "sidewalkCells": 0,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 31,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1431,
+        "originZ": 630,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": true,
+        "roadCells": 76,
+        "sidewalkCells": 76,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 33,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.watchtower",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 629,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 35,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.watchtower.approach",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 609,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 38,
+        "size": "War",
+        "faction": 1,
+        "structureId": "building.helipad",
+        "padId": "pad.skirmish.db.air_player",
+        "originX": 897,
+        "originZ": 687,
+        "widthCells": 16,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 99,
+        "sidewalkCells": 99,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 40,
+        "size": "War",
+        "faction": 1,
+        "structureId": "building.refinery.module",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 935,
+        "originZ": 601,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": false,
+        "roadCells": 0,
+        "sidewalkCells": 0,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 41,
+        "size": "War",
+        "faction": 2,
+        "structureId": "building.refinery.module",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1442,
+        "originZ": 643,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 225,
+        "sidewalkCells": 225,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 43,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.barracks",
+        "padId": "pad.skirmish.db.base_enemy",
+        "originX": 1373,
+        "originZ": 643,
+        "widthCells": 28,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 216,
+        "sidewalkCells": 216,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 45,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.ground_staging",
+        "padId": "pad.skirmish.db.staging_enemy",
+        "originX": 1342,
+        "originZ": 643,
+        "widthCells": 20,
+        "depthCells": 14,
+        "foundationLevel": true,
+        "roadCells": 128,
+        "sidewalkCells": 128,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 48,
+        "size": "LargeWar",
+        "faction": 1,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 903,
+        "originZ": 613,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 49,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.refinery",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1410,
+        "originZ": 631,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 100,
+        "sidewalkCells": 100,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 50,
+        "size": "LargeWar",
+        "faction": 1,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 926,
+        "originZ": 591,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 45,
+        "sidewalkCells": 45,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 51,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.fuel_bladder",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1433,
+        "originZ": 657,
+        "widthCells": 14,
+        "depthCells": 10,
+        "foundationLevel": true,
+        "roadCells": 14,
+        "sidewalkCells": 14,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 52,
+        "size": "LargeWar",
+        "faction": 1,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 924,
+        "originZ": 612,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": false,
+        "roadCells": 0,
+        "sidewalkCells": 0,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 53,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.fabrication_depot",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1431,
+        "originZ": 630,
+        "widthCells": 19,
+        "depthCells": 16,
+        "foundationLevel": true,
+        "roadCells": 76,
+        "sidewalkCells": 76,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 55,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.watchtower",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 629,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 57,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.watchtower.approach",
+        "padId": "pad.skirmish.db.service_enemy",
+        "originX": 1386,
+        "originZ": 609,
+        "widthCells": 3,
+        "depthCells": 4,
+        "foundationLevel": true,
+        "roadCells": 12,
+        "sidewalkCells": 12,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 60,
+        "size": "LargeWar",
+        "faction": 1,
+        "structureId": "building.helipad",
+        "padId": "pad.skirmish.db.air_player",
+        "originX": 897,
+        "originZ": 687,
+        "widthCells": 16,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 99,
+        "sidewalkCells": 99,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 62,
+        "size": "LargeWar",
+        "faction": 1,
+        "structureId": "building.refinery.module",
+        "padId": "pad.skirmish.db.supply_player",
+        "originX": 935,
+        "originZ": 601,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": false,
+        "roadCells": 0,
+        "sidewalkCells": 0,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      },
+      {
+        "index": 63,
+        "size": "LargeWar",
+        "faction": 2,
+        "structureId": "building.refinery.module",
+        "padId": "pad.skirmish.db.supply_enemy",
+        "originX": 1442,
+        "originZ": 643,
+        "widthCells": 25,
+        "depthCells": 15,
+        "foundationLevel": true,
+        "roadCells": 225,
+        "sidewalkCells": 225,
+        "waterCells": 0,
+        "blockedGridCells": 0
+      }
+    ],
+    "initial_packing_rejected": [
+      {
+        "size": "Standard",
+        "faction": 1,
+        "roleId": "role.rifle",
+        "requestedCount": 12,
+        "foundCount": 12,
+        "surfaceTraversableCount": 10,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "Standard",
+        "faction": 1,
+        "roleId": "role.rocketeer",
+        "requestedCount": 4,
+        "foundCount": 4,
+        "surfaceTraversableCount": 3,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "War",
+        "faction": 1,
+        "roleId": "role.rifle",
+        "requestedCount": 16,
+        "foundCount": 16,
+        "surfaceTraversableCount": 14,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "War",
+        "faction": 1,
+        "roleId": "role.gunner",
+        "requestedCount": 4,
+        "foundCount": 4,
+        "surfaceTraversableCount": 3,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "LargeWar",
+        "faction": 1,
+        "roleId": "role.rifle",
+        "requestedCount": 24,
+        "foundCount": 24,
+        "surfaceTraversableCount": 21,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "LargeWar",
+        "faction": 1,
+        "roleId": "role.gunner",
+        "requestedCount": 8,
+        "foundCount": 8,
+        "surfaceTraversableCount": 7,
+        "status": "ProposedPackingRejected"
+      },
+      {
+        "size": "LargeWar",
+        "faction": 1,
+        "roleId": "role.rocketeer",
+        "requestedCount": 8,
+        "foundCount": 8,
+        "surfaceTraversableCount": 6,
+        "status": "ProposedPackingRejected"
+      }
+    ],
+    "normal_fallback_inside_typed_pad_counts": {
+      "NormalStaticFallbackRejectedOrOutsideTypedPad": 40,
+      "NormalStaticFallbackInsideTypedPad_LiveFitPending": 8
+    },
+    "all_normal_fallback_requested_actors_found_and_surface_traversable": true,
+    "heavy_route_failures": 12,
+    "heavy_route_queries": 45,
+    "three_approach_independence": [
+      {
+        "role": "Tank",
+        "completeExactNativePaths": false,
+        "retainedRouteIndex": 0,
+        "retainedRouteId": "route.skirmish.db.flank_a",
+        "detourRouteIndices": [
+          1,
+          2
+        ],
+        "assemblyFailures": [
+          {
+            "routeIndex": 2,
+            "error": "Missing, failed or noncontiguous exact native leg"
+          }
+        ],
+        "scope": "StaticNativeCenterlineClearanceProbe_ExcludesLiveAndSceneryOccupancy",
+        "sourceFitCertified": false,
+        "independentUnderDeclaredProbePolicy": false
+      },
+      {
+        "role": "Siege",
+        "completeExactNativePaths": false,
+        "retainedRouteIndex": 0,
+        "retainedRouteId": "route.skirmish.db.flank_a",
+        "detourRouteIndices": [
+          1,
+          2
+        ],
+        "assemblyFailures": [
+          {
+            "routeIndex": 2,
+            "error": "Missing, failed or noncontiguous exact native leg"
+          }
+        ],
+        "scope": "StaticNativeCenterlineClearanceProbe_ExcludesLiveAndSceneryOccupancy",
+        "sourceFitCertified": false,
+        "independentUnderDeclaredProbePolicy": false
+      },
+      {
+        "role": "ApcHeavy",
+        "completeExactNativePaths": false,
+        "retainedRouteIndex": 0,
+        "retainedRouteId": "route.skirmish.db.flank_a",
+        "detourRouteIndices": [
+          1,
+          2
+        ],
+        "assemblyFailures": [
+          {
+            "routeIndex": 2,
+            "error": "Missing, failed or noncontiguous exact native leg"
+          }
+        ],
+        "scope": "StaticNativeCenterlineClearanceProbe_ExcludesLiveAndSceneryOccupancy",
+        "sourceFitCertified": false,
+        "independentUnderDeclaredProbePolicy": false
+      }
+    ]
+  },
+  "source_space_seed_envelopes": [
+    {
+      "faction": 1,
+      "kind": 3,
+      "baseline_pad_id": "pad.skirmish.db.spawn_infantry_player",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+      "baseline_role_id": "spawn.infantry.player",
+      "source_grid_rect_exclusive_max": [
+        944,
+        623,
+        968,
+        646
+      ],
+      "observed_footprints": 88,
+      "roles": [
+        "role.gunner",
+        "role.rifle",
+        "role.rocketeer"
+      ],
+      "all_3sizes_included": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "observed_rows": 9,
+      "original_inside_pad_rejects": 9,
+      "source_grid_inside": true,
+      "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof."
+    },
+    {
+      "faction": 1,
+      "kind": 4,
+      "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_player",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+      "baseline_role_id": "spawn.vehicle.player",
+      "source_grid_rect_exclusive_max": [
+        901,
+        637,
+        926,
+        664
+      ],
+      "observed_footprints": 26,
+      "roles": [
+        "role.apc_armored",
+        "role.car",
+        "role.logistics_truck",
+        "role.tank",
+        "role.tanker"
+      ],
+      "all_3sizes_included": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "observed_rows": 15,
+      "original_inside_pad_rejects": 10,
+      "source_grid_inside": true,
+      "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof."
+    },
+    {
+      "faction": 2,
+      "kind": 3,
+      "baseline_pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+      "baseline_role_id": "spawn.infantry.enemy",
+      "source_grid_rect_exclusive_max": [
+        1354,
+        653,
+        1378,
+        678
+      ],
+      "observed_footprints": 88,
+      "roles": [
+        "role.gunner",
+        "role.rifle",
+        "role.rocketeer"
+      ],
+      "all_3sizes_included": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "observed_rows": 9,
+      "original_inside_pad_rejects": 9,
+      "source_grid_inside": true,
+      "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof."
+    },
+    {
+      "faction": 2,
+      "kind": 4,
+      "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+      "baseline_role_id": "spawn.vehicle.enemy",
+      "source_grid_rect_exclusive_max": [
+        1397,
+        637,
+        1424,
+        664
+      ],
+      "observed_footprints": 26,
+      "roles": [
+        "role.apc_armored",
+        "role.car",
+        "role.logistics_truck",
+        "role.tank",
+        "role.tanker"
+      ],
+      "all_3sizes_included": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "observed_rows": 15,
+      "original_inside_pad_rejects": 12,
+      "source_grid_inside": true,
+      "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof."
+    },
+    {
+      "faction": 1,
+      "kind": 2,
+      "baseline_pad_id": "pad.skirmish.db.staging_player",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+      "baseline_role_id": "staging.player",
+      "source_grid_rect_exclusive_max": [
+        960,
+        643,
+        981,
+        657
+      ],
+      "observed_preferred_facilities": 3,
+      "source_grid_inside": true,
+      "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved."
+    },
+    {
+      "faction": 1,
+      "kind": 8,
+      "baseline_pad_id": "pad.skirmish.db.service_player",
+      "baseline_anchor_id": "anchor.skirmish.db.service_player",
+      "baseline_role_id": "service.player",
+      "source_grid_rect_exclusive_max": [
+        929,
+        666,
+        954,
+        690
+      ],
+      "observed_preferred_facilities": 9,
+      "source_grid_inside": true,
+      "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved."
+    },
+    {
+      "faction": 2,
+      "kind": 2,
+      "baseline_pad_id": "pad.skirmish.db.staging_enemy",
+      "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+      "baseline_role_id": "staging.enemy",
+      "source_grid_rect_exclusive_max": [
+        1342,
+        643,
+        1362,
+        657
+      ],
+      "observed_preferred_facilities": 3,
+      "source_grid_inside": true,
+      "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved."
+    },
+    {
+      "faction": 2,
+      "kind": 8,
+      "baseline_pad_id": "pad.skirmish.db.service_enemy",
+      "baseline_anchor_id": "anchor.skirmish.db.service_enemy",
+      "baseline_role_id": "service.enemy",
+      "source_grid_rect_exclusive_max": [
+        1381,
+        609,
+        1406,
+        633
+      ],
+      "observed_preferred_facilities": 9,
+      "source_grid_inside": true,
+      "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved."
+    }
+  ],
+  "disabled_candidate_concepts": [
+    {
+      "candidate": 0,
+      "fixedLogicalFrameAttempt": 1,
+      "existing_frame_margin_metres": 32,
+      "logical_pad_padding_metres": 1,
+      "physical_map_changed": false,
+      "pads": [
+        {
+          "faction": 1,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.infantry.player",
+          "source_grid_rect_exclusive_max": [
+            944,
+            623,
+            968,
+            646
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            943,
+            622,
+            969,
+            647
+          ],
+          "candidate_center_source_xz": [
+            956.0,
+            634.5
+          ],
+          "candidate_size_source_metres": [
+            26,
+            25
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.vehicle.player",
+          "source_grid_rect_exclusive_max": [
+            901,
+            637,
+            926,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 10,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            900,
+            636,
+            927,
+            665
+          ],
+          "candidate_center_source_xz": [
+            913.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            27,
+            29
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.infantry.enemy",
+          "source_grid_rect_exclusive_max": [
+            1354,
+            653,
+            1378,
+            678
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1353,
+            652,
+            1379,
+            679
+          ],
+          "candidate_center_source_xz": [
+            1366.0,
+            665.5
+          ],
+          "candidate_size_source_metres": [
+            26,
+            27
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.vehicle.enemy",
+          "source_grid_rect_exclusive_max": [
+            1397,
+            637,
+            1424,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 12,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1396,
+            636,
+            1425,
+            665
+          ],
+          "candidate_center_source_xz": [
+            1410.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            29,
+            29
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "staging.player",
+          "source_grid_rect_exclusive_max": [
+            960,
+            643,
+            981,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            959,
+            642,
+            982,
+            658
+          ],
+          "candidate_center_source_xz": [
+            970.5,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            23,
+            16
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_player",
+          "baseline_anchor_id": "anchor.skirmish.db.service_player",
+          "baseline_role_id": "service.player",
+          "source_grid_rect_exclusive_max": [
+            929,
+            666,
+            954,
+            690
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            928,
+            665,
+            955,
+            691
+          ],
+          "candidate_center_source_xz": [
+            941.5,
+            678.0
+          ],
+          "candidate_size_source_metres": [
+            27,
+            26
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "staging.enemy",
+          "source_grid_rect_exclusive_max": [
+            1342,
+            643,
+            1362,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1341,
+            642,
+            1363,
+            658
+          ],
+          "candidate_center_source_xz": [
+            1352.0,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            22,
+            16
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.service_enemy",
+          "baseline_role_id": "service.enemy",
+          "source_grid_rect_exclusive_max": [
+            1381,
+            609,
+            1406,
+            633
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1380,
+            608,
+            1407,
+            634
+          ],
+          "candidate_center_source_xz": [
+            1393.5,
+            621.0
+          ],
+          "candidate_size_source_metres": [
+            27,
+            26
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        }
+      ],
+      "eligible_for_execution": false,
+      "reason": "Requires own S026/S032 typed baseline+prepared-frame exporter and inverse projection/roundtrip through existing shared APIs; verify source/compound/frame/ownership bounds. Not ready-to-run padOverrides."
+    },
+    {
+      "candidate": 1,
+      "fixedLogicalFrameAttempt": 2,
+      "existing_frame_margin_metres": 64,
+      "logical_pad_padding_metres": 2,
+      "physical_map_changed": false,
+      "pads": [
+        {
+          "faction": 1,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.infantry.player",
+          "source_grid_rect_exclusive_max": [
+            944,
+            623,
+            968,
+            646
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            942,
+            621,
+            970,
+            648
+          ],
+          "candidate_center_source_xz": [
+            956.0,
+            634.5
+          ],
+          "candidate_size_source_metres": [
+            28,
+            27
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.vehicle.player",
+          "source_grid_rect_exclusive_max": [
+            901,
+            637,
+            926,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 10,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            899,
+            635,
+            928,
+            666
+          ],
+          "candidate_center_source_xz": [
+            913.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            29,
+            31
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.infantry.enemy",
+          "source_grid_rect_exclusive_max": [
+            1354,
+            653,
+            1378,
+            678
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1352,
+            651,
+            1380,
+            680
+          ],
+          "candidate_center_source_xz": [
+            1366.0,
+            665.5
+          ],
+          "candidate_size_source_metres": [
+            28,
+            29
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.vehicle.enemy",
+          "source_grid_rect_exclusive_max": [
+            1397,
+            637,
+            1424,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 12,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1395,
+            635,
+            1426,
+            666
+          ],
+          "candidate_center_source_xz": [
+            1410.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            31,
+            31
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "staging.player",
+          "source_grid_rect_exclusive_max": [
+            960,
+            643,
+            981,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            958,
+            641,
+            983,
+            659
+          ],
+          "candidate_center_source_xz": [
+            970.5,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            25,
+            18
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_player",
+          "baseline_anchor_id": "anchor.skirmish.db.service_player",
+          "baseline_role_id": "service.player",
+          "source_grid_rect_exclusive_max": [
+            929,
+            666,
+            954,
+            690
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            927,
+            664,
+            956,
+            692
+          ],
+          "candidate_center_source_xz": [
+            941.5,
+            678.0
+          ],
+          "candidate_size_source_metres": [
+            29,
+            28
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "staging.enemy",
+          "source_grid_rect_exclusive_max": [
+            1342,
+            643,
+            1362,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1340,
+            641,
+            1364,
+            659
+          ],
+          "candidate_center_source_xz": [
+            1352.0,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            24,
+            18
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.service_enemy",
+          "baseline_role_id": "service.enemy",
+          "source_grid_rect_exclusive_max": [
+            1381,
+            609,
+            1406,
+            633
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1379,
+            607,
+            1408,
+            635
+          ],
+          "candidate_center_source_xz": [
+            1393.5,
+            621.0
+          ],
+          "candidate_size_source_metres": [
+            29,
+            28
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        }
+      ],
+      "eligible_for_execution": false,
+      "reason": "Requires own S026/S032 typed baseline+prepared-frame exporter and inverse projection/roundtrip through existing shared APIs; verify source/compound/frame/ownership bounds. Not ready-to-run padOverrides."
+    },
+    {
+      "candidate": 2,
+      "fixedLogicalFrameAttempt": 3,
+      "existing_frame_margin_metres": 128,
+      "logical_pad_padding_metres": 4,
+      "physical_map_changed": false,
+      "pads": [
+        {
+          "faction": 1,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.infantry.player",
+          "source_grid_rect_exclusive_max": [
+            944,
+            623,
+            968,
+            646
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            940,
+            619,
+            972,
+            650
+          ],
+          "candidate_center_source_xz": [
+            956.0,
+            634.5
+          ],
+          "candidate_size_source_metres": [
+            32,
+            31
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "spawn.vehicle.player",
+          "source_grid_rect_exclusive_max": [
+            901,
+            637,
+            926,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 10,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            897,
+            633,
+            930,
+            668
+          ],
+          "candidate_center_source_xz": [
+            913.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            33,
+            35
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 3,
+          "baseline_pad_id": "pad.skirmish.db.spawn_infantry_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.infantry.enemy",
+          "source_grid_rect_exclusive_max": [
+            1354,
+            653,
+            1378,
+            678
+          ],
+          "observed_footprints": 88,
+          "roles": [
+            "role.gunner",
+            "role.rifle",
+            "role.rocketeer"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 9,
+          "original_inside_pad_rejects": 9,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1350,
+            649,
+            1382,
+            682
+          ],
+          "candidate_center_source_xz": [
+            1366.0,
+            665.5
+          ],
+          "candidate_size_source_metres": [
+            32,
+            33
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 4,
+          "baseline_pad_id": "pad.skirmish.db.spawn_vehicle_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "spawn.vehicle.enemy",
+          "source_grid_rect_exclusive_max": [
+            1397,
+            637,
+            1424,
+            664
+          ],
+          "observed_footprints": 26,
+          "roles": [
+            "role.apc_armored",
+            "role.car",
+            "role.logistics_truck",
+            "role.tank",
+            "role.tanker"
+          ],
+          "all_3sizes_included": [
+            "LargeWar",
+            "Standard",
+            "War"
+          ],
+          "observed_rows": 15,
+          "original_inside_pad_rejects": 12,
+          "source_grid_inside": true,
+          "scope": "Envelope of seed1 normal-fallback footprints against OLD preferred facilities; not a new cleared pad/packing/capacity proof.",
+          "proposed_source_grid_rect": [
+            1393,
+            633,
+            1428,
+            668
+          ],
+          "candidate_center_source_xz": [
+            1410.5,
+            650.5
+          ],
+          "candidate_size_source_metres": [
+            35,
+            35
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_player",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_player",
+          "baseline_role_id": "staging.player",
+          "source_grid_rect_exclusive_max": [
+            960,
+            643,
+            981,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            956,
+            639,
+            985,
+            661
+          ],
+          "candidate_center_source_xz": [
+            970.5,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            29,
+            22
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 1,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_player",
+          "baseline_anchor_id": "anchor.skirmish.db.service_player",
+          "baseline_role_id": "service.player",
+          "source_grid_rect_exclusive_max": [
+            929,
+            666,
+            954,
+            690
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            925,
+            662,
+            958,
+            694
+          ],
+          "candidate_center_source_xz": [
+            941.5,
+            678.0
+          ],
+          "candidate_size_source_metres": [
+            33,
+            32
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 2,
+          "baseline_pad_id": "pad.skirmish.db.staging_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.staging_enemy",
+          "baseline_role_id": "staging.enemy",
+          "source_grid_rect_exclusive_max": [
+            1342,
+            643,
+            1362,
+            657
+          ],
+          "observed_preferred_facilities": 3,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1338,
+            639,
+            1366,
+            661
+          ],
+          "candidate_center_source_xz": [
+            1352.0,
+            650.0
+          ],
+          "candidate_size_source_metres": [
+            28,
+            22
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        },
+        {
+          "faction": 2,
+          "kind": 8,
+          "baseline_pad_id": "pad.skirmish.db.service_enemy",
+          "baseline_anchor_id": "anchor.skirmish.db.service_enemy",
+          "baseline_role_id": "service.enemy",
+          "source_grid_rect_exclusive_max": [
+            1381,
+            609,
+            1406,
+            633
+          ],
+          "observed_preferred_facilities": 9,
+          "source_grid_inside": true,
+          "scope": "Bounding hint for old projected pad+preferred prefab footprints; roads/slopes and actual service legality unresolved.",
+          "proposed_source_grid_rect": [
+            1377,
+            605,
+            1410,
+            637
+          ],
+          "candidate_center_source_xz": [
+            1393.5,
+            621.0
+          ],
+          "candidate_size_source_metres": [
+            33,
+            32
+          ],
+          "placement_accepted": false,
+          "runtime_input_before_values_pending_typed_exporter": true
+        }
+      ],
+      "eligible_for_execution": false,
+      "reason": "Requires own S026/S032 typed baseline+prepared-frame exporter and inverse projection/roundtrip through existing shared APIs; verify source/compound/frame/ownership bounds. Not ready-to-run padOverrides."
+    }
+  ],
+  "route_plan": {
+    "retain_candidate": "Observed flank_a complete heavy legs and CC.main-north-bypass-v1 complete15heavy legs are hints for two approaches; requery under actual joint facility reservations and every exposed profile.",
+    "unresolved_third_corridor": "Lower-central-join fails legs2/3/4 for Tank/Siege/ApcHeavy at actual recorded cells; do not rename shared north path or waive independence. Existing endpoint adjustment did not improve12/45 failures.",
+    "measured_detours": [
+      {
+        "proposalId": "CC.main-north-bypass-v1",
+        "source_grid_waypoints": [
+          [
+            970,
+            650
+          ],
+          [
+            1054,
+            650
+          ],
+          [
+            1072,
+            688
+          ],
+          [
+            1250,
+            688
+          ],
+          [
+            1268,
+            650
+          ],
+          [
+            1352,
+            650
+          ]
+        ],
+        "all_native_legs_passed": true,
+        "failed_legs": [],
+        "scope": "Observed static source-grid/decoded-surface paths only; no same-relocated-facility or full-profile independence transfer."
+      },
+      {
+        "proposalId": "CC.lower-central-join-v1",
+        "source_grid_waypoints": [
+          [
+            970,
+            650
+          ],
+          [
+            1006,
+            598
+          ],
+          [
+            1054,
+            600
+          ],
+          [
+            1161,
+            600
+          ],
+          [
+            1220,
+            582
+          ],
+          [
+            1316,
+            598
+          ],
+          [
+            1352,
+            650
+          ]
+        ],
+        "all_native_legs_passed": false,
+        "failed_legs": [
+          {
+            "role": "Tank",
+            "leg": 2,
+            "requestedStartCell": [
+              1006,
+              598
+            ],
+            "requestedGoalCell": [
+              1054,
+              600
+            ],
+            "failureCode": 6
+          },
+          {
+            "role": "Tank",
+            "leg": 3,
+            "requestedStartCell": [
+              1054,
+              600
+            ],
+            "requestedGoalCell": [
+              1161,
+              600
+            ],
+            "failureCode": 3
+          },
+          {
+            "role": "Tank",
+            "leg": 4,
+            "requestedStartCell": [
+              1161,
+              600
+            ],
+            "requestedGoalCell": [
+              1220,
+              582
+            ],
+            "failureCode": 3
+          },
+          {
+            "role": "Siege",
+            "leg": 2,
+            "requestedStartCell": [
+              1006,
+              598
+            ],
+            "requestedGoalCell": [
+              1054,
+              600
+            ],
+            "failureCode": 6
+          },
+          {
+            "role": "Siege",
+            "leg": 3,
+            "requestedStartCell": [
+              1054,
+              600
+            ],
+            "requestedGoalCell": [
+              1161,
+              600
+            ],
+            "failureCode": 3
+          },
+          {
+            "role": "Siege",
+            "leg": 4,
+            "requestedStartCell": [
+              1161,
+              600
+            ],
+            "requestedGoalCell": [
+              1220,
+              582
+            ],
+            "failureCode": 3
+          },
+          {
+            "role": "ApcHeavy",
+            "leg": 2,
+            "requestedStartCell": [
+              1006,
+              598
+            ],
+            "requestedGoalCell": [
+              1054,
+              600
+            ],
+            "failureCode": 6
+          },
+          {
+            "role": "ApcHeavy",
+            "leg": 3,
+            "requestedStartCell": [
+              1054,
+              600
+            ],
+            "requestedGoalCell": [
+              1161,
+              600
+            ],
+            "failureCode": 3
+          },
+          {
+            "role": "ApcHeavy",
+            "leg": 4,
+            "requestedStartCell": [
+              1161,
+              600
+            ],
+            "requestedGoalCell": [
+              1220,
+              582
+            ],
+            "failureCode": 3
+          }
+        ],
+        "scope": "Observed static source-grid/decoded-surface paths only; no same-relocated-facility or full-profile independence transfer."
+      }
+    ],
+    "required_profiles": "All actual G ground/logistics exposed profiles; do not reduce to3heavy probes or starting roster."
+  },
+  "existing_API_reuse": {
+    "reference_commit": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+    "backbone": "RunAll120BoundedFacilityPreferences -> RunAll120SimultaneousLogicalRefinement",
+    "pad_input_env": [
+      "WARLINE_ALL120_LOGICAL_PAD_INPUT",
+      "WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256"
+    ],
+    "existing_input_scope": "ReviewedLogicalPadProposal_NotPlacement",
+    "constraints": "At most8unique stable pad/anchor/role/faction IDs; exact before-image afterpreparedframe; only centre/dimensions; grid/compound/frame bounds; canonical rows/source pins unchanged; frameattempt1..3,9assignments max.",
+    "missing_complete_groundBA_scope": "Generic currently does not activate fullservice; outsideAssets four-existing-file tuple-aware proposal accompanies this data. MP/S049 geometry remains dedicated.",
+    "entry_proposed": "Game.Editor.SkirmishGroundSourceFitSurvey.RunGroundBaCompleteStaticPilot",
+    "existingS049JointStaticPilot": "S049-specific and NOT retargeted.",
+    "upstream_air_rate_guard": "Root source-fit/Runner owns mode-aware finite active-mode guard in BoundedRouteRepair; ground-only disabled AirTransitSeconds0 must stay0, no local duplicatefix or invented positiveAirrate."
+  },
+  "host_authority_gates": [
+    "Actual CC report grid rawSHA8ef1... is Mac LF; current f90 GroundBa S032 sourceAuthority demands Windows raw20f6... and older historical source corpus. No normalization/bridge/oldsurvey transfer or newMacsource acceptance. Root must choose reviewed authority/generation/host before execution.",
+    "New source52e5 epoch or derivedoutput role only Root review, original aggregate remainsfalse. No collectionrepeat authorized.",
+    "Compile proposed sharedAPI/controls in reviewed exactOwnerGraph; old36c6GameEditor29proof doesnot cover this newcode.",
+    "Typed exporter must produce actual S026owner/S032baseline, exact three budgets and8pad beforeimages after each existingframeattempt. Only then encode reviewed ordinary ownedLogs input and freezehash.",
+    "One new logical-source-fit/authoring job only after Root grant; do not recollect identicalCC survey or rerun unchanged29.",
+    "Complete jointfacilities/actualpackedscenery, allactors insidelegalpads, allprofile exactroutes/3independentapproaches and member serviceingress/return across3sizes withsame blockers, canonicalcompiler+disposal+source/tool/settings receipts required.",
+    "Normal-input manual/ARIA/results/return/recovery, paid resources/lifecycle, queue, visual review/APK/device/player remain separate acceptance gates."
+  ],
+  "nativeFitCertified": false,
+  "sourceFitCertified": false,
+  "normalMissionReady": false,
+  "physical_geometry_changes": 0,
+  "imported_assets_or_source": 0,
+  "native_runs": 0
+}

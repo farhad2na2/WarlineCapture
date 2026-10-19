@@ -1,0 +1,48 @@
+{
+  "utc": "2026-10-19T03:10:52.207062+00:00",
+  "scope": "ReadOnlyActualCapacity_NoProjectExpansionNoLaunch",
+  "processes": [
+    {
+      "kind": "Hub",
+      "pid": 55563,
+      "ppid": 1,
+      "started": "Wed Oct 14 21:02:25 2026",
+      "cpu_percent": 0.1,
+      "project": null,
+      "import_worker": false
+    }
+  ],
+  "memory_pressure_free_percent": 72,
+  "swap": "vm.swapusage: total = 5120.00M  used = 4268.38M  free = 851.62M  (encrypted)",
+  "disks": {
+    "/private/tmp": {
+      "free_bytes": 21750640640,
+      "total_bytes": 494332366848
+    },
+    "/Volumes/T7": {
+      "free_bytes": 35077550080,
+      "total_bytes": 1000204845056
+    }
+  },
+  "host_lock_exists": false,
+  "sparse": {
+    "path": "/private/tmp/warline-mac-groundba-api-native-validation",
+    "HEAD": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+    "status": "",
+    "file_count": 4,
+    "Library_exists": false,
+    "four_raw_hashes": {
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8"
+    }
+  },
+  "process_action": false,
+  "native_launch_authorized": false,
+  "native_launched": false,
+  "capacity_admitted": false,
+  "heavy_lane_occupied": false,
+  "internal_disk_meets_25GiB": false,
+  "T7_disk_meets_25GiB": true
+}

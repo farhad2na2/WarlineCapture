@@ -5515,10 +5515,10 @@ namespace Game.UI.Runtime
                 {
                     for (int iy = 0; iy < dys.Length; iy++)
                     {
-                        // The hex flats miss a portrait that only fits the box. The box
-                        // itself keeps the same ratio and holds the whole card.
+                        // Keep the coastline. Stretching it into the shifted box holds the
+                        // card without replacing the outline with a four-corner rectangle.
                         var box = new Box(minX + dxs[ix], minY + dys[iy], maxX - minX, maxY - minY);
-                        Vec2[] accepted = AcceptCover(Corners(box), shape, card, pin, others, cue, pill, plateWidth, plateHeight, detail, hint, expected);
+                        Vec2[] accepted = AcceptCover(ShapeIntoBox(grown, box), shape, card, pin, others, cue, pill, plateWidth, plateHeight, detail, hint, expected);
                         if (accepted != null)
                             return accepted;
                     }
@@ -5594,7 +5594,7 @@ namespace Game.UI.Runtime
                 {
                     for (int iy = 0; iy < tops.Length; iy++)
                     {
-                        Vec2[] built = Corners(new Box(lefts[ix], tops[iy], width, height));
+                        Vec2[] built = ShapeIntoBox(shape, new Box(lefts[ix], tops[iy], width, height));
                         Vec2[] accepted = AcceptCover(built, shape, card, pin, others, cue, pill, plateWidth, plateHeight, detail, hint, expected);
                         if (accepted != null)
                             return accepted;
@@ -5775,10 +5775,16 @@ namespace Game.UI.Runtime
                 && TerritoryStaysLegal(snapped, hex, card, others, pill, plateWidth, plateHeight, detail, hint, expected))
                 return snapped;
             Vec2[] rect = CardMarginRect(card, pill, plateWidth, plateHeight);
-            if (rect != null
-                && RestsInside(card, rect, InsideMargin)
-                && TerritoryStaysLegal(rect, hex, card, others, pill, plateWidth, plateHeight, detail, hint, expected))
-                return rect;
+            if (rect != null)
+            {
+                BoundsOf(rect, out float rx0, out float ry0, out float rx1, out float ry1);
+                Vec2[] fitted = ShapeIntoBox(shape.Length >= 6 ? shape : hex, new Box(rx0, ry0, rx1 - rx0, ry1 - ry0));
+                if (fitted != null
+                    && fitted.Length >= 6
+                    && RestsInside(card, fitted, InsideMargin)
+                    && TerritoryStaysLegal(fitted, hex, card, others, pill, plateWidth, plateHeight, detail, hint, expected))
+                    return fitted;
+            }
             Vec2 origin = card.Center;
             float[] gains = { 1.06f, 1.12f, 1.2f, 1.3f, 1.42f, 1.56f };
             for (int g = 0; g < gains.Length; g++)
@@ -5790,13 +5796,17 @@ namespace Game.UI.Runtime
                     var pushed = new Vec2(
                         origin.X + (shape[i].X - origin.X) * gain,
                         origin.Y + (shape[i].Y - origin.Y) * gain);
-                    pushed = new Vec2(
-                        Clamp(pushed.X, CaptureFrameInset, plateWidth - CaptureFrameInset),
-                        Clamp(pushed.Y, CaptureFrameInset, plateHeight - CaptureFrameInset));
                     if (pill.W > 1f && pushed.X >= pill.XMin && pushed.X <= pill.XMax && pushed.Y >= pill.YMin && pushed.Y <= pill.YMax)
                         pushed = ExitRect(pushed, pill);
                     grown[i] = pushed;
                 }
+
+                grown = FitShapeInWindow(
+                    grown,
+                    CaptureFrameInset,
+                    CaptureFrameInset,
+                    plateWidth - CaptureFrameInset,
+                    plateHeight - CaptureFrameInset);
 
                 if (!RestsInside(card, grown, InsideMargin))
                     continue;
@@ -5831,14 +5841,18 @@ namespace Game.UI.Runtime
                     points.Add(around[i]);
             }
 
-            for (int i = 0; i < points.Count; i++)
-            {
-                points[i] = new Vec2(
-                    Clamp(points[i].X, CaptureFrameInset, plateWidth - CaptureFrameInset),
-                    Clamp(points[i].Y, CaptureFrameInset, plateHeight - CaptureFrameInset));
-            }
-
-            return ConvexHull(points);
+            Vec2[] hull = ConvexHull(points);
+            if (hull == null || hull.Length < 6)
+                return null;
+            Vec2[] fitted = FitShapeInWindow(
+                hull,
+                CaptureFrameInset,
+                CaptureFrameInset,
+                plateWidth - CaptureFrameInset,
+                plateHeight - CaptureFrameInset);
+            if (fitted == null || fitted.Length < 6 || !RestsInside(card, fitted, InsideMargin))
+                return hull;
+            return fitted;
         }
 
         private static Vec2[] ConvexHull(System.Collections.Generic.List<Vec2> points)
@@ -5995,7 +6009,8 @@ namespace Game.UI.Runtime
             bool outside = false;
             for (int i = 0; i < shape.Length; i++)
             {
-                if (shape[i].X < minX - 0.5f || shape[i].X > maxX + 0.5f)
+                if (shape[i].X < minX - 0.5f || shape[i].X > maxX + 0.5f
+                    || shape[i].Y < minY - 0.5f || shape[i].Y > maxY + 0.5f)
                 {
                     outside = true;
                     break;
@@ -6004,17 +6019,10 @@ namespace Game.UI.Runtime
 
             if (!outside)
                 return shape;
-            CentroidOf(shape, out float cx, out float cy);
-            var next = new Vec2[shape.Length];
-            for (int i = 0; i < shape.Length; i++)
-            {
-                Vec2 point = shape[i];
-                for (int step = 0; step < 8 && (point.X < minX || point.X > maxX || point.Y < minY || point.Y > maxY); step++)
-                    point = new Vec2(point.X + (cx - point.X) * 0.45f, point.Y + (cy - point.Y) * 0.45f);
-                next[i] = new Vec2(Clamp(point.X, minX, maxX), Clamp(point.Y, minY, maxY));
-            }
-
-            return next;
+            // Slide the coastline onto the visible plate, then scale it as one shape.
+            // Clamping each vertex was folding RTL 4:3 coasts into a four-point rectangle.
+            Vec2[] fitted = FitShapeInWindow(shape, minX, minY, maxX, maxY);
+            return fitted != null && fitted.Length >= 6 ? fitted : shape;
         }
 
         /// <summary>Halo rect pad past the polygon: outline pad, feather, and the extra pixel the capture requires.</summary>
@@ -6060,9 +6068,60 @@ namespace Game.UI.Runtime
             if (FrameHolds(shape, hex, card, pin, others, pill, cue, plateWidth, plateHeight, hint, glow, expected))
                 return shape;
             Vec2[] opened = OpenForSamples(hex, card, pin, others, cue, plateWidth, plateHeight, hint, glow, expected);
+            if (shape != null && shape.Length >= 12)
+            {
+                Vec2[] fitted = ShrinkCoastToFrame(shape, card, pin, cue, hint, glow, plateWidth, plateHeight, expected);
+                if (fitted != null)
+                    return fitted;
+            }
+
+            if (opened != null && (shape == null || shape.Length < 12))
+                return opened;
             if (opened != null)
                 return opened;
             return CopyShape(hex);
+        }
+
+        /// <summary>
+        /// Pulls an organic coast inward until it sits in the map frame and clear of the hint.
+        /// A six-point hex is not substituted while a scaled coast still has interior samples.
+        /// </summary>
+        private static Vec2[] ShrinkCoastToFrame(
+            Vec2[] shape,
+            Box card,
+            Box pin,
+            Box cue,
+            Box hint,
+            Box glow,
+            float plateWidth,
+            float plateHeight,
+            float expected)
+        {
+            if (shape == null || shape.Length < 12)
+                return null;
+            CentroidOf(shape, out float cx, out float cy);
+            float[] scales = { 1f, 0.97f, 0.93f, 0.88f, 0.82f };
+            for (int s = 0; s < scales.Length; s++)
+            {
+                float scale = scales[s];
+                var next = new Vec2[shape.Length];
+                for (int i = 0; i < shape.Length; i++)
+                    next[i] = new Vec2(cx + (shape[i].X - cx) * scale, cy + (shape[i].Y - cy) * scale);
+                if (!OutlineInside(next, plateWidth, plateHeight, out _, out _))
+                    continue;
+                if (!GlowInside(next, plateWidth, plateHeight, out _, out _))
+                    continue;
+                if (EdgesHit(next, hint) || EdgesHit(next, glow))
+                    continue;
+                if (InteriorUnblocked(next, card, pin, cue, hint) < 8)
+                    continue;
+                float measured = MeasuredHexAspect(next);
+                if (expected >= 0.2f && measured >= 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
+                    continue;
+                return next;
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -6223,7 +6282,7 @@ namespace Game.UI.Runtime
             // A rounded hex is the same template on every seat. Each district cuts its own
             // bays, and the compass points stay on the seated box so the aspect holds.
             // The strongest coastline that still clears the card, the pill, and the area floor wins.
-            float[] strength = { 1f, 0.62f, 0.34f };
+            float[] strength = { 1f, 0.62f, 0.34f, 0.18f, 0.08f };
             for (int step = 0; step < strength.Length; step++)
             {
                 Vec2[] coast = SmoothTerritory(hex, card, cx, cy, phase, strength[step], pill, others, true, district, true);
@@ -6253,7 +6312,89 @@ namespace Game.UI.Runtime
                 && RadialRoughness(filleted) <= 0.35f)
                 return filleted;
 
+            // A tight seat used to keep the six-point hex. Shrink the organic coast
+            // about the card until the card, the pill, and the area floor all hold.
+            Vec2[] grown = SmoothTerritory(hex, card, cx, cy, phase, 0.62f, pill, others, true, district, true);
+            Vec2 anchor = card.W >= 1f ? card.Center : new Vec2(cx, cy);
+            float[] scales = { 0.97f, 0.93f, 0.88f, 0.82f };
+            for (int s = 0; s < scales.Length; s++)
+            {
+                if (grown == null || grown.Length < 12)
+                    break;
+                float scale = scales[s];
+                var shrunk = new Vec2[grown.Length];
+                for (int i = 0; i < grown.Length; i++)
+                    shrunk[i] = new Vec2(anchor.X + (grown[i].X - anchor.X) * scale, anchor.Y + (grown[i].Y - anchor.Y) * scale);
+                if (SmoothWhy(shrunk, card, hex, others, pill) == null && RadialRoughness(shrunk) <= 1.15f)
+                    return shrunk;
+            }
+
+            if (grown != null && grown.Length >= 12 && SmoothWhy(grown, card, hex, others, pill) == null)
+                return grown;
+            // Still not a six-point hex. A shallow bay inside the seated box keeps the aspect.
+            Vec2[] traced = TraceInsideHex(hex, card, pill, others, district);
+            if (traced != null && traced.Length >= 12)
+                return traced;
             return hex;
+        }
+
+        /// <summary>
+        /// 72-point coast drawn just inside the seated hex. Compass samples stay on the box.
+        /// The bay stops short of the card and the zoom pill. The first depth that still
+        /// clears the card, the pill, and the area floor is the one that is drawn.
+        /// </summary>
+        private static Vec2[] TraceInsideHex(Vec2[] hex, Box card, Box pill, Vec2[][] others, int district)
+        {
+            if (hex == null || hex.Length < 3)
+                return hex;
+            CentroidOf(hex, out float cx, out float cy);
+            const int count = 36;
+            const float tau = 6.2831853f;
+            int band = district < 0 ? 0 : district % 5;
+            float[] cuts = { 0.10f, 0.05f, 0.025f };
+            Vec2[] closest = null;
+            for (int c = 0; c < cuts.Length; c++)
+            {
+                var controls = new Vec2[count];
+                for (int i = 0; i < count; i++)
+                {
+                    float angle = (i + 0.5f) / count * tau;
+                    float dx = (float)Math.Cos(angle);
+                    float dy = (float)Math.Sin(angle);
+                    Vec2 boundary = BoundaryAt(hex, cx, cy, dx, dy);
+                    float far = Distance(new Vec2(cx, cy), boundary);
+                    if (far < 1f)
+                        far = 1f;
+                    float spare = card.W >= 1f ? ClearOfRect(boundary, card) - 28f : far;
+                    if (pill.W > 1f)
+                    {
+                        float pillSpare = ClearOfRect(boundary, pill) - 36f;
+                        if (pillSpare < spare)
+                            spare = pillSpare;
+                    }
+
+                    if (spare < 0f)
+                        spare = 0f;
+                    float keep = CompassKeep(angle);
+                    float lobe = 0.5f + 0.5f * (float)Math.Sin((1f + band) * angle + band * 1.3f);
+                    float cut = (1f - keep) * lobe * cuts[c];
+                    float room = spare / far;
+                    if (cut > room)
+                        cut = room;
+                    if (cut < 0f)
+                        cut = 0f;
+                    controls[i] = new Vec2(cx + dx * far * (1f - cut), cy + dy * far * (1f - cut));
+                }
+
+                Vec2[] curved = CatmullRomClosed(controls, 2);
+                if (curved == null || curved.Length < 12)
+                    continue;
+                closest = curved;
+                if (SmoothWhy(curved, card, hex, others, pill) == null)
+                    return curved;
+            }
+
+            return closest;
         }
 
         /// <summary>
@@ -12540,6 +12681,84 @@ namespace Game.UI.Runtime
                 new Vec2(card.XMax, card.YMax),
                 new Vec2(card.XMin, card.YMax)
             };
+        }
+
+        /// <summary>
+        /// Maps an organic outline onto <paramref name="box"/> without dropping vertices.
+        /// A four-corner stand-in fails the visible-area check.
+        /// </summary>
+        private static Vec2[] ShapeIntoBox(Vec2[] shape, Box box)
+        {
+            if (shape == null || shape.Length < 6 || box.W < 1f || box.H < 1f)
+                return null;
+            float minX = shape[0].X, maxX = shape[0].X, minY = shape[0].Y, maxY = shape[0].Y;
+            for (int i = 1; i < shape.Length; i++)
+            {
+                minX = Math.Min(minX, shape[i].X);
+                maxX = Math.Max(maxX, shape[i].X);
+                minY = Math.Min(minY, shape[i].Y);
+                maxY = Math.Max(maxY, shape[i].Y);
+            }
+
+            float sw = Math.Max(1f, maxX - minX);
+            float sh = Math.Max(1f, maxY - minY);
+            var placed = new Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+            {
+                float u = (shape[i].X - minX) / sw;
+                float v = (shape[i].Y - minY) / sh;
+                placed[i] = new Vec2(box.X + u * box.W, box.Y + v * box.H);
+            }
+
+            return placed;
+        }
+
+        /// <summary>
+        /// Moves a coastline into the window as one shape. A pure slide is used when the
+        /// outline already fits. Uniform scale is the fallback, so RTL 4:3 does not fold.
+        /// </summary>
+        private static Vec2[] FitShapeInWindow(Vec2[] shape, float minX, float minY, float maxX, float maxY)
+        {
+            if (shape == null || shape.Length < 3)
+                return shape;
+            BoundsOf(shape, out float sx0, out float sy0, out float sx1, out float sy1);
+            if (sx0 >= minX - 0.5f && sx1 <= maxX + 0.5f && sy0 >= minY - 0.5f && sy1 <= maxY + 0.5f)
+                return shape;
+            float sw = Math.Max(1f, sx1 - sx0);
+            float sh = Math.Max(1f, sy1 - sy0);
+            float availW = maxX - minX;
+            float availH = maxY - minY;
+            if (availW < 8f || availH < 8f)
+                return shape;
+            float scale = Math.Min(1f, Math.Min(availW / sw, availH / sh));
+            if (scale < 0.05f)
+                return shape;
+            CentroidOf(shape, out float cx, out float cy);
+            var next = new Vec2[shape.Length];
+            float nx0 = float.MaxValue, nx1 = float.MinValue, ny0 = float.MaxValue, ny1 = float.MinValue;
+            for (int i = 0; i < shape.Length; i++)
+            {
+                next[i] = new Vec2(cx + (shape[i].X - cx) * scale, cy + (shape[i].Y - cy) * scale);
+                nx0 = Math.Min(nx0, next[i].X);
+                nx1 = Math.Max(nx1, next[i].X);
+                ny0 = Math.Min(ny0, next[i].Y);
+                ny1 = Math.Max(ny1, next[i].Y);
+            }
+
+            float dx = 0f, dy = 0f;
+            if (nx0 < minX)
+                dx = minX - nx0;
+            else if (nx1 > maxX)
+                dx = maxX - nx1;
+            if (ny0 < minY)
+                dy = minY - ny0;
+            else if (ny1 > maxY)
+                dy = maxY - ny1;
+            if (Math.Abs(dx) < 0.01f && Math.Abs(dy) < 0.01f && scale > 0.999f)
+                return shape;
+            for (int i = 0; i < next.Length; i++)
+                next[i] = new Vec2(next[i].X + dx, next[i].Y + dy);
+            return next;
         }
 
         // Unity Rect.Contains is inclusive on the minimum and exclusive on the maximum.

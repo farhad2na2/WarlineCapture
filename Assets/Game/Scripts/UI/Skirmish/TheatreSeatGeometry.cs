@@ -4711,11 +4711,11 @@ namespace Game.UI.Runtime
         /// </summary>
         public const float TerritoryFeather = 10f;
 
-        /// <summary>Peak alpha of the 5px tinted glow. The fill sits under this.</summary>
-        public const float TerritoryBorderAlpha = 0.70f;
+        /// <summary>Peak alpha of the unselected 5px glow. The fill sits under this.</summary>
+        public const float TerritoryBorderAlpha = 0.86f;
 
-        /// <summary>Fill alpha over the theatre painting. Strong enough to read, light enough that the map stays visible.</summary>
-        public const float TerritoryFillAlpha = 0.32f;
+        /// <summary>Fill alpha over the theatre painting. One step above the 0.32 veil, still light enough that the map stays visible.</summary>
+        public const float TerritoryFillAlpha = 0.36f;
 
         /// <summary>
         /// Irregular territory on the seated district. The border is a smooth curve, the
@@ -9713,6 +9713,285 @@ namespace Game.UI.Runtime
             return true;
         }
 
+        /// <summary>
+        /// Pulls a card that left its district back inside, then slides every card toward
+        /// the middle of its region. The 20:9 Airfield Plains portrait stays where it is.
+        /// </summary>
+        private static void SeatCardsInRegions(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || cards == null)
+                return;
+            bool wideAirfield = plateHeight > 2f && plateWidth / plateHeight >= 1.9f;
+            int airfield = IndexOf("AP");
+            // FaChromeMirrors compares the selected cue on this plate. Moving that cue
+            // pulls the Farsi shelf off the English one.
+            bool mirrorCue = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+            for (int i = 0; i < cards.Length && i < hexes.Length; i++)
+            {
+                if (cards[i].W < 1f || hexes[i] == null)
+                    continue;
+                if (wideAirfield && i == airfield)
+                    continue;
+                bool keepCue = mirrorCue && i == selected;
+                if (!keepCue && !RestsInside(cards[i], hexes[i], InsideMargin))
+                    PlaceCardNearCentre(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, i);
+                if (!RestsInside(cards[i], hexes[i], InsideMargin)
+                    && (MapIds[i] == "DB" || MapIds[i] == "IB")
+                    && !CoverCardInPlace(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, i))
+                    TuckCardInDistrict(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, i);
+                if (!keepCue)
+                    SlideTowardRegionCentre(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, i);
+            }
+        }
+
+        /// <summary>
+        /// Moves the card, its pin and its tab together toward the region centre.
+        /// A step that would leave the card, the pin or the tab illegal is skipped.
+        /// </summary>
+        private static void SlideTowardRegionCentre(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int index)
+        {
+            if (!RegionCentre(hexes[index], out Vec2 centre))
+                return;
+            Box card = cards[index];
+            float dx = centre.X - card.Center.X;
+            float dy = centre.Y - card.Center.Y;
+            if (Math.Abs(dx) < 8f && Math.Abs(dy) < 8f)
+                return;
+            Box pin = pins != null && index < pins.Length ? pins[index] : default;
+            bool hosts = index == selected && cue.W > 1f;
+            bool tab = hosts && CueIsCardTopTab(card, cue);
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            float[] gains = { 1f, 0.92f, 0.84f, 0.76f, 0.68f, 0.56f, 0.4f, 0.24f };
+            for (int g = 0; g < gains.Length; g++)
+            {
+                float sx = dx * gains[g];
+                float sy = dy * gains[g];
+                var trial = new Box(card.X + sx, card.Y + sy, card.W, card.H);
+                if (!CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, index, trial, sx, sy, true))
+                    continue;
+                ApplyCardShift(pins, cards, ref cue, selected, index, trial, sx, sy, true);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// The card is outside and the pin already sits in the district, so sliding both
+        /// pushes the pin out. Park the card beside that pin, as close to the centre as it fits.
+        /// </summary>
+        private static void PlaceCardNearCentre(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int index)
+        {
+            if (!RegionCentre(hexes[index], out Vec2 centre))
+                return;
+            Box card = cards[index];
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            float[] nudge = { 0f, 14f, -14f, 28f, -28f, 42f, -42f, 56f, -56f, 72f, -72f };
+            float best = float.MaxValue;
+            Box bestCard = card;
+            float bestSx = 0f;
+            float bestSy = 0f;
+            bool found = false;
+            for (int y = 0; y < nudge.Length; y++)
+            {
+                for (int x = 0; x < nudge.Length; x++)
+                {
+                    var trial = new Box(
+                        centre.X + nudge[x] - card.W * 0.5f,
+                        centre.Y + nudge[y] - card.H * 0.5f,
+                        card.W,
+                        card.H);
+                    float sx = trial.X - card.X;
+                    float sy = trial.Y - card.Y;
+                    if (!CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, index, trial, sx, sy, false))
+                        continue;
+                    float score = Math.Abs(nudge[x]) + Math.Abs(nudge[y]);
+                    if (score >= best)
+                        continue;
+                    best = score;
+                    bestCard = trial;
+                    bestSx = sx;
+                    bestSy = sy;
+                    found = true;
+                }
+            }
+
+            if (found)
+                ApplyCardShift(pins, cards, ref cue, selected, index, bestCard, bestSx, bestSy, false);
+        }
+
+        private static void ApplyCardShift(
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            int index,
+            Box trial,
+            float sx,
+            float sy,
+            bool movePin)
+        {
+            Box card = cards[index];
+            cards[index] = trial;
+            if (movePin && pins != null && index < pins.Length && pins[index].W > 1f)
+                pins[index] = new Box(pins[index].X + sx, pins[index].Y + sy, pins[index].W, pins[index].H);
+            if (index == selected && cue.W > 1f)
+                cue = new Box(cue.X + (trial.X - card.X), cue.Y + (trial.Y - card.Y), cue.W, cue.H);
+        }
+
+        private static bool CardShiftHolds(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            int selected,
+            Box detail,
+            Box hint,
+            float plateWidth,
+            float plateHeight,
+            int index,
+            Box trial,
+            float sx,
+            float sy,
+            bool movePin)
+        {
+            Box card = cards[index];
+            if (!RestsInside(trial, hexes[index], InsideMargin))
+                return false;
+            if (!OnPlate(trial, plateWidth, plateHeight) || !Clears(trial, detail))
+                return false;
+            if (hint.W > 1f && Overlaps(trial, hint, 0f))
+                return false;
+            Box pin = pins != null && index < pins.Length ? pins[index] : default;
+            Box movedPin = pin;
+            if (pin.W > 1f)
+            {
+                if (movePin)
+                    movedPin = new Box(pin.X + sx, pin.Y + sy, pin.W, pin.H);
+                if (!PointInPolygon(movedPin.Center, hexes[index]) || DistanceToEdge(movedPin.Center, hexes[index]) < 6f)
+                    return false;
+                if (!OnPlate(movedPin, plateWidth, plateHeight))
+                    return false;
+                // The drawn stroke drops the pin radius and the 4px end gap, so 25px still
+                // logs a missing leader. 28px leaves a visible stroke.
+                if (Leader(movedPin, trial) < 28f || Separation(trial, movedPin) < PinGap)
+                    return false;
+                if (detail.W > 1f && SegmentHitsRect(movedPin.Center, NearestOn(trial, movedPin.Center), detail))
+                    return false;
+                if (hint.W > 1f && Overlaps(movedPin, hint, 0f))
+                    return false;
+            }
+
+            bool hosts = index == selected && cue.W > 1f;
+            Box movedCue = cue;
+            if (hosts)
+            {
+                movedCue = new Box(cue.X + sx, cue.Y + sy, cue.W, cue.H);
+                if (!OnPlate(movedCue, plateWidth, plateHeight))
+                    return false;
+                if (detail.W > 1f && Overlaps(movedCue, detail, 0f))
+                    return false;
+                if (CueIsCardTopTab(card, cue) && !CueIsCardTopTab(trial, movedCue))
+                    return false;
+                if (hint.W > 1f && Overlaps(movedCue, hint, 0f))
+                    return false;
+                if (!CueCountsAsNear(movedCue, trial, movedPin, hexes[index]))
+                    return false;
+            }
+
+            cards[index] = trial;
+            bool clear = ClearsOtherCards(cards, index);
+            cards[index] = card;
+            if (!clear)
+                return false;
+            return NameGrowthKeepsLeaders(
+                cards, hexes, pins, detail, hosts ? movedCue : cue, hint, plateWidth, plateHeight, index, trial, movedPin);
+        }
+
+        /// <summary>
+        /// Name growth makes the portrait taller in place. A centre slide that leaves
+        /// room for that growth keeps the drawn leader. One that does not is refused.
+        /// </summary>
+        private static bool NameGrowthKeepsLeaders(
+            Box[] cards,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box detail,
+            Box cue,
+            Box hint,
+            float plateWidth,
+            float plateHeight,
+            int index,
+            Box trial,
+            Box movedPin)
+        {
+            if (cards == null)
+                return true;
+            var grown = (Box[])cards.Clone();
+            grown[index] = trial;
+            bool fa = ShotLocale != null && ShotLocale.StartsWith("fa", StringComparison.OrdinalIgnoreCase);
+            bool wide = plateHeight > 2f && plateWidth / plateHeight >= 2.4f;
+            GrowCardsForNames(grown, hexes, grown.Length, detail, cue, hint, plateHeight, fa, wide);
+            if (pins == null)
+                return true;
+            int n = Math.Min(grown.Length, pins.Length);
+            for (int i = 0; i < n; i++)
+            {
+                if (grown[i].W < 1f || pins[i].W < 1f)
+                    continue;
+                Box pin = i == index && movedPin.W > 1f ? movedPin : pins[i];
+                float draw = Leader(pin, grown[i]) - PinSize * 0.5f - 2f - ForeignLeaderClearance;
+                if (draw < 4f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool RegionCentre(Vec2[] hex, out Vec2 centre)
+        {
+            centre = default;
+            if (hex == null || hex.Length < 3)
+                return false;
+            BoundsOf(hex, out float minX, out float minY, out float maxX, out float maxY);
+            var box = new Vec2((minX + maxX) * 0.5f, (minY + maxY) * 0.5f);
+            if (PointInPolygon(box, hex))
+            {
+                centre = box;
+                return true;
+            }
+
+            Vec2 mid = DistrictCentroid(hex);
+            if (!PointInPolygon(mid, hex))
+                return false;
+            centre = mid;
+            return true;
+        }
+
         private static bool SlideCardInside(
             Vec2[][] hexes,
             Box[] pins,
@@ -10495,17 +10774,7 @@ namespace Game.UI.Runtime
                 HoldWidePortraits(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
 
             if (placed != null)
-            {
-                for (int i = 0; i < placed.Length && i < hexes.Length; i++)
-                {
-                    if (placed[i].W < 1f || hexes[i] == null || RestsInside(placed[i], hexes[i], InsideMargin))
-                        continue;
-                    if (MapIds[i] != "DB" && MapIds[i] != "IB")
-                        continue;
-                    if (!CoverCardInPlace(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, i))
-                        TuckCardInDistrict(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, i);
-                }
-            }
+                SeatCardsInRegions(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
 
             if (fa && placed != null && SeatWideFarsiPill(
                 hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight))

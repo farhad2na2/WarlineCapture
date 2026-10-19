@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "state": "DISABLED_SPARSE_SOURCE_ONLY_NOT_NATIVE_ADMITTED",
+  "source_commit": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "source_branch": "codex/mac-groundba-api-native-validation",
+  "worktree": "/private/tmp/warline-mac-groundba-api-native-validation",
+  "base": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "source_delta_paths": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs"
+  ],
+  "source_stage_receipt_sha256": "16865661e4badbc2990793d8de739a902d5ec2e1a76c20e1d3d26c960d3de646",
+  "provided_CSharp_controls": 47,
+  "CSharp_executed": false,
+  "actual_imported_project": false,
+  "actual_Game_Editor_RSP": null,
+  "actual_Game_Editor_DLL": null,
+  "actual_Csc_consumption": false,
+  "required_future_marker": "[CompleteGroundBaTupleControls] result=Passed controls=47 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0",
+  "wrapper_sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608",
+  "disabled_invocation": [
+    "rtk",
+    "proxy",
+    "Tools/CI/invoke_unity_macos.sh",
+    "--timeout",
+    "3600",
+    "--log",
+    "<fresh-owned-absolute-log>",
+    "--",
+    "-quit",
+    "-executeMethod",
+    "Game.Editor.SkirmishGroundSourceFitSurvey.RunCompleteGroundBaTupleControls"
+  ],
+  "launch_authorized": false,
+  "launch_performed": false,
+  "run_grant": null,
+  "heavy_project_expansion_authorized_now": false,
+  "required_before_future_packet_admission": [
+    "Fresh no-heavy-job capacity/owner evidence",
+    "Root-reviewed full checkout/materialization scope; no active Library copy",
+    "Actual project source/settings before-census and package/SDK/Hub pins",
+    "Actual build/RSP before-state, then separately authorized owning compile closure",
+    "Exact one-use grant/controller/timeout/output/settings policy and owned wrapper/shutdown tracking",
+    "Root verification of complete concrete native packet before launch"
+  ],
+  "preserved_acceptance_boundaries": [
+    "MP/S049 existing tests separate",
+    "Original CC operational source-stability failures retained",
+    "Windows prepared replay fix a174 uncomposed; explicit integration required",
+    "No sourcefit/normal/paid/queue/APK/device credit"
+  ]
+}

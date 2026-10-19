@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ec0d2f30504814a49d4919f244c32e, type: 3}
+  m_Name: SkirmishScenario_S074
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishScenarioDefinitionConfig
+  catalogId: S074
+  definitionId: skirmish.s074
+  scenarioSetupId: scenario.skirmish.s074
+  operationMapId: opmap.skirmish.refinerydistrict_prepared
+  mapLayoutId: layout.s074.measured-pad-candidate.v2
+  contentVersion: 2
+  contentHash: skirmish.s074.v2
+  objectiveConfig: {fileID: 11400000, guid: 59b861580478d8747a8c81e9bffd2529, type: 2}
+  armyProfileConfig: {fileID: 11400000, guid: a7e29fa83f1c4735acd2aa8a75df7d60, type: 2}
+  startPackageConfig: {fileID: 11400000, guid: 8032585b22bd4dbfb4d0c58ead392aaf, type: 2}
+  defaultDifficulty: 2
+  firstVisitSize: 1
+  recommendedSize: 1
+  economyConfig: {fileID: 11400000, guid: a80273e4faab4a8699e8ec8cc63e6d9e, type: 2}
+  upgradeCatalog: {fileID: 11400000, guid: 4cc33e81f1714b1990c22147ede7d678, type: 2}
+  intelConfig: {fileID: 11400000, guid: 04b7de727d214decb18d44a0a1156838, type: 2}
+  roleCatalog: {fileID: 11400000, guid: 576ea8bf79b7478480428278cdb00745, type: 2}
+  mapLayout: {fileID: 11400000, guid: 6b0cbf5e2b21f37488183e4801aef5a2, type: 2}
+  playerFaction: 1
+  enemyFaction: 2
+  sideRule: symmetric.ba
+  allowedCertifiedSizeIds: 01
+  requiredFeatureIds:
+  - ground
+  - intel
+  - transport
+  - advanced_ground
+  - objective_ba
+  ariaCapabilityIds: []
+  briefingKey: skirmish.s074.brief
+  titleKey: skirmish.s074.title
+  objectiveKey: skirmish.s074.objective
+  resultVictoryKey: skirmish.s074.result.victory
+  resultDefeatKey: skirmish.s074.result.defeat
+  readinessManifestId: publication.skirmish.s074
+  missionLogicalBinding: {fileID: 11400000, guid: fc22994aa28c24d478b8f9786e0d3de9, type: 2}
+  campaignMap: {fileID: 11400000, guid: 0064e5ac3442d4dcda5a04f2623647c5, type: 2}

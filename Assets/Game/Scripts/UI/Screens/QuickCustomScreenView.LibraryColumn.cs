@@ -1234,23 +1234,28 @@ namespace Game.UI.Runtime
             // grow into it evenly - icon, name, count and their offsets all scale by the same factor (capped so the
             // icon stays inside half the tile width).
             float plateHeight = TheatreSummarySpareHeight(plate); // v43b: from the column, not the pre-layout plate rect
-            float plateWidth = plate.rect.width > 1f ? plate.rect.width : 300f;
-            float wanted = (plateHeight - top - gap - bottomPad) * 0.5f;
+            // v44: the plate is laid out by the column (childControlWidth), so its width is the column's inner width.
+            // Reading plate.rect first gave the 100 px default of a freshly created RectTransform -> 38 px tiles.
+            float plateWidth = TheatreSummaryWidth(plate, out string widthSource);
+            int tileColumns = (plateWidth - 16f - gap) * 0.5f >= TheatreMedalTileMinWidth ? 2 : 1;
+            int tileRows = 4 / tileColumns;
+            float wanted = (plateHeight - top - gap * (tileRows - 1) - bottomPad) / tileRows;
             float scale = Mathf.Max(1f, wanted / baseTileHeight);
-            float tileWidth = (plateWidth - 16f - gap) * 0.5f;
+            float tileWidth = (plateWidth - 16f - gap * (tileColumns - 1)) / tileColumns;
             scale = Mathf.Min(scale, Mathf.Max(1f, tileWidth * 0.55f / 54f), 2f);
             // Tiles always fill the spare height; if the width cap stops the content scale, the content is centred in
             // the taller tile instead of leaving a gap under the grid.
             float tileHeight = Mathf.Max(baseTileHeight * scale, wanted);
             float contentTop = (tileHeight - baseTileHeight * scale) * 0.5f;
-            float leftover = Mathf.Max(0f, plateHeight - (top + 2f * tileHeight + gap + bottomPad));
+            float leftover = Mathf.Max(0f, plateHeight - (top + tileRows * tileHeight + gap * (tileRows - 1) + bottomPad));
             var tierNames = new List<TMP_Text>(4);
+            var tierCounts = new List<TMP_Text>(4);
             float enEquivalent = float.MaxValue; // v43c: the size the English names would get in these tiles
             for (int i = 0; i < tiers.Length; i++)
             {
-                int column = i % 2;
-                int row = i / 2;
-                int visual = fa ? 1 - column : column;
+                int column = i % tileColumns;
+                int row = i / tileColumns;
+                int visual = tileColumns == 1 ? 0 : fa ? 1 - column : column;
                 string name = "TheatreMedal_" + tiers[i];
                 var tile = plate.Find(name) as RectTransform;
                 // Rebuilt each pass: the library's blank-image sweep can strip Image components between passes.
@@ -1263,12 +1268,14 @@ namespace Game.UI.Runtime
                 CreateLabel(tile, "TierName", 22f);
                 CreateLabel(tile, "TierCount", 30f);
 
-                tile.anchorMin = new Vector2(visual * 0.5f, 1f);
-                tile.anchorMax = new Vector2((visual + 1) * 0.5f, 1f);
+                float span = 1f / tileColumns;
+                tile.anchorMin = new Vector2(visual * span, 1f);
+                tile.anchorMax = new Vector2((visual + 1) * span, 1f);
                 tile.pivot = new Vector2(0.5f, 1f);
                 float yTop = top + row * (tileHeight + gap);
-                tile.offsetMin = new Vector2(visual == 0 ? 8f : gap * 0.5f, -(yTop + tileHeight));
-                tile.offsetMax = new Vector2(visual == 0 ? -gap * 0.5f : -8f, -yTop);
+                bool lead = visual == 0, trail = visual == tileColumns - 1;
+                tile.offsetMin = new Vector2(lead ? 8f : gap * 0.5f, -(yTop + tileHeight));
+                tile.offsetMax = new Vector2(trail ? -8f : -gap * 0.5f, -yTop);
                 Image frame = tile.GetComponent<Image>();
                 if (frame != null)
                 {
@@ -1319,11 +1326,7 @@ namespace Game.UI.Runtime
                     tierCount.isRightToLeftText = false;
                     tierCount.fontStyle = FontStyles.Bold;
                     tierCount.color = new Color(0.98f, 0.95f, 0.86f, 1f);
-                    if (fa)
-                    {
-                        tierCount.enableAutoSizing = false;
-                        tierCount.fontSize = 38f * scale; // +25%
-                    }
+                    tierCounts.Add(tierCount);
                 }
             }
 
@@ -1344,6 +1347,25 @@ namespace Game.UI.Runtime
                         tierNames[i].fontSize = faMax;
                     }
                 }
+            }
+
+            // v44: counts follow the same rule as the names. en pins 32 x scale (its autosize floor, what the 34 x scale
+            // line gives it); fa-IR = that x the Farsi allowance, capped at the old 38 x scale pin, never above it.
+            float enCount = 32f * scale;
+            float countFont = fa ? Mathf.Min(enCount * FaTierNameAllowance, 38f * scale) : enCount;
+            for (int i = 0; i < tierCounts.Count; i++)
+            {
+                TMP_Text c = tierCounts[i];
+                c.enableAutoSizing = false;
+                c.fontSize = countFont;
+                c.fontSizeMin = countFont;
+                c.fontSizeMax = countFont;
+                if (fa)
+                    HoldArabicLineBox(c.rectTransform, countFont);
+                V3LocalizedTextBindingView countBinding = c.GetComponent<V3LocalizedTextBindingView>();
+                if (countBinding != null)
+                    countBinding.ConfigureFontBounds(countFont, countFont);
+                c.ForceMeshUpdate();
             }
 
             // One shared size: the smallest per-tile fit, applied to all four, autosize off (per aspect/locale).
@@ -1370,11 +1392,38 @@ namespace Game.UI.Runtime
                 " tile=" + tileWidth.ToString("0") + "x" + tileHeight.ToString("0") +
                 " nameFont=" + (shared < float.MaxValue ? shared.ToString("0.0") : "-") +
                 " enEquivalent=" + (enEquivalent < float.MaxValue ? enEquivalent.ToString("0.0") : "-") +
+                " countFont=" + countFont.ToString("0.0") + " enCount=" + enCount.ToString("0.0") +
+                " tiles=" + tileColumns + "x" + tileRows + " width=" + widthSource +
                 (fa ? " faAllowance=" + FaTierNameAllowance.ToString("0.00") + " faMax=" + faMax.ToString("0.0") +
                     " nameLineH=" + (tierNames.Count > 0 ? tierNames[0].rectTransform.rect.height.ToString("0.0") : "-") : "") +
                 " plate=" + plateWidth.ToString("0") + "x" + plateHeight.ToString("0") +
                 " leftover=" + leftover.ToString("0") +
                 " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>v44: narrowest medal tile; below this the 2 x 2 grid reflows to one column of four.</summary>
+        private const float TheatreMedalTileMinWidth = 96f;
+
+        /// <summary>v44: plate width from the laid-out column (inner width), else the plate rect if it is past the
+        /// 100 px RectTransform default, else 300. Reports which source was used for [MedalGrid].</summary>
+        private static float TheatreSummaryWidth(RectTransform plate, out string source)
+        {
+            var column = plate.parent as RectTransform;
+            VerticalLayoutGroup group = column != null ? column.GetComponent<VerticalLayoutGroup>() : null;
+            if (column != null && group != null && column.rect.width > 1f)
+            {
+                source = "column";
+                return column.rect.width - group.padding.left - group.padding.right;
+            }
+
+            if (plate.rect.width > 1f && !Mathf.Approximately(plate.rect.width, 100f))
+            {
+                source = "plate";
+                return plate.rect.width;
+            }
+
+            source = plate.rect.width > 1f ? "prelayout-default" : "fallback";
+            return 300f;
         }
 
         /// <summary>v43c: fa-IR medal tier names are this much larger than the en tile-scaled size (glyph-body allowance).</summary>
@@ -1463,11 +1512,15 @@ namespace Game.UI.Runtime
         {
             if (!TryFindEntry(scenarioId, out SkirmishBattleCatalogEntry entry))
                 return scenarioId ?? string.Empty;
-            SkirmishBattleLibraryArt.ObjectiveCopy(entry.ObjectiveId, fa, out _, out string objective);
-            SkirmishBattleLibraryArt.ProfileCopy(entry.ArmyProfile, fa, out string army);
-            SkirmishBattleLibraryArt.ProfileCopy(entry.StartProfile, fa, out string start);
-            string detail = string.IsNullOrEmpty(start) ? army : army + " · " + start;
-            return scenarioId + " · " + objective + "\n" + detail;
+            // v44 (Game PM): the localised battlefield name and objective, not the raw id/enum codes.
+            SkirmishBattleLibraryArt.ObjectiveCopy(entry.ObjectiveId, fa, out string objective, out _);
+            string name = string.Empty;
+            if (_libraryViewModel != null && TryFindTheaterPin(_libraryViewModel.Theater, entry.MapId, out SkirmishTheaterPinState pin) &&
+                !string.IsNullOrEmpty(pin.TitleLocKey))
+                name = LibraryText(pin.TitleLocKey, fa);
+            if (string.IsNullOrEmpty(name))
+                name = LibraryTitle(scenarioId, fa);
+            return string.IsNullOrEmpty(objective) ? name : name + " – " + objective;
         }
 
         private bool IsBriefingColumnChild(Transform child, Transform medalKeep, bool battlefield, string descriptionName)
@@ -1661,6 +1714,8 @@ namespace Game.UI.Runtime
             FitRecommendedText(fa);
             TMP_Text loggedBody = _recommendedPanel.Find("Body")?.GetComponent<TMP_Text>();
             TMP_Text loggedHeading = _recommendedPanel.Find("Heading")?.GetComponent<TMP_Text>();
+            Debug.Log("[RecommendedNext] title=" + (loggedBody != null ? loggedBody.text.Replace("\n", " / ") : "-") +
+                " locale=" + (fa ? "fa-IR" : "en"));
             Debug.Log("[RecommendedNext] layout=compact scenario=" + (scenarioId ?? string.Empty) +
                 " thumb=" + (showPreview ? thumbW.ToString("0") + "x" + thumbH.ToString("0") : "none") +
                 " bodyFont=" + (loggedBody != null ? loggedBody.fontSize.ToString("0.0") : "-") +

@@ -1,0 +1,90 @@
+{
+  "state": "SourceAPICompositionComplete_PortableChecksOnly_CompileAndNativePending",
+  "source_commit": "c2a000de490c72073d3b62bc77b430ab9d65130c",
+  "source_direct_parent": "553304d468b147f6d6995f3bbe16d5134841a3c8",
+  "composition_root_parent": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "Windows_exact_input": "8135ce92385620025b39a0cd7f284bb0f1a88db0",
+  "common_base": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "merge_resolution": "Literal three-way git merge-file result for both overlapping files; zero conflicts, no hand-edited source resolution.",
+  "preserved": {
+    "Windows_entire_method_bodies": [
+      "ApplyMpPilotEndpointRevision",
+      "RunMpGroundBaPreparedReplayControls",
+      "RunS050ReviewedPadEndpointControls"
+    ],
+    "Windows_behavior": "PreparedAuthoring default=false, original initial four-point source/grid/route guards, immutable prepared shared endpoint admission, actual refusal diagnostics including environment/input+layout context, exact real30 fixture helper and finally ENV restoration.",
+    "Mac_MP_method_bodies_preserved_except_explicit_Windows_Apply": 29,
+    "Mac_entire_files": [
+      "FacilityPreferences",
+      "PilotFacilityRelocation"
+    ],
+    "Simultaneous": "Mac file plus exactly Windows preparedAuthoring forwarding line; all generic source/grid/service/canonical-route/independence/signature receipt logic remains.",
+    "Windows_entire_files": [
+      "BoundedRouteRepair",
+      "SkirmishProductionNativeIdentityCensus"
+    ],
+    "Windows_fixtures": "Exact raw Windows old/new blobs; only typed player staging CenterX1364\u21921366 differs after JSON parse; all quantities/bounds/guards otherwise retained.",
+    "existing_native_failures": "Original r6, compiled29 GUI failure and both CC strict operational failures untouched.",
+    "Main": "No main merge or Windows worktree mutation."
+  },
+  "other_exact_Windows_public_entries": {
+    "SkirmishGroundSourceFitSurvey.BoundedRouteRepair.cs": [
+      "RunBoundedRouteTimeControls",
+      "RunBoundedRouteRepairControls"
+    ],
+    "SkirmishProductionNativeIdentityCensus.cs": [
+      "ExportReviewedMatrixSliceFromEnvironment",
+      "ExportPersistedTypedConfigDigests",
+      "ExportS005RegularStandard155926Fa"
+    ]
+  },
+  "portable_checks": {
+    "passed": 60,
+    "receipt_path": "portable-source-check-result.json",
+    "receipt_sha256": "b681cdd534410d11b71fcc9f3405d8273b9302f41214104f8c232214695856e3",
+    "limitations": "Exact Git/source structure and JSON comparison only. Lexical delimiters are not C# syntax/typing, API callability, actual runtime data or compiler consumption proof."
+  },
+  "raw_fixture_git_filter_correction": {
+    "commit": "553304d468b147f6d6995f3bbe16d5134841a3c8",
+    "native_or_compiler_executed": false,
+    "failures": [
+      {
+        "path": "Logs/SkirmishProduction/Offline/S050OwnEstablishedLogicalPadProposal_20261019/logical-pad-input.json",
+        "stored_sha256": "e524939d929f2749c30ad8dcc7953fb7af3ac4845085df9c8fcf97a03385f3b3",
+        "required_sha256": "c0602fee9744b432df16a37004cea5e93f0137594c534f2628dc35ae663debe8",
+        "reason": "Git add CRLF clean filter normalized fixture; not accepted exact Windows bytes."
+      }
+    ],
+    "corrected_in": "c2a000de490c72073d3b62bc77b430ab9d65130c"
+  },
+  "sourcecheck_requires_git_raw_blob_equality": true,
+  "test_obligations": [
+    {
+      "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunCompleteGroundBaTupleControls",
+      "controls": 47,
+      "marker": "[CompleteGroundBaTupleControls] result=Passed controls=47 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0",
+      "status": "Uncompiled_UnexecutedOnComposedEpoch"
+    },
+    {
+      "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunMpGroundBaPreparedReplayControls",
+      "controls": 20,
+      "marker": "[MpGroundBaPreparedReplayControls] result=Passed controls=20 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0",
+      "status": "UnexecutedOnComposedEpoch_ExistingWindowsResultSeparate"
+    },
+    {
+      "entry": "Game.Editor.SkirmishGroundSourceFitSurvey.RunS050ReviewedPadEndpointControls",
+      "controls": 30,
+      "marker": "[S050ReviewedPadEndpointControls] result=Passed controls=30 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 normalMissionReady=0",
+      "status": "UnexecutedOnComposedEpoch_ExistingWindowsResultSeparate"
+    }
+  ],
+  "additional_gates": [
+    "Separate owning C# assembly compilation, exact actual RSP six-source/reference closure, SDK/Hub/source/settings/current resource admission",
+    "Run original dedicated MP/S049 controls separately; do not sum proposed controls into execution claim",
+    "Validate active-mode BoundedRouteRepair pure controls and typed-config Census API independently as required by chosen execution scope",
+    "Full normal/input fit/paid/queue/APK/device acceptance all separate",
+    "Disk assessment22b2 unchanged; no cleanup, reserve waiver, full checkout, import, LFS fetch, active Library copy or native launch authorized"
+  ],
+  "native_launch_authorized": false,
+  "native_or_compiler_executed": false
+}

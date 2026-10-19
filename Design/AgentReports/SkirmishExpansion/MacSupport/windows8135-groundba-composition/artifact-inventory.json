@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/windows8135-groundba-composition/composition-notes.md",
+      "bytes": 1786,
+      "sha256": "690869a7a09248f8929ed1939ee9c08ffa4ddd75453563c9665573353045e2dc"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/windows8135-groundba-composition/portable-source-check-result.json",
+      "bytes": 4890,
+      "sha256": "b681cdd534410d11b71fcc9f3405d8273b9302f41214104f8c232214695856e3"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/windows8135-groundba-composition/portable-source-check.py",
+      "bytes": 6258,
+      "sha256": "2c5701d38e23dd9fa5c30263a1edaa88b61ab759e559dbf1e2434b3a07b598d2"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/windows8135-groundba-composition/source-api-rationale-and-obligations.json",
+      "bytes": 5124,
+      "sha256": "04d9f1db6e32482d5ce1424fbca9b0f0cb89bb156ebef6e48c03cac7377aa011"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacSupport/windows8135-groundba-composition/source-stage-and-path-manifest.json",
+      "bytes": 6305,
+      "sha256": "cc58e3e8e8d01c79bebb2554729915dd2ec48004f7df7be3508efa5c169c6d22"
+    }
+  ]
+}

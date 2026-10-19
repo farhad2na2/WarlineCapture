@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "state": "SourceOnlyComposed_Uncompiled_Unexecuted",
+  "utc": "2026-10-19T03:27:57.458512+00:00",
+  "branch": "codex/mac-groundba-native47-windows8135-composition",
+  "source_commit": "c2a000de490c72073d3b62bc77b430ab9d65130c",
+  "direct_parent": "553304d468b147f6d6995f3bbe16d5134841a3c8",
+  "Windows_input": "8135ce92385620025b39a0cd7f284bb0f1a88db0",
+  "common_base": "f90b6bfed2e3ecf2d630d5eede839777812a1bf5",
+  "worktree": "/private/tmp/warline-mac-groundba-api-native-validation",
+  "actual_source_paths": 6,
+  "actual_fixtures": 2,
+  "actual_materialized_files": 8,
+  "actual_bytes": 315379,
+  "Library_exists": false,
+  "paths": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedRouteRepair.cs",
+      "composed_sha256": "f65ea28b368d55626d9342a0d7cae0af2ddba4d9eefcc0ab77b3f045b0f4ec30",
+      "bytes": 24803,
+      "f90_sha256": "4a3e5598ef762eb58def87a7b721a996a207d28d7d09799195dac002fb134c5a",
+      "Mac923ed_sha256": "4a3e5598ef762eb58def87a7b721a996a207d28d7d09799195dac002fb134c5a",
+      "Windows8135_sha256": "f65ea28b368d55626d9342a0d7cae0af2ddba4d9eefcc0ab77b3f045b0f4ec30"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "composed_sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "bytes": 64630,
+      "f90_sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c",
+      "Mac923ed_sha256": "d935d7f3f9a40de052cc8b91574e96f6f8cc1376842c54a5597d64a258af91c8",
+      "Windows8135_sha256": "b17bd14017b82f2af192feb6dc6bc5170c46cfdb3637b088796814f84604684c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+      "composed_sha256": "ca74e0cb7948963835c14b2527cb2eedfeef795a33b8bb56e25c41f157c77e46",
+      "bytes": 96309,
+      "f90_sha256": "22816c78968066fcaecd692056c3fa1f2392ae78be484fdcaf02cbc79a84d5c5",
+      "Mac923ed_sha256": "0f2b2b8ff0afd68287a56a309a7106f4c973bc0dff3723c7926ca8ee0eeee1e0",
+      "Windows8135_sha256": "664c83281830a447b5bad08f4a72db5a597301307bd1f702bca8b09b6400774f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "composed_sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "bytes": 41844,
+      "f90_sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4",
+      "Mac923ed_sha256": "c47287391a900df29bca5b089b7c074d556129148b557a7bd542f3a39b44cb85",
+      "Windows8135_sha256": "3bc066376fb23692f8947960472005100c483d17d25bd6fb4c2e2f8ce0b20cc4"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "composed_sha256": "582e5fa7f5f09af3ec3c5bb9e7551d0f56a6c743eb1718de9959e1bbfc5b6029",
+      "bytes": 40727,
+      "f90_sha256": "7d7ba98442f3ae7c6d19521a0f9f25abc290bf1d1084c6377eee1c2f8282a1e1",
+      "Mac923ed_sha256": "086be579a3841160b77194bc22ad0cc28b94a985d5dce48bb977aa178a235abf",
+      "Windows8135_sha256": "05491a733783575d4396398bef381d014d59a3c4a39b06b69449a992bc6a3b27"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+      "composed_sha256": "a1e9878cc6e22cd9e4f7740c7eee289d93ae0f9e7da55ad5f43ab94c2b01ff4f",
+      "bytes": 24573,
+      "f90_sha256": "a651cc6cb42b58654aa5be042b2ccdad0dbb89fe41fab909f47fd3176c1e9089",
+      "Mac923ed_sha256": "a651cc6cb42b58654aa5be042b2ccdad0dbb89fe41fab909f47fd3176c1e9089",
+      "Windows8135_sha256": "a1e9878cc6e22cd9e4f7740c7eee289d93ae0f9e7da55ad5f43ab94c2b01ff4f"
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/S050OwnEstablishedLogicalPadProposal_20261019/logical-pad-input.json",
+      "composed_sha256": "c0602fee9744b432df16a37004cea5e93f0137594c534f2628dc35ae663debe8",
+      "bytes": 11432,
+      "f90_sha256": null,
+      "Mac923ed_sha256": null,
+      "Windows8135_sha256": "c0602fee9744b432df16a37004cea5e93f0137594c534f2628dc35ae663debe8"
+    },
+    {
+      "path": "Logs/SkirmishProduction/Offline/S050ReviewedPadEndpointAlignmentProposal_20261019/logical-pad-input.json",
+      "composed_sha256": "17b3013d6cba8ebd6a738f5d43c7d301fd6407d4935b7b1272c9021cf580ccce",
+      "bytes": 11061,
+      "f90_sha256": null,
+      "Mac923ed_sha256": null,
+      "Windows8135_sha256": "17b3013d6cba8ebd6a738f5d43c7d301fd6407d4935b7b1272c9021cf580ccce"
+    }
+  ],
+  "delta_vs_parent": [
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.BoundedRouteRepair.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionNativeIdentityCensus.cs",
+    "Logs/SkirmishProduction/Offline/S050OwnEstablishedLogicalPadProposal_20261019/logical-pad-input.json",
+    "Logs/SkirmishProduction/Offline/S050ReviewedPadEndpointAlignmentProposal_20261019/logical-pad-input.json"
+  ],
+  "source_API_resolution": "Exact git merge-file three-way outputs with zero conflicts for MP+Sim; other Windows paths exact8135, Facility/Relocation exact923ed. No handwritten source resolution.",
+  "native_launch_authorized": false,
+  "CSharp_compiler_or_native_executed": false,
+  "main_modified": false,
+  "original_Mac923ed_branch_preserved": true,
+  "source_root_parent": "923ed3cd5baf44251b65684c8e7a1c302db1305b",
+  "preserved_predecessor_filter_failure": {
+    "commit": "553304d468b147f6d6995f3bbe16d5134841a3c8",
+    "native_or_compiler_executed": false,
+    "failures": [
+      {
+        "path": "Logs/SkirmishProduction/Offline/S050OwnEstablishedLogicalPadProposal_20261019/logical-pad-input.json",
+        "stored_sha256": "e524939d929f2749c30ad8dcc7953fb7af3ac4845085df9c8fcf97a03385f3b3",
+        "required_sha256": "c0602fee9744b432df16a37004cea5e93f0137594c534f2628dc35ae663debe8",
+        "reason": "Git add CRLF clean filter normalized fixture; not accepted exact Windows bytes."
+      }
+    ],
+    "corrected_in": "c2a000de490c72073d3b62bc77b430ab9d65130c"
+  },
+  "exact_final_Git_blobs_verified": 8,
+  "git_status_after_raw_byte_repair": ""
+}

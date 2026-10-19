@@ -1139,13 +1139,34 @@ namespace Game.UI.Runtime
                 // (autosize then settled lower), so the Farsi heading drew far smaller than en's ~25 px. Like the
                 // Recommended-next heading fix, fa is sized from en: the en pass's settled size (else what the 32 px box
                 // gives Oxanium, 32 / 1.25) x the 1.15 Farsi allowance, pinned by LibraryFixedTextSize. The rect stays put.
+                // v45b: en cache is keyed per heading box (a 60x32 pre-layout box gave en 18 but fa used the 496 px box's
+                // 30). Game PM: fa may exceed en's 30 cap up to en x 1.15, limited by the box height (Noto ink is 0.946 em
+                // for this copy, so h / 0.95) and shrunk to the box width - fixed size, no rect move, no overflow.
+                Rect headingBox = heading.rectTransform.rect;
+                int headingKey = Mathf.RoundToInt(headingBox.width) * 1000 + Mathf.RoundToInt(headingBox.height);
                 string headingSource;
                 float headingSize;
+                float enHeading = -1f;
                 if (fa)
                 {
-                    float enSize = EnMedalHeadingSize > 0f ? EnMedalHeadingSize : Mathf.Min(30f, 32f / 1.25f);
-                    headingSource = EnMedalHeadingSize > 0f ? "en-cache" : "en-box";
-                    headingSize = Mathf.Min(30f, enSize * FaTierNameAllowance);
+                    bool cached = EnMedalHeadingSizeByBox.TryGetValue(headingKey, out enHeading);
+                    if (!cached)
+                        enHeading = Mathf.Min(30f, headingBox.height / 1.25f); // what the box gives Oxanium
+                    headingSource = cached ? "en-cache" : "en-box";
+                    float wanted = enHeading * FaTierNameAllowance;
+                    float heightCap = headingBox.height > 1f ? headingBox.height / FaHeadingInkRatio : wanted;
+                    headingSize = Mathf.Min(wanted, heightCap);
+                    if (headingBox.width > 1f)
+                    {
+                        heading.enableAutoSizing = false;
+                        heading.fontSize = headingSize;
+                        float natural = heading.GetPreferredValues(heading.text, 9999f, 100f).x;
+                        if (natural > headingBox.width - 2f && natural > 1f)
+                        {
+                            headingSize = Mathf.Max(12f, Mathf.Floor(headingSize * (headingBox.width - 2f) / natural));
+                            headingSource += "+width";
+                        }
+                    }
                     PinFixedSize(heading, headingSize);
                 }
                 else
@@ -1153,12 +1174,13 @@ namespace Game.UI.Runtime
                     heading.ForceMeshUpdate();
                     headingSize = heading.fontSize;
                     if (headingSize > 1f)
-                        EnMedalHeadingSize = headingSize;
+                        EnMedalHeadingSizeByBox[headingKey] = headingSize;
+                    enHeading = headingSize;
                     headingSource = "autosize";
                 }
 
                 Debug.Log("[MedalHeading] font=" + headingSize.ToString("0.0") + " source=" + headingSource +
-                    " en=" + (EnMedalHeadingSize > 0f ? EnMedalHeadingSize.ToString("0.0") : "-") +
+                    " en=" + (enHeading > 0f ? enHeading.ToString("0.0") : "-") +
                     " box=" + heading.rectTransform.rect.width.ToString("0") + "x" + heading.rectTransform.rect.height.ToString("0") +
                     " locale=" + (fa ? "fa-IR" : "en"));
             }
@@ -1283,6 +1305,8 @@ namespace Game.UI.Runtime
             float countTop = spread ? spare * 0.75f : contentTop;
             float leftover = Mathf.Max(0f, plateHeight - (top + tileRows * tileHeight + gap * (tileRows - 1) + bottomPad));
             var tierNames = new List<TMP_Text>(4);
+            // v45b: name line width from the computed tile (PlaceTileLine insets 4 + 4, name offsets 8 + 8), not the rect.
+            float nameLineWidth = tileWidth - 24f;
             var tierCounts = new List<TMP_Text>(4);
             float enEquivalent = float.MaxValue; // v43c: the size the English names would get in these tiles
             for (int i = 0; i < tiers.Length; i++)
@@ -1346,11 +1370,14 @@ namespace Game.UI.Runtime
                     // v43c: fa-IR no longer pins its own 30 x scale. It measures the English name of the same tier in this
                     // tile (same 16..28 x scale fit as en) and is sized from that after the loop.
                     if (!fa)
-                        enEquivalent = Mathf.Min(enEquivalent, TierNameFit(tierName, en[i], 16f, 28f * scale));
+                        enEquivalent = Mathf.Min(enEquivalent, TierNameFit(tierName, en[i], 16f, 28f * scale, nameLineWidth));
                     else if (!EnTierNameSizeByTile.ContainsKey(TierTileKey(tileWidth, scale)))
-                        enEquivalent = Mathf.Min(enEquivalent, TierNameFitLatin(tierName, en[i], 16f, 28f * scale));
-                    if (!fa && tierName.rectTransform.rect.width > 40f)
-                        FitDetailLine(tierName, 16f, 28f * scale);
+                        enEquivalent = Mathf.Min(enEquivalent, TierNameFitLatin(tierName, en[i], 16f, 28f * scale, nameLineWidth));
+                    // v45b: en is fitted to the same logical width it is measured against. On the first pass the rect
+                    // was still the pre-layout 100 px default, so FitDetailLine was skipped (width <= 40) and en kept its
+                    // SetCopy 22 while the measure said 55.3.
+                    if (!fa)
+                        FitTierLine(tierName, 16f, 28f * scale, nameLineWidth);
                     tierNames.Add(tierName);
                 }
 
@@ -1389,8 +1416,8 @@ namespace Game.UI.Runtime
             {
                 for (int i = 0; i < tierNames.Count; i++)
                 {
-                    if (tierNames[i].rectTransform.rect.width > 40f)
-                        FitDetailLine(tierNames[i], 16f, faMax);
+                    if (nameLineWidth > 40f)
+                        FitTierLine(tierNames[i], 16f, faMax, nameLineWidth);
                     else
                     {
                         tierNames[i].enableAutoSizing = false;
@@ -1437,7 +1464,7 @@ namespace Game.UI.Runtime
                 t.ForceMeshUpdate();
             }
 
-            if (!fa && shared < float.MaxValue && tierNames.Count > 0 && tierNames[0].rectTransform.rect.width > 40f)
+            if (!fa && shared < float.MaxValue && tierNames.Count > 0 && nameLineWidth > 40f)
                 EnTierNameSizeByTile[TierTileKey(tileWidth, scale)] = shared;
             Debug.Log("[MedalGrid] icon=" + (54f * scale).ToString("0.0") +
                 " scale=" + scale.ToString("0.00") +
@@ -1455,8 +1482,11 @@ namespace Game.UI.Runtime
                 " locale=" + (fa ? "fa-IR" : "en"));
         }
 
-        /// <summary>v45: the en Battles-won heading's settled autosize, so fa-IR can match it.</summary>
-        private static float EnMedalHeadingSize;
+        /// <summary>v45b: the en Battles-won heading's settled autosize per box (width x 1000 + height).</summary>
+        private static readonly Dictionary<int, float> EnMedalHeadingSizeByBox = new Dictionary<int, float>();
+
+        /// <summary>v45b: ink height / point size of the Farsi heading copy in Noto Sans Arabic (64.3 + 20.9) / 90.</summary>
+        private const float FaHeadingInkRatio = 0.95f;
 
         /// <summary>v45: tile spare height (px) above which icon/name/count spread out instead of centring.</summary>
         private const float TheatreMedalSpreadThreshold = 24f;
@@ -1492,22 +1522,40 @@ namespace Game.UI.Runtime
         /// <summary>v43c: the single-line size <paramref name="copy"/> would get in <paramref name="text"/>'s rect, using
         /// the same rule as FitDetailLine (max, shrunk to the width minus 2 px, floored at min), without changing the text.</summary>
         /// <summary>v44b: TierNameFit with a Latin-capable font when the label's font has no glyphs for the copy.</summary>
-        private static float TierNameFitLatin(TMP_Text text, string copy, float min, float max)
+        private static float TierNameFitLatin(TMP_Text text, string copy, float min, float max, float width)
         {
             TMP_FontAsset own = text.font;
             TMP_FontAsset latin = TMP_Settings.defaultFontAsset;
             bool swap = own != null && latin != null && own != latin && !own.HasCharacters(copy);
             if (swap)
                 text.font = latin;
-            float size = TierNameFit(text, copy, min, max);
+            float size = TierNameFit(text, copy, min, max, width);
             if (swap)
                 text.font = own;
             return size;
         }
 
-        private static float TierNameFit(TMP_Text text, string copy, float min, float max)
+        /// <summary>v45b: FitDetailLine's rule on an explicit width (the rect may not be laid out yet).</summary>
+        private static void FitTierLine(TMP_Text text, float min, float max, float width)
         {
-            float width = text.rectTransform.rect.width;
+            if (text == null)
+                return;
+            text.textWrappingMode = TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Overflow;
+            text.maxVisibleLines = 1;
+            text.enableAutoSizing = false;
+            float size = TierNameFit(text, text.text, min, max, width);
+            text.fontSize = size;
+            text.fontSizeMin = size;
+            text.fontSizeMax = size;
+            V3LocalizedTextBindingView binding = text.GetComponent<V3LocalizedTextBindingView>();
+            if (binding != null)
+                binding.ConfigureFontBounds(size, size);
+            text.ForceMeshUpdate();
+        }
+
+        private static float TierNameFit(TMP_Text text, string copy, float min, float max, float width)
+        {
             if (width <= 40f || string.IsNullOrEmpty(copy))
                 return max;
             float held = text.fontSize;

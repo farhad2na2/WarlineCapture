@@ -1001,7 +1001,7 @@ namespace Game.UI.Runtime
             group.childScaleHeight = false;
             int index = 0;
             Transform summary = column.Find("TheatreSummary");
-            index = StackColumnChild(summary as RectTransform, index, TheatreSummaryHeight, !battlefield && summary != null);
+            index = StackColumnChild(summary as RectTransform, index, TheatreSummaryHeight, !battlefield && summary != null, true); // v43b: the plate absorbs the spare column height
             bool previewShown = battlefield && _briefingPreview != null && _briefingPreview.gameObject.activeSelf;
             index = StackColumnChild(_briefingPreview != null ? _briefingPreview.rectTransform : null, index, 188f, previewShown);
             // The heading label is authored under RulesScroll/Content, which is hidden unless Advanced is open, so it was
@@ -1194,6 +1194,31 @@ namespace Game.UI.Runtime
             fillImage.raycastTarget = false;
         }
 
+        /// <summary>v43b: the plate's laid-out height = column height minus padding, spacing and the other stacked rows.</summary>
+        private static float TheatreSummarySpareHeight(RectTransform plate)
+        {
+            var column = plate.parent as RectTransform;
+            VerticalLayoutGroup group = column != null ? column.GetComponent<VerticalLayoutGroup>() : null;
+            if (column == null || group == null || column.rect.height <= 1f)
+                return Mathf.Max(TheatreSummaryHeight, plate.rect.height);
+            float used = group.padding.top + group.padding.bottom;
+            int shown = 0;
+            for (int i = 0; i < column.childCount; i++)
+            {
+                var child = column.GetChild(i) as RectTransform;
+                if (child == null || !child.gameObject.activeSelf)
+                    continue;
+                LayoutElement element = child.GetComponent<LayoutElement>();
+                if (element != null && element.ignoreLayout)
+                    continue;
+                shown++;
+                if (child != plate)
+                    used += element != null ? Mathf.Max(element.preferredHeight, element.minHeight) : child.rect.height;
+            }
+            used += group.spacing * Mathf.Max(0, shown - 1);
+            return Mathf.Max(TheatreSummaryHeight, column.rect.height - used);
+        }
+
         /// <summary>approved-1 2 x 2 medal tiles (icon, tier name, count) with whole-theatre ledger totals.</summary>
         private void PresentTheatreMedalTiles(RectTransform plate, SkirmishMedalTotals totals, bool fa)
         {
@@ -1208,7 +1233,7 @@ namespace Game.UI.Runtime
             // v43 (Game PM, approved-1): the Theatre summary plate takes the column's spare height, and the four tiles
             // grow into it evenly - icon, name, count and their offsets all scale by the same factor (capped so the
             // icon stays inside half the tile width).
-            float plateHeight = plate.rect.height > 1f ? plate.rect.height : TheatreSummaryHeight;
+            float plateHeight = TheatreSummarySpareHeight(plate); // v43b: from the column, not the pre-layout plate rect
             float plateWidth = plate.rect.width > 1f ? plate.rect.width : 300f;
             float wanted = (plateHeight - top - gap - bottomPad) * 0.5f;
             float scale = Mathf.Max(1f, wanted / baseTileHeight);

@@ -1075,6 +1075,17 @@ namespace Game.UI.Runtime
             // بزرگنمایی at 22px prefers about 202px. A 160px shelf clips that line.
             float width = Mathf.Max(206f, slot.Card.width);
             Rect card = slot.Card;
+            Rect seated = slot.Cue;
+            // The seater already parked a 206×56 pill above the card or on a side shelf.
+            bool parked = seated.width + 0.5f >= 206f && seated.height + 0.5f >= height
+                && seated.yMin >= 1f
+                && (seated.yMax <= card.yMin + 1.5f
+                    || seated.xMin + 1f >= card.xMax
+                    || seated.xMax <= card.xMin + 1f
+                    || (seated.xMin >= card.xMin - 1f && seated.xMax <= card.xMax + 1f
+                        && seated.yMin >= card.yMin + 8f && seated.yMax <= card.yMax + 1f));
+            if (parked)
+                return;
             Rect pin = slot.Pin;
             float drop = card.y - height < 1f ? 1f - (card.y - height) : 0f;
             if (drop > 0.5f)
@@ -1863,11 +1874,11 @@ namespace Game.UI.Runtime
                     : fill;
             polygon.Configure(local, tint);
             polygon.material = null;
-            PlaceDistrictHalo(root, local, tint, selected);
+            PlaceDistrictHalo(root, local, tint, selected, string.Equals(mapId, "DB", StringComparison.OrdinalIgnoreCase));
             // A 2px saturated edge. Thick saturated strokes are rejected as hard hexes,
             // so this stays under 3px and does not wash toward the bright plate.
             Color dash = tint;
-            dash.a = selected ? 0.94f : 0.82f;
+            dash.a = selected ? 0.96f : 0.90f;
             PlaceSoftDashes(root, local, dash);
         }
 
@@ -1908,7 +1919,7 @@ namespace Game.UI.Runtime
             return max > 0.001f ? (max - min) / max : 0f;
         }
 
-        private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color, bool selected)
+        private static void PlaceDistrictHalo(RectTransform root, Vector2[] localPoints, Color color, bool selected, bool desert)
         {
             // The outline widget already sits ZoneHexPad past the territory. The feather
             // has to clear that widget by a full TerritoryFeather, so the soft edge is
@@ -1916,7 +1927,7 @@ namespace Game.UI.Runtime
             // keeps the rect strictly outside the capture test, which rejects a halo
             // that stops on the feather line.
             float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
-            float peak = selected ? 0.90f : TheatreSeatGeometry.TerritoryBorderAlpha;
+            float peak = selected || desert ? 0.96f : TheatreSeatGeometry.TerritoryBorderAlpha;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color, peak);
             if (halo == null || root == null)
                 return;
@@ -1984,9 +1995,11 @@ namespace Game.UI.Runtime
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
-            byte red = (byte)Mathf.Clamp(Mathf.RoundToInt(color.r * 255f), 0, 255);
-            byte green = (byte)Mathf.Clamp(Mathf.RoundToInt(color.g * 255f), 0, 255);
-            byte blue = (byte)Mathf.Clamp(Mathf.RoundToInt(color.b * 255f), 0, 255);
+            // The rim is the same hue, lifted toward white so the edge glows brighter than the fill.
+            const float rimLift = 0.34f;
+            float rimR = color.r + (1f - color.r) * rimLift;
+            float rimG = color.g + (1f - color.g) * rimLift;
+            float rimB = color.b + (1f - color.b) * rimLift;
             for (int y = 0; y < height; y++)
             {
                 int target = (height - 1 - y) * width;
@@ -2003,6 +2016,10 @@ namespace Game.UI.Runtime
                     float alpha = peak * (1f - along);
                     if (interior)
                         alpha = 0f;
+                    float hot = 1f - along;
+                    byte red = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(color.r, rimR, hot) * 255f), 0, 255);
+                    byte green = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(color.g, rimG, hot) * 255f), 0, 255);
+                    byte blue = (byte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Lerp(color.b, rimB, hot) * 255f), 0, 255);
                     pixels[target + x] = new Color32(red, green, blue, (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 255f), 0, 255));
                 }
             }
@@ -7626,7 +7643,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                case "DB": return new Color(0.96f, 0.76f, 0.10f, 1f);
+                case "DB": return new Color(1.00f, 0.55f, 0.06f, 1f);
                 default:
                     return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
             }
@@ -7640,7 +7657,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                default: return new Color(0.96f, 0.76f, 0.10f, 1f);
+                default: return new Color(1.00f, 0.55f, 0.06f, 1f);
             }
         }
 

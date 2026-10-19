@@ -342,7 +342,7 @@ namespace Game.UI.Runtime
         /// <summary>Confirms the painted theatre plate is the registered base, not the hex board.</summary>
         private static void LogTheatreBase(Texture2D painted)
         {
-            Debug.Log("[TheatrePlate] key=" + SkirmishLibraryPreviewAssets.TheatreBaseKey
+            Debug.Log("[TheatreBase] key=" + SkirmishLibraryPreviewAssets.TheatreBaseKey
                 + " drawn=" + (painted != null ? "1" : "0")
                 + " name=" + (painted != null ? painted.name : "none"));
         }
@@ -1072,7 +1072,8 @@ namespace Game.UI.Runtime
             if (slot.Card.width < 48f || slot.Card.height < 48f)
                 return;
             const float height = 56f;
-            float width = Mathf.Max(160f, slot.Card.width);
+            // بزرگنمایی at 22px prefers about 202px. A 160px shelf clips that line.
+            float width = Mathf.Max(206f, slot.Card.width);
             Rect card = slot.Card;
             Rect pin = slot.Pin;
             float drop = card.y - height < 1f ? 1f - (card.y - height) : 0f;
@@ -1858,15 +1859,15 @@ namespace Game.UI.Runtime
             tint.a = thinDesert
                 ? fill
                 : selected
-                    ? Mathf.Min(0.42f, fill + 0.08f)
+                    ? Mathf.Min(0.46f, fill + 0.10f)
                     : fill;
             polygon.Configure(local, tint);
             polygon.material = null;
             PlaceDistrictHalo(root, local, tint, selected);
+            // A 2px saturated edge. Thick saturated strokes are rejected as hard hexes,
+            // so this stays under 3px and does not wash toward the bright plate.
             Color dash = tint;
-            dash.a = selected ? 0.92f : 0.5f;
-            if (selected)
-                dash = Color.Lerp(dash, Color.white, 0.35f);
+            dash.a = selected ? 0.94f : 0.82f;
             PlaceSoftDashes(root, local, dash);
         }
 
@@ -1915,7 +1916,7 @@ namespace Game.UI.Runtime
             // keeps the rect strictly outside the capture test, which rejects a halo
             // that stops on the feather line.
             float pad = ZoneHexPad + TheatreSeatGeometry.TerritoryFeather + 1f;
-            float peak = selected ? 0.86f : TheatreSeatGeometry.TerritoryBorderAlpha;
+            float peak = selected ? 0.90f : TheatreSeatGeometry.TerritoryBorderAlpha;
             Sprite halo = BuildDistrictHalo(localPoints, pad, color, peak);
             if (halo == null || root == null)
                 return;
@@ -1978,9 +1979,6 @@ namespace Game.UI.Runtime
             float scale = Mathf.Min(1f, maxDim / Mathf.Max(spanX, spanY));
             int width = Mathf.Max(8, Mathf.RoundToInt(spanX * scale));
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
-            float reach = pad > 1f ? pad : TheatreSeatGeometry.TerritoryFeather;
-            if (reach < 1f)
-                reach = 1f;
             if (peak < 0.05f)
                 peak = TheatreSeatGeometry.TerritoryBorderAlpha;
             float originX = minX - pad;
@@ -1997,7 +1995,10 @@ namespace Game.UI.Runtime
                     var point = new Vector2(originX + (x + 0.5f) / scale, originY + (y + 0.5f) / scale);
                     float dist = DistanceToPolygonEdge(point, localPoints);
                     bool interior = PointInsidePolygon(point, localPoints);
-                    float along = interior ? 1f : Mathf.Clamp01(dist / reach);
+                    // The sprite rect still clears the 10px feather test. The visible
+                    // tint is a 5px soft border, inside the 3–6px band.
+                    const float glowBand = 5f;
+                    float along = interior ? 1f : Mathf.Clamp01(dist / glowBand);
                     along = along * along * (3f - 2f * along);
                     float alpha = peak * (1f - along);
                     if (interior)
@@ -2965,8 +2966,8 @@ namespace Game.UI.Runtime
                 return false;
             Rect origin = PlateRect(cue.rectTransform);
             string selected = CueSelectedMap(parent, origin.x);
-            float[] widths = { 160f, Mathf.Max(160f, origin.width) };
-            float[] tracking = { -12f, -36f, -72f, -108f, 0f };
+            float[] widths = { 206f, 220f, 240f, 280f, 160f, Mathf.Max(206f, origin.width) };
+            float[] tracking = { 0f, -12f, -36f, -72f, -108f };
             const float height = 56f;
             for (int w = 0; w < widths.Length; w++)
             {
@@ -3185,18 +3186,26 @@ namespace Game.UI.Runtime
                 return false;
             float cardX = card.anchoredPosition.x;
             float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
-            if (width + 0.5f < cardW)
+            if (width + 0.5f < cardW && width + 0.5f < 206f)
                 return false;
+            float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
             float xLo = cardX + cardW - width;
             float xHi = cardX;
             float bottom = origin.y + origin.height;
             float top = bottom - height;
             if (top < 1f)
                 return false;
-            float[] xs = { Mathf.Clamp(origin.x, Mathf.Min(xLo, xHi), Mathf.Max(xLo, xHi)), xLo, xHi };
+            float mid = cardX + (cardW - width) * 0.5f;
+            float[] xs =
+            {
+                Mathf.Clamp(origin.x, 1f, Mathf.Max(1f, frameW - width - 1f)),
+                mid, xLo, xHi,
+                mid - 48f, mid + 48f, mid - 96f, mid + 96f, mid - 144f, mid + 144f
+            };
             for (int i = 0; i < xs.Length; i++)
             {
-                var grown = new Rect(xs[i], top, width, height);
+                float x = Mathf.Clamp(xs[i], 1f, Mathf.Max(1f, frameW - width - 1f));
+                var grown = new Rect(x, top, width, height);
                 if (FaCueTabBlocked(parent, grown, selected) || FaCueHitsOtherCard(parent, grown, selected))
                     continue;
                 PlaceTopLeft(cue.rectTransform, grown.x, grown.y, grown.width, grown.height);
@@ -7613,11 +7622,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.68f, 0.38f, 0.20f, 1f);
-                case "MP": return new Color(0.52f, 0.36f, 0.66f, 1f);
-                case "IB": return new Color(0.28f, 0.48f, 0.70f, 1f);
-                case "AP": return new Color(0.30f, 0.58f, 0.28f, 1f);
-                case "DB": return new Color(0.62f, 0.50f, 0.22f, 1f);
+                case "CC": return new Color(0.94f, 0.42f, 0.08f, 1f);
+                case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
+                case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
+                case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
+                case "DB": return new Color(0.96f, 0.76f, 0.10f, 1f);
                 default:
                     return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
             }
@@ -7627,11 +7636,11 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.68f, 0.38f, 0.20f, 1f);
-                case "MP": return new Color(0.52f, 0.36f, 0.66f, 1f);
-                case "IB": return new Color(0.28f, 0.48f, 0.70f, 1f);
-                case "AP": return new Color(0.30f, 0.58f, 0.28f, 1f);
-                default: return new Color(0.62f, 0.50f, 0.22f, 1f);
+                case "CC": return new Color(0.94f, 0.42f, 0.08f, 1f);
+                case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
+                case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
+                case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
+                default: return new Color(0.96f, 0.76f, 0.10f, 1f);
             }
         }
 

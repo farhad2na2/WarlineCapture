@@ -82,14 +82,20 @@ namespace Game.UI.Runtime
             float scaleX = authoredSize.x > 0f ? rectTransform.rect.width / authoredSize.x : 1f;
             float scaleY = authoredSize.y > 0f ? rectTransform.rect.height / authoredSize.y : 1f;
             Color32 vertexColor = color;
+            var centroid = Vector2.zero;
             for (int i = 0; i < points.Length; i++)
             {
                 Vector2 point = points[i];
-                vertexHelper.AddVert(new Vector3(point.x * scaleX, -point.y * scaleY, 0f), vertexColor, Vector2.zero);
+                var mesh = new Vector3(point.x * scaleX, -point.y * scaleY, 0f);
+                centroid += (Vector2)mesh;
+                vertexHelper.AddVert(mesh, vertexColor, Vector2.zero);
             }
 
-            for (int i = 1; i < points.Length - 1; i++)
-                vertexHelper.AddTriangle(0, i, i + 1);
+            centroid /= points.Length;
+            int hub = vertexHelper.currentVertCount;
+            vertexHelper.AddVert(new Vector3(centroid.x, centroid.y, 0f), vertexColor, Vector2.zero);
+            for (int i = 0; i < points.Length; i++)
+                vertexHelper.AddTriangle(i, (i + 1) % points.Length, hub);
 
             if (outlineWidth <= 0f || outlineColor.a <= 0f)
                 return;

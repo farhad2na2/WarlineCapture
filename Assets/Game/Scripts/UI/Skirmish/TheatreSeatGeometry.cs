@@ -2070,7 +2070,7 @@ namespace Game.UI.Runtime
             float[] widths = { 160f, 152f, 144f, 136f, 128f };
             for (int i = 0; i < cards.Length; i++)
             {
-                if (cards[i].W < PortraitMinWidth - 0.5f || hexes == null || i >= hexes.Length)
+                if (cards[i].W < FullPortraitMinWidth - 0.5f || hexes == null || i >= hexes.Length)
                     continue;
                 Box best = cards[i];
                 for (int s = 0; s < widths.Length; s++)
@@ -2082,7 +2082,7 @@ namespace Game.UI.Runtime
                     if (tall > PortraitMaxHeight)
                         tall = PortraitMaxHeight;
                     float mid = (tall + cards[i].H) * 0.5f;
-                    float[] heights = { PortraitMaxHeight, tall, mid, cards[i].H };
+                    float[] heights = { tall, mid, cards[i].H };
                     for (int band = 0; band < heights.Length; band++)
                     {
                         float height = heights[band];
@@ -7467,9 +7467,11 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Scales each district about its card centre. Full size is kept when the
-        /// seat is legal, so the blobs fill the plate. A tight seat steps down only
-        /// as far as the 40000 area floor, never to a smaller hex.
+        /// Scales each district about its card centre. 82% when that district's area
+        /// stays above 40000; otherwise the smallest factor the floor allows. A hex
+        /// whose pin or card cannot take that factor steps back toward full size.
+        /// The drawn coast then fills that box, so the outline stays large without
+        /// closing the 12px halo gap.
         /// </summary>
         private static void FitDistrictScales(
             Vec2[][] source,
@@ -7483,18 +7485,19 @@ namespace Game.UI.Runtime
             int selected)
         {
             var pct = new int[hexes.Length];
-            var floorPct = new int[hexes.Length];
             for (int i = 0; i < pct.Length; i++)
             {
                 float area = PolygonArea(source[i]);
                 float floor = area > 1f ? (float)Math.Sqrt(40100f / area) : 1f;
-                int minStep = (int)Math.Ceiling(floor * 100f - 0.001f);
-                if (minStep < 80)
-                    minStep = 80;
-                if (minStep > 100)
-                    minStep = 100;
-                floorPct[i] = minStep;
-                pct[i] = 100;
+                float wanted = floor <= 0.82f ? 0.82f : floor;
+                if (wanted > 1f)
+                    wanted = 1f;
+                int step = (int)Math.Ceiling(wanted * 100f - 0.001f);
+                if (step < 80)
+                    step = 80;
+                if (step > 100)
+                    step = 100;
+                pct[i] = step;
             }
 
             for (int attempt = 0; attempt < 200; attempt++)
@@ -7504,25 +7507,22 @@ namespace Game.UI.Runtime
                 if (DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
                     return;
                 int blame = BlameDistrict(OpenBlock);
-                bool lowered = false;
-                if (blame >= 0 && blame < pct.Length && pct[blame] > floorPct[blame])
+                if (blame < 0 || blame >= pct.Length || pct[blame] >= 100)
                 {
-                    pct[blame]--;
-                    lowered = true;
-                }
-                else
-                {
+                    bool raised = false;
                     for (int i = 0; i < pct.Length; i++)
                     {
-                        if (pct[i] <= floorPct[i])
+                        if (pct[i] >= 100)
                             continue;
-                        pct[i]--;
-                        lowered = true;
+                        pct[i]++;
+                        raised = true;
                     }
-                }
 
-                if (!lowered)
-                    break;
+                    if (!raised)
+                        break;
+                }
+                else
+                    pct[blame]++;
             }
 
             CopyDistricts(source, hexes);

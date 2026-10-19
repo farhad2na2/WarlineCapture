@@ -23,6 +23,7 @@ namespace Game.Editor
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
             Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
         {
+            bool originalFcScope=OriginalFcNormalOriginScope(layout,roles,(string)report["catalogId"]);
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
             if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority)||CompleteGroundBaServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
@@ -226,26 +227,37 @@ namespace Game.Editor
                         continue;
                     }
 
-                    if(!capacityOnly&&normalFacilityOriginExportRequest!=null&&
-                        configuration.Key.Item1==(string)normalFacilityOriginExportRequest["catalogId"]&&
-                        faction==(int)normalFacilityOriginExportRequest["faction"]&&
-                        (string)preferred["structureId"]==(string)normalFacilityOriginExportRequest["structureId"])
+                    if(!capacityOnly&&(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)!=null&&
+                        configuration.Key.Item1==(string)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["catalogId"]&&
+                        faction==(int)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["faction"]&&
+                        (string)preferred["structureId"]==(string)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["structureId"])
                     {
-                        var request=normalFacilityOriginExportRequest;
-                        Require(discoverFacilityPads&&exactTypedRosterCaller&&serviceAuthority!=null&&serviceAvailable[faction],
+                        var captureRequest=normalOriginContextCaptureRequest;
+                        var request=captureRequest??normalFacilityOriginExportRequest;
+                        Require(captureRequest==null||originalFcScope,"Context capture requires exact FC owner");
+                        Require(discoverFacilityPads&&exactTypedRosterCaller&&(serviceAuthority!=null||originalFcScope)&&serviceAvailable[faction],
                             "Actual authoring allocator, exact roster and complete service clearances required");
-                        var expected=((JArray)request["contexts"]).OfType<JObject>().Single(c=>(string)c["size"]==configuration.Key.Item2);
                         var actual=new JObject{["size"]=configuration.Key.Item2,["target"]=NormalOriginFacilityIdentity(result),
                             ["priorReservations"]=new JArray(output.OfType<JObject>().Where(r=>r!=result&&
                                 (string)r["catalogId"]==configuration.Key.Item1&&(string)r["size"]==configuration.Key.Item2).Select(NormalOriginPriorIdentity)),
                             ["qaKeepClear"]=new JArray(serviceKeepClear.Select(RectJson)),["compound"]=RectJson(compound),
                             ["typedPad"]=RectJson(padBounds),["footprint"]=new JArray(geometry.GetPlacementFootprint(definition,false).x,
                                 geometry.GetPlacementFootprint(definition,false).y)};
-                        ValidateNormalOriginContext(expected,actual);
+                        if(captureRequest==null)
+                        {
+                            var expected=((JArray)request["contexts"]).OfType<JObject>().Single(c=>(string)c["size"]==configuration.Key.Item2);
+                            ValidateNormalOriginContext(expected,actual);
+                        }
                         Require(reserved.Count==((JArray)actual["priorReservations"]).Count&&
                             JToken.DeepEquals(new JArray(reserved.Select(RectJson)),
                                 new JArray(((JArray)actual["priorReservations"]).Select(r=>r["rect"].DeepClone()))),
                             "Complete actual prefix order and rectangles required, not independent capacity");
+                        if(captureRequest!=null)
+                        {
+                            result["normalPrefixCapturedContext"]=actual;
+                            result["status"]="CapturedOriginalFcNormalTargetContext_NotSelectedOrConfigurationFit";
+                            complete=false;break; // No target search, finite enumeration, later facilities or packing.
+                        }
                         long domain=(long)compound.width*compound.height;
                         Require(compound.width>0&&compound.height>0&&domain<=(int)request["maximumOriginsPerRow"],
                             "Finite complete origin domain must fit reviewed per-size cap");

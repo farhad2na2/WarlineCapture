@@ -80,10 +80,22 @@ namespace Game.Editor
 
             if(reviewedRouteDeltaProof!=null)
             {
-                Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
-                    completeGroundBaServiceRequested&&!mpGroundBaPilotRequested&&!apGroundJointPreferencesRequested,
-                    "Only explicit prepared generic route clone may enter this replay");
-                ValidateReviewedRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof);
+                bool apReviewed=(string)reviewedRouteDeltaProof["scope"]==ApReviewedReplayScope;
+                if(apReviewed)
+                {
+                    Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
+                        apPairServiceRequested&&apGroundJointPreferencesRequested&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                        !ProtectedRefinementCatalog(owner.Definition.CatalogId),
+                        "Only explicit prepared reviewed AP pair clone may enter this replay");
+                    ValidateReviewedApRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof,grid);
+                }
+                else
+                {
+                    Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
+                        completeGroundBaServiceRequested&&!mpGroundBaPilotRequested&&!apGroundJointPreferencesRequested,
+                        "Only explicit prepared generic route clone may enter this replay");
+                    ValidateReviewedRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof);
+                }
             }
             JObject mpEndpointRevision=null;
             if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid,preparedAuthoring);

@@ -18,6 +18,1598 @@ namespace Game.Editor
 
 
 
+        public static void RunCurrentDependencyGuardedGroundBaCompleteStaticPilot()
+        {
+            const string inputEnv="WARLINE_FULL_GROUND_DEPENDENCY_REQUEST";
+            const string shaEnv="WARLINE_FULL_GROUND_DEPENDENCY_REQUEST_SHA256";
+            const string outputEnv="WARLINE_FULL_GROUND_DEPENDENCY_OUTPUT";
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,
+                "Idle current-dependency complete static pilot scope required");
+            string inputPath=Environment.GetEnvironmentVariable(inputEnv),inputSha=Environment.GetEnvironmentVariable(shaEnv);
+            var inputRef=new JObject{["path"]=inputPath,["sha256"]=inputSha};
+            var request=ReadRecordedQueryProbeJson(inputRef,1048576);
+            RouteDeltaFields(request,"schema","scope","catalogId","sourcePins","canonicalSizeRows","codeSnapshot",
+                "currentDependencyManifest","logicalPadInput","routeDeltaInput","fullReportPath",
+                "sourceFitCertified","missionAccepted","normalMissionReady");
+            string id=(string)request["catalogId"];
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="CurrentDependencyGuardedGroundBaFullStaticRequest_NoReadiness"&&
+                !string.IsNullOrWhiteSpace(id)&&id==Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG"),"Exact current full static request required");
+            foreach(string name in new[]{"sourceFitCertified","missionAccepted","normalMissionReady"})
+                Require(request[name]?.Type==JTokenType.Boolean&&!(bool)request[name],"No request readiness authority");
+            var authority=GroundBa10Rows().Single(x=>(string)x["catalog_id"]==id);
+            ValidateCompleteGroundBaAuthorityRow(authority);
+            var pins=(JObject)GroundBaTemplate(authority)["source_candidate"].DeepClone();
+            Require(JToken.DeepEquals(request["sourcePins"],pins)&&JToken.DeepEquals(request["canonicalSizeRows"],authority["canonical_size_rows"]),
+                "Original source and all three canonical budgets unchanged");
+            var codeRef=request["codeSnapshot"] as JObject;
+            var manifestRef=request["currentDependencyManifest"] as JObject;
+            var manifest=ReadRecordedQueryProbeJson(manifestRef,33554432);
+            var padRef=request["logicalPadInput"] as JObject;
+            var routeRef=request["routeDeltaInput"] as JObject;
+            ReadRecordedQueryProbeJson(padRef,1048576);ReadRecordedQueryProbeJson(routeRef,1048576);
+            string fullOutput=(string)request["fullReportPath"],output=Environment.GetEnvironmentVariable(outputEnv);
+            RecordedQueryProbePath(fullOutput,true);RecordedQueryProbePath(output,true);
+            Require(!string.Equals(System.IO.Path.GetFullPath(fullOutput),System.IO.Path.GetFullPath(output),StringComparison.OrdinalIgnoreCase)&&
+                fullOutput==Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT"),
+                "Distinct exact full pilot and dependency-window outputs required");
+            foreach(string mode in new[]{"WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST","WARLINE_NORMAL_FACILITY_CONTEXT_REQUEST",
+                "WARLINE_FINITE_FACILITY_ORIGIN_REQUEST","WARLINE_FRESH_RECORDED_QUERY_REQUEST","WARLINE_AP_REVIEWED_ROUTE_INPUT"})
+                Require(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(mode)),"Conflicting diagnostic mode refused");
+            var stages=new JArray();
+            var receipt=new JObject{["schema"]=1,["scope"]="CurrentDependencyBracketedGroundBaFullStaticMeasurement_NoReadiness",
+                ["result"]="Incomplete",["catalogId"]=id,["requestPath"]=inputPath,["requestSha256"]=inputSha,
+                ["codeSnapshot"]=codeRef?.DeepClone(),["currentDependencyManifest"]=manifestRef.DeepClone(),
+                ["logicalPadInput"]=padRef.DeepClone(),["routeDeltaInput"]=routeRef.DeepClone(),["fullReportPath"]=fullOutput,
+                ["dependencyChecks"]=stages,["fullPilotReturned"]=false,["dependencyWindowVerified"]=false,
+                ["historicalWorldEquivalent"]=false,["bakedPayloadEquivalenceCertified"]=false,
+                ["bakeAuthority"]="PendingActualConsumedBakeAuthority",["sourceFitCertified"]=false,["missionAccepted"]=false,["normalMissionReady"]=false};
+            void Recheck(string stage)
+            {
+                RecheckFreshDependencyManifest(manifest,pins,codeRef);
+                foreach(var reference in new[]{inputRef,codeRef,manifestRef,padRef,routeRef})
+                {
+                    RecordedQueryProbePath((string)reference["path"],false);
+                    Require(Hash((string)reference["path"])==(string)reference["sha256"],"Full static input evidence changed");
+                }
+                Require(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG")==id&&
+                    Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")==fullOutput&&
+                    Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT")== (string)padRef["path"]&&
+                    Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256")== (string)padRef["sha256"]&&
+                    Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv)== (string)routeRef["path"]&&
+                    Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv)== (string)routeRef["sha256"]&&
+                    Environment.GetEnvironmentVariable(inputEnv)==inputPath&&Environment.GetEnvironmentVariable(shaEnv)==inputSha&&
+                    Environment.GetEnvironmentVariable(outputEnv)==output,"Exact complete pilot inputs/environment unchanged");
+                stages.Add(stage);
+            }
+            Exception finalFailure=null;
+            try
+            {
+                Recheck("beforeFullPilot");
+                RunGroundBaCompleteStaticPilot();
+                receipt["fullPilotReturned"]=true;Recheck("afterFullPilot");
+                receipt["result"]="CompletedFullStaticPilot_CurrentAuthoredDependencyWindow_NoReadiness";
+            }
+            catch(Exception failure)
+            {
+                receipt["result"]="FailedFullStaticPilotOrCurrentDependencyWindow_NoReadiness";
+                receipt["error"]=failure.ToString();throw;
+            }
+            finally
+            {
+                try{Recheck("afterFullPilotCleanup");receipt["dependencyWindowVerified"]=(bool)receipt["fullPilotReturned"]&&
+                    stages.Values<string>().SequenceEqual(new[]{"beforeFullPilot","afterFullPilot","afterFullPilotCleanup"});}
+                catch(Exception failure)
+                {
+                    finalFailure=failure;receipt["dependencyWindowError"]=failure.ToString();
+                    receipt["result"]="FailedFullStaticPilotOrCurrentDependencyWindow_NoReadiness";
+                }
+                WriteFreshDependencyReport(output,receipt);
+                if(finalFailure!=null)throw new InvalidOperationException("Full static dependency window failed; partial receipt retained",finalFailure);
+            }
+            Debug.Log("[CurrentDependencyGuardedGroundBaCompleteStaticPilot] result=Completed dependencyChecks=3 sourceFitCertified=0 normalMissionReady=0 consumedBakeAuthority=Pending");
+        }
+
+        public static void RunReviewedApFcSerializerAndRecordedQuerySubset()
+        {
+            RunReviewedApAndFcAuthoringControlsAndSerializerPreflight();
+            RunRecordedCanonicalRouteQuerySubsetProbe();
+            Debug.Log("[ReviewedApFcSerializerAndRecordedQuerySubset] result=Collected apGroups=19 fcIdentityControls=18 serializedLayouts=2 maximumRecordedQueries=8 fullFitMeasured=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        const string RecordedQueryProbeRequestEnv="WARLINE_RECORDED_QUERY_SUBSET_REQUEST";
+        const string RecordedQueryProbeRequestShaEnv="WARLINE_RECORDED_QUERY_SUBSET_REQUEST_SHA256";
+        static void RecordedQueryProbePath(string path,bool fresh)
+        {
+            string project=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            string logs=System.IO.Path.Combine(project,"Logs","SkirmishProduction")+System.IO.Path.DirectorySeparatorChar;
+            Require(!string.IsNullOrEmpty(path)&&System.IO.Path.IsPathRooted(path)&&
+                !path.Split(System.IO.Path.DirectorySeparatorChar,System.IO.Path.AltDirectorySeparatorChar).Contains(".."),
+                "Exact ordinary owned recorded-query evidence path required");
+            path=System.IO.Path.GetFullPath(path);
+            Require(path.StartsWith(logs,StringComparison.OrdinalIgnoreCase)&&!System.IO.Directory.Exists(path)&&
+                System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path))&&
+                (fresh?!System.IO.File.Exists(path):System.IO.File.Exists(path)),"Fresh output or existing evidence required");
+            string cursor=fresh?System.IO.Path.GetDirectoryName(path):path;
+            while(!string.Equals(cursor,project,StringComparison.OrdinalIgnoreCase))
+            {
+                Require(cursor!=null&&(System.IO.File.GetAttributes(cursor)&System.IO.FileAttributes.ReparsePoint)==0,
+                    "No recorded-query evidence reparse ancestry");cursor=System.IO.Path.GetDirectoryName(cursor);
+            }
+        }
+        static JObject ReadRecordedQueryProbeJson(JObject reference,long maximumBytes)
+        {
+            RouteDeltaFields(reference,"path","sha256");
+            Require(reference["path"]?.Type==JTokenType.String&&reference["sha256"]?.Type==JTokenType.String&&
+                System.Text.RegularExpressions.Regex.IsMatch((string)reference["sha256"],"^[a-f0-9]{64}$"),
+                "Exact recorded-query reference identity required");
+            string path=(string)reference["path"],digest=(string)reference["sha256"];
+            RecordedQueryProbePath(path,false);
+            Require(new System.IO.FileInfo(path).Length>0&&new System.IO.FileInfo(path).Length<=maximumBytes&&Hash(path)==digest,
+                "Bounded pinned recorded-query evidence required");
+            byte[] bytes=System.IO.File.ReadAllBytes(path);
+            Require(RouteDeltaSha(bytes)==digest&&!(bytes.Length>=3&&bytes[0]==239&&bytes[1]==187&&bytes[2]==191),
+                "Exact strict UTF8 recorded-query parsed buffer required");
+            var result=JObject.Parse(new System.Text.UTF8Encoding(false,true).GetString(bytes),
+                new Newtonsoft.Json.Linq.JsonLoadSettings{DuplicatePropertyNameHandling=Newtonsoft.Json.Linq.DuplicatePropertyNameHandling.Error});
+            RecordedQueryProbePath(path,false);Require(Hash(path)==digest,"Recorded-query evidence changed while parsing");return result;
+        }
+        public static void RunRecordedCanonicalRouteQuerySubsetProbe()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&
+                ground30MemoryWriter==null&&!apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&
+                !refinementPreferenceReplay&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&normalFacilityOriginExportRequest==null&&
+                finiteFacilityOriginExportRequest==null&&normalOriginContextCaptureRequest==null&&
+                normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null,"Idle exclusive readonly recorded-query subset required");
+            // No pad/route/AP/FC reader is called. Their environment, if present for a preceding
+            // separate aggregate, is neither consumed nor changed by this dedicated request.
+            string requestPath=Environment.GetEnvironmentVariable(RecordedQueryProbeRequestEnv);
+            string requestSha=Environment.GetEnvironmentVariable(RecordedQueryProbeRequestShaEnv);
+            var requestRef=new JObject{["path"]=requestPath,["sha256"]=requestSha};
+            var request=ReadRecordedQueryProbeJson(requestRef,1048576);
+            RouteDeltaFields(request,"schema","scope","catalogId","size","candidate","pass","sourceReport","failedRoot",
+                "measuredSourceSnapshot","sizeArtifact","sourcePins","canonicalSizeRow","layoutSha256","facilitySignatureSha256",
+                "diagnosticSourceSnapshot","trialSteeringCell","queryIds","maximumNativeQueries","sourceFitCertified","missionAccepted");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="RecordedCanonicalRouteQuerySubset_NotSourceFit"&&
+                (string)request["catalogId"]=="S074"&&(string)request["size"]=="Standard"&&
+                request["candidate"]?.Type==JTokenType.Integer&&(int)request["candidate"]==0&&
+                request["pass"]?.Type==JTokenType.Integer&&(int)request["pass"]==2&&
+                request["maximumNativeQueries"]?.Type==JTokenType.Integer&&(int)request["maximumNativeQueries"]==8&&
+                request["queryIds"] is JArray ids&&ids.Count==5&&ids.All(x=>x.Type==JTokenType.Integer)&&
+                ids.Values<int>().SequenceEqual(new[]{4,5,6,25,41})&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)request["missionAccepted"],
+                "Exact S074 Standard strict2 bounded recorded-query diagnostic request required");
+            var failed=ReadRecordedQueryProbeJson((JObject)request["failedRoot"],1048576);
+            var prior=ReadRecordedQueryProbeJson((JObject)request["sourceReport"],67108864);
+            var snapshot=ReadRecordedQueryProbeJson((JObject)request["measuredSourceSnapshot"],67108864);
+            var artifact=ReadRecordedQueryProbeJson((JObject)request["sizeArtifact"],33554432);
+            var diagnosticSnapshot=ReadRecordedQueryProbeJson((JObject)request["diagnosticSourceSnapshot"],67108864);
+            bool SameRef(JToken first,JToken second)=>first is JObject a&&second is JObject b&&
+                (string)a["sha256"]==(string)b["sha256"]&&string.Equals(System.IO.Path.GetFullPath((string)a["path"]),
+                    System.IO.Path.GetFullPath((string)b["path"]),StringComparison.OrdinalIgnoreCase);
+            Require((int?)failed["sessionId"]==50697&&(bool?)failed["terminal"]==true&&(int?)failed["toolExitCode"]==1&&
+                (int?)failed["wrapperExit"]==1&&(int?)failed["watcherExit"]==0&&(bool?)failed["strictThreeSizesAccepted"]==false&&
+                (bool?)failed["sourceUnchanged"]==true&&(bool?)failed["ownedShutdownVerified"]==true&&
+                SameRef(failed["refs"]?["refinement.json"],request["sourceReport"])&&
+                SameRef(failed["refs"]?["source-after.json"],request["measuredSourceSnapshot"])&&
+                (string)failed["sourceCandidate"]==(string)snapshot["candidate_sha256"]&&
+                (string)failed["buildAfter"]==(string)snapshot["build_sha256"],"Exact failed50697 provenance; no passed-fit transfer");
+            var missionReport=((JArray)prior["missions"]).OfType<JObject>().Single(m=>(string)m["catalogId"]=="S074");
+            var diagnostic=(JObject)missionReport["measurement"];var replays=(JArray)diagnostic["nativePreferenceReplays"];
+            Require((bool?)prior["cleanupVerified"]==true&&(bool?)prior["sourcePinsRecheckedAfterMeasurement"]==true&&
+                replays.Count==1&&(int?)replays[0]["candidate"]==0,"One original measured candidate with cleanup required");
+            var measured=(JObject)replays[0]["measurement"];
+            var pass=((JArray)measured["passes"]).OfType<JObject>().Single(x=>(int)x["pass"]==2);
+            var recorded=((JArray)pass["sizes"]).OfType<JObject>().Single(x=>(string)x["size"]=="Standard");
+            var sizeRef=((JArray)missionReport["sizeArtifacts"]).OfType<JObject>().Single(x=>(int)x["pass"]==2&&(string)x["size"]=="Standard");
+            Require((bool?)pass["discoveryOnly"]==false&&SameRef(sizeRef,request["sizeArtifact"])&&
+                JToken.DeepEquals(artifact["facts"],recorded)&&(int?)artifact["candidateLocalPass"]==2&&
+                (int?)artifact["preferenceCandidate"]==0,"Whole actual Standard strict2 durable facts required");
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S074");
+            Require(authority["protected_binding"]?.Type==JTokenType.Null&&JToken.DeepEquals(request["canonicalSizeRow"],
+                ((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(x=>(string)x["size_id"]=="Standard")),
+                "Exact own unchanged Standard canonical budget authority required");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            var pins=(JObject)template["source_candidate"];
+            Require(JToken.DeepEquals(pins,request["sourcePins"])&&JToken.DeepEquals(pins,prior["sourcePins"])&&
+                JToken.DeepEquals(pins,measured["sourcePins"]),"Exact recorded/current immutable physical source required");
+            string layoutJson=(string)measured["proposedLayoutJson"];
+            Require(request["layoutSha256"]?.Type==JTokenType.String&&RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(layoutJson))==
+                (string)request["layoutSha256"],"Exact recorded final layout bytes required; no route mutation");
+            var measuredMap=((JArray)snapshot["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"],StringComparer.Ordinal);
+            var diagnosticMap=((JArray)diagnosticSnapshot["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"],StringComparer.Ordinal);
+            string[] ownedDiagnosticPaths={
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs"};
+            Require(measuredMap.Keys.OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(diagnosticMap.Keys.OrderBy(x=>x,StringComparer.Ordinal))&&
+                measuredMap.Where(x=>x.Value!=diagnosticMap[x.Key]).Select(x=>x.Key).OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(ownedDiagnosticPaths.OrderBy(x=>x,StringComparer.Ordinal))&&
+                (string)diagnosticSnapshot["candidate_sha256"]!=(string)snapshot["candidate_sha256"],
+                "Separate current diagnostic source snapshot; exact reviewed three-file change only, no old code qualification");
+            string[] dependencyRoots={(string)pins["sourcePath"],(string)pins["gridPath"],(string)pins["surfacePath"],
+                AssetDatabase.GUIDToAssetPath((string)pins["authoredSubSceneGuid"]),Support};
+            Require(dependencyRoots.All(x=>!string.IsNullOrEmpty(x)&&x.StartsWith("Assets/",StringComparison.Ordinal)),"Exact source/streaming dependency roots");
+            var dependencyPaths=AssetDatabase.GetDependencies(dependencyRoots,true).Where(x=>x.StartsWith("Assets/",StringComparison.Ordinal)&&
+                !x.EndsWith(".cs",StringComparison.Ordinal)&&!x.EndsWith(".dll",StringComparison.Ordinal)).SelectMany(x=>new[]{x,x+".meta"})
+                .Distinct(StringComparer.Ordinal).OrderBy(x=>x,StringComparer.Ordinal).ToArray();
+            Require(dependencyPaths.Length>0,"Nonempty actual source/streaming data dependency closure");
+            void Recheck()
+            {
+                foreach(string path in dependencyPaths)
+                    Require(measuredMap.TryGetValue(path,out string oldSha)&&diagnosticMap.TryGetValue(path,out string currentSha)&&
+                        oldSha==currentSha&&Hash(path)==oldSha,"Measured/current source streaming data dependency changed");
+                foreach(string path in ownedDiagnosticPaths)Require(Hash(path)==diagnosticMap[path],"Current diagnostic source differs from controller snapshot");
+                foreach(JObject reference in new[]{requestRef,(JObject)request["failedRoot"],(JObject)request["sourceReport"],
+                    (JObject)request["measuredSourceSnapshot"],(JObject)request["sizeArtifact"],(JObject)request["diagnosticSourceSnapshot"]})
+                {RecordedQueryProbePath((string)reference["path"],false);Require(Hash((string)reference["path"])==(string)reference["sha256"],"Recorded subset evidence changed");}
+            }
+            Recheck();
+            string sourcePath=(string)pins["sourcePath"],gridPath=(string)pins["gridPath"],surfacePath=(string)pins["surfacePath"];
+            Require(Hash(sourcePath)==(string)pins["sourceAssetSha256"]&&Hash(gridPath)==(string)pins["gridAssetSha256"]&&
+                Hash(surfacePath)==(string)pins["surfaceAssetSha256"],"Pinned source/grid/surface unchanged");
+            var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            Require(source!=null&&!EditorUtility.IsDirty(source)&&source.OperationMapId==(string)pins["operationMapId"]&&
+                source.SourceIdentityHash==(string)pins["sourceIdentityHash"]&&source.ContentHash==(string)pins["contentHash"]&&
+                source.SourceSceneReference.AssetGUID==(string)pins["sourceSceneGuid"]&&
+                source.NavigationMetadata.AuthoredSubSceneGuid==(string)pins["authoredSubSceneGuid"]&&
+                AssetDatabase.GUIDToAssetPath(source.GridMetadata.AssetGuid)==gridPath&&source.MapSurfaceDataReference!=null&&
+                AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID)==surfacePath,"Current exact clean Campaign physical source");
+            string output=Environment.GetEnvironmentVariable("WARLINE_RECORDED_QUERY_SUBSET_OUTPUT");RecordedQueryProbePath(output,true);
+            var worlds=CaptureMaterializationWorldCensus();var defaultWorld=World.DefaultGameObjectInjectionWorld;var scenes=Ground30SceneOwnership();
+            var result=new JObject{["schema"]=1,["scope"]="RecordedCanonicalRouteQuerySubset_NotSourceFit",["result"]="Incomplete",
+                ["failedRoot"]=request["failedRoot"].DeepClone(),["measuredSourceCandidate"]=snapshot["candidate_sha256"].DeepClone(),
+                ["measuredBuild"]=snapshot["build_sha256"].DeepClone(),["diagnosticSourceCandidate"]=diagnosticSnapshot["candidate_sha256"].DeepClone(),
+                ["diagnosticSourceSnapshot"]=request["diagnosticSourceSnapshot"].DeepClone(),["queryScratchPolicy"]="FreshWorkspacePerOriginalQueryPathCall_NoOrdinalState",["unrelatedOverrideEnvironmentConsumed"]=false,
+                ["controlInterpretation"]="q4/q6 direct-shortcut observations do not prove middle clearance; q41 changes faction as well as direction",
+                ["guard9Meaning"]="BudgetStopOn451stUnclosedPopBeforeGoalTest_Not451ExpandedOrNoPathProof",["requestPath"]=requestPath,["requestSha256"]=requestSha,
+                ["queryResults"]=new JArray(),["trialQueryResults"]=new JArray(),["maximumNativeQueries"]=8,["fullFitMeasured"]=false,["normalCompilerQualified"]=false,
+                ["context24Executed"]=0,["sourceFitCertified"]=false,["normalMissionReady"]=false,["missionAccepted"]=false};
+            bool controlsMatched=true;int calls=0;
+            try
+            {
+                using(var world=StreamingWorld())
+                {
+                    Load(world,source.NavigationMetadata.AuthoredSubSceneGuid);Load(world,AssetDatabase.AssetPathToGUID(Support));
+                    using var runtimeSurface=PublishMissingPinnedSurface(world,source,surfacePath,result);var em=world.EntityManager;
+                    using var grids=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),typeof(GridRoad));
+                    using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                    Require(grids.CalculateEntityCount()==1&&surfaces.CalculateEntityCount()==1,"Unique actual native grid/surface");
+                    var ge=grids.GetSingletonEntity();var grid=grids.GetSingleton<GridConfig>();var surface=surfaces.GetSingleton<MapSurfaceComponent>();
+                    var ng=prior["nativeGridIdentity"]["grid"];
+                    Require(grid.Width==(int)ng["width"]&&grid.Height==(int)ng["height"]&&grid.CellSize==(float)ng["cellSize"]&&
+                        grid.Origin.x==(float)ng["originXZ"][0]&&grid.Origin.z==(float)ng["originXZ"][1]&&
+                        grid.Width==source.GridMetadata.Dimensions.x&&grid.Height==source.GridMetadata.Dimensions.y&&
+                        grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin)&&
+                        surface.HasSurfaceData!=0&&surface.SurfaceBlob.IsCreated&&surface.Dimensions.Equals(new int2(grid.Width,grid.Height))&&
+                        surface.CellSize==grid.CellSize&&math.all(surface.GridOrigin==grid.Origin),"Exact historical/current loaded native grid/surface");
+                    Require(TryCreateGroundBa10Candidate(candidate,source,out var owner,out string error),error);
+                    using(owner)
+                    {
+                        string original=JsonUtility.ToJson(owner.Layout);
+                        try
+                        {
+                            JsonUtility.FromJsonOverwrite(layoutJson,owner.Layout);
+                            Require(JsonUtility.ToJson(owner.Layout)==layoutJson&&owner.Definition.CampaignMap==source&&
+                                owner.Definition.MapLayout==owner.Layout&&owner.Layout.WorldBinding.SourceHash==source.ContentHash,
+                                "Exact recorded layout on disposable current factory only");
+                            Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
+                            Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,1,
+                                new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                                budget.ExactCanonicalQuantities,"Exact current own Standard budget: "+string.Join(";",reasons));
+                            var budgetKey=JObject.Parse(ApPreferenceBudgetKey(budget).ToString(Newtonsoft.Json.Formatting.None));
+                            Require(JToken.DeepEquals(budgetKey,((JArray)diagnostic["reviewedLogicalPadBudgets"]).OfType<JObject>().Single(x=>(string)x["size"]=="Standard")),
+                                "Current canonical budget equals recorded own budget");
+                            var signature=RecordedFacilitySignature(recorded,budget,grid);
+                            Require(signature.Count==20&&request["facilitySignatureSha256"]?.Type==JTokenType.String&&
+                                RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(signature.ToString(Newtonsoft.Json.Formatting.None)))==
+                                (string)request["facilitySignatureSha256"],"Exact measured complete facility signature");
+                            using var blockers=new Unity.Collections.NativeBitArray(grid.Width*grid.Height,Unity.Collections.Allocator.Persistent,Unity.Collections.NativeArrayOptions.ClearMemory);
+                            Ground30OccupyFacilities((JArray)recorded["normalFacilityRelocationProposals"],grid,blockers);
+                            var priorQueries=(JArray)recorded["routeQueriesWithSameFacilityReservations"]["queries"];
+                            var roleRefs=(JArray)recorded["routeQueriesWithSameFacilityReservations"]["roleReferences"];
+                            var packed=(JArray)recorded["postFacilityForcePacking"];
+                            foreach(int id in ((JArray)request["queryIds"]).Values<int>())
+                            {
+                                Require(id>=0&&id<priorQueries.Count&&++calls<=5,"Exact bounded selected query");
+                                var priorQuery=(JObject)priorQueries[id];
+                                var role=roleRefs.OfType<JObject>().First(x=>(int?)x["nativeQueryId"]==id);
+                                int forceIndex=(int)role["forceIndex"];Require(forceIndex>=0&&forceIndex<budget.Forces.Length,"Actual force index");
+                                var force=budget.Forces[forceIndex];var actualPacked=packed.OfType<JObject>().Single(x=>(int)x["forceIndex"]==forceIndex);
+                                Require(force.FactionId==(byte)actualPacked["faction"]&&force.RoleId==(string)actualPacked["roleId"]&&
+                                    force.RuntimePrefabKey==(string)actualPacked["runtimePrefabKey"]&&force.Quantity==(int)actualPacked["requestedCount"],
+                                    "Actual recorded/current canonical force identity");
+                                var prefab=FindNativePrefab(em,force.RuntimePrefabKey);
+                                Require(prefab!=Entity.Null&&em.HasComponent<UnitFootprint>(prefab)&&em.HasComponent<UnitMovementBehavior>(prefab)&&
+                                    !em.HasComponent<UnitAirMovement>(prefab),"Actual native ground prefab");
+                                var footprint=em.GetComponentData<UnitFootprint>(prefab).Size;var behavior=em.GetComponentData<UnitMovementBehavior>(prefab);
+                                var from=new int2((int)priorQuery["fromCell"][0],(int)priorQuery["fromCell"][1]);
+                                var to=new int2((int)priorQuery["toCell"][0],(int)priorQuery["toCell"][1]);
+                                Require((int?)priorQuery["queryId"]==id&&
+                                    Ground30PathQueryKey(force.FactionId,footprint,behavior,from,to)==(string)priorQuery["exactInputKey"],
+                                    "Exact faction/footprint/behavior/direction/endpoints");
+                                var observed=new JObject{["historicalQueryId"]=id,["forceIndex"]=forceIndex,["size"]="Standard",
+                                    ["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y),
+                                    ["exactInputKey"]=priorQuery["exactInputKey"].DeepClone()};
+                                QueryPath(em,ge,grid,surface,prefab,from,to,observed,force.FactionId,blockers);
+                                string[] compare={"status","failureCode","expansions","pathCells","footprintX","footprintZ","nativeQueryFaction","plannedFacilityBlockerScope","dynamicBlockersIncluded","liveOccupancyIncluded"};
+                                bool matched=compare.All(k=>priorQuery[k]!=null&&observed[k]!=null&&JToken.DeepEquals(priorQuery[k],observed[k]));
+                                observed["historicalObservationMatched"]=matched;observed["historicalStatus"]=priorQuery["status"].DeepClone();
+                                if(id!=5)controlsMatched&=matched;
+                                ((JArray)result["queryResults"]).Add(observed);
+                            }
+                            var q5=(JObject)priorQueries[5];var q5Role=roleRefs.OfType<JObject>().First(x=>(int?)x["nativeQueryId"]==5);
+                            var q5Force=budget.Forces[(int)q5Role["forceIndex"]];var q5Prefab=FindNativePrefab(em,q5Force.RuntimePrefabKey);
+                            var q5From=new int2((int)q5["fromCell"][0],(int)q5["fromCell"][1]);var q5To=new int2((int)q5["toCell"][0],(int)q5["toCell"][1]);
+                            Require(q5Force.FactionId==1&&em.GetComponentData<UnitFootprint>(q5Prefab).Size.Equals(new int2(1,1))&&
+                                em.GetComponentData<UnitMovementBehavior>(q5Prefab).UsesVehicleMotion==0,"Exact faction1 infantry q5 profile required");
+                            var reverse=new JObject{["scope"]="SamePrefabBehaviorFlagsFaction1_EndpointReversalOnly",
+                                ["fromCell"]=new JArray(q5To.x,q5To.y),["toCell"]=new JArray(q5From.x,q5From.y)};
+                            Require(++calls<=8,"Bounded same-faction reverse query");
+                            QueryPath(em,ge,grid,surface,q5Prefab,q5To,q5From,reverse,q5Force.FactionId,blockers);
+                            ((JArray)result["queryResults"]).Add(reverse);
+                            if(request["trialSteeringCell"]?.Type!=JTokenType.Null)
+                            {
+                                var steering=request["trialSteeringCell"] as JArray;
+                                Require(steering!=null&&steering.Count==2&&steering.All(x=>x.Type==JTokenType.Integer),"Optional one integer steering cell only");
+                                var mid=new int2((int)steering[0],(int)steering[1]);var vehicle=(JObject)priorQueries[25];
+                                var path=vehicle["pathCells"] as JArray;bool onSegment=false;
+                                Require((string)vehicle["status"]=="NativeQueryFoundExactGoal"&&(int?)vehicle["footprintX"]==3&&
+                                    (int?)vehicle["footprintZ"]==3&&(int?)vehicle["nativeQueryFaction"]==1&&path!=null&&path.Count>=2,
+                                    "Actual same-faction successful3x3 q25 compressed centerline required");
+                                for(int i=1;i<path.Count;i++)
+                                {
+                                    var first=new int2((int)path[i-1][0],(int)path[i-1][1]);var last=new int2((int)path[i][0],(int)path[i][1]);
+                                    long cross=(long)(mid.x-first.x)*(last.y-first.y)-(long)(mid.y-first.y)*(last.x-first.x);
+                                    if(cross==0&&mid.x>=math.min(first.x,last.x)&&mid.x<=math.max(first.x,last.x)&&
+                                        mid.y>=math.min(first.y,last.y)&&mid.y<=math.max(first.y,last.y))onSegment=true;
+                                }
+                                float2 a=new float2(q5From.x,q5From.y),z=new float2(q5To.x,q5To.y),m=new float2(mid.x,mid.y);
+                                float progress=math.dot(m-a,z-a)/math.lengthsq(z-a);
+                                float distance=math.distance(m,math.lerp(a,z,math.clamp(progress,0f,1f)))*grid.CellSize;
+                                Require(onSegment&&progress>0f&&progress<1f&&distance<=32.0001f&&mid.x>=0&&mid.y>=0&&mid.x<grid.Width&&mid.y<grid.Height&&
+                                    RouteDeltaFootprintInsideFrame(owner.Layout,grid,mid),
+                                    "Trial inside actual q25 segment/original q5 span32m/frame; no source-clearance inference");
+                                foreach(bool first in new[]{true,false})
+                                {
+                                    var from=first?q5From:mid;var to=first?mid:q5To;
+                                    var trial=new JObject{["scope"]="OptionalQ5EndpointSubstitutionOnly_NotRouteConfiguration",
+                                        ["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y)};
+                                    Require(++calls<=8,"At most two optional split queries");
+                                    QueryPath(em,ge,grid,surface,q5Prefab,from,to,trial,q5Force.FactionId,blockers);
+                                    ((JArray)result["trialQueryResults"]).Add(trial);
+                                }
+                            }
+                            Require(calls==(request["trialSteeringCell"].Type==JTokenType.Null?6:8)&&JToken.DeepEquals(signature,RecordedFacilitySignature(recorded,budget,grid))&&
+                                JsonUtility.ToJson(owner.Layout)==layoutJson,"Complete unchanged subset/facility/layout");
+                            result["facilitySignature"]=signature;result["nativeQueries"]=calls;result["controlQueriesMatched"]=controlsMatched;
+                            Require(controlsMatched,"Historical control drift; preserve failed diagnostic without marker");
+                            result["result"]="CollectedRecordedSubset_NoFit";
+                        }
+                        finally{JsonUtility.FromJsonOverwrite(original,owner.Layout);Require(JsonUtility.ToJson(owner.Layout)==original,"Original disposable factory layout restored");}
+                    }
+                }
+            }
+            catch(Exception failure){result["error"]=failure.ToString();result["result"]="FailedRecordedSubset_NoFit";throw;}
+            finally
+            {
+                bool restored=worlds.SequenceEqual(CaptureMaterializationWorldCensus())&&ReferenceEquals(defaultWorld,World.DefaultGameObjectInjectionWorld)&&
+                    JToken.DeepEquals(scenes,Ground30SceneOwnership())&&!EditorUtility.IsDirty(source)&&Hash(sourcePath)==(string)pins["sourceAssetSha256"]&&
+                    Hash(gridPath)==(string)pins["gridAssetSha256"]&&Hash(surfacePath)==(string)pins["surfaceAssetSha256"];
+                Recheck();result["cleanupVerified"]=restored;RecordedQueryProbePath(output,true);
+                using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+                {byte[] bytes=new System.Text.UTF8Encoding(false).GetBytes(result.ToString(Newtonsoft.Json.Formatting.None));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
+                Require(restored,"Recorded-query world/default/scene/source cleanup required");
+            }
+            Require(controlsMatched,"Historical readonly control query drift retained; no subset qualification");
+            Debug.Log("[RecordedCanonicalRouteQuerySubset] result=Collected originalQueries=5 sameFactionReverse=1 trialQueries="+((JArray)result["trialQueryResults"]).Count+" controlQueries=4 sourceFitCertified=0 normalMissionReady=0 fullFitMeasured=0");
+        }
+
+
+
+
+
+
+        public static void RunCurrentDependencyControlsAndCapture()
+        {
+            RunCurrentRecordedDependencyControls();
+            CaptureCurrentRecordedQueryDependencyManifest();
+            Debug.Log("[CurrentDependencyControlsAndCapture] result=Collected controls=13 worldsCreated=0 nativeQueries=0 historicalWorldEquivalent=0 sourceFitCertified=0");
+        }
+
+
+        const string FreshDependencyScope="CurrentRecordedQueryDependencyManifest_NoHistoricalWorldEquivalence";
+        static string[] FreshRecordedDependencyRoots(JObject pins)
+        {
+            var roots=new[]{(string)pins["sourcePath"],(string)pins["gridPath"],(string)pins["surfacePath"],
+                AssetDatabase.GUIDToAssetPath((string)pins["authoredSubSceneGuid"]),Support};
+            Require(roots.All(p=>!string.IsNullOrEmpty(p)&&p.StartsWith("Assets/",StringComparison.Ordinal)),
+                "Exact current source/grid/surface/subscene/Support roots");
+            return roots;
+        }
+        static string[] FreshRecordedDependencyPaths(string[] roots)
+        {
+            var all=AssetDatabase.GetDependencies(roots,true);
+            Require(all!=null&&all.Length>0&&all.Length<=65536,"Finite complete current dependency membership; no truncation");
+            return all.SelectMany(p=>new[]{p,p+".meta"}).Distinct(StringComparer.Ordinal).OrderBy(p=>p,StringComparer.Ordinal).ToArray();
+        }
+        static void FreshDependencyOrdinaryFile(string path)
+        {
+            Require(System.IO.Path.IsPathRooted(path)&&!path.Split(System.IO.Path.DirectorySeparatorChar,
+                System.IO.Path.AltDirectorySeparatorChar).Contains("..")&&System.IO.File.Exists(path)&&
+                !System.IO.Directory.Exists(path),"Ordinary rooted existing dependency payload");
+            string cursor=System.IO.Path.GetFullPath(path);
+            while(cursor!=null)
+            {
+                Require((System.IO.File.GetAttributes(cursor)&System.IO.FileAttributes.ReparsePoint)==0,
+                    "No dependency payload or ancestor reparse point");
+                cursor=System.IO.Path.GetDirectoryName(cursor);
+            }
+        }
+        static void ValidateFreshDependencyRows(JArray rows,string[] expectedPaths)
+        {
+            Require(rows!=null&&rows.Count==expectedPaths.Length&&rows.Count<=131072,
+                "Complete finite dependency rows, never a truncated prefix");
+            var seen=new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            for(int i=0;i<rows.Count;i++)
+            {
+                var row=rows[i] as JObject;RouteDeltaFields(row,"assetPath","physicalPath","sha256","bytes");
+                Require(row["assetPath"]?.Type==JTokenType.String&&(string)row["assetPath"]==expectedPaths[i]&&
+                    seen.Add((string)row["assetPath"])&&row["physicalPath"]?.Type==JTokenType.String&&
+                    System.IO.Path.IsPathRooted((string)row["physicalPath"])&&
+                    row["sha256"]?.Type==JTokenType.String&&System.Text.RegularExpressions.Regex.IsMatch((string)row["sha256"],"^[a-f0-9]{64}$")&&
+                    row["bytes"]?.Type==JTokenType.Integer&&(long)row["bytes"]>=0,
+                    "Exact typed unique current payload/meta row");
+            }
+        }
+        // Same public physical-resolution pattern as SkirmishAircraftRootProvenance.DependencyPin;
+        // its helper is private to another class, so this strict consumer retains explicit refusal.
+        static string FreshDependencyPhysicalPath(string assetPath,JArray unsupported)
+        {
+            string project=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            if(string.IsNullOrEmpty(assetPath)||assetPath.Contains("\\")||System.IO.Path.IsPathRooted(assetPath)||assetPath.Split('/').Contains(".."))
+            {unsupported.Add(new JObject{["path"]=assetPath,["reason"]="LexicalTraversal"});return null;}
+            if(assetPath.StartsWith("Assets/",StringComparison.Ordinal))
+                return System.IO.Path.GetFullPath(System.IO.Path.Combine(project,assetPath));
+            if(assetPath.StartsWith("Packages/",StringComparison.Ordinal))
+            {
+                string lookup=assetPath.EndsWith(".meta",StringComparison.Ordinal)?assetPath.Substring(0,assetPath.Length-5):assetPath;
+                var package=UnityEditor.PackageManager.PackageInfo.FindForAssetPath(lookup);
+                if(package!=null&&!string.IsNullOrEmpty(package.resolvedPath)&&!string.IsNullOrEmpty(package.assetPath))
+                {
+                    string prefix=package.assetPath.TrimEnd('/')+"/";
+                    if(assetPath.StartsWith(prefix,StringComparison.Ordinal))
+                    {
+                        string resolved=System.IO.Path.GetFullPath(package.resolvedPath);
+                        string physical=System.IO.Path.GetFullPath(System.IO.Path.Combine(resolved,assetPath.Substring(prefix.Length)));
+                        if(physical.StartsWith(resolved.TrimEnd(System.IO.Path.DirectorySeparatorChar)+System.IO.Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
+                            return physical;
+                    }
+                }
+            }
+            unsupported.Add(new JObject{["path"]=assetPath,["reason"]="VirtualBuiltinOrUnresolvedPackagePhysicalAuthority"});
+            return null;
+        }
+        static JArray FreshImporterAuthorities(string[] roots)
+        {
+            var paths=AssetDatabase.GetDependencies(roots,true).Distinct(StringComparer.Ordinal).OrderBy(x=>x,StringComparer.Ordinal);
+            var rows=new JArray();
+            foreach(string path in paths)
+            {
+                var importer=AssetImporter.GetAtPath(path);
+                var row=new JObject{["assetPath"]=path,["guid"]=AssetDatabase.AssetPathToGUID(path),
+                    ["dependencyHash"]=AssetDatabase.GetAssetDependencyHash(path).ToString(),
+                    ["importerType"]=(importer==null?null:importer.GetType().AssemblyQualifiedName),["importerStatus"]=(importer==null?"Absent":"ObservedPublicTypeOnly")};
+                if(path.StartsWith("Packages/",StringComparison.Ordinal))
+                {
+                    var package=UnityEditor.PackageManager.PackageInfo.FindForAssetPath(path);
+                    if(package!=null&&!string.IsNullOrEmpty(package.resolvedPath))row["package"]=new JObject{["name"]=package.name,["version"]=package.version,["source"]=package.source.ToString(),
+                        ["assetPath"]=package.assetPath,["resolvedPath"]=System.IO.Path.GetFullPath(package.resolvedPath)};
+                }
+                rows.Add(row);
+            }
+            return rows;
+        }
+        static JArray FreshDependencyEnvironmentFiles(string[] roots)
+        {
+            string project=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            var paths=new SortedSet<string>(StringComparer.Ordinal){
+                System.IO.Path.Combine(project,"Packages","manifest.json"),System.IO.Path.Combine(project,"Packages","packages-lock.json"),
+                System.IO.Path.Combine(project,"ProjectSettings","ProjectVersion.txt")};
+            foreach(string path in AssetDatabase.GetDependencies(roots,true))
+                if(path.StartsWith("Packages/",StringComparison.Ordinal))
+                {
+                    var package=UnityEditor.PackageManager.PackageInfo.FindForAssetPath(path);
+                    if(package!=null&&!string.IsNullOrEmpty(package.resolvedPath))paths.Add(System.IO.Path.Combine(System.IO.Path.GetFullPath(package.resolvedPath),"package.json"));
+                }
+            var rows=new JArray();
+            foreach(string path in paths)
+            {
+                FreshDependencyOrdinaryFile(path);
+                rows.Add(new JObject{["physicalPath"]=path,["sha256"]=Hash(path),["bytes"]=new System.IO.FileInfo(path).Length});
+            }
+            return rows;
+        }
+        static JArray CaptureFreshDependencyRows(string[] paths,JArray unsupported)
+        {
+            var rows=new JArray();
+            foreach(string path in paths)
+            {
+                string physical=FreshDependencyPhysicalPath(path,unsupported);if(physical==null)continue;
+                if(!System.IO.File.Exists(physical)||System.IO.Directory.Exists(physical))
+                {unsupported.Add(new JObject{["path"]=path,["reason"]="RequiredDependencyPayloadOrMetaAbsent"});continue;}
+                FreshDependencyOrdinaryFile(physical);long length=new System.IO.FileInfo(physical).Length;
+                Require(length<=1073741824,"Bounded dependency payload bytes, never truncation");
+                string before=Hash(physical);
+                Require(new System.IO.FileInfo(physical).Length==length&&Hash(physical)==before,"Stable current dependency payload during capture");
+                rows.Add(new JObject{["assetPath"]=path,["physicalPath"]=physical,["sha256"]=before,["bytes"]=length});
+            }
+            return rows;
+        }
+        static void WriteFreshDependencyReport(string output,JObject report)
+        {
+            byte[] data=new System.Text.UTF8Encoding(false).GetBytes(report.ToString(Newtonsoft.Json.Formatting.None));
+            Require(data.Length<=33554432,"Bounded complete manifest/report bytes; never truncate");
+            RecordedQueryProbePath(output,true);
+            using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+            {
+                stream.Write(data,0,data.Length);stream.Flush(true);
+            }
+            RecordedQueryProbePath(output,false);
+            Require(Hash(output)==RouteDeltaSha(data),"Durable exact serialized report buffer");
+        }
+        public static void CaptureCurrentRecordedQueryDependencyManifest()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&
+                ground30MemoryWriter==null&&!apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&
+                !refinementPreferenceReplay&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&normalFacilityOriginExportRequest==null&&
+                finiteFacilityOriginExportRequest==null&&normalOriginContextCaptureRequest==null&&
+                normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null,"Idle exclusive noWorld dependency capture required");
+            string requestPath=Environment.GetEnvironmentVariable("WARLINE_CURRENT_QUERY_DEPENDENCY_REQUEST");
+            var requestRef=new JObject{["path"]=requestPath,["sha256"]=Environment.GetEnvironmentVariable("WARLINE_CURRENT_QUERY_DEPENDENCY_REQUEST_SHA256")};
+            var request=ReadRecordedQueryProbeJson(requestRef,1048576);
+            RouteDeltaFields(request,"schema","scope","catalogId","sourcePins","canonicalSizeRow","codeSnapshot","sourceFitCertified","missionAccepted");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="CurrentRecordedQueryDependencyCaptureRequest_NoWorld"&&(string)request["catalogId"]=="S074"&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)request["missionAccepted"],"Exact current dependency capture request");
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S074");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            Require(JToken.DeepEquals(template["source_candidate"],request["sourcePins"])&&
+                JToken.DeepEquals(((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(x=>(string)x["size_id"]=="Standard"),
+                    request["canonicalSizeRow"]),"Immutable own source/canonical budget identity");
+            var code=ReadRecordedQueryProbeJson((JObject)request["codeSnapshot"],67108864);
+            var codeMap=((JArray)code["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"]);
+            foreach(string name in new[]{"FacilityPreferences","SimultaneousRefinement","PilotFacilityRelocation"})
+            {
+                string path="Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey."+name+".cs";
+                Require(codeMap.TryGetValue(path,out var expected)&&Hash(path)==expected,"Actual current three diagnostic source snapshot bytes");
+            }
+            var pins=(JObject)request["sourcePins"];var roots=FreshRecordedDependencyRoots(pins);
+            var worlds=CaptureMaterializationWorldCensus();var defaultWorld=World.DefaultGameObjectInjectionWorld;var scenes=Ground30SceneOwnership();
+            var unsupported=new JArray();var paths=FreshRecordedDependencyPaths(roots);
+            var importersBefore=FreshImporterAuthorities(roots);var environment=FreshDependencyEnvironmentFiles(roots);
+            var rows=CaptureFreshDependencyRows(paths,unsupported);
+            Require(JToken.DeepEquals(importersBefore,FreshImporterAuthorities(roots)),"Dependency/import authority stable during capture");
+            var report=new JObject{["schema"]=1,["scope"]=FreshDependencyScope,["request"]=request.DeepClone(),
+                ["requestPath"]=requestPath,["requestSha256"]=requestRef["sha256"],["sourcePins"]=pins.DeepClone(),
+                ["codeSnapshot"]=request["codeSnapshot"].DeepClone(),["currentSourceCandidate"]=code["candidate_sha256"].DeepClone(),
+                ["currentBuildBefore"]=code["build_sha256"].DeepClone(),["roots"]=new JArray(roots),["dependencyPaths"]=new JArray(paths),
+                ["rows"]=rows,["unsupported"]=unsupported,["importerAuthorities"]=importersBefore,["environmentFiles"]=environment,
+                ["bakeAuthority"]=new JObject{["status"]="PendingActualConsumedBakeAuthority",["reason"]="No supported no-import public SubScene consumed artifact identity; dependencyHash/importer type are not bake proof"},
+                ["worldsCreated"]=0,["nativeQueries"]=0,
+                ["historicalWorldEquivalent"]=false,["bakedPayloadEquivalenceCertified"]=false,
+                ["sourceFitCertified"]=false,["missionAccepted"]=false,["normalMissionReady"]=false};
+            report["result"]=unsupported.Count==0?"CapturedCurrentAuthoredDependencyClosure_NoWorld":"UnsupportedDependencyAuthority";
+            if(unsupported.Count==0)
+            {
+                ValidateFreshDependencyRows(rows,paths);RecheckFreshDependencyManifest(report,pins,(JObject)request["codeSnapshot"]);
+            }
+            Require(Hash(requestPath)==(string)requestRef["sha256"],"Dependency capture request stable");
+            Require(worlds.SequenceEqual(CaptureMaterializationWorldCensus())&&ReferenceEquals(defaultWorld,World.DefaultGameObjectInjectionWorld)&&
+                JToken.DeepEquals(scenes,Ground30SceneOwnership()),"NoWorld capture preserves actual World/default/scene census");
+            WriteFreshDependencyReport(Environment.GetEnvironmentVariable("WARLINE_CURRENT_QUERY_DEPENDENCY_OUTPUT"),report);
+            Require(unsupported.Count==0,"Unsupported current dependency authorities are reported, never omitted");
+            Debug.Log("[CurrentRecordedQueryDependencyManifest] result=Collected worldsCreated=0 nativeQueries=0 historicalWorldEquivalent=0 sourceFitCertified=0");
+        }
+        static void VerifyFreshDependencyPayload(JObject row,string physical)
+        {
+            FreshDependencyOrdinaryFile(physical);
+            Require(new System.IO.FileInfo(physical).Length==(long)row["bytes"]&&Hash(physical)==(string)row["sha256"],
+                "Current dependency payload changed; no historical hash substitution");
+        }
+        static void ValidateFreshDependencyClaimFlags(JObject manifest)
+        {
+            foreach(string field in new[]{"historicalWorldEquivalent","bakedPayloadEquivalenceCertified","sourceFitCertified","missionAccepted","normalMissionReady"})
+                Require(manifest[field]?.Type==JTokenType.Boolean&&!(bool)manifest[field],"No historical/baked/fit acceptance");
+        }
+        static void ValidateFreshDependencyProducerRequest(JObject manifest,JObject pins,JObject codeSnapshotRef)
+        {
+            var reference=new JObject{["path"]=manifest["requestPath"]?.DeepClone(),["sha256"]=manifest["requestSha256"]?.DeepClone()};
+            var request=ReadRecordedQueryProbeJson(reference,1048576);
+            RouteDeltaFields(request,"schema","scope","catalogId","sourcePins","canonicalSizeRow","codeSnapshot","sourceFitCertified","missionAccepted");
+            Require(JToken.DeepEquals(manifest["request"],request)&&request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="CurrentRecordedQueryDependencyCaptureRequest_NoWorld"&&(string)request["catalogId"]=="S074"&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)request["missionAccepted"]&&
+                JToken.DeepEquals(request["sourcePins"],pins)&&JToken.DeepEquals(request["codeSnapshot"],codeSnapshotRef),
+                "Actual producer request bytes/source/code ownership, never decorative provenance");
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S074");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            Require(JToken.DeepEquals(template["source_candidate"],pins)&&
+                JToken.DeepEquals(((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(x=>(string)x["size_id"]=="Standard"),
+                    request["canonicalSizeRow"]),"Current immutable own source and Standard canonical row");
+        }
+        static void RecheckFreshDependencyManifest(JObject manifest,JObject pins,JObject codeSnapshotRef)
+        {
+            RouteDeltaFields(manifest,"schema","scope","request","requestPath","requestSha256","sourcePins","codeSnapshot",
+                "currentSourceCandidate","currentBuildBefore","roots","dependencyPaths","rows","unsupported","worldsCreated","nativeQueries",
+                "historicalWorldEquivalent","bakedPayloadEquivalenceCertified","sourceFitCertified","missionAccepted","normalMissionReady","result",
+                "importerAuthorities","environmentFiles","bakeAuthority");
+            Require(manifest["schema"]?.Type==JTokenType.Integer&&(int)manifest["schema"]==1&&(string)manifest["scope"]==FreshDependencyScope&&
+                (string)manifest["result"]=="CapturedCurrentAuthoredDependencyClosure_NoWorld"&&
+                manifest["unsupported"] is JArray unsupported&&unsupported.Count==0&&
+                JToken.DeepEquals(manifest["sourcePins"],pins)&&JToken.DeepEquals(manifest["codeSnapshot"],codeSnapshotRef),
+                "Exact supported current dependency manifest and code/source ownership");
+            ValidateFreshDependencyClaimFlags(manifest);
+            ValidateFreshDependencyProducerRequest(manifest,pins,codeSnapshotRef);
+            Require(manifest["worldsCreated"]?.Type==JTokenType.Integer&&(int)manifest["worldsCreated"]==0&&
+                manifest["nativeQueries"]?.Type==JTokenType.Integer&&(int)manifest["nativeQueries"]==0,"NoWorld manifest producer");
+            var roots=FreshRecordedDependencyRoots(pins);var expected=FreshRecordedDependencyPaths(roots);
+            Require(JToken.DeepEquals(manifest["roots"],new JArray(roots))&&JToken.DeepEquals(manifest["dependencyPaths"],new JArray(expected)),
+                "Exact current dependency membership; no suffix/intersection substitute");
+            Require(JToken.DeepEquals(manifest["importerAuthorities"],FreshImporterAuthorities(roots))&&
+                JToken.DeepEquals(manifest["environmentFiles"],FreshDependencyEnvironmentFiles(roots)),
+                "Actual current package/dependency/import metadata and raw authority files unchanged");
+            var bake=manifest["bakeAuthority"] as JObject;RouteDeltaFields(bake,"status","reason");
+            Require((string)bake["status"]=="PendingActualConsumedBakeAuthority"&&
+                (string)bake["reason"]=="No supported no-import public SubScene consumed artifact identity; dependencyHash/importer type are not bake proof",
+                "Authored dependency capture never silently certifies consumed baked payload");
+            var rows=manifest["rows"] as JArray;ValidateFreshDependencyRows(rows,expected);
+            var unsupportedNow=new JArray();
+            foreach(JObject row in rows)
+            {
+                string physical=FreshDependencyPhysicalPath((string)row["assetPath"],unsupportedNow);
+                Require(physical!=null&&unsupportedNow.Count==0&&string.Equals(physical,(string)row["physicalPath"],StringComparison.OrdinalIgnoreCase),
+                    "Exact owned current dependency physical mapping");
+                VerifyFreshDependencyPayload(row,physical);
+            }
+            var code=ReadRecordedQueryProbeJson(codeSnapshotRef,67108864);
+            var codeMap=((JArray)code["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"]);
+            foreach(string name in new[]{"FacilityPreferences","SimultaneousRefinement","PilotFacilityRelocation"})
+            {
+                string path="Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey."+name+".cs";
+                Require(codeMap.TryGetValue(path,out var expectedCodeSha)&&Hash(path)==expectedCodeSha,"Current diagnostic code stays pinned");
+            }
+            Require(JToken.DeepEquals(code["candidate_sha256"],manifest["currentSourceCandidate"])&&
+                JToken.DeepEquals(code["build_sha256"],manifest["currentBuildBefore"]),"Manifest current epoch");
+        }
+
+        public static void RunCurrentRecordedDependencyControls()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling,"Pure noWorld dependency controls");
+            string dir=System.IO.Path.Combine(System.IO.Path.GetTempPath(),"warline-current-deps-"+Guid.NewGuid().ToString("N"));
+            System.IO.Directory.CreateDirectory(dir);int checks=0;
+            try
+            {
+                string png=System.IO.Path.Combine(dir,"portrait.png"),meta=png+".meta";
+                System.IO.File.WriteAllText(png,"old-payload");System.IO.File.WriteAllText(meta,"meta");
+                var expected=new[]{"Assets/portrait.png","Assets/portrait.png.meta"};
+                JObject Row(string asset,string file)=>new JObject{["assetPath"]=asset,["physicalPath"]=file,["sha256"]=Hash(file),["bytes"]=new System.IO.FileInfo(file).Length};
+                var rows=new JArray(Row(expected[0],png),Row(expected[1],meta));
+                void Pass(Action action){action();checks++;}
+                void Refuse(Action action){bool refused=false;try{action();}catch(InvalidOperationException){refused=true;}Require(refused,"Actual dependency helper must refuse corruption");checks++;}
+                Pass(()=>ValidateFreshDependencyRows(rows,expected));
+                Pass(()=>VerifyFreshDependencyPayload((JObject)rows[0],png));
+                Refuse(()=>ValidateFreshDependencyRows(new JArray(rows[1].DeepClone()),expected));
+                Refuse(()=>ValidateFreshDependencyRows(rows,new[]{expected[0]}));
+                var duplicate=(JArray)rows.DeepClone();duplicate[1]["assetPath"]=expected[0];
+                Refuse(()=>ValidateFreshDependencyRows(duplicate,expected));
+                var bad=(JArray)rows.DeepClone();bad[0]["bytes"]=true;
+                Refuse(()=>ValidateFreshDependencyRows(bad,expected));
+                bad=(JArray)rows.DeepClone();bad[0]["sha256"]="not-a-sha";
+                Refuse(()=>ValidateFreshDependencyRows(bad,expected));
+                bad=(JArray)rows.DeepClone();bad[0]["physicalPath"]="relative.png";
+                Refuse(()=>ValidateFreshDependencyRows(bad,expected));
+                System.IO.File.WriteAllText(png,"new-payload");
+                Refuse(()=>VerifyFreshDependencyPayload((JObject)rows[0],png));
+                System.IO.File.Delete(meta);
+                Refuse(()=>VerifyFreshDependencyPayload((JObject)rows[1],meta));
+                var unsupported=new JArray();
+                Require(FreshDependencyPhysicalPath("Outside/unknown.payload",unsupported)==null&&unsupported.Count==1,"Unsupported authority reported");checks++;
+                var claims=new JObject{["historicalWorldEquivalent"]=false,["bakedPayloadEquivalenceCertified"]=false,
+                    ["sourceFitCertified"]=false,["missionAccepted"]=false,["normalMissionReady"]=false};
+                var badClaims=(JObject)claims.DeepClone();badClaims["historicalWorldEquivalent"]=true;
+                Refuse(()=>ValidateFreshDependencyClaimFlags(badClaims));
+                badClaims=(JObject)claims.DeepClone();badClaims["bakedPayloadEquivalenceCertified"]=true;
+                Refuse(()=>ValidateFreshDependencyClaimFlags(badClaims));
+                Require(checks==13,"Exact actual helper control count");
+            }
+            finally{System.IO.Directory.Delete(dir,true);}
+            Debug.Log("[CurrentRecordedDependencyControls] result=Passed controls=13 worldsCreated=0 nativeQueries=0 historicalWorldEquivalent=0 sourceFitCertified=0");
+        }
+
+
+        static readonly string[] FreshRecordedCleanupKeys={
+            "worldCensusMatch","defaultWorldReferenceMatch","sceneOwnershipMatch","sourceNotDirty",
+            "sourceHashMatch","gridHashMatch","surfaceHashMatch"};
+        static bool FreshRecordedCleanupPassed(JObject checks)
+        {
+            RouteDeltaFields(checks,FreshRecordedCleanupKeys);
+            Require(checks.Properties().All(p=>p.Value.Type==JTokenType.Boolean),"Exact typed cleanup conjunction");
+            return FreshRecordedCleanupKeys.All(k=>(bool)checks[k]);
+        }
+        static JObject FreshRecordedWorldIdentity(World world)
+        {
+            var value=new JObject{["isNull"]=world==null};
+            if(world!=null)
+            {
+                value["isCreated"]=world.IsCreated;
+                if(world.IsCreated)
+                {
+                    value["sequenceNumber"]=world.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    value["name"]=world.Name;
+                }
+            }
+            return value;
+        }
+        static JObject ObserveFreshRecordedCleanup(string[] worlds,World defaultWorld,JObject defaultBefore,JObject scenes,
+            OperationMapDefinition source,JObject pins)
+        {
+            var checks=new JObject();foreach(string key in FreshRecordedCleanupKeys)checks[key]=false;
+            var errors=new JArray();
+            var detail=new JObject{["scope"]="ExactFreshRecordedWorldDefaultSceneAndSourceRestoration",
+                ["worldsBefore"]=new JArray(worlds),["defaultWorldBefore"]=defaultBefore.DeepClone(),
+                ["sceneOwnershipBefore"]=scenes.DeepClone(),["checks"]=checks,["errors"]=errors};
+            void Observe(string key,Func<bool> read)
+            {
+                try{checks[key]=read();}
+                catch(Exception failure){checks[key]=false;errors.Add(new JObject{["check"]=key,["error"]=failure.ToString()});}
+            }
+            Observe("worldCensusMatch",()=>{var after=CaptureMaterializationWorldCensus();detail["worldsAfter"]=new JArray(after);return worlds.SequenceEqual(after);});
+            Observe("defaultWorldReferenceMatch",()=>{var after=World.DefaultGameObjectInjectionWorld;detail["defaultWorldAfter"]=FreshRecordedWorldIdentity(after);return ReferenceEquals(defaultWorld,after);});
+            Observe("sceneOwnershipMatch",()=>{var after=Ground30SceneOwnership();detail["sceneOwnershipAfter"]=after;return JToken.DeepEquals(scenes,after);});
+            Observe("sourceNotDirty",()=>{bool dirty=EditorUtility.IsDirty(source);detail["sourceDirty"]=dirty;return !dirty;});
+            void ObserveHash(string key,string pathField,string hashField)
+            {
+                Observe(key,()=>{string actual=Hash((string)pins[pathField]);detail[key]=new JObject{
+                    ["path"]=pins[pathField].DeepClone(),["expectedSha256"]=pins[hashField].DeepClone(),["actualSha256"]=actual};
+                    return actual==(string)pins[hashField];});
+            }
+            ObserveHash("sourceHashMatch","sourcePath","sourceAssetSha256");
+            ObserveHash("gridHashMatch","gridPath","gridAssetSha256");
+            ObserveHash("surfaceHashMatch","surfacePath","surfaceAssetSha256");
+            detail["passed"]=FreshRecordedCleanupPassed(checks);return detail;
+        }
+        public static void RunFreshRecordedCleanupPredicateControls()
+        {
+            var valid=new JObject();foreach(string key in FreshRecordedCleanupKeys)valid[key]=true;
+            Require(FreshRecordedCleanupPassed(valid),"All seven cleanup terms required");int controls=1;
+            foreach(string key in FreshRecordedCleanupKeys)
+            {
+                var bad=(JObject)valid.DeepClone();bad[key]=false;
+                Require(!FreshRecordedCleanupPassed(bad),"No cleanup term may be ignored");controls++;
+            }
+            bool refused=false;
+            try{var bad=(JObject)valid.DeepClone();bad.Remove(FreshRecordedCleanupKeys[0]);FreshRecordedCleanupPassed(bad);}
+            catch(InvalidOperationException){refused=true;}
+            Require(refused,"Missing cleanup witness must refuse");controls++;
+            refused=false;
+            try{var bad=(JObject)valid.DeepClone();bad[FreshRecordedCleanupKeys[0]]=1;FreshRecordedCleanupPassed(bad);}
+            catch(InvalidOperationException){refused=true;}
+            Require(refused&&++controls==10,"Nonboolean cleanup witness must refuse");
+            Debug.Log("[FreshRecordedCleanupPredicateControls] result=Passed controls=10 worldsCreated=0 nativeQueries=0 sourceFitCertified=0");
+        }
+        public static void RunFreshCurrentRecordedQueryCleanupPreflight()
+        {
+            RunFreshCurrentRecordedQueryCore(true);
+        }
+        public static void RunFreshRecordedCleanupControlsAndPreflight()
+        {
+            RunFreshRecordedCleanupPredicateControls();
+            RunFreshCurrentRecordedQueryCleanupPreflight();
+            Debug.Log("[FreshRecordedCleanupControlsAndPreflight] result=Collected controls=10 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        public static void RunFreshCurrentRecordedQuerySubsetProbe()
+        {
+            RunFreshCurrentRecordedQueryCore(false);
+        }
+        static void RunFreshCurrentRecordedQueryCore(bool cleanupOnly)
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&
+                ground30MemoryWriter==null&&!apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&
+                !refinementPreferenceReplay&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&normalFacilityOriginExportRequest==null&&
+                finiteFacilityOriginExportRequest==null&&normalOriginContextCaptureRequest==null&&
+                normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null,"Idle exclusive readonly recorded-query subset required");
+            // No pad/route/AP/FC reader is called. Their environment, if present for a preceding
+            // separate aggregate, is neither consumed nor changed by this dedicated request.
+            string requestPath=Environment.GetEnvironmentVariable("WARLINE_FRESH_RECORDED_QUERY_REQUEST");
+            string requestSha=Environment.GetEnvironmentVariable("WARLINE_FRESH_RECORDED_QUERY_REQUEST_SHA256");
+            var requestRef=new JObject{["path"]=requestPath,["sha256"]=requestSha};
+            var request=ReadRecordedQueryProbeJson(requestRef,1048576);
+            RouteDeltaFields(request,"schema","scope","catalogId","size","candidate","pass","sourceReport","failedRoot",
+                "measuredSourceSnapshot","sizeArtifact","sourcePins","canonicalSizeRow","layoutSha256","facilitySignatureSha256",
+                "diagnosticSourceSnapshot","currentDependencyManifest","trialSteeringCell","queryIds","maximumNativeQueries","sourceFitCertified","missionAccepted");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="FreshCurrentRecordedInputQuerySubset_NotHistoricalWorldEquivalence"&&
+                (string)request["catalogId"]=="S074"&&(string)request["size"]=="Standard"&&
+                request["candidate"]?.Type==JTokenType.Integer&&(int)request["candidate"]==0&&
+                request["pass"]?.Type==JTokenType.Integer&&(int)request["pass"]==2&&
+                request["maximumNativeQueries"]?.Type==JTokenType.Integer&&(int)request["maximumNativeQueries"]==8&&
+                request["queryIds"] is JArray ids&&ids.Count==5&&ids.All(x=>x.Type==JTokenType.Integer)&&
+                ids.Values<int>().SequenceEqual(new[]{4,5,6,25,41})&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)request["missionAccepted"],
+                "Exact S074 Standard strict2 bounded recorded-query diagnostic request required");
+            var failed=ReadRecordedQueryProbeJson((JObject)request["failedRoot"],1048576);
+            var prior=ReadRecordedQueryProbeJson((JObject)request["sourceReport"],67108864);
+            var snapshot=ReadRecordedQueryProbeJson((JObject)request["measuredSourceSnapshot"],67108864);
+            var artifact=ReadRecordedQueryProbeJson((JObject)request["sizeArtifact"],33554432);
+            var diagnosticSnapshot=ReadRecordedQueryProbeJson((JObject)request["diagnosticSourceSnapshot"],67108864);
+            bool SameRef(JToken first,JToken second)=>first is JObject a&&second is JObject b&&
+                (string)a["sha256"]==(string)b["sha256"]&&string.Equals(System.IO.Path.GetFullPath((string)a["path"]),
+                    System.IO.Path.GetFullPath((string)b["path"]),StringComparison.OrdinalIgnoreCase);
+            Require((int?)failed["sessionId"]==50697&&(bool?)failed["terminal"]==true&&(int?)failed["toolExitCode"]==1&&
+                (int?)failed["wrapperExit"]==1&&(int?)failed["watcherExit"]==0&&(bool?)failed["strictThreeSizesAccepted"]==false&&
+                (bool?)failed["sourceUnchanged"]==true&&(bool?)failed["ownedShutdownVerified"]==true&&
+                SameRef(failed["refs"]?["refinement.json"],request["sourceReport"])&&
+                SameRef(failed["refs"]?["source-after.json"],request["measuredSourceSnapshot"])&&
+                (string)failed["sourceCandidate"]==(string)snapshot["candidate_sha256"]&&
+                (string)failed["buildAfter"]==(string)snapshot["build_sha256"],"Exact failed50697 provenance; no passed-fit transfer");
+            var missionReport=((JArray)prior["missions"]).OfType<JObject>().Single(m=>(string)m["catalogId"]=="S074");
+            var diagnostic=(JObject)missionReport["measurement"];var replays=(JArray)diagnostic["nativePreferenceReplays"];
+            Require((bool?)prior["cleanupVerified"]==true&&(bool?)prior["sourcePinsRecheckedAfterMeasurement"]==true&&
+                replays.Count==1&&(int?)replays[0]["candidate"]==0,"One original measured candidate with cleanup required");
+            var measured=(JObject)replays[0]["measurement"];
+            var pass=((JArray)measured["passes"]).OfType<JObject>().Single(x=>(int)x["pass"]==2);
+            var recorded=((JArray)pass["sizes"]).OfType<JObject>().Single(x=>(string)x["size"]=="Standard");
+            var sizeRef=((JArray)missionReport["sizeArtifacts"]).OfType<JObject>().Single(x=>(int)x["pass"]==2&&(string)x["size"]=="Standard");
+            Require((bool?)pass["discoveryOnly"]==false&&SameRef(sizeRef,request["sizeArtifact"])&&
+                JToken.DeepEquals(artifact["facts"],recorded)&&(int?)artifact["candidateLocalPass"]==2&&
+                (int?)artifact["preferenceCandidate"]==0,"Whole actual Standard strict2 durable facts required");
+            var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(x=>(string)x["catalog_id"]=="S074");
+            Require(authority["protected_binding"]?.Type==JTokenType.Null&&JToken.DeepEquals(request["canonicalSizeRow"],
+                ((JArray)authority["canonical_size_rows"]).OfType<JObject>().Single(x=>(string)x["size_id"]=="Standard")),
+                "Exact own unchanged Standard canonical budget authority required");
+            ResolveAll120RefinementCandidate(authority,out var candidate,out var template);
+            var pins=(JObject)template["source_candidate"];
+            Require(JToken.DeepEquals(pins,request["sourcePins"])&&JToken.DeepEquals(pins,prior["sourcePins"])&&
+                JToken.DeepEquals(pins,measured["sourcePins"]),"Exact recorded/current immutable physical source required");
+            string layoutJson=(string)measured["proposedLayoutJson"];
+            Require(request["layoutSha256"]?.Type==JTokenType.String&&RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(layoutJson))==
+                (string)request["layoutSha256"],"Exact recorded final layout bytes required; no route mutation");
+            var measuredMap=((JArray)snapshot["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"],StringComparer.Ordinal);
+            var diagnosticMap=((JArray)diagnosticSnapshot["source_manifest"]).OfType<JObject>().ToDictionary(x=>(string)x["path"],x=>(string)x["sha256"],StringComparer.Ordinal);
+            string[] ownedDiagnosticPaths={
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs"};
+            Require(measuredMap.Keys.OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(diagnosticMap.Keys.OrderBy(x=>x,StringComparer.Ordinal))&&
+                measuredMap.Where(x=>x.Value!=diagnosticMap[x.Key]).Select(x=>x.Key).OrderBy(x=>x,StringComparer.Ordinal).SequenceEqual(ownedDiagnosticPaths.OrderBy(x=>x,StringComparer.Ordinal))&&
+                (string)diagnosticSnapshot["candidate_sha256"]!=(string)snapshot["candidate_sha256"],
+                "Separate current diagnostic source snapshot; exact reviewed three-file change only, no old code qualification");
+            var dependencyRef=(JObject)request["currentDependencyManifest"];
+            var dependencyManifest=ReadRecordedQueryProbeJson(dependencyRef,33554432);
+            void Recheck()
+            {
+                RecheckFreshDependencyManifest(dependencyManifest,pins,(JObject)request["diagnosticSourceSnapshot"]);
+                foreach(string path in ownedDiagnosticPaths)Require(Hash(path)==diagnosticMap[path],"Current diagnostic source differs from pinned snapshot");
+                foreach(JObject reference in new[]{requestRef,(JObject)request["failedRoot"],(JObject)request["sourceReport"],
+                    (JObject)request["measuredSourceSnapshot"],(JObject)request["sizeArtifact"],(JObject)request["diagnosticSourceSnapshot"],dependencyRef})
+                {RecordedQueryProbePath((string)reference["path"],false);Require(Hash((string)reference["path"])==(string)reference["sha256"],"Fresh subset evidence changed");}
+            }
+            Recheck();
+            string sourcePath=(string)pins["sourcePath"],gridPath=(string)pins["gridPath"],surfacePath=(string)pins["surfacePath"];
+            Require(Hash(sourcePath)==(string)pins["sourceAssetSha256"]&&Hash(gridPath)==(string)pins["gridAssetSha256"]&&
+                Hash(surfacePath)==(string)pins["surfaceAssetSha256"],"Pinned source/grid/surface unchanged");
+            var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            Require(source!=null&&!EditorUtility.IsDirty(source)&&source.OperationMapId==(string)pins["operationMapId"]&&
+                source.SourceIdentityHash==(string)pins["sourceIdentityHash"]&&source.ContentHash==(string)pins["contentHash"]&&
+                source.SourceSceneReference.AssetGUID==(string)pins["sourceSceneGuid"]&&
+                source.NavigationMetadata.AuthoredSubSceneGuid==(string)pins["authoredSubSceneGuid"]&&
+                AssetDatabase.GUIDToAssetPath(source.GridMetadata.AssetGuid)==gridPath&&source.MapSurfaceDataReference!=null&&
+                AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID)==surfacePath,"Current exact clean Campaign physical source");
+            string output=Environment.GetEnvironmentVariable("WARLINE_FRESH_RECORDED_QUERY_OUTPUT");RecordedQueryProbePath(output,true);
+            var companionPrewarm=Ground30PrewarmCompanions();
+            var worlds=CaptureMaterializationWorldCensus();var defaultWorld=World.DefaultGameObjectInjectionWorld;var scenes=Ground30SceneOwnership();
+            var defaultWorldBefore=FreshRecordedWorldIdentity(defaultWorld);
+            var result=new JObject{["schema"]=1,["scope"]=cleanupOnly?"FreshCurrentRecordedStreamingCleanup_NoQueries_NoFit":"FreshCurrentRecordedInputQuerySubset_NotHistoricalWorldEquivalence",["result"]="Incomplete",
+                ["failedRoot"]=request["failedRoot"].DeepClone(),["measuredSourceCandidate"]=snapshot["candidate_sha256"].DeepClone(),
+                ["measuredBuild"]=snapshot["build_sha256"].DeepClone(),["diagnosticSourceCandidate"]=diagnosticSnapshot["candidate_sha256"].DeepClone(),
+                ["diagnosticSourceSnapshot"]=request["diagnosticSourceSnapshot"].DeepClone(),["queryScratchPolicy"]="FreshWorkspacePerOriginalQueryPathCall_NoOrdinalState",["unrelatedOverrideEnvironmentConsumed"]=false,
+                ["currentDependencyManifest"]=dependencyRef.DeepClone(),["historicalWorldEquivalent"]=false,
+                ["historicalResultsReusedAsCurrent"]=false,["bakedPayloadEquivalenceCertified"]=false,
+                ["controlInterpretation"]="Fresh current measurements of recorded inputs; historical comparisons are observations only, not equivalent World proof",
+                ["guard9Meaning"]="BudgetStopOn451stUnclosedPopBeforeGoalTest_Not451ExpandedOrNoPathProof",["requestPath"]=requestPath,["requestSha256"]=requestSha,
+                ["queryResults"]=new JArray(),["trialQueryResults"]=new JArray(),["maximumNativeQueries"]=cleanupOnly?0:8,["fullFitMeasured"]=false,["normalCompilerQualified"]=false,
+                ["context24Executed"]=0,["sourceFitCertified"]=false,["normalMissionReady"]=false,["missionAccepted"]=false,
+                ["companionPrewarm"]=companionPrewarm,["cleanupOnly"]=cleanupOnly};
+            bool historicalControlsMatched=true;int calls=0;
+            string failedResult=cleanupOnly?"FailedFreshCurrentStreamingCleanup_NoQueries_NoFit":"FailedFreshCurrentRecordedInputs_NoFit";
+            try
+            {
+                using(var world=StreamingWorld())
+                {
+                    Load(world,source.NavigationMetadata.AuthoredSubSceneGuid);Load(world,AssetDatabase.AssetPathToGUID(Support));
+                    using var runtimeSurface=PublishMissingPinnedSurface(world,source,surfacePath,result);var em=world.EntityManager;
+                    using var grids=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),typeof(GridRoad));
+                    using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                    Require(grids.CalculateEntityCount()==1&&surfaces.CalculateEntityCount()==1,"Unique actual native grid/surface");
+                    var ge=grids.GetSingletonEntity();var grid=grids.GetSingleton<GridConfig>();var surface=surfaces.GetSingleton<MapSurfaceComponent>();
+                    var ng=prior["nativeGridIdentity"]["grid"];
+                    Require(grid.Width==(int)ng["width"]&&grid.Height==(int)ng["height"]&&grid.CellSize==(float)ng["cellSize"]&&
+                        grid.Origin.x==(float)ng["originXZ"][0]&&grid.Origin.z==(float)ng["originXZ"][1]&&
+                        grid.Width==source.GridMetadata.Dimensions.x&&grid.Height==source.GridMetadata.Dimensions.y&&
+                        grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin)&&
+                        surface.HasSurfaceData!=0&&surface.SurfaceBlob.IsCreated&&surface.Dimensions.Equals(new int2(grid.Width,grid.Height))&&
+                        surface.CellSize==grid.CellSize&&math.all(surface.GridOrigin==grid.Origin),"Recorded dimensions/current loaded surface metadata only; no historical payload equivalence");
+                    Require(TryCreateGroundBa10Candidate(candidate,source,out var owner,out string error),error);
+                    using(owner)
+                    {
+                        string original=JsonUtility.ToJson(owner.Layout);
+                        try
+                        {
+                            JsonUtility.FromJsonOverwrite(layoutJson,owner.Layout);
+                            Require(JsonUtility.ToJson(owner.Layout)==layoutJson&&owner.Definition.CampaignMap==source&&
+                                owner.Definition.MapLayout==owner.Layout&&owner.Layout.WorldBinding.SourceHash==source.ContentHash,
+                                "Exact recorded layout on disposable current factory only");
+                            Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out error),error);
+                            Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,1,
+                                new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                                budget.ExactCanonicalQuantities,"Exact current own Standard budget: "+string.Join(";",reasons));
+                            var budgetKey=JObject.Parse(ApPreferenceBudgetKey(budget).ToString(Newtonsoft.Json.Formatting.None));
+                            Require(JToken.DeepEquals(budgetKey,((JArray)diagnostic["reviewedLogicalPadBudgets"]).OfType<JObject>().Single(x=>(string)x["size"]=="Standard")),
+                                "Current canonical budget equals recorded own budget");
+                            var signature=RecordedFacilitySignature(recorded,budget,grid);
+                            Require(signature.Count==20&&request["facilitySignatureSha256"]?.Type==JTokenType.String&&
+                                RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(signature.ToString(Newtonsoft.Json.Formatting.None)))==
+                                (string)request["facilitySignatureSha256"],"Exact measured complete facility signature");
+                            using var blockers=new Unity.Collections.NativeBitArray(grid.Width*grid.Height,Unity.Collections.Allocator.Persistent,Unity.Collections.NativeArrayOptions.ClearMemory);
+                            Ground30OccupyFacilities((JArray)recorded["normalFacilityRelocationProposals"],grid,blockers);
+                            var priorQueries=(JArray)recorded["routeQueriesWithSameFacilityReservations"]["queries"];
+                            var roleRefs=(JArray)recorded["routeQueriesWithSameFacilityReservations"]["roleReferences"];
+                            var packed=(JArray)recorded["postFacilityForcePacking"];
+                            if(!cleanupOnly)
+                            {
+                            foreach(int id in ((JArray)request["queryIds"]).Values<int>())
+                            {
+                                Require(id>=0&&id<priorQueries.Count&&++calls<=5,"Exact bounded selected query");
+                                var priorQuery=(JObject)priorQueries[id];
+                                var role=roleRefs.OfType<JObject>().First(x=>(int?)x["nativeQueryId"]==id);
+                                int forceIndex=(int)role["forceIndex"];Require(forceIndex>=0&&forceIndex<budget.Forces.Length,"Actual force index");
+                                var force=budget.Forces[forceIndex];var actualPacked=packed.OfType<JObject>().Single(x=>(int)x["forceIndex"]==forceIndex);
+                                Require(force.FactionId==(byte)actualPacked["faction"]&&force.RoleId==(string)actualPacked["roleId"]&&
+                                    force.RuntimePrefabKey==(string)actualPacked["runtimePrefabKey"]&&force.Quantity==(int)actualPacked["requestedCount"],
+                                    "Actual recorded/current canonical force identity");
+                                var prefab=FindNativePrefab(em,force.RuntimePrefabKey);
+                                Require(prefab!=Entity.Null&&em.HasComponent<UnitFootprint>(prefab)&&em.HasComponent<UnitMovementBehavior>(prefab)&&
+                                    !em.HasComponent<UnitAirMovement>(prefab),"Actual native ground prefab");
+                                var footprint=em.GetComponentData<UnitFootprint>(prefab).Size;var behavior=em.GetComponentData<UnitMovementBehavior>(prefab);
+                                var from=new int2((int)priorQuery["fromCell"][0],(int)priorQuery["fromCell"][1]);
+                                var to=new int2((int)priorQuery["toCell"][0],(int)priorQuery["toCell"][1]);
+                                Require((int?)priorQuery["queryId"]==id&&
+                                    Ground30PathQueryKey(force.FactionId,footprint,behavior,from,to)==(string)priorQuery["exactInputKey"],
+                                    "Exact faction/footprint/behavior/direction/endpoints");
+                                var observed=new JObject{["historicalQueryId"]=id,["forceIndex"]=forceIndex,["size"]="Standard",
+                                    ["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y),
+                                    ["exactInputKey"]=priorQuery["exactInputKey"].DeepClone()};
+                                QueryPath(em,ge,grid,surface,prefab,from,to,observed,force.FactionId,blockers);
+                                string[] compare={"status","failureCode","expansions","pathCells","footprintX","footprintZ","nativeQueryFaction","plannedFacilityBlockerScope","dynamicBlockersIncluded","liveOccupancyIncluded"};
+                                bool matched=compare.All(k=>priorQuery[k]!=null&&observed[k]!=null&&JToken.DeepEquals(priorQuery[k],observed[k]));
+                                observed["historicalObservationMatched"]=matched;observed["historicalStatus"]=priorQuery["status"].DeepClone();
+                                if(id!=5)historicalControlsMatched&=matched;
+                                ((JArray)result["queryResults"]).Add(observed);
+                            }
+                            var q5=(JObject)priorQueries[5];var q5Role=roleRefs.OfType<JObject>().First(x=>(int?)x["nativeQueryId"]==5);
+                            var q5Force=budget.Forces[(int)q5Role["forceIndex"]];var q5Prefab=FindNativePrefab(em,q5Force.RuntimePrefabKey);
+                            var q5From=new int2((int)q5["fromCell"][0],(int)q5["fromCell"][1]);var q5To=new int2((int)q5["toCell"][0],(int)q5["toCell"][1]);
+                            Require(q5Force.FactionId==1&&em.GetComponentData<UnitFootprint>(q5Prefab).Size.Equals(new int2(1,1))&&
+                                em.GetComponentData<UnitMovementBehavior>(q5Prefab).UsesVehicleMotion==0,"Exact faction1 infantry q5 profile required");
+                            var reverse=new JObject{["scope"]="SamePrefabBehaviorFlagsFaction1_EndpointReversalOnly",
+                                ["fromCell"]=new JArray(q5To.x,q5To.y),["toCell"]=new JArray(q5From.x,q5From.y)};
+                            Require(++calls<=8,"Bounded same-faction reverse query");
+                            QueryPath(em,ge,grid,surface,q5Prefab,q5To,q5From,reverse,q5Force.FactionId,blockers);
+                            ((JArray)result["queryResults"]).Add(reverse);
+                            if(request["trialSteeringCell"]?.Type!=JTokenType.Null)
+                            {
+                                var steering=request["trialSteeringCell"] as JArray;
+                                Require(steering!=null&&steering.Count==2&&steering.All(x=>x.Type==JTokenType.Integer),"Optional one integer steering cell only");
+                                var mid=new int2((int)steering[0],(int)steering[1]);var vehicle=((JArray)result["queryResults"]).OfType<JObject>().Single(q=>(int?)q["historicalQueryId"]==25);
+                                var path=vehicle["pathCells"] as JArray;bool onSegment=false;
+                                Require((string)vehicle["status"]=="NativeQueryFoundExactGoal"&&(int?)vehicle["footprintX"]==3&&
+                                    (int?)vehicle["footprintZ"]==3&&(int?)vehicle["nativeQueryFaction"]==1&&path!=null&&path.Count>=2,
+                                    "Fresh current same-faction successful3x3 q25 centerline required; historical result not eligible");
+                                for(int i=1;i<path.Count;i++)
+                                {
+                                    var first=new int2((int)path[i-1][0],(int)path[i-1][1]);var last=new int2((int)path[i][0],(int)path[i][1]);
+                                    long cross=(long)(mid.x-first.x)*(last.y-first.y)-(long)(mid.y-first.y)*(last.x-first.x);
+                                    if(cross==0&&mid.x>=math.min(first.x,last.x)&&mid.x<=math.max(first.x,last.x)&&
+                                        mid.y>=math.min(first.y,last.y)&&mid.y<=math.max(first.y,last.y))onSegment=true;
+                                }
+                                float2 a=new float2(q5From.x,q5From.y),z=new float2(q5To.x,q5To.y),m=new float2(mid.x,mid.y);
+                                float progress=math.dot(m-a,z-a)/math.lengthsq(z-a);
+                                float distance=math.distance(m,math.lerp(a,z,math.clamp(progress,0f,1f)))*grid.CellSize;
+                                Require(onSegment&&progress>0f&&progress<1f&&distance<=32.0001f&&mid.x>=0&&mid.y>=0&&mid.x<grid.Width&&mid.y<grid.Height&&
+                                    RouteDeltaFootprintInsideFrame(owner.Layout,grid,mid),
+                                    "Trial inside actual q25 segment/original q5 span32m/frame; no source-clearance inference");
+                                foreach(bool first in new[]{true,false})
+                                {
+                                    var from=first?q5From:mid;var to=first?mid:q5To;
+                                    var trial=new JObject{["scope"]="OptionalQ5EndpointSubstitutionOnly_NotRouteConfiguration",
+                                        ["fromCell"]=new JArray(from.x,from.y),["toCell"]=new JArray(to.x,to.y)};
+                                    Require(++calls<=8,"At most two optional split queries");
+                                    QueryPath(em,ge,grid,surface,q5Prefab,from,to,trial,q5Force.FactionId,blockers);
+                                    ((JArray)result["trialQueryResults"]).Add(trial);
+                                }
+                            }
+                            }
+                            Require(calls==(cleanupOnly?0:request["trialSteeringCell"].Type==JTokenType.Null?6:8)&&JToken.DeepEquals(signature,RecordedFacilitySignature(recorded,budget,grid))&&
+                                JsonUtility.ToJson(owner.Layout)==layoutJson,"Complete unchanged subset/facility/layout");
+                            result["facilitySignature"]=signature;result["nativeQueries"]=calls;
+                            result["maximumNativeQueries"]=cleanupOnly?0:8;
+                            result["historicalControlObservationsMatched"]=cleanupOnly?JValue.CreateNull():new JValue(historicalControlsMatched);
+                            Recheck();
+                            result["result"]=cleanupOnly?"CollectedFreshCurrentStreamingCleanup_NoQueries_NoFit":"CollectedFreshCurrentRecordedInputs_NoFit";
+                        }
+                        finally{JsonUtility.FromJsonOverwrite(original,owner.Layout);Require(JsonUtility.ToJson(owner.Layout)==original,"Original disposable factory layout restored");}
+                    }
+                }
+            }
+            catch(Exception failure){result["error"]=failure.ToString();result["result"]=failedResult;throw;}
+            finally
+            {
+                bool restored=false;Exception finalWindowFailure=null;
+                try{var cleanup=ObserveFreshRecordedCleanup(worlds,defaultWorld,defaultWorldBefore,scenes,source,pins);
+                result["cleanupObservation"]=cleanup;restored=(bool)cleanup["passed"];
+                Recheck();}
+                catch(Exception failure){finalWindowFailure=failure;result["dependencyWindowError"]=failure.ToString();result["result"]=failedResult;}
+                if(!restored){result["result"]=failedResult;result["cleanupError"]="World/default/scene/source restoration predicate failed";}
+                result["cleanupVerified"]=restored;result["currentDependencyWindowVerified"]=finalWindowFailure==null;RecordedQueryProbePath(output,true);
+                using(var stream=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+                {byte[] bytes=new System.Text.UTF8Encoding(false).GetBytes(result.ToString(Newtonsoft.Json.Formatting.None));stream.Write(bytes,0,bytes.Length);stream.Flush(true);}
+                Require(restored,"Recorded-query world/default/scene/source cleanup required");
+                if(finalWindowFailure!=null)throw new InvalidOperationException("Current dependency recheck failed; partial observations preserved",finalWindowFailure);
+            }
+
+            if(cleanupOnly)Debug.Log("[FreshCurrentRecordedStreamingCleanup] result=Collected nativeQueries=0 historicalWorldEquivalent=0 sourceFitCertified=0 normalMissionReady=0");
+            else Debug.Log("[FreshCurrentRecordedQuerySubset] result=Collected originalQueries=5 sameFactionReverse=1 trialQueries="+((JArray)result["trialQueryResults"]).Count+" historicalComparisonQueries=4 historicalWorldEquivalent=0 sourceFitCertified=0 normalMissionReady=0 fullFitMeasured=0");
+        }
+
+
+        public static void RunReviewedApAndFcAuthoringControlsAndSerializerPreflight()
+        {
+            RunNormalOriginContextCaptureControls();
+            RunReviewedApRouteControlsAndSerializerPreflight();
+            Debug.Log("[ReviewedApAndFcAuthoringControlsAndSerializer] result=Collected apGroups=19 fcIdentityControls=18 serializedLayouts=2 canonicalSizeRows=6 worldsCreated=0 nativeQueries=0 context24Executed=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        const string ApBoundaryRequestEnv="WARLINE_AP_REVIEWED_ROUTE_BOUNDARY_REQUEST";
+        const string ApBoundaryRequestShaEnv="WARLINE_AP_REVIEWED_ROUTE_BOUNDARY_REQUEST_SHA256";
+        const string ApBoundaryRequestScope="ReviewedAPGroundPairSerializerRequest_NoWorldOrSourceFit";
+        static void ValidateApBoundaryRequest(JObject request,JObject[] missions,string padSha)
+        {
+            RouteDeltaFields(request,"schema","scope","catalogIds","sourcePins","padInputSha256","missions","sourceFitCertified","missionAccepted");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]==ApBoundaryRequestScope&&request["catalogIds"] is JArray ids&&
+                ids.Count==2&&ids.All(v=>v.Type==JTokenType.String)&&ids.Values<string>().SequenceEqual(new[]{"S097","S098"})&&
+                missions!=null&&missions.Length==2&&missions.Select(m=>(string)m["catalog_id"]).SequenceEqual(new[]{"S097","S098"})&&
+                missions.All(m=>JToken.DeepEquals(m["source_candidate"],request["sourcePins"]))&&
+                request["padInputSha256"]?.Type==JTokenType.String&&(string)request["padInputSha256"]==padSha&&
+                padSha!=null&&System.Text.RegularExpressions.Regex.IsMatch(padSha,"^[a-f0-9]{64}$")&&
+                request["missions"] is JArray entries&&entries.Count==2&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)request["missionAccepted"],
+                "Exact separate unqualified AP serializer request and reviewed pad SHA required");
+            for(int i=0;i<2;i++)
+            {
+                var entry=request["missions"][i] as JObject;RouteDeltaFields(entry,"catalogId","fixedEndpointCandidate","canonical_size_rows");
+                Require(entry["catalogId"]?.Type==JTokenType.String&&(string)entry["catalogId"]==(string)missions[i]["catalog_id"]&&
+                    entry["fixedEndpointCandidate"]?.Type==JTokenType.Integer&&
+                    JToken.DeepEquals(entry["canonical_size_rows"],missions[i]["canonical_size_rows"]),
+                    "Exact ordered AP serializer subject and all six canonical rows required");
+                ApReviewedEndpointOffset((int)entry["fixedEndpointCandidate"]);
+            }
+        }
+        static string SerializeReviewedApEndpointTranslation(SkirmishMapLayoutConfig layout,int candidate)
+        {
+            string before=JsonUtility.ToJson(layout);
+            Require(TryEncodeJointPadTranslation(before,ApReviewedEndpointOffset(candidate),true,out string next,out string error),error);
+            JsonUtility.FromJsonOverwrite(next,layout);
+            return JsonUtility.ToJson(layout);
+        }
+        public static void RunReviewedApRouteSerializerBoundaryPreflight()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating&&
+                !apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&
+                !mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&completeGroundBaAuthority==null&&
+                completeGroundBaSourcePins==null&&normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null&&
+                !refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteShaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT"))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256")),
+                "Idle AP serializer-only request cannot enter route collection or generic modes");
+            string path=Environment.GetEnvironmentVariable(ApBoundaryRequestEnv),digest=Environment.GetEnvironmentVariable(ApBoundaryRequestShaEnv);
+            var request=ParseReviewedRouteDelta(ReadApReviewedPinnedBytes(path,digest),digest);
+            string padPath=Environment.GetEnvironmentVariable(ApJointPadInputEnv),padSha=Environment.GetEnvironmentVariable(ApJointPadInputShaEnv);
+            ReadApReviewedPinnedBytes(padPath,padSha);
+            var missions=ApReviewedCanonicalMissions();ValidateApBoundaryRequest(request,missions,padSha);
+            string project=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,".."));
+            string logs=System.IO.Path.Combine(project,"Logs","SkirmishProduction")+System.IO.Path.DirectorySeparatorChar;
+            string output=Environment.GetEnvironmentVariable("WARLINE_AP_REVIEWED_ROUTE_BOUNDARY_OUTPUT");
+            Require(!string.IsNullOrEmpty(output)&&System.IO.Path.IsPathRooted(output)&&
+                !output.Split(System.IO.Path.DirectorySeparatorChar,System.IO.Path.AltDirectorySeparatorChar).Contains(".."),
+                "Explicit fresh AP serializer output under owned Logs required");
+            output=System.IO.Path.GetFullPath(output);
+            void CheckOutput(string file)
+            {
+                Require(file.StartsWith(logs,StringComparison.OrdinalIgnoreCase)&&!System.IO.File.Exists(file)&&
+                    !System.IO.Directory.Exists(file)&&System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(file)),
+                    "Fresh AP boundary files under existing owned output directory required");
+                string current=System.IO.Path.GetDirectoryName(file);
+                while(!string.Equals(current,project,StringComparison.OrdinalIgnoreCase))
+                {
+                    Require(current!=null&&(System.IO.File.GetAttributes(current)&System.IO.FileAttributes.ReparsePoint)==0,
+                        "No AP boundary output reparse ancestry");current=System.IO.Path.GetDirectoryName(current);
+                }
+            }
+            CheckOutput(output);
+            foreach(string id in new[]{"S097","S098"})CheckOutput(output+"."+id+".layout.json");
+            var worlds=CaptureMaterializationWorldCensus();var defaultWorld=World.DefaultGameObjectInjectionWorld;var scenes=Ground30SceneOwnership();
+            var pin=(JObject)missions[0]["source_candidate"];
+            string sourcePath=(string)pin["sourcePath"];var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            Require(source!=null&&!EditorUtility.IsDirty(source)&&Hash(sourcePath)==(string)pin["sourceAssetSha256"]&&
+                Hash((string)pin["gridPath"])==(string)pin["gridAssetSha256"]&&Hash((string)pin["surfacePath"])==(string)pin["surfaceAssetSha256"]&&
+                source.OperationMapId==(string)pin["operationMapId"]&&source.SourceIdentityHash==(string)pin["sourceIdentityHash"]&&
+                source.ContentHash==(string)pin["contentHash"]&&source.SourceSceneReference.AssetGUID==(string)pin["sourceSceneGuid"]&&
+                source.NavigationMetadata.AuthoredSubSceneGuid==(string)pin["authoredSubSceneGuid"]&&
+                AssetDatabase.GUIDToAssetPath(source.GridMetadata.AssetGuid)==(string)pin["gridPath"]&&source.MapSurfaceDataReference!=null&&
+                AssetDatabase.GUIDToAssetPath(source.MapSurfaceDataReference.AssetGUID)==(string)pin["surfacePath"],
+                "Actual clean existing AP Campaign source/grid/surface/scene identity required");
+            var metadata=source.GridMetadata;
+            var grid=new GridConfig{Width=metadata.Dimensions.x,Height=metadata.Dimensions.y,CellSize=metadata.CellSize,Origin=(float3)metadata.Origin};
+            Require(grid.Width>0&&grid.Height>0&&float.IsFinite(grid.CellSize)&&grid.CellSize>0&&math.all(math.isfinite(grid.Origin)),
+                "Actual authored grid metadata required; no loaded native world claim");
+            var rows=new JArray();var buffers=new Dictionary<string,byte[]>(StringComparer.Ordinal);
+            var result=new JObject{["schema"]=1,["scope"]="ExactAPFactoryFramePadCandidateSerializerBoundary_NoWorldOrPlacement",
+                ["requestPath"]=path,["requestSha256"]=digest,["request"]=request.DeepClone(),["sourcePins"]=pin.DeepClone(),
+                ["rows"]=rows,["result"]="Incomplete",["worldsCreated"]=0,["nativeQueries"]=0,["placementMeasured"]=false,
+                ["sourceFitCertified"]=false,["normalMissionReady"]=false,["missionAccepted"]=false};
+            try
+            {
+                Require(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string matrixError),matrixError);
+                WithApJointPreferenceMode(()=>
+                {
+                    for(int i=0;i<2;i++)
+                    {
+                        var mission=missions[i];string id=(string)mission["catalog_id"];
+                        var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(m=>(string)m["catalog_id"]==id);
+                        ResolveAll120RefinementCandidate(authority,out var candidate,out _);
+                        Require(TryCreateGroundBa10Candidate(candidate,source,out var owner,out string error),error);
+                        using(owner)
+                        {
+                            Require(ApPairServiceAuthority(owner.Definition)&&owner.Definition.CampaignMap==source&&
+                                owner.Definition.MapLayout==owner.Layout&&owner.Layout.WorldBinding.SourceHash==source.ContentHash,
+                                "Actual own AP factory, service capability and existing source binding required");
+                            var budgets=new List<SkirmishStaticAuthoringBudget>();
+                            foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})
+                            {
+                                Require(SkirmishSetupCompiler.TryInspectStaticAuthoringBudget(owner.Definition,SkirmishDifficultyId.Regular,size,1,
+                                    new SkirmishContentManifest{RequiredFeatureIds=owner.Definition.RequiredFeatureIds},matrix,out var budget,out var reasons)&&
+                                    budget.ExactCanonicalQuantities,"Actual own canonical AP static budget required: "+string.Join(";",reasons));
+                                budgets.Add(budget);
+                            }
+                            var budgetKeys=new JArray(budgets.Select(ApPreferenceBudgetKey));
+                            string original=JsonUtility.ToJson(owner.Layout);var compounds=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
+                            Require(TryNextApJointLogicalFrame(original,compounds,owner.Layout,source,grid,out var framedCompounds,out error),error);
+                            string framed=JsonUtility.ToJson(owner.Layout);
+                            var pad=ApplyApJointPadInput(mission,owner.Layout,source,grid,budgets);
+                            Require((string)pad["inputPath"]==padPath&&(string)pad["inputSha256"]==padSha,"Exact requested owned AP pad input");
+                            int selected=(int)request["missions"][i]["fixedEndpointCandidate"];
+                            string boundary=SerializeReviewedApEndpointTranslation(owner.Layout,selected);
+                            byte[] bytes=new System.Text.UTF8Encoding(false).GetBytes(boundary);
+                            Require(JToken.DeepEquals(budgetKeys,new JArray(budgets.Select(ApPreferenceBudgetKey)))&&boundary==JsonUtility.ToJson(owner.Layout),
+                                "Exact AP serializer boundary and actual budgets unchanged after inspection");
+                            string rawPath=output+"."+id+".layout.json";buffers.Add(rawPath,bytes);
+                            rows.Add(new JObject{["catalogId"]=id,["definitionId"]=owner.Definition.DefinitionId,
+                                ["scenarioSetupId"]=owner.Definition.ScenarioSetupId,["fixedEndpointCandidate"]=selected,
+                                ["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),["canonicalStaticBudgets"]=budgetKeys,
+                                ["sourceGridMetadata"]=new JObject{["scope"]="AuthoredPinnedMetadata_NotLoadedNativeWorld",
+                                    ["width"]=grid.Width,["height"]=grid.Height,["cellSize"]=grid.CellSize,["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z)},
+                                ["originalCompounds"]=compounds,["appliedCompounds"]=framedCompounds,
+                                ["factoryLayoutSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(original)),
+                                ["postFrameLayoutSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(framed)),
+                                ["padInput"]=pad,["layoutBeforeRouteInput"]=new JObject{["path"]=rawPath,["sha256"]=RouteDeltaSha(bytes),["bytes"]=bytes.Length}});
+                        }
+                    }
+                });
+                result["result"]="CollectedTwoActualSerializerBoundaries_NoNativeQa";
+            }
+            catch(Exception failure){result["error"]=failure.ToString();result["result"]="FailedSerializerBoundary_NoFit";throw;}
+            finally
+            {
+                Require(worlds.SequenceEqual(CaptureMaterializationWorldCensus())&&ReferenceEquals(defaultWorld,World.DefaultGameObjectInjectionWorld)&&
+                    JToken.DeepEquals(scenes,Ground30SceneOwnership())&&!EditorUtility.IsDirty(source)&&
+                    Hash(sourcePath)==(string)pin["sourceAssetSha256"]&&Hash((string)pin["gridPath"])==(string)pin["gridAssetSha256"]&&
+                    Hash((string)pin["surfacePath"])==(string)pin["surfaceAssetSha256"]&&Hash(path)==digest&&Hash(padPath)==padSha,
+                    "Exact AP no-World/scene/default/source/request/pad restoration before output");
+                void WriteNew(string file,byte[] data)
+                {
+                    CheckOutput(file);
+                    using var stream=new System.IO.FileStream(file,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read);
+                    stream.Write(data,0,data.Length);stream.Flush(true);
+                }
+                foreach(var buffer in buffers)WriteNew(buffer.Key,buffer.Value);
+                WriteNew(output,new System.Text.UTF8Encoding(false).GetBytes(result.ToString(Newtonsoft.Json.Formatting.None)));
+            }
+            Debug.Log("[ReviewedApRouteSerializerBoundary] result=Collected missions=2 serializedLayouts=2 canonicalSizeRows=6 worldsCreated=0 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+        public static void RunReviewedApRouteControlsAndSerializerPreflight()
+        {
+            RunReviewedApPairRouteInputControls();
+            RunReviewedApRouteSerializerBoundaryPreflight();
+            Debug.Log("[ReviewedApRouteControlsAndSerializer] result=Collected groups=19 missions=2 worldsCreated=0 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        const string ApReviewedRouteEnv="WARLINE_AP_REVIEWED_ROUTE_INPUT";
+        const string ApReviewedRouteShaEnv="WARLINE_AP_REVIEWED_ROUTE_INPUT_SHA256";
+        const string ApReviewedRouteScope="ReviewedAPGroundPairRouteInput_NotSourceFit";
+        const string ApReviewedReplayScope="ReviewedAPGroundPairRouteReplay_NotSourceFit";
+        static Vector2 ApReviewedEndpointOffset(int candidate)
+        {
+            Require(candidate>=0&&candidate<=3,"One explicit existing AP endpoint candidate0..3 required");
+            return candidate==0?new Vector2(-32,0):candidate==1?new Vector2(0,32):
+                candidate==2?new Vector2(0,-32):new Vector2(32,0);
+        }
+        static JObject[] ApReviewedCanonicalMissions()
+        {
+            var index=(JArray)ReadAll120RefinementIndex()["missions"];
+            return new[]{"S097","S098"}.Select(id=>{
+                var authority=index.OfType<JObject>().Single(r=>(string)r["catalog_id"]==id);
+                ResolveAll120RefinementCandidate(authority,out _,out var template);
+                return All120MeasurementMission(authority,template);
+            }).ToArray();
+        }
+        static void ValidateApReviewedEnvelope(JObject input,JObject[] missions)
+        {
+            RouteDeltaFields(input,"schema","scope","catalogIds","sourcePins","missions");
+            Require(input["schema"]?.Type==JTokenType.Integer&&(int)input["schema"]==1&&
+                input["scope"]?.Type==JTokenType.String&&(string)input["scope"]==ApReviewedRouteScope&&
+                input["catalogIds"] is JArray ids&&ids.Count==2&&ids.All(v=>v.Type==JTokenType.String)&&
+                ids.Values<string>().SequenceEqual(new[]{"S097","S098"})&&missions!=null&&missions.Length==2&&
+                missions.Select(m=>(string)m["catalog_id"]).SequenceEqual(new[]{"S097","S098"})&&
+                missions.All(m=>JToken.DeepEquals(m["source_candidate"],input["sourcePins"]))&&
+                input["missions"] is JArray entries&&entries.Count==2,"Exact reviewed AP pair/source envelope required");
+            for(int i=0;i<2;i++)
+            {
+                var mission=missions[i];var entry=(JObject)input["missions"][i];
+                RouteDeltaFields(entry,"catalogId","fixedEndpointCandidate","routeDelta");
+                Require(entry["catalogId"]?.Type==JTokenType.String&&(string)entry["catalogId"]==(string)mission["catalog_id"]&&
+                    entry["fixedEndpointCandidate"]?.Type==JTokenType.Integer,"Exact ordered AP pair entry required");
+                ApReviewedEndpointOffset((int)entry["fixedEndpointCandidate"]);
+                var delta=entry["routeDelta"] as JObject;
+                RouteDeltaFields(delta,"schema","scope","catalogId","definitionId","sourcePins","canonical_size_rows",
+                    "layoutBeforeSha256","routes","sourceFitCertified","missionAccepted");
+                Require(delta["schema"]?.Type==JTokenType.Integer&&(int)delta["schema"]==1&&
+                    (string)delta["scope"]=="ReviewedBoundedRouteDelta_NotPathOrSourceFit"&&
+                    delta["catalogId"]?.Type==JTokenType.String&&(string)delta["catalogId"]==(string)mission["catalog_id"]&&
+                    delta["definitionId"]?.Type==JTokenType.String&&(string)delta["definitionId"]==(string)mission["definition_id"]&&
+                    (string)mission["tuple"]?["army_profile"]=="G"&&(string)mission["tuple"]?["objective_id"]=="BA"&&
+                    JToken.DeepEquals(delta["sourcePins"],mission["source_candidate"])&&
+                    JToken.DeepEquals(delta["canonical_size_rows"],mission["canonical_size_rows"])&&
+                    delta["layoutBeforeSha256"]?.Type==JTokenType.String&&
+                    System.Text.RegularExpressions.Regex.IsMatch((string)delta["layoutBeforeSha256"],"^[a-f0-9]{64}$")&&
+                    delta["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)delta["sourceFitCertified"]&&
+                    delta["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)delta["missionAccepted"],
+                    "Exact own AP definition/source/three canonical budgets and unqualified route input required");
+            }
+        }
+        static byte[] ReadApReviewedPinnedBytes(string path,string digest,Action afterRead=null)
+        {
+            Require(!string.IsNullOrEmpty(path)&&digest!=null&&
+                System.Text.RegularExpressions.Regex.IsMatch(digest,"^[a-f0-9]{64}$"),"Complete AP path/SHA pair required");
+            RequireFiniteOriginRequestPath(path);
+            Require(new System.IO.FileInfo(path).Length<=1048576&&Hash(path)==digest,"Bounded exact AP route input path required");
+            byte[] bytes=System.IO.File.ReadAllBytes(path);
+            ParseReviewedRouteDelta(bytes,digest);
+            afterRead?.Invoke();
+            RequireFiniteOriginRequestPath(path);
+            Require(Hash(path)==digest,"AP route input changed while reading");
+            return bytes;
+        }
+        static JObject ReadReviewedApPairRouteInput(JObject mission)
+        {
+            string path=Environment.GetEnvironmentVariable(ApReviewedRouteEnv),digest=Environment.GetEnvironmentVariable(ApReviewedRouteShaEnv);
+            Require(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestShaEnv)),
+                "Separate AP serializer request cannot enter normal route collection");
+            if(string.IsNullOrEmpty(path)&&string.IsNullOrEmpty(digest))return null;
+            Require(apGroundJointPreferencesRequested&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT"))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256"))&&
+                new[]{"S097","S098"}.Contains((string)mission["catalog_id"]),
+                "Exclusive AP pair input cannot enter generic/MP/S049/protected paths");
+            var input=ParseReviewedRouteDelta(ReadApReviewedPinnedBytes(path,digest),digest);
+            ReadApReviewedPinnedBytes(Environment.GetEnvironmentVariable(ApJointPadInputEnv),Environment.GetEnvironmentVariable(ApJointPadInputShaEnv));
+            var missions=ApReviewedCanonicalMissions();ValidateApReviewedEnvelope(input,missions);
+            Require(JToken.DeepEquals(mission,missions.Single(m=>(string)m["catalog_id"]==(string)mission["catalog_id"])),
+                "Current AP measurement subject must equal actual resolved canonical authority");
+            return new JObject{["input"]=input,["path"]=path,["sha256"]=digest};
+        }
+        static void CheckApReviewedQueryCap(int legs,int profiles)
+        {Require(legs>0&&profiles>0&&(long)legs*profiles<=2048,"Existing bounded source-approach query cap cannot increase");}
+        static void RequireApReviewedAnchorOwnership(JObject route,string[] ids,Dictionary<string,JObject> originals,
+            HashSet<string> owned,JArray pads)
+        {
+            Require(ids.Length>=2&&ids.All(originals.ContainsKey)&&ids.Distinct().Count()==ids.Length,
+                "Exact AP original typed anchor sequence required");
+            for(int p=0;p<ids.Length;p++)
+            {
+                var matches=pads.OfType<JObject>().Where(v=>(string)v["AnchorId"]==ids[p]).ToArray();
+                if(p==0||p==ids.Length-1)
+                    Require(matches.Length==1&&(int?)matches[0]["Kind"]==(int)SkirmishLegalPadKind.GroundStaging&&
+                        (int?)matches[0]["FactionId"]==(p==0?1:2),"Only original AP shared staging pad endpoints allowed");
+                else Require(matches.Length==0&&owned.Add(ids[p]),"Exclusive AP interior anchors cannot own pads or another approach");
+            }
+        }
+        static int CheckedApReviewedQueryCount(string applied,List<SkirmishStaticAuthoringBudget> budgets)
+        {
+            int legs=((JArray)JObject.Parse(applied)["routes"]).OfType<JObject>().Sum(r=>((JArray)r["WaypointAnchorIds"]).Count-1);
+            int profiles=budgets.Sum(b=>b.Forces.Select(f=>f.FactionId+"/"+f.RuntimePrefabKey).Distinct().Count());
+            CheckApReviewedQueryCap(legs,profiles);
+            return legs;
+        }
+        static JObject ApplyReviewedApPairRoute(JObject holder,JObject mission,SkirmishMapLayoutConfig layout,
+            GridConfig grid,List<SkirmishStaticAuthoringBudget> budgets,JObject pad)
+        {
+            var input=(JObject)holder["input"];ValidateApReviewedEnvelope(input,ApReviewedCanonicalMissions());
+            var entry=((JArray)input["missions"]).OfType<JObject>().Single(r=>(string)r["catalogId"]==(string)mission["catalog_id"]);
+            int candidate=(int)entry["fixedEndpointCandidate"];string before=JsonUtility.ToJson(layout);
+            Require(pad!=null&&(string)pad["afterLayoutJson"]==before&&
+                Hash((string)pad["inputPath"])==(string)pad["inputSha256"],"Exact owned post-frame AP pad stage required");
+            string actualBefore=SerializeReviewedApEndpointTranslation(layout,candidate);
+            var unchanged=new JArray(budgets.Select(ApPreferenceBudgetKey));
+            string applied=EncodeReviewedRouteDelta(actualBefore,mission,(JObject)entry["routeDelta"],grid,out var inner,true);
+            CheckedApReviewedQueryCount(applied,budgets);
+            Require(JToken.DeepEquals(unchanged,new JArray(budgets.Select(ApPreferenceBudgetKey))),"Exact unchanged canonical AP budgets required");
+            JsonUtility.FromJsonOverwrite(applied,layout);
+            Require(Hash((string)holder["path"])==(string)holder["sha256"]&&
+                Hash((string)pad["inputPath"])==(string)pad["inputSha256"],"AP pair and pad bytes unchanged after encoding");
+            return new JObject{["scope"]=ApReviewedReplayScope,["pairInputPath"]=holder["path"].DeepClone(),
+                ["pairInputSha256"]=holder["sha256"].DeepClone(),["padInputPath"]=pad["inputPath"].DeepClone(),
+                ["padInputSha256"]=pad["inputSha256"].DeepClone(),["catalogId"]=mission["catalog_id"].DeepClone(),
+                ["fixedEndpointCandidate"]=candidate,["beforeLayoutSha256"]=inner["beforeLayoutSha256"].DeepClone(),
+                ["beforeLayoutJson"]=actualBefore,["appliedLayoutSha256"]=inner["appliedLayoutSha256"].DeepClone(),
+                ["routeProof"]=inner,["sourceFitCertified"]=false,["missionAccepted"]=false};
+        }
+        static void ValidateReviewedApRouteReplayProof(string layout,JObject mission,JObject proof,GridConfig grid)
+        {
+            RouteDeltaFields(proof,"scope","pairInputPath","pairInputSha256","padInputPath","padInputSha256","catalogId",
+                "fixedEndpointCandidate","beforeLayoutSha256","beforeLayoutJson","appliedLayoutSha256","routeProof","sourceFitCertified","missionAccepted");
+            Require((string)proof["scope"]==ApReviewedReplayScope&&
+                new[]{"S097","S098"}.Contains((string)mission["catalog_id"])&&
+                (string)proof["catalogId"]==(string)mission["catalog_id"]&&
+                proof["fixedEndpointCandidate"]?.Type==JTokenType.Integer&&
+                proof["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)proof["sourceFitCertified"]&&
+                proof["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)proof["missionAccepted"],
+                "Exact unqualified AP replay wrapper required");
+            string pairPath=(string)proof["pairInputPath"],pairSha=(string)proof["pairInputSha256"];
+            Require(Environment.GetEnvironmentVariable(ApReviewedRouteEnv)==pairPath&&
+                Environment.GetEnvironmentVariable(ApReviewedRouteShaEnv)==pairSha&&
+                Environment.GetEnvironmentVariable(ApJointPadInputEnv)==(string)proof["padInputPath"]&&
+                Environment.GetEnvironmentVariable(ApJointPadInputShaEnv)==(string)proof["padInputSha256"]&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv)),
+                "Original reviewed AP pair/pad ownership, never generic replay or renewed input");
+            var input=ParseReviewedRouteDelta(ReadApReviewedPinnedBytes(pairPath,pairSha),pairSha);
+            ValidateApReviewedEnvelope(input,ApReviewedCanonicalMissions());
+            ReadApReviewedPinnedBytes((string)proof["padInputPath"],(string)proof["padInputSha256"]);
+            var entry=((JArray)input["missions"]).OfType<JObject>().Single(r=>(string)r["catalogId"]==(string)mission["catalog_id"]);
+            Require(JToken.DeepEquals(entry["fixedEndpointCandidate"],proof["fixedEndpointCandidate"])&&
+                JToken.DeepEquals(entry["routeDelta"],proof["routeProof"]?["input"])&&
+                proof["beforeLayoutJson"]?.Type==JTokenType.String&&
+                RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes((string)proof["beforeLayoutJson"]))==(string)proof["beforeLayoutSha256"],
+                "Actual parsed pair/candidate/before-layout binding required");
+            string replay=EncodeReviewedRouteDelta((string)proof["beforeLayoutJson"],mission,(JObject)entry["routeDelta"],grid,out var inner,true);
+            Require(replay==layout&&JToken.DeepEquals(inner,proof["routeProof"])&&
+                RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(layout))==(string)proof["appliedLayoutSha256"],
+                "Exact current AP applied clone and original route proof required");
+        }
+
+
+        public static void RunReviewedApPairRouteInputControls()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Edit Mode AP route input controls required");
+            int groups=0;
+            void Check(bool accepted,string message){Require(accepted,message);}
+            void Refuses(Action action)
+            {bool failed=false;try{action();}catch(InvalidOperationException){failed=true;}catch(Newtonsoft.Json.JsonException){failed=true;}Require(failed,"Real AP boundary must refuse");}
+            var missions=ApReviewedCanonicalMissions();
+            var grid=new GridConfig{Width=256,Height=256,CellSize=1,Origin=float3.zero};
+            JObject RouteFixture(JObject mission,out string original)
+            {
+                const float fixtureEndX=208.5f;
+                var anchors=new JArray();var routes=new JArray();var pads=new JArray();
+                foreach(var point in new[]{new{Id="ap.start",X=20.5f},new{Id="ap.end",X=fixtureEndX}})
+                    anchors.Add(new JObject{["AnchorId"]=point.Id,["RoleId"]=point.Id,["WorldX"]=point.X,["WorldZ"]=128.5f,
+                        ["NormalizedU"]=point.X/256,["NormalizedV"]=128.5f/256});
+                // Deployment binding anchors are immutable and distinct from movable typed staging.
+                foreach(var point in new[]{new{Id="fixture.deployment.player",X=20.5f,Z=128.5f},
+                    new{Id="fixture.deployment.enemy",X=220.5f,Z=128.5f},
+                    new{Id="fixture.spawn",X=fixtureEndX,Z=200f}})
+                    anchors.Add(new JObject{["AnchorId"]=point.Id,["RoleId"]=point.Id,["WorldX"]=point.X,["WorldZ"]=point.Z,
+                        ["NormalizedU"]=point.X/256,["NormalizedV"]=point.Z/256});
+                for(int r=0;r<3;r++)
+                {
+                    var ids=new JArray("ap.start");float z=128.5f+(r==1?24:r==2?-24:0);
+                    for(int p=0;p<3;p++)
+                    {
+                        string id="ap.middle."+r+"."+p;float x=70.5f+p*50;
+                        anchors.Add(new JObject{["AnchorId"]=id,["RoleId"]=id,["WorldX"]=x,["WorldZ"]=z,
+                            ["NormalizedU"]=x/256,["NormalizedV"]=z/256});ids.Add(id);
+                    }
+                    ids.Add("ap.end");float length=0;
+                    for(int p=1;p<ids.Count;p++)
+                    {
+                        var aa=anchors.OfType<JObject>().Single(v=>(string)v["AnchorId"]==(string)ids[p-1]);
+                        var bb=anchors.OfType<JObject>().Single(v=>(string)v["AnchorId"]==(string)ids[p]);
+                        length+=Vector2.Distance(new Vector2((float)aa["WorldX"],(float)aa["WorldZ"]),new Vector2((float)bb["WorldX"],(float)bb["WorldZ"]));
+                    }
+                    routes.Add(new JObject{["RouteId"]="fixture.ap."+r,["Kind"]=r+1,["WaypointAnchorIds"]=ids,
+                        ["WidthMetres"]=8,["AllowsVehicles"]=true,["AllowsAircraft"]=r!=1,["ProvisionalTimes"]=true,
+                        ["LengthMetres"]=length,["InfantryTransitSeconds"]=100f,["GroundTransitSeconds"]=50f,["AirTransitSeconds"]=25f,
+                        ["InfantryFirstContactSeconds"]=50f,["GroundFirstContactSeconds"]=25f});
+                }
+                for(int side=1;side<=2;side++)pads.Add(new JObject{["PadId"]="fixture.stage."+side,["AnchorId"]=side==1?"ap.start":"ap.end",
+                    ["Kind"]=(int)SkirmishLegalPadKind.GroundStaging,["FactionId"]=side,["CenterX"]=side==1?20.5f:fixtureEndX,
+                    ["CenterZ"]=128.5f,["WidthMetres"]=20f,["DepthMetres"]=14f});
+                pads.Add(new JObject{["PadId"]="fixture.enemy.spawn",["AnchorId"]="fixture.spawn",["Kind"]=(int)SkirmishLegalPadKind.InfantrySpawn,
+                    ["FactionId"]=2,["CenterX"]=fixtureEndX,["CenterZ"]=200,["WidthMetres"]=12,["DepthMetres"]=12});
+                var data=new JObject{["originX"]=0,["originZ"]=0,["worldWidthMetres"]=256,["worldDepthMetres"]=256,
+                    ["worldBinding"]=new JObject{["OriginX"]=0,["OriginZ"]=128,["ForwardX"]=1,["ForwardZ"]=0,["AcrossX"]=0,["AcrossZ"]=1,
+                        ["ForwardMetres"]=256,["AcrossMetres"]=256,["PlayerAnchorId"]="fixture.deployment.player",["EnemyAnchorId"]="fixture.deployment.enemy",["SourceHash"]=mission["source_candidate"]["contentHash"].DeepClone()},
+                    ["anchors"]=anchors,["routes"]=routes,["pads"]=pads};
+                var layout=ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
+                try{JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),layout);original=JsonUtility.ToJson(layout);}
+                finally{UnityEngine.Object.DestroyImmediate(layout);}
+                return new JObject{["schema"]=1,["scope"]="ReviewedBoundedRouteDelta_NotPathOrSourceFit",
+                    ["catalogId"]=mission["catalog_id"].DeepClone(),["definitionId"]=mission["definition_id"].DeepClone(),
+                    ["sourcePins"]=mission["source_candidate"].DeepClone(),["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+                    ["layoutBeforeSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(original)),
+                    ["routes"]=new JArray(routes.OfType<JObject>().Select(r=>new JObject{["routeId"]=r["RouteId"].DeepClone(),
+                        ["points"]=new JArray(((JArray)r["WaypointAnchorIds"]).Values<string>().Select(id=>{
+                            var a=anchors.OfType<JObject>().Single(v=>(string)v["AnchorId"]==id);
+                            return (JToken)new JObject{["anchorId"]=id,["roleId"]=a["RoleId"].DeepClone(),["x"]=a["WorldX"].DeepClone(),["z"]=a["WorldZ"].DeepClone()};
+                        }))})),["sourceFitCertified"]=false,["missionAccepted"]=false};
+            }
+            var first=RouteFixture(missions[0],out string original0);var second=RouteFixture(missions[1],out string original1);
+            var envelope=new JObject{["schema"]=1,["scope"]=ApReviewedRouteScope,["catalogIds"]=new JArray("S097","S098"),
+                ["sourcePins"]=missions[0]["source_candidate"].DeepClone(),["missions"]=new JArray(
+                    new JObject{["catalogId"]="S097",["fixedEndpointCandidate"]=0,["routeDelta"]=first},
+                    new JObject{["catalogId"]="S098",["fixedEndpointCandidate"]=3,["routeDelta"]=second})};
+            byte[] Bytes(JObject value)=>new System.Text.UTF8Encoding(false).GetBytes(value.ToString(Newtonsoft.Json.Formatting.None));
+            void Valid(JObject value)=>ValidateApReviewedEnvelope(value,missions);
+            void Bad(Action<JObject> mutate){var value=(JObject)envelope.DeepClone();mutate(value);Refuses(()=>Valid(value));}
+            string fixturePadSha=new string('1',64);
+            var boundaryRequest=new JObject{["schema"]=1,["scope"]=ApBoundaryRequestScope,["catalogIds"]=new JArray("S097","S098"),
+                ["sourcePins"]=missions[0]["source_candidate"].DeepClone(),["padInputSha256"]=fixturePadSha,
+                ["missions"]=new JArray(missions.Select((m,i)=>(JToken)new JObject{["catalogId"]=m["catalog_id"].DeepClone(),
+                    ["fixedEndpointCandidate"]=i==0?0:3,["canonical_size_rows"]=m["canonical_size_rows"].DeepClone()})),
+                ["sourceFitCertified"]=false,["missionAccepted"]=false};
+            void BadBoundary(Action<JObject> mutate)
+            {var value=(JObject)boundaryRequest.DeepClone();mutate(value);Refuses(()=>ValidateApBoundaryRequest(value,missions,fixturePadSha));}
+            var bytes=Bytes(envelope);Valid(ParseReviewedRouteDelta(bytes,RouteDeltaSha(bytes)));
+            ValidateApBoundaryRequest(boundaryRequest,missions,fixturePadSha);groups++; //1 separate strict reader and producer parser positive
+            var duplicate=new System.Text.UTF8Encoding(false).GetBytes("{\"schema\":1,\"schema\":1}");
+            Refuses(()=>ParseReviewedRouteDelta(duplicate,RouteDeltaSha(duplicate)));groups++; //2 duplicates
+            Refuses(()=>ParseReviewedRouteDelta(bytes,new string('0',64)));groups++; //3 hash
+            Refuses(()=>ReadApReviewedPinnedBytes(null,RouteDeltaSha(bytes)));
+            Refuses(()=>RequireFiniteOriginRequestPath(System.IO.Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction","..","escape.json")));groups++; //4 path/partial
+            string temp=System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction","ap-route-control-"+Guid.NewGuid().ToString("N")+".json"));
+            try
+            {
+                System.IO.File.WriteAllBytes(temp,bytes);
+                Refuses(()=>ReadApReviewedPinnedBytes(temp,RouteDeltaSha(bytes),()=>System.IO.File.WriteAllText(temp,"{}")));
+            }
+            finally{if(System.IO.File.Exists(temp))System.IO.File.Delete(temp);}
+            groups++; //5 real buffer/path TOCTOU
+            Bad(v=>v["catalogIds"][1]="S097");Bad(v=>v["missions"][1]["catalogId"]="S097");BadBoundary(v=>v["missions"][1]["catalogId"]="S097");groups++; //6 pair
+            Bad(v=>{var a=(JArray)v["missions"];var x=a[0];a[0]=a[1];a[1]=x;});groups++; //7 order
+            Bad(v=>v["sourcePins"]["contentHash"]="foreign");BadBoundary(v=>v["sourcePins"]["contentHash"]="foreign");BadBoundary(v=>v["padInputSha256"]=new string('2',64));groups++; //8 source/pad
+            for(int m=0;m<2;m++)for(int size=0;size<3;size++)
+            {int mi=m,si=size;Bad(v=>v["missions"][mi]["routeDelta"]["canonical_size_rows"][si]["player_combat"]="0");BadBoundary(v=>v["missions"][mi]["canonical_size_rows"][si]["player_combat"]="0");}
+            groups++; //9 all six actual budget rows
+            Bad(v=>v["missions"][0]["routeDelta"]=second.DeepClone());Bad(v=>v["scope"]="stale");groups++; //10 cross-entry/scope
+            var apBefore=JObject.Parse(original0);string unshifted=original0;
+            foreach(string original in new[]{original0,original1})foreach(int candidate in new[]{0,1,2,3})
+            {
+                Check(TryEncodeJointPadTranslation(original,ApReviewedEndpointOffset(candidate),true,out string translated,out string translationError),
+                    "Actual existing cardinal32m fixture translation: "+translationError);
+                var beforeTranslation=JObject.Parse(original);var afterTranslation=JObject.Parse(translated);
+                Check(JToken.DeepEquals(beforeTranslation["worldBinding"],afterTranslation["worldBinding"]),
+                    "Existing translation preserves actual deployment binding");
+                foreach(string id in new[]{"fixture.deployment.player","fixture.deployment.enemy","fixture.spawn"})
+                    Check(JToken.DeepEquals(((JArray)beforeTranslation["anchors"]).OfType<JObject>().Single(a=>(string)a["AnchorId"]==id),
+                        ((JArray)afterTranslation["anchors"]).OfType<JObject>().Single(a=>(string)a["AnchorId"]==id)),
+                        "Only staging anchor moves; spawn centre translation does not move its separate anchor");
+                var oldRoutes=(JArray)beforeTranslation["routes"];var newRoutes=(JArray)afterTranslation["routes"];
+                for(int r=0;r<3;r++)
+                {
+                    Check(JToken.DeepEquals(oldRoutes[r]["WaypointAnchorIds"],newRoutes[r]["WaypointAnchorIds"])&&
+                        JToken.DeepEquals(oldRoutes[r]["AllowsAircraft"],newRoutes[r]["AllowsAircraft"]),
+                        "Translation keeps existing route IDs and mixed air permissions");
+                    foreach(string rate in new[]{"InfantryTransitSeconds","GroundTransitSeconds","AirTransitSeconds","InfantryFirstContactSeconds","GroundFirstContactSeconds"})
+                        Check(Math.Abs((float)oldRoutes[r][rate]/(float)oldRoutes[r]["LengthMetres"]-
+                            (float)newRoutes[r][rate]/(float)newRoutes[r]["LengthMetres"])<.00001f,
+                            "Actual translation preserves all existing time per metre rates");
+                }
+            }
+            var deploymentBoundStage=JObject.Parse(original0);deploymentBoundStage["worldBinding"]["EnemyAnchorId"]="ap.end";
+            Check(!TryEncodeJointPadTranslation(deploymentBoundStage.ToString(Newtonsoft.Json.Formatting.None),
+                ApReviewedEndpointOffset(0),true,out _,out string deploymentError)&&deploymentError=="DeploymentAnchorCannotMove",
+                "Actual deployment anchor cannot move; production guard remains strict");
+            Check(TryEncodeJointPadTranslation(unshifted,ApReviewedEndpointOffset(0),true,out string shifted,out _),"Actual existing one32m translation");
+            Refuses(()=>EncodeReviewedRouteDelta(shifted,missions[0],first,grid,out _,true));groups++; //11 exact posttranslation digest/order
+            foreach(var invalid in new JToken[]{-1,4,1.5,"0",true})
+                {Bad(v=>v["missions"][0]["fixedEndpointCandidate"]=invalid.DeepClone());BadBoundary(v=>v["missions"][0]["fixedEndpointCandidate"]=invalid.DeepClone());}
+            groups++; //12 enum/token
+            string encoded=EncodeReviewedRouteDelta(original0,missions[0],first,grid,out var proof,true);
+            var after=JObject.Parse(encoded);
+            string encodedSecond=EncodeReviewedRouteDelta(original1,missions[1],second,grid,out var secondProof,true);
+            Check((int)secondProof["pointCount"]==15&&(int)secondProof["addedAnchors"]==0&&(int)secondProof["movedOriginalAnchors"]==0&&
+                JToken.DeepEquals(JObject.Parse(original1)["pads"],JObject.Parse(encodedSecond)["pads"]),
+                "Both canonical mission fixture encoders preserve exact pad-owned endpoints and original budgets");
+            Check(((JArray)after["routes"]).OfType<JObject>().Select(r=>(bool)r["AllowsAircraft"]).SequenceEqual(new[]{true,false,true})&&
+                ((JArray)after["routes"]).OfType<JObject>().Select(r=>(string)r["RouteId"]).SequenceEqual(new[]{"fixture.ap.0","fixture.ap.1","fixture.ap.2"}),
+                "AP original IDs and mixed air permissions retained");
+            var moved=(JObject)first.DeepClone();moved["routes"][0]["points"][0]["z"]=129;
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));groups++; //13 shared pad endpoints immutable
+            moved=(JObject)first.DeepClone();moved["routes"][1]["points"][1]["roleId"]="foreign";
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));
+            moved=(JObject)first.DeepClone();moved["routes"][1]["points"][1]["z"]=90;
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));groups++; //14 typed ownership/flank
+            moved=(JObject)first.DeepClone();moved["routes"][0]["points"][1]["z"]=170;
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));
+            moved=(JObject)first.DeepClone();moved["routes"][0]["points"][1]["x"]=10;
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));groups++; //15 32m/progress
+            CheckApReviewedQueryCap(128,16);Refuses(()=>CheckApReviewedQueryCap(129,16));
+            moved=(JObject)first.DeepClone();
+            for(int r=0;r<2;r++)for(int p=1;p<=3;p++)moved["routes"][r]["points"][p]["x"]=(float)moved["routes"][r]["points"][p]["x"]+.25f;
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));
+            moved=(JObject)first.DeepClone();((JArray)moved["routes"][0]["points"]).Add(moved["routes"][0]["points"][1].DeepClone());
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],moved,grid,out _,true));groups++; //16 caps/query/repeated
+            Refuses(()=>EncodeReviewedRouteDelta(original0,missions[0],first,grid,out _));
+            Refuses(()=>ValidateReviewedApRouteReplayProof(encoded,missions[0],proof,grid));groups++; //17 cross-lane proof
+            var beforeRoutes=(JArray)JObject.Parse(original0)["routes"];var afterRoutes=(JArray)after["routes"];
+            for(int r=0;r<3;r++)foreach(string rate in new[]{"InfantryTransitSeconds","GroundTransitSeconds","AirTransitSeconds","InfantryFirstContactSeconds","GroundFirstContactSeconds"})
+                Check(Math.Abs((float)beforeRoutes[r][rate]/(float)beforeRoutes[r]["LengthMetres"]-
+                    (float)afterRoutes[r][rate]/(float)afterRoutes[r]["LengthMetres"])<.00001f,"All original active/inactive time-per-metre rates preserved");
+            Check(JToken.DeepEquals(JObject.Parse(original0)["pads"],after["pads"])&&
+                JToken.DeepEquals(first,envelope["missions"][0]["routeDelta"]),"Pure encoder cannot overwrite pad/ownedinput");
+            bool old=apGroundJointPreferencesRequested;
+            try{WithApJointPreferenceMode(()=>throw new InvalidOperationException("restoration control"));}
+            catch(InvalidOperationException){}
+            Check(apGroundJointPreferencesRequested==old&&!refinementPreferenceReplay&&!refinementFacilityPreferencesRequested,
+                "Existing mode finally restoration");groups++; //18 overwrite/restoration
+            Bad(v=>v["missions"][0]["routeDelta"]["sourceFitCertified"]=true);
+            Bad(v=>v["missions"][1]["routeDelta"]["missionAccepted"]=true);BadBoundary(v=>v["sourceFitCertified"]=true);BadBoundary(v=>v["missionAccepted"]=true);groups++; //19 false acceptance
+            Require(groups==19,"Exactly19 grouped AP boundary controls");
+            Debug.Log("[ReviewedApPairRouteInputControls] result=Passed groups=19 nativeQueries=0 sourceWorlds=0 sourceFitCertified=0 missionAccepted=0");
+        }
+
         const string ReviewedRouteDeltaEnv="WARLINE_ALL120_ROUTE_DELTA_INPUT";
         const string ReviewedRouteDeltaShaEnv="WARLINE_ALL120_ROUTE_DELTA_INPUT_SHA256";
         static string RouteDeltaSha(byte[] bytes)
@@ -74,9 +1666,11 @@ namespace Game.Editor
             }
             return true;
         }
-        static string EncodeReviewedRouteDelta(string original,JObject mission,JObject input,GridConfig grid,out JObject evidence)
+        static string EncodeReviewedRouteDelta(string original,JObject mission,JObject input,GridConfig grid,out JObject evidence,bool apPolicy=false)
         {
             evidence=null;
+            bool apSubject=new[]{"S097","S098"}.Contains((string)mission["catalog_id"]);
+            Require(apPolicy==apSubject,"Explicit AP policy cannot enter generic subject or generic AP input");
             RouteDeltaFields(input,"schema","scope","catalogId","definitionId","sourcePins","canonical_size_rows",
                 "layoutBeforeSha256","routes","sourceFitCertified","missionAccepted");
             Require(input["schema"]?.Type==JTokenType.Integer&&(int)input["schema"]==1&&
@@ -103,6 +1697,7 @@ namespace Game.Editor
             var originalAnchors=anchors.OfType<JObject>().ToDictionary(a=>(string)a["AnchorId"],a=>(JObject)a.DeepClone(),StringComparer.Ordinal);
             var owned=new HashSet<string>(StringComparer.Ordinal);var usedNew=new HashSet<string>(StringComparer.Ordinal);
             int totalPoints=0,added=0,moved=0;var signatures=new HashSet<string>(StringComparer.Ordinal);
+            var apMoved=new HashSet<string>(StringComparer.Ordinal);
             var clone=ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
             try
             {
@@ -110,13 +1705,15 @@ namespace Game.Editor
                 for(int r=0;r<3;r++)
                 {
                     var route=(JObject)routes[r];var change=changes[r] as JObject;RouteDeltaFields(change,"routeId","points");
-                    Require((string)route["RouteId"]=="route.pilot."+r&&change["routeId"]?.Type==JTokenType.String&&
+                    Require((apPolicy?!string.IsNullOrEmpty((string)route["RouteId"]):(string)route["RouteId"]=="route.pilot."+r)&&change["routeId"]?.Type==JTokenType.String&&
                         (string)change["routeId"]==(string)route["RouteId"]&&route["Kind"]?.Type==JTokenType.Integer&&
                         (int)route["Kind"]==r+1&&route["ProvisionalTimes"]?.Type==JTokenType.Boolean&&(bool)route["ProvisionalTimes"]&&
                         route["AllowsVehicles"]?.Type==JTokenType.Boolean&&(bool)route["AllowsVehicles"]&&
-                        route["AllowsAircraft"]?.Type==JTokenType.Boolean&&!(bool)route["AllowsAircraft"],
+                        route["AllowsAircraft"]?.Type==JTokenType.Boolean&&(apPolicy||!(bool)route["AllowsAircraft"]),
                         "Original generic three route roles/ground permissions/provisional timing required");
                     var oldIds=((JArray)route["WaypointAnchorIds"]).Values<string>().ToArray();
+                    if(apPolicy)RequireApReviewedAnchorOwnership(route,oldIds,originalAnchors,owned,(JArray)data["pads"]);
+                    else
                     Require(oldIds.Length>=2&&oldIds.All(id=>originalAnchors.ContainsKey(id)&&owned.Add(id))&&
                         !((JArray)data["pads"]).OfType<JObject>().Any(p=>oldIds.Contains((string)p["AnchorId"])),
                         "Exclusive original route anchors; no pad/return ownership changes");
@@ -149,7 +1746,10 @@ namespace Game.Editor
                         }
                         float x=RouteDeltaNumber(point["x"]),z=RouteDeltaNumber(point["z"]);
                         if(originalAnchors.TryGetValue(id,out var originalPoint)&&
-                            (x!=(float)originalPoint["WorldX"]||z!=(float)originalPoint["WorldZ"]))moved++;
+                            (x!=(float)originalPoint["WorldX"]||z!=(float)originalPoint["WorldZ"])&&(!apPolicy||apMoved.Add(id)))moved++;
+                        if(apPolicy&&(p==0||p==points.Count-1))
+                            Require(x==(float)originalAnchors[id]["WorldX"]&&z==(float)originalAnchors[id]["WorldZ"],
+                                "AP shared pad-owned endpoints remain exact after the one reviewed translation");
                         Require(x>=clone.OriginX&&z>=clone.OriginZ&&x<=clone.OriginX+clone.WorldWidthMetres&&
                             z<=clone.OriginZ+clone.WorldDepthMetres,"Finite route point inside unchanged authored frame");
                         Require(clone.TryProjectLocalToMap(x,z,out float wx,out float wz)&&float.IsFinite(wx)&&float.IsFinite(wz),
@@ -402,6 +2002,11 @@ namespace Game.Editor
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv))&&
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv)),
                 "Idle unowned serializer preflight, before any route override");
+            Require(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteShaEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestShaEnv)),
+                "Generic serializer cannot consume AP pair or AP serializer-only requests");
             string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
             Require(id!="S049"&&id!="S050","Dedicated MP endpoint revision path is not this generic serializer boundary");
             var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);ValidateCompleteGroundBaAuthorityRow(authority);
@@ -499,6 +2104,116 @@ namespace Game.Editor
             WriteNew(output,new System.Text.UTF8Encoding(false).GetBytes(result.ToString(Newtonsoft.Json.Formatting.None)));
             Debug.Log("[ReviewedRouteSerializerBoundary] result=Collected catalog="+id+
                 " sizes=3 worldsCreated=0 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0 output="+output);
+        }
+
+        const string NormalContextCaptureEnv="WARLINE_NORMAL_FACILITY_CONTEXT_REQUEST";
+        const string NormalContextCaptureShaEnv="WARLINE_NORMAL_FACILITY_CONTEXT_REQUEST_SHA256";
+        static JObject normalOriginContextCaptureRequest;
+        static SkirmishScenarioDefinitionConfig normalOriginOriginalFcDefinition;
+        static JObject normalOriginOriginalFcMission;
+
+        static void ValidateNormalOriginCaptureRequest(JObject request,JObject mission)
+        {
+            string[] fields={"schema","scope","catalogId","faction","structureId","sourcePins","canonical_size_rows",
+                "originalAuthoringEnvelopeSha256","layoutPolicy","sourceFitCertified","normalMissionReady"};
+            Require(request!=null&&request.Properties().Select(p=>p.Name).OrderBy(p=>p,StringComparer.Ordinal)
+                .SequenceEqual(fields.OrderBy(p=>p,StringComparer.Ordinal)),"Exact capture identity only; no supplied expected context");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                request["scope"]?.Type==JTokenType.String&&(string)request["scope"]=="OriginalFcNormalTargetContextCapture_NotOriginSearch"&&
+                request["catalogId"]?.Type==JTokenType.String&&(string)request["catalogId"]==(string)mission["catalog_id"]&&
+                request["faction"]?.Type==JTokenType.Integer&&new[]{1,2}.Contains((int)request["faction"])&&
+                request["structureId"]?.Type==JTokenType.String&&!string.IsNullOrEmpty((string)request["structureId"])&&
+                JToken.DeepEquals(request["sourcePins"],mission["source_candidate"])&&
+                JToken.DeepEquals(request["canonical_size_rows"],mission["canonical_size_rows"])&&
+                request["originalAuthoringEnvelopeSha256"]?.Type==JTokenType.String&&
+                (string)request["originalAuthoringEnvelopeSha256"]==GroundObjective30InputsSha&&
+                request["layoutPolicy"]?.Type==JTokenType.String&&
+                (string)request["layoutPolicy"]=="ImmutableAuthoredOriginal_NoPadOrRouteOverride"&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["normalMissionReady"]?.Type==JTokenType.Boolean&&!(bool)request["normalMissionReady"],
+                "Exact original FC subject/source/budgets and diagnostic identity required");
+            ResolveNormalOriginSubject((string)mission["catalog_id"],out _,out var current,out bool ba);
+            Require(!ba&&JToken.DeepEquals(current,mission),"Capture admits real immutable FC subject, never BA");
+        }
+        static JObject NormalOriginCaptureFixture(JObject mission)=>new JObject{
+            ["schema"]=1,["scope"]="OriginalFcNormalTargetContextCapture_NotOriginSearch",
+            ["catalogId"]=mission["catalog_id"].DeepClone(),["faction"]=2,["structureId"]="building.refinery",
+            ["sourcePins"]=mission["source_candidate"].DeepClone(),["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+            ["originalAuthoringEnvelopeSha256"]=GroundObjective30InputsSha,
+            ["layoutPolicy"]="ImmutableAuthoredOriginal_NoPadOrRouteOverride",["sourceFitCertified"]=false,["normalMissionReady"]=false};
+
+        public static void RunNormalOriginContextCaptureControls()
+        {
+            Require(normalOriginContextCaptureRequest==null&&normalOriginOriginalFcDefinition==null&&
+                normalOriginOriginalFcMission==null&&!EditorApplication.isPlayingOrWillChangePlaymode,"Idle capture controls");
+            ResolveNormalOriginSubject("S008",out _,out var mission,out bool ba);Require(!ba,"Actual FC fixture");
+            var request=NormalOriginCaptureFixture(mission);int controls=0;
+            ValidateNormalOriginCaptureRequest(request,mission);controls++;
+            void Reject(Action<JObject> mutate)
+            {
+                var changed=(JObject)request.DeepClone();mutate(changed);bool refused=false;
+                try{ValidateNormalOriginCaptureRequest(changed,mission);}catch(InvalidOperationException){refused=true;}
+                Require(refused,"Malformed real FC capture identity must refuse");controls++;
+            }
+            Reject(r=>r["schema"]="1");Reject(r=>r["schema"]=1.0);Reject(r=>r["scope"]="ConfigurationFit");
+            Reject(r=>r["catalogId"]="S074");Reject(r=>r["faction"]=0);Reject(r=>r["faction"]="2");
+            Reject(r=>r["structureId"]="");Reject(r=>r["sourcePins"]=new JObject());
+            Reject(r=>r["canonical_size_rows"]=new JArray());Reject(r=>r["originalAuthoringEnvelopeSha256"]=new string('0',64));
+            Reject(r=>r["layoutPolicy"]="widen");Reject(r=>r["sourceFitCertified"]=true);Reject(r=>r["normalMissionReady"]="false");
+            Reject(r=>r["contexts"]=new JArray());Reject(r=>r["qaKeepClear"]=new JArray());
+            bool missing=false;try{ValidateNormalOriginCaptureRequest(null,mission);}catch(InvalidOperationException){missing=true;}
+            Require(missing,"No missing identity accepted");controls++;
+            ResolveNormalOriginSubject("S074",out _,out var wrong,out _);
+            bool wrongFamily=false;try{ValidateNormalOriginCaptureRequest(NormalOriginCaptureFixture(wrong),wrong);}
+            catch(InvalidOperationException){wrongFamily=true;}
+            Require(wrongFamily,"No BA spoof");controls++;
+            Require(controls==18,"Exact capture identity controls");
+            Debug.Log("[NormalOriginContextCaptureControls] result=Passed controls=18 worldsCreated=0 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+        static bool OriginalFcNormalOriginScope(SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,string id)
+        {
+            if(normalOriginOriginalFcDefinition==null)return false;
+            Require(normalOriginOriginalFcMission!=null&&normalOriginOriginalFcDefinition.CatalogId==id&&
+                normalOriginOriginalFcDefinition.MapLayout==layout&&normalOriginOriginalFcDefinition.RoleCatalog==roles,
+                "Exact disposable FC factory owner/layout/roles required");
+            ResolveNormalOriginSubject(id,out _,out var mission,out bool ba);
+            Require(!ba&&JToken.DeepEquals(mission,normalOriginOriginalFcMission)&&completeGroundBaAuthority==null&&
+                completeGroundBaSourcePins==null&&!mpGroundBaPilotRequested,"Real FC scope cannot borrow BA/MP service authority");
+            if(normalOriginContextCaptureRequest!=null)ValidateNormalOriginCaptureRequest(normalOriginContextCaptureRequest,mission);
+            else Require(normalFacilityOriginExportRequest!=null&&NormalOriginOriginalFc(normalFacilityOriginExportRequest,mission),
+                "Original FC target scope requires capture or schema2 export");
+            return true;
+        }
+        public static void RunReviewedOriginalFcNormalContextCapture()
+        {
+            Require(normalOriginContextCaptureRequest==null&&normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null&&
+                normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null&&completeGroundBaAuthority==null&&
+                completeGroundBaSourcePins==null&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                !strictLogicalCandidatesRequested&&!apGroundJointPreferencesRequested&&!refinementFacilityPreferencesRequested&&
+                !refinementPreferenceReplay&&!refinementCompoundSearchRequested&&!refinementJointPadSearchRequested&&
+                !refinementLogicalFrameSearchRequested&&!EditorApplication.isPlayingOrWillChangePlaymode&&
+                !EditorApplication.isCompiling&&!EditorApplication.isUpdating,"Fresh exclusive FC context capture");
+            ResolveNormalOriginSubject(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG"),out _,out var mission,out bool ba);
+            Require(!ba&&ReadReviewedFacilityPadInput(mission)==null&&ReadReviewedRouteDelta(mission)==null,"Original FC only; no pad/route inputs");
+            string path=Environment.GetEnvironmentVariable(NormalContextCaptureEnv),sha=Environment.GetEnvironmentVariable(NormalContextCaptureShaEnv);
+            RequireFiniteOriginRequestPath(path);
+            Require(sha!=null&&sha.Length==64&&sha.All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&
+                new System.IO.FileInfo(path).Length<=1048576&&Hash(path)==sha,"Exact bounded capture identity bytes");
+            var request=JObject.Parse(System.IO.File.ReadAllText(path));ValidateNormalOriginCaptureRequest(request,mission);
+            RunNormalOriginContextCaptureControls();
+            normalOriginContextCaptureRequest=(JObject)request.DeepClone();
+            try{RunAll120BoundedFacilityPreferences();}
+            finally
+            {
+                normalOriginContextCaptureRequest=null;
+                Require(normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null&&Hash(path)==sha&&
+                    Hash(GroundObjective30Inputs)==GroundObjective30InputsSha,"Scoped owner and immutable FC input restored");
+            }
+            var output=JObject.Parse(System.IO.File.ReadAllText(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")));
+            var captures=output.SelectTokens("$..normalPrefixContextCapture").OfType<JObject>().ToArray();
+            Require(captures.Length==1&&captures[0]["contexts"] is JArray&&((JArray)captures[0]["contexts"]).Count==3,
+                "Exactly three actual target contexts captured");
+            Debug.Log("[ReviewedOriginalFcNormalContextCapture] result=Collected sizes=3 originEnumerations=0 targetSelected=0 packing=0 sourceFitCertified=0 normalMissionReady=0");
         }
 
         const string NormalOriginRequestEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST";
@@ -705,7 +2420,8 @@ namespace Game.Editor
 
         public static void RunReviewedNormalFacilityOriginExport()
         {
-            Require(normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null&&
+            Require(normalFacilityOriginExportRequest==null&&normalOriginContextCaptureRequest==null&&
+                normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null&&finiteFacilityOriginExportRequest==null&&
                 completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&!mpGroundBaPilotRequested&&
                 !s049BoundedCompoundRouteRequested&&!strictLogicalCandidatesRequested&&!apGroundJointPreferencesRequested&&
                 !refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&!refinementCompoundSearchRequested&&
@@ -868,8 +2584,14 @@ namespace Game.Editor
                 !refinementJointPadSearchRequested&&!refinementCompoundSearchRequested&&!refinementLogicalFrameSearchRequested,
                 "Exclusive bounded AP logical-preference collection required");
             RunFacilityPreferenceControls();
+            Require(string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestEnv))&&
+                string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApBoundaryRequestShaEnv)),
+                "Serializer-only request cannot enter full AP collection");
             WithApJointPreferenceMode(()=>
             {
+                if(!string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteEnv))||
+                    !string.IsNullOrEmpty(Environment.GetEnvironmentVariable(ApReviewedRouteShaEnv)))
+                    ReadReviewedApPairRouteInput(ApReviewedCanonicalMissions()[0]);
                 RunApGroundPairStaticCollection();
                 Debug.Log("[APGroundPairJointPreferenceCollection] result=Collected routeSeedLimit=4 assignmentLimit=9 sourceFitCertified=0 normalMissionReady=0");
             });
@@ -1065,10 +2787,12 @@ namespace Game.Editor
                 ["sourceFitCertified"]=false,["cameraAccepted"]=false,["normalMissionReady"]=false,["maximumPreferenceAssignments"]=9};
             var logicalPadInput=ReadReviewedFacilityPadInput(mission);
             var reviewedRouteInput=ReadReviewedRouteDelta(mission);
+            var reviewedApInput=ReadReviewedApPairRouteInput(mission);
             JObject reviewedRouteProof=null;
             int frameAttempt=logicalPadInput==null?3:(int)logicalPadInput["fixedLogicalFrameAttempt"];
             JObject compounds;string error;
-            bool originalFc=normalFacilityOriginExportRequest!=null&&NormalOriginOriginalFc(normalFacilityOriginExportRequest,mission);
+            bool originalFc=normalOriginContextCaptureRequest!=null||
+                (normalFacilityOriginExportRequest!=null&&NormalOriginOriginalFc(normalFacilityOriginExportRequest,mission));
             bool frameReady;
             if(originalFc)
             {
@@ -1093,7 +2817,23 @@ namespace Game.Editor
                 report["fixedReviewedPadCandidate"]=true;
             }
 
-            if(reviewedRouteInput!=null)
+            if(apGroundJointPreferencesRequested)
+            {
+                report["apJointPadInput"]=ApplyApJointPadInput(mission,owner.Layout,source,grid,budgets);
+                if(reviewedApInput!=null)
+                {
+                    reviewedRouteProof=ApplyReviewedApPairRoute(reviewedApInput,mission,owner.Layout,grid,budgets,(JObject)report["apJointPadInput"]);
+                    reviewedRouteInput=(JObject)reviewedRouteProof["routeProof"]["input"];
+                    report["reviewedApRouteInput"]=reviewedRouteProof.DeepClone();
+                    report["reviewedRouteAppliedLayoutJson"]=JsonUtility.ToJson(owner.Layout);
+                }
+                else
+                {
+                    report["apJointRouteSeed"]=PrepareApJointRouteSeed(owner,budgets,em,gridEntity,grid,surface);
+                    if(report["apJointRouteSeed"]["selectedCandidate"]==null)return report;
+                }
+            }
+            else if(reviewedRouteInput!=null)
             {
                 var unchangedBudgets=new JArray(budgets.Select(ApPreferenceBudgetKey));
                 string applied=EncodeReviewedRouteDelta(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteInput,grid,out var routeInputEvidence);
@@ -1105,13 +2845,7 @@ namespace Game.Editor
                 reviewedRouteProof=routeInputEvidence;report["reviewedRouteInput"]=routeInputEvidence;
                 report["reviewedRouteAppliedLayoutJson"]=applied;
             }
-            if(apGroundJointPreferencesRequested)
-            {
-                report["apJointPadInput"]=ApplyApJointPadInput(mission,owner.Layout,source,grid,budgets);
-                report["apJointRouteSeed"]=PrepareApJointRouteSeed(owner,budgets,em,gridEntity,grid,surface);
-                if(report["apJointRouteSeed"]["selectedCandidate"]==null)return report;
-            }
-            else if(reviewedRouteInput==null&&!originalFc)
+            else if(!originalFc)
             {
                 var routes=ProposeBoundedNativeRouteRepair(owner.Layout,budgets,baselineRoutes,em,gridEntity,grid,surface);
                 report["boundedRouteProposal"]=routes;
@@ -1123,6 +2857,45 @@ namespace Game.Editor
             if(reviewedRouteInput!=null)AppendReviewedRoutePointClearance(approachEvidence,clearance);
             report["actualProposedApproaches"]=approachEvidence;
 
+            if(normalOriginContextCaptureRequest!=null)
+            {
+                var request=normalOriginContextCaptureRequest;ValidateNormalOriginCaptureRequest(request,mission);
+                Require(originalFc&&logicalPadInput==null&&reviewedRouteInput==null&&
+                    normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null,
+                    "Exact original FC factory boundary and fresh capture owner");
+                string layoutJson=JsonUtility.ToJson(owner.Layout);
+                var rows=new JArray();var contexts=new JArray();
+                normalOriginOriginalFcDefinition=owner.Definition;normalOriginOriginalFcMission=(JObject)mission.DeepClone();
+                try
+                {
+                    foreach(var budget in budgets)
+                    {
+                        var row=new JObject{["catalogId"]=owner.Definition.CatalogId,["size"]=budget.Size.ToString(),
+                            ["group"]=mission["collector_source_group"].DeepClone(),["newLogicalCandidateMaterialized"]=true,
+                            ["candidateCompoundWorldRects"]=compounds.DeepClone(),["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
+                        ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
+                            em,gridEntity,grid,surface,row,true,true,clearance,false,serviceAuthority:null);
+                        var targets=((JArray)row["normalFacilityRelocationProposals"]).OfType<JObject>()
+                            .Where(r=>r["normalPrefixCapturedContext"] is JObject).ToArray();
+                        Require(targets.Length==1,"One genuine normal target boundary per canonical size");
+                        contexts.Add(targets[0]["normalPrefixCapturedContext"].DeepClone());rows.Add(row);
+                    }
+                }
+                finally{normalOriginOriginalFcDefinition=null;normalOriginOriginalFcMission=null;}
+                Require(contexts.Count==3&&contexts.Select(c=>(string)c["size"]).SequenceEqual(new[]{"Standard","War","LargeWar"})&&
+                    JsonUtility.ToJson(owner.Layout)==layoutJson,"Exactly three original-layout contexts, no layout mutation");
+                report["normalPrefixContextCapture"]=new JObject{
+                    ["scope"]="OriginalFcNormalTargetContextCapture_NotOriginSearch",["identity"]=request.DeepClone(),
+                    ["layoutJson"]=layoutJson,["layout"]=JObject.Parse(layoutJson),
+                    ["approachClearance"]=new JArray(clearance.Select(RectJson)),
+                    ["budgets"]=new JArray(budgets.Select(ApPreferenceBudgetKey)),["contexts"]=contexts,["rows"]=rows,
+                    ["sourcePins"]=mission["source_candidate"].DeepClone(),["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+                    ["nativeGrid"]=new JObject{["width"]=grid.Width,["height"]=grid.Height,["cellSize"]=grid.CellSize,
+                        ["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z)},
+                    ["originalAuthoringEnvelopeSha256"]=GroundObjective30InputsSha,["originEnumerations"]=0,
+                    ["targetSelected"]=false,["packingMeasured"]=false,["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                report["result"]="CollectedOriginalFcNormalTargetContext_NoOriginSearch";return report;
+            }
             if(normalFacilityOriginExportRequest!=null)
             {
                 var request=normalFacilityOriginExportRequest;ValidateNormalOriginRequest(request,mission);
@@ -1132,7 +2905,14 @@ namespace Game.Editor
                     JToken.DeepEquals(NormalOriginJson(new JArray(clearance.Select(RectJson))),NormalOriginJson(request["approachClearance"]))&&
                     JToken.DeepEquals(NormalOriginJson(new JArray(budgets.Select(ApPreferenceBudgetKey))),NormalOriginJson(request["budgets"])),
                     "Exact recorded layout, real approach clearances and all three own budgets required");
+                if(originalFc)
+                {
+                    Require(normalOriginOriginalFcDefinition==null&&normalOriginOriginalFcMission==null,"Fresh FC export owner scope");
+                    normalOriginOriginalFcDefinition=owner.Definition;normalOriginOriginalFcMission=(JObject)mission.DeepClone();
+                }
                 var exported=new JArray();
+                try
+                {
                 foreach(var budget in budgets)
                 {
                     var row=new JObject{["catalogId"]=owner.Definition.CatalogId,["size"]=budget.Size.ToString(),
@@ -1146,6 +2926,11 @@ namespace Game.Editor
                     Require(targets.Length==1&&(bool)targets[0]["normalPrefixFiniteOrigins"]["enumerationComplete"],
                         "Requested normal-search point must be reached exactly once for each size");
                     exported.Add(row);
+                }
+                }
+                finally
+                {
+                    if(originalFc){normalOriginOriginalFcDefinition=null;normalOriginOriginalFcMission=null;}
                 }
                 report["normalPrefixOriginExport"]=new JObject{["scope"]="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit",
                     ["request"]=request.DeepClone(),["rows"]=exported,["packingMeasured"]=false,
@@ -1179,7 +2964,7 @@ namespace Game.Editor
             }
 
             var hints=(JArray)inventory["normalFacilityRelocationProposals"];
-            var assignments=logicalPadInput==null?BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds):
+            var assignments=logicalPadInput==null&&reviewedApInput==null?BuildPreferenceAssignments(owner.Layout,maxBudget.Structures,hints,grid,compounds):
                 new JArray(new JObject{["score"]=0,["pads"]=new JArray()});
             report["preferenceAssignments"]=assignments;
             string baseline=JsonUtility.ToJson(owner.Layout),definition=JsonUtility.ToJson(owner.Definition);

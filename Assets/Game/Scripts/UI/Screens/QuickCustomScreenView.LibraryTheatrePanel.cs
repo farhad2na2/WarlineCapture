@@ -637,11 +637,38 @@ namespace Game.UI.Runtime
                 }
             }
 
+            // v47d (v97: fa 'پایگاه' under BA ran into the BT icon on the row below at every ratio): rows are sized from
+            // the captions' measured ink, not their 26 px box. Noto Arabic sits deeper than the box (dots under پ/ی), so
+            // a row is icon + caption offset + caption ink depth + gap; the icon gives way first (32 down to 16).
+            var captionTexts = new List<TMP_Text>(captions.Count);
+            float captionDepth = captionH; // ink below the caption box top
+            float captionRise = 0f;        // ink above the caption box top (would touch its own icon)
+            for (int i = 0; i < captions.Count; i++)
+            {
+                TMP_Text text = captions[i].GetComponent<TMP_Text>();
+                captionTexts.Add(text);
+                if (TextInkExtent(text, out float rise, out float depth))
+                {
+                    captionDepth = Mathf.Max(captionDepth, depth);
+                    captionRise = Mathf.Max(captionRise, rise);
+                }
+            }
+
+            float captionOffset = Mathf.Max(2f, captionRise + ObjectiveHeadingGap);
+            float needBelowIcon = captionOffset + captionDepth + ObjectiveHeadingGap;
             float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
             float limit = Mathf.Max(panelH - 12f, Mathf.Min(blockBottom, panelH - 4f));
             int rows = Mathf.Max(1, (ids.Length + 1) / 2);
             float pitch = Mathf.Min(DetailObjectiveRowHeight, (limit - rowsTop) / rows);
-            float icon = Mathf.Clamp(pitch - captionH - 4f, 16f, oldIcon > 1f ? oldIcon : 32f);
+            float iconCap = Mathf.Min(32f, Mathf.Max(oldIcon, 28f));
+            float icon = Mathf.Clamp(pitch - needBelowIcon, 16f, iconCap);
+            if (icon + needBelowIcon > pitch)
+            {
+                // Even a 16 px icon leaves too little: use the panel's bottom pad before giving up.
+                float roomy = (panelH - 4f - rowsTop) / rows;
+                pitch = Mathf.Max(pitch, Mathf.Min(roomy, icon + needBelowIcon));
+            }
+
             for (int i = 0; i < ids.Length; i++)
             {
                 float top = rowsTop + (i / 2) * pitch;
@@ -654,19 +681,63 @@ namespace Game.UI.Runtime
                 }
 
                 if (i < captions.Count)
-                    PlaceTopLeft(captions[i], captions[i].anchoredPosition.x, top + icon + 2f, captions[i].sizeDelta.x, captionH);
+                    PlaceTopLeft(captions[i], captions[i].anchoredPosition.x, top + icon + captionOffset, captions[i].sizeDelta.x, captionH);
             }
 
-            bool fits = pitch >= 16f + captionH + 2f;
+            // Re-measure where the ink actually landed: every caption must clear the next row's icons and the panel pad.
+            float worstClear = float.MaxValue;
+            for (int i = 0; i < captionTexts.Count; i++)
+            {
+                if (captionTexts[i] == null || string.IsNullOrWhiteSpace(captionTexts[i].text))
+                    continue;
+                float ink = TextInkBottom(panel, captionTexts[i]);
+                float next = (i / 2) + 1 < rows ? rowsTop + ((i / 2) + 1) * pitch : panelH - 4f;
+                worstClear = Mathf.Min(worstClear, next - ink);
+            }
+
+            if (worstClear == float.MaxValue)
+                worstClear = 0f;
+            bool fits = worstClear >= ObjectiveHeadingGap - 0.5f && icon >= 16f;
             string line = "[TheatreObjectives] headingFont=" + heading.fontSize.ToString("0.0") +
                 " box=" + headingRect.sizeDelta.x.ToString("0") + "x" + headingRect.sizeDelta.y.ToString("0") +
                 " inkBottom=" + inkBottom.ToString("0.0") + " boxBottom=" + boxBottom.ToString("0.0") +
                 " rowsTop=" + rowsTop.ToString("0.0") + " pitch=" + pitch.ToString("0.0") + " icon=" + icon.ToString("0.0") +
+                " captionFont=" + (captionTexts.Count > 0 && captionTexts[0] != null ? captionTexts[0].fontSize.ToString("0.0") : "-") +
+                " captionInk=" + captionRise.ToString("0.0") + "/" + captionDepth.ToString("0.0") +
+                " captionBox=" + captionH.ToString("0") + " captionClear=" + worstClear.ToString("0.0") +
                 " panelH=" + panelH.ToString("0") + " fits=" + (fits ? "1" : "0") + " locale=" + (fa ? "fa-IR" : "en");
             if (fits)
                 Debug.Log(line);
             else
                 Debug.LogWarning(line);
+        }
+
+        /// <summary>
+        /// v47d: a label's ink relative to its own rect top: rise = ink above the top edge (>= 0), depth = lowest glyph
+        /// quad below the top edge. Glyph quads include TMP's descender dots, which is what the overlap check reads.
+        /// </summary>
+        private static bool TextInkExtent(TMP_Text text, out float rise, out float depth)
+        {
+            rise = 0f;
+            depth = 0f;
+            if (text == null || string.IsNullOrWhiteSpace(text.text) || !text.gameObject.activeInHierarchy)
+                return false;
+            text.ForceMeshUpdate();
+            TMP_TextInfo info = text.textInfo;
+            int count = info != null && info.characterInfo != null ? Mathf.Min(info.characterCount, info.characterInfo.Length) : 0;
+            float top = text.rectTransform.rect.yMax;
+            bool any = false;
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo c = info.characterInfo[i];
+                if (!c.isVisible)
+                    continue;
+                any = true;
+                rise = Mathf.Max(rise, c.topRight.y - top);
+                depth = Mathf.Max(depth, top - c.bottomLeft.y);
+            }
+
+            return any;
         }
 
         /// <summary>v47: depth from <paramref name="panel"/>'s top of the lowest visible glyph quad of <paramref name="text"/>.</summary>

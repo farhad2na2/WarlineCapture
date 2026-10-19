@@ -3390,7 +3390,7 @@ namespace Game.UI.Runtime
                             for (int xStep = 0; xStep < shift.Length; xStep++)
                             {
                                 var trial = new Box(originX + shift[xStep], originY + shift[yStep], tryW[axis], tryH[axis]);
-                                if (!SeatHolds(trial, hexes[i], hexes))
+                                if (!SeatHolds(trial, hexes[i], hexes) || !RestsInside(trial, hexes[i], InsideMargin))
                                     continue;
                                 cards[i] = trial;
                                 if (!DistrictsStayLegal(hexes, pins, cards, quiet, detail, plateWidth, plateHeight, selected))
@@ -3430,6 +3430,8 @@ namespace Game.UI.Runtime
                 && (SameCue(savedCue, attached) || !mirrorPlate))
             {
                 cue = attached;
+                if (SnapLooseCards(hexes, cards, savedCards, selected))
+                    cue = savedCue;
                 return;
             }
 
@@ -3440,14 +3442,22 @@ namespace Game.UI.Runtime
             {
                 Box grown = cards[selected];
                 Box home = savedCards[selected];
-                cards[selected] = new Box(grown.X, grown.YMax - home.H, grown.W, home.H);
-                if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box wideCue)
-                    && DistrictsStayLegal(hexes, pins, cards, wideCue, detail, plateWidth, plateHeight, selected)
-                    && (SameCue(savedCue, wideCue) || !mirrorPlate))
+                var shortened = new Box(grown.X, grown.YMax - home.H, grown.W, home.H);
+                if (RestsInside(shortened, hexes[selected], InsideMargin))
                 {
-                    cue = wideCue;
-                    return;
+                    cards[selected] = shortened;
+                    if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box wideCue)
+                        && DistrictsStayLegal(hexes, pins, cards, wideCue, detail, plateWidth, plateHeight, selected)
+                        && (SameCue(savedCue, wideCue) || !mirrorPlate))
+                    {
+                        cue = wideCue;
+                        if (SnapLooseCards(hexes, cards, savedCards, selected))
+                            cue = savedCue;
+                        return;
+                    }
                 }
+
+                cards[selected] = grown;
             }
 
             if (selected >= 0 && selected < cards.Length)
@@ -3458,16 +3468,40 @@ namespace Game.UI.Runtime
                 && SameCue(savedCue, kept))
             {
                 cue = kept;
+                if (SnapLooseCards(hexes, cards, savedCards, selected))
+                    cue = savedCue;
                 return;
             }
 
             cue = savedCue;
             if (DistrictsStayLegal(hexes, pins, cards, cue, detail, plateWidth, plateHeight, selected))
+            {
+                if (SnapLooseCards(hexes, cards, savedCards, selected))
+                    cue = savedCue;
                 return;
+            }
 
             for (int i = 0; i < cards.Length; i++)
                 cards[i] = savedCards[i];
             cue = savedCue;
+            SnapLooseCards(hexes, cards, savedCards, selected);
+        }
+
+        private static bool SnapLooseCards(Vec2[][] hexes, Box[] cards, Box[] saved, int selected)
+        {
+            if (cards == null || saved == null || hexes == null)
+                return false;
+            bool selectedLoose = false;
+            for (int i = 0; i < cards.Length && i < saved.Length && i < hexes.Length; i++)
+            {
+                if (hexes[i] == null || cards[i].W < 1f || RestsInside(cards[i], hexes[i], InsideMargin))
+                    continue;
+                cards[i] = saved[i];
+                if (i == selected)
+                    selectedLoose = true;
+            }
+
+            return selectedLoose;
         }
 
         private static bool SameCue(Box before, Box after)
@@ -6306,6 +6340,366 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Capture's zoom-pill test. The selected district fails on a stroke hit. Every
+        /// other district fails on any overlap. The reach is <see cref="CueHexStroke"/>.
+        /// </summary>
+        public static bool FarsiPillClearsDistrict(Box pill, Vec2[] district, bool own)
+        {
+            if (pill.W < 1f || district == null || district.Length < 3)
+                return true;
+            Box stroke = InflateBox(pill, CueHexStroke);
+            return own ? !HexEdgeHits(district, stroke) : !PolygonHitsRect(district, stroke);
+        }
+
+        /// <summary>
+        /// The Farsi zoom pill is 206×56. Hung off the left of the selected card it crosses
+        /// that district's stroke, and the capture names the district. Park it above the card
+        /// with the extra width to the right, or on a shelf beside the card, and slide only
+        /// this district when the shelf needs room. The title bar stays clear.
+        /// </summary>
+
+        private static bool SeatWideFarsiPill(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || pins == null || cards == null)
+                return false;
+            if (selected < 0 || selected >= cards.Length || cards[selected].W < 48f)
+                return false;
+            const float pillW = 206f;
+            const float pillH = 56f;
+            Box card = cards[selected];
+            float width = Math.Max(pillW, card.W);
+            float height = pillH;
+            float aboveY = Math.Max(1f, card.Y - height);
+            float[] aboveX = { card.X, card.XMax - width, card.X - 36f, card.X + 36f, card.X - 72f };
+            for (int a = 0; a < aboveX.Length; a++)
+            {
+                float x = aboveX[a];
+                if (x < 1f)
+                    x = 1f;
+                if (x + width > plateWidth - 1f)
+                    x = plateWidth - 1f - width;
+                var above = new Box(x, aboveY, width, height);
+                if (above.YMax > card.Y + 1f)
+                    continue;
+                if (!WideFarsiPillHolds(above, card, hexes, pins, cards, selected, detail, plateWidth, plateHeight))
+                {
+                    continue;
+                }
+
+                cue = above;
+                return true;
+            }
+
+            var beside = new Box(card.XMax + 4f, card.Y, width, height);
+            if (WideFarsiPillHolds(beside, card, hexes, pins, cards, selected, detail, plateWidth, plateHeight))
+            {
+                cue = beside;
+                return true;
+            }
+
+            BoundsOf(hexes[selected], out float minX, out _, out float maxX, out _);
+            float openX = detail.W > 1f && detail.Center.X < plateWidth * 0.5f
+                ? detail.XMax + 6f
+                : 8f;
+            float[] shelfY = { card.Y, card.Y + 36f, card.Y + card.H - height, card.Y - 16f };
+            float limit = RightDistrictLimit(hexes, selected, plateWidth);
+            for (int s = 0; s < shelfY.Length; s++)
+            {
+                float y = shelfY[s];
+                if (y < 1f || y + height > plateHeight - 8f)
+                    continue;
+                float shelfX = openX;
+                for (int step = 0; step < 48; step++)
+                {
+                    var trial = new Box(shelfX, y, width, height);
+                    Box stroke = InflateBox(trial, CueHexStroke);
+                    bool hit = false;
+                    for (int i = 0; i < hexes.Length; i++)
+                    {
+                        if (i == selected || hexes[i] == null)
+                            continue;
+                        if (!PolygonHitsRect(hexes[i], stroke))
+                            continue;
+                        hit = true;
+                        break;
+                    }
+
+                    if (!hit)
+                        break;
+                    shelfX += 4f;
+                }
+
+                var shelf = new Box(shelfX, y, width, height);
+                if (shelf.XMax > plateWidth - 8f)
+                    continue;
+                float shift = shelf.XMax + CueHexStroke + 2f - minX;
+                if (shift < 0f)
+                    shift = 0f;
+                if (maxX + shift > limit + 0.5f)
+                {
+                    continue;
+                }
+
+                Vec2[] savedHex = CloneShape(hexes[selected]);
+                Box savedCard = cards[selected];
+                Box savedPin = pins[selected];
+                Box savedCue = cue;
+                if (shift > 0.5f)
+                    NudgeDistrict(hexes[selected], ref cards[selected], shift);
+                BoundsOf(hexes[selected], out float left, out _, out _, out _);
+                Box pin = pins[selected];
+                float homeX = pin.Center.X + Math.Max(0f, shift);
+                float pinCenter = homeX;
+                for (float x = left + 10f; x < homeX; x += 4f)
+                {
+                    var point = new Vec2(x, pin.Center.Y);
+                    if (!PointInPolygon(point, hexes[selected]) || EdgeCloserThan(point, hexes[selected], 6f))
+                        continue;
+                    pinCenter = x;
+                    break;
+                }
+
+                pins[selected] = new Box(pinCenter - pin.W * 0.5f, pin.Y, pin.W, pin.H);
+                bool holds = WideFarsiPillHolds(
+                        shelf, cards[selected], hexes, pins, cards, selected, detail, plateWidth, plateHeight)
+                    && DistrictShiftHolds(hexes, pins, cards, selected, detail, plateWidth, plateHeight);
+                if (!holds)
+                {
+                    hexes[selected] = savedHex;
+                    cards[selected] = savedCard;
+                    pins[selected] = savedPin;
+                    cue = savedCue;
+                    continue;
+                }
+
+                cue = shelf;
+                return true;
+            }
+
+            // The 206px line does not fit on a shelf. Set it inside the selected card,
+            // under the title, so the capture's in-card exemption applies and the pill
+            // is not on Desert Base.
+            float grownW = Math.Max(card.W, width);
+            float grow = grownW - card.W;
+            var grown = new Box(card.X, card.Y, grownW, card.H);
+            if (grow > 0.5f && !RestsInside(grown, hexes[selected], InsideMargin))
+                grown = new Box(card.X - grow, card.Y, grownW, card.H);
+            float titleEnd = grown.Y + 8f + 46f;
+            var inner = new Box(grown.X + (grown.W - width) * 0.5f, titleEnd + 6f, width, height);
+            bool innerOk = RestsInside(grown, hexes[selected], InsideMargin)
+                && inner.YMax <= grown.YMax - 4f
+                && inner.X >= grown.X + 1f
+                && inner.XMax <= grown.XMax - 1f
+                && OnPlate(grown, plateWidth, plateHeight)
+                && Clears(grown, detail);
+            if (innerOk)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Separation(grown, cards[i]) < CardGap)
+                        innerOk = false;
+                }
+            }
+
+            if (innerOk)
+            {
+                cards[selected] = grown;
+                cue = inner;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static void NudgeDistrict(Vec2[] hex, ref Box card, float dx)
+        {
+            if (hex != null)
+            {
+                for (int i = 0; i < hex.Length; i++)
+                    hex[i] = new Vec2(hex[i].X + dx, hex[i].Y);
+            }
+
+            card = new Box(card.X + dx, card.Y, card.W, card.H);
+        }
+
+        private static float RightDistrictLimit(Vec2[][] hexes, int selected, float plateWidth)
+        {
+            float limit = plateWidth - HaloReach - 1f;
+            if (hexes == null || hexes[selected] == null)
+                return limit;
+            BoundsOf(hexes[selected], out _, out float top, out _, out float bottom);
+            CentroidOf(hexes[selected], out float sx, out _);
+            float need = DistrictGlowReach * 2f + 14f;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == selected || hexes[i] == null)
+                    continue;
+                BoundsOf(hexes[i], out float minX, out float oy0, out _, out float oy1);
+                bool stacked = oy1 < top - need || oy0 > bottom + need;
+                if (stacked)
+                    continue;
+                CentroidOf(hexes[i], out float ox, out _);
+                if (ox <= sx)
+                    continue;
+                limit = Math.Min(limit, minX - need);
+            }
+
+            return limit;
+        }
+
+        private static bool DistrictShiftHolds(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (!PointInPolygon(pins[selected].Center, hexes[selected])
+                || EdgeCloserThan(pins[selected].Center, hexes[selected], 6f))
+            {
+                return false;
+            }
+
+            if (!RestsInside(cards[selected], hexes[selected], InsideMargin))
+            {
+                return false;
+            }
+
+            if (!OnPlate(cards[selected], plateWidth, plateHeight) || !Clears(cards[selected], detail))
+            {
+                return false;
+            }
+
+            if (PolygonArea(hexes[selected]) < 40000f)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < cards.Length; i++)
+            {
+                if (i == selected || cards[i].W < 1f)
+                    continue;
+                if (Separation(cards[selected], cards[i]) < CardGap)
+                {
+                    return false;
+                }
+
+                if (PolygonsOverlap(hexes[selected], hexes[i], 0.75f))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool WideFarsiPillHolds(
+            Box pill,
+            Box card,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            return WideFarsiPillHolds(pill, card, hexes, pins, cards, selected, detail, plateWidth, plateHeight, true);
+        }
+
+        private static bool WideFarsiPillHolds(
+            Box pill,
+            Box card,
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool ownStroke)
+        {
+            if (pill.W < 200f || pill.H < 54f)
+            {
+                return false;
+            }
+
+            if (!OnPlate(pill, plateWidth, plateHeight) || !Clears(pill, detail))
+            {
+                return false;
+            }
+
+            bool above = pill.YMax <= card.Y + 1f;
+            bool aside = pill.XMax <= card.X + 1f || pill.X >= card.XMax - 1f;
+            if (!above && !aside)
+            {
+                return false;
+            }
+            if (cards != null)
+            {
+                for (int i = 0; i < cards.Length; i++)
+                {
+                    if (i == selected || cards[i].W < 1f)
+                        continue;
+                    if (Overlaps(pill, cards[i], 2f))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (pins != null)
+            {
+                for (int i = 0; i < pins.Length; i++)
+                {
+                    if (pins[i].W > 1f && Overlaps(pill, pins[i], 1f))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            if (!CueCountsAsNear(pill, card, pins[selected], hexes[selected]))
+            {
+                return false;
+            }
+            Box stroke = InflateBox(pill, CueHexStroke);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (hexes[i] == null)
+                    continue;
+                if (i == selected)
+                {
+                    if (ownStroke && HexEdgeHits(hexes[i], stroke))
+                    {
+                        return false;
+                    }
+
+                    continue;
+                }
+
+                if (PolygonHitsRect(hexes[i], stroke))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
         /// Pulls an organic coast inward until it sits in the map frame and clear of the hint.
         /// A six-point hex is not substituted while a scaled coast still has interior samples.
         /// </summary>
@@ -6340,6 +6734,10 @@ namespace Game.UI.Runtime
                     continue;
                 float measured = MeasuredHexAspect(next);
                 if (expected >= 0.2f && measured >= 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
+                    continue;
+                // A uniform shrink that clears the frame was cutting the card. The
+                // coast has to keep the same 8px seat the hex already gave it.
+                if (card.W >= 1f && !RestsInside(card, next, InsideMargin))
                     continue;
                 return next;
             }
@@ -8908,6 +9306,52 @@ namespace Game.UI.Runtime
         /// margin, so a short lift and a neighbour drop are tried until the cover fits.
         /// The zoom tab moves with the card and the pin clearance stays.
         /// </summary>
+        /// <summary>
+        /// The grown district left the selected card a few pixels outside the 160px
+        /// cue reach. Slide the card toward its pin while it still sits inside.
+        /// </summary>
+        private static bool PullCardTowardPin(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int index,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || pins == null || cards == null || index < 0 || index >= cards.Length)
+                return false;
+            Box card = cards[index];
+            Box pin = pins[index];
+            float dist = CueAnchorDistance(cue, card, pin);
+            if (dist <= CueNearLimit || dist > CueNearLimit + 24f)
+                return dist <= CueNearLimit;
+            Vec2 top = new Vec2(card.X + card.W * 0.5f, card.Y);
+            float dx = pin.Center.X - top.X;
+            float dy = pin.Center.Y - top.Y;
+            float length = (float)Math.Sqrt(dx * dx + dy * dy);
+            if (length < 1f)
+                return false;
+            float step = dist - (CueNearLimit - 1f);
+            var moved = new Box(card.X + dx / length * step, card.Y + dy / length * step, card.W, card.H);
+            if (!RestsInside(moved, hexes[index], InsideMargin))
+                return false;
+            if (!OnPlate(moved, plateWidth, plateHeight) || !Clears(moved, detail))
+                return false;
+            if (Leader(pin, moved) < LeaderMin || Separation(moved, pin) < PinGap)
+                return false;
+            cards[index] = moved;
+            if (!ClearsOtherCards(cards, index))
+            {
+                cards[index] = card;
+                return false;
+            }
+
+            cue = new Box(cue.X + (moved.X - card.X), cue.Y + (moved.Y - card.Y), cue.W, cue.H);
+            return CueCountsAsNear(cue, moved, pin, hexes[index]);
+        }
+
         private static bool CoverCardInPlace(
             Vec2[][] hexes,
             Box[] pins,
@@ -8947,8 +9391,30 @@ namespace Game.UI.Runtime
                         && RestsInside(cards[index], hexes[index], InsideMargin)
                         && Leader(pins[index], cards[index]) + 0.05f >= LeaderMin)
                     {
+                        Box keptCue = cue;
                         if (index == selected)
                             RaiseCoverOverCue(hexes, pins, cards, ref cue, detail, plateWidth, plateHeight, index);
+                        if (index == selected && !CueCountsAsNear(cue, cards[index], pins[index], hexes[index]))
+                            cue = keptCue;
+                        if (index == selected && !CueCountsAsNear(cue, cards[index], pins[index], hexes[index]))
+                            PullCardTowardPin(hexes, pins, cards, ref cue, index, detail, plateWidth, plateHeight);
+                        Box hint = ZoomHintRect(plateWidth, plateHeight);
+                        bool hintHit = false;
+                        for (int h = 0; h < hexes.Length; h++)
+                        {
+                            if (hexes[h] != null && EdgesHit(hexes[h], hint))
+                            {
+                                hintHit = true;
+                                break;
+                            }
+                        }
+
+                        if (hintHit || (index == selected && cue.W > 1f && !CueCountsAsNear(cue, cards[index], pins[index], hexes[index])))
+                        {
+                            RestoreCover(hexes, pins, cards, ref cue, originHex, originPins, originCards, originCue);
+                            continue;
+                        }
+
                         return true;
                     }
                     if (!DropBlockerBelow(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, index))
@@ -9501,6 +9967,277 @@ namespace Game.UI.Runtime
             return !HexEdgeHits(shaped, stroke);
         }
 
+        /// <summary>
+        /// The card sits outside a district that cannot grow without hitting a neighbour.
+        /// Scale that district about its centre, then slide the card into the opening.
+        /// </summary>
+        private static bool TuckCardInDistrict(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int index)
+        {
+            if (hexes == null || hexes[index] == null || cards == null)
+                return false;
+            Vec2[] savedHex = CopyShape(hexes[index]);
+            Box savedCard = cards[index];
+            Box savedPin = pins != null && index < pins.Length ? pins[index] : default;
+            Box savedCue = cue;
+            CentroidOf(savedHex, out float cx, out float cy);
+            var others = new Vec2[hexes.Length][];
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i != index)
+                    others[i] = hexes[i];
+            }
+
+            float[] gains = { 1f, 1.08f, 1.16f, 1.24f, 1.34f };
+            for (int g = 0; g < gains.Length; g++)
+            {
+                float gain = gains[g];
+                var grown = new Vec2[savedHex.Length];
+                for (int p = 0; p < savedHex.Length; p++)
+                    grown[p] = new Vec2(cx + (savedHex[p].X - cx) * gain, cy + (savedHex[p].Y - cy) * gain);
+                if (!OutlineInside(grown, plateWidth, plateHeight, out _, out _) || !GlowInside(grown, plateWidth, plateHeight, out _, out _))
+                    continue;
+                if (detail.W > 1f && PolygonHitsRect(grown, detail))
+                    continue;
+                if (!NeighbourGapsHold(grown, savedHex, others))
+                    continue;
+                if (savedPin.W > 1f && (!PointInPolygon(savedPin.Center, grown) || DistanceToEdge(savedPin.Center, grown) < 6f))
+                    continue;
+                hexes[index] = grown;
+                cards[index] = savedCard;
+                cue = savedCue;
+                if (!SlideCardInside(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, index))
+                    continue;
+                if (!RestsInside(cards[index], hexes[index], InsideMargin))
+                    continue;
+                return true;
+            }
+
+            BoundsOf(savedHex, out float hx0, out float hy0, out float hx1, out float hy1);
+            float y = Math.Max(savedCard.Y, 40f);
+            var trial = new Box(hx0 + (hx1 - hx0 - savedCard.W) * 0.5f, y, savedCard.W, savedCard.H);
+            float[] drops = { 1f, 1.06f, 1.12f, 1.18f, 1.26f };
+            for (int g = 0; g < drops.Length; g++)
+            {
+                float gain = drops[g];
+                float top = hy0;
+                var grown = new Vec2[savedHex.Length];
+                for (int p = 0; p < savedHex.Length; p++)
+                {
+                    grown[p] = new Vec2(
+                        cx + (savedHex[p].X - cx) * gain,
+                        top + (savedHex[p].Y - hy0) * gain);
+                }
+
+                if (!OutlineInside(grown, plateWidth, plateHeight, out _, out _) || !GlowInside(grown, plateWidth, plateHeight, out _, out _))
+                {
+                    continue;
+                }
+
+                if (detail.W > 1f && PolygonHitsRect(grown, detail))
+                {
+                    continue;
+                }
+
+                if (!NeighbourGapsHold(grown, savedHex, others))
+                {
+                    if (!NudgeNeighboursClear(hexes, pins, cards, grown, index, detail, plateWidth, plateHeight)
+                        || !FreshGapsHold(grown, hexes, index))
+                    {
+                        continue;
+                    }
+                }
+
+                if (!RestsInside(trial, grown, InsideMargin))
+                {
+                    continue;
+                }
+
+                if (savedPin.W > 1f && (!PointInPolygon(savedPin.Center, grown) || DistanceToEdge(savedPin.Center, grown) < 6f))
+                {
+                    continue;
+                }
+
+                hexes[index] = grown;
+                cards[index] = trial;
+                if (!OnPlate(trial, plateWidth, plateHeight) || !Clears(trial, detail) || !ClearsOtherCards(cards, index))
+                {
+                    continue;
+                }
+
+                if (savedPin.W > 1f && (Leader(savedPin, trial) < LeaderMin || Separation(trial, savedPin) < PinGap))
+                {
+                    continue;
+                }
+
+                if (index == selected)
+                {
+                    if (!TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box attached))
+                    {
+                        continue;
+                    }
+
+                    cue = attached;
+                }
+
+                return true;
+            }
+
+            hexes[index] = savedHex;
+            cards[index] = savedCard;
+            if (pins != null && index < pins.Length)
+                pins[index] = savedPin;
+            cue = savedCue;
+            return false;
+        }
+
+        /// <summary>
+        /// Straight coast of the cover box. The organic bow was cutting a card that
+        /// the box itself already contained.
+        /// </summary>
+        private static Vec2[] RectCoast(Box box)
+        {
+            if (box.W < 1f || box.H < 1f)
+                return null;
+            const int edge = 6;
+            var points = new Vec2[edge * 4];
+            int n = 0;
+            for (int i = 0; i < edge; i++)
+                points[n++] = new Vec2(box.X + box.W * (i / (float)edge), box.Y);
+            for (int i = 0; i < edge; i++)
+                points[n++] = new Vec2(box.XMax, box.Y + box.H * (i / (float)edge));
+            for (int i = 0; i < edge; i++)
+                points[n++] = new Vec2(box.XMax - box.W * (i / (float)edge), box.YMax);
+            for (int i = 0; i < edge; i++)
+                points[n++] = new Vec2(box.X, box.YMax - box.H * (i / (float)edge));
+            return points;
+        }
+
+        /// <summary>
+        /// Slides a neighbour that the grown district would touch. The neighbour's card
+        /// and pin move with its hex, so a seat that was inside stays inside.
+        /// </summary>
+        private static bool FreshGapsHold(Vec2[] shape, Vec2[][] hexes, int index)
+        {
+            if (hexes == null)
+                return true;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == index || hexes[i] == null)
+                    continue;
+                if (DrawnDistrictGap(shape, hexes[i]) + 0.05f < 12f)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool NudgeNeighboursClear(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Vec2[] shaped,
+            int index,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || shaped == null)
+                return false;
+            CentroidOf(shaped, out float sx, out float sy);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == index || hexes[i] == null)
+                    continue;
+                float gap = DrawnDistrictGap(shaped, hexes[i]);
+                if (gap + 0.05f >= 12f)
+                    continue;
+                float need = 14f - gap;
+                if (need < 1f)
+                    continue;
+                if (need > 64f)
+                    return false;
+                CentroidOf(hexes[i], out float ox, out float oy);
+                float dx = ox - sx;
+                float dy = oy - sy;
+                float length = (float)Math.Sqrt(dx * dx + dy * dy);
+                if (length < 1f)
+                    return false;
+                if (!ShiftSeat(hexes, pins, cards, i, dx / length * need, dy / length * need, detail, plateWidth, plateHeight))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool ShiftSeat(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            int index,
+            float dx,
+            float dy,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || hexes[index] == null || Math.Abs(dx) + Math.Abs(dy) < 0.5f)
+                return false;
+            Vec2[] savedHex = hexes[index];
+            Box savedCard = cards != null && index < cards.Length ? cards[index] : default;
+            Box savedPin = pins != null && index < pins.Length ? pins[index] : default;
+            var moved = new Vec2[savedHex.Length];
+            for (int p = 0; p < savedHex.Length; p++)
+                moved[p] = new Vec2(savedHex[p].X + dx, savedHex[p].Y + dy);
+            Box card = savedCard.W > 1f
+                ? new Box(savedCard.X + dx, savedCard.Y + dy, savedCard.W, savedCard.H)
+                : savedCard;
+            Box pin = savedPin.W > 1f
+                ? new Box(savedPin.X + dx, savedPin.Y + dy, savedPin.W, savedPin.H)
+                : savedPin;
+            if (card.W > 1f && (!OnPlate(card, plateWidth, plateHeight) || !Clears(card, detail)))
+                return false;
+            if (EdgesHit(moved, ZoomHintRect(plateWidth, plateHeight)))
+                return false;
+            if (!OutlineInside(moved, plateWidth, plateHeight, out _, out _) || !GlowInside(moved, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (detail.W > 1f && PolygonHitsRect(moved, detail))
+                return false;
+            Box glow = detail.W > 1f
+                ? new Box(detail.X - HaloReach, detail.Y - HaloReach, detail.W + HaloReach * 2f, detail.H + HaloReach * 2f)
+                : default;
+            if (glow.W > 1f && PolygonHitsRect(moved, glow))
+                return false;
+            if (card.W > 1f && !RestsInside(card, moved, InsideMargin))
+                return false;
+            if (pin.W > 1f && (!PointInPolygon(pin.Center, moved) || DistanceToEdge(pin.Center, moved) < 6f))
+                return false;
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i == index || hexes[i] == null)
+                    continue;
+                if (DrawnDistrictGap(moved, hexes[i]) + 0.05f < 12f)
+                    return false;
+                if (cards != null && card.W > 1f && cards[i].W > 1f && Separation(card, cards[i]) < CardGap)
+                    return false;
+            }
+
+            hexes[index] = moved;
+            if (cards != null && index < cards.Length)
+                cards[index] = card;
+            if (pins != null && index < pins.Length)
+                pins[index] = pin;
+            return true;
+        }
+
         private static bool ExpandHexOverCard(
             Vec2[][] hexes,
             Box[] pins,
@@ -9560,7 +10297,9 @@ namespace Game.UI.Runtime
                 float topLo = Math.Max(CaptureFrameInset, maxY - height);
                 float topHi = Math.Min(plateHeight - CaptureFrameInset - height, minY);
                 if (leftLo > leftHi + 0.5f || topLo > topHi + 0.5f)
+                {
                     continue;
+                }
                 float left = Clamp((minX + maxX) * 0.5f - width * 0.5f, leftLo, leftHi);
                 float top = Clamp((minY + maxY) * 0.5f - height * 0.5f, topLo, topHi);
                 var box = new Box(left, top, width, height);
@@ -9580,29 +10319,59 @@ namespace Game.UI.Runtime
                     }
 
                     if (coast == null)
-                        continue;
-
-                    shaped = coast;
+                    {
+                        Vec2[] rect = RectCoast(box);
+                        if (rect != null && RestsInside(card, rect, InsideMargin))
+                            shaped = rect;
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                        shaped = coast;
                 }
 
-                if (!OutlineInside(shaped, plateWidth, plateHeight, out _, out _))
+                if (!OutlineInside(shaped, plateWidth, plateHeight, out _, out _)
+                    || EdgesHit(shaped, ZoomHintRect(plateWidth, plateHeight)))
+                {
                     continue;
+                }
+
                 if (!GlowInside(shaped, plateWidth, plateHeight, out _, out _))
+                {
                     continue;
+                }
+
                 if (detail.W > 1f && PolygonHitsRect(shaped, detail))
+                {
                     continue;
+                }
+
                 if (!NeighbourGapsHold(shaped, hex, others))
-                    continue;
+                {
+                    if (!NudgeNeighboursClear(hexes, pins, cards, shaped, index, detail, plateWidth, plateHeight)
+                        || !FreshGapsHold(shaped, hexes, index))
+                        continue;
+                }
+
                 if (PolygonArea(shaped) + 0.5f < 40000f)
+                {
                     continue;
+                }
+
                 float measured = MeasuredHexAspect(shaped);
                 if (expected >= 0.2f && measured >= 0.2f && Math.Abs(measured / expected - 1f) > 0.10f)
+                {
                     continue;
+                }
                 if (pins != null && index < pins.Length && pins[index].W > 1f)
                 {
                     Vec2 pin = pins[index].Center;
                     if (!PointInPolygon(pin, shaped) || DistanceToEdge(pin, shaped) < 8f)
+                    {
                         continue;
+                    }
                 }
 
                 if (shaped.Length < 12)
@@ -9724,6 +10493,23 @@ namespace Game.UI.Runtime
 
             if (placed != null)
                 HoldWidePortraits(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
+
+            if (placed != null)
+            {
+                for (int i = 0; i < placed.Length && i < hexes.Length; i++)
+                {
+                    if (placed[i].W < 1f || hexes[i] == null || RestsInside(placed[i], hexes[i], InsideMargin))
+                        continue;
+                    if (MapIds[i] != "DB" && MapIds[i] != "IB")
+                        continue;
+                    if (!CoverCardInPlace(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, i))
+                        TuckCardInDistrict(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, i);
+                }
+            }
+
+            if (fa && placed != null && SeatWideFarsiPill(
+                hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight))
+                cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
 
             bool cardsLegal = placed != null;
             if (placed == null)

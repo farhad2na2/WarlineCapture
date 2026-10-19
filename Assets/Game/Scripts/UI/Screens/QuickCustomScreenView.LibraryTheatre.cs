@@ -1073,6 +1073,17 @@ namespace Game.UI.Runtime
             // بزرگنمایی at 22px prefers about 202px. A 160px shelf clips that line.
             float width = Mathf.Max(206f, slot.Card.width);
             Rect card = slot.Card;
+            Rect seated = slot.Cue;
+            // The seater already parked a 206×56 pill above the card or on a side shelf.
+            bool parked = seated.width + 0.5f >= 206f && seated.height + 0.5f >= height
+                && seated.yMin >= 1f
+                && (seated.yMax <= card.yMin + 1.5f
+                    || seated.xMin + 1f >= card.xMax
+                    || seated.xMax <= card.xMin + 1f
+                    || (seated.xMin >= card.xMin - 1f && seated.xMax <= card.xMax + 1f
+                        && seated.yMin >= card.yMin + 8f && seated.yMax <= card.yMax + 1f));
+            if (parked)
+                return;
             Rect pin = slot.Pin;
             float drop = card.y - height < 1f ? 1f - (card.y - height) : 0f;
             if (drop > 0.5f)
@@ -7624,7 +7635,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                case "DB": return new Color(0.96f, 0.76f, 0.10f, 1f);
+                case "DB": return new Color(1.00f, 0.84f, 0.10f, 1f);
                 default:
                     return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
             }
@@ -7638,7 +7649,7 @@ namespace Game.UI.Runtime
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
                 case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
-                default: return new Color(0.96f, 0.76f, 0.10f, 1f);
+                default: return new Color(1.00f, 0.84f, 0.10f, 1f);
             }
         }
 

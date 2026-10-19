@@ -311,12 +311,12 @@ namespace Game.UI.Runtime
                     float alpha = Mathf.Lerp(0.72f, 0.88f, Mathf.Max(t, edge * 0.85f));
                     int hash = (x * 374761393 + y * 668265263) & 255;
                     int grit = (hash % 17) - 8;
-                    byte shade = (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 255f), 0, 255);
+                    byte shadeAlpha = (byte)Mathf.Clamp(Mathf.RoundToInt(alpha * 255f), 0, 255);
                     pixels[y * width + x] = new Color32(
                         (byte)Mathf.Clamp(26 + grit, 0, 255),
                         (byte)Mathf.Clamp(30 + grit / 2, 0, 255),
                         (byte)Mathf.Clamp(24 + grit / 3, 0, 255),
-                        shade);
+                        shadeAlpha);
                 }
             }
 

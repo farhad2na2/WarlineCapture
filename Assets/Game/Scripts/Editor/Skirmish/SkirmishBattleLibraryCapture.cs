@@ -3983,6 +3983,16 @@ namespace Game.Editor
                 throw new InvalidOperationException(widthFailure);
             ExpectPanel(map, "map", mapX, -panelY, expectedWidth, panelHeight);
             ExpectPanel(briefing, "briefing", briefingX, -panelY, briefingSpan, panelHeight);
+            if (theatre && TheatreSeatGeometry.ZoomCueAttemptFailed)
+            {
+                string cueFailure = TheatreSeatGeometry.FormatZoomCueAttempt(
+                    TheatreSeatGeometry.ShotRatio,
+                    fa ? "fa" : "en",
+                    actualWidth,
+                    panelHeight);
+                Debug.Log(cueFailure);
+                throw new InvalidOperationException(cueFailure);
+            }
             RequireFilled(map, "map");
             RequireFilled(briefing, "briefing");
             var plate = composition.Find("OperationPreview/MapPreviewClip") as RectTransform;

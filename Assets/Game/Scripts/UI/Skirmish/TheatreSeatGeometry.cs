@@ -428,6 +428,285 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Font-fit attempts for one zoom pill. The capture log is
+        /// <c>[ZoomCueAttempt] attempts=</c>. A search that keeps rebuilding the
+        /// layout never gets past this cap: it stops and reports a miss.
+        /// </summary>
+        public const int ZoomCueAttemptCap = 30;
+
+        public static int ZoomCueAttempts { get; private set; }
+
+        public static bool ZoomCueFits { get; private set; }
+
+        public static bool ZoomCueCapped { get; private set; }
+
+        /// <summary>True after this shot's search has finished. The old width grids stay closed.</summary>
+        public static bool ZoomCueSealed { get; private set; }
+
+        /// <summary>
+        /// How many times this shot has started a search. Layout callbacks after the
+        /// winning size is applied get one follow-up, then they stop.
+        /// </summary>
+        public static int ZoomCueRefits { get; private set; }
+
+        public const int ZoomCueRefitCap = 2;
+
+        public static string ZoomCueWhy { get; private set; } = "";
+
+        public static float ZoomCueSize { get; private set; }
+
+        /// <summary>
+        /// A search ran and did not fit inside the cap. Capture throws on this.
+        /// No attempts yet is not a failure: the battlefield shots never fit a cue.
+        /// </summary>
+        public static bool ZoomCueAttemptFailed
+        {
+            get
+            {
+                return ZoomCueAttempts > 0
+                    && (ZoomCueAttempts > ZoomCueAttemptCap || !ZoomCueFits || ZoomCueCapped);
+            }
+        }
+
+        public struct ZoomCueStep
+        {
+            public string Phase;
+            public float Size;
+            public float Tracking;
+            public float BoxW;
+            public float BoxH;
+        }
+
+        public static void ResetZoomCueAttempts()
+        {
+            ZoomCueAttempts = 0;
+            ZoomCueFits = false;
+            ZoomCueCapped = false;
+            ZoomCueSealed = false;
+            ZoomCueWhy = "";
+            ZoomCueSize = 0f;
+        }
+
+        /// <summary>New capture shot. Clears the search, the refit budget and the geometry caches.</summary>
+        public static void BeginZoomCueShot()
+        {
+            ResetZoomCueAttempts();
+            ZoomCueRefits = 0;
+            ClearArrangeCache();
+            ClearAttachCache();
+        }
+
+        /// <summary>
+        /// True while another candidate may be measured. A sealed shot and a finished
+        /// fit both refuse, so a layout callback cannot open the old grid again.
+        /// </summary>
+        public static bool ZoomCueSearchOpen
+        {
+            get { return !ZoomCueSealed && ZoomCueAttempts < ZoomCueAttemptCap && !ZoomCueFits; }
+        }
+
+        /// <summary>One more search is allowed this shot. The third layout pass is not.</summary>
+        public static bool NoteZoomCueRefit()
+        {
+            if (ZoomCueRefits >= ZoomCueRefitCap)
+                return false;
+            ZoomCueRefits++;
+            return true;
+        }
+
+        public static string FormatZoomCueAttempt(string ratio, string locale, float rectW, float rectH)
+        {
+            if (string.IsNullOrEmpty(ratio))
+                ratio = "unset";
+            if (string.IsNullOrEmpty(locale))
+                locale = "en";
+            return "[ZoomCueAttempt] ratio=" + ratio
+                + " locale=" + locale
+                + " rect=" + rectW.ToString("0.0", CultureInfo.InvariantCulture)
+                + "x" + rectH.ToString("0.0", CultureInfo.InvariantCulture)
+                + " size=" + ZoomCueSize.ToString("0.0", CultureInfo.InvariantCulture)
+                + " fits=" + (ZoomCueFits ? "1" : "0")
+                + " why=" + (string.IsNullOrEmpty(ZoomCueWhy) ? "none" : ZoomCueWhy)
+                + " phase=" + (string.IsNullOrEmpty(ZoomCueWhy) ? "none" : ZoomCueWhy)
+                + " attempts=" + ZoomCueAttempts.ToString(CultureInfo.InvariantCulture)
+                + " cap=" + ZoomCueAttemptCap.ToString(CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Records one candidate. Returns false when the cap is already spent or a fit
+        /// is already in hand, so the caller stops instead of measuring again.
+        /// </summary>
+        public static bool NoteZoomCueAttempt(string why, float size, bool fits)
+        {
+            if (ZoomCueAttempts >= ZoomCueAttemptCap)
+            {
+                ZoomCueCapped = true;
+                if (!ZoomCueFits)
+                    ZoomCueWhy = "cap";
+                return false;
+            }
+
+            ZoomCueAttempts++;
+            ZoomCueSize = size;
+            if (fits)
+            {
+                ZoomCueFits = true;
+                ZoomCueWhy = string.IsNullOrEmpty(why) ? "fit" : why;
+                return false;
+            }
+
+            ZoomCueWhy = string.IsNullOrEmpty(why) ? "miss" : why;
+            if (ZoomCueAttempts >= ZoomCueAttemptCap)
+            {
+                ZoomCueCapped = true;
+                ZoomCueWhy = "cap";
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// The ordered candidates for one pill. English locks 26, then a wider tab,
+        /// then steps down to 16. Farsi stays on 22–26, then one 56px shelf.
+        /// The list is never longer than <see cref="ZoomCueAttemptCap"/>.
+        /// </summary>
+        public static ZoomCueStep[] ZoomCueSchedule(bool fa, float boxW, float boxH)
+        {
+            if (boxW < 8f)
+                boxW = 160f;
+            if (boxH < 8f)
+                boxH = 36f;
+            var steps = new System.Collections.Generic.List<ZoomCueStep>(ZoomCueAttemptCap);
+            if (!fa)
+            {
+                AddCueStep(steps, "en-line", 26f, 0f, boxW, boxH);
+                AddCueStep(steps, "en-line", 26f, -12f, boxW, boxH);
+                AddCueStep(steps, "en-wide", 26f, -8f, Math.Max(boxW, 196f), Math.Max(boxH, 48f));
+                AddCueStep(steps, "en-wide", 26f, -8f, Math.Max(boxW, 220f), Math.Max(boxH, 48f));
+                AddCueStep(steps, "en-split", 26f, 0f, boxW, boxH);
+                float[] sizes = { 24f, 22f, 20f, 18f, 16f };
+                for (int i = 0; i < sizes.Length; i++)
+                {
+                    AddCueStep(steps, "en-line", sizes[i], -12f, boxW, boxH);
+                    AddCueStep(steps, "en-split", sizes[i], -12f, boxW, boxH);
+                }
+            }
+            else
+            {
+                float[] sizes = { 26f, 24f, 22f };
+                for (int i = 0; i < sizes.Length; i++)
+                {
+                    float pair = sizes[i] * 1.65f * 2f + 4f;
+                    AddCueStep(steps, "fa-two", sizes[i], 0f, boxW, Math.Max(boxH, pair));
+                }
+
+                for (int i = 0; i < sizes.Length; i++)
+                {
+                    float pair = sizes[i] * 1.65f * 2f + sizes[i] * 0.48f + 4f;
+                    AddCueStep(steps, "fa-two", sizes[i], -48f, boxW, Math.Max(boxH, pair));
+                }
+                for (int i = 0; i < sizes.Length; i++)
+                    AddCueStep(steps, "fa-track", sizes[i], -12f, boxW, boxH);
+                AddCueStep(steps, "fa-track", 22f, -36f, boxW, boxH);
+                AddCueStep(steps, "fa-track", 22f, -72f, boxW, boxH);
+                AddCueStep(steps, "fa-shelf", 22f, -12f, Math.Max(boxW, 206f), Math.Max(boxH, 56f));
+                AddCueStep(steps, "fa-shelf", 22f, -36f, Math.Max(boxW, 220f), Math.Max(boxH, 56f));
+            }
+
+            if (steps.Count > ZoomCueAttemptCap)
+                steps.RemoveRange(ZoomCueAttemptCap, steps.Count - ZoomCueAttemptCap);
+            return steps.ToArray();
+        }
+
+        private static void AddCueStep(
+            System.Collections.Generic.List<ZoomCueStep> steps,
+            string phase,
+            float size,
+            float tracking,
+            float boxW,
+            float boxH)
+        {
+            if (steps.Count >= ZoomCueAttemptCap)
+                return;
+            steps.Add(new ZoomCueStep
+            {
+                Phase = phase,
+                Size = size,
+                Tracking = tracking,
+                BoxW = boxW,
+                BoxH = boxH
+            });
+        }
+
+        /// <summary>
+        /// Walks <see cref="ZoomCueSchedule"/> once. <paramref name="probe"/> returns true
+        /// when that candidate fits. A null probe misses every step, which is the cap.
+        /// The same walk is what the theatre runs, so the seat check and the capture
+        /// count the same attempts.
+        /// </summary>
+        public static int WalkZoomCueAttempts(
+            bool fa,
+            float boxW,
+            float boxH,
+            Func<ZoomCueStep, bool> probe,
+            out bool fits,
+            out string why,
+            out float size)
+        {
+            ResetZoomCueAttempts();
+            // Close the old width grids for the whole walk, including a layout callback
+            // that a mesh update might raise before the winning size is applied.
+            ZoomCueSealed = true;
+            ZoomCueStep[] steps = ZoomCueSchedule(fa, boxW, boxH);
+            fits = false;
+            why = "none";
+            size = fa ? 22f : 16f;
+            for (int i = 0; i < steps.Length; i++)
+            {
+                if (!NoteZoomCueAttempt(steps[i].Phase, steps[i].Size, false))
+                {
+                    if (ZoomCueAttempts >= ZoomCueAttemptCap && !fits)
+                    {
+                        ZoomCueCapped = true;
+                        why = "cap";
+                        ZoomCueWhy = why;
+                    }
+
+                    break;
+                }
+
+                bool hit = probe != null && probe(steps[i]);
+                if (!hit)
+                {
+                    why = steps[i].Phase;
+                    ZoomCueWhy = why;
+                    continue;
+                }
+
+                fits = true;
+                why = steps[i].Phase;
+                size = steps[i].Size;
+                ZoomCueFits = true;
+                ZoomCueWhy = why;
+                ZoomCueSize = size;
+                break;
+            }
+
+            if (!fits && ZoomCueAttempts >= ZoomCueAttemptCap)
+            {
+                ZoomCueCapped = true;
+                why = "cap";
+                ZoomCueWhy = why;
+            }
+            else if (!fits)
+                ZoomCueWhy = why;
+
+            ZoomCueFits = fits;
+            return ZoomCueAttempts;
+        }
+
+        /// <summary>
         /// Plate a dumped shot is checked on. A 4:3 file that stored the old 724px clip
         /// (or any other plate) is reseated on the capture clip of its canvas. Section
         /// dumps keep the stored plate; their frame is not <see cref="CaptureMapSize"/>.
@@ -779,6 +1058,7 @@ namespace Game.UI.Runtime
             ShotInsetTop = insetTop;
             ShotInsetRight = insetRight;
             ShotInsetBottom = insetBottom;
+            BeginZoomCueShot();
         }
 
         public static string Stamp(string message)
@@ -5160,6 +5440,43 @@ namespace Game.UI.Runtime
         /// so the halo and the outline rect clear the clip, and stays off the zoom hint
         /// and the detail column.
         /// </summary>
+        /// <summary>
+        /// Desert Base keeps the seated hexagon at every ratio. A smooth coast was
+        /// turning 4:3 and 20:9 into an ellipse while 16:9 still read as that hex.
+        /// </summary>
+        private static bool DesertHexDraws(
+            Vec2[] hex,
+            Box card,
+            Box pin,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint)
+        {
+            if (hex == null || hex.Length != 6 || card.W < 1f)
+                return false;
+            if (!RestsInside(card, hex, InsideMargin))
+                return false;
+            if (!OutlineInside(hex, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (!GlowInside(hex, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (EdgesHit(hex, hint))
+                return false;
+            Box glow = detail.W > 1f
+                ? new Box(detail.X - HaloReach, detail.Y - HaloReach, detail.W + HaloReach * 2f, detail.H + HaloReach * 2f)
+                : default;
+            if (EdgesHit(hex, glow) || (glow.W > 1f && (PolygonHitsRect(hex, detail) || PolygonHitsRect(hex, glow))))
+                return false;
+            if (!NeighbourGapsHold(hex, hex, others))
+                return false;
+            if (InteriorUnblocked(hex, card, pin, cue, hint) < 8)
+                return false;
+            return true;
+        }
+
         public static Vec2[] FinishTerritory(
             Vec2[] hex,
             Box card,
@@ -5174,6 +5491,9 @@ namespace Game.UI.Runtime
         {
             if (hex == null || hex.Length < 3)
                 return hex;
+            if (string.Equals(mapId, "DB", StringComparison.Ordinal) && DesertHexDraws(
+                hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint))
+                return CopyShape(hex);
             if (CompactRegionHolds(hex, card, plateWidth, plateHeight, detail, hint))
                 return hex;
             bool panelLeft = detail.W > 1f && DetailOccupiesLeft(plateWidth, detail.X, detail.W);
@@ -5289,6 +5609,8 @@ namespace Game.UI.Runtime
                 if (glow.W > 1f && (PolygonHitsRect(grown, detail) || PolygonHitsRect(grown, glow)))
                     continue;
                 if (CrossesOther(grown, hex, others))
+                    continue;
+                if (!NeighbourGapsHold(grown, hex, others))
                     continue;
                 if (!OutlineInside(grown, plateWidth, plateHeight, out _, out _) || !GlowInside(grown, plateWidth, plateHeight, out _, out _))
                     continue;
@@ -6767,7 +7089,7 @@ namespace Game.UI.Runtime
             Vec2[][] hexes,
             Box[] pins,
             Box[] cards,
-            Box cue,
+            ref Box cue,
             int selected,
             Box detail,
             float plateWidth,
@@ -6788,9 +7110,10 @@ namespace Game.UI.Runtime
                 baseHex[i] = CloneShape(hexes[i]);
             var baseCards = (Box[])cards.Clone();
             var basePins = (Box[])pins.Clone();
-            SpreadTightDistricts(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
+            CloseWideSeams(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             ScaleDistrictsIntoSlack(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             InflateOpenEdges(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
+            StepCardsTowardCentre(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight);
             if (ReplayCentresHold(hexes, pins, cards, cue, detail, plateWidth, plateHeight, fa, selected))
                 return;
             for (int i = 0; i < hexes.Length; i++)
@@ -6799,6 +7122,150 @@ namespace Game.UI.Runtime
                 cards[i] = baseCards[i];
                 pins[i] = basePins[i];
             }
+        }
+
+        /// <summary>
+        /// Facing districts move together until the dark seam is about 16px.
+        /// A pair already inside 20px stays. Aspect does not change because the
+        /// shape is translated, not stretched. The 12px halo still holds.
+        /// </summary>
+        private static void CloseWideSeams(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked)
+        {
+            if (hexes == null)
+                return;
+            int[] left = { 0, 2, 0, 1, 2, 3 };
+            int[] right = { 1, 3, 2, 3, 4, 4 };
+            bool wide = plateHeight > 2f && plateWidth / plateHeight >= 1.9f;
+            for (int pass = 0; pass < 24; pass++)
+            {
+                bool moved = false;
+                for (int pair = 0; pair < left.Length; pair++)
+                {
+                    int a = left[pair];
+                    int b = right[pair];
+                    if (a >= hexes.Length || b >= hexes.Length || hexes[a] == null || hexes[b] == null)
+                        continue;
+                    float gap = DrawnDistrictGap(hexes[a], hexes[b]);
+                    if (gap < 20f)
+                        continue;
+                    float step = Math.Min(24f, (gap - 16f) * 0.5f);
+                    if (step < 2f)
+                        continue;
+                    bool closed = NudgeDistrictToward(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, wide, a, b, step);
+                    closed |= NudgeDistrictToward(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, wide, b, a, step);
+                    if (!closed && step > 6f)
+                    {
+                        float smaller = Math.Max(4f, step * 0.5f);
+                        closed |= NudgeDistrictToward(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, wide, a, b, smaller);
+                        closed |= NudgeDistrictToward(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, wide, b, a, smaller);
+                    }
+
+                    moved |= closed;
+                }
+
+                if (!moved)
+                    break;
+            }
+        }
+
+        private static bool NudgeDistrictToward(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked,
+            bool wide,
+            int index,
+            int other,
+            float step)
+        {
+            if (index < 0 || other < 0 || index >= hexes.Length)
+                return false;
+            if (wide && string.Equals(MapIds[index], "AP", StringComparison.Ordinal))
+                return false;
+            if (hexes[index] == null || hexes[other] == null)
+                return false;
+            Vec2 from = DistrictCentroid(hexes[index]);
+            Vec2 to = DistrictCentroid(hexes[other]);
+            float rawX = to.X - from.X;
+            float rawY = to.Y - from.Y;
+            if (Math.Abs(rawX) < 1f && Math.Abs(rawY) < 1f)
+                return false;
+            float signX = rawX < 0f ? -1f : 1f;
+            float signY = rawY < 0f ? -1f : 1f;
+            // A diagonal step into a pair that is already at the halo rejects the
+            // whole move. Close the wide axis first, then the short one.
+            if (Math.Abs(rawX) >= Math.Abs(rawY))
+            {
+                if (TrySlideDistrict(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, index, other, signX * step, 0f))
+                    return true;
+                if (TrySlideDistrict(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, index, other, 0f, signY * step))
+                    return true;
+            }
+            else
+            {
+                if (TrySlideDistrict(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, index, other, 0f, signY * step))
+                    return true;
+                if (TrySlideDistrict(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked, index, other, signX * step, 0f))
+                    return true;
+            }
+
+            float length = (float)Math.Sqrt(rawX * rawX + rawY * rawY);
+            return TrySlideDistrict(
+                hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked,
+                index, other, rawX / length * step, rawY / length * step);
+        }
+
+        private static bool TrySlideDistrict(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked,
+            int index,
+            int other,
+            float dx,
+            float dy)
+        {
+            if (Math.Abs(dx) < 0.5f && Math.Abs(dy) < 0.5f)
+                return false;
+            float before = DrawnDistrictGap(hexes[index], hexes[other]);
+            Vec2[] savedHex = CloneShape(hexes[index]);
+            Box savedCard = cards[index];
+            Box savedPin = pins[index];
+            Box savedCue = cue;
+            TranslateDistrict(hexes[index], cards, pins, index, dx, dy);
+            if (index == selected && CueIsCardTopTab(savedCard, savedCue))
+                cue = ShiftBox(savedCue, dx, dy);
+            float after = DrawnDistrictGap(hexes[index], hexes[other]);
+            bool closed = after + 0.4f < before && after + 0.05f >= 12f;
+            if (closed && RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked))
+                return true;
+            hexes[index] = savedHex;
+            cards[index] = savedCard;
+            pins[index] = savedPin;
+            cue = savedCue;
+            return false;
         }
 
         private static void SpreadTightDistricts(
@@ -6929,12 +7396,12 @@ namespace Game.UI.Runtime
             bool keepParked)
         {
             float need = GlowEdgeNeed();
-            float[] steps = { 8f, 4f };
+            float[] steps = { 16f, 8f, 4f };
             Box hint = ZoomHintRect(plateWidth, plateHeight);
             for (int s = 0; s < steps.Length; s++)
             {
                 float step = steps[s];
-                for (int round = 0; round < 5; round++)
+                for (int round = 0; round < 4; round++)
                 {
                     bool any = false;
                     for (int i = 0; i < hexes.Length; i++)
@@ -7132,28 +7599,14 @@ namespace Game.UI.Runtime
                 coasts[i] = coast != null ? coast : hexes[i];
             }
 
-            var trial = (Box[])cards.Clone();
-            bool attached = fa
-                ? TryAttachFarsiCue(plateWidth, plateHeight, pins, trial, coasts, detail, selected, out _)
-                    || TryAttachCueToCard(plateWidth, plateHeight, pins, trial, coasts, detail, selected, out _)
-                : TryAttachCueToCard(plateWidth, plateHeight, pins, trial, coasts, detail, selected, out _);
-            if (attached)
-            {
-                for (int i = 0; i < trial.Length; i++)
-                {
-                    if (coasts[i] == null || trial[i].W < 1f)
-                        continue;
-                    if (!CardInsideTerritory(trial[i], coasts[i]))
-                        trial[i] = cards[i];
-                }
-            }
-
             for (int i = 0; i < hexes.Length; i++)
             {
+                if (cards[i].W > 1f && coasts[i] != null && !CardInsideTerritory(cards[i], coasts[i]))
+                    return false;
                 if (!string.Equals(MapIds[i], "DB", StringComparison.Ordinal)
                     && !string.Equals(MapIds[i], "CC", StringComparison.Ordinal))
                     continue;
-                if (!CardNearCoastCentre(trial[i], coasts[i]))
+                if (!CardNearCoastCentre(cards[i], coasts[i]))
                     return false;
             }
 
@@ -11245,29 +11698,66 @@ namespace Game.UI.Runtime
             Box detail,
             float plateWidth,
             float plateHeight,
-            int index)
+            int index,
+            Vec2[] aim = null)
         {
-            if (!RegionCentre(hexes[index], out Vec2 centre))
+            Vec2[] shape = aim != null && aim.Length >= 3 ? aim : hexes[index];
+            if (!RegionCentre(shape, out Vec2 centre))
                 return;
             Box card = cards[index];
             float dx = centre.X - card.Center.X;
             float dy = centre.Y - card.Center.Y;
-            if (Math.Abs(dx) < 8f && Math.Abs(dy) < 8f)
+            if (Math.Abs(dx) < 2f && Math.Abs(dy) < 2f)
                 return;
-            Box pin = pins != null && index < pins.Length ? pins[index] : default;
-            bool hosts = index == selected && cue.W > 1f;
-            bool tab = hosts && CueIsCardTopTab(card, cue);
             Box hint = ZoomHintRect(plateWidth, plateHeight);
-            float[] gains = { 1f, 0.92f, 0.84f, 0.76f, 0.68f, 0.56f, 0.4f, 0.24f };
-            for (int g = 0; g < gains.Length; g++)
+            for (int step = 0; step < 24; step++)
             {
-                float sx = dx * gains[g];
-                float sy = dy * gains[g];
+                card = cards[index];
+                dx = centre.X - card.Center.X;
+                dy = centre.Y - card.Center.Y;
+                float length = (float)Math.Sqrt(dx * dx + dy * dy);
+                if (length < 1.5f)
+                    return;
+                float gain = Math.Min(6f, length) / length;
+                float sx = dx * gain;
+                float sy = dy * gain;
                 var trial = new Box(card.X + sx, card.Y + sy, card.W, card.H);
                 if (!CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, index, trial, sx, sy, true))
-                    continue;
+                    return;
                 ApplyCardShift(pins, cards, ref cue, selected, index, trial, sx, sy, true);
+            }
+        }
+
+        private static void StepCardsTowardCentre(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || cards == null)
                 return;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            for (int i = 0; i < cards.Length && i < hexes.Length; i++)
+            {
+                if (cards[i].W < 1f || hexes[i] == null)
+                    continue;
+                var others = new Vec2[hexes.Length][];
+                for (int j = 0; j < hexes.Length; j++)
+                {
+                    if (j != i)
+                        others[j] = hexes[j];
+                }
+
+                Box pill = i == selected ? cue : default;
+                Vec2[] coast = FinishTerritory(
+                    hexes[i], cards[i], pins[i], MapIds[i], others, pill, plateWidth, plateHeight, detail, hint);
+                SlideTowardRegionCentre(
+                    hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, i,
+                    coast != null && coast.Length >= 3 ? coast : hexes[i]);
             }
         }
 
@@ -12256,12 +12746,21 @@ namespace Game.UI.Runtime
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                hexes[i] = CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
+                bool desert = i == 0;
+                hexes[i] = desert
+                    ? FlatHex(centers[i].X, centers[i].Y, halfW[i], halfH[i])
+                    : CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
                 PlaceCompactSeat(hexes[i], out cards[i], out pins[i]);
+                if (desert && !RestsInside(cards[i], hexes[i], InsideMargin))
+                {
+                    hexes[i] = CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
+                    PlaceCompactSeat(hexes[i], out cards[i], out pins[i]);
+                }
             }
 
             RepairCompactCardGaps(hexes, cards, pins);
             Box cue = PlaceCompactCue(cards[selected], plateWidth);
+            HoldIndustrialCue(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight);
             for (int i = 0; i < MapIds.Length; i++)
             {
                 layout.Seats[i].MapId = MapIds[i];
@@ -12439,6 +12938,66 @@ namespace Game.UI.Runtime
             return PointInPolygon(centre, hex) && !EdgeCloserThan(centre, hex, 6f);
         }
 
+        /// <summary>
+        /// 4:3 Industrial Basin keeps the pill on the card. A shelf to the right of the
+        /// region is pulled back to a top tab when that tab still clears the plate.
+        /// </summary>
+        private static void HoldIndustrialCue(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            bool four = ShotIsFourByThree() || (plateHeight > 2f && plateWidth / plateHeight < 1.5f);
+            if (!four || hexes == null || pins == null || cards == null)
+                return;
+            if (selected < 0 || selected >= cards.Length || !string.Equals(MapIds[selected], "IB", StringComparison.Ordinal))
+                return;
+            Box card = cards[selected];
+            if (card.W < 48f || cue.W < 8f)
+                return;
+            if (CueIsCardTopTab(card, cue))
+                return;
+            bool beside = cue.X + 4f >= card.XMax
+                && cue.Center.Y >= card.Y - 8f
+                && cue.Center.Y <= card.YMax + 8f;
+            if (!beside)
+                return;
+            Box savedCard = cards[selected];
+            Box savedPin = pins[selected];
+            if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out Box tab)
+                && CueIsCardTopTab(cards[selected], tab))
+            {
+                cue = tab;
+                return;
+            }
+
+            cards[selected] = savedCard;
+            pins[selected] = savedPin;
+            float cueW = Math.Max(card.W, Math.Min(cue.W, 160f));
+            float cueH = cue.H >= 36f && cue.H <= 62f ? cue.H : 44f;
+            float cueX = card.X + (card.W - cueW) * 0.5f;
+            float cueY = card.Y - cueH;
+            if (cueY < 1f)
+                cueY = 1f;
+            if (cueX < 1f)
+                cueX = 1f;
+            if (cueX + cueW > plateWidth - 1f)
+                cueX = plateWidth - 1f - cueW;
+            var forced = new Box(cueX, cueY, cueW, cueH);
+            if (!CueIsCardTopTab(card, forced))
+                return;
+            if (!CueCountsAsNear(forced, card, pins[selected], hexes[selected]))
+                return;
+            if (detail.W > 1f && Overlaps(forced, detail, 0f))
+                return;
+            cue = forced;
+        }
+
         private static Box PlaceCompactCue(Box card, float plateWidth)
         {
             float cueW = Math.Max(PackedCueMinWidth, card.W);
@@ -12543,6 +13102,9 @@ namespace Game.UI.Runtime
         {
             if (string.IsNullOrEmpty(selectedMapId))
                 selectedMapId = "DB";
+            bool cacheable = PortraitCards == null;
+            if (cacheable && ArrangeCacheHit(plateWidth, plateHeight, fa, reserveOn, selectedMapId, out Layout cached))
+                return cached;
             ReserveSlideX = 0f;
             CompactCoast = false;
             var layout = new Layout
@@ -12571,6 +13133,8 @@ namespace Game.UI.Runtime
                 && TryArrangeCompactReserve(ref layout, plateWidth, plateHeight, fa, selected))
             {
                 SelectedPortrait = -1;
+                if (cacheable)
+                    RememberArrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId, layout);
                 return layout;
             }
 
@@ -12662,7 +13226,7 @@ namespace Game.UI.Runtime
 
             if (placed != null)
             {
-                EnlargeBoardDistricts(hexes, pins, placed, cue, selected, detail, plateWidth, plateHeight, fa);
+                EnlargeBoardDistricts(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, fa);
                 if (cue.W > 1f)
                     cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
             }
@@ -12675,6 +13239,13 @@ namespace Game.UI.Runtime
                 if (cue.W < 1f && TryAttachCueToCard(plateWidth, plateHeight, pins, placed, hexes, detail, selected, out cue))
                     cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
                 else if (cue.W > 1f)
+                    cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
+            }
+
+            if (placed != null)
+            {
+                HoldIndustrialCue(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
+                if (cue.W > 1f)
                     cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
             }
 
@@ -12725,6 +13296,8 @@ namespace Game.UI.Runtime
             layout.HexAspectLegal = AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight)
                 && DistrictsLegal(hexes, pins, plateWidth, plateHeight);
             layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
+            if (cacheable)
+                RememberArrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId, layout);
             return layout;
         }
 
@@ -12803,6 +13376,230 @@ namespace Game.UI.Runtime
 
         /// <summary>Cards seated inside the hexes from the last <see cref="BuildAll"/> call.</summary>
         private static Box[] PortraitCards;
+
+        private static bool _arrangeReady;
+        private static float _arrangeW;
+        private static float _arrangeH;
+        private static bool _arrangeFa;
+        private static bool _arrangeReserve;
+        private static string _arrangeSelected = "";
+        private static Layout _arrangeStored;
+
+        private struct AttachMemo
+        {
+            public bool Valid;
+            public int Stamp;
+            public bool Success;
+            public Box Cue;
+            public Box[] Cards;
+        }
+
+        private static AttachMemo _memoCue;
+        private static AttachMemo _memoFarsi;
+
+        private static void ClearArrangeCache()
+        {
+            _arrangeReady = false;
+        }
+
+        private static void ClearAttachCache()
+        {
+            _memoCue.Valid = false;
+            _memoFarsi.Valid = false;
+        }
+
+        private static bool ArrangeCacheHit(float w, float h, bool fa, bool reserve, string selected, out Layout layout)
+        {
+            layout = default;
+            if (!_arrangeReady || _arrangeFa != fa || _arrangeReserve != reserve)
+                return false;
+            if (Math.Abs(_arrangeW - w) > 0.05f || Math.Abs(_arrangeH - h) > 0.05f)
+                return false;
+            if (!string.Equals(_arrangeSelected, selected, StringComparison.Ordinal))
+                return false;
+            layout = _arrangeStored;
+            if (_arrangeStored.Seats != null)
+            {
+                layout.Seats = new Seat[_arrangeStored.Seats.Length];
+                for (int i = 0; i < _arrangeStored.Seats.Length; i++)
+                    layout.Seats[i] = _arrangeStored.Seats[i];
+            }
+
+            if (_arrangeStored.LogLines != null)
+            {
+                layout.LogLines = new string[_arrangeStored.LogLines.Length];
+                for (int i = 0; i < _arrangeStored.LogLines.Length; i++)
+                    layout.LogLines[i] = _arrangeStored.LogLines[i];
+            }
+
+            return true;
+        }
+
+        private static void RememberArrange(float w, float h, bool fa, bool reserve, string selected, Layout layout)
+        {
+            _arrangeReady = true;
+            _arrangeW = w;
+            _arrangeH = h;
+            _arrangeFa = fa;
+            _arrangeReserve = reserve;
+            _arrangeSelected = selected ?? "";
+            _arrangeStored = layout;
+            if (layout.Seats != null)
+            {
+                _arrangeStored.Seats = new Seat[layout.Seats.Length];
+                for (int i = 0; i < layout.Seats.Length; i++)
+                    _arrangeStored.Seats[i] = layout.Seats[i];
+            }
+
+            if (layout.LogLines == null)
+                return;
+            _arrangeStored.LogLines = new string[layout.LogLines.Length];
+            for (int i = 0; i < layout.LogLines.Length; i++)
+                _arrangeStored.LogLines[i] = layout.LogLines[i];
+        }
+
+        private static int QuantStamp(float value)
+        {
+            return (int)Math.Round(value * 2f);
+        }
+
+        private static int AttachStamp(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected)
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 31 + QuantStamp(plateWidth);
+                hash = hash * 31 + QuantStamp(plateHeight);
+                hash = hash * 31 + selected;
+                hash = hash * 31 + QuantStamp(detail.X);
+                hash = hash * 31 + QuantStamp(detail.Y);
+                hash = hash * 31 + QuantStamp(detail.W);
+                hash = hash * 31 + QuantStamp(detail.H);
+                hash = StampBoxes(hash, pins);
+                hash = StampBoxes(hash, cards);
+                if (hexes == null)
+                    return hash * 31 + 1;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    Vec2[] shape = hexes[i];
+                    if (shape == null)
+                    {
+                        hash = hash * 31 + 1;
+                        continue;
+                    }
+
+                    hash = hash * 31 + shape.Length;
+                    for (int p = 0; p < shape.Length; p++)
+                    {
+                        hash = hash * 31 + QuantStamp(shape[p].X);
+                        hash = hash * 31 + QuantStamp(shape[p].Y);
+                    }
+                }
+
+                return hash;
+            }
+        }
+
+        private static int StampBoxes(int hash, Box[] boxes)
+        {
+            unchecked
+            {
+                if (boxes == null)
+                    return hash * 31 + 1;
+                for (int i = 0; i < boxes.Length; i++)
+                {
+                    hash = hash * 31 + QuantStamp(boxes[i].X);
+                    hash = hash * 31 + QuantStamp(boxes[i].Y);
+                    hash = hash * 31 + QuantStamp(boxes[i].W);
+                    hash = hash * 31 + QuantStamp(boxes[i].H);
+                }
+
+                return hash;
+            }
+        }
+
+        private static Box[] CopyBoxes(Box[] source)
+        {
+            if (source == null)
+                return null;
+            var copy = new Box[source.Length];
+            for (int i = 0; i < source.Length; i++)
+                copy[i] = source[i];
+            return copy;
+        }
+
+        private static void WriteBoxes(Box[] source, Box[] dest)
+        {
+            if (source == null || dest == null)
+                return;
+            int count = source.Length < dest.Length ? source.Length : dest.Length;
+            for (int i = 0; i < count; i++)
+                dest[i] = source[i];
+        }
+
+        /// <summary>
+        /// Same plate, same input cards and coasts. A reverted retry of the pill search
+        /// returns the cue it already found instead of scanning the shift ring again.
+        /// </summary>
+        private static bool ReplayAttach(
+            bool farsi,
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue,
+            out bool success)
+        {
+            cue = default;
+            success = false;
+            AttachMemo memo = farsi ? _memoFarsi : _memoCue;
+            if (!memo.Valid || cards == null)
+                return false;
+            int stamp = AttachStamp(plateWidth, plateHeight, pins, cards, hexes, detail, selected);
+            if (stamp != memo.Stamp)
+                return false;
+            WriteBoxes(memo.Cards, cards);
+            cue = memo.Cue;
+            success = memo.Success;
+            return true;
+        }
+
+        private static void RememberAttach(
+            bool farsi,
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] before,
+            Box[] after,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            bool success,
+            Box cue)
+        {
+            var memo = new AttachMemo
+            {
+                Valid = true,
+                Stamp = AttachStamp(plateWidth, plateHeight, pins, before, hexes, detail, selected),
+                Success = success,
+                Cue = cue,
+                Cards = CopyBoxes(after)
+            };
+            if (farsi)
+                _memoFarsi = memo;
+            else
+                _memoCue = memo;
+        }
 
         /// <summary>Frame whose aspect the hex is authored against. The open viewport when the reserve is up; placement stays on the plate.</summary>
         private static float RatioPlateWidth;
@@ -15307,6 +16104,24 @@ namespace Game.UI.Runtime
             int selected,
             out Box cue)
         {
+            if (ReplayAttach(false, plateWidth, plateHeight, pins, cards, hexes, detail, selected, out cue, out bool cached))
+                return cached;
+            Box[] before = CopyBoxes(cards);
+            bool ok = AttachCueToCardSearch(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out cue);
+            RememberAttach(false, plateWidth, plateHeight, pins, before, cards, hexes, detail, selected, ok, cue);
+            return ok;
+        }
+
+        private static bool AttachCueToCardSearch(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue)
+        {
             cue = default;
             if (plateWidth < 32f || plateHeight < 32f || pins == null || cards == null)
                 return false;
@@ -15337,6 +16152,24 @@ namespace Game.UI.Runtime
         /// or steps aside. The cue may also widen past the card when one line is wider than 160.
         /// </summary>
         public static bool TryAttachFarsiCue(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            out Box cue)
+        {
+            if (ReplayAttach(true, plateWidth, plateHeight, pins, cards, hexes, detail, selected, out cue, out bool cached))
+                return cached;
+            Box[] before = CopyBoxes(cards);
+            bool ok = AttachFarsiCueSearch(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out cue);
+            RememberAttach(true, plateWidth, plateHeight, pins, before, cards, hexes, detail, selected, ok, cue);
+            return ok;
+        }
+
+        private static bool AttachFarsiCueSearch(
             float plateWidth,
             float plateHeight,
             Box[] pins,
@@ -15610,6 +16443,9 @@ namespace Game.UI.Runtime
         /// The packed card has no room for its tab. Slide that card, keeping the same size,
         /// until the tab above it is on the plate and the card is still a legal seat.
         /// </summary>
+        /// <summary>Inner placements tried while hunting a top tab. The Farsi 2px grid was the slow pass.</summary>
+        public static int ShiftCardScans;
+
         private static bool TryShiftCardForTab(
             float plateWidth,
             float plateHeight,
@@ -15623,53 +16459,228 @@ namespace Game.UI.Runtime
         {
             cue = default;
             float[] heights = TabHeights;
-            float best = float.MaxValue;
-            Box bestCard = default;
-            Box bestCue = default;
-            bool found = false;
             for (int h = 0; h < heights.Length; h++)
             {
                 float stripH = heights[h];
                 // A short tab must not win the Farsi search and skip the widen path.
                 if (UseFarsiTabs && stripH + 0.1f < 56f)
                     continue;
-                bool taller = false;
-                for (float dy = -240f; dy <= 240.1f; dy += 2f)
+                if (!SearchShiftRing(
+                    plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                    out Box bestCard, out Box bestCue))
+                    continue;
+                cards[selected] = bestCard;
+                cue = bestCue;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Outward rings at 8px, then a 2px refine on the first ring that seats a tab.
+        /// The old 2px grid over ±240/±280 was the Farsi pass that repeated for an hour.
+        /// A miss falls back to a 4px grid inside ±80 and the same refine.
+        /// </summary>
+        private static bool SearchShiftRing(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float stripH,
+            out Box bestCard,
+            out Box bestCue)
+        {
+            if (ScanShiftWindow(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                8f, 240f, 280f, true, out float hitX, out float hitY, out bestCard, out bestCue))
+            {
+                RefineShift(
+                    plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                    hitX, hitY, 8f, 2f, ref bestCard, ref bestCue);
+                return true;
+            }
+
+            if (ScanShiftWindow(
+                plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                4f, 80f, 80f, false, out hitX, out hitY, out bestCard, out bestCue))
+            {
+                RefineShift(
+                    plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                    hitX, hitY, 4f, 2f, ref bestCard, ref bestCue);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool ScanShiftWindow(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float stripH,
+            float step,
+            float limitY,
+            float limitX,
+            bool rings,
+            out float hitX,
+            out float hitY,
+            out Box bestCard,
+            out Box bestCue)
+        {
+            hitX = 0f;
+            hitY = 0f;
+            bestCard = default;
+            bestCue = default;
+            int stride = Math.Max(1, (int)step);
+            if (!rings)
+            {
+                float best = float.MaxValue;
+                bool found = false;
+                for (float dy = -limitY; dy <= limitY + 0.1f; dy += stride)
                 {
-                    for (float dx = -280f; dx <= 280.1f; dx += 2f)
+                    for (float dx = -limitX; dx <= limitX + 0.1f; dx += stride)
                     {
-                        var dropped = new Box(card.X + dx, card.Y + dy, card.W, card.H);
-                        if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
-                            continue;
-                        if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
-                            continue;
-                        Box held = cards[selected];
-                        cards[selected] = dropped;
-                        bool tabOk = TrySeatTabHeight(
-                            stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out Box spot);
-                        cards[selected] = held;
-                        if (!tabOk)
+                        ShiftCardScans++;
+                        if (!ShiftSpotLegal(
+                            plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                            dx, dy, out Box dropped, out Box spot))
                             continue;
                         float score = dx * dx + dy * dy;
                         if (score >= best)
                             continue;
                         best = score;
+                        hitX = dx;
+                        hitY = dy;
                         bestCard = dropped;
                         bestCue = spot;
                         found = true;
-                        taller = true;
                     }
                 }
 
-                if (taller)
+                return found;
+            }
+
+            int reach = (int)Math.Max(limitX, limitY);
+            for (int ring = 0; ring <= reach; ring += stride)
+            {
+                float best = float.MaxValue;
+                bool found = false;
+                int y0 = -(int)Math.Min(limitY, ring);
+                int y1 = (int)Math.Min(limitY, ring);
+                int x0 = -(int)Math.Min(limitX, ring);
+                int x1 = (int)Math.Min(limitX, ring);
+                for (int dy = y0; dy <= y1; dy += stride)
+                {
+                    for (int dx = x0; dx <= x1; dx += stride)
+                    {
+                        if (rings && Math.Max(Math.Abs(dx), Math.Abs(dy)) != ring)
+                            continue;
+                        ShiftCardScans++;
+                        if (!ShiftSpotLegal(
+                            plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                            dx, dy, out Box dropped, out Box spot))
+                            continue;
+                        float score = dx * dx + dy * dy;
+                        if (score >= best)
+                            continue;
+                        best = score;
+                        hitX = dx;
+                        hitY = dy;
+                        bestCard = dropped;
+                        bestCue = spot;
+                        found = true;
+                    }
+                }
+
+                if (found)
+                    return true;
+                if (!rings)
                     break;
             }
 
-            if (!found)
+            return false;
+        }
+
+        private static void RefineShift(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float stripH,
+            float hitX,
+            float hitY,
+            float radius,
+            float step,
+            ref Box bestCard,
+            ref Box bestCue)
+        {
+            float best = hitX * hitX + hitY * hitY;
+            int reach = (int)radius;
+            int stride = Math.Max(1, (int)step);
+            for (int dy = -reach; dy <= reach; dy += stride)
+            {
+                for (int dx = -reach; dx <= reach; dx += stride)
+                {
+                    float ox = hitX + dx;
+                    float oy = hitY + dy;
+                    if (Math.Abs(ox) > 280.1f || Math.Abs(oy) > 240.1f)
+                        continue;
+                    ShiftCardScans++;
+                    if (!ShiftSpotLegal(
+                        plateWidth, plateHeight, pins, cards, hexes, detail, selected, card, stripH,
+                        ox, oy, out Box dropped, out Box spot))
+                        continue;
+                    float score = ox * ox + oy * oy;
+                    if (score >= best)
+                        continue;
+                    best = score;
+                    bestCard = dropped;
+                    bestCue = spot;
+                }
+            }
+        }
+
+        private static bool ShiftSpotLegal(
+            float plateWidth,
+            float plateHeight,
+            Box[] pins,
+            Box[] cards,
+            Vec2[][] hexes,
+            Box detail,
+            int selected,
+            Box card,
+            float stripH,
+            float dx,
+            float dy,
+            out Box dropped,
+            out Box spot)
+        {
+            dropped = new Box(card.X + dx, card.Y + dy, card.W, card.H);
+            spot = default;
+            if (hexes != null && selected < hexes.Length && !CentreOwns(dropped, hexes[selected]))
                 return false;
-            cards[selected] = bestCard;
-            cue = bestCue;
-            return true;
+            if (!SelectedCardCanDrop(dropped, selected, cards, pins, hexes, detail, plateWidth, plateHeight))
+                return false;
+            Box held = cards[selected];
+            cards[selected] = dropped;
+            bool tabOk = TrySeatTabHeight(
+                stripH, dropped, pins, cards, hexes, detail, selected, plateWidth, plateHeight, out spot);
+            cards[selected] = held;
+            return tabOk;
         }
 
         /// <summary>The selected card may move down to free its top tab. The seat rules stay the same.</summary>

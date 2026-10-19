@@ -225,6 +225,54 @@ namespace Game.Editor
                         result["maximumRepresentativeLimitReached"]=representatives.Count==32;
                         continue;
                     }
+
+                    if(!capacityOnly&&normalFacilityOriginExportRequest!=null&&
+                        configuration.Key.Item1==(string)normalFacilityOriginExportRequest["catalogId"]&&
+                        faction==(int)normalFacilityOriginExportRequest["faction"]&&
+                        (string)preferred["structureId"]==(string)normalFacilityOriginExportRequest["structureId"])
+                    {
+                        var request=normalFacilityOriginExportRequest;
+                        Require(discoverFacilityPads&&exactTypedRosterCaller&&serviceAuthority!=null&&serviceAvailable[faction],
+                            "Actual authoring allocator, exact roster and complete service clearances required");
+                        var expected=((JArray)request["contexts"]).OfType<JObject>().Single(c=>(string)c["size"]==configuration.Key.Item2);
+                        var actual=new JObject{["size"]=configuration.Key.Item2,["target"]=NormalOriginFacilityIdentity(result),
+                            ["priorReservations"]=new JArray(output.OfType<JObject>().Where(r=>r!=result&&
+                                (string)r["catalogId"]==configuration.Key.Item1&&(string)r["size"]==configuration.Key.Item2).Select(NormalOriginPriorIdentity)),
+                            ["qaKeepClear"]=new JArray(serviceKeepClear.Select(RectJson)),["compound"]=RectJson(compound),
+                            ["typedPad"]=RectJson(padBounds),["footprint"]=new JArray(geometry.GetPlacementFootprint(definition,false).x,
+                                geometry.GetPlacementFootprint(definition,false).y)};
+                        ValidateNormalOriginContext(expected,actual);
+                        Require(reserved.Count==((JArray)actual["priorReservations"]).Count&&
+                            JToken.DeepEquals(new JArray(reserved.Select(RectJson)),
+                                new JArray(((JArray)actual["priorReservations"]).Select(r=>r["rect"].DeepClone()))),
+                            "Complete actual prefix order and rectangles required, not independent capacity");
+                        long domain=(long)compound.width*compound.height;
+                        Require(compound.width>0&&compound.height>0&&domain<=(int)request["maximumOriginsPerRow"],
+                            "Finite complete origin domain must fit reviewed per-size cap");
+                        var origins=new JArray();long examined=0,prefixRejected=0,fullPredicateRejected=0;
+                        var diagnosticFootprint=geometry.GetPlacementFootprint(definition,false);
+                        for(int z=compound.yMin;z<compound.yMax;z++)for(int x=compound.xMin;x<compound.xMax;x++)
+                        {
+                            examined++;var candidate=new Vector2Int(x,z);
+                            if(CachedSourceInvalid(candidate,diagnosticFootprint)){prefixRejected++;continue;}
+                            if(!Valid(definition,candidate,diagnosticFootprint,false,grid,roads,blocker)){fullPredicateRejected++;continue;}
+                            var rect=RectJson(Effective(definition,candidate,grid,false));
+                            rect["originCell"]=new JArray(x,z);origins.Add(rect);
+                        }
+                        Require(examined==domain&&examined==prefixRejected+fullPredicateRejected+origins.Count,
+                            "Every finite origin must be accounted for with no truncation");
+                        result["normalPrefixFiniteOrigins"]=new JObject{
+                            ["scope"]="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit",["context"]=actual,
+                            ["enumerationComplete"]=true,["enumeratedOriginCells"]=examined,
+                            ["prefixRejected"]=prefixRejected,["fullNativeQaPredicateRejected"]=fullPredicateRejected,
+                            ["allLegalOrigins"]=origins,["legalOriginCount"]=origins.Count,
+                            ["priorReservationsIncluded"]=true,["allCirculationServiceApproachClearancesIncluded"]=true,
+                            ["usesActualNormalNativePredicate"]=true,["footprintRotation"]=false,
+                            ["noNativePathQueriesInEnumeration"]=true,["packingMeasured"]=false,
+                            ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                        result["status"]="CollectedNormalPrefixFiniteOrigins_NotSelectedOrConfigurationFit";
+                        complete=false;break; // No target selection, later facilities, packing or final route queries.
+                    }
                     var context=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
                         geometry.GetPlacementFootprint,Effective,Valid,CachedSourceInvalid,null,null,null,null);
                     var footprint=geometry.GetPlacementFootprint(definition,false);

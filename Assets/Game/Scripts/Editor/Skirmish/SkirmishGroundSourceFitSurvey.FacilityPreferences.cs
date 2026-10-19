@@ -16,6 +16,144 @@ namespace Game.Editor
     public static partial class SkirmishGroundSourceFitSurvey
     {
 
+
+        const string NormalOriginRequestEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST";
+        const string NormalOriginRequestShaEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST_SHA256";
+        static JObject normalFacilityOriginExportRequest;
+
+        // This is a replay of one recorded allocator prefix, not independent capacity.
+        static JToken NormalOriginJson(JToken value)=>JToken.Parse(value.ToString(Newtonsoft.Json.Formatting.None));
+        static void ValidateNormalOriginRequest(JObject request,JObject mission)
+        {
+            string[] fields={"schema","scope","catalogId","canonicalSizes","faction","structureId","sourcePins","canonical_size_rows",
+                "logicalPadInputSha256","maximumOriginsPerRow","maximumOriginsTotal","layout","approachClearance","budgets","contexts",
+                "sourceFitCertified","normalMissionReady"};
+            Require(request!=null&&request.Properties().Select(p=>p.Name).OrderBy(p=>p,StringComparer.Ordinal)
+                .SequenceEqual(fields.OrderBy(p=>p,StringComparer.Ordinal)),"Exact normal-prefix diagnostic request shape required");
+            Require(request["schema"]?.Type==JTokenType.Integer&&(int)request["schema"]==1&&
+                (string)request["scope"]=="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit"&&
+                request["catalogId"]?.Type==JTokenType.String&&(string)request["catalogId"]==(string)mission["catalog_id"]&&
+                request["faction"]?.Type==JTokenType.Integer&&new[]{1,2}.Contains((int)request["faction"])&&
+                request["structureId"]?.Type==JTokenType.String&&!string.IsNullOrEmpty((string)request["structureId"])&&
+                JToken.DeepEquals(request["canonicalSizes"],new JArray("Standard","War","LargeWar"))&&
+                JToken.DeepEquals(request["sourcePins"],mission["source_candidate"])&&
+                JToken.DeepEquals(request["canonical_size_rows"],mission["canonical_size_rows"])&&
+                request["logicalPadInputSha256"]?.Type==JTokenType.String&&((string)request["logicalPadInputSha256"]).Length==64&&
+                ((string)request["logicalPadInputSha256"]).All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&
+                request["maximumOriginsPerRow"]?.Type==JTokenType.Integer&&(int)request["maximumOriginsPerRow"]>0&&
+                (int)request["maximumOriginsPerRow"]<=100000&&
+                request["maximumOriginsTotal"]?.Type==JTokenType.Integer&&
+                (int)request["maximumOriginsTotal"]==3*(int)request["maximumOriginsPerRow"]&&
+                request["layout"] is JObject&&request["approachClearance"] is JArray&&
+                request["budgets"] is JArray&&((JArray)request["budgets"]).Count==3&&
+                request["contexts"] is JArray&&((JArray)request["contexts"]).Count==3&&
+                request["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)request["sourceFitCertified"]&&
+                request["normalMissionReady"]?.Type==JTokenType.Boolean&&!(bool)request["normalMissionReady"],
+                "Own subject/source/three canonical budgets/typed bounded diagnostic required");
+            var contexts=((JArray)request["contexts"]).OfType<JObject>().ToArray();
+            Require(contexts.Length==3&&contexts.Select(c=>(string)c["size"]).SequenceEqual(new[]{"Standard","War","LargeWar"})&&
+                contexts.All(c=>c["priorReservations"] is JArray&&c["qaKeepClear"] is JArray&&c["target"] is JObject&&
+                    c["compound"] is JObject&&c["typedPad"] is JObject),"Exact three recorded allocator contexts required");
+        }
+
+        static JObject NormalOriginFacilityIdentity(JObject row)=>new JObject{
+            ["catalogId"]=row["catalogId"].DeepClone(),["size"]=row["size"].DeepClone(),
+            ["faction"]=row["faction"].DeepClone(),["structureId"]=row["structureId"].DeepClone(),
+            ["padId"]=row["padId"].DeepClone(),["prefabPath"]=row["prefabPath"].DeepClone(),
+            ["prefabSha256"]=row["prefabSha256"].DeepClone()};
+        static JObject NormalOriginPriorIdentity(JObject row)
+        {
+            var identity=NormalOriginFacilityIdentity(row);
+            Require(row["resolvedEffectiveRect"] is JObject,"Every preceding facility must have a real accepted reservation");
+            identity["rect"]=row["resolvedEffectiveRect"].DeepClone();return identity;
+        }
+        static void ValidateNormalOriginContext(JObject expected,JObject actual)
+        {
+            Require(JToken.DeepEquals(NormalOriginJson(expected),NormalOriginJson(actual)),
+                "Recorded normal facility prefix, target, compound, typed pad and full QA must match exactly");
+        }
+
+        public static void RunNormalFacilityOriginRequestControls()
+        {
+            string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            string path=Environment.GetEnvironmentVariable(NormalOriginRequestEnv),digest=Environment.GetEnvironmentVariable(NormalOriginRequestShaEnv);
+            RequireFiniteOriginRequestPath(path);
+            Require(digest!=null&&digest.Length==64&&Hash(path)==digest&&new System.IO.FileInfo(path).Length<=1048576,
+                "Actual reviewed bounded request fixture required for pure context controls");
+            var request=JObject.Parse(System.IO.File.ReadAllText(path));
+            int controls=0;ValidateNormalOriginRequest(request,mission);controls++;
+            void Reject(Action<JObject> mutate)
+            {
+                var changed=(JObject)request.DeepClone();mutate(changed);bool refused=false;
+                try{ValidateNormalOriginRequest(changed,mission);}catch(InvalidOperationException){refused=true;}
+                Require(refused,"Malformed normal-origin request must refuse");controls++;
+            }
+            Reject(r=>r["schema"]="1");Reject(r=>r["catalogId"]=id=="S050"?"S074":"S050");Reject(r=>r["faction"]=0);
+            Reject(r=>r["faction"]="1");Reject(r=>r["structureId"]="");Reject(r=>r["sourcePins"]=new JObject());
+            Reject(r=>r["canonical_size_rows"]=new JArray());Reject(r=>r["canonicalSizes"]=new JArray("Standard"));
+            Reject(r=>r["logicalPadInputSha256"]="bad");Reject(r=>r["maximumOriginsPerRow"]=100001);
+            Reject(r=>r["maximumOriginsTotal"]=1);Reject(r=>r["contexts"]=new JArray());
+            Reject(r=>r["contexts"][1]["size"]="Standard");Reject(r=>r["sourceFitCertified"]=true);
+            Reject(r=>r["normalMissionReady"]=true);
+            var context=(JObject)request["contexts"][0].DeepClone();
+            ValidateNormalOriginContext(context,(JObject)context.DeepClone());controls++;
+            foreach(string field in new[]{"priorReservations","qaKeepClear","target","compound","typedPad"})
+            {
+                var changed=(JObject)context.DeepClone();
+                if(field=="priorReservations"&&((JArray)changed[field]).Count==0)((JArray)changed[field]).Add(new JObject{["unexpectedReservation"]=true});
+                else if(field=="priorReservations")changed[field][0]["rect"]["x"]=(int)changed[field][0]["rect"]["x"]+1;
+                else if(field=="qaKeepClear")((JArray)changed[field]).RemoveAt(((JArray)changed[field]).Count-1);
+                else if(field=="target")changed[field]["prefabSha256"]=new string('0',64);
+                else changed[field]["width"]=(int)changed[field]["width"]+1;
+                bool refused=false;try{ValidateNormalOriginContext(context,changed);}catch(InvalidOperationException){refused=true;}
+                Require(refused,"Actual allocator-context mutation must refuse");controls++;
+            }
+            Require(Hash(path)==digest,"Actual reviewed context fixture unchanged after controls");
+            Require(controls==22,"Exactly 22 normal-prefix request/context controls");
+            Debug.Log("[NormalFacilityOriginRequestControls] result=Passed controls=22 worldQueries=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
+        public static void RunReviewedNormalFacilityOriginExport()
+        {
+            Require(normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null&&
+                completeGroundBaAuthority==null&&completeGroundBaSourcePins==null&&!mpGroundBaPilotRequested&&
+                !s049BoundedCompoundRouteRequested&&!strictLogicalCandidatesRequested&&!apGroundJointPreferencesRequested&&
+                !refinementFacilityPreferencesRequested&&!refinementPreferenceReplay&&!refinementCompoundSearchRequested&&
+                !refinementJointPadSearchRequested&&!refinementLogicalFrameSearchRequested&&
+                !EditorApplication.isPlayingOrWillChangePlaymode&&!EditorApplication.isCompiling&&!EditorApplication.isUpdating,
+                "Fresh exclusive idle normal-origin diagnostic scope required");
+            string id=Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_CATALOG");
+            var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);ValidateCompleteGroundBaAuthorityRow(authority);
+            var mission=All120MeasurementMission(authority,GroundBaTemplate(authority));
+            string path=Environment.GetEnvironmentVariable(NormalOriginRequestEnv),digest=Environment.GetEnvironmentVariable(NormalOriginRequestShaEnv);
+            RequireFiniteOriginRequestPath(path);
+            Require(digest!=null&&digest.Length==64&&digest.All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&Hash(path)==digest,
+                "Reviewed request path and exact SHA pair required");
+            Require(new System.IO.FileInfo(path).Length<=1048576,"Bounded diagnostic request bytes required");
+            var request=JObject.Parse(System.IO.File.ReadAllText(path));ValidateNormalOriginRequest(request,mission);
+            var pad=ReadReviewedFacilityPadInput(mission);
+            Require(pad!=null&&(string)pad["observedInputSha256"]==(string)request["logicalPadInputSha256"]&&Hash(path)==digest,
+                "Exact reviewed logical-pad input and unchanged request required");
+            RunNormalFacilityOriginRequestControls();
+            normalFacilityOriginExportRequest=(JObject)request.DeepClone();
+            completeGroundBaAuthority=(JObject)authority.DeepClone();
+            completeGroundBaSourcePins=(JObject)mission["source_candidate"].DeepClone();
+            try{RunAll120BoundedFacilityPreferences();}
+            finally
+            {
+                normalFacilityOriginExportRequest=null;completeGroundBaAuthority=null;completeGroundBaSourcePins=null;
+                Require(Hash(path)==digest&&Hash((string)pad["observedInputPath"])==(string)request["logicalPadInputSha256"],
+                    "Diagnostic inputs unchanged after collection");
+            }
+            var output=JObject.Parse(System.IO.File.ReadAllText(Environment.GetEnvironmentVariable("WARLINE_ALL120_REFINEMENT_OUTPUT")));
+            var collected=output.SelectTokens("$..normalPrefixOriginExport").OfType<JObject>().ToArray();
+            Require(collected.Length==1&&collected[0]["rows"] is JArray&&((JArray)collected[0]["rows"]).Count==3,
+                "Exactly one complete three-size diagnostic export required");
+            Debug.Log("[ReviewedNormalFacilityOriginExport] result=Collected sizes=3 normalPrefix=1 packing=0 fullRouteAcceptance=0 sourceFitCertified=0 normalMissionReady=0");
+        }
+
         const string FiniteOriginRequestEnv="WARLINE_FINITE_FACILITY_ORIGIN_REQUEST";
         const string FiniteOriginRequestShaEnv="WARLINE_FINITE_FACILITY_ORIGIN_REQUEST_SHA256";
         const string FiniteOriginPadSha="17b3013d6cba8ebd6a738f5d43c7d301fd6407d4935b7b1272c9021cf580ccce";
@@ -364,6 +502,35 @@ namespace Game.Editor
             var approachEvidence=new JObject();
             var clearance=PreferenceApproachClearance(owner.Layout,budgets,em,gridEntity,grid,surface,approachEvidence);
             report["actualProposedApproaches"]=approachEvidence;
+
+            if(normalFacilityOriginExportRequest!=null)
+            {
+                var request=normalFacilityOriginExportRequest;ValidateNormalOriginRequest(request,mission);
+                Require(logicalPadInput!=null&&(string)logicalPadInput["observedInputSha256"]==(string)request["logicalPadInputSha256"]&&
+                    JToken.DeepEquals(NormalOriginJson(JObject.Parse(JsonUtility.ToJson(owner.Layout))),NormalOriginJson(request["layout"]))&&
+                    JToken.DeepEquals(NormalOriginJson(new JArray(clearance.Select(RectJson))),NormalOriginJson(request["approachClearance"]))&&
+                    JToken.DeepEquals(NormalOriginJson(new JArray(budgets.Select(ApPreferenceBudgetKey))),NormalOriginJson(request["budgets"])),
+                    "Exact recorded layout, real approach clearances and all three own budgets required");
+                var exported=new JArray();
+                foreach(var budget in budgets)
+                {
+                    var row=new JObject{["catalogId"]=owner.Definition.CatalogId,["size"]=budget.Size.ToString(),
+                        ["group"]=mission["collector_source_group"].DeepClone(),["newLogicalCandidateMaterialized"]=true,
+                        ["candidateCompoundWorldRects"]=compounds.DeepClone(),
+                        ["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
+                    ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
+                        em,gridEntity,grid,surface,row,true,true,clearance,false,serviceAuthority:owner.Definition);
+                    var targets=((JArray)row["normalFacilityRelocationProposals"]).OfType<JObject>()
+                        .Where(r=>r["normalPrefixFiniteOrigins"] is JObject).ToArray();
+                    Require(targets.Length==1&&(bool)targets[0]["normalPrefixFiniteOrigins"]["enumerationComplete"],
+                        "Requested normal-search point must be reached exactly once for each size");
+                    exported.Add(row);
+                }
+                report["normalPrefixOriginExport"]=new JObject{["scope"]="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit",
+                    ["request"]=request.DeepClone(),["rows"]=exported,["packingMeasured"]=false,
+                    ["fullRouteAcceptance"]=false,["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                report["result"]="CollectedNormalPrefixFiniteOrigins_NoConfigurationFit";return report;
+            }
             var maxBudget=budgets.OrderByDescending(b=>b.Structures.Length).ThenByDescending(b=>(int)b.Size).First();
             var inventory=new JObject{["newLogicalCandidateMaterialized"]=true,["candidateCompoundWorldRects"]=compounds.DeepClone(),
                 ["allSizeFacilities"]=Ground30PreferredFacilities(maxBudget,owner.Layout,grid)};

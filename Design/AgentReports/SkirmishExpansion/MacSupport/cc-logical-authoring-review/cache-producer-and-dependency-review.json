@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "scope": "ReadOnlyInstalledProducerAndExactDependencyAnalysis_NotSourceEpochAcceptance",
+  "created_utc": "2026-10-18T23:45:45.264524+00:00",
+  "original_run_nonce": "78a889179aa846c4ae9b6d13584eda8f",
+  "original_terminal_commit": "e62047f7323dbe2f4dc4ea9595448244272ab423",
+  "original_operational_result": false,
+  "original_controller_exit": 1,
+  "cache_descriptor": {
+    "path": "Assets/SceneDependencyCache/c4f8c91329530ce6f383a99579ad8402.sceneWithBuildSettings",
+    "bytes": 48,
+    "sha256": "25d81aa94470964ed7d4eca0da6409bfb0da64656464247dcdcfdf46a46d8aba",
+    "hex": "0c10042f9ea4403c80c4d8bcc081bc0d0000000000000000000000000000000001000000000000000000000000000000",
+    "layout": "SceneGUID16 + BuildConfiguration16 + int IsBuildingForEditor at32 + padding4 + long DirtyValue at40; actual48bytes match installed unmanaged struct",
+    "decoded_scene_GUID": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "build_configuration_GUID": "00000000000000000000000000000000",
+    "IsBuildingForEditor_int": 1,
+    "DirtyValue": 0,
+    "decoder_provenance": "Exact installed Unity.Entities.Hash128.ToString nibble order on four little-endian UInt32; roundtrip first16 bytes checked. No Unity invocation."
+  },
+  "new_meta": {
+    "path": "Assets/SceneDependencyCache/c4f8c91329530ce6f383a99579ad8402.sceneWithBuildSettings.meta",
+    "bytes": 152,
+    "sha256": "213e24d8df8d740eecaba039134d74d70fd4146749d8a44c178ed4e1ee8e5b94",
+    "text": "fileFormatVersion: 2\nguid: c4f8c91329530ce6f383a99579ad8402\nDefaultImporter:\n  externalObjects: {}\n  userData:\n  assetBundleName:\n  assetBundleVariant:\n",
+    "guid_matches_descriptor_basename": true
+  },
+  "source_scene": {
+    "guid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "path": "Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity",
+    "sha256_before": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+    "sha256_after": "067c5d78592503cc22b9971db2d4abdeb852460b31f9caac12b37df3c5179975",
+    "unchanged": true
+  },
+  "producer": {
+    "package": "com.unity.entities",
+    "version": "6.5.0",
+    "package_json_sha256": "ec6297bee6c63194e9ef4de95ce2853e6f4954b5406de19c321e5d60e68eae80",
+    "method": "Unity.Scenes.SceneWithBuildConfigurationGUIDs.WriteEntitySceneWithBuildConfig",
+    "caller": "ResolveSceneReferenceSystem -> EnsureExistsFor(scene.SceneGUID, BuildConfigurationGUID, true) -> ComputeBuildConfigurationGUID/xxHash3.Hash128 -> WriteEntitySceneWithBuildConfig when descriptor missing",
+    "write_behavior": "Writes48byte unmanaged descriptor and exact152byte DefaultImporter meta at Assets/SceneDependencyCache; existing sceneGUID is referenced, no new terrain/layout/map source created.",
+    "consumer": "ResolveSceneReferenceSystem AssetDependencyTracker and EntityScenesPaths.GetSubSceneArtifactHash use derived GUID; SubSceneImporter reads descriptor, registers dependencies and opens EXISTING scene by descriptor SceneGUID.",
+    "classification": "Engine-generated descriptor/identity metadata output that becomes a derived asset-pipeline/cache input; not authored physical/layout/config input. Do not call it unconsumed or waive original fullsource gate.",
+    "attribution_limit": "Installed producer source, exact descriptor/meta format and source GUID/callpath/owned run align. No per-write OS tracing captured; exact OS writerPID not independently witnessed.",
+    "observed_owned_editor_rows": [
+      {
+        "pid": 96790,
+        "ppid": 96783,
+        "started": "Mon Oct 19 01:35:55 2026",
+        "cpu": 0.8,
+        "rss_kib": 2522000,
+        "comm": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "identity_verified": true,
+        "start_sec": 1792366555,
+        "start_usec": 206068,
+        "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+        "command": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/WarlineCapture-mac-native-s003 -logFile /Volumes/T7/Projects/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacSupport/cc-runtime-dependency-review/corrected-CC-packet/78a889179aa846c4ae9b6d13584eda8f/unity-CC.log -quit -executeMethod Game.Editor.SkirmishGroundSourceFitSurvey.RunRequestedSourceGroupSurvey",
+        "arguments_observed": true
+      }
+    ]
+  },
+  "source_code_evidence": [
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/SceneWithBuildConfigurationGUIDs.cs",
+      "sha256": "5028f7e13395526edbd670daa55f7d4d35914c0d76809e7036a5cdcf8a798647",
+      "start_line": 12,
+      "end_line": 30,
+      "text": "    struct SceneWithBuildConfigurationGUIDs\n    {\n        public Hash128 SceneGUID;\n        public Hash128 BuildConfiguration;\n        public int     _IsBuildingForEditor;\n\n        public bool IsBuildingForEditor\n        {\n            get { return _IsBuildingForEditor != 0; }\n            set { _IsBuildingForEditor = value ? 1 : 0; }\n        }\n\n        // Currently used to allow us to force subscenes to reimport\n        public long DirtyValue;\n\n        static HashSet<Hash128> s_BuildConfigurationCreated = new HashSet<Hash128>();\n        private static ulong s_AssetRefreshCounter = 0;\n\n        internal const string k_SceneDependencyCachePath = \"Assets/SceneDependencyCache\";"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/SceneWithBuildConfigurationGUIDs.cs",
+      "sha256": "5028f7e13395526edbd670daa55f7d4d35914c0d76809e7036a5cdcf8a798647",
+      "start_line": 81,
+      "end_line": 124,
+      "text": "        }\n\n        private static unsafe void WriteEntitySceneWithBuildConfig(Hash128 guid, SceneWithBuildConfigurationGUIDs sceneWithBuildConfigurationGUIDs, string path)\n        {\n            var previousPath = AssetDatabaseCompatibility.GuidToPath(guid);\n            if (!string.IsNullOrEmpty(previousPath) && previousPath != path)\n                UnityEngine.Debug.LogError($\"EntitySceneWithBuildConfig guid is not unique {guid}. ScenePath: '{AssetDatabaseCompatibility.GuidToPath(sceneWithBuildConfigurationGUIDs.SceneGUID)}' Conflicting GUID: '{previousPath}'\");\n\n            Directory.CreateDirectory(k_SceneDependencyCachePath);\n            using (var writer = new StreamBinaryWriter(path))\n            {\n#if UNITY_EDITOR && UNITY_DOTS_IMHEX\n                writer.ImHexPattern.WriteTypeWithPosition<SceneWithBuildConfigurationGUIDs>(\"sceneWithBuildConfigurationGUIDs\", writer.Position);\n#endif\n                writer.WriteBytes(&sceneWithBuildConfigurationGUIDs, sizeof(SceneWithBuildConfigurationGUIDs));\n            }\n            File.WriteAllText(path + \".meta\",\n                $\"fileFormatVersion: 2\\nguid: {guid}\\nDefaultImporter:\\n  externalObjects: {{}}\\n  userData:\\n  assetBundleName:\\n  assetBundleVariant:\\n\");\n        }\n\n        public static unsafe Hash128 EnsureExistsFor(Hash128 sceneGUID, Hash128 buildConfigurationGUID, bool isBuildingForEditor, out bool mustRequestRefresh)\n        {\n            mustRequestRefresh = false;\n            var guid = ComputeBuildConfigurationGUID(sceneGUID, buildConfigurationGUID, isBuildingForEditor);\n\n            if (s_BuildConfigurationCreated.Contains(guid))\n                return guid;\n\n            var fileName = GetSceneWithBuildSettingsPath(guid);\n            if (!File.Exists(fileName))\n            {\n                var sceneWithBuildConfigurationGUIDs = new SceneWithBuildConfigurationGUIDs { SceneGUID = sceneGUID, IsBuildingForEditor = isBuildingForEditor, BuildConfiguration = buildConfigurationGUID, DirtyValue = 0};\n                WriteEntitySceneWithBuildConfig(guid, sceneWithBuildConfigurationGUIDs, fileName);\n                mustRequestRefresh = true;\n            }\n\n            s_BuildConfigurationCreated.Add(guid);\n\n            return guid;\n        }\n\n        public static unsafe SceneWithBuildConfigurationGUIDs ReadFromFile(string path)\n        {\n            SceneWithBuildConfigurationGUIDs sceneWithBuildConfiguration = default;"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/SceneWithBuildConfigurationGUIDs.cs",
+      "sha256": "5028f7e13395526edbd670daa55f7d4d35914c0d76809e7036a5cdcf8a798647",
+      "start_line": 125,
+      "end_line": 140,
+      "text": "            using (var reader = new StreamBinaryReader(path))\n            {\n                reader.ReadBytes(&sceneWithBuildConfiguration, sizeof(SceneWithBuildConfigurationGUIDs));\n            }\n            return sceneWithBuildConfiguration;\n        }\n\n        static Hash128 ComputeBuildConfigurationGUID(in Hash128 sceneGUID, in Hash128 buildConfigurationGUID, bool isBuildingForEditor)\n        {\n            var guids = new SceneWithBuildConfigurationGUIDs { SceneGUID = sceneGUID, BuildConfiguration = buildConfigurationGUID, IsBuildingForEditor = isBuildingForEditor};\n            var hash = xxHash3.Hash128(guids);\n            return new Hash128(hash);\n        }\n    }\n}\n#endif"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/ResolveSceneReferenceSystem.cs",
+      "sha256": "7495e28aa5c35c5c154f2ae1b96d8e611f77d01a7cd5a4cda9bea57cb9053fdf",
+      "start_line": 125,
+      "end_line": 151,
+      "text": "            SceneWithBuildConfigurationGUIDs.ValidateBuildSettingsCache();\n\n            var buildConfigurationGUID = EntityManager.GetComponentData<SceneSystemData>(_sceneSystem).BuildConfigurationGUID;\n\n            // Add scene entities that haven't been encountered yet\n            if (!m_AddScenes.IsEmptyIgnoreFilter)\n            {\n                //@TODO: Should use Entities.ForEach but we are missing Entities.ForEach support for explicit queries\n\n                using (var addScenes = m_AddScenes.ToEntityArray(Allocator.TempJob))\n                {\n                    var trackerStates = new NativeArray<AssetDependencyTrackerState>(addScenes.Length, Allocator.Temp);\n                    for (int i = 0; i != addScenes.Length; i++)\n                    {\n                        var sceneEntity = addScenes[i];\n                        var scene = EntityManager.GetComponentData<SceneReference>(sceneEntity);\n                        var requestSceneLoaded = EntityManager.GetComponentData<RequestSceneLoaded>(sceneEntity);\n\n                        var guid = SceneWithBuildConfigurationGUIDs.EnsureExistsFor(scene.SceneGUID,\n                            buildConfigurationGUID, true, out var requireRefresh);\n                        var async = (requestSceneLoaded.LoadFlags & SceneLoadFlags.BlockOnImport) == 0;\n\n                        LogResolving(async ? \"Adding Async\" : \"Adding Sync\", guid);\n\n                        _AssetDependencyTracker.Add(guid, sceneEntity, async);\n                        if (requireRefresh)\n                            _AssetDependencyTracker.RequestRefresh();"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes/EntityScenesPaths.cs",
+      "sha256": "cf1c3558f26d5477e20ea1d5c5a5df80b20ea9966bc31af4dddffd804b294bfc",
+      "start_line": 67,
+      "end_line": 75,
+      "text": "        internal static Hash128 GetSubSceneArtifactHash(Hash128 sceneGUID, Hash128 buildConfigurationGUID, bool isBuildingForEditor, ImportMode importMode)\n        {\n            var guid = SceneWithBuildConfigurationGUIDs.EnsureExistsFor(sceneGUID, buildConfigurationGUID, isBuildingForEditor, out var mustRequestRefresh);\n            if (mustRequestRefresh)\n                UnityEditor.AssetDatabase.Refresh();\n\n            if (!s_HashToString.TryGetValue(guid, out var guidString))\n                guidString = s_HashToString[guid] = guid.ToString();\n            return AssetDatabaseCompatibility.GetArtifactHash(guidString, SubSceneImporterType, importMode);"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Scenes.Editor/SubSceneImporter.cs",
+      "sha256": "a94cb7e13e29aeff56a5a77a232f46ae1a2898e2b9413df7b90577d2907a4b99",
+      "start_line": 175,
+      "end_line": 203,
+      "text": "        public override void OnImportAsset(AssetImportContext ctx)\n        {\n            try\n            {\n                var sceneWithBuildConfiguration = SceneWithBuildConfigurationGUIDs.ReadFromFile(ctx.assetPath);\n\n                // Ensure we have as many dependencies as possible registered early in case an exception is thrown\n                EditorEntityScenes.AddEntityBinaryFileDependencies(ctx, sceneWithBuildConfiguration.BuildConfiguration);\n                EditorEntityScenes.DependOnSceneGameObjects(sceneWithBuildConfiguration.SceneGUID, ctx);\n\n                GetBuildConfigurationOrDotsSettings(sceneWithBuildConfiguration, out var settingsAsset);\n                if(settingsAsset != null)\n                    ctx.DependsOnCustomDependency(settingsAsset.CustomDependency);\n\n                var scenePath = AssetDatabaseCompatibility.GuidToPath(sceneWithBuildConfiguration.SceneGUID);\n\n                UnityEngine.SceneManagement.Scene scene;\n                bool isScene = scenePath.EndsWith(\".unity\");\n                GameObject prefab = null;\n                if (!isScene)\n                {\n                    var prefabGUID = sceneWithBuildConfiguration.SceneGUID;\n                    scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);\n                    scene.name = prefabGUID.ToString();\n                    prefab = AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(AssetDatabase.GUIDToAssetPath(prefabGUID.ToString()));\n                }\n                else\n                {\n                    scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);"
+    },
+    {
+      "path": "Library/PackageCache/com.unity.entities@ef040875dea9/Unity.Entities/Types/Hash128.cs",
+      "sha256": "fc9989feabee6de0f1acdd54564b1ab523e520934e8c63b52c94f2871b62a2f5",
+      "start_line": 68,
+      "end_line": 83,
+      "text": "        public override unsafe string ToString()\n        {\n            var chars = stackalloc char[32];\n\n            for (int i = 0; i < 4; i++)\n            {\n                for (int j = 7; j >= 0; j--)\n                {\n                    uint cur = Value[i];\n                    cur >>= (j * 4);\n                    cur &= 0xF;\n                    chars[i * 8 + j] = k_HexToLiteral[cur];\n                }\n            }\n\n            return new string(chars, 0, 32);"
+    }
+  ],
+  "dependency_comparison": {
+    "source_before_rows": 41741,
+    "source_after_rows": 41742,
+    "source_before_sha256": "79d5f94a72cc98bc3803eee7186bd312f40f820c0c6e65dedff509cffcc7a3a8",
+    "source_after_sha256": "52e5229790f557a0363598b6e374e56217fb341439eb4ea9f1c53b14ffe185d2",
+    "added": [
+      "Assets/SceneDependencyCache/c4f8c91329530ce6f383a99579ad8402.sceneWithBuildSettings.meta"
+    ],
+    "removed": [],
+    "changed": [],
+    "explicit18runtimefiles_before_launch_after_identical": true,
+    "runtime_manifest_sha256": "9e6f3efbca516f54d188f6f8ae35392b70f69c8a828b727e5a6b9a24c661235b",
+    "relevant_code_asmdef_asmref_Packages_ProjectSettings_equal": true,
+    "relevant_rows": 4127,
+    "all_retained_build_manifest_equal": true,
+    "GameEditorDLL_RSP_equal": true,
+    "SDK_package_actualpins_equal": true,
+    "no_physical_or_layout_source_row_modified": true
+  },
+  "source_census_contract_note": {
+    "helper_path": "/private/tmp/warline-mac-probe35-lifecycle-review/Tools/CI/s005_windows_source_snapshot.py",
+    "extensions_are_whitelisted": true,
+    "meta_included": true,
+    "sceneWithBuildSettings_binary_excluded": true,
+    "meaning": "All source-census Assets rows is a complete contract superset for authored candidates, not every generated binary under Assets/Library. New .meta still changed this declared contract and FAILED it."
+  },
+  "prospective_only": "Root may review a distinct derived-output role or accept a new52e5 source epoch for future scope; no change to prior failed79d5->52e5 aggregate and no authority for new run.",
+  "cache_deletion_or_rebaseline": false,
+  "physical_source_changed": false,
+  "native_runs": 0
+}

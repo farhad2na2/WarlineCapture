@@ -33,6 +33,10 @@ MonoBehaviour:
     Sprite: {fileID: 21300000, guid: 01d8fc972e00f4440a1bff536a93d94d, type: 3}
   - Key: skirmish.plate.MP
     Sprite: {fileID: 21300000, guid: 01d8fc972e00f4440a1bff536a93d94d, type: 3}
+  - Key: Assets/Game/Art/SkirmishLibrary/Theatre/skirmish.theatre.base.png
+    Sprite: {fileID: 21300000, guid: 6d5e002f1f9d4142a29094b82c102d38, type: 3}
+  - Key: skirmish.theatre.base
+    Sprite: {fileID: 21300000, guid: 6d5e002f1f9d4142a29094b82c102d38, type: 3}
   - Key: Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S001.png
     Sprite: {fileID: 21300000, guid: 5280968adb8124365bd8ae92d6301cae, type: 3}
   - Key: skirmish.preview.S001

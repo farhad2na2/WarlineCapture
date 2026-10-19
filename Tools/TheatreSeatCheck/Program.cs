@@ -544,7 +544,12 @@ internal static class Program
     {
         const float plateWidth = 1079.6f;
         const float plateHeight = 844f;
-        bool ok = true;
+        bool ccOn = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, false, true, true, "CC");
+        bool mpOn = TheatreSeatGeometry.DetailReserveOn(plateWidth, plateHeight, true, true, true, "MP");
+        bool underFloor = !TheatreSeatGeometry.DetailReserveOn(900f, 700f, false, true, true, "CC");
+        bool ok = ccOn && mpOn && underFloor;
+        if (!ok)
+            Console.WriteLine("FAIL 4:3 reserve rule cc=" + ccOn + " mp=" + mpOn + " underFloorSkipped=" + underFloor);
         foreach (bool fa in new[] { false, true })
         {
             foreach (string map in TheatreSeatGeometry.MapIds)

@@ -743,7 +743,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Detail reserve. A 4:3 plate that asked for the panel keeps it for every district.
+        /// Detail reserve. A 4:3 plate that clears <see cref="ReserveViewportFloor"/> keeps the
+        /// panel for every district. The full-portrait gate no longer turns City Crossroads
+        /// or Mountain Pass off. A 4:3 viewport under that floor still leaves the panel off.
         /// Wider ratios still drop it when the reserved plate cannot hold full portraits
         /// (at least <see cref="FullPortraitMinWidth"/> by <see cref="FullPortraitMinHeight"/>, names fitting, no word breaks).
         /// The detail panel is then a bottom sheet and the seats use the full plate.
@@ -759,7 +761,12 @@ namespace Game.UI.Runtime
             if (!requested || plateWidth < 600f || plateHeight < 2f)
                 return false;
             if (fourByThree)
-                return true;
+            {
+                Box view = OpenViewport(plateWidth, plateHeight, fa, true);
+                bool holds = view.W + 0.5f >= ReserveViewportFloor.X && view.H + 0.5f >= ReserveViewportFloor.Y;
+                return holds;
+            }
+
             if (string.IsNullOrEmpty(selected))
                 selected = "DB";
             return FullPortraitSeatsHold(plateWidth, plateHeight, fa, selected);

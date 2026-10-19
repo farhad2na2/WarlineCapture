@@ -1,8 +1,9 @@
 """Constructed contract tests only. No real compiler/mission admission is proved."""
-import ast
 import copy
 import hashlib
 import json
+import os
+import shutil
 from pathlib import Path
 import tempfile
 import unittest
@@ -12,14 +13,16 @@ import skirmish_compile_attempt_adapter as adapter
 import skirmish_operational_compile_connector as connector
 import skirmish_native_compile_admission as native
 from skirmish_production_queue import fingerprint
-from skirmish_production_operational_inspector import Reader
+from skirmish_production_operational_inspector import Reader, _io_path, _resolved_path
 
 
 class AttemptAdapterTests(unittest.TestCase):
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix="warline-attempt-contract-")
-        self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name).resolve()
+        # Extended spelling is for filesystem I/O only; receipt identities stay
+        # canonical. This also supports a Windows TEMP directory beyond MAX_PATH.
+        self.root = _resolved_path(tempfile.mkdtemp(
+            prefix="warline-attempt-contract-", dir=str(_io_path(tempfile.gettempdir()))))
+        self.addCleanup(shutil.rmtree, _io_path(self.root))
         self.items = []
         self.actual = []
         self.backend_calls = []
@@ -48,9 +51,9 @@ class AttemptAdapterTests(unittest.TestCase):
     def write(self, path, value):
         p = Path(path)
         if not p.is_absolute(): p = self.root / p
-        p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_bytes(adapter.canonical(value)+b"\n")
-        return dict(path=str(p), sha256=hashlib.sha256(p.read_bytes()).hexdigest())
+        _io_path(p.parent).mkdir(parents=True, exist_ok=True)
+        _io_path(p).write_bytes(adapter.canonical(value)+b"\n")
+        return dict(path=str(p), sha256=hashlib.sha256(_io_path(p).read_bytes()).hexdigest())
 
     def operational(self):
         return dict(result="NormalCompletedUnqualified", wins=1, attempts=copy.deepcopy(self.actual),
@@ -86,7 +89,7 @@ class AttemptAdapterTests(unittest.TestCase):
     def mutate_receipt(self, spec, change):
         spec = copy.deepcopy(spec)
         ref = spec["compile_receipts"][0]
-        value = json.loads(Path(ref["path"]).read_bytes())
+        value = json.loads(_io_path(ref["path"]).read_bytes())
         change(value)
         # Even rehashing and renaming a forged receipt is insufficient: the
         # consumer recomputes native proof and exact subject independently.
@@ -102,10 +105,10 @@ class AttemptAdapterTests(unittest.TestCase):
         refs = spec["compile_receipts"]
         self.assertNotEqual(refs[0]["path"], refs[1]["path"])
         for i, ref in enumerate(refs):
-            value = json.loads(Path(ref["path"]).read_bytes())
+            value = json.loads(_io_path(ref["path"]).read_bytes())
             self.assertEqual(value["subject"]["attempt_id"], "attempt-"+str(i))
             self.assertEqual(value["subject"]["worker"], "fixture-worker")
-            self.assertNotIn("private-claim-token", Path(ref["path"]).read_text())
+            self.assertNotIn("private-claim-token", _io_path(ref["path"]).read_text())
             self.assertEqual(value["sampling_coverage_credit"], 0)
         self.assertEqual(adapter.produce(self.root, self.request)["connector_spec"], spec)
 
@@ -132,7 +135,7 @@ class AttemptAdapterTests(unittest.TestCase):
                 self.assert_missing(self.mutate_receipt(spec, lambda r, f=field: r.__setitem__(f, 1)))
 
     def test_receipt_reference_digest_tamper(self):
-        spec = self.produced(); Path(spec["compile_receipts"][0]["path"]).write_text("{}")
+        spec = self.produced(); _io_path(spec["compile_receipts"][0]["path"]).write_text("{}")
         self.assert_missing(spec)
 
     def test_duplicate_or_reordered_or_missing_attempt_receipts(self):
@@ -152,7 +155,7 @@ class AttemptAdapterTests(unittest.TestCase):
     def test_cross_attempt_receipt_copy_is_not_canonical(self):
         spec = self.produced();ref = spec["compile_receipts"][0]
         target = Path(spec["compile_receipts"][1]["path"]).parent / Path(ref["path"]).name
-        spec["compile_receipts"][0] = self.write(target, json.loads(Path(ref["path"]).read_bytes()))
+        spec["compile_receipts"][0] = self.write(target, json.loads(_io_path(ref["path"]).read_bytes()))
         self.assert_missing(spec)
 
     def test_backend_source_hash_is_pinned(self):
@@ -175,7 +178,7 @@ class AttemptAdapterTests(unittest.TestCase):
             self.native_patch.start()
 
     def test_changed_proof_document_rejects_old_receipt(self):
-        spec = self.produced();Path(self.proof_ref["path"]).write_text('{"changed":true}')
+        spec = self.produced();_io_path(self.proof_ref["path"]).write_text('{"changed":true}')
         self.assert_missing(spec)
 
     def test_forged_backend_success_payload_cannot_substitute_actual_evidence(self):
@@ -204,13 +207,13 @@ class AttemptAdapterTests(unittest.TestCase):
         with patch.object(adapter.backend, "admit", side_effect=failed): self.assert_missing(spec)
 
     def test_proof_leaf_change_after_production_is_refused(self):
-        spec = self.produced();Path(self.initial["path"]).write_text('{"leaf":"changed"}')
+        spec = self.produced();_io_path(self.initial["path"]).write_text('{"leaf":"changed"}')
         with self.assertRaises(ValueError): connector.inspect(self.root, spec)
 
     def test_mutation_during_backend_invalidates_full_pin_union(self):
         original = self.backend
         def mutated(project, job, proof):
-            result=original(project, job, proof);Path(self.initial["path"]).write_text('{"late":true}');return result
+            result=original(project, job, proof);_io_path(self.initial["path"]).write_text('{"late":true}');return result
         with patch.object(adapter.backend, "admit", side_effect=mutated):
             with self.assertRaises(ValueError): adapter.produce(self.root, self.request)
 
@@ -218,27 +221,49 @@ class AttemptAdapterTests(unittest.TestCase):
         with patch.object(adapter, "inspect_operational", return_value={"result":"Incomplete"}):
             with self.assertRaises(ValueError): adapter.produce(self.root, self.request)
         self.assertEqual(self.backend_calls, [])
-        self.assertEqual(list(self.root.rglob("compile-admission-*.json")), [])
+        self.assertEqual(list(_io_path(self.root).rglob("compile-admission-*.json")), [])
 
-    def test_cross_namespace_traversal_and_symlink_references_refused(self):
+    def test_cross_namespace_traversal_references_refused(self):
         for path in ["../outside.json", str(self.root/"Logs"/".."/"compile-proof.json")]:
             request=copy.deepcopy(self.request);request["compile_proof"]["path"]=path
             with self.assertRaises(ValueError): adapter.produce(self.root, request)
-        alias=self.root/"Logs"/"alias.json";alias.symlink_to(Path(self.proof_ref["path"]))
+
+    def real_symlink(self, alias, target):
+        try:
+            _io_path(alias).symlink_to(_io_path(target))
+        except OSError as error:
+            if os.name == "nt" and getattr(error, "winerror", None) == 1314:
+                self.skipTest("Actual Windows symlink privilege unavailable (WinError 1314)")
+            raise
+
+    def test_actual_symlink_proof_reference_refused(self):
+        alias=self.root/"Logs"/"alias.json"
+        self.real_symlink(alias, self.proof_ref["path"])
         request=copy.deepcopy(self.request);request["compile_proof"]["path"]=str(alias)
         with self.assertRaises(ValueError): adapter.produce(self.root, request)
 
-    def test_existing_corrupt_or_symlink_receipt_not_overwritten(self):
+    def test_existing_corrupt_receipt_not_overwritten(self):
         read=Reader(self.root);receipt,folder=adapter.evaluate_attempt(read,self.items[0],self.actual[0],self.proof_ref)
-        path=adapter.receipt_path(folder,receipt);path.write_bytes(b"incomplete preserved")
+        path=adapter.receipt_path(folder,receipt);_io_path(path).write_bytes(b"incomplete preserved")
         with self.assertRaises(ValueError): adapter.write_immutable(read,folder,receipt)
-        self.assertEqual(path.read_bytes(),b"incomplete preserved")
-        path.unlink();path.symlink_to(Path(self.initial["path"]))
+        self.assertEqual(_io_path(path).read_bytes(),b"incomplete preserved")
+
+    def test_actual_symlink_receipt_not_overwritten(self):
+        read=Reader(self.root);receipt,folder=adapter.evaluate_attempt(read,self.items[0],self.actual[0],self.proof_ref)
+        path=adapter.receipt_path(folder,receipt)
+        self.real_symlink(path, self.initial["path"])
         with self.assertRaises(ValueError): adapter.write_immutable(read,folder,receipt)
+
+    def test_extended_path_fixture_io_and_cleanup(self):
+        path=self.root.joinpath(*(["long-fixture-component-"+"x"*48]*6), "proof.json")
+        self.assertGreater(len(str(path)), 260)
+        ref=self.write(path, {"fixture": "long-path"})
+        _, value=Reader(self.root).obj(ref)
+        self.assertEqual(value, {"fixture": "long-path"})
 
     def test_duplicate_json_and_nonfinite_proof_are_refused(self):
         for raw in [b'{"schema_version":3,"schema_version":3}',b'{"number":NaN}']:
-            path=Path(self.proof_ref["path"]);path.write_bytes(raw)
+            path=Path(self.proof_ref["path"]);_io_path(path).write_bytes(raw)
             request=copy.deepcopy(self.request);request["compile_proof"]["sha256"]=hashlib.sha256(raw).hexdigest()
             with self.assertRaises(ValueError): adapter.produce(self.root,request)
 

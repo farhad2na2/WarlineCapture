@@ -723,6 +723,15 @@ namespace Game.UI.Runtime
         }
 
         /// <param name="briefingOnLeftOverride">Null keeps the default side (left in LTR, right in RTL).</param>
+        /// <summary>v46: px the 4:3 Theatre briefing column gives the map so P2's detail reserve holds.</summary>
+        private const float TheatreFourByThreeColumnNarrow = 40f;
+
+        /// <summary>v46: the 4:3 Theatre briefing column never drops below this (medal tiles stay >= 96 px).</summary>
+        private const float TheatreBriefingMinWidth = 300f;
+
+        /// <summary>v46: Game PM floor, the 4:3 Theatre map keeps at least this share of the safe width.</summary>
+        private const float TheatreMapMinShare = 0.60f;
+
         private void ApplyLibraryFrame(bool? briefingOnLeftOverride = null)
         {
             RectTransform composition = transform.Find("SkirmishSetupComposition") as RectTransform;
@@ -743,10 +752,25 @@ namespace Game.UI.Runtime
                 out float panelY,
                 out float panelHeight);
             bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
-            // v45c: the 4:3 right-panel restore (narrow the briefing 40 px so P2's detail reserve holds) is blocked: P2's
-            // SkirmishBattleLibraryCapture.RejectCollapsedLayout (4026-4039) re-derives the split from SkirmishLibraryFrame
-            // and rejects any other map width ("Map panel width is 1079.6; expected 1039.6"). Logged only.
-            const float theatreNarrow = 0f;
+            // v46 (Game PM, approved-1 keeps the district panel at 4:3): P2's seating only reserves the trailing detail
+            // column when every portrait seats (TheatreSeatGeometry.DetailReserveOn); the 4:3 plate was 1039.6 px, just
+            // under it. The briefing column gives the map 40 px (plate ~1080, where the reserve holds for the default
+            // district in en and fa). P2's capture check now reads the live split ([MapPanelWidth]); the map stays at
+            // or above 60% of the safe width.
+            float theatreNarrow = 0f;
+            float safeWidth = composition.rect.width;
+            if (theater && composition.rect.height > 1f && safeWidth / composition.rect.height < 1.6f)
+            {
+                theatreNarrow = Mathf.Min(TheatreFourByThreeColumnNarrow, Mathf.Max(0f, briefingWidth - TheatreBriefingMinWidth));
+                if (mapWidth + theatreNarrow < TheatreMapMinShare * safeWidth)
+                    theatreNarrow = Mathf.Max(theatreNarrow, TheatreMapMinShare * safeWidth - mapWidth);
+                briefingWidth -= theatreNarrow;
+                mapWidth += theatreNarrow;
+                if (briefingOnLeft)
+                    mapX -= theatreNarrow;
+                else
+                    briefingX += theatreNarrow;
+            }
 
             SkirmishLibraryFrame.CloseTheatreSeam(
                 theater,
@@ -760,7 +784,7 @@ namespace Game.UI.Runtime
             if (theater)
                 Debug.Log("[TheatreColumns] composition=" + composition.rect.width.ToString("0") + "x" + composition.rect.height.ToString("0") +
                     " briefing=" + briefingWidth.ToString("0.0") + " map=" + mapWidth.ToString("0.0") +
-                    " narrow=" + theatreNarrow.ToString("0") + " side=" + (briefingOnLeft ? "left" : "right"));
+                    " narrow=" + theatreNarrow.ToString("0") + " mapShare=" + (composition.rect.width > 1f ? mapWidth / composition.rect.width : 0f).ToString("0.000") + " side=" + (briefingOnLeft ? "left" : "right"));
             EnsureOpaquePanel(map);
             EnsureOpaquePanel(briefing);
             RectTransform mapShadow = EnsureSoftShadow(map, 8f, 14f);

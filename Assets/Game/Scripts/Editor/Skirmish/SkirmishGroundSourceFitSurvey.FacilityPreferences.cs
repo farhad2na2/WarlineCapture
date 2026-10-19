@@ -17,6 +17,371 @@ namespace Game.Editor
     {
 
 
+
+        const string ReviewedRouteDeltaEnv="WARLINE_ALL120_ROUTE_DELTA_INPUT";
+        const string ReviewedRouteDeltaShaEnv="WARLINE_ALL120_ROUTE_DELTA_INPUT_SHA256";
+        static string RouteDeltaSha(byte[] bytes)
+        {
+            using var sha=System.Security.Cryptography.SHA256.Create();
+            return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
+        }
+        static void RouteDeltaFields(JObject row,params string[] fields)
+            =>Require(row!=null&&row.Properties().Select(p=>p.Name).OrderBy(v=>v,StringComparer.Ordinal)
+                .SequenceEqual(fields.OrderBy(v=>v,StringComparer.Ordinal)),"Exact reviewed route object fields required");
+        static float RouteDeltaNumber(JToken value)
+        {
+            Require(value!=null&&(value.Type==JTokenType.Integer||value.Type==JTokenType.Float),"Numeric route coordinate required");
+            double number=(double)value;float result=(float)number;
+            Require(!double.IsNaN(number)&&!double.IsInfinity(number)&&float.IsFinite(result)&&Math.Abs(number-result)<.00001,
+                "Finite representable route coordinate required");return result;
+        }
+        static JObject ParseReviewedRouteDelta(byte[] bytes,string digest)
+        {
+            Require(bytes!=null&&bytes.Length>0&&bytes.Length<=1048576&&digest!=null&&digest.Length==64&&
+                digest.All(c=>(c>='0'&&c<='9')||(c>='a'&&c<='f'))&&RouteDeltaSha(bytes)==digest,
+                "Exact bounded reviewed route bytes required");
+            Require(!(bytes.Length>=3&&bytes[0]==239&&bytes[1]==187&&bytes[2]==191),"Route input is strict UTF8 without BOM");
+            string text=new System.Text.UTF8Encoding(false,true).GetString(bytes);
+            return JObject.Parse(text,new Newtonsoft.Json.Linq.JsonLoadSettings{
+                DuplicatePropertyNameHandling=Newtonsoft.Json.Linq.DuplicatePropertyNameHandling.Error});
+        }
+        static JObject ReadReviewedRouteDelta(JObject mission)
+        {
+            string path=Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv),digest=Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv);
+            if(string.IsNullOrEmpty(path)&&string.IsNullOrEmpty(digest))return null;
+            Require(!string.IsNullOrEmpty(path)&&!string.IsNullOrEmpty(digest)&&!apGroundJointPreferencesRequested&&
+                !mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&!ProtectedRefinementCatalog((string)mission["catalog_id"]),
+                "Exclusive reviewed generic BA route input required; coded/MP/AP paths unchanged");
+            RequireFiniteOriginRequestPath(path);
+            Require(new System.IO.FileInfo(path).Length<=1048576&&Hash(path)==digest,"Bounded exact route input path required");
+            byte[] bytes=System.IO.File.ReadAllBytes(path);var input=ParseReviewedRouteDelta(bytes,digest);
+            RequireFiniteOriginRequestPath(path);Require(Hash(path)==digest,"Route input changed while reading");
+            return input;
+        }
+
+        static bool RouteDeltaFootprintInsideFrame(SkirmishMapLayoutConfig layout,GridConfig grid,int2 cell)
+        {
+            if(!layout.TryProjectLocalToMap(layout.OriginX,layout.OriginZ,out float ox,out float oz)||
+                !layout.TryProjectLocalToMap(layout.OriginX+1,layout.OriginZ,out float ax,out float az)||
+                !layout.TryProjectLocalToMap(layout.OriginX,layout.OriginZ+1,out float bx,out float bz))return false;
+            float fx=ax-ox,fz=az-oz,cx=bx-ox,cz=bz-oz,det=fx*cz-fz*cx;
+            if(!float.IsFinite(det)||Math.Abs(det)<.000001f)return false;
+            foreach(int dx in new[]{-1,2})foreach(int dz in new[]{-1,2})
+            {
+                float x=grid.Origin.x+(cell.x+dx)*grid.CellSize-ox,z=grid.Origin.z+(cell.y+dz)*grid.CellSize-oz;
+                float u=(x*cz-z*cx)/det,v=(fx*z-fz*x)/det;
+                if(!float.IsFinite(u)||!float.IsFinite(v)||u<0||v<0||u>layout.WorldWidthMetres||v>layout.WorldDepthMetres)return false;
+            }
+            return true;
+        }
+        static string EncodeReviewedRouteDelta(string original,JObject mission,JObject input,GridConfig grid,out JObject evidence)
+        {
+            evidence=null;
+            RouteDeltaFields(input,"schema","scope","catalogId","definitionId","sourcePins","canonical_size_rows",
+                "layoutBeforeSha256","routes","sourceFitCertified","missionAccepted");
+            Require(input["schema"]?.Type==JTokenType.Integer&&(int)input["schema"]==1&&
+                input["scope"]?.Type==JTokenType.String&&(string)input["scope"]=="ReviewedBoundedRouteDelta_NotPathOrSourceFit"&&
+                input["catalogId"]?.Type==JTokenType.String&&(string)input["catalogId"]==(string)mission["catalog_id"]&&
+                input["definitionId"]?.Type==JTokenType.String&&(string)input["definitionId"]==(string)mission["definition_id"]&&
+                !ProtectedRefinementCatalog((string)mission["catalog_id"])&&
+                (string)mission["tuple"]?["objective_id"]=="BA"&&(string)mission["tuple"]?["army_profile"]=="G"&&
+                JToken.DeepEquals(input["sourcePins"],mission["source_candidate"])&&
+                JToken.DeepEquals(input["canonical_size_rows"],mission["canonical_size_rows"])&&
+                input["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)input["sourceFitCertified"]&&
+                input["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)input["missionAccepted"]&&
+                input["layoutBeforeSha256"]?.Type==JTokenType.String&&
+                (string)input["layoutBeforeSha256"]==RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(original)),
+                "Exact unqualified generic ground BA subject/source/three-size layout ownership required");
+            var sizes=mission["canonical_size_rows"] as JArray;
+            Require(sizes!=null&&sizes.Count==3&&sizes.OfType<JObject>().Select(r=>(string)r["size_id"])
+                .SequenceEqual(new[]{"Standard","War","LargeWar"}),"Exactly three canonical sizes required");
+            var data=JObject.Parse(original);var routes=data["routes"] as JArray;var anchors=data["anchors"] as JArray;
+            var changes=input["routes"] as JArray;
+            Require(routes!=null&&routes.Count==3&&anchors!=null&&changes!=null&&changes.Count==3,
+                "Exactly three existing typed approaches required");
+            Require(grid.Width>0&&grid.Height>0&&float.IsFinite(grid.CellSize)&&grid.CellSize>0,"Actual source grid required");
+            var originalAnchors=anchors.OfType<JObject>().ToDictionary(a=>(string)a["AnchorId"],a=>(JObject)a.DeepClone(),StringComparer.Ordinal);
+            var owned=new HashSet<string>(StringComparer.Ordinal);var usedNew=new HashSet<string>(StringComparer.Ordinal);
+            int totalPoints=0,added=0,moved=0;var signatures=new HashSet<string>(StringComparer.Ordinal);
+            var clone=ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
+            try
+            {
+                JsonUtility.FromJsonOverwrite(original,clone);
+                for(int r=0;r<3;r++)
+                {
+                    var route=(JObject)routes[r];var change=changes[r] as JObject;RouteDeltaFields(change,"routeId","points");
+                    Require((string)route["RouteId"]=="route.pilot."+r&&change["routeId"]?.Type==JTokenType.String&&
+                        (string)change["routeId"]==(string)route["RouteId"]&&route["Kind"]?.Type==JTokenType.Integer&&
+                        (int)route["Kind"]==r+1&&route["ProvisionalTimes"]?.Type==JTokenType.Boolean&&(bool)route["ProvisionalTimes"]&&
+                        route["AllowsVehicles"]?.Type==JTokenType.Boolean&&(bool)route["AllowsVehicles"]&&
+                        route["AllowsAircraft"]?.Type==JTokenType.Boolean&&!(bool)route["AllowsAircraft"],
+                        "Original generic three route roles/ground permissions/provisional timing required");
+                    var oldIds=((JArray)route["WaypointAnchorIds"]).Values<string>().ToArray();
+                    Require(oldIds.Length>=2&&oldIds.All(id=>originalAnchors.ContainsKey(id)&&owned.Add(id))&&
+                        !((JArray)data["pads"]).OfType<JObject>().Any(p=>oldIds.Contains((string)p["AnchorId"])),
+                        "Exclusive original route anchors; no pad/return ownership changes");
+                    var points=change["points"] as JArray;
+                    Require(points!=null&&points.Count>=2&&points.Count<=14,"Each reviewed route has2..14 bounded points");
+                    totalPoints+=points.Count;
+                    var ids=new JArray();var seen=new HashSet<string>(StringComparer.Ordinal);var cells=new List<int2>();float length=0;
+                    var a0=originalAnchors[oldIds[0]];var b0=originalAnchors[oldIds[oldIds.Length-1]];
+                    var start=new Vector2((float)a0["WorldX"],(float)a0["WorldZ"]);
+                    var end=new Vector2((float)b0["WorldX"],(float)b0["WorldZ"]);
+                    float lastProgress=-1;
+                    for(int p=0;p<points.Count;p++)
+                    {
+                        var point=points[p] as JObject;RouteDeltaFields(point,"anchorId","roleId","x","z");
+                        Require(point["anchorId"]?.Type==JTokenType.String&&point["roleId"]?.Type==JTokenType.String,"Typed route point required");
+                        string id=(string)point["anchorId"],role=(string)point["roleId"];
+                        Require(seen.Add(id),"No repeated route anchor");
+                        Require((p!=0||id==oldIds[0])&&(p!=points.Count-1||id==oldIds[oldIds.Length-1]),"Original entry/exit anchor identities retained");
+                        JObject anchor;
+                        if(originalAnchors.TryGetValue(id,out var existing))
+                        {
+                            Require(oldIds.Contains(id)&&role==(string)existing["RoleId"],"Only this route's typed anchors may move");
+                            anchor=anchors.OfType<JObject>().Single(v=>(string)v["AnchorId"]==id);
+                        }
+                        else
+                        {
+                            Require(id=="anchor.reviewed."+r+"."+p&&role=="reviewed.route."+r+"."+p&&usedNew.Add(id),
+                                "Canonical fresh route-only steering identity required");
+                            anchor=new JObject{["AnchorId"]=id,["RoleId"]=role};anchors.Add(anchor);added++;
+                        }
+                        float x=RouteDeltaNumber(point["x"]),z=RouteDeltaNumber(point["z"]);
+                        if(originalAnchors.TryGetValue(id,out var originalPoint)&&
+                            (x!=(float)originalPoint["WorldX"]||z!=(float)originalPoint["WorldZ"]))moved++;
+                        Require(x>=clone.OriginX&&z>=clone.OriginZ&&x<=clone.OriginX+clone.WorldWidthMetres&&
+                            z<=clone.OriginZ+clone.WorldDepthMetres,"Finite route point inside unchanged authored frame");
+                        Require(clone.TryProjectLocalToMap(x,z,out float wx,out float wz)&&float.IsFinite(wx)&&float.IsFinite(wz),
+                            "Actual finite source projection required");
+                        var cell=GridUtils.WorldToCell(grid,new float3(wx,0,wz));
+                        Require(cell.x>=1&&cell.y>=1&&cell.x+1<grid.Width&&cell.y+1<grid.Height,
+                            "Complete canonical3x3 requested footprint inside source grid");
+                        Require(RouteDeltaFootprintInsideFrame(clone,grid,cell),"Canonical footprint stays inside unchanged logical frame");
+                        if(p>0&&p<points.Count-1&&r!=0)
+                        {
+                            var axis=end-start;float side=axis.x*(z-start.y)-axis.y*(x-start.x);
+                            Require(r==1?side>0:side<0,"Original north/south flank side required for every interior point");
+                        }
+                        var v=new Vector2(x,z);float progress=Vector2.Dot(v-start,end-start)/(end-start).sqrMagnitude;
+                        Require(float.IsFinite(progress)&&progress>=-.0001f&&progress<=1.0001f&&progress>lastProgress,
+                            "Ordered forward approach without loops/backtracking");lastProgress=progress;
+                        bool semantic=false;
+                        for(int leg=1;leg<oldIds.Length;leg++)
+                        {
+                            var aa=originalAnchors[oldIds[leg-1]];var bb=originalAnchors[oldIds[leg]];
+                            var a=new Vector2((float)aa["WorldX"],(float)aa["WorldZ"]);var b=new Vector2((float)bb["WorldX"],(float)bb["WorldZ"]);
+                            float t=Mathf.Clamp01(Vector2.Dot(v-a,b-a)/(b-a).sqrMagnitude);
+                            semantic|=RouteCandidateWithinSemantics(v,a,b,start,end,t);
+                        }
+                        Require(semantic,"Reviewed points retain existing32m bounded leg corridor and flank side");
+                        anchor["WorldX"]=x;anchor["WorldZ"]=z;anchor["NormalizedU"]=(x-clone.OriginX)/clone.WorldWidthMetres;
+                        anchor["NormalizedV"]=(z-clone.OriginZ)/clone.WorldDepthMetres;
+                        if(cells.Count>0){Require(!cells[cells.Count-1].Equals(cell),"Distinct successive native cells");length+=Vector2.Distance(
+                            new Vector2((float)points[p-1]["x"],(float)points[p-1]["z"]),v);}
+                        cells.Add(cell);ids.Add(id);
+                    }
+                    Require(signatures.Add(string.Join(";",cells.Select(c=>c.x+","+c.y))),"Three distinct authored approach sequences required");
+                    route["WaypointAnchorIds"]=ids;RescaleBoundedRouteTimes(route,(float)route["LengthMetres"],length);
+                    route["LengthMetres"]=length;route["ProvisionalTimes"]=true;
+                }
+                Require(moved<=4,"At most4 changed original macro anchors required");
+                Require(totalPoints<=42&&added<=30,"Unchanged maximum30 added anchors and42 total route points");
+                string next=data.ToString(Newtonsoft.Json.Formatting.None);JsonUtility.FromJsonOverwrite(next,clone);
+                Require(TryPreflightAuthoredRouteEndpoints(clone,grid,out var policy),"Existing exact shared endpoint/zone policy required");
+                evidence=new JObject{["scope"]="ReviewedRouteDeltaNecessaryPreflight_NotPathIndependence",["input"]=input.DeepClone(),
+                    ["beforeLayoutSha256"]=input["layoutBeforeSha256"].DeepClone(),["appliedLayoutSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(JsonUtility.ToJson(clone))),["pointCount"]=totalPoints,["addedAnchors"]=added,["movedOriginalAnchors"]=moved,
+                    ["endpointPolicy"]=policy,["nativeQueries"]=0,["sourceFitCertified"]=false,["missionAccepted"]=false};
+                return JsonUtility.ToJson(clone);
+            }
+            finally{UnityEngine.Object.DestroyImmediate(clone);}
+        }
+
+        static void ValidateReviewedRouteReplayProof(string layout,JObject mission,JObject proof)
+        {
+            Require(proof!=null&&proof["input"] is JObject&&
+                (string)proof["appliedLayoutSha256"]==RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(layout))&&
+                (string)proof["input"]["catalogId"]==(string)mission["catalog_id"]&&
+                (string)proof["input"]["definitionId"]==(string)mission["definition_id"]&&
+                JToken.DeepEquals(proof["input"]["sourcePins"],mission["source_candidate"])&&
+                JToken.DeepEquals(proof["input"]["canonical_size_rows"],mission["canonical_size_rows"])&&
+                proof["nativeQueries"]?.Type==JTokenType.Integer&&(int)proof["nativeQueries"]==0&&
+                proof["sourceFitCertified"]?.Type==JTokenType.Boolean&&!(bool)proof["sourceFitCertified"]&&
+                proof["missionAccepted"]?.Type==JTokenType.Boolean&&!(bool)proof["missionAccepted"],
+                "Exact prepared route clone/source/three canonical budgets; necessary preflight only");
+        }
+        static void AppendReviewedRoutePointClearance(JObject evidence,List<RectInt> clearance)
+        {
+            var kept=new HashSet<RectInt>(clearance);var added=new HashSet<RectInt>();
+            foreach(JObject size in (JArray)evidence["queriesBySize"])
+            foreach(JObject query in (JArray)size["queries"])
+            {
+                int x=(int)query["footprintX"],z=(int)query["footprintZ"];
+                Require(x>0&&z>0&&x<=3&&z<=3,"Actual canonical ground footprint within preflight3x3 envelope");
+                foreach(string field in new[]{"fromCell","toCell"})
+                {
+                    var c=(JArray)query[field];var min=UnitFootprintUtility.GetMinCell(new int2((int)c[0],(int)c[1]),new int2(x,z));
+                    var rect=new RectInt(min.x,min.y,x,z);if(kept.Add(rect)){clearance.Add(rect);added.Add(rect);}
+                }
+            }
+            evidence["reviewedRequestedPointFootprints"]=new JArray(added.Select(RectJson));
+            evidence["requestedPointClearanceScope"]="All actual canonical requested waypoint/endpoint footprints, including staging zones; not path independence";
+            evidence["footprintReservations"]=new JArray(clearance.Select(RectJson));
+        }
+
+        public static void RunReviewedRouteDeltaControls()
+        {
+            Require(!UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode,"Edit Mode route input controls required");
+            int count=0;void Check(bool ok,string message){Require(ok,message);count++;}
+            var grid=new GridConfig{Width=256,Height=256,CellSize=1,Origin=float3.zero};
+            var fixture=ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
+            var mission=new JObject{["catalog_id"]="S074",["definition_id"]="fixture.definition",
+                ["tuple"]=new JObject{["objective_id"]="BA",["army_profile"]="G"},
+                ["source_candidate"]=new JObject{["map"]="fixture.exact.source"},
+                ["canonical_size_rows"]=new JArray(new[]{"Standard","War","LargeWar"}.Select(s=>
+                    (JToken)new JObject{["size_id"]=s,["budget"]="unchanged.fixture"}))};
+            var anchors=new JArray();var routes=new JArray();
+            for(int r=0;r<3;r++)
+            {
+                var ids=new JArray();float length=0;Vector2 previous=default;
+                for(int p=0;p<4;p++)
+                {
+                    float x=new[]{20.5f,50.5f,190.5f,220.5f}[p],z=128.5f+(p==0||p==3?0:r==1?24:r==2?-24:0);
+                    string id="fixture.route."+r+"."+p;ids.Add(id);
+                    anchors.Add(new JObject{["AnchorId"]=id,["RoleId"]="approach."+r+"."+p,["WorldX"]=x,["WorldZ"]=z,
+                        ["NormalizedU"]=x/256,["NormalizedV"]=z/256});
+                    if(p>0)length+=Vector2.Distance(previous,new Vector2(x,z));previous=new Vector2(x,z);
+                }
+                routes.Add(new JObject{["RouteId"]="route.pilot."+r,["Kind"]=r+1,["WaypointAnchorIds"]=ids,["WidthMetres"]=8,
+                    ["LengthMetres"]=length,["AllowsVehicles"]=true,["AllowsAircraft"]=false,["ProvisionalTimes"]=true,
+                    ["InfantryTransitSeconds"]=length/4,["GroundTransitSeconds"]=length/8,["AirTransitSeconds"]=0f,
+                    ["InfantryFirstContactSeconds"]=length/8,["GroundFirstContactSeconds"]=length/16});
+            }
+            anchors.Add(new JObject{["AnchorId"]="return.original",["RoleId"]="air.player",["WorldX"]=12f,["WorldZ"]=24f});
+            var data=new JObject{["layoutId"]="fixture.reviewed.routes",["operationMapId"]="fixture.map",
+                ["originX"]=0f,["originZ"]=0f,["worldWidthMetres"]=256f,["worldDepthMetres"]=256f,["cellSize"]=1f,
+                ["worldBinding"]=new JObject{["OriginX"]=0f,["OriginZ"]=128f,["ForwardX"]=1f,["ForwardZ"]=0f,
+                    ["AcrossX"]=0f,["AcrossZ"]=1f,["ForwardMetres"]=256f,["AcrossMetres"]=256f,
+                    ["SourceHash"]="fixture.source",["PlayerAnchorId"]="fixture.route.0.0",["EnemyAnchorId"]="fixture.route.0.3"},
+                ["anchors"]=anchors,["routes"]=routes,["pads"]=new JArray(new byte[]{1,2}.Select(f=>(JToken)new JObject{
+                    ["PadId"]="stage."+f,["AnchorId"]="stage."+f,["RoleId"]="staging."+f,
+                    ["Kind"]=(int)Game.Configs.SkirmishLegalPadKind.GroundStaging,["FactionId"]=f,
+                    ["CenterX"]=f==1?20f:220f,["CenterZ"]=128f,["WidthMetres"]=16f,["DepthMetres"]=16f}))};
+            JsonUtility.FromJsonOverwrite(data.ToString(),fixture);string before=JsonUtility.ToJson(fixture);
+            var exact=JObject.Parse(before);var changes=new JArray();
+            for(int r=0;r<3;r++)
+            {
+                var points=new JArray();
+                for(int p=0;p<4;p++)
+                {
+                    var a=((JArray)exact["anchors"]).OfType<JObject>().Single(v=>(string)v["AnchorId"]=="fixture.route."+r+"."+p);
+                    if(p==2)points.Add(new JObject{["anchorId"]="anchor.reviewed."+r+".2",["roleId"]="reviewed.route."+r+".2",
+                        ["x"]=120.5f,["z"]=r==1?152.5f:r==2?104.5f:128.5f});
+                    points.Add(new JObject{["anchorId"]=a["AnchorId"].DeepClone(),["roleId"]=a["RoleId"].DeepClone(),
+                        ["x"]=a["WorldX"].DeepClone(),["z"]=a["WorldZ"].DeepClone()});
+                }
+                changes.Add(new JObject{["routeId"]="route.pilot."+r,["points"]=points});
+            }
+            var input=new JObject{["schema"]=1,["scope"]="ReviewedBoundedRouteDelta_NotPathOrSourceFit",
+                ["catalogId"]=mission["catalog_id"].DeepClone(),["definitionId"]=mission["definition_id"].DeepClone(),
+                ["sourcePins"]=mission["source_candidate"].DeepClone(),["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+                ["layoutBeforeSha256"]=RouteDeltaSha(new System.Text.UTF8Encoding(false).GetBytes(before)),
+                ["routes"]=changes,["sourceFitCertified"]=false,["missionAccepted"]=false};
+            byte[] Bytes(JObject row)=>new System.Text.UTF8Encoding(false).GetBytes(row.ToString(Newtonsoft.Json.Formatting.None));
+            bool Refuses(Action action){try{action();return false;}catch(Exception e)when(e is InvalidOperationException||
+                e is Newtonsoft.Json.JsonException||e is System.Text.DecoderFallbackException||e is System.IO.IOException){return true;}}
+            string pathBefore=Environment.GetEnvironmentVariable(ReviewedRouteDeltaEnv),shaBefore=Environment.GetEnvironmentVariable(ReviewedRouteDeltaShaEnv);
+            string folder=System.IO.Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction","RouteDeltaControls-"+Guid.NewGuid().ToString("N"));
+            string path=System.IO.Path.GetFullPath(System.IO.Path.Combine(folder,"input.json"));bool created=false;
+            try
+            {
+                var bytes=Bytes(input);var parsed=ParseReviewedRouteDelta(bytes,RouteDeltaSha(bytes));
+                Check(JToken.DeepEquals(input,parsed),"Genuine strict UTF8 parser positive");
+                string next=EncodeReviewedRouteDelta(before,mission,parsed,grid,out var proof);
+                var after=JObject.Parse(next);
+                Check((int)proof["pointCount"]==15&&(int)proof["addedAnchors"]==3&&!(bool)proof["sourceFitCertified"],
+                    "Actual encoder splits bounded legs without source-fit credit");
+                Check(JToken.DeepEquals(exact["pads"],after["pads"])&&JToken.DeepEquals(exact["worldBinding"],after["worldBinding"])&&
+                    JToken.DeepEquals(((JArray)exact["anchors"]).Single(a=>(string)a["AnchorId"]=="return.original"),
+                        ((JArray)after["anchors"]).Single(a=>(string)a["AnchorId"]=="return.original"))&&before==JsonUtility.ToJson(fixture),
+                    "Clone-only encoder preserves pads/source/old return/nonroute anchors and original object");
+                Check(((JArray)after["routes"]).All(r=>(float)r["AirTransitSeconds"]==0&&
+                    Math.Abs((float)r["LengthMetres"]/(float)r["InfantryTransitSeconds"]-4)<.0001),
+                    "Inactive air zero and active movement speeds preserved");
+                void Reject(Action<JObject> mutate)
+                {
+                    var bad=(JObject)input.DeepClone();mutate(bad);
+                    Check(Refuses(()=>EncodeReviewedRouteDelta(before,mission,bad,grid,out _))&&before==JsonUtility.ToJson(fixture),
+                        "Malformed route request refuses with no layout mutation");
+                }
+                Reject(v=>v["schema"]="1");Reject(v=>v["schema"]=1.5);Reject(v=>v["catalogId"]="S050");
+                Reject(v=>v["definitionId"]="other");Reject(v=>v["sourcePins"]=new JObject());
+                Reject(v=>v["canonical_size_rows"][1]["budget"]="changed");Reject(v=>v["canonical_size_rows"]=new JArray());
+                Reject(v=>v["layoutBeforeSha256"]=new string('0',64));Reject(v=>v["sourceFitCertified"]=true);
+                Reject(v=>v["missionAccepted"]="false");Reject(v=>v["routes"]=new JArray());
+                Reject(v=>v["routes"][0]["routeId"]="route.pilot.other");Reject(v=>v["routes"][0]["points"][0]["anchorId"]="return.original");
+                Reject(v=>v["routes"][0]["points"][1]["roleId"]="foreign");Reject(v=>v["routes"][0]["points"][2]["anchorId"]="foreign");
+                Reject(v=>v["routes"][0]["points"][1]["x"]="50.5");Reject(v=>v["routes"][0]["points"][1]["x"]=double.NaN);
+                Reject(v=>v["routes"][0]["points"][1]["x"]=300f);Reject(v=>v["routes"][0]["points"][0]["z"]=190f);
+                Reject(v=>v["routes"][1]["points"][1]["z"]=100f);Reject(v=>v["routes"][0]["points"][2]["x"]=40.5f);
+                Reject(v=>v["routes"][0]["points"][1]["z"]=200f);Reject(v=>((JArray)v["routes"][0]["points"]).Add(v["routes"][0]["points"][1].DeepClone()));
+                Reject(v=>v["unknown"]=0);
+                Reject(v=>{v["routes"][1]["points"][1]["x"]=20.6f;v["routes"][1]["points"][1]["z"]=127.5f;});
+
+                Reject(v=>v["routes"][0]["points"][1]["x"]=true);
+                Reject(v=>v["canonical_size_rows"][1]["size_id"]="Standard");
+                Reject(v=>{var a=(JArray)v["routes"][0]["points"];while(a.Count<15)a.Add(a[1].DeepClone());});
+                Check(Refuses(()=>ParseReviewedRouteDelta(bytes,new string('0',64))),"Actual bytes bad SHA refuses");
+                var duplicate=new System.Text.UTF8Encoding(false).GetBytes("{\"schema\":1,\"schema\":1}");
+                Check(Refuses(()=>ParseReviewedRouteDelta(duplicate,RouteDeltaSha(duplicate))),"Duplicate JSON keys refuse");
+                var bom=new byte[]{239,187,191}.Concat(bytes).ToArray();
+                Check(Refuses(()=>ParseReviewedRouteDelta(bom,RouteDeltaSha(bom))),"Explicit BOM refusal");
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,null);Environment.SetEnvironmentVariable(ReviewedRouteDeltaShaEnv,null);
+                Check(ReadReviewedRouteDelta(mission)==null,"No override default remains null");
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,path);
+                Check(Refuses(()=>ReadReviewedRouteDelta(mission)),"Partial path-only override refuses");
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,null);Environment.SetEnvironmentVariable(ReviewedRouteDeltaShaEnv,RouteDeltaSha(bytes));
+                Check(Refuses(()=>ReadReviewedRouteDelta(mission)),"Partial SHA-only override refuses");
+                System.IO.Directory.CreateDirectory(folder);created=true;System.IO.File.WriteAllBytes(path,bytes);
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,path);
+                Check(JToken.DeepEquals(ReadReviewedRouteDelta(mission),input),"Real owned Logs path+SHA reader positive");
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,System.IO.Path.Combine(folder,"..",System.IO.Path.GetFileName(folder),"input.json"));
+                Check(Refuses(()=>ReadReviewedRouteDelta(mission)),"Lexical ancestor traversal refuses");
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,path);System.IO.File.AppendAllText(path," ");
+                Check(Refuses(()=>ReadReviewedRouteDelta(mission)),"Changed input bytes refuse");
+                var qa=new JObject{["queriesBySize"]=new JArray(new JObject{["queries"]=new JArray(new JObject{
+                    ["fromCell"]=new JArray(20,128),["toCell"]=new JArray(50,128),["footprintX"]=3,["footprintZ"]=3})})};
+                var clearance=new List<RectInt>();AppendReviewedRoutePointClearance(qa,clearance);
+                Check(clearance.Contains(new RectInt(19,127,3,3))&&clearance.Contains(new RectInt(49,127,3,3)),
+                    "Same actual helper retains staging endpoint and waypoint footprints, not independence credit");
+                ValidateReviewedRouteReplayProof(next,mission,proof);Check(true,"Actual normal replay proof helper positive");
+                var wrongProof=(JObject)proof.DeepClone();wrongProof["appliedLayoutSha256"]=new string('0',64);
+                Check(Refuses(()=>ValidateReviewedRouteReplayProof(next,mission,wrongProof)),"Normal replay refuses unrelated prepared layout");
+                wrongProof=(JObject)proof.DeepClone();wrongProof["input"]["sourcePins"]=new JObject();
+                Check(Refuses(()=>ValidateReviewedRouteReplayProof(next,mission,wrongProof)),"Normal replay refuses changed source proof");
+                var six=(JObject)input.DeepClone();
+                foreach(JObject route in (JArray)six["routes"])
+                {
+                    var points=(JArray)route["points"];points[0]["z"]=(float)points[0]["z"]+1;
+                    points[points.Count-1]["z"]=(float)points[points.Count-1]["z"]+1;
+                }
+                bool sixRefused=false;try{EncodeReviewedRouteDelta(before,mission,six,grid,out _);}
+                catch(InvalidOperationException e){sixRefused=e.Message=="At most4 changed original macro anchors required";}
+                Check(sixRefused&&before==JsonUtility.ToJson(fixture),"Actual encoder rejects six otherwise shared in-zone endpoint moves at original4 macro cap");
+                Require(count==46,"Exactly46 reviewed route parser/encoder/reader/clearance controls");
+            }
+            finally
+            {
+                Environment.SetEnvironmentVariable(ReviewedRouteDeltaEnv,pathBefore);Environment.SetEnvironmentVariable(ReviewedRouteDeltaShaEnv,shaBefore);
+                UnityEngine.Object.DestroyImmediate(fixture);
+                if(created)
+                {
+                    RequireFiniteOriginRequestPath(path);System.IO.File.Delete(path);System.IO.Directory.Delete(folder,false);
+                }
+            }
+            Debug.Log("[ReviewedBoundedRouteDeltaControls] result=Passed controls=46 nativeQueries=0 sourceFitCertified=0 missionAccepted=0");
+        }
+
         const string NormalOriginRequestEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST";
         const string NormalOriginRequestShaEnv="WARLINE_NORMAL_FACILITY_ORIGIN_REQUEST_SHA256";
         static JObject normalFacilityOriginExportRequest;
@@ -468,6 +833,8 @@ namespace Game.Editor
             var report=new JObject{["scope"]="BoundedLogicalPreferences_SourceQaHintsThenCanonicalNativeReplay",
                 ["sourceFitCertified"]=false,["cameraAccepted"]=false,["normalMissionReady"]=false,["maximumPreferenceAssignments"]=9};
             var logicalPadInput=ReadReviewedFacilityPadInput(mission);
+            var reviewedRouteInput=ReadReviewedRouteDelta(mission);
+            JObject reviewedRouteProof=null;
             int frameAttempt=logicalPadInput==null?3:(int)logicalPadInput["fixedLogicalFrameAttempt"];
             JObject compounds;string error;
             bool frameReady=apGroundJointPreferencesRequested
@@ -486,13 +853,26 @@ namespace Game.Editor
                 report["reviewedLogicalPadAppliedLayoutJson"]=next;report["reviewedLogicalPadBudgets"]=budgetBefore;
                 report["fixedReviewedPadCandidate"]=true;
             }
+
+            if(reviewedRouteInput!=null)
+            {
+                var unchangedBudgets=new JArray(budgets.Select(ApPreferenceBudgetKey));
+                string applied=EncodeReviewedRouteDelta(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteInput,grid,out var routeInputEvidence);
+                int legs=((JArray)JObject.Parse(applied)["routes"]).OfType<JObject>().Sum(r=>((JArray)r["WaypointAnchorIds"]).Count-1);
+                int conservativeProfiles=budgets.Sum(b=>b.Forces.Select(f=>f.FactionId+"/"+f.RuntimePrefabKey).Distinct().Count());
+                Require((long)legs*conservativeProfiles<=2048,"Existing bounded source-approach query cap cannot increase");
+                JsonUtility.FromJsonOverwrite(applied,owner.Layout);
+                Require(JToken.DeepEquals(unchangedBudgets,new JArray(budgets.Select(ApPreferenceBudgetKey))),"Routes cannot alter canonical budgets");
+                reviewedRouteProof=routeInputEvidence;report["reviewedRouteInput"]=routeInputEvidence;
+                report["reviewedRouteAppliedLayoutJson"]=applied;
+            }
             if(apGroundJointPreferencesRequested)
             {
                 report["apJointPadInput"]=ApplyApJointPadInput(mission,owner.Layout,source,grid,budgets);
                 report["apJointRouteSeed"]=PrepareApJointRouteSeed(owner,budgets,em,gridEntity,grid,surface);
                 if(report["apJointRouteSeed"]["selectedCandidate"]==null)return report;
             }
-            else
+            else if(reviewedRouteInput==null)
             {
                 var routes=ProposeBoundedNativeRouteRepair(owner.Layout,budgets,baselineRoutes,em,gridEntity,grid,surface);
                 report["boundedRouteProposal"]=routes;
@@ -501,6 +881,7 @@ namespace Game.Editor
             // any facility keep-clear. Failed native paths remain explicit facts.
             var approachEvidence=new JObject();
             var clearance=PreferenceApproachClearance(owner.Layout,budgets,em,gridEntity,grid,surface,approachEvidence);
+            if(reviewedRouteInput!=null)AppendReviewedRoutePointClearance(approachEvidence,clearance);
             report["actualProposedApproaches"]=approachEvidence;
 
             if(normalFacilityOriginExportRequest!=null)
@@ -587,7 +968,7 @@ namespace Game.Editor
                                 row["candidateLocalPass"]=row["pass"];row["pass"]=captured*3+(int)row["pass"];
                                 checkpoint?.Invoke(row);
                             }
-                        },compounds,true,false,true);
+                        },compounds,true,false,true,reviewedRouteDeltaProof:reviewedRouteProof);
                 }
                 finally{refinementPreferenceReplay=false;}
                 evidence["measurement"]=measured;

@@ -62,7 +62,7 @@ namespace Game.Editor
         // The caller owns definition/layout lifetime. This core creates only
         // proposal metadata and uses the same native allocator for every family.
         static JObject RefineLoadedCandidateCore(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
-            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false,Action<SkirmishMapLayoutConfig> strictCandidatePreparation=null)
+            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false,Action<SkirmishMapLayoutConfig> strictCandidatePreparation=null,JObject reviewedRouteDeltaProof=null)
         {
             using var live=em.CreateEntityQuery(typeof(SkirmishMatchState));
             Require(live.IsEmptyIgnoreFilter,"Refinement requires disposable source world, never live gameplay");
@@ -77,6 +77,14 @@ namespace Game.Editor
                     grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin),
                     "AP service queries require actual pinned source grid metadata");
             string error;
+
+            if(reviewedRouteDeltaProof!=null)
+            {
+                Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
+                    completeGroundBaServiceRequested&&!mpGroundBaPilotRequested&&!apGroundJointPreferencesRequested,
+                    "Only explicit prepared generic route clone may enter this replay");
+                ValidateReviewedRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof);
+            }
             JObject mpEndpointRevision=null;
             if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid,preparedAuthoring);
             JObject s049MainRouteRevision=s049BoundedCompoundRouteRequested?ApplyS049NativeCorridorMainSegments(owner.Definition,grid):null;
@@ -139,6 +147,14 @@ namespace Game.Editor
                             if(distinctClearance.Add(rect))routeClearance.Add(rect);
                         }
                     }
+                }
+
+                if(reviewedRouteDeltaProof!=null)
+                {
+                    var requestedPointEvidence=new JObject{["queriesBySize"]=baselineRoutes.DeepClone()};
+                    AppendReviewedRoutePointClearance(requestedPointEvidence,routeClearance);
+                    output["reviewedRouteDelta"]=reviewedRouteDeltaProof.DeepClone();
+                    output["reviewedRequestedPointClearance"]=requestedPointEvidence;
                 }
                 output["baselineNativeApproaches"]=baselineRoutes;
                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));

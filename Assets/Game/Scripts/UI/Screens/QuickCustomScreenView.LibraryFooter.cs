@@ -147,6 +147,7 @@ namespace Game.UI.Runtime
             IReadOnlyList<SkirmishFooterBarWidget.ButtonSpec> specs = SkirmishFooterBarWidget.Buttons(level);
             // approved-1/2 + Game PM: Zoom In is the green primary on Theatre, Start Battle on Battlefield.
             _footerPrimary = battlefield ? launchButton : randomizeSeedButton;
+            _zoomFitSize = 0f;
             float gap = 8f;
             Rect[] rects = SkirmishFooterBarWidget.Layout(level, compositionWidth - side * 2f, height, gap, fa);
             for (int i = 0; i < shown.Length && i < specs.Count; i++)
@@ -185,6 +186,8 @@ namespace Game.UI.Runtime
 
                 if (button != back)
                     AddFooterGlyph(button, FooterGlyphFor(specs[i].Name), height, fa, label);
+                if (!battlefield && button == randomizeSeedButton)
+                    FitLevelZoomLabel(label, rects[i].width, height, fa);
                 ClearButtonAudio(button);
                 AttachAudio(button, specs[i].Sound);
                 AddFooterDepth(button, face);
@@ -413,6 +416,8 @@ namespace Game.UI.Runtime
                 bool primary = button == _footerPrimary; // Zoom In (Theatre) / Start Battle (Battlefield)
                 float max = primary ? 44f : 34f;
                 float min = primary ? 28f : 24f;
+                if (button == randomizeSeedButton && _zoomFitSize > 0f)
+                    min = max = _zoomFitSize; // v46b: keep the fitted Zoom In size (FitLevelZoomLabel)
                 label.enableAutoSizing = true;
                 label.fontSizeMin = min;
                 label.fontSizeMax = max;
@@ -425,6 +430,103 @@ namespace Game.UI.Runtime
         }
 
         private Button _footerPrimary;
+
+        /// <summary>v46b: fitted Theatre Zoom In label size, 0 when the normal 28-44 primary range fits.</summary>
+        private float _zoomFitSize;
+
+        /// <summary>
+        /// v46b: "ZOOM IN · INDUSTRIAL BASIN" overflowed the 4:3 primary button because the 28 px primary floor was
+        /// re-applied after the fit. Same rule as P2's FitZoomInLabel (16 px command floor; break at the dot, else the
+        /// district alone), measured with the label's own font on the laid-out width minus the glyph inset. fa-IR never
+        /// breaks the line (RTL line order), it falls back to the district alone. Logs [ZoomLabel].
+        /// </summary>
+        private void FitLevelZoomLabel(TMP_Text label, float buttonWidth, float height, bool fa)
+        {
+            if (label == null)
+                return;
+            ZoomFooterParts(fa, out string verb, out string district);
+            const float floor = 16f;
+            const float primaryMin = 28f;
+            const float primaryMax = 44f;
+            // FitFooterLabel stretches the label 8 px either side; AddFooterGlyph sets the side margins.
+            float inner = buttonWidth - 16f - label.margin.x - label.margin.z - 2f;
+            float lineHeight = height - 12f - label.margin.y - label.margin.w;
+            string full = MixedText(string.IsNullOrEmpty(district) ? verb : verb + " · " + district, fa);
+            string form = "one";
+            float size = LargestFooterFit(label, full, inner, lineHeight, floor, primaryMax, false);
+            string chosen = full;
+            if (size < primaryMin && !string.IsNullOrEmpty(district))
+            {
+                float split = fa ? 0f : LargestFooterFit(label, verb + "\n" + district, inner, lineHeight, floor, primaryMax, true);
+                if (split > size && split >= floor)
+                {
+                    size = split;
+                    chosen = verb + "\n" + district;
+                    form = "split";
+                }
+                else if (size < floor)
+                {
+                    chosen = MixedText(district, fa);
+                    size = Mathf.Max(floor, LargestFooterFit(label, chosen, inner, lineHeight, floor, primaryMax, false));
+                    form = "district";
+                }
+            }
+
+            if (size < floor)
+                size = floor;
+            bool fitsPrimary = size >= primaryMin && form == "one";
+            _zoomFitSize = fitsPrimary ? 0f : size;
+            SetCopy(label, chosen, fitsPrimary ? primaryMin : size, fitsPrimary ? primaryMax : size);
+            V3LocalizedTextBindingView zoomBinding = label.GetComponent<V3LocalizedTextBindingView>();
+            if (zoomBinding != null) // SetCopy lifts the min to the 22 px library floor; the command floor here is 16
+                zoomBinding.ConfigureFontBounds(fitsPrimary ? primaryMin : size, fitsPrimary ? primaryMax : size);
+            label.enableAutoSizing = fitsPrimary;
+            label.fontSizeMin = fitsPrimary ? primaryMin : size;
+            label.fontSizeMax = fitsPrimary ? primaryMax : size;
+            label.fontSize = fitsPrimary ? Mathf.Min(primaryMax, size) : size;
+            label.textWrappingMode = form == "split" ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            label.maxVisibleLines = form == "split" ? 2 : 1;
+            label.overflowMode = TextOverflowModes.Ellipsis;
+            label.isRightToLeftText = ContainsArabicScript(label.text);
+            Debug.Log("[ZoomLabel] form=" + form + " font=" + size.ToString("0.0") + " inner=" + inner.ToString("0") +
+                " button=" + buttonWidth.ToString("0") + " locale=" + (fa ? "fa-IR" : "en"));
+        }
+
+        /// <summary>Largest size in [floor, max] (1 px steps) at which every line fits; floor - 1 when none does.</summary>
+        private float LargestFooterFit(TMP_Text label, string copy, float inner, float lineHeight, float floor, float max, bool twoLines)
+        {
+            if (label == null || string.IsNullOrEmpty(copy) || inner < 8f)
+                return floor - 1f;
+            SetCopy(label, copy, floor, max);
+            string shaped = label.text;
+            string[] lines = shaped.Split('\n');
+            bool autosize = label.enableAutoSizing;
+            float held = label.fontSize;
+            label.enableAutoSizing = false;
+            float found = floor - 1f;
+            for (float size = Mathf.Floor(max); size >= floor - 0.01f; size -= 1f)
+            {
+                label.fontSize = size;
+                bool fits = true;
+                float total = 0f;
+                for (int i = 0; i < lines.Length && fits; i++)
+                {
+                    Vector2 natural = label.GetPreferredValues(lines[i], 9999f, 9999f);
+                    fits = natural.x <= inner + 0.5f;
+                    total += natural.y;
+                }
+
+                if (fits && (!twoLines || total <= lineHeight + 0.5f) && (twoLines || size * 1.2f <= lineHeight + 0.5f))
+                {
+                    found = size;
+                    break;
+                }
+            }
+
+            label.fontSize = held;
+            label.enableAutoSizing = autosize;
+            return found;
+        }
 
         private Button backButtonRef() => transform.Find("SkirmishSetupComposition/BackButton")?.GetComponent<Button>();
 
@@ -579,16 +681,25 @@ namespace Game.UI.Runtime
 
         private string ZoomFooterLabel(bool fa)
         {
-            string verb = fa ? "نزدیک‌تر" : "ZOOM IN";
-            if (_libraryViewModel == null)
+            ZoomFooterParts(fa, out string verb, out string district);
+            if (string.IsNullOrEmpty(district))
                 return verb;
+            return MixedText(verb + " · " + district, fa);
+        }
+
+        /// <summary>The Zoom In verb and the selected district name (upper case in en), district empty when unknown.</summary>
+        private void ZoomFooterParts(bool fa, out string verb, out string district)
+        {
+            verb = fa ? "نزدیک‌تر" : "ZOOM IN";
+            district = string.Empty;
+            if (_libraryViewModel == null)
+                return;
             SkirmishTheaterState theater = _libraryViewModel.Theater;
             if (!TryFindTheaterPin(theater, theater.SelectedMapId, out SkirmishTheaterPinState pin))
-                return verb;
+                return;
             string map = MapDisplayTitle(pin.MapId, fa);
-            if (string.IsNullOrEmpty(map))
-                return verb;
-            return MixedText(verb + " · " + (fa ? map : map.ToUpperInvariant()), fa);
+            if (!string.IsNullOrEmpty(map))
+                district = fa ? map : map.ToUpperInvariant();
         }
 
         private void BindFooter(Button button, UnityEngine.Events.UnityAction action, string label)

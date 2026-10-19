@@ -1143,6 +1143,7 @@ namespace Game.UI.Runtime
                 // 30). Game PM: fa may exceed en's 30 cap up to en x 1.15, limited by the box height (Noto ink is 0.946 em
                 // for this copy, so h / 0.95) and shrunk to the box width - fixed size, no rect move, no overflow.
                 Rect headingBox = heading.rectTransform.rect;
+                bool headingFinal = plate.rect.width > 1f && !Mathf.Approximately(plate.rect.width, 100f);
                 int headingKey = Mathf.RoundToInt(headingBox.width) * 1000 + Mathf.RoundToInt(headingBox.height);
                 string headingSource;
                 float headingSize;
@@ -1163,8 +1164,21 @@ namespace Game.UI.Runtime
                         float natural = heading.GetPreferredValues(heading.text, 9999f, 100f).x;
                         if (natural > headingBox.width - 2f && natural > 1f)
                         {
-                            headingSize = Mathf.Max(12f, Mathf.Floor(headingSize * (headingBox.width - 2f) / natural));
+                            float shrunk = Mathf.Floor(headingSize * (headingBox.width - 2f) / natural);
+                            headingSize = Mathf.Max(MedalHeadingFloor, shrunk);
                             headingSource += "+width";
+                            if (shrunk < MedalHeadingFloor)
+                            {
+                                headingSource += "+floor";
+                                heading.fontSize = headingSize;
+                                float atFloor = heading.GetPreferredValues(heading.text, 9999f, 100f).x;
+                                // v46b: the 60x32 box is the pre-layout pass (plate still at RectTransform's 100 px default)
+                                // and is always replaced; a laid-out box that needs the floor and still overflows is a bug.
+                                if (headingFinal && atFloor > headingBox.width - 2f)
+                                    Debug.LogWarning("[MedalHeading] overflow final box=" + headingBox.width.ToString("0") + "x" +
+                                        headingBox.height.ToString("0") + " font=" + headingSize.ToString("0.0") + " natural=" +
+                                        atFloor.ToString("0.0") + " locale=fa-IR");
+                            }
                         }
                     }
                     PinFixedSize(heading, headingSize);
@@ -1180,7 +1194,7 @@ namespace Game.UI.Runtime
                 }
 
                 Debug.Log("[MedalHeading] font=" + headingSize.ToString("0.0") + " source=" + headingSource +
-                    " en=" + (enHeading > 0f ? enHeading.ToString("0.0") : "-") +
+                    " en=" + (enHeading > 0f ? enHeading.ToString("0.0") : "-") + " final=" + (headingFinal ? "1" : "0") +
                     " box=" + heading.rectTransform.rect.width.ToString("0") + "x" + heading.rectTransform.rect.height.ToString("0") +
                     " locale=" + (fa ? "fa-IR" : "en"));
             }
@@ -1487,6 +1501,9 @@ namespace Game.UI.Runtime
 
         /// <summary>v45b: ink height / point size of the Farsi heading copy in Noto Sans Arabic (64.3 + 20.9) / 90.</summary>
         private const float FaHeadingInkRatio = 0.95f;
+
+        /// <summary>v46b: smallest fa-IR Battles-won heading size the width shrink may use.</summary>
+        private const float MedalHeadingFloor = 12f;
 
         /// <summary>v45: tile spare height (px) above which icon/name/count spread out instead of centring.</summary>
         private const float TheatreMedalSpreadThreshold = 24f;

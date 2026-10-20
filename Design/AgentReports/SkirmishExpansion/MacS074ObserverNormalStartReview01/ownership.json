@@ -1,0 +1,26 @@
+{
+  "observedUtc": "2026-10-20T17:13:12.350786+00:00",
+  "method": "Read-only ps census before source review",
+  "processes": [
+    {
+      "pid": 51962,
+      "ppid": 1,
+      "birthLocal": "Tue Oct 20 12:41:34 2026",
+      "argv": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/Fig/Fig"
+    },
+    {
+      "pid": 55563,
+      "ppid": 1,
+      "birthLocal": "Wed Oct 14 21:02:25 2026",
+      "argv": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+    }
+  ],
+  "nativeJobOwnedByThisChat": null,
+  "knownOwners": {
+    "Fig51962": "Protected unrelated Editor; exact owning chat/job unknown",
+    "Menu": "Known owner Skirmish Menu01a15818-2610-7d42-86d1-8439e09ab44f; not present in this particular process census, not proof its job is terminal or capacity reserved"
+  },
+  "Hub": "Present, authentication not rechecked",
+  "capacityAdmission": false,
+  "processActions": []
+}

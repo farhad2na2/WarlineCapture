@@ -1,0 +1,105 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "repoPins": 8,
+  "packagePins": 8,
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 48231,
+      "sha256": "e1cbe915dfdec286a0fb700f169162be4013c6aabe6a94ed0fd19ce60890e12e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 94206,
+      "sha256": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 27627,
+      "sha256": "5e6dd446d4727aaec42bd90669f7f7c2a12cec366ca58a8be558ac59ceb80bb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 140488,
+      "sha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProductionCanaryRequest.cs",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 23609,
+      "sha256": "e113a199acc0d132f2af7667afe28ed31e1a4e04fd7c7594a5e6ba1478e88ebc"
+    },
+    {
+      "path": "Tools/CI/InvokeUnity.ps1",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 13201,
+      "sha256": "2ce67d0011494a1eaf294a3f351747e66fcfecbacc210165a100d5b9a5c70add"
+    },
+    {
+      "path": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 2982,
+      "sha256": "6d07feabaf19ff55d3277062fe42f542b601dd3160ce0cac2aa420f7cc482528"
+    },
+    {
+      "path": "Tools/CI/invoke_unity_macos.sh",
+      "gitBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "bytes": 7736,
+      "sha256": "53983409143d2a93b0b4b5369649a175323c5b08ec08a60571fdb5cd5127c608"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/package.json",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 5456,
+      "sha256": "dbed6569d115fa60e438a254a15abc3442eda412ff615994ec5f0fd4b979b49b"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 7209,
+      "sha256": "4a725199300ae31d08c84f05fb3128c449c67bcc592de7efee21d6f5cb2d9fa4"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 11913,
+      "sha256": "51d15e4bff39b499b53af34f422ee0c6a7938e62e1f9ccc657c8bbee343dc267"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/RoslynCompilationService.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 24161,
+      "sha256": "9a72addb00a61fc6de3d2ebdf0960ccc52f721de6ea059200a36049876e4a807"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 11390,
+      "sha256": "4f6bd0ebff3d12e47084e4fbcffc02a074bbcdde77aaa082e1d1a45d79f078ee"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/PipelineUtils.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 11139,
+      "sha256": "46880f20785a9b86fb2b7bcb1db0017ae73c6c1e0c7fc995035c60bdc272769c"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/CommandExecutionRequest.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 8548,
+      "sha256": "53f7e4eb64c3c3066b955f0c7b75f1748f84db0107e65cb5b63152ec18969986"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Models/EvalResponse.cs",
+      "scope": "Existing Mac package source; independent Windows exact byte verification required",
+      "bytes": 3818,
+      "sha256": "335b6197bf1bd13ffc837ea99722450d60034527ddd53fcfd08647aa96424a32"
+    }
+  ],
+  "WindowsEEEOverlay": "Uncommitted overlay NOT inspected or pinned; base call ordering is not overlay equality",
+  "CLIrunRefusal": "Coordinator-reported actual refusal; CLI binary implementation not source-inspected or invoked"
+}

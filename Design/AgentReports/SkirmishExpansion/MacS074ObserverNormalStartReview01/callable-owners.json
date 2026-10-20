@@ -1,0 +1,65 @@
+{
+  "scope": "Exact source callability only, not runtime validation",
+  "owners": [
+    {
+      "owner": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionJobFromEnvironment",
+      "access": "public static void, no arguments",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs:143",
+      "purpose": "Existing claimed normal single-job entry; retains input readiness, request revalidation/reservation and normal Menu/input journey"
+    },
+    {
+      "owner": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionBatchCanariesFromEnvironment",
+      "access": "public static void, no arguments",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs:222",
+      "purpose": "Existing claimed batch entry; context constructor warms exact sources before baseline capture and DispatchNext"
+    },
+    {
+      "owner": "Game.Editor.SkirmishS002AriaRunHarness.PrepareProductionBatchSources",
+      "access": "public static void, no arguments",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs:161",
+      "purpose": "Pre-freeze preparation diagnostic; warms sources, exports compiled facts; NOT a normal production/claim substitute"
+    },
+    {
+      "owner": "ProductionBatchContext.PrepareNativeSceneBaseline",
+      "access": "internal static on private nested owner; not external public API",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs:577",
+      "purpose": "Actual streaming-only Worlds, SceneSystem.LoadSceneAsync BlockOnImport|BlockOnStreamIn and world.Update; never invoke privately as normal journey"
+    },
+    {
+      "owner": "RunOwnedProductionEntryReady / ProductionCanaryContext / RunEditorJourney",
+      "access": "private/internal implementation details",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs:175 / :772; Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs:60",
+      "purpose": "Must remain behind public request/claim entry; not observer attachment APIs"
+    },
+    {
+      "owner": "Unity.Pipeline.Runtime.Commands.CodeEvalCommand.EvaluateFile",
+      "access": "registered public eval_file command on internal/static implementation owner; use registered interface",
+      "source": "Runtime/Commands/CodeEvalCommand.cs:24-55",
+      "purpose": "Read external .cs source and execute on main thread via ephemeral assembly; does not import a project script"
+    },
+    {
+      "owner": "UnityEditor.EditorApplication.delayCall",
+      "access": "public Editor callback API used in committed harness too",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs:514,:561",
+      "purpose": "Proposed one-shot deferred call to existing public production entry after observer attachment; not executed/guaranteed here"
+    },
+    {
+      "owner": "Ephemeral read-only observer ARM/Stop API",
+      "access": "Not provided in base; exact Windows external payload/interface UNKNOWN to this source review",
+      "source": null,
+      "purpose": "Coordinator must pin/verify reviewed external observer. CHECK42890 compiled response is attributed, callbacks remain unarmed; no invented observer method/type"
+    },
+    {
+      "owner": "Tools/CI/InvokeUnity.ps1",
+      "access": "checked Windows general wrapper",
+      "source": "Tools/CI/InvokeUnity.ps1:200-253",
+      "purpose": "Starts owned child Editor; arguments allow GUI launch without executeMethod/-quit, subject to future reviewed controller/grant/log/timeout. Does not attach a new method to an existing process"
+    },
+    {
+      "owner": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1",
+      "access": "checked focused wrapper",
+      "source": "Tools/CI/InvokeUnityExecuteMethodValidation.ps1:45-64",
+      "purpose": "Adds -quit/-executeMethod at process launch; cannot provide a pre-entry live attach window by itself"
+    }
+  ]
+}

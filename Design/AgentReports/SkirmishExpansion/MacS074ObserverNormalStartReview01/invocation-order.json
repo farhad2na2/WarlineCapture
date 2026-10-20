@@ -1,0 +1,30 @@
+{
+  "scope": "Non-executable future protocol proposal; NOT_ARMED_NOT_RUN",
+  "defaultPublicEntry": "RunProductionJobFromEnvironment for the independently claimed single normal mission; existing batch entry only for a genuine batch grant",
+  "steps": [
+    "Finish any already-owned run first using its actual terminal evidence. Verify intended project, exact Editor executable/PID/birth/argv, source/build/SDK/package identities, current checked wrapper ownership and log/timeout; protect other Editors. No new native grant comes from this report.",
+    "Obtain an owned idle Editor via already-reviewed checked wrapper/controller path with normal harness auto executeMethod withheld. General InvokeUnity.ps1 source supports GUI arguments without automatic executeMethod/-quit, but controller/grant changes need independent Windows review. Never use --run to re-launch an occupied project or bypass wrapper.",
+    "Verify intended Pipeline descriptor/server belongs to same project and Editor identity and is actually ready; no compile/import/play transition. Prior warm-load history is unknown unless directly proven. Existing Editor project startup may already have loaded entities; this protocol only precedes the next normal harness warm boundary.",
+    "Pin external observer bytes outside Assets/imported source; Windows must verify EEE overlay actual entry/prewarm ordering, observer API, restoration and effect on baseline/census. Preserve exact owned job/claim/batch environment in that Editor; caller shell environment does not retroactively enter an already-running process.",
+    "In one future registered Pipeline eval_file main-thread invocation, attach only the verified ephemeral observer, record observer/domain/delegate identity and bounded armed receipt, then register one original one-shot EditorApplication.delayCall callback to call the appropriate existing public production entry. Retain its original Stop/disarm delegate and cancel queued start on failure/reload. No actual payload is supplied here.",
+    "Return bounded attach/scheduled status; delayCall completion is not the Pipeline response, job acceptance or mission start. Deferred callback must remove itself first, recheck ownership/domain/frozen identities, then call the public normal entry exactly once. Log start/failure asynchronously. Do not call private constructors, readiness callbacks or LaunchCatalog to skip gates.",
+    "Observe public entry initial input preparation and genuine Editor updates; batch context source warmup happens after attachment. Single base context establishes/restores a Menu scene baseline, and Windows EEE overlay may add warmup there; attach before both. Keep observer active across actual normal Menu open and Play.",
+    "Normal RunEditorJourney enables DisableDomainReload before EnterPlaymode and owns auto-refresh suspension/restoration. Never add AssetDatabase.Refresh, recompile, source writes, script imports or a manual Play start between attachment and public entry. Unexpected beforeAssemblyReload/quitting means incomplete observer, fail closed; never reconstruct lost delegates/leases.",
+    "Existing normal Menu controls, ARIA/manual input, result/return, request reservations, strict closure/settings/profile restoration and checked wrapper terminal checks remain authoritative. Observer stops only its exact original callbacks and writes bounded evidence; no gameplay mutation or cleanup waiver. Wrapper terminal and observer completion are separate outcomes."
+  ],
+  "atomicityLimits": [
+    "Attachment-before-normal-entry can be ordered in one domain, but separate transport response and later callback completion are not an atomic transaction.",
+    "Even a one-shot callback can be lost by domain reload or Editor exit; preserve pending/failed evidence, no retry from timeout alone.",
+    "No public callback seam exists inside PrepareNativeSceneBaseline; attaching after calling the auto-start production method cannot recover earlier source loads."
+  ],
+  "prohibited": [
+    "ARM/execution in this assignment",
+    "CLI --run occupied-project retry",
+    "new unreviewed direct Unity route",
+    "private constructor/reflection bypass",
+    "direct ECS gameplay/bootstrap/LaunchCatalog dispatch",
+    "claim manufacture or substitution",
+    "manual checkpoint/result fabrication",
+    "source/Library/reset/process changes"
+  ]
+}

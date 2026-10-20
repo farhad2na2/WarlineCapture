@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "SourceReviewOnly_NoARMOrExecution",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/callable-owners.json",
+      "bytes": 4047,
+      "sha256": "a026ebaa2947f233cd0b10e54d4d6934206de3a6d1172e295e616fddfbfe4ab8"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/invocation-order.json",
+      "bytes": 4379,
+      "sha256": "60dbb5763b878f79914635dfb8afe8c0acfbaee3c093e6f7581dd6833a5bb1e9"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/ownership.json",
+      "bytes": 946,
+      "sha256": "5838a629073cecdf2e9cbde634973c626fede04015b765e2c0bb42edf1122461"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/review.md",
+      "bytes": 7223,
+      "sha256": "e0faf9294de1b4cd31291816e1224532de74a1051af6ceba2517178872363721"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/source-pins.json",
+      "bytes": 5250,
+      "sha256": "c198f797d914d6ca9ae1a79419ebf1c495ee3acfe0ebe453571b103944e333e3"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074ObserverNormalStartReview01/verification.log",
+      "bytes": 404,
+      "sha256": "a2916b033bfc9ab786e4abc401405f3398a51a1418dceba8f3146640176a44eb"
+    }
+  ]
+}

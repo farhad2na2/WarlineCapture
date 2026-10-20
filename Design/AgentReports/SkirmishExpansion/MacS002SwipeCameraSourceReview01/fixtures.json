@@ -1,0 +1,36 @@
+{
+  "scope": "Proposal only; NOT_IMPLEMENTED and NOT_RUN; fixture results would not prove screenshot cause or mission acceptance",
+  "reuse": "Extend joint coverage around existing real InputSystem/EventSystem ScrollRect fixture patterns in MatchHudSquadScrollTests and MatchHudSquadNativeScrollTests. Their UI-only swipes/taps are useful but not runtime camera/world-command assertions. A startup Camera object and method name RunGapInputCameraAndM5 do not establish those assertions.",
+  "minimalFixture": {
+    "setup": [
+      "Isolated ECS world/session, actual tray/ScrollRect/GraphicRaycaster plus EventSystem/InputSystemUIInputModule, actual UI-start containment logic and runtime pointer input context wired to RtsSelectionInputCompositionSystemHelper.",
+      "Use a small real RtsCameraSystem/RtsCameraRequestSystem and fixed camera; count Pan requests and world move/attack/selection request buffers before applying any request. Observe after real EventSystem and runtime pointer updates in production order.",
+      "Pump AriaTouchInputUiSystemHelper contacts through distinct press/intermediate move/final move/release InputSystem/UI opportunities; no direct ScrollRect callbacks, normalized scroll writes or world order injection.",
+      "Baseline no follow/aircraft/preview/smooth camera writer. Pin per-file source and exact fixture context. Extra mode/flag changes are explicit synthetic stress controls, not normal-run observations."
+    ],
+    "cases": [
+      {
+        "id": "UI_SWIPE_LIFETIME",
+        "arrange": "Start on real card and viewport gap; both LTR and RTL; move horizontally past drag threshold, optionally leave tray before release.",
+        "assert": "Roster moves when within valid ScrollRect route; no swipe card-select callback, no runtime Pan/world orders/selection rectangle; latched UI owner remains through contact; ordinary card tap still selects expected group."
+      },
+      {
+        "id": "STALE_DRAG_STRESS",
+        "arrange": "First seed dragging=true before a normal UI press: press must clear it. Separately set dragging=true AFTER an observed UI-origin press, with selection inactive and capture-ignore path absent, to model an explicit other-writer stress.",
+        "assert": "Current normal press control should remain pan-free. Held branch under synthetic post-press true flag can invoke Pan because no explicit UI predicate; record as conditional stress behavior only. A future defense must prevent it without blocking world-origin drag."
+      },
+      {
+        "id": "CANCEL_AND_MODE_RETURN",
+        "arrange": "Cancel mid-swipe using real TouchPhase.Canceled and separately remove the owned touch device/Stop; also leave fullscreen/build/support mode while held, with UI-owned origin.",
+        "assert": "No release click/world order/Pan from the canceled contact; drag/selection cleared and suppressed UI lifecycle settles. Next independent world-origin drag must still pan; UI-origin gesture must not inherit a prior mode flag. Verify no synthetic click from Stop/device removal."
+      },
+      {
+        "id": "WORLD_DRAG_POSITIVE",
+        "arrange": "Start on unobstructed world, drag past threshold in a camera mode that allows pan, then release.",
+        "assert": "Nonzero intended Pan/camera delta, no UI scroll. This proves the negative fixture is wired and avoids a global input freeze masquerading as protection."
+      }
+    ],
+    "boundedChecks": "Record pointer/device/contact identity, latched origin/UI hit, input flags, camera dragging before/after writer, request kinds, frame ordering, ScrollRect delta, camera pose and accepted-command delta. Restore isolated fixture devices/world/EventSystem; no full mission needed for these controls."
+  },
+  "executionAuthority": false
+}

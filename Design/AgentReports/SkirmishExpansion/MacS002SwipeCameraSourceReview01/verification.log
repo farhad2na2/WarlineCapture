@@ -1,0 +1,2 @@
+SOURCE_PIN_COMPARISON result=Passed windowsPins=11 immutableGitMatches=11 historicalCandidatePinsEstablished=0
+Structured report/fixture JSON parsed. Candidate per-file equality UNKNOWN. No gameplay fixtures, compiler, native run or runtime acceptance executed.

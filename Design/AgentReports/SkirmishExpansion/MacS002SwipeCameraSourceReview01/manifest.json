@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "scope": "SourceAttributedReviewOnly_HistoricalCandidatePinsUnknown",
+  "base": "423c3bf58e9f8ef1c146b9488c0eeeec7bc3f6da",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002SwipeCameraSourceReview01/attribution.json",
+      "bytes": 2041,
+      "sha256": "6fd225f8f2fe85702344d735cc37efedae03b8b674f11bca48c2ed4faf56cf79"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002SwipeCameraSourceReview01/fixtures.json",
+      "bytes": 3771,
+      "sha256": "8158a4a614956ec3ddad07d2827dd6e8841ee2293d3084b976d253c9d4a4c9ea"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002SwipeCameraSourceReview01/review.md",
+      "bytes": 6713,
+      "sha256": "6c3d8918f60a5f7c55473340eaf168abfef0e36e4d63877e59fa4753ccece96e"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002SwipeCameraSourceReview01/source-pins.json",
+      "bytes": 7692,
+      "sha256": "e36a260e4329822a9d6d23c6bac3368fefdbb9abb5bbe47fe6257031aa61e8b3"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002SwipeCameraSourceReview01/verification.log",
+      "bytes": 262,
+      "sha256": "7b3083e4c3a3dfa27ad561a95a7ec54eac12007971bbf69751cdfe49fb1f0c98"
+    }
+  ]
+}

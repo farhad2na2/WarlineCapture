@@ -1,0 +1,23 @@
+{
+  "candidate": "92a727e28012eca404d45ca673b847b37ce2e3ca84e5e3949f318706414178c2",
+  "runId": "S002-aria-rs-104731-en-1",
+  "previousReport": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS002BlankSandAttribution20261020/report.json",
+  "previousReportSha256": "fa2872241cbbff6f0b819309a2de3911ef3eccbeb45af066a6e57c4d48d3d034",
+  "previousReportBytes": 17616,
+  "previousObservedMenuHead": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
+  "previousHeadIsCompleteDirtyCandidateIdentity": false,
+  "knownHistoricalEvidence": "Launch and finish aggregate fingerprints match candidate; exact run traces and opening/screenshot evidence exist.",
+  "candidateDirectoryInspected": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/92a727e28012eca404d45ca673b847b37ce2e3ca84e5e3949f318706414178c2",
+  "candidateDirectoryContainsPerFileManifest": false,
+  "searchLimit": "Inspected exact candidate folder and prior attribution receipt; no exhaustive other-report search or new full-tree hashing.",
+  "hashSourceBehavior": "SkirmishCandidateSourceHash.Compute builds per-file path/digest rows in an in-memory BinaryWriter stream and returns aggregate SHA256; inspected harness logs aggregate only for normal Saga run. This does not persist recoverable file rows.",
+  "historicalEqualityResult": "UNKNOWN for all11; git HEAD and post-run raw source observation do not seal the dirty run/compiler source membership.",
+  "priorSelectionSourcePin": {
+    "path": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+    "observedBytes": 95972,
+    "sha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
+    "mtimeNs": 1792479432298464921
+  },
+  "missingToEstablishHistoricalPins": "Immutable exact-run per-file source manifest/source archive or original corresponding compile/source consumption evidence; do not capture a new manifest and backdate it.",
+  "noHistoricalAttributionInferredFromGlobalAggregate": true
+}

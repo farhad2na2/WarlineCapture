@@ -94,7 +94,7 @@ def main():
         # Source scan can take time. Recheck live ownership and exact installed data
         # immediately before invoking the checked wrapper; no ownership is inferred.
         check_lane(inventory());check_installed()
-        version=re.search(r'(?m)^m_EditorVersion:\s*(\S+)',(ROOT/'ProjectSettings/ProjectVersion.txt').read_text()).group(1)
+        version=re.search(r'(?m)^m_EditorVersion:\s*(\S+)',(ROOT/'ProjectSettings/ProjectVersion.txt').read_text()).group(1).replace('\r','')
         editor_path=run/'unity-editor.txt'
         resolved=powershell(['-File',str(ROOT/'Tools/CI/ResolveUnityEditor.ps1'),'-UnityVersion',version,'-OutputPath',str(editor_path),'-LogFile',str(run/'resolver.log')])
         if resolved.returncode:raise ValueError('Checked Editor resolution failed')

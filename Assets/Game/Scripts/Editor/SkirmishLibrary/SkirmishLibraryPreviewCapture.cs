@@ -1185,6 +1185,8 @@ namespace Game.Editor
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.SaveAndReimport();
             }
+
+            SkirmishLibrarySpriteRegistryBuilder.Rebuild();
         }
 
         private static void RestoreScene(string path)

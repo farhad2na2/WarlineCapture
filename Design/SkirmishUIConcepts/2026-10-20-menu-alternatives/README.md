@@ -48,4 +48,4 @@ Generated mockups illustrate layout and hierarchy. Illustrative art, copy, medal
 
 [Full owner requirements](REVIEW_REQUIREMENTS.md) · [Exact prompt set and native reference paths](prompts.json) · [PNG hashes](manifest.json).
 
-PR70 remains draft and unmerged. Campaign A remains the chapter overview; the new map-based five-mission screen replaces the tiny mission drawer. Skirmish retains A map selection and the scrolling objective-region mission screen. Historical alternatives remain for context. No runtime implementation changes during this mockup iteration.
+PR70 remains draft and unmerged. Campaign A remains the chapter overview; the new map-based five-mission screen replaces the tiny mission drawer. Skirmish retains A map selection and the scrolling objective-region mission screen. Historical alternatives remain for context. Native implementation now follows the approved direction. [Current native validation](../../AgentReports/ApprovedMissionAtlas/STATUS.md).

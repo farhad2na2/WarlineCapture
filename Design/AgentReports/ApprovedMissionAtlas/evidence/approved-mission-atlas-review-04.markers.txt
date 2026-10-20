@@ -1,0 +1,5 @@
+[ApprovedMissionAtlas] result=Passed campaignComics=25 chapterComics=5 sharedNativeLayout=true
+[ApprovedMissionAtlasReview] canvas=(x:-2400.00, y:-1080.00, width:4800.00, height:2160.00) scale=(1.00, 1.00, 1.00) host=(1.00, 1.00, 1.00) frame=(2.00, 2.00, 2.00) rect=(x:0.00, y:-1080.00, width:2400.00, height:1080.00)
+[ApprovedMissionAtlasReview] touch=ChapterCard_3
+TimeoutException: Approved map-menu state timed out
+[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-195215

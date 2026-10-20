@@ -1,0 +1,1 @@
+MissingComponentException: There is no 'CanvasGroup' attached to the "CampaignComposition" game object, but a script is trying to access it.

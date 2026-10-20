@@ -1,0 +1,5 @@
+[S004MenuJourney] phase=Touch step=0 button=Hotspot point=(925.27, 155.64) stableBeforeTouch=1 transitionAcceptance=Pending
+[S004MenuJourney] phase=Touch step=1 button=ObjectiveTab_BA point=(238.00, 869.50) stableBeforeTouch=1 transitionAcceptance=Pending
+[S004MenuJourney] phase=Touch step=1 button=BattleCard_S002 point=(1430.00, 748.33) stableBeforeTouch=1 transitionAcceptance=Pending
+[ApprovedAtlasNativeJourney] selection=S002 input=Touch stages=Map,Mission
+[SagaProcessRestart] result=Passed reason=coldProfileNativeMenuMedal profileSeeded=0 nativeTouch=1

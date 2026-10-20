@@ -1,0 +1,17 @@
+[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog
+[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=7140.6052 sha256=43e104e05cc1437e04b31ef27afa9cddf39ea8a4f248900077c4905c9e0602eb
+[S004MenuJourney] phase=Touch step=0 button=Hotspot point=(925.27, 155.64) stableBeforeTouch=1 transitionAcceptance=Pending
+[S004MenuJourney] phase=Touch step=1 button=ObjectiveTab_BA point=(238.00, 869.50) stableBeforeTouch=1 transitionAcceptance=Pending
+[S004MenuJourney] phase=Touch step=1 button=BattleCard_S002 point=(1430.00, 748.33) stableBeforeTouch=1 transitionAcceptance=Pending
+[ApprovedAtlasNativeJourney] selection=S002 input=Touch stages=Map,Mission
+[ApprovedAtlasNativeScale] result=Passed command=96.00006 card=191.3333 input=Touch
+[S004MenuJourney] phase=Touch step=4 button=StartBattleButton point=(1568.00, 82.00) stableBeforeTouch=1 transitionAcceptance=Pending
+[S004MenuJourney] phase=LaunchTouch input=Touch controls=Skirmish,Scroll,S002,Launch seedFixture=104731
+[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll,S002,Launch seedFixture=104731 nativeSessionObserved=1
+[SkirmishS002AriaRun] selected catalog=S002 definition=skirmish.s002 version=2 size=Standard difficulty=Regular seed=104731 locale=fa-IR
+[S004AriaConsent] result=Passed input=Touch controls=Play,Confirm completed=2 interventions=0 unexpected=0
+[SkirmishS002AriaRun] watchStarted=1 seed=104731 locale=fa-IR
+[SagaNativeMedalJourney] result=Passed nativeResult=1 returnSelection=1 earnedCardMedal=1 diskReload=1 processRestart=Pending
+[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=False reason=
+[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=12248.7755 taskStatus=RanToCompletion sha256=43e104e05cc1437e04b31ef27afa9cddf39ea8a4f248900077c4905c9e0602eb
+[SkirmishS002AriaRun] appended=1 countedWin=1 error=

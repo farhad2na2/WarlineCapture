@@ -1,6 +1,6 @@
 # Current menu redesign requirements
 
-Owner requires consistent two-stage navigation: select a Campaign chapter or Skirmish map, then select individual missions using large thumbnail cards directly on the map. Campaign has five per chapter; Skirmish six per objective region. Campaign A is retained for the chapter overview, but its tiny mission drawer is superseded. [Current Campaign mission screen](campaign-A-five-missions-on-map-02/README.md). [Selected Skirmish mission screen](selected-A-iteration-02-two-step/README.md). No native menu implementation changes during visual iteration.
+Owner requires consistent two-stage navigation: select a Campaign chapter or Skirmish map, then select individual missions using large thumbnail cards directly on the map. Campaign has five per chapter; Skirmish six per objective region. Campaign A is retained for the chapter overview, but its tiny mission drawer is superseded. [Current Campaign mission screen](campaign-A-five-missions-on-map-02/README.md). [Selected Skirmish mission screen](selected-A-iteration-02-two-step/README.md). Owner approved implementation; native validation is recorded in Design/AgentReports/ApprovedMissionAtlas/STATUS.md.
 
 Owner direction: 2026-10-20. Existing saga and Campaign half-saga level selection are not accepted. Generate alternatives before implementation.
 
@@ -29,7 +29,7 @@ Catalog structure is five battlefields ×24 missions each; each24 is four object
 
 A–C each have separate Skirmish and Campaign mockups. D/E are additional Skirmish scalability views. The owner may choose different letters for the two modes. Generated illustrations and example progress are visual concepts, not runtime readiness or new content. All final prompts and native reference paths are recorded in prompts.json.
 
-No implementation is approved by generation. PR 70 remains draft and unmerged; its saga UI is not the accepted final direction.
+Owner explicitly approved both selected mockups for implementation. PR70 remains draft and unmerged; the old saga UI is superseded.
 
 Latest owner media requirement: Campaign A chapter cards and individual mission choices each need comic thumbnails, reusing the main-page Campaign comic bindings. The selected mission preview uses the same corresponding comic. [Comic-thumbnail mockup](campaign-A-comic-thumbnails-01/README.md).
 

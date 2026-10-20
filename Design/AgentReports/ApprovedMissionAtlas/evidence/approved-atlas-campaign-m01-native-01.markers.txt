@@ -1,0 +1,11 @@
+[ApprovedCampaignJourney] started menuInput=InputSystemTouch gameplayInput=RaycastPointer profileFixture=FirstLaunchOnly outcomesInjected=0
+[ApprovedCampaignJourney] touch=ContinueButton
+[ApprovedCampaignJourney] touch=ChapterCard_1
+[ApprovedCampaignJourney] touch=StartBattleButton
+[ApprovedCampaignJourney] touch=DeployOperationButton
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=1 body=Press Select on the command bar.
+[CampaignPlayerJourney] action=1:SelectCommand
+[CampaignPlayerJourney] settled lesson=1 phase=FindSquad outcome=None produced=0 guidance=FindSquad body=Drag from one corner of the marked box to the opposite corner, enclosing the units, then release.
+TimeoutException: Player journey stalled: saga.ch01.m01.first_contact lesson=1 last=1:SelectCommand body=Drag from one corner of the marked box to the opposite corner, enclosing the units, then release.
+[ApprovedCampaignJourney] result=Failed menuGestures=4 outcomesInjected=0 deviceAcceptance=Pending
+[CampaignTutorialEntry] result=Failed Player journey stalled: saga.ch01.m01.first_contact lesson=1 last=1:SelectCommand body=Drag from one corner of the marked box to the opposite corner, enclosing the units, then release.

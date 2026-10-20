@@ -1,0 +1,170 @@
+[
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-build-01.log",
+    "rawSha256": "66385b07fed87c59f9a505f00bf3234bd3a37baceac027a05d9f832fa40688b8",
+    "excerpt": "approved-mission-atlas-build-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-01.log",
+    "rawSha256": "4ec7a5c7c728ea9396aefe27785bb186f4b1ba4a900a171983887c99e2c66dee",
+    "excerpt": "approved-mission-atlas-review-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-02.log",
+    "rawSha256": "45cebd417016ee5f0e6b21caa4dde89965bd3efca8862a09fc1eb619266f6291",
+    "excerpt": "approved-mission-atlas-review-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-03.log",
+    "rawSha256": "006c4465e655fe6b3d2d9405e0994918ee3764270391870e57d79b545c3e765c",
+    "excerpt": "approved-mission-atlas-review-03.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-04.log",
+    "rawSha256": "d4d46b74cf9f113534c6fd870482729b5ebc99df9d8312ff6bd469a0b41564f2",
+    "excerpt": "approved-mission-atlas-review-04.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-05.log",
+    "rawSha256": "f4978a0f9427bdd30ab89b2a6fe2eb60187f14344dfaa4635a66f2fd4934dc36",
+    "excerpt": "approved-mission-atlas-review-05.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-06.log",
+    "rawSha256": "0b1f45ba373599863289723bb35b115dacdbe2f90ef711503ed207154141d034",
+    "excerpt": "approved-mission-atlas-review-06.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-07.log",
+    "rawSha256": "1c1108c280db99b72042da6eb87c4c4becf0a4eb750ccdb1578b619b426e259a",
+    "excerpt": "approved-mission-atlas-review-07.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-08.log",
+    "rawSha256": "44286b088a19527832341f6c16bed316758a0b1a99948bc06eab9f6012da4422",
+    "excerpt": "approved-mission-atlas-review-08.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-09.log",
+    "rawSha256": "7e6342dd6317fb736e4a520bfef7cbfc7aba384cc56bee2c719f73de0598a987",
+    "excerpt": "approved-mission-atlas-review-09.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-10.log",
+    "rawSha256": "e8dcbe87a043cda967bb0578b58a4b525d951c22dbdbb249784e602d8823e1f6",
+    "excerpt": "approved-mission-atlas-review-10.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-11.log",
+    "rawSha256": "7ea53d8d92c5343ac39f3117f5ed1f1701393a8ffabc5ed80a92ba6d12798c03",
+    "excerpt": "approved-mission-atlas-review-11.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-12.log",
+    "rawSha256": "6529c5c09f7c40fe359c46ce6a8b259e6575ed43000f44ba81c2f21284b020f5",
+    "excerpt": "approved-mission-atlas-review-12.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-13.log",
+    "rawSha256": "e490f04e48044f36a86730f91e7840539c4d239e75da4d43e683bf5ebb55a42d",
+    "excerpt": "approved-mission-atlas-review-13.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-14.log",
+    "rawSha256": "c3fbb5cb0910c8f3bb2239a9c95f2d9115353b94c0cee566ee9dbb4d33b7dbb1",
+    "excerpt": "approved-mission-atlas-review-14.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-15.log",
+    "rawSha256": "e42787447dfd04afa6bcd7a7ee38e5a6af5bf9e3f518238bb67ba2690cf6fc96",
+    "excerpt": "approved-mission-atlas-review-15.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-mission-atlas-review-16.log",
+    "rawSha256": "6d21e3f1fe3bda7e4cec39c12e891f200a40bc844254edfb37c89316399e74fe",
+    "excerpt": "approved-mission-atlas-review-16.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-campaign-m01-native-01.log",
+    "rawSha256": "f766c7af2183e5ba0a4c363563c7bfcd86127f3bbc6f67692643f111eff61839",
+    "excerpt": "approved-atlas-campaign-m01-native-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-campaign-m01-native-02.log",
+    "rawSha256": "5a482f7ca077ff68d0ddec2b7346fe0812a68e49e07e894f14d1c9123f6914c6",
+    "excerpt": "approved-atlas-campaign-m01-native-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-campaign-m01-native-03.log",
+    "rawSha256": "5c5d7db935b4d11c8ac97a212480686914c86963276d723a29a3e5e8680ccf0e",
+    "excerpt": "approved-atlas-campaign-m01-native-03.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-campaign-m01-native-04.log",
+    "rawSha256": "f6da54e57a88a66324af18378633e2c278387f42c83810057faffda755be4dd6",
+    "excerpt": "approved-atlas-campaign-m01-native-04.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-native-en-01.log",
+    "rawSha256": "1bb5694f32fbb1dd846584de557982abb33995931558f4a7e287a24ab27625db",
+    "excerpt": "approved-atlas-s002-native-en-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-native-en-02.log",
+    "rawSha256": "39b9ff3837313efb317bc939caa9a00df46263b6d0290c3274f6c99d080eb041",
+    "excerpt": "approved-atlas-s002-native-en-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-native-fa-01.log",
+    "rawSha256": "55419ee660131c6d767a7d1a147df8857045f79e199fca1a982278bae690ba7d",
+    "excerpt": "approved-atlas-s002-native-fa-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-native-fa-02.log",
+    "rawSha256": "9cf05a03e8a0f0b981fbf0395c2203b6e043b93106606521a5002efc914f4a19",
+    "excerpt": "approved-atlas-s002-native-fa-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-restart-en-01.log",
+    "rawSha256": "b0ad7508ad4a48195fcee8ffa64e50c28979de1974a94c50b0656782b22889ac",
+    "excerpt": "approved-atlas-s002-restart-en-01.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-restart-en-02.log",
+    "rawSha256": "1b9cef86d60f2720c21e7f5615f84240832f74e1daf13d98f96fed3c67cdee39",
+    "excerpt": "approved-atlas-s002-restart-en-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  },
+  {
+    "rawLog": "/private/tmp/approved-atlas-s002-restart-fa-02.log",
+    "rawSha256": "3ea2f76e69041da2a6d307d975aaf504a89b2b0a608f7a98c1c360f9841ce909",
+    "excerpt": "approved-atlas-s002-restart-fa-02.markers.txt",
+    "note": "Validation/error excerpt. Full original log remains locally preserved. Earlier checkpoints and failed runs remain historical; STATUS identifies final runs."
+  }
+]

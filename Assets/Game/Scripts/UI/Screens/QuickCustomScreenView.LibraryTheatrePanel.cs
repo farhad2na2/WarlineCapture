@@ -34,7 +34,11 @@ namespace Game.UI.Runtime
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (!IsTheatreBottomSheet(parent))
+            {
+                PlaceTheatreLowerBlock(parent); // v48: objective block sized from its measured need, bottom-anchored
                 LayoutTheatreObjectives(parent, fa);
+            }
+
             Transform old = parent.Find(TheatrePanelBattlesName);
             if (old != null)
                 DestroyUi(old.gameObject);
@@ -85,6 +89,20 @@ namespace Game.UI.Runtime
             }
 
             rows = Mathf.Min(rows, Mathf.CeilToInt(battles.Count / (float)columns));
+            rows = Mathf.Min(rows, TheatreSideMaxRows); // v48 (Game PM): 3x3 at 16:9 and wider, 2x3 at 4:3
+            // v48: no empty band under the grid. The height left by the row cap goes first to the tiles (taller, up to
+            // square; the preview is cover-cropped), then to the medal/objective block, which moves up to meet the grid.
+            float band = area.height - (rows * thumbH + (rows - 1) * TheatrePanelGap);
+            if (band > 0.5f)
+                thumbH = Mathf.Min(thumbW, thumbH + band / rows);
+            band = area.height - (rows * thumbH + (rows - 1) * TheatrePanelGap);
+            float lift = band > 0.5f ? Mathf.Min(band, ObjectiveSpreadMax * ObjectiveRows) : 0f;
+            if (lift > 0.5f)
+            {
+                ShiftTheatreLowerBlock(parent, -lift);
+                LayoutTheatreObjectives(parent, fa);
+            }
+
             int slots = rows * columns;
             int shown = Mathf.Min(battles.Count, slots);
             int more = battles.Count - shown;
@@ -135,7 +153,9 @@ namespace Game.UI.Runtime
             }
 
             VerifyTheatrePanelCounts(holder, selectedZone.MapId, battles.Count, "side");
-            LogTheatreGrid(selectedZone.MapId, "side", columns, rows, shown, battles.Count, Mathf.Max(0, more), fa);
+            LogTheatreGrid(selectedZone.MapId, "side", columns, rows, shown, battles.Count, Mathf.Max(0, more), fa,
+                " thumb=" + thumbW.ToString("0.0") + "x" + thumbH.ToString("0.0") + " lift=" + lift.ToString("0.0") +
+                " band=" + Mathf.Max(0f, band - lift).ToString("0.0"));
             Debug.Log("[TheatrePanel] map=" + selectedZone.MapId +
                 " battles=" + battles.Count +
                 " visible=" + shown +
@@ -563,13 +583,13 @@ namespace Game.UI.Runtime
         /// (the "+N" tile takes the last slot when battles remain), overflow = total - visible, ratio from the live
         /// composition size.
         /// </summary>
-        private void LogTheatreGrid(string mapId, string layout, int columns, int rows, int visible, int total, int overflow, bool fa)
+        private void LogTheatreGrid(string mapId, string layout, int columns, int rows, int visible, int total, int overflow, bool fa, string extra = "")
         {
             Debug.Log("[TheatreGrid] map=" + mapId + " layout=" + layout + " columns=" + columns + " rows=" + rows +
                 " visible=" + visible + " total=" + total + " overflow=" + overflow +
                 " slots=" + (columns * rows) + " plusTile=" + (overflow > 0 && layout != "sheet" ? "1" : "0") +
                 " ok=" + (visible + overflow == total ? "1" : "0") +
-                " locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel());
+                " locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel() + (extra ?? string.Empty));
         }
 
         /// <summary>v47b: "4:3" / "16:9" / "20:9" (else W:H rounded) from the composition rect.</summary>
@@ -667,18 +687,16 @@ namespace Game.UI.Runtime
             float captionOffset = Mathf.Max(2f, captionRise + ObjectiveHeadingGap);
             float needBelowIcon = captionOffset + captionDepth + ObjectiveHeadingGap;
             float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
-            float limit = Mathf.Max(panelH - 12f, Mathf.Min(blockBottom, panelH - 4f));
+            float limit = panelH - ObjectiveBottomPad;
             int rows = Mathf.Max(1, (ids.Length + 1) / 2);
-            float pitch = Mathf.Min(DetailObjectiveRowHeight, (limit - rowsTop) / rows);
-            float iconCap = Mathf.Min(32f, Mathf.Max(oldIcon, 28f));
-            float icon = Mathf.Clamp(pitch - needBelowIcon, 16f, iconCap);
-            if (icon + needBelowIcon > pitch)
-            {
-                // Even a 16 px icon leaves too little: use the panel's bottom pad before giving up.
-                float roomy = (panelH - 4f - rowsTop) / rows;
-                pitch = Mathf.Max(pitch, Mathf.Min(roomy, icon + needBelowIcon));
-            }
-
+            // v48 (Game PM: fa icons match en): the icon is en's 28 px in both locales and the caption sits under it
+            // exactly as in en. The block was given its measured height by PlaceTheatreLowerBlock (plus any height the
+            // grid left, up to ObjectiveSpreadMax a row), so the pitch is what the live layout leaves, never less than need.
+            float icon = ObjectiveIconSize;
+            float rowNeed = Mathf.Max(DetailObjectiveRowHeight, icon + needBelowIcon);
+            float pitch = Mathf.Min((limit - rowsTop) / rows, rowNeed + ObjectiveSpreadMax);
+            if (pitch < icon + needBelowIcon)
+                icon = Mathf.Max(16f, pitch - needBelowIcon); // only when the panel itself is too short; fits=0 below
             for (int i = 0; i < ids.Length; i++)
             {
                 float top = rowsTop + (i / 2) * pitch;
@@ -711,7 +729,7 @@ namespace Game.UI.Runtime
 
             if (worstClear == float.MaxValue)
                 worstClear = 0f;
-            bool fits = worstClear >= ObjectiveHeadingGap - 0.5f && icon >= 16f;
+            bool fits = worstClear >= ObjectiveHeadingGap - 0.5f && icon >= ObjectiveIconSize - 0.01f;
             string line = "[TheatreObjectives] headingFont=" + heading.fontSize.ToString("0.0") +
                 " box=" + headingRect.sizeDelta.x.ToString("0") + "x" + headingRect.sizeDelta.y.ToString("0") +
                 " inkBottom=" + inkBottom.ToString("0.0") + " boxBottom=" + boxBottom.ToString("0.0") +
@@ -724,6 +742,90 @@ namespace Game.UI.Runtime
                 Debug.Log(line);
             else
                 Debug.LogWarning(line);
+        }
+
+        private const float ObjectiveIconSize = 28f;   // v48: en's objective icon; fa matches it
+        private const float ObjectiveSpreadMax = 12f;  // v48: extra pitch a row may take from the grid's leftover band
+        private const float ObjectiveBottomPad = 12f;
+        private const int ObjectiveRows = 2;
+        private const int TheatreSideMaxRows = 3;
+
+        /// <summary>
+        /// v48: the side panel's lower block (medal counts + OBJECTIVE TYPE heading + 2x2 rows) is bottom-anchored with
+        /// the height it measurably needs: heading box/ink + gap + 2 rows of max(66, 28 icon + caption offset + caption
+        /// ink at its reachable size + gap). fa's deeper Noto ink makes its block ~12 px taller than en's; the grid area
+        /// above (TryTheatrePanelArea) shrinks to match. Computed from relative offsets, so it is idempotent.
+        /// </summary>
+        private void PlaceTheatreLowerBlock(RectTransform panel)
+        {
+            TMP_Text heading = panel != null ? panel.Find("ObjectiveHeading")?.GetComponent<TMP_Text>() : null;
+            if (heading == null)
+                return;
+            RectTransform headingRect = heading.rectTransform;
+            FitDetailLine(heading, 16f, 24f);
+            float headingTop = -headingRect.anchoredPosition.y;
+            float headingDepth = Mathf.Max(headingRect.sizeDelta.y, TextInkBottom(panel, heading) - headingTop) + ObjectiveHeadingGap;
+            MeasureObjectiveCaptions(panel, headingRect, out float captionOffset, out float captionDepth);
+            float rowNeed = Mathf.Max(DetailObjectiveRowHeight, ObjectiveIconSize + captionOffset + captionDepth + ObjectiveHeadingGap);
+            float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
+            float target = panelH - ObjectiveBottomPad - ObjectiveRows * rowNeed - headingDepth;
+            float delta = target - headingTop;
+            if (Mathf.Abs(delta) > 0.25f)
+                ShiftTheatreLowerBlock(panel, delta);
+        }
+
+        /// <summary>v48: moves the medal row and the objective block (not the header or the grid) by delta px (down +).</summary>
+        private static void ShiftTheatreLowerBlock(RectTransform panel, float delta)
+        {
+            if (panel == null)
+                return;
+            float lowerTop = float.MaxValue;
+            for (int i = 0; i < panel.childCount; i++)
+            {
+                if (panel.GetChild(i) is RectTransform child &&
+                    (child.name.StartsWith("ZoneMedal_", StringComparison.Ordinal) || child.name == "ObjectiveHeading"))
+                    lowerTop = Mathf.Min(lowerTop, -child.anchoredPosition.y);
+            }
+
+            if (lowerTop == float.MaxValue)
+                return;
+            for (int i = 0; i < panel.childCount; i++)
+            {
+                if (panel.GetChild(i) is not RectTransform child)
+                    continue;
+                string n = child.name;
+                bool member = n.StartsWith("ZoneMedal_", StringComparison.Ordinal) || n == "ObjectiveHeading" ||
+                    n.StartsWith("ObjectiveType_", StringComparison.Ordinal) ||
+                    ((n == "Value" || n == "Subtitle") && -child.anchoredPosition.y >= lowerTop - 8f);
+                if (member)
+                    child.anchoredPosition = new Vector2(child.anchoredPosition.x, child.anchoredPosition.y - delta);
+            }
+        }
+
+        /// <summary>v48: caption offset under the icon and ink depth at the caption's reachable size (as in LayoutTheatreObjectives).</summary>
+        private void MeasureObjectiveCaptions(RectTransform panel, RectTransform headingRect, out float captionOffset, out float captionDepth)
+        {
+            float rise = 0f;
+            captionDepth = 26f;
+            int found = 0;
+            for (int i = headingRect.GetSiblingIndex() + 1; i < panel.childCount && found < SkirmishBattleLibraryArt.ObjectiveIds.Length; i++)
+            {
+                if (!(panel.GetChild(i) is RectTransform child) || child.name != "Subtitle")
+                    continue;
+                found++;
+                captionDepth = Mathf.Max(captionDepth, child.sizeDelta.y);
+                TMP_Text text = child.GetComponent<TMP_Text>();
+                if (!TextInkExtent(text, out float r, out float d))
+                    continue;
+                float now = Mathf.Max(1f, text.fontSize);
+                float reach = Mathf.Max(now, Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor()));
+                if (text.enableAutoSizing)
+                    reach = Mathf.Max(reach, text.fontSizeMax);
+                captionDepth = Mathf.Max(captionDepth, d * reach / now);
+                rise = Mathf.Max(rise, r * reach / now);
+            }
+
+            captionOffset = Mathf.Max(2f, rise + ObjectiveHeadingGap);
         }
 
         /// <summary>

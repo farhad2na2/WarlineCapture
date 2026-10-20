@@ -212,6 +212,7 @@ namespace Game.Editor
                 AssertStep(quickLabel != null && BannerNames(quickLabel.text, quickId), "Quick Battle banner does not name " + quickId + ": '" + (quickLabel != null ? quickLabel.text : "<null>") + "'.");
                 Debug.Log("[QuickBattle] flow locale=" + suffix + " button=" + quick.name + " scenario=" + quickId + " launchRequested=True");
                 Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "08-quickbattle-" + suffix + ".png"), "launch", suffix, shots);
+                SkirmishTheatreGridTapFlow.Run(instance, view, suffix); // v48 (P1 hook): Theatre tile taps, after the last shot
                 return 8;
             }
             finally

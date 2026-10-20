@@ -49,3 +49,8 @@ Generated mockups illustrate layout and hierarchy. Illustrative art, copy, medal
 [Full owner requirements](REVIEW_REQUIREMENTS.md) · [Exact prompt set and native reference paths](prompts.json) · [PNG hashes](manifest.json).
 
 PR70 remains draft and unmerged. Campaign A remains the chapter overview; the new map-based five-mission screen replaces the tiny mission drawer. Skirmish retains A map selection and the scrolling objective-region mission screen. Historical alternatives remain for context. Native implementation now follows the approved direction. [Current native validation](../../AgentReports/ApprovedMissionAtlas/STATUS.md).
+
+
+## Follow-up polish of the original Skirmish mockups
+
+[Revised map and six-mission screens](skirmish-polish-03/README.md) apply the requested clearer mission identities, four difficulty medals, calmer atlas styling, available/completed/coming-soon counts and next-region guidance. This is a design-only follow-up; the native implementation above remains separately reviewable. Progress and proposed mission copy in the refined images are illustrative.

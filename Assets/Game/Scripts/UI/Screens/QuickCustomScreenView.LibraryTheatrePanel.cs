@@ -457,7 +457,7 @@ namespace Game.UI.Runtime
             bool open = card.Access == SkirmishCardAccess.Playable;
                 var thumb = new GameObject("TheatreBattle_" + card.ScenarioId, typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage)).GetComponent<RawImage>();
                 thumb.transform.SetParent(parent, false);
-                thumb.raycastTarget = true; // v47c: the tile is the tap target; its badges stay raycastTarget=false
+                thumb.raycastTarget = false; // v48: set by WireTheatreBattleTile (PlaceCoverPreview resets it); badges stay off
                 Texture2D preview = ResolveGridPreview(card.PreviewSpriteKey, card.ScenarioId, card.MapId, out bool dimmed);
                 PlaceCoverPreview(thumb, thumbW, thumbH, preview, dimmed || !open);
                 PlaceTopLeft(thumb.rectTransform, x, y, thumbW, thumbH);
@@ -508,6 +508,9 @@ namespace Game.UI.Runtime
         {
             if (thumb == null || string.IsNullOrEmpty(card.ScenarioId))
                 return;
+            // v48 (Flow tap proof): PlaceCoverPreview turns raycastTarget off on the cover image after AddTheatreThumb set it,
+            // so the v47c tile could not take a real pointer. The Button owns the tap target, set last.
+            thumb.raycastTarget = true;
             Button button = thumb.gameObject.AddComponent<Button>();
             button.targetGraphic = thumb;
             button.transition = Selectable.Transition.ColorTint;

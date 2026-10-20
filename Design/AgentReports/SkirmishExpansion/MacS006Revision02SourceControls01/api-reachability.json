@@ -1,0 +1,40 @@
+{
+  "scope": "ReadOnlyAPIReachability_NoAssemblyLoad",
+  "observations": [
+    {
+      "path": "/Users/farhad/.codex/worktrees/s006-entry-clearance-proposal/WarlineCapture/Library/ScriptAssemblies/Game.Editor.dll",
+      "exists": false,
+      "bytes": null
+    },
+    {
+      "path": "/Users/farhad/.codex/worktrees/s006-entry-clearance-proposal/WarlineCapture/Library/ScriptAssemblies/Game.dll",
+      "exists": false,
+      "bytes": null
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Managed/UnityEngine/UnityEngine.CoreModule.dll",
+      "exists": false,
+      "bytes": null
+    },
+    {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Managed",
+      "exists": false,
+      "meaning": "Exact observed-version candidate path not found at census; no claim that every Unity installation/reference path is absent"
+    }
+  ],
+  "pureSourceReachability": [
+    "New inactive controls use same Game.Editor.SkirmishGroundSourceFitSurvey partial as actual pinned helper/control source",
+    "New fixtures directly call EntryHeader,EntryArtifactFacts,UseReviewedEntryClearanceRequest,RunProposedEntryPureGuardControls and inspect their real private partial-class scope fields. Original38 invokes clearance/facility/replay guards. No Python behavior port used.",
+    "Private ReviewedEntryOwner requires actual mission/layout/budget/grid/EntityManager/prefabs and report files; cannot construct genuine owner with source-only fixtures"
+  ],
+  "executionPendingReason": [
+    "Existing Skirmish Menu native wrapper owns heavy lane, Fig Editor also active; no isolated compiler started",
+    "Exact observed-version Managed candidate directory was absent at check. Worktree compiled Game.Editor/project assemblies are absent. No complete real-reference closure or compiled proposal is available; no fallback references fabricated.",
+    "Helper and controls remain .cs.txt outside Assets; no compiled assembly consumes them",
+    "No request/originalWindows report/size envelope/native baseline evidence locally supplied for actual owner execution"
+  ],
+  "CSharpCompile": "NOT_RUN",
+  "CSharpRefusals": "NOT_RUN",
+  "native": "NOT_RUN",
+  "sourceFitCertified": false
+}

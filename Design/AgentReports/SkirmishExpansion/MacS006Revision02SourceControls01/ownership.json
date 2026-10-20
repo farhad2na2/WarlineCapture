@@ -1,0 +1,80 @@
+{
+  "utc": "2026-10-20T10:22:31.251622+00:00",
+  "nativeJobOwnedByThisChat": null,
+  "newHeavyJobAssigned": false,
+  "actions": "Read-only census only; no process changes",
+  "records": [
+    {
+      "pid": 45979,
+      "ppid": 23878,
+      "start": "Tue Oct 20 12:17:22 2026",
+      "executable": "rtk",
+      "project": null,
+      "commandRedacted": "rtk proxy Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/skirmish-saga-capture-07.log -- -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunSagaValidation",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 45981,
+      "ppid": 45979,
+      "start": "Tue Oct 20 12:17:22 2026",
+      "executable": "bash",
+      "project": null,
+      "commandRedacted": "bash /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/skirmish-saga-capture-07.log -- -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunSagaValidation",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 45987,
+      "ppid": 45981,
+      "start": "Tue Oct 20 12:17:23 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile /private/tmp/skirmish-saga-capture-07.log -executeMethod Game.Editor.SkirmishBattleLibraryCapture.RunSagaValidation",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 46072,
+      "ppid": 45987,
+      "start": "Tue Oct 20 12:17:54 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile Logs/AssetImportWorkerHW0.log -srvPort 57877 -parentPid 45987 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense [REDACTED] -cbmMachineId [REDACTED] -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 54938,
+      "ppid": 55563,
+      "start": "Mon Oct 19 09:06:18 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectpath /Volumes/T7/Projects/Fig/Fig -acceptSoftwareTermsForThisRunOnly -useHub -hubIPC -cloudEnvironment production -licensingIpc LicenseClient-farhad -hubSessionId [REDACTED] -accessToken [REDACTED]",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 55563,
+      "ppid": 1,
+      "start": "Wed Oct 14 21:02:25 2026",
+      "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "project": null,
+      "commandRedacted": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 87934,
+      "ppid": 54938,
+      "start": "Mon Oct 19 12:26:50 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker0 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker0.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport",
+      "ownership": "Existing process preserved"
+    },
+    {
+      "pid": 87936,
+      "ppid": 54938,
+      "start": "Mon Oct 19 12:26:50 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker1 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker1.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport",
+      "ownership": "Existing process preserved"
+    }
+  ]
+}

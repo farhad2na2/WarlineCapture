@@ -1,0 +1,107 @@
+--- /dev/null
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.Revision02SourceControls.cs
+@@ -0,0 +1,104 @@
++#if UNITY_EDITOR
++using System;
++using Newtonsoft.Json;
++using Newtonsoft.Json.Linq;
++
++namespace Game.Editor
++{
++    public static partial class SkirmishGroundSourceFitSurvey
++    {
++        // INACTIVE .cs.txt. Calls actual pinned private helper methods, not a reimplementation.
++        // Proposed pure fixtures only. No executeMethod/menu/env, native world, allocator or filesystem.
++        internal static JObject RunProposedRevision02SourceControls()
++        {
++            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null&&
++                !reviewedEntryDerivationActive&&!reviewedEntryBaselineCaptureActive,
++                "Pure controls must not disturb an active source/native owner");
++            RunProposedEntryPureGuardControls(); // original38 includes original21; NOT_RUN until compiled
++            int newRefusals=0;
++            void Refuses(Action action)
++            {
++                bool refused=false;
++                try{action();}
++                catch(InvalidOperationException){refused=true;}
++                catch(JsonException){refused=true;}
++                Require(refused,"Revision02 source control unexpectedly admitted invalid pure fixture");
++                newRefusals++;
++            }
++            void Header(Action<JObject> mutate)
++            {
++                var request=EntryControlFixture();mutate(request);Refuses(()=>EntryHeader(request));
++            }
++            Header(r=>r["schemaVersion"]=2);
++            Header(r=>r["kind"]="foreign");
++            Header(r=>r["enabled"]="true");
++            Header(r=>r["reviewCommit"]=new string('0',40));
++            Header(r=>r["catalogId"]="S007");
++            Header(r=>r["definitionId"]="skirmish.s007");
++            Header(r=>r["layoutBinding"]["unknown"]=true);
++            Header(r=>r["layoutBinding"]["comparisonField"]=EntryFinalLayoutField);
++            Header(r=>r["layoutBinding"]["comparisonSha256"]=EntryFinalLayoutHash);
++            Header(r=>r["layoutBinding"]["sha256"]=EntryPreFinalLayoutHash);
++            Header(r=>r["consumedLayoutUtf8Sha256"]=EntryPreFinalLayoutHash);
++            Header(r=>r["preservedSnapshotSha256"]=new string('A',64));
++            Header(r=>r["nativeLaunchAuthorized"]="false");
++            Header(r=>r["sourceFitCertified"]=true);
++            Header(r=>r["missionAccepted"]=true);
++            Header(r=>r["entry"]["padId"]="foreign");
++            Header(r=>r["entry"]["maxGroundFootprint"]=new JArray(1,1));
++            Header(r=>r["sourcePins"]=new JArray());
++            Require(newRefusals==18,"Exact additional header refusal coverage required");
++
++            foreach(string size in new[]{"Standard","War","LargeWar"})
++            {
++                // SYNTHETIC JSON guard fixture; never an original report, source-fit measurement or allocator row.
++                var facts=new JObject{["catalogId"]="S006",["size"]=size,["fixtureOnly"]=true};
++                JObject Envelope()=>new JObject{["catalogId"]="S006",["pass"]=2,["discoveryOnly"]=false,
++                    ["size"]=size,["facts"]=facts.DeepClone(),["preferenceCandidate"]=0,["candidateLocalPass"]=2};
++                var envelope=Envelope();var extracted=EntryArtifactFacts(envelope,size,2,0,facts);
++                Require(JToken.DeepEquals(extracted,facts),"Exact canonical facts extraction required");
++                extracted["fixtureOnly"]=false;
++                Require((bool)facts["fixtureOnly"]&&(bool)envelope["facts"]["fixtureOnly"],
++                    "Facts extraction must return a clone without mutating original evidence");
++                void EnvelopeRefuses(Action<JObject> mutate)
++                {var candidate=Envelope();mutate(candidate);Refuses(()=>EntryArtifactFacts(candidate,size,2,0,facts));}
++                EnvelopeRefuses(e=>e["pass"]=0);
++                EnvelopeRefuses(e=>e["pass"]="2");
++                EnvelopeRefuses(e=>e["candidateLocalPass"]=1);
++                EnvelopeRefuses(e=>e["candidateLocalPass"]="2");
++                EnvelopeRefuses(e=>e["preferenceCandidate"]=1);
++                EnvelopeRefuses(e=>e["preferenceCandidate"]="0");
++                EnvelopeRefuses(e=>e["discoveryOnly"]=true);
++                EnvelopeRefuses(e=>e["discoveryOnly"]="false");
++                EnvelopeRefuses(e=>e["size"]="foreign");
++                EnvelopeRefuses(e=>e["facts"]=new JArray());
++                EnvelopeRefuses(e=>e["facts"]["size"]="foreign");
++                EnvelopeRefuses(e=>e["facts"]["unknown"]=true);
++                EnvelopeRefuses(e=>e["catalogId"]="S007");
++                // Original blocker1: treating the outer artifact as a facts row must refuse.
++                Refuses(()=>EntryArtifactFacts(facts,size,2,0,facts));
++            }
++            Require(newRefusals==60,"18 header plus 42 three-size envelope refusals required");
++            // Pure scope collision controls; restore state even on assertion/fixture failure.
++            try
++            {
++                reviewedEntryDerivationActive=true;
++                Refuses(()=>UseReviewedEntryClearanceRequest(EntryControlFixture().ToString()));
++            }
++            finally{reviewedEntryDerivationActive=false;}
++            try
++            {
++                reviewedEntryBaselineCaptureActive=true;
++                Refuses(()=>UseReviewedEntryClearanceRequest(EntryControlFixture().ToString()));
++            }
++            finally{reviewedEntryBaselineCaptureActive=false;}
++            Require(newRefusals==62,"Exact additional62 refusal controls required");
++            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null&&
++                !reviewedEntryDerivationActive&&!reviewedEntryBaselineCaptureActive,"Pure controls leaked state");
++            return new JObject{["scope"]="PureFixtureGuardControlsOnly_NoNativeAcceptance",
++                ["originalProposedRefusalsInvoked"]=38,["additionalRefusalsObserved"]=newRefusals,
++                ["nativeAllocatorExecuted"]=false,["sourceFitCertified"]=false,["missionAccepted"]=false};
++        }
++    }
++}
++#endif

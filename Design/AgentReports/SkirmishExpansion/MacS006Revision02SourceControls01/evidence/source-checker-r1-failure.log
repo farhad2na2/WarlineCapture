@@ -1,0 +1,22 @@
+test_actual_source_contract_structure (test_source_contracts.SourceContractTests) ... ok
+test_exact_immutable_proposal_payload_hashes (test_source_contracts.SourceContractTests) ... ok
+test_failed_immutable_replay_hull_mutation_is_detected (test_source_contracts.SourceContractTests) ... FAIL
+test_lexical_reader_ignores_comment_and_string_braces (test_source_contracts.SourceContractTests) ... ok
+test_new_csharp_fixtures_call_actual_methods_without_native_host (test_source_contracts.SourceContractTests) ... ok
+test_original_blocker_null_replay_preparation_is_detected (test_source_contracts.SourceContractTests) ... ok
+test_original_blocker_outer_envelope_as_facts_is_detected (test_source_contracts.SourceContractTests) ... ok
+test_original_blocker_pre_final_hash_substitution_is_detected (test_source_contracts.SourceContractTests) ... ok
+test_pending_witnesses_and_disabled_request_stay_pending (test_source_contracts.SourceContractTests) ... ok
+
+======================================================================
+FAIL: test_failed_immutable_replay_hull_mutation_is_detected (test_source_contracts.SourceContractTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/Users/farhad/.codex/worktrees/s006-entry-clearance-proposal/WarlineCapture/Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/test_source_contracts.py", line 123, in test_failed_immutable_replay_hull_mutation_is_detected
+    self.assertIn('immutable.failure_break_before_hulls', self.audit(core=mutant))
+AssertionError: 'immutable.failure_break_before_hulls' not found in []
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.291s
+
+FAILED (failures=1)

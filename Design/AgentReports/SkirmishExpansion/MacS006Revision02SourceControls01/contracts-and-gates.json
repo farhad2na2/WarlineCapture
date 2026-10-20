@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "baseCommit": "b415fc4eaa3f3e233b70c5167b09b4979e45fe5a",
+  "sourceOnly": true,
+  "CSharpExecution": "NOT_RUN",
+  "proposedRefusalCounts": {
+    "inherited": 38,
+    "originalSubsetIncludedIn38": 21,
+    "newHeaders": 18,
+    "newEnvelopePerSize": 14,
+    "sizes": 3,
+    "newScopeCollisions": 2,
+    "newTotal": 62,
+    "combinedTotal": 100
+  },
+  "originalBlockers": {
+    "artifactEnvelope": "Actual helper EntryArtifactFacts validates seven fields; facts must equal selected canonical row. New C# fixtures all3sizes reject wrong types/identity/facts and envelope/row confusion. Python mutant checks owner bypass detection only.",
+    "layoutJoin": "Actual historical2b9 prefinal and2359 final fields remain exact. C#Header fixtures reject field/hash substitution. Python source mutation requires exactactual2359 guard; no raw report or actualderived reproduction exists now.",
+    "immutableReplay": "Python source mutation detects non-null phase callback removal and immutable failure-guard removal. C#fixtures test conflicting pure derivation/baseline scope flags; they do not construct a real ReviewedEntryOwner or simulate native immutability."
+  },
+  "contracts": {
+    "request": "Use immutable actual helper schema; enabled=false template retains null unmeasured fields. Synthetic EntryControlFixture is HEADER-ONLY, not an admitted request or report.",
+    "sizeArtifacts": "Seven outer fields catalogId/pass/discoveryOnly/size/facts/preferenceCandidate/candidateLocalPass; pass2,candidate0,localpass2,S006,all3sizes; syntheticfacts have fixtureOnly=true, never native evidence.",
+    "candidate": "Real owner requires concrete source/rawgrid/full canonical budgets/actual prefabs, actual normallyderived layout and complete facility/packing baseline; original routes failures retained unqualified.",
+    "searchReplay": "Actual snapshot, allsize strict gates and exact actualfacility rectangle/prefab replay; immutable failure never reanchors. Source checks cannot prove runtime behavior.",
+    "acceptance": "Pure source/fixture controls, compiler/reference/consumption, unqualified baseline, reserved native candidate/replay, mission/sourcefit, normal input/paid/queue/APK/device remain separate gates."
+  },
+  "executionWitnesses": {
+    "compiledAssembly": null,
+    "referenceClosure": null,
+    "hostReachability": null,
+    "actualRequest": null,
+    "originalWindowsEnvelopes": null,
+    "actualDerivedLayout": null,
+    "actualBaseline": null,
+    "actualSearch": null,
+    "actualReplay": null,
+    "nativeRun": null,
+    "sourceFitAcceptance": null
+  },
+  "checkerHistory": {
+    "r1": "Nine source tests: eight pass, one FAIL. Checker selected earlier preparation branch and missed removal of later immutable failure guard. Exact old checker and reproduced failure log preserved.",
+    "r2": "Lookup scoped after strict-result branch; nine source tests pass with all four negative mutants. This fixes source-checker sensitivity only, not production C# code."
+  }
+}

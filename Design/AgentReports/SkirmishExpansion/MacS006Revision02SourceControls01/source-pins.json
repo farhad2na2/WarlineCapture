@@ -1,0 +1,95 @@
+{
+  "baseCommit": "b415fc4eaa3f3e233b70c5167b09b4979e45fe5a",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/README.md",
+      "bytes": 3980,
+      "sha256": "fb80f59cad62cc2bcc315c892f732bb7ebf395ee1d4878f3018e494d504cbc59"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/control-cases.json",
+      "bytes": 2229,
+      "sha256": "fdd5edf5e82957df3fe7d9eeaf02a8911a826bb77cff2548048369c5987d27af"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/hooks.inverse.patch",
+      "bytes": 7575,
+      "sha256": "c80e5e8a97c811415354e8eac3605e9becf9189d2a3c3a486e0ceb4031b1d6c6"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/hooks.patch",
+      "bytes": 7575,
+      "sha256": "649aca33fcf47b37addd8493d945563e45e22945621dcf64c72f1473356fb890"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/manifest.json",
+      "bytes": 8350,
+      "sha256": "df1a425f5e3a5ec8f654f5f11ee737965b537d1d09ab21d3c7b23c78b1f35f79"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/ownership.json",
+      "bytes": 1118,
+      "sha256": "9f8c276cb927a8ad934bd3d7d62a4c5f9ef9cf64eec0cabdb021f301f2118f63"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/phase-witness.pending.json",
+      "bytes": 1998,
+      "sha256": "891b0aee3ebd94173ef07f304fac43b6ad63128449a30c5fb2ade160f724fbac"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/projection-verification.log",
+      "bytes": 655,
+      "sha256": "caefce4e5ae72bbf0f84053d0ca763d4d0a6e703a786b3046e30abdb23554265"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposal.inverse.patch",
+      "bytes": 49758,
+      "sha256": "fb47e460e6ec9f01d7fde3374c7d1a6c48cf0471e1ea04daf850decf3265ea21"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposal.patch",
+      "bytes": 49758,
+      "sha256": "0cd344140f34bb63fc03f0fe6ce342fff11c24304b84616dcbb959dcfe400b63"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposed/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs.txt",
+      "bytes": 303885,
+      "sha256": "a817329763d6b4dfbdcac2a16fcfd3bdc43633fbf021909a09707b5b7253ed7b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposed/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "bytes": 49328,
+      "sha256": "242cbb2dade9db6512ca3ce71874147f3f9486be333d22ce45a89b1a22f7c48f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.Controls.cs.txt",
+      "bytes": 7522,
+      "sha256": "9f7101142a38c406e65b58256e47dffc8f7ed2816fda6fe354ad97d7f6f7529e"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.cs.txt",
+      "bytes": 33872,
+      "sha256": "a0d1a24bafa99af191b62d35ae9ee953616bd75fd34015e93137c9b5d90e2663"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/proposed/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "bytes": 44700,
+      "sha256": "f5c7c751434ec09ae383f22cc8e6d0d0da29246fdcabe173f58b1a94d9b5bee0"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/request-template.disabled.json",
+      "bytes": 1509,
+      "sha256": "ea729286970c3581a4240f7f90a9ccf6a661109798292e6b75f2cd0ed5ba70fb"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/source-pins.json",
+      "bytes": 983,
+      "sha256": "7f860573f1c1354ff454cc2f61f78f9f98d91d2e8819ca3b81e8f4aaaa36b834"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02/verify_projection.py",
+      "bytes": 8083,
+      "sha256": "3dd6e0a81f59ffaab02ceb403e1767f8942d0343c1f5e042e61cb6dd19389efa"
+    }
+  ]
+}

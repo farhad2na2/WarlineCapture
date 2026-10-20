@@ -1,0 +1,3 @@
+PASS exact new inactive C# fixture contextual forward/inverse roundtrip
+CSharpCompile=NOT_RUN; original38+new62=100 C# proposed refusals NOT_RUN
+Python source-contract tests=9 PASS/zero skips; not C# or native execution

@@ -1,0 +1,148 @@
+"""Lexical source regressions only; never executes or interprets C# guard behavior."""
+from pathlib import Path
+import hashlib
+import json
+import re
+import unittest
+
+HERE = Path(__file__).resolve().parent
+ROOT = next(p for p in HERE.parents if (p / 'Assets').is_dir())
+PROPOSAL = ROOT / 'Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal02'
+NAME = 'SkirmishGroundSourceFitSurvey.'
+TOKEN = re.compile(r'//[^\n]*|/\*[\s\S]*?\*/|@"(?:""|[^"])*"|"(?:\\.|[^"\\])*"|[A-Za-z_][\w]*|\d+|==|!=|&&|\|\||\?\.|=>|[^\s]')
+
+def tokens(text):
+    return [m.group() for m in TOKEN.finditer(text) if not m.group().startswith(('//', '/*'))]
+
+def flat(text):
+    return ' '.join(tokens(text))
+
+def has(text, snippet):
+    return flat(snippet) in flat(text)
+
+def method(text, name):
+    pattern = r'\b(?:static|internal|public|private)(?:\s+(?:static|internal|public|private))*\s+[\w<>]+\s+' + re.escape(name) + r'\s*\('
+    match = re.search(pattern, text)
+    if not match:
+        raise AssertionError('method declaration missing: ' + name)
+    body = tokens(text[match.start():])
+    start = body.index('{')
+    depth = 0
+    for end in range(start, len(body)):
+        depth += body[end] == '{'
+        depth -= body[end] == '}'
+        if depth == 0:
+            return ' '.join(body[start:end + 1])
+    raise AssertionError('unbalanced method: ' + name)
+
+def load(part):
+    return (PROPOSAL / 'proposed' / (NAME + part + '.cs.txt')).read_text()
+
+def contract_errors(helper, core, prefs, pilot):
+    """Recognizes required pinned guard structure, not general C# semantics."""
+    errors = []
+    def require(condition, key):
+        if not condition:
+            errors.append(key)
+    facts = method(helper, 'EntryArtifactFacts')
+    require(has(facts, 'EntryFields(envelope,"catalogId","pass","discoveryOnly","size","facts","preferenceCandidate","candidateLocalPass")'), 'envelope.exact_outer_fields')
+    for key in ['pass', 'candidateLocalPass', 'preferenceCandidate']:
+        require(has(facts, 'envelope["' + key + '"]?.Type==JTokenType.Integer'), 'envelope.typed_' + key)
+    require(has(facts, 'var facts=envelope["facts"] as JObject') and has(facts, 'JToken.DeepEquals(facts,selected)') and has(facts, 'return (JObject)facts.DeepClone()'), 'envelope.canonical_facts_join')
+    require(has(helper, 'var row=EntryArtifactFacts(envelope,names[i],2,0,selected)'), 'envelope.owner_consumes_facts')
+    require('2359d6fa5a718d5a703f02f1a43944e04453115f2fb3b42ade3180a504f66a84' in helper and '2b9e58acb72971a47543c888c5cde5118d38c4e6a20d0f26325b28b2b0baabd8' in helper, 'layout.distinct_raw_pins')
+    require(has(helper, 'EntrySha(finalJson)==EntryFinalLayoutHash&&EntrySha(comparisonJson)==EntryPreFinalLayoutHash&&layoutJson==finalJson'), 'layout.exact_original_field_join')
+    host = method(helper, 'RefineReviewedEntryTwoPhase')
+    require(has(host, 'EntrySha(actual)==EntryFinalLayoutHash'), 'layout.actual_derived_exact_final')
+    require(has(prefs, 'Require(reviewedEntryClearanceRequest==null,'), 'layout.early_preference_refuses')
+    require('JsonUtility.FromJsonOverwrite' not in helper, 'layout.no_manual_install')
+    require(has(host, 'strictCandidatePreparation:guard.PrepareImmutable'), 'immutable.nonnull_phase_callback')
+    require(has(host, 'activePhase="search";search=Phase();guard.CompletePhase(search);guard.EnterReplay();') and has(host, 'activePhase="replay";replay=Phase();guard.CompletePhase(replay);'), 'immutable.both_phases_complete')
+    core_body = method(core, 'RefineLoadedCandidateCore')
+    require(has(core_body, 'reviewedEntryOwner==null||strictCandidatePreparation!=null'), 'immutable.core_requires_callback')
+    require(has(core_body, '!reviewedEntryBaselineCaptureActive||strictCandidatePreparation!=null'), 'immutable.baseline_requires_callback')
+    callback_break = core_body.find(flat('if(strictCandidatePreparation!=null)'), core_body.find(flat('if(!discovery&&complete)')))
+    hull_call = core_body.find(flat('if(!TryApplyRefinementHulls('))
+    require(0 <= callback_break < hull_call and 'break' in core_body[callback_break:hull_call], 'immutable.failure_break_before_hulls')
+    require(has(method(helper, 'BeforeProbe'), 'Require(immutablePrepared,'), 'immutable.actual_probe_requires_prepare')
+    stable = method(helper, 'Stable')
+    require(has(stable, 'ReferenceEquals(current,layout)') and has(stable, 'JsonUtility.ToJson(layout)==layoutJson') and has(stable, 'EntrySnapshot(layout,mission,budgets)==snapshot'), 'immutable.full_snapshot')
+    require(has(method(helper, 'CompletePhase'), 'completedSizes.SetEquals(new[]{"Standard","War","LargeWar"})') and has(method(helper, 'CompletePhase'), 'result["entryClearanceStrictAllSizesObserved"]'), 'immutable.all_three_sizes')
+    after = method(helper, 'AfterProbe')
+    require(has(after, 'EntryCompareFacilities(facilities[size],row)') and has(after, 'EntrySameFacilityReplay(searchedFacilities[size],actual)'), 'replay.facility_correspondence')
+    require(has(helper, 'facilities.Add(names[i],(JArray)derivedRow["normalFacilityRelocationProposals"].DeepClone())'), 'baseline.actual_derived_roster')
+    require(has(host, 'derived["entryBaselineUnqualified"]=true') and has(host, 'derived["entryBaselineExistingGatesPassed"]=(bool?)derived["entryBaselineExistingGatesPassed"]==true'), 'baseline.failed_outcomes_retained')
+    require(has(core_body, 'if((requireExactJointRoutes||apPairServiceRequested||completeGroundBaServiceRequested)&&!JointRoutesExact(') and has(core_body, 'if(!independent)complete=false') and has(core_body, 'if(!coverage||(bool?)service["allMembersHaveExactServiceIngressAndReturn"]!=true)complete=false'), 'acceptance.full_existing_gates')
+    scoped = core_body.find(flat('if(reviewedEntryOwner!=null)'), core_body.find(flat('if(!discovery&&complete)')))
+    finalize = core_body.find(flat('try{FinalizeRefinementAuthoring('))
+    require(0 <= scoped < finalize and 'break' in core_body[scoped:finalize], 'acceptance.no_scoped_finalization')
+    wrapper = method(helper, 'ProbePilotNormalFacilityRelocation')
+    require(wrapper.find('BeforeProbe') < wrapper.find('ProbePilotNormalFacilityRelocationCore') < wrapper.find('AfterProbe'), 'allocator.normal_call_order')
+    require('static void ProbePilotNormalFacilityRelocationCore' in pilot, 'allocator.normal_owner_retained')
+    return errors
+
+class SourceContractTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.helper = load('ReviewedEntryClearance')
+        cls.core = load('SimultaneousRefinement')
+        cls.prefs = load('FacilityPreferences')
+        cls.pilot = load('PilotFacilityRelocation')
+    def audit(self, helper=None, core=None):
+        return contract_errors(helper or self.helper, core or self.core, self.prefs, self.pilot)
+    def test_exact_immutable_proposal_payload_hashes(self):
+        pins = json.loads((HERE / 'source-pins.json').read_text())
+        self.assertEqual(pins['baseCommit'], 'b415fc4eaa3f3e233b70c5167b09b4979e45fe5a')
+        self.assertEqual(len(pins['files']), 18)
+        for pin in pins['files']:
+            with self.subTest(path=pin['path']):
+                data = (ROOT / pin['path']).read_bytes()
+                self.assertEqual(len(data), pin['bytes'])
+                self.assertEqual(hashlib.sha256(data).hexdigest(), pin['sha256'])
+    def test_actual_source_contract_structure(self):
+        self.assertEqual(self.audit(), [])
+    def test_original_blocker_outer_envelope_as_facts_is_detected(self):
+        old = 'var row=EntryArtifactFacts(envelope,names[i],2,0,selected);'
+        self.assertEqual(self.helper.count(old), 1)
+        mutant = self.helper.replace(old, 'var row=envelope;', 1)
+        self.assertIn('envelope.owner_consumes_facts', self.audit(helper=mutant))
+    def test_original_blocker_pre_final_hash_substitution_is_detected(self):
+        old = 'EntrySha(actual)==EntryFinalLayoutHash'
+        self.assertEqual(self.helper.count(old), 1)
+        mutant = self.helper.replace(old, 'EntrySha(actual)==EntryPreFinalLayoutHash', 1)
+        self.assertIn('layout.actual_derived_exact_final', self.audit(helper=mutant))
+    def test_original_blocker_null_replay_preparation_is_detected(self):
+        old = 'strictCandidatePreparation:guard.PrepareImmutable'
+        self.assertEqual(self.helper.count(old), 1)
+        mutant = self.helper.replace(old, 'strictCandidatePreparation:null', 1)
+        self.assertIn('immutable.nonnull_phase_callback', self.audit(helper=mutant))
+    def test_failed_immutable_replay_hull_mutation_is_detected(self):
+        old = 'if(strictCandidatePreparation!=null)\n                    {'
+        self.assertEqual(self.core.count(old), 1)
+        mutant = self.core.replace(old, 'if(false)\n                    {', 1)
+        self.assertIn('immutable.failure_break_before_hulls', self.audit(core=mutant))
+    def test_new_csharp_fixtures_call_actual_methods_without_native_host(self):
+        text = (HERE / 'proposed' / (NAME + 'Revision02SourceControls.cs.txt')).read_text()
+        self.assertIn('RunProposedEntryPureGuardControls();', text)
+        self.assertEqual(len(re.findall(r'^\s+Header\(r=>', text, re.M)), 18)
+        self.assertEqual(len(re.findall(r'^\s+EnvelopeRefuses\(e=>', text, re.M)), 13)
+        self.assertIn('newRefusals==62', text)
+        for prohibited in ['executeMethod', 'MenuItem', 'Environment.GetEnvironmentVariable', 'new World(', 'new ReviewedEntryOwner(', 'RefineReviewedEntryTwoPhase(']:
+            # Strip comments before checking unavailable native/activation calls.
+            active = re.sub(r'//[^\n]*', '', text)
+            self.assertNotIn(prohibited, active)
+        self.assertIn('checkedRefusals==38', load('ReviewedEntryClearance.Controls'))
+    def test_pending_witnesses_and_disabled_request_stay_pending(self):
+        witness = json.loads((PROPOSAL / 'phase-witness.pending.json').read_text())
+        for name in ['actualDerivedLayoutJson', 'actualDerivedStrictSizes', 'actualSearch', 'actualReplay', 'compiler', 'nativeRun']:
+            self.assertIsNone(witness[name])
+        request = json.loads((PROPOSAL / 'request-template.disabled.json').read_text())
+        self.assertIs(request['enabled'], False)
+        self.assertIsNone(request['preservedSnapshotSha256'])
+    def test_lexical_reader_ignores_comment_and_string_braces(self):
+        text = 'static void Probe(){ // }\n string s="} {"; /* { */ if(true){Call();}}'
+        self.assertIn('Call', method(text, 'Probe'))
+        self.assertNotIn('//', flat(text))
+
+if __name__ == '__main__':
+    unittest.main(verbosity=2)

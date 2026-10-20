@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "task": "MacS006Revision02SourceControls01",
+  "createdUtc": "2026-10-20T10:27:50.163466+00:00",
+  "branch": "codex/s006-revision02-source-controls-20261020",
+  "parent": "b415fc4eaa3f3e233b70c5167b09b4979e45fe5a",
+  "state": "InactiveSourceAndControlsOnly_CSharpPending",
+  "compilerExecuted": false,
+  "nativeExecuted": false,
+  "productionSourceEdited": false,
+  "host03Included": false,
+  "sourceFitCertified": false,
+  "missionAccepted": false,
+  "verification": {
+    "PythonLexicalSourceTests": {
+      "passed": 9,
+      "skipped": 0,
+      "scope": "Source structure/raw hashes plus four mutation detector checks; not C# execution"
+    },
+    "CSharpFixtureRefusals": {
+      "existing": 38,
+      "original21Included": true,
+      "additional": 62,
+      "totalProposed": 100,
+      "executed": false
+    },
+    "exactForwardInversePatch": "PASS in-memory text-only",
+    "initialCheckerFailure": "Preserved r1 source and reproduced full failed log; r2 lookup fixed, no production helper change",
+    "realCompiledAPIReachability": "Pending absent project assemblies/complete real refs and occupied heavy lane"
+  },
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/README.md",
+      "bytes": 3113,
+      "sha256": "aa0efa67d9eb8c649ace9fa17fe7cdf5f864125357012dd87d2c87a631cf8cdc"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/api-reachability.json",
+      "bytes": 2233,
+      "sha256": "2a55755f86932e3d237adb2dab2cee5f04629f26aba2b2675f28ba3284f3eff4"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/contracts-and-gates.json",
+      "bytes": 3009,
+      "sha256": "52dd17fcf54642c9858695ce86b084761e7701c5e4dd4cd95e79716c8dc12955"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/controls.inverse.patch",
+      "bytes": 6249,
+      "sha256": "2255805a8d32eecc735640f1dd92cb1cf91557b56fa625df9d26156c4dbb9183"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/controls.patch",
+      "bytes": 6249,
+      "sha256": "58a2fc66564cda6d9a5367ec3f3784b7c5fa787813406b72c312ede55f75a793"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/evidence/source-checker-r1-failure.log",
+      "bytes": 1756,
+      "sha256": "328851e099d9005bd5c66be05a5e2ee3f43e48514a46e3cd0f2527e5aea55384"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/evidence/source-checker-r1.py.txt",
+      "bytes": 10535,
+      "sha256": "b1e4291500060df2d788026f27aab06dd1076a1558259d7e50cb750c6c759010"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/ownership.json",
+      "bytes": 5026,
+      "sha256": "6d3f8c3be96ba051943746f32166a545797d0be799a75e742733087bf793e76e"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/patch-verification.log",
+      "bytes": 220,
+      "sha256": "ee891edf0a46582a847ce90b08adf63ef41e20980089dec9426a1a544604ad99"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/proposed/SkirmishGroundSourceFitSurvey.Revision02SourceControls.cs.txt",
+      "bytes": 6013,
+      "sha256": "d15f98462e3193ce156482303982055e82648edac77b34c0fb9c6d1a2e86e28f"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/source-contract-tests.log",
+      "bytes": 1049,
+      "sha256": "d65fb4f7ee6114dda2decc083af137352be36d66ef1241c65e040caa0dda26d4"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/source-pins.json",
+      "bytes": 4469,
+      "sha256": "db13c2f7edddae6922d373f13aa8ffeb16c242233cd7c35e7fdcd7fbda647cec"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS006Revision02SourceControls01/test_source_contracts.py",
+      "bytes": 10585,
+      "sha256": "f638b0488fc4f6011ac49b63000a952de5018d54d66540b006d2802b637edb7c"
+    }
+  ]
+}

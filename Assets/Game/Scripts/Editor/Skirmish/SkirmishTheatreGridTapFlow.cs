@@ -18,6 +18,7 @@ namespace Game.Editor
     /// Hosted by one hook call in SkirmishBattleLibraryFlowCapture.RunLocale.
     /// v49: before the taps, measures the objective block on the live panel (icon rect bottom -> caption glyph ink top
     /// for each objective) and fails fa if any gap differs from en's (same run, en first) by more than 2 px.
+    /// v49b: after the taps, the same assert at 4:3 and 20:9 (canvas resized as the capture sizes it, then restored).
     /// </summary>
     public static class SkirmishTheatreGridTapFlow
     {
@@ -51,7 +52,7 @@ namespace Game.Editor
 
                 // 0. Objective captions: icon -> caption ink gap matches en.
                 Reopen(view, district);
-                CheckCaptionGaps(instance, district, locale);
+                CheckCaptionGaps(instance, district, locale, "16:9");
 
                 // 1. Real tile.
                 Reopen(view, district);
@@ -94,6 +95,8 @@ namespace Game.Editor
                 Check(view.Library.Battlefield.Layout == SkirmishBattlefieldLayout.Grid, "+N did not open the Grid layout (layout=" + view.Library.Battlefield.Layout + ")", locale);
                 Check(Same(view.Library.Battlefield.MapId, district), "+N opened district " + view.Library.Battlefield.MapId + ", expected " + district, locale);
                 Debug.Log("[TheatreGridTapFlow] tap=more district=" + district + " layout=" + view.Library.Battlefield.Layout + " ok=1 locale=" + locale);
+                // 4. v49b: the caption gap at the capture's other aspects (4:3, 20:9), on this same instance.
+                CheckCaptionGapsAtAspects(instance, view, district, locale);
                 Debug.Log("[TheatreGridTapFlow] result=Passed district=" + district + " real=" + realId + " locked=" + lockedId + " locale=" + locale);
             }
             finally
@@ -150,7 +153,7 @@ namespace Game.Editor
         /// BA/FC/BT/CE (captions are the Subtitle labels after ObjectiveHeading, in that order). en records its gaps;
         /// fa fails if en was not measured, an icon is not 28 px, or |gap - enGap| > 2 px.
         /// </summary>
-        private static void CheckCaptionGaps(GameObject instance, string district, string locale)
+        private static void CheckCaptionGaps(GameObject instance, string district, string locale, string ratio)
         {
             RectTransform panel = null;
             foreach (Transform t in instance.GetComponentsInChildren<Transform>(false))
@@ -162,9 +165,20 @@ namespace Game.Editor
                 }
             }
 
-            Check(panel != null, "no " + PanelName + " for the caption gap check", locale);
-            Transform heading = panel.Find("ObjectiveHeading");
-            Check(heading != null, "no ObjectiveHeading for the caption gap check", locale);
+            Transform heading = panel != null ? panel.Find("ObjectiveHeading") : null;
+            bool en = locale != "fa-IR";
+            if (heading == null || !heading.gameObject.activeInHierarchy)
+            {
+                // No side panel at this aspect (e.g. the seat keeps the detail reserve off): nothing to compare, unless
+                // en showed one here and fa does not.
+                bool enHad = false;
+                foreach (string key in EnCaptionGaps.Keys)
+                    enHad |= key.StartsWith(ratio + "/", StringComparison.Ordinal);
+                Check(en || !enHad, "no objective block at " + ratio + " in fa although en showed one", locale);
+                Debug.Log("[TheatreGridTapFlow] captionGap skipped ratio=" + ratio + " reason=no-objective-block district=" + district + " locale=" + locale);
+                return;
+            }
+
             var captions = new List<TMP_Text>();
             for (int i = heading.GetSiblingIndex() + 1; i < panel.childCount && captions.Count < ObjectiveIds.Length; i++)
             {
@@ -174,9 +188,6 @@ namespace Game.Editor
             }
 
             Check(captions.Count == ObjectiveIds.Length, "found " + captions.Count + " objective captions, expected " + ObjectiveIds.Length, locale);
-            bool en = locale != "fa-IR";
-            if (en)
-                EnCaptionGaps.Clear();
             var bad = new List<string>();
             for (int i = 0; i < ObjectiveIds.Length; i++)
             {
@@ -187,19 +198,77 @@ namespace Game.Editor
                 Check(InkTop(panel, captions[i], out float inkTop), "caption under ObjectiveType_" + id + " has no visible ink", locale);
                 float gap = inkTop - RectBottom(panel, icon);
                 float enGap = gap;
+                string key = ratio + "/" + id;
                 if (en)
-                    EnCaptionGaps[id] = gap;
+                    EnCaptionGaps[key] = gap;
                 else
-                    Check(EnCaptionGaps.TryGetValue(id, out enGap), "no en caption gap recorded for " + id + " (en must run first)", locale);
+                    Check(EnCaptionGaps.TryGetValue(key, out enGap), "no en caption gap recorded for " + id + " at " + ratio + " (en must run first)", locale);
                 float delta = gap - enGap;
                 bool ok = Mathf.Abs(delta) <= CaptionGapTolerance;
                 Debug.Log("[TheatreGridTapFlow] captionGap obj=" + id + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0") +
-                    " delta=" + delta.ToString("0.0") + " font=" + captions[i].fontSize.ToString("0.0") + " district=" + district + " ok=" + (ok ? 1 : 0) + " locale=" + locale);
+                    " delta=" + delta.ToString("0.0") + " font=" + captions[i].fontSize.ToString("0.0") + " district=" + district + " ok=" + (ok ? 1 : 0) + " locale=" + locale + " ratio=" + ratio);
                 if (!ok)
-                    bad.Add(id + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0"));
+                    bad.Add(id + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0") + " ratio=" + ratio);
             }
 
             Check(bad.Count == 0, "caption gap differs from en by more than " + CaptionGapTolerance.ToString("0") + " px: " + string.Join(", ", bad), locale);
+        }
+
+        /// <summary>
+        /// v49b (Game PM): the capture logs [TheatreCaptionGap] at 4:3 and 20:9 but its checks are P2's, so this step
+        /// re-lays the same flow instance out at the capture's 4:3 (1440x1080) and 20:9 (2400x1080) canvas sizes and
+        /// runs the same en-vs-fa gap assert there, then restores 16:9. Seat dumps are paused meanwhile so no extra
+        /// seat-*.json lands in the flow folder.
+        /// </summary>
+        private static void CheckCaptionGapsAtAspects(GameObject instance, QuickCustomScreenView view, string district, string locale)
+        {
+            var canvas = instance.transform.parent as RectTransform;
+            Check(canvas != null, "flow instance has no canvas to resize for the caption gap check", locale);
+            Vector2 size = canvas.sizeDelta;
+            string dumps = TheatreSeatGeometry.DumpDirectory;
+            TheatreSeatGeometry.DumpDirectory = null;
+            try
+            {
+                for (int i = 0; i < Aspects.Length; i++)
+                {
+                    Resize(instance, canvas, Aspects[i].Ratio, Aspects[i].Width, Aspects[i].Height, locale);
+                    Reopen(view, district);
+                    CheckCaptionGaps(instance, district, locale, Aspects[i].Ratio);
+                }
+            }
+            finally
+            {
+                Resize(instance, canvas, "16:9", size.x, size.y, locale);
+                Reopen(view, district);
+                TheatreSeatGeometry.DumpDirectory = dumps;
+            }
+        }
+
+        private struct Aspect
+        {
+            public readonly string Ratio;
+            public readonly float Width;
+            public readonly float Height;
+
+            public Aspect(string ratio, float width, float height)
+            {
+                Ratio = ratio;
+                Width = width;
+                Height = height;
+            }
+        }
+
+        /// <summary>The capture's other canvas sizes (SkirmishBattleLibraryCapture.Sizes), notch off.</summary>
+        private static readonly Aspect[] Aspects = { new Aspect("4:3", 1440f, 1080f), new Aspect("20:9", 2400f, 1080f) };
+
+        private static void Resize(GameObject instance, RectTransform canvas, string ratio, float width, float height, string locale)
+        {
+            canvas.sizeDelta = new Vector2(width, height);
+            TheatreSeatGeometry.SetShot(ratio, "none", locale == "fa-IR" ? "fa" : "en", true, width, height, 0f, 0f, 0f, 0f);
+            instance.GetComponentInChildren<SkirmishLibrarySafeFrame>(true)?.ClearSimulatedInsets();
+            Canvas.ForceUpdateCanvases();
+            instance.GetComponentInChildren<MainMenuV3SectionLayoutView>(true)?.RefreshLayout();
+            Canvas.ForceUpdateCanvases();
         }
 
         /// <summary>Distance from the panel's top edge down to the rect's bottom edge.</summary>

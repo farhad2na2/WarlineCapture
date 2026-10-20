@@ -1204,6 +1204,19 @@ namespace Game.Editor
 
             RectTransform cue = null;
             Transform cueNode = FindNamed(regions, "ZoomCue");
+            bool cueVisible = cueNode != null && cueNode.gameObject.activeInHierarchy
+                && cueNode is RectTransform cueRect
+                && (cueRect.rect.width >= 8f || cueRect.sizeDelta.x >= 8f)
+                && (cueRect.rect.height >= 8f || cueRect.sizeDelta.y >= 8f);
+            if (!cueVisible)
+            {
+                GuardTheatre(() =>
+                {
+                    throw new InvalidOperationException(
+                        "Theatre zoom pill is missing locale=" + locale + ".");
+                });
+            }
+
             if (cueNode != null && cueNode.gameObject.activeInHierarchy)
             {
                 GuardTheatre(() =>

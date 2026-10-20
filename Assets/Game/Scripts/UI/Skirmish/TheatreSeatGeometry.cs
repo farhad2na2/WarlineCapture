@@ -2017,6 +2017,58 @@ namespace Game.UI.Runtime
             var lines = new string[count];
             string ratio = string.IsNullOrEmpty(ShotRatio) ? "unset" : ShotRatio;
             string locale = string.IsNullOrEmpty(ShotLocale) ? "en" : ShotLocale;
+            bool mirrorPlate = Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f;
+            if (violations != null && !mirrorPlate)
+            {
+                if (cue.W < 8f || cue.H < 8f)
+                {
+                    violations.Add("Theatre zoom pill is missing locale=" + locale + ".");
+                }
+                else
+                {
+                    int selected = IndexOf(selectedMapId);
+                    Vec2[] coast = hexes != null && selected >= 0 && selected < hexes.Length ? hexes[selected] : null;
+                    Box card = cards != null && selected >= 0 && selected < cards.Length ? cards[selected] : default;
+                    Box pin = pins != null && selected >= 0 && selected < pins.Length ? pins[selected] : default;
+                    Vec2[][] probe = hexes;
+                    if (coast != null && coast.Length >= 3)
+                    {
+                        var others = new Vec2[count][];
+                        for (int j = 0; j < count && hexes != null && j < hexes.Length; j++)
+                        {
+                            if (j != selected)
+                                others[j] = hexes[j];
+                        }
+
+                        Vec2[] painted = FinishTerritory(
+                            CopyShape(coast), card, pin, MapIds[selected], others, cue, plateWidth, plateHeight, detail, hint);
+                        if (painted != null && painted.Length >= 3)
+                        {
+                            coast = painted;
+                            probe = (Vec2[][])hexes.Clone();
+                            probe[selected] = painted;
+                        }
+                    }
+
+                    bool insideCard = card.W > 1f
+                        && cue.X >= card.X - 1.5f && cue.Y >= card.Y - 1.5f
+                        && cue.XMax <= card.XMax + 1.5f && cue.YMax <= card.YMax + 1.5f;
+                    if (!insideCard && coast != null && (PolygonHitsRect(coast, cue) || !CueCaptureClear(cue, card, probe, selected, plateWidth, plateHeight)))
+                    {
+                        violations.Add(
+                            "Theatre zoom pill overlaps a district locale=" + locale
+                            + " map=" + (string.IsNullOrEmpty(selectedMapId) ? "DB" : selectedMapId) + ".");
+                    }
+                    else if (coast != null && BoxPolygonGap(cue, coast) > 72f)
+                    {
+                        violations.Add(
+                            "Theatre zoom pill is detached from " + (string.IsNullOrEmpty(selectedMapId) ? "DB" : selectedMapId)
+                            + " locale=" + locale
+                            + " gap=" + BoxPolygonGap(cue, coast).ToString("0.0", CultureInfo.InvariantCulture) + ".");
+                    }
+                }
+            }
+
             for (int i = 0; i < count; i++)
             {
                 var others = new Vec2[count][];
@@ -2057,7 +2109,7 @@ namespace Game.UI.Runtime
                         + " floor=" + EdgeIrregularityFloor.ToString("0.00", CultureInfo.InvariantCulture) + ".");
                 }
 
-                if (card.W >= 1f && Math.Abs(dy) > CardCentreTolerance + 0.05f)
+                if (card.W >= 1f && (Math.Abs(dx) > CardCentreTolerance + 0.05f || Math.Abs(dy) > CardCentreTolerance + 0.05f))
                 {
                     violations.Add(
                         "Theatre card misses the region centre map=" + MapIds[i]
@@ -3472,6 +3524,12 @@ namespace Game.UI.Runtime
                 cx = (minX + maxX) * 0.5f;
                 cy = (minY + maxY) * 0.5f;
             }
+            if (!PointInPolygon(new Vec2(cx, cy), shape))
+            {
+                BoundsOf(shape, out float minX, out float minY, out float maxX, out float maxY);
+                cx = (minX + maxX) * 0.5f;
+                cy = (minY + maxY) * 0.5f;
+            }
 
             return true;
         }
@@ -4825,19 +4883,20 @@ namespace Game.UI.Runtime
                         var trial = new Box(originX + shift[xStep], originY + shift[yStep], nextW, height);
                         if (!SeatHolds(trial, hexes[ap], hexes))
                             continue;
+                        Box[] snap = (Box[])cards.Clone();
+                        Box cueSnap = cue;
                         cards[ap] = trial;
                         Box tab = cue;
-                        if (selected == ap
-                            && (!TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out tab)
-                                || (mirror && !SameCue(savedCue, tab))))
+                        bool attached = selected != ap
+                            || (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out tab)
+                                && !(mirror && !SameCue(savedCue, tab)));
+                        if (!attached
+                            || !DistrictsStayLegal(hexes, pins, cards, tab, detail, plateWidth, plateHeight, selected)
+                            || (selected == ap && !SelectedCardOnCentre(hexes, pins, cards, tab, detail, plateWidth, plateHeight, selected)))
                         {
-                            cards[ap] = new Box(originX, originY, width, height);
-                            continue;
-                        }
-
-                        if (!DistrictsStayLegal(hexes, pins, cards, tab, detail, plateWidth, plateHeight, selected))
-                        {
-                            cards[ap] = new Box(originX, originY, width, height);
+                            for (int i = 0; i < cards.Length; i++)
+                                cards[i] = snap[i];
+                            cue = cueSnap;
                             continue;
                         }
 
@@ -5310,7 +5369,8 @@ namespace Game.UI.Runtime
             Box attached;
             if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out attached)
                 && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected)
-                && SameCue(heldCue, attached))
+                && SameCue(heldCue, attached)
+                && AllCardsOnCentre(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
             {
                 cue = attached;
                 return;
@@ -5332,16 +5392,102 @@ namespace Game.UI.Runtime
                 cards[selected] = walkedCard;
             cue = walkedCue;
             if (TryAttachCueToCard(plateWidth, plateHeight, pins, cards, hexes, detail, selected, out attached)
-                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
+                && DistrictsStayLegal(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected)
+                && AllCardsOnCentre(hexes, pins, cards, attached, detail, plateWidth, plateHeight, selected))
             {
                 cue = attached;
                 return;
+            }
+
+            // The walk is the only thing that opens a halo on a short plate. Keep those
+            // hexes and slide the cards back onto the coasts. Plates that were already
+            // legal revert, so a centre fix is not thrown away.
+            bool walkedGaps = DrawnGlowGapsHold(hexes);
+            bool heldGaps = DrawnGlowGapsHold(heldHex);
+            if (walkedGaps && !heldGaps)
+            {
+                SnapCardsToVisualCentre(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight);
+                SeatCueOffHexes(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, ShotLocale != null && ShotLocale.StartsWith("fa", StringComparison.OrdinalIgnoreCase));
+                if (DrawnGlowGapsHold(hexes) && SpreadCardsHold(hexes, cards, plateWidth, plateHeight))
+                    return;
             }
 
             CopyDistricts(heldHex, hexes);
             for (int i = 0; i < cards.Length; i++)
                 cards[i] = heldCards[i];
             cue = heldCue;
+        }
+
+        private static bool SpreadCardsHold(Vec2[][] hexes, Box[] cards, float plateWidth, float plateHeight)
+        {
+            if (hexes == null || cards == null)
+                return false;
+            for (int i = 0; i < cards.Length && i < hexes.Length; i++)
+            {
+                if (cards[i].W < 1f || hexes[i] == null)
+                    return false;
+                if (!SeatHolds(cards[i], hexes[i], hexes) || !OnPlate(cards[i], plateWidth, plateHeight))
+                    return false;
+            }
+
+            return AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight);
+        }
+
+        /// <summary>
+        /// A gap walk may slide the selected card off its coast. That walk is dropped
+        /// so the card stays inside the 20px centre tolerance.
+        /// </summary>
+        private static bool AllCardsOnCentre(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (cards == null)
+                return true;
+            for (int i = 0; i < cards.Length; i++)
+            {
+                Box pill = i == selected ? cue : default;
+                if (!SelectedCardOnCentre(hexes, pins, cards, pill, detail, plateWidth, plateHeight, i))
+                    return false;
+            }
+
+            return true;
+        }
+
+        private static bool SelectedCardOnCentre(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            int selected)
+        {
+            if (hexes == null || cards == null || selected < 0 || selected >= cards.Length || cards[selected].W < 1f)
+                return true;
+            if (hexes[selected] == null)
+                return true;
+            var others = new Vec2[hexes.Length][];
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i != selected)
+                    others[i] = hexes[i];
+            }
+
+            Box pin = pins != null && selected < pins.Length ? pins[selected] : default;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            Vec2[] coast = FinishTerritory(
+                hexes[selected], cards[selected], pin, MapIds[selected], others, cue, plateWidth, plateHeight, detail, hint);
+            if (coast == null || !CoastVisualCentre(coast, out float centreX, out float centreY))
+                return true;
+            return Math.Abs(cards[selected].Center.X - centreX) <= CardCentreTolerance
+                && Math.Abs(cards[selected].Center.Y - centreY) <= CardCentreTolerance;
         }
 
         private static string OpenBlock;
@@ -5633,16 +5779,16 @@ namespace Game.UI.Runtime
         {
             if (hex == null || hex.Length < 3)
                 return hex;
-            if (string.Equals(mapId, "DB", StringComparison.Ordinal) && DesertHexDraws(
-                hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint))
-                return CopyShape(hex);
-            if (CompactRegionHolds(hex, card, plateWidth, plateHeight, detail, hint))
-                return hex;
             bool panelLeft = detail.W > 1f && DetailOccupiesLeft(plateWidth, detail.X, detail.W);
             Box view = detail.W > 1f
                 ? OpenViewport(plateWidth, plateHeight, panelLeft, true)
                 : new Box(0f, 0f, plateWidth, plateHeight);
             float expected = HexAspect(mapId, view.W, view.H);
+            if (CompactRegionHolds(hex, card, plateWidth, plateHeight, detail, hint))
+            {
+                Vec2[] compact = SeatThenClear(hex, hex, card, others, cue, plateWidth, plateHeight, detail, hint, expected);
+                return KeepDrawnFrame(compact, hex, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            }
             Vec2[] shape = TerritoryAround(hex, card, mapId, others, cue);
             Vec2[] held = HoldMapFrame(shape, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
             if (string.Equals(mapId, "AP", StringComparison.Ordinal))
@@ -5688,7 +5834,1071 @@ namespace Game.UI.Runtime
                 }
             }
 
-            return held;
+            Vec2[] seated = SeatThenClear(
+                PreferOrganicCoast(held, hex, card, mapId, others, cue, plateWidth, plateHeight, detail, hint, expected),
+                hex, card, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            return KeepDrawnFrame(seated, held, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+        }
+
+        /// <summary>
+        /// The probe measures the painted coast: outline, glow, hint, detail panel, and
+        /// the 10% aspect gate. A centre slide that misses one of those is tucked back
+        /// onto the plate. The card stays inside and within 20px of the area centre.
+        /// </summary>
+        private static Vec2[] KeepDrawnFrame(
+            Vec2[] preferred,
+            Vec2[] fallback,
+            Vec2[] hex,
+            Box card,
+            Box pin,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            Vec2[] first = RepairDrawnFrame(preferred, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            if (FrameAndCentre(first, card, plateWidth, plateHeight, detail, hint, expected))
+                return first;
+            Vec2[] second = RepairDrawnFrame(fallback, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            if (FrameAndCentre(second, card, plateWidth, plateHeight, detail, hint, expected))
+                return second;
+            Vec2[] third = RepairDrawnFrame(hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            if (FrameAndCentre(third, card, plateWidth, plateHeight, detail, hint, expected)
+                && third != null && !TerritoryReadsRectangular(third))
+                return third;
+
+            Vec2[] best = null;
+            float bestMiss = float.MaxValue;
+            ConsiderFrame(first, card, plateWidth, plateHeight, detail, hint, expected, ref best, ref bestMiss);
+            ConsiderFrame(second, card, plateWidth, plateHeight, detail, hint, expected, ref best, ref bestMiss);
+            if (third != null && !TerritoryReadsRectangular(third))
+                ConsiderFrame(third, card, plateWidth, plateHeight, detail, hint, expected, ref best, ref bestMiss);
+            if (best != null && bestMiss <= CardCentreTolerance + 0.01f)
+                return best;
+            if (FrameAndCentre(preferred, card, plateWidth, plateHeight, detail, hint, expected))
+                return preferred;
+            return best ?? preferred ?? fallback ?? hex;
+        }
+
+        private static void ConsiderFrame(
+            Vec2[] shape,
+            Box card,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected,
+            ref Vec2[] best,
+            ref float bestMiss)
+        {
+            if (!DrawnProbeHolds(shape, plateWidth, plateHeight, detail, hint, expected))
+                return;
+            if (card.W >= 1f && !RestsInside(card, shape, InsideMargin))
+                return;
+            float miss = CentreMiss(shape, card);
+            if (miss + 0.01f >= bestMiss)
+                return;
+            best = shape;
+            bestMiss = miss;
+        }
+
+        private static bool FrameAndCentre(
+            Vec2[] shape,
+            Box card,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            if (!DrawnProbeHolds(shape, plateWidth, plateHeight, detail, hint, expected))
+                return false;
+            if (card.W >= 1f && !RestsInside(card, shape, InsideMargin))
+                return false;
+            return CentreMiss(shape, card) <= CardCentreTolerance + 0.01f;
+        }
+
+        private static float CentreMiss(Vec2[] shape, Box card)
+        {
+            if (card.W < 1f)
+                return 0f;
+            if (shape == null || !CoastVisualCentre(shape, out float cx, out float cy))
+                return 999f;
+            return Math.Max(Math.Abs(card.Center.X - cx), Math.Abs(card.Center.Y - cy));
+        }
+
+        /// <summary>
+        /// Capture's drawn-coast gate. Aspect uses the same 0.101 parse slop as the seat check.
+        /// </summary>
+        private static bool DrawnProbeHolds(Vec2[] shape, float plateWidth, float plateHeight, Box detail, Box hint, float expected)
+        {
+            if (shape == null || shape.Length < 3)
+                return false;
+            if (!OutlineInside(shape, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (!GlowInside(shape, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (EdgesHit(shape, hint))
+                return false;
+            Box glow = DetailGlow(detail);
+            if (glow.W > 1f && PolygonHitsRect(shape, glow))
+                return false;
+            float measured = MeasuredHexAspect(shape);
+            return expected < 0.2f || measured < 0.2f || Math.Abs(measured / expected - 1f) <= 0.101f;
+        }
+
+        private static Vec2[] RepairDrawnFrame(
+            Vec2[] shape,
+            Box card,
+            Box pin,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            if (shape == null || shape.Length < 3)
+                return shape;
+            int open = InteriorUnblocked(shape, card, pin, cue, hint);
+            int notch = NotchInterior(shape, card, pin, cue, hint);
+            if (FrameAndCentre(shape, card, plateWidth, plateHeight, detail, hint, expected))
+                return WaveInsideFrame(shape, shape, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected, open, notch);
+            Vec2[] tucked = TuckCoastInside(shape, plateWidth, plateHeight, detail, hint);
+            Vec2[] squeezed = SqueezeAspect(tucked, expected, card);
+            Vec2[] slid = SlideCentreWithinFrame(squeezed, card, others, plateWidth, plateHeight, detail, hint, expected);
+            if (!AcceptRepair(shape, slid, card, pin, cue, hint, others, open, notch))
+                slid = squeezed;
+            if (!AcceptRepair(shape, slid, card, pin, cue, hint, others, open, notch))
+            {
+                Vec2[] fitted = FitShapeInWindow(shape, HaloReach + 1f, HaloReach + 1f, plateWidth - (HaloReach + 1f), plateHeight - (HaloReach + 1f));
+                fitted = TuckCoastInside(fitted, plateWidth, plateHeight, detail, hint);
+                fitted = SqueezeAspect(fitted, expected, card);
+                fitted = SlideCentreWithinFrame(fitted, card, others, plateWidth, plateHeight, detail, hint, expected);
+                if (AcceptRepair(shape, fitted, card, pin, cue, hint, others, open, notch))
+                    slid = fitted;
+                else
+                    slid = shape;
+            }
+
+            return WaveInsideFrame(slid, shape, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected, open, notch);
+        }
+
+        /// <summary>
+        /// A frame tuck can leave one long flat. Nick that run so the coast stays
+        /// inside the glow, keeps the card covered, and does not read as a rectangle.
+        /// </summary>
+        private static Vec2[] WaveInsideFrame(
+            Vec2[] shape,
+            Vec2[] before,
+            Box card,
+            Box pin,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected,
+            int openBefore,
+            int notchBefore)
+        {
+            if (shape == null || !TerritoryReadsRectangular(shape))
+                return shape;
+            Vec2[] copy = CopyShape(shape);
+            float[] offsets = { 10f, 6f, 3f };
+            for (int pass = 0; pass < 12 && TerritoryReadsRectangular(copy); pass++)
+            {
+                Vec2[] next = null;
+                Vec2[] dent = DentExistingSamples(copy, plateWidth, plateHeight, 3f, card, others, hint);
+                if (dent == null)
+                    dent = DentExistingSamples(copy, plateWidth, plateHeight, 1.2f, card, others, hint);
+                if (dent != null
+                    && LongestStraightRun(dent) + 0.0001f < LongestStraightRun(copy)
+                    && NickHolds(before ?? shape, dent, copy, card, pin, cue, hint, others, openBefore, notchBefore, plateWidth, plateHeight, detail, expected))
+                    next = dent;
+
+                for (int o = 0; o < offsets.Length && next == null; o++)
+                {
+                    for (int skip = 0; skip < 8 && next == null; skip++)
+                    {
+                        for (int side = 0; side < 2 && next == null; side++)
+                        {
+                            Vec2[] trial = SplitLongestRun(copy, plateWidth, plateHeight, offsets[o], card, skip, side == 1);
+                            if (trial == null || LongestStraightRun(trial) + 0.0001f >= LongestStraightRun(copy))
+                                continue;
+                            if (NickHolds(before ?? shape, trial, copy, card, pin, cue, hint, others, openBefore, notchBefore, plateWidth, plateHeight, detail, expected))
+                                next = trial;
+                        }
+                    }
+                }
+
+                if (next == null)
+                    break;
+                copy = next;
+            }
+
+            if (!TerritoryReadsRectangular(copy))
+                return copy;
+            return shape;
+        }
+
+        private static bool NickHolds(
+            Vec2[] before,
+            Vec2[] trial,
+            Vec2[] copy,
+            Box card,
+            Box pin,
+            Box cue,
+            Box hint,
+            Vec2[][] others,
+            int openBefore,
+            int notchBefore,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            float expected)
+        {
+            string block = RepairBlock(before, trial, card, pin, cue, hint, others, openBefore, notchBefore);
+            if (block == "gap" && ClosestNeighbourGap(trial, others) + 0.05f >= ClosestNeighbourGap(copy, others))
+                block = "ok";
+            return block == "ok" && DrawnProbeHolds(trial, plateWidth, plateHeight, detail, hint, expected);
+        }
+
+        /// <summary>
+        /// Inserts one sample on the longest near-straight edge and pulls it into the coast.
+        /// The bbox corners stay put, so the measured aspect and the plate glow do not move.
+        /// </summary>
+        private static Vec2[] SplitLongestRun(Vec2[] shape, float plateWidth, float plateHeight, float offset, Box card, int skip, bool towardCard)
+        {
+            if (shape == null || shape.Length < 3 || shape.Length > 96 || offset < 1f)
+                return null;
+            const float axis = 0.1392f;
+            const float collinear = 0.9903f;
+            int n = shape.Length;
+            var len = new float[n];
+            var edx = new float[n];
+            var edy = new float[n];
+            var horizontal = new bool[n];
+            var vertical = new bool[n];
+            float total = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                Vec2 a = shape[i];
+                Vec2 b = shape[(i + 1) % n];
+                edx[i] = b.X - a.X;
+                edy[i] = b.Y - a.Y;
+                float span = (float)Math.Sqrt(edx[i] * edx[i] + edy[i] * edy[i]);
+                len[i] = span;
+                if (span < 0.05f)
+                    continue;
+                total += span;
+                horizontal[i] = Math.Abs(edy[i]) <= span * axis;
+                vertical[i] = Math.Abs(edx[i]) <= span * axis;
+            }
+
+            if (total < 0.5f)
+                return null;
+            int bestStart = -1;
+            int bestEdges = 0;
+            float bestRun = 0f;
+            for (int start = 0; start < n; start++)
+            {
+                if (!horizontal[start] && !vertical[start])
+                    continue;
+                bool hor = horizontal[start];
+                float run = len[start];
+                int edges = 1;
+                float dirX = edx[start];
+                float dirY = edy[start];
+                float dirLen = Math.Max(0.05f, len[start]);
+                for (int k = 1; k < n; k++)
+                {
+                    int i = (start + k) % n;
+                    if (hor ? !horizontal[i] : !vertical[i])
+                        break;
+                    float denom = dirLen * Math.Max(0.05f, len[i]);
+                    if ((dirX * edx[i] + dirY * edy[i]) / denom < collinear)
+                        break;
+                    run += len[i];
+                    edges++;
+                }
+
+                if (run > bestRun)
+                {
+                    bestRun = run;
+                    bestStart = start;
+                    bestEdges = edges;
+                }
+            }
+
+            if (bestStart < 0 || bestRun / total + 0.0001f < StraightRunCeiling)
+                return null;
+            int edgeAt = bestStart;
+            float edgeLen = -1f;
+            var ranked = new int[bestEdges];
+            for (int k = 0; k < bestEdges; k++)
+                ranked[k] = (bestStart + k) % n;
+            for (int a = 0; a < bestEdges; a++)
+            {
+                for (int b = a + 1; b < bestEdges; b++)
+                {
+                    if (len[ranked[b]] > len[ranked[a]])
+                    {
+                        int swap = ranked[a];
+                        ranked[a] = ranked[b];
+                        ranked[b] = swap;
+                    }
+                }
+            }
+
+            int pickAt = skip < 0 ? 0 : skip;
+            if (pickAt >= bestEdges)
+                return null;
+            edgeAt = ranked[pickAt];
+            edgeLen = len[edgeAt];
+
+            if (edgeLen < 4f)
+                return null;
+            Vec2 from = shape[edgeAt];
+            Vec2 to = shape[(edgeAt + 1) % n];
+            float mx = (from.X + to.X) * 0.5f;
+            float my = (from.Y + to.Y) * 0.5f;
+            float nx = -edy[edgeAt] / edgeLen;
+            float ny = edx[edgeAt] / edgeLen;
+            float inset = HaloReach + 1f;
+            float awayX = card.W >= 1f ? mx - card.Center.X : nx;
+            float awayY = card.W >= 1f ? my - card.Center.Y : ny;
+            if (towardCard)
+            {
+                awayX = -awayX;
+                awayY = -awayY;
+            }
+            Vec2 pick = default;
+            bool found = false;
+            float bestAway = float.MinValue;
+            for (int sign = 0; sign < 2; sign++)
+            {
+                float side = sign == 0 ? 1f : -1f;
+                float x = mx + nx * side * offset;
+                float y = my + ny * side * offset;
+                if (x < inset)
+                    x = inset;
+                if (y < inset)
+                    y = inset;
+                if (x > plateWidth - inset)
+                    x = plateWidth - inset;
+                if (y > plateHeight - inset)
+                    y = plateHeight - inset;
+                float dx = x - mx;
+                float dy = y - my;
+                if (dx * dx + dy * dy < 4f)
+                    continue;
+                float away = dx * awayX + dy * awayY;
+                if (found && away <= bestAway)
+                    continue;
+                pick = new Vec2(x, y);
+                bestAway = away;
+                found = true;
+            }
+
+            if (!found)
+                return null;
+            var next = new Vec2[n + 1];
+            for (int i = 0; i <= edgeAt; i++)
+                next[i] = shape[i];
+            next[edgeAt + 1] = pick;
+            for (int i = edgeAt + 1; i < n; i++)
+                next[i + 1] = shape[i];
+            return next;
+        }
+
+        private static float ClosestNeighbourGap(Vec2[] shape, Vec2[][] others)
+        {
+            float best = 999f;
+            if (shape == null || others == null)
+                return best;
+            for (int i = 0; i < others.Length; i++)
+            {
+                Vec2[] other = others[i];
+                if (other == null || other.Length < 3)
+                    continue;
+                best = Math.Min(best, DrawnDistrictGap(shape, other));
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// Shifts every other sample of the longest flat by a few pixels, away from the
+        /// card when that side stays inside the plate. Samples with no room stay put.
+        /// </summary>
+        private static Vec2[] DentExistingSamples(Vec2[] shape, float plateWidth, float plateHeight, float offset, Box card, Vec2[][] others, Box hint)
+        {
+            if (shape == null || shape.Length < 6)
+                return null;
+            const float axis = 0.1392f;
+            const float collinear = 0.9903f;
+            int n = shape.Length;
+            var len = new float[n];
+            var horizontal = new bool[n];
+            var vertical = new bool[n];
+            var edx = new float[n];
+            var edy = new float[n];
+            float total = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                Vec2 a = shape[i];
+                Vec2 b = shape[(i + 1) % n];
+                edx[i] = b.X - a.X;
+                edy[i] = b.Y - a.Y;
+                float edge = (float)Math.Sqrt(edx[i] * edx[i] + edy[i] * edy[i]);
+                len[i] = edge;
+                if (edge < 0.05f)
+                    continue;
+                total += edge;
+                horizontal[i] = Math.Abs(edy[i]) <= edge * axis;
+                vertical[i] = Math.Abs(edx[i]) <= edge * axis;
+            }
+
+            if (total < 0.5f)
+                return null;
+            int bestStart = -1;
+            int bestEdges = 0;
+            float bestRun = 0f;
+            for (int start = 0; start < n; start++)
+            {
+                if (!horizontal[start] && !vertical[start])
+                    continue;
+                bool hor = horizontal[start];
+                float run = len[start];
+                int edges = 1;
+                float dirX = edx[start];
+                float dirY = edy[start];
+                float dirLen = Math.Max(0.05f, len[start]);
+                for (int k = 1; k < n; k++)
+                {
+                    int i = (start + k) % n;
+                    if (hor ? !horizontal[i] : !vertical[i])
+                        break;
+                    if ((dirX * edx[i] + dirY * edy[i]) / (dirLen * Math.Max(0.05f, len[i])) < collinear)
+                        break;
+                    run += len[i];
+                    edges++;
+                }
+
+                if (run > bestRun)
+                {
+                    bestRun = run;
+                    bestStart = start;
+                    bestEdges = edges;
+                }
+            }
+
+            if (bestStart < 0 || bestEdges < 2 || bestRun / total + 0.0001f < StraightRunCeiling)
+                return null;
+            var copy = CopyShape(shape);
+            float inset = HaloReach + 1f;
+            float heldGap = ClosestNeighbourGap(shape, others);
+            bool moved = false;
+            for (int k = 1; k < bestEdges; k += 2)
+            {
+                int i = (bestStart + k) % n;
+                Vec2 prev = copy[(i + n - 1) % n];
+                Vec2 point = copy[i];
+                float ax = point.X - prev.X;
+                float ay = point.Y - prev.Y;
+                float span = (float)Math.Sqrt(ax * ax + ay * ay);
+                if (span < 0.05f)
+                    continue;
+                float px = -ay / span;
+                float py = ax / span;
+                Vec2 chosen = point;
+                bool picked = false;
+                float bestGap = float.MinValue;
+                for (int sign = 0; sign < 2; sign++)
+                {
+                    float side = sign == 0 ? 1f : -1f;
+                    float x = point.X + px * side * offset;
+                    float y = point.Y + py * side * offset;
+                    if (x < inset || y < inset || x > plateWidth - inset || y > plateHeight - inset)
+                        continue;
+                    var candidate = new Vec2(x, y);
+                    if (!SampleClearsCard(candidate, card))
+                        continue;
+                    copy[i] = candidate;
+                    bool hitsHint = hint.W > 1f && hint.H > 1f && EdgesHit(copy, hint);
+                    float gap = ClosestNeighbourGap(copy, others);
+                    copy[i] = point;
+                    if (hitsHint)
+                        continue;
+                    if (gap + 0.05f < 12f && gap + 0.05f < heldGap)
+                        continue;
+                    if (picked && gap <= bestGap)
+                        continue;
+                    chosen = candidate;
+                    bestGap = gap;
+                    picked = true;
+                }
+
+                if (!picked)
+                    continue;
+                copy[i] = chosen;
+                moved = true;
+            }
+
+            return moved ? copy : null;
+        }
+
+        private static bool SampleClearsCard(Vec2 point, Box card)
+        {
+            if (card.W < 1f)
+                return true;
+            float left = card.X - InsideMargin;
+            float right = card.XMax + InsideMargin;
+            float top = card.Y - InsideMargin;
+            float bottom = card.YMax + InsideMargin;
+            return point.X < left || point.X > right || point.Y < top || point.Y > bottom;
+        }
+
+        private static string RepairBlock(
+            Vec2[] before,
+            Vec2[] after,
+            Box card,
+            Box pin,
+            Box cue,
+            Box hint,
+            Vec2[][] others,
+            int openBefore,
+            int notchBefore)
+        {
+            if (after == null || after.Length < 3)
+                return "null";
+            if (card.W >= 1f && !RestsInside(card, after, InsideMargin))
+                return "card";
+            if (openBefore >= 8 && InteriorUnblocked(after, card, pin, cue, hint) < 8)
+                return "open";
+            if (notchBefore >= 8 && NotchInterior(after, card, pin, cue, hint) < 8)
+                return "notch";
+            if (others != null && !NeighbourGapsHold(after, before, others))
+                return "gap";
+            if (!ShiftCoversCue(before, card, cue) && ShiftCoversCue(after, card, cue))
+                return "cue";
+            if (before != null && !TerritoryReadsRectangular(before) && TerritoryReadsRectangular(after))
+                return "rect";
+            return "ok";
+        }
+
+        private static bool AcceptRepair(
+            Vec2[] before,
+            Vec2[] after,
+            Box card,
+            Box pin,
+            Box cue,
+            Box hint,
+            Vec2[][] others,
+            int openBefore,
+            int notchBefore)
+        {
+            if (after == null || after.Length < 3)
+                return false;
+            if (card.W >= 1f && !RestsInside(card, after, InsideMargin))
+                return false;
+            if (openBefore >= 8 && InteriorUnblocked(after, card, pin, cue, hint) < 8)
+                return false;
+            if (notchBefore >= 8 && NotchInterior(after, card, pin, cue, hint) < 8)
+                return false;
+            if (others != null && !NeighbourGapsHold(after, before, others))
+                return false;
+            if (!ShiftCoversCue(before, card, cue) && ShiftCoversCue(after, card, cue))
+                return false;
+            if (before != null && !TerritoryReadsRectangular(before) && TerritoryReadsRectangular(after))
+                return false;
+            return true;
+        }
+
+        private static Vec2[] TuckCoastInside(Vec2[] shape, float plateWidth, float plateHeight, Box detail, Box hint)
+        {
+            if (shape == null || shape.Length < 3)
+                return shape;
+            var next = CopyShape(shape);
+            float inset = HaloReach + 1f;
+            Box glow = DetailGlow(detail);
+            for (int pass = 0; pass < 8; pass++)
+            {
+                if (GlowInside(next, plateWidth, plateHeight, out _, out _)
+                    && OutlineInside(next, plateWidth, plateHeight, out _, out _)
+                    && !EdgesHit(next, hint)
+                    && (glow.W < 1f || !PolygonHitsRect(next, glow)))
+                    return next;
+                CentroidOf(next, out float cx, out float cy);
+                for (int i = 0; i < next.Length; i++)
+                {
+                    Vec2 point = next[i];
+                    bool outside = point.X < inset || point.X > plateWidth - inset || point.Y < inset || point.Y > plateHeight - inset;
+                    bool inHint = hint.W > 1f && point.X >= hint.X && point.X <= hint.XMax && point.Y >= hint.Y && point.Y <= hint.YMax;
+                    bool inGlow = glow.W > 1f && point.X >= glow.X && point.X <= glow.XMax && point.Y >= glow.Y && point.Y <= glow.YMax;
+                    if (!outside && !inHint && !inGlow)
+                        continue;
+                    next[i] = new Vec2(point.X + (cx - point.X) * 0.45f, point.Y + (cy - point.Y) * 0.45f);
+                }
+
+                for (int i = 0; i < next.Length; i++)
+                {
+                    int j = (i + 1) % next.Length;
+                    bool hit = hint.W > 1f && SegmentHitsRect(next[i], next[j], hint);
+                    if (!hit && glow.W > 1f)
+                        hit = SegmentHitsRect(next[i], next[j], glow);
+                    if (!hit)
+                        continue;
+                    next[i] = new Vec2(next[i].X + (cx - next[i].X) * 0.35f, next[i].Y + (cy - next[i].Y) * 0.35f);
+                    next[j] = new Vec2(next[j].X + (cx - next[j].X) * 0.35f, next[j].Y + (cy - next[j].Y) * 0.35f);
+                }
+            }
+
+            return next;
+        }
+
+        private static Vec2[] SqueezeAspect(Vec2[] shape, float expected, Box card)
+        {
+            if (shape == null || shape.Length < 3 || expected < 0.2f)
+                return shape;
+            float measured = MeasuredHexAspect(shape);
+            if (measured < 0.2f || Math.Abs(measured / expected - 1f) <= 0.09f)
+                return shape;
+            if (!CoastVisualCentre(shape, out float cx, out float cy))
+                CentroidOf(shape, out cx, out cy);
+            float sx = measured > expected ? expected / measured : 1f;
+            float sy = measured < expected ? measured / expected : 1f;
+            Vec2[] best = shape;
+            float lo = 0f;
+            float hi = 1f;
+            for (int step = 0; step < 10; step++)
+            {
+                float t = (lo + hi) * 0.5f;
+                float ax = 1f + (sx - 1f) * t;
+                float ay = 1f + (sy - 1f) * t;
+                var moved = new Vec2[shape.Length];
+                for (int i = 0; i < shape.Length; i++)
+                    moved[i] = new Vec2(cx + (shape[i].X - cx) * ax, cy + (shape[i].Y - cy) * ay);
+                float aspect = MeasuredHexAspect(moved);
+                bool aspectOk = Math.Abs(aspect / expected - 1f) <= 0.09f;
+                bool cardOk = card.W < 1f || RestsInside(card, moved, InsideMargin);
+                if (cardOk && aspectOk)
+                {
+                    best = moved;
+                    lo = t;
+                }
+                else if (!cardOk)
+                    hi = t;
+                else
+                    lo = t;
+            }
+
+            return best;
+        }
+
+        private static Vec2[] SlideCentreWithinFrame(
+            Vec2[] shape,
+            Box card,
+            Vec2[][] others,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            if (shape == null || card.W < 1f || !CoastVisualCentre(shape, out float cx, out float cy))
+                return shape;
+            float dx = card.Center.X - cx;
+            float dy = card.Center.Y - cy;
+            if (Math.Abs(dx) <= CardCentreTolerance && Math.Abs(dy) <= CardCentreTolerance)
+                return shape;
+            Vec2[] best = shape;
+            float bestMiss = Math.Max(Math.Abs(dx), Math.Abs(dy));
+            float lo = 0f;
+            float hi = 1f;
+            for (int step = 0; step < 8; step++)
+            {
+                float t = (lo + hi) * 0.5f;
+                var moved = new Vec2[shape.Length];
+                for (int i = 0; i < shape.Length; i++)
+                    moved[i] = new Vec2(shape[i].X + dx * t, shape[i].Y + dy * t);
+                if (!DrawnProbeHolds(moved, plateWidth, plateHeight, detail, hint, expected))
+                {
+                    hi = t;
+                    continue;
+                }
+
+                if (others != null && !NeighbourGapsHold(moved, shape, others))
+                {
+                    hi = t;
+                    continue;
+                }
+
+                if (!RestsInside(card, moved, InsideMargin))
+                {
+                    hi = t;
+                    continue;
+                }
+
+                float miss = CentreMiss(moved, card);
+                if (miss + 0.05f < bestMiss)
+                {
+                    best = moved;
+                    bestMiss = miss;
+                }
+
+                lo = t;
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// Centres the coast, then clears the pill. A centre slide that the pill blocks
+        /// is applied and the pill notch is cut back out when the card stays inside 20px.
+        /// </summary>
+        private static Vec2[] SeatThenClear(
+            Vec2[] shape,
+            Vec2[] hex,
+            Box card,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            Vec2[] seated = FinishOffCue(
+                SeatCoastOnCard(shape, card, others, plateWidth, plateHeight, cue),
+                hex, card, cue, others, plateWidth, plateHeight, detail, hint, expected);
+            if (CentreWithin(seated, card) || seated == null || card.W < 1f || !CoastVisualCentre(seated, out float cx, out float cy))
+                return PreferDrawn(seated, shape, card, plateWidth, plateHeight, detail, hint, expected);
+            float rx = card.Center.X - cx;
+            float ry = card.Center.Y - cy;
+            if (Math.Abs(rx) > 48f || Math.Abs(ry) > 48f)
+                return PreferDrawn(seated, shape, card, plateWidth, plateHeight, detail, hint, expected);
+            float[] scales = { 1f, 0.75f, 0.5f };
+            for (int s = 0; s < scales.Length; s++)
+            {
+                float sx = rx * scales[s];
+                float sy = ry * scales[s];
+                var moved = new Vec2[seated.Length];
+                for (int i = 0; i < seated.Length; i++)
+                    moved[i] = new Vec2(seated[i].X + sx, seated[i].Y + sy);
+                if (!RestsInside(card, moved, InsideMargin))
+                    continue;
+                if (!OutlineInside(moved, plateWidth, plateHeight, out _, out _) || !GlowInside(moved, plateWidth, plateHeight, out _, out _))
+                    continue;
+                if (others != null && !NeighbourGapsHold(moved, seated, others))
+                    continue;
+                if (!ShiftCoversCue(moved, card, cue) && CentreWithin(moved, card))
+                    return PreferDrawn(moved, shape, card, plateWidth, plateHeight, detail, hint, expected);
+                Vec2[] cleared = PullShapeOffCue(moved, hex, card, cue, others, plateWidth, plateHeight, detail, hint, expected);
+                if (cleared == null || ShiftCoversCue(cleared, card, cue) || !CentreWithin(cleared, card))
+                    continue;
+                if (card.W >= 1f && !RestsInside(card, cleared, InsideMargin))
+                    continue;
+                return PreferDrawn(cleared, shape, card, plateWidth, plateHeight, detail, hint, expected);
+            }
+
+            Vec2[] clipped = PullFarSideTowardCard(seated, card, others, cue, plateWidth, plateHeight, false);
+            if (clipped != null && !ShiftCoversCue(clipped, card, cue) && CentreWithin(clipped, card)
+                && RestsInside(card, clipped, InsideMargin))
+                return PreferDrawn(clipped, shape, card, plateWidth, plateHeight, detail, hint, expected);
+            if (clipped != null)
+            {
+                Vec2[] notch = PullShapeOffCue(clipped, hex, card, cue, others, plateWidth, plateHeight, detail, hint, expected);
+                if (notch != null && !ShiftCoversCue(notch, card, cue) && CentreWithin(notch, card)
+                    && RestsInside(card, notch, InsideMargin))
+                    return PreferDrawn(notch, shape, card, plateWidth, plateHeight, detail, hint, expected);
+            }
+
+            return PreferDrawn(seated, shape, card, plateWidth, plateHeight, detail, hint, expected);
+        }
+
+        private static Vec2[] PreferDrawn(
+            Vec2[] candidate,
+            Vec2[] prior,
+            Box card,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            if (candidate == null)
+                return prior;
+            bool candFrame = DrawnProbeHolds(candidate, plateWidth, plateHeight, detail, hint, expected)
+                && (card.W < 1f || RestsInside(card, candidate, InsideMargin));
+            bool priorFrame = prior != null && DrawnProbeHolds(prior, plateWidth, plateHeight, detail, hint, expected)
+                && (card.W < 1f || RestsInside(card, prior, InsideMargin));
+            bool candOrganic = !TerritoryReadsRectangular(candidate);
+            bool priorOrganic = prior != null && !TerritoryReadsRectangular(prior);
+            if (candFrame && candOrganic)
+                return candidate;
+            if (priorFrame && priorOrganic)
+                return prior;
+            if (candOrganic)
+                return candidate;
+            if (priorOrganic)
+                return prior;
+            if (candFrame)
+                return candidate;
+            return priorFrame ? prior : candidate;
+        }
+
+        private static bool CentreWithin(Vec2[] shape, Box card)
+        {
+            if (card.W < 1f)
+                return true;
+            if (shape == null || !CoastVisualCentre(shape, out float cx, out float cy))
+                return false;
+            return Math.Abs(card.Center.X - cx) <= CardCentreTolerance
+                && Math.Abs(card.Center.Y - cy) <= CardCentreTolerance;
+        }
+
+        /// <summary>
+        /// Slides the drawn coast so its area centre lands on the card. The card stays
+        /// put. A full shift that leaves the plate or closes a neighbour halo is
+        /// shortened until both axes are inside the 20px centre tolerance. A shift
+        /// that covers the outside zoom pill is refused.
+        /// </summary>
+        private static Vec2[] SeatCoastOnCard(Vec2[] shape, Box card, Vec2[][] others, float plateWidth, float plateHeight, Box cue)
+        {
+            if (shape == null || shape.Length < 3 || card.W < 1f || !CoastVisualCentre(shape, out float cx, out float cy))
+                return shape;
+            float dx = card.Center.X - cx;
+            float dy = card.Center.Y - cy;
+            if (Math.Abs(dx) <= 1.5f && Math.Abs(dy) <= 1.5f)
+                return shape;
+            if (Math.Abs(dx) > 80f || Math.Abs(dy) > 80f)
+                return shape;
+            Vec2[] best = shape;
+            float bestMiss = Math.Abs(dx) + Math.Abs(dy);
+            bool dominantX = Math.Abs(dx) >= Math.Abs(dy);
+            for (int axis = 0; axis < 2; axis++)
+            {
+                float axisX = axis == 0 || dominantX ? dx : 0f;
+                float axisY = axis == 0 || !dominantX ? dy : 0f;
+                if (axis == 1 && dominantX)
+                    axisY = 0f;
+                if (axis == 1 && !dominantX)
+                    axisX = 0f;
+                float lo = 0f;
+                float hi = 1f;
+                for (int step = 0; step < 8; step++)
+                {
+                    float mid = (lo + hi) * 0.5f;
+                    if (mid < 0.04f)
+                        break;
+                    if (TryCoastShift(shape, card, others, cue, plateWidth, plateHeight, axisX * mid, axisY * mid, ref best, ref bestMiss))
+                        lo = mid;
+                    else
+                        hi = mid;
+                }
+            }
+
+            if (CoastVisualCentre(best, out float leftX, out float leftY)
+                && (Math.Abs(card.Center.X - leftX) > CardCentreTolerance || Math.Abs(card.Center.Y - leftY) > CardCentreTolerance))
+            {
+                Vec2[] pulled = PullFarSideTowardCard(best, card, others, cue, plateWidth, plateHeight);
+                if (pulled != null)
+                    return pulled;
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// The whole-shape slide clips the plate. Pull only the far side toward the
+        /// card so the area centre moves and the near edge stays on the map.
+        /// </summary>
+        private static Vec2[] PullFarSideTowardCard(Vec2[] shape, Box card, Vec2[][] others, Box cue, float plateWidth, float plateHeight, bool guardCue = true)
+        {
+            if (!CoastVisualCentre(shape, out float cx, out float cy))
+                return null;
+            float dx = card.Center.X - cx;
+            float dy = card.Center.Y - cy;
+            Vec2[] best = null;
+            float bestMiss = Math.Abs(dx) + Math.Abs(dy);
+            float edge = dx < 0f ? card.XMax + 8f : card.XMin - 8f;
+            float[] caps = { edge - card.Center.X, 48f, 36f, 24f };
+            if (dx > 0f)
+                caps[0] = card.Center.X - edge;
+            for (int cap = 0; cap < caps.Length; cap++)
+            {
+                float limitX = card.Center.X + (dx < 0f ? Math.Abs(caps[cap]) : -Math.Abs(caps[cap]));
+                var moved = new Vec2[shape.Length];
+                for (int i = 0; i < shape.Length; i++)
+                {
+                    float x = shape[i].X;
+                    float y = shape[i].Y;
+                    if (dx < -1f && x > limitX)
+                        x = limitX + ((i & 1) == 0 ? 5f : -5f);
+                    else if (dx > 1f && x < limitX)
+                        x = limitX + ((i & 1) == 0 ? 5f : -5f);
+                    if (Math.Abs(dy) > CardCentreTolerance)
+                    {
+                        float limitY = card.Center.Y + (dy < 0f ? caps[cap] : -caps[cap]);
+                        if (dy < -1f && y > limitY)
+                            y = limitY;
+                        else if (dy > 1f && y < limitY)
+                            y = limitY;
+                    }
+
+                    moved[i] = new Vec2(x, y);
+                }
+
+                if (!CoastShiftHolds(moved, shape, card, others, cue, plateWidth, plateHeight, guardCue))
+                    continue;
+                if (!CoastVisualCentre(moved, out float mx, out float my))
+                    continue;
+                float missX = Math.Abs(card.Center.X - mx);
+                float missY = Math.Abs(card.Center.Y - my);
+                if (missX > CardCentreTolerance || missY > CardCentreTolerance)
+                    continue;
+                float miss = missX + missY;
+                if (miss >= bestMiss)
+                    continue;
+                best = moved;
+                bestMiss = miss;
+                if (miss <= 3f)
+                    break;
+            }
+
+            return best;
+        }
+
+        private static bool TryCoastShift(
+            Vec2[] shape,
+            Box card,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            float sx,
+            float sy,
+            ref Vec2[] best,
+            ref float bestMiss)
+        {
+            if (Math.Abs(sx) < 0.5f && Math.Abs(sy) < 0.5f)
+                return false;
+            var moved = new Vec2[shape.Length];
+            for (int i = 0; i < shape.Length; i++)
+                moved[i] = new Vec2(shape[i].X + sx, shape[i].Y + sy);
+            if (!CoastShiftHolds(moved, shape, card, others, cue, plateWidth, plateHeight))
+                return false;
+            if (!CoastVisualCentre(moved, out float mx, out float my))
+                return false;
+            float missX = Math.Abs(card.Center.X - mx);
+            float missY = Math.Abs(card.Center.Y - my);
+            float miss = missX + missY;
+            if (missX > CardCentreTolerance || missY > CardCentreTolerance)
+                return true;
+            if (miss + 0.25f >= bestMiss)
+                return false;
+            best = moved;
+            bestMiss = miss;
+            return true;
+        }
+
+        private static bool CoastShiftHolds(Vec2[] moved, Vec2[] shape, Box card, Vec2[][] others, Box cue, float plateWidth, float plateHeight, bool guardCue = true)
+        {
+            if (!RestsInside(card, moved, InsideMargin))
+                return false;
+            if (!OutlineInside(moved, plateWidth, plateHeight, out _, out _) || !GlowInside(moved, plateWidth, plateHeight, out _, out _))
+                return false;
+            if (others != null && !NeighbourGapsHold(moved, shape, others))
+                return false;
+            if (guardCue && ShiftCoversCue(moved, card, cue))
+                return false;
+            return true;
+        }
+
+        /// <summary>
+        /// An outside pill is legal only when the coast and its 26px stroke miss it.
+        /// A centre slide that covers that pill is not a legal seat.
+        /// </summary>
+        private static bool ShiftCoversCue(Vec2[] moved, Box card, Box cue)
+        {
+            if (moved == null || cue.W < 8f || cue.H < 8f || CueInsideCard(cue, card))
+                return false;
+            if (PolygonHitsRect(moved, cue))
+                return true;
+            return HexEdgeHits(moved, InflateBox(cue, CueHexStroke));
+        }
+
+        /// <summary>
+        /// Centring can slide the coast back over the pill. Push it off again when
+        /// the card stays inside and both centre axes stay inside 20px.
+        /// </summary>
+        private static Vec2[] FinishOffCue(
+            Vec2[] shape,
+            Vec2[] hex,
+            Box card,
+            Box cue,
+            Vec2[][] others,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            if (shape == null || !ShiftCoversCue(shape, card, cue))
+                return shape;
+            Vec2[] cleared = PullShapeOffCue(shape, hex, card, cue, others, plateWidth, plateHeight, detail, hint, expected);
+            if (cleared == null || ShiftCoversCue(cleared, card, cue))
+                return shape;
+            if (card.W >= 1f && !RestsInside(card, cleared, InsideMargin))
+                return shape;
+            if (!CoastVisualCentre(cleared, out float cx, out float cy))
+                return shape;
+            if (Math.Abs(card.Center.X - cx) > CardCentreTolerance || Math.Abs(card.Center.Y - cy) > CardCentreTolerance)
+                return shape;
+            return cleared;
+        }
+
+        /// <summary>
+        /// A seated hex or a long flat side is not the drawn coast. The organic blob
+        /// stays in that box so the halo gap does not change.
+        /// </summary>
+        private static Vec2[] PreferOrganicCoast(
+            Vec2[] held,
+            Vec2[] hex,
+            Box card,
+            string mapId,
+            Vec2[][] others,
+            Box cue,
+            float plateWidth,
+            float plateHeight,
+            Box detail,
+            Box hint,
+            float expected)
+        {
+            held = BreakLongFlats(held);
+            bool heldOrganic = held != null && held.Length >= 12 && !TerritoryReadsRectangular(held);
+            if (heldOrganic && DrawnProbeHolds(held, plateWidth, plateHeight, detail, hint, expected))
+                return held;
+            int district = IndexOf(mapId);
+            if (district < 0)
+                district = 0;
+            Vec2[] organic = BreakLongFlats(OrganicDistrict(hex, card, cue, others, district));
+            bool organicOk = organic != null && organic.Length >= 12 && !TerritoryReadsRectangular(organic)
+                && (card.W < 1f || RestsInside(card, organic, InsideMargin));
+            if (organicOk && DrawnProbeHolds(organic, plateWidth, plateHeight, detail, hint, expected))
+                return organic;
+            if (heldOrganic)
+                return held;
+            if (organicOk)
+                return organic;
+            return held ?? hex;
         }
 
         /// <summary>
@@ -7255,8 +8465,10 @@ namespace Game.UI.Runtime
             if (!FillDistrictsTowardShelf(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked))
             {
                 CloseWideSeams(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
+                SpreadDistrictsOutward(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
                 ScaleDistrictsIntoSlack(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             }
+            ScaleUntilTheHalo(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             InflateOpenEdges(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             StepCardsTowardCentre(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight);
             if (ReplayCentresHold(hexes, pins, cards, cue, detail, plateWidth, plateHeight, fa, selected))
@@ -7287,10 +8499,17 @@ namespace Game.UI.Runtime
             bool fa,
             bool keepParked)
         {
+            LastGrowthBlock = "";
             if (hexes == null || cards == null || pins == null)
+            {
+                LastGrowthBlock = "missing";
                 return false;
+            }
             if (Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f)
+            {
+                LastGrowthBlock = "mirror";
                 return false;
+            }
             float inset = HaloReach + 2f;
             float left = inset;
             float right = plateWidth - inset;
@@ -7310,16 +8529,22 @@ namespace Game.UI.Runtime
             float span = right - left;
             float room = bottom - top;
             if (span < 480f || room < 360f)
+            {
+                LastGrowthBlock = "room";
                 return false;
+            }
             var aspect = new float[hexes.Length];
             for (int i = 0; i < hexes.Length; i++)
             {
                 aspect[i] = MeasuredHexAspect(hexes[i]);
                 if (aspect[i] < 0.2f)
+                {
+                    LastGrowthBlock = "aspect-in";
                     return false;
+                }
             }
 
-            float gap = GlowEdgeNeed() + 1.5f;
+            float gap = GlowEdgeNeed() + 0.35f;
             float minH = 0f;
             float minW = 0f;
             for (int i = 0; i < cards.Length; i++)
@@ -7332,14 +8557,17 @@ namespace Game.UI.Runtime
             }
 
             if (!TryPlanCompactShelf(left, span, top, room, gap, aspect, true, out float[] halfW, out float[] halfH, out Vec2[] centers))
+            {
+                LastGrowthBlock = "shelf";
                 return false;
+            }
             for (int i = 0; i < hexes.Length; i++)
             {
                 if (halfH[i] * 2f + 1f < minH || halfW[i] * 2f + 1f < minW)
+                {
+                    LastGrowthBlock = "cardbox " + MapIds[i];
                     return false;
-                BoundsOf(hexes[i], out float x0, out float y0, out float x1, out float y1);
-                if (halfW[i] * 2f + 4f < (x1 - x0) || halfH[i] * 2f + 4f < (y1 - y0))
-                    return false;
+                }
             }
 
             var savedHex = new Vec2[hexes.Length][];
@@ -7359,13 +8587,18 @@ namespace Game.UI.Runtime
                 if (i == selected && cue.W > 1f)
                     cue = ShiftBox(cue, dx, dy);
                 float curW = Math.Max(1f, x1 - x0);
-                float gain = (halfW[i] * 2f) / curW;
+                float curH = Math.Max(1f, y1 - y0);
+                float gainW = (halfW[i] * 2f) / curW;
+                float gainH = (halfH[i] * 2f) / curH;
+                float gain = Math.Min(gainW, gainH);
                 if (gain > 1.01f)
                     hexes[i] = ScaleFromBBox(hexes[i], gain);
             }
 
             bool holds = RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked)
                 && ReplayCentresHold(hexes, pins, cards, cue, detail, plateWidth, plateHeight, fa, selected);
+            if (!holds)
+                LastGrowthBlock = FirstGrowthBreak(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked);
             if (holds)
                 return true;
             for (int i = 0; i < hexes.Length; i++)
@@ -7607,6 +8840,149 @@ namespace Game.UI.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Steps each district away from the cluster, a few pixels at a time, while the
+        /// halo and the aspect gate still hold. The next scale then fills the sand
+        /// that step opened. A one-shot shelf move overlaps the neighbours.
+        /// </summary>
+        private static void SpreadDistrictsOutward(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked)
+        {
+            if (hexes == null || cards == null || pins == null)
+                return;
+            if (!RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked))
+                return;
+            float[] steps = { 18f, 12f, 8f, 4f };
+            for (int pass = 0; pass < 18; pass++)
+            {
+                float gx = 0f;
+                float gy = 0f;
+                int count = 0;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null || hexes[i].Length < 3)
+                        continue;
+                    BoundsOf(hexes[i], out float x0, out float y0, out float x1, out float y1);
+                    gx += (x0 + x1) * 0.5f;
+                    gy += (y0 + y1) * 0.5f;
+                    count++;
+                }
+
+                if (count == 0)
+                    return;
+                gx /= count;
+                gy /= count;
+                bool moved = false;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null || hexes[i].Length < 3)
+                        continue;
+                    BoundsOf(hexes[i], out float x0, out float y0, out float x1, out float y1);
+                    float cx = (x0 + x1) * 0.5f;
+                    float cy = (y0 + y1) * 0.5f;
+                    float dx = cx - gx;
+                    float dy = cy - gy;
+                    float length = (float)Math.Sqrt(dx * dx + dy * dy);
+                    if (length < 1f)
+                    {
+                        dx = i % 2 == 0 ? -1f : 1f;
+                        dy = i < 3 ? -1f : 1f;
+                        length = (float)Math.Sqrt(dx * dx + dy * dy);
+                    }
+
+                    dx /= length;
+                    dy /= length;
+                    for (int s = 0; s < steps.Length; s++)
+                    {
+                        Vec2[] savedHex = CloneShape(hexes[i]);
+                        Box savedCard = cards[i];
+                        Box savedPin = pins[i];
+                        Box savedCue = cue;
+                        float step = steps[s];
+                        TranslateDistrict(hexes[i], cards, pins, i, dx * step, dy * step);
+                        if (i == selected && cue.W > 1f)
+                            cue = ShiftBox(cue, dx * step, dy * step);
+                        if (RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked))
+                        {
+                            moved = true;
+                            break;
+                        }
+
+                        hexes[i] = savedHex;
+                        cards[i] = savedCard;
+                        pins[i] = savedPin;
+                        cue = savedCue;
+                    }
+                }
+
+                if (!moved)
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Scales each coast about its box until the 12px halo, the plate glow, or the
+        /// 10% aspect gate stops it. Uniform scale keeps the authored proportion.
+        /// </summary>
+        private static void ScaleUntilTheHalo(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked)
+        {
+            if (hexes == null || !RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked))
+                return;
+            for (int pass = 0; pass < 4; pass++)
+            {
+                bool grew = false;
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    if (hexes[i] == null || hexes[i].Length < 3)
+                        continue;
+                    Vec2[] baseline = CloneShape(hexes[i]);
+                    float lo = 1f;
+                    float hi = 1.9f;
+                    Vec2[] best = baseline;
+                    for (int step = 0; step < 7; step++)
+                    {
+                        float mid = (lo + hi) * 0.5f;
+                        if (mid < 1.015f)
+                            break;
+                        hexes[i] = ScaleFromBBox(baseline, mid);
+                        if (RegionGrowthHolds(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, keepParked)
+                            && !TerritoryReadsRectangular(hexes[i]))
+                        {
+                            best = hexes[i];
+                            lo = mid;
+                            grew = true;
+                        }
+                        else
+                            hi = mid;
+                    }
+
+                    hexes[i] = best;
+                }
+
+                if (!grew)
+                    break;
+            }
+        }
+
         private static void ScaleDistrictsIntoSlack(
             Vec2[][] hexes,
             Box[] pins,
@@ -7619,8 +8995,8 @@ namespace Game.UI.Runtime
             bool fa,
             bool keepParked)
         {
-            float[] gains = { 1.20f, 1.14f, 1.08f, 1.04f };
-            for (int pass = 0; pass < 2; pass++)
+            float[] gains = { 1.72f, 1.48f, 1.32f, 1.20f, 1.12f, 1.06f };
+            for (int pass = 0; pass < 4; pass++)
             {
                 for (int i = 0; i < hexes.Length; i++)
                 {
@@ -7651,12 +9027,12 @@ namespace Game.UI.Runtime
             bool keepParked)
         {
             float need = GlowEdgeNeed();
-            float[] steps = { 16f, 8f, 4f };
+            float[] steps = { 28f, 16f, 8f, 4f };
             Box hint = ZoomHintRect(plateWidth, plateHeight);
             for (int s = 0; s < steps.Length; s++)
             {
                 float step = steps[s];
-                for (int round = 0; round < 4; round++)
+                for (int round = 0; round < 8; round++)
                 {
                     bool any = false;
                     for (int i = 0; i < hexes.Length; i++)
@@ -7726,6 +9102,45 @@ namespace Game.UI.Runtime
                         break;
                 }
             }
+        }
+
+        private static string FirstGrowthBreak(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            bool fa,
+            bool keepParked)
+        {
+            if (!DrawnGlowGapsHold(hexes))
+                return "halo";
+            if (!AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight))
+                return "aspect";
+            if (!DistrictsLegal(hexes, pins, plateWidth, plateHeight))
+                return "district";
+            if (!ReplayCentresHold(hexes, pins, cards, cue, detail, plateWidth, plateHeight, fa, selected))
+                return "centre";
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (!DistrictClearsFrame(hexes[i], plateWidth, plateHeight, detail))
+                    return "frame " + MapIds[i];
+                if (hint.W > 1f && EdgesHit(hexes[i], hint))
+                    return "hint " + MapIds[i];
+                if (i < cards.Length && cards[i].W > 1f && !RestsInside(cards[i], hexes[i], InsideMargin))
+                    return "card " + MapIds[i];
+                if (cue.W > 1f && _cueLocked != null && i < _cueLocked.Length && _cueLocked[i]
+                    && !FarsiPillClearsDistrict(cue, hexes[i], i == selected))
+                    return "pill " + MapIds[i];
+            }
+
+            if (keepParked)
+                return "parked";
+            return "other";
         }
 
         private static bool RegionGrowthHolds(
@@ -8304,50 +9719,9 @@ namespace Game.UI.Runtime
             float pillH,
             out Box spot)
         {
+            // Pulling the coast back to the pill stroke leaves a flat bite. The pill
+            // sits in open ground beside the district instead.
             spot = default;
-            float pinX = pins[selected].Center.X;
-            float pinY = pins[selected].Center.Y;
-            Vec2[] original = CloneShape(hexes[selected]);
-            Box originalPin = pins[selected];
-            Box originalCard = cards[selected];
-            float[] yOff = { 0f, -12f, 12f, -24f, 24f, -36f, 36f, -48f, 48f };
-            for (int i = 0; i < yOff.Length; i++)
-            {
-                hexes[selected] = CloneShape(original);
-                pins[selected] = originalPin;
-                cards[selected] = originalCard;
-                float y = Clamp(pinY + yOff[i] - pillH * 0.5f, MapInset, Math.Max(MapInset, plateHeight - MapInset - pillH));
-                float dy = y + pillH * 0.5f - pinY;
-                float reach = CueNearLimit - 4f;
-                float spare = reach * reach - dy * dy;
-                if (spare < 1f)
-                    continue;
-                float horiz = (float)Math.Sqrt(spare);
-                float x = (right ? pinX + horiz : pinX - horiz) - pillW * 0.5f;
-                var trial = new Box(x, y, pillW, pillH);
-                if (trial.X < MapInset || trial.XMax > plateWidth - MapInset)
-                    continue;
-                BoundsOf(hexes[selected], out float beforeMin, out _, out float beforeMax, out _);
-                ShaveHexToWall(hexes[selected], InflateBox(trial, CueHexStroke), right);
-                BoundsOf(hexes[selected], out float afterMin, out _, out float afterMax, out _);
-                float lost = right ? beforeMax - afterMax : afterMin - beforeMin;
-                if (lost > 1f)
-                    RestorePocketWidth(hexes[selected], cards, selected, right, lost, beforeMin, beforeMax);
-                SeatPinInHex(pins, hexes[selected], selected);
-                SlidePinHorizontal(pins, hexes[selected], selected, right);
-                if (!ParkedCueHolds(trial, cards[selected], hexes, pins, cards, selected, detail, plateWidth, plateHeight, fa))
-                    continue;
-                if (!PocketDistrictsHold(hexes, pins, cards, selected, neighbour, detail, plateWidth, plateHeight))
-                    continue;
-                if (!AspectsHold(hexes, plateWidth, plateHeight) || !DistrictsLegal(hexes, pins, plateWidth, plateHeight))
-                    continue;
-                spot = trial;
-                return true;
-            }
-
-            hexes[selected] = original;
-            pins[selected] = originalPin;
-            cards[selected] = originalCard;
             return false;
         }
 
@@ -9201,7 +10575,106 @@ namespace Game.UI.Runtime
                 controls[i] = new Vec2(x * radius, y * radius);
             }
 
-            return CatmullRomClosed(controls, 1);
+            return BreakLongFlats(CatmullRomClosed(controls, 1));
+        }
+
+        /// <summary>
+        /// Pushes the middle of a long axis-aligned run outward until that run is
+        /// shorter than <see cref="StraightRunCeiling"/>. One jagged side used to hide
+        /// three straight sides from the irregularity score.
+        /// </summary>
+        private static Vec2[] BreakLongFlats(Vec2[] shape)
+        {
+            if (shape == null || shape.Length < 6)
+                return shape;
+            var copy = CopyShape(shape);
+            const float axis = 0.1392f;
+            const float collinear = 0.9903f;
+            for (int pass = 0; pass < 8 && TerritoryReadsRectangular(copy); pass++)
+            {
+                int n = copy.Length;
+                int bestStart = -1;
+                int bestEdges = 0;
+                float bestRun = 0f;
+                float total = 0f;
+                var len = new float[n];
+                var edx = new float[n];
+                var edy = new float[n];
+                var horizontal = new bool[n];
+                var vertical = new bool[n];
+                for (int i = 0; i < n; i++)
+                {
+                    Vec2 a = copy[i];
+                    Vec2 b = copy[(i + 1) % n];
+                    edx[i] = b.X - a.X;
+                    edy[i] = b.Y - a.Y;
+                    float edge = (float)Math.Sqrt(edx[i] * edx[i] + edy[i] * edy[i]);
+                    len[i] = edge;
+                    if (edge < 0.05f)
+                        continue;
+                    total += edge;
+                    horizontal[i] = Math.Abs(edy[i]) <= edge * axis;
+                    vertical[i] = Math.Abs(edx[i]) <= edge * axis;
+                }
+
+                if (total < 0.5f)
+                    break;
+                for (int start = 0; start < n; start++)
+                {
+                    if (!horizontal[start] && !vertical[start])
+                        continue;
+                    bool hor = horizontal[start];
+                    float run = len[start];
+                    int edges = 1;
+                    float dirX = edx[start];
+                    float dirY = edy[start];
+                    float dirLen = Math.Max(0.05f, len[start]);
+                    for (int k = 1; k < n; k++)
+                    {
+                        int i = (start + k) % n;
+                        if (hor ? !horizontal[i] : !vertical[i])
+                            break;
+                        float denom = dirLen * Math.Max(0.05f, len[i]);
+                        if ((dirX * edx[i] + dirY * edy[i]) / denom < collinear)
+                            break;
+                        run += len[i];
+                        edges++;
+                    }
+
+                    if (run > bestRun)
+                    {
+                        bestRun = run;
+                        bestStart = start;
+                        bestEdges = edges;
+                    }
+                }
+
+                if (bestStart < 0 || bestRun / total + 0.0001f < StraightRunCeiling)
+                    break;
+                float runX = 0f;
+                float runY = 0f;
+                for (int k = 0; k < bestEdges; k++)
+                {
+                    int i = (bestStart + k) % n;
+                    runX += edx[i];
+                    runY += edy[i];
+                }
+
+                float runLen = (float)Math.Sqrt(runX * runX + runY * runY);
+                if (runLen < 0.05f)
+                    break;
+                float px = -runY / runLen;
+                float py = runX / runLen;
+                const float kink = 12f;
+                for (int k = 0; k < bestEdges; k++)
+                {
+                    int i = (bestStart + k) % n;
+                    float side = (k & 1) == 0 ? kink : -kink;
+                    copy[i] = new Vec2(copy[i].X + px * side, copy[i].Y + py * side);
+                }
+            }
+
+            return copy;
         }
 
         private static Vec2[] ScaleAbout(Vec2[] shape, Vec2 anchor, float scale)
@@ -10200,6 +11673,9 @@ namespace Game.UI.Runtime
         /// </summary>
         public const float TerritoryCoverageAim = 0.67f;
 
+        /// <summary>Why the last shelf fill was rejected. Empty when the coasts stayed grown.</summary>
+        public static string LastGrowthBlock = "";
+
         public static string FormatTerritoryCoverage(string ratio, string locale, float coverage, bool reserveViewport)
         {
             if (string.IsNullOrEmpty(ratio))
@@ -10262,10 +11738,17 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// A coast this close to axis-aligned reads as a rectangle. The desert hex
-        /// keeps about 0.39 of its perimeter off-axis. A 4px chamfer is about 0.02.
+        /// A coast this close to axis-aligned reads as a rectangle. A 4px chamfer
+        /// is about 0.02. An equal-sided hex keeps each flat under a sixth of the rim.
         /// </summary>
         public const float EdgeIrregularityFloor = 0.12f;
+
+        /// <summary>
+        /// A single near-straight run this long, as a share of the perimeter, is a
+        /// rectangle side even when the opposite edge is jagged. An equal-sided hex
+        /// stays under it. A wide flat does not.
+        /// </summary>
+        public const float StraightRunCeiling = 0.18f;
 
         /// <summary>
         /// Vertical distance allowed between a card centre and the coast's area centroid.
@@ -10324,8 +11807,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// True for an axis-aligned rectangle: four right-angled corners, or a coast
-        /// whose edges stay on the axes. The six-point desert hex is not one of these.
+        /// True for an axis-aligned rectangle, a coast whose edges stay on the axes,
+        /// or a polygon with one long near-straight side. An equal-sided hex is not
+        /// one of these. A rectangle with a single jagged edge is.
         /// </summary>
         public static bool TerritoryReadsRectangular(Vec2[] shape)
         {
@@ -10333,7 +11817,72 @@ namespace Game.UI.Runtime
                 return true;
             if (shape.Length <= 4 && CornersAreRight(shape))
                 return true;
-            return EdgeIrregularity(shape) + 0.0001f < EdgeIrregularityFloor;
+            if (EdgeIrregularity(shape) + 0.0001f < EdgeIrregularityFloor)
+                return true;
+            return LongestStraightRun(shape) + 0.0001f >= StraightRunCeiling;
+        }
+
+        /// <summary>
+        /// Longest near-axis run of collinear edges, as a share of the perimeter.
+        /// Consecutive samples of one straight side count as one run.
+        /// </summary>
+        public static float LongestStraightRun(Vec2[] shape)
+        {
+            if (shape == null || shape.Length < 3)
+                return 1f;
+            const float axis = 0.1392f;
+            const float collinear = 0.9903f;
+            int n = shape.Length;
+            var len = new float[n];
+            var dx = new float[n];
+            var dy = new float[n];
+            var horizontal = new bool[n];
+            var vertical = new bool[n];
+            float total = 0f;
+            for (int i = 0; i < n; i++)
+            {
+                Vec2 a = shape[i];
+                Vec2 b = shape[(i + 1) % n];
+                dx[i] = b.X - a.X;
+                dy[i] = b.Y - a.Y;
+                float edge = (float)Math.Sqrt(dx[i] * dx[i] + dy[i] * dy[i]);
+                len[i] = edge;
+                if (edge < 0.05f)
+                    continue;
+                total += edge;
+                horizontal[i] = Math.Abs(dy[i]) <= edge * axis;
+                vertical[i] = Math.Abs(dx[i]) <= edge * axis;
+            }
+
+            if (total < 0.5f)
+                return 1f;
+            float longest = 0f;
+            for (int start = 0; start < n; start++)
+            {
+                if (!horizontal[start] && !vertical[start])
+                    continue;
+                bool hor = horizontal[start];
+                float run = len[start];
+                float dirX = dx[start];
+                float dirY = dy[start];
+                float dirLen = Math.Max(0.05f, len[start]);
+                for (int k = 1; k < n; k++)
+                {
+                    int i = (start + k) % n;
+                    if (hor ? !horizontal[i] : !vertical[i])
+                        break;
+                    float denom = dirLen * Math.Max(0.05f, len[i]);
+                    float dot = dirX * dx[i] + dirY * dy[i];
+                    if (dot / denom < collinear)
+                        break;
+                    run += len[i];
+                }
+
+                if (run > longest)
+                    longest = run;
+            }
+
+            return longest / total;
         }
 
         private static bool CornersAreRight(Vec2[] shape)
@@ -12126,23 +13675,72 @@ namespace Game.UI.Runtime
                         hexes[i], cards[i], pins[i], MapIds[i], others, pill, plateWidth, plateHeight, detail, hint);
                     if (coast == null || coast.Length < 3)
                         coast = hexes[i];
-                    if (!CoastVisualCentre(coast, out _, out float centreY))
+                    if (!CoastVisualCentre(coast, out float centreX, out float centreY))
                         continue;
+                    float dx = centreX - cards[i].Center.X;
                     float dy = centreY - cards[i].Center.Y;
-                    if (Math.Abs(dy) <= 1.5f)
+                    if (Math.Abs(dy) > 1.5f)
+                    {
+                        for (int s = 0; s < scales.Length; s++)
+                        {
+                            float sy = dy * scales[s];
+                            if (Math.Abs(sy) < 1f)
+                                break;
+                            var trial = new Box(cards[i].X, cards[i].Y + sy, cards[i].W, cards[i].H);
+                            bool holds = CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, 0f, sy, true)
+                                || VerticalNudgeHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, sy);
+                            if (!holds)
+                                continue;
+                            if (!CommitCentreSlide(hexes, pins, cards, ref cue, selected, detail, hint, plateWidth, plateHeight, others, i, trial, 0f, sy, true))
+                                continue;
+                            break;
+                        }
+                    }
+
+                    coast = FinishTerritory(
+                        hexes[i], cards[i], pins[i], MapIds[i], others, i == selected ? cue : default, plateWidth, plateHeight, detail, hint);
+                    if (coast == null || !CoastVisualCentre(coast, out centreX, out _))
+                        continue;
+                    dx = centreX - cards[i].Center.X;
+                    if (Math.Abs(dx) <= 1.5f)
                         continue;
                     for (int s = 0; s < scales.Length; s++)
                     {
-                        float sy = dy * scales[s];
-                        if (Math.Abs(sy) < 1f)
+                        float sx = dx * scales[s];
+                        if (Math.Abs(sx) < 1f)
                             break;
-                        var trial = new Box(cards[i].X, cards[i].Y + sy, cards[i].W, cards[i].H);
-                        bool holds = CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, 0f, sy, true)
-                            || VerticalNudgeHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, sy);
-                        if (!holds)
+                        var trial = new Box(cards[i].X + sx, cards[i].Y, cards[i].W, cards[i].H);
+                        bool withPin = CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, sx, 0f, true);
+                        bool cardOnly = !withPin && CardShiftHolds(hexes, pins, cards, cue, selected, detail, hint, plateWidth, plateHeight, i, trial, sx, 0f, false);
+                        if (!withPin && !cardOnly)
                             continue;
-                        ApplyCardShift(pins, cards, ref cue, selected, i, trial, 0f, sy, true);
+                        if (!CommitCentreSlide(hexes, pins, cards, ref cue, selected, detail, hint, plateWidth, plateHeight, others, i, trial, sx, 0f, withPin))
+                            continue;
                         break;
+                    }
+
+                    coast = FinishTerritory(
+                        hexes[i], cards[i], pins[i], MapIds[i], others, i == selected ? cue : default, plateWidth, plateHeight, detail, hint);
+                    if (coast != null && CoastVisualCentre(coast, out float leftX, out float leftY))
+                    {
+                        float leftDx = leftX - cards[i].Center.X;
+                        float leftDy = leftY - cards[i].Center.Y;
+                        if ((Math.Abs(leftDx) > CardCentreTolerance || Math.Abs(leftDy) > CardCentreTolerance)
+                            && Math.Abs(leftDx) <= 48f && Math.Abs(leftDy) <= 48f)
+                        {
+                            var direct = new Box(cards[i].X + leftDx, cards[i].Y + leftDy, cards[i].W, cards[i].H);
+                            bool pinFollows = pins != null && i < pins.Length && pins[i].W > 1f;
+                            if (pinFollows)
+                            {
+                                var movedPin = new Box(pins[i].X + leftDx, pins[i].Y + leftDy, pins[i].W, pins[i].H);
+                                pinFollows = PointInPolygon(movedPin.Center, hexes[i])
+                                    && DistanceToEdge(movedPin.Center, hexes[i]) >= 6f
+                                    && Leader(movedPin, direct) >= 28f
+                                    && Separation(direct, movedPin) >= PinGap;
+                            }
+                            if (pinFollows && RestsInside(direct, hexes[i], InsideMargin) && OnPlate(direct, plateWidth, plateHeight) && Clears(direct, detail))
+                                CommitCentreSlide(hexes, pins, cards, ref cue, selected, detail, hint, plateWidth, plateHeight, others, i, direct, leftDx, leftDy, true);
+                        }
                     }
                 }
             }
@@ -12380,6 +13978,48 @@ namespace Game.UI.Runtime
                 ApplyCardShift(pins, cards, ref cue, selected, index, bestCard, bestSx, bestSy, false);
         }
 
+        /// <summary>
+        /// Applies a centre slide only when the redrawn coast still puts the card
+        /// inside the 20px tolerance. A slide that the cue then pushes off centre is undone.
+        /// </summary>
+        private static bool CommitCentreSlide(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            ref Box cue,
+            int selected,
+            Box detail,
+            Box hint,
+            float plateWidth,
+            float plateHeight,
+            Vec2[][] others,
+            int index,
+            Box trial,
+            float sx,
+            float sy,
+            bool movePin)
+        {
+            Box heldCard = cards[index];
+            Box heldPin = pins != null && index < pins.Length ? pins[index] : default;
+            Box heldCue = cue;
+            ApplyCardShift(pins, cards, ref cue, selected, index, trial, sx, sy, movePin);
+            if (!movePin)
+                cue = heldCue;
+            Box pill = index == selected ? cue : default;
+            Vec2[] coast = FinishTerritory(
+                hexes[index], cards[index], pins[index], MapIds[index], others, pill, plateWidth, plateHeight, detail, hint);
+            bool lands = coast != null && CoastVisualCentre(coast, out float cx, out float cy)
+                && Math.Abs(cards[index].Center.X - cx) <= CardCentreTolerance
+                && Math.Abs(cards[index].Center.Y - cy) <= CardCentreTolerance;
+            if (lands)
+                return true;
+            cards[index] = heldCard;
+            if (pins != null && index < pins.Length)
+                pins[index] = heldPin;
+            cue = heldCue;
+            return false;
+        }
+
         private static void ApplyCardShift(
             Box[] pins,
             Box[] cards,
@@ -12446,7 +14086,10 @@ namespace Game.UI.Runtime
             Box movedCue = cue;
             if (hosts)
             {
-                movedCue = new Box(cue.X + sx, cue.Y + sy, cue.W, cue.H);
+                // A card-only slide leaves the pill where it is. Moving the card out
+                // from under that pill, or past the 160px pin reach, is refused.
+                if (movePin)
+                    movedCue = new Box(cue.X + sx, cue.Y + sy, cue.W, cue.H);
                 if (!OnPlate(movedCue, plateWidth, plateHeight))
                     return false;
                 if (detail.W > 1f && Overlaps(movedCue, detail, 0f))
@@ -13211,7 +14854,9 @@ namespace Game.UI.Runtime
         /// </summary>
         private static bool CompactRegionHolds(Vec2[] hex, Box card, float plateWidth, float plateHeight, Box detail, Box hint)
         {
-            if (!CompactCoast || detail.W < 1f || card.W < 1f || hex == null || hex.Length < 3)
+            if (!CompactCoast || detail.W < 1f || card.W < 1f || hex == null || hex.Length < 12)
+                return false;
+            if (TerritoryReadsRectangular(hex))
                 return false;
             if (!RestsInside(card, hex, InsideMargin))
                 return false;
@@ -13228,7 +14873,7 @@ namespace Game.UI.Runtime
         /// <summary>
         /// Organic coast in the compact box. A bay that would cut the card is eased
         /// back out. The chamfer is never drawn: it reads as a rectangle.
-        /// Desert Base is not passed here; it remains the six-point hex.
+        /// Desert Base uses the same coast. A plain hexagon does not.
         /// </summary>
         private static Vec2[] OrganicCompactCoast(int district, Vec2[] chamfer, Box card, Box pin)
         {
@@ -13236,15 +14881,18 @@ namespace Game.UI.Runtime
                 return chamfer;
             BoundsOf(chamfer, out float x0, out float y0, out float x1, out float y1);
             var box = new Box(x0, y0, Math.Max(1f, x1 - x0), Math.Max(1f, y1 - y0));
-            float[] amps = { 0.28f, 0.20f, 0.14f, 0.08f, 0.04f };
+            float[] amps = { 0.04f, 0.08f, 0.14f, 0.20f, 0.28f };
             Vec2[] fallback = null;
             int fallbackOpen = -1;
+            Vec2[] fullest = null;
+            float fullestArea = -1f;
             for (int i = 0; i < amps.Length; i++)
             {
                 Vec2[] placed = ShapeIntoBox(OrganicControls(district, amps[i]), box);
                 if (placed == null || placed.Length < 12)
                     continue;
                 placed = EaseCoastOffSeat(placed, card, pin, box);
+                placed = BreakLongFlats(placed);
                 if (placed == null || TerritoryReadsRectangular(placed))
                     continue;
                 if (card.W >= 1f && !RestsInside(card, placed, InsideMargin))
@@ -13260,9 +14908,17 @@ namespace Game.UI.Runtime
                     continue;
                 if (RadialRoughness(placed) > 1.15f)
                     continue;
-                if (open >= 8)
-                    return placed;
+                if (open < 8)
+                    continue;
+                float area = PolygonArea(placed);
+                if (area <= fullestArea)
+                    continue;
+                fullest = placed;
+                fullestArea = area;
             }
+
+            if (fullest != null)
+                return fullest;
 
             if (fallbackOpen < 8)
             {
@@ -13618,21 +15274,23 @@ namespace Game.UI.Runtime
         {
             if (coast == null || coast.Length < 3 || card.W < 1f)
                 return;
-            if (!CoastVisualCentre(coast, out _, out float cy))
+            if (!CoastVisualCentre(coast, out float cx, out float cy))
                 return;
+            float dx = cx - card.Center.X;
             float dy = cy - card.Center.Y;
-            if (Math.Abs(dy) < 1.5f)
+            if (Math.Abs(dx) < 1.5f && Math.Abs(dy) < 1.5f)
                 return;
             float[] scales = { 1f, 0.75f, 0.5f, 0.25f };
             for (int s = 0; s < scales.Length; s++)
             {
-                float step = dy * scales[s];
-                if (Math.Abs(step) < 1f)
+                float sx = Math.Abs(dx) < 1.5f ? 0f : dx * scales[s];
+                float sy = Math.Abs(dy) < 1.5f ? 0f : dy * scales[s];
+                if (Math.Abs(sx) < 1f && Math.Abs(sy) < 1f)
                     return;
-                var next = new Box(card.X, card.Y + step, card.W, card.H);
+                var next = new Box(card.X + sx, card.Y + sy, card.W, card.H);
                 if (!RestsInside(next, coast, InsideMargin))
                     continue;
-                var nextPin = new Box(pin.X, pin.Y + step, pin.W, pin.H);
+                var nextPin = new Box(pin.X + sx, pin.Y + sy, pin.W, pin.H);
                 if (pin.W > 1f && !PinPocketHolds(coast, next, nextPin))
                     continue;
                 card = next;
@@ -13854,7 +15512,7 @@ namespace Game.UI.Runtime
             }
             Box view = OpenViewport(plateWidth, plateHeight, fa, true);
             Box hint = ZoomHintRect(plateWidth, plateHeight);
-            float gap = GlowEdgeNeed() + 1.5f;
+            float gap = GlowEdgeNeed() + 0.35f;
             float left = fa ? detail.XMax + HaloReach + 4f : HaloReach + 2f;
             float right = fa ? plateWidth - (HaloReach + 2f) : detail.X - HaloReach - 4f;
             float top = HaloReach + 2f;
@@ -13888,19 +15546,9 @@ namespace Game.UI.Runtime
             var pins = new Box[MapIds.Length];
             for (int i = 0; i < MapIds.Length; i++)
             {
-                bool desert = i == 0;
-                hexes[i] = desert
-                    ? FlatHex(centers[i].X, centers[i].Y, halfW[i], halfH[i])
-                    : CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
+                hexes[i] = CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
                 PlaceCompactSeat(hexes[i], out cards[i], out pins[i]);
-                if (desert && !RestsInside(cards[i], hexes[i], InsideMargin))
-                {
-                    hexes[i] = CompactRegion(centers[i].X, centers[i].Y, halfW[i], halfH[i]);
-                    PlaceCompactSeat(hexes[i], out cards[i], out pins[i]);
-                }
-
-                if (!desert)
-                    hexes[i] = OrganicCompactCoast(i, hexes[i], cards[i], pins[i]);
+                hexes[i] = OrganicCompactCoast(i, hexes[i], cards[i], pins[i]);
                 CenterCardInCoast(hexes[i], ref cards[i], ref pins[i]);
             }
 
@@ -13916,6 +15564,17 @@ namespace Game.UI.Runtime
                     hexes[i], ref cards[i], ref pins[i], cards, i, ref cue, i == selected, fa,
                     hint, detail, plateWidth, plateHeight);
             }
+
+            var grownHex = new Vec2[hexes.Length][];
+            for (int i = 0; i < hexes.Length; i++)
+                grownHex[i] = CloneShape(hexes[i]);
+            var grownCards = (Box[])cards.Clone();
+            var grownPins = (Box[])pins.Clone();
+            Box grownCue = cue;
+            ScaleUntilTheHalo(hexes, pins, cards, cue, selected, detail, plateWidth, plateHeight, fa, false);
+            for (int i = 0; i < MapIds.Length; i++)
+                CenterCardInCoast(hexes[i], ref cards[i], ref pins[i]);
+            SeatCueOffHexes(hexes, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa);
 
             for (int i = 0; i < MapIds.Length; i++)
             {
@@ -13943,6 +15602,31 @@ namespace Game.UI.Runtime
             layout.HexAspectLegal = aspects;
             layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
             bool ready = legal && aspects && layout.CueNear && cue.W > 1f;
+            if (!ready)
+            {
+                for (int i = 0; i < hexes.Length; i++)
+                {
+                    hexes[i] = grownHex[i];
+                    cards[i] = grownCards[i];
+                    pins[i] = grownPins[i];
+                    layout.Seats[i].Hex = hexes[i];
+                    layout.Seats[i].Pin = pins[i];
+                    layout.Seats[i].Card = cards[i];
+                }
+
+                cue = grownCue;
+                CompactFloorActive = true;
+                legal = CompactSeatsLegal(hexes, cards, pins, cue, detail, plateWidth, plateHeight);
+                aspects = AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight)
+                    && DistrictsLegal(hexes, pins, plateWidth, plateHeight);
+                CompactFloorActive = saved;
+                layout.CardsLegal = legal;
+                layout.Cue = cue;
+                layout.CueNear = CueCountsAsNear(cue, cards[selected], pins[selected], hexes[selected]);
+                layout.HexAspectLegal = aspects;
+                layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
+                ready = legal && aspects && layout.CueNear && cue.W > 1f;
+            }
             CompactCoast = ready;
             if (!ready && CompactNote.Length == 0)
                 CompactNote = "legal=" + legal + " aspect=" + aspects + " cue=" + layout.CueNear
@@ -14095,6 +15779,291 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// Hangs the pill on the selected coast, just outside the 26px stroke, inside
+        /// the map. A pill inside the card is covered by the portrait. A pill parked
+        /// across the sand is not attached to the district.
+        /// </summary>
+        private static bool TryAttachCueToDistrictEdge(
+            Vec2[][] hexes,
+            Box[] cards,
+            Box[] pins,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            float width,
+            float height,
+            out Box seated)
+        {
+            seated = default;
+            if (hexes == null || cards == null || selected < 0 || selected >= hexes.Length || hexes[selected] == null)
+                return false;
+            if (width < 8f || height < 8f)
+                return false;
+            Box card = cards[selected];
+            Box pin = pins != null && selected < pins.Length ? pins[selected] : default;
+            Vec2 anchor = pin.W > 1f ? pin.Center : card.Center;
+            BoundsOf(hexes[selected], out float minX, out float minY, out float maxX, out float maxY);
+            float reach = CueHexStroke + 4f;
+            float best = float.MaxValue;
+            bool found = false;
+            CentroidOf(hexes[selected], out float hexX, out float hexY);
+            float outX = anchor.X - hexX;
+            float outY = anchor.Y - hexY;
+            float outLen = (float)Math.Sqrt(outX * outX + outY * outY);
+            if (outLen < 1f)
+            {
+                outX = 0f;
+                outY = -1f;
+                outLen = 1f;
+            }
+
+            outX /= outLen;
+            outY /= outLen;
+            Vec2 lip = BoundaryAt(hexes[selected], hexX, hexY, outX, outY);
+            float tanX = -outY;
+            float tanY = outX;
+            float halfOut = Math.Abs(outX) >= Math.Abs(outY) ? width * 0.5f : height * 0.5f;
+            for (int slide = -6; slide <= 6; slide++)
+            {
+                float along = slide * 18f;
+                float x = lip.X + outX * (reach + halfOut) - width * 0.5f + tanX * along;
+                float y = lip.Y + outY * (reach + halfOut) - height * 0.5f + tanY * along;
+                if (ConsiderCueEdge(hexes, cards, pins, selected, detail, plateWidth, plateHeight, card, pin, anchor, x, y, width, height, Math.Abs(along), ref best, ref seated))
+                    found = true;
+            }
+
+            for (int side = 0; side < 4; side++)
+            {
+                for (int slide = -3; slide <= 3; slide++)
+                {
+                    float along = slide * 24f;
+                    float x;
+                    float y;
+                    if (side == 0)
+                    {
+                        x = card.W > 1f ? card.Center.X - width * 0.5f + along : (minX + maxX - width) * 0.5f + along;
+                        y = minY - reach - height;
+                    }
+                    else if (side == 1)
+                    {
+                        x = card.W > 1f ? card.Center.X - width * 0.5f + along : (minX + maxX - width) * 0.5f + along;
+                        y = maxY + reach;
+                    }
+                    else if (side == 2)
+                    {
+                        x = minX - reach - width;
+                        y = card.W > 1f ? card.Center.Y - height * 0.5f + along : (minY + maxY - height) * 0.5f + along;
+                    }
+                    else
+                    {
+                        x = maxX + reach;
+                        y = card.W > 1f ? card.Center.Y - height * 0.5f + along : (minY + maxY - height) * 0.5f + along;
+                    }
+
+                    if (ConsiderCueEdge(hexes, cards, pins, selected, detail, plateWidth, plateHeight, card, pin, anchor, x, y, width, height, Math.Abs(along), ref best, ref seated))
+                        found = true;
+                }
+            }
+
+            return found;
+        }
+
+        private static bool ConsiderCueEdge(
+            Vec2[][] hexes,
+            Box[] cards,
+            Box[] pins,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight,
+            Box card,
+            Box pin,
+            Vec2 anchor,
+            float x,
+            float y,
+            float width,
+            float height,
+            float along,
+            ref float best,
+            ref Box seated)
+        {
+            x = Clamp(x, MapInset, Math.Max(MapInset, plateWidth - MapInset - width));
+            y = Clamp(y, MapInset, Math.Max(MapInset, plateHeight - MapInset - height));
+            var trial = new Box(x, y, width, height);
+            if (pin.W > 1f && Distance(trial.Center, anchor) > CueNearLimit)
+                return false;
+            if (PolygonHitsRect(hexes[selected], trial))
+                return false;
+            if (!CueCaptureClear(trial, card, hexes, selected, plateWidth, plateHeight))
+                return false;
+            if (detail.W > 1f && Overlaps(trial, detail, 0f))
+                return false;
+            if (pins != null)
+            {
+                for (int p = 0; p < pins.Length; p++)
+                {
+                    if (pins[p].W > 1f && Overlaps(trial, pins[p], 0f))
+                        return false;
+                }
+            }
+
+            if (cards != null)
+            {
+                for (int c = 0; c < cards.Length; c++)
+                {
+                    if (cards[c].W < 1f || !Overlaps(trial, cards[c], 1f))
+                        continue;
+                    if (c != selected)
+                        return false;
+                    float titleH = Math.Min(46f, cards[c].H * 0.32f);
+                    var title = new Box(cards[c].X, cards[c].Y, cards[c].W, titleH);
+                    if (Overlaps(trial, title, 0f))
+                        return false;
+                }
+            }
+
+            float gap = BoxPolygonGap(trial, hexes[selected]);
+            if (gap > 72f)
+                return false;
+            float score = (pin.W > 1f ? Distance(trial.Center, anchor) : 0f) + gap + along * 0.02f;
+            if (score >= best)
+                return false;
+            best = score;
+            seated = trial;
+            return true;
+        }
+
+        /// <summary>Shortest distance from the box border to the polygon. Zero when they meet.</summary>
+        private static float BoxPolygonGap(Box box, Vec2[] shape)
+        {
+            if (shape == null || shape.Length < 3 || box.W < 1f)
+                return float.MaxValue;
+            if (PolygonHitsRect(shape, box))
+                return 0f;
+            float best = float.MaxValue;
+            const int steps = 6;
+            for (int edge = 0; edge < 4; edge++)
+            {
+                for (int s = 0; s <= steps; s++)
+                {
+                    float t = s / (float)steps;
+                    float x = edge == 0 || edge == 2 ? box.X + box.W * t : edge == 1 ? box.XMax : box.X;
+                    float y = edge == 1 || edge == 3 ? box.Y + box.H * t : edge == 2 ? box.YMax : box.Y;
+                    if (edge == 0)
+                    {
+                        x = box.X + box.W * t;
+                        y = box.Y;
+                    }
+                    else if (edge == 1)
+                    {
+                        x = box.XMax;
+                        y = box.Y + box.H * t;
+                    }
+                    else if (edge == 2)
+                    {
+                        x = box.X + box.W * (1f - t);
+                        y = box.YMax;
+                    }
+                    else
+                    {
+                        x = box.X;
+                        y = box.Y + box.H * (1f - t);
+                    }
+
+                    best = Math.Min(best, DistanceToEdge(new Vec2(x, y), shape));
+                }
+            }
+
+            return best;
+        }
+
+        /// <summary>
+        /// The outside pill has to stay inside the 160px pin reach. Slide it toward the
+        /// pin while the stroke still misses every coast.
+        /// </summary>
+        private static void PullCueTowardPin(
+            ref Box cue,
+            Vec2[][] hexes,
+            Box[] cards,
+            Box[] pins,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (cue.W < 8f || pins == null || cards == null || hexes == null || selected < 0 || selected >= pins.Length)
+                return;
+            if (pins[selected].W < 1f || selected >= hexes.Length || hexes[selected] == null)
+                return;
+            Vec2 pin = pins[selected].Center;
+            Box card = cards[selected];
+            for (int step = 0; step < 10; step++)
+            {
+                float dist = Distance(cue.Center, pin);
+                if (dist <= CueNearLimit - 2f)
+                    return;
+                float move = Math.Min(10f, dist - (CueNearLimit - 4f));
+                if (move < 0.5f)
+                    return;
+                float dx = (pin.X - cue.Center.X) / dist * move;
+                float dy = (pin.Y - cue.Center.Y) / dist * move;
+                Box trial = ShiftBox(cue, dx, dy);
+                if (PolygonHitsRect(hexes[selected], trial))
+                    return;
+                if (!CueCaptureClear(trial, card, hexes, selected, plateWidth, plateHeight))
+                    return;
+                if (detail.W > 1f && Overlaps(trial, detail, 0f))
+                    return;
+                cue = trial;
+            }
+        }
+
+        /// <summary>
+        /// Capture paints the finished coast, which can bulge past the seated hex and
+        /// cover a pill that cleared the raw outline. The pill is seated against that
+        /// painted coast.
+        /// </summary>
+        private static Vec2[][] CoastsUnderCue(
+            Vec2[][] hexes,
+            Box[] pins,
+            Box[] cards,
+            Box cue,
+            int selected,
+            Box detail,
+            float plateWidth,
+            float plateHeight)
+        {
+            if (hexes == null || cards == null || selected < 0 || selected >= hexes.Length || hexes[selected] == null)
+                return hexes;
+            var others = new Vec2[hexes.Length][];
+            for (int i = 0; i < hexes.Length; i++)
+            {
+                if (i != selected)
+                    others[i] = hexes[i];
+            }
+
+            Box pin = pins != null && selected < pins.Length ? pins[selected] : default;
+            Box hint = ZoomHintRect(plateWidth, plateHeight);
+            Vec2[] drawn = FinishTerritory(
+                CopyShape(hexes[selected]),
+                cards[selected],
+                pin,
+                MapIds[selected],
+                others,
+                cue,
+                plateWidth,
+                plateHeight,
+                detail,
+                hint);
+            if (drawn == null || drawn.Length < 3)
+                return hexes;
+            var probe = (Vec2[][])hexes.Clone();
+            probe[selected] = drawn;
+            return probe;
+        }
+
+        /// <summary>
         /// The capture pill is legal when it sits inside the selected card, or when
         /// a 26px stroke around it misses every coast. A pill past the map edge is
         /// pulled back. The wide Desert Base shelf that already clears is left where
@@ -14117,9 +16086,35 @@ namespace Game.UI.Runtime
                 return;
             if (Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f)
                 return;
-            Box card = cards[selected];
-            if (CueCaptureClear(cue, card, hexes, selected, plateWidth, plateHeight) && Clears(cue, detail))
+            bool root = _cueSeatDepth == 0;
+            Vec2[][] authored = hexes;
+            if (root)
+                _cueSeatDepth = 1;
+            try
+            {
+            float wantW = fa ? Math.Max(cue.W, 206f) : Math.Max(cue.W, 128f);
+            float wantH = fa ? Math.Max(cue.H, 56f) : Math.Max(cue.H, 44f);
+            if (wantW < 36f)
+                wantW = fa ? 206f : 128f;
+            if (wantH < 36f)
+                wantH = fa ? 56f : 44f;
+            if (TryAttachCueToDistrictEdge(
+                hexes, cards, pins, selected, detail, plateWidth, plateHeight, wantW, wantH, out Box edged))
+            {
+                cue = edged;
+                PullCueTowardPin(ref cue, hexes, cards, pins, selected, detail, plateWidth, plateHeight);
                 return;
+            }
+
+            Box card = cards[selected];
+            if (CueCaptureClear(cue, card, hexes, selected, plateWidth, plateHeight) && Clears(cue, detail)
+                && !PolygonHitsRect(hexes[selected], cue))
+            {
+                PullCueTowardPin(ref cue, hexes, cards, pins, selected, detail, plateWidth, plateHeight);
+                Box pin = pins != null && selected < pins.Length ? pins[selected] : default;
+                if (CueCountsAsNear(cue, card, pin, hexes[selected]))
+                    return;
+            }
             bool wideShelf = cue.W + 0.5f >= 206f && cue.H + 0.5f >= 56f;
             Box found = default;
             bool any = false;
@@ -14140,7 +16135,37 @@ namespace Game.UI.Runtime
             if (detail.W > 1f && Overlaps(found, detail, 0f))
                 return;
             cue = found;
+            }
+            finally
+            {
+                if (root)
+                {
+                    _cueSeatDepth = 0;
+                    for (int pass = 0; pass < 3; pass++)
+                    {
+                        Vec2[][] drawn = CoastsUnderCue(authored, pins, cards, cue, selected, detail, plateWidth, plateHeight);
+                        Box seatedCard = cards[selected];
+                        Vec2[] coast = drawn != null && selected < drawn.Length ? drawn[selected] : null;
+                        Box seatedPin = pins != null && selected < pins.Length ? pins[selected] : default;
+                        bool inside = CueInsideCard(cue, seatedCard);
+                        bool hitting = coast != null && !inside
+                            && (PolygonHitsRect(coast, cue) || !CueCaptureClear(cue, seatedCard, drawn, selected, plateWidth, plateHeight));
+                        bool near = CueCountsAsNear(cue, seatedCard, seatedPin, coast);
+                        if (!hitting && near)
+                            break;
+                        Box before = cue;
+                        _cueSeatDepth = 1;
+                        SeatCueOffHexes(drawn, pins, cards, ref cue, selected, detail, plateWidth, plateHeight, fa);
+                        _cueSeatDepth = 0;
+                        if (Math.Abs(cue.X - before.X) < 0.5f && Math.Abs(cue.Y - before.Y) < 0.5f
+                            && Math.Abs(cue.W - before.W) < 0.5f && Math.Abs(cue.H - before.H) < 0.5f)
+                            break;
+                    }
+                }
+            }
         }
+
+        private static int _cueSeatDepth;
 
         private static bool CueInsideCard(Box cue, Box card)
         {
@@ -14630,8 +16655,8 @@ namespace Game.UI.Runtime
             if (placed != null)
             {
                 HoldIndustrialCue(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
-                SeatCueOffHexes(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, fa);
                 SnapCardsToVisualCentre(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight);
+                SeatCueOffHexes(hexes, pins, placed, ref cue, selected, detail, plateWidth, plateHeight, fa);
                 if (cue.W > 1f)
                     cueNear = CueCountsAsNear(cue, placed[selected], pins[selected], hexes[selected]);
             }

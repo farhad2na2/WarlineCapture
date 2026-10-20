@@ -1156,56 +1156,92 @@ namespace Game.UI.Runtime
             float width = Mathf.Max(206f, slot.Card.width);
             Rect card = slot.Card;
             Rect seated = slot.Cue;
-            // The seater already parked a 206×56 pill above the card or on a side shelf.
             bool insideMap = seated.xMin >= 12f && seated.yMin >= 12f
                 && seated.xMax <= plateWidth - 12f && seated.yMax <= plateHeight - 12f;
-            bool parked = seated.width + 0.5f >= 206f && seated.height + 0.5f >= height
-                && insideMap
-                && (seated.yMax <= card.yMin + 1.5f
-                    || seated.xMin + 1f >= card.xMax
-                    || seated.xMax <= card.xMin + 1f
-                    || (seated.xMin >= card.xMin - 1f && seated.xMax <= card.xMax + 1f
-                        && seated.yMin >= card.yMin + 8f && seated.yMax <= card.yMax + 1f));
-            if (parked)
+            // The arranged pill is already off every hex. Replacing it with a shelf
+            // above the card is what put the Farsi tab back on Industrial Basin.
+            if (seated.width + 0.5f >= width && seated.height + 0.5f >= height
+                && insideMap && !ShelfHitsHex(slots, selected, seated))
                 return;
-            Rect pin = slot.Pin;
-            float drop = card.y - height < 1f ? 1f - (card.y - height) : 0f;
-            if (drop > 0.5f)
-            {
-                var moved = new Rect(card.x, card.y + drop, card.width, card.height);
-                var movedPin = new Rect(pin.x, pin.y + drop, pin.width, pin.height);
-                bool onPlate = moved.yMax <= plateHeight - 12f && movedPin.yMax <= plateHeight - 4f && moved.yMin >= 1f;
-                if (onPlate && ShelfClearOfCards(slots, selected, moved))
-                {
-                    card = moved;
-                    pin = movedPin;
-                }
-            }
-
-            float cueTop = card.y - height;
-            if (cueTop < 12f)
+            if (!TryFaShelf(slots, selected, card, seated, plateWidth, plateHeight, width, height, out Rect shelf))
                 return;
-            float cueX = card.xMax - width;
-            if (cueX > card.x)
-                cueX = card.x;
-            if (cueX < 1f)
-                cueX = 1f;
-            if (cueX + width > plateWidth - 1f)
-                cueX = Mathf.Max(1f, plateWidth - 1f - width);
-            var cue = new Rect(cueX, cueTop, width, height);
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot each = slots[i];
                 if (each.Cue.width > 1f || i == selected)
-                    each.Cue = cue;
-                if (i == selected)
-                {
-                    each.Card = card;
-                    each.Pin = pin;
-                }
-
+                    each.Cue = shelf;
                 slots[i] = each;
             }
+        }
+
+        /// <summary>
+        /// A 206×56 Farsi tab that misses every district stroke. The card stays put
+        /// so the portrait keeps the region centre the seater just locked.
+        /// </summary>
+        private static bool TryFaShelf(
+            List<TheatreZoneSlot> slots,
+            int selected,
+            Rect card,
+            Rect seated,
+            float plateWidth,
+            float plateHeight,
+            float width,
+            float height,
+            out Rect spot)
+        {
+            spot = default;
+            float[] xs =
+            {
+                seated.width > 8f ? seated.x : card.x,
+                card.x,
+                card.xMax - width,
+                card.xMax + 8f,
+                card.xMin - 8f - width,
+                card.x + (card.width - width) * 0.5f
+            };
+            float[] ys =
+            {
+                seated.height > 8f ? seated.y : card.y - height,
+                card.y - height,
+                card.yMax + 8f,
+                card.y,
+                card.y + (card.height - height) * 0.5f
+            };
+            for (int y = 0; y < ys.Length; y++)
+            {
+                for (int x = 0; x < xs.Length; x++)
+                {
+                    float cx = Mathf.Clamp(xs[x], 12f, Mathf.Max(12f, plateWidth - 12f - width));
+                    float cy = Mathf.Clamp(ys[y], 12f, Mathf.Max(12f, plateHeight - 12f - height));
+                    var trial = new Rect(cx, cy, width, height);
+                    if (trial.xMin < 12f || trial.yMin < 12f || trial.xMax > plateWidth - 12f || trial.yMax > plateHeight - 12f)
+                        continue;
+                    if (ShelfHitsHex(slots, selected, trial))
+                        continue;
+                    spot = trial;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private static bool ShelfHitsHex(List<TheatreZoneSlot> slots, int selected, Rect spot)
+        {
+            if (slots == null)
+                return false;
+            Rect inflated = InflateRect(spot, TheatreSeatGeometry.CueHexStroke);
+            for (int i = 0; i < slots.Count; i++)
+            {
+                Vector2[] shape = slots[i].Hex;
+                if (shape == null || shape.Length < 3)
+                    continue;
+                bool hits = i == selected ? EdgesHitRect(shape, inflated) : RectHitsPolygon(inflated, shape);
+                if (hits)
+                    return true;
+            }
+
+            return false;
         }
 
         private static bool ShelfClearOfCards(List<TheatreZoneSlot> slots, int selected, Rect card)
@@ -2340,6 +2376,8 @@ namespace Game.UI.Runtime
             plate.rectTransform.localScale = Vector3.one;
             var cue = CreateLabel(parent, "ZoomCue", 20f);
             PlaceTopLeft(cue.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
+            plate.rectTransform.SetAsLastSibling();
+            cue.rectTransform.SetAsLastSibling();
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -3787,8 +3825,14 @@ namespace Game.UI.Runtime
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return;
             Rect spot = PlateRect(cue.rectTransform);
+            float frameWidth = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
+            float frameHeight = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
             if (neededWidth > spot.width)
                 spot.width = neededWidth;
+            if (frameWidth > 24f && spot.xMax > frameWidth - 12f)
+                spot.x = Mathf.Max(12f, frameWidth - 12f - spot.width);
+            if (frameHeight > 24f && spot.yMax > frameHeight - 12f)
+                spot.y = Mathf.Max(12f, frameHeight - 12f - spot.height);
             string selected = CueSelectedMap(parent, spot.x);
             if (string.IsNullOrEmpty(selected))
             {
@@ -3820,18 +3864,16 @@ namespace Game.UI.Runtime
             var cardBox = new Rect(cardX, cardY, cardW, cardH);
             bool inside = spot.x >= cardBox.x - 1.5f && spot.y >= cardBox.y - 1.5f
                 && spot.xMax <= cardBox.xMax + 1.5f && spot.yMax <= cardBox.yMax + 1.5f;
-            float frameWidth = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
-            float frameHeight = parent.rect.height > 2f ? parent.rect.height : parent.sizeDelta.y;
             bool onMap = spot.x >= 12f && spot.y >= 12f && spot.xMax <= frameWidth - 12f && spot.yMax <= frameHeight - 12f;
             if (inside && onMap)
             {
-                SyncCuePlate(parent, spot);
+                CommitCueSpot(cue, parent, spot);
                 return;
             }
 
             if (!FaCueTabBlocked(parent, spot, selected) && onMap)
             {
-                SyncCuePlate(parent, spot);
+                CommitCueSpot(cue, parent, spot);
                 return;
             }
 
@@ -3844,12 +3886,9 @@ namespace Game.UI.Runtime
             var band = new Rect(bandX, bandY, bandW, bandH);
             bool bandInside = band.x >= cardBox.x - 1.5f && band.y >= cardBox.y - 1.5f
                 && band.xMax <= cardBox.xMax + 1.5f && band.yMax <= cardBox.yMax + 1.5f;
-            if (bandInside && band.width >= 36f)
+            if (bandInside && band.width >= 36f && band.width + 1f >= neededWidth)
             {
-                PlaceTopLeft(cue.rectTransform, band.x, band.y, band.width, band.height);
-                KeepAuthoredSize(cue.rectTransform);
-                MatchCueRect(cue.rectTransform);
-                SyncCuePlate(parent, band);
+                CommitCueSpot(cue, parent, band);
                 return;
             }
 
@@ -3877,14 +3916,25 @@ namespace Game.UI.Runtime
                         var trial = new Rect(x, y, spot.width, spot.height);
                         if (FaCueTabBlocked(parent, trial, selected) || FaCueHitsOtherCard(parent, trial, selected))
                             continue;
-                        PlaceTopLeft(cue.rectTransform, trial.x, trial.y, trial.width, trial.height);
-                        KeepAuthoredSize(cue.rectTransform);
-                        MatchCueRect(cue.rectTransform);
-                        SyncCuePlate(parent, trial);
+                        CommitCueSpot(cue, parent, trial);
                         return;
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// The ink width has to land on the ZoomCue rect. Growing only the plate
+        /// leaves capture measuring the old 128 or 160 box.
+        /// </summary>
+        private static void CommitCueSpot(TMP_Text cue, RectTransform parent, Rect spot)
+        {
+            if (cue == null || cue.rectTransform == null || spot.width < 8f || spot.height < 8f)
+                return;
+            PlaceTopLeft(cue.rectTransform, spot.x, spot.y, spot.width, spot.height);
+            KeepAuthoredSize(cue.rectTransform);
+            MatchCueRect(cue.rectTransform);
+            SyncCuePlate(parent, spot);
         }
 
         private static void HoldCueSize(TMP_Text cue, float size)
@@ -4376,6 +4426,7 @@ namespace Game.UI.Runtime
             if (cue == null || cue.name != "ZoomCue")
                 return;
             LockCueFont(cue);
+            FitCueInkToBox(cue);
             LiftCueClearOfTitle(cue);
             AttachZoomPointer(cue.rectTransform);
             if (cue.transform.parent is not RectTransform parent)
@@ -4732,6 +4783,8 @@ namespace Game.UI.Runtime
 
             if (cue == null)
             {
+                Debug.LogError("[ZoomCue] missing ratio=" + TheatreSeatGeometry.ShotRatio
+                    + " locale=" + TheatreSeatGeometry.ShotLocale);
                 RaiseTheatreReadability(_libraryRegions);
                 ReseatFramedCards(_libraryRegions);
                 LogTheatreSeats(_libraryRegions, UiShellRuntimeGateway.Localization.IsRightToLeft);
@@ -4761,6 +4814,53 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
+        /// English ink may drop to 16px. Farsi stays at least 22px and the box grows
+        /// to the line. Capture rejects a font under 14 and a line past the box.
+        /// </summary>
+        private static void FitCueInk(TMP_Text cue)
+        {
+            if (cue == null || cue.rectTransform == null)
+                return;
+            bool fa = CueCopyIsFarsi(cue, FlattenCopy(cue.text))
+                || UiShellRuntimeGateway.Localization.IsRightToLeft;
+            float floor = fa ? 22f : 16f;
+            cue.ForceMeshUpdate();
+            float width = cue.rectTransform.rect.width > 1f ? cue.rectTransform.rect.width : cue.rectTransform.sizeDelta.x;
+            float ink = MeasuredNameWidth(cue);
+            if (!fa)
+            {
+                while (ink > width + 2f && cue.fontSize > floor + 0.1f)
+                {
+                    float next = Mathf.Max(floor, cue.fontSize - 1f);
+                    cue.fontSizeMin = next;
+                    cue.fontSizeMax = next;
+                    cue.fontSize = next;
+                    cue.ForceMeshUpdate();
+                    ink = MeasuredNameWidth(cue);
+                    if (next <= floor + 0.1f)
+                        break;
+                }
+            }
+
+            if (ink <= width + 2f)
+                return;
+            float need = ink + 6f;
+            if (cue.rectTransform.parent is not RectTransform parent)
+                return;
+            float frameW = parent.rect.width > 2f ? parent.rect.width : parent.sizeDelta.x;
+            float x = cue.rectTransform.anchoredPosition.x;
+            float maxW = frameW - 12f - Mathf.Max(0f, x);
+            if (need > maxW)
+                need = maxW;
+            if (need < width + 1f)
+                return;
+            var size = cue.rectTransform.sizeDelta;
+            cue.rectTransform.sizeDelta = new Vector2(need, size.y);
+            KeepAuthoredSize(cue.rectTransform);
+            SyncCuePlate(parent, new Rect(x, -cue.rectTransform.anchoredPosition.y, need, size.y));
+        }
+
+        /// <summary>
         /// Locks the cue after every layout pass and writes the sizes the capture camera draws.
         /// </summary>
         private static void FinishCuePaint(TMP_Text cue, string selectedId)
@@ -4770,6 +4870,7 @@ namespace Game.UI.Runtime
             if (cue.GetComponent<TheatreZoomCueLock>() == null)
                 cue.gameObject.AddComponent<TheatreZoomCueLock>();
             LockCueFont(cue);
+            FitCueInkToBox(cue);
             LiftCueClearOfTitle(cue);
             if (!string.IsNullOrEmpty(selectedId))
                 DropNameBelowCue(cue, selectedId);
@@ -4963,14 +5064,21 @@ namespace Game.UI.Runtime
                 }
 
                 if (cardsOk && seat.Card.W >= 1f)
-                {
                     slot.Card = new Rect(seat.Card.X, seat.Card.Y, seat.Card.W, seat.Card.H);
+                if (slot.Selected && layout.Cue.W >= 8f && layout.Cue.H >= 8f)
                     slot.Cue = new Rect(layout.Cue.X, layout.Cue.Y, layout.Cue.W, layout.Cue.H);
-                }
+                else if (cardsOk && seat.Card.W >= 1f)
+                    slot.Cue = new Rect(layout.Cue.X, layout.Cue.Y, layout.Cue.W, layout.Cue.H);
 
                 slots[i] = slot;
             }
 
+            float coverage = TheatreSeatGeometry.DrawnTerritoryCoverage(layout, plateWidth, plateHeight, fa, reserve);
+            Debug.Log(TheatreSeatGeometry.FormatTerritoryCoverage(
+                TheatreSeatGeometry.ShotRatio,
+                fa ? "fa" : TheatreSeatGeometry.ShotLocale,
+                coverage,
+                reserve));
             return cardsOk;
         }
 
@@ -6237,6 +6345,11 @@ namespace Game.UI.Runtime
                 }
             }
 
+            // A 132px card cannot hold CITY CROSSROADS on one line at 20px.
+            // Two words on a narrow Latin card wrap instead of overflowing.
+            if (!ZoneNameIsFarsi(name) && source.IndexOf(' ') >= 0 && width > 1f && width < 180f)
+                bestSize = 0f;
+
             // Line spacing is a percent of the line box. Character spacing stays 0.
             // A short strip still has to hold two lines at the font floor.
             float[] lead = { 0f, -16f, -32f, -48f, -64f, -80f };
@@ -6269,6 +6382,18 @@ namespace Game.UI.Runtime
             // when 46px cannot show both, and do not fall back to the overflowing line.
             if (TrySeatWrappedName(name, source, floor, width))
                 return;
+
+            if (source.IndexOf(' ') >= 0 && WriteNameSplit(name, source, floor, 0f, Mathf.Max(8f, width)))
+            {
+                float needed = MeasuredNameHeight(name);
+                if (needed > stripH + 1.5f)
+                    OpenNameStrip(name, needed);
+                name.maxVisibleLines = 2;
+                name.textWrappingMode = TextWrappingModes.NoWrap;
+                LockSeatedName(name, floor);
+                name.ForceMeshUpdate();
+                return;
+            }
 
             name.text = source;
             name.lineSpacing = 0f;
@@ -6353,7 +6478,9 @@ namespace Game.UI.Runtime
                     continue;
                 float leftWidth = ZoneNameLineWidth(name, left, size);
                 float rightWidth = ZoneNameLineWidth(name, right, size);
-                if (leftWidth > width + 1.5f || rightWidth > width + 1.5f)
+                // CROSSROADS at 20px measures about 140px in a 132px strip.
+                // A few pixels of tracking still keeps the 20px floor.
+                if (leftWidth > width + 16f || rightWidth > width + 16f)
                     continue;
                 float gap = Mathf.Abs(leftWidth - rightWidth);
                 if (gap >= bestGap)
@@ -6376,7 +6503,43 @@ namespace Game.UI.Runtime
             name.fontSizeMax = size;
             name.fontSize = size;
             name.ForceMeshUpdate();
+            if (!NameInkFits(name, width) || NameBreaksMidWord(name))
+            {
+                name.text = source;
+                name.characterSpacing = 0f;
+                name.maxVisibleLines = 1;
+                name.ForceMeshUpdate();
+                return false;
+            }
+
             return true;
+        }
+
+        /// <summary>
+        /// Pulls a wrapped title inside its box without dropping the font. Capture
+        /// measures the mesh line, so a 140px word in a 132px strip needs tracking.
+        /// </summary>
+        private static bool NameInkFits(TMP_Text name, float width)
+        {
+            if (name == null || width < 8f)
+                return false;
+            name.ForceMeshUpdate();
+            float line = ZoneNameIsFarsi(name) ? WidestDrawnLine(name) : CapturedLineWidth(name);
+            if (line <= width + 2f)
+                return true;
+            for (float spacing = -2f; spacing >= -18f; spacing -= 2f)
+            {
+                name.characterSpacing = spacing;
+                name.ForceMeshUpdate();
+                line = ZoneNameIsFarsi(name) ? WidestDrawnLine(name) : CapturedLineWidth(name);
+                if (line > width + 2f || NameBreaksMidWord(name))
+                    continue;
+                return true;
+            }
+
+            name.characterSpacing = 0f;
+            name.ForceMeshUpdate();
+            return false;
         }
 
         /// <summary>
@@ -6446,7 +6609,15 @@ namespace Game.UI.Runtime
             if (!allowWrap && name.preferredWidth > width + 2f)
                 return false;
             if (width > 1f && line > width + 2f)
+            {
+                if (allowWrap && NameInkFits(name, width) && !NameBreaksMidWord(name))
+                {
+                    LockSeatedName(name, size);
+                    return true;
+                }
+
                 return false;
+            }
             if (allowWrap && NameBreaksMidWord(name))
                 return false;
             if (!allowWrap && name.textInfo != null && name.textInfo.lineCount > 1)
@@ -7350,7 +7521,7 @@ namespace Game.UI.Runtime
                 return 0f;
             float width = 0f;
             for (int i = 0; i < line.Length; i++)
-                width += size * (line[i] <= 127 ? 0.7f : 0.95f);
+                width += size * (line[i] <= 127 ? 0.66f : 0.95f);
             return width;
         }
 

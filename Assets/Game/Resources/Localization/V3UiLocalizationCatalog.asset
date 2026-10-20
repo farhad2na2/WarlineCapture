@@ -8360,6 +8360,10 @@ MonoBehaviour:
       value: "Industrial basin battles"
     - key: ui.skirmish.theater.mp.subtitle
       value: "Armor approach battles"
+    - key: ui.skirmish.library.title.theatre_map
+      value: "SKIRMISH | THEATRE MAP"
+    - key: ui.skirmish.library.title.battlefield
+      value: "SKIRMISH | {0}"
     - key: ui.skirmish.library.battles_won
       value: Battles won
     - key: ui.skirmish.theatre_battles_one
@@ -24648,6 +24652,10 @@ MonoBehaviour:
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
     - key: ui.skirmish.theater.mp.subtitle
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.library.title.theatre_map
+      value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | \u0646\u0642\u0634\u0647 \u0635\u062D\u0646\u0647"
+    - key: ui.skirmish.library.title.battlefield
+      value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | {0}"
     - key: ui.skirmish.library.battles_won
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u0628\u0631\u062F\u0647"
     - key: ui.skirmish.theatre_battles_one

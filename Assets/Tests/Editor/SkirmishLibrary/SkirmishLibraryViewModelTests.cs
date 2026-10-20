@@ -62,6 +62,23 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void QuickBattleSkipsTheSelectedScenarioWhenAnotherIsPlayable()
+        {
+            var entries = new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S001", "DB", "BA", "G", "F", true, 0),
+                Entry("S002", "DB", "BA", "G", "E", true, 2)
+            };
+            var model = Model(entries, new SkirmishMedalLedger(null, entries), randomIndex: _ => 0);
+            string first = model.QuickBattle();
+            string second = model.QuickBattle();
+            string third = model.QuickBattle();
+            Assert.IsNotEmpty(first);
+            Assert.AreNotEqual(first, second);
+            Assert.AreNotEqual(second, third);
+        }
+
+        [Test]
         public void QuickBattleSelectsAnOwnedScenarioAndDoesNotLaunch()
         {
             var entries = new List<SkirmishBattleCatalogEntry>

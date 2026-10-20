@@ -14,10 +14,10 @@ namespace Game.UI.Runtime
         private const float LibraryFontFloor = 22f;
         private const float LibraryPinWidth = 252f;
         private const float LibraryPinHeight = 168f;
-        private const float LibraryGridCardGap = 3f;
+        private const float LibraryGridCardGap = 6f; // v37 approved-3 framed cells (was 3)
         private const float LibraryGridRightPad = 6f;
-        private const float LibraryGridOriginX = 64f;
-        private const float LibraryGridRowGap = 2f;
+        private const float LibraryGridOriginX = 112f; // v37 approved-3 row tiles (was 84)
+        private const float LibraryGridRowGap = 6f; // v37 approved-3 framed cells (was 2)
         private const float LibraryGridTitleHeight = 28f;
         private const float LibraryGridSubtitleHeight = 44f;
         private const float LibraryGridMedalSize = 14f;
@@ -85,8 +85,6 @@ namespace Game.UI.Runtime
         private string _startFilter = string.Empty;
         private bool _missingMedalOnly;
         private bool _filtersOpen;
-        private bool _favouritesLit;
-        private Button _libraryFavouritesButton;
         private Button _libraryAdvancedButton;
         private static Sprite _libraryMedallion;
         private static Sprite _zoneMedallion;
@@ -213,7 +211,7 @@ namespace Game.UI.Runtime
             EnsureMedalSlots(_medalRow);
             EnsureDifficultyButtons(_difficultyRow);
             EnsureRecommended(_recommendedPanel);
-            _libraryFavouritesButton = EnsureFooterUtility(composition, "LibraryFavouritesButton");
+            RemoveRetiredFooterUtility(composition, "LibraryFavouritesButton");
             _libraryAdvancedButton = EnsureFooterUtility(composition, "LibraryAdvancedButton");
             EnsureStoreButton(rules);
             EnsureModeToggle(preview);
@@ -508,45 +506,6 @@ namespace Game.UI.Runtime
         }
 
 
-        private void PresentScreenHeading(SkirmishTheaterState theater, SkirmishBattlefieldState field, bool fa, bool battlefield)
-        {
-            TMP_Text screenTitle = transform.Find("SkirmishSetupComposition/ScreenTitlePanel/ScreenTitle")?.GetComponent<TMP_Text>();
-            string headingMap = string.IsNullOrEmpty(field.MapId) ? theater.SelectedMapId : field.MapId;
-            bool hasHeading = TryFindTheaterPin(theater, headingMap, out SkirmishTheaterPinState headingPin);
-            string mapTitle = hasHeading ? MapDisplayTitle(headingPin.MapId, fa) : (fa ? "صحنه نبرد" : "THEATRE");
-            string route = !battlefield
-                ? (fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP")
-                : (fa ? "زد و خورد | " : "SKIRMISH | ") + mapTitle;
-            SetCopy(screenTitle, MixedText(route, fa), 20f, 32f);
-            if (screenTitle != null)
-                screenTitle.color = new Color(0.93f, 0.78f, 0.38f, 1f);
-            SetCopy(mapNameText, mapTitle, 18f, 28f);
-            if (mapNameText != null)
-                mapNameText.color = new Color(0.96f, 0.93f, 0.84f, 1f);
-            if (screenTitle != null)
-            {
-                screenTitle.textWrappingMode = TextWrappingModes.NoWrap;
-                screenTitle.overflowMode = TextOverflowModes.Overflow;
-            }
-        }
-
-
-        private void PresentWallet()
-        {
-            MainMenuAccountHeaderView header = GetComponentInChildren<MainMenuAccountHeaderView>(true);
-            if (header == null)
-                return;
-            int credits = 0;
-            bool shown = SkirmishLibraryWallet.ReadCredits != null && SkirmishLibraryWallet.ReadCredits(out credits);
-            header.enabled = false;
-            if (!shown || header.Value == null || HasCommanderIdentity())
-                return;
-            header.gameObject.SetActive(true);
-            header.Value.isRightToLeftText = false;
-            header.Value.text = credits.ToString("N0", System.Globalization.CultureInfo.InvariantCulture);
-        }
-
-
         private void AdoptLibrarySelection(string scenarioId)
         {
             if (!TryFindEntry(scenarioId, out SkirmishBattleCatalogEntry entry))
@@ -735,7 +694,7 @@ namespace Game.UI.Runtime
                 grid.anchorMin = new Vector2(0f, 0f);
                 grid.anchorMax = new Vector2(1f, 1f);
                 grid.offsetMin = new Vector2(8f, 8f);
-                grid.offsetMax = new Vector2(-8f, -112f);
+                grid.offsetMax = new Vector2(-8f, -GridTopOffset());
                 if (grid.GetComponent<V3GradientGraphic>() == null)
                     TintPanel(grid.gameObject);
             }
@@ -760,10 +719,20 @@ namespace Game.UI.Runtime
 
         private void MirrorLibraryPanels()
         {
-            ApplyLibraryFrame();
+            ApplyLibraryFrame(LibraryBriefingOnLeft());
         }
 
-        private void ApplyLibraryFrame()
+        /// <param name="briefingOnLeftOverride">Null keeps the default side (left in LTR, right in RTL).</param>
+        /// <summary>v46: px the 4:3 Theatre briefing column gives the map so P2's detail reserve holds.</summary>
+        private const float TheatreFourByThreeColumnNarrow = 40f;
+
+        /// <summary>v46: the 4:3 Theatre briefing column never drops below this (medal tiles stay >= 96 px).</summary>
+        private const float TheatreBriefingMinWidth = 300f;
+
+        /// <summary>v46: Game PM floor, the 4:3 Theatre map keeps at least this share of the safe width.</summary>
+        private const float TheatreMapMinShare = 0.60f;
+
+        private void ApplyLibraryFrame(bool? briefingOnLeftOverride = null)
         {
             RectTransform composition = transform.Find("SkirmishSetupComposition") as RectTransform;
             var map = transform.Find("SkirmishSetupComposition/OperationPreview") as RectTransform;
@@ -771,7 +740,7 @@ namespace Game.UI.Runtime
             if (composition == null || map == null || briefing == null)
                 return;
             FillComposition(composition);
-            bool briefingOnLeft = !UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool briefingOnLeft = briefingOnLeftOverride ?? !UiShellRuntimeGateway.Localization.IsRightToLeft;
             SkirmishLibraryFrame.Resolve(
                 composition.rect.width,
                 composition.rect.height,
@@ -783,6 +752,26 @@ namespace Game.UI.Runtime
                 out float panelY,
                 out float panelHeight);
             bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+            // v46 (Game PM, approved-1 keeps the district panel at 4:3): P2's seating only reserves the trailing detail
+            // column when every portrait seats (TheatreSeatGeometry.DetailReserveOn); the 4:3 plate was 1039.6 px, just
+            // under it. The briefing column gives the map 40 px (plate ~1080, where the reserve holds for the default
+            // district in en and fa). P2's capture check now reads the live split ([MapPanelWidth]); the map stays at
+            // or above 60% of the safe width.
+            float theatreNarrow = 0f;
+            float safeWidth = composition.rect.width;
+            if (theater && composition.rect.height > 1f && safeWidth / composition.rect.height < 1.6f)
+            {
+                theatreNarrow = Mathf.Min(TheatreFourByThreeColumnNarrow, Mathf.Max(0f, briefingWidth - TheatreBriefingMinWidth));
+                if (mapWidth + theatreNarrow < TheatreMapMinShare * safeWidth)
+                    theatreNarrow = Mathf.Max(theatreNarrow, TheatreMapMinShare * safeWidth - mapWidth);
+                briefingWidth -= theatreNarrow;
+                mapWidth += theatreNarrow;
+                if (briefingOnLeft)
+                    mapX -= theatreNarrow;
+                else
+                    briefingX += theatreNarrow;
+            }
+
             SkirmishLibraryFrame.CloseTheatreSeam(
                 theater,
                 briefingOnLeft,
@@ -792,6 +781,10 @@ namespace Game.UI.Runtime
                 briefingWidth);
             PlaceTopLeft(map, mapX, panelY, mapWidth, panelHeight);
             PlaceTopLeft(briefing, briefingX, panelY, briefingWidth, panelHeight);
+            if (theater)
+                Debug.Log("[TheatreColumns] composition=" + composition.rect.width.ToString("0") + "x" + composition.rect.height.ToString("0") +
+                    " briefing=" + briefingWidth.ToString("0.0") + " map=" + mapWidth.ToString("0.0") +
+                    " narrow=" + theatreNarrow.ToString("0") + " mapShare=" + (composition.rect.width > 1f ? mapWidth / composition.rect.width : 0f).ToString("0.000") + " side=" + (briefingOnLeft ? "left" : "right"));
             EnsureOpaquePanel(map);
             EnsureOpaquePanel(briefing);
             RectTransform mapShadow = EnsureSoftShadow(map, 8f, 14f);
@@ -1503,6 +1496,7 @@ namespace Game.UI.Runtime
             button.targetGraphic = graphic;
             var state = rect.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
             state.Bind(graphic);
+            AttachDisabledTap(button, UIAudioEventKind.ButtonDisabledTap); // v41 audit: disabled taps are heard
             return button;
         }
 
@@ -1638,15 +1632,17 @@ namespace Game.UI.Runtime
                 return;
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             string descriptionName = scenarioDescription != null ? scenarioDescription.gameObject.name : "SeedHelp";
+            if (battlefield)
+                AdoptModeToggle(column);
             Transform medalKeep = ChooseMedalRow(column);
             if (medalKeep is RectTransform keptMedal)
                 _medalRow = keptMedal;
             var order = battlefield
-                ? new[] { "BriefingPreview", "Title", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
+                ? new[] { "LibraryModeToggle", "Title", "BriefingSubtitle", "BriefingPreview", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
             var heights = battlefield
-                ? new[] { 188f, 40f, 96f, 84f, 104f, 116f }
-                : new[] { 76f, 40f, 84f, 272f };
+                ? new[] { 64f, 40f, 30f, 188f, 80f, 84f, 104f, 52f } /* v34: taller MAP/GRID toggle row (approved-2), description 96->80 */ // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
+                : new[] { TheatreSummaryHeight, 40f, 84f, RecommendedCompactHeight }; // v41b compact Recommended next row (was 272)
             for (int i = 0; i < column.childCount; i++)
             {
                 Transform child = column.GetChild(i);
@@ -1700,7 +1696,10 @@ namespace Game.UI.Runtime
                     break;
                 }
 
-                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null);
+                // v43 (Game PM): on the Theatre the summary plate (battles won + medal tiles) takes the column's spare
+                // height and its tiles scale into it; Recommended next stays a compact row at the column bottom.
+                bool absorb = !battlefield && order[nameIndex] == "TheatreSummary";
+                index = StackColumnChild(child as RectTransform, index, heights[nameIndex], child != null, absorb);
             }
 
             if (battlefield && scenarioDescription != null)
@@ -1788,6 +1787,20 @@ namespace Game.UI.Runtime
             audio.Configure(kind);
         }
 
+        /// <summary>
+        /// v41 audit: sound for taps on a non-interactable library button only (the enabled click stays silent here
+        /// because the view model already raises its own interaction sound).
+        /// </summary>
+        private static void AttachDisabledTap(Button button, UIAudioEventKind disabledKind)
+        {
+            if (button == null)
+                return;
+            UIButtonAudioEventView audio = button.GetComponent<UIButtonAudioEventView>();
+            if (audio == null)
+                audio = button.gameObject.AddComponent<UIButtonAudioEventView>();
+            audio.Configure(UIAudioEventKind.None, disabledKind);
+        }
+
         private static void AliasControl(Component owner, string controlName)
         {
             if (owner == null || string.IsNullOrEmpty(controlName))
@@ -1856,8 +1869,6 @@ namespace Game.UI.Runtime
                 back.SetAsLastSibling();
             if (resetButton != null)
                 resetButton.transform.SetAsLastSibling();
-            if (_libraryFavouritesButton != null)
-                _libraryFavouritesButton.transform.SetAsLastSibling();
             if (_libraryAdvancedButton != null)
                 _libraryAdvancedButton.transform.SetAsLastSibling();
             if (randomizeSeedButton != null)
@@ -1913,10 +1924,11 @@ namespace Game.UI.Runtime
             bool reserveToggle = toggle != null && toggle.gameObject.activeSelf;
             float reserved = reserveToggle ? 268f : 12f;
             float searchWidth = Mathf.Clamp(width - 24f - reserved, 140f, 820f);
-            PlaceTopLeft(search, 12f, 56f, searchWidth, 44f);
+            if (!PlaceGridSearch(search, searchWidth))
+                PlaceTopLeft(search, 12f, 56f, searchWidth, 44f);
             FrameSearchField(search);
             search.SetAsLastSibling();
-            if (mapNameText != null)
+            if (mapNameText != null && !IsGridLibrary())
             {
                 PlaceTopLeft(mapNameText.rectTransform, 12f, 6f, Mathf.Max(160f, searchWidth), 40f);
                 mapNameText.transform.SetAsLastSibling();
@@ -2170,20 +2182,78 @@ namespace Game.UI.Runtime
             float compositionWidth = compositionRect != null && compositionRect.rect.width > 200f
                 ? compositionRect.rect.width
                 : 1672f;
-            float bannerWidth = Mathf.Clamp(compositionWidth * 0.28f, 280f, 440f);
-            PlaceTopLeft(plate, (compositionWidth - bannerWidth) * 0.5f, 8f, bannerWidth, 52f);
+            float compositionHeight = compositionRect != null && compositionRect.rect.height > 200f
+                ? compositionRect.rect.height
+                : 941f;
+            // v39b: a compact pill over the bottom of the briefing preview picture (the selected battle's own image),
+            // clear of the header, every battle card/tile and the footer buttons. Fallback when no preview is laid out:
+            // a small pill in the footer band's top edge, centred.
+            float bannerHeight = 40f;
+            float bannerWidth = 300f;
+            float bannerX = (compositionWidth - bannerWidth) * 0.5f;
+            float bannerY = compositionHeight - 112f - bannerHeight - 4f;
+            RectTransform preview = _briefingPreview != null && _briefingPreview.gameObject.activeInHierarchy
+                ? _briefingPreview.rectTransform
+                : null;
+            if (compositionRect != null && preview != null && preview.rect.width > 120f && preview.rect.height > 60f)
+            {
+                var corners = new Vector3[4];
+                preview.GetWorldCorners(corners);
+                Vector3 topLeft = compositionRect.InverseTransformPoint(corners[1]);
+                Vector3 bottomRight = compositionRect.InverseTransformPoint(corners[3]);
+                Rect area = compositionRect.rect;
+                float left = topLeft.x - area.xMin;
+                float top = area.yMax - topLeft.y;
+                float w = bottomRight.x - topLeft.x;
+                float h = topLeft.y - bottomRight.y;
+                bannerWidth = Mathf.Min(300f, Mathf.Max(120f, w - 16f));
+                bannerHeight = Mathf.Min(40f, Mathf.Max(28f, h * 0.3f));
+                bannerX = left + (w - bannerWidth) * 0.5f;
+                bannerY = top + h - bannerHeight - 8f;
+            }
+
+            PlaceTopLeft(plate, bannerX, bannerY, bannerWidth, bannerHeight);
             plate.gameObject.SetActive(true);
+            if (plateImage != null)
+                plateImage.color = new Color(0.07f, 0.08f, 0.09f, 0.88f);
             RaiseLaunchTransition();
             TMP_Text text = plate.Find("LaunchLabel")?.GetComponent<TMP_Text>();
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            SetCopy(text, fa ? "در حال اعزام " + scenarioId : "LAUNCHING " + scenarioId, 16f, 24f);
             if (text != null)
             {
-                Stretch(text.rectTransform, 16f, 12f, 8f, 8f);
+                // v39b: the FA toast rendered blank: the raw (unshaped) Farsi string was set with isRightToLeftText=false,
+                // and the Farsi TMP atlas only bakes presentation forms, so no glyph drew. The label now opts out of the
+                // localisation binding/refit pass, takes the live footer font, and gets shaped RTL text directly.
+                V3LocalizedTextBindingView binding = text.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null)
+                {
+                    if (Application.isPlaying)
+                        Destroy(binding);
+                    else
+                        DestroyImmediate(binding);
+                }
+                LibraryFixedTextSize held = text.GetComponent<LibraryFixedTextSize>() ?? text.gameObject.AddComponent<LibraryFixedTextSize>();
+                TMP_Text fontSource = launchButton != null ? launchButton.GetComponentInChildren<TMP_Text>(true) : null;
+                if (fontSource != null && fontSource.font != null)
+                    text.font = fontSource.font;
+                Stretch(text.rectTransform, 10f, 10f, 4f, 4f);
+                string copy = fa ? "در حال اعزام " + scenarioId : "LAUNCHING " + scenarioId;
+                text.text = fa ? V3LocalizedTextBindingView.ShapeForRendering(copy) : copy;
+                text.enableAutoSizing = false;
+                text.fontSize = Mathf.Min(20f, bannerHeight * 0.5f);
+                held.Size = text.fontSize;
+                text.textWrappingMode = TextWrappingModes.NoWrap;
+                text.overflowMode = TextOverflowModes.Overflow;
                 text.alignment = TextAlignmentOptions.Center;
-                text.isRightToLeftText = false;
+                text.isRightToLeftText = fa;
                 text.color = new Color(0.96f, 0.93f, 0.84f, 1f);
-                text.overflowMode = TextOverflowModes.Ellipsis;
+                text.alpha = 1f;
+                text.gameObject.SetActive(true);
+                text.enabled = true;
+                text.transform.SetAsLastSibling();
+                text.ForceMeshUpdate();
+                Debug.Log("[LaunchToast] locale=" + (fa ? "fa-IR" : "en") + " text=" + scenarioId +
+                    " chars=" + text.textInfo.characterCount + " rect=" + bannerWidth.ToString("0") + "x" + bannerHeight.ToString("0"));
             }
         }
 
@@ -2192,151 +2262,6 @@ namespace Game.UI.Runtime
             Transform transition = transform.Find("SkirmishSetupComposition/LaunchTransition");
             if (transition != null && transition.gameObject.activeSelf)
                 transition.SetAsLastSibling();
-        }
-
-        private void PlaceLibraryHeader()
-        {
-            Transform composition = transform.Find("SkirmishSetupComposition");
-            if (composition is not RectTransform compositionRect)
-                return;
-            float width = compositionRect.rect.width;
-            if (width < 200f)
-                width = compositionRect.sizeDelta.x > 200f ? compositionRect.sizeDelta.x : 1672f;
-            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            float settingsWidth = 72f;
-            bool showChip = HasCommanderIdentity();
-            float chipWidth = showChip ? Mathf.Clamp(width * 0.22f, 240f, 360f) : 0f;
-            float logoWidth = Mathf.Clamp(width * 0.24f, 220f, 400f);
-            const float logoHeight = 96f;
-            const float logoX = 18f;
-            const float gap = 8f;
-            float settingsX = width - 12f - settingsWidth;
-            float chipX = settingsX - gap - chipWidth;
-            float titleX = logoX + logoWidth + gap;
-            float titleWidth = Mathf.Max(140f, chipX - gap - titleX);
-            if (composition.Find("WarlineLogo") is RectTransform logo)
-                FitBrandLogo(logo, logoX, 6f, logoWidth, logoHeight);
-
-            if (composition.Find("ScreenTitlePanel") is RectTransform title)
-            {
-                PlaceTopLeft(title, titleX, 10f, titleWidth, 78f);
-                if (title.Find("ScreenTitle") is RectTransform screenTitle)
-                {
-                    screenTitle.anchorMin = Vector2.zero;
-                    screenTitle.anchorMax = Vector2.one;
-                    screenTitle.offsetMin = new Vector2(fa ? 8f : 52f, 4f);
-                    screenTitle.offsetMax = new Vector2(-8f, -4f);
-                    TMP_Text screenTitleText = screenTitle.GetComponent<TMP_Text>();
-                    if (screenTitleText != null)
-                    {
-                        screenTitleText.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                        screenTitleText.isRightToLeftText = fa;
-                        screenTitleText.textWrappingMode = TextWrappingModes.NoWrap;
-                        screenTitleText.overflowMode = TextOverflowModes.Ellipsis;
-                        screenTitleText.enableAutoSizing = true;
-                        screenTitleText.fontSizeMin = 16f;
-                        screenTitleText.fontSizeMax = 32f;
-                    }
-                }
-            }
-
-            Transform settings = FindDeep(transform, "SettingsButton");
-            if (settings is RectTransform settingsRect)
-            {
-                if (settings.parent != composition)
-                    settings.SetParent(composition, false);
-                settings.gameObject.SetActive(true);
-                PlaceTopLeft(settingsRect, settingsX, 12f, settingsWidth, 72f);
-            }
-
-            MainMenuAccountHeaderView header = GetComponentInChildren<MainMenuAccountHeaderView>(true);
-            if (header == null)
-                return;
-            header.enabled = false;
-            header.gameObject.SetActive(showChip);
-            if (!showChip)
-                return;
-            if (header.transform is RectTransform chip)
-            {
-                if (chip.parent != composition)
-                    chip.SetParent(composition, false);
-                PlaceTopLeft(chip, chipX, 10f, chipWidth, 88f);
-                Image chipImage = chip.GetComponent<Image>();
-                if (chipImage != null)
-                {
-                    chipImage.enabled = true;
-                    if (chipImage.color.a < 0.98f || SkirmishLibraryBlankImage.IsLightNeutral(chipImage.color))
-                        chipImage.color = new Color(0.05f, 0.07f, 0.08f, 1f);
-                }
-            }
-
-            if (header.transform.Find("Icon") is RectTransform icon)
-                PlaceTopLeft(icon, 10f, 16f, 56f, 56f);
-            BindCommanderChip(header, fa, chipWidth);
-        }
-
-        private static void FitBrandLogo(RectTransform logo, float x, float y, float width, float height)
-        {
-            if (logo == null)
-                return;
-            logo.gameObject.SetActive(true);
-            PlaceTopLeft(logo, x, y, width, height);
-            if (logo.childCount == 0)
-                return;
-            RectTransform mark = logo.GetChild(0) as RectTransform;
-            if (mark == null)
-                return;
-            float nativeWidth = mark.sizeDelta.x > 64f ? mark.sizeDelta.x : 513f;
-            float nativeHeight = mark.sizeDelta.y > 32f ? mark.sizeDelta.y : 137f;
-            float scale = Mathf.Min(
-                Mathf.Max(1f, width - 16f) / nativeWidth,
-                Mathf.Max(1f, height - 12f) / nativeHeight);
-            mark.anchorMin = new Vector2(0.5f, 0.5f);
-            mark.anchorMax = new Vector2(0.5f, 0.5f);
-            mark.pivot = new Vector2(0.5f, 0.5f);
-            mark.sizeDelta = new Vector2(nativeWidth, nativeHeight);
-            mark.localScale = new Vector3(scale, scale, 1f);
-            mark.anchoredPosition = Vector2.zero;
-        }
-
-        private static bool HasCommanderIdentity()
-        {
-            if (!UiShellRuntimeGateway.TryReadCommanderProfile(out UiShellCommanderProfileModel profile))
-                return false;
-            return !string.IsNullOrWhiteSpace(profile.Name);
-        }
-
-        private void BindCommanderChip(MainMenuAccountHeaderView header, bool fa, float chipWidth)
-        {
-            if (header == null || !UiShellRuntimeGateway.TryReadCommanderProfile(out UiShellCommanderProfileModel profile))
-                return;
-            string name = profile.Name ?? string.Empty;
-            if (string.Equals(name, "Commander", StringComparison.OrdinalIgnoreCase) && fa)
-                name = "فرمانده";
-            Transform label = header.transform.Find("Label");
-            if (label != null)
-                label.gameObject.SetActive(true);
-            if (label is RectTransform labelRect)
-                PlaceTopLeft(labelRect, 74f, 8f, Mathf.Max(96f, chipWidth - 88f), 34f);
-            TMP_Text caption = label != null ? label.GetComponent<TMP_Text>() : null;
-            if (caption != null)
-            {
-                SetCopy(caption, name, 16f, 22f);
-                caption.alignment = ContainsArabicScript(name) ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-                caption.isRightToLeftText = ContainsArabicScript(caption.text);
-                caption.overflowMode = TextOverflowModes.Ellipsis;
-                caption.color = new Color(0.93f, 0.78f, 0.38f, 1f);
-            }
-
-            if (header.Value == null)
-                return;
-            PlaceTopLeft(header.Value.rectTransform, 74f, 44f, Mathf.Max(96f, chipWidth - 88f), 36f);
-            string level = "Lv " + profile.Level.ToString(System.Globalization.CultureInfo.InvariantCulture);
-            SetCopy(header.Value, level, 18f, 28f);
-            header.Value.isRightToLeftText = false;
-            header.Value.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
-            header.Value.overflowMode = TextOverflowModes.Overflow;
-            header.Value.text = level;
         }
 
         private void FinishLibraryText()
@@ -2368,7 +2293,6 @@ namespace Game.UI.Runtime
                     footerOwner == resetButton ||
                     footerOwner == launchButton ||
                     footerOwner == randomizeSeedButton ||
-                    footerOwner == _libraryFavouritesButton ||
                     footerOwner == _libraryAdvancedButton ||
                     footerOwner.name == "BackButton");
                 bool cardTitle = text.name == "Title" &&
@@ -2498,10 +2422,10 @@ namespace Game.UI.Runtime
                 }
                 else if (recommended)
                 {
-                    bool bodyCopy = text.name == "Body";
-                    RelaxLibraryText(text, bodyCopy ? 18f : 20f, bodyCopy ? 24f : 26f, bodyCopy);
-                    text.overflowMode = TextOverflowModes.Overflow;
-                    text.maxVisibleLines = bodyCopy ? 3 : 1;
+                    // v42: Recommended next copy is fitted and pinned by FitRecommendedText (largest size that fits,
+                    // >= 14px body, two lines); the old 18-24 / 3-line relax here pushed it past its box.
+                    if (text.name == "Heading" || text.name == "Body")
+                        FitRecommendedText(fa);
                 }
                 else if (footer && !_refittingGrid)
                 {

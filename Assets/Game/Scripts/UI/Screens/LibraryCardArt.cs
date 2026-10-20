@@ -302,7 +302,11 @@ namespace Game.UI.Runtime
                 plate.color = new Color(0.04f, 0.05f, 0.06f, 0.94f);
 
             if (pin)
+            {
                 FillPinPortrait(card);
+                StyleMapPinCard(card, selected, playable);
+                return;
+            }
             TintNamedImage(card, "FooterScrim", new Color(0.02f, 0.03f, 0.04f, 0.90f));
             TintNamedImage(card, "ScenarioBadge", new Color(0.02f, 0.03f, 0.04f, 0.84f));
             TintNamedImage(card, "MedalBacking", new Color(0.02f, 0.02f, 0.03f, 0.55f));
@@ -314,6 +318,150 @@ namespace Game.UI.Runtime
 
             if (card.Find("Subtitle") is Transform subtitleNode && subtitleNode.TryGetComponent<TMP_Text>(out TMP_Text subtitle))
                 subtitle.color = new Color(0.78f, 0.74f, 0.64f, 1f);
+        }
+
+        /// <summary>
+        /// v35 approved-2 map card: opaque dark frame, the scenario art at full contrast (no tint, no alpha),
+        /// a solid title bar with a gold rule, a backed row of medal circles, and a heavy gold frame when selected.
+        /// Art is the existing scenario preview / zone plate only (Assets/Game/Art/SkirmishLibrary); nothing new is drawn.
+        /// </summary>
+        private static void StyleMapPinCard(Transform card, bool selected, bool playable)
+        {
+            if (card.TryGetComponent<Image>(out Image plate) && card.GetComponent<SkirmishLibraryButtonStateView>() == null)
+                plate.color = new Color(0.025f, 0.03f, 0.035f, 1f);
+            if (card.Find("Preview") is Transform previewNode && previewNode.TryGetComponent<RawImage>(out RawImage art) && art.texture != null)
+                art.color = Color.white;
+            TintNamedImage(card, "FooterScrim", new Color(0.015f, 0.02f, 0.025f, 1f));
+            TintNamedImage(card, "ScenarioBadge", new Color(0.015f, 0.02f, 0.025f, 0.96f));
+            TintNamedImage(card, "MedalBacking", new Color(0f, 0f, 0f, 0.85f));
+            if (card.Find("FooterScrim") is RectTransform scrim && scrim.Find("TitleRule") == null)
+            {
+                var rule = new GameObject("TitleRule", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                rule.transform.SetParent(scrim, false);
+                rule.raycastTarget = false;
+                rule.color = playable ? new Color(0.86f, 0.66f, 0.24f, 1f) : new Color(0.45f, 0.40f, 0.32f, 1f);
+                RectTransform r = rule.rectTransform;
+                r.anchorMin = new Vector2(0f, 1f);
+                r.anchorMax = new Vector2(1f, 1f);
+                r.pivot = new Vector2(0.5f, 1f);
+                r.sizeDelta = new Vector2(0f, 2f);
+                r.anchoredPosition = Vector2.zero;
+            }
+
+            if (card.Find("Title") is Transform titleNode && titleNode.TryGetComponent<TMP_Text>(out TMP_Text title))
+            {
+                title.fontStyle = FontStyles.Bold | FontStyles.UpperCase;
+                title.color = new Color(1f, 0.97f, 0.90f, 1f);
+            }
+
+            if (card.Find("Subtitle") is Transform subtitleNode && subtitleNode.TryGetComponent<TMP_Text>(out TMP_Text subtitle))
+                subtitle.color = new Color(0.86f, 0.80f, 0.66f, 1f);
+
+            SkirmishDifficultyId[] tiers =
+            {
+                SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander
+            };
+            for (int i = 0; i < tiers.Length; i++)
+            {
+                // v36 approved-2: every circle carries its tier colour (SkirmishMedalRowWidget.TierColor) over the real medal
+                // sprite; earned stays full white (true sprite colours), unearned is the tier fill at reduced brightness.
+                if (card.Find("Medal" + i) is Transform medal && medal.TryGetComponent<Image>(out Image medalImage) &&
+                    medalImage.color.r < 0.99f)
+                {
+                    Color tier = SkirmishMedalRowWidget.TierColor(tiers[i]);
+                    medalImage.color = new Color(tier.r * 0.8f, tier.g * 0.8f, tier.b * 0.8f, 1f);
+                }
+            }
+
+            Outline edge = card.GetComponent<Outline>();
+            if (edge == null)
+                edge = card.gameObject.AddComponent<Outline>();
+            edge.useGraphicAlpha = false;
+            edge.effectColor = selected
+                ? new Color(1f, 0.80f, 0.25f, 1f)
+                : playable ? new Color(0.62f, 0.48f, 0.22f, 0.9f) : new Color(0.32f, 0.29f, 0.24f, 0.9f);
+            edge.effectDistance = selected ? new Vector2(4f, -4f) : new Vector2(1.5f, -1.5f);
+        }
+
+        /// <summary>
+        /// v35 unit art slot, one per force type, loaded from Resources/SkirmishLibrary/UnitArt/{Ground,AirMobile,Combined}
+        /// (Design PR #67 painted card art). Drop-in swap: replace the PNG under that folder (same name, keep the meta),
+        /// or change UnitArtKey below. Force type is SkirmishBattleCardState.ArmyProfile (G/A/C).
+        /// </summary>
+        public const string UnitArtRoot = "SkirmishLibrary/UnitArt/";
+
+        public static string UnitArtKey(string armyProfile)
+        {
+            switch (armyProfile)
+            {
+                case "G": return "Ground";
+                case "A": return "AirMobile";
+                case "C": return "Combined";
+                default: return null;
+            }
+        }
+
+        /// <summary>
+        /// Map card main image: UnitArt/{Ground,AirMobile,Combined} (Design PR #67 painted 1152x720) at full contrast,
+        /// cover-fitted so the aspect is preserved (no stretching). Returns false when the file is missing so the caller
+        /// falls back to the scenario preview.
+        /// </summary>
+        private static bool TryShowUnitArt(RawImage preview, string armyProfile, float x, float y, float frameWidth, float frameHeight)
+        {
+            string key = UnitArtKey(armyProfile);
+            if (preview == null || key == null)
+                return false;
+            Sprite sprite = LoadLibraryIcon(UnitArtRoot + key);
+            Texture2D texture = sprite != null ? sprite.texture : Resources.Load<Texture2D>(UnitArtRoot + key);
+            if (texture == null)
+                return false;
+            preview.raycastTarget = false;
+            preview.texture = texture;
+            preview.color = Color.white;
+            preview.enabled = true;
+            PlaceTopLeft(preview.rectTransform, x, y, frameWidth, frameHeight);
+            CoverCrop(preview, frameWidth, frameHeight);
+            return true;
+        }
+
+        /// <summary>Retired in v35 (map cards now use the unit art as the main image); kept for a possible corner-badge variant.</summary>
+        private static void AddUnitArtBadge(Transform card, string armyProfile, float width, bool fa)
+        {
+            string key = UnitArtKey(armyProfile);
+            if (card == null || key == null || card.Find("UnitArt") != null)
+                return;
+            Sprite own = LoadLibraryIcon(UnitArtRoot + key);
+            Sprite[] icons = own != null
+                ? new[] { own }
+                : key == "Combined"
+                    ? new[] { LoadLibraryIcon(UnitArtRoot + "Ground"), LoadLibraryIcon(UnitArtRoot + "AirMobile") }
+                    : System.Array.Empty<Sprite>();
+            icons = System.Array.FindAll(icons, icon => icon != null);
+            if (icons.Length == 0)
+                return;
+            const float size = 34f;
+            const float gap = 2f;
+            const float pad = 4f;
+            float run = icons.Length * size + (icons.Length - 1) * gap + pad * 2f;
+            var slot = new GameObject("UnitArt", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+            slot.transform.SetParent(card, false);
+            slot.raycastTarget = false;
+            slot.color = new Color(0.015f, 0.02f, 0.025f, 0.9f);
+            // Opposite corner from the scenario id badge (top-left in EN, top-right in FA).
+            PlaceTopLeft(slot.rectTransform, fa ? 4f : width - 4f - run, 4f, run, size + pad * 2f);
+            var edge = slot.gameObject.AddComponent<Outline>();
+            edge.effectColor = new Color(0.86f, 0.66f, 0.24f, 0.9f);
+            edge.effectDistance = new Vector2(1f, -1f);
+            for (int i = 0; i < icons.Length; i++)
+            {
+                var icon = new GameObject("UnitArt" + i, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                icon.transform.SetParent(slot.transform, false);
+                icon.sprite = icons[i];
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                icon.color = Color.white;
+                PlaceTopLeft(icon.rectTransform, pad + i * (size + gap), pad, size, size);
+            }
         }
 
         private static void FillPinPortrait(Transform card)
@@ -442,7 +590,7 @@ namespace Game.UI.Runtime
             V3LocalizedTextBindingView binding = subtitle.GetComponent<V3LocalizedTextBindingView>();
             subtitle.enableAutoSizing = true;
             subtitle.overflowMode = TextOverflowModes.Overflow;
-            for (float size = 20f; size >= 11f - 0.01f; size -= 1f)
+            for (float size = Mathf.Clamp(boxH * 0.6f, 20f, 26f); size >= 11f - 0.01f; size -= 1f) // v36: larger cards start larger
             {
                 if (!SubtitleFits(subtitle, source, size, boxW, boxH, false))
                     continue;

@@ -66,8 +66,8 @@ namespace Game.Editor
                     written += RunLocale(prefab, Locales[localeIndex], folder, shots);
                 }
 
-                if (written != 14)
-                    throw new InvalidOperationException("Expected 14 flow captures, wrote " + written + ".");
+                if (written != 16)
+                    throw new InvalidOperationException("Expected 16 flow captures, wrote " + written + ".");
                 SkirmishBattleLibraryCapture.RejectDuplicateCaptures(shots);
                 SkirmishBattleLibraryCapture.FinishTheatreReport();
                 Debug.Log(PassMarker + " files=" + written + " folder=" + OutputDirectory);
@@ -196,7 +196,24 @@ namespace Game.Editor
                 AssertStep(
                     SkirmishLibraryLaunchContext.Difficulty == view.Library.Briefing.SelectedDifficulty,
                     "Start Battle did not publish the briefing difficulty to the launch context.");
-                return 7;
+
+                // v38 (P1): QUICK BATTLE through the real footer button on the theatre: picks an owned playable battle
+                // from the ledger and launches it through the START BATTLE path.
+                Click(Require(instance, SkirmishLibraryControlNames.TheaterMap));
+                AssertStep(view.Library.Level == SkirmishLibraryLevel.Theater, "THEATRE MAP did not return to the theatre.");
+                Button quick = Require(instance, SkirmishLibraryControlNames.QuickBattle);
+                Click(quick);
+                string quickId = view.Library.Briefing.ScenarioId;
+                AssertStep(!string.IsNullOrEmpty(quickId), "Quick Battle did not resolve a scenario.");
+                AssertStep(view.LibraryLaunchRequested, "Quick Battle did not request a launch.");
+                Transform quickTransition = instance.transform.Find("SkirmishSetupComposition/LaunchTransition");
+                AssertStep(quickTransition != null && quickTransition.gameObject.activeInHierarchy, "Quick Battle did not show the launch transition.");
+                TMP_Text quickLabel = quickTransition.Find("LaunchLabel")?.GetComponent<TMP_Text>();
+                AssertStep(quickLabel != null && BannerNames(quickLabel.text, quickId), "Quick Battle banner does not name " + quickId + ": '" + (quickLabel != null ? quickLabel.text : "<null>") + "'.");
+                Debug.Log("[QuickBattle] flow locale=" + suffix + " button=" + quick.name + " scenario=" + quickId + " launchRequested=True");
+                Shot(view, camera, canvasObject, target, width, height, Path.Combine(folder, "08-quickbattle-" + suffix + ".png"), "launch", suffix, shots);
+                SkirmishTheatreGridTapFlow.Run(instance, view, suffix); // v48 (P1 hook): Theatre tile taps, after the last shot
+                return 8;
             }
             finally
             {
@@ -378,6 +395,26 @@ namespace Game.Editor
             public bool TryGetSourceByLocalized(string value, out string key, out string source) =>
                 GameLocalization.TryGetSourceByLocalized(value, out key, out source);
         }
+
+        // fa-IR banners are shaped for RTL (Persian digits, possibly reversed runs), so compare on normalised ASCII.
+        private static bool BannerNames(string label, string scenarioId)
+        {
+            if (string.IsNullOrEmpty(label) || string.IsNullOrEmpty(scenarioId))
+                return false;
+            var sb = new System.Text.StringBuilder(label.Length);
+            foreach (char c in label)
+            {
+                if (c >= '\u06F0' && c <= '\u06F9') sb.Append((char)('0' + (c - '\u06F0')));
+                else if (c >= '\u0660' && c <= '\u0669') sb.Append((char)('0' + (c - '\u0660')));
+                else if (char.IsLetterOrDigit(c) && c < 128) sb.Append(c);
+                else sb.Append(' ');
+            }
+            string flat = sb.ToString();
+            char[] rev = scenarioId.ToCharArray();
+            System.Array.Reverse(rev);
+            return flat.Contains(scenarioId) || flat.Contains(new string(rev));
+        }
+
     }
 }
 #endif

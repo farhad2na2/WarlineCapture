@@ -165,6 +165,9 @@ def main():
     allowed = (project / 'Logs/SkirmishProduction/Batches').resolve()
     if not output.is_relative_to(allowed) or output.name != descriptor['batch_id'] or descriptor_path != output / 'batch.json':
         raise ValueError('Use canonical prepared durable batch descriptor')
+    upm_log = output / 'upm.log'
+    if os.path.lexists(upm_log):
+        raise ValueError('Fresh owned UPM log required; retain existing evidence')
     plan = dict(result='PlanOnly', execute_method=METHOD, checked_wrapper='Tools/CI/InvokeUnity.ps1',
                 gui_licensing=True, quit_argument=False, timeout_seconds=args.timeout,
                 descriptor_sha256=sha(descriptor_path), queue_success_enabled=False)
@@ -190,9 +193,9 @@ def main():
     unity = resolved.read_text(encoding='ascii')
     before = observe_endpoint(project, descriptor, output, 'before')
     launch = output / 'checked-no-quit-launch.ps1'; log = output / 'unity.log'
-    launch.write_text("$ErrorActionPreference='Stop'\n& " + quoted(check) + "\n& " + quoted(project / 'Tools/CI/InvokeUnity.ps1') +
+    launch.write_text("$ErrorActionPreference='Stop'\n& " + quoted(check) + "\n$taskUpmAbsent=$false\ntry { Get-Item -LiteralPath " + quoted(upm_log) + " -Force -ErrorAction Stop | Out-Null } catch [System.Management.Automation.ItemNotFoundException] { $taskUpmAbsent=$true }\nif(-not $taskUpmAbsent){throw 'Fresh owned UPM log required; retain existing evidence'}\n& " + quoted(project / 'Tools/CI/InvokeUnity.ps1') +
         ' -UnityExe ' + quoted(unity) + ' -ProjectPath ' + quoted(project) + ' -LogFile ' + quoted(log) +
-        ' -TimeoutSeconds ' + str(args.timeout) + " -GuiLicensing -NoProcessExit -UnityArguments @('-executeMethod'," + quoted(METHOD) + ")\nif($global:LASTEXITCODE -ne 0){exit $global:LASTEXITCODE}\n$runtimeLog=[IO.File]::ReadAllText(" + quoted(log) + ")\nif(-not $runtimeLog.Contains(" + quoted('[SkirmishProductionRuntimeGate] result=Passed errors=0 jobs='+str(len(descriptor['jobs']))+' actualWrapperExitStillRequired=1') + ") -or $runtimeLog.Contains('[SkirmishProductionRuntimeGate] result=Failed')){throw 'Required whole-run runtime gate absent or failed'}\nexit 0\n", encoding='utf-8-sig')
+        ' -TimeoutSeconds ' + str(args.timeout) + " -GuiLicensing -NoProcessExit -UnityArguments @('-executeMethod'," + quoted(METHOD) + ",'-upmLogFile'," + quoted(upm_log) + ")\nif($global:LASTEXITCODE -ne 0){exit $global:LASTEXITCODE}\n$runtimeLog=[IO.File]::ReadAllText(" + quoted(log) + ")\nif(-not $runtimeLog.Contains(" + quoted('[SkirmishProductionRuntimeGate] result=Passed errors=0 jobs='+str(len(descriptor['jobs']))+' actualWrapperExitStillRequired=1') + ") -or $runtimeLog.Contains('[SkirmishProductionRuntimeGate] result=Failed')){throw 'Required whole-run runtime gate absent or failed'}\nexit 0\n", encoding='utf-8-sig')
     began = time.perf_counter(); result = None; after = None; wrapper_wall = None
     try:
         with (output / 'checked-wrapper-console.log').open('x', encoding='utf-8') as console:

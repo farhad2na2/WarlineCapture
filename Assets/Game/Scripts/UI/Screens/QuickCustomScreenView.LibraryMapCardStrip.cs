@@ -146,6 +146,24 @@ namespace Game.UI.Runtime
                 " need=" + (idW + MapCardStripPad + bodyW).ToString("0") + "/" + inner.ToString("0"));
         }
 
+        /// <summary>
+        /// v50b: the map cards are built before EnforceLibraryFontFloor, which lifts every strip label to 22 px (v50: S002's
+        /// id ran into its text at 4:3 / 16:9). LibraryHeaderBreadcrumb.Apply, which runs from PlaceLibraryHeader after that
+        /// pass, re-applies each strip label's held size so it matches the positions the strip was laid out for.
+        /// </summary>
+        private void ReassertMapCardStrips(Transform composition)
+        {
+            if (composition == null || LibraryLevel != SkirmishLibraryLevel.Battlefield)
+                return;
+            LibraryFixedTextSize[] held = composition.GetComponentsInChildren<LibraryFixedTextSize>(false);
+            for (int i = 0; i < held.Length; i++)
+            {
+                Transform parent = held[i].transform.parent;
+                if (parent != null && parent.name == MapCardStripName)
+                    held[i].Apply();
+            }
+        }
+
         private static float StripWidthAt(TMP_Text text, float size)
         {
             text.enableAutoSizing = false;

@@ -32,7 +32,7 @@ namespace Game.Configs
     {
         public SkirmishSizeId Size;
         public SkirmishDifficultyId Difficulty;
-        public SkirmishObjectiveAreaConfig Areas;
+        [SerializeReference] public SkirmishObjectiveAreaConfig Areas;
         public string ReviewedAreaLogicalFingerprint, ReviewedGeometryFingerprint;
         public SkirmishMissionViewProfile View;
         public SkirmishRoleKind OpeningFocusRole;

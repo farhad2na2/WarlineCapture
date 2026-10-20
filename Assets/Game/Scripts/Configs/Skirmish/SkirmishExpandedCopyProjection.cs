@@ -88,13 +88,21 @@ namespace Game.Configs
         public static bool IsExpandedS003(string catalogId) =>
             string.Equals(catalogId, S003CatalogId, StringComparison.Ordinal);
 
+        // Copy presentation uses actual current authored identity, never a stale row version.
+        private static int CurrentCodedLibraryVersion(string id,string definitionId)
+        {
+            var catalog=SkirmishExpansionCatalogConfig.Load();
+            return catalog!=null&&catalog.TryGetDefinition(id,out var definition)&&definition!=null&&
+                definition.DefinitionId==definitionId&&definition.ContentVersion>0?definition.ContentVersion:0;
+        }
+
         public static void ApplyLibraryCopyS003(ref SkirmishBattleCatalogEntry entry)
         {
             if (!IsExpandedS003(entry.ScenarioId))
                 return;
             entry.TitleKey = S003TitleKey;
             entry.DefinitionId = "skirmish.s003";
-            entry.ContentVersion = 1;
+            entry.ContentVersion = CurrentCodedLibraryVersion(entry.ScenarioId,entry.DefinitionId);
             entry.ReadinessManifestId = "publication.skirmish.s003";
             if (string.IsNullOrEmpty(entry.DescriptionEnglish))
             {
@@ -284,11 +292,12 @@ namespace Game.Configs
 
         public static void ApplyLibraryCopy(ref SkirmishBattleCatalogEntry entry)
         {
+            if(IsExpandedS003(entry.ScenarioId)){ApplyLibraryCopyS003(ref entry);return;}
             if (!IsExpandedS002(entry.ScenarioId))
                 return;
             entry.TitleKey = TitleKey;
             entry.DefinitionId = "skirmish.s002";
-            entry.ContentVersion = 1;
+            entry.ContentVersion = CurrentCodedLibraryVersion(entry.ScenarioId,entry.DefinitionId);
             entry.ReadinessManifestId = "publication.skirmish.s002";
             if (string.IsNullOrEmpty(entry.DescriptionEnglish))
             {

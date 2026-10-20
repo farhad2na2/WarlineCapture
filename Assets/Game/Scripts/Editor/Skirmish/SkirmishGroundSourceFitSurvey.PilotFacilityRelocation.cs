@@ -21,10 +21,13 @@ namespace Game.Editor
         // metadata/caches. Static proposals do not stand in for live scene fitting.
         static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
-            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false)
+            Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
         {
+            bool originalFcScope=OriginalFcNormalOriginScope(layout,roles,(string)report["catalogId"]);
             string group=(string)report["group"];
             if(group!="MP"&&group!="IB"&&(bool?)report["newLogicalCandidateMaterialized"]!=true)return;
+            if(serviceAuthority!=null)Require((mpGroundBaPilotRequested||ApPairServiceAuthority(serviceAuthority)||CompleteGroundBaServiceAuthority(serviceAuthority))&&serviceAuthority.MapLayout==layout&&serviceAuthority.RoleCatalog==roles,
+                "Exact MP or authority-bound AP disposable service authoring context required");
             var output=new JArray();report["normalFacilityRelocationProposals"]=output;
             report["normalFacilityRelocationScope"]="ActualProductionSearchAndStaticSourceCaches_NoLiveGameplayCertificate";
             using var surfaces=em.CreateEntityQuery(typeof(MapSurfaceComponent));
@@ -70,7 +73,10 @@ namespace Game.Editor
                 foreach(byte side in new byte[]{1,2})
                 {
                     var serviceRows=new JArray();
-                    serviceAvailable[side]=PilotRepairInteractionFootprints(layout,em,gridEntity,grid,surface,side,out var keepClear,serviceRows);
+                    List<RectInt> keepClear;
+                    serviceAvailable[side]=serviceAuthority!=null
+                        ?MpPilotRepairInteractionFootprints(serviceAuthority,layout,em,gridEntity,grid,surface,side,out keepClear,serviceRows)
+                        :PilotRepairInteractionFootprints(layout,em,gridEntity,grid,surface,side,out keepClear,serviceRows);
                     serviceFootprints[side]=keepClear;
                     bool support=configuration.Any(value=>(byte)value["faction"]==side&&(string)value["structureId"]==Game.Skirmish.Contracts.SkirmishStructureIds.GroundStaging);
                     serviceAvailable[side]&=support;
@@ -164,6 +170,21 @@ namespace Game.Editor
                         result["existingTypedPadIgnoredForHintsOnly"]=true;
                         result["additionalQaClearanceScope"]="WholeDeclaredCompound_OriginalTypedPadNotCertified_FixedSpawnRallyRepairAndActualApproachClearance";
                         if(faction!=2){result["status"]="NotRequested_PlayerPreferencesFixed";continue;}
+                        JArray allOrigins=null;
+                        if(finiteFacilityOriginExportRequest!=null)
+                        {
+                            Require(configuration.Key.Item1=="S050","Exact owned finite-origin subject");
+                            if(faction!=2||!FiniteOriginStructures.Contains((string)preferred["structureId"]))
+                            {result["status"]="NotRequested_FiniteOriginExport";continue;}
+                            Require((long)compound.width*compound.height<=(int)finiteFacilityOriginExportRequest["maximumOriginsPerRow"],
+                                "Finite original compound enumeration bound required");
+                            allOrigins=new JArray();result["allSourceQaLegalOrigins"]=allOrigins;
+                            result["allOriginsEnumerationComplete"]=false;
+                            result["sameQaKeepClearCells"]=new JArray(serviceKeepClear.Select(RectJson));
+                            result["originGrid"]=new JObject{["width"]=grid.Width,["height"]=grid.Height,
+                                ["cellSize"]=grid.CellSize,["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z)};
+                        }
+
                         var plots=new JArray();var representatives=new List<RectInt>();
                         result["representativePlots"]=plots;
                         var hintFootprint=geometry.GetPlacementFootprint(definition,false);
@@ -180,6 +201,11 @@ namespace Game.Editor
                             if(serviceKeepClear.Any(rect.Overlaps)||!serviceAvailable[faction]){qaRejected++;continue;}
                             if(!NativeValid(definition,originHint,hintFootprint,false,grid,roads,blocker)){nativeRejected++;continue;}
                             sourceLegal++;
+                            if(allOrigins!=null)
+                            {
+                                var measuredOrigin=RectJson(rect);measuredOrigin["originCell"]=new JArray(originHint.x,originHint.y);
+                                allOrigins.Add(measuredOrigin);
+                            }
                             if(representatives.Count>=32||representatives.Any(rect.Overlaps))continue;
                             representatives.Add(rect);var plot=RectJson(rect);
                             plot["preferredOriginCell"]=new JArray(originHint.x,originHint.y);plots.Add(plot);
@@ -189,10 +215,75 @@ namespace Game.Editor
                         result["outsideFullCompound"]=outsideFullCompound;result["nativeSourceRejected"]=nativeRejected;
                         result["staticPrefixRejected"]=prefixRejected;result["qaRejected"]=qaRejected;
                         result["independentlySourceQaLegalOriginCount"]=sourceLegal;
+                        if(allOrigins!=null)
+                        {
+                            Require(allOrigins.Count==sourceLegal,"Every legal origin recorded without truncation");
+                            result["allOriginsEnumerationComplete"]=true;
+                            result["allOriginsAreIndependentNotJointPacking"]=true;
+                        }
                         result["representativeLimit"]=32;
                         result["representativesAreExhaustivePacking"]=false;
                         result["maximumRepresentativeLimitReached"]=representatives.Count==32;
                         continue;
+                    }
+
+                    if(!capacityOnly&&(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)!=null&&
+                        configuration.Key.Item1==(string)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["catalogId"]&&
+                        faction==(int)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["faction"]&&
+                        (string)preferred["structureId"]==(string)(normalOriginContextCaptureRequest??normalFacilityOriginExportRequest)["structureId"])
+                    {
+                        var captureRequest=normalOriginContextCaptureRequest;
+                        var request=captureRequest??normalFacilityOriginExportRequest;
+                        Require(captureRequest==null||originalFcScope,"Context capture requires exact FC owner");
+                        Require(discoverFacilityPads&&exactTypedRosterCaller&&(serviceAuthority!=null||originalFcScope)&&serviceAvailable[faction],
+                            "Actual authoring allocator, exact roster and complete service clearances required");
+                        var actual=new JObject{["size"]=configuration.Key.Item2,["target"]=NormalOriginFacilityIdentity(result),
+                            ["priorReservations"]=new JArray(output.OfType<JObject>().Where(r=>r!=result&&
+                                (string)r["catalogId"]==configuration.Key.Item1&&(string)r["size"]==configuration.Key.Item2).Select(NormalOriginPriorIdentity)),
+                            ["qaKeepClear"]=new JArray(serviceKeepClear.Select(RectJson)),["compound"]=RectJson(compound),
+                            ["typedPad"]=RectJson(padBounds),["footprint"]=new JArray(geometry.GetPlacementFootprint(definition,false).x,
+                                geometry.GetPlacementFootprint(definition,false).y)};
+                        if(captureRequest==null)
+                        {
+                            var expected=((JArray)request["contexts"]).OfType<JObject>().Single(c=>(string)c["size"]==configuration.Key.Item2);
+                            ValidateNormalOriginContext(expected,actual);
+                        }
+                        Require(reserved.Count==((JArray)actual["priorReservations"]).Count&&
+                            JToken.DeepEquals(new JArray(reserved.Select(RectJson)),
+                                new JArray(((JArray)actual["priorReservations"]).Select(r=>r["rect"].DeepClone()))),
+                            "Complete actual prefix order and rectangles required, not independent capacity");
+                        if(captureRequest!=null)
+                        {
+                            result["normalPrefixCapturedContext"]=actual;
+                            result["status"]="CapturedOriginalFcNormalTargetContext_NotSelectedOrConfigurationFit";
+                            complete=false;break; // No target search, finite enumeration, later facilities or packing.
+                        }
+                        long domain=(long)compound.width*compound.height;
+                        Require(compound.width>0&&compound.height>0&&domain<=(int)request["maximumOriginsPerRow"],
+                            "Finite complete origin domain must fit reviewed per-size cap");
+                        var origins=new JArray();long examined=0,prefixRejected=0,fullPredicateRejected=0;
+                        var diagnosticFootprint=geometry.GetPlacementFootprint(definition,false);
+                        for(int z=compound.yMin;z<compound.yMax;z++)for(int x=compound.xMin;x<compound.xMax;x++)
+                        {
+                            examined++;var candidate=new Vector2Int(x,z);
+                            if(CachedSourceInvalid(candidate,diagnosticFootprint)){prefixRejected++;continue;}
+                            if(!Valid(definition,candidate,diagnosticFootprint,false,grid,roads,blocker)){fullPredicateRejected++;continue;}
+                            var rect=RectJson(Effective(definition,candidate,grid,false));
+                            rect["originCell"]=new JArray(x,z);origins.Add(rect);
+                        }
+                        Require(examined==domain&&examined==prefixRejected+fullPredicateRejected+origins.Count,
+                            "Every finite origin must be accounted for with no truncation");
+                        result["normalPrefixFiniteOrigins"]=new JObject{
+                            ["scope"]="NormalAllocatorPrefixFiniteOrigins_NotConfigurationFit",["context"]=actual,
+                            ["enumerationComplete"]=true,["enumeratedOriginCells"]=examined,
+                            ["prefixRejected"]=prefixRejected,["fullNativeQaPredicateRejected"]=fullPredicateRejected,
+                            ["allLegalOrigins"]=origins,["legalOriginCount"]=origins.Count,
+                            ["priorReservationsIncluded"]=true,["allCirculationServiceApproachClearancesIncluded"]=true,
+                            ["usesActualNormalNativePredicate"]=true,["footprintRotation"]=false,
+                            ["noNativePathQueriesInEnumeration"]=true,["packingMeasured"]=false,
+                            ["sourceFitCertified"]=false,["normalMissionReady"]=false};
+                        result["status"]="CollectedNormalPrefixFiniteOrigins_NotSelectedOrConfigurationFit";
+                        complete=false;break; // No target selection, later facilities, packing or final route queries.
                     }
                     var context=new BuildingRuntimeSpawnCompositionSystemHelper.Context(null,null,null,null,default,null,
                         geometry.GetPlacementFootprint,Effective,Valid,CachedSourceInvalid,null,null,null,null);

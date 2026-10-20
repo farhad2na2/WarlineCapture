@@ -75,11 +75,25 @@ namespace Game.Runtime
                 return false;
             }
 
+            if(SkirmishConstructionLedger.Observer!=null)
+            {
+                if(context.TryReserveCost.Target is BuildingConstructionResourceTransactionSystemHelper owner)
+                    owner.ObservePlacement(placement,transactionId);
+                else SkirmishConstructionLedger.UnsupportedPlacement();
+            }
+
             // Commit the pose that was displayed and validated above. Road alignment and
             // rotation may have moved it since the last raw pointer/drag snapshot.
             placement.CommittedOriginCell = placement.OriginCell;
             BuildingPlacementCommitCompositionSystemHelper.CommitOutcome outcome =
                 context.CommitPlacement != null ? context.CommitPlacement(placement) : default;
+            if(SkirmishConstructionLedger.Observer!=null)
+            {
+                if(context.TryReserveCost.Target is BuildingConstructionResourceTransactionSystemHelper owner)
+                    owner.ObservePlacement(placement,transactionId,outcome);
+                else SkirmishConstructionLedger.UnsupportedPlacement();
+            }
+
             if (!outcome.FullyCommitted)
             {
                 if (outcome.PlacementCommitted)

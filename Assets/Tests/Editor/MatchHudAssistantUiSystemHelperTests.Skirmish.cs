@@ -545,4 +545,146 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         tests.SkirmishContextMatchesFullReadAcrossAdmissionAndSessionVariants();
         Debug.Log("[SkirmishContextValidation] result=Passed fallback=4 admission=3 matrix=48 nativeMissionAcceptance=Pending");
     }
+    public sealed class PadWitnessRaycaster : BaseRaycaster
+    {
+        public int Calls; public bool Block;
+        public void EnsureRegistered(){if(!RaycasterManager.GetRaycasters().Contains(this))base.OnEnable();}
+        public void ReleaseRegistered(){if(RaycasterManager.GetRaycasters().Contains(this))base.OnDisable();}
+        public override Camera eventCamera => null;
+        public override void Raycast(PointerEventData data, List<RaycastResult> results)
+        {
+            Calls++;
+            if(Block)results.Add(new RaycastResult{gameObject=gameObject,module=this,
+                screenPosition=data.position,distance=0,index=results.Count});
+        }
+    }
+    public static void RunHomePadWitnessControls()
+    {
+        Assert.IsFalse(EditorApplication.isPlayingOrWillChangePlaymode);
+        Assert.IsTrue(SkirmishMatchView.NativeCombatEvidenceEnabled,
+            "Use WARLINE_S005_COMBAT_EVIDENCE=1 before Editor startup.");
+        PadWitnessFixture(true);
+        Debug.Log("[HomePadRefusalWitnessControls] result=Passed controls=11 normalMissionReady=0");
+    }
+    public static void RunHomePadWitnessDefaultOffControl()
+    {
+        Assert.IsFalse(EditorApplication.isPlayingOrWillChangePlaymode);
+        Assert.IsFalse(SkirmishMatchView.NativeCombatEvidenceEnabled,
+            "Separate Editor invocation: omit WARLINE_S005_COMBAT_EVIDENCE.");
+        PadWitnessFixture(false);
+        Debug.Log("[HomePadRefusalWitnessDefaultOff] result=Passed controls=1 normalMissionReady=0");
+    }
+    private static void PadWitnessFixture(bool enabled)
+    {
+        var flags=BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public;
+        var helper=new MatchHudAssistantUiSystemHelper();
+        var type=typeof(MatchHudAssistantUiSystemHelper);
+        var method=type.GetMethod("ObserveHomePadSite",flags);
+        Assert.IsNotNull(method);
+        void Set(string name,object value)=>type.GetField(name,flags).SetValue(helper,value);
+        var saved=new[]{SkirmishMatchView.NativeHomePadSite0,SkirmishMatchView.NativeHomePadSite1,
+            SkirmishMatchView.NativeHomePadSite2,SkirmishMatchView.NativeHomePadSite3};
+        var previousEventSystem=EventSystem.current;
+        var systems=(System.Collections.IList)typeof(EventSystem).GetField("m_EventSystems",BindingFlags.Static|BindingFlags.NonPublic).GetValue(null);
+        var previousSystems=new List<EventSystem>();foreach(EventSystem system in systems)previousSystems.Add(system);
+        var previousRays=new List<BaseRaycaster>(RaycasterManager.GetRaycasters());
+        EventSystem ownedEventSystem=null;PadWitnessRaycaster ownedRaycaster=null;
+        var tagged=new List<GameObject>();
+        var disabled=new List<BaseRaycaster>();
+        var root=new GameObject("OwnedPadWitnessFixture");
+        var fontField=typeof(SkirmishMatchView).GetField("interfaceFont",BindingFlags.Static|BindingFlags.NonPublic);
+        object previousFont=fontField.GetValue(null);
+        try
+        {
+            foreach(var existing in UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsSortMode.None))
+                if(existing.CompareTag("MainCamera")){tagged.Add(existing.gameObject);existing.tag="Untagged";}
+            var cameraGo=new GameObject("OwnedPadCamera",typeof(Camera));cameraGo.transform.SetParent(root.transform);
+            var camera=cameraGo.GetComponent<Camera>();cameraGo.tag="MainCamera";
+            camera.orthographic=true;camera.orthographicSize=60;camera.cullingMask=0;
+            camera.pixelRect=Screen.safeArea;camera.nearClipPlane=.1f;camera.farClipPlane=1000;
+            var site=new Vector3(-34,0,18);
+            camera.transform.SetPositionAndRotation(site+Vector3.up*100,Quaternion.Euler(90,0,0));
+            var hud=SkirmishMatchView.Create();hud.gameObject.name="OwnedPadHud";
+            hud.transform.SetParent(root.transform);
+            void Bases(Vector3 home,Vector3 enemy)
+            {
+                typeof(SkirmishMatchView).GetField("<PlayerBaseObjectivePosition>k__BackingField",flags).SetValue(hud,home);
+                typeof(SkirmishMatchView).GetField("<EnemyBaseObjectivePosition>k__BackingField",flags).SetValue(hud,enemy);
+            }
+            Bases(Vector3.zero,new Vector3(0,0,500));
+            var mapGo=new GameObject("OwnedPadMap",typeof(RectTransform));mapGo.transform.SetParent(root.transform);
+            var map=mapGo.AddComponent<MatchHudMinimapView>();
+            var esGo=new GameObject("OwnedPadEventSystem",typeof(EventSystem));esGo.transform.SetParent(root.transform);
+            ownedEventSystem=esGo.GetComponent<EventSystem>();
+            if(!systems.Contains(ownedEventSystem))typeof(EventSystem).GetMethod("OnEnable",flags).Invoke(ownedEventSystem,null);
+            Assert.IsTrue(systems.Contains(ownedEventSystem));EventSystem.current=ownedEventSystem;
+            Assert.AreSame(ownedEventSystem,EventSystem.current);
+            foreach(var ray in UnityEngine.Object.FindObjectsByType<BaseRaycaster>(FindObjectsSortMode.None))
+                if(ray.enabled){disabled.Add(ray);ray.enabled=false;}
+            var rayGo=new GameObject("OwnedPadRaycaster");rayGo.transform.SetParent(root.transform);
+            var raycaster=rayGo.AddComponent<PadWitnessRaycaster>();ownedRaycaster=raycaster;
+            raycaster.EnsureRegistered();Assert.IsTrue(RaycasterManager.GetRaycasters().Contains(raycaster));
+            Set("watchSkirmish",hud);Set("watchMap",map);
+            AriaTouchTarget Invoke(string refusal,int rayCalls,bool available=false)
+            {
+                int calls=raycaster.Calls,contacts=map.PresentedContacts.Count;
+                Vector3 position=camera.transform.position;Quaternion rotation=camera.transform.rotation;
+                var target=(AriaTouchTarget)method.Invoke(helper,new object[]{0});
+                Assert.AreEqual(available,target.Available);
+                Assert.AreEqual(rayCalls,raycaster.Calls-calls,"Unexpected extra/missing real RaycastAll");
+                Assert.AreEqual(contacts,map.PresentedContacts.Count);
+                Assert.AreEqual(position,camera.transform.position);Assert.AreEqual(rotation,camera.transform.rotation);
+                if(enabled)
+                {
+                    var evidence=SkirmishMatchView.NativeHomePadSite0;
+                    Assert.IsTrue(evidence.collected);Assert.AreEqual(Time.frameCount,evidence.frame);
+                    Assert.AreEqual(refusal,evidence.refusal);Assert.AreEqual(available,evidence.reachable);
+                    Assert.AreEqual(rayCalls==0?-1:(available?0:1),evidence.uiHitCount);
+                }
+                else Assert.AreEqual(saved[0],SkirmishMatchView.NativeHomePadSite0);
+                return target;
+            }
+            if(!enabled){Assert.AreEqual(-20200,Invoke("",1,true).Id);return;}
+            Set("watchSkirmish",null);Assert.AreEqual(0,Invoke("MissingViewMapCamera",0).Id);Set("watchSkirmish",hud);
+            Set("watchMap",null);Invoke("MissingViewMapCamera",0);Set("watchMap",map);
+            cameraGo.tag="Untagged";Invoke("MissingViewMapCamera",0);cameraGo.tag="MainCamera";
+            Bases(Vector3.zero,Vector3.zero);Invoke("DegenerateHomeEnemyDirection",0);
+            Bases(Vector3.zero,new Vector3(0,0,30));Invoke("EnemyBaseClearance",0);
+            Assert.AreEqual(75,SkirmishMatchView.NativeHomePadSite0.requiredClearance);
+            Assert.AreEqual((site-new Vector3(0,0,30)).sqrMagnitude,SkirmishMatchView.NativeHomePadSite0.rejectedDistanceSquared);
+            Bases(Vector3.zero,new Vector3(0,0,500));
+            map.RecordPresentedContact(new MatchHudMinimapMarkerModel(site,MatchHudMinimapMarkerAllegiance.Player),null);
+            Invoke("PublicFriendlyContactClearance",0);Assert.AreEqual(16,SkirmishMatchView.NativeHomePadSite0.requiredClearance);
+            map.PresentedContacts.Clear();
+            map.RecordPresentedContact(new MatchHudMinimapMarkerModel(site,MatchHudMinimapMarkerAllegiance.Enemy),null);
+            Invoke("PublicEnemyContactClearance",0);Assert.AreEqual(36,SkirmishMatchView.NativeHomePadSite0.requiredClearance);
+            map.PresentedContacts.Clear();
+            camera.transform.position=site-Vector3.up*100;Invoke("BehindCamera",0);
+            Assert.IsFalse(SkirmishMatchView.NativeHomePadSite0.screenValid);
+            camera.transform.position=site+Vector3.up*100+Vector3.right*100000;Invoke("OutsideSafeArea",0);
+            camera.transform.position=site+Vector3.up*100;
+            var projected=camera.WorldToScreenPoint(site);Assert.Greater(projected.z,0);Assert.IsTrue(Screen.safeArea.Contains(projected));
+            var accepted=Invoke("None",1,true);Assert.AreEqual(-20200,accepted.Id);Assert.AreEqual((Vector2)projected,accepted.Position);
+            raycaster.Block=true;var blocked=Invoke("ReachabilityRejected",1);
+            Assert.AreEqual(accepted.Id,blocked.Id);Assert.AreEqual(accepted.Position,blocked.Position);
+        }
+        finally
+        {
+            SkirmishMatchView.NativeHomePadSite0=saved[0];SkirmishMatchView.NativeHomePadSite1=saved[1];
+            SkirmishMatchView.NativeHomePadSite2=saved[2];SkirmishMatchView.NativeHomePadSite3=saved[3];
+            if(ownedRaycaster!=null){ownedRaycaster.enabled=false;ownedRaycaster.ReleaseRegistered();}
+            if(ownedEventSystem!=null){ownedEventSystem.enabled=false;
+                if(systems.Contains(ownedEventSystem))typeof(EventSystem).GetMethod("OnDisable",flags).Invoke(ownedEventSystem,null);}
+            UnityEngine.Object.DestroyImmediate(root);
+            fontField.SetValue(null,previousFont);
+            foreach(var ray in disabled)if(ray!=null)ray.enabled=true;
+            foreach(var go in tagged)if(go!=null)go.tag="MainCamera";
+            if(previousEventSystem!=null&&systems.Contains(previousEventSystem))EventSystem.current=previousEventSystem;
+            var restoredRays=RaycasterManager.GetRaycasters();restoredRays.Clear();restoredRays.AddRange(previousRays);
+            CollectionAssert.AreEqual(previousSystems,systems);
+            CollectionAssert.AreEqual(previousRays,restoredRays);
+            Assert.AreSame(previousEventSystem,EventSystem.current);
+        }
+    }
+
 }

@@ -9,6 +9,166 @@ namespace Game.Editor
     {
         public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
 
+        public static void RunPublicPrecisionAttackValidation()
+        {
+            int checks=0;
+            void Check(bool ok,string name){if(!ok)throw new InvalidOperationException(name);checks++;}
+            var v=new AriaSkirmishObservation();var p=new AriaSkirmishPlanComponent();
+            var t=new AriaPlaySessionComponent();var o=new AriaPlayObservationComponent();
+            void Reset()
+            {
+                v=new AriaSkirmishObservation {Active=true,ExpandedSession=true,ExpandedBaseAssault=true,Frame=100,Time=100,Infantry=20,
+                    PlayerHealth=800,EnemyHealth=800,EnemyDesignatedAlive=true,CombinedArmsField=true,
+                    OwnStructureAttackUnits=8,ExpandedAssaultMask=4,ExpandedStructureMask=4,ExpandedAttackOrderMask=4,
+                    ExpandedGroup2=77,ExpandedPageCount=1,ExpandedTotalGroups=3,ExpandedRosterRevision=10,
+                    ExpandedSelectedMask=4,ExpandedSelectedGroups=1,SelectionVisible=true,SelectionMode=true,
+                    EnemyBase=new AriaTouchTarget{Available=true,Id=-20001,Position=new UnityEngine.Vector2(30,40)},
+                    AdvanceGround=new AriaTouchTarget{Available=true,Id=16},
+                    Attack=new AriaTouchTarget{Available=true,Id=14},Select=new AriaTouchTarget{Available=true,Id=15},
+                    Squad2=new AriaTouchTarget{Available=true,Id=12},
+                    SelectedSquadToToggle=new AriaTouchTarget{Available=true,Id=13}};
+                p=new AriaSkirmishPlanComponent {AssaultStarted=1,AssaultIssued=1,StructureOrdered=1,
+                    LastProgressAt=100,Infantry=20,PlayerHealth=800,EnemyHealth=800,SweepRosterRevision=10};
+                t=new AriaPlaySessionComponent{Phase=AriaPlayPhase.Observing,LastProgressAt=100,LastObjectiveProgressAt=100};
+            }
+            void Step(){AriaSkirmishPlanSystem.Step(v,ref p,ref t,ref o);}
+            void Issue(){Step();v.Frame++;v.AttackMode=true;Step();}
+            void Ack(uint group=77,int contact=-20001,bool presented=true,uint revision=1)
+            {
+                t.Actions++;t.LastCompletedTargetId=-20001;t.LastCompletedFrame=v.Frame;
+                t.LastCompletedPosition=new UnityEngine.Vector2(30,40);
+                v.PrecisionAttack=new UiExpandedPrecisionAttackResult{Presented=presented,Revision=revision,GroupId=group,
+                    PublicTargetId=contact,RequestId=123,Frame=v.Frame,AcceptedMembers=1,SourceMembers=4,
+                    ScreenPosition=t.LastCompletedPosition};
+                v.AttackMode=false;v.Frame++;Step();
+            }
+            Reset();v.ExpandedBaseAssault=false;Step();Check(p.PrecisionStage==0,"non BaseAssault scope never starts precision");
+            Reset();v.EnemyBase=default;Step();
+            Check(p.PrecisionStage==0,"hidden target cannot start precision");
+            Reset();Step();Check(o.TargetId==14&&p.PrecisionStage==1,"selected structure group uses normal Attack");
+            v.AttackMode=true;v.Frame++;Step();
+            Check(o.TargetId==-20001&&p.PrecisionStage==4&&p.PrecisionAttempts==1,"one normal public target tap");
+            t.Actions++;t.LastCompletedTargetId=-20001;t.LastCompletedFrame=v.Frame;v.AttackMode=false;Step();
+            Check(p.PrecisionAcceptedGroups.Length==0&&p.PrecisionStage==4,"gesture and old attack mask are not native ack");
+            Reset();Issue();Ack();
+            Check(p.PrecisionAcceptedGroups.Length==1&&p.PrecisionAcceptedGroups[0]==77,
+                "fresh exact partial native acceptance is acknowledged without all-member claim");
+            Step();Check(o.TargetId!=-20001&&o.TargetId!=14,"accepted group is not spammed");
+            Reset();Issue();v.ExpandedRosterRevision++;Ack();Check(p.PrecisionAcceptedGroups.Length==0,"roster churn cannot splice an ack");
+            Reset();Issue();Ack(revision:0);Check(p.PrecisionAcceptedGroups.Length==0,"stale revision rejected");
+            Reset();Issue();Ack(group:88);Check(p.PrecisionAcceptedGroups.Length==0,"wrong group rejected");
+            Reset();Issue();Ack(contact:99);Check(p.PrecisionAcceptedGroups.Length==0,"wrong public target rejected");
+            Reset();Issue();Ack(presented:false);Check(p.PrecisionAcceptedGroups.Length==0,"unpresented result rejected");
+            Reset();v.ExpandedSelectedGroups=0;v.ExpandedSelectedMask=0;Step();
+            Check(o.TargetId==12,"actual available card selected through normal input");
+            Reset();v.ExpandedSelectedOffPage=1;Step();
+            Check(o.TargetId==13,"offpage selection normally deselected before precision");
+            Reset();Step();v.AttackMode=true;v.EnemyBase=default;Step();
+            Check(p.PrecisionStage==5&&o.TargetId!=-20001&&o.TargetId!=v.AdvanceGround.Id,
+                "lost precision target never falls back to terrain");
+            Reset();v.ExpandedAirMask=4;Step();
+            Check(p.PrecisionStage==0,"air group excluded from ground precision");
+            Reset();Issue();v.AttackMode=false;v.Time=109;Step();
+            Check(p.PrecisionStage==1&&p.PrecisionAttempts==1,"ack timeout rearms bounded cooldown");
+            v.Time=110;Step();Check(o.TargetId==0,"cooldown has no repeated order");
+            v.Time=112;Step();v.AttackMode=true;v.Frame++;Step();
+            Check(p.PrecisionAttempts==2&&o.TargetId==-20001,"second target attempt permitted once");
+            v.AttackMode=false;v.Time=121;Step();v.Time=122;Step();
+            Check(p.PrecisionExhaustedGroups.Length==1&&p.PrecisionStage==0&&o.TargetId!=14,
+                "exhausted group cannot repeat indefinitely");
+            Reset();Issue();v.Time=281;Step();
+            Check(t.Phase==AriaPlayPhase.Blocked&&p.LastProgressAt==100&&t.LastObjectiveProgressAt==100,
+                "pending precision cannot renew180second watchdog");
+            Reset();t.Phase=AriaPlayPhase.Manual;Step();
+            Check(p.PrecisionStage==0,"Manual does not start precision");
+            UnityEngine.Debug.Log($"[PublicPrecisionAttackControls] result=Passed checks={checks} nativeBehaviorProved=0 missionReady=0");
+        }
+
+        public static void RunPublicAssaultFocusValidation()
+        {
+            int checks=0;
+            void Check(bool ok,string name){if(!ok)throw new InvalidOperationException(name);checks++;}
+            var v=new AriaSkirmishObservation();var p=new AriaSkirmishPlanComponent();
+            var t=new AriaPlaySessionComponent();var o=new AriaPlayObservationComponent();
+            void Reset()
+            {
+                v=new AriaSkirmishObservation{Active=true,ExpandedSession=true,ExpandedBaseAssault=true,Frame=100,Time=100,
+                    Infantry=20,PlayerHealth=800,EnemyHealth=800,EnemyDesignatedAlive=true,CombinedArmsField=true,
+                    OwnStructureAttackUnits=8,ExpandedAssaultMask=4,ExpandedStructureMask=4,ExpandedAttackOrderMask=4,
+                    ExpandedGroup2=77,ExpandedPageCount=1,ExpandedTotalGroups=3,ExpandedRosterRevision=10,
+                    ExpandedSelectedMask=4,ExpandedSelectedGroups=1,SelectionVisible=true,SelectionMode=true,
+                    AssaultAtBase=true,AssaultDistanceVisible=true,NearestFriendlyObjectiveDistance=25,
+                    AssaultMap=new AriaAssaultMapObservation{Identity=1,ObjectiveHudIdentity=2,ExpectedIdentity=true,
+                        Complete=true,ProjectionValid=true,MarkerRevision=1,MarkerFrame=100,MarkerTime=100},
+                    FocusEnemy=new AriaTouchTarget{Available=true,Id=55,Position=new UnityEngine.Vector2(30,40)},
+                    Attack=new AriaTouchTarget{Available=true,Id=14},Squad2=new AriaTouchTarget{Available=true,Id=12}};
+                p=new AriaSkirmishPlanComponent{AssaultStarted=1,AssaultIssued=1,StructureOrdered=1,SweepRosterRevision=10,
+                    LastProgressAt=100,EnemyHealth=800,PlayerHealth=800,Infantry=20,
+                    AssaultDistanceObserved=1,BestAssaultDistance=25,AssaultObjectiveHudIdentity=2};
+                t=new AriaPlaySessionComponent{Phase=AriaPlayPhase.Observing,LastProgressAt=100,LastObjectiveProgressAt=100};
+            }
+            void Step(){AriaSkirmishPlanSystem.Step(v,ref p,ref t,ref o);}
+            void NoFocus(string why){Step();Check(p.AssaultFocusStage==0,why);}
+            Reset();Step();
+            Check(o.Kind==AriaPlayObservationKind.Control&&o.TargetId==55&&o.Drag==0&&p.AssaultFocusStage==1,
+                "existing public focus button is a normal control, never a world order");
+            Check(p.AssaultIssued==1&&p.StructureOrdered==1&&p.PrecisionAcceptedGroups.Length==0&&
+                p.LastProgressAt==100&&t.LastObjectiveProgressAt==100&&!v.EnemyBase.Available,
+                "camera request neither accepts combat nor reveals target nor refreshes watchdog");
+            Step();Check(o.TargetId==55&&p.AssaultFocusActions==0,"same pending gesture is maintained without restarting attempt");
+            t.Actions=1;t.LastCompletedTargetId=55;t.LastCompletedFrame=100;Step();
+            Check(p.AssaultFocusStage==2&&p.PrecisionAcceptedGroups.Length==0,"focus completion is distinct from precision acceptance");
+            Step();Check(o.TargetId!=55,"completed focus cannot repeat");
+            v.AssaultAtBase=false;Step();v.AssaultAtBase=true;Step();
+            Check(o.TargetId!=55,"arrival jitter cannot rearm camera gesture");
+            v.EnemyBase=new AriaTouchTarget{Available=true,Id=-20001,Position=new UnityEngine.Vector2(80,90)};Step();
+            Check(o.TargetId==14&&p.PrecisionStage==1,"only subsequently presented real target enters unchanged precision selection");
+            Reset();v.ExpandedBaseAssault=false;NoFocus("no other objective scope");
+            Reset();v.AssaultAtBase=false;NoFocus("no early focus before public arrival");
+            Reset();v.AssaultMap.MarkerTime=98;NoFocus("stale presented map cannot authorize arrival");
+            Reset();v.AssaultMap.ExpectedIdentity=false;NoFocus("foreign presented map cannot authorize arrival");
+            Reset();p.AssaultIssued=0;NoFocus("unaccepted assault cannot authorize focus");
+            Reset();p.StructureOrdered=0;NoFocus("structure force order is required");
+            Reset();t.Phase=AriaPlayPhase.Manual;NoFocus("Manual remains idle");
+            Reset();v.AttackMode=true;NoFocus("camera cannot consume an active targeting mode");
+            Reset();v.DrawerOpen=true;NoFocus("open drawer blocks focus");
+            Reset();v.MapOpen=true;NoFocus("open full map blocks focus");
+            Reset();v.PlacementOpen=true;NoFocus("placement blocks focus");
+            Reset();v.PresentedHomeThreat=true;NoFocus("home defence has priority");
+            Reset();v.FocusEnemy=default;NoFocus("unavailable focus is not bypassed");
+            Reset();v.EnemyBase=new AriaTouchTarget{Available=true,Id=-20001};NoFocus("already presented precision target needs no focus");
+            Reset();Step();t.Actions=1;t.LastCompletedTargetId=99;t.LastCompletedFrame=100;Step();
+            Check(p.AssaultFocusStage==1,"unrelated normal gesture is not a focus completion receipt");
+            v.Time=108;v.Frame=108;Step();
+            Check(p.AssaultFocusStage==2&&o.TargetId!=55&&p.PrecisionAcceptedGroups.Length==0,
+                "timeout consumes bounded attempt without accepting combat");
+            // Exercise the unchanged actual camera request owner, not a fabricated gameplay acknowledgement.
+            using(var world=new Unity.Entities.World("Public objective camera mutation boundary"))
+            {
+                var em=world.EntityManager;
+                var camera=em.CreateEntity(typeof(Game.Components.RuntimeCameraFocusRequestComponent));
+                var objective=em.CreateEntity(typeof(Unity.Transforms.LocalTransform));
+                var position=new Unity.Mathematics.float3(100,0,200);
+                em.SetComponentData(objective,Unity.Transforms.LocalTransform.FromPosition(position));
+                var actor=em.CreateEntity(typeof(Unity.Transforms.LocalTransform),typeof(Game.Components.AttackMoveOrder));
+                var actorPosition=new Unity.Mathematics.float3(20,0,30);
+                em.SetComponentData(actor,Unity.Transforms.LocalTransform.FromPosition(actorPosition));
+                em.SetComponentData(actor,new Game.Components.AttackMoveOrder{Destination=new Unity.Mathematics.int2(80,90)});
+                var system=world.GetOrCreateSystemManaged<Game.Composition.SkirmishPresentationSystem>();
+                var method=typeof(Game.Composition.SkirmishPresentationSystem).GetMethod("Focus",
+                    System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+                Check(method!=null,"existing camera owner is available");
+                Check((bool)method.Invoke(system,new object[]{objective,false,0,true,false}),"actual public focus request accepted");
+                var request=em.GetComponentData<Game.Components.RuntimeCameraFocusRequestComponent>(camera);
+                Check(request.Requested==1&&request.UseExplicitPerspective==1,"actual owner only requests camera presentation");
+                Check(em.GetComponentData<Game.Components.AttackMoveOrder>(actor).Destination.Equals(new Unity.Mathematics.int2(80,90))&&
+                    em.GetComponentData<Unity.Transforms.LocalTransform>(actor).Position.Equals(actorPosition)&&
+                    !em.HasComponent<Game.Components.EngageTarget>(actor),
+                    "actual camera owner preserves troop destination/position and creates no EngageTarget");
+            }
+            UnityEngine.Debug.Log($"[PublicAssaultFocusControls] result=Passed checks={checks} nativeCameraProved=0 missionReady=0");
+        }
+
         private static int RunPublicApproachProgressControls()
         {
             int checks = 0;
@@ -47,6 +207,11 @@ namespace Game.Editor
             void Step(float time, float distance)
             {
                 view.Time = time; view.Frame++; view.NearestFriendlyObjectiveDistance = distance;
+                view.AssaultMap = new AriaAssaultMapObservation {
+                    Identity = 11, ExpectedIdentity = true, Complete = true, ProjectionValid = true,
+                    FullMap = view.MapOpen, MarkerRevision = (uint)view.Frame,
+                    MarkerFrame = view.Frame, MarkerTime = view.Time, ObjectiveHudIdentity = 77,
+                    ObjectiveWorld = UnityEngine.Vector3.zero };
                 AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             }
             void NoProgress(string label) => Check(plan.LastProgressAt == 100 &&

@@ -11,6 +11,12 @@ from skirmish_production_matrix_authority import SamplingAuthority
 
 
 def prepare(project,job_directories,snapshot_path,batch_id,sampling_plan=None,sampling_sha=None):
+    # Public standalone descriptor preparation remains fresh-validating.
+    return _prepare(project,job_directories,snapshot_path,batch_id,sampling_plan,sampling_sha)
+
+
+def _prepare(project,job_directories,snapshot_path,batch_id,sampling_plan=None,sampling_sha=None,*,_validate=None):
+    _validate=preflight if _validate is None else _validate
     project=project.resolve()
     batch_id=identifier(batch_id)
     authority=SamplingAuthority(project,sampling_plan,sampling_sha) if sampling_plan is not None else None
@@ -23,7 +29,7 @@ def prepare(project,job_directories,snapshot_path,batch_id,sampling_plan=None,sa
         raise ValueError('Snapshot rows do not derive candidate/build identity')
     jobs=[]
     for directory in job_directories:
-        directory=directory.resolve();job=load(directory/'job.json');preflight(job,project,authority)
+        directory=directory.resolve();job=load(directory/'job.json');_validate(job,project,authority)
         claim=load(directory/'claim.json');artifact=directory/claim['attempt_id']
         if claim['job_sha256']!=fingerprint(job) or load(artifact/'claim.json')!=claim:
             raise ValueError('Canonical live claim differs from immutable attempt')

@@ -1,0 +1,223 @@
+{
+  "reference_commit": "3a38730df1721fe38c7aaa2a239fc412dfc44be1",
+  "current_published_commit": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "interfaces": [
+    {
+      "path": "Tools/CI/skirmish_production_queue.py",
+      "old_sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "published_sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/skirmish_production_matrix_authority.py",
+      "old_sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "published_sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/prepare_skirmish_production_batch.py",
+      "old_sha256": "b717046d7ce8cb146879211504de1dff62554ba2340930687b45b6b2935e7341",
+      "published_sha256": "b717046d7ce8cb146879211504de1dff62554ba2340930687b45b6b2935e7341",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/collect_skirmish_batch_inspection.py",
+      "old_sha256": "a0cf68aa9a5059c159c6de0418a8f67b3362ef405c3cd89f8caacbe12f355162",
+      "published_sha256": "a0cf68aa9a5059c159c6de0418a8f67b3362ef405c3cd89f8caacbe12f355162",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/invoke_skirmish_production_batch.py",
+      "old_sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "published_sha256": "bbde0ef1e3f608cfeaef37e0a8e9f6bd24a9b66d28bd889c10c04222b7c3f05f",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/skirmish_production_operational_inspector.py",
+      "old_sha256": "c8835e1f769ee53d5acc561e2d3798052393c43518bd614e554fc4a9f19ee93f",
+      "published_sha256": "c8835e1f769ee53d5acc561e2d3798052393c43518bd614e554fc4a9f19ee93f",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/skirmish_profile_journal_admission.py",
+      "old_sha256": "70af53bd31151e395992f3651c544e24db27556742e839830e7566656ad47014",
+      "published_sha256": "70af53bd31151e395992f3651c544e24db27556742e839830e7566656ad47014",
+      "byte_identical": true
+    },
+    {
+      "path": "Tools/CI/skirmish_operational_test_fixture.py",
+      "old_sha256": "d8f4d9ce19b114cd52f77fc7afdf8802134f1e6b34312d982a259391ed432710",
+      "published_sha256": "d8f4d9ce19b114cd52f77fc7afdf8802134f1e6b34312d982a259391ed432710",
+      "byte_identical": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "old_sha256": "e1cbe915dfdec286a0fb700f169162be4013c6aabe6a94ed0fd19ce60890e12e",
+      "published_sha256": "e1cbe915dfdec286a0fb700f169162be4013c6aabe6a94ed0fd19ce60890e12e",
+      "byte_identical": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs",
+      "old_sha256": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+      "published_sha256": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+      "byte_identical": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs",
+      "old_sha256": "b0fe98b3d3b14395c54f4aed5b6c68529f7c8837c8ed87cfed341ad6b3896ed7",
+      "published_sha256": "b0fe98b3d3b14395c54f4aed5b6c68529f7c8837c8ed87cfed341ad6b3896ed7",
+      "byte_identical": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs",
+      "old_sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "published_sha256": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+      "byte_identical": true
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+      "old_sha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
+      "published_sha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
+      "byte_identical": true
+    }
+  ],
+  "shipping_reader_class_byte_identical": true,
+  "shipping_reader_class_sha256": "05d47267f7824631713b60384ca361a933051ee9327a0603a0c761a13ad51913",
+  "shipping_fixture_byte_identical": true,
+  "c50_to_f2a_source_paths_changed": [],
+  "canonical720_authority_source_equivalence": [
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/AI_AND_ARIA.md",
+      "old_sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874",
+      "published_sha256": "98bb7ff7d5e6e3d318277597cf12d0d8df19e456c656fe8b42d6ec37563c8874",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+      "old_sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+      "published_sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md",
+      "old_sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+      "published_sha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BT.md",
+      "old_sha256": "266dadd1b80c13dad1ed640c9a34cf2aa68721f8cf514ce57c01cca0a482706b",
+      "published_sha256": "266dadd1b80c13dad1ed640c9a34cf2aa68721f8cf514ce57c01cca0a482706b",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_CE.md",
+      "old_sha256": "56e5af7a83ef9e63a1723733f7462bf9fff57c3c7ccdffdf4a30021e2e02f378",
+      "published_sha256": "56e5af7a83ef9e63a1723733f7462bf9fff57c3c7ccdffdf4a30021e2e02f378",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_FC.md",
+      "old_sha256": "bca718e725c0fa9b7e34172742882db2b202d62116a228a1443820683732e5da",
+      "published_sha256": "bca718e725c0fa9b7e34172742882db2b202d62116a228a1443820683732e5da",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BA.md",
+      "old_sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "published_sha256": "b87bd99d85edc95164d98144b269cafb0b3b9e343a7f737cdadb595126776e9e",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_BT.md",
+      "old_sha256": "74a674a06b2be733795f73d6ae586745c2e6b1aa3680c9675bd86d40348938d3",
+      "published_sha256": "74a674a06b2be733795f73d6ae586745c2e6b1aa3680c9675bd86d40348938d3",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_CE.md",
+      "old_sha256": "d0390d46e133159f857f7c768766eca177fc8b860dd9e92a0e174b6335199f2c",
+      "published_sha256": "d0390d46e133159f857f7c768766eca177fc8b860dd9e92a0e174b6335199f2c",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/CC_FC.md",
+      "old_sha256": "d58000a4e6df306f15c6100c5f313b964128de1a92be38a4bc704112fc373864",
+      "published_sha256": "d58000a4e6df306f15c6100c5f313b964128de1a92be38a4bc704112fc373864",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BA.md",
+      "old_sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+      "published_sha256": "e87d1d8271df9f4344ef6b23fd5f31b0db9c8c3278a1dbdfaf49d784d8e1cecf",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_BT.md",
+      "old_sha256": "4826ac5e0df2e1f9d3143980f22ca50fe6906b09185cd1c8438da940ede43283",
+      "published_sha256": "4826ac5e0df2e1f9d3143980f22ca50fe6906b09185cd1c8438da940ede43283",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_CE.md",
+      "old_sha256": "1c8fe561d7f12bdfa679f646cec76db762b8efacd6f9fdea058ec4eee8d9d598",
+      "published_sha256": "1c8fe561d7f12bdfa679f646cec76db762b8efacd6f9fdea058ec4eee8d9d598",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_FC.md",
+      "old_sha256": "360daeb60270b2a2eaac6f0150169dd638df412fe3457af49bea43bdae9ad857",
+      "published_sha256": "360daeb60270b2a2eaac6f0150169dd638df412fe3457af49bea43bdae9ad857",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BA.md",
+      "old_sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1",
+      "published_sha256": "b83a43cfd1715a2e4178aae560427bb6ee77cb52fc4116a2c517e33f335969f1",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_BT.md",
+      "old_sha256": "37c4339d8dc04f37fad29ecf77ed42db4183fa6c32494475c7bd634052f97b08",
+      "published_sha256": "37c4339d8dc04f37fad29ecf77ed42db4183fa6c32494475c7bd634052f97b08",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_CE.md",
+      "old_sha256": "b2271c088c5aba6ad99b97e23b7aad9885b61696ace3620d39e732123b7751f6",
+      "published_sha256": "b2271c088c5aba6ad99b97e23b7aad9885b61696ace3620d39e732123b7751f6",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/IB_FC.md",
+      "old_sha256": "26c191bb0fe880a26c3d5bd0cfaef4b5c22892e539b7cf8ee1cbde3c56a9741e",
+      "published_sha256": "26c191bb0fe880a26c3d5bd0cfaef4b5c22892e539b7cf8ee1cbde3c56a9741e",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md",
+      "old_sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+      "published_sha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BT.md",
+      "old_sha256": "2a213f44779fb125e29f8d9de74644a553c68fd001ae2879a68a64591b473ee8",
+      "published_sha256": "2a213f44779fb125e29f8d9de74644a553c68fd001ae2879a68a64591b473ee8",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_CE.md",
+      "old_sha256": "e06743489475be561348c1eeea8f9360a0bfb2b31a4f31ba1fb37d5bfc0f5324",
+      "published_sha256": "e06743489475be561348c1eeea8f9360a0bfb2b31a4f31ba1fb37d5bfc0f5324",
+      "byte_identical": true
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_FC.md",
+      "old_sha256": "4a6b5a80eac93485fd6d8e58723ebc4eea18831ef0ada635b70aba4114e30678",
+      "published_sha256": "4a6b5a80eac93485fd6d8e58723ebc4eea18831ef0ada635b70aba4114e30678",
+      "byte_identical": true
+    }
+  ],
+  "canonical_baseline_slot_count": 720
+}

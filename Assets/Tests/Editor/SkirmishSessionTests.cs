@@ -15,6 +15,150 @@ using UnityEngine;
 
 public sealed class SkirmishSessionTests
 {
+    public static void RunCodedLibraryRawLaunchParityControls()
+    {
+        var raw=Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);
+        Assert.NotNull(raw);Assert.AreEqual(120,raw.Entries.Count);
+        Assert.IsTrue(raw.TryGet("S002",out var packaged));
+        var project=packaged;SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref project);
+        var selectionMethod=typeof(Game.UI.Runtime.QuickCustomScreenView).GetMethod("LibrarySelection",
+            System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+        Assert.NotNull(selectionMethod);
+        var selected=(UiSkirmishLibrarySelection)selectionMethod.Invoke(null,new object[]{project});
+        int checks=0;
+        Assert.AreEqual(UiSkirmishLibraryLaunchKind.ExpandedDefinition,selected.Kind);
+        Assert.AreEqual("S002",selected.CatalogId);checks++;
+        bool Accept(SkirmishBattleCatalogConfig catalog,UiSkirmishLibrarySelection choice,int index)
+            =>SkirmishMissionDispatch.TryGetSelectedExpanded(catalog,choice.CatalogId,choice.DefinitionId,
+                choice.ContentVersion,index,out _);
+        Assert.IsTrue(Accept(raw,selected,packaged.PlayableScenarioIndex),
+            "Actual UI-projected identity must cross the RAW packaged launch boundary.");checks++;
+        var staleChoice=selected;staleChoice.ContentVersion=1;
+        Assert.IsFalse(Accept(raw,staleChoice,packaged.PlayableScenarioIndex));checks++;
+        var foreignChoice=selected;foreignChoice.DefinitionId="skirmish.foreign";
+        Assert.IsFalse(Accept(raw,foreignChoice,packaged.PlayableScenarioIndex));checks++;
+        Assert.IsFalse(Accept(raw,selected,packaged.PlayableScenarioIndex+1));checks++;
+        var owned=ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
+        try
+        {
+            void Set(params SkirmishBattleCatalogEntry[] rows)
+            {
+                var field=typeof(SkirmishBattleCatalogConfig).GetField("entries",
+                    System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance);
+                Assert.NotNull(field);field.SetValue(owned,rows);
+            }
+            // Reproduce the actual former split: displayed v2 versus raw positive v1.
+            var staleRow=packaged;staleRow.ContentVersion=1;Set(staleRow);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex),
+                "Do not repair a stale raw row by weakening the strict launch identity guard.");checks++;
+            Set(packaged,packaged);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex));checks++;
+            var planned=packaged;planned.Status=SkirmishBattleCatalogStatus.Planned;
+            planned.PlayableScenarioIndex=-1;Set(planned);
+            Assert.IsFalse(Accept(owned,selected,packaged.PlayableScenarioIndex));checks++;
+            Assert.IsTrue(raw.TryGet("S003",out var packaged3));
+            var project3=packaged3;SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref project3);
+            var selected3=(UiSkirmishLibrarySelection)selectionMethod.Invoke(null,new object[]{project3});
+            Assert.IsTrue(Accept(raw,selected3,packaged3.PlayableScenarioIndex),
+                "Actual S003 UI projection must cross the raw packaged launch boundary.");checks++;
+            var staleChoice3=selected3;staleChoice3.ContentVersion=1;
+            Assert.IsFalse(Accept(raw,staleChoice3,packaged3.PlayableScenarioIndex));checks++;
+            var staleRow3=packaged3;staleRow3.ContentVersion=1;Set(staleRow3);
+            Assert.IsFalse(Accept(owned,selected3,packaged3.PlayableScenarioIndex));checks++;
+        }
+        finally{UnityEngine.Object.DestroyImmediate(owned);}
+        Assert.AreEqual(11,checks);
+        Debug.Log("[CodedLibraryRawLaunchParityControls] result=Passed controls=11 catalogs=2 actualUiProjection=1 rawCatalogGuard=1 sourceFitCertified=0 missionReady=0");
+    }
+
+    public static void RunCodedLibraryAndCanonicalJobFocusedControls()
+    {
+        RunCodedLibraryRawLaunchParityControls();
+        Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunCanonicalJobWriterCompatibilityControls();
+        Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunCanonicalCurrentJobByteEquivalence();
+        Debug.Log("[CodedLibraryAndCanonicalJobFocusedControls] result=Passed rawCatalogControls=11 canonicalOracleCases=31 canonicalRefusals=2 actualJobByteEquivalent=1 missionReady=0");
+    }
+
+    public static void RunCodedLibraryPreferenceIdentityControls()
+    {
+        var actual=SkirmishExpansionCatalogConfig.Load();Assert.NotNull(actual);
+        string directory=Path.Combine(Path.GetTempPath(),"coded-preference-"+Guid.NewGuid().ToString("N"));
+        var owned=new System.Collections.Generic.List<UnityEngine.Object>();int checks=0;
+        var save=new SaveService(new JsonSaveRepository(directory));var store=new QuickCustomGameConfigStore(save);
+        void Copy(ref SkirmishBattleCatalogEntry row)
+        {
+            SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref row);
+        }
+        UiQuickCustomGameConfig Config(SkirmishBattleCatalogEntry row)
+        {
+            var config=store.Current;config.ScenarioIndex=row.PlayableScenarioIndex;
+            config.SkirmishSelection=new UiSkirmishLibrarySelection{
+                Kind=UiSkirmishLibraryLaunchKind.ExpandedDefinition,CatalogId=row.ScenarioId,
+                DefinitionId=row.DefinitionId,ContentVersion=SkirmishMissionDispatch.SelectedContentVersion(row),
+                MissionSize=UiSkirmishMissionSize.Standard};return config;
+        }
+        SkirmishExpansionCatalogConfig Scoped(SkirmishScenarioDefinitionConfig definition)
+        {
+            var catalog=UnityEngine.Object.Instantiate(actual);owned.Add(catalog);
+            var fields=new SerializedObject(catalog);var rows=fields.FindProperty("definitions");
+            rows.arraySize=definition==null?0:1;
+            if(definition!=null)rows.GetArrayElementAtIndex(0).objectReferenceValue=definition;
+            fields.ApplyModifiedPropertiesWithoutUndo();return catalog;
+        }
+        try
+        {
+            foreach(string id in new[]{"S002","S003"})
+            {
+                Assert.IsTrue(actual.TryGetDefinition(id,out var definition));Assert.AreEqual(2,definition.ContentVersion);
+                var row=new SkirmishBattleCatalogEntry{ScenarioId=id,DefinitionId=definition.DefinitionId,ContentVersion=1,
+                    Status=SkirmishBattleCatalogStatus.Playable,PlayableScenarioIndex=id=="S002"?4:5};
+                Copy(ref row);Assert.AreEqual(definition.ContentVersion,row.ContentVersion);checks++;
+                store.Apply(Config(row));Assert.AreEqual(definition.ContentVersion,save.LoadQuickGame().skirmishSizeContentVersion);checks++;
+            }
+            Assert.IsTrue(actual.TryGetDefinition("S002",out var source));
+            var candidate=UnityEngine.Object.Instantiate(source);owned.Add(candidate);
+            var data=new SerializedObject(candidate);data.FindProperty("contentVersion").intValue=7;data.ApplyModifiedPropertiesWithoutUndo();
+            var selected=new SkirmishBattleCatalogEntry{ScenarioId="S002",DefinitionId=source.DefinitionId,ContentVersion=1,
+                Status=SkirmishBattleCatalogStatus.Playable,PlayableScenarioIndex=4};
+            using(SkirmishExpansionCatalogConfig.UseEditorValidationCatalog(Scoped(candidate)))
+            {
+                Copy(ref selected);Assert.AreEqual(7,selected.ContentVersion);store.Apply(Config(selected));
+                Assert.AreEqual(7,save.LoadQuickGame().skirmishSizeContentVersion);checks++;
+                var stale=Config(selected);stale.SkirmishSelection.ContentVersion=1;
+                Assert.Throws<InvalidOperationException>(()=>store.Apply(stale));checks++;
+            }
+            using(SkirmishExpansionCatalogConfig.UseEditorValidationCatalog(Scoped(null)))
+            {
+                Copy(ref selected);Assert.Zero(selected.ContentVersion);
+                Assert.Throws<InvalidOperationException>(()=>store.Apply(Config(selected)));checks++;
+            }
+            data=new SerializedObject(candidate);data.FindProperty("definitionId").stringValue="skirmish.foreign";data.ApplyModifiedPropertiesWithoutUndo();
+            using(SkirmishExpansionCatalogConfig.UseEditorValidationCatalog(Scoped(candidate)))
+            {
+                Copy(ref selected);Assert.Zero(selected.ContentVersion);
+                Assert.Throws<InvalidOperationException>(()=>store.Apply(Config(selected)));checks++;
+            }
+            foreach(string id in new[]{"S004","S001","S026"})
+            {
+                var row=new SkirmishBattleCatalogEntry{ScenarioId=id,DefinitionId="preserved",ContentVersion=12,
+                    Status=SkirmishBattleCatalogStatus.Planned,PlayableScenarioIndex=-1,TitleKey="preserved"};
+                string before=JsonUtility.ToJson(row);Copy(ref row);Assert.AreEqual(before,JsonUtility.ToJson(row));checks++;
+            }
+            Assert.AreEqual(11,checks);Assert.AreSame(actual,SkirmishExpansionCatalogConfig.Load());
+            Debug.Log("[CodedLibraryPreferenceIdentityControls] result=Passed controls=11 persistedCatalogChanged=0 nativeMissionReady=0");
+        }
+        finally
+        {
+            foreach(var value in owned)if(value!=null)UnityEngine.Object.DestroyImmediate(value);
+            Assert.AreSame(actual,SkirmishExpansionCatalogConfig.Load());
+            if(Directory.Exists(directory))
+            {
+                Assert.IsFalse((File.GetAttributes(directory)&FileAttributes.ReparsePoint)!=0);
+                Directory.Delete(directory,true);
+            }
+        }
+    }
+
     [Test]
     public void BuildingPlacementRejectsSkirmishMountainsAndKeepsFlatGroundAvailable()
     {

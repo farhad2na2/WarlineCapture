@@ -25,6 +25,8 @@ namespace Game.Composition
 
         public static bool TryQueueSelected(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
         {
+            // Reject unsupported size identities before mutating launch boundaries.
+            if (!TryResolveSelectedMissionSize(selected, out _)) return false;
             // Existing callers and old saves retain ordinary practice defaults.
             if(selected.Kind==UiSkirmishLibraryLaunchKind.Unspecified)
                 return string.IsNullOrEmpty(selected.CatalogId)&&string.IsNullOrEmpty(selected.DefinitionId)&&selected.ContentVersion==0&&TryQueue(em,config);
@@ -42,6 +44,22 @@ namespace Game.Composition
                 !SkirmishMissionDispatch.TryGetSelectedExpanded(SkirmishBattleCatalogConfig.Load(),selected.CatalogId,selected.DefinitionId,
                     selected.ContentVersion,config.ScenarioIndex,out _)||config.MapSeed<=0)return false;
             return TryQueueCore(em,config,selected);
+        }
+
+        private static bool TryResolveSelectedMissionSize(UiSkirmishLibrarySelection selected, out SkirmishSizeId size)
+        {
+            size = SkirmishSizeId.Standard;
+            switch (selected.MissionSize)
+            {
+                case UiSkirmishMissionSize.Unspecified:
+                case UiSkirmishMissionSize.Standard: return true;
+                case UiSkirmishMissionSize.War: size = SkirmishSizeId.War; break;
+                case UiSkirmishMissionSize.LargeWar: size = SkirmishSizeId.LargeWar; break;
+                default: return false;
+            }
+            // Practice presets and legacy/config-only callers keep coded defaults.
+            return selected.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition &&
+                SkirmishBattleCatalogConfig.IsMissionSizeSelectionAvailable(selected.CatalogId,selected.DefinitionId,selected.ContentVersion,size);
         }
 
         public static bool TryQueue(EntityManager em, QuickGameConfig config)
@@ -84,7 +102,10 @@ namespace Game.Composition
             }
             config = config.NormalizeForBaseAssault();
             if(selected.Kind==UiSkirmishLibraryLaunchKind.ExpandedDefinition)
-                return TryQueueExpanded(em,selected.CatalogId,config.MapSeed,selected.DefinitionId,selected.ContentVersion);
+            {
+                if (!TryResolveSelectedMissionSize(selected, out var selectedSize)) return false;
+                return TryQueueExpanded(em,selected.CatalogId,config.MapSeed,selected.DefinitionId,selected.ContentVersion,selectedSize);
+            }
             if (generic) return TryQueueExpanded(em, genericEntry.ScenarioId, config.MapSeed);
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)
                 return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
@@ -111,7 +132,7 @@ namespace Game.Composition
             return true;
         }
 
-        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed,string expectedDefinition=null,int expectedVersion=0)
+        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed,string expectedDefinition=null,int expectedVersion=0,SkirmishSizeId missionSize=SkirmishSizeId.Standard)
         {
             // Packaged content only: a standalone player cannot read the repository
             // Design directory, and the authored definition asset is the source of truth.
@@ -152,7 +173,7 @@ namespace Game.Composition
                     em,
                     catalogId,
                     difficulty,
-                    SkirmishSizeId.Standard,
+                    missionSize,
                     seed,
                     authored,
                     matrix,

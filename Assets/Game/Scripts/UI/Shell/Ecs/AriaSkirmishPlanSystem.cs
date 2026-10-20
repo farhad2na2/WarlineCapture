@@ -631,11 +631,149 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        static void ClearAssaultMapInspection(ref AriaSkirmishPlanComponent plan)
+        {
+            plan.AssaultInspectStage = 0; plan.AssaultInspectActions = 0; plan.AssaultInspectOpenTarget = 0;
+            plan.AssaultInspectMapIdentity = 0; plan.AssaultInspectOpenedFrame = 0;
+            plan.AssaultInspectRevision = 0; plan.AssaultInspectDeadline = 0; plan.AssaultInspectReadyAt = 0;
+            plan.AssaultInspectObjectiveHudIdentity = 0; plan.AssaultInspectObjectiveWorld = default;
+        }
+        static bool AssaultInspectionUiBusy(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
+            => view.DrawerOpen || view.PlacementOpen || view.AttackMode || plan.AssaultSelecting != 0 ||
+               plan.TargetPending != 0 || plan.AdvanceNavigation != 0 || plan.MapNavigationStage != 0 ||
+               (plan.PadStage != 0 && plan.PadStage != 8) ||
+               (view.AirProfile && plan.AirCycleCount == 0 && plan.AirCycleStage >= 1 && plan.AirCycleStage <= 4 &&
+                view.OwnAttackAirLive > 0 && view.PadPresent && view.Time < plan.AirCycleDeadline);
+
+        static bool CurrentAssaultDistance(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
+        {
+            if (!view.AssaultDistanceVisible || view.AssaultMap.FullMap != view.MapOpen ||
+                !view.AssaultMap.IsCurrent(view.Frame, view.Time)) return false;
+            if (plan.AssaultInspectStage == 0 || !view.MapOpen) return true;
+            return plan.AssaultInspectStage == 2 && view.Time <= plan.AssaultInspectDeadline &&
+                view.AssaultMap.FullMap && view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
+                view.AssaultMap.MarkerRevision != plan.AssaultInspectRevision &&
+                view.AssaultMap.MarkerFrame > plan.AssaultInspectOpenedFrame &&
+                view.AssaultMap.ObjectiveHudIdentity == plan.AssaultInspectObjectiveHudIdentity &&
+                (view.AssaultMap.ObjectiveWorld - plan.AssaultInspectObjectiveWorld).sqrMagnitude <= .0001f;
+        }
+
+        // Only normal map open/close touches. UI activity never renews progress.
+        static bool StepAssaultMapInspection(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            if (plan.AssaultInspectStage == 0)
+            {
+                if (plan.AssaultIssued == 0 || plan.StructureOrdered == 0 ||
+                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting) ||
+                    view.AssaultDistanceVisible || view.MapOpen || AssaultInspectionUiBusy(view,plan) ||
+                    view.PresentedHomeThreat ||
+                    view.Time < plan.AssaultInspectReadyAt || !view.AssaultMap.OpenMap.Available) return false;
+                plan.AssaultInspectStage = 1;
+                plan.AssaultInspectActions = touch.Actions;
+                plan.AssaultInspectOpenTarget = view.AssaultMap.OpenMap.Id;
+                plan.AssaultInspectDeadline = view.Time + 8f;
+                plan.AssaultInspectObjectiveHudIdentity = view.AssaultMap.ObjectiveHudIdentity;
+                plan.AssaultInspectObjectiveWorld = view.AssaultMap.ObjectiveWorld;
+            }
+            if (AssaultInspectionUiBusy(view,plan))
+            {
+                if (!view.MapOpen)
+                {
+                    ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
+                    return false;
+                }
+                if (plan.AssaultInspectStage != 3 && plan.AssaultInspectStage != 4)
+                { plan.AssaultInspectStage = 3; plan.AssaultInspectDeadline = view.Time + 3f; }
+            }
+            plan.Intent = AriaSkirmishIntent.Inspect;
+            if (plan.AssaultInspectStage == 1)
+            {
+                if (view.MapOpen)
+                {
+                    // A different control/user opening is not this requested operation.
+                    if (touch.Actions <= plan.AssaultInspectActions ||
+                        touch.TargetId != plan.AssaultInspectOpenTarget ||
+                        !view.AssaultMap.ExpectedIdentity || !view.AssaultMap.FullMap ||
+                        view.AssaultMap.Identity == 0)
+                    { plan.AssaultInspectStage = 4; return true; }
+                    plan.AssaultInspectMapIdentity = view.AssaultMap.Identity;
+                    plan.AssaultInspectOpenedFrame = view.Frame;
+                    plan.AssaultInspectRevision = view.AssaultMap.MarkerRevision;
+                    plan.AssaultInspectStage = view.Time <= plan.AssaultInspectDeadline &&
+                        view.AssaultMap.ObjectiveHudIdentity == plan.AssaultInspectObjectiveHudIdentity &&
+                        (view.AssaultMap.ObjectiveWorld - plan.AssaultInspectObjectiveWorld).sqrMagnitude <= .0001f ? (byte)2 : (byte)3;
+                    plan.AssaultInspectDeadline = view.Time + 3f;
+                    return true; // Require a subsequent completed rendered marker update.
+                }
+                if (view.Time > plan.AssaultInspectDeadline || view.PresentedHomeThreat)
+                { plan.AssaultInspectStage = 4; return true; }
+                if (view.AssaultMap.OpenMap.Available &&
+                    view.AssaultMap.OpenMap.Id == plan.AssaultInspectOpenTarget)
+                    Target(view.AssaultMap.OpenMap, false, ref output);
+                return true;
+            }
+            if (plan.AssaultInspectStage == 2)
+            {
+                if (!view.MapOpen)
+                {
+                    ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
+                    return true;
+                }
+                if (view.PresentedHomeThreat || view.Time > plan.AssaultInspectDeadline ||
+                    view.AssaultMap.ObjectiveHudIdentity != plan.AssaultInspectObjectiveHudIdentity ||
+                    (view.AssaultMap.ObjectiveWorld - plan.AssaultInspectObjectiveWorld).sqrMagnitude > .0001f ||
+                    CurrentAssaultDistance(view, plan))
+                { plan.AssaultInspectStage = 3; plan.AssaultInspectDeadline = view.Time + 3f; }
+                else return true;
+            }
+            if (plan.AssaultInspectStage == 3)
+            {
+                if (!view.MapOpen)
+                {
+                    ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
+                    return true;
+                }
+                // Keep a reachable owned close target stable through normal hand aiming.
+                // The existing input owner bounds attempts; the battle watchdog is unchanged.
+                if (view.AssaultMap.ExpectedIdentity && view.AssaultMap.FullMap &&
+                    view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
+                    view.CloseMap.Available) Target(view.CloseMap, false, ref output);
+                else if (view.Time > plan.AssaultInspectDeadline) plan.AssaultInspectStage = 4;
+                return true;
+            }
+            // Closed/failed open cannot starve ordinary production/navigation.
+            // An unclosable/foreign open popup still refuses all inspection actions.
+            if (!view.MapOpen)
+            {
+                ClearAssaultMapInspection(ref plan); plan.AssaultInspectReadyAt = view.Time + 12f;
+                return false;
+            }
+            // A previously timed-out presentation may become closable again. Reuse only
+            // the same owned popup, without resetting attempts, deadline or progress.
+            if (view.AssaultMap.ExpectedIdentity && view.AssaultMap.FullMap &&
+                view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
+                plan.AssaultInspectMapIdentity != 0 && view.CloseMap.Available)
+            {
+                plan.AssaultInspectStage = 3;
+                Target(view.CloseMap, false, ref output);
+                return true;
+            }
+            // Never dismiss a foreign/unreachable popup or wait here indefinitely.
+            touch.Phase = AriaPlayPhase.Blocked;
+            touch.GestureRequested = 0;
+            return true;
+        }
+
         private static void StepExpandedBaseAssault(in AriaSkirmishObservation view,
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
         {
             // Public visible controls only. No gameplay Entity mutation from this planner.
+            if (view.Finished || touch.Phase == AriaPlayPhase.Manual ||
+                plan.AssaultIssued == 0 || plan.StructureOrdered == 0)
+                ClearAssaultMapInspection(ref plan);
             if (view.Finished)
             {
                 plan.Intent = AriaSkirmishIntent.Handback;
@@ -668,11 +806,19 @@ namespace Game.UI.Shell.Ecs
             bool assaultAdvance = false;
             // Public accepted assault intent may precede completion of the full roster sweep.
             bool acceptedAssaultOnPage = (view.ExpandedAssaultMask & view.ExpandedAttackOrderMask) != 0;
-            if ((plan.AssaultIssued != 0 || acceptedAssaultOnPage) && view.AssaultDistanceVisible &&
+            if (touch.Phase != AriaPlayPhase.Manual &&
+                (plan.AssaultIssued != 0 || acceptedAssaultOnPage) && CurrentAssaultDistance(view, plan) &&
                 view.NearestFriendlyObjectiveDistance >= 0f &&
                 !float.IsNaN(view.NearestFriendlyObjectiveDistance) &&
                 !float.IsInfinity(view.NearestFriendlyObjectiveDistance))
             {
+                if (plan.AssaultObjectiveHudIdentity != view.AssaultMap.ObjectiveHudIdentity ||
+                    (plan.AssaultObjectiveWorld - view.AssaultMap.ObjectiveWorld).sqrMagnitude > .0001f)
+                {
+                    plan.AssaultDistanceObserved = 0;
+                    plan.AssaultObjectiveHudIdentity = view.AssaultMap.ObjectiveHudIdentity;
+                    plan.AssaultObjectiveWorld = view.AssaultMap.ObjectiveWorld;
+                }
                 if (plan.AssaultDistanceObserved == 0)
                 {
                     plan.AssaultDistanceObserved = 1;
@@ -699,6 +845,21 @@ namespace Game.UI.Shell.Ecs
                 touch.GestureRequested = 0;
                 return;
             }
+            if (plan.PrecisionStage != 0)
+            {
+                // Actual home defence may interrupt; accepted group history is retained.
+                if ((view.PresentedHomeThreat || plan.HomeDefenseStage != 0) &&
+                    StepPresentedHomeDefense(view, ref plan, ref touch, ref output))
+                {
+                    if (plan.PrecisionGroup != 0 &&
+                        !PrecisionContains(plan.PrecisionExhaustedGroups, plan.PrecisionGroup) &&
+                        plan.PrecisionExhaustedGroups.Length < plan.PrecisionExhaustedGroups.Capacity)
+                        plan.PrecisionExhaustedGroups.Add(plan.PrecisionGroup);
+                    plan.PrecisionStage = view.AttackMode ? (byte)5 : (byte)0; return;
+                }
+                if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
+            }
+            if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
             // An air-capable starting force cannot leave its base undefended.
@@ -744,6 +905,8 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
+            if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
+            if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
             {
                 if (view.EnemyBase.Available)
@@ -1142,6 +1305,162 @@ namespace Game.UI.Shell.Ecs
             if (squad0WithoutSelection)
                 return (view.ExpandedStructureMask & 1) != 0;
             return (view.ExpandedStructureMask & view.ExpandedSelectedMask) != 0;
+        }
+
+        private static bool PrecisionContains(in Unity.Collections.FixedList512Bytes<uint> ids,uint group)
+        {
+            for(int i=0;i<ids.Length;i++)if(ids[i]==group)return true;
+            return false;
+        }
+        // A public camera control only. The rendered/fog/reachability target gates remain authoritative.
+        private static bool StepAssaultObjectiveFocus(in AriaSkirmishObservation v,
+            ref AriaSkirmishPlanComponent p, ref AriaPlaySessionComponent t,
+            ref AriaPlayObservationComponent o)
+        {
+            if(p.AssaultFocusStage==2)return false; // One bounded attempt per plan/session, including roster churn.
+            if(!v.ExpandedBaseAssault||v.Finished||t.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
+                return false;
+            if(p.AssaultFocusStage==0)
+            {
+                if(p.AssaultIssued==0||p.StructureOrdered==0||!v.EnemyDesignatedAlive||!v.AssaultAtBase||
+                    !CurrentAssaultDistance(v,p)||v.EnemyBase.Available||
+                    (t.Phase!=AriaPlayPhase.Observing&&t.Phase!=AriaPlayPhase.Waiting)||
+                    v.DrawerOpen||v.MapOpen||v.PlacementOpen||v.AttackMode||v.PresentedHomeThreat||
+                    p.HomeDefenseStage!=0||p.PrecisionStage!=0||p.AssaultInspectStage!=0||
+                    AssaultInspectionUiBusy(v,p)||!v.FocusEnemy.Available||v.FocusEnemy.Id==0||
+                    v.FocusEnemy.Id==-20001||v.FocusEnemy.Drag)return false;
+                p.AssaultFocusStage=1;p.AssaultFocusActions=t.Actions;
+                p.AssaultFocusTarget=v.FocusEnemy.Id;p.AssaultFocusFrame=v.Frame;
+                p.AssaultFocusDeadline=v.Time+8f;
+            }
+            if(t.Actions>p.AssaultFocusActions&&t.LastCompletedTargetId==p.AssaultFocusTarget&&
+                t.LastCompletedFrame>=p.AssaultFocusFrame)
+            {p.AssaultFocusStage=2;return true;}
+            if(v.Time>=p.AssaultFocusDeadline||p.AssaultIssued==0||p.StructureOrdered==0||
+                v.DrawerOpen||v.MapOpen||v.PlacementOpen||v.AttackMode||v.PresentedHomeThreat||
+                p.HomeDefenseStage!=0||!v.FocusEnemy.Available||v.FocusEnemy.Id!=p.AssaultFocusTarget)
+            {p.AssaultFocusStage=2;return false;}
+            p.Intent=AriaSkirmishIntent.FindBase;
+            Target(v.FocusEnemy,false,ref o);
+            return true; // No selection, Attack toggle, terrain/target order, accepted ack or progress-clock write.
+        }
+
+        private static bool StepPrecisionAttack(in AriaSkirmishObservation v,ref AriaSkirmishPlanComponent p,
+            ref AriaPlaySessionComponent touch,ref AriaPlayObservationComponent output)
+        {
+            if(v.Finished||touch.Phase==AriaPlayPhase.Manual)
+            {p.PrecisionStage=0;return false;}
+            // Once precision owns Attack mode, a missing target never becomes a terrain order.
+            if(p.PrecisionStage==5)
+            {
+                if(v.AttackMode)return true;
+                p.PrecisionStage=0;return false;
+            }
+            if(p.PrecisionStage==4)
+            {
+                var ack=v.PrecisionAttack;
+                bool exact=v.ExpandedBaseAssault&&v.ExpandedRosterRevision==p.PrecisionRoster&&
+                    v.ExpandedPageIndex==p.PrecisionPage&&v.ExpandedGroup(p.PrecisionSlot)==p.PrecisionGroup&&
+                    ack.Presented&&ack.Revision>p.PrecisionBaseline&&ack.GroupId==p.PrecisionGroup&&
+                    ack.PublicTargetId==-20001&&ack.RequestId>0&&ack.Frame>=p.PrecisionIssueFrame&&
+                    ack.AcceptedMembers>0&&ack.AcceptedMembers<=ack.SourceMembers&&
+                    touch.Actions>p.PrecisionActions&&touch.LastCompletedTargetId==-20001&&
+                    touch.LastCompletedFrame>=p.PrecisionIssueFrame&&
+                    UnityEngine.Mathf.Abs(touch.LastCompletedFrame-ack.Frame)<=2&&
+                    (touch.LastCompletedPosition-ack.ScreenPosition).sqrMagnitude<=4f;
+                if(exact)
+                {
+                    if(!PrecisionContains(p.PrecisionAcceptedGroups,p.PrecisionGroup)&&
+                        p.PrecisionAcceptedGroups.Length<p.PrecisionAcceptedGroups.Capacity)
+                        p.PrecisionAcceptedGroups.Add(p.PrecisionGroup);
+                    p.PrecisionStage=0;p.PrecisionAttempts=0;
+                    p.Intent=AriaSkirmishIntent.ObserveBattle;
+                    return true; // Never issue another group's order in the acknowledgement frame.
+                }
+                if(v.Time<p.PrecisionDeadline)
+                {
+                    // Publishing a target starts normal DecisionSystem aiming; it is not a tap.
+                    // Keep only the SAME current public target available until the owned gesture completes.
+                    bool current=v.Active&&v.ExpandedSession&&v.ExpandedBaseAssault&&v.EnemyDesignatedAlive&&
+                        v.Frame>=p.PrecisionIssueFrame&&v.ExpandedRosterRevision==p.PrecisionRoster&&
+                        v.ExpandedPageIndex==p.PrecisionPage&&v.ExpandedGroup(p.PrecisionSlot)==p.PrecisionGroup&&
+                        (v.ExpandedStructureMask&v.ExpandedAssaultMask&~v.ExpandedAirMask&(1<<p.PrecisionSlot))!=0&&
+                        v.ExpandedSelectedGroups==1&&v.ExpandedSelectedOffPage==0&&
+                        v.ExpandedSelectedMask==(1<<p.PrecisionSlot)&&v.SelectionVisible&&v.AttackMode&&
+                        v.EnemyBase.Available&&v.EnemyBase.Id==-20001&&!v.EnemyBase.Drag&&
+                        p.AssaultIssued!=0&&p.StructureOrdered!=0&&!v.DrawerOpen&&!v.MapOpen&&!v.PlacementOpen&&
+                        !v.PresentedHomeThreat&&p.HomeDefenseStage==0;
+                    if(current&&touch.Actions==p.PrecisionActions)
+                        Target(v.EnemyBase,true,ref output);
+                    return true;
+                }
+                if(p.PrecisionAttempts>=2||!v.EnemyBase.Available||v.AttackMode)
+                {
+                    if(p.PrecisionExhaustedGroups.Length<p.PrecisionExhaustedGroups.Capacity)
+                        p.PrecisionExhaustedGroups.Add(p.PrecisionGroup);
+                    p.PrecisionStage=v.AttackMode?(byte)5:(byte)0;
+                    return true;
+                }
+                p.PrecisionStage=1;p.PrecisionReadyAt=v.Time+3f;p.PrecisionDeadline=v.Time+18f;
+                return true;
+            }
+            if(p.PrecisionStage==0)
+            {
+                if(!v.ExpandedBaseAssault||p.AssaultIssued==0||p.StructureOrdered==0||!v.EnemyDesignatedAlive||
+                    !v.EnemyBase.Available||v.EnemyBase.Id!=-20001||v.AttackMode||v.DrawerOpen||v.PlacementOpen||v.MapOpen||
+                    p.AssaultInspectStage!=0||p.AdvanceNavigation!=0||p.MapNavigationStage!=0||
+                    p.HomeDefenseStage!=0||v.PresentedHomeThreat)return false;
+                int eligible=v.ExpandedStructureMask&v.ExpandedAssaultMask&~v.ExpandedAirMask;
+                int slot=-1;
+                for(int i=0;i<5;i++)
+                {
+                    uint group=v.ExpandedGroup(i);
+                    if((eligible&(1<<i))!=0&&group!=0&&v.Squad(i).Available&&
+                        !PrecisionContains(p.PrecisionAcceptedGroups,group)&&
+                        !PrecisionContains(p.PrecisionExhaustedGroups,group)){slot=i;break;}
+                }
+                if(slot<0||p.PrecisionAcceptedGroups.Length==p.PrecisionAcceptedGroups.Capacity||
+                    p.PrecisionExhaustedGroups.Length==p.PrecisionExhaustedGroups.Capacity)return false;
+                p.PrecisionGroup=v.ExpandedGroup(slot);p.PrecisionSlot=slot;p.PrecisionPage=v.ExpandedPageIndex;
+                p.PrecisionRoster=v.ExpandedRosterRevision;p.PrecisionStage=1;p.PrecisionAttempts=0;
+                p.PrecisionReadyAt=v.Time;p.PrecisionDeadline=v.Time+18f;
+            }
+            bool sameGroup=v.ExpandedPageIndex==p.PrecisionPage&&v.ExpandedRosterRevision==p.PrecisionRoster&&
+                v.ExpandedGroup(p.PrecisionSlot)==p.PrecisionGroup&&
+                (v.ExpandedStructureMask&v.ExpandedAssaultMask&~v.ExpandedAirMask&(1<<p.PrecisionSlot))!=0;
+            if(!sameGroup||!v.EnemyBase.Available||v.EnemyBase.Id!=-20001||p.AssaultIssued==0||p.StructureOrdered==0||
+                v.DrawerOpen||v.MapOpen||v.PlacementOpen||v.Time>=p.PrecisionDeadline)
+            {
+                if(!PrecisionContains(p.PrecisionExhaustedGroups,p.PrecisionGroup)&&
+                    p.PrecisionExhaustedGroups.Length<p.PrecisionExhaustedGroups.Capacity)
+                    p.PrecisionExhaustedGroups.Add(p.PrecisionGroup);
+                p.PrecisionStage=v.AttackMode?(byte)5:(byte)0;
+                return true;
+            }
+            if(v.Time<p.PrecisionReadyAt)return true;
+            bool selected=v.ExpandedSelectedGroups==1&&v.ExpandedSelectedOffPage==0&&
+                v.ExpandedSelectedMask==(1<<p.PrecisionSlot);
+            if(!selected)
+            {
+                if(v.ExpandedSelectedGroups>0)
+                {TryDeselectSquads(v,ref output);return true;}
+                if(!v.SelectionMode)
+                {p.Intent=AriaSkirmishIntent.SelectSquad;Target(v.Select,false,ref output);return true;}
+                p.Intent=AriaSkirmishIntent.SelectSquad;Target(v.Squad(p.PrecisionSlot),false,ref output);
+                return true;
+            }
+            if(!v.AttackMode)
+            {
+                p.Intent=AriaSkirmishIntent.Attack;Target(v.Attack,false,ref output);
+                return true;
+            }
+            if(!v.SelectionVisible)return true;
+            // Exactly one target gesture per attempt; subsequent frames wait for native feedback.
+            p.PrecisionBaseline=v.PrecisionAttack.Revision;p.PrecisionIssueFrame=v.Frame;
+            p.PrecisionActions=touch.Actions;p.PrecisionAttempts++;p.PrecisionStage=4;
+            p.PrecisionDeadline=v.Time+8f;
+            p.Intent=AriaSkirmishIntent.TargetBase;Target(v.EnemyBase,true,ref output);
+            return true;
         }
 
         private static bool TryExpandedGroundAssault(

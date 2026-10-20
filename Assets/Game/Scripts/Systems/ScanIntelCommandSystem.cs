@@ -582,6 +582,12 @@ namespace Game.Runtime
                 return TacticalCommandResult.Success();
             }
 
+            em.CompleteDependencyBeforeRO<Faction>();
+            em.CompleteDependencyBeforeRO<UnitGrid>();
+            em.CompleteDependencyBeforeRO<UnitHealth>();
+            em.CompleteDependencyBeforeRO<LocalTransform>();
+            em.CompleteDependencyBeforeRO<RuntimeBuildingCombatInfo>();
+
             int expectedCandidates = math.max(
                 1,
                 (unitScanTargetQuery.IsEmptyIgnoreFilter ? 0 : unitScanTargetQuery.CalculateEntityCount()) +

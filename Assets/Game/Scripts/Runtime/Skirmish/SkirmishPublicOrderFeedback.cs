@@ -11,6 +11,79 @@ namespace Game.Runtime
     public static partial class SkirmishPublicOrderFeedback
     {
         public const int Version=1;
+        // Called with the actual normal Attack source list, never the later UI selection.
+        public static uint PrecisionSourceGroup(EntityManager em, NativeArray<Entity> sources, Entity target)
+        {
+            if(sources.Length==0 || !PrecisionTarget(em,target,out var owner)||
+                !SkirmishFogConsumerUtility.PlayerVisible(em,target))return 0;
+            uint group=0;var unique=new HashSet<Entity>();
+            foreach(var actor in sources)
+            {
+                if(!unique.Add(actor)||!em.HasComponent<SkirmishAttemptOwnedComponent>(actor)||
+                    !em.HasComponent<SkirmishArmyGroupMembershipComponent>(actor)||
+                    !em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=1||
+                    !SkirmishArmyGroupSystem.IsAlive(em,actor))return 0;
+                var own=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                uint id=em.GetComponentData<SkirmishArmyGroupMembershipComponent>(actor).GroupId;
+                if(own.SessionId!=owner.SessionId||own.FactionId!=1||own.IsStructure!=0||own.CapacityReleased!=0||
+                    id==0||(group!=0&&group!=id))return 0;
+                group=id;
+            }
+            return group;
+        }
+        static bool PrecisionTarget(EntityManager em,Entity target,out SkirmishAttemptOwnedComponent owner)
+        {
+            owner=default;
+            if(target==Entity.Null||!em.Exists(target)||
+                !em.HasComponent<SkirmishAttemptOwnedComponent>(target)||
+                !em.HasComponent<SkirmishStructureIdentityComponent>(target)||
+                em.GetComponentData<SkirmishStructureIdentityComponent>(target).DesignatedBase==0)return false;
+            owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+            return owner.FactionId!=1&&owner.CapacityReleased==0;
+        }
+        public static void PublishPrecisionAttack(EntityManager em,in RtsSelectionCommandIntentRequestElement request,
+            in AttackOrderCommandSystem.Result result)
+        {
+            // Only the normal screen-request branch calls this. Native validation still owns fog/range/orders.
+            if(request.HasScreenPosition==0||!result.Issued||result.PublicPrecisionGroup==0||
+                result.PublicAcceptedMembers<=0||result.PublicAcceptedMembers>result.PublicSourceMembers||
+                !PrecisionTarget(em,result.PublicPrecisionTarget,out var own))return;
+            using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            using var entities=query.ToEntityArray(Allocator.Temp);
+            foreach(var session in entities)
+            {
+                var attempt=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if(attempt.SessionId!=own.SessionId||attempt.IsLegacy!=0||
+                    attempt.Phase!=Game.Skirmish.Contracts.SkirmishSessionPhase.Playing||
+                    attempt.ObjectiveKind!=Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault)continue;
+                uint prior=em.HasComponent<SkirmishPublicPrecisionAttackFeedbackComponent>(session)?
+                    em.GetComponentData<SkirmishPublicPrecisionAttackFeedbackComponent>(session).Revision:0;
+                if(prior==uint.MaxValue)return;
+                var row=new SkirmishPublicPrecisionAttackFeedbackComponent {Revision=prior+1,
+                    GroupId=result.PublicPrecisionGroup,OriginalTarget=result.PublicPrecisionTarget,
+                    Frame=request.Frame,RequestId=request.RequestId,
+                    PublicTargetId=-20001,ScreenPosition=request.ScreenPosition,
+                    AcceptedMembers=result.PublicAcceptedMembers,SourceMembers=result.PublicSourceMembers};
+                if(em.HasComponent<SkirmishPublicPrecisionAttackFeedbackComponent>(session))em.SetComponentData(session,row);
+                else em.AddComponentData(session,row);
+                return;
+            }
+        }
+        public static void MarkPrecisionAttackPresented(EntityManager em,in RtsSelectionCommandResultElement result)
+        {
+            if(result.Kind!=RtsSelectionCommandIntentKind.Attack||result.Accepted==0||result.HasTargetEntity==0)return;
+            using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishPublicPrecisionAttackFeedbackComponent));
+            using var entities=query.ToEntityArray(Allocator.Temp);
+            foreach(var session in entities)
+            {
+                var row=em.GetComponentData<SkirmishPublicPrecisionAttackFeedbackComponent>(session);
+                if(row.RequestId!=result.RequestId||row.Frame!=result.Frame||
+                    math.distancesq(row.ScreenPosition,result.ScreenPosition)>.0001f)continue;
+                if(!PrecisionTarget(em,row.OriginalTarget,out var own)||
+                    em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId!=own.SessionId)continue;
+                row.Presented=1;em.SetComponentData(session,row);
+            }
+        }
         public static void MarkPresented(EntityManager em,RtsSelectionCommandIntentKind kind,int request,int frame)
         {
             using var sessions=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent),typeof(SkirmishPublicOrderFeedbackComponent));

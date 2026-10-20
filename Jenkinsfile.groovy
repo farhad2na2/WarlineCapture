@@ -1,5 +1,5 @@
 def PROJECT_NAME = 'WarlineCapture'
-def UNITY_EDITOR_VERSION = '6000.5.2f1'
+def UNITY_EDITOR_VERSION = '6000.5.8f1'
 def CUSTOM_WORKSPACE = "D:\\Projects\\Jenkins\\${PROJECT_NAME}"
 
 pipeline {
@@ -552,6 +552,7 @@ pipeline {
                     -ProjectPath "$env:PROJECT_PATH" `
                     -LogFile "$env:BUILD_LOG" `
                     -NoProcessExit `
+                    -TimeoutSeconds 3600 `
                     -UnityArguments $unityArguments
                 exit $LASTEXITCODE
                 '''

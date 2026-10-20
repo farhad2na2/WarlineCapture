@@ -35,6 +35,13 @@ namespace Game.UI.Contracts
         // Expanded session catalog id, including repeats that earn no new medal.
         public string CatalogId;
     }
+    public struct UiExpandedPrecisionAttackResult
+    {
+        public bool Presented;
+        public uint Revision, GroupId;
+        public int Frame, RequestId, PublicTargetId, AcceptedMembers, SourceMembers;
+        public UnityEngine.Vector2 ScreenPosition;
+    }
     public struct UiExpandedSquadPage
     {
         public bool Expanded;
@@ -46,6 +53,10 @@ namespace Game.UI.Contracts
         public int SelectedMask;
         public int StructureMask;
         public int AttackOrderMask;
+        public bool BaseAssault;
+        public uint Group0, Group1, Group2, Group3, Group4;
+        public UiExpandedPrecisionAttackResult PrecisionAttack;
+        public uint Group(int slot) => slot switch { 0=>Group0,1=>Group1,2=>Group2,3=>Group3,4=>Group4,_=>0 };
         public int AirMask;
         public bool NextPage;
     }

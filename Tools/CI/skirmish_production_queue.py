@@ -31,7 +31,14 @@ def require(condition, message):
 
 
 def digest(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    # Bound memory independently of source size; hash every byte without caching.
+    with Path(path).open("rb") as stream:
+        if hasattr(hashlib, "file_digest"):
+            return hashlib.file_digest(stream, "sha256").hexdigest()
+        hasher = hashlib.sha256()
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            hasher.update(block)
+        return hasher.hexdigest()
 
 
 def fingerprint(value):
@@ -76,6 +83,11 @@ def outside_assets(path, project):
 
 
 def preflight(job, project, sampling_authority=None):
+    # Standalone callers always re-observe actual bytes.
+    return _preflight(job, project, sampling_authority)
+
+
+def _preflight(job, project, sampling_authority=None, *, _observation=None):
     require(isinstance(job, dict), "job must be an object")
     fields = {"schema_version", "job_id", "catalog_id", "definition_id", "definition_version", "candidate_sha256", "build_sha256", "setup_sha256", "content_sha256", "source_manifest", "packet_path", "packet_sha256", "seed", "locale", "size", "difficulty", "control_mode", "required_stages", "timeout_seconds"}
     legacy = type(job.get("schema_version")) is int and job["schema_version"] == 2
@@ -111,17 +123,22 @@ def preflight(job, project, sampling_authority=None):
     stages = job["required_stages"]
     require(isinstance(stages, list) and all(isinstance(s, str) for s in stages) and len(stages) == len(set(stages)) and set(stages) == STAGES, "all six required stages must occur exactly once")
     manifest = job["source_manifest"]
-    require(isinstance(manifest, list) and bool(manifest), "source_manifest must be nonempty")
-    seen = set()
-    for entry in manifest:
-        require(isinstance(entry, dict) and set(entry) == {"path", "sha256"}, "invalid source manifest entry")
-        path = relative_file(project, entry["path"])
-        require(entry["path"] not in seen and sha(entry["sha256"]), "duplicate path or invalid source SHA256")
-        seen.add(entry["path"])
-        require(path.is_file() and digest(path) == entry["sha256"], "source missing or changed: " + entry["path"])
-    packet = relative_file(project, job["packet_path"])
-    require(packet.is_file() and digest(packet) == job["packet_sha256"], "packet missing or changed")
-    text = packet.read_text(encoding="utf-8")
+    if _observation is None:
+        require(isinstance(manifest, list) and bool(manifest), "source_manifest must be nonempty")
+        seen = set()
+        for entry in manifest:
+            require(isinstance(entry, dict) and set(entry) == {"path", "sha256"}, "invalid source manifest entry")
+            path = relative_file(project, entry["path"])
+            require(entry["path"] not in seen and sha(entry["sha256"]), "duplicate path or invalid source SHA256")
+            seen.add(entry["path"])
+            require(path.is_file() and digest(path) == entry["sha256"], "source missing or changed: " + entry["path"])
+        packet = relative_file(project, job["packet_path"])
+        require(packet.is_file() and digest(packet) == job["packet_sha256"], "packet missing or changed")
+        text = packet.read_text(encoding="utf-8")
+    else:
+        # Reachable only from the closed matrix preparer, never public skip/cache input.
+        _observation.check_job(job, project)
+        text = _observation.packet(job["packet_path"], job["packet_sha256"])
     match = re.search(r"^## " + catalog + r"\s*$([\s\S]*?)(?=^## |\Z)", text, re.MULTILINE)
     require(match is not None, "catalog absent from packet")
     section = match.group(1)
@@ -149,6 +166,10 @@ def preflight(job, project, sampling_authority=None):
 
 def enqueue(queue, job, project, sampling_authority=None):
     preflight(job, project, sampling_authority)
+    return _enqueue_preflighted(queue, job, project)
+
+
+def _enqueue_preflighted(queue, job, project):
     outside_assets(queue, project)
     directory = Path(queue) / identifier(job["job_id"])
     directory.mkdir(parents=True, exist_ok=False)
@@ -224,19 +245,30 @@ def guard(directory):
         lock.rmdir()
 
 
-def claim(directory, worker, project, sampling_authority=None):
+def claim(directory, worker, project, sampling_authority=None, *, before_reserve=None):
+    validate = lambda job: preflight(job, project, sampling_authority)
+    if before_reserve is None:
+        return _claim_checked(directory, worker, project, validate)
+    return _claim_checked(directory, worker, project, validate, before_reserve=before_reserve)
+
+
+def _claim_checked(directory, worker, project, validate, *, before_reserve=None):
     directory = Path(directory)
     worker = identifier(worker)
     outside_assets(directory, project)
     with guard(directory):
         job = load(directory / "job.json")
-        preflight(job, project, sampling_authority)
+        validate(job)
         require(not (directory / "claim.json").exists(), "job already claimed; explicit interruption required")
         attempts = sorted(directory.glob("attempt-*/result.json"))
         results = [load(p) for p in attempts]
         require(not any(r["status"] == "qualified" for r in results), "job already qualified")
         signatures = [r.get("failure_signature") for r in results if r["status"] == "failed"]
         require(not any(signatures.count(s) >= 2 for s in signatures), "two identical failure signatures; repair/revise job before retry")
+        # Optional refusal-only final admission after fresh source/history IO.
+        # Existing callers retain their complete validation and locking rules.
+        if before_reserve is not None:
+            before_reserve()
         attempt = "attempt-" + uuid.uuid4().hex
         artifacts = directory / attempt
         artifacts.mkdir()

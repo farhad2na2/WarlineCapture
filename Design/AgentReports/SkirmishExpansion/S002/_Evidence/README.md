@@ -7,7 +7,7 @@ Required files for the guarded publication flip:
 
 | File | Source |
 |---|---|
-| `s002-regular-standard-104731-playing.png` | Primary dump is repo-root `_Evidence/`; this folder gets a copy |
+| `s002-regular-standard-104731-playing.png` | Versioned mission capture; root scratch copy is ignored |
 | `s002-regular-standard-104731-gameview.json` | Written by the same probe (seed/definition/phase; `forcedVictory=0`) |
 
 The probe queues expanded S002 Regular Standard seed `104731`, enters the
@@ -28,3 +28,10 @@ When the PNGs exist and the compiler hashes still match, Programmer 1 may run
 `Tools/Warline/Skirmish/Flip S002 Playable If Evidence Ready`. That menu is
 the only writer. `EvaluateS002PlayableFlip` / focused tests never persist
 Playable.
+
+## Repository cleanup — 2026-10-18
+
+Keep the versioned capture and sidecar in this mission folder. Repo-root
+`_Evidence/` is ignored local capture scratch. The existing acceptance
+resolver supports the mission-report directory; no publication predicate
+or evidence gate changed.

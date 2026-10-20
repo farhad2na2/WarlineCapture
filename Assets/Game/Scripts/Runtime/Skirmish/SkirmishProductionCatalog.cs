@@ -46,6 +46,15 @@ namespace Game.Runtime
                 var availableBuildings = new Dictionary<string, GameObject>(StringComparer.Ordinal);
                 foreach (var prefab in scene.Spawnables) if (prefab != null) availableBuildings[prefab.name] = prefab;
                 foreach (var prefab in baseline.Spawnables) if (prefab != null) availableBuildings[prefab.name] = prefab;
+                // Starting grants also need their authored shared definition, even when
+                // no allowed production recipe uses that structure as a producer.
+                foreach (var structure in setup.Structures ?? Array.Empty<SkirmishResolvedStructureEntry>())
+                {
+                    string key = SkirmishStructureIds.VisualKey(structure.StructureId);
+                    if (!availableBuildings.TryGetValue(key, out var prefab))
+                        throw new InvalidOperationException("Missing authored starting structure binding: " + key);
+                    if (!buildings.Contains(prefab)) buildings.Add(prefab);
+                }
                 var availableUnits = new Dictionary<string, GameObject>(StringComparer.Ordinal);
                 foreach (var prefab in scene.UnitPrefabRegistryConfig.UnitSpawnPrefabs)
                     if (prefab != null) availableUnits[prefab.name] = prefab;

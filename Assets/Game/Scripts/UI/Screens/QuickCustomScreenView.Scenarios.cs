@@ -87,7 +87,7 @@ namespace Game.UI.Runtime
             if (entry.IsPlayable)
             {
                 _config.ScenarioIndex = entry.PlayableScenarioIndex;
-                _config.SkirmishSelection = LibrarySelection(entry);
+                _config.SkirmishSelection = RestoreMissionSizePreference(LibrarySelection(entry));
                 PlayerPrefs.SetString(LastScenarioIdPrefsKey, _selectedScenarioId);
                 PlayerPrefs.Save();
             }
@@ -291,6 +291,7 @@ namespace Game.UI.Runtime
             PresentCompiledBriefing(selected, fa);
             _savedMatchAvailable = !_suppressSavedMatch && selected.IsPlayable &&
                 UiShellRuntimeGateway.HasSavedSkirmish(selected.ScenarioId);
+            BindMissionSize();
             if (launchButton != null)
             {
                 launchButton.interactable = selected.IsPlayable;
@@ -321,6 +322,7 @@ namespace Game.UI.Runtime
         private readonly Dictionary<TMP_Text, (string key, string fallback)> _authoredRuleCopy = new();
         private string _briefingCatalogId;
         private int _briefingSeed, _briefingVersion;
+        private UiSkirmishMissionSize _briefingSize;
         private string _briefingDefinitionId;
         private UiSkirmishLibraryLaunchKind _briefingLaunchKind;
         private SkirmishResolvedSetup _briefingSetup;
@@ -329,16 +331,19 @@ namespace Game.UI.Runtime
         {
             if (_briefingCatalogId != selected.ScenarioId || _briefingSeed != _config.MapSeed ||
                 _briefingLaunchKind != _config.SkirmishSelection.Kind || _briefingDefinitionId != _config.SkirmishSelection.DefinitionId ||
-                _briefingVersion != _config.SkirmishSelection.ContentVersion)
+                _briefingVersion != _config.SkirmishSelection.ContentVersion || _briefingSize != _config.SkirmishSelection.MissionSize)
             {
                 _briefingCatalogId = selected.ScenarioId;
                 _briefingSeed = _config.MapSeed;
                 _briefingLaunchKind=_config.SkirmishSelection.Kind;_briefingDefinitionId=_config.SkirmishSelection.DefinitionId;
                 _briefingVersion=_config.SkirmishSelection.ContentVersion;
+                _briefingSize=_config.SkirmishSelection.MissionSize;
                 _briefingSetup = null;
                 if (selected.IsPlayable && _briefingLaunchKind==UiSkirmishLibraryLaunchKind.ExpandedDefinition && MatchesLibrarySelection(selected))
                 {
-                    SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, out _briefingSetup);
+                    var size = _briefingSize == UiSkirmishMissionSize.War ? Game.Skirmish.Contracts.SkirmishSizeId.War :
+                        _briefingSize == UiSkirmishMissionSize.LargeWar ? Game.Skirmish.Contracts.SkirmishSizeId.LargeWar : Game.Skirmish.Contracts.SkirmishSizeId.Standard;
+                    SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, size, out _briefingSetup);
                     if(_briefingSetup!=null&&(_briefingSetup.DefinitionId!=_briefingDefinitionId||_briefingSetup.ContentVersion!=_briefingVersion))_briefingSetup=null;
                 }
             }

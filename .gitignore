@@ -97,3 +97,10 @@ Design/NarrativeVision/M3StyleAlignment/**/*.png
 # Unity crash memory may contain process data; keep it local.
 mono_crash.mem.*.blob
 mono_crash*.json
+
+# Root capture scratch is regenerated locally; canonical mission evidence stays in Design.
+/_Evidence/
+/mono_crash.*.json
+
+# Redundant workspace snapshot; exact contents remain in the documented remote Git backup.
+/Design/AgentReports/WorkspaceConsolidation/20261001/airlift-local-evidence.tar.gz

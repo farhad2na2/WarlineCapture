@@ -135,6 +135,9 @@ namespace Game.Runtime
         public int schemaVersion;
         public Game.Configs.QuickGameConfig configuration = Game.Configs.QuickGameConfig.Defaults;
         public SkirmishResultSaveData lastResult;
+        // A preference only; never a saved expanded launch identity.
+        public string skirmishSizeCatalogId, skirmishSizeDefinitionId, skirmishSizeId;
+        public int skirmishSizeContentVersion;
         public string presetId = "balanced";
         public int enemyCount = 2;
         public string difficulty = "Normal";

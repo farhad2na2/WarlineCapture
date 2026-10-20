@@ -14,6 +14,23 @@ namespace Game.UI.Contracts
         public int ScrollTargetId;
         public float ScrollDistanceViewports;
     }
+    // Only an actually rendered map surface supplies these contacts/provenance.
+    [System.Serializable]
+    public struct AriaAssaultMapObservation
+    {
+        public AriaTouchTarget OpenMap;
+        public int Identity, MarkerFrame, ObjectiveHudIdentity;
+        public uint MarkerRevision;
+        public float MarkerTime;
+        public Vector3 ObjectiveWorld;
+        public bool ExpectedIdentity, FullMap, Complete, ProjectionValid;
+        public bool IsCurrent(int frame, float now) =>
+            ExpectedIdentity && Identity != 0 && ObjectiveHudIdentity != 0 &&
+            float.IsFinite(ObjectiveWorld.x) && float.IsFinite(ObjectiveWorld.y) && float.IsFinite(ObjectiveWorld.z) &&
+            Complete && ProjectionValid && MarkerRevision != 0 && MarkerFrame > 0 &&
+            MarkerFrame <= frame && float.IsFinite(MarkerTime) &&
+            float.IsFinite(now) && now >= MarkerTime && now - MarkerTime <= 1f;
+    }
     public enum AriaSkirmishIntent : byte
     {
         Recruit, SelectSquad, FindBase, Attack, TargetBase, ObserveBattle, FindThreat, TargetThreat,
@@ -48,6 +65,7 @@ namespace Game.UI.Contracts
         public Vector2 FocusThreatDragEnd, FocusGroupDragEnd, FocusAdvanceDragEnd;
         public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame, VisibleHostileCombat, OwnMaterials, ExpandedRetries, VisibleHostileAir;
         public float Time, PlayerHealth, EnemyHealth, ForceHealth;
+        public AriaAssaultMapObservation AssaultMap;
         public bool AssaultDistanceVisible;
         public float NearestFriendlyObjectiveDistance;
         public AriaTouchTarget Squad0, Squad1, Squad2, Squad3, Squad4;
@@ -66,6 +84,11 @@ namespace Game.UI.Contracts
         public int ExpandedSelectedMask;
         public int ExpandedStructureMask;
         public int ExpandedAttackOrderMask;
+        public bool ExpandedBaseAssault;
+        public uint ExpandedGroup0, ExpandedGroup1, ExpandedGroup2, ExpandedGroup3, ExpandedGroup4;
+        public UiExpandedPrecisionAttackResult PrecisionAttack;
+        public uint ExpandedGroup(int slot) => slot switch {
+            0=>ExpandedGroup0,1=>ExpandedGroup1,2=>ExpandedGroup2,3=>ExpandedGroup3,4=>ExpandedGroup4,_=>0 };
         public int ExpandedAirMask;
         public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;

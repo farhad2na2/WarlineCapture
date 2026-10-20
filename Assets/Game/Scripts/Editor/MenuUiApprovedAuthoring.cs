@@ -304,14 +304,47 @@ namespace Game.Editor
             var rules=Find(root,"BaseAssaultRules");Place(rules,1068,108,590,688);
             if(rules!=null)
             {
-                var content=ScrollContent(rules,"RulesScroll",860);
-                string[] names={"Title","Opponent","Objective","Roster","Economy","Intel"};
-                float[] y={12,72,182,346,518,686};float[] h={50,100,154,162,158,154};
-                for(int i=0;i<names.Length;i++)Place(content.Find(names[i]) as RectTransform,16,y[i],540,h[i]);
+                ScrollContent(rules,"RulesScroll",940);
+                ApplySkirmishMissionSizeRowLayout(root);
             }
             Copy(Find(root,"ResetButton"),"Label","DEFAULTS");
             Copy(Find(root,"RandomizeSeedButton"),"Label","SHUFFLE TACTICS");
         }
+        // Narrow shared layout slice; does not restyle headers, library or fonts.
+        internal static void ApplySkirmishMissionSizeRowLayout(GameObject root)
+        {
+            var content=root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content") as RectTransform;
+            var army=Find(root,"ArmySize");
+            if(content==null||army==null)throw new System.InvalidOperationException("Existing approved RulesScroll and ArmySize required");
+            content.sizeDelta=new Vector2(content.sizeDelta.x,940);
+            army.SetParent(content,false);Place(army,24,72,782,64);
+            string[] names={"Title","Opponent","Objective","Roster","Economy","Intel"};
+            float[] y={12,152,262,426,598,766};float[] h={50,100,154,162,158,154};
+            for(int i=0;i<names.Length;i++)
+            {
+                var label=content.Find(names[i]) as RectTransform;
+                if(label==null)throw new System.InvalidOperationException("Existing approved rule label missing: "+names[i]);
+                Place(label,24,y[i],782,h[i]);
+            }
+        }
+
+        internal static bool SkirmishMissionSizeRowLayoutMatches(GameObject root)
+        {
+            var content=root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content") as RectTransform;
+            if(content==null||!Mathf.Approximately(content.sizeDelta.y,940))return false;
+            bool Matches(string name,float x,float y,float w,float h)
+            {
+                var r=content.Find(name) as RectTransform;
+                return r!=null&&r.anchorMin==new Vector2(0,1)&&r.anchorMax==new Vector2(0,1)&&r.pivot==new Vector2(0,1)&&
+                    r.anchoredPosition==new Vector2(x,-y)&&r.sizeDelta==new Vector2(w,h);
+            }
+            if(!Matches("ArmySize",24,72,782,64))return false;
+            string[] names={"Title","Opponent","Objective","Roster","Economy","Intel"};
+            float[] y={12,152,262,426,598,766};float[] h={50,100,154,162,158,154};
+            for(int i=0;i<names.Length;i++)if(!Matches(names[i],24,y[i],782,h[i]))return false;
+            return true;
+        }
+
         private static void Operations(GameObject root)
         {
             Stretch(Find(root,"DistrictMap")?.Find("MapClip") as RectTransform,3);

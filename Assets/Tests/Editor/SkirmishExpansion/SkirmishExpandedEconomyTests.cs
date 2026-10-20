@@ -1,4 +1,5 @@
 using System;
+using PaidHarness = Game.Editor.SkirmishS002AriaRunHarness;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -13,6 +14,771 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishExpandedEconomyTests
     {
+        private static Newtonsoft.Json.Linq.JArray paidDtoSamples;
+        private static Newtonsoft.Json.Linq.JObject PaidDtoRoundTrip(Newtonsoft.Json.Linq.JObject value)
+        {
+            foreach (var scalar in System.Linq.Enumerable.OfType<Newtonsoft.Json.Linq.JValue>(value.Descendants()))
+                if (scalar.Type == Newtonsoft.Json.Linq.JTokenType.Float)
+                {
+                    double number = Convert.ToDouble(scalar.Value, System.Globalization.CultureInfo.InvariantCulture);
+                    Assert.IsFalse(double.IsNaN(number) || double.IsInfinity(number), "Finite fixture DTO numbers required");
+                }
+            string encoded = PaidHarness.SerializeProductionNativeRecord(value);
+            var decoded = Newtonsoft.Json.Linq.JObject.Parse(encoded);
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(value, decoded), "Exact installed native JSON token roundtrip required");
+            return decoded;
+        }
+        private static void PaidDtoSample(string family, string operation,
+            Newtonsoft.Json.Linq.JObject before, Newtonsoft.Json.Linq.JObject after,
+            Newtonsoft.Json.Linq.JObject decision, Newtonsoft.Json.Linq.JObject actor)
+        {
+            var sample = new Newtonsoft.Json.Linq.JObject {
+                ["fixture_family"] = family, ["operation"] = operation,
+                ["before"] = before, ["after"] = after, ["decision"] = decision, ["actor"] = actor,
+                ["normalEnvelopeExercised"] = false, ["normalJournal"] = false, ["paid_resources"] = false };
+            var decoded = PaidDtoRoundTrip(sample);
+            Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Object, decoded["before"]["bank"].Type);
+            Assert.AreEqual(Newtonsoft.Json.Linq.JTokenType.Integer, decoded["after"]["bank"]["Current"].Type);
+            if (paidDtoSamples != null) paidDtoSamples.Add(decoded);
+        }
+        private static void PaidProductionDtoRows(
+            System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation> rows)
+        {
+            foreach (var row in rows)
+            {
+                var before = PaidHarness.PaidPoint(row.Before);
+                var after = PaidHarness.PaidPoint(row.After);
+                Assert.AreEqual(row.Before.Bank, before["bank"].ToObject(row.Before.Bank.GetType()));
+                Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                Assert.AreEqual(row.Before.Materials, (int)before["materials"]);
+                Assert.AreEqual(row.After.Materials, (int)after["materials"]);
+                Assert.AreEqual(row.After.HasReservation,
+                    after["reservation"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                if (row.After.HasReservation)
+                {
+                    Assert.AreEqual(row.After.Reservation.ReservationId, (uint)after["reservation"]["id"]);
+                    Assert.AreEqual(row.After.Reservation.Phase.ToString(), (string)after["reservation"]["phase"]);
+                }
+                var actor = PaidHarness.PaidProductionActorJson(row);
+                Assert.AreEqual(row.HasActorOwner, actor != null);
+                if (actor != null)
+                {
+                    Assert.AreEqual(row.Actor.Index, (int)actor["index"]);
+                    Assert.AreEqual(row.Actor.Version, (int)actor["version"]);
+                    Assert.AreEqual(row.ActorOwner.StableObjectId.ToString(), (string)actor["stable_id"]);
+                    Assert.AreEqual(row.ActorOwner.CapacityReleased, (byte)actor["capacity_released"]);
+                }
+                var decision = PaidHarness.PaidProductionDecisionJson(row);
+                Assert.AreEqual(row.HasDecision, decision != null);
+                if (decision != null) Assert.AreEqual(row.Decision.MaterialsCost, (int)decision["materials"]);
+                PaidDtoSample("production", row.Operation, before, after, decision, actor);
+            }
+        }
+        [Test]
+        public void PaidDtoDirectAndDeathUseRealCommittedPointsAndActorIdentity()
+        {
+            WithCommittedProductionLedger((em, session, rows) => {
+                var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryProduce(em, session, SkirmishRoleIds.Tank, 1, authored.ArmyGround, out var produced));
+                Entity member = FindReservedUnit(em, produced.ReservationId);
+                Assert.IsTrue(SkirmishProductionService.TryReleaseDeath(em, session, member));
+                CollectionAssert.AreEqual(new[] { "DirectDebit", "DirectDispatch", "DirectMember", "DeathRelease" }, rows.ConvertAll(r => r.Operation));
+                PaidProductionDtoRows(rows);
+            });
+        }
+        [Test]
+        public void PaidDtoQueuedDispatchSerializesRealNullAndLiveReservations()
+        {
+            WithCommittedProductionLedger((em, session, rows) => {
+                var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyGround, out var queued));
+                Assert.IsTrue(SkirmishProductionService.TryStartQueued(em, session, queued.ReservationId, out _));
+                Assert.IsTrue(SkirmishProductionService.TryDispatchQueued(em, session, queued.ReservationId, authored.ArmyGround, out _));
+                Assert.IsFalse(rows[0].Before.HasReservation);
+                Assert.AreEqual(SkirmishReservationPhase.Live, rows[2].After.Reservation.Phase);
+                PaidProductionDtoRows(rows);
+            });
+        }
+        [Test]
+        public void PaidDtoResearchUsesRealStateDecisionAndNoProgressRows()
+        {
+            WithResearchLedger((em, session, rows) => {
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.InfantryWeapons, 1, out var queued));
+                Assert.AreEqual(0, SkirmishResearchService.Tick(em, session, 1, false));
+                Assert.AreEqual(2, rows.Count);
+                float remaining = LedgerResearchItem(em, session, queued.ResearchId).RemainingSeconds;
+                Assert.AreEqual(1, SkirmishResearchService.Tick(em, session, remaining, false));
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.VehicleProtection, 1, out var cancelled));
+                Assert.IsTrue(SkirmishResearchService.TryCancel(em, session, cancelled.ResearchId, out _));
+                CollectionAssert.AreEqual(new[] { "Queue", "Start", "Complete", "Queue", "Cancel" }, rows.ConvertAll(r => r.Operation));
+                foreach (var row in rows)
+                {
+                    var before = PaidHarness.ResearchPointJson(row.Before);
+                    var after = PaidHarness.ResearchPointJson(row.After);
+                    Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                    Assert.AreEqual(row.After.State, after["state"].ToObject(row.After.State.GetType()));
+                    Assert.AreEqual(row.After.NextResearchId, (uint)after["next_research_id"]);
+                    Assert.AreEqual(row.After.HasItem, after["research"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                    var decision = PaidHarness.PaidResearchDecisionJson(row);
+                    Assert.AreEqual(row.HasDecision, decision != null);
+                    if (decision != null) Assert.AreEqual(row.Decision, decision.ToObject(row.Decision.GetType()));
+                    PaidDtoSample("research", row.Operation, before, after, decision, null);
+                }
+            });
+        }
+        [Test]
+        public void PaidDtoEnemyConstructionUsesRealRequestRefundAndDeliveryPoints()
+        {
+            Assert.IsNull(SkirmishConstructionLedger.Observer);
+            var rows = new System.Collections.Generic.List<SkirmishConstructionLedger.Observation>();
+            Action<SkirmishConstructionLedger.Observation> sink = row => {
+                var before = PaidHarness.ConstructionPoint(row.Before);
+                var after = PaidHarness.ConstructionPoint(row.After);
+                Assert.AreEqual(row.After.Bank, after["bank"].ToObject(row.After.Bank.GetType()));
+                Assert.AreEqual(row.After.Economy, after["economy"].ToObject(row.After.Economy.GetType()));
+                Assert.AreEqual(row.After.HasRequest, after["request"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                Assert.AreEqual(row.After.HasEnemyIntent, after["enemy_intent"].Type != Newtonsoft.Json.Linq.JTokenType.Null);
+                var actor = PaidHarness.PaidConstructionActorJson(row);
+                Assert.AreEqual(row.HasActorOwner, actor != null);
+                if (actor != null) Assert.AreEqual(row.Actor.Index, (int)actor["index"]);
+                PaidDtoSample("construction", row.Operation, before, after, null, actor);
+                rows.Add(row);
+            };
+            long faults = SkirmishConstructionLedger.Faults;
+            SkirmishConstructionLedger.OpenOwned(sink);
+            try
+            {
+                using (var f = new SkirmishEnemyConstructionAdapterTests.Fixture())
+                {
+                    Assert.IsTrue(f.Request()); f.Failed();
+                    SkirmishEnemyConstructionAdapter.Tick(f.Em, f.Session);
+                    CollectionAssert.AreEqual(new[] { "EnemyRequest", "EnemyRefundDebt", "EnemyRefund" }, rows.ConvertAll(r => r.Operation));
+                }
+                rows.Clear();
+                using (var f = new SkirmishEnemyConstructionAdapterTests.Fixture())
+                {
+                    Assert.IsTrue(f.Request()); f.Succeeded();
+                    CollectionAssert.AreEqual(new[] { "EnemyRequest", "EnemyDelivered" }, rows.ConvertAll(r => r.Operation));
+                }
+                Assert.AreEqual(faults, SkirmishConstructionLedger.Faults, "Serializer assertion/sink exceptions must not be hidden as observation faults");
+            }
+            finally { Assert.IsTrue(SkirmishConstructionLedger.CloseOwned(sink), "Preserve unexpected foreign sink"); }
+        }
+        [Test]
+        public void PaidDtoCompactSerializerRefusesNonfiniteFixtureRoundTrip()
+        {
+            var bad = new Newtonsoft.Json.Linq.JObject { ["fixture_nonfinite"] = double.NaN };
+            Assert.Throws<AssertionException>(() => PaidDtoRoundTrip(bad));
+        }
+        public static void RunPaidNativeDtoConformanceControls()
+        {
+            Assert.IsNull(paidDtoSamples);
+            string path = Environment.GetEnvironmentVariable("WARLINE_PAID_DTO_CONFORMANCE_OUTPUT");
+            Assert.IsFalse(string.IsNullOrEmpty(path)); Assert.IsTrue(System.IO.Path.IsPathRooted(path));
+            path = System.IO.Path.GetFullPath(path);
+            string root = System.IO.Path.GetFullPath("Logs/SkirmishProduction") + System.IO.Path.DirectorySeparatorChar;
+            Assert.IsTrue(path.StartsWith(root, StringComparison.OrdinalIgnoreCase));
+            Assert.IsFalse(System.IO.File.Exists(path)); Assert.IsTrue(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(path)));
+            for (string current = System.IO.Path.GetDirectoryName(path); !string.IsNullOrEmpty(current); current = System.IO.Path.GetDirectoryName(current))
+                Assert.AreEqual(0, (int)(System.IO.File.GetAttributes(current) & System.IO.FileAttributes.ReparsePoint));
+            var samples = new Newtonsoft.Json.Linq.JArray();
+            var report = new Newtonsoft.Json.Linq.JObject {
+                ["schema"] = 1, ["scope"] = "PaidNativeDtoConformanceFixture_NoNormalJournal",
+                ["result"] = "Incomplete", ["samples"] = samples,
+                ["normalEnvelopeExercised"] = false, ["normalJournal"] = false,
+                ["compactRecordSerializerShared"] = true, ["paid_resources"] = false, ["qualified"] = false };
+            paidDtoSamples = samples;
+            try
+            {
+                var t = new SkirmishExpandedEconomyTests();
+                t.PaidDtoDirectAndDeathUseRealCommittedPointsAndActorIdentity();
+                t.PaidDtoQueuedDispatchSerializesRealNullAndLiveReservations();
+                t.PaidDtoResearchUsesRealStateDecisionAndNoProgressRows();
+                t.PaidDtoEnemyConstructionUsesRealRequestRefundAndDeliveryPoints();
+                t.PaidDtoCompactSerializerRefusesNonfiniteFixtureRoundTrip();
+                foreach (string family in new[] { "production", "research", "construction" })
+                    Assert.IsTrue(System.Linq.Enumerable.Any(samples, x => (string)x["fixture_family"] == family));
+                var counts = new Newtonsoft.Json.Linq.JObject();
+                foreach (string family in new[] { "production", "research", "construction" })
+                    counts[family] = System.Linq.Enumerable.Count(samples, x => (string)x["fixture_family"] == family);
+                report["sampleCountsByFamily"] = counts;
+                report["sampleCount"] = samples.Count; report["controls"] = 5; report["result"] = "CollectedFixtureOnly";
+            }
+            catch (Exception error) when (!(error is OutOfMemoryException))
+            {
+                report["result"] = "Failed"; report["exceptionType"] = error.GetType().FullName; throw;
+            }
+            finally
+            {
+                paidDtoSamples = null;
+                using var stream = new System.IO.FileStream(path, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write, System.IO.FileShare.Read);
+                using var writer = new System.IO.StreamWriter(stream, new System.Text.UTF8Encoding(false));
+                writer.Write(PaidHarness.SerializeProductionNativeRecord(report));
+            }
+            Debug.Log("[PaidNativeDtoConformanceControls] result=Collected controls=5 families=3 normalEnvelope=0 normalJournal=0 paidResourcesQualified=0");
+        }
+
+        private sealed class PaidRegistryFixture : IDisposable
+        {
+            internal readonly Action<SkirmishProductionService.ProductionLedgerObservation> production = row => { };
+            internal readonly Action<SkirmishResearchService.ResearchLedgerObservation> research = row => { };
+            internal readonly Action<SkirmishConstructionLedger.Observation> construction = row => { };
+            internal readonly Action<SkirmishProductionService.ProductionLedgerObservation> foreignProduction = row => { };
+            internal readonly Action<SkirmishResearchService.ResearchLedgerObservation> foreignResearch = row => { };
+            internal readonly Action<SkirmishConstructionLedger.Observation> foreignConstruction = row => { };
+            internal readonly System.Collections.Generic.List<string> closed = new();
+            internal int starts;
+            internal PaidRegistryFixture() { AssertEmpty(); }
+            internal void Install(int i, bool foreign = false)
+            {
+                if (!foreign) starts++;
+                if (i == 0) SkirmishProductionService.ProductionLedgerObserver = foreign ? foreignProduction : production;
+                if (i == 1) SkirmishResearchService.ResearchLedgerObserver = foreign ? foreignResearch : research;
+                if (i == 2) SkirmishConstructionLedger.Observer = foreign ? foreignConstruction : construction;
+            }
+            internal void Close(int i)
+            {
+                closed.Add(i == 0 ? "P" : i == 1 ? "R" : "C");
+                if (i == 0) PaidHarness.ReleasePaidProductionObserver(production);
+                if (i == 1) PaidHarness.ReleasePaidResearchObserver(research);
+                if (i == 2) SkirmishConstructionLedger.CloseOwned(construction);
+            }
+            internal static void AssertEmpty()
+            {
+                Assert.IsNull(SkirmishProductionService.ProductionLedgerObserver);
+                Assert.IsNull(SkirmishResearchService.ResearchLedgerObserver);
+                Assert.IsNull(SkirmishConstructionLedger.Observer);
+            }
+            internal void AssertForeign(int i)
+            {
+                if (i == 0) Assert.AreSame(foreignProduction, SkirmishProductionService.ProductionLedgerObserver);
+                if (i == 1) Assert.AreSame(foreignResearch, SkirmishResearchService.ResearchLedgerObserver);
+                if (i == 2) Assert.AreSame(foreignConstruction, SkirmishConstructionLedger.Observer);
+            }
+            public void Dispose()
+            {
+                PaidHarness.ReleasePaidProductionObserver(production);
+                PaidHarness.ReleasePaidResearchObserver(research);
+                SkirmishConstructionLedger.CloseOwned(construction);
+                PaidHarness.ReleasePaidProductionObserver(foreignProduction);
+                PaidHarness.ReleasePaidResearchObserver(foreignResearch);
+                SkirmishConstructionLedger.CloseOwned(foreignConstruction);
+            }
+        }
+        [Test]
+        public void PaidGroupDisabledLeavesActualForeignRegistriesUntouched()
+        {
+            using var f = new PaidRegistryFixture();
+            for (int i = 0; i < 3; i++) f.Install(i, true);
+            int reservations = 0;
+            PaidHarness.GuardPaidObserverReservation(false, true, () => reservations++);
+            PaidHarness.StartPaidObserverGroup(false, () => f.Install(0), () => f.Install(1),
+                () => f.Install(2), () => f.Close(2), () => f.Close(1), () => f.Close(0));
+            Assert.AreEqual(1, reservations); Assert.AreEqual(0, f.starts);
+            for (int i = 0; i < 3; i++) f.AssertForeign(i);
+        }
+        [Test]
+        public void PaidGroupEachForeignRegistryRefusesBeforeReservation()
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                using var f = new PaidRegistryFixture(); f.Install(i, true);
+                int reservations = 0;
+                Assert.Throws<InvalidOperationException>(() =>
+                    PaidHarness.GuardPaidObserverReservation(true, false, () => reservations++));
+                Assert.AreEqual(0, reservations); f.AssertForeign(i);
+            }
+        }
+        [Test]
+        public void PaidGroupLegacyRefusesBeforeReservation()
+        {
+            using var f = new PaidRegistryFixture(); int reservations = 0;
+            Assert.Throws<System.IO.InvalidDataException>(() =>
+                PaidHarness.GuardPaidObserverReservation(true, true, () => reservations++));
+            Assert.AreEqual(0, reservations); PaidRegistryFixture.AssertEmpty();
+        }
+        [Test]
+        public void PaidGroupStartupFaultAfterEachInstallClosesOwnedRegistriesInReverse()
+        {
+            for (int fault = 0; fault < 3; fault++)
+            {
+                using var f = new PaidRegistryFixture();
+                Action<int> start = i => { f.Install(i); if (i == fault) throw new InvalidOperationException("injected-start"); };
+                var error = Assert.Throws<InvalidOperationException>(() =>
+                    PaidHarness.StartPaidObserverGroup(true, () => start(0), () => start(1), () => start(2),
+                        () => f.Close(2), () => f.Close(1), () => f.Close(0)));
+                Assert.AreEqual("injected-start", error.Message);
+                Assert.AreEqual(fault + 1, f.starts);
+                CollectionAssert.AreEqual(new[] { "C", "R", "P" }, f.closed);
+                PaidRegistryFixture.AssertEmpty();
+            }
+        }
+        [Test]
+        public void PaidGroupStartupFaultPreservesForeignReplacement()
+        {
+            using var f = new PaidRegistryFixture();
+            Assert.Throws<InvalidOperationException>(() =>
+                PaidHarness.StartPaidObserverGroup(true, () => f.Install(0),
+                    () => { f.Install(1); f.Install(0, true); throw new InvalidOperationException("injected-replaced"); },
+                    () => f.Install(2), () => f.Close(2), () => f.Close(1), () => f.Close(0)));
+            f.AssertForeign(0);
+            Assert.IsNull(SkirmishResearchService.ResearchLedgerObserver);
+            Assert.IsNull(SkirmishConstructionLedger.Observer);
+        }
+        [Test]
+        public void PaidGroupClosePreservesAllForeignReplacements()
+        {
+            using var f = new PaidRegistryFixture();
+            for (int i = 0; i < 3; i++) { f.Install(i); f.Install(i, true); }
+            bool restored = false;
+            PaidHarness.ClosePaidObserverGroup(() => f.Close(2), () => f.Close(1), () => f.Close(0), () => restored = true);
+            Assert.IsTrue(restored);
+            for (int i = 0; i < 3; i++) f.AssertForeign(i);
+        }
+        [Test]
+        public void PaidGroupEachCloseFaultStillRunsRemainingCloseAndActualEcsCleanup()
+        {
+            for (int fault = 0; fault < 3; fault++)
+            {
+                using var f = new PaidRegistryFixture();
+                using var world = new World("PaidCloseFailureControl");
+                var em = world.EntityManager; var entity = em.CreateEntity();
+                for (int i = 0; i < 3; i++) f.Install(i);
+                Action<int> close = i => { f.Close(i); if (i == fault) throw new InvalidOperationException("injected-close"); };
+                var error = Assert.Throws<InvalidOperationException>(() =>
+                    PaidHarness.ClosePaidObserverGroup(() => close(2), () => close(1), () => close(0),
+                        () => em.DestroyEntity(entity)));
+                Assert.AreEqual("injected-close", error.Message);
+                CollectionAssert.AreEqual(new[] { "C", "R", "P" }, f.closed);
+                Assert.IsFalse(em.Exists(entity)); PaidRegistryFixture.AssertEmpty();
+            }
+        }
+        [Test]
+        public void PaidGroupNormalCloseRunsExactlyOnceInReverseThenCleanup()
+        {
+            using var f = new PaidRegistryFixture(); int cleanups = 0;
+            PaidHarness.GuardPaidObserverReservation(true, false, () => { });
+            PaidHarness.StartPaidObserverGroup(true, () => f.Install(0), () => f.Install(1), () => f.Install(2),
+                () => f.Close(2), () => f.Close(1), () => f.Close(0));
+            PaidHarness.ClosePaidObserverGroup(() => f.Close(2), () => f.Close(1), () => f.Close(0), () => cleanups++);
+            CollectionAssert.AreEqual(new[] { "C", "R", "P" }, f.closed);
+            Assert.AreEqual(3, f.starts); Assert.AreEqual(1, cleanups); PaidRegistryFixture.AssertEmpty();
+        }
+        public static void RunPaidObserverSharedLifecycleControls()
+        {
+            var t = new SkirmishExpandedEconomyTests();
+            t.PaidGroupDisabledLeavesActualForeignRegistriesUntouched();
+            t.PaidGroupEachForeignRegistryRefusesBeforeReservation();
+            t.PaidGroupLegacyRefusesBeforeReservation();
+            t.PaidGroupStartupFaultAfterEachInstallClosesOwnedRegistriesInReverse();
+            t.PaidGroupStartupFaultPreservesForeignReplacement();
+            t.PaidGroupClosePreservesAllForeignReplacements();
+            t.PaidGroupEachCloseFaultStillRunsRemainingCloseAndActualEcsCleanup();
+            t.PaidGroupNormalCloseRunsExactlyOnceInReverseThenCleanup();
+            Debug.Log("[PaidObserverSharedLifecycleControls] result=Passed controls=14 realRegistries=3 ecsCleanupCases=3 normalJournal=0 paidResourcesQualified=0");
+        }
+
+        private static void WithResearchLedger(Action<EntityManager,Entity,
+            System.Collections.Generic.List<SkirmishResearchService.ResearchLedgerObservation>> action)
+        {
+            Assert.IsNull(SkirmishResearchService.ResearchLedgerObserver,"Preserve a foreign research sink");
+            using var world=new World("ResearchCommittedLedgerControls");var em=world.EntityManager;
+            CompileAndSpawn(em,out var session,out var setup);SkirmishMaterialsService.Initialize(em,session,setup);
+            var rows=new System.Collections.Generic.List<SkirmishResearchService.ResearchLedgerObservation>();
+            Action<SkirmishResearchService.ResearchLedgerObservation> sink=rows.Add;
+            SkirmishResearchService.ResearchLedgerObserver=sink;
+            try{action(em,session,rows);}
+            finally
+            {
+                bool owned=SkirmishResearchService.ResearchLedgerObserver==sink;
+                if(owned)SkirmishResearchService.ResearchLedgerObserver=null;
+                Assert.IsTrue(owned,"Do not erase a replaced research sink");
+            }
+        }
+        private static SkirmishResearchQueueItem LedgerResearchItem(EntityManager em,Entity session,uint id)
+        {
+            foreach(var item in em.GetBuffer<SkirmishResearchQueueItem>(session))if(item.ResearchId==id)return item;
+            Assert.Fail("Real queued research required");return default;
+        }
+
+        [Test]
+        public void ResearchLedgerRealTickCompletesAndGrantsWithoutSecondDebit()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                int before=SkirmishMaterialsService.Read(em,session,1);
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var queued));
+                Assert.AreEqual("Queue",rows[0].Operation);Assert.IsFalse(rows[0].Before.HasItem);
+                Assert.AreEqual(before-queued.MaterialsCost,rows[0].After.Materials);
+                Assert.AreEqual(queued.ResearchId,rows[0].After.Item.ResearchId);
+                Assert.AreEqual(0,SkirmishResearchService.Tick(em,session,1,false));
+                Assert.AreEqual("Start",rows[1].Operation);Assert.AreEqual(2,rows.Count,"No per-tick snapshots/rows");
+                Assert.Less(LedgerResearchItem(em,session,queued.ResearchId).RemainingSeconds,rows[1].After.Item.RemainingSeconds);
+                float remaining=LedgerResearchItem(em,session,queued.ResearchId).RemainingSeconds;
+                Assert.AreEqual(1,SkirmishResearchService.Tick(em,session,remaining,false));
+                Assert.AreEqual(3,rows.Count);Assert.AreEqual("Complete",rows[2].Operation);
+                Assert.LessOrEqual(rows[2].Before.Item.RemainingSeconds,0,"Actual Tick wrote the elapsed state before completion");
+                Assert.AreEqual(SkirmishResearchPhase.Completed,rows[2].After.Item.Phase);
+                Assert.AreEqual(1,rows[2].After.State.InfantryWeapons);Assert.AreEqual(0,rows[2].After.Item.RemainingSeconds);
+                Assert.AreEqual(before-queued.MaterialsCost,SkirmishMaterialsService.Read(em,session,1));
+                foreach(var row in rows)if(row.Operation!="Queue")Assert.AreEqual(row.Before.Bank,row.After.Bank);
+                Assert.IsFalse(SkirmishResearchService.TryComplete(em,session,queued.ResearchId,out _));Assert.AreEqual(3,rows.Count);
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerQueuedCancellationUsesAuthoredFullRefundOnce()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                int before=SkirmishMaterialsService.Read(em,session,1);
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.VehicleProtection,1,out var queued));
+                int policy=SkirmishResearchCosts.RefundMaterials(queued.MaterialsCost,SkirmishResearchPhase.Queued);
+                Assert.IsTrue(SkirmishResearchService.TryCancel(em,session,queued.ResearchId,out var cancelled));
+                Assert.AreEqual("Cancel",rows[1].Operation);Assert.AreEqual(policy,cancelled.RefundedMaterials);
+                Assert.AreEqual(before-queued.MaterialsCost+policy,SkirmishMaterialsService.Read(em,session,1));
+                Assert.AreEqual(rows[0].After.Bank,rows[1].Before.Bank);
+                Assert.AreEqual(SkirmishResearchPhase.Cancelled,rows[1].After.Item.Phase);
+                Assert.IsFalse(SkirmishResearchService.TryCancel(em,session,queued.ResearchId,out _));Assert.AreEqual(2,rows.Count);
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerResearchingCancellationUsesActualPartialPolicy()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                int before=SkirmishMaterialsService.Read(em,session,1);
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.VehicleProtection,1,out var queued));
+                Assert.IsTrue(SkirmishResearchService.TryStart(em,session,queued.ResearchId,out _));
+                int policy=SkirmishResearchCosts.RefundMaterials(queued.MaterialsCost,SkirmishResearchPhase.Researching);
+                Assert.IsTrue(SkirmishResearchService.TryCancel(em,session,queued.ResearchId,out var cancelled));
+                Assert.AreEqual(policy,cancelled.RefundedMaterials);Assert.AreEqual(before-queued.MaterialsCost+policy,rows[2].After.Materials);
+                Assert.AreEqual(rows[1].After.Bank,rows[2].Before.Bank);Assert.AreEqual("Cancel",rows[2].Operation);
+                Assert.IsFalse(SkirmishResearchService.HasCompleted(em,session,SkirmishResearchKind.VehicleProtection));
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerProducerLossNeverRefundsOrResurrects()
+        {
+            foreach(bool started in new[]{false,true})WithResearchLedger((em,session,rows)=>{
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var queued));
+                if(started)Assert.IsTrue(SkirmishResearchService.TryStart(em,session,queued.ResearchId,out _));
+                int paid=SkirmishMaterialsService.Read(em,session,1);
+                var producer=LedgerResearchItem(em,session,queued.ResearchId).Producer;
+                Assert.AreEqual(1,SkirmishResearchService.NotifyProducerDestroyed(em,session,producer,1));
+                var last=rows[rows.Count-1];Assert.AreEqual("Lost",last.Operation);
+                Assert.AreEqual(SkirmishResearchPhase.Lost,last.After.Item.Phase);Assert.AreEqual(last.Before.Bank,last.After.Bank);
+                Assert.AreEqual(paid,SkirmishMaterialsService.Read(em,session,1));
+                int count=rows.Count;Assert.AreEqual(0,SkirmishResearchService.NotifyProducerDestroyed(em,session,producer,1));
+                Assert.IsFalse(SkirmishResearchService.TryCancel(em,session,queued.ResearchId,out _));
+                Assert.IsFalse(SkirmishResearchService.TryComplete(em,session,queued.ResearchId,out _));Assert.AreEqual(count,rows.Count);
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerBothFactionsHaveDistinctIdsBanksAndGrants()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var player));
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,2,out var enemy));
+                Assert.AreNotEqual(player.ResearchId,enemy.ResearchId);Assert.AreNotEqual(rows[0].After.BankEntity,rows[1].After.BankEntity);
+                Assert.AreEqual(1,rows[0].After.State.FactionId);Assert.AreEqual(2,rows[1].After.State.FactionId);
+                Assert.AreEqual(rows[1].Before.NextResearchId+1,rows[1].After.NextResearchId);
+                Assert.IsTrue(SkirmishResearchService.TryComplete(em,session,enemy.ResearchId,out _));
+                Assert.IsTrue(SkirmishResearchService.HasCompleted(em,session,SkirmishResearchKind.InfantryWeapons,2));
+                Assert.IsFalse(SkirmishResearchService.HasCompleted(em,session,SkirmishResearchKind.InfantryWeapons,1));
+                Assert.AreEqual(rows[2].Before.Bank,rows[2].After.Bank);
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerPauseAndUnaffordableRequestHaveNoCommit()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var queued));
+                var item=LedgerResearchItem(em,session,queued.ResearchId);
+                Assert.AreEqual(0,SkirmishResearchService.Tick(em,session,20,true));Assert.AreEqual(1,rows.Count);
+                Assert.AreEqual(item,LedgerResearchItem(em,session,queued.ResearchId));
+                SkirmishMaterialsService.Write(em,session,1,0);var bank=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1));
+                Assert.IsFalse(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.VehicleProtection,1,out _));
+                Assert.AreEqual(bank,em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1)));Assert.AreEqual(1,rows.Count);
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerOrdinarySinkFailureAndDefaultOffDoNotChangeDebits()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                var owned=SkirmishResearchService.ResearchLedgerObserver;long faults=SkirmishResearchService.ResearchLedgerObservationFaults;
+                try
+                {
+                    SkirmishResearchService.ResearchLedgerObserver=_=>throw new InvalidOperationException("research observation failure");
+                    int before=SkirmishMaterialsService.Read(em,session,1);
+                    Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var first));
+                    Assert.AreEqual(before-first.MaterialsCost,SkirmishMaterialsService.Read(em,session,1));
+                    Assert.AreEqual(faults+1,SkirmishResearchService.ResearchLedgerObservationFaults);
+                    SkirmishResearchService.ResearchLedgerObserver=null;before=SkirmishMaterialsService.Read(em,session,1);
+                    Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.VehicleProtection,1,out var second));
+                    Assert.AreEqual(before-second.MaterialsCost,SkirmishMaterialsService.Read(em,session,1));
+                    Assert.AreEqual(faults+1,SkirmishResearchService.ResearchLedgerObservationFaults);Assert.AreEqual(0,rows.Count);
+                }
+                finally{SkirmishResearchService.ResearchLedgerObserver=owned;}
+            });
+        }
+
+        [Test]
+        public void ResearchLedgerDuplicateBankRefusesObservationNotGameplay()
+        {
+            WithResearchLedger((em,session,rows)=>{
+                var bank=SkirmishMaterialsService.FindEconomy(em,1);var duplicate=em.CreateEntity(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent));
+                em.SetComponentData(duplicate,em.GetComponentData<FactionEconomy>(bank));
+                em.SetComponentData(duplicate,em.GetComponentData<FactionTacticalMaterialsComponent>(bank));
+                long faults=SkirmishResearchService.ResearchLedgerObservationFaults;
+                Assert.IsTrue(SkirmishResearchService.TryQueue(em,session,SkirmishResearchKind.InfantryWeapons,1,out var queued));
+                Assert.AreEqual(SkirmishResearchPhase.Queued,LedgerResearchItem(em,session,queued.ResearchId).Phase);
+                Assert.AreEqual(faults+1,SkirmishResearchService.ResearchLedgerObservationFaults);Assert.AreEqual(0,rows.Count);
+            });
+        }
+
+        public static void RunResearchCommittedLedgerFocusedControls()
+        {
+            var suite=new SkirmishExpandedEconomyTests();
+            suite.ResearchLedgerRealTickCompletesAndGrantsWithoutSecondDebit();
+            suite.ResearchLedgerQueuedCancellationUsesAuthoredFullRefundOnce();
+            suite.ResearchLedgerResearchingCancellationUsesActualPartialPolicy();
+            suite.ResearchLedgerProducerLossNeverRefundsOrResurrects();
+            suite.ResearchLedgerBothFactionsHaveDistinctIdsBanksAndGrants();
+            suite.ResearchLedgerPauseAndUnaffordableRequestHaveNoCommit();
+            suite.ResearchLedgerOrdinarySinkFailureAndDefaultOffDoNotChangeDebits();
+            suite.ResearchLedgerDuplicateBankRefusesObservationNotGameplay();
+            Debug.Log("[ResearchCommittedLedgerControls] result=Passed ecsCases=8 paidResourcesQualified=0 missionReady=0");
+        }
+
+
+        private static void WithCommittedProductionLedger(Action<EntityManager,Entity,
+            System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation>> action)
+        {
+            Assert.IsNull(SkirmishProductionService.ProductionLedgerObserver,"Do not replace a foreign sink");
+            using var world=new World("ProductionCommittedOriginsControls");
+            var em=world.EntityManager;
+            CompileAndSpawn(em,out var session,out var setup);
+            SkirmishMaterialsService.Initialize(em,session,setup);
+            var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            state.Phase=SkirmishSessionPhase.Playing;em.SetComponentData(session,state);
+            var rows=new System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation>();
+            Action<SkirmishProductionService.ProductionLedgerObservation> sink=rows.Add;
+            SkirmishProductionService.ProductionLedgerObserver=sink;
+            try { action(em,session,rows); }
+            finally
+            {
+                bool owned=SkirmishProductionService.ProductionLedgerObserver==sink;
+                if(owned)SkirmishProductionService.ProductionLedgerObserver=null;
+                Assert.IsTrue(owned,"Fixture must not erase a replaced observer");
+            }
+        }
+
+        [Test]
+        public void LedgerDirectDebitDispatchAndDeathReflectCommittedEcs()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                int before=SkirmishMaterialsService.Read(em,session,1);
+                var capacity=em.GetComponentData<SkirmishCapacityComponent>(session);
+                Assert.IsTrue(SkirmishProductionService.TryProduce(em,session,SkirmishRoleIds.Tank,1,authored.ArmyGround,out var decision));
+                Assert.AreEqual(3,rows.Count);Assert.AreEqual("DirectDebit",rows[0].Operation);Assert.AreEqual("DirectDispatch",rows[1].Operation);
+                Assert.AreEqual("DirectMember",rows[2].Operation);Assert.AreEqual(0,rows[2].MemberOrdinal);
+                Assert.AreEqual(before,rows[0].Before.Materials);
+                Assert.AreEqual(before-decision.MaterialsCost,rows[0].After.Materials);
+                Assert.AreEqual(SkirmishMaterialsService.Read(em,session,1),rows[1].After.Materials);
+                Assert.AreEqual(rows[0].After.Bank,rows[1].Before.Bank);
+                Assert.AreEqual(rows[1].Before.Bank,rows[1].After.Bank,"Dispatch cannot debit twice");
+                Assert.AreEqual(SkirmishReservationPhase.Live,rows[1].After.Reservation.Phase);
+                Entity member=FindReservedUnit(em,decision.ReservationId);Assert.AreNotEqual(Entity.Null,member);
+                Assert.AreEqual(member,rows[2].Actor);
+                AssertDirectMemberIdentities(em,session,decision.ReservationId,decision.MemberCount,rows);
+                Assert.AreEqual(capacity.GroundLive+1,em.GetComponentData<SkirmishCapacityComponent>(session).GroundLive);
+                Assert.IsTrue(SkirmishProductionService.TryReleaseDeath(em,session,member));
+                Assert.AreEqual("DeathRelease",rows[3].Operation);Assert.IsTrue(rows[3].ActorOwner.CapacityReleased!=0);
+                Assert.AreEqual(rows[3].Before.Bank,rows[3].After.Bank,"Death is not a refund");
+                Assert.AreEqual(capacity.GroundLive,em.GetComponentData<SkirmishCapacityComponent>(session).GroundLive);
+                Assert.IsFalse(SkirmishProductionService.TryReleaseDeath(em,session,member));Assert.AreEqual(4,rows.Count);
+            });
+        }
+
+        [Test]
+        public void LedgerQueuedDirectDispatchDoesNotDebitAgain()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryQueue(em,session,SkirmishRoleIds.Rifle,1,authored.ArmyGround,out var queued));
+                int paid=SkirmishMaterialsService.Read(em,session,1);
+                Assert.IsTrue(SkirmishProductionService.TryStartQueued(em,session,queued.ReservationId,out _));
+                Assert.IsTrue(SkirmishProductionService.TryDispatchQueued(em,session,queued.ReservationId,authored.ArmyGround,out _));
+                Assert.AreEqual(3+queued.MemberCount,rows.Count);Assert.AreEqual("Queue",rows[0].Operation);Assert.AreEqual("StartQueued",rows[1].Operation);Assert.AreEqual("QueuedDirectDispatch",rows[2].Operation);
+                Assert.AreEqual(rows[0].After.Bank,rows[1].After.Bank);Assert.AreEqual(rows[1].After.Bank,rows[2].After.Bank);
+                Assert.AreEqual(paid,SkirmishMaterialsService.Read(em,session,1));
+                Assert.AreEqual(SkirmishReservationPhase.Producing,rows[1].After.Reservation.Phase);
+                Assert.AreEqual(SkirmishReservationPhase.Live,rows[2].After.Reservation.Phase);
+                Assert.AreNotEqual(Entity.Null,FindReservedUnit(em,queued.ReservationId));
+                Assert.IsFalse(SkirmishProductionService.TryDispatchQueued(em,session,queued.ReservationId,authored.ArmyGround,out _));Assert.AreEqual(3+queued.MemberCount,rows.Count);
+                AssertDirectMemberIdentities(em,session,queued.ReservationId,queued.MemberCount,rows);
+            });
+        }
+
+        [Test]
+        public void LedgerNativeStartAndRealMemberAdoptionStayBound()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryQueue(em,session,SkirmishRoleIds.Rifle,1,authored.ArmyGround,out var queued));
+                Assert.IsTrue(SkirmishProductionService.BindNativeQueue(em,session,queued.ReservationId,42));
+                var id=em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+                SkirmishProductionService.StartNativeQueue(em,session,queued.ReservationId,new FixedString64Bytes("foreign"));Assert.AreEqual(2,rows.Count);
+                SkirmishProductionService.StartNativeQueue(em,session,queued.ReservationId,id);
+                Assert.AreEqual("StartNativeQueue",rows[2].Operation);Assert.AreEqual(42,rows[2].After.Reservation.ProducerRuntimeId);
+                var member=em.CreateEntity(typeof(Faction),typeof(UnitSourcePrefabKey),typeof(UnitHealth));
+                em.SetComponentData(member,new Faction {Id=1});
+                em.SetComponentData(member,new UnitSourcePrefabKey {Value=new FixedString64Bytes(SkirmishRoleCatalogConfig.RuntimePrefabKey(SkirmishRoleKind.Rifle))});
+                Assert.IsFalse(SkirmishProductionService.AdoptNativeMember(em,session,queued.ReservationId,99,member,id));Assert.AreEqual(3,rows.Count);
+                Assert.IsTrue(SkirmishProductionService.AdoptNativeMember(em,session,queued.ReservationId,42,member,id));
+                Assert.AreEqual("Deliver",rows[3].Operation);Assert.AreEqual(member,rows[3].Actor);
+                Assert.AreEqual(queued.ReservationId,rows[3].ActorOwner.ReservationId);
+                Assert.AreEqual(rows[3].Before.Bank,rows[3].After.Bank);
+                Assert.AreEqual(1,rows[3].After.Reservation.DeliveredMembers);
+            });
+        }
+
+        [Test]
+        public void LedgerBlockedRealSpawnCapturesDebitThenOneRefund()
+        {
+            Assert.IsNull(SkirmishProductionService.ProductionLedgerObserver);
+            var rows=new System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation>();
+            Action<SkirmishProductionService.ProductionLedgerObservation> sink=rows.Add;
+            SkirmishProductionService.ProductionLedgerObserver=sink;
+            try
+            {
+                // Existing actual registry/grid refusal fixture checks real banks,
+                // population, BlockedSpawn and refusal of a second refund.
+                new SkirmishExpandedEconomyTests().BlockedRegistryDispatchRefundsOnceWithoutPromotingPopulation();
+                Assert.AreEqual(2,rows.Count);Assert.AreEqual("DirectDebit",rows[0].Operation);Assert.AreEqual("FailedDispatchRefund",rows[1].Operation);
+                Assert.AreEqual(rows[0].After.Bank,rows[1].Before.Bank);
+                Assert.AreEqual(rows[0].Before.Materials,rows[1].After.Materials);
+                Assert.AreEqual(rows[0].After.Reservation.ReservationId,rows[1].After.Reservation.ReservationId);
+            }
+            finally { if(SkirmishProductionService.ProductionLedgerObserver==sink)SkirmishProductionService.ProductionLedgerObserver=null; }
+        }
+
+        [Test]
+        public void LedgerUnaffordableRequestHasNoCommittedOrigin()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                SkirmishMaterialsService.Write(em,session,1,0);
+                var before=em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1));
+                var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsFalse(SkirmishProductionService.TryProduce(em,session,SkirmishRoleIds.Tank,1,authored.ArmyGround,out _));
+                Assert.IsFalse(SkirmishProductionService.TryQueue(em,session,SkirmishRoleIds.Rifle,1,authored.ArmyGround,out _));
+                Assert.AreEqual(0,rows.Count);Assert.AreEqual(before,em.GetComponentData<FactionTacticalMaterialsComponent>(SkirmishMaterialsService.FindEconomy(em,1)));
+            });
+        }
+
+        [Test]
+        public void LedgerOrdinarySinkFailureCannotChangeAcceptedCommit()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var original=SkirmishProductionService.ProductionLedgerObserver;
+                long faults=SkirmishProductionService.ProductionLedgerObservationFaults;
+                SkirmishProductionService.ProductionLedgerObserver=_=>throw new InvalidOperationException("fixture observer failure");
+                try
+                {
+                    int before=SkirmishMaterialsService.Read(em,session,1);var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                    Assert.IsTrue(SkirmishProductionService.TryQueue(em,session,SkirmishRoleIds.Rifle,1,authored.ArmyGround,out var queued));
+                    Assert.AreEqual(before-queued.MaterialsCost,SkirmishMaterialsService.Read(em,session,1));
+                    Assert.AreEqual(SkirmishReservationPhase.Reserved,ReservationPhase(em,session,queued.ReservationId));
+                    Assert.AreEqual(faults+1,SkirmishProductionService.ProductionLedgerObservationFaults);
+                }
+                finally { SkirmishProductionService.ProductionLedgerObserver=original; }
+            });
+        }
+
+        [Test]
+        public void LedgerDefaultOffPreservesRealProduction()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var original=SkirmishProductionService.ProductionLedgerObserver;
+                long faults=SkirmishProductionService.ProductionLedgerObservationFaults;
+                SkirmishProductionService.ProductionLedgerObserver=null;
+                try
+                {
+                    int before=SkirmishMaterialsService.Read(em,session,1);var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                    Assert.IsTrue(SkirmishProductionService.TryProduce(em,session,SkirmishRoleIds.Tank,1,authored.ArmyGround,out var decision));
+                    Assert.AreEqual(before-decision.MaterialsCost,SkirmishMaterialsService.Read(em,session,1));
+                    Assert.AreEqual(0,rows.Count);Assert.AreEqual(faults,SkirmishProductionService.ProductionLedgerObservationFaults);
+                }
+                finally { SkirmishProductionService.ProductionLedgerObserver=original; }
+            });
+        }
+
+        private static void AssertDirectMemberIdentities(EntityManager em,Entity session,uint reservation,int count,
+            System.Collections.Generic.List<SkirmishProductionService.ProductionLedgerObservation> rows)
+        {
+            var expected=new System.Collections.Generic.HashSet<Entity>();
+            var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            using(var query=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(SkirmishUnitRoleComponent)))
+            using(var entities=query.ToEntityArray(Allocator.Temp))
+                foreach(var entity in entities)
+                {
+                    var owned=em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                    if(owned.SessionId.Equals(native.SessionId)&&owned.ReservationId==reservation)expected.Add(entity);
+                }
+            Assert.AreEqual(count,expected.Count,"Compare real committed members, not expected DTOs");
+            var actual=new System.Collections.Generic.HashSet<Entity>();int ordinal=0;
+            foreach(var row in rows)
+            {
+                if(row.Operation!="DirectMember")continue;
+                Assert.AreEqual(session,row.Session);Assert.IsTrue(row.HasActorOwner);
+                Assert.AreEqual(ordinal++,row.MemberOrdinal);Assert.IsTrue(actual.Add(row.Actor),"Duplicate member receipt");
+                Assert.IsTrue(expected.Contains(row.Actor));
+                var owned=em.GetComponentData<SkirmishAttemptOwnedComponent>(row.Actor);
+                Assert.AreEqual(owned,row.ActorOwner);Assert.IsTrue(owned.SessionId.Equals(native.SessionId));
+                Assert.AreEqual(reservation,owned.ReservationId);Assert.AreEqual(1,owned.FactionId);
+                Assert.AreEqual(0,owned.IsStructure);Assert.AreEqual(0,owned.CapacityReleased);
+                Assert.IsFalse(owned.StableObjectId.IsEmpty);
+                Assert.IsFalse(em.GetComponentData<UnitSourcePrefabKey>(row.Actor).Value.IsEmpty);
+                Assert.AreEqual(row.Before.Bank,row.After.Bank,"A member receipt cannot imply a second debit");
+                Assert.AreEqual(SkirmishReservationPhase.Live,row.After.Reservation.Phase);
+                Assert.AreEqual(reservation,row.After.Reservation.ReservationId);
+                Assert.AreEqual(count,row.After.Reservation.MemberCount);
+                // Direct spawning does not update the native delivered counter.
+                Assert.AreEqual(0,row.After.Reservation.DeliveredMembers,"Do not manufacture native delivery state");
+            }
+            Assert.AreEqual(count,ordinal);Assert.IsTrue(expected.SetEquals(actual));
+        }
+
+        [Test]
+        public void LedgerDirectRifleIdentitySetMatchesActualReservationMembers()
+        {
+            WithCommittedProductionLedger((em,session,rows)=>{
+                var authored=SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryProduce(em,session,SkirmishRoleIds.Rifle,1,authored.ArmyGround,out var decision));
+                Assert.Greater(decision.MemberCount,1,"Exercise a real multi-member configured squad");
+                Assert.AreEqual(2+decision.MemberCount,rows.Count);
+                AssertDirectMemberIdentities(em,session,decision.ReservationId,decision.MemberCount,rows);
+            });
+        }
+
+        public static void RunProductionCommittedOriginsFocusedControls()
+        {
+            var suite=new SkirmishExpandedEconomyTests();
+            suite.LedgerDirectDebitDispatchAndDeathReflectCommittedEcs();
+            suite.LedgerQueuedDirectDispatchDoesNotDebitAgain();
+            suite.LedgerNativeStartAndRealMemberAdoptionStayBound();
+            suite.LedgerBlockedRealSpawnCapturesDebitThenOneRefund();
+            suite.LedgerUnaffordableRequestHasNoCommittedOrigin();
+            suite.LedgerOrdinarySinkFailureCannotChangeAcceptedCommit();
+            suite.LedgerDefaultOffPreservesRealProduction();
+            suite.LedgerDirectRifleIdentitySetMatchesActualReservationMembers();
+            Debug.Log("[ProductionCommittedOriginsControls] result=Passed ecsCases=8 directMemberIdentity=1 paidResourcesQualified=0 missionReady=0");
+        }
+
         [Test]
         public void NativeDeliveryRejectsStaleAttemptPauseAndTerminalState()
         {
@@ -961,6 +1727,18 @@ namespace Game.Tests.Editor
             Assert.AreEqual(before - 240, SkirmishMaterialsService.Read(em, session, 1));
         }
 
+        public static void RunPaidCommittedObserverFocusedControls()
+        {
+            RunPaidObserverSharedLifecycleControls();
+            RunPackagedEconomyFixtureBindingControls();
+            RunProductionCommittedOriginsFocusedControls();
+            RunResearchCommittedLedgerFocusedControls();
+            global::BuildingPlacementConstructionTransactionTests.RunConstructionLedgerPlayerControls();
+            SkirmishEnemyConstructionAdapterTests.RunConstructionLedgerEnemyControls();
+            RunFocusedValidation();
+            Debug.Log("[PaidCommittedObserverControls] result=Passed productionDirect=8 research=8 constructionPlayer=8 constructionEnemy=5 legacyEconomy=24 paidResourcesQualified=0 missionReady=0");
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -999,6 +1777,69 @@ namespace Game.Tests.Editor
             }
         }
 
+        private static SkirmishScenarioDefinitionConfig RequirePackagedEconomyDefinition(
+            string catalogId, SkirmishScenarioDefinitionConfig definition)
+        {
+            var packaged = Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Assert.IsNotNull(packaged, "Actual packaged economy catalog required");
+            Assert.AreSame(packaged, SkirmishExpansionCatalogConfig.Load(), "Preserve foreign validation catalog ownership");
+            Assert.IsTrue(packaged.TryGetDefinition(catalogId, out var current), "Actual packaged coded definition required");
+            Assert.IsNotNull(definition, "Actual packaged economy definition required");
+            Assert.AreSame(current, definition, "Actual packaged economy definition required; stale or detached copies refused");
+            Assert.IsNotNull(definition.MapLayout, "Existing coded logical layout required");
+            Assert.IsTrue(SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint(catalogId, out string reviewed));
+            Assert.AreEqual(reviewed, SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout),
+                "Current packaged layout must retain its existing reviewed coded binding");
+            return definition;
+        }
+        private static SkirmishExpansionAuthoredSet PackagedEconomyFixture(string catalogId)
+        {
+            var catalog = Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Assert.IsNotNull(catalog, "Actual packaged economy catalog required");
+            Assert.IsTrue(catalog.TryGetDefinition(catalogId, out var definition));
+            RequirePackagedEconomyDefinition(catalogId, definition);
+            var authored = catalog.ToAuthoredSet();
+            Assert.IsTrue(SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out var selected));
+            Assert.AreSame(definition, selected, "Compile the exact existing packaged definition");
+            return authored;
+        }
+        [Test]
+        public void PackagedEconomyFixturesRetainAllThreeExistingReviewedBindings()
+        {
+            foreach (string id in new[] { "S002", "S003", "S004" })
+            {
+                var authored = PackagedEconomyFixture(id);
+                Assert.IsTrue(SkirmishExpansionCatalogFactory.TryGetDefinition(authored, id, out var definition));
+                Assert.AreEqual(id, RequirePackagedEconomyDefinition(id, definition).CatalogId);
+            }
+        }
+        [Test]
+        public void PackagedEconomyFixtureRefusesMissingAndStaleDefinitionWithoutMutation()
+        {
+            var catalog = Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Assert.IsNotNull(catalog); Assert.IsTrue(catalog.TryGetDefinition("S002", out var current));
+            string before = JsonUtility.ToJson(current);
+            var missing = Assert.Throws<AssertionException>(() => RequirePackagedEconomyDefinition("S002", null));
+            StringAssert.Contains("Actual packaged economy definition required", missing.Message);
+            var stale = UnityEngine.Object.Instantiate(current);
+            try
+            {
+                JsonUtility.FromJsonOverwrite("{\"contentVersion\":" + Math.Max(0, current.ContentVersion - 1) + "}", stale);
+                Assert.AreNotEqual(current.ContentVersion, stale.ContentVersion);
+                var error = Assert.Throws<AssertionException>(() => RequirePackagedEconomyDefinition("S002", stale));
+                StringAssert.Contains("Actual packaged economy definition required", error.Message);
+                Assert.AreEqual(before, JsonUtility.ToJson(current), "Do not mutate packaged assets to repair fixture data");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(stale); }
+        }
+        public static void RunPackagedEconomyFixtureBindingControls()
+        {
+            var t = new SkirmishExpandedEconomyTests();
+            t.PackagedEconomyFixturesRetainAllThreeExistingReviewedBindings();
+            t.PackagedEconomyFixtureRefusesMissingAndStaleDefinitionWithoutMutation();
+            Debug.Log("[PackagedEconomyFixtureBindingControls] result=Passed catalogs=3 refusals=2 normalMission=0");
+        }
+
         private static void CompileAndSpawn(
             EntityManager em,
             out Entity session,
@@ -1006,7 +1847,7 @@ namespace Game.Tests.Editor
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = PackagedEconomyFixture("S002");
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
@@ -1040,7 +1881,7 @@ namespace Game.Tests.Editor
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = PackagedEconomyFixture("S003");
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,
@@ -1074,7 +1915,7 @@ namespace Game.Tests.Editor
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = PackagedEconomyFixture("S004");
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
             Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                 em,

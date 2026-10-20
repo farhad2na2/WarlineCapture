@@ -480,6 +480,11 @@ namespace Game.Editor
         private static bool TryCreateSelectedPayload(string catalog, int selectedSeed, string selectedLocale,
             out SkirmishAriaAcceptancePayload payload, out string error)
         {
+            if(codedSizeCameraActive)
+            {
+                payload=default;error=null;
+                return catalog==codedSizeExpected.CatalogId && selectedSeed==codedSizeExpected.Seed && selectedLocale==codedSizeLocale;
+            }
             if(productionCanary!=null)
             {
                 var request=productionCanary.Request;
@@ -713,8 +718,9 @@ namespace Game.Editor
                     bool selected = TryCreateSelectedPayload(catalogId, seed, locale, out payload, out _);
                     if (!selected)
                         return;
-                    Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
-                    if (TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
+                    if(codedSizeCameraActive) Debug.Log("[CodedBaCameraJourney] selected catalog="+catalogId+" size="+codedSizeExpected.SizeId+" qualification=0");
+                    else Debug.Log("[SkirmishS002AriaRun] selected " + (productionCanary?.Request.IsLegacyPreset==true ? "LegacyPreset catalog="+catalogId+" seed="+seed+" nativeSettings=CodedPreset" : payload.FormatSelectedConfiguration()));
+                    if (!codedSizeCameraActive && TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
                         Debug.Log(SkirmishAcceptanceCensusCapture.FormatLog(census));
                     stage = 1;
                     next = now + 2d;
@@ -723,7 +729,7 @@ namespace Game.Editor
 
                 if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
-                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null || codedSizeCameraActive) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
                 if (stage <= 1 && !nativeS005MenuJourney)
                 {
                     SkirmishLaunchProjection.TryEnterMatch(em);
@@ -810,6 +816,7 @@ namespace Game.Editor
                         Finish(true, "incompletePackedRenderInitialization");
                         return;
                     }
+                    if (codedSizeCameraActive) { TickCodedSizeCamera(em, session, in match, simulationActive, elapsed); return; }
                     if (Environment.GetEnvironmentVariable("WARLINE_S005_PAID_BUILDING_CLEARANCE_ONLY") == "1" &&
                         Environment.GetEnvironmentVariable("WARLINE_NATIVE_PLACEMENT_CLEARANCE") == "1")
                     {
@@ -959,7 +966,8 @@ namespace Game.Editor
                     return;
                 }
 
-                if (elapsed >= 180f && Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1")
+                if (OwnedPadBoundaryDiagnostic.TryFinish()) return;
+                if (elapsed >= 180f && !OwnedPadBoundaryDiagnostic.Active && Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1")
                 {
                     Finish(abort: false, abortReason: "diagnosticWindowComplete");
                     return;
@@ -1016,8 +1024,15 @@ namespace Game.Editor
             bool simulationActive,
             float elapsed)
         {
+            var traceTiming=EditorTraceTimings.Begin(elapsed);
+            long traceTimingStart=traceTiming!=null?EditorTraceTimings.Now():0, traceTimingTick=traceTimingStart;
+            bool traceTimingCompleted=false;
+            try
+            {
             RecordProductionResolvedSnapshot(em, session, in match, simulationActive, elapsed, "NativeResolvedSnapshot");
+            if(traceTiming!=null)traceTiming.nativeSnapshotMs=EditorTraceTimings.Since(ref traceTimingTick);
             Directory.CreateDirectory(EvidenceDirectory());
+            if(traceTiming!=null)traceTiming.directoryMs=EditorTraceTimings.Since(ref traceTimingTick);
             float clockElapsed = elapsed;
             byte clockPaused = 0;
             if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
@@ -1029,6 +1044,7 @@ namespace Game.Editor
 
             int playerBaseHp = DesignatedBaseHp(em, session, 1);
             int enemyBaseHp = DesignatedBaseHp(em, session, 2);
+            if(traceTiming!=null)traceTiming.baseQueriesMs=EditorTraceTimings.Since(ref traceTimingTick);
             int requests = 0;
             int following = 0;
             int playerUnits = 0;
@@ -1053,6 +1069,8 @@ namespace Game.Editor
                     }
                 }
             }
+
+            if(traceTiming!=null)traceTiming.unitQueryMs=EditorTraceTimings.Since(ref traceTimingTick);
             string line = string.Format(
                 CultureInfo.InvariantCulture,
                 "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6},\"playerBaseHp\":{7},\"enemyBaseHp\":{8},\"playerUnits\":{9},\"pathRequests\":{10},\"pathFollowing\":{11},\"leadX\":{12},\"leadZ\":{13}}}\n",
@@ -1070,26 +1088,101 @@ namespace Game.Editor
                 following,
                 leadX.ToString("0.###", CultureInfo.InvariantCulture),
                 leadZ.ToString("0.###", CultureInfo.InvariantCulture));
-            File.AppendAllText(LiveTracePath(), line);
-            AppendActorDiagnostic(em, elapsed);
+
+            if(traceTiming!=null)traceTiming.traceSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+            OwnedDiagnosticTraceIo.Append(LiveTracePath(), line, true);
+
+            if(traceTiming!=null)traceTiming.traceWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
+            AppendActorDiagnostic(em, elapsed, match.EnemyMainBase);
             AppendInputDiagnostic(em, elapsed);
+            traceTimingCompleted=true;
+            }
+            finally{EditorTraceTimings.Complete(traceTiming,traceTimingStart,traceTimingCompleted);}
+        }
+
+        // Editor-owned diagnostic: reuse the SAME already serialized public sample.
+        private static class OwnedPadBoundaryDiagnostic
+        {
+            static readonly bool enabled=Environment.GetEnvironmentVariable("WARLINE_HOME_PAD_BOUNDARY_DIAGNOSTIC")=="1";
+            static readonly bool inputDiagnostic=Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC")=="1";
+            static object owner;
+            static InputDiagnostic latest;
+            static bool sequenceObserved;
+            internal static bool Active => enabled && productionCanary!=null;
+            internal static void Record(InputDiagnostic value,bool nativePath)
+            {
+                if(!Active||!nativePath)return;
+                if(!inputDiagnostic)throw new InvalidOperationException("Owned pad diagnostic requires existing input diagnostic completion path.");
+                if(!ReferenceEquals(owner,productionCanary))
+                {owner=productionCanary;latest=null;sequenceObserved=false;}
+                latest=value;
+                if(value.padStage!=0)sequenceObserved=true;
+            }
+            internal static bool TryTakeCapture(out InputDiagnostic sample,out string status)
+            {
+                sample=null;status=null;
+                if(!Active||!ReferenceEquals(owner,productionCanary)||latest==null||latest.frame!=Time.frameCount)return false;
+                status=sequenceObserved&&latest.pad?"PadPresent":latest.padStage==8?"SearchStopped":null;
+                if(status==null)return false;
+                sample=latest;latest=null;return true;
+            }
+            internal static bool TryFinish()
+            {
+                if(!TryTakeCapture(out var sample,out string status))return false;
+                Debug.Log("[HomePadBoundaryDiagnostic] result=Captured status="+status+
+                    " frame="+sample.frame+" padStage="+sample.padStage+" actions="+sample.actions+
+                    " elapsed="+sample.elapsed.ToString("R",CultureInfo.InvariantCulture)+" acceptance=Unmeasured");
+                Finish(abort:false,abortReason:"padBoundary:"+status);
+                return true;
+            }
         }
 
         [Serializable]
         private sealed class InputDiagnostic
         {
             public float elapsed;
+            // Diagnostic-only mirrors of existing public planner/touch/receipt state.
+            public float observationTime;
+            public int padStage, airCycleStage, airCycleCount;
+            public Game.UI.Runtime.SkirmishMatchView.NativeHomePadSiteEvidence padSiteEvidence0, padSiteEvidence1, padSiteEvidence2, padSiteEvidence3;
+            public bool padSiteEvidenceSameFrame;
+            public int padTargetId, padActions, padSiteIndex, padFeedbackFrame;
+            public float padDeadline, padReadyAt;
+            public AriaTouchTarget padFocusPlayer, padCatalogTarget, padSite0, padSite1, padSite2, padSite3, padConfirm, padCancel;
+            public byte targetPending, advanceNavigation;
+            public bool airProfile;
+            public float airCycleDeadline;
+            public bool assaultAtBase, enemyDesignatedAlive;
+            public AriaTouchTarget focusEnemy;
+            public byte assaultFocusStage;
+            public int assaultFocusActions, assaultFocusTarget, assaultFocusFrame;
+            public float assaultFocusDeadline;
+            public int lastCompletedTargetId, lastCompletedFrame;
+            public UnityEngine.Vector2 lastCompletedPosition;
+            public byte precisionStage, precisionAttempts;
+            public uint precisionGroup, precisionRoster, precisionBaseline, precisionCurrentSlotGroup;
+            public int precisionSlot, precisionPage, precisionIssueFrame, precisionActions;
+            public float precisionDeadline, precisionReadyAt;
+            public Game.UI.Contracts.UiExpandedPrecisionAttackResult precisionAttack;
             public string phase, intent, observation;
             public int actions, attempts, targetId, observedTargetId, stopReason, pageSeen, navigationStage;
             public float progressAt, objectiveProgressAt, openingUntil;
             public int frame, observationFrame, pageCount, totalGroups, selectedGroups;
             public int assaultMask, attackOrderMask, selectedMask, structureMask;
             public int squadCardMask, squadTargetMask, squadDragMask, airMask;
-            public AriaTouchTarget squad4;
+            public AriaTouchTarget enemyBase, squad4;
+            public Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchEvidence enemyBaseEvidence;
+            public bool enemyBaseEvidenceFrameMatches, enemyBaseEvidenceTargetMatches;
+            public Game.UI.Runtime.MatchHudSquadTouchNavigation.SlotResolutionDiagnostic squad4Resolution;
+            public bool squad4ResolutionFrameMatches, squad4ResolutionTargetMatches, squad4ResolutionPageMatches;
             public uint rosterRevision, sweepRosterRevision;
             public int pagedToAssault, assaultSelecting, structureOrdered, pagesOrdered, homeDefenseStage;
             public bool attackMode, selectionVisible, presentedHomeThreat, mapOpen, placementOpen, approachVisible;
             public float publicApproachDistance, bestApproachDistance;
+            public AriaAssaultMapObservation assaultMap;
+            public byte assaultInspectStage;
+            public int assaultInspectMapIdentity, assaultInspectOpenedFrame;
+            public uint assaultInspectRevision;
             public byte approachBaselineObserved;
             public bool assaultStarted, assaultIssued;
             public int materials, infantry, page, structureAttackUnits;
@@ -1099,6 +1192,13 @@ namespace Game.Editor
 
         private static void AppendInputDiagnostic(EntityManager em, float elapsed)
         {
+            AppendInputDiagnosticToPath(em, elapsed, null);
+        }
+
+        private static void AppendInputDiagnosticToPath(EntityManager em, float elapsed, string ownedOutputPath)
+        {
+            var traceTiming=ownedOutputPath==null?EditorTraceTimings.Current:null;
+            long traceTimingTick=traceTiming!=null?EditorTraceTimings.Now():0;
             using var query = em.CreateEntityQuery(typeof(AriaSkirmishObservationComponent),
                 typeof(AriaSkirmishObservationOwner), typeof(AriaSkirmishPlanComponent));
             if (query.CalculateEntityCount() != 1) return;
@@ -1110,9 +1210,46 @@ namespace Game.Editor
             var input = em.GetComponentData<AriaPlaySessionComponent>(boundary);
             var plan = em.GetComponentData<AriaSkirmishPlanComponent>(storage);
             var target = em.GetComponentData<AriaPlayObservationComponent>(boundary);
+            var squad4Resolution = Game.UI.Runtime.MatchHudSquadTouchNavigation.ReadSlotDiagnostic(4);
+            var enemyBaseEvidence = Game.UI.Runtime.SkirmishMatchView.NativeEnemyBaseTouchSnapshot;
             var sample = new InputDiagnostic
             {
                 elapsed = elapsed,
+                padSiteEvidence0 = SkirmishMatchView.NativeHomePadSite0,
+                padSiteEvidence1 = SkirmishMatchView.NativeHomePadSite1,
+                padSiteEvidence2 = SkirmishMatchView.NativeHomePadSite2,
+                padSiteEvidence3 = SkirmishMatchView.NativeHomePadSite3,
+                padSiteEvidenceSameFrame = SkirmishMatchView.NativeHomePadSite0.collected &&
+                    SkirmishMatchView.NativeHomePadSite1.collected && SkirmishMatchView.NativeHomePadSite2.collected &&
+                    SkirmishMatchView.NativeHomePadSite3.collected && SkirmishMatchView.NativeHomePadSite0.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite1.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite2.frame == view.Frame &&
+                    SkirmishMatchView.NativeHomePadSite3.frame == view.Frame,
+                padTargetId = plan.PadTargetId, padActions = plan.PadAction,
+                padSiteIndex = plan.PadSiteIndex, padFeedbackFrame = plan.PadFeedbackFrame,
+                padDeadline = plan.PadDeadline, padReadyAt = plan.PadReadyAt,
+                padFocusPlayer = view.FocusPlayer, padCatalogTarget = view.AirPad,
+                padSite0 = view.PadSite0, padSite1 = view.PadSite1,
+                padSite2 = view.PadSite2, padSite3 = view.PadSite3,
+                padConfirm = view.PlacementConfirm, padCancel = view.PlacementCancel,
+                padStage = plan.PadStage, targetPending = plan.TargetPending,
+                advanceNavigation = plan.AdvanceNavigation, airProfile = view.AirProfile,
+                airCycleStage = plan.AirCycleStage, airCycleCount = plan.AirCycleCount,
+                airCycleDeadline = plan.AirCycleDeadline,
+                observationTime = view.Time, assaultAtBase = view.AssaultAtBase,
+                enemyDesignatedAlive = view.EnemyDesignatedAlive, focusEnemy = view.FocusEnemy,
+                assaultFocusStage = plan.AssaultFocusStage, assaultFocusActions = plan.AssaultFocusActions,
+                assaultFocusTarget = plan.AssaultFocusTarget, assaultFocusFrame = plan.AssaultFocusFrame,
+                assaultFocusDeadline = plan.AssaultFocusDeadline,
+                lastCompletedTargetId = input.LastCompletedTargetId, lastCompletedFrame = input.LastCompletedFrame,
+                lastCompletedPosition = input.LastCompletedPosition,
+                precisionStage = plan.PrecisionStage, precisionAttempts = plan.PrecisionAttempts,
+                precisionGroup = plan.PrecisionGroup, precisionRoster = plan.PrecisionRoster,
+                precisionBaseline = plan.PrecisionBaseline, precisionCurrentSlotGroup = view.ExpandedGroup(plan.PrecisionSlot),
+                precisionSlot = plan.PrecisionSlot, precisionPage = plan.PrecisionPage,
+                precisionIssueFrame = plan.PrecisionIssueFrame, precisionActions = plan.PrecisionActions,
+                precisionDeadline = plan.PrecisionDeadline, precisionReadyAt = plan.PrecisionReadyAt,
+                precisionAttack = view.PrecisionAttack,
                 phase = input.Phase.ToString(), intent = plan.Intent.ToString(), observation = target.Kind.ToString(),
                 actions = input.Actions, attempts = input.Attempts, targetId = input.TargetId,
                 observedTargetId = target.TargetId, stopReason = input.StopReason,
@@ -1124,13 +1261,38 @@ namespace Game.Editor
                 squadCardMask = view.AvailableSquads, airMask = view.ExpandedAirMask,
                 squadTargetMask = (view.Squad0.Available ? 1 : 0) | (view.Squad1.Available ? 2 : 0) | (view.Squad2.Available ? 4 : 0) | (view.Squad3.Available ? 8 : 0) | (view.Squad4.Available ? 16 : 0),
                 squadDragMask = (view.Squad0.Drag ? 1 : 0) | (view.Squad1.Drag ? 2 : 0) | (view.Squad2.Drag ? 4 : 0) | (view.Squad3.Drag ? 8 : 0) | (view.Squad4.Drag ? 16 : 0),
+                enemyBase = view.EnemyBase, enemyBaseEvidence = enemyBaseEvidence,
+                enemyBaseEvidenceFrameMatches = enemyBaseEvidence.collected && enemyBaseEvidence.frame == view.Frame,
+                enemyBaseEvidenceTargetMatches = enemyBaseEvidence.collected &&
+                    enemyBaseEvidence.target.Id == view.EnemyBase.Id &&
+                    enemyBaseEvidence.target.Position.Equals(view.EnemyBase.Position) &&
+                    enemyBaseEvidence.target.Available == view.EnemyBase.Available &&
+                    enemyBaseEvidence.target.Drag == view.EnemyBase.Drag &&
+                    enemyBaseEvidence.target.DragEnd.Equals(view.EnemyBase.DragEnd) &&
+                    enemyBaseEvidence.target.ScrollTargetId == view.EnemyBase.ScrollTargetId &&
+                    enemyBaseEvidence.target.ScrollDistanceViewports.Equals(view.EnemyBase.ScrollDistanceViewports),
                 squad4 = view.Squad4,
+                squad4Resolution = squad4Resolution,
+                squad4ResolutionFrameMatches = squad4Resolution.collected && squad4Resolution.frame == view.Frame,
+                squad4ResolutionPageMatches = squad4Resolution.collected && squad4Resolution.slotLookupEvaluated &&
+                    squad4Resolution.page == view.ExpandedPageIndex,
+                squad4ResolutionTargetMatches = squad4Resolution.collected &&
+                    squad4Resolution.target.Id == view.Squad4.Id &&
+                    squad4Resolution.target.Available == view.Squad4.Available &&
+                    squad4Resolution.target.Drag == view.Squad4.Drag &&
+                    squad4Resolution.target.Position.Equals(view.Squad4.Position) &&
+                    squad4Resolution.target.DragEnd.Equals(view.Squad4.DragEnd) &&
+                    squad4Resolution.target.ScrollTargetId == view.Squad4.ScrollTargetId &&
+                    squad4Resolution.target.ScrollDistanceViewports.Equals(view.Squad4.ScrollDistanceViewports),
                 rosterRevision = view.ExpandedRosterRevision, sweepRosterRevision = plan.SweepRosterRevision,
                 pagedToAssault = plan.PagedToAssault, assaultSelecting = plan.AssaultSelecting,
                 structureOrdered = plan.StructureOrdered, pagesOrdered = plan.PagesOrdered, homeDefenseStage = plan.HomeDefenseStage,
                 attackMode = view.AttackMode, selectionVisible = view.SelectionVisible, presentedHomeThreat = view.PresentedHomeThreat,
                 mapOpen = view.MapOpen, placementOpen = view.PlacementOpen, approachVisible = view.AssaultDistanceVisible,
                 publicApproachDistance = view.NearestFriendlyObjectiveDistance, bestApproachDistance = plan.BestAssaultDistance,
+                assaultMap = view.AssaultMap, assaultInspectStage = plan.AssaultInspectStage,
+                assaultInspectMapIdentity = plan.AssaultInspectMapIdentity, assaultInspectOpenedFrame = plan.AssaultInspectOpenedFrame,
+                assaultInspectRevision = plan.AssaultInspectRevision,
                 approachBaselineObserved = plan.AssaultDistanceObserved,
                 progressAt = plan.LastProgressAt, objectiveProgressAt = input.LastObjectiveProgressAt,
                 openingUntil = plan.OpeningUntil, assaultStarted = plan.AssaultStarted != 0, assaultIssued = plan.AssaultIssued != 0,
@@ -1140,7 +1302,411 @@ namespace Game.Editor
                 truckCommitted = view.LogisticsTruckCommitted, readiness = view.ReadinessEligible,
                 pad = view.PadPresent, recruit = view.Recruit
             };
-            File.AppendAllText(LiveTracePath() + ".input.jsonl", JsonUtility.ToJson(sample) + "\n");
+
+            if(traceTiming!=null)traceTiming.inputCollectMs=EditorTraceTimings.Since(ref traceTimingTick);
+            string inputOutput=ownedOutputPath ?? (LiveTracePath() + ".input.jsonl");
+            string serializedInput=JsonUtility.ToJson(sample)+"\n";
+            if(traceTiming!=null)traceTiming.inputSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+            OwnedDiagnosticTraceIo.Append(inputOutput, serializedInput, ownedOutputPath == null);
+            if(traceTiming!=null)traceTiming.inputWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
+            OwnedPadBoundaryDiagnostic.Record(sample,ownedOutputPath==null);
+        }
+
+
+
+
+        // Opt-in Editor diagnostic only. Each append is flushed before returning, just as
+        // AppendAllText closes its writer before the caller continues.
+        private static class OwnedDiagnosticTraceIo
+        {
+            static readonly bool enabled = string.Equals(Environment.GetEnvironmentVariable(
+                "WARLINE_EDITOR_PERSISTENT_TRACE_IO"), "1", StringComparison.Ordinal);
+            static OwnedTraceAppendSession session;
+            static bool subscribed;
+
+            internal static void Append(string path, string text, bool nativePath)
+            {
+                if (!enabled || !nativePath || productionCanary == null)
+                {
+                    CloseOwned("FallbackWriter"); // Preserve direct/nonowned access even if it aliases an owned file.
+                    File.AppendAllText(path, text);
+                    return;
+                }
+                try
+                {
+                    string trace = Path.GetFullPath(LiveTracePath());
+                    if (session == null || !session.Matches(productionCanary, trace))
+                    {
+                        CloseOwned("OwnerOrPathChanged");
+                        session = new OwnedTraceAppendSession(productionCanary,
+                            productionCanary.Request.ArtifactDirectory, trace);
+                        EditorApplication.playModeStateChanged += OnPlayMode;
+                        EditorApplication.quitting += OnQuit;
+                        AssemblyReloadEvents.beforeAssemblyReload += OnReload;
+                        subscribed = true;
+                    }
+                    session.Append(path, text);
+                }
+                catch (Exception failure) { CloseAfterFailure(failure); throw; }
+            }
+
+            static void OnPlayMode(PlayModeStateChange state)
+            {
+                if (state == PlayModeStateChange.ExitingPlayMode) CloseOwned("ExitingPlayMode");
+            }
+            static void OnQuit() => CloseOwned("EditorQuitting");
+            static void OnReload() => CloseOwned("BeforeAssemblyReload");
+            static void CloseAfterFailure(Exception failure)
+            {
+                try { CloseOwned("AppendFailure", failure.GetType().Name); }
+                catch (OutOfMemoryException) { throw; }
+                catch { /* Preserve the original append failure. */ }
+            }
+            internal static void Close() => CloseOwned("Explicit");
+            internal static void CloseOwned(string reason, string priorFailure = null)
+            {
+                var owned = session;
+                session = null;
+                if (subscribed)
+                {
+                    EditorApplication.playModeStateChanged -= OnPlayMode;
+                    EditorApplication.quitting -= OnQuit;
+                    AssemblyReloadEvents.beforeAssemblyReload -= OnReload;
+                    subscribed = false;
+                }
+                if (owned == null) return;
+                int opened = owned.OpenedStreamCount;
+                long started = System.Diagnostics.Stopwatch.GetTimestamp();
+                Exception closeFailure = null;
+                try { owned.Dispose(); }
+                catch (Exception failure) { closeFailure = failure; throw; }
+                finally
+                {
+                    double elapsed = (System.Diagnostics.Stopwatch.GetTimestamp() - started) *
+                        1000d / System.Diagnostics.Stopwatch.Frequency;
+                    // Stopwatch ends before logging. This is lifecycle close, not Finish/UI duration.
+                    string failure = closeFailure?.GetType().Name ?? priorFailure ?? "None";
+                    try
+                    {
+                        Debug.Log("[OwnedDiagnosticTraceIoClose] result=" + (failure == "None" ? "Closed" : "Failed") +
+                            " elapsedMs=" + elapsed.ToString("R", CultureInfo.InvariantCulture) +
+                            " openedStreams=" + opened + " reason=" + reason + " failure=" + failure);
+                    }
+                    catch (Exception loggingFailure) when (!(loggingFailure is OutOfMemoryException))
+                    {
+                        // A secondary logging failure must not replace the owned I/O failure.
+                        if (closeFailure == null && priorFailure == null) throw;
+                    }
+                }
+            }
+        }
+
+        private sealed class OwnedTraceAppendSession : IDisposable
+        {
+            static readonly string[] suffixes = { "", ".actors.jsonl", ".combat.jsonl", ".input.jsonl" };
+            static readonly StringComparison pathComparison = Path.DirectorySeparatorChar == '\\'
+                ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            readonly object owner;
+            readonly string trace;
+            readonly string root;
+            readonly Dictionary<string, StreamWriter> writers =
+                new Dictionary<string, StreamWriter>(StringComparer.Ordinal);
+            bool disposed;
+            int openedStreamCount;
+            internal int OpenedStreamCount => openedStreamCount;
+            internal OwnedTraceAppendSession(object owner, string directory, string trace)
+            {
+                if (owner == null) throw new ArgumentNullException(nameof(owner));
+                this.owner = owner;
+                root = Path.GetFullPath(directory).TrimEnd(Path.DirectorySeparatorChar,
+                    Path.AltDirectorySeparatorChar);
+                this.trace = Path.GetFullPath(trace);
+                if (!string.Equals(Path.GetDirectoryName(this.trace), root, pathComparison))
+                    throw new InvalidDataException("Trace must be directly inside the owned artifact directory.");
+                // No new directories, arbitrary names, or inferred attempt ownership.
+                ValidateAncestors();
+            }
+            void ValidateAncestors()
+            {
+                // Fresh observations at each of at most four stream opens, not a cached stat proof.
+                for (var current = new DirectoryInfo(root); current != null; current = current.Parent)
+                {
+                    FileAttributes attributes = File.GetAttributes(current.FullName);
+                    if ((attributes & FileAttributes.Directory) == 0 ||
+                        (attributes & FileAttributes.ReparsePoint) != 0)
+                        throw new InvalidDataException("Reparse/non-directory diagnostic ancestor rejected.");
+                }
+            }
+            internal bool Matches(object owner, string trace) =>
+                !disposed && ReferenceEquals(this.owner, owner) &&
+                string.Equals(this.trace, Path.GetFullPath(trace), StringComparison.Ordinal);
+
+            internal void Append(string path, string text)
+            {
+                if (disposed) throw new ObjectDisposedException(nameof(OwnedTraceAppendSession));
+                try
+                {
+                    string full = Path.GetFullPath(path);
+                    // Return canonical key: aliases cannot open additional streams.
+                    string key = null;
+                    foreach (string suffix in suffixes)
+                        if (string.Equals(full, trace + suffix, pathComparison)) { key = trace + suffix; break; }
+                    if (key == null) throw new InvalidDataException("Unowned diagnostic output rejected.");
+                    if (!writers.TryGetValue(key, out var writer))
+                    {
+                        if (writers.Count >= 4) throw new InvalidOperationException("Four diagnostic streams maximum.");
+                        ValidateAncestors();
+                        try
+                        {
+                            if ((File.GetAttributes(key) & FileAttributes.ReparsePoint) != 0)
+                                throw new InvalidDataException("Reparse diagnostic output rejected.");
+                        }
+                        catch (FileNotFoundException) { } // Only absent leaf permits creation. No File.Exists suppression.
+                        FileStream stream = null;
+                        try
+                        {
+                            stream = new FileStream(key, FileMode.Append, FileAccess.Write, FileShare.Read);
+                            writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false), 1024);
+                            writers.Add(key, writer);
+                            openedStreamCount++;
+                            stream = null; // Dictionary owns the writer after successful insertion.
+                        }
+                        finally { stream?.Dispose(); }
+                    }
+                    writer.Write(text);
+                    writer.Flush(); // Same per-append visibility; no delayed evidence buffer.
+                }
+                catch
+                {
+                    try { Dispose(); } catch (OutOfMemoryException) { throw; } catch { /* Retain the original failure. */ }
+                    throw;
+                }
+            }
+            public void Dispose()
+            {
+                if (disposed) return;
+                disposed = true;
+                Exception first = null;
+                foreach (var writer in writers.Values)
+                    try { writer.Dispose(); } catch (Exception failure) { if (first == null || failure is OutOfMemoryException) first = failure; }
+                writers.Clear();
+                if (first != null) System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(first).Throw();
+            }
+        }
+
+        // Explicit, bounded editor-only attribution. Default evidence and gameplay are unchanged.
+        [Serializable] private sealed class EditorTraceTimingRow
+        {
+            public int frame;
+            public float simulationElapsed;
+            public double observationTime, overallMs, nativeSnapshotMs, directoryMs, baseQueriesMs,
+                unitQueryMs, traceSerializeMs, traceWriteMs, actorQueryMs, actorCollectSerializeMs,
+                actorWriteMs, combatCollectMs, combatSerializeMs, combatWriteMs,
+                inputCollectMs, inputSerializeMs, inputWriteMs;
+            public bool completed;
+        }
+        [Serializable] private sealed class EditorTraceTimingEnvelope
+        {
+            public int schema=1, maximumSamples=1024, omittedSamples;
+            public string scope="EditorAppendTraceSubstepAttributionOnly", tracePath, closeReason;
+            public bool gameplayChanged=false, qualificationClaim=false;
+            public EditorTraceTimingRow[] samples;
+        }
+        private static class EditorTraceTimings
+        {
+            internal const int MaximumSamples=1024;
+            internal static EditorTraceTimingRow Current;
+            // Cached once per editor domain; fresh owned diagnostic runs use fresh Editors.
+            static readonly bool enabled=string.Equals(Environment.GetEnvironmentVariable("WARLINE_EDITOR_TRACE_TIMINGS"),"1",StringComparison.Ordinal);
+            static readonly System.Collections.Generic.List<EditorTraceTimingRow> rows=new System.Collections.Generic.List<EditorTraceTimingRow>();
+            static string trace;
+            static int omitted;
+            static bool armed, closed;
+            internal static long Now()=>System.Diagnostics.Stopwatch.GetTimestamp();
+            internal static double Since(ref long start)
+            {
+                long end=Now();double milliseconds=(end-start)*1000d/System.Diagnostics.Stopwatch.Frequency;
+                start=end;return milliseconds;
+            }
+            internal static EditorTraceTimingRow Begin(float elapsed)
+            {
+                if(!enabled||closed)return null;
+                if(!armed)
+                {
+                    trace=Path.GetFullPath(LiveTracePath());
+                    string allowed=Path.GetFullPath(EvidenceDirectory()).TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar;
+                    if(!trace.StartsWith(allowed,StringComparison.OrdinalIgnoreCase))
+                        throw new InvalidOperationException("Trace timing requires existing owned evidence path");
+                    armed=true;
+                    EditorApplication.playModeStateChanged+=OnPlayMode;
+                    EditorApplication.quitting+=OnQuit;
+                }
+                if(rows.Count>=MaximumSamples){omitted++;return null;}
+                return Current=new EditorTraceTimingRow{frame=Time.frameCount,simulationElapsed=elapsed,observationTime=Time.realtimeSinceStartupAsDouble};
+            }
+            internal static void Complete(EditorTraceTimingRow row,long start,bool completed)
+            {
+                Current=null;
+                if(row==null)return;
+                row.overallMs=Since(ref start);row.completed=completed;rows.Add(row);
+            }
+            static void OnPlayMode(PlayModeStateChange state)
+            {
+                if(state==PlayModeStateChange.ExitingPlayMode)Flush("ExitingPlayMode");
+            }
+            static void OnQuit()=>Flush("EditorQuitting");
+            internal static void Flush(string reason)
+            {
+                if(!enabled||!armed||closed)return;
+                closed=true;
+                EditorApplication.playModeStateChanged-=OnPlayMode;
+                EditorApplication.quitting-=OnQuit;
+                try
+                {
+                    var envelope=new EditorTraceTimingEnvelope{tracePath=trace,closeReason=reason,
+                        omittedSamples=omitted,samples=rows.ToArray()};
+                    byte[] bytes=new System.Text.UTF8Encoding(false).GetBytes(JsonUtility.ToJson(envelope));
+                    if(bytes.Length>2*1024*1024)throw new InvalidDataException("Bounded trace timing output exceeds2MiB");
+                    using(var stream=new FileStream(trace+".editor-timings.json",FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                        stream.Write(bytes,0,bytes.Length);
+                    Debug.Log("[EditorAppendTraceTimings] result=Captured samples="+rows.Count+" omitted="+omitted+
+                        " scope=DiagnosticOnly nativeEvidenceUnchanged=1");
+                }
+                catch(Exception failure) when(!(failure is OutOfMemoryException))
+                {
+                    Debug.LogWarning("[EditorAppendTraceTimings] result=Unavailable reason="+failure.GetType().Name+
+                        " scope=DiagnosticOnly nativeEvidenceUnchanged=1");
+                }
+                finally{rows.Clear();}
+            }
+        }
+
+        [Serializable] private sealed class CombatTargetDiagnostic
+        {
+            public int index, version;
+            public bool exists, owned, sessionMatches, hasTransform, hasHealth, hasPolicy;
+            public string stableId, sessionId, role;
+            public byte faction, nativeFaction, isStructure, domain;
+            public bool hasFaction;
+            public Vector3 position;
+            public float health, distance;
+            public bool fogEvaluated, fogVisible, policyEvaluated, policyAllows;
+            // These are sampled predicates, not the historical attack-job branch.
+            public bool losEvaluated, nativeRejectionCollected;
+        }
+        [Serializable] private sealed class ActorCombatDiagnostic
+        {
+            public int frame;
+            public float elapsed;
+            public string id, sessionId, role;
+            public byte faction, nativeFaction;
+            public bool hasFaction, hasAcceptedIntent;
+            public byte acceptedIntentOrder, engageCommanded;
+            public int acceptedTargetIndex, acceptedTargetVersion;
+            public int2 engageCell;
+            public Vector3 engagePosition;
+            public Vector3 position;
+            public bool hasAttackMove, hasEngage, hasAttack, hasCombat, capReached;
+            public int2 moveDestination;
+            public Vector3 movePosition;
+            public float attackRange;
+            public int damage, aggroRangeCells;
+            public byte canAttack, autoEngage, allowedDomains;
+            public CombatTargetDiagnostic engagedTarget, designatedEnemyBase;
+        }
+        private static CombatTargetDiagnostic ReadCombatTargetDiagnostic(
+            EntityManager em, Entity actor, in SkirmishAttemptOwnedComponent owner, Entity target)
+        {
+            var result = new CombatTargetDiagnostic
+            { index = target.Index, version = target.Version, exists = em.Exists(target) };
+            if (!result.exists) return result;
+            result.hasFaction = em.HasComponent<Faction>(target);
+            if (result.hasFaction) result.nativeFaction = em.GetComponentData<Faction>(target).Id;
+            result.owned = em.HasComponent<SkirmishAttemptOwnedComponent>(target);
+            if (result.owned)
+            {
+                var targetOwner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+                result.stableId = targetOwner.StableObjectId.ToString();
+                result.sessionId = targetOwner.SessionId.ToString();
+                result.sessionMatches = targetOwner.SessionId.Equals(owner.SessionId);
+                result.faction = targetOwner.FactionId; result.isStructure = targetOwner.IsStructure;
+                result.fogEvaluated = true;
+                result.fogVisible = SkirmishFogService.IsVisibleToFaction(em, target, owner.FactionId);
+            }
+            if (em.HasComponent<SkirmishUnitRoleComponent>(target))
+                result.role = em.GetComponentData<SkirmishUnitRoleComponent>(target).Role.ToString();
+            result.hasTransform = em.HasComponent<LocalTransform>(target);
+            if (result.hasTransform)
+            {
+                result.position = em.GetComponentData<LocalTransform>(target).Position;
+                result.distance = math.distance(em.GetComponentData<LocalTransform>(actor).Position.xz,
+                    new float2(result.position.x, result.position.z));
+            }
+            result.hasHealth = em.HasComponent<UnitHealth>(target);
+            if (result.hasHealth) result.health = em.GetComponentData<UnitHealth>(target).Current;
+            result.hasPolicy = em.HasComponent<CombatTargetPolicy>(target);
+            if (result.hasPolicy)
+            {
+                var policy = em.GetComponentData<CombatTargetPolicy>(target);
+                result.domain = (byte)policy.Domain;
+                if (em.HasComponent<CombatTargetPolicy>(actor))
+                {
+                    result.policyEvaluated = true;
+                    if (result.owned) policy.Visible = 1;
+                    result.policyAllows = (!result.owned || (result.sessionMatches && result.fogVisible)) &&
+                        CombatTargetPolicyUtility.Allows(true, em.GetComponentData<CombatTargetPolicy>(actor), true, policy);
+                }
+            }
+            return result;
+        }
+        private static ActorCombatDiagnostic ReadActorCombatDiagnostic(
+            EntityManager em, Entity actor, in SkirmishAttemptOwnedComponent owner,
+            ActorDiagnostic observed, Entity enemyBase)
+        {
+            var result = new ActorCombatDiagnostic
+            {
+                frame = observed.frame, elapsed = observed.elapsed, id = observed.id, role = observed.role,
+                faction = owner.FactionId, sessionId = owner.SessionId.ToString(), position = observed.position,
+                hasAttackMove = em.HasComponent<AttackMoveOrder>(actor),
+                hasEngage = em.HasComponent<EngageTarget>(actor),
+                hasAttack = em.HasComponent<UnitAttack>(actor), hasCombat = em.HasComponent<UnitCombat>(actor)
+            };
+            result.hasFaction = em.HasComponent<Faction>(actor);
+            if (result.hasFaction) result.nativeFaction = em.GetComponentData<Faction>(actor).Id;
+            result.hasAcceptedIntent = em.HasComponent<SkirmishMoveIntentComponent>(actor);
+            if (result.hasAcceptedIntent)
+            {
+                var intent = em.GetComponentData<SkirmishMoveIntentComponent>(actor);
+                result.acceptedIntentOrder = (byte)intent.Order;
+                result.acceptedTargetIndex = intent.AttackTarget.Index; result.acceptedTargetVersion = intent.AttackTarget.Version;
+            }
+            if (result.hasEngage)
+            {
+                var engage = em.GetComponentData<EngageTarget>(actor);
+                result.engageCell = engage.Cell; result.engagePosition = engage.Position; result.engageCommanded = engage.IsCommanded;
+            }
+            if (result.hasAttackMove)
+            {
+                var order = em.GetComponentData<AttackMoveOrder>(actor);
+                result.moveDestination = order.Destination; result.movePosition = order.Position;
+            }
+            if (result.hasAttack)
+            {
+                var attack = em.GetComponentData<UnitAttack>(actor);
+                result.attackRange = attack.Range; result.damage = attack.Damage;
+            }
+            if (result.hasCombat)
+            {
+                var combat = em.GetComponentData<UnitCombat>(actor);
+                result.aggroRangeCells = combat.AggroRangeCells;
+                result.canAttack = combat.CanAttack; result.autoEngage = combat.AutoEngage;
+            }
+            if (em.HasComponent<CombatTargetPolicy>(actor))
+                result.allowedDomains = (byte)em.GetComponentData<CombatTargetPolicy>(actor).AllowedTargets;
+            result.engagedTarget = ReadCombatTargetDiagnostic(em, actor, owner,
+                result.hasEngage ? em.GetComponentData<EngageTarget>(actor).Target : Entity.Null);
+            result.designatedEnemyBase = ReadCombatTargetDiagnostic(em, actor, owner, enemyBase);
+            return result;
         }
 
         [Serializable]
@@ -1162,12 +1728,22 @@ namespace Game.Editor
             public float cargoOil, cargoFuel;
         }
 
-        private static void AppendActorDiagnostic(EntityManager em, float elapsed)
+        private static void AppendActorDiagnostic(EntityManager em, float elapsed, Entity enemyBase = default)
         {
+            AppendActorDiagnosticToPath(em, elapsed, enemyBase, null);
+        }
+
+        private static void AppendActorDiagnosticToPath(EntityManager em, float elapsed, Entity enemyBase, string ownedTracePath)
+        {
+            var traceTiming=ownedTracePath==null?EditorTraceTimings.Current:null;
+            long traceTimingTick=traceTiming!=null?EditorTraceTimings.Now():0;
             using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
                 typeof(SkirmishUnitRoleComponent), typeof(LocalTransform));
             using var entities = query.ToEntityArray(Allocator.Temp);
+            if(traceTiming!=null)traceTiming.actorQueryMs=EditorTraceTimings.Since(ref traceTimingTick);
             var lines = new System.Text.StringBuilder();
+            var combatSamples = Game.UI.Runtime.SkirmishMatchView.NativeCombatEvidenceEnabled
+                ? new System.Collections.Generic.List<ActorCombatDiagnostic>(16) : null;
             foreach (var unit in entities)
             {
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
@@ -1216,8 +1792,37 @@ namespace Game.Editor
                     sample.cargoOil = cargo.CargoOilBarrels; sample.cargoFuel = cargo.CargoFuelBarrels;
                 }
                 lines.AppendLine(JsonUtility.ToJson(sample));
+                if (combatSamples != null && owned.FactionId == 1 && owned.IsStructure == 0 &&
+                    em.HasComponent<SkirmishRoleOverlayComponent>(unit))
+                {
+                    var overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(unit);
+                    if (overlay.Damage > 0 && (overlay.TargetDomains & SkirmishTargetDomain.Structure) != 0)
+                    {
+                        if (combatSamples.Count < 16)
+                        {
+                            long combatStart=traceTiming!=null?EditorTraceTimings.Now():0;
+                            combatSamples.Add(ReadActorCombatDiagnostic(em, unit, owned, sample, enemyBase));
+                            if(traceTiming!=null)traceTiming.combatCollectMs+=EditorTraceTimings.Since(ref combatStart);
+                        }
+                        else combatSamples[15].capReached = true;
+                    }
+                }
             }
-            File.AppendAllText(LiveTracePath() + ".actors.jsonl", lines.ToString());
+
+            if(traceTiming!=null)traceTiming.actorCollectSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+            if(traceTiming!=null)traceTiming.actorCollectSerializeMs-=traceTiming.combatCollectMs;
+            OwnedDiagnosticTraceIo.Append((ownedTracePath ?? LiveTracePath()) + ".actors.jsonl", lines.ToString(), ownedTracePath == null);
+            if(traceTiming!=null)traceTiming.actorWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
+            if (combatSamples != null && combatSamples.Count > 0)
+            {
+                var combatLines = new System.Text.StringBuilder();
+                foreach (var combatSample in combatSamples)
+                    combatLines.AppendLine(JsonUtility.ToJson(combatSample));
+
+            if(traceTiming!=null)traceTiming.combatSerializeMs=EditorTraceTimings.Since(ref traceTimingTick);
+                OwnedDiagnosticTraceIo.Append((ownedTracePath ?? LiveTracePath()) + ".combat.jsonl", combatLines.ToString(), ownedTracePath == null);
+            if(traceTiming!=null)traceTiming.combatWriteMs=EditorTraceTimings.Since(ref traceTimingTick);
+            }
         }
 
         private static int DesignatedBaseHp(EntityManager em, Entity session, byte faction)
@@ -1263,6 +1868,7 @@ namespace Game.Editor
             string directory = Path.GetDirectoryName(path);
             if (!string.IsNullOrEmpty(directory))
                 Directory.CreateDirectory(directory);
+            OwnedDiagnosticTraceIo.CloseOwned("ResetLiveTrace");
             File.WriteAllText(path, string.Empty);
         }
 
@@ -1276,9 +1882,13 @@ namespace Game.Editor
 
         private static void Finish(bool abort, string abortReason)
         {
+            if(codedSizeCameraActive) { FinishCodedSizeCamera(false,abortReason);return; }
             StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
+            try { OwnedDiagnosticTraceIo.CloseOwned("Finish"); }
+            catch (Exception ioError) when (!(ioError is OutOfMemoryException))
+            { abort = true; abortReason = "diagnosticAppendClose:" + ioError.GetType().Name; Debug.LogError(ioError); }
             EditorApplication.update -= Tick;
             RestoreBackgroundInput();
             StopS004ManualProbe();
@@ -1316,14 +1926,115 @@ namespace Game.Editor
             if (completed.IsFaulted || completed.IsCanceled)
             {
                 Debug.LogError("[SkirmishSourceFingerprint] result=Failed error=" + completed.Exception);
-                FinishEvidence(true, "candidateSourceFingerprintFailed", string.Empty);
+                FinishEvidenceOrScheduleOwnedFailure(true, "candidateSourceFingerprintFailed", string.Empty);
                 return;
             }
-            FinishEvidence(finishAbort, finishAbortReason, completed.Result);
+            FinishEvidenceOrScheduleOwnedFailure(finishAbort, finishAbortReason, completed.Result);
         }
+
+
+        // Evidence failures must not strand the already-latched owned Finish.
+        private static void RunFinishEvidenceBoundary(Action evidence,Action<Exception> report,Action end,
+            Action stop,Action exitPlay,Action requestFailedQuit)
+        {
+            try{evidence();}
+            catch(Exception failure) when(!(failure is OutOfMemoryException))
+            {
+                try{report(failure);}
+                finally
+                {
+                    try{end();}
+                    finally
+                    {
+                        try{stop();}
+                        finally
+                        {
+                            try{exitPlay();}
+                            finally{requestFailedQuit();}
+                        }
+                    }
+                }
+            }
+        }
+        private static void FinishEvidenceOrScheduleOwnedFailure(bool abort,string reason,string source)
+            =>RunFinishEvidenceBoundary(()=>FinishEvidence(abort,reason,source),
+                error=>Debug.LogError("[SkirmishFinishEvidenceFailure] result=Failed original="+error),
+                AriaCommandEvidence.End,()=>UiShellRuntimeGateway.StopAriaPlay(),
+                ()=>EditorApplication.ExitPlaymode(),()=>RequestQuitIfAsked(2));
+
+        private static void RequireOrdinaryRunLogDirectory(string directory)
+        {
+            for(var current=new DirectoryInfo(directory);current!=null;current=current.Parent)
+            {
+                var attributes=File.GetAttributes(current.FullName);
+                if((attributes&FileAttributes.Directory)==0||(attributes&FileAttributes.ReparsePoint)!=0)
+                    throw new InvalidDataException("Owned run-log ordinary directory ancestry required.");
+            }
+        }
+        private static void RequireFreshRunLogDestination(string path)
+        {
+            try{File.GetAttributes(path);throw new IOException("Owned run-log destination already exists.");}
+            catch(FileNotFoundException){}
+            catch(DirectoryNotFoundException){}
+        }
+        // Same installed UTF8-no-BOM replacement bytes. Only short owned opens;
+        // existing File.Copy transfers to/from the long actual evidence path.
+        private static void WriteRunLogInOwnedAttempt(string attemptRoot,string candidate,string output,string text)
+        {
+            string root=Path.GetFullPath(attemptRoot).TrimEnd(Path.DirectorySeparatorChar);
+            string destination=Path.GetFullPath(output),parent=Path.GetDirectoryName(destination);
+            if(!System.Text.RegularExpressions.Regex.IsMatch(candidate??"","^[a-f0-9]{64}$")||
+                !string.Equals(parent,Path.Combine(root,"candidates",candidate),StringComparison.Ordinal)||
+                !System.Text.RegularExpressions.Regex.IsMatch(Path.GetFileName(destination),"^[a-z0-9][a-z0-9_.-]*-log[.]txt$"))
+                throw new InvalidDataException("Exact owned candidate run-log destination required.");
+            RequireOrdinaryRunLogDirectory(parent);RequireFreshRunLogDestination(destination);
+            string token=Guid.NewGuid().ToString("N");
+            string temporary=Path.Combine(root,".run-log-"+token+".tmp");
+            string verified=Path.Combine(root,".run-log-"+token+".verified");
+            Exception originalFailure=null;
+            try
+            {
+                RequireOrdinaryRunLogDirectory(root);
+                using(var stream=new FileStream(temporary,FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                using(var writer=new StreamWriter(stream,new System.Text.UTF8Encoding(false)))
+                {writer.Write(text);writer.Flush();stream.Flush(true);}
+                byte[] expected=File.ReadAllBytes(temporary);
+                RequireOrdinaryRunLogDirectory(parent);RequireFreshRunLogDestination(destination);
+                File.Copy(temporary,destination,false);
+                if((File.GetAttributes(destination)&(FileAttributes.Directory|FileAttributes.ReparsePoint))!=0)
+                    throw new InvalidDataException("Owned copied run-log must be an ordinary file.");
+                RequireOrdinaryRunLogDirectory(root);
+                File.Copy(destination,verified,false);
+                byte[] actual=File.ReadAllBytes(verified);
+                bool same=expected.Length==actual.Length;
+                for(int i=0;same&&i<expected.Length;i++)same=expected[i]==actual[i];
+                if(!same)throw new IOException("Owned copied run-log bytes differ.");
+            }
+            catch(Exception failure){originalFailure=failure;throw;}
+            finally
+            {
+                Exception cleanupFailure=null;
+                foreach(string path in new[]{verified,temporary})
+                    try
+                    {
+                        if(!File.Exists(path))continue;
+                        RequireOrdinaryRunLogDirectory(root);
+                        if((File.GetAttributes(path)&FileAttributes.ReparsePoint)!=0)
+                            throw new InvalidDataException("Owned temporary run-log reparse cleanup refused.");
+                        File.Delete(path);
+                    }
+                    catch(Exception cleanup) when(!(cleanup is OutOfMemoryException))
+                    {cleanupFailure=cleanupFailure??cleanup;Debug.LogError("[SkirmishRunLogTemporaryCleanup] result=Failed error="+cleanup);}
+                // Preserve the primary error; cleanup failure cannot become success.
+                if(originalFailure==null&&cleanupFailure!=null)throw cleanupFailure;
+            }
+        }
+
 
         private static void FinishEvidence(bool abort, string abortReason, string currentSourceHash)
         {
+            OwnedDiagnosticTraceIo.CloseOwned("FinishEvidence");
+            EditorTraceTimings.Flush("FinishEvidence");
             try { RecordProductionBatchFingerprint("End",currentSourceHash,productionBatchFinishHashMilliseconds); }
             catch(Exception fingerprintError) { abort=true;abortReason="productionBatchFingerprint:"+fingerprintError.GetType().Name;Debug.LogError(fingerprintError); }
             if (currentSourceHash != SessionState.GetString(CandidateHashKey, ""))
@@ -1333,13 +2044,7 @@ namespace Game.Editor
             }
             SessionState.SetBool(Key, false);
             SessionState.SetFloat(PlayingSinceKey, 0f);
-            string previous = SessionState.GetString("Warline.AriaPlayValidation", "");
-            Environment.SetEnvironmentVariable(
-                "WARLINE_VALIDATION_SAVE_ROOT",
-                string.IsNullOrEmpty(previous) ? null : previous);
-            string backgroundPrevious = SessionState.GetString(BackgroundPreviousKey, "");
-            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",
-                string.IsNullOrEmpty(backgroundPrevious) ? null : backgroundPrevious);
+            RecordProductionProfileBeforeRestoreAndResetEnvironment();
 
             if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1")
             {
@@ -1523,7 +2228,9 @@ namespace Game.Editor
                 counted ? 1 : 0,
                 error ?? string.Empty,
                 row ?? string.Empty);
-            File.WriteAllText(logAbsolute, log);
+            if(productionCanary==null)File.WriteAllText(logAbsolute,log);
+            else WriteRunLogInOwnedAttempt(productionCanary.Request.ArtifactDirectory,
+                (string)productionCanary.Request.Job["candidate_sha256"],logAbsolute,log);
             if (appended)
                 Debug.Log(log.Trim());
             else
@@ -1601,6 +2308,7 @@ namespace Game.Editor
             EditorApplication.update -= FinishQuitAfterPlayMode;
             try
             {
+                CompleteCodedSizeCameraAfterOwnedPlay();
                 RestoreS004EditorJourneyOptions();
                 RestoreProductionCanaryAfterOwnedPlay();
             }

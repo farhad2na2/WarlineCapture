@@ -52,6 +52,31 @@ namespace Game.Configs
 
         public IReadOnlyList<SkirmishBattleCatalogEntry> Entries => entries;
 
+        // Non-Standard choices are validation candidates only until per-size publication lands.
+        // Authority is the existing disposable catalog scope, never a caller/environment flag.
+        public static bool IsMissionSizeSelectionAvailable(string catalogId,string definitionId,int version,
+            Game.Skirmish.Contracts.SkirmishSizeId size)
+        {
+            if(size==Game.Skirmish.Contracts.SkirmishSizeId.Standard)return true;
+            if(size!=Game.Skirmish.Contracts.SkirmishSizeId.War&&size!=Game.Skirmish.Contracts.SkirmishSizeId.LargeWar)return false;
+#if UNITY_EDITOR
+            if(editorValidationCatalog==null)return false;
+            var authored=SkirmishExpansionCatalogConfig.Load();
+            if(authored==null||!authored.TryGetDefinition(catalogId,out var definition)||
+                definition.DefinitionId!=definitionId||definition.ContentVersion!=version)return false;
+            int matches=0;
+            foreach(var row in editorValidationCatalog.Entries)
+                if(row.ScenarioId==catalogId)
+                {
+                    if(!row.IsPlayable||row.DefinitionId!=definitionId||row.ContentVersion!=version)return false;
+                    matches++;
+                }
+            return matches==1;
+#else
+            return false;
+#endif
+        }
+
         public static SkirmishBattleCatalogConfig Load()
         {
 #if UNITY_EDITOR

@@ -1,0 +1,519 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf57a3e5e5b455b8bf4ee0258b3ad9d, type: 3}
+  m_Name: Layout_S074
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMapLayoutConfig
+  layoutId: layout.s074.measured-pad-candidate.v2
+  operationMapId: opmap.skirmish.refinerydistrict_prepared
+  contentVersion: 1
+  contentHash: logical.refinement.v1.042047aeea0398726fac1370ace2dcfa024b9b3c0140e00c97b8ff6cde150f9d
+  worldWidthMetres: 577
+  worldDepthMetres: 234.5
+  originX: 400
+  originZ: 300
+  cellSize: 1
+  anchors:
+  - AnchorId: anchor.pilot.base.player
+    RoleId: base.player
+    NormalizedU: 0.06239168
+    NormalizedV: 0.23880596
+    WorldX: 436
+    WorldZ: 356
+  - AnchorId: anchor.pilot.base.enemy
+    RoleId: base.enemy
+    NormalizedU: 0.6724437
+    NormalizedV: 0.23880596
+    WorldX: 788
+    WorldZ: 356
+  - AnchorId: anchor.pilot.staging.player
+    RoleId: staging.player
+    NormalizedU: 0.110918544
+    NormalizedV: 0.23880596
+    WorldX: 464
+    WorldZ: 356
+  - AnchorId: anchor.pilot.staging.enemy
+    RoleId: staging.enemy
+    NormalizedU: 0.7209705
+    NormalizedV: 0.23880596
+    WorldX: 816
+    WorldZ: 356
+  - AnchorId: anchor.pilot.spawn.infantry.player
+    RoleId: spawn.infantry.player
+    NormalizedU: 0.072790295
+    NormalizedV: 0.13646056
+    WorldX: 442
+    WorldZ: 332
+  - AnchorId: anchor.pilot.spawn.infantry.enemy
+    RoleId: spawn.infantry.enemy
+    NormalizedU: 0.6828423
+    NormalizedV: 0.13646056
+    WorldX: 794
+    WorldZ: 332
+  - AnchorId: anchor.pilot.spawn.vehicle.player
+    RoleId: spawn.vehicle.player
+    NormalizedU: 0.1490468
+    NormalizedV: 0.15351813
+    WorldX: 486
+    WorldZ: 336
+  - AnchorId: anchor.pilot.spawn.vehicle.enemy
+    RoleId: spawn.vehicle.enemy
+    NormalizedU: 0.75909877
+    NormalizedV: 0.15351813
+    WorldX: 838
+    WorldZ: 336
+  - AnchorId: anchor.pilot.rally.player
+    RoleId: rally.player
+    NormalizedU: 0.1594454
+    NormalizedV: 0.28997868
+    WorldX: 492
+    WorldZ: 368
+  - AnchorId: anchor.pilot.rally.enemy
+    RoleId: rally.enemy
+    NormalizedU: 0.7694974
+    NormalizedV: 0.28997868
+    WorldX: 844
+    WorldZ: 368
+  - AnchorId: anchor.pilot.service.player
+    RoleId: service.player
+    NormalizedU: 0.1559792
+    NormalizedV: 0.3411514
+    WorldX: 490
+    WorldZ: 380
+  - AnchorId: anchor.pilot.service.enemy
+    RoleId: service.enemy
+    NormalizedU: 0.7660312
+    NormalizedV: 0.3411514
+    WorldX: 842
+    WorldZ: 380
+  - AnchorId: anchor.pilot.air.player
+    RoleId: air.player
+    NormalizedU: 0.06759099
+    NormalizedV: 0.3411514
+    WorldX: 439
+    WorldZ: 380
+  - AnchorId: anchor.pilot.air.enemy
+    RoleId: air.enemy
+    NormalizedU: 0.677643
+    NormalizedV: 0.3411514
+    WorldX: 791
+    WorldZ: 380
+  - AnchorId: anchor.pilot.economy.player
+    RoleId: economy.player
+    NormalizedU: 0.13171577
+    NormalizedV: 0.3411514
+    WorldX: 476
+    WorldZ: 380
+  - AnchorId: anchor.pilot.economy.enemy
+    RoleId: economy.enemy
+    NormalizedU: 0.74176776
+    NormalizedV: 0.3411514
+    WorldX: 828
+    WorldZ: 380
+  - AnchorId: anchor.pilot.supply.expansion.a
+    RoleId: supply.expansion.a
+    NormalizedU: 0.32443675
+    NormalizedV: 0.11940298
+    WorldX: 587.2
+    WorldZ: 328
+  - AnchorId: anchor.pilot.supply.expansion.b
+    RoleId: supply.expansion.b
+    NormalizedU: 0.5074523
+    NormalizedV: 0.11940298
+    WorldX: 692.8
+    WorldZ: 328
+  - AnchorId: anchor.pilot.approach.0.0
+    RoleId: approach.0.0
+    NormalizedU: 0.17417678
+    NormalizedV: 0.26652452
+    WorldX: 500.5
+    WorldZ: 362.5
+  - AnchorId: anchor.pilot.approach.0.1
+    RoleId: approach.0.1
+    NormalizedU: 0.20450607
+    NormalizedV: 0.23880596
+    WorldX: 518
+    WorldZ: 356
+  - AnchorId: anchor.pilot.approach.0.2
+    RoleId: approach.0.2
+    NormalizedU: 0.627383
+    NormalizedV: 0.23880596
+    WorldX: 762
+    WorldZ: 356
+  - AnchorId: anchor.pilot.approach.0.3
+    RoleId: approach.0.3
+    NormalizedU: 0.6689775
+    NormalizedV: 0.23880596
+    WorldX: 786
+    WorldZ: 356
+  - AnchorId: anchor.pilot.approach.1.0
+    RoleId: approach.1.0
+    NormalizedU: 0.17417678
+    NormalizedV: 0.26652452
+    WorldX: 500.5
+    WorldZ: 362.5
+  - AnchorId: anchor.pilot.approach.1.1
+    RoleId: approach.1.1
+    NormalizedU: 0.20450607
+    NormalizedV: 0.35820895
+    WorldX: 518
+    WorldZ: 384
+  - AnchorId: anchor.pilot.approach.1.2
+    RoleId: approach.1.2
+    NormalizedU: 0.627383
+    NormalizedV: 0.35820895
+    WorldX: 762
+    WorldZ: 384
+  - AnchorId: anchor.pilot.approach.1.3
+    RoleId: approach.1.3
+    NormalizedU: 0.6689775
+    NormalizedV: 0.23880596
+    WorldX: 786
+    WorldZ: 356
+  - AnchorId: anchor.pilot.approach.2.0
+    RoleId: approach.2.0
+    NormalizedU: 0.17417678
+    NormalizedV: 0.26652452
+    WorldX: 500.5
+    WorldZ: 362.5
+  - AnchorId: anchor.pilot.approach.2.1
+    RoleId: approach.2.1
+    NormalizedU: 0.20450607
+    NormalizedV: 0.11940298
+    WorldX: 518
+    WorldZ: 328
+  - AnchorId: anchor.pilot.approach.2.2
+    RoleId: approach.2.2
+    NormalizedU: 0.627383
+    NormalizedV: 0.11940298
+    WorldX: 762
+    WorldZ: 328
+  - AnchorId: anchor.pilot.approach.2.3
+    RoleId: approach.2.3
+    NormalizedU: 0.6689775
+    NormalizedV: 0.23880596
+    WorldX: 786
+    WorldZ: 356
+  - AnchorId: anchor.reviewed.0.2
+    RoleId: reviewed.route.0.2
+    NormalizedU: 0.27816293
+    NormalizedV: 0.20682302
+    WorldX: 560.5
+    WorldZ: 348.5
+  - AnchorId: anchor.reviewed.0.3
+    RoleId: reviewed.route.0.3
+    NormalizedU: 0.347487
+    NormalizedV: 0.20682302
+    WorldX: 600.5
+    WorldZ: 348.5
+  - AnchorId: anchor.reviewed.0.4
+    RoleId: reviewed.route.0.4
+    NormalizedU: 0.48613518
+    NormalizedV: 0.20682302
+    WorldX: 680.5
+    WorldZ: 348.5
+  - AnchorId: anchor.reviewed.0.5
+    RoleId: reviewed.route.0.5
+    NormalizedU: 0.55545926
+    NormalizedV: 0.20682302
+    WorldX: 720.5
+    WorldZ: 348.5
+  - AnchorId: anchor.reviewed.0.6
+    RoleId: reviewed.route.0.6
+    NormalizedU: 0.62651646
+    NormalizedV: 0.20682302
+    WorldX: 761.5
+    WorldZ: 348.5
+  - AnchorId: anchor.reviewed.1.2
+    RoleId: reviewed.route.1.2
+    NormalizedU: 0.27816293
+    NormalizedV: 0.33901918
+    WorldX: 560.5
+    WorldZ: 379.5
+  - AnchorId: anchor.reviewed.1.3
+    RoleId: reviewed.route.1.3
+    NormalizedU: 0.347487
+    NormalizedV: 0.33901918
+    WorldX: 600.5
+    WorldZ: 379.5
+  - AnchorId: anchor.reviewed.1.4
+    RoleId: reviewed.route.1.4
+    NormalizedU: 0.48613518
+    NormalizedV: 0.33901918
+    WorldX: 680.5
+    WorldZ: 379.5
+  - AnchorId: anchor.reviewed.1.6
+    RoleId: reviewed.route.1.6
+    NormalizedU: 0.66637784
+    NormalizedV: 0.29211086
+    WorldX: 784.5
+    WorldZ: 368.5
+  - AnchorId: anchor.reviewed.2.2
+    RoleId: reviewed.route.2.2
+    NormalizedU: 0.347487
+    NormalizedV: 0.12153518
+    WorldX: 600.5
+    WorldZ: 328.5
+  - AnchorId: anchor.reviewed.2.3
+    RoleId: reviewed.route.2.3
+    NormalizedU: 0.48613518
+    NormalizedV: 0.12153518
+    WorldX: 680.5
+    WorldZ: 328.5
+  - AnchorId: anchor.reviewed.2.5
+    RoleId: reviewed.route.2.5
+    NormalizedU: 0.66637784
+    NormalizedV: 0.18976545
+    WorldX: 784.5
+    WorldZ: 344.5
+  routes:
+  - RouteId: route.pilot.0
+    WaypointAnchorIds:
+    - anchor.pilot.approach.0.0
+    - anchor.pilot.approach.0.1
+    - anchor.reviewed.0.2
+    - anchor.reviewed.0.3
+    - anchor.reviewed.0.4
+    - anchor.reviewed.0.5
+    - anchor.reviewed.0.6
+    - anchor.pilot.approach.0.2
+    - anchor.pilot.approach.0.3
+    Kind: 1
+    LengthMetres: 294.3415
+    InfantryTransitSeconds: 73.58537
+    GroundTransitSeconds: 36.792686
+    AirTransitSeconds: 0
+    InfantryFirstContactSeconds: 36.792686
+    GroundFirstContactSeconds: 18.396343
+    ProvisionalTimes: 1
+    WidthMetres: 8
+    AllowsVehicles: 1
+    AllowsAircraft: 0
+  - RouteId: route.pilot.1
+    WaypointAnchorIds:
+    - anchor.pilot.approach.1.0
+    - anchor.pilot.approach.1.1
+    - anchor.reviewed.1.2
+    - anchor.reviewed.1.3
+    - anchor.reviewed.1.4
+    - anchor.pilot.approach.1.2
+    - anchor.reviewed.1.6
+    - anchor.pilot.approach.1.3
+    Kind: 2
+    LengthMetres: 311.9954
+    InfantryTransitSeconds: 77.99885
+    GroundTransitSeconds: 38.999424
+    AirTransitSeconds: 0
+    InfantryFirstContactSeconds: 38.999424
+    GroundFirstContactSeconds: 19.499712
+    ProvisionalTimes: 1
+    WidthMetres: 8
+    AllowsVehicles: 1
+    AllowsAircraft: 0
+  - RouteId: route.pilot.2
+    WaypointAnchorIds:
+    - anchor.pilot.approach.2.0
+    - anchor.pilot.approach.2.1
+    - anchor.reviewed.2.2
+    - anchor.reviewed.2.3
+    - anchor.pilot.approach.2.2
+    - anchor.reviewed.2.5
+    - anchor.pilot.approach.2.3
+    Kind: 3
+    LengthMetres: 322.1867
+    InfantryTransitSeconds: 80.54668
+    GroundTransitSeconds: 40.27334
+    AirTransitSeconds: 0
+    InfantryFirstContactSeconds: 40.27334
+    GroundFirstContactSeconds: 20.13667
+    ProvisionalTimes: 1
+    WidthMetres: 8
+    AllowsVehicles: 1
+    AllowsAircraft: 0
+  pads:
+  - PadId: pad.skirmish.db.base_player
+    AnchorId: anchor.pilot.base.player
+    RoleId: base.player
+    Kind: 1
+    CenterX: 436
+    CenterZ: 356
+    WidthMetres: 72
+    DepthMetres: 80
+    FactionId: 1
+  - PadId: pad.skirmish.db.base_enemy
+    AnchorId: anchor.pilot.base.enemy
+    RoleId: base.enemy
+    Kind: 1
+    CenterX: 788
+    CenterZ: 356
+    WidthMetres: 100
+    DepthMetres: 18
+    FactionId: 2
+  - PadId: pad.skirmish.db.staging_player
+    AnchorId: anchor.pilot.staging.player
+    RoleId: staging.player
+    Kind: 2
+    CenterX: 502
+    CenterZ: 356
+    WidthMetres: 38
+    DepthMetres: 14
+    FactionId: 1
+  - PadId: pad.skirmish.db.staging_enemy
+    AnchorId: anchor.pilot.staging.enemy
+    RoleId: staging.enemy
+    Kind: 2
+    CenterX: 794
+    CenterZ: 356
+    WidthMetres: 54
+    DepthMetres: 46
+    FactionId: 2
+  - PadId: pad.skirmish.db.spawn_infantry_player
+    AnchorId: anchor.pilot.spawn.infantry.player
+    RoleId: spawn.infantry.player
+    Kind: 3
+    CenterX: 442
+    CenterZ: 332.5
+    WidthMetres: 24
+    DepthMetres: 25
+    FactionId: 1
+  - PadId: pad.skirmish.db.spawn_infantry_enemy
+    AnchorId: anchor.pilot.spawn.infantry.enemy
+    RoleId: spawn.infantry.enemy
+    Kind: 3
+    CenterX: 794.5
+    CenterZ: 332.5
+    WidthMetres: 25
+    DepthMetres: 25
+    FactionId: 2
+  - PadId: pad.skirmish.db.spawn_vehicle_player
+    AnchorId: anchor.pilot.spawn.vehicle.player
+    RoleId: spawn.vehicle.player
+    Kind: 4
+    CenterX: 486.5
+    CenterZ: 336.5
+    WidthMetres: 27
+    DepthMetres: 27
+    FactionId: 1
+  - PadId: pad.skirmish.db.spawn_vehicle_enemy
+    AnchorId: anchor.pilot.spawn.vehicle.enemy
+    RoleId: spawn.vehicle.enemy
+    Kind: 4
+    CenterX: 838
+    CenterZ: 336
+    WidthMetres: 22
+    DepthMetres: 26
+    FactionId: 2
+  - PadId: pad.skirmish.db.rally_player
+    AnchorId: anchor.pilot.rally.player
+    RoleId: rally.player
+    Kind: 5
+    CenterX: 492
+    CenterZ: 368
+    WidthMetres: 10
+    DepthMetres: 8
+    FactionId: 1
+  - PadId: pad.skirmish.db.rally_enemy
+    AnchorId: anchor.pilot.rally.enemy
+    RoleId: rally.enemy
+    Kind: 5
+    CenterX: 844
+    CenterZ: 368
+    WidthMetres: 10
+    DepthMetres: 8
+    FactionId: 2
+  - PadId: pad.skirmish.db.service_player
+    AnchorId: anchor.pilot.service.player
+    RoleId: service.player
+    Kind: 8
+    CenterX: 490
+    CenterZ: 380
+    WidthMetres: 60
+    DepthMetres: 32
+    FactionId: 1
+  - PadId: pad.skirmish.db.service_enemy
+    AnchorId: anchor.pilot.service.enemy
+    RoleId: service.enemy
+    Kind: 8
+    CenterX: 842
+    CenterZ: 380
+    WidthMetres: 72
+    DepthMetres: 40
+    FactionId: 2
+  - PadId: pad.skirmish.db.air_player
+    AnchorId: anchor.pilot.air.player
+    RoleId: air.player
+    Kind: 6
+    CenterX: 528
+    CenterZ: 388
+    WidthMetres: 194
+    DepthMetres: 72
+    FactionId: 1
+  - PadId: pad.skirmish.db.air_enemy
+    AnchorId: anchor.pilot.air.enemy
+    RoleId: air.enemy
+    Kind: 6
+    CenterX: 791
+    CenterZ: 380
+    WidthMetres: 92
+    DepthMetres: 60
+    FactionId: 2
+  - PadId: pad.skirmish.db.supply_player
+    AnchorId: anchor.pilot.economy.player
+    RoleId: economy.player
+    Kind: 7
+    CenterX: 496
+    CenterZ: 380
+    WidthMetres: 86
+    DepthMetres: 60
+    FactionId: 1
+  - PadId: pad.skirmish.db.supply_enemy
+    AnchorId: anchor.pilot.economy.enemy
+    RoleId: economy.enemy
+    Kind: 7
+    CenterX: 828
+    CenterZ: 380
+    WidthMetres: 224
+    DepthMetres: 110
+    FactionId: 2
+  - PadId: pad.skirmish.db.supply_expansion_a
+    AnchorId: anchor.pilot.supply.expansion.a
+    RoleId: supply.expansion.a
+    Kind: 9
+    CenterX: 587.2
+    CenterZ: 328
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 0
+  - PadId: pad.skirmish.db.supply_expansion_b
+    AnchorId: anchor.pilot.supply.expansion.b
+    RoleId: supply.expansion.b
+    Kind: 9
+    CenterX: 692.8
+    CenterZ: 328
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 0
+  worldBinding:
+    OriginX: 400
+    OriginZ: 417.25
+    ForwardX: 1
+    ForwardZ: 0
+    AcrossX: 0
+    AcrossZ: 1
+    ForwardMetres: 577
+    AcrossMetres: 234.5
+    PlayerAnchorId: anchor.pilot.base.player
+    EnemyAnchorId: anchor.pilot.base.enemy
+    SourceHash: 2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778
+    HasMeasuredDeployments: 1
+    PlayerDeployment: {x: 436, y: 356}
+    EnemyDeployment: {x: 788, y: 356}
+    BindAllConfigurations: 1

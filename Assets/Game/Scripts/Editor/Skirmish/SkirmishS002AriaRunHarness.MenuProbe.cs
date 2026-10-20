@@ -65,8 +65,27 @@ namespace Game.Editor
             // Pre-save failures in a reused Editor must not report the preceding
             // manual journey's counters before StartManualProbe runs.
             manualActions = manualAttackReceipts = 0;
-            if (selectedCatalog == "S005")
+            if (SkirmishMissionDispatch.RequiresSourceBoundDefinition(selectedCatalog))
             {
+                if(candidateCatalogScope!=null)throw new InvalidOperationException("One owned catalog scope required.");
+                var library=SkirmishBattleCatalogConfig.Load();
+                if(library==null||!library.TryGet(selectedCatalog,out var row))
+                    throw new InvalidOperationException("Exact existing generic library row required.");
+                if(!row.IsPlayable)
+                {
+                    if(row.Status!=SkirmishBattleCatalogStatus.Planned||row.PlayableScenarioIndex>=0)
+                        throw new InvalidOperationException("Unpublished generic draft row is malformed.");
+                    var authored=SkirmishExpansionCatalogConfig.Load();
+                    int index=1000+int.Parse(selectedCatalog.Substring(1),System.Globalization.CultureInfo.InvariantCulture);
+                    candidateCatalogScope=SkirmishGenericMissionAvailabilityScope.Open(authored,selectedCatalog,index);
+                }
+            }
+            else if (selectedCatalog == "S005" || codedSizeCameraActive)
+            {
+                if(candidateCatalogScope!=null)throw new InvalidOperationException("One owned catalog scope required.");
+                var authored=SkirmishExpansionCatalogConfig.Load();
+                if(authored==null||!authored.TryGetDefinition(selectedCatalog,out var exactDefinition))
+                    throw new InvalidOperationException("Exact authored candidate definition required.");
                 var source = SkirmishBattleCatalogConfig.Load();
                 if (source == null) throw new InvalidOperationException("Packaged battle catalog is missing.");
                 var rows = new SkirmishBattleCatalogEntry[source.Entries.Count];
@@ -77,13 +96,20 @@ namespace Game.Editor
                     if (rows[i].ScenarioId != selectedCatalog) continue;
                     found = true;
                     rows[i].Status = SkirmishBattleCatalogStatus.Playable;
-                    rows[i].PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;
-                    rows[i].DefinitionId = "skirmish.s005";
+                    rows[i].PlayableScenarioIndex = selectedCatalog=="S002"?SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex:
+                        selectedCatalog=="S003"?SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex:
+                        selectedCatalog=="S004"?SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex:
+                        SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex;
+                    rows[i].DefinitionId = exactDefinition.DefinitionId;
+                    rows[i].ContentVersion = exactDefinition.ContentVersion;
+                    if(selectedCatalog=="S005")
+                    {
                     rows[i].TitleKey = "skirmish.s005.title";
                     rows[i].DescriptionEnglish = "Advance with armor and infantry, or upgrade readiness to build a Helipad. Defend your original Barracks.";
                     rows[i].DescriptionFarsi = "با زرهی‌ها و پیاده‌ها پیشروی کن، یا آمادگی را ارتقا بده و هلی‌پد بساز. از سربازخانهٔ اصلی‌ات دفاع کن.";
+                    }
                 }
-                if (!found) throw new InvalidOperationException("S005 candidate catalog entry is missing.");
+                if (!found) throw new InvalidOperationException("Exact candidate catalog entry is missing.");
                 candidateCatalog = ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
                 candidateCatalog.hideFlags = HideFlags.HideAndDontSave;
                 candidateCatalog.Configure(rows);
@@ -210,6 +236,7 @@ namespace Game.Editor
                         Game.Composition.SkirmishLaunchProjection.IsSimulationActive(world.EntityManager),
                         Game.Composition.SkirmishLaunchProjection.ReadMatchElapsedSeconds(world.EntityManager, observedSession, in observedMatch),
                         "NormalMenuLaunchObserved");
+                    if(codedSizeCameraActive) ValidateCodedSizeNativeIdentity(world.EntityManager,observedSession);
                     Debug.Log("[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll," +
                         catalogId + ",Launch seedFixture=" + seed + " nativeSessionObserved=1");
                     menuStep = 6;
@@ -261,8 +288,8 @@ namespace Game.Editor
                     var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
                     // Follow the actual card position. A one-direction swipe
                     // can overshoot a short target row or start at retained scroll.
-                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .4f)));
-                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .4f)));
+                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .1f)));
+                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .1f)));
                     foreach (var card in buttons)
                         if (card.name == "ScenarioCard_" + catalogId)
                         {
@@ -305,6 +332,7 @@ namespace Game.Editor
                         // the ordinary raycast/stability path a fresh subsequent frame.
                         return;
                     }
+                    if(codedSizeCameraActive && !CodedSizeMenuReady(setup)) return;
                     foreach (var label in setup.GetComponentsInChildren<TMP_Text>())
                         if (label.name == "OperationName" || label.name == "SeedHelp")
                         {

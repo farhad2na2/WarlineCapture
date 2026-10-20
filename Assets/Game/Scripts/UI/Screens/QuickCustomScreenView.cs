@@ -15,6 +15,12 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Dropdown enemyTypeDropdown;
         [SerializeField] private UISegmentedControlView enemyCountStepper;
         [SerializeField] private UISegmentedControlView difficultySegmented;
+        [SerializeField] private UISegmentedControlView missionSizeSegmented;
+        private static readonly string[] MissionSizeLabels = { "STANDARD", "WAR", "LARGE WAR" };
+        private static readonly string[] MissionSizeLabelsFa = { "\u0627\u0633\u062a\u0627\u0646\u062f\u0627\u0631\u062f", "\u062c\u0646\u06af", "\u062c\u0646\u06af \u0628\u0632\u0631\u06af" };
+        public UISegmentedControlView MissionSizeControl => missionSizeSegmented;
+        public UiSkirmishMissionSize SelectedMissionSize => ReadMissionSizeControl();
+        public SkirmishResolvedSetup PresentedMissionSizeSetup => _briefingSetup;
         [SerializeField] private UISegmentedControlView startingMoneySegmented;
         [SerializeField] private UISliderRowView startingMoneySlider;
         [SerializeField] private UISliderRowView incomeMultiplierSlider;
@@ -129,7 +135,7 @@ namespace Game.UI.Runtime
             if(baseAssaultPreset&&_config.SkirmishSelection.Kind==UiSkirmishLibraryLaunchKind.Unspecified&&
                 string.IsNullOrEmpty(_config.SkirmishSelection.CatalogId)&&string.IsNullOrEmpty(_config.SkirmishSelection.DefinitionId)&&_config.SkirmishSelection.ContentVersion==0&&
                 TryFindEntry(_selectedScenarioId,out SkirmishBattleCatalogEntry selectedIdentity)&&selectedIdentity.IsPlayable)
-                _config.SkirmishSelection=LibrarySelection(selectedIdentity);
+                _config.SkirmishSelection=RestoreMissionSizePreference(LibrarySelection(selectedIdentity));
             BindEnemyCountStepper(Mathf.Clamp(config.EnemyCount, 1, 3));
             BindSegment(difficultySegmented, DifficultyLabels, (int)config.Difficulty);
             BindSegment(startingMoneySegmented, StartingMoneyLabels, (int)config.StartingMoney);
@@ -139,6 +145,7 @@ namespace Game.UI.Runtime
             BindSpeedSlider(buildSpeedSlider, "Build Speed", config.BuildSpeed);
             BindSegment(unitProductionSpeedSegmented, SpeedLabels, (int)config.UnitProductionSpeed);
             BindSegment(attackGroupSizeSegmented, AttackGroupSizeLabels, (int)config.AttackGroupSize);
+            BindMissionSize();
             BindSegment(attackFrequencySegmented, AttackFrequencyLabels, (int)config.AttackFrequency);
             BindSegment(aggressionSegmented, AggressionLabels, (int)config.Aggression);
             BindAggressionSlider(config.Aggression);
@@ -278,6 +285,7 @@ namespace Game.UI.Runtime
                 ? (UiAiSpeedSetting)GetSelectedSegment(unitProductionSpeedSegmented, (int)_config.UnitProductionSpeed)
                 : _config.UnitProductionSpeed;
             _config.AttackGroupSize = (UiAiAttackGroupSizeSetting)GetSelectedSegment(attackGroupSizeSegmented, (int)_config.AttackGroupSize);
+            _config.SkirmishSelection.MissionSize = ReadMissionSizeControl();
             _config.AttackFrequency = (UiAiAttackFrequencySetting)GetSelectedSegment(attackFrequencySegmented, (int)_config.AttackFrequency);
             _config.Aggression = aggressionSlider != null
                 ? ReadAggressionSlider(aggressionSlider)
@@ -313,6 +321,8 @@ namespace Game.UI.Runtime
                 if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable || !MatchesLibrarySelection(selected))
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;
+                if (!_savedMatchAvailable && _config.SkirmishSelection.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition &&
+                    (missionSizeSegmented == null || !missionSizeSegmented.gameObject.activeInHierarchy)) return;
                 if (_savedMatchAvailable)
                 {
                     UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
@@ -348,6 +358,7 @@ namespace Game.UI.Runtime
             WireSegment(buildSpeedSegmented, SpeedLabels);
             WireSegment(unitProductionSpeedSegmented, SpeedLabels);
             WireSegment(attackGroupSizeSegmented, AttackGroupSizeLabels);
+            WireMissionSize();
             WireSegment(attackFrequencySegmented, AttackFrequencyLabels);
             WireSegment(aggressionSegmented, AggressionLabels);
             WireSegment(expansionSegmented, ExpansionLabels);
@@ -363,7 +374,11 @@ namespace Game.UI.Runtime
                 PresentScenarioChoices();
                 return;
             }
-            flowSystem.ResetToDefaults(this, _configStore);
+            var defaults = _configStore != null ? _configStore.Defaults : UiQuickCustomGameConfig.Defaults;
+            defaults.SkirmishSelection = _config.SkirmishSelection;
+            defaults.SkirmishSelection.MissionSize = UiSkirmishMissionSize.Standard;
+            Bind(defaults);
+            _configStore?.Apply(ReadConfigFromControls());
         }
 
         private void RandomizeSeed()
@@ -421,6 +436,76 @@ namespace Game.UI.Runtime
             return int.TryParse(enemyCountStepper.SegmentLabels[1].text, out int value)
                 ? Mathf.Clamp(value, 1, 3)
                 : Mathf.Clamp(fallback, 1, 3);
+        }
+
+        private UiSkirmishLibrarySelection RestoreMissionSizePreference(UiSkirmishLibrarySelection selected)
+        {
+            selected.MissionSize = selected.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition &&
+                _configStore is ISkirmishMissionSizePreferenceStore preferences
+                ? preferences.ReadMissionSize(selected.CatalogId, selected.DefinitionId, selected.ContentVersion)
+                : UiSkirmishMissionSize.Standard;
+            return selected;
+        }
+
+        private UiSkirmishMissionSize ReadMissionSizeControl()
+        {
+            if (_config.SkirmishSelection.Kind != UiSkirmishLibraryLaunchKind.ExpandedDefinition)
+                return UiSkirmishMissionSize.Standard;
+            var fallback = _config.SkirmishSelection.MissionSize;
+            if (_savedMatchAvailable) return fallback == UiSkirmishMissionSize.Unspecified ? UiSkirmishMissionSize.Standard : fallback;
+            int index = GetSelectedSegment(missionSizeSegmented,
+                fallback == UiSkirmishMissionSize.War ? 1 : fallback == UiSkirmishMissionSize.LargeWar ? 2 : 0);
+            return index == 1 ? UiSkirmishMissionSize.War : index == 2 ? UiSkirmishMissionSize.LargeWar : UiSkirmishMissionSize.Standard;
+        }
+
+        private bool MissionSizeAvailable(UiSkirmishMissionSize value)
+        {
+            var selected=_config.SkirmishSelection;
+            var size=value==UiSkirmishMissionSize.War?Game.Skirmish.Contracts.SkirmishSizeId.War:
+                value==UiSkirmishMissionSize.LargeWar?Game.Skirmish.Contracts.SkirmishSizeId.LargeWar:
+                Game.Skirmish.Contracts.SkirmishSizeId.Standard;
+            return SkirmishBattleCatalogConfig.IsMissionSizeSelectionAvailable(selected.CatalogId,selected.DefinitionId,selected.ContentVersion,size);
+        }
+
+        private void BindMissionSize()
+        {
+            if (missionSizeSegmented == null) return;
+            bool expanded = baseAssaultPreset && _config.SkirmishSelection.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition;
+            missionSizeSegmented.gameObject.SetActive(expanded);
+            if(!MissionSizeAvailable(_config.SkirmishSelection.MissionSize))
+                _config.SkirmishSelection.MissionSize=UiSkirmishMissionSize.Standard;
+            var size = _config.SkirmishSelection.MissionSize;
+            BindSegment(missionSizeSegmented, UiShellRuntimeGateway.Localization.IsRightToLeft ? MissionSizeLabelsFa : MissionSizeLabels,
+                size == UiSkirmishMissionSize.War ? 1 : size == UiSkirmishMissionSize.LargeWar ? 2 : 0);
+            if(missionSizeSegmented.SegmentButtons!=null)
+                for(int i=0;i<missionSizeSegmented.SegmentButtons.Length;i++)
+                {
+                    var button=missionSizeSegmented.SegmentButtons[i];if(button==null)continue;
+                    var option=i==1?UiSkirmishMissionSize.War:i==2?UiSkirmishMissionSize.LargeWar:UiSkirmishMissionSize.Standard;
+                    button.interactable=!_savedMatchAvailable&&option!=size&&MissionSizeAvailable(option);
+                }
+            if (TryFindEntry(_selectedScenarioId, out var selected))
+                PresentCompiledBriefing(selected, UiShellRuntimeGateway.Localization.IsRightToLeft);
+
+        }
+
+        private void WireMissionSize()
+        {
+            if (missionSizeSegmented?.SegmentButtons == null) return;
+            for (int i = 0; i < missionSizeSegmented.SegmentButtons.Length; i++)
+            {
+                int index = i;
+                var button = missionSizeSegmented.SegmentButtons[i];
+                if (button == null) continue;
+                button.onClick.AddListener(() => {
+                    if (_savedMatchAvailable || _config.SkirmishSelection.Kind != UiSkirmishLibraryLaunchKind.ExpandedDefinition) return;
+                    var option=index==1?UiSkirmishMissionSize.War:index==2?UiSkirmishMissionSize.LargeWar:UiSkirmishMissionSize.Standard;
+                    if(!MissionSizeAvailable(option))return;
+                    _config.SkirmishSelection.MissionSize=option;
+                    BindMissionSize();
+                    _configStore?.Apply(ReadConfigFromControls());
+                });
+            }
         }
 
         private void WireSegment(UISegmentedControlView view, string[] labels)

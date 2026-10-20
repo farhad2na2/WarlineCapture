@@ -211,7 +211,7 @@ namespace Game.Composition
         }
     }
 
-    internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
+    internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore, ISkirmishMissionSizePreferenceStore
     {
         private SaveService saveService;
         private QuickGameSaveData saved;
@@ -233,6 +233,27 @@ namespace Game.Composition
             currentConfig = saved.configuration;
         }
 
+        public UiSkirmishMissionSize ReadMissionSize(string catalogId, string definitionId, int contentVersion)
+        {
+            EnsureLoaded();
+            var catalog = SkirmishExpansionCatalogConfig.Load();
+            if (catalog == null || !catalog.TryGetDefinition(catalogId, out var definition) ||
+                definition.DefinitionId != definitionId || definition.ContentVersion != contentVersion ||
+                saved.skirmishSizeCatalogId != catalogId || saved.skirmishSizeDefinitionId != definitionId ||
+                saved.skirmishSizeContentVersion != contentVersion) return UiSkirmishMissionSize.Standard;
+            var storedSize=saved.skirmishSizeId=="War"?Game.Skirmish.Contracts.SkirmishSizeId.War:
+                saved.skirmishSizeId=="LargeWar"?Game.Skirmish.Contracts.SkirmishSizeId.LargeWar:Game.Skirmish.Contracts.SkirmishSizeId.Standard;
+            if(!SkirmishBattleCatalogConfig.IsMissionSizeSelectionAvailable(catalogId,definitionId,contentVersion,storedSize))
+                return UiSkirmishMissionSize.Standard;
+            return saved.skirmishSizeId switch {
+                "Standard" => UiSkirmishMissionSize.Standard, "War" => UiSkirmishMissionSize.War,
+                "LargeWar" => UiSkirmishMissionSize.LargeWar, _ => UiSkirmishMissionSize.Standard };
+        }
+
+        private static bool ValidMissionSize(UiSkirmishMissionSize value) =>
+            value == UiSkirmishMissionSize.Standard || value == UiSkirmishMissionSize.War ||
+            value == UiSkirmishMissionSize.LargeWar;
+
         public UiQuickCustomGameConfig Current { get { EnsureLoaded(); var value=ToUiConfig(currentConfig); value.SkirmishSelection=librarySelection; return value; } }
         public UiQuickCustomGameConfig Defaults => ToUiConfig(QuickGameConfig.Defaults);
         internal AISettingsSnapshot CurrentSnapshot { get { EnsureLoaded(); return currentConfig.ToAISettingsSnapshot(); } }
@@ -248,6 +269,17 @@ namespace Game.Composition
             // Refresh the document so changing setup cannot restore a stale result.
             saved = saveService.LoadQuickGame();
             saved.configuration = currentConfig;
+            var selected = librarySelection;
+            if (selected.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition)
+            {
+                var catalog = SkirmishExpansionCatalogConfig.Load();
+                var size = selected.MissionSize == UiSkirmishMissionSize.Unspecified ? UiSkirmishMissionSize.Standard : selected.MissionSize;
+                if (!ValidMissionSize(size) || catalog == null || !catalog.TryGetDefinition(selected.CatalogId, out var definition) ||
+                    definition.DefinitionId != selected.DefinitionId || definition.ContentVersion != selected.ContentVersion)
+                    throw new System.InvalidOperationException("Invalid expanded mission-size preference identity.");
+                saved.skirmishSizeCatalogId = selected.CatalogId; saved.skirmishSizeDefinitionId = selected.DefinitionId;
+                saved.skirmishSizeContentVersion = selected.ContentVersion; saved.skirmishSizeId = size.ToString();
+            }
             saveService.SaveQuickGame(saved);
         }
 

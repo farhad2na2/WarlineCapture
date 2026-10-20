@@ -54,6 +54,9 @@ namespace Game.Configs
         }
 
         public static bool TryLoad(string catalogId, int seed, out SkirmishResolvedSetup setup)
+            => TryLoad(catalogId, seed, SkirmishSizeId.Standard, out setup);
+
+        public static bool TryLoad(string catalogId, int seed, SkirmishSizeId size, out SkirmishResolvedSetup setup)
         {
             setup = null;
             var catalog = SkirmishExpansionCatalogConfig.Load();
@@ -63,7 +66,7 @@ namespace Game.Configs
             var manifest = new SkirmishContentManifest
             { RequiredFeatureIds = definition.RequiredFeatureIds ?? Array.Empty<string>() };
             return SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular,
-                SkirmishSizeId.Standard, seed, manifest, matrix, out setup, out _);
+                size, seed, manifest, matrix, out setup, out _);
         }
 
         public static string RoleLabel(SkirmishRoleKind role, bool fa) => role switch

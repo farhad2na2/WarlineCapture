@@ -24,12 +24,33 @@ namespace Game.Runtime
                 if (!SkirmishMissionLogicalBindingProvider.TryRead(em,session,out var logical)) return false;
                 profile = logical.View; return true;
             }
-            if (setup.CatalogId != "S005") return false;
+
             var catalog = Game.Configs.SkirmishExpansionCatalogConfig.Load();
             var candidate = Game.Configs.SkirmishMissionViewProfile.Load(setup.CatalogId);
             if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, out var definition) ||
-                candidate == null || !candidate.Matches(setup, definition)) return false;
+                candidate == null || !MatchesSource(em,setup,definition,candidate)) return false;
+            if(candidate.UsesActiveMapIdentity)
+            {
+                if(!em.HasComponent<SkirmishLaunchDefinitionRecord>(session))return false;
+                var selected=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
+                if(selected==null||selected.Definition!=definition||!selected.Matches(setup,em.GetComponentData<SkirmishExpandedSessionComponent>(session)))return false;
+            }
             profile = candidate; return true;
+        }
+        internal static bool MatchesSource(EntityManager em,Game.Configs.SkirmishResolvedSetup setup,
+            Game.Configs.SkirmishScenarioDefinitionConfig definition,Game.Configs.SkirmishMissionViewProfile profile)
+        {
+            if(profile==null)return false;
+            if(!profile.UsesActiveMapIdentity)return profile.Matches(setup,definition);
+            using var activeQuery=em.CreateEntityQuery(typeof(ActiveOperationMapComponent));
+            using var metadataQuery=em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+            if(activeQuery.CalculateEntityCount()!=1||metadataQuery.CalculateEntityCount()!=1)return false;
+            var active=activeQuery.GetSingleton<ActiveOperationMapComponent>();
+            var metadata=metadataQuery.GetSingleton<OperationMapMetadataComponent>();
+            if(active.Generation<=0||metadata.Generation!=active.Generation||metadata.PhysicalSourceValidated!=1||!metadata.Blob.IsCreated)return false;
+            ref var map=ref metadata.Blob.Value;
+            return active.OperationMapId.Equals(map.OperationMapId)&&
+                profile.MatchesActiveMap(setup,definition,map.OperationMapId.ToString(),map.ContentHash.ToString(),map.SourceIdentityHash.ToString());
         }
         public static void Apply(Game.Configs.SkirmishMissionViewProfile profile, ref SelectionRuntimeConfigStartupSystemHelper.State state)
         {

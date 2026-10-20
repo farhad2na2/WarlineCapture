@@ -62,6 +62,13 @@ namespace Game.Runtime
                 TryRestoreConstructionResources(0, amount);
         }
 
+        internal SkirmishConstructionLedger.Point CaptureConstructionLedger(object owner)
+        {
+            var point=SkirmishConstructionLedger.Begin(_entityManager,_controlledFactionResourceEntity);
+            if(point!=null)point.TransactionOwner=owner;
+            return point;
+        }
+
         public FactionConstructionResourceMutationResult TrySpendConstructionResources(
             int creditsCost,
             int materialsCost)
@@ -265,4 +272,90 @@ namespace Game.Runtime
 
         private bool IsEntityManagerAvailable() => _isConfigured && _entityManager.WorldUnmanaged.IsCreated;
     }
+    // Diagnostic-only copies of actual committed construction origins.
+    public static class SkirmishConstructionLedger
+    {
+        public sealed class Point
+        {
+            public EntityManager Manager;
+            public Entity BankEntity,Session;
+            public object TransactionOwner;
+            public FactionEconomy Economy;
+            public FactionTacticalMaterialsComponent Bank;
+            public bool HasEnemyIntent,HasRequest;
+            public SkirmishEnemyConstructionIntentV1Component EnemyIntent;
+            public BuildingRuntimeSpawnRequest Request;
+        }
+        public sealed class Observation
+        {
+            public Point Before,After;
+            public object TransactionOwner;
+            public string Operation,PrefabName;
+            public int TransactionId,CreditsQuoted,MaterialsQuoted,CommittedCount,ExpectedCount;
+            public Unity.Mathematics.int2 Origin;
+            public bool Rotated,HasActorOwner;
+            public Entity Actor;
+            public SkirmishAttemptOwnedComponent ActorOwner;
+        }
+        public static System.Action<Observation> Observer;
+        public static void OpenOwned(System.Action<Observation> sink)
+        {if(sink==null||Observer!=null)throw new System.InvalidOperationException("Unobserved construction sink required");Observer=sink;}
+        public static bool CloseOwned(System.Action<Observation> sink)
+        {bool owned=sink!=null&&Observer==sink;if(owned)Observer=null;return owned;}
+        public static long Faults {get;private set;}
+        private static Point Read(EntityManager em,Entity bank,Entity session)
+        {
+            if(!em.Exists(bank)||!em.HasComponent<FactionEconomy>(bank)||!em.HasComponent<FactionTacticalMaterialsComponent>(bank))
+                throw new System.InvalidOperationException("Actual construction bank required");
+            var economy=em.GetComponentData<FactionEconomy>(bank);int matches=0;
+            using(var q=em.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent)))
+            using(var entities=q.ToEntityArray(Unity.Collections.Allocator.Temp))
+                foreach(var entity in entities)if(em.GetComponentData<FactionEconomy>(entity).FactionId==economy.FactionId)matches++;
+            if(matches!=1)throw new System.InvalidOperationException("Unique actual construction bank required");
+            if(session==Entity.Null)
+            {
+                using var q=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                int count=q.CalculateEntityCount();
+                if(count>1)throw new System.InvalidOperationException("Ambiguous construction session");
+                if(count==1)session=q.GetSingletonEntity();
+            }
+            var p=new Point {Manager=em,BankEntity=bank,Session=session,Economy=economy,Bank=em.GetComponentData<FactionTacticalMaterialsComponent>(bank)};
+            if(economy.FactionId==2 && session!=Entity.Null && em.HasComponent<SkirmishEnemyConstructionIntentV1Component>(session))
+            {
+                p.HasEnemyIntent=true;p.EnemyIntent=em.GetComponentData<SkirmishEnemyConstructionIntentV1Component>(session);
+                using var q=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingRuntimeSpawnRequest));
+                if(q.CalculateEntityCount()>1)throw new System.InvalidOperationException("Ambiguous construction boundary");
+                if(q.CalculateEntityCount()==1)
+                    foreach(var r in em.GetBuffer<BuildingRuntimeSpawnRequest>(q.GetSingletonEntity()))
+                        if(r.PlanEntity==session&&r.RequestId==p.EnemyIntent.RequestId&&r.RequestKind==BuildingRuntimeSpawnRequest.KindSkirmishPaidConstruction)
+                        {if(p.HasRequest)throw new System.InvalidOperationException("Duplicate construction request");p.HasRequest=true;p.Request=r;}
+            }
+            return p;
+        }
+        internal static Point Begin(EntityManager em,Entity bank,Entity session=default)
+        {
+            if(Observer==null)return null;
+            try{return Read(em,bank,session);}
+            catch(System.Exception error)when(!(error is System.OutOfMemoryException)){Faults++;return null;}
+        }
+        internal static void UnsupportedPlacement()
+        {if(Observer!=null)Faults++;}
+        internal static void End(Point before,string operation,int transactionId=0,int credits=0,int materials=0,
+            string prefabName=null,Unity.Mathematics.int2 origin=default,bool rotated=false,int committed=0,int expected=0,Entity actor=default)
+        {
+            if(before==null||Observer==null)return;
+            try
+            {
+                var em=before.Manager;
+                var row=new Observation {Before=before,After=Read(em,before.BankEntity,before.Session),Operation=operation,TransactionOwner=before.TransactionOwner,
+                    TransactionId=transactionId,CreditsQuoted=credits,MaterialsQuoted=materials,PrefabName=prefabName,
+                    Origin=origin,Rotated=rotated,CommittedCount=committed,ExpectedCount=expected,Actor=actor};
+                if(actor!=Entity.Null && em.Exists(actor)&&em.HasComponent<SkirmishAttemptOwnedComponent>(actor))
+                {row.HasActorOwner=true;row.ActorOwner=em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);}
+                Observer(row);
+            }
+            catch(System.Exception error)when(!(error is System.OutOfMemoryException)){Faults++;}
+        }
+    }
+
 }

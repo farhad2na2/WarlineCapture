@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77e34b4584fd4df9aef1cd6c8c8db196, type: 3}
+  m_Name: SkirmishMissionViewProfile_S002
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionViewProfile
+  OpeningFocusPolicy: 2
+  OpeningFocusStableActorId: 
+  UseSeparateAircraftYaw: 0
+  AircraftYaw: 35
+  AuthoredNonBaseAssault: 0
+  AuthoredGenericBaseAssault: 0
+  ObjectiveKind: 1
+  SchemaVersion: 1
+  ContentVersion: 1
+  DefinitionVersion: 2
+  CatalogId: S002
+  DefinitionId: skirmish.s002
+  CampaignSourceContentHash: 
+  ActiveOperationMapId: opmap.skirmish.desert_base_01
+  ActiveMapContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  ActiveMapSourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+  LayoutContentHash: measured.db.ba.v2
+  MinHeight: 12
+  MaxHeight: 20
+  NormalHeight: 20
+  BuildHeight: 20
+  Pitch: 65
+  Yaw: 307
+  NormalFieldOfView: 46
+  BuildFieldOfView: 50
+  GroundReferenceY: -5.31082
+  MaximumGroundCenterSlantDistance: 32
+  InfantryMinimumViewportHeight: 0.03
+  PlaneMaximumViewportDimension: 0.45
+  AircraftPitch: 50
+  AircraftFieldOfView: 60
+  AircraftMinimumDistance: 80
+  AircraftMaximumDistance: 300

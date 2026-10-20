@@ -14,7 +14,6 @@ Design/MapVariants/Preparation/*/Candidate/output-manifest.json filter=lfs diff=
 Assets/Game/GeneratedOperationMaps/Variants/**/*.png filter=lfs diff=lfs merge=lfs -text
 Assets/Game/Art/MapBeautify/**/*.asset filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/RuntimeBinding/**/*.unity filter=lfs diff=lfs merge=lfs -text
-Design/AgentReports/WorkspaceConsolidation/20261001/airlift-local-evidence.tar.gz filter=lfs diff=lfs merge=lfs -text
 Design/AgentReports/SkirmishExpansion/S005/native1621-t7-editor-launch.log filter=lfs diff=lfs merge=lfs -text
 Design/AgentReports/SkirmishExpansion/S005/native1440-normal-paid-south-flank-observation.jsonl filter=lfs diff=lfs merge=lfs -text
 Design/AgentReports/SkirmishExpansion/S005/native1219-passive-pressure-observation.jsonl filter=lfs diff=lfs merge=lfs -text
@@ -380,3 +379,9 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.js
 
 # Native visual evidence for the approved water/bridge pass.
 /Design/AgentReports/WaterBridgesRoads20261016/**/*.png filter=lfs diff=lfs merge=lfs -text
+
+# Exact compiled shared validation bytes; scoped preservation.
+/Assets/Tests/Editor/SkirmishExpansion/SkirmishProfileNamespaceTests.cs -text
+/Assets/Tests/Editor/SkirmishExpansion/SkirmishProfileNamespaceTests.cs.meta -text
+/Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs -text
+/Assets/Tests/Editor/SkirmishExpansion/SkirmishCandidateSourceHashTests.cs -text

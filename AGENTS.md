@@ -27,7 +27,9 @@
 - On macOS, `invoke_unity_macos.sh` uses **GUI licensing** and never passes `-batchmode`. Do not add `-batchmode`, do not bypass the wrapper, and do not try an alternate Unity command when validation fails.
 - Normal Editors and wrapper-driven validation may run concurrently. The shared licensing client supports multiple clients.
 - Never run `Tools/CI/reset_unity_macos_ipc.sh`, pass `--reset-ipc`, or use `--quit-hub` while any Unity Editor is running. Reset requires `--confirm-no-editors` and is recovery-only for a fully closed, known-stuck Unity environment that the user explicitly asked to recover.
-- Do not terminate Unity, Unity Hub, Unity.Licensing.Client, Package Manager, or remove `/private/tmp/Unity-*.sock` files unless the user explicitly asks to recover a stuck Unity environment.
+- Owner authorization (2026-10-17): agents may close or terminate Unity Editor when needed for authorized development, testing, validation or recovery, without asking for further confirmation. This includes stopping stuck or failed validations and freeing this project for the next run.
+- Before stopping an Editor, verify its project, executable path, PID, start time, command line and owned process tree. Preserve unsaved work and validation evidence where possible; prefer a graceful exit, and terminate the verified tree if necessary. Record the reason and actual outcome; an interrupted validation remains failed or incomplete.
+- Keep Unity Hub open and signed in. Protect unrelated Editors and processes. Editor termination permission does not authorize stopping Hub, licensing or Package Manager, or deleting IPC sockets; their separate recovery rules below still apply.
 
 ## Unity CLI / Pipeline agent path (updated 2026-08-24)
 
@@ -46,7 +48,7 @@ Windows validation is permitted through the checked-in PowerShell wrappers:
 - Launch the PowerShell wrappers with `powershell.exe -NoProfile -ExecutionPolicy Bypass -File ...` when the machine's execution policy blocks checked-in scripts.
 - `-batchmode` is permitted on Windows only through `InvokeUnity.ps1`; this does not relax the macOS prohibition.
 - Give every run an explicit log path and timeout. Treat a timeout, missing pass marker, nonzero exit, or project lock as a failed validation.
-- Before starting a run, confirm that no active Unity process owns this project. Do not terminate an existing Editor to make room for validation.
+- Before starting a run, confirm that no active Unity process owns this project. If an Editor must be closed to proceed, use the termination authorization above and verify its shutdown before launching the next run.
 - A wrapper timeout may terminate only the Unity process tree that wrapper started. Never terminate unrelated Unity or Unity Hub processes.
 
 ### Windows licensing recovery ladder (authorized 2026-08-05)
@@ -60,7 +62,7 @@ Windows validation is permitted through the checked-in PowerShell wrappers:
 - When the Hub client is healthy for Hub but its generic pipe still refuses the Editor after that verified restart, keep Hub open and rerun the same checked Windows wrapper without `-GuiLicensing`. This uses the wrapper-owned Windows command-line/batchmode path and lets the Editor launch its version-matched licensing client; it is not permission to invoke Unity directly or to bypass the required pass marker.
 - Do not manually launch `Unity.Licensing.Client` from an elevated recovery shell. Stop only the verified stale client after confirming no Editor, then let the already-running Hub or checked wrapper recreate the client at the caller's normal integrity level.
 - A full system drive is an infrastructure failure, not a passive blocker. After confirming no Editor owns the project, audit exact sizes and remove only explicitly verified rebuildable Unity caches (for example `Library/Bee`) or obsolete build outputs; preserve source, current packages, validation evidence, and unrelated worktree changes. Rerun the same checked wrapper with its original marker and timeout after space recovery.
-- These permissions are recovery-scoped only. They do not authorize terminating an active Editor, changing Unity/Jenkins paths, altering project assets, or killing unrelated processes.
+- These licensing permissions are recovery-scoped only. Editor termination is governed by the owner authorization above. Licensing recovery does not authorize changing Unity/Jenkins paths, altering project assets, or killing unrelated processes.
 
 Example:
 

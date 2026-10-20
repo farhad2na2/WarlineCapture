@@ -42,7 +42,47 @@ def observe_endpoint(project, descriptor, output, phase):
     return receipt
 
 
-def verify_native_events(descriptor, events, log, project=None):
+def verify_mac_wrapper(descriptor, receipt, project):
+    """Read-only receipt consistency, never independent process/mission qualification."""
+    if project is None or not isinstance(receipt, dict):
+        raise ValueError('Actual Mac project and original-child receipt required')
+    root = str(Path(project).resolve())
+    expected = dict(schema_version=1, platform='macos', execute_method=METHOD,
+                    checked_wrapper='Tools/CI/invoke_unity_macos.sh',
+                    descriptor_fingerprint=fingerprint(descriptor), project=root,
+                    checked_wrapper_exit=0, wrapper_reaped=True,
+                    parent_environment_unchanged=True, source_settings_unchanged=True,
+                    observed_target_editor=True, queue_success_enabled=False)
+    if not all(type(receipt.get(k)) is type(v) and receipt[k] == v for k, v in expected.items()):
+        raise ValueError('Mac original-child wrapper receipt differs')
+    birth = receipt.get('wrapper_birth')
+    if not (type(receipt.get('wrapper_pid')) is int and receipt['wrapper_pid'] > 0
+            and isinstance(birth, list) and len(birth) == 3
+            and all(type(v) is int and v >= 0 for v in birth)
+            and birth[0] == receipt['wrapper_pid'] and birth[1] > 0):
+        raise ValueError('Mac wrapper kernel birth missing')
+    shutdown = receipt.get('owned_shutdown')
+    if not (isinstance(shutdown, dict) and shutdown.get('closed') is True
+            and type(shutdown.get('observed_absence_samples')) is int
+            and shutdown['observed_absence_samples'] >= 2 and shutdown.get('survivors') == []):
+        raise ValueError('Mac full owned shutdown missing')
+    if receipt.get('lifecycle_errors') or receipt.get('controller_error'):
+        raise ValueError('Mac lifecycle failure remains latched')
+    if not re.fullmatch('[a-f0-9]{64}', receipt.get('grant_sha256', '')):
+        raise ValueError('Mac reviewed grant binding missing')
+    command = receipt.get('argv')
+    timeout = receipt.get('timeout_seconds')
+    if type(timeout) is not int or not 1 <= timeout <= 28800:
+        raise ValueError('Mac bounded timeout missing')
+    expected_command = ['rtk', 'proxy', str(Path(root)/'Tools/CI/invoke_unity_macos.sh'),
+                        '--project', root, '--timeout', str(timeout), '--log',
+                        str(Path(descriptor['artifact_directory'])/'unity.log'),
+                        '--', '-buildTarget', 'Android', '-executeMethod', METHOD]
+    if command != expected_command:
+        raise ValueError('Mac checked GUI/no-quit command differs')
+
+
+def verify_native_events(descriptor, events, log, project=None, *, mac_wrapper_receipt=None):
     """Consistency of actual wrapper/native rows only, never gameplay certification."""
     if descriptor.get('schema_version')==2:
         if project is None: raise ValueError('Actual project required to revalidate matrix authority')
@@ -53,7 +93,9 @@ def verify_native_events(descriptor, events, log, project=None):
     if log.count(runtime_marker)!=1 or '[SkirmishProductionRuntimeGate] result=Failed' in log or len(runtime)!=1 or runtime[0].get('passed') is not True or type(runtime[0].get('errors')) is not int or runtime[0]['errors']!=0 or runtime[0].get('completed_jobs')!=count:
         raise ValueError('Whole-run runtime Error/Exception/Assert gate missing or failed')
     marker='[SkirmishProductionBatch] result=Completed jobs='+str(count)+' queueSuccessEnabled=0'
-    if marker not in log or re.search(r'\[UnityInvoke\] ExitCode: 0\s*$', log, re.M) is None:
+    if mac_wrapper_receipt is not None:
+        verify_mac_wrapper(descriptor, mac_wrapper_receipt, project)
+    if marker not in log or (mac_wrapper_receipt is None and re.search(r'\[UnityInvoke\] ExitCode: 0\s*$', log, re.M) is None):
         raise ValueError('Actual checked wrapper exit0 or two-job marker absent')
     if 'process exit code was unavailable' in log.lower():
         raise ValueError('Actual process exit was unavailable; log fallback cannot qualify this benchmark')

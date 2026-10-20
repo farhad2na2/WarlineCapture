@@ -25,7 +25,9 @@ namespace Game.Editor
             "WARLINE_OPERATION_MAP_ADDRESSABLES_REPORT_PATH";
 
         [MenuItem("Game/Operation Maps/Build Local Addressables And Publish Report")]
-        public static void Run()
+        public static void Run() => BuildAndPublish();
+
+        internal static string BuildAndPublish()
         {
             if (!OperationMapAddressablesLayoutValidator.TryValidateCurrentLayout(true, out string error))
                 throw new InvalidOperationException(error);
@@ -71,6 +73,7 @@ namespace Game.Editor
                         $"entitiesArtifacts={report.EntitiesArtifacts.Length} " +
                         $"duplicates={report.DuplicateDependencies.Length} " +
                         $"report={outputPath}");
+                    return result.OutputPath;
                 }
                 finally
                 {
@@ -391,7 +394,7 @@ namespace Game.Editor
             return path;
         }
 
-        private static void ValidateContentBuildOutput(string settingsPath)
+        internal static void ValidateContentBuildOutput(string settingsPath)
         {
             if (string.IsNullOrEmpty(settingsPath) || !File.Exists(settingsPath))
                 throw new InvalidOperationException("Addressables content build did not produce settings.json.");

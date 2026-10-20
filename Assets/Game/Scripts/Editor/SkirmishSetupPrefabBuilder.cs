@@ -105,7 +105,7 @@ namespace Game.Editor
                 .Configure("ui.skirmish.base_assault_map", "DESERT BASE", false);
             ConfigureBaseAssaultPreview(composition);
             SkirmishScenarioAssetsBuilder.ConfigureChoices(root);
-            BuildBaseAssaultRules(composition, rightTargets);
+            BuildBaseAssaultRules(composition, rightTargets, out UISegmentedControlView missionSize);
             BuildFooter(composition, rightTargets, widthTargets, out Button reset, out Button randomize, out Button launch);
             UiLocalizedText.Set(launch.GetComponentInChildren<TMP_Text>(), "DEPLOY");
             foreach (string name in new[] { "CreditsChip", "CommandChip" })
@@ -125,6 +125,7 @@ namespace Game.Editor
 
             SerializedObject serializedScreen = new(screen);
             serializedScreen.FindProperty("baseAssaultPreset").boolValue = true;
+            SetReference(serializedScreen, "missionSizeSegmented", missionSize);
             SetReference(serializedScreen, "seedInput", seedInput);
             SetReference(serializedScreen, "mapNameText", mapName);
             SetReference(serializedScreen, "resetButton", reset);
@@ -208,6 +209,231 @@ namespace Game.Editor
             string absolute = Path.Combine(projectRoot, PrefabPath);
             using SHA256 sha = SHA256.Create();
             return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(absolute))).Replace("-", string.Empty);
+        }
+
+        // Checked executeMethod authoring entry: exactly one existing UI prefab.
+        // Does not call Build/EnsureBuilt/LoadAssets/Apply(all)/SaveScene.
+        public static void AuthorMissionSizeRowOnExistingSetup()
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                throw new InvalidOperationException("Idle scoped UI authoring required");
+            string output=Environment.GetEnvironmentVariable("WARLINE_MISSION_SIZE_AUTHORING_OUTPUT");
+            string allowed=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction"))+Path.DirectorySeparatorChar;
+            if(string.IsNullOrEmpty(output)||!Path.IsPathRooted(output)||!Path.GetFullPath(output).StartsWith(allowed,StringComparison.OrdinalIgnoreCase)||
+                Directory.Exists(output)||File.Exists(output))throw new InvalidOperationException("Fresh owned Logs authoring receipt directory required");
+            string beforeSha=ScopedAssetHash(PrefabPath),expected=Environment.GetEnvironmentVariable("WARLINE_MISSION_SIZE_PREFAB_BEFORE_SHA256");
+            if(expected!=beforeSha)throw new InvalidOperationException("Exact reviewed current SCN13 before SHA required");
+            string guid=AssetDatabase.AssetPathToGUID(PrefabPath);
+            if(guid!="55d7c0139800d4cde8c2e97e255e423c")throw new InvalidOperationException("Existing active SCN13 GUID drift");
+            string sceneBefore=ScopedAssetHash(MenuScenePath),mainBefore=ScopedAssetHash(MainMenuPrefabPath),metaBefore=ScopedAssetHash(PrefabPath+".meta");
+            var persistent=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if(persistent==null||EditorUtility.IsDirty(persistent))throw new InvalidOperationException("Clean existing setup prefab required");
+            string scene=File.ReadAllText(MenuScenePath);
+            string binding="skirmishSetupContentPrefab: {fileID: 964225400410988824, guid: "+guid+", type: 3}";
+            if(scene.IndexOf(binding,StringComparison.Ordinal)<0||scene.IndexOf(binding,StringComparison.Ordinal)!=scene.LastIndexOf(binding,StringComparison.Ordinal))
+                throw new InvalidOperationException("Exact current Menu scene setup binding required; no scene rewrite allowed");
+            Directory.CreateDirectory(output);
+            byte[] before=File.ReadAllBytes(PrefabPath),beforeMeta=File.ReadAllBytes(PrefabPath+".meta");
+            File.WriteAllBytes(Path.Combine(output,"SCN13.before.prefab"),before);
+            File.WriteAllBytes(Path.Combine(output,"SCN13.before.prefab.meta"),beforeMeta);
+            bool saved=false;
+            try
+            {
+                var root=PrefabUtility.LoadPrefabContents(PrefabPath);
+                try
+                {
+                    var screen=root.GetComponent<QuickCustomScreenView>();
+                    var content=root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content") as RectTransform;
+                    if(screen==null||content==null)throw new InvalidOperationException("Actual approved SCN13 screen/RulesScroll missing");
+                    var existing=content.Find("ArmySize");
+                    if(existing!=null)
+                    {
+                        if(!MissionSizePrefabConfigured(root))throw new InvalidOperationException("Existing partial or mismatched ArmySize refuses; review recovery separately");
+                    }
+                    else
+                    {
+                        if(Find(root.transform,"ArmySize")!=null)throw new InvalidOperationException("Unexpected duplicate ArmySize outside approved content");
+                        // Font read only; no sprite importer or foundation regeneration.
+                        boldFont=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
+                        if(boldFont==null)throw new InvalidOperationException("Existing shared font missing");
+                        var control=CreateVisibleSegmented("ArmySize",content,24,72,782,64,new[]{"STANDARD","WAR","LARGE WAR"},30,-1);
+                        control.Bind(new[]{"STANDARD","WAR","LARGE WAR"},0);
+                        foreach(var label in control.SegmentLabels)
+                        {
+                            label.enableAutoSizing=false;label.fontSize=label.fontSizeMin=label.fontSizeMax=30;
+                            label.GetComponent<V3LocalizedTextBindingView>()?.ConfigureFontBounds(30,30);
+                        }
+                        var serialized=new SerializedObject(screen);
+                        SetReference(serialized,"missionSizeSegmented",control);serialized.ApplyModifiedPropertiesWithoutUndo();
+                        MenuUiApprovedAuthoring.ApplySkirmishMissionSizeRowLayout(root);
+                        if(!MissionSizePrefabConfigured(root))throw new InvalidOperationException("Scoped row/config/layout readback failed");
+                        saved=true; // A failed/partial save must also restore the exact before bytes.
+                        if(PrefabUtility.SaveAsPrefabAsset(root,PrefabPath)==null)throw new InvalidOperationException("Scoped prefab save failed");
+                    }
+                }
+                finally{PrefabUtility.UnloadPrefabContents(root);}
+                if(ScopedAssetHash(PrefabPath+".meta")!=metaBefore||AssetDatabase.AssetPathToGUID(PrefabPath)!=guid||
+                    ScopedAssetHash(MenuScenePath)!=sceneBefore||ScopedAssetHash(MainMenuPrefabPath)!=mainBefore)
+                    throw new InvalidOperationException("SCN13 metadata or unrelated scene/menu changed");
+                // Identical semantic replay must make zero serialized writes.
+                string afterSha=ScopedAssetHash(PrefabPath);
+                var reloaded=PrefabUtility.LoadPrefabContents(PrefabPath);
+                try {if(!MissionSizePrefabConfigured(reloaded))throw new InvalidOperationException("Persisted scoped row failed reload");}
+                finally{PrefabUtility.UnloadPrefabContents(reloaded);}
+                if(ScopedAssetHash(PrefabPath)!=afterSha)throw new InvalidOperationException("Identical replay changed prefab bytes");
+                var receipt=new Newtonsoft.Json.Linq.JObject{["result"]="Passed",["prefab"]=PrefabPath,["guid"]=guid,
+                    ["beforeSha256"]=beforeSha,["afterSha256"]=afterSha,["prefabChanged"]=saved,
+                    ["identicalReplayAssetDiff"]=false,["menuSceneChanged"]=false,["mainMenuPrefabChanged"]=false,
+                    ["sourceFitCertified"]=false,["missionReady"]=false};
+                using var stream=new FileStream(Path.Combine(output,"authoring.json"),FileMode.CreateNew,FileAccess.Write,FileShare.Read);
+                using var writer=new StreamWriter(stream,new System.Text.UTF8Encoding(false));writer.Write(receipt.ToString());writer.Flush();stream.Flush(true);
+                Debug.Log("[SkirmishMissionSizeScopedAuthoring] result=Passed repeatAssetDiff=0 guidPreserved=1 sceneChanged=0 missionReady=0");
+            }
+            catch
+            {
+                if(saved)
+                {
+                    File.WriteAllBytes(PrefabPath,before);File.WriteAllBytes(PrefabPath+".meta",beforeMeta);
+                    AssetDatabase.ImportAsset(PrefabPath,ImportAssetOptions.ForceUpdate);
+                }
+                throw;
+            }
+        }
+
+        static bool MissionSizePrefabConfigured(GameObject root)
+        {
+            int rowCount=0;
+            foreach(var item in root.GetComponentsInChildren<Transform>(true))if(item.name=="ArmySize")rowCount++;
+            if(rowCount!=1)return false;
+            var screen=root.GetComponent<QuickCustomScreenView>();
+            var row=root.transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content/ArmySize");
+            var control=row!=null?row.GetComponent<UISegmentedControlView>():null;
+            if(screen==null||control==null||control.SegmentButtons?.Length!=3||control.SegmentLabels?.Length!=3)return false;
+            var serialized=new SerializedObject(screen);
+            if(serialized.FindProperty("missionSizeSegmented").objectReferenceValue!=control)return false;
+            var visual=control.GetComponent<SkirmishSetupV3SegmentVisualView>();
+            if(visual==null||new SerializedObject(visual).FindProperty("fixedSelectedIndex").intValue!=-1)return false;
+            string[] labels={"STANDARD","WAR","LARGE WAR"};
+            if(!row.gameObject.activeSelf)return false;
+            var uniqueButtons=new HashSet<Button>();
+            for(int i=0;i<3;i++)
+            {
+                var button=control.SegmentButtons[i];var label=control.SegmentLabels[i];
+                if(button==null||label==null||!uniqueButtons.Add(button)||
+                    !button.transform.IsChildOf(row)||!label.transform.IsChildOf(button.transform)||
+                    !ActiveThrough(button.transform,row)||!ActiveThrough(label.transform,row)||
+                    !button.enabled||!label.enabled||label.text!=labels[i]||
+                    button.interactable!=(i!=0))return false;
+            }
+            return MenuUiApprovedAuthoring.SkirmishMissionSizeRowLayoutMatches(root);
+        }
+
+        private static string ScopedAssetHash(string path)
+        {using var stream=File.OpenRead(path);using var hash=System.Security.Cryptography.SHA256.Create();return BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
+
+        private static int RunMissionSizeScopeControls()
+        {
+            var authored=Game.Configs.SkirmishExpansionCatalogConfig.Load();
+            if(authored==null||!authored.TryGetDefinition("S002",out var definition))
+                throw new InvalidOperationException("Actual coded definition required for scope controls.");
+            int count=0;
+            void Require(bool value,string label)
+            {if(!value)throw new InvalidOperationException("Mission-size scope control failed: "+label);count++;}
+            bool Allowed(Game.Skirmish.Contracts.SkirmishSizeId size,string id,int version)=>
+                Game.Configs.SkirmishBattleCatalogConfig.IsMissionSizeSelectionAvailable("S002",id,version,size);
+            Require(Allowed(Game.Skirmish.Contracts.SkirmishSizeId.Standard,definition.DefinitionId,definition.ContentVersion),"outside Standard unchanged");
+            Require(!Allowed(Game.Skirmish.Contracts.SkirmishSizeId.War,definition.DefinitionId,definition.ContentVersion),"outside War refused");
+            var owner=typeof(Game.Composition.SkirmishExpandedLaunchResolver).Assembly.GetType("Game.Composition.SkirmishLaunchProjection",true);
+            var resolver=owner.GetMethod("TryResolveSelectedMissionSize",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
+            if(resolver==null)throw new InvalidOperationException("Actual queue preboundary resolver missing.");
+            var selected=new UiSkirmishLibrarySelection{Kind=UiSkirmishLibraryLaunchKind.ExpandedDefinition,CatalogId="S002",
+                DefinitionId=definition.DefinitionId,ContentVersion=definition.ContentVersion,MissionSize=UiSkirmishMissionSize.War};
+            object[] args={selected,default(Game.Skirmish.Contracts.SkirmishSizeId)};
+            Require(!(bool)resolver.Invoke(null,args),"actual queue preboundary refuses unscoped War without EntityManager mutation");
+            selected.MissionSize=UiSkirmishMissionSize.Standard;args[0]=selected;
+            Require((bool)resolver.Invoke(null,args),"actual queue preboundary retains Standard");
+            var shipped=Game.Configs.SkirmishBattleCatalogConfig.Load();
+            var candidate=ScriptableObject.CreateInstance<Game.Configs.SkirmishBattleCatalogConfig>();
+            try
+            {
+                var rows=new Game.Configs.SkirmishBattleCatalogEntry[shipped.Entries.Count];
+                for(int i=0;i<rows.Length;i++)
+                {
+                    rows[i]=shipped.Entries[i];
+                    if(rows[i].ScenarioId!="S002")continue;
+                    rows[i].Status=Game.Configs.SkirmishBattleCatalogStatus.Playable;
+                    rows[i].PlayableScenarioIndex=Game.Configs.SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+                    rows[i].DefinitionId=definition.DefinitionId;rows[i].ContentVersion=definition.ContentVersion;
+                }
+                candidate.Configure(rows);
+                using(Game.Configs.SkirmishBattleCatalogConfig.UseEditorValidationCatalog(candidate))
+                {
+                    Require(Allowed(Game.Skirmish.Contracts.SkirmishSizeId.War,definition.DefinitionId,definition.ContentVersion),"exact scoped War");
+                    Require(Allowed(Game.Skirmish.Contracts.SkirmishSizeId.LargeWar,definition.DefinitionId,definition.ContentVersion),"exact scoped LargeWar");
+                    Require(!Allowed(Game.Skirmish.Contracts.SkirmishSizeId.War,definition.DefinitionId+".foreign",definition.ContentVersion),"foreign definition refused");
+                    Require(!Allowed(Game.Skirmish.Contracts.SkirmishSizeId.War,definition.DefinitionId,definition.ContentVersion+1),"foreign version refused");
+                }
+                Require(!Allowed(Game.Skirmish.Contracts.SkirmishSizeId.War,definition.DefinitionId,definition.ContentVersion),"dispose revokes War");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(candidate);}
+            return count;
+        }
+
+        private static bool ActiveThrough(Transform item,Transform ancestor)
+        {
+            for(var current=item;current!=null;current=current.parent)
+            {if(!current.gameObject.activeSelf)return false;if(current==ancestor)return true;}
+            return false;
+        }
+
+        // Edit Mode controls use an unsaved existing-prefab clone, never save/import assets.
+        public static void RunMissionSizeProposalControls()
+        {
+            if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                throw new InvalidOperationException("Idle Edit Mode controls required.");
+            var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
+            if(prefab==null)throw new InvalidOperationException("Existing SCN13 prefab required.");
+            string before=ScopedAssetHash(PrefabPath),meta=ScopedAssetHash(PrefabPath+".meta");
+            var priorFont=boldFont;var clone=UnityEngine.Object.Instantiate(prefab);int count=0;
+            void Require(bool value,string label)
+            {if(!value)throw new InvalidOperationException("Mission size control failed: "+label);count++;}
+            try
+            {
+                var content=clone.transform.Find("SkirmishSetupComposition/BaseAssaultRules/RulesScroll/Content");
+                var row=content.Find("ArmySize");UISegmentedControlView control;
+                if(row==null)
+                {
+                    boldFont=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
+                    if(boldFont==null)throw new InvalidOperationException("Shared font required.");
+                    control=CreateVisibleSegmented("ArmySize",content,24,72,782,64,new[]{"STANDARD","WAR","LARGE WAR"},30,-1);
+                    control.Bind(new[]{"STANDARD","WAR","LARGE WAR"},0);
+                    var serialized=new SerializedObject(clone.GetComponent<QuickCustomScreenView>());
+                    SetReference(serialized,"missionSizeSegmented",control);serialized.ApplyModifiedPropertiesWithoutUndo();
+                    MenuUiApprovedAuthoring.ApplySkirmishMissionSizeRowLayout(clone);row=control.transform;
+                }
+                else control=row.GetComponent<UISegmentedControlView>();
+                Require(MissionSizePrefabConfigured(clone),"valid existing row");
+                var buttons=control.SegmentButtons;var original=buttons[2];
+                buttons[2]=buttons[1];Require(!MissionSizePrefabConfigured(clone),"aliased buttons refused");buttons[2]=original;
+                var parent=original.transform.parent;original.transform.SetParent(clone.transform,false);
+                Require(!MissionSizePrefabConfigured(clone),"external button refused");original.transform.SetParent(parent,false);
+                var label=control.SegmentLabels[2];var labelParent=label.transform.parent;
+                label.transform.SetParent(buttons[1].transform,false);
+                Require(!MissionSizePrefabConfigured(clone),"wrong owner label refused");label.transform.SetParent(labelParent,false);
+                row.gameObject.SetActive(false);Require(!MissionSizePrefabConfigured(clone),"inactive row refused");row.gameObject.SetActive(true);
+                buttons[2].gameObject.SetActive(false);Require(!MissionSizePrefabConfigured(clone),"inactive button refused");buttons[2].gameObject.SetActive(true);
+                var visual=new SerializedObject(control.GetComponent<SkirmishSetupV3SegmentVisualView>());
+                visual.FindProperty("fixedSelectedIndex").intValue=0;visual.ApplyModifiedPropertiesWithoutUndo();
+                Require(!MissionSizePrefabConfigured(clone),"fixed Standard gradient refused");
+                visual.FindProperty("fixedSelectedIndex").intValue=-1;visual.ApplyModifiedPropertiesWithoutUndo();
+                Require(MissionSizePrefabConfigured(clone),"restored row accepts");
+            }
+            finally{UnityEngine.Object.DestroyImmediate(clone);boldFont=priorFont;}
+            Require(ScopedAssetHash(PrefabPath)==before&&ScopedAssetHash(PrefabPath+".meta")==meta,"asset bytes unchanged");
+            int receiptControls=SkirmishS002AriaRunHarness.RunCodedSizeReceiptControls();
+            int scopeControls=RunMissionSizeScopeControls();
+            Debug.Log("[SkirmishMissionSizeProposalControls] result=Passed rowControls="+count+
+                " receiptControls="+receiptControls+" scopeControls="+scopeControls+" normalInputProof=0 missionReady=0");
         }
 
         [MenuItem("Game/UI/V3/Validate SCN-13 Skirmish Setup")]
@@ -339,7 +565,7 @@ namespace Game.Editor
             SetHorizontalStretch(seedHelp.rectTransform, 20f, 20f, 520f, 60f);
         }
 
-        private static void BuildBaseAssaultRules(RectTransform root, ICollection<RectTransform> rightTargets)
+        private static void BuildBaseAssaultRules(RectTransform root, ICollection<RectTransform> rightTargets, out UISegmentedControlView missionSize)
         {
             var panel = CreateTopLeft("BaseAssaultRules", root, BriefingPanelX, BriefingPanelY, BriefingPanelWidth, BriefingPanelHeight);
             CreateGradientPanel(panel, DarkTop, DarkBottom, Border, 3f);
@@ -353,6 +579,7 @@ namespace Game.Editor
                 text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(key, value);
             }
             Label("Title", "ui.skirmish.base_assault", "BASE ASSAULT", 22f, 58f, 40f, Cyan);
+            missionSize = CreateVisibleSegmented("ArmySize", panel, 30f, 72f, 490f, 64f, new[] { "STANDARD", "WAR", "LARGE WAR" }, 20f, -1);
             Label("Opponent", "ui.skirmish.preset_summary", "1 opponent · Normal · 15-minute limit", 94f, 70f, 28f, TextPrimary);
             Label("Objective", "ui.skirmish.objective_explanation", "Destroy the enemy's main Barracks and protect yours. If both survive when time runs out, the match is a draw.", 178f, 128f, 29f, TextPrimary);
             Label("Roster", "ui.skirmish.starting_roster", "Each side starts with 2 rifle groups, 1 armored car and an automated supply base. Recruit more soldiers and build defenses.", 322f, 128f, 28f, TextPrimary);

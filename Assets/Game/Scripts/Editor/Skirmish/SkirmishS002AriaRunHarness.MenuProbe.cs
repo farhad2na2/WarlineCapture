@@ -279,8 +279,8 @@ namespace Game.Editor
                     var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
                     // Follow the actual card position. A one-direction swipe
                     // can overshoot a short target row or start at retained scroll.
-                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .4f)));
-                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .4f)));
+                    var from = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMin + rect.rect.height * .1f)));
+                    var to = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(new Vector2(rect.rect.center.x, rect.rect.yMax - rect.rect.height * .1f)));
                     foreach (var card in buttons)
                         if (card.name == "ScenarioCard_" + catalogId)
                         {

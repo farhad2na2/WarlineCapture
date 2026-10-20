@@ -7,6 +7,35 @@ internal static class Program
 {
     private const string ReplayRoot = "Design/AgentReports/SkirmishBattleLibrary/2026-10-14";
 
+    /// <summary>
+    /// The dump lives in the repo. Unity and the seat check are not always started
+    /// with that repo as the working directory, so walk parents from the process
+    /// and from the current directory until the fixture directory is found.
+    /// </summary>
+    private static string ResolveReplayRoot()
+    {
+        if (Directory.Exists(ReplayRoot))
+            return ReplayRoot;
+        string[] starts =
+        {
+            AppContext.BaseDirectory,
+            Directory.GetCurrentDirectory()
+        };
+        for (int s = 0; s < starts.Length; s++)
+        {
+            var dir = new DirectoryInfo(starts[s]);
+            for (int hop = 0; hop < 8 && dir != null; hop++)
+            {
+                string candidate = Path.Combine(dir.FullName, ReplayRoot);
+                if (Directory.Exists(candidate))
+                    return candidate;
+                dir = dir.Parent;
+            }
+        }
+
+        return ReplayRoot;
+    }
+
     private static int _cuePlates;
     private static int _cueWorstMiss;
     private static int _cueWorstHit;
@@ -814,7 +843,8 @@ internal static class Program
     }
 
     /// <summary>
-    /// A plain rectangle and an 8-point chamfer fail. The six-point desert hex passes.
+    /// A plain rectangle, an 8-point chamfer, a sampled rectangle, a wide flat hex,
+    /// and a rectangle with one jagged side all fail. An equal-sided hex passes.
     /// The same predicate is applied to every drawn coast inside CollectViolations.
     /// </summary>
     private static bool RectangularTerritoryRejected()
@@ -861,17 +891,45 @@ internal static class Program
             sampled[12 + i] = new TheatreSeatGeometry.Vec2(310f - 300f * (i / 6f), 220f);
         for (int i = 0; i < 6; i++)
             sampled[18 + i] = new TheatreSeatGeometry.Vec2(10f, 220f - 200f * (i / 6f));
+        var equal = new TheatreSeatGeometry.Vec2[6];
+        const float radius = 90f;
+        for (int i = 0; i < 6; i++)
+        {
+            double angle = (60.0 * i + 30.0) * Math.PI / 180.0;
+            equal[i] = new TheatreSeatGeometry.Vec2(
+                cx + (float)(Math.Cos(angle) * radius),
+                cy + (float)(Math.Sin(angle) * radius));
+        }
+
+        var jagged = new[]
+        {
+            new TheatreSeatGeometry.Vec2(10f, 220f),
+            new TheatreSeatGeometry.Vec2(310f, 220f),
+            new TheatreSeatGeometry.Vec2(310f, 20f),
+            new TheatreSeatGeometry.Vec2(270f, 46f),
+            new TheatreSeatGeometry.Vec2(230f, 18f),
+            new TheatreSeatGeometry.Vec2(190f, 50f),
+            new TheatreSeatGeometry.Vec2(150f, 16f),
+            new TheatreSeatGeometry.Vec2(110f, 44f),
+            new TheatreSeatGeometry.Vec2(70f, 18f),
+            new TheatreSeatGeometry.Vec2(10f, 20f)
+        };
         bool rectFails = TheatreSeatGeometry.TerritoryReadsRectangular(rectangle);
         bool chamferFails = TheatreSeatGeometry.TerritoryReadsRectangular(clipped);
         bool sampledFails = TheatreSeatGeometry.TerritoryReadsRectangular(sampled);
-        bool hexPasses = !TheatreSeatGeometry.TerritoryReadsRectangular(hex);
-        bool ok = rectFails && chamferFails && sampledFails && hexPasses;
+        bool wideFlatFails = TheatreSeatGeometry.TerritoryReadsRectangular(hex);
+        bool jaggedFails = TheatreSeatGeometry.TerritoryReadsRectangular(jagged);
+        bool equalPasses = !TheatreSeatGeometry.TerritoryReadsRectangular(equal);
+        bool ok = rectFails && chamferFails && sampledFails && wideFlatFails && jaggedFails && equalPasses;
         Console.WriteLine((ok ? "PASS" : "FAIL") + " rectangular coast"
             + " rect=" + TheatreSeatGeometry.EdgeIrregularity(rectangle).ToString("0.000", CultureInfo.InvariantCulture)
             + " chamfer=" + TheatreSeatGeometry.EdgeIrregularity(clipped).ToString("0.000", CultureInfo.InvariantCulture)
             + " sampled=" + TheatreSeatGeometry.EdgeIrregularity(sampled).ToString("0.000", CultureInfo.InvariantCulture)
-            + " hex=" + TheatreSeatGeometry.EdgeIrregularity(hex).ToString("0.000", CultureInfo.InvariantCulture)
-            + " floor=" + TheatreSeatGeometry.EdgeIrregularityFloor.ToString("0.00", CultureInfo.InvariantCulture));
+            + " wide=" + TheatreSeatGeometry.LongestStraightRun(hex).ToString("0.000", CultureInfo.InvariantCulture)
+            + " jagged=" + TheatreSeatGeometry.LongestStraightRun(jagged).ToString("0.000", CultureInfo.InvariantCulture)
+            + " equal=" + TheatreSeatGeometry.LongestStraightRun(equal).ToString("0.000", CultureInfo.InvariantCulture)
+            + " floor=" + TheatreSeatGeometry.EdgeIrregularityFloor.ToString("0.00", CultureInfo.InvariantCulture)
+            + " run=" + TheatreSeatGeometry.StraightRunCeiling.ToString("0.00", CultureInfo.InvariantCulture));
         return ok;
     }
 
@@ -1417,7 +1475,7 @@ internal static class Program
     private static bool ReplayFourByThreeFaIb()
     {
         const string dumpName = "seat-4x3-section-fa-reserve-off-plate-1111.0x705.0-sel-IB.json";
-        string path = Path.Combine(ReplayRoot, dumpName);
+        string path = Path.Combine(ResolveReplayRoot(), dumpName);
         if (!File.Exists(path))
         {
             Console.WriteLine("FAIL replay 4:3 fa IB missing " + dumpName);
@@ -1518,13 +1576,14 @@ internal static class Program
 
     private static void ReplayDumps(ref int seated, ref int blocked, ref int failed)
     {
-        if (!Directory.Exists(ReplayRoot))
+        string replayRoot = ResolveReplayRoot();
+        if (!Directory.Exists(replayRoot))
         {
             Console.WriteLine("REPLAY files=0");
             return;
         }
 
-        string[] files = Directory.GetFiles(ReplayRoot, "seat-*.json", SearchOption.AllDirectories);
+        string[] files = Directory.GetFiles(replayRoot, "seat-*.json", SearchOption.AllDirectories);
         Console.WriteLine("REPLAY files=" + files.Length);
         for (int i = 0; i < files.Length; i++)
         {
@@ -1764,4 +1823,5 @@ internal static class Program
 
         return true;
     }
+
 }

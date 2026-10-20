@@ -1,0 +1,37 @@
+{
+  "status": "ProposedOnly_NotExecuted",
+  "reuse": [
+    "Assets/Tests/Editor/MatchHudSquadScrollTests.cs",
+    "Assets/Tests/PlayMode/MatchHudSquadNativeScrollTests.cs",
+    "Assets/Tests/Editor/RtsCameraSystemTests.cs",
+    "Assets/Tests/Editor/TacticalFollowCameraModeCommandSystemHelperTests.cs"
+  ],
+  "cases": [
+    {
+      "case": "Real UI-origin swipe",
+      "checks": "Actual EventSystem/InputSystem contact frames over card and transparent gaps; leave viewport before release; roster scrolls, no swipe-generated click/selection change, accepted Pan count0, no world move/attack/transport commands; include EN/FA and empty-gap hit."
+    },
+    {
+      "case": "Conditional post-press flag stress",
+      "checks": "After classified UI press, deliberately set shared dragging before held sample; mark synthetic. Guard must block Pan; pre-press stale flag should already be cleared. Positive world-origin drag still pans."
+    },
+    {
+      "case": "Contact lifecycle",
+      "checks": "Stop/device removal/cancel, resumed touch, capture completion and mode return settle ownership; pump separate input/UI/runtime frames; no replayed release click/order or stale drag. Do not conflate UI-only scroll test with joint camera coverage."
+    },
+    {
+      "case": "Lens/center transitions",
+      "checks": "Existing request path fullscreen enter/exit versus normalISO; record actual before/after center and footprint under bounds. Separately test aircraft clear only with applied exact owned actor context. No broad clamp of intended Follow/aircraft views."
+    },
+    {
+      "case": "Public Follow restoration",
+      "checks": "Save known manual pose/lens through actual enter/exit/target-loss; retain exact restore rotation behavior and current existing boundary-suppression controls. No troop orders."
+    }
+  ],
+  "laterBoundedReproducer": {
+    "notAssignedOrRun": true,
+    "ownershipPrerequisite": "Fresh protected-job/capacity/source identity check and explicit exact reproducer scope before checked macOS wrapper; ownership.json records busy Menu now.",
+    "requiredEvidence": "Existing diagnostics only: actual UI ownership, pointer phases, request kinds/counts, camera owner+target and desired/applied pose/lens, actual ground center/footprint versus effective map/grid bounds, and native viewport/minimap culling/residency around visible\u2192sand transition. If camera stays correct, investigate presentation instead of bounds.",
+    "acceptance": "Compilation, fixture pass, native reproduction/normal-input ARIA/result+return, visuals, paid/queue, APK and device remain separate."
+  }
+}

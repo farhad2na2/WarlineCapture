@@ -1,0 +1,86 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "findings": [
+    {
+      "id": "UIOriginLatch",
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "startLine": 288,
+      "endLine": 321,
+      "sourceExcerpt": "            bool pointerOverAnyUi = context.IsPointerOverAnyUi?.Invoke(pointerPosition) == true;\n            bool pointerOverGameplayUi = context.IsPointerOverGameplayUi?.Invoke(pointerPosition) == true;\n            bool pointerOverBlockingUi = runtime.PlayRequested ? pointerOverGameplayUi : (pointerOverAnyUi || pointerOverGameplayUi);\n            bool hasPressActiveWorldTarget = input.HasActiveWorldTargetCommandMode(out TacticalCommandMode pressActiveMode);\n            SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(\n                $\"pointerPress pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} \" +\n                $\"activeWorldTarget={hasPressActiveWorldTarget}:{pressActiveMode} \" +\n                $\"selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} \" +\n                $\"blockingUi={pointerOverBlockingUi} ignoreUntil={input.IgnoreWorldCommandsUntilFrame}\");\n            context.LogClickDiagnostic?.Invoke(\n                $\"press pos={pointerPosition} frame={UnityEngine.Time.frameCount} play={runtime.PlayRequested} selectionMode={runtime.SelectionModeActive} anyUi={pointerOverAnyUi} gameplayUi={pointerOverGameplayUi} blockingUi={pointerOverBlockingUi}\");\n            input.BeginPointerPress(pointerPosition, pointerOverBlockingUi);\n            context.SetCameraDragging?.Invoke(false);\n\n            if (runtime.SelectionModeActive)\n                return;\n\n            if (input.HasActiveWorldTargetCommandMode(out _))\n            {\n                input.BoardPassengerDragArmed = IsTransportFirstBoardPassengerPress(context, input, pointerPosition);\n                bool allowCommandPan = AllowsCameraPanDuringCommandMode(input) && !input.PointerPressedOverUi;\n                context.SetCameraDragging?.Invoke(allowCommandPan);\n                input.SelectionModeHoldArmed = false;\n                return;\n            }\n\n            if (!input.PointerPressedOverUi)\n            {\n                context.SetCameraDragging?.Invoke(true);\n                input.ArmSelectionModeHold(UnityEngine.Time.unscaledTime);\n            }\n            else\n            {\n                context.SetCameraDragging?.Invoke(false);",
+      "claim": "Normal press classifies gameplay UI, begins latched press and clears dragging; only world-origin press arms pan.",
+      "strength": "Source-proven normal intended ownership; no observed leak",
+      "requiredRuntimeEvidence": "Need actual callback order, UI hit/latch and same contact lifetime on implicated frame."
+    },
+    {
+      "id": "HeldPanConditionalSeam",
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "startLine": 371,
+      "endLine": 374,
+      "sourceExcerpt": "            else if (context.GetCameraDragging?.Invoke() == true && frameDelta.sqrMagnitude > 0f)\n            {\n                context.PanCamera?.Invoke(frameDelta);\n            }",
+      "claim": "Held pan uses shared dragging and delta without explicit !PointerPressedOverUi. Normal press cleared dragging, so only missed ownership/lifecycle or a later writer makes this leak.",
+      "strength": "Conditional defense seam, not demonstrated normal-path failure",
+      "requiredRuntimeEvidence": "Show a real UI-origin held sample generating accepted Pan, or label injected post-press flag case synthetic."
+    },
+    {
+      "id": "RosterClickSelection",
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "startLine": 427,
+      "endLine": 439,
+      "sourceExcerpt": "                    pagination.ConfigureExpandedGroupSelection(groupId =>\n                    {\n                        selectionUiCommand.CaptureUiClickSequence();\n                        runtimeGameplayStateSystem.SuppressNextWorldClick = true;\n                        bool haveSession = TryGetExpandedSession(out Entity session);\n                        bool toggled = haveSession && SkirmishExpandedPresentedOrders.TryTogglePresentedGroup(entityManager, session, groupId);\n#if UNITY_EDITOR\n                        if (System.Environment.GetEnvironmentVariable(\"WARLINE_SQUAD_INPUT_DIAGNOSTIC\") == \"1\")\n                            Debug.Log(\"[SquadCardInput] composition group=\" + groupId + \" session=\" + haveSession + \" toggled=\" + toggled);\n#endif\n                        if (toggled)\n                            matchHudSquadTraySelectionSystem.SynchronizeExpandedSelection(\n                                CreateSquadTraySelectionContext(), entityManager);",
+      "claim": "Actual card click captures UI sequence and toggles stable group then synchronizes selection. Scrolling relay suppresses click on drag; no direct ground camera recenter or move order here.",
+      "strength": "Source-proven callback path, actual runtime still unknown",
+      "requiredRuntimeEvidence": "Check card identity/dragged flag and accepted selection/command buffers. Single aircraft selection may separately enter aircraft focus."
+    },
+    {
+      "id": "FullscreenExitCenter",
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
+      "startLine": 259,
+      "endLine": 274,
+      "sourceExcerpt": "        public void ExitFullscreenMapIsoMode(Context context)\n        {\n            if (context.WorldCamera != null && context.TryGetDefaultEntityManager(out EntityManager em))\n            {\n                context.CameraRequestSystem.QueueApplyPerspectiveModeInstant(\n                    em,\n                    context.NormalModeZoomHeight,\n                    context.NormalModePitch,\n                    context.NormalModeYaw,\n                    context.NormalModeFieldOfView);\n                ProcessCameraRequests(context, em);\n            }\n\n            context.RuntimeGameplayStateSystem.FullscreenMapIsoMode = false;\n            SetCameraDragging(context, false);\n        }",
+      "claim": "Fullscreen map exit queues perspective lens only, unlike normal ISO exit which explicitly preserves current ground center. Height/pitch changes at fixed XZ can shift ground intersection.",
+      "strength": "Concrete source asymmetry; desired UX and actual screenshot participation unproven",
+      "requiredRuntimeEvidence": "Need actual fullscreen entry/exit, before/after ground-center and effective bounds near failure; frame2874mapOpen=false alone does not show earlier transitions."
+    },
+    {
+      "id": "AircraftClearLensOnly",
+      "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs",
+      "startLine": 96,
+      "endLine": 107,
+      "sourceExcerpt": "        public void ClearAircraftFocus(Camera camera,string reason,bool restoreGround)\n        {\n            if(aircraftLens==null)return;var prior=aircraftLens;EmitAircraftFocus(\"Cleared\",reason,camera);aircraftLens=null;\n            if(restoreGround&&camera!=null&&prior.Applied)ApplyPerspectiveCameraModeInstant(camera,prior.GroundHeight,prior.GroundPitch,prior.GroundYaw,prior.GroundFov);\n        }\n        public static bool ObserveNormalGroundSelection(EntityManager em,Entity actor)\n        {\n            if(!em.Exists(actor)||!em.HasComponent<Faction>(actor)||em.GetComponentData<Faction>(actor).Id!=1||\n                OwnAircraft(em,actor,false,out _))return false;\n            var cameraOwner=em.World.GetExistingSystemManaged<RtsCameraSystem>();\n            if(cameraOwner==null||!cameraOwner.HasAircraftFocusContext)return false;\n            return em.World.GetOrCreateSystemManaged<RtsCameraRequestSystem>().QueueClearAircraftFocus(em);",
+      "claim": "Aircraft clear applies profile ground lens without a saved manual ground-center or exact prior pose. Ground selection can request this clear.",
+      "strength": "Concrete source lifecycle, not proof a S002 aircraft focus occurred",
+      "requiredRuntimeEvidence": "Need actor/session/lens ownership and Applied=true with clear reason before empty view. Do not change aircraft framing or restore policy from screenshot alone."
+    },
+    {
+      "id": "TacticalRestoreCapturedPose",
+      "path": "Assets/Game/Scripts/Systems/TacticalFollowCameraModeSystemHelper.cs",
+      "startLine": 298,
+      "endLine": 306,
+      "sourceExcerpt": "            if (worldCamera != null)\n            {\n                mode.RestorePoseValid = 1;\n                mode.RestorePosition = worldCamera.transform.position;\n                mode.RestoreRotation = worldCamera.transform.rotation;\n                mode.RestoreFieldOfView = worldCamera.fieldOfView;\n                mode.RestoreOrthographicSize = worldCamera.orthographicSize;\n                mode.RestoreOrthographic = worldCamera.orthographic ? (byte)1 : (byte)0;\n            }",
+      "claim": "Public Follow captures actual pre-Follow position/rotation/lens; later restore uses these values, not an arbitrary empty-region lookup.",
+      "strength": "Source-proven capture; can restore an already-empty prior pose; no cause established",
+      "requiredRuntimeEvidence": "Need enter/exit/target/restore pose facts plus actual camera pose; cannot infer Follow from sand screenshot."
+    },
+    {
+      "id": "RectangleNotOccupancy",
+      "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+      "startLine": 334,
+      "endLine": 375,
+      "sourceExcerpt": "        private void SyncGroundBoundary(EntityManager entityManager, RtsCameraSystem cameraSystem, Camera worldCamera, bool skipClamp)\n        {\n            Rect boundary;\n            if (TryGetActiveOperationMapCameraBoundary(entityManager, out boundary) ||\n                TryGetGridConfig(entityManager, out GridConfig grid) &&\n                TryGetGridBoundary(in grid, out boundary))\n            {\n                cameraSystem.SetGroundBoundary(boundary);\n                if (!skipClamp)\n                    cameraSystem.ClampCameraToGroundBoundary(worldCamera);\n            }\n            else\n            {\n                cameraSystem.ClearGroundBoundary();\n            }\n        }\n\n        private bool TryGetActiveOperationMapCameraBoundary(\n            EntityManager entityManager,\n            out Rect boundary)\n        {\n            boundary = default;\n            if (_activeOperationMapBoundsQuery.CalculateEntityCount() != 1)\n                return false;\n\n            Entity entity = _activeOperationMapBoundsQuery.GetSingletonEntity();\n            OperationMapBoundsComponent bounds =\n                entityManager.GetComponentData<OperationMapBoundsComponent>(entity);\n            float2 minimum = bounds.CameraMin.xz;\n            float2 maximum = bounds.CameraMax.xz;\n            if (!math.all(math.isfinite(minimum)) ||\n                !math.all(math.isfinite(maximum)) ||\n                math.any(maximum - minimum <= new float2(0.01f)))\n            {\n                return false;\n            }\n\n            boundary = new Rect(\n                minimum.x,\n                minimum.y,\n                maximum.x - minimum.x,\n                maximum.y - minimum.y);",
+      "claim": "Ground boundary prefers active map CameraMin/Max, otherwise grid fallback; these are rectangle limits, not a test that visible roads/units occupy every region.",
+      "strength": "Source-proven limits; actual runtime bounds/geometry unknown",
+      "requiredRuntimeEvidence": "Need effective bounds, ground footprint, ground reference plane and render/minimap residency. A valid rectangle does not prove presentation."
+    },
+    {
+      "id": "LensChangesAtFixedXZ",
+      "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
+      "startLine": 228,
+      "endLine": 240,
+      "sourceExcerpt": "        public void ApplyPerspectiveCameraModeInstant(Camera worldCamera, float height, float pitch, float yaw, float fieldOfView)\n        {\n            if (worldCamera == null)\n                return;\n\n            worldCamera.orthographic = false;\n            Vector3 position = worldCamera.transform.position;\n            position.y = height;\n            worldCamera.transform.position = position;\n            worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);\n            worldCamera.fieldOfView = fieldOfView;\n            ClampCameraToGroundBoundary(worldCamera);\n        }",
+      "claim": "ApplyPerspectiveCameraModeInstant changes orthographic flag, Y, rotation/FOV then clamps, without itself restoring prior ground center.",
+      "strength": "Source-proven mechanism; no numerical real-world displacement asserted",
+      "requiredRuntimeEvidence": "A separate caller may recenter; inspect full request sequence and actual source elevations, not just this method."
+    }
+  ],
+  "causeVerdict": "Unproven. Normal drawer gestures are protected by intended latch; conditional held-pan seam and lens/center restoration hypotheses remain distinct from screenshot evidence."
+}

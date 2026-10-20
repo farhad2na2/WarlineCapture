@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "Source-attributed camera review and disabled proposals only; no implementation/native acceptance",
+  "payloads": [
+    {
+      "name": "disabled-proposal.json",
+      "bytes": 2089,
+      "sha256": "dc5918ea12572e828f09e826e9ab7e20120ee1852a246bf4c504fa02cd4ca6d9"
+    },
+    {
+      "name": "evidence.json",
+      "bytes": 2813,
+      "sha256": "429194a4d8dc47b6c35ae475e4b416d49ec3f3f60661b2b93d06bd98e693bb3b"
+    },
+    {
+      "name": "findings.json",
+      "bytes": 13241,
+      "sha256": "3cfaaf8ffb226526e0d3f0a8282b04c791c3638097bf75ab2b37382e3eadf06a"
+    },
+    {
+      "name": "fixtures.json",
+      "bytes": 2614,
+      "sha256": "aaf5bb21f90cc8c18256777fe42e15a8a36893d883753cc0f36e10661d811a82"
+    },
+    {
+      "name": "ownership.json",
+      "bytes": 3497,
+      "sha256": "883ec1b06d81c74dbf784e86561b7e669f3a4f5d6773af556ec2827d0b1c3645"
+    },
+    {
+      "name": "review.md",
+      "bytes": 8468,
+      "sha256": "418203f2d9b640d6ebd046406277757981aca106d3ff98414ff8b9fbae6d9419"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 14924,
+      "sha256": "6a2819ea867e393601d99d52b336a9eee54407cb91e11bd12c384ee0a6e29f1d"
+    },
+    {
+      "name": "validation.log",
+      "bytes": 715,
+      "sha256": "98eddfd844901906614a07af8c28daa391524623654c91618988ae79fa6ca12e"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 3620,
+      "sha256": "96d20867b44ad9608e51e2aa26f9b0030ce2e19d490caa8d1f7f099baa4f5bbd"
+    }
+  ]
+}

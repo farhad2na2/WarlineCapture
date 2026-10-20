@@ -1,0 +1,60 @@
+{
+  "kind": "ExistingEvidenceAttributionOnly",
+  "existingMacReport": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacS002BlankSandAttribution20261020/report.json",
+    "bytes": 17616,
+    "sha256": "fa2872241cbbff6f0b819309a2de3911ef3eccbeb45af066a6e57c4d48d3d034",
+    "externalMacReferenceNotGitBlob": true
+  },
+  "attribution": {
+    "confidence": "Strong existing-run/time/HUD correlation; screenshot has no embedded run identity, exact frame not cryptographically sealed",
+    "mission": "S002 / skirmish.s002 v2",
+    "size": "Standard",
+    "difficulty": "Regular",
+    "seed": 104731,
+    "locale": "en",
+    "runId": "S002-aria-rs-104731-en-1",
+    "candidateSha256": "92a727e28012eca404d45ca673b847b37ce2e3ca84e5e3949f318706414178c2",
+    "codeHash": "0c104508f96f68b3850abae2dcc62f719934aadd5ff84f0c3853023afc2f067f",
+    "configHash": "c5aa3fca28e3043adbd0d873229b8edbefbf606d78d5eb102fa1e64c7daf3f01",
+    "attempt": "expanded-s002-104731-ef576d4f5a1541449eaefc40d8489be8",
+    "startedAt": "2026-10-20T15:41:08Z",
+    "liveArtifactId": "7840bb12fd0d48398f17b6ecb98c8f27",
+    "liveTraceEqualsFinalTrace": true
+  },
+  "screenshot": {
+    "observed": "Sand-only viewport and minimap; ARIA active, timer17:08, ownbase800/800, enemybase dash, materials950, infantry20/48; squad-card swipe pointer visible",
+    "comparison": "Existing exact live opening image at17:53 shows road markings, troops and minimap raster/green markers. Thus total map absence at startup is contradicted for this run; later disappearance/displacement remains unresolved.",
+    "exactFrameOrCameraPose": null
+  },
+  "boundedObservation": {
+    "frame": 2874,
+    "elapsed": 52.68246841430664,
+    "phase": "Touching",
+    "intent": "SelectSquad",
+    "selectedGroups": 0,
+    "mapOpen": false,
+    "placementOpen": false,
+    "cameraPose": null,
+    "activeCameraOwner": null,
+    "panRequests": null
+  },
+  "reportedSwipeFrameInterval": [
+    2600,
+    2960
+  ],
+  "intervalMeaning": "Prior card-swipe/time correlation, not a sealed causal frame sequence. No pose/ground footprint/owner/acceptedPan sample joins.",
+  "visibleOpening": "Existing17:53 image showed geometry/troops/minimap; later17:08 sand view unresolved. Startup total map absence contradicted for that run, later residency/rendering still unproven.",
+  "historicalOutcome": "Preserve raw Victory/MainBaseDestroyed236.072s and return; does not accept visual failure.",
+  "WindowsCurrentMetadata": {
+    "attribution": "Direct Windows task delegation, not independently replayed",
+    "source": "a7c2d6",
+    "build": "7d3ca1",
+    "S074VictorySeconds": 134.773,
+    "mainMenuPassed": true,
+    "strictCleanup": "Failed CompanionScene2to4",
+    "acceptanceTransferred": false
+  },
+  "newNativeRun": false,
+  "causeProven": false
+}

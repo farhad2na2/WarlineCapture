@@ -1,0 +1,30 @@
+{
+  "enabled": false,
+  "implementationSupplied": false,
+  "WindowsReviewRequiredForIntegration": true,
+  "primaryMinimalDefense": {
+    "target": "RtsSelectionRuntimeInputCompositionSystemHelper.HandlePointerHeld",
+    "proposal": "Add explicit !input.PointerPressedOverUi alongside shared dragging check before held Pan. Optional early UI-owned return only if existing selection/scan/release/cancel lifecycle remains intact.",
+    "why": "Defends a classified UI-origin stream against a distinct post-press drag-flag writer; does not repair a missed initial hit or prove the blank-view cause.",
+    "prerequisite": "Review and joint existing-fixture coverage, including positive world drag; no native proof claimed."
+  },
+  "separateConditionalCenterProposal": {
+    "enabled": false,
+    "target": "ExitFullscreenMapIsoMode",
+    "proposal": "If reviewed desired behavior is retain-current-ground-center, capture center before lens change and queue the same existing MoveGroundCenterTo after perspective change, following ExitNormalIsoMode pattern.",
+    "prerequisite": "Establish actual fullscreen-exit involvement and desired restoration semantics; test normal plane/bounds and portrait/wide view. Do not reset to base or change geometry."
+  },
+  "aircraftRestorePolicy": {
+    "enabled": false,
+    "proposal": "No unconditional patch. First establish Applied aircraft context and whether UX should retain current actor area or restore prior manual center; use existing owner/request APIs only.",
+    "prerequisite": "Exact actor/session/camera evidence and Windows owner decision; preserve paid production identity and Follow authority."
+  },
+  "nonChanges": [
+    "No troop orders from camera guidance or card-scroll handling",
+    "No automatic base focus/teleport on every card click",
+    "No global ground clamp added to tactical Follow/aircraft/placement (existing tests intentionally exempt these)",
+    "No map/budget/AI/geometry changes",
+    "No new diagnostic framework, source integration, Unity/native/Library/process control"
+  ],
+  "acceptedAsEmptyViewFix": false
+}

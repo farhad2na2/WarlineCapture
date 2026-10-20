@@ -1,0 +1,56 @@
+{
+  "observedUtc": "2026-10-20T22:58:24.902198+00:00",
+  "scope": "Read-only current Editor ownership observation, not launch admission or proof that missing jobs are terminal",
+  "hubProcessObserved": true,
+  "editorsAndWorkers": [
+    {
+      "pid": 51962,
+      "parentPid": 1,
+      "startedLocalPs": "Tue Oct 20 12:41:34 2026",
+      "cpuPercent": 0.8,
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "redactedCommand": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/Fig/Fig",
+      "processKind": "Editor"
+    },
+    {
+      "pid": 63415,
+      "parentPid": 23878,
+      "startedLocalPs": "Wed Oct 21 00:57:28 2026",
+      "cpuPercent": 0.0,
+      "project": null,
+      "redactedCommand": "rtk proxy Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/mission-atlas-polish-s002-en-01.log -- -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaEn",
+      "processKind": "RTK wrapper"
+    },
+    {
+      "pid": 63417,
+      "parentPid": 63415,
+      "startedLocalPs": "Wed Oct 21 00:57:28 2026",
+      "cpuPercent": 0.0,
+      "project": null,
+      "redactedCommand": "bash /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/mission-atlas-polish-s002-en-01.log -- -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaEn",
+      "processKind": "Checked wrapper"
+    },
+    {
+      "pid": 63423,
+      "parentPid": 63417,
+      "startedLocalPs": "Wed Oct 21 00:57:28 2026",
+      "cpuPercent": 152.7,
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "redactedCommand": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile /private/tmp/mission-atlas-polish-s002-en-01.log -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaEn",
+      "processKind": "Editor"
+    },
+    {
+      "pid": 63523,
+      "parentPid": 63423,
+      "startedLocalPs": "Wed Oct 21 00:57:42 2026",
+      "cpuPercent": 0.0,
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "redactedCommand": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile Logs/AssetImportWorkerHW0.log -srvPort 57130 -parentPid 63423 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense [REDACTED] -cbmMachineId [REDACTED] -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+      "processKind": "AssetImportWorker"
+    }
+  ],
+  "nativeJobAssignedToThisReview": false,
+  "processControlPerformed": false,
+  "capacityDecision": "Deferred: active protected Menu Editor152.7%CPU observed, Fig/Hub present. No new run assigned or admitted; later reproducer needs fresh exact ownership/source/capacity gate.",
+  "protectedOwnerChat": "01a15818-2610-7d42-86d1-8439e09ab44f"
+}

@@ -892,6 +892,418 @@ namespace Game.Tests.Editor
             Debug.Log("[BaManagedAreaMaterializationFocusedControls] result=Passed baPhases=11 nonBaRoundtrips=4 strictRefusals=23 reportReaders=4 callerTransactions=4 serialization=8 hull=12 sourceFitCertified=0 missionReady=0");
         }
 
+
+        // Diagnostic only: no menu input, LaunchMatch, publication or gameplay.
+        private IDisposable availabilityLifecycleScope;
+        private UnityEditor.SceneManagement.SceneSetup[] availabilityLifecycleScenes;
+        private UnityEditor.SceneManagement.SceneSetup[] availabilityLifecycleSavedScenes;
+        private bool availabilityLifecycleUtfEmptyBaseline,availabilityLifecycleMeasuredDefaultBootstrap;
+        private Newtonsoft.Json.Linq.JObject availabilityLifecycleOriginalSceneStructure;
+        private bool availabilityLifecycleStarted, availabilityLifecycleOptionsEnabled, availabilityLifecycleBackground;
+        private EnterPlayModeOptions availabilityLifecycleOptions;
+        private string availabilityLifecycleSaveRoot, availabilityLifecycleLocale, availabilityLifecycleOutput;
+        private SkirmishBattleCatalogConfig availabilityLifecycleLibrary;
+        private SkirmishExpansionCatalogConfig availabilityLifecycleAuthored;
+        private string availabilityLifecycleLibraryJson, availabilityLifecycleAuthoredJson;
+        private byte[] availabilityLifecycleLibraryBytes, availabilityLifecycleAuthoredBytes;
+        private readonly Newtonsoft.Json.Linq.JArray availabilityLifecycleObservations=new Newtonsoft.Json.Linq.JArray();
+        private bool availabilityLifecycleCyclesCompleted;
+        private static string AvailabilityLifecycleOwnedOutput(string value)
+        {
+            Assert.IsTrue(System.IO.Path.IsPathRooted(value),"Absolute owned output required.");
+            foreach(string part in value.Split(new[]{'\\','/'},StringSplitOptions.RemoveEmptyEntries))
+                Assert.IsTrue(part!=".."&&part!=".","Lexical output aliases refused.");
+            string full=System.IO.Path.GetFullPath(value);
+            string logs=System.IO.Path.GetFullPath("Logs/SkirmishProduction")+System.IO.Path.DirectorySeparatorChar;
+            Assert.IsTrue(full.StartsWith(logs,StringComparison.OrdinalIgnoreCase),"Output must remain in owned Logs.");
+            string cursor=full;
+            while(!string.IsNullOrEmpty(cursor))
+            {
+                if(System.IO.File.Exists(cursor)||System.IO.Directory.Exists(cursor))
+                    Assert.IsFalse((System.IO.File.GetAttributes(cursor)&System.IO.FileAttributes.ReparsePoint)!=0,"Reparse ancestry refused: "+cursor);
+                cursor=System.IO.Path.GetDirectoryName(cursor);
+            }
+            Assert.IsTrue(System.IO.Directory.Exists(System.IO.Path.GetDirectoryName(full)),"Existing ordinary output parent required.");
+            Assert.IsFalse(System.IO.File.Exists(full)||System.IO.Directory.Exists(full),"Fresh output required.");
+            return full;
+        }
+        private static void AvailabilityLifecycleCleanScenes()
+        {
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+            {
+                var scene=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                Assert.IsFalse(scene.isDirty,"Refuse to discard dirty scene: "+scene.path);
+                Assert.IsNotEmpty(scene.path,"A saved, restorable scene baseline is required.");
+            }
+        }
+        private static Newtonsoft.Json.Linq.JObject AvailabilityLifecycleSceneStructure(Newtonsoft.Json.Linq.JObject inventory)
+        {
+            var sceneOnly=new Newtonsoft.Json.Linq.JObject();
+            foreach(string key in new[]{"savedSetup","sceneManagerCount","scenes","truncated","rootInventoryOnly","childrenTraversed"})
+                sceneOnly[key]=inventory[key].DeepClone();
+            // Canonical JSON roundtrip compares serialized float witnesses to the actual measured JSON without widening tolerances.
+            return Newtonsoft.Json.Linq.JObject.Parse(sceneOnly.ToString(Newtonsoft.Json.Formatting.None));
+        }
+        private static Newtonsoft.Json.Linq.JObject AvailabilityLifecycleMeasuredBootstrapStructure()
+        {
+            // Exact scene-only projection of measured17264/e796df27; terminal acceptance is an external launch prerequisite.
+            return Newtonsoft.Json.Linq.JObject.Parse(@"{""savedSetup"":[],""sceneManagerCount"":1,""scenes"":[{""index"":0,""path"":"""",""name"":"""",""loaded"":true,""dirty"":false,""active"":true,""rootCount"":2,""roots"":[{""index"":0,""name"":""Main Camera"",""tag"":""MainCamera"",""activeSelf"":true,""activeInHierarchy"":true,""layer"":0,""hideFlags"":""None"",""localPosition"":[0.0,1.0,-10.0],""localRotation"":[0.0,0.0,0.0,1.0],""localScale"":[1.0,1.0,1.0],""childCount"":0,""componentCount"":3,""componentTypes"":[""UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"",""UnityEngine.Camera, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"",""UnityEngine.AudioListener, UnityEngine.AudioModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null""]},{""index"":1,""name"":""Directional Light"",""tag"":""Untagged"",""activeSelf"":true,""activeInHierarchy"":true,""layer"":0,""hideFlags"":""None"",""localPosition"":[0.0,3.0,0.0],""localRotation"":[0.408217877,-0.234569684,0.109381631,0.8754261],""localScale"":[1.0,1.0,1.0],""childCount"":0,""componentCount"":2,""componentTypes"":[""UnityEngine.Transform, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null"",""UnityEngine.Light, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null""]}]}],""truncated"":false,""rootInventoryOnly"":true,""childrenTraversed"":false}");
+        }
+        private static void AvailabilityLifecycleRequireMeasuredDefaultBootstrap()
+        {
+            var actual=AvailabilityLifecycleSceneStructure(AvailabilityUtfReadBootstrapInventory());
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(AvailabilityLifecycleMeasuredBootstrapStructure(),actual),
+                "Exact measured clean single unnamed UTF DefaultGameObjects structure required; no arbitrary unsaved scene may be discarded.");
+        }
+        private static void AvailabilityLifecycleRequireOwnedCycleScene()
+        {
+            if(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup().Length==0)
+            {
+                AvailabilityLifecycleRequireMeasuredDefaultBootstrap();
+                return;
+            }
+            AvailabilityLifecycleCleanScenes();
+            Assert.AreEqual(1,UnityEngine.SceneManagement.SceneManager.sceneCount,"Only the owned cycle Menu scene may be replaced.");
+            Assert.AreEqual("Assets/Game/Scenes/Menu.unity",UnityEngine.SceneManagement.SceneManager.GetSceneAt(0).path);
+        }
+        private static void AvailabilityLifecycleRecreateMeasuredDefaultBootstrap()
+        {
+            AvailabilityLifecycleRequireOwnedCycleScene();
+            UnityEditor.SceneManagement.EditorSceneManager.NewScene(
+                UnityEditor.SceneManagement.NewSceneSetup.DefaultGameObjects,UnityEditor.SceneManagement.NewSceneMode.Single);
+            AvailabilityLifecycleRequireMeasuredDefaultBootstrap();
+        }
+        private void AvailabilityLifecycleWriteRawSceneBaseline(Newtonsoft.Json.Linq.JObject inventory)
+        {
+            var report=new Newtonsoft.Json.Linq.JObject {
+                ["schema"]=1,["scope"]="S074LifecycleRawSceneBaselineBeforeGuards_NoConclusion",["inventory"]=inventory,
+                ["lifecycleStagesCollected"]=0,["productionPatchApplied"]=false,["normalMissionPassed"]=false };
+            Debug.Log("[S074LifecycleRawSceneBaseline] "+report.ToString(Newtonsoft.Json.Formatting.None));
+            string path=AvailabilityLifecycleOwnedOutput(availabilityLifecycleOutput+".baseline-before.json");
+            byte[] bytes=System.Text.Encoding.UTF8.GetBytes(report.ToString(Newtonsoft.Json.Formatting.Indented));
+            Assert.LessOrEqual(bytes.Length,4*1024*1024);
+            using(var file=new System.IO.FileStream(path,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+            {file.Write(bytes,0,bytes.Length);file.Flush(true);}
+        }
+        private void AvailabilityLifecycleCaptureSceneBaseline()
+        {
+            availabilityLifecycleScenes=UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup();
+            var rawInventory=AvailabilityUtfReadBootstrapInventory();
+            AvailabilityLifecycleWriteRawSceneBaseline(rawInventory);
+            availabilityLifecycleOriginalSceneStructure=AvailabilityLifecycleSceneStructure(rawInventory);
+            if(availabilityLifecycleScenes.Length==0)
+            {
+                AvailabilityLifecycleRequireMeasuredDefaultBootstrap();
+                availabilityLifecycleMeasuredDefaultBootstrap=true;
+                availabilityLifecycleSavedScenes=new UnityEditor.SceneManagement.SceneSetup[0];
+                return;
+            }
+            Assert.IsTrue(availabilityLifecycleScenes.Length>0);
+            Assert.AreEqual(availabilityLifecycleScenes.Length,UnityEngine.SceneManagement.SceneManager.sceneCount);
+            int unnamedCount=0;
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+            {
+                var scene=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                Assert.IsFalse(scene.isDirty,"Refuse to discard dirty scene: "+scene.path);
+                Assert.IsTrue(scene.isLoaded,"Loaded baseline scenes required.");
+                if(!string.IsNullOrEmpty(scene.path))continue;
+                unnamedCount++;
+                Assert.AreEqual(UnityEngine.SceneManagement.SceneManager.sceneCount-1,i,"Only the UTF trailing empty scene is supported.");
+                Assert.AreEqual(0,scene.rootCount,"Nonempty unsaved scenes must never be discarded.");
+                Assert.AreEqual(scene,UnityEngine.SceneManagement.SceneManager.GetActiveScene(),"UTF empty scene must be active.");
+                Assert.IsTrue(availabilityLifecycleScenes[i].isActive&&availabilityLifecycleScenes[i].isLoaded);
+                Assert.IsEmpty(availabilityLifecycleScenes[i].path);
+            }
+            Assert.LessOrEqual(unnamedCount,1,"Only one UTF empty scene is supported.");
+            availabilityLifecycleUtfEmptyBaseline=unnamedCount==1;
+            if(!availabilityLifecycleUtfEmptyBaseline)
+            {
+                AvailabilityLifecycleCleanScenes();
+                string baselineJson=Newtonsoft.Json.JsonConvert.SerializeObject(availabilityLifecycleScenes);
+                availabilityLifecycleSavedScenes=Newtonsoft.Json.JsonConvert.DeserializeObject<UnityEditor.SceneManagement.SceneSetup[]>(baselineJson);
+                Assert.AreEqual(baselineJson,Newtonsoft.Json.JsonConvert.SerializeObject(availabilityLifecycleSavedScenes));
+                for(int i=0;i<availabilityLifecycleScenes.Length;i++)
+                    Assert.IsFalse(ReferenceEquals(availabilityLifecycleScenes[i],availabilityLifecycleSavedScenes[i]),"Independent cycle scene setup required.");
+                return;
+            }
+            Assert.Greater(availabilityLifecycleScenes.Length,1,"A saved scene alongside the UTF empty scene is required.");
+            var saved=new System.Collections.Generic.List<UnityEditor.SceneManagement.SceneSetup>();
+            foreach(var setup in availabilityLifecycleScenes)
+            {
+                if(string.IsNullOrEmpty(setup.path))continue;
+                Assert.IsTrue(setup.isLoaded);
+                string setupJson=Newtonsoft.Json.JsonConvert.SerializeObject(setup);
+                var copy=Newtonsoft.Json.JsonConvert.DeserializeObject<UnityEditor.SceneManagement.SceneSetup>(setupJson);
+                Assert.AreEqual(setupJson,Newtonsoft.Json.JsonConvert.SerializeObject(copy));
+                Assert.IsFalse(ReferenceEquals(setup,copy),"Cycle setup must not alias the captured original.");
+                saved.Add(copy);
+            }
+            Assert.Greater(saved.Count,0);
+            // The UTF transient is active; choose a saved cycle baseline without changing the captured original setup.
+            var first=saved[0];first.isActive=true;saved[0]=first;
+            availabilityLifecycleSavedScenes=saved.ToArray();
+        }
+        private void AvailabilityLifecycleRestoreSceneBaseline()
+        {
+            if(availabilityLifecycleMeasuredDefaultBootstrap)
+            {
+                AvailabilityLifecycleRecreateMeasuredDefaultBootstrap();
+                Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(availabilityLifecycleOriginalSceneStructure,
+                    AvailabilityLifecycleSceneStructure(AvailabilityUtfReadBootstrapInventory())));
+                Assert.AreEqual(Newtonsoft.Json.JsonConvert.SerializeObject(availabilityLifecycleScenes),
+                    Newtonsoft.Json.JsonConvert.SerializeObject(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup()));
+                return;
+            }
+            UnityEditor.SceneManagement.EditorSceneManager.RestoreSceneManagerSetup(availabilityLifecycleSavedScenes);
+            if(availabilityLifecycleUtfEmptyBaseline)
+            {
+                var empty=UnityEditor.SceneManagement.EditorSceneManager.NewScene(
+                    UnityEditor.SceneManagement.NewSceneSetup.EmptyScene,UnityEditor.SceneManagement.NewSceneMode.Additive);
+                Assert.IsTrue(UnityEngine.SceneManagement.SceneManager.SetActiveScene(empty));
+                Assert.IsEmpty(empty.path);Assert.IsFalse(empty.isDirty);Assert.AreEqual(0,empty.rootCount);
+            }
+            Assert.AreEqual(Newtonsoft.Json.JsonConvert.SerializeObject(availabilityLifecycleScenes),
+                Newtonsoft.Json.JsonConvert.SerializeObject(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup()));
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+                Assert.IsFalse(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty);
+        }
+        private static Newtonsoft.Json.Linq.JObject AvailabilityLifecycleObserve(string cycle,string phase,SkirmishBattleCatalogConfig captured)
+        {
+            var loaded=SkirmishBattleCatalogConfig.Load();
+            bool managedPresent=!ReferenceEquals(captured,null),alive=captured!=null;
+            bool found=loaded!=null&&loaded.TryGet("S074",out _);
+            SkirmishBattleCatalogEntry row=default;
+            if(found)loaded.TryGet("S074",out row);
+            var facts=new Newtonsoft.Json.Linq.JObject {
+                ["cycle"]=cycle,["phase"]=phase,["isPlaying"]=EditorApplication.isPlaying,
+                ["actualEnterPlayOptionsEnabled"]=EditorSettings.enterPlayModeOptionsEnabled,
+                ["actualEnterPlayOptions"]=(int)EditorSettings.enterPlayModeOptions,
+                ["actualSaveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
+                ["actualLocale"]=GameLocalization.CurrentLocaleCode,
+                ["capturedManagedPresent"]=managedPresent,["capturedNativeAlive"]=alive,
+                ["capturedEntityId"]=alive?captured.GetEntityId().ToString():null,
+                ["sameManagedLoadReference"]=ReferenceEquals(captured,loaded),
+                ["loadedNativeAlive"]=loaded!=null,["rowFound"]=found,
+                ["rowPlayable"]=found&&row.IsPlayable,["rowStatus"]=found?row.Status.ToString():"Missing",
+                ["rowIndex"]=found?row.PlayableScenarioIndex:-1,
+                ["rowDefinitionId"]=found?row.DefinitionId:null,["rowContentVersion"]=found?row.ContentVersion:0,
+                ["capturedHideFlags"]=alive?captured.hideFlags.ToString():"Destroyed",
+                ["historicalWorldEquivalent"]=false,["missionReady"]=false };
+            Debug.Log("[S074AvailabilityLifecycleStage] "+facts.ToString(Newtonsoft.Json.Formatting.None));
+            return facts;
+        }
+        [UnityEngine.TestTools.UnityTest]
+        public System.Collections.IEnumerator ActualS074AvailabilitySurvivesSceneAndPlayCharacterization()
+        {
+            string requested=Environment.GetEnvironmentVariable("WARLINE_S074_SCOPE_LIFECYCLE_OUTPUT");
+            if(string.IsNullOrEmpty(requested))Assert.Ignore("Owned lifecycle output binding is required; not part of ordinary test suites.");
+            Assert.IsFalse(EditorApplication.isPlayingOrWillChangePlaymode);
+            availabilityLifecycleOutput=AvailabilityLifecycleOwnedOutput(requested);
+            AvailabilityLifecycleCaptureSceneBaseline();
+            availabilityLifecycleOptions=EditorSettings.enterPlayModeOptions;
+            availabilityLifecycleOptionsEnabled=EditorSettings.enterPlayModeOptionsEnabled;
+            availabilityLifecycleBackground=Application.runInBackground;
+            availabilityLifecycleSaveRoot=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            availabilityLifecycleLocale=GameLocalization.CurrentLocaleCode;
+            availabilityLifecycleLibrary=Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);
+            availabilityLifecycleAuthored=Resources.Load<SkirmishExpansionCatalogConfig>(SkirmishExpansionCatalogConfig.ResourceName);
+            Assert.IsNotNull(availabilityLifecycleLibrary);Assert.IsNotNull(availabilityLifecycleAuthored);
+            Assert.AreSame(availabilityLifecycleLibrary,SkirmishBattleCatalogConfig.Load(),"No pre-existing catalog override.");
+            Assert.AreSame(availabilityLifecycleAuthored,SkirmishExpansionCatalogConfig.Load(),"No pre-existing authored override.");
+            Assert.IsFalse(EditorUtility.IsDirty(availabilityLifecycleLibrary));Assert.IsFalse(EditorUtility.IsDirty(availabilityLifecycleAuthored));
+            Assert.IsTrue(availabilityLifecycleLibrary.TryGet("S074",out var shipped));
+            Assert.AreEqual(SkirmishBattleCatalogStatus.Planned,shipped.Status);Assert.AreEqual(-1,shipped.PlayableScenarioIndex);
+            Assert.IsTrue(string.IsNullOrEmpty(shipped.DefinitionId));
+            availabilityLifecycleLibraryJson=JsonUtility.ToJson(availabilityLifecycleLibrary);
+            availabilityLifecycleAuthoredJson=JsonUtility.ToJson(availabilityLifecycleAuthored);
+            availabilityLifecycleLibraryBytes=System.IO.File.ReadAllBytes(AssetDatabase.GetAssetPath(availabilityLifecycleLibrary));
+            availabilityLifecycleAuthoredBytes=System.IO.File.ReadAllBytes(AssetDatabase.GetAssetPath(availabilityLifecycleAuthored));
+            availabilityLifecycleStarted=true;
+            string profile=availabilityLifecycleOutput+".isolated-profile";
+            Assert.IsFalse(System.IO.Directory.Exists(profile));
+            // Each cycle starts with its own empty profile below the owned output directory.
+            EditorSettings.enterPlayModeOptionsEnabled=true;
+            EditorSettings.enterPlayModeOptions=EnterPlayModeOptions.DisableDomainReload;
+            Assert.AreEqual(EnterPlayModeOptions.DisableDomainReload,EditorSettings.enterPlayModeOptions);
+            Application.runInBackground=true;
+            foreach(var flags in new[]{HideFlags.None,HideFlags.HideAndDontSave})
+            {
+                string cycleProfile=profile+"."+flags;
+                Assert.IsFalse(System.IO.Directory.Exists(cycleProfile));
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",cycleProfile);
+                GameLocalization.SetLocale("en",false); // Actual failed normal job was EN; no persistence.
+                // Recreate only the measured engine-owned default bootstrap, or retain the existing saved-scene branch.
+                if(availabilityLifecycleMeasuredDefaultBootstrap)AvailabilityLifecycleRecreateMeasuredDefaultBootstrap();
+                else UnityEditor.SceneManagement.EditorSceneManager.RestoreSceneManagerSetup(availabilityLifecycleSavedScenes);
+                availabilityLifecycleScope=Game.Editor.SkirmishGenericMissionAvailabilityScope.Open(availabilityLifecycleAuthored,"S074",1074);
+                var captured=SkirmishBattleCatalogConfig.Load();
+                Assert.AreNotSame(availabilityLifecycleLibrary,captured);Assert.IsFalse(AssetDatabase.Contains(captured));
+                captured.hideFlags=flags; // Only the owned transient test clone; production remains unchanged.
+                Assert.IsTrue(captured.TryGet("S074",out var candidate));Assert.IsTrue(candidate.IsPlayable);
+                Assert.AreEqual(1074,candidate.PlayableScenarioIndex);
+                Assert.IsTrue(availabilityLifecycleAuthored.TryGetDefinition("S074",out var definition));Assert.IsNotNull(definition);
+                Assert.AreEqual(definition.DefinitionId,candidate.DefinitionId);Assert.AreEqual(definition.ContentVersion,candidate.ContentVersion);
+                string cycle=flags.ToString();
+                availabilityLifecycleObservations.Add(AvailabilityLifecycleObserve(cycle,"BeforeScene",captured));
+                UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
+                availabilityLifecycleObservations.Add(AvailabilityLifecycleObserve(cycle,"AfterScene",captured));
+                yield return new UnityEngine.TestTools.EnterPlayMode(false);
+                yield return null;
+                availabilityLifecycleObservations.Add(AvailabilityLifecycleObserve(cycle,"AfterEnterPlay",captured));
+                yield return new UnityEngine.TestTools.ExitPlayMode();
+                availabilityLifecycleObservations.Add(AvailabilityLifecycleObserve(cycle,"AfterExitPlay",captured));
+                availabilityLifecycleScope.Dispose();availabilityLifecycleScope=null;
+                Assert.AreSame(availabilityLifecycleLibrary,SkirmishBattleCatalogConfig.Load());
+                Assert.AreSame(availabilityLifecycleAuthored,SkirmishExpansionCatalogConfig.Load());
+                AvailabilityLifecycleCleanScenes();
+            }
+            availabilityLifecycleCyclesCompleted=true;
+        }
+        [UnityEngine.TestTools.UnityTearDown]
+        public System.Collections.IEnumerator RestoreActualS074AvailabilityLifecycleCharacterization()
+        {
+            if(!availabilityLifecycleStarted)yield break;
+            if(EditorApplication.isPlayingOrWillChangePlaymode)
+                yield return new UnityEngine.TestTools.ExitPlayMode();
+            Exception restorationError=null;
+            try
+            {
+                availabilityLifecycleScope?.Dispose();availabilityLifecycleScope=null;
+                if(availabilityLifecycleMeasuredDefaultBootstrap)AvailabilityLifecycleRequireOwnedCycleScene();
+                else AvailabilityLifecycleCleanScenes();
+                AvailabilityLifecycleRestoreSceneBaseline();
+                Assert.AreSame(availabilityLifecycleLibrary,SkirmishBattleCatalogConfig.Load());
+                Assert.AreSame(availabilityLifecycleAuthored,SkirmishExpansionCatalogConfig.Load());
+                Assert.AreEqual(availabilityLifecycleLibraryJson,JsonUtility.ToJson(availabilityLifecycleLibrary));
+                Assert.AreEqual(availabilityLifecycleAuthoredJson,JsonUtility.ToJson(availabilityLifecycleAuthored));
+                CollectionAssert.AreEqual(availabilityLifecycleLibraryBytes,System.IO.File.ReadAllBytes(AssetDatabase.GetAssetPath(availabilityLifecycleLibrary)));
+                CollectionAssert.AreEqual(availabilityLifecycleAuthoredBytes,System.IO.File.ReadAllBytes(AssetDatabase.GetAssetPath(availabilityLifecycleAuthored)));
+                Assert.IsFalse(EditorUtility.IsDirty(availabilityLifecycleLibrary));Assert.IsFalse(EditorUtility.IsDirty(availabilityLifecycleAuthored));
+            }
+            catch(Exception error){restorationError=error;}
+            finally
+            {
+                try
+                {
+                    EditorSettings.enterPlayModeOptions=availabilityLifecycleOptions;
+                    EditorSettings.enterPlayModeOptionsEnabled=availabilityLifecycleOptionsEnabled;
+                    Application.runInBackground=availabilityLifecycleBackground;
+                    Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",availabilityLifecycleSaveRoot);
+                    GameLocalization.SetLocale(availabilityLifecycleLocale,false);
+                    Assert.AreEqual(availabilityLifecycleOptions,EditorSettings.enterPlayModeOptions);
+                    Assert.AreEqual(availabilityLifecycleOptionsEnabled,EditorSettings.enterPlayModeOptionsEnabled);
+                    Assert.AreEqual(availabilityLifecycleBackground,Application.runInBackground);
+                    Assert.AreEqual(availabilityLifecycleSaveRoot,Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"));
+                    Assert.AreEqual(availabilityLifecycleLocale,GameLocalization.CurrentLocaleCode);
+                }
+                catch(Exception settingsError)
+                {
+                    restorationError=restorationError==null?settingsError:new AggregateException(restorationError,settingsError);
+                }
+            }
+            var report=new Newtonsoft.Json.Linq.JObject {
+                ["schema"]=1,["scope"]="S074EditorAvailabilityScenePlayLifetime_NoLaunchNoMission",
+                ["cyclesCompleted"]=availabilityLifecycleCyclesCompleted,["observations"]=availabilityLifecycleObservations,
+                ["sceneBaseline"]=new Newtonsoft.Json.Linq.JObject {
+                    ["utfCleanEmptyTransientRecognized"]=availabilityLifecycleUtfEmptyBaseline,
+                    ["measuredDefaultBootstrapRecognized"]=availabilityLifecycleMeasuredDefaultBootstrap,
+                    ["originalSceneStructure"]=availabilityLifecycleOriginalSceneStructure,
+                    ["actualSceneStructure"]=AvailabilityLifecycleSceneStructure(AvailabilityUtfReadBootstrapInventory()),
+                    ["originalSetup"]=Newtonsoft.Json.Linq.JArray.FromObject(availabilityLifecycleScenes),
+                    ["restoredSetup"]=Newtonsoft.Json.Linq.JArray.FromObject(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup()),
+                    ["restorationScope"]="Exact captured saved setup or measured engine DefaultGameObjects structure; no original transient native identity claim" },
+                ["restorationWitnesses"]=new Newtonsoft.Json.Linq.JObject {
+                    ["originalEnterPlayOptions"]=(int)availabilityLifecycleOptions,
+                    ["actualEnterPlayOptions"]=(int)EditorSettings.enterPlayModeOptions,
+                    ["originalOptionsEnabled"]=availabilityLifecycleOptionsEnabled,
+                    ["actualOptionsEnabled"]=EditorSettings.enterPlayModeOptionsEnabled,
+                    ["originalSaveRoot"]=availabilityLifecycleSaveRoot,
+                    ["actualSaveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
+                    ["originalLocale"]=availabilityLifecycleLocale,["actualLocale"]=GameLocalization.CurrentLocaleCode,
+                    ["originalRunInBackground"]=availabilityLifecycleBackground,["actualRunInBackground"]=Application.runInBackground },
+                ["restorationPassed"]=restorationError==null,["restorationError"]=restorationError?.ToString(),
+                ["productionPatchApplied"]=false,["hypothesisConclusion"]="Requires independent interpretation of actual stage witnesses",
+                ["normalMissionPassed"]=false,["publicationModified"]=false };
+            byte[] bytes=System.Text.Encoding.UTF8.GetBytes(report.ToString(Newtonsoft.Json.Formatting.Indented));
+            Assert.AreEqual(availabilityLifecycleOutput,AvailabilityLifecycleOwnedOutput(availabilityLifecycleOutput));
+            using(var file=new System.IO.FileStream(availabilityLifecycleOutput,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+            {file.Write(bytes,0,bytes.Length);file.Flush(true);}
+            availabilityLifecycleStarted=false;
+            if(restorationError!=null)throw new InvalidOperationException("Lifecycle restoration failed; partial evidence retained.",restorationError);
+            Assert.IsTrue(availabilityLifecycleCyclesCompleted,"Incomplete cycles; no lifecycle conclusion.");
+            Debug.Log("[S074AvailabilityLifecycle] result=Collected cycles=2 stages=8 launchInputs=0 missionReady=0");
+        }
+        private static Newtonsoft.Json.Linq.JObject AvailabilityUtfReadBootstrapInventory()
+        {
+            var scenes=new Newtonsoft.Json.Linq.JArray();
+            bool truncated=false;
+            int sceneCount=UnityEngine.SceneManagement.SceneManager.sceneCount;
+            var active=UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+            for(int i=0;i<System.Math.Min(sceneCount,16);i++)
+            {
+                var scene=UnityEngine.SceneManagement.SceneManager.GetSceneAt(i);
+                var roots=new Newtonsoft.Json.Linq.JArray();
+                if(scene.isLoaded)
+                {
+                    var objects=scene.GetRootGameObjects();
+                    if(objects.Length>128)truncated=true;
+                    for(int r=0;r<System.Math.Min(objects.Length,128);r++)
+                    {
+                        var go=objects[r];var transform=go.transform;
+                        var components=new Newtonsoft.Json.Linq.JArray();
+                        var actual=go.GetComponents<Component>();
+                        if(actual.Length>128)truncated=true;
+                        for(int c=0;c<System.Math.Min(actual.Length,128);c++)
+                            components.Add(actual[c]==null?"MissingScript":actual[c].GetType().AssemblyQualifiedName);
+                        roots.Add(new Newtonsoft.Json.Linq.JObject {
+                            ["index"]=r,["name"]=go.name,["tag"]=go.tag,["activeSelf"]=go.activeSelf,
+                            ["activeInHierarchy"]=go.activeInHierarchy,["layer"]=go.layer,["hideFlags"]=go.hideFlags.ToString(),
+                            ["localPosition"]=new Newtonsoft.Json.Linq.JArray(transform.localPosition.x,transform.localPosition.y,transform.localPosition.z),
+                            ["localRotation"]=new Newtonsoft.Json.Linq.JArray(transform.localRotation.x,transform.localRotation.y,transform.localRotation.z,transform.localRotation.w),
+                            ["localScale"]=new Newtonsoft.Json.Linq.JArray(transform.localScale.x,transform.localScale.y,transform.localScale.z),
+                            ["childCount"]=transform.childCount,["componentCount"]=actual.Length,["componentTypes"]=components });
+                    }
+                }
+                scenes.Add(new Newtonsoft.Json.Linq.JObject {
+                    ["index"]=i,["path"]=scene.path,["name"]=scene.name,["loaded"]=scene.isLoaded,
+                    ["dirty"]=scene.isDirty,["active"]=scene==active,["rootCount"]=scene.rootCount,["roots"]=roots });
+            }
+            return new Newtonsoft.Json.Linq.JObject {
+                ["savedSetup"]=Newtonsoft.Json.Linq.JArray.FromObject(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup()),
+                ["sceneManagerCount"]=sceneCount,["scenes"]=scenes,["truncated"]=truncated||sceneCount>16,
+                ["rootInventoryOnly"]=true,["childrenTraversed"]=false,
+                ["enterPlayOptionsEnabled"]=EditorSettings.enterPlayModeOptionsEnabled,
+                ["enterPlayOptions"]=(int)EditorSettings.enterPlayModeOptions,
+                ["runInBackground"]=Application.runInBackground,
+                ["validationSaveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT") };
+        }
+        [Test]
+        public void ActualS074UtfBootstrapSceneInventoryOnly()
+        {
+            string requested=Environment.GetEnvironmentVariable("WARLINE_S074_UTF_BASELINE_INVENTORY_OUTPUT");
+            if(string.IsNullOrEmpty(requested))Assert.Ignore("Owned inventory output binding required; not an ordinary suite measurement.");
+            Assert.IsFalse(EditorApplication.isPlayingOrWillChangePlaymode);
+            string output=AvailabilityLifecycleOwnedOutput(requested);
+            // Observe the exact UTF bootstrap before any fixture shape guard or scene/profile/options mutation.
+            var before=AvailabilityUtfReadBootstrapInventory();
+            var after=AvailabilityUtfReadBootstrapInventory();
+            bool unchanged=Newtonsoft.Json.Linq.JToken.DeepEquals(before,after);
+            var report=new Newtonsoft.Json.Linq.JObject {
+                ["schema"]=1,["scope"]="S074UtfBootstrapInventoryOnly_NoSceneMutationNoLifecycleConclusion",
+                ["before"]=before,["after"]=after,["observedStateUnchanged"]=unchanged,
+                ["noSceneOrProfileOrOptionsMutationRequested"]=true,["localeQueried"]=false,
+                ["lifecycleStagesCollected"]=0,["availabilityScopeOpened"]=false,["productionPatchApplied"]=false,
+                ["normalMissionPassed"]=false,["publicationModified"]=false };
+            Debug.Log("[S074UtfBootstrapRawInventory] "+report.ToString(Newtonsoft.Json.Formatting.None));
+            byte[] bytes=System.Text.Encoding.UTF8.GetBytes(report.ToString(Newtonsoft.Json.Formatting.Indented));
+            Assert.LessOrEqual(bytes.Length,4*1024*1024,"Bounded inventory buffer required.");
+            Assert.AreEqual(output,AvailabilityLifecycleOwnedOutput(output));
+            using(var file=new System.IO.FileStream(output,System.IO.FileMode.CreateNew,System.IO.FileAccess.Write,System.IO.FileShare.Read))
+            {file.Write(bytes,0,bytes.Length);file.Flush(true);}
+            Assert.IsTrue(unchanged,"Inventory observed a changing baseline; raw facts persisted.");
+            Assert.IsFalse((bool)before["truncated"],"Inventory limits reached; partial facts persisted.");
+            Debug.Log("[S074UtfBootstrapInventory] result=Collected sceneMutations=0 profileMutations=0 lifecycleStages=0 missionReady=0");
+        }
         public static void RunFocusedValidation()
         {
             var t=new SkirmishGenericMissionDispatchTests();

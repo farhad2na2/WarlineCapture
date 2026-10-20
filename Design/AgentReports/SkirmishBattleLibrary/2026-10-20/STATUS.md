@@ -1,46 +1,58 @@
 # Skirmish saga menu — implementation and evidence
 
-Working branch: `codex/skirmish-saga-menu`. **No merge authorized: owner visual review required.**
+Branch: `codex/skirmish-saga-menu`. Runtime/UI checkpoint: `ac03176`; native pointer-driver correction: `16beead`. **Merge awaits owner visual review.**
 
-The approved saga replaces the grid and the six battlefield cards with a winding, native 24-stop road. It retains the existing catalog, medal ledger, ownership evaluator, launch resolver, Campaign map sources, localized TMP typography, and colorful command buttons. Theatre adds a dotted route and objective medal trails. Existing legacy Grid code remains dormant pending the owner’s deletion decision.
+The native 24-stop battlefield road, objective flags, earned ribbons, ownership/store states, theatre route and objective medal trails follow the approved saga direction. Catalog IDs, ledger semantics, access/launch authority and Campaign map sources remain in use. Legacy Grid code is dormant pending the owner's deletion decision.
 
-## Unity Game view scale bug
+## Game view sizing and native UI fixes
 
-The shell used a 4800×2160 logical canvas, but `FillComposition` reset its child scale to one. This stretched the map while fixed 80-point stops and 100-point footer controls rendered at half their intended size. `SkirmishLibraryFrame.FitComposition` now shares a 1080-point reference-height calculation with the offline geometry checker. Both live and inset-device layout use that calculation.
+The shell's 4800×2160 logical canvas stretched a child whose scale was reset to one, halving fixed-size controls. Composition now uses a 1080-point reference height and fits the parent canvas. Native Play checks measure a 100 px footer and 80 px stops at 2400×1080. The obsolete map-clip anchor reset, duplicate theatre detail overlay and old yellow panel/safe-area perimeter strokes are removed. Stop medallions receive native raycasts.
 
-A second binding bug collapsed `MapPreviewClip` to zero size after a scenario refresh. That obsolete anchor reset is removed. Stops also now register their medallions as native raycast targets.
+Briefing content is measured after localization, retains EN 20 / FA 22 pt, and gains a native scroll viewport when needed. The picture respects its adaptive row height. Skirmish sizing is released from the generic typography late-frame reset while RTL/arrow handling remains enabled. The native journey rejects actual briefing overflow before launch. Result first-medal text fits one line.
 
-Actual normal-input Play evidence from attempt 05: 2400×1080 rendered frame, footer 100 pixels, stop diameter 79.99994 pixels, complete native Main Menu → Theatre → Zoom → objective → S002 → Launch navigation. The menu screenshot is in `../../SkirmishExpansion/S002/_Evidence/`, artifact ID `1827490ac90045c1a3a4dd364e5e855e`. This run failed later in combat; it is not a successful mission journey.
+## Theatre density and interactions
+
+The owner chose to retain both limits and continue enlargement. Authored menu coasts now cover **66.1%** of the open map while retaining the **10% aspect**, **12 px painted halo-gap**, **20 px area-centroid**, card-containment, visible-terrain, leader and native glyph gates. Blue City Crossroads, gold Industrial Basin and teal Airfield Plains follow the mockup palette. The coast template is a menu overlay; no runtime packing optimizer or physical Campaign map geometry was added.
+
+The reserved portrait preview holds the selected zoom cue clear of title/progress. The parked-cue predicate recognizes that interior slot and retains all nonselected-coast, pin, leader, map and detail checks, avoiding an old attachment path that moved Persian Desert Base. Region hit testing follows the polygon, preventing overlapping bounding boxes from selecting the wrong coast. The cue is an actual native Button routed through the existing view model; its hint describes the button action. Native journeys tap the visible marker for selection, then the cue; cold-restart navigation also exercises the footer zoom action.
+
+Unchanged layout callbacks preserve existing theatre pointer targets and avoid recursively reseating them; actual geometry, locale or selection changes still rebuild. The cue uses the existing footer zoom handler, including its presentation refresh. A regression checks button instance identity across repeated layout passes.
+
+A bounded cache shares exact raster sprites by geometry/color bits, avoiding repeated coast/shade texture generation and unbounded native texture growth on refresh. Shader inclusion is authored through Unity serialized APIs so both dynamically found theatre shaders remain referenced in GraphicsSettings. Player builds/device rendering are a separate pending gate.
 
 ## Separate acceptance records
 
-| Gate | Latest verified state |
+| Gate | Latest record |
 | --- | --- |
-| Native EditMode, ledger, access, launch and menu tests | Tests 22: 89 passed, 0 failed, 0 skipped |
-| ARIA plan/control checks | Tests 22: 141 cases passed |
-| Dense logical canvas regression | Scale 03 passed EN 20:9 and FA 4:3; actual Play 05 also measured native scale |
-| Full 16 native captures | Final matrix 10 passed all 16; compact EN 4:3 repair and five long-briefing captures also passed |
-| Focused native cue captures | Native 12 passed 5; AP FA 4:3 passed separately |
-| Strict theatre geometry | Full 09 passed on the compact-coast repair: 113 seated, 0 blocked |
-| Full normal-input ARIA/result/return | Attempt 06 passed the actual S002 ARIA victory/result/return/disk flow; its separately observed briefing visual defect is being fixed before final acceptance |
-| Medal persistence across an actual process restart | Restart 01 passed in a different Editor PID on the same candidate, using the original earned profile and native Touch navigation |
-| Owner visual review | Pending |
-| Real player/device acceptance | Pending |
+| Focused native menu, access, launch, ledger and model tests | Run 26: **95 passed, 0 failed, 0 skipped** |
+| ARIA plan/control checks | **141 cases passed** |
+| Strict pure geometry | Full 14: **113 seated, 0 blocked**, passed |
+| Native visual matrix | Capture 15: **18 passed** — 16 locale/ratio screens plus FA 16:9 DB and EN 20:9 AP selection regressions |
+| Live scale/briefing | Final EN run 14 and FA run 15 passed: footer 100 px, stops 80 px; full briefings at EN 20 / FA 22 pt |
+| Actual S002 normal-touch ARIA victory, result, return and disk medal | Final EN run 14 and FA run 15 passed on `ceeb2284…`: actual victories, visible result medals, correct return selection, ribbon and fresh disk reload |
+| Cold Editor process medal reload without seeding | EN restart 05 and FA restart 06 passed in fresh PIDs on the same hash; `profileSeeded=0`, native touch navigation |
+| Owner visual review | **Pending** |
+| Real player/device acceptance | **Pending** |
+| Windows filesystem guard lane | **Unverified on this macOS host** |
 
-## Preserved failure evidence
+The static capture progress is a labelled demo fixture. Normal-input journeys use isolated validation profiles and seed 104731; actual S002 victories, result medals, returned ribbons and disk reloads establish their own evidence. No injected model settlement or earlier-candidate win establishes final native readiness.
 
-All failed and interrupted runs remain on disk. `iterations/`, `tests/`, `normal-input/`, and the unique S002 trace artifacts record their own candidate and outcomes. A stale `failure.txt` or `failures.txt` in a reused capture directory is historical; use the explicit per-run log and manifest. Do not delete it or treat its absence as validation.
+## Preserved failed and superseded evidence
 
-The three aircraft geometry dependency-stamp updates were measured separately against exact backups. Geometry, binding fields, GUIDs and original strict guards were preserved; see `normal-input/cache-stamp-preparation/`. This is dependency metadata maintenance, not a physical map change.
+Every failed/interrupted capture and raw log remains locally under `iterations/`, `tests/`, `normal-input/` and uniquely named S002 traces. Public review copies redact private host/licensing fields, preserve validation markers and record raw/public SHA-256 hashes. Reused directories can contain stale `failure.txt` files; authoritative records are per-run logs and manifests.
 
-Tracked handoff recovery scenes remain in `Assets/_Recovery`; an audit copy is retained in `baseline/recovery-scenes/`. No scene source was changed by this task.
+Density iterations exposed real title/cue overlap, a stale 4:3 fallback and a hidden cue; all were fixed. Arabic line-height failures, the EN 4:3 label width and a legacy Persian shelf override were fixed without reducing the font floor or geometry limits. The old runtime replay's bounding-box-center approximation was replaced by the native area centroid, tightening 36 px to 20 px. Exterior shelves retain their width requirement; the new interior preview is checked separately with its explicit title/footer bounds and native glyph captures.
 
-## Outstanding theatre coverage gate
+Native attempt 12 stopped before launch with `menuControlsTimeout`: its bounding-box-center selection point was occupied by the new valid cue action. The driver now taps the visible marker and still requires EventSystem to hit the exact region button. That failed run remains failed; it is not a mission win.
 
-The current legal coast layout remains below the handoff’s 0.65–0.70 territory coverage target (roughly 0.42 at 16:9, 0.32–0.37 at 20:9, and 0.50 at 4:3). All 12-pixel halo and 10-percent aspect constraints remain in force. Isolated 15/20-percent aspect experiments are retained under `tests/`; they do not prove that higher coverage is impossible and were not shipped. A strict checker pass must not be reported as satisfying this separate visual coverage target. The owner decision is still open.
+Optional broader run 18 **failed: 131 passed, 28 failed, 2 skipped**. Twenty failures concern Windows filesystem/junction controls or the correctly refused macOS temporary-directory symlink. Eight prefab-free ledger fixtures hit the newer native camera-readiness path; their setup now explicitly creates a model simulation, with a separate test proving that native initialization still refuses the prefab-free world. The focused passing suite includes those model tests and the refusal test. Windows guards were not weakened or relabeled as passing.
 
-## Broader harness and platform limits
+Earlier actual wins on `dfce6e94…` and `92a727e2…` are retained as historical evidence, including their cold reloads. They do not substitute for the final candidate's new journeys. Run 25 finished 94/0/0 before a considered stop; no Editor was terminated. One already-failed obsolete pure replay was explicitly interrupted, with a PID/log receipt.
 
-Optional broader run 18 was **failed** (131 passed, 28 failed, 2 skipped), and its original log/XML are preserved. Twenty failures concern Windows filesystem/junction controls or the correctly refused macOS temporary-directory symlink. Eight prefab-free model fixtures also failed because they entered the newer native camera-readiness path. Their setup now explicitly seeds only a ledger simulation, with a separate test proving that the original native initializer still refuses that prefab-free world. Run 19 includes those eight model tests, the refusal test and the 78 native menu/ledger/access tests: 87 passed, 0 failed, 0 skipped. These simulation outcomes never count as native player wins. Windows filesystem coverage remains unverified here; none of its guards was weakened or relabeled as passing.
+## Source scope
 
-The live-only typography race is fixed by releasing Skirmish label sizing from `MenuTypographyView` while retaining its RTL/arrow work. Tests 22 exercise its actual late-frame sizing callback, preserve unrelated labels, and pass 89 cases. The native journey now also rejects actual briefing overflow before launch. Final post-fix Play runs are in progress.
+The three aircraft dependency-stamp updates were measured against exact backups: geometry/binding fields, GUIDs and original strict guards were preserved. See [exact dependency-stamp backups and audit](review/evidence/aircraft-dependency-audit.zip); full originals remain in `normal-input/cache-stamp-preparation/`. Tracked handoff recovery scenes remain unchanged in `Assets/_Recovery`. The source audit has **zero .unity scene diffs**. Existing Campaign physical maps are reused. Inherited P1/P2 and CI/line-ending changes are listed in the source-path manifest.
+
+[Review comparisons](review/REVIEW.md) · [Final native captures](captures/final-15/manifest.json)
+
+Final candidate SHA-256: `ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0`. EN artifact `1effdbc6887a40f3a3e5fe9f1261edca`; FA artifact `f70e9d3adcf34eec8f978fb3f4666739`. [Final validation and exact native proof files](review/evidence/final-validation.json) · [Public log archive manifest](review/evidence/log-copy-manifest.json) · [Source paths](review/pr-source-paths.json).

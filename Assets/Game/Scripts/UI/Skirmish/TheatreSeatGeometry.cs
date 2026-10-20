@@ -1564,6 +1564,144 @@ namespace Game.UI.Runtime
             return 6f + art + 4f + 4f + 6f;
         }
 
+        /// <summary>
+        /// Smallest painting that still reads as the district plate. An 8px sliver
+        /// under a title that was pushed to the bottom is a blank card.
+        /// </summary>
+        public const float CardArtMinHeight = 40f;
+
+        /// <summary>Title, painting and status bands inside one zone card. Y grows downward.</summary>
+        public struct ZoneCardBands
+        {
+            public float TitleY;
+            public float TitleH;
+            public float ArtX;
+            public float ArtY;
+            public float ArtW;
+            public float ArtH;
+            public float StatusY;
+            public float StatusH;
+        }
+
+        /// <summary>
+        /// Title under <paramref name="titleTop"/>, status on the bottom edge, painting
+        /// between them. A two-line title grows downward only while the painting stays
+        /// at least <see cref="CardArtMinHeight"/> and every band stays on the card.
+        /// </summary>
+        public static ZoneCardBands LayoutZoneCardBands(
+            float cardW,
+            float cardH,
+            float titleTop,
+            float titleNeed,
+            float statusNeed)
+        {
+            if (cardW < 8f)
+                cardW = 8f;
+            if (cardH < 8f)
+                cardH = 8f;
+            if (titleTop < 0f)
+                titleTop = 0f;
+            if (titleTop > cardH - 24f)
+                titleTop = 0f;
+            if (titleNeed < 18f)
+                titleNeed = 18f;
+            if (statusNeed < 22f)
+                statusNeed = 22f;
+            float artFloor = CardArtMinHeight;
+            if (cardH < 120f)
+                artFloor = 28f;
+            float budget = cardH - titleTop - 6f;
+            float titleH = titleNeed;
+            float statusH = statusNeed;
+            float overflow = titleH + statusH + artFloor - budget;
+            if (overflow > 0f)
+            {
+                float titleSpare = titleH - 36f;
+                if (titleSpare > 0f)
+                {
+                    float cut = titleSpare < overflow ? titleSpare : overflow;
+                    titleH -= cut;
+                    overflow -= cut;
+                }
+            }
+
+            if (overflow > 0f)
+            {
+                float statusSpare = statusH - 22f;
+                float cut = statusSpare < overflow ? statusSpare : overflow;
+                if (cut < 0f)
+                    cut = 0f;
+                statusH -= cut;
+                overflow -= cut;
+            }
+
+            if (overflow > 0f)
+                titleH -= overflow;
+            if (titleH < 18f)
+                titleH = 18f;
+            if (titleTop + titleH > cardH - 8f)
+                titleH = Math.Max(18f, cardH - titleTop - 8f);
+            float artY = titleTop + titleH + 2f;
+            float statusY = cardH - statusH;
+            if (statusY < artY + 8f)
+            {
+                statusY = artY + 8f;
+                statusH = cardH - statusY;
+                if (statusH < 18f)
+                {
+                    statusH = 18f;
+                    statusY = cardH - statusH;
+                }
+            }
+
+            float artH = statusY - 2f - artY;
+            if (artH < 8f)
+                artH = 8f;
+            if (artY + artH > statusY)
+                artH = Math.Max(8f, statusY - artY);
+            float artX = 3f;
+            float artW = cardW - 6f;
+            if (artW < 8f)
+            {
+                artX = 0f;
+                artW = cardW;
+            }
+
+            return new ZoneCardBands
+            {
+                TitleY = titleTop,
+                TitleH = titleH,
+                ArtX = artX,
+                ArtY = artY,
+                ArtW = artW,
+                ArtH = artH,
+                StatusY = statusY,
+                StatusH = statusH
+            };
+        }
+
+        /// <summary>True when the painting, the title and the status all sit on the card.</summary>
+        public static bool ZoneCardArtInside(ZoneCardBands bands, float cardW, float cardH)
+        {
+            if (bands.ArtH + 0.05f < CardArtMinHeight)
+                return false;
+            if (bands.ArtW < 8f || bands.ArtH < 8f)
+                return false;
+            if (bands.TitleY < -0.5f || bands.TitleY + bands.TitleH > cardH + 0.5f)
+                return false;
+            if (bands.ArtX < -0.5f || bands.ArtY < -0.5f)
+                return false;
+            if (bands.ArtX + bands.ArtW > cardW + 0.5f || bands.ArtY + bands.ArtH > cardH + 0.5f)
+                return false;
+            if (bands.StatusY < -0.5f || bands.StatusY + bands.StatusH > cardH + 0.5f)
+                return false;
+            if (bands.ArtY + 0.5f < bands.TitleY + bands.TitleH)
+                return false;
+            if (bands.StatusY + 0.5f < bands.ArtY + bands.ArtH)
+                return false;
+            return true;
+        }
+
         private static string Json(string value)
         {
             if (string.IsNullOrEmpty(value))

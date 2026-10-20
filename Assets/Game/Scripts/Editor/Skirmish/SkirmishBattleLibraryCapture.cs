@@ -1948,6 +1948,14 @@ namespace Game.Editor
                     " alpha=" + art.color.a.ToString("0.00") + ".");
             }
 
+            RejectBlankCardArt(card, art, thumb, locale, mapId);
+            if (name.rectTransform != null && !Contains(WorldBounds(card), WorldBounds(name.rectTransform), 1f))
+            {
+                throw new InvalidOperationException(
+                    "Theatre zone name draws outside its card locale=" + locale +
+                    " card=ZoneCard_" + mapId + ".");
+            }
+
             float nameShare = QuickCustomScreenView.NameStripShare(card);
             if (nameShare > 0.25f)
             {
@@ -2087,6 +2095,42 @@ namespace Game.Editor
             if (spriteName.IndexOf("disc", StringComparison.OrdinalIgnoreCase) >= 0)
                 return false;
             return spriteName.IndexOf("skirmish.plate." + mapId, StringComparison.OrdinalIgnoreCase) >= 0;
+        }
+
+        /// <summary>
+        /// The painting has to occupy the middle of the card. A title parked on the
+        /// bottom leaves an 8px art rect under the tile, and the card reads as a
+        /// blank black frame even when the plate sprite is assigned.
+        /// </summary>
+        private static void RejectBlankCardArt(RectTransform card, Image art, RawImage thumb, string locale, string mapId)
+        {
+            RectTransform artRect = art != null ? art.rectTransform : null;
+            float artH = 0f;
+            if (artRect != null)
+                artH = artRect.rect.height > 1f ? artRect.rect.height : artRect.sizeDelta.y;
+            bool shown = art != null && art.enabled && art.gameObject.activeInHierarchy && art.sprite != null && artRect != null;
+            Rect cardBounds = WorldBounds(card);
+            Rect artBounds = artRect != null ? WorldBounds(artRect) : default;
+            if (!shown || artH < 36f || artBounds.height < 36f || !Contains(cardBounds, artBounds, 2f))
+            {
+                throw new InvalidOperationException(
+                    "Theatre card art area is blank locale=" + locale +
+                    " card=ZoneCard_" + mapId +
+                    " artH=" + artH.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ".");
+            }
+
+            RectTransform thumbRect = thumb != null ? thumb.rectTransform : null;
+            float thumbH = 0f;
+            if (thumbRect != null)
+                thumbH = thumbRect.rect.height > 1f ? thumbRect.rect.height : thumbRect.sizeDelta.y;
+            Rect thumbBounds = thumbRect != null ? WorldBounds(thumbRect) : default;
+            if (thumbRect == null || !thumb.enabled || thumbH < 36f || thumbBounds.height < 36f || !Contains(cardBounds, thumbBounds, 2f))
+            {
+                throw new InvalidOperationException(
+                    "Theatre card art area is blank locale=" + locale +
+                    " card=ZoneCard_" + mapId +
+                    " thumbH=" + thumbH.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) + ".");
+            }
         }
 
         private static void RejectStatusInsideCard(RectTransform card, TMP_Text count, string locale, string mapId)

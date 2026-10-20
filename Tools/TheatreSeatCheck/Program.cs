@@ -69,11 +69,13 @@ internal static class Program
         }
         if (args != null && Array.IndexOf(args, "reserve") >= 0)
             return FourByThreeReserveHolds() ? 0 : 1;
+        if (args != null && Array.IndexOf(args, "art") >= 0)
+            return CardArtBandsHold() ? 0 : 1;
         if (args != null && Array.IndexOf(args, "diag") >= 0)
             return Diagnose();
         if (args != null && Array.IndexOf(args, "cover") >= 0)
             return Cover();
-        if (!RectangularTerritoryRejected() || !MapPanelWidthsHold() || !FourByThreeReserveHolds() || !DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
+        if (!CardArtBandsHold() || !RectangularTerritoryRejected() || !MapPanelWidthsHold() || !FourByThreeReserveHolds() || !DrawnFramesHold() || !StampHolds() || !DumpRoundTrips() || !MirrorHolds() || !ReplayPlateHolds()
             || !ReplayFourByThreeFaIb() || !ReplaySixteenByNineFaPill() || !ReplayRuntimeCards()
             || !ReplayZoomInLabel())
             failed++;
@@ -847,6 +849,38 @@ internal static class Program
     /// and a rectangle with one jagged side all fail. An equal-sided hex passes.
     /// The same predicate is applied to every drawn coast inside CollectViolations.
     /// </summary>
+    /// <summary>
+    /// 4:3 English CC and IB grow a two-line title. That growth has to stay in the
+    /// top bar. Parking it on the bottom is the blank black painting.
+    /// </summary>
+    private static bool CardArtBandsHold()
+    {
+        bool ok = true;
+        ok &= ArtBand("4:3 CC", 132f, 156f, 8f, 52f, 36f);
+        ok &= ArtBand("4:3 IB", 144f, 156f, 8f, 52f, 36f);
+        ok &= ArtBand("4:3 short", 124f, 140f, 8f, 46f, 44f);
+        ok &= ArtBand("grown title", 132f, 156f, 8f, 120f, 44f);
+        Console.WriteLine((ok ? "PASS" : "FAIL") + " card art bands");
+        return ok;
+    }
+
+    private static bool ArtBand(string label, float cardW, float cardH, float titleTop, float titleNeed, float statusNeed)
+    {
+        TheatreSeatGeometry.ZoneCardBands bands = TheatreSeatGeometry.LayoutZoneCardBands(
+            cardW, cardH, titleTop, titleNeed, statusNeed);
+        bool inside = TheatreSeatGeometry.ZoneCardArtInside(bands, cardW, cardH);
+        if (inside)
+            return true;
+        Console.WriteLine("FAIL card art " + label
+            + " title=" + bands.TitleY.ToString("0.0", CultureInfo.InvariantCulture)
+            + "+" + bands.TitleH.ToString("0.0", CultureInfo.InvariantCulture)
+            + " art=" + bands.ArtY.ToString("0.0", CultureInfo.InvariantCulture)
+            + "+" + bands.ArtH.ToString("0.0", CultureInfo.InvariantCulture)
+            + " status=" + bands.StatusY.ToString("0.0", CultureInfo.InvariantCulture)
+            + "+" + bands.StatusH.ToString("0.0", CultureInfo.InvariantCulture));
+        return false;
+    }
+
     private static bool RectangularTerritoryRejected()
     {
         var rectangle = new[]

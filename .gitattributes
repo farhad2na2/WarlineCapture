@@ -395,3 +395,4 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.js
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/*.png filter=lfs diff=lfs merge=lfs -text
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/selected-A-iteration-01/*.png filter=lfs diff=lfs merge=lfs -text
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/selected-A-iteration-02-two-step/*.png filter=lfs diff=lfs merge=lfs -text
+Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-A-comic-thumbnails-01/*.png filter=lfs diff=lfs merge=lfs -text

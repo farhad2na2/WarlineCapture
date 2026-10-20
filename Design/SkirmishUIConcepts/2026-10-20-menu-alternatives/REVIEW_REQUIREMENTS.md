@@ -1,6 +1,6 @@
 # Menu redesign directions awaiting owner selection
 
-Owner accepted **Campaign A — chapter atlas and mission drawer**. For Skirmish the owner rejected the tiny side list and requires **map selection first, then a separate page with six large individual mission choices**. A remains the map-selector direction; card, sector and scrolling-region mission screens are under review. [Active two-step iteration](selected-A-iteration-02-two-step/README.md). No native menu implementation changes during visual iteration.
+Owner accepted **Campaign A — chapter atlas and mission drawer**. For Skirmish the owner rejected the tiny side list and requires **map selection first, then a separate page with six large individual mission choices**. A remains the map-selector direction; the scrolling objective-region mission screen is selected. [Active two-step iteration](selected-A-iteration-02-two-step/README.md). No native menu implementation changes during visual iteration.
 
 Owner direction: 2026-10-20. Existing saga and Campaign half-saga level selection are not accepted. Generate alternatives before implementation.
 
@@ -30,3 +30,5 @@ Catalog structure is five battlefields ×24 missions each; each24 is four object
 A–C each have separate Skirmish and Campaign mockups. D/E are additional Skirmish scalability views. The owner may choose different letters for the two modes. Generated illustrations and example progress are visual concepts, not runtime readiness or new content. All final prompts and native reference paths are recorded in prompts.json.
 
 No implementation is approved by generation. PR 70 remains draft and unmerged; its saga UI is not the accepted final direction.
+
+Latest owner media requirement: Campaign A chapter cards and individual mission choices each need comic thumbnails, reusing the main-page Campaign comic bindings. The selected mission preview uses the same corresponding comic. [Comic-thumbnail mockup](campaign-A-comic-thumbnails-01/README.md).

@@ -1,6 +1,6 @@
 # Skirmish and Campaign — replacement menu choices
 
-**Campaign A accepted. Skirmish: select a map first, then choose from six large missions on a separate screen. Mission-screen style pending.** [Active two-step iteration](selected-A-iteration-02-two-step/README.md). Generated with built-in ImageGen using actual native Operations and Campaign screenshots. The existing saga and half-saga route are not accepted. These images are design concepts; no gameplay, progression or physical Campaign map changes are authorized by their illustrations.
+**Selected: Campaign A, refined with chapter and mission comic thumbnails; Skirmish A map selection followed by the scrolling objective-region mission screen.** [Campaign comic refinement](campaign-A-comic-thumbnails-01/README.md) · [Selected Skirmish mission screen](selected-A-iteration-02-two-step/04-missions-scrolling-regions.png). Generated with built-in ImageGen using actual native Operations and Campaign screenshots. The existing saga and half-saga route are not accepted. These images are design concepts; no gameplay, progression or physical Campaign map changes are authorized by their illustrations.
 
 ## Recommended scalable navigation
 
@@ -48,4 +48,4 @@ Generated mockups illustrate layout and hierarchy. Illustrative art, copy, medal
 
 [Full owner requirements](REVIEW_REQUIREMENTS.md) · [Exact prompt set and native reference paths](prompts.json) · [PNG hashes](manifest.json).
 
-PR70 remains draft and unmerged. Campaign A is accepted. Skirmish retains A for map selection, with a separate six-mission screen now under review. Historical alternatives are retained for context. No implementation changes during this iteration.
+PR70 remains draft and unmerged. Campaign A is accepted and now has a comic-thumbnail refinement. Skirmish retains A for map selection; the scrolling objective-region mission screen is selected. Historical alternatives remain for context. No runtime implementation changes during this mockup iteration.

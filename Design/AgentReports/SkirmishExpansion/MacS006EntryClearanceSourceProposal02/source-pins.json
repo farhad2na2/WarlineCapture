@@ -1,0 +1,20 @@
+{
+  "commit": "b4405e72ae823c4463a82d81ceb9703ed6d99174",
+  "files": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "base_sha256": "e6fb7bc4e72ad8d47251d48c2c8658192b840d6066811a25e6481ed756d52c4b",
+      "proposed_sha256": "a817329763d6b4dfbdcac2a16fcfd3bdc43633fbf021909a09707b5b7253ed7b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "base_sha256": "d9d7145225e82ca4c7d4ed3533d514cd4bb29cca06e3ff10eed92ed6e2cc3188",
+      "proposed_sha256": "f5c7c751434ec09ae383f22cc8e6d0d0da29246fdcabe173f58b1a94d9b5bee0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "base_sha256": "297157877b39576264c8ef1b485a2d881d2713fe3667a9decd6a861b463e7e8d",
+      "proposed_sha256": "242cbb2dade9db6512ca3ce71874147f3f9486be333d22ce45a89b1a22f7c48f"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "implemented_proposed_pure_controls": {
+    "refusals": 38,
+    "areas": [
+      "duplicate/unknown fields",
+      "wrong owner/profile/disabled input",
+      "shrunk footprint/padding/foreign faction",
+      "launch claim/size count/hash format",
+      "nested scope and disposal",
+      "search/replay missing rectangle",
+      "facility clearance/no-fit/unrelated drift/footprint mutation/partial roster/foreign prefab",
+      "final vs pre-final exact field binding",
+      "seven-field artifact envelope identity and exact facts join",
+      "exact search/replay facility rectangle and raw prefab identity"
+    ],
+    "executed": false,
+    "result": "NOT_RUN; proposed C# controls only"
+  },
+  "future_actual_evidence_controls_required": [
+    "Wrong parent/size/pass rawhash and crosslink must refuse before normal allocator",
+    "Evidence changed during read/reparse/outside owned Logs refused",
+    "Wrong consumed layout field vs proposedLayoutJson, source/rawgrid or canonical rows/budget snapshot refused",
+    "Exact byte-identical owner snapshot through replay; exception cleanup leaves scopes null; cold absence changes nothing",
+    "Actual normal allocator no-fit and all3size otherfacility equality with unchanged pad/preferredcenter/routes/service",
+    "Genuine initial normal derivation: discovery, successful real hull application and complete strict facility/packing all3 size observation; original route/service failures preserved, not claimed passed",
+    "Actual derived baseline equals exact requested final2359; no historical dimension installation or baseline hash waiver",
+    "Non-null strictCandidatePreparation in BOTH search/replay; failed immutable phase stops before hull call",
+    "Derived source/layout/budgets and per-size full facility signatures stable; no measured flags/finalization",
+    "Preserve failed phase checkpoints and cleanup request/derivation/allocator scopes, including exceptions",
+    "Exact actual search/replay facility roster, target-origin rectangle and raw prefab identity equality"
+  ],
+  "compile": false,
+  "native": false,
+  "original_proposal_01": {
+    "immutable": true,
+    "proposed_refusals": 21,
+    "executed": false,
+    "result": "NOT_RUN"
+  }
+}

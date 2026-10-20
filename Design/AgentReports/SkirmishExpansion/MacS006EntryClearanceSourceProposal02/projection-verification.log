@@ -1,0 +1,9 @@
+PASS exact contextual forward/inverse bytes: FacilityPreferences
+PASS exact contextual forward/inverse bytes: SimultaneousRefinement
+PASS exact contextual forward/inverse bytes: PilotFacilityRelocation
+PASS exact contextual forward/inverse bytes: ReviewedEntryClearance
+PASS exact contextual forward/inverse bytes: ReviewedEntryClearance.Controls
+PASS all four aggregate patch files equal reconstructed patches
+PASS structural scope/call-order/envelope/hash checks ONLY; not C# behavior
+CSharpCompile=NOT_RUN; proposed C# refusals=38 NOT_RUN (original21 preserved NOT_RUN)
+UnityNative=NOT_RUN; sourceFit=false; missionAcceptance=false; APK/device=NOT_RUN

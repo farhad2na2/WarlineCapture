@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "kind": "ReviewedEntryClearanceRequest.v1",
+  "enabled": false,
+  "reviewCommit": "b4405e72ae823c4463a82d81ceb9703ed6d99174",
+  "catalogId": "S006",
+  "definitionId": "skirmish.s006",
+  "tuple": [
+    "DB",
+    "BA",
+    "C",
+    "E"
+  ],
+  "historicalReport": {
+    "path": "Logs/SkirmishProduction/Offline/S006ReservationAwareMeasurementProposal_20261018/Native-01/refinement.json",
+    "sha256": "a3891f85e2dab2e54b498fd021c13feeef8737ace3e088f0436855ba1ddb72c2",
+    "pass": 2
+  },
+  "layoutBinding": {
+    "field": "missions[0].measurement.nativePreferenceReplays[0].measurement.proposedLayoutJson",
+    "sha256": "2359d6fa5a718d5a703f02f1a43944e04453115f2fb3b42ade3180a504f66a84",
+    "comparisonField": "missions[0].measurement.reviewedLogicalPadAppliedLayoutJson",
+    "comparisonSha256": "2b9e58acb72971a47543c888c5cde5118d38c4e6a20d0f26325b28b2b0baabd8"
+  },
+  "consumedLayoutUtf8Sha256": "2359d6fa5a718d5a703f02f1a43944e04453115f2fb3b42ade3180a504f66a84",
+  "sizeArtifacts": null,
+  "sourcePins": null,
+  "canonical_size_rows": null,
+  "budgets": null,
+  "preservedSnapshotSha256": null,
+  "entry": {
+    "faction": 1,
+    "padId": "pad.skirmish.db.staging_player",
+    "candidateCell": [
+      970,
+      655
+    ],
+    "maxGroundFootprint": [
+      3,
+      3
+    ],
+    "occupancyPadding": 1,
+    "clearanceRectHalfOpen": [
+      968,
+      653,
+      5,
+      5
+    ]
+  },
+  "nativeLaunchAuthorized": false,
+  "sourceFitCertified": false,
+  "missionAccepted": false
+}

@@ -1,0 +1,98 @@
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
+@@ -2781,7 +2781,6 @@
+             JArray baselineRoutes,string prefix,Action<JObject> checkpoint)
+         {
+             Require(!ProtectedRefinementCatalog(owner.Definition.CatalogId),"No coded layout preference changes");
+-            Require(reviewedEntryClearanceRequest==null,"Entry request cannot begin in pre-final preference search; explicit two-phase owner required");
+             string before=JsonUtility.ToJson(owner.Layout);
+             var originalCompounds=CandidateCompoundRects((JObject)mission["layout_input"]["pilot_candidate"]);
+             var report=new JObject{["scope"]="BoundedLogicalPreferences_SourceQaHintsThenCanonicalNativeReplay",
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
+@@ -64,9 +64,6 @@
+         static JObject RefineLoadedCandidateCore(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
+             EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false,Action<SkirmishMapLayoutConfig> strictCandidatePreparation=null,JObject reviewedRouteDeltaProof=null)
+         {
+-            Require(reviewedEntryOwner==null||strictCandidatePreparation!=null,"Entry replay requires non-null immutable preparation");
+-            Require(!reviewedEntryBaselineCaptureActive||strictCandidatePreparation!=null,"Entry baseline observation must remain immutable");
+-            Require(!reviewedEntryDerivationActive||strictCandidatePreparation==null,"Entry derivation must use genuine ordinary hull pipeline");
+             using var live=em.CreateEntityQuery(typeof(SkirmishMatchState));
+             Require(live.IsEmptyIgnoreFilter,"Refinement requires disposable source world, never live gameplay");
+             Require(owner!=null&&owner.Definition!=null&&owner.Layout!=null&&source!=null&&
+@@ -134,7 +131,6 @@
+                     ["status"]="Pending_ActualResolvedTowerWeaponRangeLineOfFireAndPlayerStartZoneValidation",
+                     ["unavoidableStartZoneFireExcluded"]=false,
+                     ["requirement"]="Both extra defender towers must avoid unavoidable fire into the player start zone; logical envelope placement alone is insufficient"};
+-                reviewedEntryOwner?.Stable(owner.Layout);
+                 var baselineRoutes=new JArray();var routeClearance=new List<RectInt>();var distinctClearance=new HashSet<RectInt>();
+                 foreach(var budget in budgets)
+                 {
+@@ -172,7 +168,6 @@
+                     output["reviewedRouteDelta"]=reviewedRouteDeltaProof.DeepClone();
+                     output["reviewedRequestedPointClearance"]=requestedPointEvidence;
+                 }
+-                if(reviewedEntryOwner!=null)AppendReviewedEntryClearance(routeClearance,owner.Layout,reviewedEntryOwner.Phase);
+                 output["baselineNativeApproaches"]=baselineRoutes;
+                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
+                 if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
+@@ -191,7 +186,6 @@
+                     output["originalLogicalFrameJson"]=originalLogicalFrame;
+                 }
+                 var activeCompounds=(JObject)originalCompounds.DeepClone();
+-                int entryDerivedHullApplications=0;
+                 int compoundAttempt=0,strictPasses=0;bool discoveryPending=strictCandidatePreparation==null;
+                 for(int pass=0;pass<(refinementCompoundSearchRequested?6:3);pass++)
+                 {
+@@ -263,28 +257,6 @@
+                     }
+                     if(!discovery&&complete)
+                     {
+-                        // Separate unqualified evidence from ordinary finalization/measurement authority.
+-                        if(reviewedEntryDerivationActive)
+-                        {
+-                            Require(entryDerivedHullApplications>0,"Entry baseline must follow actual hull derivation");
+-                            output["entryDerivationStrictAllSizesObserved"]=true;
+-                            output["entryDerivationStrictPass"]=pass;
+-                            output["entryDerivationHullApplications"]=entryDerivedHullApplications;
+-                            output["entryDerivedStrictSizes"]=sizes.DeepClone();
+-                            break;
+-                        }
+-                        if(reviewedEntryBaselineCaptureActive)
+-                        {
+-                            output["entryBaselineExistingGatesPassed"]=true;
+-                            break;
+-                        }
+-                        if(reviewedEntryOwner!=null)
+-                        {
+-                            reviewedEntryOwner.Stable(owner.Layout);
+-                            output["entryClearanceStrictAllSizesObserved"]=true;
+-                            output["entryClearancePhase"]=reviewedEntryOwner.Phase;
+-                            break;
+-                        }
+                         output["strictThreeSizePlacementPass"]=pass;
+                         try{FinalizeRefinementAuthoring(owner,em,grid,surface,output,artifactPrefix);}
+                         catch(Exception failure){output["logicalFinalizationUnresolved"]=failure.ToString();}
+@@ -315,11 +287,9 @@
+                     }
+                     if(!TryApplyRefinementHulls(owner.Layout,sizes,grid,out string hullError))
+                     {output["unresolved"]=hullError;break;}
+-                    if(reviewedEntryDerivationActive)entryDerivedHullApplications++;
+                     discoveryPending=false;
+                     if(!discovery&&++strictPasses>=2)break;
+                 }
+-                if(reviewedEntryDerivationActive)output["entryDerivationHullApplications"]=entryDerivedHullApplications;
+                 output["proposedLayoutJson"]=JsonUtility.ToJson(owner.Layout);
+                 output["proposedLayoutSemanticSha256"]=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(owner.Layout);
+                 output["pending"]=new JArray("Exact three independent approaches/no shared interior bottleneck",
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
+@@ -19,7 +19,7 @@
+     {
+         // Calls the NORMAL production origin-search owner and actual placement
+         // metadata/caches. Static proposals do not stand in for live scene fitting.
+-        static void ProbePilotNormalFacilityRelocationCore(JObject input,JObject[] requests,
++        static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
+             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
+             Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
+         {

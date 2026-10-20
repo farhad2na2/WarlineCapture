@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "state": "Unmeasured_DisabledProposalOnly",
+  "actualDerivedLayoutJson": null,
+  "actualDerivedLayoutRawSha256": null,
+  "actualDerivedSnapshotSha256": null,
+  "actualDerivedStrictSizes": null,
+  "actualDerivationPass": null,
+  "actualHullApplications": null,
+  "actualSearch": null,
+  "actualReplay": null,
+  "compiler": null,
+  "nativeRun": null,
+  "sourceFitCertified": false,
+  "missionAccepted": false,
+  "historicalExactDelta": {
+    "source": "Windows coordinator attributed metadata; not independently measured Mac",
+    "witnessSha256": "2454e4360bc7423995ae8d872baa277fa3a0576a503465b0391fb626f558bc4b",
+    "realNonTargetPadDimensionFields": 16,
+    "nonTargetPads": 8,
+    "intFloatTokenOnlyFields": 4,
+    "otherEquivalentDecimalSpellings": 91,
+    "centerAnchorRouteValueChanges": 0,
+    "manualApplicationAuthorized": false
+  },
+  "callOrderWitnessSha256": "496bba740e611ba4730b3fcf6af53228486a700a9e2c46301694d7ba2ae7a7f2",
+  "pending": [
+    "Raw original report and all three outer size envelopes unavailable on Mac; strict parser shape still requires Windows raw-byte review",
+    "Baseline original target-route failures must remain failed evidence; complete ordinary facility/packing/source-grid results required to capture baseline. Reserved candidate/replay alone must pass all full existing gates.",
+    "First successful hull is not assumed final; only complete strict derivation plus actual2359 identity can proceed",
+    "Exact request snapshot/source rows/budget payload must be populated by separately reviewed evidence; disabled template cannot activate",
+    "API/type compilation and all 38 C# refusal controls NOT_RUN; historical21 remain NOT_RUN",
+    "No host installed; compiler/source integration/new GUID/meta/native wrapper and run authorization remain separate",
+    "Full normal-input mission/ARIA/result/return, service/paid/live occupancy, visual/device/APK acceptance remain pending"
+  ],
+  "actualBaselineExistingGatesPassed": null
+}

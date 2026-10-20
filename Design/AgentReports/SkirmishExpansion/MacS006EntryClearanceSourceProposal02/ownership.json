@@ -1,0 +1,9 @@
+{
+  "utc": "2026-10-20T08:02:43.162505+00:00",
+  "rows": [
+    "54938 55563 Mon Oct 19 09:06:18 2026     /Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectpath /Volumes/T7/Projects/Fig/Fig -acceptSoftwareTermsForThisRunOnly -useHub -hubIPC -cloudEnvironment production -licensingIpc LicenseClient-farhad -hubSessionId [REDACTED] -accessToken [REDACTED]",
+    "87934 54938 Mon Oct 19 12:26:50 2026     /Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker0 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker0.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport",
+    "87936 54938 Mon Oct 19 12:26:50 2026     /Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker1 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker1.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport"
+  ],
+  "actions": false
+}

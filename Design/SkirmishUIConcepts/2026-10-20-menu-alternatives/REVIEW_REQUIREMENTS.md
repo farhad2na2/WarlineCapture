@@ -1,6 +1,6 @@
-# Menu redesign directions awaiting owner selection
+# Current menu redesign requirements
 
-Owner accepted **Campaign A — chapter atlas and mission drawer**. For Skirmish the owner rejected the tiny side list and requires **map selection first, then a separate page with six large individual mission choices**. A remains the map-selector direction; the scrolling objective-region mission screen is selected. [Active two-step iteration](selected-A-iteration-02-two-step/README.md). No native menu implementation changes during visual iteration.
+Owner requires consistent two-stage navigation: select a Campaign chapter or Skirmish map, then select individual missions using large thumbnail cards directly on the map. Campaign has five per chapter; Skirmish six per objective region. Campaign A is retained for the chapter overview, but its tiny mission drawer is superseded. [Current Campaign mission screen](campaign-A-five-missions-on-map-02/README.md). [Selected Skirmish mission screen](selected-A-iteration-02-two-step/README.md). No native menu implementation changes during visual iteration.
 
 Owner direction: 2026-10-20. Existing saga and Campaign half-saga level selection are not accepted. Generate alternatives before implementation.
 
@@ -32,3 +32,5 @@ A–C each have separate Skirmish and Campaign mockups. D/E are additional Skirm
 No implementation is approved by generation. PR 70 remains draft and unmerged; its saga UI is not the accepted final direction.
 
 Latest owner media requirement: Campaign A chapter cards and individual mission choices each need comic thumbnails, reusing the main-page Campaign comic bindings. The selected mission preview uses the same corresponding comic. [Comic-thumbnail mockup](campaign-A-comic-thumbnails-01/README.md).
+
+Latest clarification: missions must sit ON the map in both modes with very similar layout. Do not squeeze Campaign missions into a side drawer. Chapter and mission choices each use their own corresponding comic thumbnail.

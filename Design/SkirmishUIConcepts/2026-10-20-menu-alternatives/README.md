@@ -1,8 +1,8 @@
 # Skirmish and Campaign — replacement menu choices
 
-**Selected: Campaign A, refined with chapter and mission comic thumbnails; Skirmish A map selection followed by the scrolling objective-region mission screen.** [Campaign comic refinement](campaign-A-comic-thumbnails-01/README.md) · [Selected Skirmish mission screen](selected-A-iteration-02-two-step/04-missions-scrolling-regions.png). Generated with built-in ImageGen using actual native Operations and Campaign screenshots. The existing saga and half-saga route are not accepted. These images are design concepts; no gameplay, progression or physical Campaign map changes are authorized by their illustrations.
+**Current direction: choose a map (Skirmish) or chapter (Campaign), then select large thumbnail mission cards directly on the map. Campaign shows five per chapter; Skirmish shows six per objective region.** [Campaign map-based mission screen](campaign-A-five-missions-on-map-02/README.md) · [Campaign A chapter overview](campaign-A-comic-thumbnails-01/README.md) · [Selected Skirmish mission screen](selected-A-iteration-02-two-step/04-missions-scrolling-regions.png). Shared Back, buttons, panels, typography and spacing. Historical drawer layouts below are superseded. Concepts do not authorize physical map or gameplay changes.
 
-## Recommended scalable navigation
+## Historical alternatives
 
 Skirmish: **5 battlefields ×24 battles =120**, each battlefield has **4 objective families ×6 battles**.
 
@@ -12,7 +12,7 @@ Skirmish: **5 battlefields ×24 battles =120**, each battlefield has **4 objecti
 
 These views may be combined; D/E do not require squeezing120 buttons onto one map. Full catalog capacity is separate from playable availability. Future slots remain coming soon, with no invented unlock rule.
 
-Campaign recommendation: **B**, five contiguous mission-selection sectors for the selected chapter, using the shared Operations menu components. A is a chapter-atlas alternative; C adds a mission-card tray.
+Current Campaign navigation: Campaign A chapter overview, followed by five large comic mission cards on the selected chapter map. The tiny side drawer is superseded.
 
 ## Compare the directions
 
@@ -48,4 +48,4 @@ Generated mockups illustrate layout and hierarchy. Illustrative art, copy, medal
 
 [Full owner requirements](REVIEW_REQUIREMENTS.md) · [Exact prompt set and native reference paths](prompts.json) · [PNG hashes](manifest.json).
 
-PR70 remains draft and unmerged. Campaign A is accepted and now has a comic-thumbnail refinement. Skirmish retains A for map selection; the scrolling objective-region mission screen is selected. Historical alternatives remain for context. No runtime implementation changes during this mockup iteration.
+PR70 remains draft and unmerged. Campaign A remains the chapter overview; the new map-based five-mission screen replaces the tiny mission drawer. Skirmish retains A map selection and the scrolling objective-region mission screen. Historical alternatives remain for context. No runtime implementation changes during this mockup iteration.

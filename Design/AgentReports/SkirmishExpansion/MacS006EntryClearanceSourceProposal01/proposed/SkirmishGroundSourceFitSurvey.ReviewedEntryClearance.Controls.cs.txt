@@ -1,0 +1,69 @@
+#if UNITY_EDITOR
+using System;
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using UnityEngine;
+namespace Game.Editor
+{
+    public static partial class SkirmishGroundSourceFitSurvey
+    {
+        // PROPOSED ONLY. Pure parser/guard fixtures; no native world/allocator or filesystem reads.
+        static JObject EntryControlFixture() => new JObject {
+            ["schemaVersion"]=1,["kind"]="ReviewedEntryClearanceRequest.v1",["enabled"]=true,
+            ["reviewCommit"]=EntryReviewBase,["catalogId"]="S006",["definitionId"]="skirmish.s006",["tuple"]=new JArray("DB","BA","C","E"),
+            ["historicalReport"]=new JObject(),["sizeArtifacts"]=new JArray(new JObject(),new JObject(),new JObject()),
+            ["sourcePins"]=new JObject(),["consumedLayoutUtf8Sha256"]=new string('0',64),["preservedSnapshotSha256"]=new string('0',64),
+            ["canonical_size_rows"]=new JArray(new JObject(),new JObject(),new JObject()),["budgets"]=new JArray(new JObject(),new JObject(),new JObject()),
+            ["entry"]=new JObject{["faction"]=1,["padId"]="pad.skirmish.db.staging_player",["candidateCell"]=new JArray(970,655),
+                ["maxGroundFootprint"]=new JArray(3,3),["occupancyPadding"]=1,["clearanceRectHalfOpen"]=new JArray(968,653,5,5)},
+            ["nativeLaunchAuthorized"]=false,["sourceFitCertified"]=false,["missionAccepted"]=false };
+        internal static void RunProposedEntryPureGuardControls()
+        {
+            Require(reviewedEntryOwner==null&&reviewedEntryClearanceRequest==null,"Unowned pure control boundary required");
+            int checkedRefusals=0;
+            void Refuses(Action a){bool refused=false;try{a();}catch(InvalidOperationException){refused=true;}catch(JsonException){refused=true;}
+                Require(refused,"Expected entry refusal");checkedRefusals++;}
+            void Header(Action<JObject> change){var x=EntryControlFixture();change(x);Refuses(()=>EntryHeader(x));}
+            EntryHeader(EntryControlFixture());
+            Refuses(()=>EntryParse("{\"schemaVersion\":1,\"schemaVersion\":1}"));
+            Header(x=>x["forcedOrigin"]=new JArray(963,646));
+            Header(x=>x["tuple"]=new JArray("DB","BA","G","E"));
+            Header(x=>x["enabled"]=false);
+            Header(x=>x["entry"]["clearanceRectHalfOpen"]=new JArray(968,653,3,5));
+            Header(x=>x["entry"]["candidateCell"]=new JArray(970,645));
+            Header(x=>x["entry"]["occupancyPadding"]=0);
+            Header(x=>x["entry"]["faction"]=2);
+            Header(x=>x["nativeLaunchAuthorized"]=true);
+            Header(x=>x["sizeArtifacts"]=new JArray(new JObject()));
+            Header(x=>x["consumedLayoutUtf8Sha256"]=new string('A',64));
+            var token=UseReviewedEntryClearanceRequest(EntryControlFixture().ToString());
+            try { Refuses(()=>UseReviewedEntryClearanceRequest(EntryControlFixture().ToString())); }
+            finally { token.Dispose(); }
+            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null,"Request scope leaked");
+            var clear=new List<RectInt>{ReviewedEntryRect};
+            EntryCheckProbeClearance(clear,true,false,false);
+            EntryCheckProbeClearance(clear,true,true,true);
+            Refuses(()=>EntryCheckProbeClearance(clear,false,false,false));
+            Refuses(()=>EntryCheckProbeClearance(clear,true,false,true));
+            Refuses(()=>EntryCheckProbeClearance(new List<RectInt>(),true,true,true));
+            JObject F(int faction,string id,int x,int z,int w,int h)=>new JObject{["faction"]=faction,["structureId"]=id,
+                ["prefabPath"]="fixture",["prefabSha256"]="fixture",["entireConfigurationFound"]=true,
+                ["resolvedEffectiveRect"]=new JObject{["x"]=x,["z"]=z,["width"]=w,["depth"]=h}};
+            var old=new JArray(F(1,"building.ground_staging",963,647,14,7),F(2,"building.barracks",1412,604,28,15));
+            JObject Result()=>new JObject{["normalFacilityRelocationProposals"]=new JArray(
+                F(1,"building.ground_staging",963,646,14,7),F(2,"building.barracks",1412,604,28,15))};
+            EntryCompareFacilities(old,Result()); // guard arithmetic only, NOT normal allocator placement authority
+            void ResultRefuses(Action<JObject> change){var x=Result();change(x);Refuses(()=>EntryCompareFacilities(old,x));}
+            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["resolvedEffectiveRect"]["z"]=647);
+            ResultRefuses(x=>x["normalFacilityRelocationProposals"][1]["resolvedEffectiveRect"]["x"]=1413);
+            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["resolvedEffectiveRect"]["width"]=13);
+            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["entireConfigurationFound"]=false);
+            ResultRefuses(x=>((JArray)x["normalFacilityRelocationProposals"]).RemoveAt(1));
+            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["prefabSha256"]="foreign");
+            Require(checkedRefusals==21,"Exact focused refusal coverage changed");
+            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null,"Final pure scope leaked");
+        }
+    }
+}
+#endif

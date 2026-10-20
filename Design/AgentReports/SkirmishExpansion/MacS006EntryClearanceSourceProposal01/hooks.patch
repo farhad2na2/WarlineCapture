@@ -1,0 +1,51 @@
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
+@@ -2845,16 +2845,18 @@
+                 reviewedRouteProof=routeInputEvidence;report["reviewedRouteInput"]=routeInputEvidence;
+                 report["reviewedRouteAppliedLayoutJson"]=applied;
+             }
+-            else if(!originalFc)
++            else if(!originalFc&&reviewedEntryClearanceRequest==null)
+             {
+                 var routes=ProposeBoundedNativeRouteRepair(owner.Layout,budgets,baselineRoutes,em,gridEntity,grid,surface);
+                 report["boundedRouteProposal"]=routes;
+             }
+             // Re-query complete actual paths after the proposal, before deriving
+             // any facility keep-clear. Failed native paths remain explicit facts.
++            using var entryClearanceScope=BeginReviewedEntryClearance(mission,owner.Layout,budgets,grid,em);
+             var approachEvidence=new JObject();
+             var clearance=PreferenceApproachClearance(owner.Layout,budgets,em,gridEntity,grid,surface,approachEvidence);
+             if(reviewedRouteInput!=null)AppendReviewedRoutePointClearance(approachEvidence,clearance);
++            AppendReviewedEntryClearance(clearance,owner.Layout,"search");
+             report["actualProposedApproaches"]=approachEvidence;
+ 
+             if(normalOriginContextCaptureRequest!=null)
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
+@@ -131,6 +131,7 @@
+                     ["status"]="Pending_ActualResolvedTowerWeaponRangeLineOfFireAndPlayerStartZoneValidation",
+                     ["unavoidableStartZoneFireExcluded"]=false,
+                     ["requirement"]="Both extra defender towers must avoid unavoidable fire into the player start zone; logical envelope placement alone is insufficient"};
++                reviewedEntryOwner?.Stable(owner.Layout);
+                 var baselineRoutes=new JArray();var routeClearance=new List<RectInt>();var distinctClearance=new HashSet<RectInt>();
+                 foreach(var budget in budgets)
+                 {
+@@ -168,6 +169,7 @@
+                     output["reviewedRouteDelta"]=reviewedRouteDeltaProof.DeepClone();
+                     output["reviewedRequestedPointClearance"]=requestedPointEvidence;
+                 }
++                AppendReviewedEntryClearance(routeClearance,owner.Layout,"replay");
+                 output["baselineNativeApproaches"]=baselineRoutes;
+                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
+                 if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
+@@ -19,7 +19,7 @@
+     {
+         // Calls the NORMAL production origin-search owner and actual placement
+         // metadata/caches. Static proposals do not stand in for live scene fitting.
+-        static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
++        static void ProbePilotNormalFacilityRelocationCore(JObject input,JObject[] requests,
+             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
+             Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
+         {

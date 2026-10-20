@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "task": "MacS006EntryClearanceReviewBranch01",
+  "branch": "codex/s006-entry-clearance-proposal-20261020",
+  "base": "90e5a2919469b1dc25ca656b93b14074dd2487a4",
+  "sourceManifestSha256": "a66af85ea954c8aa83611f49efafa71b057d8141df5acc131ab256468be9cad1",
+  "sourceManifestBytes": 7545,
+  "path_mapping_note": "Original manifest remains exact. Its Logs paths are provenance locations; mapped branch files below contain identical bytes. No source installed in Assets.",
+  "files": [
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/control-cases.json",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/control-cases.json",
+      "sha256": "7bee5003a123d8c0adf2d92a62b6176e3e1c71e284f71659b3b7b1fe36a4b4d1",
+      "bytes": 1077
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/hooks.inverse.patch",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/hooks.inverse.patch",
+      "sha256": "2ce56ab12b8a942f2e05159196d010a37e3c0601c4aac69161616ad4c67e5c4d",
+      "bytes": 3832
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/hooks.patch",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/hooks.patch",
+      "sha256": "5e118fcaac6ce58adbb653a01df167ac6fa836e799beb78d0eae2d545f71d5d1",
+      "bytes": 3832
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/ownership.json",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/ownership.json",
+      "sha256": "8f881516780b1b632d06d9e4b154961d9e502701df4084eeff455cb01613e690",
+      "bytes": 1126
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/projection-verification.log",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/projection-verification.log",
+      "sha256": "64c7720e9e62dbefd6aec1745055297f9cacaa25bc80ae4eeba0af9ce4c2127d",
+      "bytes": 585
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposal.inverse.patch",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposal.inverse.patch",
+      "sha256": "d87eeb24d260bc13a631ecbb691583ea40670ec3d13cd863bafed869c9785928",
+      "bytes": 28775
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposal.patch",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposal.patch",
+      "sha256": "07db54ca0e596a10a59a4950ef202344925a78680bb17c8e4436bd5d484e6223",
+      "bytes": 28775
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs.txt",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs.txt",
+      "sha256": "1c6e0adcda6b28767f63a1b28f7a82b6d97f969b3f1f989d25f3eb2b0724eec5",
+      "bytes": 303953
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs.txt",
+      "sha256": "242cbb2dade9db6512ca3ce71874147f3f9486be333d22ce45a89b1a22f7c48f",
+      "bytes": 49328
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.Controls.cs.txt",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.Controls.cs.txt",
+      "sha256": "4d1f44a40bcc45900c194394e2871c8e92a8e46bf2cb4a3c3d9f431009f2179d",
+      "bytes": 5211
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.cs.txt",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.cs.txt",
+      "sha256": "83cea0cc06916e729cfe0dcb3857afbcbe5453c8347bc4cda3c4606e17dadaa4",
+      "bytes": 19145
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/proposed/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs.txt",
+      "sha256": "d2b48e97d04cb45ea25ac181f57b0d8650f3f395d8ede442cb18fcc3c3c2560f",
+      "bytes": 42666
+    },
+    {
+      "original_manifest_path": "Logs/SkirmishProduction/MacS006EntryClearanceSourceProposal01/source-pins.json",
+      "branch_path": "Design/AgentReports/SkirmishExpansion/MacS006EntryClearanceSourceProposal01/source-pins.json",
+      "sha256": "65586d81d6e268df18993cea9df718b72bef078f887fff58a01bbb898b5225bd",
+      "bytes": 983
+    }
+  ],
+  "owning_source_pins_equal_b440": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs",
+      "base_sha256": "e6fb7bc4e72ad8d47251d48c2c8658192b840d6066811a25e6481ed756d52c4b",
+      "proposed_sha256": "1c6e0adcda6b28767f63a1b28f7a82b6d97f969b3f1f989d25f3eb2b0724eec5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs",
+      "base_sha256": "d9d7145225e82ca4c7d4ed3533d514cd4bb29cca06e3ff10eed92ed6e2cc3188",
+      "proposed_sha256": "d2b48e97d04cb45ea25ac181f57b0d8650f3f395d8ede442cb18fcc3c3c2560f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs",
+      "base_sha256": "297157877b39576264c8ef1b485a2d881d2713fe3667a9decd6a861b463e7e8d",
+      "proposed_sha256": "242cbb2dade9db6512ca3ce71874147f3f9486be333d22ce45a89b1a22f7c48f"
+    }
+  ],
+  "approval_scope": "Review artifacts only; no main/source/compiler/native/fit authority."
+}

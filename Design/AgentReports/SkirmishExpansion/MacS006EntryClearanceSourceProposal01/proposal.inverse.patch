@@ -1,0 +1,376 @@
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.FacilityPreferences.cs
+@@ -2845,18 +2845,16 @@
+                 reviewedRouteProof=routeInputEvidence;report["reviewedRouteInput"]=routeInputEvidence;
+                 report["reviewedRouteAppliedLayoutJson"]=applied;
+             }
+-            else if(!originalFc&&reviewedEntryClearanceRequest==null)
++            else if(!originalFc)
+             {
+                 var routes=ProposeBoundedNativeRouteRepair(owner.Layout,budgets,baselineRoutes,em,gridEntity,grid,surface);
+                 report["boundedRouteProposal"]=routes;
+             }
+             // Re-query complete actual paths after the proposal, before deriving
+             // any facility keep-clear. Failed native paths remain explicit facts.
+-            using var entryClearanceScope=BeginReviewedEntryClearance(mission,owner.Layout,budgets,grid,em);
+             var approachEvidence=new JObject();
+             var clearance=PreferenceApproachClearance(owner.Layout,budgets,em,gridEntity,grid,surface,approachEvidence);
+             if(reviewedRouteInput!=null)AppendReviewedRoutePointClearance(approachEvidence,clearance);
+-            AppendReviewedEntryClearance(clearance,owner.Layout,"search");
+             report["actualProposedApproaches"]=approachEvidence;
+ 
+             if(normalOriginContextCaptureRequest!=null)
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.SimultaneousRefinement.cs
+@@ -131,7 +131,6 @@
+                     ["status"]="Pending_ActualResolvedTowerWeaponRangeLineOfFireAndPlayerStartZoneValidation",
+                     ["unavoidableStartZoneFireExcluded"]=false,
+                     ["requirement"]="Both extra defender towers must avoid unavoidable fire into the player start zone; logical envelope placement alone is insufficient"};
+-                reviewedEntryOwner?.Stable(owner.Layout);
+                 var baselineRoutes=new JArray();var routeClearance=new List<RectInt>();var distinctClearance=new HashSet<RectInt>();
+                 foreach(var budget in budgets)
+                 {
+@@ -169,7 +168,6 @@
+                     output["reviewedRouteDelta"]=reviewedRouteDeltaProof.DeepClone();
+                     output["reviewedRequestedPointClearance"]=requestedPointEvidence;
+                 }
+-                AppendReviewedEntryClearance(routeClearance,owner.Layout,"replay");
+                 output["baselineNativeApproaches"]=baselineRoutes;
+                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
+                 if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
++++ b/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.PilotFacilityRelocation.cs
+@@ -19,7 +19,7 @@
+     {
+         // Calls the NORMAL production origin-search owner and actual placement
+         // metadata/caches. Static proposals do not stand in for live scene fitting.
+-        static void ProbePilotNormalFacilityRelocationCore(JObject input,JObject[] requests,
++        static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,
+             SkirmishMapLayoutConfig layout,SkirmishRoleCatalogConfig roles,EntityManager em,
+             Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
+         {
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.cs
++++ /dev/null
+@@ -1,250 +0,0 @@
+-#if UNITY_EDITOR
+-using System;
+-using System.Collections.Generic;
+-using System.IO;
+-using System.Linq;
+-using System.Security.Cryptography;
+-using System.Text;
+-using Game.Components;
+-using Game.Configs;
+-using Game.Runtime;
+-using Newtonsoft.Json;
+-using Newtonsoft.Json.Linq;
+-using Unity.Entities;
+-using Unity.Mathematics;
+-using UnityEngine;
+-
+-namespace Game.Editor
+-{
+-    // DISABLED PROPOSAL: .cs.txt outside Assets. No environment/menu/executeMethod hook.
+-    public static partial class SkirmishGroundSourceFitSurvey
+-    {
+-        static JObject reviewedEntryClearanceRequest; // null in every existing path
+-        static ReviewedEntryOwner reviewedEntryOwner;
+-        const string EntryReviewBase = "b4405e72ae823c4463a82d81ceb9703ed6d99174";
+-        const string EntryHistoricalHash = "a3891f85e2dab2e54b498fd021c13feeef8737ace3e088f0436855ba1ddb72c2";
+-        static readonly RectInt ReviewedEntryRect = new RectInt(968,653,5,5);
+-
+-        static JObject EntryParse(string json) => JObject.Parse(json,new JsonLoadSettings {
+-            DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error });
+-        static string EntrySha(string text)
+-        {
+-            using var h=SHA256.Create();
+-            return BitConverter.ToString(h.ComputeHash(new UTF8Encoding(false).GetBytes(text))).Replace("-","").ToLowerInvariant();
+-        }
+-        static void EntryFields(JObject obj, params string[] names)
+-        {
+-            Require(obj!=null && obj.Properties().Select(p=>p.Name).OrderBy(x=>x,StringComparer.Ordinal)
+-                .SequenceEqual(names.OrderBy(x=>x,StringComparer.Ordinal)),"Entry request fields differ");
+-        }
+-        static void EntryDigest(JToken value)
+-        {
+-            Require(value?.Type==JTokenType.String && ((string)value).Length==64 &&
+-                ((string)value).All(c=>c>='0'&&c<='9'||c>='a'&&c<='f'),"Entry digest invalid");
+-        }
+-        static void EntryHeader(JObject r)
+-        {
+-            EntryFields(r,"schemaVersion","kind","enabled","reviewCommit","catalogId","definitionId","tuple",
+-                "historicalReport","sizeArtifacts","sourcePins","consumedLayoutUtf8Sha256","preservedSnapshotSha256",
+-                "canonical_size_rows","budgets","entry","nativeLaunchAuthorized","sourceFitCertified","missionAccepted");
+-            Require(r["schemaVersion"]?.Type==JTokenType.Integer&&(int)r["schemaVersion"]==1 &&
+-                (string)r["kind"]=="ReviewedEntryClearanceRequest.v1" &&
+-                r["enabled"]?.Type==JTokenType.Boolean&&(bool)r["enabled"] &&
+-                (string)r["reviewCommit"]==EntryReviewBase && (string)r["catalogId"]=="S006" &&
+-                (string)r["definitionId"]=="skirmish.s006" &&
+-                JToken.DeepEquals(r["tuple"],new JArray("DB","BA","C","E")),"Entry subject/disabled request refused");
+-            foreach(string key in new[]{"nativeLaunchAuthorized","sourceFitCertified","missionAccepted"})
+-                Require(r[key]?.Type==JTokenType.Boolean&&!(bool)r[key],"Entry input cannot grant acceptance/launch");
+-            EntryDigest(r["consumedLayoutUtf8Sha256"]); EntryDigest(r["preservedSnapshotSha256"]);
+-            var e=r["entry"] as JObject;EntryFields(e,"faction","padId","candidateCell","maxGroundFootprint","occupancyPadding","clearanceRectHalfOpen");
+-            Require(e["faction"]?.Type==JTokenType.Integer&&(int)e["faction"]==1 &&
+-                (string)e["padId"]=="pad.skirmish.db.staging_player" &&
+-                JToken.DeepEquals(e["candidateCell"],new JArray(970,655)) &&
+-                JToken.DeepEquals(e["maxGroundFootprint"],new JArray(3,3)) &&
+-                e["occupancyPadding"]?.Type==JTokenType.Integer&&(int)e["occupancyPadding"]==1 &&
+-                JToken.DeepEquals(e["clearanceRectHalfOpen"],new JArray(968,653,5,5)),"Entry full5x5 contract changed");
+-            Require(r["sizeArtifacts"] is JArray a&&a.Count==3 && r["canonical_size_rows"] is JArray rows&&rows.Count==3 &&
+-                r["budgets"] is JArray b&&b.Count==3 && r["sourcePins"] is JObject,"Entry three-size data required");
+-        }
+-        // Future reviewed host may explicitly own this scope. No existing caller installs it.
+-        // This is not a native launch method. A checked wrapper/run grant remains separate.
+-        static IDisposable UseReviewedEntryClearanceRequest(string json)
+-        {
+-            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null,"Entry request owner already active");
+-            var r=EntryParse(json);EntryHeader(r);var installed=(JObject)r.DeepClone();reviewedEntryClearanceRequest=installed;
+-            return new EntryAction(()=>{
+-                Require(reviewedEntryOwner==null&&ReferenceEquals(reviewedEntryClearanceRequest,installed),
+-                    "Entry request disposed before allocator owner");
+-                reviewedEntryClearanceRequest=null;
+-            });
+-        }
+-        sealed class EntryAction : IDisposable
+-        {
+-            Action action;internal EntryAction(Action value){action=value;}
+-            public void Dispose(){var a=action;if(a==null)return;a();action=null;}
+-        }
+-        static JObject EntryReadRef(JObject reference,string root)
+-        {
+-            EntryFields(reference,"path","sha256");EntryDigest(reference["sha256"]);
+-            string relative=(string)reference["path"];
+-            Require(!string.IsNullOrEmpty(relative)&&!relative.Split('/','\\').Contains(".."),"Entry evidence path invalid");
+-            string path=Path.GetFullPath(Path.IsPathRooted(relative)?relative:Path.Combine(root,relative));
+-            Require(path.StartsWith(Path.Combine(root,"Logs","SkirmishProduction")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)&&
+-                File.Exists(path)&&new FileInfo(path).Length<=16*1024*1024,"Entry evidence path/size refused");
+-            string current=path;
+-            while(!string.Equals(current,root,StringComparison.OrdinalIgnoreCase))
+-            {
+-                Require(current!=null&&(File.GetAttributes(current)&FileAttributes.ReparsePoint)==0,"Entry reparse evidence refused");
+-                current=Path.GetDirectoryName(current);
+-            }
+-            string before=Hash(path);Require(before==(string)reference["sha256"],"Entry evidence raw hash changed");
+-            var result=EntryParse(File.ReadAllText(path));Require(Hash(path)==before,"Entry evidence changed during read");return result;
+-        }
+-        static string EntrySnapshot(SkirmishMapLayoutConfig layout,JObject mission,List<SkirmishStaticAuthoringBudget> budgets)
+-            =>EntrySha(new JObject{["layout"]=JsonUtility.ToJson(layout),["sourcePins"]=mission["source_candidate"].DeepClone(),
+-                ["canonical_size_rows"]=mission["canonical_size_rows"].DeepClone(),
+-                ["budgets"]=new JArray(budgets.Select(ApPreferenceBudgetKey))}.ToString(Formatting.None));
+-        static ReviewedEntryOwner BeginReviewedEntryClearance(JObject mission,SkirmishMapLayoutConfig layout,
+-            List<SkirmishStaticAuthoringBudget> budgets,GridConfig grid,EntityManager em)
+-        {
+-            if(reviewedEntryClearanceRequest==null)return null;
+-            Require(reviewedEntryOwner==null&&!refinementPreferenceReplay&&!mpGroundBaPilotRequested&&!apGroundJointPreferencesRequested&&
+-                !s049BoundedCompoundRouteRequested&&normalOriginContextCaptureRequest==null&&
+-                normalFacilityOriginExportRequest==null&&finiteFacilityOriginExportRequest==null,"Entry nested/conflicting allocator owner refused");
+-            var owner=new ReviewedEntryOwner(reviewedEntryClearanceRequest,mission,layout,budgets,grid,em);
+-            reviewedEntryOwner=owner;return owner;
+-        }
+-        static void AppendReviewedEntryClearance(List<RectInt> list,SkirmishMapLayoutConfig layout,string phase)
+-        {
+-            if(reviewedEntryOwner==null)return;
+-            reviewedEntryOwner.Append(list,layout,phase);
+-        }
+-        sealed class ReviewedEntryOwner : IDisposable
+-        {
+-            readonly string layoutJson,snapshot;
+-            readonly JObject mission;
+-            readonly List<SkirmishStaticAuthoringBudget> budgets;
+-            readonly Dictionary<string,JArray> facilities=new Dictionary<string,JArray>(StringComparer.Ordinal);
+-            readonly SkirmishMapLayoutConfig layout;
+-            bool searchAppended,replayAppended,disposed;
+-            internal ReviewedEntryOwner(JObject request,JObject actualMission,SkirmishMapLayoutConfig actualLayout,
+-                List<SkirmishStaticAuthoringBudget> actualBudgets,GridConfig grid,EntityManager em)
+-            {
+-                EntryHeader(request);mission=actualMission;layout=actualLayout;budgets=actualBudgets;
+-                Require((string)mission["catalog_id"]=="S006" && JToken.DeepEquals(request["sourcePins"],mission["source_candidate"])&&
+-                    JToken.DeepEquals(request["canonical_size_rows"],mission["canonical_size_rows"])&&
+-                    JToken.DeepEquals(request["budgets"],new JArray(budgets.Select(ApPreferenceBudgetKey))),"Entry actual subject/source/budgets differ");
+-                layoutJson=JsonUtility.ToJson(layout);snapshot=EntrySnapshot(layout,mission,budgets);
+-                Require(EntrySha(layoutJson)==(string)request["consumedLayoutUtf8Sha256"]&&snapshot==(string)request["preservedSnapshotSha256"],"Entry consumed-layout/snapshot drift");
+-                Require(grid.Width==2048&&grid.Height==1024&&grid.CellSize==1&&math.all(grid.Origin==float3.zero)&&
+-                    TryReadAuthoredEndpointZones(layout,grid,out var min,out var max,out _,out _)&&
+-                    min[0].Equals(new int2(961,643))&&max[0].Equals(new int2(979,657))&&
+-                    ReviewedEntryRect.xMin>=min[0].x&&ReviewedEntryRect.yMin>=min[0].y&&
+-                    ReviewedEntryRect.xMax-1<=max[0].x&&ReviewedEntryRect.yMax-1<=max[0].y,"Entry nativegrid/full rectangle zone mismatch");
+-                Require(layout.TryProjectLocalToMap(970.5f,655.5f,out var px,out var pz)&&
+-                    math.all(GridUtils.WorldToCell(grid,new float3(px,0,pz))==new int2(970,655)),"Entry projection roundtrip refused");
+-                bool max3=false;var factions=new HashSet<byte>();
+-                foreach(var force in budgets.SelectMany(b=>b.Forces))
+-                {
+-                    var prefab=FindNativePrefab(em,force.RuntimePrefabKey);Require(prefab!=Entity.Null,"Entry actual prefab missing");
+-                    if(em.HasComponent<UnitAirMovement>(prefab))continue;
+-                    Require(em.HasComponent<UnitFootprint>(prefab)&&em.HasComponent<UnitMovementBehavior>(prefab),"Entry native ground profile unavailable");
+-                    var size=em.GetComponentData<UnitFootprint>(prefab).Size;
+-                    Require(size.x>0&&size.y>0&&size.x<=3&&size.y<=3,"Entry full ground hull exceeds contract");
+-                    max3|=size.Equals(new int2(3,3));factions.Add(force.FactionId);
+-                }
+-                Require(max3&&factions.SetEquals(new byte[]{1,2})&&UnitPathPlacementValidation.VehicleOccupancyPaddingCells==1,"Entry actual profile/clearance mismatch");
+-                string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+-                foreach(var pair in new[]{new[]{"sourcePath","sourceAssetSha256"},new[]{"gridPath","gridAssetSha256"},new[]{"surfacePath","surfaceAssetSha256"}})
+-                    Require(Hash((string)mission["source_candidate"][pair[0]])==(string)mission["source_candidate"][pair[1]],"Entry actual raw source pin mismatch");
+-                var reportRef=request["historicalReport"] as JObject;
+-                EntryFields(reportRef,"path","sha256","pass");Require((int?)reportRef["pass"]==2&&(string)reportRef["sha256"]==EntryHistoricalHash,"Entry historical identity/pass mismatch");
+-                var readRef=(JObject)reportRef.DeepClone();readRef.Remove("pass");var prior=EntryReadRef(readRef,root);
+-                Require(JToken.DeepEquals(prior["sourcePins"],mission["source_candidate"])&&
+-                    (bool?)prior["sourcePinsRecheckedAfterMeasurement"]==true&&(bool?)prior["cleanupVerified"]==true,"Entry historical source/cleanup mismatch");
+-                var old=((JArray)prior["missions"]).OfType<JObject>().Single(m=>(string)m["catalogId"]=="S006");
+-                var replay=((JArray)old["measurement"]["nativePreferenceReplays"]).OfType<JObject>().Single();
+-                Require((int?)replay["candidate"]==0,"Entry historical candidate mismatch");
+-                var measurement=(JObject)replay["measurement"];
+-                Require((string)measurement["proposedLayoutJson"]==layoutJson,"Entry consumed layout is not selected historical layout");
+-                var pass=((JArray)measurement["passes"]).OfType<JObject>().Single(p=>(int?)p["pass"]==2);
+-                Require((bool?)pass["discoveryOnly"]==false,"Entry final pass required");
+-                string[] names={"Standard","War","LargeWar"};
+-                for(int i=0;i<3;i++)
+-                {
+-                    var item=request["sizeArtifacts"][i] as JObject;EntryFields(item,"path","sha256","size","pass");
+-                    Require((string)item["size"]==names[i]&&(int?)item["pass"]==2,"Entry artifact order/pass mismatch");
+-                    var original=((JArray)old["sizeArtifacts"]).OfType<JObject>().Single(a=>(string)a["size"]==names[i]&&(int?)a["pass"]==2);
+-                    Require(JToken.DeepEquals(item,original),"Entry artifact parent crosslink mismatch");
+-                    var fileRef=(JObject)item.DeepClone();fileRef.Remove("size");fileRef.Remove("pass");var row=EntryReadRef(fileRef,root);
+-                    Require(JToken.DeepEquals(row,((JArray)pass["sizes"]).OfType<JObject>().Single(x=>(string)x["size"]==names[i])),"Entry artifact content differs from selected pass");
+-                    Require((bool?)row["allActorsInsidePads"]==true&&(bool?)row["completeFacilities"]==true,"Entry historical full placement required");
+-                    var budget=budgets.Single(b=>b.Size.ToString()==names[i]);RecordedFacilitySignature(row,budget,grid);
+-                    facilities.Add(names[i],(JArray)row["normalFacilityRelocationProposals"].DeepClone());
+-                }
+-            }
+-            internal void Stable(SkirmishMapLayoutConfig current)
+-            {
+-                Require(!disposed&&ReferenceEquals(current,layout)&&JsonUtility.ToJson(layout)==layoutJson&&
+-                    EntrySnapshot(layout,mission,budgets)==snapshot,"Entry owner/layout/source/budget snapshot changed");
+-            }
+-            internal void Append(List<RectInt> list,SkirmishMapLayoutConfig current,string phase)
+-            {
+-                Stable(current);Require(list!=null&&(phase=="search"||phase=="replay"),"Entry clearance phase/list invalid");
+-                if(!list.Contains(ReviewedEntryRect))list.Add(ReviewedEntryRect);
+-                if(phase=="search")searchAppended=true;else{Require(searchAppended,"Entry replay without search refused");replayAppended=true;}
+-            }
+-            internal void BeforeProbe(SkirmishMapLayoutConfig current,List<RectInt> list)
+-            {
+-                Stable(current);EntryCheckProbeClearance(list,searchAppended,replayAppended,refinementPreferenceReplay);
+-            }
+-            internal void AfterProbe(JObject row,bool capacityOnly)
+-            {
+-                Stable(layout);
+-                if(capacityOnly){row["reviewedEntryCapacityOnly"]=true;return;} // never configuration acceptance
+-                string size=(string)row["size"];Require((string)row["catalogId"]=="S006"&&size!=null&&facilities.ContainsKey(size),"Entry result subject/size mismatch");
+-                EntryCompareFacilities(facilities[size],row);
+-                row["reviewedEntryClearance"]=new JObject{["rect"]=RectJson(ReviewedEntryRect),["sourceFitCertified"]=false,["missionAccepted"]=false};
+-            }
+-            public void Dispose()
+-            {
+-                Require(ReferenceEquals(reviewedEntryOwner,this),"Entry wrong owner disposal");reviewedEntryOwner=null;disposed=true;
+-            }
+-        }
+-        static void EntryCheckProbeClearance(List<RectInt> list,bool search,bool replay,bool replayPhase)
+-        {
+-            Require(search&&list!=null&&list.Contains(ReviewedEntryRect)&&(!replayPhase||replay),"Entry search/replay clearance missing");
+-        }
+-        static void EntryCompareFacilities(JArray expected,JObject row)
+-        {
+-            var actual=row["normalFacilityRelocationProposals"] as JArray;
+-            Require(actual!=null&&actual.Count==expected.Count&&actual.OfType<JObject>().Count()==actual.Count&&
+-                actual.OfType<JObject>().Select(x=>(int)x["faction"]+"/"+(string)x["structureId"]).Distinct().Count()==actual.Count,
+-                "Entry incomplete/duplicate allocator roster");
+-            foreach(JObject previous in expected)
+-            {
+-                var next=actual.OfType<JObject>().Single(x=>JToken.DeepEquals(x["faction"],previous["faction"])&&JToken.DeepEquals(x["structureId"],previous["structureId"]));
+-                Require((bool?)next["entireConfigurationFound"]==true&&JToken.DeepEquals(next["prefabPath"],previous["prefabPath"])&&
+-                    JToken.DeepEquals(next["prefabSha256"],previous["prefabSha256"]),"Entry incomplete/foreign native facility");
+-                var a=(JObject)next["resolvedEffectiveRect"];EntryFields(a,"x","z","width","depth");
+-                Require(a.Properties().All(p=>p.Value.Type==JTokenType.Integer),"Entry noninteger rectangle");
+-                var rect=new RectInt((int)a["x"],(int)a["z"],(int)a["width"],(int)a["depth"]);
+-                Require(rect.width>0&&rect.height>0&&!rect.Overlaps(ReviewedEntryRect),"Entry allocator clearance/no-fit refusal");
+-                bool target=(int)previous["faction"]==1&&(string)previous["structureId"]=="building.ground_staging";
+-                var old=(JObject)previous["resolvedEffectiveRect"];
+-                Require(target?JToken.DeepEquals(a["width"],old["width"])&&JToken.DeepEquals(a["depth"],old["depth"]):JToken.DeepEquals(a,old),"Entry unrelated facility/footprint drift refused");
+-            }
+-        }
+-        static void ProbePilotNormalFacilityRelocation(JObject input,JObject[] requests,SkirmishMapLayoutConfig layout,
+-            SkirmishRoleCatalogConfig roles,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,
+-            JObject report,bool exactTypedRosterCaller=false,bool discoverFacilityPads=false,List<RectInt> plannedApproachClearance=null,
+-            bool capacityOnly=false,SkirmishScenarioDefinitionConfig serviceAuthority=null)
+-        {
+-            var guard=reviewedEntryOwner;guard?.BeforeProbe(layout,plannedApproachClearance);
+-            ProbePilotNormalFacilityRelocationCore(input,requests,layout,roles,em,gridEntity,grid,surface,report,
+-                exactTypedRosterCaller,discoverFacilityPads,plannedApproachClearance,capacityOnly,serviceAuthority);
+-            guard?.AfterProbe(report,capacityOnly); // no postcheck masks an original allocator exception
+-        }
+-    }
+-}
+-#endif
+--- a/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.ReviewedEntryClearance.Controls.cs
++++ /dev/null
+@@ -1,69 +0,0 @@
+-#if UNITY_EDITOR
+-using System;
+-using System.Collections.Generic;
+-using Newtonsoft.Json;
+-using Newtonsoft.Json.Linq;
+-using UnityEngine;
+-namespace Game.Editor
+-{
+-    public static partial class SkirmishGroundSourceFitSurvey
+-    {
+-        // PROPOSED ONLY. Pure parser/guard fixtures; no native world/allocator or filesystem reads.
+-        static JObject EntryControlFixture() => new JObject {
+-            ["schemaVersion"]=1,["kind"]="ReviewedEntryClearanceRequest.v1",["enabled"]=true,
+-            ["reviewCommit"]=EntryReviewBase,["catalogId"]="S006",["definitionId"]="skirmish.s006",["tuple"]=new JArray("DB","BA","C","E"),
+-            ["historicalReport"]=new JObject(),["sizeArtifacts"]=new JArray(new JObject(),new JObject(),new JObject()),
+-            ["sourcePins"]=new JObject(),["consumedLayoutUtf8Sha256"]=new string('0',64),["preservedSnapshotSha256"]=new string('0',64),
+-            ["canonical_size_rows"]=new JArray(new JObject(),new JObject(),new JObject()),["budgets"]=new JArray(new JObject(),new JObject(),new JObject()),
+-            ["entry"]=new JObject{["faction"]=1,["padId"]="pad.skirmish.db.staging_player",["candidateCell"]=new JArray(970,655),
+-                ["maxGroundFootprint"]=new JArray(3,3),["occupancyPadding"]=1,["clearanceRectHalfOpen"]=new JArray(968,653,5,5)},
+-            ["nativeLaunchAuthorized"]=false,["sourceFitCertified"]=false,["missionAccepted"]=false };
+-        internal static void RunProposedEntryPureGuardControls()
+-        {
+-            Require(reviewedEntryOwner==null&&reviewedEntryClearanceRequest==null,"Unowned pure control boundary required");
+-            int checkedRefusals=0;
+-            void Refuses(Action a){bool refused=false;try{a();}catch(InvalidOperationException){refused=true;}catch(JsonException){refused=true;}
+-                Require(refused,"Expected entry refusal");checkedRefusals++;}
+-            void Header(Action<JObject> change){var x=EntryControlFixture();change(x);Refuses(()=>EntryHeader(x));}
+-            EntryHeader(EntryControlFixture());
+-            Refuses(()=>EntryParse("{\"schemaVersion\":1,\"schemaVersion\":1}"));
+-            Header(x=>x["forcedOrigin"]=new JArray(963,646));
+-            Header(x=>x["tuple"]=new JArray("DB","BA","G","E"));
+-            Header(x=>x["enabled"]=false);
+-            Header(x=>x["entry"]["clearanceRectHalfOpen"]=new JArray(968,653,3,5));
+-            Header(x=>x["entry"]["candidateCell"]=new JArray(970,645));
+-            Header(x=>x["entry"]["occupancyPadding"]=0);
+-            Header(x=>x["entry"]["faction"]=2);
+-            Header(x=>x["nativeLaunchAuthorized"]=true);
+-            Header(x=>x["sizeArtifacts"]=new JArray(new JObject()));
+-            Header(x=>x["consumedLayoutUtf8Sha256"]=new string('A',64));
+-            var token=UseReviewedEntryClearanceRequest(EntryControlFixture().ToString());
+-            try { Refuses(()=>UseReviewedEntryClearanceRequest(EntryControlFixture().ToString())); }
+-            finally { token.Dispose(); }
+-            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null,"Request scope leaked");
+-            var clear=new List<RectInt>{ReviewedEntryRect};
+-            EntryCheckProbeClearance(clear,true,false,false);
+-            EntryCheckProbeClearance(clear,true,true,true);
+-            Refuses(()=>EntryCheckProbeClearance(clear,false,false,false));
+-            Refuses(()=>EntryCheckProbeClearance(clear,true,false,true));
+-            Refuses(()=>EntryCheckProbeClearance(new List<RectInt>(),true,true,true));
+-            JObject F(int faction,string id,int x,int z,int w,int h)=>new JObject{["faction"]=faction,["structureId"]=id,
+-                ["prefabPath"]="fixture",["prefabSha256"]="fixture",["entireConfigurationFound"]=true,
+-                ["resolvedEffectiveRect"]=new JObject{["x"]=x,["z"]=z,["width"]=w,["depth"]=h}};
+-            var old=new JArray(F(1,"building.ground_staging",963,647,14,7),F(2,"building.barracks",1412,604,28,15));
+-            JObject Result()=>new JObject{["normalFacilityRelocationProposals"]=new JArray(
+-                F(1,"building.ground_staging",963,646,14,7),F(2,"building.barracks",1412,604,28,15))};
+-            EntryCompareFacilities(old,Result()); // guard arithmetic only, NOT normal allocator placement authority
+-            void ResultRefuses(Action<JObject> change){var x=Result();change(x);Refuses(()=>EntryCompareFacilities(old,x));}
+-            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["resolvedEffectiveRect"]["z"]=647);
+-            ResultRefuses(x=>x["normalFacilityRelocationProposals"][1]["resolvedEffectiveRect"]["x"]=1413);
+-            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["resolvedEffectiveRect"]["width"]=13);
+-            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["entireConfigurationFound"]=false);
+-            ResultRefuses(x=>((JArray)x["normalFacilityRelocationProposals"]).RemoveAt(1));
+-            ResultRefuses(x=>x["normalFacilityRelocationProposals"][0]["prefabSha256"]="foreign");
+-            Require(checkedRefusals==21,"Exact focused refusal coverage changed");
+-            Require(reviewedEntryClearanceRequest==null&&reviewedEntryOwner==null,"Final pure scope leaked");
+-        }
+-    }
+-}
+-#endif

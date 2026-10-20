@@ -1,0 +1,18 @@
+{
+  "status": "DisabledSourceReviewOnly",
+  "sourceBase": "b4405e72ae823c4463a82d81ceb9703ed6d99174",
+  "branchBase": "90e5a2919469b1dc25ca656b93b14074dd2487a4",
+  "limits": [
+    "Windows must surgically review b440 hunks against unrelated native-only SimultaneousRefinement c127; no automatic apply onto frozen epoch.",
+    "Exact original sizeArtifact/reference schema/path forms and consumed proposedLayoutJson must be peer-checked from unavailable raw Windows reports. Strict crosslink parser intentionally refuses any different shape; do not loosen by guess.",
+    "Request uses concrete canonical_size_rows/budgets plus original report-derived facility signatures instead of placeholder-only design fields; peer review this concrete binding and parser surface.",
+    "No C# compiler/control execution authorized. API/type and baseline compatibility remain pending; this is reviewable source, not compile/fit acceptance.",
+    "Future new file GUID/metas and loaded-source/build identity must be reviewed at terminal boundary; none installed/imported now.",
+    "Allocator selector stays unchanged; cleared entry does not prove full routes/service/air/paid/normal mission/device. Old655request remains unexecuted."
+  ],
+  "compiler": "NOT_RUN",
+  "native": "NOT_RUN",
+  "proposed21PureControls": "NOT_RUN",
+  "activeAssetsOrMetasInstalled": false,
+  "windowsIntegratorRequired": true
+}

@@ -1,0 +1,24 @@
+{
+  "implemented_proposed_pure_controls": {
+    "refusals": 21,
+    "areas": [
+      "duplicate/unknown fields",
+      "wrong owner/profile/disabled input",
+      "shrunk footprint/padding/foreign faction",
+      "launch claim/size count/hash format",
+      "nested scope and disposal",
+      "search/replay missing rectangle",
+      "facility clearance/no-fit/unrelated drift/footprint mutation/partial roster/foreign prefab"
+    ],
+    "executed": false
+  },
+  "future_actual_evidence_controls_required": [
+    "Wrong parent/size/pass rawhash and crosslink must refuse before normal allocator",
+    "Evidence changed during read/reparse/outside owned Logs refused",
+    "Wrong consumed layout field vs proposedLayoutJson, source/rawgrid or canonical rows/budget snapshot refused",
+    "Exact byte-identical owner snapshot through replay; exception cleanup leaves scopes null; cold absence changes nothing",
+    "Actual normal allocator no-fit and all3size otherfacility equality with unchanged pad/preferredcenter/routes/service"
+  ],
+  "compile": false,
+  "native": false
+}

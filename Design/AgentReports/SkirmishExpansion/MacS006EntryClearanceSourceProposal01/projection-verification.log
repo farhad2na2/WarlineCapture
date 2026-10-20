@@ -1,0 +1,13 @@
+PASS exact b440 source pins:3
+PASS contextual hook apply:3
+PASS exact inverse roundtrip:3
+PASS checkout Assets/index/refs not used for projection
+C# compiler NOT_RUN
+Unity/native NOT_RUN
+Focused C# controls NOT_RUN (proposal only)
+PASS default inactive: null request/owner; no environment/menu/launch activation
+PASS explicit5x5 + other-facility/post-probe guard source presence
+PASS search/replay append source coverage
+PASS native-only c127 not read/copied; b440 only
+PASS all proposed files are .txt under owned Logs
+PASS complete five-source proposal/inverse roundtrip in memory:5

@@ -243,6 +243,7 @@ namespace Game.UI.Runtime
             if (pin)
                 AddSiblingShadow(rect);
             StyleBattleCard(button.transform, card.IsSelected, playable, pin);
+            if (pin) StyleMapCardTitleStrip(button.transform, fa); // v50 LOCAL P2 hook (P1 helper)
             return rect;
         }
 

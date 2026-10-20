@@ -162,6 +162,7 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(settingsRect, settingsX, 12f, settingsWidth, 72f);
             }
 
+            LibraryHeaderBreadcrumb.Apply(this, compositionRect, fa, titleX, titleWidth, chipX, chipWidth); // v50 LOCAL P2 hook (P1 helper)
             MainMenuAccountHeaderView header = GetComponentInChildren<MainMenuAccountHeaderView>(true);
             if (header == null)
                 return;

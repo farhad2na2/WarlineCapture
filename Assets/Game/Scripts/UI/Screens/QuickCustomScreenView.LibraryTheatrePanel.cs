@@ -643,14 +643,24 @@ namespace Game.UI.Runtime
             var captionTexts = new List<TMP_Text>(captions.Count);
             float captionDepth = captionH; // ink below the caption box top
             float captionRise = 0f;        // ink above the caption box top (would touch its own icon)
+            float captionReach = 0f;       // largest font size the captions can be drawn at
             for (int i = 0; i < captions.Count; i++)
             {
                 TMP_Text text = captions[i].GetComponent<TMP_Text>();
                 captionTexts.Add(text);
                 if (TextInkExtent(text, out float rise, out float depth))
                 {
-                    captionDepth = Mathf.Max(captionDepth, depth);
-                    captionRise = Mathf.Max(captionRise, rise);
+                    // v47e (v47 run: laid out at 12.3 pt, drawn at 22 pt): the last panel rebuild runs before the shared
+                    // text pass lifts every Subtitle to the library floor (FinishLibraryText -> RelaxLibraryText, min
+                    // ReferenceSubtitleFloor / LibraryFontFloor). Glyph ink scales with size, so size the rows for the
+                    // largest size this caption can reach, whatever pass comes last.
+                    float now = Mathf.Max(1f, text.fontSize);
+                    float reach = Mathf.Max(now, Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor()));
+                    if (text.enableAutoSizing)
+                        reach = Mathf.Max(reach, text.fontSizeMax);
+                    captionReach = Mathf.Max(captionReach, reach);
+                    captionDepth = Mathf.Max(captionDepth, depth * reach / now);
+                    captionRise = Mathf.Max(captionRise, rise * reach / now);
                 }
             }
 
@@ -692,6 +702,10 @@ namespace Game.UI.Runtime
                     continue;
                 float ink = TextInkBottom(panel, captionTexts[i]);
                 float next = (i / 2) + 1 < rows ? rowsTop + ((i / 2) + 1) * pitch : panelH - 4f;
+                float now = Mathf.Max(1f, captionTexts[i].fontSize);
+                float top = -captions[i].anchoredPosition.y;
+                if (captionReach > now)
+                    ink = top + (ink - top) * captionReach / now; // clearance at the reachable size, not today's
                 worstClear = Mathf.Min(worstClear, next - ink);
             }
 
@@ -704,7 +718,7 @@ namespace Game.UI.Runtime
                 " rowsTop=" + rowsTop.ToString("0.0") + " pitch=" + pitch.ToString("0.0") + " icon=" + icon.ToString("0.0") +
                 " captionFont=" + (captionTexts.Count > 0 && captionTexts[0] != null ? captionTexts[0].fontSize.ToString("0.0") : "-") +
                 " captionInk=" + captionRise.ToString("0.0") + "/" + captionDepth.ToString("0.0") +
-                " captionBox=" + captionH.ToString("0") + " captionClear=" + worstClear.ToString("0.0") +
+                " captionReach=" + captionReach.ToString("0.0") + " captionBox=" + captionH.ToString("0") + " captionClear=" + worstClear.ToString("0.0") +
                 " panelH=" + panelH.ToString("0") + " fits=" + (fits ? "1" : "0") + " locale=" + (fa ? "fa-IR" : "en");
             if (fits)
                 Debug.Log(line);

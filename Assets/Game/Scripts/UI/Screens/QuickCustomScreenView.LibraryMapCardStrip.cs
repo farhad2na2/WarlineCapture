@@ -17,7 +17,13 @@ namespace Game.UI.Runtime
     public sealed partial class QuickCustomScreenView
     {
         internal const string MapCardStripName = "TitleStrip";
-        private const float MapCardStripMinFont = 16f;
+        /// <summary>(size, tracking) tried in order: 22 -> 16 px at 0, then 16 at -4 / -8, then 14 at 0 / -4 / -8.</summary>
+        private static readonly Vector2[] MapCardStripSteps =
+        {
+            new Vector2(22f, 0f), new Vector2(21f, 0f), new Vector2(20f, 0f), new Vector2(19f, 0f), new Vector2(18f, 0f),
+            new Vector2(17f, 0f), new Vector2(16f, 0f), new Vector2(16f, -4f), new Vector2(16f, -8f),
+            new Vector2(15f, -4f), new Vector2(14f, 0f), new Vector2(14f, -4f), new Vector2(14f, -8f),
+        };
         private const float MapCardStripPad = 8f;
         private static readonly Color MapCardStripIdColor = new Color(0.40f, 0.80f, 0.92f, 1f);
 
@@ -105,17 +111,23 @@ namespace Game.UI.Runtime
                 body.color = new Color(0.98f, 0.96f, 0.90f, 1f);
             }
 
-            // Largest size from the library floor down to 16 px at which id + gap + text fit the strip on one line.
-            for (float s = LibraryFontFloor; s >= MapCardStripMinFont - 0.01f; s -= 1f)
+            // Largest size from the library floor down to 16 px at which id + gap + text fit the strip on one line; then
+            // (v50b, v50 4:3 "COMBINED · ESTABLISHED" needed 273/227 at 16 px) tighter tracking, then 14 px (the grid
+            // header floor) with tracking down to -8.
+            float track = 0f;
+            for (int step = 0; step < MapCardStripSteps.Length && !fits; step++)
             {
+                float s = MapCardStripSteps[step].x;
+                float t = MapCardStripSteps[step].y;
+                if (body != null)
+                    body.characterSpacing = t;
+                if (id != null)
+                    id.characterSpacing = t;
                 idW = id != null ? StripWidthAt(id, s) : 0f;
                 bodyW = body != null && text.Length > 0 ? StripWidthAt(body, s) : 0f;
                 size = s;
-                if (idW + MapCardStripPad + bodyW <= inner && s * (fa ? 1.65f : 1.2f) <= stripH + 6f)
-                {
-                    fits = true;
-                    break;
-                }
+                track = t;
+                fits = idW + MapCardStripPad + bodyW <= inner && s * (fa ? 1.65f : 1.2f) <= stripH + 6f;
             }
 
             float lineH = stripH - 4f;
@@ -130,7 +142,7 @@ namespace Game.UI.Runtime
             bool overlapArt = art != null && art.enabled && artTop < stripH - 0.5f;
             Debug.Log("[MapCardStrip] locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel() + " battle=" + scenarioId +
                 " text=" + scenarioId + (text.Length > 0 ? " " + text : string.Empty) + " fits=" + (fits ? 1 : 0) +
-                " overlapArt=" + (overlapArt ? 1 : 0) + " size=" + size.ToString("0.0") + " strip=" + width.ToString("0") + "x" + stripH.ToString("0") +
+                " overlapArt=" + (overlapArt ? 1 : 0) + " size=" + size.ToString("0.0") + " track=" + track.ToString("0") + " strip=" + width.ToString("0") + "x" + stripH.ToString("0") +
                 " need=" + (idW + MapCardStripPad + bodyW).ToString("0") + "/" + inner.ToString("0"));
         }
 

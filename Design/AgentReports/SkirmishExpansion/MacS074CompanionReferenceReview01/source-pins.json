@@ -1,0 +1,134 @@
+{
+  "baseCommit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "packageRoot": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.entities@ef040875dea9",
+  "packageVersion": "6.5.0",
+  "packageCacheIdentity": "com.unity.entities@ef040875dea9",
+  "packageFiles": [
+    {
+      "path": "package.json",
+      "bytes": 1033,
+      "sha256": "ec6297bee6c63194e9ef4de95ce2853e6f4954b5406de19c321e5d60e68eae80",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes.Editor/EntitySceneBuildUtility.cs",
+      "bytes": 43154,
+      "sha256": "771bfb6d0223aba013410c69b0a6b653b67903d3188d52d5cd6baecd6e1fb17c",
+      "windowsExpected": "771bfb6d0223aba013410c69b0a6b653b67903d3188d52d5cd6baecd6e1fb17c",
+      "windowsExactMatch": true
+    },
+    {
+      "path": "Unity.Scenes/Hybrid/CompanionSceneUtility.cs",
+      "bytes": 4926,
+      "sha256": "a775ad88d466afbebac429d19d40b2c3bac9311e936ab9b3f4d87b6b00dac489",
+      "windowsExpected": "a775ad88d466afbebac429d19d40b2c3bac9311e936ab9b3f4d87b6b00dac489",
+      "windowsExactMatch": true
+    },
+    {
+      "path": "Unity.Scenes/Hybrid/SerializeUtilityHybrid.cs",
+      "bytes": 8083,
+      "sha256": "3744508185fe61d76b4da155fa550b55c7cd3c03abc45692fed94b27204ff34d",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/Hybrid/ReferencedUnityObjects.cs",
+      "bytes": 904,
+      "sha256": "7afc813f82482a17cc942b272ed91f124a2d4e660aef5f238156bdc69625022c",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/AsyncLoadSceneOperation.cs",
+      "bytes": 20337,
+      "sha256": "8c6b694bc8d4f73362a02479c7c4ee38ffc27ef552aec1ac89edd47452ec6443",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/SceneSectionStreamingSystem.cs",
+      "bytes": 46006,
+      "sha256": "7afae8412c4d17f04562d71473c709bdae3c4efa4bccdee45ad95538a7e7548a",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/SceneSectionReferencedUnityObjects.cs",
+      "bytes": 967,
+      "sha256": "1732cbc2522adc84b8d5c2acd87b212df26cb762b0f53e5c2e411487d3eca1f8",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/ResolveSceneReferenceSystem.cs",
+      "bytes": 20041,
+      "sha256": "7495e28aa5c35c5c154f2ae1b96d8e611f77d01a7cd5a4cda9bea57cb9053fdf",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/SceneSystem.cs",
+      "bytes": 30886,
+      "sha256": "83c9abc28d59a2b2a51c07469e9a441d7b4285fa2d9ef9740cd65c733e9d6078",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Scenes/EntityScenesPaths.cs",
+      "bytes": 6102,
+      "sha256": "cf1c3558f26d5477e20ea1d5c5a5df80b20ea9966bc31af4dddffd804b294bfc",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Entities/Types/SceneTagComponent.cs",
+      "bytes": 10522,
+      "sha256": "129d4b0d6a30baab1d3587d802dd5a6f62af658dc5194e276ce9a2a87a3e1d0a",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Entities/Content/RuntimeContentManager.cs",
+      "bytes": 64073,
+      "sha256": "835bb7189d0cea1fe3a85537d357782de2e271adcb0e35b5e1d81f14e708b5e9",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    },
+    {
+      "path": "Unity.Entities.Hybrid/Components/CompanionLink.cs",
+      "bytes": 1273,
+      "sha256": "c39845aea45ba11eb65b6eeda614f4d1b7f5f4cc8c9ccc18fb97d7d286a37845",
+      "windowsExpected": null,
+      "windowsExactMatch": null
+    }
+  ],
+  "projectFiles": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "bytes": 48231,
+      "sha256": "e1cbe915dfdec286a0fb700f169162be4013c6aabe6a94ed0fd19ce60890e12e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+      "bytes": 6992,
+      "sha256": "04df40c6b972bd3cdb07fc6c2d3c3f891f676f0a10e70703ec0adf7629f38cb8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs",
+      "bytes": 21761,
+      "sha256": "03e807ecb53f47e5ac0c5c94f60efc0fd91fcd2d8a9135d6198818dcdff2b7bf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationMapSceneLoadOperations.cs",
+      "bytes": 13082,
+      "sha256": "9f37cf1c5b978280418b9d8642d06d408e8677bceaaa9616aa1444a1bf6b84ee"
+    },
+    {
+      "path": "Packages/packages-lock.json",
+      "bytes": 17132,
+      "sha256": "1ca71cadd2b58424e9ea01c7f73fa2cefc2b791002acd213ea0a365f5dbd2d51"
+    }
+  ],
+  "crossPlatformLimit": "Only two supplied Windows raw files compared exactly. All remaining local pins need Windows raw-byte comparison; package-name/version alone is not all-file equality."
+}

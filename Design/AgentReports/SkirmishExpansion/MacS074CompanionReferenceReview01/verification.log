@@ -1,0 +1,3 @@
+PASS raw pins unchanged:14 local package files,5 exact-base project files;2 supplied Windows files exact
+PASS reviewed source anchors and pending-witness receipt consistency ONLY
+Compiler=NOT_RUN; Unity/native=NOT_RUN; causal root attribution=PENDING; repair=PENDING; acceptance=false

@@ -1,0 +1,37 @@
+{
+  "utc": "2026-10-20T10:39:26.893186+00:00",
+  "nativeJobOwnedByThisChat": null,
+  "processActions": false,
+  "newHeavyJob": false,
+  "policy": "Preserve all observed Skirmish Menu/SCN13/Fig and unrelated jobs; no ownership transfer",
+  "records": [
+    {
+      "pid": 54938,
+      "ppid": 55563,
+      "start": "Mon Oct 19 09:06:18 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectpath /Volumes/T7/Projects/Fig/Fig -acceptSoftwareTermsForThisRunOnly -useHub -hubIPC -cloudEnvironment production -licensingIpc LicenseClient-farhad -hubSessionId [REDACTED] -accessToken [REDACTED]"
+    },
+    {
+      "pid": 55563,
+      "ppid": 1,
+      "start": "Wed Oct 14 21:02:25 2026",
+      "executable": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "commandRedacted": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub"
+    },
+    {
+      "pid": 87934,
+      "ppid": 54938,
+      "start": "Mon Oct 19 12:26:50 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker0 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker0.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport"
+    },
+    {
+      "pid": 87936,
+      "ppid": 54938,
+      "start": "Mon Oct 19 12:26:50 2026",
+      "executable": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "commandRedacted": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorker1 -projectPath /Volumes/T7/Projects/Fig/Fig -logFile Logs/AssetImportWorker1.log -srvPort 49994 -job-worker-count 4 -background-job-worker-count 8 -gc-helper-count 1 -name AssetImport"
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "state": "IndependentSourceReview_NoRuntimeDiagnosis",
+  "baseCommit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "claims": [
+    {
+      "id": "loader-retention",
+      "kind": "Source fact",
+      "source": "Unity.Scenes.Editor/EntitySceneBuildUtility.cs",
+      "lines": [
+        583,
+        601,
+        678,
+        682,
+        811,
+        843
+      ],
+      "finding": "Each Editor LoadInstance creates new LoadState. SubSceneObjectReferences resolve GUID+section to artifact loadPath and load serialized references into CompanionScene(false). ReleaseInstance removes its state and calls Unload; Unload deliberately unloads no objects. Runtime handle release is not proof of restoring scene roots."
+    },
+    {
+      "id": "blocking-fallback",
+      "kind": "Source fact plus bounded hypothesis",
+      "source": "Unity.Scenes.Editor/EntitySceneBuildUtility.cs",
+      "lines": [
+        615,
+        632
+      ],
+      "finding": "Incomplete blocking WaitForCompletion drops loadingOperation reference and performs synchronous LoadSerializedFileAndForget without explicit destination scene. No cancellation is shown in this branch. This differs from async destination-scene loading. Whether fallback actually occurred, its eventual async completion and which objects survived are unmeasured; no causal conclusion."
+    },
+    {
+      "id": "warmup-normal",
+      "kind": "Project source fact",
+      "source": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs",
+      "lines": [
+        389,
+        577,
+        621
+      ],
+      "relatedSource": "Assets/Game/Scripts/Composition/OperationMapPackedEntitySceneOwnership.cs",
+      "relatedLines": [
+        39,
+        76,
+        99,
+        149
+      ],
+      "finding": "Batch context passes actual planned jobs. Warmup resolves current definition CampaignMap and includes MatchRuntimeSubScene; streaming-only temporary world uses BlockOnImport|BlockOnStreamIn and one Update with loaded check, then disposes. Normal packed owner uses default world and default async LoadSceneAsync. A prebound MapSubScene can bypass this packed owner; actual path must be measured. Warmup sameGUID is insufficient proof of same artifacts/reference objects or load timing. Standalone preparation defaults S004/S005; do not confuse it with planned batch context."
+    },
+    {
+      "id": "editor-transfer",
+      "kind": "Source fact",
+      "source": "Unity.Scenes/AsyncLoadSceneOperation.cs",
+      "lines": [
+        244,
+        252,
+        308,
+        315,
+        388,
+        400
+      ],
+      "relatedSource": "Unity.Scenes/Hybrid/SerializeUtilityHybrid.cs",
+      "relatedLines": [
+        91,
+        116
+      ],
+      "finding": "Editor blocking and async scene loads obtain per-instance handles. ScheduleSceneRead deserializes ReferencedUnityObjects and releases the instance handle. Editor deserializer reuses object references and sets flags only for CompanionObjectIndices. It does not use the player branch clone loop. HideFlags0/name(Clone)/inactivity alone neither identify the loader source nor establish harmless template status."
+    },
+    {
+      "id": "scene-vs-reference-owner",
+      "kind": "Source fact",
+      "source": "Unity.Scenes/SceneSectionReferencedUnityObjects.cs",
+      "lines": [
+        8,
+        23
+      ],
+      "relatedSource": "Unity.Scenes/SceneSectionStreamingSystem.cs",
+      "relatedLines": [
+        591,
+        595,
+        941,
+        942
+      ],
+      "finding": "Section records an object reference ID; its refcount Retain/Release interface exists only outside UNITY_EDITOR. Removing section meta/content and releasing an Editor instance do not imply loaded serialized-reference objects were destroyed. CompanionReference.Dispose has a distinct instance destruction path in Unity.Entities.Hybrid/Components/CompanionLink.cs22-45; do not conflate it with retained source objects."
+    },
+    {
+      "id": "preview-lifetime",
+      "kind": "Source fact",
+      "source": "Unity.Scenes/Hybrid/CompanionSceneUtility.cs",
+      "lines": [
+        41,
+        47,
+        63,
+        88
+      ],
+      "finding": "GetCompanionScene can create both preview scenes and register assembly-reload cleanup. It is not a read-only observer. Package close path shown here is beforeAssemblyReload, not ordinary mission/world teardown. No scene close/root destroy/private reset is proposed."
+    }
+  ],
+  "WindowsEvidenceAttribution": {
+    "normalSession": "12620",
+    "result": "terminal failed1, wrapper2/watch0 after genuineVictory/MainMenu",
+    "strictDelta": "same CompanionScene handle root2->4; originalpair retained; added inactive hideFlags0 Global Volume(Clone)/Sun(Clone), descendants1 each; other projected fields equal",
+    "localReproduction": false,
+    "UPM": "9 list200/zero matching errors is attributed noncausal evidence"
+  },
+  "conclusion": "A retained serialized-reference lifetime is a source-supported candidate, not proven identity of the observed extra pair. SameGUID repeated loads and blocking fallback can differ without a map-binding mismatch. Actual identity/phase joins pending. Preserve strict failure."
+}

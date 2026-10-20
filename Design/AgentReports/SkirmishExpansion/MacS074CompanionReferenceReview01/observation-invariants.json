@@ -1,0 +1,90 @@
+{
+  "schema": 1,
+  "status": "ProposedReadOnlyInvariants_NoHarnessCode",
+  "checkpoints": [
+    "Before preparation",
+    "After each actual warmup scene/section completion and world disposal",
+    "Normal menu entered",
+    "Actual mission source selected and sections resolved",
+    "References available / mission running",
+    "Result",
+    "Returned Main Menu",
+    "Owned teardown settled at bounded explicit frame checkpoints"
+  ],
+  "identities": {
+    "world": [
+      "World sequence number/name and created/disposed status; do not set DefaultGameObjectInjectionWorld"
+    ],
+    "source": [
+      "actual catalog/definition instance and asset identity",
+      "OperationMapId, physical source identity/content hash",
+      "actual view.MapSubScene.SceneGUID and NavigationMetadata.AuthoredSubSceneGuid, which branch won",
+      "existing planned job source GUID list incl MatchRuntimeSubScene"
+    ],
+    "section": [
+      "existing SceneReference.SceneGUID",
+      "ResolvedSectionEntity buffer and SceneEntityReference.SceneEntity",
+      "SceneSectionData.SceneGUID,SubSectionIndex,ObjectReferenceCount",
+      "SceneSystem.GetSceneStreamingState/GetSectionStreamingState on existing entities"
+    ],
+    "references": [
+      "Already-loaded Resources.FindObjectsOfTypeAll<ReferencedUnityObjects> inventory",
+      "container object ID, persistence/GUID/local file ID or explicit unresolved",
+      "Array indices/object IDs/types and CompanionObjectIndices without modification",
+      "GameObject/component owning root IDs, existing Scene handle/path/name, activeSelf/activeInHierarchy/hideFlags and parent/descendant IDs"
+    ],
+    "roots": [
+      "Discover existing roots via loaded object inventory and each object.scene; use valid Scene.GetRootGameObjects, preserving IDs",
+      "Retain originalpair identity; exact set diff of added/removed/replaced object IDs per same scene handle",
+      "Names/counts/flags are attributes, not identity or ownership proof"
+    ],
+    "artifact": [
+      "Record authoritative actual artifact/dependency identity only if supplied by an existing supported owner/receipt",
+      "Read-only AssetDatabase GUIDToAssetPath/TryGetGUIDAndLocalFileIdentifier/GetAssetDependencyHash describe source/dependencies, NOT necessarily exact imported entities artifact or instance identity"
+    ]
+  },
+  "publicApiLimits": [
+    "ResolvedSceneHash,ResolvedSectionPath.HybridReferenceId,SceneSectionReferencedUnityObjects are internal in this pinned package",
+    "EditorPlayModeLoader.LoadState and instance query methods on RuntimeContentManager are internal; no public per-instance loader identity enumeration established",
+    "EntityScenesPaths/artifact-path helper is internal. Do not silently replace supported observations with reflection/private-field probes",
+    "RuntimeContentManager.GetObjectLoadingStatus/GetObjectValue are public object-cache queries, not proof of the internal Editor instance-handle join; do not load/retain an ID just to observe it",
+    "GlobalObjectId/AssetDatabase persisted identity may be unresolved for serialized/cloned nonpersistent objects; preserve null rather than infer identity from names",
+    "SceneManager.sceneCount/GetSceneManagerSetup alone may omit preview objects. Observe existing objects/scenes without calling GetCompanionScene, opening preview scenes or loading assets"
+  ],
+  "invariants": [
+    "Warmup vs normal tuple compare actual GUID+section+artifact+reference object identities; distinguish equalGUID/differentinstances from wrongsource",
+    "Original pre-run scene/roots remain exactly present; every extra root must retain identity and first appearance phase, not be excused or deleted",
+    "No schema-normalized ownership baseline or wider root allowance; observed2->4 remains failure",
+    "All native/reference/causal observations below remain NULL until an authorized Windows checkpoint run",
+    "No package-private mutation, root deletion, preview close, asset load, Resources.UnloadUnusedAssets, scene changes or global resets in observer"
+  ],
+  "actualWitness": {
+    "warmupTuples": null,
+    "normalTuples": null,
+    "exactArtifactJoin": null,
+    "exactEditorInstanceJoin": null,
+    "referenceToExtraRootJoin": null,
+    "firstAppearancePhase": null,
+    "fallbackTaken": null,
+    "repairValidated": null
+  },
+  "repairDecision": [
+    {
+      "if": "Owner starts duplicate or unmatched real scene loads",
+      "minimalCandidate": "Correct that one existing game owner load/release pairing using supported SceneSystem lifecycle; retain DestroyMetaEntities and normal scene ownership. Requires actual ownership proof and separate source/compile/native validation."
+    },
+    {
+      "if": "Warmup resolves different actualsource/section/artifact than normal",
+      "minimalCandidate": "Correct only the binding/preparation selection under existing policy; preserve Campaign geometry/budgets. Matching GUID alone still insufficient. Do not expand baseline to swallow additional roots."
+    },
+    {
+      "if": "Same exact artifact loaded per-instance produces retained source objects after legitimate ownership release",
+      "minimalCandidate": "No supported roots-only reclaim repair demonstrated in this source. Need narrowly reviewed package/lifecycle fix or supported production reference reuse, with explicit authority and exact identity before/after proof; no manual deletion or private reset."
+    },
+    {
+      "if": "Only blocking fallback differs",
+      "minimalCandidate": "A separately reviewed warmup recipe matching normal async path can test timing/reference correspondence. It is diagnostic until zero extra roots and full native gates pass, and is not assumed to eliminate per-instance retention."
+    }
+  ],
+  "acceptance": "Source hypotheses/observation recipe only; no repair installed, compiler/native run, sourcefit, mission acceptance or new failure waiver."
+}

@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "task": "MacS074CompanionReferenceReview01",
+  "createdUtc": "2026-10-20T10:41:50.607612+00:00",
+  "branch": "codex/s074-companion-reference-review-20261020",
+  "parent": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "state": "SourceReviewOnly_RuntimeCauseAndRepairPending",
+  "scope": "New Design review directory only. No instrumentation, Assets/package edits or code integration.",
+  "package": "com.unity.entities@ef040875dea9 / version6.5.0",
+  "WindowsRawPinMatches": 2,
+  "otherLocalPackagePinsPendingWindowsComparison": 12,
+  "exactBaseProjectPins": 5,
+  "verification": "Raw source hashes and reviewed anchors PASS; not native/causal validation",
+  "compiler": false,
+  "UnityNative": false,
+  "LibraryCopy": false,
+  "processActions": false,
+  "rootDeletion": false,
+  "privateFieldReset": false,
+  "cleanupNormalization": false,
+  "sourceFitAccepted": false,
+  "missionAccepted": false,
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/README.md",
+      "bytes": 3251,
+      "sha256": "c13453b974e4799f5b06e3ecdae00e65795577cb3c4d9b3cfb015f3f180ae0ce"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/observation-invariants.json",
+      "bytes": 5922,
+      "sha256": "40625b16871d174a0bb83cea46d57d29cee191725a9fc1a1af1076330e7a7938"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/ownership.json",
+      "bytes": 2059,
+      "sha256": "a7af6c59e494aac3bde984f2db8eeb11df80313534973b3688dfba8dfe068416"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/source-pins.json",
+      "bytes": 4979,
+      "sha256": "e8ce816a65d226f3046312bccb82b1502f03c2cab7b38b7450cabcb87de53961"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/source-review.json",
+      "bytes": 5181,
+      "sha256": "d41547a3b251e70cac32cc083f65517717243843b05a66f55db4f88d7039d05b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/verification.log",
+      "bytes": 285,
+      "sha256": "3ba93b2d53ed4cabe1cfca00575b218122fd9f6cc5fe5998474e30781b78bf09"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074CompanionReferenceReview01/verify_review.py",
+      "bytes": 2445,
+      "sha256": "d2b35d56f067addead0f21ccfc2914f3b4288cc85b834563eb97634654ceafd5"
+    }
+  ]
+}

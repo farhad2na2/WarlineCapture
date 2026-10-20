@@ -505,27 +505,136 @@ namespace Game.UI.Runtime
             edge.effectColor = selected ? GridA3Gold : GridA3Edge;
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
 
-            float iconSize = Mathf.Clamp(rowHeight * 0.36f, 24f, 40f);
-            float iconY = Mathf.Max(4f, rowHeight * 0.5f - iconSize - 2f);
             Transform medallion = zone.Find("RowTile");
             if (medallion != null)
                 medallion.gameObject.SetActive(false);
+
+            // v49d (Game PM, approved-3): the row tile names the objective in full ("FRONTLINE CONTROL") on up to two
+            // lines at 14 px or more, from the catalog (objective.TitleLocKey, SkirmishLibraryUiStrings.json), and the
+            // status ("Coming soon" / won-of-playable) sits in a small badge at the tile's foot. The name is sized here
+            // (16 -> 14, tracking 0 -> -12) so the later text pass, which autosizes Row_ labels 11-16 with wrapping,
+            // still finds a fit at that size or larger.
+            float innerW = w - 8f;
+            Transform name = zone.Find("Row_" + objective.ObjectiveId);
+            TMP_Text label = name != null ? name.GetComponent<TMP_Text>() : null;
+            Transform countNode = zone.Find("RowCount_" + objective.ObjectiveId);
+            TMP_Text count = countNode != null ? countNode.GetComponent<TMP_Text>() : null;
+            bool badge = count != null && !string.IsNullOrWhiteSpace(count.text);
+            float badgeH = badge ? GridRowBadgeHeight : 0f;
+            string fullName = LibraryText(objective.TitleLocKey, fa);
+            if (string.IsNullOrWhiteSpace(fullName))
+                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out fullName, out _);
+            float size = GridRowNameMin;
+            int lines = 0;
+            bool fits = false;
+            float nameH = 0f;
+            if (label != null)
+            {
+                SetCopy(label, fullName, GridRowNameMin, GridRowNameMax);
+                label.fontStyle = fa ? FontStyles.Bold : FontStyles.Bold | FontStyles.UpperCase;
+                label.isRightToLeftText = fa;
+                label.alignment = TextAlignmentOptions.Top;
+                label.textWrappingMode = TextWrappingModes.Normal;
+                label.overflowMode = TextOverflowModes.Overflow;
+                label.maxVisibleLines = 2;
+                fits = FitGridRowName(label, innerW, fa, out size, out lines);
+                nameH = Mathf.Max(1, lines) * size * (fa ? GridRowFaLine : GridRowEnLine);
+                label.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
+            }
+
+            const float pad = 4f;
+            const float gap = 3f;
+            float iconSize = Mathf.Clamp(rowHeight - 2f * pad - nameH - badgeH - 2f * gap, 18f, 40f);
+            float stack = iconSize + gap + nameH + (badge ? gap + badgeH : 0f);
+            float top = Mathf.Max(pad, (rowHeight - stack) * 0.5f);
             Transform icon = zone.Find("RowIcon");
             if (icon != null)
-                PlaceTopLeft((RectTransform)icon, (w - iconSize) * 0.5f, iconY, iconSize, iconSize);
-            float textY = iconY + iconSize + 2f;
-            Transform name = zone.Find("Row_" + objective.ObjectiveId);
-            if (name != null && name.TryGetComponent(out TMP_Text label))
+                PlaceTopLeft((RectTransform)icon, (w - iconSize) * 0.5f, top, iconSize, iconSize);
+            float nameY = top + iconSize + gap;
+            if (label != null)
             {
-                PlaceTopLeft(label.rectTransform, 3f, textY, w - 6f, Mathf.Max(20f, rowHeight * 0.24f));
-                label.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
-                label.fontStyle = FontStyles.Bold;
-                label.maxVisibleLines = 2;
-                label.isRightToLeftText = fa;
+                // Two full lines of room (the pass may pick a size up to 16), never past the badge.
+                float room = Mathf.Max(nameH, 2f * GridRowNameMax * (fa ? GridRowFaLine : GridRowEnLine));
+                room = Mathf.Min(room, rowHeight - pad - badgeH - (badge ? gap : 0f) - nameY);
+                PlaceTopLeft(label.rectTransform, 4f, nameY, innerW, Mathf.Max(nameH, room));
             }
-            Transform count = zone.Find("RowCount_" + objective.ObjectiveId);
-            if (count != null)
-                PlaceTopLeft((RectTransform)count, 3f, Mathf.Min(rowHeight - 20f, textY + Mathf.Max(20f, rowHeight * 0.24f)), w - 6f, 18f);
+
+            if (badge)
+            {
+                float badgeY = Mathf.Min(rowHeight - pad - badgeH, nameY + nameH + gap);
+                float badgeW = Mathf.Min(innerW, count.GetPreferredValues(count.text, 9999f, badgeH).x + 14f);
+                float badgeX = (w - badgeW) * 0.5f;
+                Image plate = null;
+                Transform plateNode = zone.Find("RowCountBadge_" + objective.ObjectiveId);
+                if (plateNode != null)
+                    plate = plateNode.GetComponent<Image>();
+                if (plate == null)
+                {
+                    plate = new GameObject("RowCountBadge_" + objective.ObjectiveId, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
+                    plate.transform.SetParent(zone, false);
+                    plate.raycastTarget = false;
+                    Outline rim = plate.gameObject.AddComponent<Outline>();
+                    rim.effectColor = GridA3Edge;
+                    rim.effectDistance = new Vector2(1f, -1f);
+                }
+
+                plate.color = new Color(0.02f, 0.03f, 0.04f, 0.9f);
+                PlaceTopLeft(plate.rectTransform, badgeX, badgeY, badgeW, badgeH);
+                plate.transform.SetSiblingIndex(Mathf.Max(0, count.transform.GetSiblingIndex()));
+                PlaceTopLeft(count.rectTransform, badgeX + 2f, badgeY, badgeW - 4f, badgeH);
+                count.alignment = TextAlignmentOptions.Center;
+                count.color = new Color(1f, 0.86f, 0.42f, 1f);
+            }
+
+            Debug.Log("[GridRowHeader] ratio=" + TheatreRatioLabel() + " locale=" + (fa ? "fa-IR" : "en") + " obj=" + objective.ObjectiveId +
+                " name=" + fullName + " lines=" + lines + " size=" + size.ToString("0.0") + " box=" + innerW.ToString("0") +
+                " badge=" + (badge ? count.text : "-") + " fits=" + (fits ? "1" : "0"));
+        }
+
+        private const float GridRowNameMin = 14f;
+        private const float GridRowNameMax = 16f;
+        private const float GridRowBadgeHeight = 20f;
+        private const float GridRowEnLine = 1.2f;
+        private const float GridRowFaLine = 1.65f; // Noto Arabic line box (V3LocalizedTextBindingView.FitArabicLineBox)
+
+        /// <summary>
+        /// v49d: largest size (16 down to 14) and tracking (0 down to -12) at which the name wraps to at most two lines
+        /// with no word wider than the box. Leaves the label at that size with autosizing off; false when even 14 px at
+        /// -12 tracking does not fit (logged as fits=0).
+        /// </summary>
+        private static bool FitGridRowName(TMP_Text label, float boxWidth, bool fa, out float size, out int lines)
+        {
+            float[] tracks = { 0f, -3f, -6f, -9f, -12f };
+            string[] words = (label.text ?? string.Empty).Split(new[] { ' ', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            label.enableAutoSizing = false;
+            for (float s = GridRowNameMax; s >= GridRowNameMin - 0.01f; s -= 1f)
+            {
+                for (int t = 0; t < tracks.Length; t++)
+                {
+                    label.fontSize = label.fontSizeMin = label.fontSizeMax = s;
+                    label.characterSpacing = tracks[t];
+                    bool wordsFit = true;
+                    for (int i = 0; i < words.Length && wordsFit; i++)
+                        wordsFit = label.GetPreferredValues(words[i], 9999f, 100f).x <= boxWidth + 0.5f;
+                    if (!wordsFit)
+                        continue;
+                    label.rectTransform.sizeDelta = new Vector2(boxWidth, label.rectTransform.sizeDelta.y);
+                    label.ForceMeshUpdate();
+                    lines = label.textInfo != null ? label.textInfo.lineCount : 0;
+                    if (lines <= 2)
+                    {
+                        size = s;
+                        return true;
+                    }
+                }
+            }
+
+            size = GridRowNameMin;
+            label.fontSize = label.fontSizeMin = label.fontSizeMax = size;
+            label.characterSpacing = tracks[tracks.Length - 1];
+            label.ForceMeshUpdate();
+            lines = label.textInfo != null ? label.textInfo.lineCount : 0;
+            return false;
         }
     }
 }

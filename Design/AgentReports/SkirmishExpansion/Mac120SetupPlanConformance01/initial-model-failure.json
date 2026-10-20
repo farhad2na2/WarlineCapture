@@ -1,0 +1,337 @@
+{
+  "scope": "AuditModelError_Preserved_NotProductionDeviations",
+  "failure": "First metadata assertion failed after applying shared BA Standard1080 deadline to FC Standard rows. No production/compiler execution failed.",
+  "correction": "GroundObjective30Authoring123-128 and AirCombined80Authoring136-141 explicitly copy objective-specific deadlines from planned rows; FC Standard1200 is preserved. Remove invalid BA-default comparison outside BA. Materialized definition deadline checks remain.",
+  "incorrectComparisonRows": [
+    {
+      "catalogId": "S007",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S008",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S009",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S010",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S011",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S012",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S031",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S032",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S033",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S034",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S035",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S036",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S055",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S056",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S057",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S058",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S059",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S060",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S079",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S080",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S081",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S082",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S083",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S084",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S103",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S104",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S105",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S106",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S107",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    },
+    {
+      "catalogId": "S108",
+      "size": "Standard",
+      "issues": [
+        {
+          "field": "deadline_seconds",
+          "plan": "1200",
+          "sourceExpected": 1080
+        }
+      ]
+    }
+  ]
+}

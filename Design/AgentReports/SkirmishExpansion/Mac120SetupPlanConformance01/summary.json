@@ -1,0 +1,216 @@
+{
+  "scope": "StaticCommittedSetupPlanAudit_NoCompilerOrNativeAcceptance",
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "notWindowsDirtyNativeCandidate": "Windows source6a/build26f remains separately frozen; no equality asserted",
+  "counts": {
+    "catalogIds": 120,
+    "plannedSizeRows": 360,
+    "sizesPerId": 3,
+    "sideCompositionVectors": 720,
+    "logicalMapGroups": {
+      "DB": 24,
+      "CC": 24,
+      "MP": 24,
+      "IB": 24,
+      "AP": 24
+    },
+    "objectives": {
+      "BA": 30,
+      "FC": 30,
+      "BT": 30,
+      "CE": 30
+    },
+    "armies": {
+      "G": 40,
+      "A": 40,
+      "C": 40
+    },
+    "persistentScenarioDefinitionIds": 6,
+    "persistentDefinitionSizeVectorsAsInputsOnly": 18,
+    "packagedExpansionDefinitionRefs": 6,
+    "inMemoryFactoryCodedDefinitions": 4,
+    "catalogIdsWithoutPersistentExpandedDefinition": 114,
+    "protectedLegacyCounterpartIdsWithoutExpandedDefinition": 3,
+    "otherMissingExpandedDefinitionIds": 111,
+    "serializedBattleStatus1Ids": 6,
+    "serializedCertifiedStandardSizeFlags": 6,
+    "arithmeticStockCapIdentityIssueRows": 0,
+    "conditionalS002StructureCountRows": 3,
+    "mapLayoutAliasCrosswalkRows": 12,
+    "currentCompiledRowsEstablishedByAudit": 0,
+    "currentFitRowsAcceptedByAudit": 0,
+    "missionRowsQualifiedByAudit": 0
+  },
+  "persistentIds": [
+    "S002",
+    "S003",
+    "S004",
+    "S005",
+    "S049",
+    "S074"
+  ],
+  "inputConformanceIssues": [],
+  "mapLayoutCrosswalk": [
+    {
+      "catalogId": "S049",
+      "size": "Standard",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.mountain_pass",
+      "materialized": "opmap.ch04.armor_break",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S049",
+      "size": "Standard",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.mp.ba",
+      "materialized": "layout.s049.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S049",
+      "size": "War",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.mountain_pass",
+      "materialized": "opmap.ch04.armor_break",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S049",
+      "size": "War",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.mp.ba",
+      "materialized": "layout.s049.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S049",
+      "size": "LargeWar",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.mountain_pass",
+      "materialized": "opmap.ch04.armor_break",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S049",
+      "size": "LargeWar",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.mp.ba",
+      "materialized": "layout.s049.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "Standard",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.industrial_basin",
+      "materialized": "opmap.skirmish.refinerydistrict_prepared",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "Standard",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.ib.ba",
+      "materialized": "layout.s074.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "War",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.industrial_basin",
+      "materialized": "opmap.skirmish.refinerydistrict_prepared",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "War",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.ib.ba",
+      "materialized": "layout.s074.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "LargeWar",
+      "field": "operationMapId",
+      "planned": "opmap.skirmish.industrial_basin",
+      "materialized": "opmap.skirmish.refinerydistrict_prepared",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    },
+    {
+      "catalogId": "S074",
+      "size": "LargeWar",
+      "field": "mapLayoutId",
+      "planned": "layout.skirmish.ib.ba",
+      "materialized": "layout.s074.measured-pad-candidate.v2",
+      "classification": "CurrentCampaignReuseOrMeasuredLogicalAlias_RequiresExplicitCrosswalk_NotPhysicalMapDeviation"
+    }
+  ],
+  "unknowns": [
+    "No compiler/native execution;0established is audit credit only, not global absence of prior compilations.",
+    "Serialized status/size flags are author intent, not independently admitted current readiness.",
+    "Existing native evidence for other dirty candidates does not transfer to this snapshot.",
+    "All source-fit snapshot flags are historical unqualified input state; current source bindings and per-size measured facts require separate review."
+  ],
+  "budgetResult": "No deterministic role-total/supply, stock/cap, plan tuple or selected typed-definition scalar deviations found. Queues/support/structures are largely direct vector inputs, not independent compiled proof. Conditional S002 structure array vs declared count remains unresolved; protected grants preserved.",
+  "noRun": true,
+  "objectiveSpecificDeadlines": {
+    "BA, BT, CE": [
+      1080,
+      1500,
+      1800
+    ],
+    "FC": [
+      1200,
+      1500,
+      1800
+    ],
+    "sizeOrder": [
+      "Standard",
+      "War",
+      "LargeWar"
+    ],
+    "note": "BA shared typed defaults compared only to BA; generic authoring copies planned objective-specific deadlines; non-BA materialization remains pending."
+  },
+  "auditModelCorrection": "Preserved initial-model-failure.json; erroneous30FC deadline comparisons removed after source verification, not a production fix.",
+  "packagedDefinitionReferences": [
+    {
+      "catalogId": "S002",
+      "guid": "3e42a217591343f69076829c56903d0d",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset",
+      "sha256": "1d19889ee0f2689acb23d7d460f3f92bd3d1a7234c62f849ffe2a1dbc6aea89a"
+    },
+    {
+      "catalogId": "S003",
+      "guid": "7f2c9e14b6a84d0e8f31c5a9d2b70418",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "sha256": "9bd4caeaaf587a0a77938ebaaf224b3c4eebff8a245b559dcccdd113ea17c129"
+    },
+    {
+      "catalogId": "S004",
+      "guid": "2b7e4c91a0d64f3e8a5c1d9b6e0f4732",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "sha256": "c2ffbdb5b7ddef82fdc89dfc9a115e0fd2036e81617d6a887288460b6b9a2dde"
+    },
+    {
+      "catalogId": "S005",
+      "guid": "ae31f3108b36b47cab4fb6ca76e84797",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c"
+    },
+    {
+      "catalogId": "S049",
+      "guid": "4392fb1dc2ca10b43ba12754beb5350f",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "sha256": "cd8526de610c7018a0fd15d102891c231f42021fbbf690460ed394271fa44cd7"
+    },
+    {
+      "catalogId": "S074",
+      "guid": "24ade16a4b012cd4085245c8e0101f55",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset",
+      "sha256": "6571ab86a6ba432c66d191bb3a62ff192c8b403f4e35d5b8014bbc8c6e7cc5b7"
+    }
+  ]
+}

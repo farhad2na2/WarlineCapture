@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "StaticSetupPlanReview_NoAcceptance",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/README.md",
+      "bytes": 3298,
+      "sha256": "11307bdc447d0c4b31a3bc2c56bce4f2d319a032131f608d1f2f5b340b8f8edb"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv",
+      "bytes": 91016,
+      "sha256": "f327f2b6ecc8ae710fee2c0f0b72bacb1d8d4bdad8e700af4ebee216cadaf244"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/ground-ba-next-actions.json",
+      "bytes": 1807,
+      "sha256": "6fead95dc873b79a4b41911c5c7dcaebefa633fe726e1d7e10af640a5aa347d7"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/initial-model-failure.json",
+      "bytes": 6837,
+      "sha256": "4f39d844ae79b8f37f30b84a9940b9b2f617c390272a2d8570c9078d39a39711"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/method.md",
+      "bytes": 3002,
+      "sha256": "5a12f8b860a157ee960c5affb2345dfaba8db4d46c8154c291757a0e386f6d2c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/per-size-gap-table.json",
+      "bytes": 2059456,
+      "sha256": "78e6068aa8bb6d61e38a8ef54bca9dfd06a35a485476fb1c34ae032f8af5202b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/source-pins.json",
+      "bytes": 20163,
+      "sha256": "2df771cd1475d6f4f198ab4722eee31ff0d5ddd36abbaa00f9fe63cb173a7dc6"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/summary.json",
+      "bytes": 8379,
+      "sha256": "5bc2563ee0b27334cec5c85a02c4a76610b9f25a826d5324c7e373cd2c9ab734"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/verification.log",
+      "bytes": 1037,
+      "sha256": "95c8e1eed6d360049add99d8f3c17d743039e5824886c6a79b582f9d914d4696"
+    }
+  ]
+}

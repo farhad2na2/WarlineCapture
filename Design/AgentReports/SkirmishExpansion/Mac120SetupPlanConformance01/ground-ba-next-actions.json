@@ -1,0 +1,44 @@
+{
+  "scope": "Bounded logical authoring recommendations only; no run or implementation authority",
+  "groundBAIds": [
+    "S001",
+    "S002",
+    "S025",
+    "S026",
+    "S049",
+    "S050",
+    "S073",
+    "S074",
+    "S097",
+    "S098"
+  ],
+  "groundBAVectors": 30,
+  "pilotIds": [
+    "S026",
+    "S049",
+    "S050",
+    "S074",
+    "S097",
+    "S098"
+  ],
+  "pilotVectors": 18,
+  "pilotMaterializedIds": [
+    "S049",
+    "S074"
+  ],
+  "pilotMissingDefinitionIds": [
+    "S026",
+    "S050",
+    "S097",
+    "S098"
+  ],
+  "steps": [
+    "Preserve legacy S001/S025/S073 and coded S002; do not overwrite their bindings or transfer wins.",
+    "Use S049/S074 as existing logical-bundle review starting points only; preserve other owners and their separate dirty native evidence. Reconcile planned logical group/source aliases under current Campaign reuse policy.",
+    "For S026/S050/S097/S098 choose one owned pilot at a time; use the existing shared authoring/budget interface to bind a reviewed Campaign source and typed pads/routes/view requirements. Do not guess coordinates, enlarge maps, change budgets or add a per-ID engine controller.",
+    "Retain exactly the three planned size vectors including roles, support actors, stock/caps/queues/structures. Missing all-size fit requires another existing source or unresolved gate, not budget reduction.",
+    "Only after exact source/config input freezing, obtain separately authorized compiler-consumption and fit evidence for each size; native legal placement/routes/facility circulation, then normal ARIA/result/return and player/device gates stay separate."
+  ],
+  "fitSnapshot": "Historical six-pilot proposals allmay_materialize_ready_asset=false; do not substitute for reviewed live source-fit evidence.",
+  "execution": "NOT_REQUESTED_NOT_RUN"
+}

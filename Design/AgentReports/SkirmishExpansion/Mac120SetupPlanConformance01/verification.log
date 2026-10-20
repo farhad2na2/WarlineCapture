@@ -1,0 +1,8 @@
+INITIAL_MODEL_CHECK result=Failed falseComparisons=30 reason=BADeadlineAppliedToFC; preserved initial-model-failure.json; no compiler/native failure or change.
+CORRECTED_STATIC_PLAN_AUDIT result=Passed uniqueCatalogIds=120 uniqueSizeRows=360 sideVectors=720 packagedMatrixEqual=1 deterministicIssueRows=0 embeddedFitRowsEqual=360
+MATERIALIZATION persistentIds=6 packagedRefs=6 inputVectors=18 inMemoryCodedIds=4 missingExpandedIds=114 protectedCounterparts=3 otherMissingIds=111
+GROUND_BA ids=10 rows=30 uncodedPilotIds=6 rows=18 materializedPilots=2 missingPilots=4
+CONDITIONAL_S002_STRUCTURES protectedLegacySource=9/10/10 matrix=10/11/11 rows=3; no native evaluation or grant edit.
+GATES currentCompiledRowsEstablished=0 currentFitRowsAccepted=0 missionsQualified=0 auditCreditsOnly=1
+JSON_AND_PIN_REFERENCE_CHECK result=Passed; no compiler/Unity/native/process/Library operations.
+INDEPENDENT_RAW_ROW_AND_GIT_PIN_CHECK result=Passed completeRows=360 compactRows=360 exactBasePins=71 packagedMatrixRawEqual=1 packagedDefinitionRefs=6

@@ -1,0 +1,445 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "hashScope": "Only bounded selected plan, logical config, source and prior-report inputs; no full-tree/SDK/Library/terrain/scene hash census",
+  "count": 73,
+  "files": [
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacConfigOnlyGapReview01/configuration-only-gap-review.md",
+      "bytes": 8186,
+      "sha256": "e98185b33c91eb15be1db8132a8b73219e8be9b8139fdc3c8155e563529eeca8",
+      "scope": "prior Mac evidence outside exact snapshot"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/MacConfigOnlyGapReview01/source-evidence.json",
+      "bytes": 2603,
+      "sha256": "279e19443263be10eb824e70b56179823a5b9a716493967660a8996b4056046d",
+      "scope": "prior Mac evidence outside exact snapshot"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset",
+      "bytes": 1909,
+      "sha256": "1d19889ee0f2689acb23d7d460f3f92bd3d1a7234c62f849ffe2a1dbc6aea89a",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset.meta",
+      "bytes": 189,
+      "sha256": "4544b3918d9806582b1f3b2be069cb1647b5cbbafeec47f269e825004cfec92e",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "bytes": 1924,
+      "sha256": "9bd4caeaaf587a0a77938ebaaf224b3c4eebff8a245b559dcccdd113ea17c129",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset.meta",
+      "bytes": 189,
+      "sha256": "2081ed5fcc95553858b0ff0857035a1eeb9bc620a52e1d6e3f561b6de4159ed2",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishLayout_S004.asset",
+      "bytes": 10331,
+      "sha256": "c3b55adc48e1fe8ff5d4845510bc005f821af1c9c46eaf7f5c13210a3d5a2c9d",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishLayout_S004.asset.meta",
+      "bytes": 186,
+      "sha256": "49f7a353858ae2af27a4e74d5df948a68cfb45bf36fc97476b9a4d6a3f4812e7",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "bytes": 1921,
+      "sha256": "c2ffbdb5b7ddef82fdc89dfc9a115e0fd2036e81617d6a887288460b6b9a2dde",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset.meta",
+      "bytes": 186,
+      "sha256": "0d231a19b202386de6da50d669e88b396a963700852d397073522e1fbfacf8db",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset",
+      "bytes": 10653,
+      "sha256": "1e0ca8565010989efc2514243891a5f55d1596d3c6891a63ef11e02749814934",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishLayout_S005.asset.meta",
+      "bytes": 189,
+      "sha256": "62fa6c9a254daedf5d58329ff514902fee2003e9c1328cc5e79e7f47ab103f31",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "bytes": 2024,
+      "sha256": "470563864af7190a4475adfe66dc763506a2900e400aaf20b7db227bda1e815c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset.meta",
+      "bytes": 189,
+      "sha256": "3ca042eb3e4d4eba379009f722208510cd527243e85c9520e181eabd25ce18f4",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Binding_S049.asset",
+      "bytes": 15213,
+      "sha256": "0dab8d810a4129cefc833d16a77f34196603cb3b9d88213c80747e0cf4606c3c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Binding_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "824c271fcbf1434d9e09b2384cd9787a48d3300f604268e9b3c13c3e5efd50ac",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Layout_S049.asset",
+      "bytes": 12619,
+      "sha256": "99c4db33f364eafe97d9f7da72a614d800d12c0859a4cdf358a56a63a5a81c58",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Layout_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "a2ff13132c645b895df112edc70b45bb7d23b1f71228d5406a1829e4e005ab4e",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Objective_S049.asset",
+      "bytes": 654,
+      "sha256": "94ac0462863643689d6ac211f1d875ba7a7906ac13bc8f4a9ff5f3fcda5f0f81",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/Logical/Objective_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "4f688bfe1bd0370aef4858107d1d67a533b186849ccb2ca67aab21bdaf5e2f54",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "bytes": 2091,
+      "sha256": "cd8526de610c7018a0fd15d102891c231f42021fbbf690460ed394271fa44cd7",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset.meta",
+      "bytes": 189,
+      "sha256": "7d1fc7ac118e9d1641e162cc325f4e20095461acfc2b256091bbcdc16cabd229",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Binding_S074.asset",
+      "bytes": 15180,
+      "sha256": "d32d98aa4b3342e6cf60bb07e94ffe9344c2c739d532ae967099e827153ef026",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Binding_S074.asset.meta",
+      "bytes": 189,
+      "sha256": "5b440397e0ac6a845da1f1bb2231997dc32f6696e174a0f262e8d9824b030d27",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Layout_S074.asset",
+      "bytes": 13476,
+      "sha256": "00618ddf76659f751cdf5862b633d87a0b3da326f4ad3aaa35c8f3f098a8e69a",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Layout_S074.asset.meta",
+      "bytes": 189,
+      "sha256": "6bbbae9c2ad95fbb9927786b89588926dace557915bd7c86b2631970aebe910c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Objective_S074.asset",
+      "bytes": 654,
+      "sha256": "7dd1712578c970a884209553bf5ddaa26ccfde048edd90b46cc383d1ecd2d945",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/Logical/Objective_S074.asset.meta",
+      "bytes": 189,
+      "sha256": "d3dce1a2085a96d7d39e4df61675bceac3ad89e41d8c42a04ac735eb6e5e5d07",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset",
+      "bytes": 2109,
+      "sha256": "6571ab86a6ba432c66d191bb3a62ff192c8b403f4e35d5b8014bbc8c6e7cc5b7",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset.meta",
+      "bytes": 189,
+      "sha256": "7cea2044804d5d6a8b698c487a50feb986865284f38471e8a29d72da652a500a",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_AirMobile.asset",
+      "bytes": 944,
+      "sha256": "05b48fc6a0398081b800c924c98228150eb139b5c99596e86484fc72072e5abf",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_AirMobile.asset.meta",
+      "bytes": 189,
+      "sha256": "b617a6b52de6b39e192707032aa1f47a79ae2b23fe7fdf6d0dc4beb513a46343",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_CombinedArms.asset",
+      "bytes": 950,
+      "sha256": "29f118816e2f0e0cb5855c64dd4e8caac266af6527a58c9c25ea87070c984417",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_CombinedArms.asset.meta",
+      "bytes": 189,
+      "sha256": "fc6d73f4db8917ed95a915bed6cab8b5740d66bcf7137fb98243fa82f57c01ae",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+      "bytes": 949,
+      "sha256": "10c4dc052bcdb51bf8209dfb89b4cc90f5a8ebea102fefd353dae44650f91571",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset.meta",
+      "bytes": 189,
+      "sha256": "71a46e50dea5f04bcacb18c4663c29f3a541870860279cbe352e6f59a045486a",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+      "bytes": 815,
+      "sha256": "88c3234d6e673999765b6f9faac76d5530e6c8ae41633c06dc6476efdc67a66b",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset.meta",
+      "bytes": 189,
+      "sha256": "2799bffcceb2f65eb94b9008f76ffb9a12f14692793e09c9537a2874d6009670",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset",
+      "bytes": 10403,
+      "sha256": "a9ff73f6a6852e76f013cf91ab31e59d3b1318b2ced4656f7da61c5c70e988f1",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset.meta",
+      "bytes": 189,
+      "sha256": "a6e3e84e0afa32e2b7f63ac0e81fc417649ec6c2222c57d05e6ea329bc44042d",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset",
+      "bytes": 660,
+      "sha256": "70f7fbe9cab0e2713a1ea2efc4716e2e41d7d14c459a94fb40eee98e8c533435",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset.meta",
+      "bytes": 189,
+      "sha256": "9ab49f1e729575aa443011dcd6c220e0c58932f0f8858e6d60ec7ca41a6e50ff",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_LargeWar.asset",
+      "bytes": 681,
+      "sha256": "59505078541d73818dc7f61f69a256042a4415c7c0ed328e7caac218d6d7f33b",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_Standard.asset",
+      "bytes": 677,
+      "sha256": "76574f7f1dda37a5315d86cd8358cfcb13426d9b69ce6677eb0fe9133fdd94c3",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_War.asset",
+      "bytes": 669,
+      "sha256": "de6a94b79612016fa9868d53bf0d06e7a7d61d1295f3ebd65e1cbf57c2336141",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+      "bytes": 556,
+      "sha256": "ba22dc27165807e102eb4fc757b70c3545499b85e34719bda8a2fc4b34a467ab",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset.meta",
+      "bytes": 189,
+      "sha256": "35e8b79e1bb35508e377544e5797f025d3db9bfb83dd7ecf1d6afc621614dc1e",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset",
+      "bytes": 549,
+      "sha256": "1740ac38ae155acbd08b34c5ac3e9902973e4e7097f6124eb39f08509c5f460c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset.meta",
+      "bytes": 189,
+      "sha256": "288f20f746c020d52c9121dcd265ad01c79af111c1b5d0504e72c63475bfea23",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Resources/Skirmish/S002Definition.asset",
+      "bytes": 1902,
+      "sha256": "7a4c879f1a86ba25980dbfa1929c300217dd1a013576ef6db0fb09e53e6ba4bb",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishBattleCatalog.asset",
+      "bytes": 48737,
+      "sha256": "e5d37c633b63d2ad706cfaf35eb18598377d38ca47eebba70ffe59a01f9e1340",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv",
+      "bytes": 90201,
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+      "bytes": 2499,
+      "sha256": "2bae1f1fa06a6ae3c3a4a2f8e547eafca5d70cc5c4883cb859deab8b98a3ffd6",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEconomyConfig.cs",
+      "bytes": 3529,
+      "sha256": "627e70c41109aafdfe3d2aba9d3cd369b5a25512f28955a429f426af4d140151",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "bytes": 8343,
+      "sha256": "baefc65b6672de32d6fa7b944410348d4de23bb648e65502ffcba293bbb5decf",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "bytes": 11289,
+      "sha256": "3556c591ab5e21acf1057a9d44af1c646edb6200111dd868ba532353c9dd7a6c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishLegacyLayoutBaselineContract.cs",
+      "bytes": 4203,
+      "sha256": "b02906542a2bdfd71209a0134456365b1200dcdfbb5867016c8f268f10963293",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "bytes": 29747,
+      "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveConfig.cs",
+      "bytes": 2083,
+      "sha256": "5267891a5b5ddc2e977f392f8ffc2dc3fb6ba874a3170fbc7bc0a78e146d9e98",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+      "bytes": 7385,
+      "sha256": "b689509b7b886d6d21b6c97beb8078cb3f69d2ae91da43dfc38910b739458b5d",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "bytes": 45973,
+      "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupMatrixTable.cs",
+      "bytes": 10456,
+      "sha256": "50a15854409d02f2ea70f25d97b74b1cbda03fe5414c3373a5e6ad7806483dcc",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSizeConfig.cs",
+      "bytes": 3029,
+      "sha256": "31612e3b080897d9e611fcac686468bb7dc26aa60120731296a723542158556c",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStartPackageConfig.cs",
+      "bytes": 1454,
+      "sha256": "35643447d77cea08d461885c40a0fb609771a7f2ebb11769970660c9b45fdab0",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 25485,
+      "sha256": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "bytes": 14730,
+      "sha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs",
+      "bytes": 14150,
+      "sha256": "4b72ea8fd6a591539d1025b09b64ab086da96494e09b741e7dfb2084e5fda228",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+      "bytes": 1302003,
+      "sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionFoundation/Validation/generic-compiler-integration-20261015-05-passed.json",
+      "bytes": 37067,
+      "sha256": "07fb75d9e7802c53d93b3e4e243cfc74feb05e4cafe3f92126e73441d0cbd8e7",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+      "bytes": 8563,
+      "sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/IMPLEMENTATION_MANIFEST.csv",
+      "bytes": 57646,
+      "sha256": "a5b997c9a8bfaf21cc59be9c5d3d8c0edd822b5c68833e80cc09936b1f933ffa",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv",
+      "bytes": 90201,
+      "sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+      "scope": "exact committed base selected logical input"
+    },
+    {
+      "path": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+      "bytes": 15918,
+      "sha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+      "scope": "exact committed base selected logical input"
+    }
+  ]
+}

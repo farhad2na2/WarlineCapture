@@ -6,8 +6,8 @@
   "payloads": [
     {
       "name": "correction-01/correction.json",
-      "bytes": 7422,
-      "sha256": "1947e1b63d05fa14234b0b44bdeed6b3380b5e2e4081fec5dd091ddd8b185cb8"
+      "bytes": 8480,
+      "sha256": "fded2b0b49731c1b91a991df4d2ce569b3ed7168301c9a67c40a8162a7a44d98"
     },
     {
       "name": "correction-01/mac-verification.log",
@@ -51,13 +51,13 @@
     },
     {
       "name": "review.md",
-      "bytes": 9602,
-      "sha256": "93b679d27325793187ad7013a0bee9412a3832849286dd275a7f5cbdc97afd2a"
+      "bytes": 9928,
+      "sha256": "17d5ca06147451ac81fc7f5233d0b147bd4651f4f39b81a2f310fd2a5dcfb581"
     },
     {
       "name": "source-pins.json",
-      "bytes": 22096,
-      "sha256": "848689046dd32d4219257823e794cfdaf534f5e2bf311841fc5946c7f1918a3e"
+      "bytes": 22972,
+      "sha256": "d5f62135bc5820cb8551cdedba43cb17f23c7541a14c2a02057b936e1fd76173"
     },
     {
       "name": "validation.log",

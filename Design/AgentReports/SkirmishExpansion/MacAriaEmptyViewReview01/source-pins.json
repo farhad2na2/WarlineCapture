@@ -150,7 +150,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "ReportedUnavailableAtFirstQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -168,7 +168,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -186,7 +186,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -204,7 +204,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -222,7 +222,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -240,7 +240,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -258,7 +258,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -276,7 +276,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -294,7 +294,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -312,7 +312,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -330,7 +330,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -348,7 +348,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -366,7 +366,7 @@
         "sameAsBase": false,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -384,7 +384,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -402,7 +402,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -420,7 +420,7 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     },
     {
@@ -438,12 +438,12 @@
         "sameAsBase": true,
         "noReplaceObjects": true
       },
-      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "WindowsHistoricalGitObservation": "Unmeasured_HistoricalCommitObjectUnavailable; original replay stopped at first source query",
       "crossHostHistoricalReplayComplete": false
     }
   ],
   "runtimeCandidateEqualityEstablished": false,
   "scope": "Only named source/tests/policy and existing exact reports; no broad source/SDK/Library hashing or source integration.",
-  "comparisonScope": "Original prior-report claims and actual no-replace Mac observations are attributed separately. Windows lookup of first historical row was unavailable; remaining rows unmeasured there. Missing rows never count as byte matches.",
+  "comparisonScope": "Original prior-report claims and actual no-replace Mac observations are attributed separately. Windows lookup of first historical row was unavailable; remaining rows unmeasured there. Missing rows never count as byte matches. Windows followup cat-file exits128: historical commit itself unavailable; this is not a different-tree finding.",
   "historicalReplayRequiredForCompleteResult": true
 }

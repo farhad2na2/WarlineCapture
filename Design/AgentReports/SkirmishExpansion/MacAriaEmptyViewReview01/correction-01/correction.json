@@ -155,7 +155,7 @@
       }
     ]
   },
-  "discrepancyCause": "UNKNOWN; no remote source/object repair, payload substitution or disk fallback performed",
+  "discrepancyCause": "Windows reports historical commit object unavailable (cat-file exit128). Mac has the commit; no evidence of different immutable tree contents. No object/source transfer, repair or fallback performed.",
   "verifierPolicy": {
     "requiredCurrentBasePins": "All28 must match; missing/current mismatch fails",
     "priorImmutableReports": "All3 must match; missing fails",
@@ -164,5 +164,27 @@
     "complete": "Exit0 only when every required comparison is actually measured and matches its recorded expected digest",
     "scope": "No camera test/fixture/native or runtime attribution credit"
   },
-  "newNativeOrGameChanges": false
+  "newNativeOrGameChanges": false,
+  "WindowsMetadataFollowup": {
+    "attribution": "Direct Windows coordinator metadata query; not a Mac execution",
+    "receivedUtc": "2026-10-20T23:17:36.592294+00:00",
+    "historicalRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
+    "commitQuery": {
+      "argv": [
+        "git",
+        "--no-replace-objects",
+        "cat-file",
+        "-p",
+        "9a0f620405c43d0bceb3db763ed979ad7ddf10cc"
+      ],
+      "exit": 128,
+      "stderr": "fatal: Not a valid object name 9a0f620405c43d0bceb3db763ed979ad7ddf10cc"
+    },
+    "pathQuery": {
+      "exit": 128,
+      "stderr": "fatal: path 'Assets/Game/Scripts/UI/Components/MatchHudSquadTouchNavigation.cs' exists on disk, but not in '9a0f620405c43d0bceb3db763ed979ad7ddf10cc'"
+    },
+    "conclusion": "Historical commit object unavailable on Windows, not evidence of a different tree; historical replay remains incomplete.",
+    "sourcePayloadOrObjectTransferRequested": false
+  }
 }

@@ -12,4 +12,4 @@ Both modes share Back, the gear centered inside its own button, backgrounds, bor
 
 [Accepted refined Skirmish](../skirmish-polish-03/README.md) · [Actual native review and separate gameplay/device gates](../../../AgentReports/ApprovedMissionAtlas/STATUS.md).
 
-Exact prompts and output hashes are in [generation-manifest.json](generation-manifest.json). Menu art/layout only; no physical map or gameplay-rule change. Native implementation and QA are in progress; nothing is merged.
+Exact prompts and output hashes are in [generation-manifest.json](generation-manifest.json). Menu art/layout only; no physical map or gameplay-rule change. Native implementation is in source commit `2864809`; the linked native gallery records its separate QA gates. Nothing is merged.

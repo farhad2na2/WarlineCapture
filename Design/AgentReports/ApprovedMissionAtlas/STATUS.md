@@ -1,39 +1,41 @@
-# Approved Campaign and Skirmish map menus
+# Polished Campaign and Skirmish map menus
 
-Owner approved both map-based directions on 2026-10-20. The native implementation is committed as `c160864`; PR70 remains draft and unmerged. Owner review of the implemented screens is pending.
+Owner approved the refined map-first Skirmish direction and the Campaign A chapter-first flow with five large comic mission cards. Native menu source is committed as `28648094e5da633499bdb1bb94aefad412fe724b`. PR70 remains draft and unmerged; owner visual review of the implemented screens is pending.
 
-## Native screens
+[Current native gallery](REVIEW.md) · [40 final Game view captures](20261020-225027/) · [Capture checksums](20261020-225027/sha256.json).
 
-[Latest native gallery](REVIEW.md) · [40 original Game view captures and checksum manifest](20261020-211119/).
+## Implemented behavior
 
-- Campaign: chapter atlas with comic covers, then five large individual comic mission cards on the selected chapter map. Selected preview uses the corresponding comic. Main-page comic coverage is repaired from 14 to 25 without replacing existing bindings.
-- Skirmish: choose a map, then scroll four objective regions with six large thumbnail choices each. Objective tabs jump to those same regions. Five maps ×four regions ×six catalog slots provides 120 capacity; access and published status remain authoritative. Coming-soon entries are not made playable.
-- Shared Back, navy/steel panels, typography, mobile spacing, cyan selection, blue secondary and green primary commands. Native mission-size controls survive repeated prefab authoring. Campaign briefing return preserves the mission page.
-- Current Campaign physical maps, mission definitions, budgets and scene bindings remain unchanged. New aerial city artwork is a menu illustration.
+- Campaign: chapter atlas with each chapter's comic cover, then five large individual mission comic cards on its map. The selected preview uses that mission's exact existing comic. Main-page comic coverage remains25 with the existing bindings preserved.
+- Skirmish: choose a map, then six large mission thumbnails in each of four scrolling objective regions. Fixed objective tabs, a pinned current-region heading and the next-region command expose the continuation. Five maps × four regions × six catalog slots provides 120 capacity; actual release and ownership gates remain authoritative.
+- Shared Back, navy/steel backgrounds, border weights, typography, blue secondary and green primary commands. Selected territories have restrained cyan tint and thin boundaries; decorative yellow rectangular strokes are removed. The gear is centered inside its own Settings box, with its header position preserved.
+- Human mission names lead; smaller catalog IDs and army/start profiles remain visible. Four medal slots represent actual difficulty tiers. Green completion checks are separate from cyan selection. Counts bind existing progress/catalog models; Coming Soon never becomes a false playable claim.
+- Six released mission thumbnails were recaptured on existing geometry, with distinct camera angles and a matching selected preview. Campaign uses its existing comics. No playable map geometry, mission definitions, budgets or fixed scene bindings were changed.
+- QA fixes include narrow-screen text fitting, status/icon overlap, real mission-size control spacing, locked/coming-soon distinctions, access-to-store reachability, region heading stability and translating full Campaign purpose text before shortening it.
 
-## Validation
+## Current candidate validation
 
 | Gate | Result and scope |
 | --- | --- |
-| Mockup direction | Owner approved Campaign A and Skirmish scrolling mission regions. |
-| Native owner visual review | Pending; review the gallery before merging. |
-| Native UI and input | Review16 passed all four pages at 2400×1080,1920×1080 and1440×1080 in EN/fa-IR. Real touch covers chapter/map/mission selection, objective jumps, map swiping, Back, Campaign briefing and return. Layout progression fixtures are labelled and do not count as gameplay. |
-| Focused automated checks | 34 passed, 0 failed, 0 skipped. Library selection/access/launch/result models, medal ledger and main-menu navigation. [Exact XML](evidence/focused-tests-34.xml). |
-| Campaign normal input | M01 run04 passed English and Persian real victories, settlement and menu return. Menu, briefing, selection drag, controls, world destinations and result action use Input System touch. Outcomes injected:0. Other missions are not certified by this journey. The isolated validation store also ensures M01–M05 availability; it seeds no wins or outcomes. |
-| Final Skirmish normal input | EN and FA run02 passed actual normal-speed ARIA victory, native result, selected S002 return, earned card medal and disk reload. Full-source start/finish fingerprint: `43e104e05cc1437e04b31ef27afa9cddf39ea8a4f248900077c4905c9e0602eb`. Earlier831a checkpoint wins are historical only. |
-| Final cold restart | EN restart02 passed in a distinct Editor process: native touch, earned card medal, profileSeeded=0. FA restart02 also passed with the same zero-seeding and native-touch checks. |
-| Player/device, Windows and clean-checkout acceptance | Pending. Native worktree checks do not establish these gates. |
+| Owner mockup direction | Approved; [Campaign polish](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/README.md) and [Skirmish polish](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/skirmish-polish-03/README.md). |
+| Owner native visual review | Pending. Review the current gallery before merging. |
+| Native visual/input QA | Review14 passed all four pages at 2400×1080, 1920×1080 and 1440×1080 in EN/fa-IR:24 page/ratio/language cases and 40 captures. Input System touch covers selection, difficulty, next region, swipe/pinned heading, Back, Campaign briefing and return. Every active label is checked for truncation; card ink bounds use actual per-character font metrics. Gear center is asserted within 0.5 px of its box center in every case. Layout fixtures do not count as gameplay. |
+| Focused automated tests |35 passed, 0 failed, 0 skipped on the frozen final source. Read-only progress across maps, selection/access/launch/result models, medal ledger and main-menu navigation. [Exact XML](polish-evidence/focused-tests-35.xml). |
+| Campaign normal input | Fresh M01 journey passed English and Persian actual victories, settlement and Campaign return, with 25 menu touches and Input System touch for briefing, selection drag, commands, world destinations and result action. Outcomes injected:0. The isolated fixture ensures first-launch state plus M01–M05 availability, with no seeded wins/outcomes. Other missions are not certified. [Source and screenshots](polish-evidence/campaign/source.json). |
+| Skirmish normal input | Fresh English and Persian S002 runs passed normal-speed ARIA victory, native result, selected S002 return, earned Regular card medal and disk reload. Both launch/finish fingerprints match the frozen candidate. |
+| Cold restart | English and Persian both passed in distinct Editor processes: native touch, actual earned card medal and profileSeeded=0. [EN proof](polish-evidence/skirmish-en/cold-restart.json) · [FA proof](polish-evidence/skirmish-fa/cold-restart.json). |
+| Player/device, Windows and clean-checkout acceptance | Pending; these worktree checks do not establish those gates. |
 
-Native checks run in the managed worktree with two preserved local source differences outside this menu commit: the existing Match HUD prefab and Arabic narrative font asset. Their [path/hash record](evidence/preserved-local-source.json) makes this qualification explicit. Neither is silently included in the PR. Automatic approval review rejected restoring the unrelated HUD prefab because it could discard uncommitted work; it remains intact. A clean-checkout pass remains a separate pre-merge gate.
+Frozen worktree source/configuration fingerprint: `d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596`. The native Skirmish runner compares complete launch and finish fingerprints; original thumbnail PNGs and native screenshots have separate checksum manifests.
 
-## Evidence and retained failures
+Native worktree checks include two preserved local differences outside this menu commit: the existing Match HUD prefab and Arabic narrative font asset. Their [path/hash record](polish-evidence/preserved-local-source.json) makes this qualification explicit. Neither is silently included in the PR. Automatic approval review rejected restoring the unrelated HUD prefab because it could discard uncommitted work; it remains intact. A clean-checkout pass remains a separate pre-merge gate.
 
-[Run index and validation/error excerpts](evidence/run-index.json). Complete original logs remain at the indexed /private/tmp paths; earlier raw captures and gameplay traces remain locally preserved.
+## Retained evidence and failures
 
-Native review01–05 and07–11 retain failures covering authoring, shell transition scaling, old capture targets, localized text fitting and glyph bounds. Review06 passed the first bilingual flow;12–16 passed progressively broader matrices. Review16 is the final layout candidate.
+[Fresh gameplay/test/restart log index](polish-evidence/native-run-index.json) and [full logs](polish-evidence/native-validation-logs.zip) · [Current visual run index](polish-evidence/visual-run-index.json) · [Representative failed/manual-review screenshots](polish-evidence/retained-failed-screens.zip) with [source/reason/hash index](polish-evidence/retained-failed-screens.json) · [All14 visual review logs plus thumbnail capture log](polish-evidence/visual-review-logs.zip) · [Thumbnail scope and checksums](polish-evidence/thumbnail-manifest.json).
 
-Campaign run01 stalled because the older driver did not perform the visible tutorial selection drag. Run02 had a harness-only missing namespace compile error and was stopped as an incomplete run; its verified Editor received SIGTERM and exited143. Run03 passed pointer/command replay in both languages. Run04 replaced remaining gestures with Input System touch and passed both real victories/returns. No outcome, unit health, position or time-scale injection establishes these results.
+Polish review01–12 retain failures for a missing CanvasRenderer, cramped progress/status labels, long words, difficulty labels, metadata line boxes, localized spacing and icon overlap. Review13 passed the layout matrix, then manual screenshot review caught shortened English Campaign copy surviving in Persian. Review14 fixes that order of operations, asserts a Persian purpose and passes the full matrix. No failed run is relabelled as a pass.
 
-[Approved Campaign reference](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-A-five-missions-on-map-02/campaign-five-comic-missions-on-map.png) · [Approved Skirmish reference](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/selected-A-iteration-02-two-step/04-missions-scrolling-regions.png).
+The earlier implementation `c160864` and evidence commit `da124ec5f` are historical. Their 34-test pass, source fingerprint `43e104e05cc1437e04b31ef27afa9cddf39ea8a4f248900077c4905c9e0602eb`, earlier victories and cold restarts are not used to certify this polish. Their [run index](evidence/run-index.json) remains preserved. Earlier native review failures and Campaign selection-driver/compile failures remain documented there.
 
-Earlier PR validation history remains in the [previous status report](../SkirmishBattleLibrary/2026-10-20/STATUS.md). Its wider optional run18 failed 131/28/2 before later fixture repairs; Windows filesystem/junction cases remain unverified on macOS. The focused 34 tests do not claim a rerun of the whole project suite, and model simulations do not count as native wins.
+The [earlier broader-suite report](../SkirmishBattleLibrary/2026-10-20/STATUS.md) also remains authoritative for its failed optional run18 and Windows filesystem/junction limitations. The focused 35 tests do not claim a rerun of the whole project suite, and model simulations do not count as native victories.

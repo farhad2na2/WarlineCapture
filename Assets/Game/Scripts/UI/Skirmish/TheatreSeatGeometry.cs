@@ -6014,9 +6014,9 @@ namespace Game.UI.Runtime
             for (int pass = 0; pass < 12 && TerritoryReadsRectangular(copy); pass++)
             {
                 Vec2[] next = null;
-                Vec2[] dent = DentExistingSamples(copy, plateWidth, plateHeight, 3f, card, others);
+                Vec2[] dent = DentExistingSamples(copy, plateWidth, plateHeight, 3f, card, others, hint);
                 if (dent == null)
-                    dent = DentExistingSamples(copy, plateWidth, plateHeight, 1.2f, card, others);
+                    dent = DentExistingSamples(copy, plateWidth, plateHeight, 1.2f, card, others, hint);
                 if (dent != null
                     && LongestStraightRun(dent) + 0.0001f < LongestStraightRun(copy)
                     && NickHolds(before ?? shape, dent, copy, card, pin, cue, hint, others, openBefore, notchBefore, plateWidth, plateHeight, detail, expected))
@@ -6237,7 +6237,7 @@ namespace Game.UI.Runtime
         /// Shifts every other sample of the longest flat by a few pixels, away from the
         /// card when that side stays inside the plate. Samples with no room stay put.
         /// </summary>
-        private static Vec2[] DentExistingSamples(Vec2[] shape, float plateWidth, float plateHeight, float offset, Box card, Vec2[][] others)
+        private static Vec2[] DentExistingSamples(Vec2[] shape, float plateWidth, float plateHeight, float offset, Box card, Vec2[][] others, Box hint)
         {
             if (shape == null || shape.Length < 6)
                 return null;
@@ -6331,8 +6331,11 @@ namespace Game.UI.Runtime
                     if (!SampleClearsCard(candidate, card))
                         continue;
                     copy[i] = candidate;
+                    bool hitsHint = hint.W > 1f && hint.H > 1f && EdgesHit(copy, hint);
                     float gap = ClosestNeighbourGap(copy, others);
                     copy[i] = point;
+                    if (hitsHint)
+                        continue;
                     if (gap + 0.05f < 12f && gap + 0.05f < heldGap)
                         continue;
                     if (picked && gap <= bestGap)

@@ -1,0 +1,55 @@
+{
+  "base": "ad3a252e98c33391b4b58a64fdb4b05bc3753513",
+  "selectedFilesOnly": true,
+  "compilerArtifactsCaptured": false,
+  "rows": [
+    {
+      "path": "Tools/CI/native_compile_closure.py",
+      "sha256": "822c6ba923a8cce3a5e0797137bb664b79dc0ab9cdf2a70b42cea96b6624e981",
+      "bytes": 7792,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Tools/CI/skirmish_native_compile_admission.py",
+      "sha256": "f27135fb3c7934c3fc151f19c82f5537188043271d48098c1872f54860c5070a",
+      "bytes": 15068,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Tools/CI/composite_compile_evidence.py",
+      "sha256": "c3caaf5e4fabdcbd005d0fce26db41764b624eee654786f885871724b6ee6a50",
+      "bytes": 9355,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Tools/CI/compile_evidence_common.py",
+      "sha256": "ea63757af003b407d1c3442b391474044bea71983a7e20bd735014a0620285d6",
+      "bytes": 3375,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Tools/CI/tests/test_generalized_compile_admission.py",
+      "sha256": "d0fe57e2788979adcd16fe41404b2fa626ed7cfd02f145f5adc2ff07857c59af",
+      "bytes": 13741,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+      "sha256": "ea33d806db2c6af67a5b1464a6566ee32d5209d51cb4c2e25806b66a1c66dc8b",
+      "bytes": 1848,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
+      "sha256": "6f60a3a6e2db030d2ff0a4c8c1959b47d34a6b2983c7ffdbc25e46b3e8ad5249",
+      "bytes": 1777,
+      "origin": "review branch exact committed source"
+    },
+    {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c/Editor/Commands/RecompileCommand.cs",
+      "sha256": "cddb0316232bdffad09ae7e622465a008825e210179e70ebd5756bd9af8cd070",
+      "bytes": 5122,
+      "origin": "existing Mac package source only; Windows exact comparison pending"
+    }
+  ]
+}

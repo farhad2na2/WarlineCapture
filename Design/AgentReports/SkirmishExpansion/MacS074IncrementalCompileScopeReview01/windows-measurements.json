@@ -1,0 +1,21 @@
+{
+  "scope": "Proposed measurements for separately reviewed future Windows run; NOT_EXECUTED",
+  "required": [
+    "Freeze exact single edited path, old/new raw hash and full source/build identity; resolve its actual owner via CompilationPipeline and actual RSP membership. New source must already be frozen before the compile observation window.",
+    "Pin complete actual native owner universe, raw RSP bytes, source membership, output/ref-output paths and actual reference graph including packages, predefined/generated and non-Game owners; derive transitive consumers from real references.",
+    "Join Windows canonical lowercase input paths to case-preserving owner names explicitly and uniquely; distinguish historical corrected projection from raw RSP parser behavior. Recompute every new epoch; no inferred native admission bug.",
+    "Pin Editor executable/version, checked SDK dotnet/csc, target/subtarget, defines, asmdef/asmref constraints, package lock, compiler options, analyzers/generators/additional/config inputs and all reference bytes. Unclassified inputs/options refuse.",
+    "For every retained owner, bind current complete membership/inputs/references/raw RSP/SDK and exact native output paths/hashes to a real successful originating compile and immutable terminal receipt; retain lineage chain. No hash-only path substitution.",
+    "For each fresh owner, correlate invocation with run identity and numeric Csc log, actual raw RSP and exact consumed producer reference bytes. Record errors, output/ref-output, ordering and before/after stability. Events or timestamps alone are insufficient.",
+    "If a producer changes a consumed reference during a global window, current native checker refuses. A future per-consumer contract would need genuine at-invocation input capture and immutable producer completion before consumer consumption; no retrospective reconstruction.",
+    "Measure which consumers Unity actually recompiles. If required consumer Csc is skipped because ref bytes stay equal, keep current composite gate pending; do not label a cache hit fresh.",
+    "Keep wrapper/watch exits, same-window sealed closure, settings/source/build census and loaded assembly/domain identity separate from Pipeline reconnect/readiness and actual mission evidence. Preserve failed attempts and full raw logs."
+  ],
+  "unmeasured": [
+    "Exact source edit",
+    "Actual Windows graph and dependency closure",
+    "Fresh and retained partition",
+    "Per-consumer capture feasibility",
+    "Any new native execution or acceptance"
+  ]
+}

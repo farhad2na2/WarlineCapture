@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "scope": "SourceReviewOnly_NoImplementationOrExecution",
+  "base": "ad3a252e98c33391b4b58a64fdb4b05bc3753513",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/ownership.json",
+      "bytes": 9232,
+      "sha256": "f9a2601c1015d011391bbe24b0dc0049a7375b86a4a084d6dbd281a9dedab62c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/provisional-graph.json",
+      "bytes": 5537,
+      "sha256": "bce22ba6db0807aea64e51aafe0a10af0d172a2ed5f044d216ac8a64bf60e307"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/review.md",
+      "bytes": 8264,
+      "sha256": "4fe4ee7a2f57ef04d2e54fed535ecf2cf8609c4f85574b337e44b91df6207d6c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/source-pins.json",
+      "bytes": 2117,
+      "sha256": "b5d10c7b9d6af9d4ebb4e1c4645e7a65dd18d51207462f36d5e949b4df044d63"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/verification.log",
+      "bytes": 309,
+      "sha256": "03d1c6e32da57457125f55c2493ed546d8275727ac7b8622a59899b2cde55627"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074IncrementalCompileScopeReview01/windows-measurements.json",
+      "bytes": 2559,
+      "sha256": "150ed9e744ea8e5f12ac9098fee1d12b4c69ee170a073d7bb897a33ab48f1618"
+    }
+  ]
+}

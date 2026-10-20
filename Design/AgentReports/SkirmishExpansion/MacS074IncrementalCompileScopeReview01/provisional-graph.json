@@ -1,0 +1,164 @@
+{
+  "scope": "Static committed Assets asmdefs only, not actual native owner graph",
+  "definitionsInspected": 40,
+  "seed": "Game.Editor",
+  "reverseClosure": [
+    "Game.Editor",
+    "Game.Tests.Editor"
+  ],
+  "actualFreshOwnersMeasured": false,
+  "native192ReuseCount": null,
+  "definitions": [
+    {
+      "path": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+      "definition": {
+        "name": "Game.Editor",
+        "rootNamespace": "Game.Editor",
+        "references": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Composition",
+          "Game.Configs",
+          "Game.Narrative.Contracts",
+          "Game.Operations.Contracts",
+          "Game.Rendering",
+          "Game.Rendering.Contracts",
+          "Game.Skirmish.Contracts",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Shell.Contracts.Ecs",
+          "Game.UI.Shell.Ecs",
+          "Game.UI.Runtime",
+          "Game.Runtime",
+          "Game.Runtime.Pathfinding",
+          "sniveler-code.gpu-animation",
+          "sniveler-code.gpu-animation.Editor",
+          "Unity.Collections",
+          "Unity.Addressables",
+          "Unity.Addressables.Editor",
+          "Unity.ResourceManager",
+          "Unity.Entities",
+          "Unity.Entities.Build",
+          "Unity.Entities.Hybrid",
+          "Unity.Entities.Graphics",
+          "Unity.RenderPipelines.Universal.Editor",
+          "Unity.Scenes",
+          "Unity.Scenes.Editor",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.TextMeshPro",
+          "RTLTMPro",
+          "Unity.Transforms",
+          "UnityEngine.UI",
+          "Game.Missions.Contracts",
+          "Game.Narrative.Runtime",
+          "Game.Runtime.Combat",
+          "Unity.InputSystem",
+          "Game.UI.ScenarioLab.Runtime",
+          "Unity.2D.Sprite.Editor",
+          "Game.Operations.Strategic",
+          "UnityEditor.TestRunner",
+          "Unity.ScriptableBuildPipeline.Editor"
+        ],
+        "includePlatforms": [
+          "Editor"
+        ],
+        "excludePlatforms": [],
+        "allowUnsafeCode": false,
+        "overrideReferences": false,
+        "precompiledReferences": [],
+        "autoReferenced": true,
+        "defineConstraints": [],
+        "versionDefines": [],
+        "noEngineReferences": false
+      }
+    },
+    {
+      "path": "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
+      "definition": {
+        "name": "Game.Tests.Editor",
+        "rootNamespace": "",
+        "references": [
+          "Game.Authoring",
+          "Game.Catalog.Contracts",
+          "Game.Components",
+          "Game.Composition",
+          "Game.Configs",
+          "Game.Editor",
+          "Game.Missions.Contracts",
+          "Game.Operations.Contracts",
+          "Game.Narrative.Contracts",
+          "Game.Narrative.Runtime",
+          "Game.Rendering",
+          "Game.Rendering.Contracts",
+          "Game.Skirmish.Contracts",
+          "Game.Tactical.Contracts",
+          "Game.UI.Contracts",
+          "Game.UI.Shell.Contracts.Ecs",
+          "Game.UI.Shell.Ecs",
+          "Game.UI.Runtime",
+          "Game.Runtime",
+          "Game.Runtime.Combat",
+          "Game.Runtime.Pathfinding",
+          "sniveler-code.gpu-animation",
+          "Unity.Collections",
+          "Unity.Burst",
+          "Unity.Addressables",
+          "Unity.Addressables.Editor",
+          "Unity.ResourceManager",
+          "Unity.RenderPipelines.Universal.Runtime",
+          "Unity.Entities",
+          "Unity.Entities.Graphics",
+          "Unity.Scenes",
+          "Unity.Mathematics",
+          "Unity.Mathematics.Extensions",
+          "Unity.TextMeshPro",
+          "RTLTMPro",
+          "Unity.Transforms",
+          "UnityEngine.UI",
+          "Unity.InputSystem",
+          "sniveler-code.gpu-animation.Editor",
+          "Game.UI.ScenarioLab.Runtime",
+          "Game.Operations.Strategic"
+        ],
+        "includePlatforms": [
+          "Editor"
+        ],
+        "excludePlatforms": [],
+        "allowUnsafeCode": false,
+        "overrideReferences": true,
+        "precompiledReferences": [
+          "Newtonsoft.Json.dll"
+        ],
+        "autoReferenced": true,
+        "defineConstraints": [],
+        "versionDefines": [],
+        "optionalUnityReferences": [
+          "TestAssemblies"
+        ],
+        "noEngineReferences": false
+      }
+    }
+  ],
+  "limits": [
+    "Package/default/predefined/generated owners, actual RSP references, build target, defines and active generators require Windows measurement.",
+    "No claim of two fresh owners or 190 retained owners."
+  ],
+  "windowsReportedHistoricalGraph": {
+    "attribution": "Direct Windows coordinator message; not independently captured or hashed on Mac",
+    "frozenFull192MapSha256": "39955f869788e74c576fb85eb465fe195f9727f539638a4018d2f0799bbfeb1a",
+    "editedHypotheticalSource": "ProductionBatch.cs",
+    "soleOwner": "Game.Editor",
+    "caseNormalizedDllRefDllReverseClosure": [
+      "Game.Editor",
+      "Game.Tests.Editor"
+    ],
+    "edge": "Game.Tests.Editor -> Game.Editor",
+    "method": "Complete frozen input rows; Windows canonical input keys are lowercase, assembly owner names preserve case; explicit case-normalized basename join",
+    "initialProjection": "First join-missing projection preserved unaccepted by Windows; corrected separate r2",
+    "futureEpochMustRecompute": true,
+    "futureCompileOrAdmissionCredit": false,
+    "nativeAdmissionBugClaimed": false
+  }
+}

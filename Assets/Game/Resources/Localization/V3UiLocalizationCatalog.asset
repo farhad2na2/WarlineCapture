@@ -8362,6 +8362,10 @@ MonoBehaviour:
       value: "Armor approach battles"
     - key: ui.skirmish.library.title.theatre_map
       value: "SKIRMISH | THEATRE MAP"
+    - key: ui.skirmish.library.crumb.theatre
+      value: THEATER
+    - key: ui.common.credits
+      value: CREDITS
     - key: ui.skirmish.library.title.battlefield
       value: "SKIRMISH | {0}"
     - key: ui.skirmish.library.battles_won
@@ -24654,6 +24658,10 @@ MonoBehaviour:
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
     - key: ui.skirmish.library.title.theatre_map
       value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | \u0646\u0642\u0634\u0647 \u0635\u062D\u0646\u0647"
+    - key: ui.skirmish.library.crumb.theatre
+      value: "\u0635\u062D\u0646\u0647 \u0646\u0628\u0631\u062F"
+    - key: ui.common.credits
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631"
     - key: ui.skirmish.library.title.battlefield
       value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | {0}"
     - key: ui.skirmish.library.battles_won

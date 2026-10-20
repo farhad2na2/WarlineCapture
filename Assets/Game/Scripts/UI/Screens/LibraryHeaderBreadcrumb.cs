@@ -38,13 +38,26 @@ namespace Game.UI.Runtime
                 // CREDITS chip: right end of the title band, title panel narrowed to make room.
                 int credits = 0;
                 bool read = SkirmishLibraryWallet.ReadCredits != null && SkirmishLibraryWallet.ReadCredits(out credits);
-                float creditsWidth = Mathf.Clamp(titleWidth * 0.3f, 180f, 240f);
-                bool room = titleWidth - creditsWidth - Gap >= MinTitleRoom;
+                // v50 (P2: chipWidth is 0 whenever HasCommanderIdentity() is false): the chip is sized from its own content.
+                float creditsWidth = 0f;
+                RectTransform creditsChip = null;
+                if (read)
+                    creditsChip = BuildCreditsChip(view, composition, credits, fa, out creditsWidth);
+                bool room = read && titleWidth - creditsWidth - Gap >= MinTitleRoom;
                 bool creditsShown = read && room;
                 float panelWidth = creditsShown ? titleWidth - creditsWidth - Gap : titleWidth;
                 if (titlePanel != null)
                     PlaceTopLeft(titlePanel, titleX, 10f, panelWidth, 78f);
-                RectTransform creditsChip = PresentCreditsChip(view, composition, creditsShown, credits, titleX + panelWidth + Gap, creditsWidth, fa);
+                if (creditsShown)
+                    PlaceTopLeft(creditsChip, titleX + panelWidth + Gap, ChipTop, creditsWidth, ChipHeight);
+                else
+                {
+                    if (creditsChip == null)
+                        creditsChip = composition.Find(CreditsChipName) as RectTransform;
+                    if (creditsChip != null)
+                        creditsChip.gameObject.SetActive(false);
+                    creditsChip = null;
+                }
 
                 // Breadcrumb in the title (Battlefield level only).
                 string crumb = "-";
@@ -82,12 +95,19 @@ namespace Game.UI.Runtime
                     " crumb=" + crumb + " crumbFits=" + (crumbFits ? 1 : 0) +
                     " credits=" + (read ? credits.ToString(CultureInfo.InvariantCulture) : "none") +
                     " creditsShown=" + (creditsShown ? 1 : 0) + (read && !room ? " creditsRoom=0" : string.Empty) +
+                    " creditsW=" + (creditsChip != null ? creditsChip.sizeDelta.x.ToString("0") : "0") +
                     " overlap=" + overlap);
             }
 
-            /// <summary>"THEATRE MAP" / "نقشه صحنه": the catalog theatre-map title after its "|" separator.</summary>
+            /// <summary>
+            /// v50: the crumb root from ui.skirmish.library.crumb.theatre ("THEATER" / "صحنه نبرد"); if a table lacks the
+            /// key, the theatre-map title's part after "|" ("THEATRE MAP" / "نقشه صحنه").
+            /// </summary>
             private static string TheatreRoot(bool fa)
             {
+                string root = LibraryTitleCopy("ui.skirmish.library.crumb.theatre", string.Empty).Trim();
+                if (!string.IsNullOrEmpty(root))
+                    return root;
                 string full = LibraryTitleCopy("ui.skirmish.library.title.theatre_map", fa ? "زد و خورد | نقشه صحنه" : "SKIRMISH | THEATRE MAP");
                 int bar = full.LastIndexOf('|');
                 return (bar >= 0 ? full.Substring(bar + 1) : string.Empty).Trim();
@@ -105,16 +125,19 @@ namespace Game.UI.Runtime
                 return width;
             }
 
-            private static RectTransform PresentCreditsChip(QuickCustomScreenView view, RectTransform composition, bool show, int credits, float x, float width, bool fa)
+            private const float CoinSize = 44f;
+            private const float ChipPad = 12f;
+            private const float LabelSize = 22f;  // library floor (LibraryFontFloor)
+            private const float ValueSize = 28f;
+
+            /// <summary>
+            /// v50: approved-2 CREDITS chip: coin, "CREDITS" (ui.common.credits) over the real balance, sized from that content
+            /// (pad + coin + gap + widest line + pad). fa mirrors it (coin on the right, right-aligned text); digits stay Latin
+            /// and LTR, as PresentWallet writes them. The label is omitted, never invented, when the table has no text.
+            /// </summary>
+            private static RectTransform BuildCreditsChip(QuickCustomScreenView view, RectTransform composition, int credits, bool fa, out float width)
             {
                 RectTransform chip = composition.Find(CreditsChipName) as RectTransform;
-                if (!show)
-                {
-                    if (chip != null)
-                        chip.gameObject.SetActive(false);
-                    return null;
-                }
-
                 if (chip == null)
                 {
                     chip = new GameObject(CreditsChipName, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<RectTransform>();
@@ -131,39 +154,68 @@ namespace Game.UI.Runtime
                     icon.sprite = Resources.Load<Sprite>("resource_credits");
                     icon.preserveAspect = true;
                     icon.raycastTarget = false;
-
-                    TextMeshProUGUI value = new GameObject("Value", typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
-                    value.transform.SetParent(chip, false);
-                    value.raycastTarget = false;
+                    view.CreateLabel(chip, "Label", LabelSize);
+                    view.CreateLabel(chip, "Value", ValueSize);
                 }
 
                 chip.gameObject.SetActive(true);
-                PlaceTopLeft(chip, x, ChipTop, width, ChipHeight);
                 Image coin = chip.Find("Icon")?.GetComponent<Image>();
+                bool hasCoin = coin != null && coin.sprite != null;
                 if (coin != null)
-                {
-                    coin.enabled = coin.sprite != null;
-                    PlaceTopLeft(coin.rectTransform, 12f, (ChipHeight - 48f) * 0.5f, 48f, 48f);
-                }
+                    coin.enabled = hasCoin;
 
-                TMP_Text label = chip.Find("Value")?.GetComponent<TMP_Text>();
+                string caption = LibraryTitleCopy("ui.common.credits", string.Empty).Trim();
+                TMP_Text label = chip.Find("Label")?.GetComponent<TMP_Text>();
+                float labelH = fa ? 38f : 28f; // Noto line box: FitArabicLineBox allows box/1.65 >= 22
+                float labelW = 0f;
                 if (label != null)
                 {
-                    TMP_Text source = view.GetComponentInChildren<MainMenuAccountHeaderView>(true)?.Value;
-                    if (source != null && source.font != null)
-                        label.font = source.font;
-                    float left = coin != null && coin.enabled ? 68f : 12f;
-                    PlaceTopLeft(label.rectTransform, left, 8f, width - left - 12f, ChipHeight - 16f);
-                    label.text = credits.ToString("N0", CultureInfo.InvariantCulture); // digits stay LTR in fa, as PresentWallet
-                    label.isRightToLeftText = false;
-                    label.alignment = TextAlignmentOptions.MidlineLeft;
-                    label.textWrappingMode = TextWrappingModes.NoWrap;
-                    label.overflowMode = TextOverflowModes.Overflow;
-                    label.enableAutoSizing = true;
-                    label.fontSizeMin = 18f;
-                    label.fontSizeMax = 30f;
-                    label.fontStyle = FontStyles.Bold;
-                    label.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                    label.gameObject.SetActive(caption.Length > 0);
+                    if (caption.Length > 0)
+                    {
+                        view.SetCopy(label, caption, LabelSize, LabelSize);
+                        label.fontStyle = FontStyles.Bold;
+                        label.isRightToLeftText = fa;
+                        label.textWrappingMode = TextWrappingModes.NoWrap;
+                        label.overflowMode = TextOverflowModes.Overflow;
+                        label.color = new Color(0.78f, 0.8f, 0.76f, 1f);
+                        labelW = WidthAtSize(label, LabelSize);
+                    }
+                }
+
+                TMP_Text value = chip.Find("Value")?.GetComponent<TMP_Text>();
+                float valueW = 0f;
+                if (value != null)
+                {
+                    value.text = credits.ToString("N0", CultureInfo.InvariantCulture);
+                    value.isRightToLeftText = false;
+                    value.fontStyle = FontStyles.Bold;
+                    value.textWrappingMode = TextWrappingModes.NoWrap;
+                    value.overflowMode = TextOverflowModes.Overflow;
+                    value.color = new Color(0.96f, 0.93f, 0.84f, 1f);
+                    valueW = WidthAtSize(value, ValueSize);
+                    value.enableAutoSizing = false;
+                    value.fontSize = ValueSize;
+                }
+
+                float textW = Mathf.Ceil(Mathf.Max(labelW, valueW)) + 2f;
+                float coinW = hasCoin ? CoinSize + Gap : 0f;
+                width = ChipPad + coinW + textW + ChipPad;
+                float textX = fa ? ChipPad : ChipPad + coinW;
+                if (coin != null)
+                    PlaceTopLeft(coin.rectTransform, fa ? width - ChipPad - CoinSize : ChipPad, (ChipHeight - CoinSize) * 0.5f, CoinSize, CoinSize);
+                bool labelShown = label != null && label.gameObject.activeSelf;
+                float valueTop = labelShown ? 4f + labelH : 8f;
+                if (labelShown)
+                {
+                    PlaceTopLeft(label.rectTransform, textX, 4f, textW, labelH);
+                    label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
+                }
+
+                if (value != null)
+                {
+                    PlaceTopLeft(value.rectTransform, textX, valueTop, textW, ChipHeight - valueTop - 4f);
+                    value.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 }
 
                 return chip;

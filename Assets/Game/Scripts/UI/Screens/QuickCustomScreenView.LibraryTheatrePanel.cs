@@ -670,9 +670,11 @@ namespace Game.UI.Runtime
             var captionInkTop = new List<float>(captions.Count);
             float captionReach = 0f;       // largest font size the captions can be drawn at
             float inkBelowIcon = captionH; // deepest caption ink below its icon's bottom
+            float captionSize = ObjectiveCaptionSize();
             for (int i = 0; i < captions.Count; i++)
             {
                 TMP_Text text = captions[i].GetComponent<TMP_Text>();
+                PinObjectiveCaption(text, captionSize);
                 captionTexts.Add(text);
                 float inkTop = 0f;
                 if (CaptionInkAtReach(text, out float top, out float bottom, out float reach))
@@ -749,6 +751,27 @@ namespace Game.UI.Runtime
             else
                 Debug.LogWarning(line);
             LogTheatreCaptionGaps(ids, icons, captionTexts, fa);
+        }
+
+        /// <summary>
+        /// v50 (v98: fa-IR captionFont=12.3 against en 20-22): DetailObjectives creates the captions in a 26 px box with
+        /// SetCopy 14-20 and autosize, and in fa V3LocalizedTextBindingView.FitArabicLineBox caps an Arabic line at
+        /// box/1.65 (15.8) with a 12 px minimum, so the fa autosize settled at 12.3 while en grew to 20 and the shared
+        /// pass lifted it to the 22 pt floor. Both locales are now pinned to the library caption floor (the size the
+        /// ink was already measured at, CaptionInkAtReach) with LibraryFixedTextSize, which re-asserts it every frame.
+        /// </summary>
+        private float ObjectiveCaptionSize()
+        {
+            return Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor());
+        }
+
+        private static void PinObjectiveCaption(TMP_Text text, float size)
+        {
+            if (text == null || size <= 0f)
+                return;
+            LibraryFixedTextSize held = text.GetComponent<LibraryFixedTextSize>() ?? text.gameObject.AddComponent<LibraryFixedTextSize>();
+            held.Size = size;
+            held.Apply();
         }
 
         /// <summary>v49: icon rect bottom -> caption glyph ink top, the same target in en and fa at every ratio.</summary>

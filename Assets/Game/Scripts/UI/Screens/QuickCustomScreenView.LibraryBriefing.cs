@@ -813,6 +813,9 @@ namespace Game.UI.Runtime
     {
         public float Size;
 
+        /// <summary>v50: 1 (default) holds one unwrapped line; above 1 the label wraps (Normal) to at most this many lines.</summary>
+        public int MaxLines = 1;
+
         private void LateUpdate()
         {
             Apply();
@@ -823,8 +826,11 @@ namespace Game.UI.Runtime
             var text = GetComponent<TMP_Text>();
             if (text == null || Size <= 0f)
                 return;
-            text.textWrappingMode = TextWrappingModes.NoWrap; // refit text pass can turn wrapping back on
-            text.maxVisibleLines = 1;
+            bool wrap = MaxLines > 1;
+            text.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap; // refit text pass can turn wrapping back on
+            text.maxVisibleLines = Mathf.Max(1, MaxLines);
+            if (wrap && text.overflowMode != TextOverflowModes.Overflow)
+                text.overflowMode = TextOverflowModes.Overflow; // RelaxLibraryText sets Ellipsis
             if (text.enableAutoSizing || !Mathf.Approximately(text.fontSize, Size))
             {
                 text.enableAutoSizing = false;

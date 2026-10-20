@@ -536,8 +536,14 @@ namespace Game.UI.Runtime
                 label.alignment = TextAlignmentOptions.Top;
                 label.textWrappingMode = TextWrappingModes.Normal;
                 label.overflowMode = TextOverflowModes.Overflow;
-                label.maxVisibleLines = 2;
+                label.maxVisibleLines = GridRowNameMaxLines;
                 fits = FitGridRowName(label, innerW, fa, out size, out lines);
+                // v50 (Game PM): never below 14 px; FinishLibraryText's Row_ relax (11-16, Library.cs) is undone by
+                // LibraryFixedTextSize, which LibraryPass re-applies straight after the Grid refit's text pass.
+                LibraryFixedTextSize held = label.GetComponent<LibraryFixedTextSize>() ?? label.gameObject.AddComponent<LibraryFixedTextSize>();
+                held.MaxLines = Mathf.Max(GridRowNameLines, lines);
+                held.Size = size;
+                held.Apply();
                 nameH = Mathf.Max(1, lines) * size * (fa ? GridRowFaLine : GridRowEnLine);
                 label.color = selected ? new Color(1f, 0.88f, 0.5f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
             }
@@ -554,7 +560,7 @@ namespace Game.UI.Runtime
             if (label != null)
             {
                 // Two full lines of room (the pass may pick a size up to 16), never past the badge.
-                float room = Mathf.Max(nameH, 2f * GridRowNameMax * (fa ? GridRowFaLine : GridRowEnLine));
+                float room = Mathf.Max(nameH, GridRowNameLines * GridRowNameMax * (fa ? GridRowFaLine : GridRowEnLine));
                 room = Mathf.Min(room, rowHeight - pad - badgeH - (badge ? gap : 0f) - nameY);
                 PlaceTopLeft(label.rectTransform, 4f, nameY, innerW, Mathf.Max(nameH, room));
             }
@@ -594,6 +600,8 @@ namespace Game.UI.Runtime
         private const float GridRowNameMin = 14f;
         private const float GridRowNameMax = 16f;
         private const float GridRowBadgeHeight = 20f;
+        private const int GridRowNameLines = 2;     // word-wrapped full name
+        private const int GridRowNameMaxLines = 3;  // v50: a word wider than the tile wraps inside it at 14 px
         private const float GridRowEnLine = 1.2f;
         private const float GridRowFaLine = 1.65f; // Noto Arabic line box (V3LocalizedTextBindingView.FitArabicLineBox)
 
@@ -621,7 +629,7 @@ namespace Game.UI.Runtime
                     label.rectTransform.sizeDelta = new Vector2(boxWidth, label.rectTransform.sizeDelta.y);
                     label.ForceMeshUpdate();
                     lines = label.textInfo != null ? label.textInfo.lineCount : 0;
-                    if (lines <= 2)
+                    if (lines <= GridRowNameLines)
                     {
                         size = s;
                         return true;
@@ -629,12 +637,18 @@ namespace Game.UI.Runtime
                 }
             }
 
+            // v50 (Game PM): no size below 14. A word that is wider than the tile even at -12 tracking (BREAKTHROUGH in a
+            // narrow 4:3 header) wraps inside the tile at 14 px (TMP breaks an over-long word across lines); it fits when
+            // it takes no more than GridRowNameMaxLines lines.
             size = GridRowNameMin;
             label.fontSize = label.fontSizeMin = label.fontSizeMax = size;
             label.characterSpacing = tracks[tracks.Length - 1];
+            label.textWrappingMode = TextWrappingModes.Normal;
+            label.maxVisibleLines = GridRowNameMaxLines;
+            label.rectTransform.sizeDelta = new Vector2(boxWidth, label.rectTransform.sizeDelta.y);
             label.ForceMeshUpdate();
             lines = label.textInfo != null ? label.textInfo.lineCount : 0;
-            return false;
+            return lines > 0 && lines <= GridRowNameMaxLines;
         }
     }
 }

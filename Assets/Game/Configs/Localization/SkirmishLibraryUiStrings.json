@@ -11,6 +11,26 @@
       ]
     },
     {
+      "key": "ui.skirmish.library.crumb.theatre",
+      "source": "THEATER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "صحنه نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.common.credits",
+      "source": "CREDITS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعتبار"
+        }
+      ]
+    },
+    {
       "key": "ui.skirmish.library.title.battlefield",
       "source": "SKIRMISH | {0}",
       "translations": [

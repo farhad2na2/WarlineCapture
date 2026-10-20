@@ -52,6 +52,7 @@ namespace Game.UI.Runtime
             if (composition is not RectTransform compositionRect)
                 return;
             PlaceFooterPlate(compositionRect);
+            SyncGridPreviewOrnaments(); // v49b: no preview corner ornaments over the approved-3 Grid
             Button back = composition.Find("BackButton")?.GetComponent<Button>();
             float compositionHeight = compositionRect.rect.height;
             float compositionWidth = compositionRect.rect.width;

@@ -236,7 +236,10 @@ namespace Game.UI.Runtime
             float strip = Mathf.Clamp(h * 0.24f, 20f, 46f); // v38: approved-3 name strip (~24% of the tab)
             // v39: short (4:3) tabs stack the count above the name so the name gets the full tab width and a band
             // tall enough for the 18px floor; wide tabs keep name + count side by side in one strip.
-            bool stacked = h < 120f;
+            bool comingSoon = havePin && pin.PublishedCount <= 0;
+            // v49b (v49 16:9/20:9 Grid: "MOUNTAINPASS Coming soon", the name squeezed into the strip beside the wide
+            // status): narrow Coming-soon tabs use the stacked layout too, so the name gets the full tab width.
+            bool stacked = h < 120f || (comingSoon && width < GridA3InlineComingSoonMinWidth);
             if (stacked)
                 strip = Mathf.Min(h - 20f, Mathf.Max(strip, 40f)); // FA line box at 18px needs ~40px; badge keeps the top 18px
             float nameMax = h >= 120f ? 22f : 15f;
@@ -248,7 +251,6 @@ namespace Game.UI.Runtime
             scrim.raycastTarget = false;
 
             string countCopy = string.Empty;
-            bool comingSoon = havePin && pin.PublishedCount <= 0;
             if (comingSoon)
                 countCopy = SkirmishBattleLibraryArt.ComingSoon(fa); // capture rule: zero playable reads Coming soon, never 0/0
             else if (havePin)
@@ -316,6 +318,28 @@ namespace Game.UI.Runtime
                 edge = button.gameObject.AddComponent<Outline>();
             edge.effectColor = selected ? GridA3Gold : GridA3Edge;
             edge.effectDistance = selected ? new Vector2(2f, -2f) : new Vector2(1f, -1f);
+        }
+
+        /// <summary>v49b: below this tab width a Coming-soon tab stacks its status above the name (inline left ~130 px for it).</summary>
+        private const float GridA3InlineComingSoonMinWidth = 300f;
+
+        /// <summary>
+        /// v49b (approved-3: the Grid is full-bleed with no panel ornaments): the OperationPreview's gold corner
+        /// ornaments are raised above the grid by the depth pass and sat on the CONVOY row header ("Coming soon") and on
+        /// the last cell's medal. Hidden while the Grid shows, back for the Map. Called every pass from PlaceLibraryFooter.
+        /// </summary>
+        private void SyncGridPreviewOrnaments()
+        {
+            Transform preview = transform.Find("SkirmishSetupComposition/OperationPreview");
+            if (preview == null)
+                return;
+            bool grid = LibraryLevel == SkirmishLibraryLevel.Battlefield && LibraryLayout == SkirmishBattlefieldLayout.Grid;
+            for (int i = 0; i < 4; i++)
+            {
+                Transform corner = preview.Find("OrnamentCorner" + i);
+                if (corner != null && corner.gameObject.activeSelf == grid)
+                    corner.gameObject.SetActive(!grid);
+            }
         }
 
         private static void AddGridA3Frame(RectTransform cell, float width, float height)

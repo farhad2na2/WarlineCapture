@@ -105,6 +105,22 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void DynamicTheatreShadersRemainIncludedInPlayerBuilds()
+        {
+            var settings=new SerializedObject(AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/GraphicsSettings.asset")[0]);
+            var included=settings.FindProperty("m_AlwaysIncludedShaders");
+            foreach(string name in new[]{"TheatrePlate","DistrictMultiply"})
+            {
+                var shader=AssetDatabase.LoadAssetAtPath<Shader>("Assets/Game/Rendering/Shaders/"+name+".shader");
+                bool found=false;
+                for(int i=0;i<included.arraySize;i++)
+                    if(included.GetArrayElementAtIndex(i).objectReferenceValue==shader) found=true;
+                Assert.IsNotNull(shader);
+                Assert.IsTrue(found,"A runtime Shader.Find must resolve in the player: "+name);
+            }
+        }
+
+        [Test]
         public void SetupRefreshKeepsTheMapAndNativeStopHitTargets()
         {
             Bind();

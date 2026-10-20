@@ -16,10 +16,10 @@ Actual normal-input Play evidence from attempt 05: 2400×1080 rendered frame, fo
 
 | Gate | Latest verified state |
 | --- | --- |
-| Native EditMode, ledger, access, launch and menu tests | Tests 17: 78 passed, 0 failed, 0 skipped |
-| ARIA plan/control checks | Tests 17: 141 cases passed |
+| Native EditMode, ledger, access, launch and menu tests | Tests 20: 88 passed, 0 failed, 0 skipped |
+| ARIA plan/control checks | Tests 20: 141 cases passed |
 | Dense logical canvas regression | Scale 03 passed EN 20:9 and FA 4:3; actual Play 05 also measured native scale |
-| Full 16 native captures | Matrix 09 captured 16 but failed 4:3 EN Airfield Plains area/interior visibility; focused 4:3 EN capture 05 now passes all unchanged gates |
+| Full 16 native captures | Final matrix 10 passed all 16; compact EN 4:3 repair and five long-briefing captures also passed |
 | Focused native cue captures | Native 12 passed 5; AP FA 4:3 passed separately |
 | Strict theatre geometry | Full 09 passed on the compact-coast repair: 113 seated, 0 blocked |
 | Full normal-input ARIA/result/return | Attempt 06 passed the actual S002 ARIA victory/result/return/disk flow; its separately observed briefing visual defect is being fixed before final acceptance |
@@ -38,3 +38,7 @@ Tracked handoff recovery scenes remain in `Assets/_Recovery`; an audit copy is r
 ## Outstanding theatre coverage gate
 
 The current legal coast layout remains below the handoff’s 0.65–0.70 territory coverage target (roughly 0.42 at 16:9, 0.32–0.37 at 20:9, and 0.50 at 4:3). All 12-pixel halo and 10-percent aspect constraints remain in force. Isolated 15/20-percent aspect experiments are retained under `tests/`; they do not prove that higher coverage is impossible and were not shipped. A strict checker pass must not be reported as satisfying this separate visual coverage target. The owner decision is still open.
+
+## Broader harness and platform limits
+
+Optional broader run 18 was **failed** (131 passed, 28 failed, 2 skipped), and its original log/XML are preserved. Twenty failures concern Windows filesystem/junction controls or the correctly refused macOS temporary-directory symlink. Eight prefab-free model fixtures also failed because they entered the newer native camera-readiness path. Their setup now explicitly seeds only a ledger simulation, with a separate test proving that the original native initializer still refuses that prefab-free world. Run 19 includes those eight model tests, the refusal test and the 78 native menu/ledger/access tests: 87 passed, 0 failed, 0 skipped. These simulation outcomes never count as native player wins. Windows filesystem coverage remains unverified here; none of its guards was weakened or relabeled as passing.

@@ -16,7 +16,9 @@ namespace Game.Editor
             SkirmishSetupPrefabBuilder.Build();
             api = ScriptableObject.CreateInstance<TestRunnerApi>();
             api.RegisterCallbacks(new Results());
-            api.Execute(new ExecutionSettings(new Filter { testMode = TestMode.EditMode, testNames = new[] { "Game.Tests.Editor.SkirmishMedalLedgerTests", "Game.Tests.Editor.SkirmishLibraryViewModelTests", "Game.Tests.Editor.SkirmishLibrary.SkirmishLibraryWidgetTests", "Game.Tests.Editor.SkirmishLibraryJourneyTests", "Game.Tests.Editor.SkirmishSagaMenuTests", "SkirmishSetupScreenTests" } }));
+            string focus=Environment.GetEnvironmentVariable("WARLINE_SAGA_TEST_FOCUS");
+            var names = new[] { "Game.Tests.Editor.SkirmishS002AriaHarnessTests.AssaultColumnDestroysEnemyBarracksAndPublishesVictory", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.DeadEnemyBarracksFinishesVictoryWithoutRulesSystem", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.DeadlineDrawPublishesFinishedMatchWithoutStampingVictory", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.PresentedColumnDestroysEnemyBaseBeforeDeadlineOnLiveSeeds", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating", "Game.Tests.Editor.SkirmishS002AriaHarnessTests.PrefabFreeLedgerFixtureCannotClaimNativeReadiness", "Game.Tests.Editor.SkirmishMedalLedgerTests", "Game.Tests.Editor.SkirmishLibraryViewModelTests", "Game.Tests.Editor.SkirmishLibrary.SkirmishLibraryWidgetTests", "Game.Tests.Editor.SkirmishLibraryJourneyTests", "Game.Tests.Editor.SkirmishSagaMenuTests", "SkirmishSetupScreenTests" };
+            api.Execute(new ExecutionSettings(new Filter { testMode=TestMode.EditMode, testNames=string.IsNullOrEmpty(focus)?names:new[]{focus} }));
         }
 
         private sealed class Results : ICallbacks

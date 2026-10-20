@@ -2649,7 +2649,7 @@ namespace Game.Tests.Editor
         public void DeadlineDrawPublishesFinishedMatchWithoutStampingVictory()
         {
             using var world = new World(nameof(DeadlineDrawPublishesFinishedMatchWithoutStampingVictory));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Assert.Greater(em.GetComponentData<SkirmishResolvedSetupComponent>(session).DeadlineSeconds, 0);
             var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
@@ -2680,7 +2680,7 @@ namespace Game.Tests.Editor
         public void DeadEnemyBarracksFinishesVictoryWithoutRulesSystem()
         {
             using var world = new World(nameof(DeadEnemyBarracksFinishesVictoryWithoutRulesSystem));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity enemyBase = DesignatedBase(em, 2);
             Entity playerBase = DesignatedBase(em, 1);
@@ -2706,7 +2706,7 @@ namespace Game.Tests.Editor
         public void AssaultColumnDestroysEnemyBarracksAndPublishesVictory()
         {
             using var world = new World(nameof(AssaultColumnDestroysEnemyBarracksAndPublishesVictory));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             int materials = SkirmishMaterialsService.Read(em, session, 1);
@@ -2871,7 +2871,7 @@ namespace Game.Tests.Editor
         private static void PresentedColumnDestroysEnemyBaseBeforeDeadline(int seed)
         {
             using var world = new World("PresentedColumn-" + seed);
-            BootPlayingSession(world, out Entity session, seed);
+            BootPlayingLedgerSimulation(world, out Entity session, seed);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             ObserveEnemyFixtureThreats(world, session);
@@ -3128,7 +3128,7 @@ namespace Game.Tests.Editor
         public void RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating()
         {
             using var world = new World(nameof(RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
             Entity barracks = DesignatedBase(em, 2);
@@ -3154,7 +3154,7 @@ namespace Game.Tests.Editor
         public void FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup()
         {
             using var world = new World(nameof(FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
             SkirmishExpandedSessionComponent expanded = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
@@ -3179,7 +3179,7 @@ namespace Game.Tests.Editor
         public void PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase()
         {
             using var world = new World(nameof(PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase));
-            BootPlayingSession(world, out Entity session, 130365);
+            BootPlayingLedgerSimulation(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             ObserveEnemyFixtureThreats(world, session);
@@ -3233,7 +3233,7 @@ namespace Game.Tests.Editor
         public void MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders()
         {
             using var world = new World(nameof(MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders));
-            BootPlayingSession(world, out Entity session, 130365);
+            BootPlayingLedgerSimulation(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
@@ -3539,9 +3539,8 @@ namespace Game.Tests.Editor
             return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         }
 
-        private static void BootPlayingSession(World world, out Entity session, int seed = 104731)
+        private static void QueueLedgerFixture(EntityManager em, out Entity session, int seed)
         {
-            EntityManager em = world.EntityManager;
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
             SkirmishExpansionAuthoredSet authored = CreateLedgerFixture();
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
@@ -3559,16 +3558,45 @@ namespace Game.Tests.Editor
                 out var reasons),
                 reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
             session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        }
+
+        // These command/settlement tests deliberately use prefab-free ledgers.
+        // Their Playing state is a model fixture, never native readiness or an ARIA win.
+        private static void BootPlayingLedgerSimulation(World world, out Entity session, int seed = 104731)
+        {
+            EntityManager em=world.EntityManager;
+            QueueLedgerFixture(em,out session,seed);
+            world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
+            var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(em,session,setup,out var reason,out byte visualPending),reason.ToString());
+            Assert.AreEqual(0,visualPending);
+            var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            Assert.AreEqual(SkirmishSessionPhase.Spawning,state.Phase);
+            state.SpawnComplete=1;
+            state.Phase=SkirmishSessionPhase.Playing;
+            em.SetComponentData(session,state);
+            var objective=em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            objective.State=SkirmishObjectiveStateKind.Active;
+            em.SetComponentData(session,objective);
+            em.AddComponentData(session,new SkirmishObjectiveClockComponent {
+                DeadlineSeconds=setup.DeadlineSeconds,Playing=1 });
+            using var owned=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(em,owned,state.SessionId,setup);
+            SkirmishArmyGroupSystem.RefreshAlive(em,session,owned,state.SessionId);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em,session);
+            Assert.AreEqual(SkirmishPhase.Playing,em.GetComponentData<SkirmishMatchState>(session).Phase);
+        }
+
+        [Test]
+        public void PrefabFreeLedgerFixtureCannotClaimNativeReadiness()
+        {
+            using var world=new World("S002 prefab-free native refusal");
+            QueueLedgerFixture(world.EntityManager,out var session,104731);
             world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
             world.GetOrCreateSystem<SkirmishScenarioSpawnSystem>().Update(world.Unmanaged);
-            Assert.AreEqual(SkirmishSessionPhase.Playing, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
-            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
-            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, setup);
-            SkirmishArmyGroupSystem.RefreshAlive(em, session, owned, sessionId);
-            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
-            Assert.AreEqual(SkirmishPhase.Playing, em.GetComponentData<SkirmishMatchState>(session).Phase);
+            var state=world.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            Assert.AreEqual(SkirmishSessionPhase.Failed,state.Phase);
+            Assert.AreEqual(SkirmishReasonCode.MissingReference,state.FailureCode);
         }
 
         private static void PublishProjectedMatch(World world, Entity session)

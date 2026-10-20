@@ -75,6 +75,7 @@ namespace Game.Editor
         [MenuItem("Game/UI/V3/Rebuild SCN-13 Skirmish Setup")]
         public static void Build()
         {
+            SkirmishSagaShaderSettings.Ensure();
             _sessionPassed = false;
             _sessionPrefabHash = null;
             SkirmishLibrarySpriteRegistryBuilder.Rebuild();

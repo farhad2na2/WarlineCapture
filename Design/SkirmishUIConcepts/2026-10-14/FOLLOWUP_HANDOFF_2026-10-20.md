@@ -5,6 +5,20 @@ This continues issue [#69](https://github.com/farhad2na2/WarlineCapture/issues/6
 - Original design brief: `Design/SkirmishUIConcepts/2026-10-14/IMPLEMENTATION_HANDOFF.md` (commit `3ebb2a6f4`).
 - Approved mockups: `approved-1-theater-map.jpg`, `approved-2-battlefield-map-view.jpg` and `approved-3-battlefield-grid-view.jpg` in the same folder.
 
+## Design change: saga map replaces the grids (owner-approved 2026-10-20 08:40)
+
+Read `Design/SkirmishUIConcepts/2026-10-20-saga-map/README.md` first.
+
+- **Battlefield** (`skirmish-saga-battlefield-v02.jpg`): a winding road with 24 mission stops and objective chapter flags replaces the approved-3 Grid view, the MAP/GRID toggle and the six pinned map cards.
+- **Theatre** (`skirmish-saga-theatre-v01.jpg`): a dotted route links the five battlefields, and short medal trails replace the 4×6 medal grid in the right panel.
+- **No locking by order:** every owned mission stays playable.
+
+Consequences for the plan below:
+
+- P1's Grid work (#68 Grid view, item 6 grid row headers) and the Map-view card work (item 9, map card title strip) are **superseded by the saga path**. Reuse their data plumbing (catalog projection, medal flags, access state, launch), not their layouts.
+- The P2 Theatre work (territories, cards, zoom pill, items 1–5) **still applies**. Add the dotted inter-battlefield route and the right-panel medal trails.
+- Ask the owner before deleting superseded code; it may be removed in the same PR that adds the saga path.
+
 ## Verdict on the paused work (reviewed 2026-10-20 08:10–08:40 CEST)
 
 **Continue from the existing branches. Do not restart.** The work is real and broadly matches the brief, but it is **not merge-ready**, and its **visual quality is currently unverified**.

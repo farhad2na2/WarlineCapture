@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "SourceStructureSemanticsReviewOnly_NoAcceptance",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/README.md",
+      "bytes": 3816,
+      "sha256": "8b3ad79ac3d5d63a18dae6a6cbe4a34d847b8c33b1194e3c15d68e0c843b9ebb"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/all-sizes.json",
+      "bytes": 4115,
+      "sha256": "6a45e99b3bda57db018e77971acf22f94429e8293818fe31ac71c39126094216"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/consumer-trace.json",
+      "bytes": 5626,
+      "sha256": "a7905a4f485d782caa4f9e81d87ac4b39dbc8e395002427c1385934aa1d56af3"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/proposal.json",
+      "bytes": 4637,
+      "sha256": "f9cde776000584c0fe7cdcc2659aa4b7c17a71a16a4f2e3e2b44a2548d963747"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/source-pins.json",
+      "bytes": 7664,
+      "sha256": "24571303f0b634e6267a57f20243cdab9adced7a8d0ebe8b3ca5d6d94d0b25d1"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS002StartingStructureSemantics01/verification.log",
+      "bytes": 418,
+      "sha256": "b82d50c1741e9d2ffd6a414bae2474fa39eb14f3f7fe83ea3506395261a418f8"
+    }
+  ]
+}

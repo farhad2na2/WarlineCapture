@@ -1,0 +1,42 @@
+{
+  "scope": "Proposal only; no implementation, compile/native run or acceptance authority",
+  "smallestContractPreservingAction": "Add a separately versioned evidence/reporting sidecar that displays canonical planned count, resolved starting grant inventory/count, and actual session-owned native bound count distinctly. Leave matrix, existing fields/hashes/grants and strict canonical error unchanged. This exposes rather than repairs the unresolved product/legacy contract conflict.",
+  "doNot": [
+    "Add a Helipad or dummy row/foundation as a silent count fix",
+    "Rewrite10/11/11 to9/10/10 or rename existing fields silently",
+    "Set ExactCanonicalQuantities true through an unreviewed S002 waiver",
+    "Alter preserved layout/source fingerprint or CampaignMap to force generic grant",
+    "Credit old setup hash/win as complete current structure/producer evidence",
+    "Expose War/Large or bypass normal input/claims to get a normal-mission pass"
+  ],
+  "specificFutureReproducer": {
+    "status": "NOT_IMPLEMENTED_NOT_RUN; needs new reviewed diagnostic source/compile/native authority",
+    "phaseA_noPlayAllSizes": [
+      "Use a new bounded focused read-only diagnostic/test owner rather than pretending an existing export covers S002 all3sizes. Load exact persistent catalog S002, packaged matrix, source/build/SDK pins; retain exact no-CampaignMap binding.",
+      "For Regular and a single recorded seed across Standard/War/LargeWar (155926 matches historical baseline, not a new normal-win fixture), call actual public TryCompile and TryInspectStaticAuthoringBudget without modifying setup. Record reasons/return status, exact preservation-predicate inputs and observed result, both declared faction counts and every resolved structure row.",
+      "Record complete raw UnityJson resolved setup, full digest, existing setup/config hashes and typed quantities/errors. Expect conditional source predictions9/10/10 grants vs10/11/11 metadata; record discrepancies as failure/unresolved, never manufacture equality. Preserve code/scalars and all-size budgets.",
+      "Compare exact original structure IDs, factions, designated flags and producer metadata; do not infer functions from prefab names. No Play, spawning, paid-resource or mission acceptance follows.",
+      "If TryCompile refuses, preserve null setup/reasons and no accepted native setup digest. Static authoring DTO may expose actual rows plus errors, but must never be serialized/backfilled as a successful compiler-consumed setup or launch payload."
+    ],
+    "phaseB_actualFunctionalObservation": [
+      "Only under separate normal-run authority, observe the session-owned SkirmishAttemptOwnedComponent/RuntimeBuildingCombatInfo/shared grant bindings, actual configured building/producer/queue state and legal routes at deployment. Exclude Campaign scenery, preexisting unrelated buildings, bought/replacement facilities and foundations.",
+      "Use normal Menu and input for currently allowed sizes. War/Large normal availability is not granted by typed compile success or this proposal; no silent UI unlock. A separately authorized diagnostic fit lane would still earn no normal-mission credit.",
+      "Correlate original grant request EntryIndex to bound building and expected producer behavior, preserving costs, stocks, queues and identity. Establish whether the product requires a free producer before proposing a versioned legacy compatibility decision."
+    ],
+    "existingCollectorLimits": {
+      "ExportReviewedMatrixSliceFromEnvironment": "Hardcodes Regular/Standard73-74 and checks slot matches; cannot export War/Large by merely changing request.",
+      "ExportPersistedTypedConfigDigests": "All3sizes but requires nonnull CampaignMap153-154 and measured/logical source binding167-170; preserved S002 intentionally null. Do not inject a source to pass.",
+      "CaptureCompiledCanaryIdentities": "HardcodesS004/S005 RegularStandard32-40; no S002allsize witness.",
+      "ExportS005RegularStandard155926Fa": "S005 only."
+    }
+  },
+  "affectedSharedConsumers": [
+    "Compiler scalar/array reporting and static budget DTO",
+    "Source-fit actual inventory/exactness predicates",
+    "Shared starting-grant/runtime producer binding",
+    "Startup/terminal/checkpoint ownership census",
+    "Acceptance text/config digests/full native setup identity",
+    "Publication/normal-input/device evidence and coded/generic regression tests"
+  ],
+  "resolutionAuthority": "A product/legacy contract decision may eventually version reporting/grants, but this source review authorizes neither; preserve fixed budgets and protected bindings."
+}

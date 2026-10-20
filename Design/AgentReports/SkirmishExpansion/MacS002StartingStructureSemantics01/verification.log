@@ -1,0 +1,3 @@
+SOURCE_STRUCTURE_SEMANTICS result=Passed sourcePins=28 sizes=3 factionComparisons=6 sourceConditionalResolved=9/10/10 declared=10/11/11
+Explicit source tests preserve Standard noHelipad+18total+declared10. Source review only; tests/compiler/native reproducer NOT_RUN.
+Classification=DeliberateLegacyGrantException_WithDeclaredCountMismatch; functional product reconciliation Pending; no exception waiver or readiness.

@@ -1,0 +1,92 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "sizes": 3,
+  "factionsPerSize": 2,
+  "rows": [
+    {
+      "catalogId": "S002",
+      "size": "Standard",
+      "declaredCanonicalPerFaction": 10,
+      "sourceConditionalResolvedGrantPerFaction": 9,
+      "sourceConditionalResolvedGrantBothFactions": 18,
+      "differencePerFaction": -1,
+      "startingRefineryModulesEach": 1,
+      "sourceGrantRowsPerFaction": [
+        "building.barracks",
+        "building.ground_staging",
+        "building.oil_pump",
+        "building.refinery",
+        "building.fuel_bladder",
+        "building.fabrication_depot",
+        "building.watchtower",
+        "building.watchtower.approach",
+        "building.satellite_dish"
+      ],
+      "startingHelipadGranted": false,
+      "sourceCondition": "PreservesPackagedLegacyBinding=true for actual pinned S002 definition/layout; not evaluated natively here",
+      "declaredPlayerAndEnemyFields": "Copied from matrix, not recounted from Structures",
+      "staticBudgetExpectedEffect": "Method may return true with DTO; ExactCanonicalQuantities=false due actual structure tally mismatch; normal compiler status remains independent",
+      "nativeRuntimeCount": "NOT_OBSERVED_IN_THIS_REVIEW",
+      "planBudgetUnchanged": true
+    },
+    {
+      "catalogId": "S002",
+      "size": "War",
+      "declaredCanonicalPerFaction": 11,
+      "sourceConditionalResolvedGrantPerFaction": 10,
+      "sourceConditionalResolvedGrantBothFactions": 20,
+      "differencePerFaction": -1,
+      "startingRefineryModulesEach": 2,
+      "sourceGrantRowsPerFaction": [
+        "building.barracks",
+        "building.ground_staging",
+        "building.oil_pump",
+        "building.refinery",
+        "building.fuel_bladder",
+        "building.fabrication_depot",
+        "building.watchtower",
+        "building.watchtower.approach",
+        "building.satellite_dish",
+        "building.refinery.module"
+      ],
+      "startingHelipadGranted": false,
+      "sourceCondition": "PreservesPackagedLegacyBinding=true for actual pinned S002 definition/layout; not evaluated natively here",
+      "declaredPlayerAndEnemyFields": "Copied from matrix, not recounted from Structures",
+      "staticBudgetExpectedEffect": "Method may return true with DTO; ExactCanonicalQuantities=false due actual structure tally mismatch; normal compiler status remains independent",
+      "nativeRuntimeCount": "NOT_OBSERVED_IN_THIS_REVIEW",
+      "planBudgetUnchanged": true
+    },
+    {
+      "catalogId": "S002",
+      "size": "LargeWar",
+      "declaredCanonicalPerFaction": 11,
+      "sourceConditionalResolvedGrantPerFaction": 10,
+      "sourceConditionalResolvedGrantBothFactions": 20,
+      "differencePerFaction": -1,
+      "startingRefineryModulesEach": 2,
+      "sourceGrantRowsPerFaction": [
+        "building.barracks",
+        "building.ground_staging",
+        "building.oil_pump",
+        "building.refinery",
+        "building.fuel_bladder",
+        "building.fabrication_depot",
+        "building.watchtower",
+        "building.watchtower.approach",
+        "building.satellite_dish",
+        "building.refinery.module"
+      ],
+      "startingHelipadGranted": false,
+      "sourceCondition": "PreservesPackagedLegacyBinding=true for actual pinned S002 definition/layout; not evaluated natively here",
+      "declaredPlayerAndEnemyFields": "Copied from matrix, not recounted from Structures",
+      "staticBudgetExpectedEffect": "Method may return true with DTO; ExactCanonicalQuantities=false due actual structure tally mismatch; normal compiler status remains independent",
+      "nativeRuntimeCount": "NOT_OBSERVED_IN_THIS_REVIEW",
+      "planBudgetUnchanged": true
+    }
+  ],
+  "sharedComparison": {
+    "genericEstablishedGround": "Source test S026 all3sizes counts actual10/11/11 with2total Helipads and actual==declared; no extension of S002 exception",
+    "codedS004EstablishedAir": "Source Standardactual20total/declared10each; War22total/declared11each, Helipad included",
+    "codedS003Field": "Standard14total/7each, no functional free Helipad; not an Established exception"
+  }
+}

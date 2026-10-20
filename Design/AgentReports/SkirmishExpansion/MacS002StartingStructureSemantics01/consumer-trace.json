@@ -1,0 +1,98 @@
+{
+  "classification": "DeliberateTestedLegacyGrantException_WithDeclaredCountSemanticMismatch_FunctionalPlanReconciliationPending",
+  "evidence": [
+    {
+      "consumer": "Plan and typed start package",
+      "sources": [
+        "MATCH_SETUP.md:68-81",
+        "INITIAL_SETUP_MATRIX.csv S002 three rows",
+        "SkirmishStartPackageConfig.cs:21-27"
+      ],
+      "fact": "Established plan grants one functional Helipad per faction and10/11/11 structures; queue capacity is not an additional building. Empty foundation is not a working facility and no source counts it to reconcile this gap."
+    },
+    {
+      "consumer": "Protected binding and emitted grant",
+      "sources": [
+        "SkirmishMeasuredLayoutBinder.cs:27-52",
+        "SkirmishLegacyLayoutBaselineContract.cs:9-15,26-30",
+        "SkirmishSetupCompiler.cs:392-406,537-607,637-644"
+      ],
+      "fact": "Exact coded S002 no-CampaignMap/layout preservation path prevents generic G Helipad grant. Base7 + Established2 =9, plus second refinery module forWar/Large =10. Changing layout/source to fall into generic path is not a permitted fix."
+    },
+    {
+      "consumer": "Intentional source test",
+      "sources": [
+        "SkirmishExpandedDefinitionTests.cs:651-653,683-688"
+      ],
+      "fact": "Tests explicitly assert S002 no Helipad,18totalStructures, and PlayerStartingStructures10 simultaneously. This is direct evidence of deliberate legacy behavior and a known-in-source inconsistent counter, not accidental native spawn loss."
+    },
+    {
+      "consumer": "Typed compiler and authoring budget",
+      "sources": [
+        "SkirmishSetupCompiler.cs:341-342,394,111-118",
+        "SkirmishStaticAuthoringBudget.cs:9-18"
+      ],
+      "fact": "Resolved count fields copy plan; Structures is independently generated. Main TryCompile does not directly compare these structure counts. Static diagnostic does count actual arrays against vector and sets canonical error/ExactCanonicalQuantities=false; outer true is not canonical success."
+    },
+    {
+      "consumer": "Source-fit consumers",
+      "sources": [
+        "SkirmishGroundSourceFitSurvey.GroundObjective30.cs:155-168",
+        "SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs:152,595-667"
+      ],
+      "fact": "Strict fit consumers use actual budget.Structures and/or ExactCanonicalQuantities. Do not relabel S002 canonical-exact or generalize its grant exception to pilots."
+    },
+    {
+      "consumer": "Runtime shared grant",
+      "sources": [
+        "SkirmishStartingBuildingsService.cs:34-69,96-112",
+        "SkirmishScenarioSpawnSystem.cs:299-305,582"
+      ],
+      "fact": "Actual configured spawn requests iterate setup.Structures, bind session-owned runtime entities by entry index. Declared metadata does not request an extra facility; a prefab present in build/catalog/scenery is not a free starting grant."
+    },
+    {
+      "consumer": "Production catalog",
+      "sources": [
+        "SkirmishProductionCatalog.cs:37-76"
+      ],
+      "fact": "Available producer prefab/recipe bindings can be added for allowed roles and starting keys, but available spawnable does not mean an already built functional producer. Functional queue/route readiness is not demonstrated by prefab/name presence."
+    },
+    {
+      "consumer": "Startup/terminal/checkpoint",
+      "sources": [
+        "SkirmishS002AriaRunHarness.cs:884-898",
+        "SkirmishS002AriaRunHarness.TerminalProbe.cs:164-166",
+        "SkirmishNativeObjectiveCheckpoint.cs:258-266"
+      ],
+      "fact": "Startup/terminal count checks use actual Structures.Length, not canonical declared counts. Objective checkpoint binds designated structures by identity. They can agree with emitted9/10/10 while declared10/11/11 remains unreconciled."
+    },
+    {
+      "consumer": "Report, acceptance and identity",
+      "sources": [
+        "SkirmishSetupCompiler.cs:735-754,688-722",
+        "SkirmishAcceptanceScaffolding.cs:450-474,486-504",
+        "SkirmishProductionNativeIdentityCensus.cs:171-178"
+      ],
+      "fact": "Text/acceptance census copies declared starting counts. Legacy setup-hash text has no direct structure-count/array field, so equality alone cannot settle this question. Legacy config digest includes player declared count; full UnityJson resolved-setup digest includes both array and counters. Preserve all exact identities; no hash shortcut."
+    },
+    {
+      "consumer": "Publication",
+      "sources": [
+        "SkirmishPublicationValidator.cs:65-106,123-170"
+      ],
+      "fact": "Publication checks exact content/setup evidence and full manual/ARIA/edge/recovery/device gates; no standalone structure-count reconciliation exists in inspected validator. A historical win/status flag does not resolve this issue or authorize a flip."
+    }
+  ],
+  "historicalBaseline": {
+    "path": "Design/AgentReports/SkirmishExpansion/ProductionFoundation/Validation/legacy-layout-and-setup-baselines-20261014.json",
+    "purpose": "PreCompilerIntegrationLegacyLayoutAndSetupBaselineOnly",
+    "nativeCandidateProof": false,
+    "rows": 12,
+    "limit": "Contains layout/setup hashes for4codedx3sizes, not functional building inventory and not a current exact-candidate native witness."
+  },
+  "unknowns": [
+    "No current runtime source-fit/producer/economy measurement for this exactbase.",
+    "Not proven that all product functionality is satisfied without the planned free producer. Deliberate omission is not a product-contract waiver.",
+    "No accepted authority supplied to revise canonical count definitions or protected grants; reconciliation remains pending."
+  ]
+}

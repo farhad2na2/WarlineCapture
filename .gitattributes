@@ -402,3 +402,4 @@ Design/AgentReports/ApprovedMissionAtlas/**/*.png filter=lfs diff=lfs merge=lfs 
 Design/AgentReports/ApprovedMissionAtlas/**/*.zip filter=lfs diff=lfs merge=lfs -text
 
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/skirmish-polish-03/*.png filter=lfs diff=lfs merge=lfs -text
+Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/*.png filter=lfs diff=lfs merge=lfs -text

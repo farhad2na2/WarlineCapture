@@ -52,7 +52,17 @@ namespace Game.Editor
 
         private static readonly string[] BattlefieldOrder = { "DB", "CC", "MP", "IB", "AP" };
 
-        public static void Run()
+        public static void RunCards()
+        {
+            bool passed=false;
+            try { Run(false);passed=true; }
+            catch(Exception error) { Debug.LogException(error); }
+            finally { MissionEditorValidationExit.Complete(passed); }
+        }
+
+        public static void Run()=>Run(true);
+
+        private static void Run(bool includePlates)
         {
             if (EditorApplication.isPlaying)
                 throw new InvalidOperationException("Skirmish library preview capture requires Edit mode.");
@@ -64,7 +74,7 @@ namespace Game.Editor
                 Debug.Log("[SkirmishLibraryPreviewCapture] note=EntityScenesMayOmitStaticGeometry");
                 var shots = new List<Shot>();
                 int previews = CollectPreviews(shots);
-                int plates = CollectPlates(shots);
+                int plates = includePlates ? CollectPlates(shots) : 0;
                 RenderGrouped(shots);
                 ImportSprites(shots);
                 RestoreScene(restore);
@@ -496,7 +506,7 @@ namespace Game.Editor
             bool established)
         {
             // The scenario objective (enemy base / target) is the subject; approach from the player's side.
-            Vector3 look = Vector3.Lerp(enemy, player, 0.12f);
+            Vector3 look = Vector3.Lerp(enemy, player, 0.12f) + Vector3.up * 6f;
             Vector3 back = player - enemy;
             back.y = 0f;
             if (back.sqrMagnitude < 0.01f)
@@ -512,8 +522,8 @@ namespace Game.Editor
             back = Quaternion.AngleAxis(azimuth, Vector3.up) * back;
 
             float separation = Vector2.Distance(new Vector2(player.x, player.z), new Vector2(enemy.x, enemy.z));
-            float distance = Mathf.Clamp(separation * 0.16f, 80f, 120f) * (established ? 0.85f : 1f);
-            float pitch = established ? 48f : 42f;
+            float distance = Mathf.Clamp(separation * 0.13f, 65f, 95f) * (established ? 0.85f : 1f);
+            float pitch = established ? 30f : 26f;
             Vector3 position = look + back * (distance * Mathf.Cos(pitch * Mathf.Deg2Rad)) +
                                Vector3.up * (distance * Mathf.Sin(pitch * Mathf.Deg2Rad));
             Quaternion rotation = Quaternion.LookRotation(look - position, Vector3.up);

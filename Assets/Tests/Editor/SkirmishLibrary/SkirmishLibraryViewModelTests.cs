@@ -18,6 +18,31 @@ namespace Game.Tests.Editor
             SkirmishLibraryLaunchContext.Difficulty = SkirmishDifficultyId.Regular;
 
         [Test]
+        public void ReadingAtlasProgressForAnotherMapPreservesSelectionAndUsesPublishedDenominators()
+        {
+            var entries=new List<SkirmishBattleCatalogEntry>
+            {
+                Entry("S001","DB","BA","G","F",true,0),
+                Entry("S025","CC","BA","G","F",true,1),
+                Entry("S031","CC","FC","G","F",true,2),
+                Entry("S032","CC","FC","G","E",false,-1)
+            };
+            var ledger=new SkirmishMedalLedger(null,entries);
+            Assert.IsTrue(ledger.TryAward(Victory("S031",SkirmishDifficultyId.Regular),out _));
+            var model=Model(entries,ledger);
+            var level=model.Level;string map=model.Theater.SelectedMapId,scenario=model.Briefing.ScenarioId;
+            var rows=model.ReadObjectiveProgress("CC");
+            Assert.AreEqual(4,rows.Length);
+            Assert.AreEqual(1,rows[0].PublishedCount);
+            Assert.AreEqual(1,rows[1].PublishedCount);
+            Assert.AreEqual(1,rows[1].WonCount);
+            Assert.AreEqual(0,rows[2].PublishedCount);
+            Assert.AreEqual(level,model.Level);
+            Assert.AreEqual(map,model.Theater.SelectedMapId);
+            Assert.AreEqual(scenario,model.Briefing.ScenarioId);
+        }
+
+        [Test]
         public void RecommendedNextUsesTheBattlefieldWithFewestWinsThenCatalogOrder()
         {
             var entries = new List<SkirmishBattleCatalogEntry>

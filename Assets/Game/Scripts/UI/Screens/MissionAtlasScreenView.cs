@@ -10,14 +10,17 @@ namespace Game.UI.Runtime
         public string Id, Title, Subtitle, Status;
         public Texture Texture;
         public Sprite Comic;
-        public bool Selected, Enabled, Dimmed, Icon;
+        public bool Selected, Enabled, Dimmed, Icon, Completed, Locked;
         public int Medals;
     }
 
     public sealed class MissionAtlasPresentation
     {
         public bool Missions, Skirmish;
-        public string Heading, DetailTitle, Purpose, Objectives, Primary, Secondary;
+        public string Heading, DetailTitle, DetailSubtitle, Purpose, Objectives, Primary, Secondary;
+        public string[] RegionSummaries = Array.Empty<string>();
+        public MissionAtlasSummaryRow[] SummaryRows = Array.Empty<MissionAtlasSummaryRow>();
+        public string SummaryHeading;
         public bool CanLaunch;
         public bool CanSecondary = true;
         public Texture Overview, Map, Preview;
@@ -34,7 +37,7 @@ namespace Game.UI.Runtime
     /// Its logical height is always 1080, including on a 2160-unit shell canvas.
     /// </summary>
     [ExecuteAlways, DisallowMultipleComponent]
-    public sealed class MissionAtlasScreenView : MonoBehaviour, IUiBackOverlayParticipant
+    public sealed partial class MissionAtlasScreenView : MonoBehaviour, IUiBackOverlayParticipant
     {
         [Serializable] public sealed class Card
         {
@@ -43,13 +46,16 @@ namespace Game.UI.Runtime
             public V3GradientGraphic Face;
             public MissionAtlasArtworkView Art;
             public TMP_Text Title, Subtitle, Status;
-            public string FullTitle;
+            public string FullTitle, FullSubtitle, FullStatus;
             public Image[] MedalIcons;
+            public MissionAtlasStatusGraphic Completion;
+            public Image Lock;
+            public MissionAtlasStatusGraphic[] MedalEngravings;
             [NonSerialized] public Action Click;
             public void Set(MissionAtlasItem item)
             {
                 Rect.gameObject.SetActive(true);
-                Rect.name = item.Id;FullTitle=item.Title;
+                Rect.name = item.Id;FullTitle=item.Title;FullSubtitle=item.Subtitle;FullStatus=item.Status;
                 Button.interactable = item.Enabled;
                 Face.Configure(Top, Bottom, item.Selected ? Cyan : Border, item.Selected ? 3 : 2);
                 Art.Set(item.Comic, item.Texture);Art.ContainIcon(item.Icon);
@@ -59,9 +65,13 @@ namespace Game.UI.Runtime
                     bool show=item.Medals>=0;MedalIcons[i].gameObject.SetActive(show);
                     if(show)MedalIcons[i].sprite=Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal((item.Medals & (1<<i))!=0,(Game.Skirmish.Contracts.SkirmishDifficultyId)(i+1)));
                 }
+                if(Completion!=null)Completion.gameObject.SetActive(item.Completed);
+                if(Lock!=null)Lock.gameObject.SetActive(item.Locked);
+                for(int i=0;i<(MedalEngravings?.Length??0);i++)
+                    MedalEngravings[i]?.Configure(MissionAtlasStatusGraphic.Kind.Medal,(item.Medals&(1<<i))!=0,i);
                 Copy(Title,item.Title); Copy(Subtitle,item.Subtitle); Copy(Status,item.Status);
                 Title.color = item.Selected ? Cyan : item.Enabled ? Color.white : Muted;
-                Status.color = item.Selected ? Cyan : Muted;
+                Status.color = item.Completed ? new Color32(129,218,128,255) : Muted;
             }
         }
         [Serializable] public sealed class Region
@@ -74,7 +84,7 @@ namespace Game.UI.Runtime
         }
         public static readonly Color Top = new Color32(15,30,36,255), Bottom = new Color32(3,14,19,255),
             Border = new Color32(70,92,103,255), Cyan = new Color32(0,210,248,255), Muted = new Color32(171,192,204,255);
-        private static readonly Color[] ZoneColors = { new(.05f,.62f,1,.30f),new(1,.62f,.02f,.25f),new(1,.30f,.1f,.24f),new(.25f,.8f,.12f,.26f),new(.92f,.15f,.22f,.26f) };
+        private static readonly Color[] ZoneColors = { new(.25f,.55f,.65f,.10f),new(.55f,.57f,.55f,.05f),new(.56f,.59f,.57f,.05f),new(.51f,.57f,.53f,.05f),new(.54f,.57f,.60f,.05f) };
         [SerializeField] private TMP_FontAsset font;
         [SerializeField] private Sprite backIcon, settingsIcon, creditsIcon, mapIcon, launchIcon;
         [SerializeField] private RectTransform frame, rail, mapPanel, detail, extraControls;
@@ -172,7 +182,7 @@ namespace Game.UI.Runtime
             secondary=Command(frame,"SecondaryCommand","CHAPTERS",mapIcon,1);
             primary=Command(frame,"StartBattleButton","START BRIEFING",launchIcon,2);
             secondaryLabel=secondary.GetComponentInChildren<TMP_Text>(); primaryLabel=primary.GetComponentInChildren<TMP_Text>();
-            Wire(); Layout(true);
+            AuthorPolish(); Wire(); Layout(true);
         }
 
         private void Wire()
@@ -183,6 +193,7 @@ namespace Game.UI.Runtime
             for(int i=0;i<regions.Length;i++) for(int j=0;j<regions[i].Cards.Length;j++) {int n=i*6+j; regions[i].Cards[j].Button.onClick.AddListener(()=>ChooseMission?.Invoke(n));}
             for(int i=0;i<4;i++) {int n=i; difficulties[i].onClick.AddListener(()=>ChooseDifficulty?.Invoke(n));}
             scroll.onValueChanged.AddListener(_=>OnScroll());
+            WirePolish();
         }
         public void Present(MissionAtlasPresentation next)
         {
@@ -213,6 +224,7 @@ namespace Game.UI.Runtime
             }
             difficultyRoot.gameObject.SetActive(next.Skirmish && next.Missions);
             extraControls.gameObject.SetActive(next.Skirmish && next.Missions);
+            PresentPolish();
             Layout(true);
             if(next.Missions && regionIndex!=next.SelectedRegion) JumpToRegion(next.SelectedRegion);
             if(!next.Missions)regionIndex=-1;
@@ -225,6 +237,7 @@ namespace Game.UI.Runtime
             {
                 Copy(difficultyLabels[i],labels[i]); difficulties[i].interactable=enabled==null || enabled[i];
                 difficulties[i].GetComponent<V3GradientGraphic>().Configure(Top,Bottom,i==selected?Cyan:Border,i==selected?3:2);
+                if(difficultyChecks!=null&&i<difficultyChecks.Length)difficultyChecks[i].gameObject.SetActive(i==selected);
             }
         }
         public void JumpToRegion(int index)
@@ -232,13 +245,13 @@ namespace Game.UI.Runtime
             if(state==null || !state.Missions)return;
             regionIndex=Mathf.Clamp(index,0,Mathf.Max(0,state.RegionTitles.Length-1)); scrolling=true;
             scroll.StopMovement(); float total=Mathf.Max(1,content.rect.height-scroll.viewport.rect.height);
-            scroll.verticalNormalizedPosition=1-Mathf.Clamp01(regionIndex*RegionHeight()/total); scrolling=false;
+            scroll.verticalNormalizedPosition=1-Mathf.Clamp01(regionIndex*RegionHeight()/total); scrolling=false;UpdateStickyHeading();
         }
         private void OnScroll()
         {
             if(scrolling || state==null || !state.Missions || state.RegionTitles.Length<=1)return;
-            int next=Mathf.Clamp(Mathf.RoundToInt(content.anchoredPosition.y/RegionHeight()),0,state.RegionTitles.Length-1);
-            if(next==regionIndex)return; regionIndex=next; ScrollRegion?.Invoke(next);
+            int next=Mathf.Clamp(Mathf.FloorToInt((content.anchoredPosition.y+2)/RegionHeight()),0,state.RegionTitles.Length-1);
+            if(next==regionIndex)return; regionIndex=next; ScrollRegion?.Invoke(next);UpdateStickyHeading();
         }
         private void LateUpdate() { if(frame!=null) { Wire(); Layout(false); } }
         private float RegionHeight()=>Mathf.Max(620,mapPanel.rect.height-64);
@@ -260,13 +273,16 @@ namespace Game.UI.Runtime
             Place(frame.GetChild(0) as RectTransform,0,0,w,1080);
             Place(back.transform as RectTransform,16,16,204,96); Place(heading.transform.parent as RectTransform,236,16,w-780,96);
             Place(heading.rectTransform,24,8,w-828,80); Place(settings.transform as RectTransform,w-528,16,120,96);
+            var gear=settings.transform.Find("Icon") as RectTransform;
+            if(gear!=null){gear.anchorMin=gear.anchorMax=gear.pivot=Vector2.one*.5f;gear.anchoredPosition=Vector2.zero;gear.sizeDelta=new Vector2(64,64);}
             Place(credits.transform.parent as RectTransform,w-392,16,376,96);
             Place(rail,16,128,nav,mainH); Place(mapPanel,nav+32,128,mapW,mainH); Place(detail,w-side-16,128,side,mainH);
             Fill(mapPanel.GetChild(0) as RectTransform);Fill(detail.GetChild(0) as RectTransform);
             Place(secondary.transform as RectTransform,16,932,w*.31f-24,132); Place(primary.transform as RectTransform,w*.31f+8,932,w*.69f-24,132);
             SetSize(heading,w<1800?36:48);SetSize(detailTitle,side<440?32:40);
             var primaryIcon=primary.transform.Find("Icon") as RectTransform;if(primaryIcon!=null)Place(primaryIcon,((RectTransform)primary.transform).rect.width*.18f,30,72,72);
-            var secondaryIcon=secondary.transform.Find("Icon") as RectTransform;if(secondaryIcon!=null)Place(secondaryIcon,((RectTransform)secondary.transform).rect.width*.10f,30,72,72);
+            var secondaryIcon=secondary.transform.Find("Icon") as RectTransform;if(secondaryIcon!=null)Place(secondaryIcon,24,30,72,72);
+            secondaryLabel.rectTransform.offsetMin=new Vector2(112,4);SetSize(secondaryLabel,w<1800?30:34);
             float nh=state!=null && state.Missions && state.Skirmish?165:148;
             for(int i=0;i<5;i++) {Place(navigation[i].Rect,0,i*(nh+12),nav,nh); LayoutCard(navigation[i],nav,nh,true,false);}
             Fill(overviewRoot);Fill(overviewArt.transform as RectTransform);Fill(missionRoot);Fill(scroll.viewport);
@@ -279,22 +295,15 @@ namespace Game.UI.Runtime
             {
                 var r=regions[i];float rw=mapW-28;
                 Place(r.Rect,0,i*rh,rw,rh);Fill(r.Map.transform as RectTransform);Fill(r.Tint.rectTransform);
-                r.Tint.ConfigureResponsive(new[]{new Vector2(0,40),new Vector2(rw*.22f,10),new Vector2(rw*.62f,22),new Vector2(rw-8,52),new Vector2(rw-14,rh-40),new Vector2(rw*.73f,rh-10),new Vector2(rw*.2f,rh-22),new Vector2(4,rh-54)},ZoneColors[i],i==0?Cyan:new Color(1,.65f,.1f,.9f),3,new Vector2(rw,rh));
+                bool selectedRegion=state==null || i==state.SelectedRegion;
+                r.Tint.ConfigureResponsive(new[]{new Vector2(0,40),new Vector2(rw*.22f,10),new Vector2(rw*.62f,22),new Vector2(rw-8,52),new Vector2(rw-14,rh-40),new Vector2(rw*.73f,rh-10),new Vector2(rw*.2f,rh-22),new Vector2(4,rh-54)},selectedRegion?new Color(.1f,.6f,.7f,.10f):ZoneColors[i],selectedRegion?Cyan:Border,2,new Vector2(rw,rh));
                 Place(r.Title.transform.parent as RectTransform,18,18,Mathf.Min(rw-36,780),64);Place(r.Title.rectTransform,16,4,Mathf.Min(rw-68,748),56);
-                float cw=(rw-80)/2,ch=(rh-150)/3;
-                for(int j=0;j<r.Cards.Length;j++) {Place(r.Cards[j].Rect,26+(j%2)*(cw+22),108+(j/2)*(ch+16),cw,ch);LayoutCard(r.Cards[j],cw,ch,false,false);}
+                r.Title.transform.parent.gameObject.SetActive(false);
+                float cw=(rw-72)/2,ch=(rh-164)/3;
+                for(int j=0;j<r.Cards.Length;j++) {Place(r.Cards[j].Rect,24+(j%2)*(cw+24),120+(j/2)*(ch+14),cw,ch);LayoutCard(r.Cards[j],cw,ch,false,false);}
             }
             LayoutOverview(mapW,mainH);
-            float previewH=Mathf.Min(280,(side-28)*.5625f);
-            Place(detailTitle.rectTransform,18,12,side-36,70);Place(detailArt.transform as RectTransform,14,86,side-28,previewH);
-            float y=102+previewH;
-            float copyHeight=state!=null&&state.Skirmish?mainH-264-y:mainH-y-18;
-            Place(detailScroll.transform as RectTransform,18,y,side-36,Mathf.Max(80,copyHeight));Fill(detailScroll.viewport);
-            float purposeHeight=Mathf.Max(76,purpose.GetPreferredValues(purpose.text,side-36,0).y+12),objectiveHeight=Mathf.Max(70,objectives.GetPreferredValues(objectives.text,side-36,0).y+12);
-            Place(detailCopy,0,0,side-36,purposeHeight+objectiveHeight+20);
-            Place(purpose.rectTransform,0,0,side-36,purposeHeight);Place(objectives.rectTransform,0,purposeHeight+20,side-36,objectiveHeight);
-            Place(extraControls,18,mainH-252,side-36,78);Place(difficultyRoot,18,mainH-164,side-36,148);
-            for(int i=0;i<4;i++){Place(difficulties[i].transform as RectTransform,(i%2)*(side-24)/2,(i/2)*76,(side-48)/2,68);SetSize(difficultyLabels[i],side<440?24:30);}
+            LayoutPolish(side,mapW,mainH);
             foreach(var art in GetComponentsInChildren<MissionAtlasArtworkView>(true))art.Refresh();
         }
         private void LayoutOverview(float w,float h)
@@ -315,35 +324,67 @@ namespace Game.UI.Runtime
                 };
                 centers=new[]{P(.24f,.17f),P(.76f,.17f),P(.23f,.51f),P(.75f,.52f),P(.52f,.86f)};
             }
-            float cw=Mathf.Min(380,w*.43f),ph=UiShellRuntimeGateway.Localization.IsRightToLeft?160:120;
+            float cw=Mathf.Min(380,w*.43f),ph=UiShellRuntimeGateway.Localization.IsRightToLeft?176:148;
             for(int i=0;i<5;i++)
-            {Fill(overviewZones[i].rectTransform);overviewZones[i].ConfigureResponsive(shapes[i],ZoneColors[i],new Color(ZoneColors[i].r,ZoneColors[i].g,ZoneColors[i].b,.95f),3,new Vector2(w,h));Place(zones[i].Rect,centers[i].x-cw/2,centers[i].y-ph/2,cw,ph);LayoutCard(zones[i],cw,ph,false,true);}
+            {Fill(overviewZones[i].rectTransform);overviewZones[i].ConfigureResponsive(shapes[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?new Color(.12f,.60f,.73f,.10f):ZoneColors[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?Cyan:Border,2,new Vector2(w,h));Place(zones[i].Rect,Mathf.Clamp(centers[i].x-cw/2,12,Mathf.Max(12,w-cw-12)),Mathf.Clamp(centers[i].y-ph/2,12,Mathf.Max(12,h-ph-12)),cw,ph);LayoutCard(zones[i],cw,ph,false,true);}
         }
         private void LayoutCard(Card c,float w,float h,bool nav,bool plaque)
         {
-            float art=plaque?0:nav?w*(w<380?.28f:.42f):w*.47f; c.Art.gameObject.SetActive(!plaque);
-            Place(c.Art.transform as RectTransform,5,5,Mathf.Max(1,art-10),h-10);
-            float x=plaque?16:art+12,tw=w-x-18;
-            Place(c.Title.rectTransform,x,12,tw,46); Place(c.Subtitle.rectTransform,x,60,tw,h-102);Place(c.Status.rectTransform,x,h-39,tw,29);
-            if(c.MedalIcons!=null)for(int i=0;i<c.MedalIcons.Length;i++)Place(c.MedalIcons[i].rectTransform,x+i*36,h-39,32,32);
-            if(nav||plaque)
+            float art=plaque?0:nav?w*(w<380?.30f:.38f):w*(w<380?.37f:.44f);
+            c.Art.gameObject.SetActive(!plaque);Place(c.Art.transform as RectTransform,5,5,Mathf.Max(1,art-10),h-10);
+            float x=plaque?14:art+12,tw=w-x-16;
+            bool fa=UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool compactMission=!nav&&!plaque&&state!=null&&state.Skirmish&&w<380&&!fa;
+            float titleHeight=nav||plaque?64:compactMission?68:76;
+            Place(c.Title.rectTransform,x,8,tw,titleHeight);
+            Place(c.Subtitle.rectTransform,x,nav||plaque?76:compactMission?78:86,tw,nav||plaque?32:compactMission?70:fa?66:54);
+            if(!nav&&!plaque)Copy(c.Subtitle,compactMission?(c.FullSubtitle??string.Empty).Replace(" · ","\n"):c.FullSubtitle);
+            Place(c.Status.rectTransform,x,h-38,tw,34);c.Status.gameObject.SetActive(true);
+            if(c.Completion!=null)Place((RectTransform)c.Completion.transform,w-38,10,28,28);
+            if(c.Lock!=null)Place(c.Lock.rectTransform,w-38,10,28,28);
+
+            if(c.MedalIcons!=null)for(int i=0;i<c.MedalIcons.Length;i++)Place(c.MedalIcons[i].rectTransform,x+i*38,h-38,32,32);
+            if(c.MedalIcons!=null&&c.MedalIcons.Length>0&&c.MedalIcons[0].gameObject.activeSelf)c.Status.gameObject.SetActive(false);
+            if(plaque){c.Art.gameObject.SetActive(false);Place(c.Subtitle.rectTransform,x,72,tw,34);}
+            if(state!=null&&!state.Skirmish&&!plaque)
             {
-                bool objective=nav && state!=null && state.Skirmish && state.Missions;
-                bool mapNavigation=nav && state!=null && state.Skirmish && !state.Missions;
-                float titleHeight=objective||mapNavigation?94:50;
-                float subtitleTop=objective?112:mapNavigation?96:52;
-                Place(c.Title.rectTransform,x,8,tw,titleHeight);Place(c.Subtitle.rectTransform,x,subtitleTop,tw,objective?h-116:mapNavigation?h-100:h-52);c.Status.gameObject.SetActive(false);
-                if(nav && !string.IsNullOrEmpty(c.FullTitle))Copy(c.Title,w<380?c.FullTitle.Replace("CHAPTER ",""):c.FullTitle);
+                Place(c.Subtitle.rectTransform,x,10,tw,30);
+                Place(c.Title.rectTransform,x,nav?42:54,tw,nav?64:76);
             }
-            else c.Status.gameObject.SetActive(c.MedalIcons==null || !c.MedalIcons[0].gameObject.activeSelf);
-            float fs=nav?27:plaque?30:32; if(w<380)fs=26;
-            SetSize(c.Title,(nav||plaque)&&UiShellRuntimeGateway.Localization.IsRightToLeft?24:fs);SetSize(c.Subtitle,UiShellRuntimeGateway.Localization.IsRightToLeft&&(nav||plaque)?24:nav?26:28);SetSize(c.Status,24);
+            bool mark=(c.Completion!=null&&c.Completion.gameObject.activeSelf)||(c.Lock!=null&&c.Lock.gameObject.activeSelf);
+            if(mark)
+            {
+                if(state!=null&&!state.Skirmish&&!plaque)c.Subtitle.rectTransform.sizeDelta=new Vector2(tw-34,30);
+                else c.Title.rectTransform.sizeDelta=new Vector2(tw-34,titleHeight);
+            }
+            if(nav)Copy(c.Status,w<380?(c.FullStatus??string.Empty).Replace("COMING SOON","SOON"):c.FullStatus);
+            float size=nav?26:plaque?27:w<380?26:30;
+            SetSize(c.Title,fa?24:size);
+            if(!plaque)
+            {
+                // Keep a long single word intact rather than ellipsizing it inside a large card.
+                float longest=0;
+                foreach(string word in (c.Title.text??string.Empty).Split(' '))
+                    longest=Mathf.Max(longest,c.Title.GetPreferredValues(word,10000,10000).x);
+                float titleWidth=c.Title.rectTransform.rect.width;
+                if(longest>titleWidth-8)SetSize(c.Title,Mathf.Max(18,c.Title.fontSize*(titleWidth-8)/longest));
+            }
+            SetSize(c.Subtitle,nav||plaque?23:compactMission||fa?20:24);SetSize(c.Status,22);
+            FitLabelHeight(c.Title,18);FitLabelHeight(c.Subtitle,16);
+        }
+        private static void FitLabelHeight(TMP_Text label,float minimum)
+        {
+            label.ForceMeshUpdate();
+            float preferred=label.GetPreferredValues(label.text,label.rectTransform.rect.width,0).y;
+            float height=label.rectTransform.rect.height-2;
+            if(preferred>height&&height>0)SetSize(label,Mathf.Max(minimum,label.fontSize*height/preferred));
         }
         private Card CreateCard(Transform parent,string name)
         {
             var p=Panel(parent,name,0,0,400,170);var b=p.gameObject.AddComponent<Button>();b.targetGraphic=p;b.transition=Selectable.Transition.None;
             var c=new Card{Rect=p.rectTransform,Button=b,Face=p,Art=Artwork(p.transform,"Thumbnail"),Title=Label(p.transform,"Title","",32),Subtitle=Label(p.transform,"Subtitle","",28),Status=Label(p.transform,"Status","",24),MedalIcons=new Image[4]};
             if(parent==rail)c.Art.AuthorIconSupport();
+            AuthorCardPolish(c,p.transform);
             for(int i=0;i<4;i++){c.MedalIcons[i]=Icon(p.transform,"Medal_"+i,null);c.MedalIcons[i].gameObject.SetActive(false);}return c;
         }
         private Button Command(Transform parent,string name,string copy,Sprite icon,int role)

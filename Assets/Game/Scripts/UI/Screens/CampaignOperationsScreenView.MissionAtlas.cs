@@ -51,25 +51,69 @@ namespace Game.UI.Runtime
             bool fa=UiShellRuntimeGateway.Localization.IsRightToLeft;
             string Chapter(int c)
             {
-                string title=UiShellRuntimeGateway.Localization.Get("chapter."+AtlasChapterKeys[c]+".name",AtlasChapterFallback[c]);int bar=title.IndexOf(" · ",System.StringComparison.Ordinal);if(bar>=0)title=title.Substring(bar+3);return fa?title:title.ToUpperInvariant();
+                string title=UiShellRuntimeGateway.Localization.Get("chapter."+AtlasChapterKeys[c]+".name",AtlasChapterFallback[c]);
+                int bar=title.IndexOf(" · ",System.StringComparison.Ordinal);if(bar>=0)title=title.Substring(bar+3);
+                return fa?title:title.ToUpperInvariant();
             }
-            var navigation=new MissionAtlasItem[5];
+            string ChapterNumber(int c)=>(fa?"فصل ":"CHAPTER ")+AtlasRoman[c];
+            string Locked()=>AtlasWords.Get("locked","LOCKED","قفل");
+            var navigation=new MissionAtlasItem[5];int chapterCompleted=0;
             for(int i=0;i<5;i++)
             {
                 bool available=AtlasChapterButton(i)?.interactable??false;
-                uint bits=31u<<(i*5);bool complete=(atlasModel.CompletedMissionMask&bits)==bits;
-                navigation[i]=new MissionAtlasItem {Id="ChapterCard_"+(i+1),Title=(fa?"فصل ":"CHAPTER ")+AtlasRoman[i],Subtitle=Chapter(i),Comic=chapterComicPlates!=null&&i<chapterComicPlates.Length?chapterComicPlates[i]:null,Enabled=available,Selected=i==atlasChapter,Medals=-1,Status=complete?(fa?"تکمیل شده":"COMPLETED"):available?"":(fa?"قفل":"LOCKED")};
+                int done=CountAtlasBits((atlasModel.CompletedMissionMask>>(i*5))&31u);
+                bool unlocked=((atlasModel.AvailableMissionMask>>(i*5))&31u)!=0;
+                bool released=((atlasModel.ReadyMissionMask>>(i*5))&31u)!=0;
+                if(i==atlasChapter)chapterCompleted=done;
+                navigation[i]=new MissionAtlasItem
+                {
+                    Id="ChapterCard_"+(i+1),Title=Chapter(i),Subtitle=ChapterNumber(i),
+                    Comic=chapterComicPlates!=null&&i<chapterComicPlates.Length?chapterComicPlates[i]:null,
+                    Enabled=available,Selected=i==atlasChapter,Medals=-1,Completed=done==5,Locked=!unlocked,
+                    Status=unlocked?AtlasWords.Complete(done,5):released?Locked():AtlasWords.Get("coming_soon","COMING SOON","به‌زودی")
+                };
             }
-            var cards=new MissionAtlasItem[5];int selected=0;
+            var cards=new MissionAtlasItem[5];var progressRows=new MissionAtlasSummaryRow[5];int selected=0;
             for(int i=0;i<5;i++)
             {
-                int n=atlasChapter*5+i; string id=CampaignMissionSequence.IdAt(n);
+                int n=atlasChapter*5+i;string id=CampaignMissionSequence.IdAt(n);
                 bool chosen=id==atlasModel.SelectedMission.MissionId;if(chosen)selected=i;
-                string key="chapter."+AtlasChapterKeys[atlasChapter]+".mission."+(i+1);
-                cards[i]=new MissionAtlasItem {Id="CampaignMission_"+id,Title=(i+1).ToString("00"),Subtitle=UiShellRuntimeGateway.Localization.Get(key,AtlasMissionFallback[n]).ToUpperInvariant(),Medals=-1,Comic=missionComicPlates!=null&&n<missionComicPlates.Length?missionComicPlates[n]:null,Enabled=missionNodeButtons[i].interactable,Selected=chosen,Status=(atlasModel.CompletedMissionMask&(1u<<n))!=0?(fa?"تکمیل شده":"COMPLETED"):missionNodeButtons[i].interactable?"":(fa?"قفل":"LOCKED")};
+                bool complete=(atlasModel.CompletedMissionMask&(1u<<n))!=0,available=missionNodeButtons[i].interactable;
+                bool released=(atlasModel.ReadyMissionMask&(1u<<n))!=0;
+                string name=UiShellRuntimeGateway.Localization.Get("chapter."+AtlasChapterKeys[atlasChapter]+".mission."+(i+1),AtlasMissionFallback[n]);
+                string status=complete?AtlasWords.Get("completed","COMPLETED","تکمیل شده"):available?AtlasWords.Get("available","AVAILABLE","در دسترس"):released?Locked():AtlasWords.Get("coming_soon","COMING SOON","به‌زودی");
+                cards[i]=new MissionAtlasItem
+                {
+                    Id="CampaignMission_"+id,Title=fa?name:name.ToUpperInvariant(),
+                    Subtitle=(i+1).ToString("00"),Medals=-1,
+                    Comic=missionComicPlates!=null&&n<missionComicPlates.Length?missionComicPlates[n]:null,
+                    Enabled=available,Selected=chosen,Status=status,Completed=complete,Locked=!available
+                };
+                progressRows[i]=new MissionAtlasSummaryRow {Title=(i+1).ToString("00")+" · "+cards[i].Title,Value=status,Completed=complete,Locked=!available};
             }
             Texture map=districtAtlasScenes!=null&&atlasChapter<districtAtlasScenes.Length?districtAtlasScenes[atlasChapter]:null;
-            approvedAtlas.Present(new MissionAtlasPresentation {Missions=atlasMissions,Skirmish=false,Heading=atlasMissions?(fa?"کارزار / ":"CAMPAIGN / ")+Chapter(atlasChapter):(fa?"کارزار":"CAMPAIGN"),Navigation=navigation,MissionsOnMap=cards,RegionTitles=new[]{(fa?"فصل ":"CHAPTER ")+AtlasRoman[atlasChapter]+(fa?" · ۵ ماموریت":" · 5 MISSIONS")},SelectedRegion=0,Overview=districtAtlasScenes!=null&&districtAtlasScenes.Length>0?districtAtlasScenes[0]:map,Map=map,DetailTitle=atlasMissions?(selected+1).ToString("00")+" · "+cards[selected].Subtitle:Chapter(atlasChapter),PreviewComic=atlasMissions?cards[selected].Comic:navigation[atlasChapter].Comic,Purpose=atlasMissions?AtlasSource(missionBriefingText):(fa?"یک فصل را برای مشاهده ماموریت‌ها انتخاب کنید.":"Select a chapter to view its missions."),Objectives=atlasMissions?AtlasSource(primaryObjectiveText):"",Primary=atlasMissions?AtlasSource(launchMissionLabel):(fa?"انتخاب ماموریت":"CHOOSE MISSIONS"),Secondary=atlasMissions?(fa?"فصل‌ها":"CHAPTERS"):(fa?"بایگانی داستان":"STORY ARCHIVE"),CanSecondary=atlasMissions || atlasModel.AllRequiredMissionsCompleted,CanLaunch=atlasMissions?launchMissionButton.interactable:(AtlasChapterButton(atlasChapter)?.interactable??false)});
+            approvedAtlas.Present(new MissionAtlasPresentation
+            {
+                Missions=atlasMissions,Skirmish=false,
+                Heading=atlasMissions?(fa?"کارزار / ":"CAMPAIGN / ")+Chapter(atlasChapter):AtlasWords.Get("choose_chapter","CAMPAIGN / CHOOSE CHAPTER","کارزار / انتخاب فصل"),
+                Navigation=navigation,MissionsOnMap=cards,
+                RegionTitles=new[]{ChapterNumber(atlasChapter)+" · "+Chapter(atlasChapter)},
+                RegionSummaries=new[]{AtlasWords.Complete(chapterCompleted,5)},SelectedRegion=0,
+                Overview=districtAtlasScenes!=null&&districtAtlasScenes.Length>0?districtAtlasScenes[0]:map,Map=map,
+                DetailTitle=atlasMissions?cards[selected].Title:Chapter(atlasChapter),
+                DetailSubtitle=atlasMissions?(fa?"ماموریت ":"MISSION ")+cards[selected].Subtitle+" · "+ChapterNumber(atlasChapter):ChapterNumber(atlasChapter)+" · "+chapterCompleted+"/5",
+                PreviewComic=atlasMissions?cards[selected].Comic:navigation[atlasChapter].Comic,
+                Purpose=atlasMissions?AtlasWords.Brief(AtlasSource(missionBriefingText)):AtlasWords.Get("choose_missions_chapter","Choose missions to continue.","ماموریت‌ها را انتخاب کنید."),
+                Objectives=atlasMissions?AtlasSource(primaryObjectiveText):"",
+                SummaryRows=atlasMissions?System.Array.Empty<MissionAtlasSummaryRow>():progressRows,
+                SummaryHeading=AtlasWords.Get("chapter_progress","CHAPTER PROGRESS","پیشرفت فصل"),
+                Primary=atlasMissions?AtlasSource(launchMissionLabel):AtlasWords.Get("choose_missions","CHOOSE MISSIONS","انتخاب ماموریت"),
+                Secondary=atlasMissions?AtlasWords.Get("chapters","CHAPTERS","فصل‌ها"):AtlasWords.Get("story_archive","STORY ARCHIVE","بایگانی داستان"),
+                CanSecondary=atlasMissions||atlasModel.AllRequiredMissionsCompleted,
+                CanLaunch=atlasMissions?launchMissionButton.interactable:(AtlasChapterButton(atlasChapter)?.interactable??false)
+            });
         }
+        private static int CountAtlasBits(uint value)
+        {int count=0;while(value!=0){count+=(int)(value&1);value>>=1;}return count;}
     }
 }

@@ -427,10 +427,10 @@ namespace Game.UI.Runtime
             };
         }
 
-        private SkirmishBattlefieldState BuildBattlefield()
+        /// <summary>Reads published/earned progress without changing map, scenario, route or preferences.</summary>
+        public SkirmishObjectiveTabState[] ReadObjectiveProgress(string mapId)
         {
             RefreshMedals();
-            string mapId = _selectedMapId ?? string.Empty;
             var tabs = new SkirmishObjectiveTabState[ObjectiveOrder.Length];
             for (int i = 0; i < ObjectiveOrder.Length; i++)
             {
@@ -442,6 +442,15 @@ namespace Game.UI.Runtime
                     WonCount = _medals.CountFor(mapId, ObjectiveOrder[i])
                 };
             }
+
+            return tabs;
+        }
+
+        private SkirmishBattlefieldState BuildBattlefield()
+        {
+            RefreshMedals();
+            string mapId = _selectedMapId ?? string.Empty;
+            var tabs = ReadObjectiveProgress(mapId);
 
             var grid = new SkirmishBattleCardState[ObjectiveOrder.Length * ArmyOrder.Length];
             for (int row = 0; row < ObjectiveOrder.Length; row++)

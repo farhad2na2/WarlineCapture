@@ -18,6 +18,20 @@ namespace Game.Editor
         private static bool sagaScaleRecorded;
         private static bool CaptureNativeSagaMenuScale(QuickCustomScreenView setup)
         {
+            foreach(var text in setup.GetComponentsInChildren<TMPro.TMP_Text>(false))
+                if(text.name=="SeedHelp")
+                {
+                    text.ForceMeshUpdate();
+                    float available=text.rectTransform.rect.height-text.margin.y-text.margin.w;
+                    if(text.renderedHeight>available+1f)
+                    {
+                        ScreenCapture.CaptureScreenshot(LiveTracePath()+".briefing-failed.png");
+                        Debug.LogError("[SagaNativeBriefingReadability] result=Failed font="+text.fontSize+" rendered="+text.renderedHeight+" available="+available+" root="+setup.name);
+                        Finish(true,"nativeBriefingOverflow");
+                        return false;
+                    }
+                    if(!sagaScaleRecorded) Debug.Log("[SagaNativeBriefingReadability] result=Passed font="+text.fontSize+" rendered="+text.renderedHeight+" available="+available);
+                }
             if (sagaScaleRecorded) return true;
             var corners = new Vector3[4];
             float Height(RectTransform rect)

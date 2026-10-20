@@ -167,6 +167,28 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void RuntimeTypographyDoesNotRestoreTheOldLibraryFontSizes()
+        {
+            var description=_view.GetComponentsInChildren<TMP_Text>(true).Single(x=>x.name=="SeedHelp");
+            description.fontSize=30;
+            var other=new GameObject("UnrelatedMenuLabel",typeof(RectTransform)).AddComponent<TextMeshProUGUI>();
+            other.transform.SetParent(_host.transform,false);
+            other.fontSize=24;
+            var typography=_host.AddComponent<MenuTypographyView>();
+            typography.Configure(new TMP_Text[]{description,other});
+            Bind();
+            _view.SelectScenarioId("S002");
+            other.fontSize=42;
+            typeof(MenuTypographyView).GetMethod("LateUpdate",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).Invoke(typography,null);
+            description.GetComponent<V3LocalizedTextBindingView>().ApplyLocalization();
+            Canvas.ForceUpdateCanvases();
+            description.ForceMeshUpdate();
+            Assert.AreEqual(20,description.fontSize,.1f,"The frame's baked 30pt size must not overwrite the measured library size.");
+            Assert.AreEqual(24,other.fontSize,.1f,"Other menus retain the shared typography owner.");
+            Assert.IsTrue(typography.enabled,"RTL and arrow handling remain active.");
+        }
+
+        [Test]
         public void LongPersianBriefingScrollsAtFourByThreeWithoutShrinkingOrCoveringItsText()
         {
             _host.GetComponent<Canvas>().renderMode=RenderMode.WorldSpace;

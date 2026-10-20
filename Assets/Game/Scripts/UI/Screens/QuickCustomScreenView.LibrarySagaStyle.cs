@@ -11,6 +11,10 @@ namespace Game.UI.Runtime
         public void ApplySagaPrefabStyle() => ApplySagaStyle();
         private void ApplySagaStyle()
         {
+            foreach(var typography in GetComponentsInParent<MenuTypographyView>(true))
+                typography.ReleaseFontSizingUnder(transform);
+            foreach(var typography in GetComponentsInChildren<MenuTypographyView>(true))
+                typography.ReleaseFontSizingUnder(transform);
             Color steel = new(.23f, .29f, .31f, 1), top = new(.055f, .085f, .095f, 1), bottom = new(.015f, .035f, .043f, 1);
             foreach (Transform child in GetComponentsInChildren<Transform>(true))
             {

@@ -16,8 +16,8 @@ Actual normal-input Play evidence from attempt 05: 2400×1080 rendered frame, fo
 
 | Gate | Latest verified state |
 | --- | --- |
-| Native EditMode, ledger, access, launch and menu tests | Tests 20: 88 passed, 0 failed, 0 skipped |
-| ARIA plan/control checks | Tests 20: 141 cases passed |
+| Native EditMode, ledger, access, launch and menu tests | Tests 22: 89 passed, 0 failed, 0 skipped |
+| ARIA plan/control checks | Tests 22: 141 cases passed |
 | Dense logical canvas regression | Scale 03 passed EN 20:9 and FA 4:3; actual Play 05 also measured native scale |
 | Full 16 native captures | Final matrix 10 passed all 16; compact EN 4:3 repair and five long-briefing captures also passed |
 | Focused native cue captures | Native 12 passed 5; AP FA 4:3 passed separately |
@@ -42,3 +42,5 @@ The current legal coast layout remains below the handoff’s 0.65–0.70 territo
 ## Broader harness and platform limits
 
 Optional broader run 18 was **failed** (131 passed, 28 failed, 2 skipped), and its original log/XML are preserved. Twenty failures concern Windows filesystem/junction controls or the correctly refused macOS temporary-directory symlink. Eight prefab-free model fixtures also failed because they entered the newer native camera-readiness path. Their setup now explicitly seeds only a ledger simulation, with a separate test proving that the original native initializer still refuses that prefab-free world. Run 19 includes those eight model tests, the refusal test and the 78 native menu/ledger/access tests: 87 passed, 0 failed, 0 skipped. These simulation outcomes never count as native player wins. Windows filesystem coverage remains unverified here; none of its guards was weakened or relabeled as passing.
+
+The live-only typography race is fixed by releasing Skirmish label sizing from `MenuTypographyView` while retaining its RTL/arrow work. Tests 22 exercise its actual late-frame sizing callback, preserve unrelated labels, and pass 89 cases. The native journey now also rejects actual briefing overflow before launch. Final post-fix Play runs are in progress.

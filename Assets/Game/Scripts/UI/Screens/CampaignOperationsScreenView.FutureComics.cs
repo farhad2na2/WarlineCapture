@@ -20,6 +20,7 @@ namespace Game.UI.Runtime
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
                 persian ? "مأموریت‌های ۱ تا ۵ آماده‌اند" : "5 MISSIONS");
+            if (approvedAtlas != null && atlasModel.IsValid) RenderApprovedAtlas();
             // Keep previously available story previews reachable beside playable M01.
             if(selectedChapter==5&&IsChapterFive)
                 for(int index=1;index<5;index++)

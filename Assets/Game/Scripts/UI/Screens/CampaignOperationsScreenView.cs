@@ -210,6 +210,7 @@ namespace Game.UI.Runtime
                 }));
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(index < mission.BestStars);
+            PresentApprovedAtlas(model);
         }
 
         public void ApplyUnavailable()

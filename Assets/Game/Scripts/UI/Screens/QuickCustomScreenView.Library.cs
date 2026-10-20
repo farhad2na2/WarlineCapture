@@ -307,6 +307,7 @@ namespace Game.UI.Runtime
 
         private void PresentBattleLibrary()
         {
+            if (approvedSkirmishAtlas != null) { PresentApprovedSkirmishAtlas(); return; }
             if (!baseAssaultPreset || _libraryPresenting)
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -2169,6 +2170,7 @@ namespace Game.UI.Runtime
 
         private void PresentLaunchTransition(string scenarioId)
         {
+            if(approvedSkirmishAtlas!=null){approvedSkirmishAtlas.ShowLaunching();return;}
             Transform composition = transform.Find("SkirmishSetupComposition");
             if (composition == null)
                 return;

@@ -209,6 +209,7 @@ namespace Game.Editor
                 }
                 ClickVisible(button); RecordAction(action, now); return;
             }
+            if (SessionState.GetBool(ApprovedAtlasJourney,false) && TickApprovedSelection(match, now)) return;
             var ring = GameObject.Find("AriaAssistantPreviewHighlightRuntime");
             if (ring == null || !UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || target.NeedsSelection || target.Moving || target.ExecutingAttack || target.BattleAction == Game.UI.Contracts.UiTutorialBattleAction.Watch) return;
             if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var commands)) return;
@@ -220,6 +221,12 @@ namespace Game.Editor
                 throw new InvalidOperationException("Required world target is offscreen without Show Me.");
             if (CaptureBeforeAction("lesson-" + journeyStep + "-world-" + commands.ActiveCommandMode, now)) return;
             var input = Field<RtsSelectionInputCompositionSystemHelper>(match.MatchBootstrap.SelectionUiCommand, "_inputSystem");
+            if(SessionState.GetBool(ApprovedAtlasJourney,false))
+            {
+                if(approvedMenuTouch.IsBusy)return;
+                if(!approvedMenuTouch.TryGesture(screen,screen,.18f,0,Time.unscaledTime))throw new InvalidOperationException("Campaign world touch rejected");
+                CaptureJourney("lesson-"+journeyStep+"-world-touch");RecordAction(worldAction,now);return;
+            }
             bool queued = commands.ActiveCommandMode switch
             {
                 TacticalCommandMode.Attack => input.QueueAttackCommandRequest(screen, true, Time.frameCount),
@@ -275,7 +282,12 @@ namespace Game.Editor
                     }
                 if (!found) throw new InvalidOperationException("Visible guide points to an occluded button: " + button.name);
             }
-            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerClickHandler);
+            if(SessionState.GetBool(ApprovedAtlasJourney,false))
+            {
+                if(approvedMenuTouch.IsBusy)return;
+                if(!approvedMenuTouch.TryGesture(pointer.position,pointer.position,.18f,0,Time.unscaledTime))throw new InvalidOperationException("Campaign visible-control touch rejected");
+            }
+            else ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerClickHandler);
         }
         private static void CaptureJourney(string state) => ScreenCapture.CaptureScreenshot($"{Output}/{CapturePrefix}-journey-{state}.png");
         private static bool CaptureBeforeAction(string action, double now)

@@ -67,10 +67,15 @@ namespace Game.UI.Runtime
                 PresentResumeFailure();
         }
 
-        private void PresentResumeFailure() => UiLocalizedText.Set(scenarioDescription,
-            GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode
+        private void PresentResumeFailure()
+        {
+            string message=GameLocalization.CurrentLocaleCode==GameLocalization.PersianLocaleCode
                 ? "ادامهٔ نبرد ممکن نشد. دوباره تلاش کن یا یک نبرد جدید شروع کن."
-                : "Could not continue this match. Try again or start a new match.");
+                : "Could not continue this match. Try again or start a new match.";
+            UiLocalizedText.Set(scenarioDescription,message);
+            if(approvedSkirmishAtlas!=null)approvedSkirmishAtlas.ShowNotice(message);
+        }
+
 
         private void Awake()
         {
@@ -482,7 +487,7 @@ namespace Game.UI.Runtime
                 }
             if (TryFindEntry(_selectedScenarioId, out var selected))
                 PresentCompiledBriefing(selected, UiShellRuntimeGateway.Localization.IsRightToLeft);
-            if (baseAssaultPreset)
+            if (baseAssaultPreset && approvedSkirmishAtlas == null)
                 FitSagaMissionSizeLabels();
 
         }

@@ -364,6 +364,8 @@ namespace Game.Editor
 
         private static bool AdvancePresentedLibraryNavigation(Button[] buttons)
         {
+            foreach(var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                if(setup.ApprovedAtlas!=null)return AdvanceApprovedAtlasNavigation(setup,buttons);
             if (!HasNewLibraryChrome(buttons))
                 return false;
             ResolveLibraryTarget();
@@ -420,6 +422,32 @@ namespace Game.Editor
                 menuStep = 4;
             }
 
+            return true;
+        }
+
+        private static bool AdvanceApprovedAtlasNavigation(QuickCustomScreenView setup,Button[] buttons)
+        {
+            ResolveLibraryTarget();var atlas=setup.ApprovedAtlas;
+            if(!atlas.ShowingMissions)
+            {
+                if(menuLibraryBeat==0)
+                {
+                    var map=FindNamed(buttons,SkirmishLibraryControlNames.TheaterPin(menuLibraryMap));
+                    if(map!=null&&MenuTap(map))menuLibraryBeat=1;
+                }
+                else if(MenuTap(atlas.PrimaryButton))menuLibraryBeat=2;
+                return true;
+            }
+            if(setup.LibraryViewModel.Battlefield.MapId!=menuLibraryMap)
+            {if(MenuTap(atlas.BackButton))menuLibraryBeat=0;return true;}
+            if(menuLibraryBeat<3)
+            {
+                var tab=FindNamed(buttons,SkirmishLibraryControlNames.ObjectiveTab(menuLibraryObjective));
+                if(tab!=null&&MenuTap(tab))menuLibraryBeat=3;
+                return true;
+            }
+            var card=FindNamed(buttons,SkirmishLibraryControlNames.BattleCard(catalogId));
+            if(card!=null&&MenuTap(card)){menuStep=4;Debug.Log("[ApprovedAtlasNativeJourney] selection="+catalogId+" input=Touch stages=Map,Mission");}
             return true;
         }
 

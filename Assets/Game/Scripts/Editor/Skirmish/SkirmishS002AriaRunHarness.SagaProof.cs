@@ -18,6 +18,7 @@ namespace Game.Editor
         private static bool sagaScaleRecorded;
         private static bool CaptureNativeSagaMenuScale(QuickCustomScreenView setup)
         {
+            if(setup.ApprovedAtlas!=null)return CaptureApprovedAtlasScale(setup);
             foreach(var text in setup.GetComponentsInChildren<TMPro.TMP_Text>(false))
                 if(text.name=="SeedHelp")
                 {
@@ -63,6 +64,19 @@ namespace Game.Editor
             return true;
         }
 
+        private static bool CaptureApprovedAtlasScale(QuickCustomScreenView setup)
+        {
+            if(sagaScaleRecorded)return true;
+            var atlas=setup.ApprovedAtlas;var canvas=atlas.GetComponentInParent<Canvas>().rootCanvas;var camera=canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:canvas.worldCamera;
+            float Height(RectTransform r){var corners=new Vector3[4];r.GetWorldCorners(corners);return Mathf.Abs(RectTransformUtility.WorldToScreenPoint(camera,corners[1]).y-RectTransformUtility.WorldToScreenPoint(camera,corners[0]).y);}
+            float command=Mathf.Min(Height(atlas.BackButton.transform as RectTransform),Height(atlas.PrimaryButton.transform as RectTransform));
+            float card=0;foreach(var region in atlas.Regions)foreach(var item in region.Cards)if(item.Rect.name==SkirmishLibraryControlNames.BattleCard(catalogId))card=Height(item.Rect);
+            if(command/Screen.height<.08f || card/Screen.height<.12f)throw new InvalidOperationException("Native atlas targets are too small");
+            string prefix=LiveTracePath()+".menu-scale";ScreenCapture.CaptureScreenshot(prefix+".png");
+            File.WriteAllText(prefix+".json",new JObject{["presentation"]="approved-map-cards",["actualPlayMode"]=true,["selectedScenario"]=catalogId,["commandHeightPixels"]=command,["missionCardHeightPixels"]=card,["screenWidth"]=Screen.width,["screenHeight"]=Screen.height}.ToString());
+            sagaScaleRecorded=true;Debug.Log("[ApprovedAtlasNativeScale] result=Passed command="+command+" card="+card+" input=Touch");return true;
+        }
+
         private static SkirmishDifficultyId terminalSagaDifficulty;
         private static bool ObserveSagaResultMedal(EntityManager em, Entity session, in SkirmishMatchState match)
         {
@@ -104,10 +118,21 @@ namespace Game.Editor
             foreach (var node in selected.GetComponentsInChildren<Transform>(false))
                 if (node.name.StartsWith("EarnedRibbon_", StringComparison.Ordinal) && node.parent.name == SkirmishLibraryControlNames.BattleCard(catalogId))
                     ribbon = true;
+            bool atlasCardMedal=false;
+            if(selected.ApprovedAtlas!=null)
+            {
+                foreach(var region in selected.ApprovedAtlas.Regions)foreach(var card in region.Cards)
+                    if(card.Rect.name==SkirmishLibraryControlNames.BattleCard(catalogId))
+                    {
+                        var icon=card.MedalIcons[(int)terminalSagaDifficulty-1];
+                        atlasCardMedal=icon.gameObject.activeInHierarchy && icon.sprite==Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true,terminalSagaDifficulty));
+                    }
+                ribbon=atlasCardMedal;
+            }
             if (!ribbon || selected.Library.Theater.OverallWonCount < 1)
                 throw new InvalidOperationException("Returned saga stop/theatre totals did not show the earned medal");
-            File.WriteAllText(prefix + "-saga-medal-proof.json", new JObject { ["candidateSourceHash"] = UnityEditor.SessionState.GetString(CandidateHashKey, ""), ["producerPid"] = System.Diagnostics.Process.GetCurrentProcess().Id, ["locale"] = locale, ["scenario"] = catalogId, ["difficulty"] = terminalSagaDifficulty.ToString(), ["outcome"] = "Victory", ["resultFirstMedalShown"] = true, ["returnedBattlefield"] = selected.Library.Battlefield.MapId, ["returnedScenario"] = selected.SelectedScenarioId, ["nativeStopRibbonVisible"] = true, ["nativeBriefingMedalRefreshed"] = true, ["diskReloadHasMedal"] = true, ["profileRoot"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"), ["processRestartAcceptance"] = "Pending" }.ToString());
-            Debug.Log("[SagaNativeMedalJourney] result=Passed nativeResult=1 returnSelection=1 stopRibbon=1 diskReload=1 processRestart=Pending");
+            File.WriteAllText(prefix + "-saga-medal-proof.json", new JObject { ["candidateSourceHash"] = UnityEditor.SessionState.GetString(CandidateHashKey, ""), ["producerPid"] = System.Diagnostics.Process.GetCurrentProcess().Id, ["locale"] = locale, ["scenario"] = catalogId, ["difficulty"] = terminalSagaDifficulty.ToString(), ["outcome"] = "Victory", ["resultFirstMedalShown"] = true, ["returnedBattlefield"] = selected.Library.Battlefield.MapId, ["returnedScenario"] = selected.SelectedScenarioId, ["nativeStopRibbonVisible"] = selected.ApprovedAtlas==null, ["nativeMissionCardMedalVisible"] = atlasCardMedal, ["presentation"] = selected.ApprovedAtlas!=null?"approved-map-cards":"saga", ["nativeBriefingMedalRefreshed"] = true, ["diskReloadHasMedal"] = true, ["profileRoot"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"), ["processRestartAcceptance"] = "Pending" }.ToString());
+            Debug.Log("[SagaNativeMedalJourney] result=Passed nativeResult=1 returnSelection=1 earnedCardMedal=1 diskReload=1 processRestart=Pending");
         }
     }
 }

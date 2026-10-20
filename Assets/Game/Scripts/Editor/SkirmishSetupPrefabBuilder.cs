@@ -173,6 +173,7 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
+            ApprovedMissionAtlasBuilder.BuildSkirmish();
             _sessionPrefabHash = HashPrefabFile();
             _sessionPassed = true;
             Debug.Log("[SkirmishSetupPrefabBuilder] result=Passed v3=True reference=1672x941 responsive=True");

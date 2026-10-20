@@ -248,6 +248,7 @@ namespace Game.UI.Runtime
 
         private void OnLibraryLayoutApplied()
         {
+            if (approvedSkirmishAtlas != null) return;
             if (_libraryPresenting || _refittingTheatre)
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;

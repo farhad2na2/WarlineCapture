@@ -41,7 +41,7 @@ namespace Game.Editor
             int priorPid = (int?)sagaRestartPrior["producerPid"] ?? 0;
             if (priorPid <= 0 || priorPid == System.Diagnostics.Process.GetCurrentProcess().Id ||
                 (string)sagaRestartPrior["outcome"] != "Victory" || (bool?)sagaRestartPrior["diskReloadHasMedal"] != true ||
-                (bool?)sagaRestartPrior["nativeStopRibbonVisible"] != true)
+                ((bool?)sagaRestartPrior["nativeStopRibbonVisible"] != true && (bool?)sagaRestartPrior["nativeMissionCardMedalVisible"] != true))
                 throw new InvalidOperationException("A distinct completed native victory process is required.");
             catalogId = (string)sagaRestartPrior["scenario"];
             if (catalogId != "S002") throw new InvalidOperationException("This restart probe is scoped to S002.");
@@ -114,13 +114,21 @@ namespace Game.Editor
                 var ledger = new SkirmishMedalLedger(SaveService.CreateDefault().LoadProfile().skirmishMedals, SkirmishBattleCatalogConfig.Load().Entries);
                 var mask = terminalSagaDifficulty switch { SkirmishDifficultyId.Recruit => SkirmishMedalMask.Recruit, SkirmishDifficultyId.Regular => SkirmishMedalMask.Regular, SkirmishDifficultyId.Veteran => SkirmishMedalMask.Veteran, _ => SkirmishMedalMask.Commander };
                 bool ribbon = setup.GetComponentsInChildren<Transform>(false).Any(x => x.name.StartsWith("EarnedRibbon_", StringComparison.Ordinal) && x.parent.name == SkirmishLibraryControlNames.BattleCard(catalogId));
+                bool cardMedal=false;
+                if(setup.ApprovedAtlas!=null)
+                {
+                    foreach(var region in setup.ApprovedAtlas.Regions)foreach(var card in region.Cards)
+                        if(card.Rect.name==SkirmishLibraryControlNames.BattleCard(catalogId))
+                        {var icon=card.MedalIcons[(int)terminalSagaDifficulty-1];cardMedal=icon.gameObject.activeInHierarchy && icon.sprite==Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true,terminalSagaDifficulty));}
+                    ribbon=cardMedal;
+                }
                 if (!ledger.Has(catalogId, terminalSagaDifficulty) || (setup.Library.Briefing.Medals & mask) == 0 || !ribbon || setup.Library.Theater.OverallWonCount < 1)
                     throw new InvalidOperationException("Cold profile/UI medal, ribbon or theatre totals did not persist.");
                 if (menuTouch.CompletedGestures < 2 || menuTouch.UnexpectedSamples != 0 || menuTouch.PhysicalInterventions != 0)
                     throw new InvalidOperationException("Native restart navigation input was not clean.");
                 string prefix = sagaRestartPath + ".process-restart";
                 ScreenCapture.CaptureScreenshot(prefix + ".png");
-                File.WriteAllText(prefix + ".json", new JObject { ["result"] = "Passed", ["priorProof"] = sagaRestartPath, ["priorProofSha256"] = sagaRestartSha, ["priorPid"] = sagaRestartPrior["producerPid"], ["restartPid"] = System.Diagnostics.Process.GetCurrentProcess().Id, ["candidateSourceHash"] = sagaRestartHash, ["locale"] = locale, ["scenario"] = catalogId, ["nativeTouchGestures"] = menuTouch.CompletedGestures, ["diskMedal"] = true, ["nativeRibbon"] = true, ["nativeBriefingMedal"] = true, ["profileSeeded"] = false }.ToString());
+                File.WriteAllText(prefix + ".json", new JObject { ["result"] = "Passed", ["priorProof"] = sagaRestartPath, ["priorProofSha256"] = sagaRestartSha, ["priorPid"] = sagaRestartPrior["producerPid"], ["restartPid"] = System.Diagnostics.Process.GetCurrentProcess().Id, ["candidateSourceHash"] = sagaRestartHash, ["locale"] = locale, ["scenario"] = catalogId, ["nativeTouchGestures"] = menuTouch.CompletedGestures, ["diskMedal"] = true, ["nativeRibbon"] = setup.ApprovedAtlas==null, ["nativeMissionCardMedal"] = cardMedal, ["nativeBriefingMedal"] = true, ["profileSeeded"] = false }.ToString());
                 EndSagaRestart(true, "coldProfileNativeMenuMedal");
             }
             catch (Exception e) { Debug.LogException(e); EndSagaRestart(false, "nativeMenuProof"); }

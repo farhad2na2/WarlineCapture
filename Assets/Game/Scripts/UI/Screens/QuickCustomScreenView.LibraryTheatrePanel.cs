@@ -661,40 +661,39 @@ namespace Game.UI.Runtime
             }
 
             // v47d (v97: fa 'پایگاه' under BA ran into the BT icon on the row below at every ratio): rows are sized from
-            // the captions' measured ink, not their 26 px box. Noto Arabic sits deeper than the box (dots under پ/ی), so
-            // a row is icon + caption offset + caption ink depth + gap; the icon gives way first (32 down to 16).
+            // the captions' measured ink, not their 26 px box.
+            // v49 (Game PM: fa captions sat ~2x further below their icons than en): Noto Arabic's line box (the 1.65 box
+            // FitArabicLineBox assumes) puts the first line's ink much lower under a TopRight rect top than the Latin
+            // font does under TopLeft. Each caption is therefore placed by its own measured ink top, at the size it
+            // will be drawn at, so icon bottom -> caption ink top is ObjectiveCaptionInkGap in both locales.
             var captionTexts = new List<TMP_Text>(captions.Count);
-            float captionDepth = captionH; // ink below the caption box top
-            float captionRise = 0f;        // ink above the caption box top (would touch its own icon)
+            var captionInkTop = new List<float>(captions.Count);
             float captionReach = 0f;       // largest font size the captions can be drawn at
+            float inkBelowIcon = captionH; // deepest caption ink below its icon's bottom
             for (int i = 0; i < captions.Count; i++)
             {
                 TMP_Text text = captions[i].GetComponent<TMP_Text>();
                 captionTexts.Add(text);
-                if (TextInkExtent(text, out float rise, out float depth))
+                float inkTop = 0f;
+                if (CaptionInkAtReach(text, out float top, out float bottom, out float reach))
                 {
-                    // v47e (v47 run: laid out at 12.3 pt, drawn at 22 pt): the last panel rebuild runs before the shared
-                    // text pass lifts every Subtitle to the library floor (FinishLibraryText -> RelaxLibraryText, min
-                    // ReferenceSubtitleFloor / LibraryFontFloor). Glyph ink scales with size, so size the rows for the
-                    // largest size this caption can reach, whatever pass comes last.
-                    float now = Mathf.Max(1f, text.fontSize);
-                    float reach = Mathf.Max(now, Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor()));
-                    if (text.enableAutoSizing)
-                        reach = Mathf.Max(reach, text.fontSizeMax);
+                    // v47e: ink measured at the largest size this caption can reach (the shared text pass lifts every
+                    // Subtitle to the library floor after a panel rebuild), whatever pass comes last.
                     captionReach = Mathf.Max(captionReach, reach);
-                    captionDepth = Mathf.Max(captionDepth, depth * reach / now);
-                    captionRise = Mathf.Max(captionRise, rise * reach / now);
+                    inkTop = top;
+                    inkBelowIcon = Mathf.Max(inkBelowIcon, ObjectiveCaptionInkGap + bottom - top);
                 }
+
+                captionInkTop.Add(inkTop);
             }
 
-            float captionOffset = Mathf.Max(2f, captionRise + ObjectiveHeadingGap);
-            float needBelowIcon = captionOffset + captionDepth + ObjectiveHeadingGap;
+            float needBelowIcon = inkBelowIcon + ObjectiveHeadingGap;
             float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
             float limit = panelH - ObjectiveBottomPad;
             int rows = Mathf.Max(1, (ids.Length + 1) / 2);
-            // v48 (Game PM: fa icons match en): the icon is en's 28 px in both locales and the caption sits under it
-            // exactly as in en. The block was given its measured height by PlaceTheatreLowerBlock (plus any height the
-            // grid left, up to ObjectiveSpreadMax a row), so the pitch is what the live layout leaves, never less than need.
+            // v48 (Game PM: fa icons match en): the icon is en's 28 px in both locales. The block was given its measured
+            // height by PlaceTheatreLowerBlock (plus any height the grid left, up to ObjectiveSpreadMax a row), so the
+            // pitch is what the live layout leaves, never less than need.
             float icon = ObjectiveIconSize;
             float rowNeed = Mathf.Max(DetailObjectiveRowHeight, icon + needBelowIcon);
             float pitch = Mathf.Min((limit - rowsTop) / rows, rowNeed + ObjectiveSpreadMax);
@@ -712,7 +711,11 @@ namespace Game.UI.Runtime
                 }
 
                 if (i < captions.Count)
-                    PlaceTopLeft(captions[i], captions[i].anchoredPosition.x, top + icon + captionOffset, captions[i].sizeDelta.x, captionH);
+                {
+                    // Rect top so that the ink top lands ObjectiveCaptionInkGap under the icon (ink may rise above the rect).
+                    float boxTop = top + icon + ObjectiveCaptionInkGap - captionInkTop[i];
+                    PlaceTopLeft(captions[i], captions[i].anchoredPosition.x, boxTop, captions[i].sizeDelta.x, captionH);
+                }
             }
 
             // Re-measure where the ink actually landed: every caption must clear the next row's icons and the panel pad.
@@ -738,13 +741,82 @@ namespace Game.UI.Runtime
                 " inkBottom=" + inkBottom.ToString("0.0") + " boxBottom=" + boxBottom.ToString("0.0") +
                 " rowsTop=" + rowsTop.ToString("0.0") + " pitch=" + pitch.ToString("0.0") + " icon=" + icon.ToString("0.0") +
                 " captionFont=" + (captionTexts.Count > 0 && captionTexts[0] != null ? captionTexts[0].fontSize.ToString("0.0") : "-") +
-                " captionInk=" + captionRise.ToString("0.0") + "/" + captionDepth.ToString("0.0") +
+                " captionInk=" + ObjectiveCaptionInkGap.ToString("0.0") + "/" + inkBelowIcon.ToString("0.0") +
                 " captionReach=" + captionReach.ToString("0.0") + " captionBox=" + captionH.ToString("0") + " captionClear=" + worstClear.ToString("0.0") +
                 " panelH=" + panelH.ToString("0") + " fits=" + (fits ? "1" : "0") + " locale=" + (fa ? "fa-IR" : "en");
             if (fits)
                 Debug.Log(line);
             else
                 Debug.LogWarning(line);
+            LogTheatreCaptionGaps(ids, icons, captionTexts, fa);
+        }
+
+        /// <summary>v49: icon rect bottom -> caption glyph ink top, the same target in en and fa at every ratio.</summary>
+        private const float ObjectiveCaptionInkGap = 6f;
+
+        /// <summary>v49: en's measured gaps by "ratio/objective", so the fa pass of the same ratio logs its delta to en.</summary>
+        private static readonly Dictionary<string, float> TheatreEnCaptionGaps = new Dictionary<string, float>();
+
+        /// <summary>
+        /// v49: logs [TheatreCaptionGap] obj= gap= enGap= delta= locale= ratio= for each objective. gap is measured from the
+        /// placed icon rect bottom to the caption's glyph ink top at the size the caption will be drawn at. In fa, enGap
+        /// is en's measured gap for the same ratio when en has been laid out in this session (src=en), else the shared
+        /// target (src=target). |delta| > 2 logs a warning (ok=0); the Flow step asserts it on the live panel.
+        /// </summary>
+        private void LogTheatreCaptionGaps(string[] ids, List<RectTransform> icons, List<TMP_Text> captions, bool fa)
+        {
+            string ratio = TheatreRatioLabel();
+            string locale = fa ? "fa-IR" : "en";
+            for (int i = 0; i < ids.Length && i < captions.Count; i++)
+            {
+                RectTransform iconRect = icons[i];
+                TMP_Text text = captions[i];
+                if (iconRect == null || text == null || !CaptionInkAtReach(text, out float inkTop, out _, out _))
+                    continue;
+                float iconBottom = -iconRect.anchoredPosition.y + iconRect.sizeDelta.y;
+                float gap = (-text.rectTransform.anchoredPosition.y + inkTop) - iconBottom;
+                string key = ratio + "/" + ids[i];
+                string src = "en";
+                float enGap = gap;
+                if (!fa)
+                    TheatreEnCaptionGaps[key] = gap;
+                else if (!TheatreEnCaptionGaps.TryGetValue(key, out enGap))
+                {
+                    enGap = ObjectiveCaptionInkGap;
+                    src = "target";
+                }
+
+                float delta = gap - enGap;
+                bool ok = Mathf.Abs(delta) <= 2f;
+                string line = "[TheatreCaptionGap] obj=" + ids[i] + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0") +
+                    " delta=" + delta.ToString("0.0") + " locale=" + locale + " ratio=" + ratio + " src=" + src + " ok=" + (ok ? "1" : "0");
+                if (ok)
+                    Debug.Log(line);
+                else
+                    Debug.LogWarning(line);
+            }
+        }
+
+        /// <summary>
+        /// v49: a caption's glyph ink top and bottom below its rect top (top may be negative when ink rises above it),
+        /// scaled to the largest size the caption can reach (the shared text pass lifts Subtitles to the library floor;
+        /// captions are top-aligned, so ink offsets scale with the size).
+        /// </summary>
+        private bool CaptionInkAtReach(TMP_Text text, out float inkTop, out float inkBottom, out float reach)
+        {
+            inkTop = 0f;
+            inkBottom = 0f;
+            reach = 0f;
+            if (!TextInkExtent(text, out _, out float depth, out float drop))
+                return false;
+            float now = Mathf.Max(1f, text.fontSize);
+            reach = Mathf.Max(now, Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor()));
+            if (text.enableAutoSizing)
+                reach = Mathf.Max(reach, text.fontSizeMax);
+            float scale = reach / now;
+            inkTop = drop * scale;
+            inkBottom = depth * scale;
+            return true;
         }
 
         private const float ObjectiveIconSize = 28f;   // v48: en's objective icon; fa matches it
@@ -768,8 +840,8 @@ namespace Game.UI.Runtime
             FitDetailLine(heading, 16f, 24f);
             float headingTop = -headingRect.anchoredPosition.y;
             float headingDepth = Mathf.Max(headingRect.sizeDelta.y, TextInkBottom(panel, heading) - headingTop) + ObjectiveHeadingGap;
-            MeasureObjectiveCaptions(panel, headingRect, out float captionOffset, out float captionDepth);
-            float rowNeed = Mathf.Max(DetailObjectiveRowHeight, ObjectiveIconSize + captionOffset + captionDepth + ObjectiveHeadingGap);
+            float inkBelowIcon = MeasureObjectiveCaptions(panel, headingRect);
+            float rowNeed = Mathf.Max(DetailObjectiveRowHeight, ObjectiveIconSize + inkBelowIcon + ObjectiveHeadingGap);
             float panelH = panel.rect.height > 1f ? panel.rect.height : panel.sizeDelta.y;
             float target = panelH - ObjectiveBottomPad - ObjectiveRows * rowNeed - headingDepth;
             float delta = target - headingTop;
@@ -805,40 +877,36 @@ namespace Game.UI.Runtime
             }
         }
 
-        /// <summary>v48: caption offset under the icon and ink depth at the caption's reachable size (as in LayoutTheatreObjectives).</summary>
-        private void MeasureObjectiveCaptions(RectTransform panel, RectTransform headingRect, out float captionOffset, out float captionDepth)
+        /// <summary>v49: deepest caption ink below its icon when its ink top sits ObjectiveCaptionInkGap under it (as LayoutTheatreObjectives).</summary>
+        private float MeasureObjectiveCaptions(RectTransform panel, RectTransform headingRect)
         {
-            float rise = 0f;
-            captionDepth = 26f;
+            float below = 26f;
             int found = 0;
             for (int i = headingRect.GetSiblingIndex() + 1; i < panel.childCount && found < SkirmishBattleLibraryArt.ObjectiveIds.Length; i++)
             {
                 if (!(panel.GetChild(i) is RectTransform child) || child.name != "Subtitle")
                     continue;
                 found++;
-                captionDepth = Mathf.Max(captionDepth, child.sizeDelta.y);
-                TMP_Text text = child.GetComponent<TMP_Text>();
-                if (!TextInkExtent(text, out float r, out float d))
-                    continue;
-                float now = Mathf.Max(1f, text.fontSize);
-                float reach = Mathf.Max(now, Mathf.Max(LibraryFontFloor, ReferenceSubtitleFloor()));
-                if (text.enableAutoSizing)
-                    reach = Mathf.Max(reach, text.fontSizeMax);
-                captionDepth = Mathf.Max(captionDepth, d * reach / now);
-                rise = Mathf.Max(rise, r * reach / now);
+                below = Mathf.Max(below, child.sizeDelta.y);
+                if (CaptionInkAtReach(child.GetComponent<TMP_Text>(), out float top, out float bottom, out _))
+                    below = Mathf.Max(below, ObjectiveCaptionInkGap + bottom - top);
             }
 
-            captionOffset = Mathf.Max(2f, rise + ObjectiveHeadingGap);
+            return below;
         }
 
         /// <summary>
         /// v47d: a label's ink relative to its own rect top: rise = ink above the top edge (>= 0), depth = lowest glyph
         /// quad below the top edge. Glyph quads include TMP's descender dots, which is what the overlap check reads.
         /// </summary>
-        private static bool TextInkExtent(TMP_Text text, out float rise, out float depth)
+        private static bool TextInkExtent(TMP_Text text, out float rise, out float depth) => TextInkExtent(text, out rise, out depth, out _);
+
+        /// <summary>v49: as above, plus drop = the highest glyph quad's top below the rect top (negative when it rises above).</summary>
+        private static bool TextInkExtent(TMP_Text text, out float rise, out float depth, out float drop)
         {
             rise = 0f;
             depth = 0f;
+            drop = float.MaxValue;
             if (text == null || string.IsNullOrWhiteSpace(text.text) || !text.gameObject.activeInHierarchy)
                 return false;
             text.ForceMeshUpdate();
@@ -854,8 +922,11 @@ namespace Game.UI.Runtime
                 any = true;
                 rise = Mathf.Max(rise, c.topRight.y - top);
                 depth = Mathf.Max(depth, top - c.bottomLeft.y);
+                drop = Mathf.Min(drop, top - c.topRight.y);
             }
 
+            if (!any)
+                drop = 0f;
             return any;
         }
 

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Game.UI.Runtime;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -15,6 +16,8 @@ namespace Game.Editor
     /// real -> Battlefield, Map layout, that district, that battle selected; locked -> CardLocked heard, state unchanged;
     /// +N -> Battlefield, Grid layout, that district. Any miss throws, which fails the flow with the reason.
     /// Hosted by one hook call in SkirmishBattleLibraryFlowCapture.RunLocale.
+    /// v49: before the taps, measures the objective block on the live panel (icon rect bottom -> caption glyph ink top
+    /// for each objective) and fails fa if any gap differs from en's (same run, en first) by more than 2 px.
     /// </summary>
     public static class SkirmishTheatreGridTapFlow
     {
@@ -23,6 +26,10 @@ namespace Game.Editor
         private const string TilePrefix = "TheatreBattle_";
         private const string MoreName = "MoreBattles";
         private static readonly string[] PreferredDistricts = { "IB", "DB" };
+        private static readonly string[] ObjectiveIds = SkirmishBattleLibraryArt.ObjectiveIds;
+        private const float CaptionGapTolerance = 2f;
+        private const float ObjectiveIconSize = 28f;
+        private static readonly Dictionary<string, float> EnCaptionGaps = new Dictionary<string, float>();
 
         public static void Run(GameObject instance, QuickCustomScreenView view, string locale)
         {
@@ -41,6 +48,10 @@ namespace Game.Editor
             try
             {
                 string district = PickDistrict(instance, view, out string realId, out string lockedId);
+
+                // 0. Objective captions: icon -> caption ink gap matches en.
+                Reopen(view, district);
+                CheckCaptionGaps(instance, district, locale);
 
                 // 1. Real tile.
                 Reopen(view, district);
@@ -132,6 +143,98 @@ namespace Game.Editor
             }
 
             throw new InvalidOperationException("[TheatreGridTapFlow] result=Failed no district shows a real tile, a locked tile and +N: " + string.Join(" ", seen));
+        }
+
+        /// <summary>
+        /// v49: on the live theatre panel, gap = caption glyph ink top - ObjectiveType_<id> rect bottom (panel space), for
+        /// BA/FC/BT/CE (captions are the Subtitle labels after ObjectiveHeading, in that order). en records its gaps;
+        /// fa fails if en was not measured, an icon is not 28 px, or |gap - enGap| > 2 px.
+        /// </summary>
+        private static void CheckCaptionGaps(GameObject instance, string district, string locale)
+        {
+            RectTransform panel = null;
+            foreach (Transform t in instance.GetComponentsInChildren<Transform>(false))
+            {
+                if (t.name == PanelName)
+                {
+                    panel = t as RectTransform;
+                    break;
+                }
+            }
+
+            Check(panel != null, "no " + PanelName + " for the caption gap check", locale);
+            Transform heading = panel.Find("ObjectiveHeading");
+            Check(heading != null, "no ObjectiveHeading for the caption gap check", locale);
+            var captions = new List<TMP_Text>();
+            for (int i = heading.GetSiblingIndex() + 1; i < panel.childCount && captions.Count < ObjectiveIds.Length; i++)
+            {
+                Transform child = panel.GetChild(i);
+                if (child.name == "Subtitle")
+                    captions.Add(child.GetComponent<TMP_Text>());
+            }
+
+            Check(captions.Count == ObjectiveIds.Length, "found " + captions.Count + " objective captions, expected " + ObjectiveIds.Length, locale);
+            bool en = locale != "fa-IR";
+            if (en)
+                EnCaptionGaps.Clear();
+            var bad = new List<string>();
+            for (int i = 0; i < ObjectiveIds.Length; i++)
+            {
+                string id = ObjectiveIds[i];
+                var icon = panel.Find("ObjectiveType_" + id) as RectTransform;
+                Check(icon != null, "no ObjectiveType_" + id, locale);
+                Check(Mathf.Abs(icon.rect.height - ObjectiveIconSize) <= 0.5f, "ObjectiveType_" + id + " is " + icon.rect.height.ToString("0.0") + " px, expected 28", locale);
+                Check(InkTop(panel, captions[i], out float inkTop), "caption under ObjectiveType_" + id + " has no visible ink", locale);
+                float gap = inkTop - RectBottom(panel, icon);
+                float enGap = gap;
+                if (en)
+                    EnCaptionGaps[id] = gap;
+                else
+                    Check(EnCaptionGaps.TryGetValue(id, out enGap), "no en caption gap recorded for " + id + " (en must run first)", locale);
+                float delta = gap - enGap;
+                bool ok = Mathf.Abs(delta) <= CaptionGapTolerance;
+                Debug.Log("[TheatreGridTapFlow] captionGap obj=" + id + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0") +
+                    " delta=" + delta.ToString("0.0") + " font=" + captions[i].fontSize.ToString("0.0") + " district=" + district + " ok=" + (ok ? 1 : 0) + " locale=" + locale);
+                if (!ok)
+                    bad.Add(id + " gap=" + gap.ToString("0.0") + " enGap=" + enGap.ToString("0.0"));
+            }
+
+            Check(bad.Count == 0, "caption gap differs from en by more than " + CaptionGapTolerance.ToString("0") + " px: " + string.Join(", ", bad), locale);
+        }
+
+        /// <summary>Distance from the panel's top edge down to the rect's bottom edge.</summary>
+        private static float RectBottom(RectTransform panel, RectTransform rect)
+        {
+            var corners = new Vector3[4];
+            rect.GetWorldCorners(corners);
+            float lowest = float.MaxValue;
+            for (int i = 0; i < 4; i++)
+                lowest = Mathf.Min(lowest, panel.InverseTransformPoint(corners[i]).y);
+            return panel.rect.yMax - lowest;
+        }
+
+        /// <summary>Distance from the panel's top edge down to the highest visible glyph quad of the label.</summary>
+        private static bool InkTop(RectTransform panel, TMP_Text text, out float top)
+        {
+            top = 0f;
+            if (text == null || string.IsNullOrWhiteSpace(text.text) || !text.gameObject.activeInHierarchy)
+                return false;
+            text.ForceMeshUpdate();
+            TMP_TextInfo info = text.textInfo;
+            int count = info != null && info.characterInfo != null ? Mathf.Min(info.characterCount, info.characterInfo.Length) : 0;
+            float highest = float.MinValue;
+            for (int i = 0; i < count; i++)
+            {
+                TMP_CharacterInfo c = info.characterInfo[i];
+                if (!c.isVisible)
+                    continue;
+                highest = Mathf.Max(highest, panel.InverseTransformPoint(text.rectTransform.TransformPoint(c.topRight)).y);
+            }
+
+            if (highest == float.MinValue)
+                return false;
+            top = panel.rect.yMax - highest;
+            return true;
         }
 
         private static void Reopen(QuickCustomScreenView view, string district)

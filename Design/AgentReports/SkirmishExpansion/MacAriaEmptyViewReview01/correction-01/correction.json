@@ -1,0 +1,168 @@
+{
+  "kind": "HistoricalReplayCorrection_PreserveOriginalFailure",
+  "originalCommit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
+  "originalEvidence": [
+    {
+      "commit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
+      "path": "Design/AgentReports/SkirmishExpansion/MacAriaEmptyViewReview01/manifest.json",
+      "bytes": 1549,
+      "sha256": "bfa43f5b096c735ec26a2ab6d5b506531ab7981bb93a54b16f6e7654b6eea452"
+    },
+    {
+      "commit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
+      "path": "Design/AgentReports/SkirmishExpansion/MacAriaEmptyViewReview01/verify.py",
+      "bytes": 3620,
+      "sha256": "96d20867b44ad9608e51e2aa26f9b0030ce2e19d490caa8d1f7f099baa4f5bbd"
+    },
+    {
+      "commit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
+      "path": "Design/AgentReports/SkirmishExpansion/MacAriaEmptyViewReview01/source-pins.json",
+      "bytes": 14924,
+      "sha256": "6a2819ea867e393601d99d52b336a9eee54407cb91e11bd12c384ee0a6e29f1d"
+    },
+    {
+      "commit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
+      "path": "Design/AgentReports/SkirmishExpansion/MacAriaEmptyViewReview01/validation.log",
+      "bytes": 715,
+      "sha256": "98eddfd844901906614a07af8c28daa391524623654c91618988ae79fa6ca12e"
+    }
+  ],
+  "WindowsOriginalFailure": {
+    "attribution": "Direct coordinator report; raw log not transferred or read by Mac",
+    "receiptDirectory": "Logs/SkirmishProduction/Offline/MacAriaEmptyViewWindowsReceipt_20261021",
+    "replay": "43904",
+    "terminal": "41e847",
+    "exit": 1,
+    "passedBeforeFailure": [
+      "original manifest",
+      "28 exact base source/test/policy pins",
+      "3 prior immutable reports"
+    ],
+    "failedAt": "verify.py line22 unconditional historical git show",
+    "firstPath": "Assets/Game/Scripts/UI/Components/MatchHudSquadTouchNavigation.cs",
+    "historicalRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
+    "WindowsReportedState": "Path exists on working disk but unavailable in requested Git revision",
+    "remainingHistoricalRows": "Not measured; stopped at first row",
+    "originalFailureRemainsFailed": true
+  },
+  "MacRecheck": {
+    "observedUtc": "2026-10-20T23:14:08.252401+00:00",
+    "noReplaceRefs": true,
+    "noReplaceCommitTree": "9e0e022eb19dff57157ac97172cce24d85802232",
+    "firstPathAvailable": true,
+    "rows": [
+      {
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTouchNavigation.cs",
+        "historicalBytes": 14796,
+        "historicalSha256": "25a5231b319e5176bdc63d6d46bf1ee490021e9215f6f5305206c2586a06f289",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs",
+        "historicalBytes": 28914,
+        "historicalSha256": "a15d9260b352249e0e4d4ed84601aa8ac37ef2f3e387047fd82a4e3066171ba6",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.Pagination.cs",
+        "historicalBytes": 35549,
+        "historicalSha256": "7cf468e6fca9aab5ef3693b3d0911caf62efd2cb7684d25410824eeac131bd1c",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadCardPressRelay.cs",
+        "historicalBytes": 1469,
+        "historicalSha256": "d18c45d37b8c31004c3464277918e467e582c4816e18f97d3ba04b3dd4c3f3c0",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "historicalBytes": 31150,
+        "historicalSha256": "2da0505469cf858cf7b1b893c0cd72445e76cbcf1353034369c3dc4c2db85e36",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+        "historicalBytes": 45961,
+        "historicalSha256": "88d14e70f628afe8b7930f441eba6468c925565c6d8aa2fa606b11cdc4212c22",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
+        "historicalBytes": 38996,
+        "historicalSha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
+        "historicalBytes": 32417,
+        "historicalSha256": "bfef46fd4a2e16628fba5df77a77305a7021bd3c570e749940c4d98535ec946e",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+        "historicalBytes": 95972,
+        "historicalSha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+        "historicalBytes": 12086,
+        "historicalSha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Utilities/GamePointerInput.cs",
+        "historicalBytes": 4137,
+        "historicalSha256": "32627654cf6e62f5531f7ecff3c8e12ae9c9951fbc589b9b368698fd2a961532",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs",
+        "historicalBytes": 10674,
+        "historicalSha256": "fcd53fbfbca9e7812641c1e01651666f0b052531c69ebc72d95ceb1a26a08619",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
+        "historicalBytes": 140642,
+        "historicalSha256": "e574689e8a18d9d04e935df8ce7ee7e70036e898e893459232a379d6a1e870d5",
+        "sameAsBase": false
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+        "historicalBytes": 30858,
+        "historicalSha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
+        "historicalBytes": 30240,
+        "historicalSha256": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Tests/Editor/MatchHudSquadScrollTests.cs",
+        "historicalBytes": 32646,
+        "historicalSha256": "f533ce2d1014aea830f178f6ace605d43e660bf6249cf8db28ab05d9739f1433",
+        "sameAsBase": true
+      },
+      {
+        "path": "Assets/Tests/PlayMode/MatchHudSquadNativeScrollTests.cs",
+        "historicalBytes": 14803,
+        "historicalSha256": "1221ae0c28043912e954fe8a5a424790759ac8e1e542b9e8b7e774a3a34f0fb6",
+        "sameAsBase": true
+      }
+    ]
+  },
+  "discrepancyCause": "UNKNOWN; no remote source/object repair, payload substitution or disk fallback performed",
+  "verifierPolicy": {
+    "requiredCurrentBasePins": "All28 must match; missing/current mismatch fails",
+    "priorImmutableReports": "All3 must match; missing fails",
+    "historicalAvailable": "Compare exact committed Git bytes; mismatch fails exit1",
+    "historicalUnavailable": "Emit per-row INCOMPLETE with diagnostic and return2 after remaining checks; never use disk/prior claimed digest as substitute",
+    "complete": "Exit0 only when every required comparison is actually measured and matches its recorded expected digest",
+    "scope": "No camera test/fixture/native or runtime attribution credit"
+  },
+  "newNativeOrGameChanges": false
+}

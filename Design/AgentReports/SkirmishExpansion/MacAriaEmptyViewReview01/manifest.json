@@ -1,8 +1,29 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
-  "scope": "Source-attributed camera review and disabled proposals only; no implementation/native acceptance",
+  "scope": "Source-attributed camera review; historical unavailable is INCOMPLETE/exit2, no comparisons waived or native acceptance",
+  "originalCommit": "fbf16981fa2bf9a0903e18b6febf7b7c266b790b",
   "payloads": [
+    {
+      "name": "correction-01/correction.json",
+      "bytes": 7422,
+      "sha256": "1947e1b63d05fa14234b0b44bdeed6b3380b5e2e4081fec5dd091ddd8b185cb8"
+    },
+    {
+      "name": "correction-01/mac-verification.log",
+      "bytes": 832,
+      "sha256": "6836cb3cc33982352a96a741fbe2a42b69f8a87de4820369373484b2caacfb2a"
+    },
+    {
+      "name": "correction-01/offline-regression-controls.log",
+      "bytes": 1736,
+      "sha256": "9ef1cad4537a5175a9bc5475db3e394059a65440eadf2ec4e0e6e733ce66016f"
+    },
+    {
+      "name": "correction-01/replay-controls.py",
+      "bytes": 2530,
+      "sha256": "43db6ce11116d7a87c36e844466a465e1dac339d7ce08d1d74edd8c382af61ec"
+    },
     {
       "name": "disabled-proposal.json",
       "bytes": 2089,
@@ -30,13 +51,13 @@
     },
     {
       "name": "review.md",
-      "bytes": 8468,
-      "sha256": "418203f2d9b640d6ebd046406277757981aca106d3ff98414ff8b9fbae6d9419"
+      "bytes": 9602,
+      "sha256": "93b679d27325793187ad7013a0bee9412a3832849286dd275a7f5cbdc97afd2a"
     },
     {
       "name": "source-pins.json",
-      "bytes": 14924,
-      "sha256": "6a2819ea867e393601d99d52b336a9eee54407cb91e11bd12c384ee0a6e29f1d"
+      "bytes": 22096,
+      "sha256": "848689046dd32d4219257823e794cfdaf534f5e2bf311841fc5946c7f1918a3e"
     },
     {
       "name": "validation.log",
@@ -45,8 +66,8 @@
     },
     {
       "name": "verify.py",
-      "bytes": 3620,
-      "sha256": "96d20867b44ad9608e51e2aa26f9b0030ce2e19d490caa8d1f7f099baa4f5bbd"
+      "bytes": 5689,
+      "sha256": "aadf74981c932674b2ebd21d9a9f49820e09cf2bd1cbf3f3fd748b7a40b73e40"
     }
   ]
 }

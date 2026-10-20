@@ -140,155 +140,310 @@
       "baseSha256": "25a5231b319e5176bdc63d6d46bf1ee490021e9215f6f5305206c2586a06f289",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "25a5231b319e5176bdc63d6d46bf1ee490021e9215f6f5305206c2586a06f289",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 14796,
+        "sha256": "25a5231b319e5176bdc63d6d46bf1ee490021e9215f6f5305206c2586a06f289",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "ReportedUnavailableAtFirstQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs",
       "baseSha256": "a15d9260b352249e0e4d4ed84601aa8ac37ef2f3e387047fd82a4e3066171ba6",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "a15d9260b352249e0e4d4ed84601aa8ac37ef2f3e387047fd82a4e3066171ba6",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 28914,
+        "sha256": "a15d9260b352249e0e4d4ed84601aa8ac37ef2f3e387047fd82a4e3066171ba6",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.Pagination.cs",
       "baseSha256": "7cf468e6fca9aab5ef3693b3d0911caf62efd2cb7684d25410824eeac131bd1c",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "7cf468e6fca9aab5ef3693b3d0911caf62efd2cb7684d25410824eeac131bd1c",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 35549,
+        "sha256": "7cf468e6fca9aab5ef3693b3d0911caf62efd2cb7684d25410824eeac131bd1c",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/UI/Components/MatchHudSquadCardPressRelay.cs",
       "baseSha256": "d18c45d37b8c31004c3464277918e467e582c4816e18f97d3ba04b3dd4c3f3c0",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "d18c45d37b8c31004c3464277918e467e582c4816e18f97d3ba04b3dd4c3f3c0",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 1469,
+        "sha256": "d18c45d37b8c31004c3464277918e467e582c4816e18f97d3ba04b3dd4c3f3c0",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
       "baseSha256": "2da0505469cf858cf7b1b893c0cd72445e76cbcf1353034369c3dc4c2db85e36",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "2da0505469cf858cf7b1b893c0cd72445e76cbcf1353034369c3dc4c2db85e36",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 31150,
+        "sha256": "2da0505469cf858cf7b1b893c0cd72445e76cbcf1353034369c3dc4c2db85e36",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
       "baseSha256": "88d14e70f628afe8b7930f441eba6468c925565c6d8aa2fa606b11cdc4212c22",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "88d14e70f628afe8b7930f441eba6468c925565c6d8aa2fa606b11cdc4212c22",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 45961,
+        "sha256": "88d14e70f628afe8b7930f441eba6468c925565c6d8aa2fa606b11cdc4212c22",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsSelectionInputCompositionSystemHelper.cs",
       "baseSha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 38996,
+        "sha256": "be093bfbbbe56fd39d95177586e3cbcfef76813fe9a7de53da48889a420f7971",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs",
       "baseSha256": "bfef46fd4a2e16628fba5df77a77305a7021bd3c570e749940c4d98535ec946e",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "bfef46fd4a2e16628fba5df77a77305a7021bd3c570e749940c4d98535ec946e",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 32417,
+        "sha256": "bfef46fd4a2e16628fba5df77a77305a7021bd3c570e749940c4d98535ec946e",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
       "baseSha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 95972,
+        "sha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
       "baseSha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 12086,
+        "sha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Utilities/GamePointerInput.cs",
       "baseSha256": "32627654cf6e62f5531f7ecff3c8e12ae9c9951fbc589b9b368698fd2a961532",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "32627654cf6e62f5531f7ecff3c8e12ae9c9951fbc589b9b368698fd2a961532",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 4137,
+        "sha256": "32627654cf6e62f5531f7ecff3c8e12ae9c9951fbc589b9b368698fd2a961532",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs",
       "baseSha256": "fcd53fbfbca9e7812641c1e01651666f0b052531c69ebc72d95ceb1a26a08619",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "fcd53fbfbca9e7812641c1e01651666f0b052531c69ebc72d95ceb1a26a08619",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 10674,
+        "sha256": "fcd53fbfbca9e7812641c1e01651666f0b052531c69ebc72d95ceb1a26a08619",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs",
       "baseSha256": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "e574689e8a18d9d04e935df8ce7ee7e70036e898e893459232a379d6a1e870d5",
-      "sameBytes": false,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": false,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 140642,
+        "sha256": "e574689e8a18d9d04e935df8ce7ee7e70036e898e893459232a379d6a1e870d5",
+        "sameAsBase": false,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
       "baseSha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 30858,
+        "sha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
       "baseSha256": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 30240,
+        "sha256": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Tests/Editor/MatchHudSquadScrollTests.cs",
       "baseSha256": "f533ce2d1014aea830f178f6ace605d43e660bf6249cf8db28ab05d9739f1433",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "f533ce2d1014aea830f178f6ace605d43e660bf6249cf8db28ab05d9739f1433",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 32646,
+        "sha256": "f533ce2d1014aea830f178f6ace605d43e660bf6249cf8db28ab05d9739f1433",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     },
     {
       "path": "Assets/Tests/PlayMode/MatchHudSquadNativeScrollTests.cs",
       "baseSha256": "1221ae0c28043912e954fe8a5a424790759ac8e1e542b9e8b7e774a3a34f0fb6",
       "priorAnalysisRevision": "9a0f620405c43d0bceb3db763ed979ad7ddf10cc",
       "priorSha256": "1221ae0c28043912e954fe8a5a424790759ac8e1e542b9e8b7e774a3a34f0fb6",
-      "sameBytes": true,
       "historical92a727PerFileAttribution": "UNKNOWN",
-      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview"
+      "WindowsFrozenA7c2d6PerFileAttribution": "NotIndependentlySealedByThisReview",
+      "priorReportClaimsSameBytes": true,
+      "MacHistoricalGitObservation": {
+        "available": true,
+        "bytes": 14803,
+        "sha256": "1221ae0c28043912e954fe8a5a424790759ac8e1e542b9e8b7e774a3a34f0fb6",
+        "sameAsBase": true,
+        "noReplaceObjects": true
+      },
+      "WindowsHistoricalGitObservation": "NotMeasured_ReplayStoppedAtFirstHistoricalQuery",
+      "crossHostHistoricalReplayComplete": false
     }
   ],
   "runtimeCandidateEqualityEstablished": false,
-  "scope": "Only named source/tests/policy and existing exact reports; no broad source/SDK/Library hashing or source integration."
+  "scope": "Only named source/tests/policy and existing exact reports; no broad source/SDK/Library hashing or source integration.",
+  "comparisonScope": "Original prior-report claims and actual no-replace Mac observations are attributed separately. Windows lookup of first historical row was unavailable; remaining rows unmeasured there. Missing rows never count as byte matches.",
+  "historicalReplayRequiredForCompleteResult": true
 }

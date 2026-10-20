@@ -1,0 +1,9 @@
+Current staged-report verification; observed on Mac; historical absence in controls is simulated.
+PASS canonical Git payload manifest
+PASS28 named base source/test/policy pins and3 prior immutable reports
+PASS original4 artifact pins; Windows failure preserved as attributed report, not replayed/pass
+MEASURED historical expected-digest rows=17/17; measured equal-to-base=16; unmeasured=0; no disk/hash fallback
+PASS8 exact source excerpts; source-supported seams do not establish screenshot cause
+PASS disabled proposals/fixture-only status and causal-evidence limitations
+PASS protected busy-capacity observation and sensitive argument redaction; no live launch admission
+RESULT Passed: actual historical rows measured17/17; static review integrity only; runtime attribution/fixture/compiler/native/mission acceptance NOT_GRANTED

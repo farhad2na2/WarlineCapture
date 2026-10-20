@@ -73,7 +73,9 @@ namespace Game.UI.Runtime
                         string leaf = MapDisplayTitle(pin.MapId, fa);
                         if (!fa)
                             leaf = leaf.ToUpperInvariant();
-                        crumb = root + (fa ? " < " : " > ") + leaf;
+                        // v50b: one logical " > " in both locales; the fa shaper mirrors it (v50 fa '<' was drawn as '>'),
+                        // so fa reads right to left with the chevron pointing at the leaf.
+                        crumb = root + " > " + leaf;
                         string pattern = LibraryTitleCopy("ui.skirmish.library.title.battlefield", fa ? "زد و خورد | {0}" : "SKIRMISH | {0}");
                         float min = title.fontSizeMin;
                         float max = title.fontSizeMax;
@@ -90,6 +92,7 @@ namespace Game.UI.Runtime
                     }
                 }
 
+                view.ReassertMapCardStrips(composition); // v50b: after the shared text floor (runs before PlaceLibraryHeader)
                 string overlap = Overlaps(composition, creditsChip, titlePanel, chipX, chipWidth);
                 Debug.Log("[LibraryHeader] locale=" + (fa ? "fa-IR" : "en") + " ratio=" + view.TheatreRatioLabel() +
                     " crumb=" + crumb + " crumbFits=" + (crumbFits ? 1 : 0) +

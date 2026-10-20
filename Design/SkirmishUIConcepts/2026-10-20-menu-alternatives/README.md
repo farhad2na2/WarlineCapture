@@ -1,6 +1,6 @@
 # Skirmish and Campaign — replacement menu choices
 
-**Owner selection pending.** Generated with built-in ImageGen using actual native Operations and Campaign screenshots. The existing saga and half-saga route are not accepted. These images are design concepts; no gameplay, progression or physical Campaign map changes are authorized by their illustrations.
+**Selected: Skirmish A and Campaign B. Further visual iteration requested before implementation.** [Active selected-option iteration](selected-A-iteration-01/README.md). Generated with built-in ImageGen using actual native Operations and Campaign screenshots. The existing saga and half-saga route are not accepted. These images are design concepts; no gameplay, progression or physical Campaign map changes are authorized by their illustrations.
 
 ## Recommended scalable navigation
 
@@ -48,4 +48,4 @@ Generated mockups illustrate layout and hierarchy. Illustrative art, copy, medal
 
 [Full owner requirements](REVIEW_REQUIREMENTS.md) · [Exact prompt set and native reference paths](prompts.json) · [PNG hashes](manifest.json).
 
-PR70 remains draft and unmerged. Choose a primary Skirmish direction (A/B/C/D), whether to include E, and a Campaign direction (A/B/C) before implementation.
+PR70 remains draft and unmerged. The active choices are Skirmish A and Campaign B; D/E are historical alternatives. Further visual iteration is pending before native implementation.

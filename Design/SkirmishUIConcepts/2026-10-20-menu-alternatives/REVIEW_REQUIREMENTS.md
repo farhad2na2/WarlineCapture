@@ -1,5 +1,7 @@
 # Menu redesign directions awaiting owner selection
 
+Owner selected **Skirmish A — territory atlas and mission drawer** and **Campaign B — mission sectors**, then requested further mockup iteration before implementation. Active iteration: [A navigation through all120 catalog entries](selected-A-iteration-01/README.md). No native menu edits are approved by this iteration request.
+
 Owner direction: 2026-10-20. Existing saga and Campaign half-saga level selection are not accepted. Generate alternatives before implementation.
 
 ## Shared visual requirements

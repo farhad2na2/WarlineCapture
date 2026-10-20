@@ -9,6 +9,24 @@ namespace Game.UI.Runtime
     /// </summary>
     public static class SkirmishLibraryFrame
     {
+        public const float ReferenceHeight = TheatreSeatGeometry.SagaReferenceHeight;
+
+        // The shell's CanvasScaler uses a 4800x2160 coordinate space. Keep authored
+        // control sizes in the same 1080-high frame at every canvas density.
+        public static void FitComposition(RectTransform composition)
+        {
+            if (composition == null || composition.parent is not RectTransform parent
+                || parent.rect.width < 2f || parent.rect.height < 2f)
+                return;
+            TheatreSeatGeometry.ResolveSagaFrame(parent.rect.width, parent.rect.height, out float width, out float height, out float scale);
+            composition.anchorMin = composition.anchorMax = new Vector2(.5f, .5f);
+            composition.pivot = new Vector2(.5f, .5f);
+            composition.sizeDelta = new Vector2(width, height);
+            composition.localRotation = Quaternion.identity;
+            composition.localScale = new Vector3(scale, scale, 1f);
+            composition.anchoredPosition = Vector2.zero;
+        }
+
         public const float OriginX = 14f;
         public const float HeaderBand = 108f;
         public const float FooterBand = 112f;
@@ -26,7 +44,8 @@ namespace Game.UI.Runtime
             out float briefingX,
             out float briefingWidth,
             out float panelY,
-            out float panelHeight)
+            out float panelHeight,
+            bool theatre = false)
         {
             if (width < 200f)
                 width = 1672f;
@@ -35,10 +54,10 @@ namespace Game.UI.Runtime
             panelY = HeaderBand;
             panelHeight = Mathf.Max(480f, height - HeaderBand - FooterBand);
             bool narrow = width / Mathf.Max(1f, height) < NarrowAspect;
-            float share = narrow ? 0.26f : 0.32f;
-            float minBriefing = narrow ? 280f : 460f;
-            float maxBriefing = narrow ? 380f : 600f;
-            briefingWidth = Mathf.Clamp(width * share, minBriefing, maxBriefing);
+            float share = 0.26f;
+            float minBriefing = 280f;
+            float maxBriefing = narrow ? 380f : 560f;
+            briefingWidth = theatre ? TheatreSeatGeometry.SagaSummaryWidth(width,height) : Mathf.Clamp(width * share, minBriefing, maxBriefing);
             mapWidth = width - OriginX * 2f - Gap - briefingWidth;
             if (mapWidth < 480f)
             {

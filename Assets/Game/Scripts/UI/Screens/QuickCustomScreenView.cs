@@ -212,12 +212,8 @@ namespace Game.UI.Runtime
                     titleRect.pivot = new Vector2(0f, 1f);
                     titleRect.anchoredPosition = new Vector2(8f, 0f);
                     titleRect.sizeDelta = new Vector2(784f, 54f);
-                    var previewRect = titleRect.parent.Find("MapPreviewClip") as RectTransform;
-                    if (previewRect != null)
-                    {
-                        previewRect.anchorMin = previewRect.anchorMax = new Vector2(0f, 1f);
-                        previewRect.pivot = new Vector2(0f, 1f);
-                    }
+                    // The battle library owns the stretched map viewport. Rebinding
+                    // a selected mission must not collapse that clip to a point anchor.
                     if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
                     {
                         UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
@@ -486,6 +482,8 @@ namespace Game.UI.Runtime
                 }
             if (TryFindEntry(_selectedScenarioId, out var selected))
                 PresentCompiledBriefing(selected, UiShellRuntimeGateway.Localization.IsRightToLeft);
+            if (baseAssaultPreset)
+                FitSagaMissionSizeLabels();
 
         }
 

@@ -58,7 +58,7 @@ namespace Game.UI.Runtime
                 new ButtonSpec(BackName, "ui.common.back", "BACK", "بازگشت", 0.9f, Neutral, UIAudioEventKind.ScreenBack),
                 new ButtonSpec(SkirmishLibraryControlNames.TheaterMap, "ui.skirmish.library.theater_map", "THEATER MAP", "نقشه جبهه", 1.2f, Blue, UIAudioEventKind.ScreenBack),
                 new ButtonSpec(SkirmishLibraryControlNames.StartBattle, "ui.skirmish.library.start_battle", "START BATTLE", "شروع نبرد", 1.6f, Green, UIAudioEventKind.ButtonPrimaryClick),
-                new ButtonSpec(AdvancedName, "ui.skirmish.library.advanced", "ADVANCED", "پیشرفته", 1.0f, Navy, UIAudioEventKind.ButtonSecondaryClick)
+                new ButtonSpec(SkirmishLibraryControlNames.QuickBattle, "ui.skirmish.library.quick_battle", "QUICK BATTLE", "نبرد سریع", 1.0f, Navy, UIAudioEventKind.ButtonPrimaryClick)
             };
         }
 

@@ -269,7 +269,7 @@ namespace Game.UI.Runtime
                 if (image == null)
                     image = slot.GetComponentInChildren<Image>(true);
                 if (image != null)
-                    ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, difficulties[i]), earned ? Color.white : new Color(1f, 1f, 1f, battlefield ? 0.32f : 0.78f));
+                    ShowIcon(image, SkirmishBattleLibraryArt.Medal(!battlefield || earned, difficulties[i]), Color.white);
                 TMP_Text count = slot.Find("Count")?.GetComponent<TMP_Text>();
                 SetCopy(count, battlefield ? string.Empty : counts[i].ToString(), 18f, 22f);
                 if (battlefield)
@@ -675,12 +675,13 @@ namespace Game.UI.Runtime
             return 0f;
         }
 
-        private static void BindMedalIcon(Image image, int index)
+        private void BindMedalIcon(Image image, int index)
         {
             if (image == null)
                 return;
-            Color tint = image.color.a > 0.2f ? image.color : Color.white;
-            ShowIcon(image, SkirmishBattleLibraryArt.Medal(true, MedalTier(index)), tint);
+            bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
+            bool earned = !battlefield || (_libraryViewModel != null && MedalEarned(_libraryViewModel.Briefing.Medals, MedalTier(index)));
+            ShowIcon(image, SkirmishBattleLibraryArt.Medal(earned, MedalTier(index)), Color.white);
             image.preserveAspect = true;
             image.type = Image.Type.Simple;
             if (image.sprite == null)
@@ -1719,8 +1720,10 @@ namespace Game.UI.Runtime
                 return battlefield && child == medalKeep; // Theatre medal counts live in P2's bottom strip.
             if (child.name == "Title")
                 return true;
+            if (child.name == "ArmySize")
+                return battlefield && _config.SkirmishSelection.Kind == Game.UI.Contracts.UiSkirmishLibraryLaunchKind.ExpandedDefinition;
             if (child.name == "LibraryModeToggle")
-                return battlefield; // approved-2: MAP/GRID toggle heads the right panel
+                return false; // Superseded by the saga path.
             if (scenarioDescription != null && child == scenarioDescription.transform)
                 return true;
             if (child.name == descriptionName && scenarioDescription != null && child != scenarioDescription.transform)
@@ -1827,7 +1830,7 @@ namespace Game.UI.Runtime
 
             frame.sprite = SolidSprite();
             frame.type = Image.Type.Simple;
-            frame.color = new Color(0.93f, 0.72f, 0.28f, 1f);
+            frame.color = new Color(0.23f, 0.29f, 0.31f, 1f);
             frame.enabled = showPreview;
             frame.gameObject.SetActive(showPreview);
             if (showPreview)
@@ -1965,7 +1968,8 @@ namespace Game.UI.Runtime
                     body.fontSize = size;
                     if (width <= 1f || height <= 1f)
                         break;
-                    TMP_TextInfo info = body.GetTextInfo(body.text);
+                    body.ForceMeshUpdate(true);
+                    TMP_TextInfo info = body.textInfo;
                     float needed = body.GetPreferredValues(body.text, width - body.margin.x - body.margin.z, 0f).y;
                     if (info != null && info.lineCount <= 2 && needed <= height)
                         break;

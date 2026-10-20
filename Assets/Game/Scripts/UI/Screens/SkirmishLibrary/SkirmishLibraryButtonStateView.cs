@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
         private bool _custom;
         private Color _top = new Color(0.07f, 0.12f, 0.14f, 1f);
         private Color _bottom = new Color(0.02f, 0.05f, 0.06f, 1f);
-        private Color _border = new Color(0.93f, 0.78f, 0.38f, 1f);
+        private Color _border = new Color(0.23f, 0.29f, 0.31f, 1f);
 
         public void Bind(V3GradientGraphic graphic)
         {
@@ -103,14 +103,14 @@ namespace Game.UI.Runtime
             {
                 top = _top;
                 bottom = _bottom;
-                border = _selected ? new Color(1f, 0.92f, 0.55f, 1f) : _border;
+                border = _selected ? new Color(0.22f, 0.48f, 0.58f, 1f) : _border;
                 width = _selected ? 4f : 3f;
             }
             else if (_selected)
             {
-                top = new Color(0.15f, 0.28f, 0.12f, 1f);
-                bottom = new Color(0.05f, 0.12f, 0.06f, 1f);
-                border = new Color(0.95f, 0.72f, 0.15f, 1f);
+                top = new Color(0.07f, 0.18f, 0.23f, 1f);
+                bottom = new Color(0.02f, 0.06f, 0.08f, 1f);
+                border = new Color(0.22f, 0.48f, 0.58f, 1f);
                 width = 3f;
             }
             else
@@ -118,7 +118,7 @@ namespace Game.UI.Runtime
                 float body = _opaque ? 1f : 0.94f;
                 top = new Color(0.07f, 0.12f, 0.14f, body);
                 bottom = new Color(0.02f, 0.05f, 0.06f, body);
-                border = new Color(0.93f, 0.78f, 0.38f, 1f);
+                border = new Color(0.23f, 0.29f, 0.31f, 1f);
                 width = 2f;
             }
 

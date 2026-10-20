@@ -234,39 +234,18 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void NativeChromeJourneyAwaitsWp4UntilZoomInExists()
+        public void ShippedFreshProfileResolverRejectsEveryNonSampleCatalogEntry()
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SetupPrefabPath);
-            bool chrome = false;
-            if (prefab != null)
-            {
-                Button[] buttons = prefab.GetComponentsInChildren<Button>(true);
-                for (int i = 0; i < buttons.Length; i++)
+            var entries=SkirmishBattleCatalogConfig.Load().Entries;Assert.AreEqual(120,entries.Count);
+            using(ContentAccessRuntime.UseValidationProvider(new OwnsNothing()))
+            using(var world=new World(nameof(ShippedFreshProfileResolverRejectsEveryNonSampleCatalogEntry)))
+                foreach(var entry in entries)
                 {
-                    if (buttons[i] != null && buttons[i].name == SkirmishLibraryControlNames.ZoomIn)
-                    {
-                        chrome = true;
-                        break;
-                    }
+                    if(entry.ScenarioId=="S001")continue;
+                    Assert.IsFalse(SkirmishExpandedLaunchResolver.TryCompileAndQueue(world.EntityManager,entry.ScenarioId,
+                        SkirmishDifficultyId.Regular,SkirmishSizeId.Standard,1,null,null,null,out _,out _,out List<SkirmishCompileReason> reasons),entry.ScenarioId);
+                    Assert.AreEqual("contentAccess",reasons[0].Field,entry.ScenarioId);
                 }
-            }
-
-            if (!chrome)
-                Assert.Ignore("awaits WP4");
-
-            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-            try
-            {
-                QuickCustomScreenView view = instance.GetComponent<QuickCustomScreenView>();
-                Assert.IsNotNull(view);
-                Assert.IsNotNull(view.Library);
-                Assert.IsTrue(view.Library.SelectMapCollection(string.Empty));
-                Assert.AreEqual(SkirmishLibraryLevel.Theater, view.Library.Level);
-            }
-            finally
-            {
-                UnityEngine.Object.DestroyImmediate(instance);
-            }
         }
 
         [Test]

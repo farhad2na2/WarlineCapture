@@ -530,7 +530,7 @@ namespace Game.UI.Runtime
         {
             if (image == null)
                 return;
-            string path = SkirmishBattleLibraryArt.Medal(true, difficulty);
+            string path = SkirmishBattleLibraryArt.Medal(earned, difficulty);
             Sprite sprite = LoadLibraryIcon(path);
             if (sprite == null)
                 sprite = Resources.Load<Sprite>(path);
@@ -539,7 +539,7 @@ namespace Game.UI.Runtime
             image.preserveAspect = true;
             image.useSpriteMesh = false;
             image.raycastTarget = false;
-            image.color = earned ? Color.white : new Color(0.46f, 0.46f, 0.46f, 0.9f);
+            image.color = earned ? SagaMedalTint(path) : Color.white;
             bool shown = sprite != null;
             image.enabled = shown;
             if (image.gameObject.activeSelf != shown)

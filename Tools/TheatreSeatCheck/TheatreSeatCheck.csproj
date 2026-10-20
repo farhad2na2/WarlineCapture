@@ -9,5 +9,9 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="..\..\Assets\Game\Scripts\UI\Skirmish\TheatreSeatGeometry.cs" />
-  </ItemGroup>
+    <Compile Include="..\..\Assets\Game\Scripts\UI\Skirmish\TheatreSeatGeometry.Saga.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaCueRepair.cs" Link="TheatreSeatGeometry.SagaCueRepair.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaStableSelection.cs" Link="TheatreSeatGeometry.SagaStableSelection.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaPortraitCoast.cs" Link="TheatreSeatGeometry.SagaPortraitCoast.cs" />
+</ItemGroup>
 </Project>

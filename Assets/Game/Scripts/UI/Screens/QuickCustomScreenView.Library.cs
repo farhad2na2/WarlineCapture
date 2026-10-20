@@ -214,9 +214,11 @@ namespace Game.UI.Runtime
             RemoveRetiredFooterUtility(composition, "LibraryFavouritesButton");
             _libraryAdvancedButton = EnsureFooterUtility(composition, "LibraryAdvancedButton");
             EnsureStoreButton(rules);
-            EnsureModeToggle(preview);
+            SetActive(FindModeToggle(), false);
             EnsureFilterPanel(_libraryFilters);
             EnsureLibraryPass(composition, preview, rules);
+            if (missionSizeSegmented != null && rules.Find("BriefingColumn") is RectTransform briefingColumn)
+                missionSizeSegmented.transform.SetParent(briefingColumn, false);
             PlaceLibraryChrome();
             _libraryChromeReady = true;
         }
@@ -243,6 +245,7 @@ namespace Game.UI.Runtime
             EnsureLibraryViewModel();
             switch ((state ?? string.Empty).ToLowerInvariant())
             {
+                case "saga":
                 case "map":
                     _libraryViewModel.SelectMapCollection(string.IsNullOrEmpty(LibraryMapId) ? "DB" : LibraryMapId);
                     _libraryViewModel.ZoomIn();
@@ -304,16 +307,17 @@ namespace Game.UI.Runtime
 
         private void PresentBattleLibrary()
         {
-            if (!baseAssaultPreset)
+            if (!baseAssaultPreset || _libraryPresenting)
                 return;
-            EnsureBattleLibraryChrome();
-            if (_libraryPins == null && _libraryRegions == null)
-                return;
-
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             _libraryPresenting = true;
             try
             {
+                // Chrome creation changes rects synchronously. Defer layout callbacks
+                // until the district cards and zoom cue have both been installed.
+                EnsureBattleLibraryChrome();
+                if (_libraryPins == null && _libraryRegions == null)
+                    return;
                 EnsureLibraryViewModel();
                 SyncLibraryFilter();
                 ApplyLargeTextScale();
@@ -325,12 +329,15 @@ namespace Game.UI.Runtime
                 SkirmishBattlefieldState field = _libraryViewModel.Battlefield;
                 SkirmishBriefingState briefing = _libraryViewModel.Briefing;
                 bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
-                bool grid = battlefield && LibraryLayout == SkirmishBattlefieldLayout.Grid;
+                bool grid = false; // Saga is the only battlefield presentation; legacy widgets remain for compatibility.
                 SetActive(transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary"), false);
                 SetActive(transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibraryCount"), false);
                 SetActive(battleLibraryMapTabs, false);
                 HideMapCollectionTabs();
                 SetActive(_libraryRegions, !battlefield);
+                // The detail panel is reparented to the plate when seated. It must
+                // follow the level too, otherwise its labels leak around the road.
+                SetActive(FindTheatreDetailPanel(transform), !battlefield);
                 SetActive(_libraryPins, battlefield && !grid);
                 SetActive(_objectiveColumn, battlefield && !grid);
                 SetActive(_libraryGrid, grid);
@@ -343,12 +350,13 @@ namespace Game.UI.Runtime
                 SetActive(_medalGrid, false);
                 SetActive(_briefingPreview, battlefield);
                 PresentPlateTexture(battlefield, field);
-                PresentRegions(theater, fa);
-                PresentModeToggle(fa, battlefield);
+                if (!battlefield)
+                    PresentRegions(theater, fa);
+                SetActive(FindModeToggle(), false);
                 if (battlefield && !grid)
                 {
                     PresentObjectiveColumn(field, fa);
-                    PresentPins(field);
+                    PresentSaga(field, fa);
                 }
                 if (grid)
                     PresentGrid(field, fa);
@@ -378,6 +386,7 @@ namespace Game.UI.Runtime
                 RaiseLaunchTransition();
                 ApplyBriefingColumnState();
                 PublishMedalCounts(theater);
+                ApplySagaStyle();
             }
             finally
             {
@@ -590,7 +599,7 @@ namespace Game.UI.Runtime
                 plateRect.anchorMax = new Vector2(1f, 1f);
                 plateRect.pivot = new Vector2(0f, 1f);
                 plateRect.offsetMin = new Vector2(theater ? 0f : 8f, 8f);
-                plateRect.offsetMax = new Vector2(theater ? 0f : -8f, theater ? -8f : -112f);
+                plateRect.offsetMax = new Vector2(theater ? 0f : -8f, theater ? -8f : -56f);
                 MaskRect(plateRect);
             }
 
@@ -608,7 +617,7 @@ namespace Game.UI.Runtime
             {
                 pinRect.anchorMin = Vector2.zero;
                 pinRect.anchorMax = Vector2.one;
-                pinRect.offsetMin = new Vector2(132f, 8f);
+                pinRect.offsetMin = new Vector2(PinRailReserve, 8f);
                 pinRect.offsetMax = new Vector2(-8f, -8f);
             }
 
@@ -623,7 +632,7 @@ namespace Game.UI.Runtime
                 RectMask2D searchMask = search.GetComponent<RectMask2D>();
                 if (searchMask != null)
                     searchMask.enabled = false;
-                PlaceTopLeft(search, 12f, 56f, 700f, 44f);
+                PlaceTopLeft(search, 12f, 8f, Mathf.Max(240f,(preview as RectTransform).rect.width-24f), 44f);
                 FrameSearchField(search);
                 search.SetAsLastSibling();
                 if (battleLibrarySearch.textViewport != null && battleLibrarySearch.textViewport != search)
@@ -643,7 +652,7 @@ namespace Game.UI.Runtime
 
             if (mapNameText != null)
             {
-                mapNameText.gameObject.SetActive(!theater);
+                mapNameText.gameObject.SetActive(false);
                 if (!theater)
                 {
                     PlaceTopLeft(mapNameText.rectTransform, 12f, 6f, 680f, 40f);
@@ -741,6 +750,7 @@ namespace Game.UI.Runtime
                 return;
             FillComposition(composition);
             bool briefingOnLeft = briefingOnLeftOverride ?? !UiShellRuntimeGateway.Localization.IsRightToLeft;
+            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
             SkirmishLibraryFrame.Resolve(
                 composition.rect.width,
                 composition.rect.height,
@@ -750,8 +760,8 @@ namespace Game.UI.Runtime
                 out float briefingX,
                 out float briefingWidth,
                 out float panelY,
-                out float panelHeight);
-            bool theater = LibraryLevel != SkirmishLibraryLevel.Battlefield;
+                out float panelHeight,
+                theater);
             // v46 (Game PM, approved-1 keeps the district panel at 4:3): P2's seating only reserves the trailing detail
             // column when every portrait seats (TheatreSeatGeometry.DetailReserveOn); the 4:3 plate was 1039.6 px, just
             // under it. The briefing column gives the map 40 px (plate ~1080, where the reserve holds for the default
@@ -810,14 +820,8 @@ namespace Game.UI.Runtime
         {
             if (composition == null)
                 return;
-            composition.anchorMin = Vector2.zero;
-            composition.anchorMax = Vector2.one;
-            composition.pivot = new Vector2(0.5f, 0.5f);
-            composition.offsetMin = Vector2.zero;
-            composition.offsetMax = Vector2.zero;
-            composition.localScale = Vector3.one;
-            composition.localRotation = Quaternion.identity;
-            composition.anchoredPosition = Vector2.zero;
+            SkirmishLibraryFrame.FitComposition(composition);
+            composition.GetComponent<SkirmishLibrarySafeFrame>()?.RefreshLiveInset();
             Canvas.ForceUpdateCanvases();
         }
 
@@ -1304,7 +1308,10 @@ namespace Game.UI.Runtime
                 return null;
             if (LibraryIconCache.TryGetValue(resourcePath, out Sprite cached) && cached != null)
                 return cached;
-            Sprite sprite = Resources.Load<Sprite>(resourcePath);
+            Sprite sprite = null;
+            if (resourcePath.StartsWith(SkirmishBattleLibraryArt.ResourceRoot + "medal_", StringComparison.Ordinal) && !resourcePath.EndsWith("medal_empty", StringComparison.Ordinal))
+                SkirmishLibrarySpriteRegistry.Load()?.TryGetSprite("skirmish.shared.medallion", out sprite);
+            if (sprite == null) sprite = Resources.Load<Sprite>(resourcePath);
             if (sprite == null)
             {
                 Texture2D texture = Resources.Load<Texture2D>(resourcePath);
@@ -1337,7 +1344,7 @@ namespace Game.UI.Runtime
                 image.gameObject.SetActive(true);
             image.preserveAspect = true;
             image.type = Image.Type.Simple;
-            image.color = tint;
+            image.color = tint * SagaMedalTint(resourcePath);
             image.raycastTarget = false;
         }
 
@@ -1633,15 +1640,18 @@ namespace Game.UI.Runtime
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
             string descriptionName = scenarioDescription != null ? scenarioDescription.gameObject.name : "SeedHelp";
             if (battlefield)
-                AdoptModeToggle(column);
+                SetActive(FindModeToggle(), false);
             Transform medalKeep = ChooseMedalRow(column);
             if (medalKeep is RectTransform keptMedal)
                 _medalRow = keptMedal;
             var order = battlefield
-                ? new[] { "LibraryModeToggle", "Title", "BriefingSubtitle", "BriefingPreview", descriptionName, "BriefingStats", "MedalRow", "MedalDifficultySelector" }
+                ? new[] { "Title", "BriefingSubtitle", "BriefingPreview", descriptionName, "BriefingStats", "ArmySize", "MedalRow", "MedalDifficultySelector" }
                 : new[] { "TheatreSummary", "Title", "BattlesWonTrack", "RecommendedNext" };
+            if (battlefield) BindBattlefieldSeed(UiShellRuntimeGateway.Localization.IsRightToLeft);
+            float descriptionHeight = battlefield ? MeasureSagaBriefingDescription(column.rect.width) : 0f;
+            float previewHeight = Mathf.Clamp(column.rect.height - 520f - descriptionHeight, 80f, 188f);
             var heights = battlefield
-                ? new[] { 64f, 40f, 30f, 188f, 80f, 84f, 104f, 52f } /* v34: taller MAP/GRID toggle row (approved-2), description 96->80 */ // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
+                ? new[] { 44f, 32f, previewHeight, descriptionHeight, 84f, 52f, 104f, 52f } /* v34: taller MAP/GRID toggle row (approved-2), description 96->80 */ // Game PM approved-2 order: MAP/GRID toggle, heading, subtitle, preview; P1 v25 tiles + difficulty (52)
                 : new[] { TheatreSummaryHeight, 40f, 84f, RecommendedCompactHeight }; // v41b compact Recommended next row (was 272)
             for (int i = 0; i < column.childCount; i++)
             {
@@ -1705,17 +1715,17 @@ namespace Game.UI.Runtime
             if (battlefield && scenarioDescription != null)
             {
                 bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-                BindBattlefieldSeed(fa);
+                // Copy and binding bounds were finalized before measuring this row.
+                // Rebinding here restores the old larger font after the layout pass.
                 scenarioDescription.gameObject.SetActive(true);
                 scenarioDescription.margin = new Vector4(24f, 8f, 24f, 8f);
                 scenarioDescription.textWrappingMode = TextWrappingModes.Normal;
-                scenarioDescription.overflowMode = TextOverflowModes.Ellipsis;
+                scenarioDescription.overflowMode = TextOverflowModes.Overflow;
                 scenarioDescription.alignment = fa ? TextAlignmentOptions.TopRight : TextAlignmentOptions.TopLeft;
                 scenarioDescription.isRightToLeftText = fa;
-                scenarioDescription.maxVisibleLines = battlefield ? 4 : 3;
-                scenarioDescription.enableAutoSizing = true;
-                scenarioDescription.fontSizeMin = 15f;
-                scenarioDescription.fontSizeMax = battlefield ? 22f : 20f;
+                scenarioDescription.maxVisibleLines = int.MaxValue;
+                scenarioDescription.enableAutoSizing = false;
+                scenarioDescription.fontSize = scenarioDescription.fontSizeMin = scenarioDescription.fontSizeMax = fa ? 22f : 20f;
             }
 
             VerticalLayoutGroup group = column.GetComponent<VerticalLayoutGroup>();
@@ -1731,6 +1741,8 @@ namespace Game.UI.Runtime
             }
 
             LayoutRebuilder.ForceRebuildLayoutImmediate(column);
+            FitSagaBriefingOverflow((RectTransform)rules, column, battlefield);
+            if (battlefield) FitBriefingPicture();
             if (scenarioDescription != null)
                 scenarioDescription.ForceMeshUpdate();
             ArrangeMedalGrid(_medalRow, UiShellRuntimeGateway.Localization.IsRightToLeft);
@@ -1910,7 +1922,7 @@ namespace Game.UI.Runtime
                 return;
             battleLibrarySearch.gameObject.SetActive(true);
             if (mapNameText != null)
-                mapNameText.gameObject.SetActive(true);
+                mapNameText.gameObject.SetActive(false);
             RectTransform search = battleLibrarySearch.GetComponent<RectTransform>();
             if (search == null)
                 return;
@@ -1925,7 +1937,7 @@ namespace Game.UI.Runtime
             float reserved = reserveToggle ? 268f : 12f;
             float searchWidth = Mathf.Clamp(width - 24f - reserved, 140f, 820f);
             if (!PlaceGridSearch(search, searchWidth))
-                PlaceTopLeft(search, 12f, 56f, searchWidth, 44f);
+                PlaceTopLeft(search, 12f, 8f, Mathf.Max(140f,width-24f), 44f);
             FrameSearchField(search);
             search.SetAsLastSibling();
             if (mapNameText != null && !IsGridLibrary())
@@ -1946,7 +1958,7 @@ namespace Game.UI.Runtime
             if (border == null)
                 border = search.gameObject.AddComponent<Image>();
             border.enabled = true;
-            border.color = new Color(0.55f, 0.42f, 0.18f, 1f);
+            border.color = new Color(0.23f, 0.29f, 0.31f, 1f);
             border.raycastTarget = true;
             Transform existing = search.Find("SearchFill");
             Image fill = existing != null ? existing.GetComponent<Image>() : null;
@@ -2130,7 +2142,7 @@ namespace Game.UI.Runtime
             frame.SetAsFirstSibling();
             V3GradientGraphic graphic = frame.GetComponent<V3GradientGraphic>();
             graphic.raycastTarget = false;
-            graphic.Configure(new Color(0.05f, 0.08f, 0.09f, 0.94f), new Color(0.02f, 0.04f, 0.05f, 0.94f), new Color(0.62f, 0.54f, 0.32f, 0.85f), 1.5f);
+            graphic.Configure(new Color(0.05f, 0.08f, 0.09f, 0.94f), new Color(0.02f, 0.04f, 0.05f, 0.94f), new Color(0.23f, 0.29f, 0.31f, 1f), 1.5f);
         }
 
 
@@ -2276,6 +2288,7 @@ namespace Game.UI.Runtime
                 TMP_Text text = texts[i];
                 if (text == null || text.transform.parent == null)
                     continue;
+                if (text.name == "StopNumber") { text.isRightToLeftText = false; continue; }
                 string parentName = text.transform.parent.name;
                 bool subtitle = text.name == "Subtitle";
                 bool zoneTab = text.name == "Label" && parentName.StartsWith("BattlefieldTab_", StringComparison.Ordinal);
@@ -2589,7 +2602,10 @@ namespace Game.UI.Runtime
             if (target == null)
                 return;
             if (Application.isPlaying)
+            {
+                if (target is GameObject retired) { retired.SetActive(false); retired.transform.SetParent(null, false); }
                 UnityEngine.Object.Destroy(target);
+            }
             else
                 UnityEngine.Object.DestroyImmediate(target);
         }

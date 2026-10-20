@@ -41,10 +41,9 @@ namespace Game.UI.Runtime
                 // v50 (P2: chipWidth is 0 whenever HasCommanderIdentity() is false): the chip is sized from its own content.
                 float creditsWidth = 0f;
                 RectTransform creditsChip = null;
-                if (read)
-                    creditsChip = BuildCreditsChip(view, composition, credits, fa, out creditsWidth);
-                bool room = read && titleWidth - creditsWidth - Gap >= MinTitleRoom;
-                bool creditsShown = read && room;
+                creditsChip = BuildCreditsChip(view, composition, read ? credits : (int?)null, fa, out creditsWidth);
+                bool room = titleWidth - creditsWidth - Gap >= MinTitleRoom;
+                bool creditsShown = room;
                 float panelWidth = creditsShown ? titleWidth - creditsWidth - Gap : titleWidth;
                 if (titlePanel != null)
                     PlaceTopLeft(titlePanel, titleX, 10f, panelWidth, 78f);
@@ -138,7 +137,7 @@ namespace Game.UI.Runtime
             /// (pad + coin + gap + widest line + pad). fa mirrors it (coin on the right, right-aligned text); digits stay Latin
             /// and LTR, as PresentWallet writes them. The label is omitted, never invented, when the table has no text.
             /// </summary>
-            private static RectTransform BuildCreditsChip(QuickCustomScreenView view, RectTransform composition, int credits, bool fa, out float width)
+            private static RectTransform BuildCreditsChip(QuickCustomScreenView view, RectTransform composition, int? credits, bool fa, out float width)
             {
                 RectTransform chip = composition.Find(CreditsChipName) as RectTransform;
                 if (chip == null)
@@ -149,12 +148,13 @@ namespace Game.UI.Runtime
                     plate.color = new Color(0.05f, 0.07f, 0.08f, 1f);
                     plate.raycastTarget = false;
                     Outline rim = chip.gameObject.AddComponent<Outline>();
-                    rim.effectColor = new Color(0.93f, 0.78f, 0.38f, 0.55f);
+                    rim.effectColor = new Color(0.23f, 0.29f, 0.31f, 1f);
                     rim.effectDistance = new Vector2(1f, -1f);
 
                     Image icon = new GameObject("Icon", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
                     icon.transform.SetParent(chip, false);
                     icon.sprite = Resources.Load<Sprite>("resource_credits");
+                    if (icon.sprite == null && SkirmishLibrarySpriteRegistry.Load() is {} art && art.TryGetSprite("skirmish.shared.medallion", out var coinArt)) icon.sprite = coinArt;
                     icon.preserveAspect = true;
                     icon.raycastTarget = false;
                     view.CreateLabel(chip, "Label", LabelSize);
@@ -167,7 +167,7 @@ namespace Game.UI.Runtime
                 if (coin != null)
                     coin.enabled = hasCoin;
 
-                string caption = LibraryTitleCopy("ui.common.credits", string.Empty).Trim();
+                string caption = LibraryTitleCopy("ui.common.credits", fa ? "اعتبار" : "CREDITS").Trim();
                 TMP_Text label = chip.Find("Label")?.GetComponent<TMP_Text>();
                 float labelH = fa ? 38f : 28f; // Noto line box: FitArabicLineBox allows box/1.65 >= 22
                 float labelW = 0f;
@@ -190,7 +190,7 @@ namespace Game.UI.Runtime
                 float valueW = 0f;
                 if (value != null)
                 {
-                    value.text = credits.ToString("N0", CultureInfo.InvariantCulture);
+                    value.text = credits.HasValue ? credits.Value.ToString("N0", CultureInfo.InvariantCulture) : "—";
                     value.isRightToLeftText = false;
                     value.fontStyle = FontStyles.Bold;
                     value.textWrappingMode = TextWrappingModes.NoWrap;

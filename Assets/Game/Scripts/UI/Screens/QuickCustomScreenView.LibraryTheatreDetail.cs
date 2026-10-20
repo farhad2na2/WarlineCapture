@@ -20,7 +20,7 @@ namespace Game.UI.Runtime
         {
             if (plateWidth < 600f)
                 return 0f;
-            return Mathf.Clamp(plateWidth * 0.22f, 230f, 290f);
+            return TheatreSeatGeometry.SagaDetailReserve(plateWidth);
         }
 
         /// <summary>Shrinks the Theatre safe rect so cards and cues avoid the detail panel (trailing side: right in LTR, left in RTL).</summary>
@@ -99,7 +99,7 @@ namespace Game.UI.Runtime
                 // v37: no medal cabinet (per-battle medal states for a zone are not in the Theatre data; tier totals are
                 // shown in the medal row). Objective types take the middle and trailing columns.
                 DetailObjectives(root, fa, (fa ? trailX : middleX) + 6f, pad, middle + trail - 12f, innerH);
-                BuildTheatrePanel(pin, root);
+                BuildSagaTheatrePanel(pin, root);
                 return;
             }
 
@@ -119,7 +119,7 @@ namespace Game.UI.Runtime
                 DetailObjectives(root, fa, pad, Mathf.Max(y, objectivesTop), inner, objectivesHeight);
             }
 
-            BuildTheatrePanel(pin, root);
+            BuildSagaTheatrePanel(pin, root);
         }
 
         private const float DetailObjectiveRowHeight = 66f;
@@ -175,7 +175,7 @@ namespace Game.UI.Runtime
         private float DetailHeader(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width, float panelHeight)
         {
             y = DetailTitleAndStats(root, pin, fa, x, y, width, false);
-            float previewHeight = Mathf.Clamp(width * 0.9f, 90f, Mathf.Max(90f, panelHeight * 0.4f)); // approved-1: large plate, grown to fill the panel
+            float previewHeight = Mathf.Clamp(width * 0.56f, 110f, 240f); // approved-1: large plate, grown to fill the panel
             DetailPreview(root, pin, x, y, width, previewHeight);
             y += previewHeight + 8f;
             y = DetailStats(root, pin, fa, x, y, width);
@@ -207,7 +207,7 @@ namespace Game.UI.Runtime
             return y + 50f;
         }
 
-        private const bool HideDetailStatsLine = true;
+        private const bool HideDetailStatsLine = false;
 
         private float DetailStats(RectTransform root, SkirmishTheaterPinState pin, bool fa, float x, float y, float width)
         {

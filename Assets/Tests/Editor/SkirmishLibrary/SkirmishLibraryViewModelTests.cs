@@ -157,7 +157,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual("S012", model.Battlefield.MapCards[5].ScenarioId);
             Assert.AreEqual(SkirmishBattlefieldLayout.Map, model.Battlefield.Layout);
             model.SetLayout(SkirmishBattlefieldLayout.Grid);
-            Assert.AreEqual(SkirmishBattlefieldLayout.Grid, model.Battlefield.Layout);
+            Assert.AreEqual(SkirmishBattlefieldLayout.Map, model.Battlefield.Layout, "Legacy layout requests use the saga presentation.");
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishLibraryLevel.Battlefield, restored.Level);
             Assert.AreEqual("DB", restored.Battlefield.MapId);
             Assert.AreEqual("BA", restored.Battlefield.SelectedObjectiveId);
-            Assert.AreEqual(SkirmishBattlefieldLayout.Grid, restored.Battlefield.Layout);
+            Assert.AreEqual(SkirmishBattlefieldLayout.Map, restored.Battlefield.Layout);
             Assert.AreEqual("S002", restored.Briefing.ScenarioId);
             Assert.AreEqual(SkirmishDifficultyId.Veteran, restored.Briefing.SelectedDifficulty);
             Assert.AreEqual(SkirmishMedalMask.Veteran, restored.Briefing.Medals);

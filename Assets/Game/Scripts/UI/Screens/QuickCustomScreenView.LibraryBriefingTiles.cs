@@ -65,7 +65,8 @@ namespace Game.UI.Runtime
             DecorateIconTile(_statRow.Find("Time"), FooterGlyph.Clock, null, fa);
             DecorateIconTile(_statRow.Find("Size"), FooterGlyph.Squares, null, fa);
             DecorateIconTile(_statRow.Find("Objective"), FooterGlyph.None, string.IsNullOrEmpty(objectiveId) ? null : SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), fa);
-            DecorateIconTile(_statRow.Find("Army"), FooterGlyph.Shield, null, fa);
+            string armyCode = TryFindEntry(briefing.ScenarioId, out var sourceEntry) ? sourceEntry.ArmyProfile : "G";
+            DecorateIconTile(_statRow.Find("Army"), FooterGlyph.None, SkirmishBattleLibraryArt.ArmyIcon(armyCode), fa);
             DecorateIconTile(_statRow.Find("Start"), FooterGlyph.Pin, null, fa);
 
             string army = string.IsNullOrEmpty(briefing.ArmyLocKey) ? string.Empty : LibraryText(briefing.ArmyLocKey, fa);

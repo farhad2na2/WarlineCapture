@@ -168,7 +168,7 @@ namespace Game.UI.Runtime
                 if (button == back)
                     SetCopy(label, fa ? "بازگشت" : "BACK", 20f, 28f);
                 else if (button == _libraryAdvancedButton)
-                    SetCopy(label, fa ? "پیشرفته" : "ADVANCED", 20f, 28f);
+                    SetCopy(label, fa ? "نبرد سریع" : "QUICK BATTLE", 20f, 28f);
                 FitFooterLabel(button, fa, rects[i].width);
                 if (label != null)
                 {
@@ -653,7 +653,8 @@ namespace Game.UI.Runtime
             }
 
             BindFooter(resetButton, OnLibraryFilters, fa ? "پالایه" : "FILTERS");
-            BindFooter(_libraryAdvancedButton, OnLibraryAdvanced, fa ? "پیشرفته" : "ADVANCED");
+            BindFooter(_libraryAdvancedButton, OnLibraryQuickBattle, fa ? "نبرد سریع" : "QUICK BATTLE");
+            if (_libraryAdvancedButton != null) _libraryAdvancedButton.interactable = HasQuickBattleTarget();
             if (battlefield)
             {
                 BindFooter(randomizeSeedButton, OnLibraryTheater, fa ? "نقشه صحنه" : "THEATRE MAP");
@@ -1001,12 +1002,12 @@ namespace Game.UI.Runtime
                 gradient = button.GetComponent<V3GradientGraphic>();
             if (gradient == null)
                 return;
-            gradient.Configure(top, bottom, new Color(0.93f, 0.78f, 0.38f, 1f), 3f);
+            gradient.Configure(top, bottom, new Color(0.23f, 0.29f, 0.31f, 1f), 2f);
             SkirmishLibraryButtonStateView state = button.GetComponent<SkirmishLibraryButtonStateView>();
             if (state == null)
                 state = button.gameObject.AddComponent<SkirmishLibraryButtonStateView>();
             state.Bind(gradient);
-            state.ApplyPalette(top, bottom, new Color(0.93f, 0.78f, 0.38f, 1f), button.interactable, false);
+            state.ApplyPalette(top, bottom, new Color(0.23f, 0.29f, 0.31f, 1f), button.interactable, false);
         }
     }
 }

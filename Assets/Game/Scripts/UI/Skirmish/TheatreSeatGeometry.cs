@@ -11,7 +11,7 @@ namespace Game.UI.Runtime
     /// corners into this same y-down space and calls <see cref="SeatHolds"/>.
     /// A seat this accepts is the seat the straddle check accepts.
     /// </summary>
-    public static class TheatreSeatGeometry
+    public static partial class TheatreSeatGeometry
     {
         public struct Vec2
         {
@@ -239,11 +239,7 @@ namespace Game.UI.Runtime
                 safeWidth = 1672f;
             if (safeHeight < 200f)
                 safeHeight = 941f;
-            bool narrow = safeWidth / Math.Max(1f, safeHeight) < MapPanelNarrowAspect;
-            float share = narrow ? 0.26f : 0.32f;
-            float minBriefing = narrow ? 280f : 460f;
-            float maxBriefing = narrow ? 380f : 600f;
-            float briefing = Clamp(safeWidth * share, minBriefing, maxBriefing);
+            float briefing = SagaSummaryWidth(safeWidth,safeHeight);
             float map = safeWidth - MapPanelOriginX * 2f - MapPanelGap - briefing;
             if (map < 480f)
                 briefing = Math.Max(240f, safeWidth - MapPanelOriginX * 2f - MapPanelGap - 480f);
@@ -883,7 +879,7 @@ namespace Game.UI.Runtime
         {
             if (!reserveOn || plateWidth < 600f || plateHeight < 2f)
                 return new Box(0f, 0f, 0f, 0f);
-            float reserve = Clamp(plateWidth * 0.22f, 230f, 290f);
+            float reserve = SagaDetailReserve(plateWidth);
             const float margin = 10f;
             float width = reserve - margin * 2f;
             float height = Math.Max(200f, plateHeight - margin * 2f);
@@ -966,9 +962,8 @@ namespace Game.UI.Runtime
             Layout fa = Arrange(plateWidth, plateHeight, true, true, "DB");
             Box enView = OpenViewport(plateWidth, plateHeight, false, true);
             Box faView = OpenViewport(plateWidth, plateHeight, true, true);
-            if (Math.Abs((en.Cue.X - enView.X) - (fa.Cue.X - faView.X)) > 1f
-                || Math.Abs(en.Cue.Y - fa.Cue.Y) > 1f
-                || Math.Abs(en.Cue.W - fa.Cue.W) > 1f)
+            if (!SagaCueChromeHolds(en,plateWidth,plateHeight,false,true)
+                || !SagaCueChromeHolds(fa,plateWidth,plateHeight,true,true))
             {
                 failure = "cue";
                 return false;
@@ -976,7 +971,8 @@ namespace Game.UI.Runtime
 
             Layout enOpen = Arrange(plateWidth, plateHeight, false, false, "DB");
             Layout faOpen = Arrange(plateWidth, plateHeight, true, false, "DB");
-            if (Math.Abs(enOpen.Cue.X - faOpen.Cue.X) > 1f || Math.Abs(enOpen.Cue.Y - faOpen.Cue.Y) > 1f)
+            if (!SagaCueChromeHolds(enOpen,plateWidth,plateHeight,false,false)
+                || !SagaCueChromeHolds(faOpen,plateWidth,plateHeight,true,false))
             {
                 failure = "open cue";
                 return false;
@@ -5701,8 +5697,8 @@ namespace Game.UI.Runtime
                 }
 
                 Box cue = i == IndexOf(selectedMapId) ? layout.Cue : default;
-                if (fa && cue.W > 1f)
-                    cue = WidenFaCue(cue, plateWidth);
+                // Probe the seated cue. TMP fitting and any subsequent cue move are
+                // checked against the final native rectangles by the capture lane.
                 Vec2[] shape = FinishTerritory(hexes[i], cards[i], layout.Seats[i].Pin, MapIds[i], others, cue, plateWidth, plateHeight, detail, hint);
                 float expected = HexAspect(MapIds[i], view.W, view.H);
                 float measured = MeasuredHexAspect(shape);
@@ -5925,7 +5921,7 @@ namespace Game.UI.Runtime
             if (CompactRegionHolds(hex, card, plateWidth, plateHeight, detail, hint))
             {
                 Vec2[] compact = SeatThenClear(hex, hex, card, others, cue, plateWidth, plateHeight, detail, hint, expected);
-                return KeepDrawnFrame(compact, hex, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+                return GrowSagaPortraitCoast(KeepDrawnFrame(compact, hex, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected), card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
             }
             Vec2[] shape = TerritoryAround(hex, card, mapId, others, cue);
             Vec2[] held = HoldMapFrame(shape, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
@@ -5975,7 +5971,7 @@ namespace Game.UI.Runtime
             Vec2[] seated = SeatThenClear(
                 PreferOrganicCoast(held, hex, card, mapId, others, cue, plateWidth, plateHeight, detail, hint, expected),
                 hex, card, others, cue, plateWidth, plateHeight, detail, hint, expected);
-            return KeepDrawnFrame(seated, held, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
+            return GrowSagaPortraitCoast(KeepDrawnFrame(seated, held, hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected), card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected);
         }
 
         /// <summary>
@@ -9530,10 +9526,7 @@ namespace Game.UI.Runtime
                 return false;
             if (selected < 0 || selected >= cards.Length || cards[selected].W < 48f)
                 return false;
-            // Capture always selects Industrial Basin and was clean. The flow
-            // violations are the Desert Base pill, so only that district is reseated.
-            if (!string.Equals(MapIds[selected], "DB", StringComparison.Ordinal))
-                return false;
+            // Every selected battlefield needs the same cue clearance and readable size.
             // FaChromeMirrors compares the 1294×724 cue. A wider Farsi pill there
             // breaks the match, and that plate is not the 16:9 capture.
             if (Math.Abs(plateWidth - 1294f) < 1f && Math.Abs(plateHeight - 724f) < 1f)
@@ -11952,6 +11945,8 @@ namespace Game.UI.Runtime
         public static bool TerritoryReadsRectangular(Vec2[] shape)
         {
             if (shape == null || shape.Length < 3)
+                return true;
+            if (SagaCoastOccupancy(shape) > 0.91f)
                 return true;
             if (shape.Length <= 4 && CornersAreRight(shape))
                 return true;
@@ -16652,6 +16647,8 @@ namespace Game.UI.Runtime
             bool cacheable = PortraitCards == null;
             if (cacheable && ArrangeCacheHit(plateWidth, plateHeight, fa, reserveOn, selectedMapId, out Layout cached))
                 return cached;
+            if(cacheable&&TryArrangeStableSagaSelection(plateWidth,plateHeight,fa,reserveOn,selectedMapId,out var stable))
+            {RememberArrange(plateWidth,plateHeight,fa,reserveOn,selectedMapId,stable);return stable;}
             ReserveSlideX = 0f;
             CompactCoast = false;
             var layout = new Layout
@@ -16670,16 +16667,13 @@ namespace Game.UI.Runtime
             if (selected < 0)
                 selected = 0;
             SelectedPortrait = selected;
-            bool sectionReserve = reserveOn
-                && plateHeight < 760f
-                && plateHeight > 680f
-                && plateWidth < 1200f
-                && plateWidth / plateHeight < 1.65f
-                && plateWidth / plateHeight >= 1.40f;
+            bool sectionReserve = reserveOn && plateHeight>680f && plateHeight<820f && aspectView.W/plateHeight<1.55f;
             if ((ReserveScalesArea(plateWidth, plateHeight, reserveOn) || sectionReserve)
                 && TryArrangeCompactReserve(ref layout, plateWidth, plateHeight, fa, selected))
             {
                 SelectedPortrait = -1;
+                FinalizeCompactSagaCue(ref layout, plateWidth, plateHeight, fa, selected);
+                FinalizeSagaSeats(ref layout, plateWidth, plateHeight, fa, reserveOn);
                 if (cacheable)
                     RememberArrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId, layout);
                 return layout;
@@ -16845,6 +16839,7 @@ namespace Game.UI.Runtime
             layout.CueNear = cueNear;
             layout.HexAspectLegal = AspectsHold(hexes, RatioPlateWidth, RatioPlateHeight)
                 && DistrictsLegal(hexes, pins, plateWidth, plateHeight);
+            FinalizeSagaSeats(ref layout, plateWidth, plateHeight, fa, reserveOn);
             layout.LogLines = BuildLog(fa ? "fa" : "en", layout);
             if (cacheable)
                 RememberArrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId, layout);
@@ -21270,7 +21265,7 @@ namespace Game.UI.Runtime
         {
             if (plateWidth < 2f)
                 return 0f;
-            float reserve = Clamp(plateWidth * 0.22f, 230f, 290f);
+            float reserve = SagaDetailReserve(plateWidth);
             float faRight = reserve - 10f + 2f;
             float enLeft = plateWidth - reserve + 10f - 2f;
             float faFrac = faRight / plateWidth;

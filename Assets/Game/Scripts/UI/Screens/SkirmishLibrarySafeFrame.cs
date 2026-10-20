@@ -77,6 +77,14 @@ namespace Game.UI.Runtime
             Apply();
         }
 
+        public void RefreshLiveInset()
+        {
+            if (_simulated)
+                return;
+            _hasBase = false;
+            Apply();
+        }
+
         public void Apply()
         {
             if (rect == null)
@@ -115,7 +123,7 @@ namespace Game.UI.Runtime
             float horizontal = (left + right) / Mathf.Max(1f, canvasWidth);
             float vertical = (top + bottom) / Mathf.Max(1f, canvasHeight);
             bool inset = horizontal + vertical >= 0.004f;
-            ShowEdges(inset);
+            HideSafeAreaEdges();
             ShowNotch(inset && _simulated && top >= 24f);
             if (!inset)
                 return;
@@ -182,33 +190,14 @@ namespace Game.UI.Runtime
                 cutout.gameObject.SetActive(false);
         }
 
-        private void ShowEdges(bool visible)
+        // Insets affect layout only. Diagnostic perimeter strokes are not player UI.
+        private void HideSafeAreaEdges()
         {
-            EnsureEdge("SafeAreaEdgeTop", 0f, 1f, 1f, 1f, 0f, -4f, 0f, 0f, visible);
-            EnsureEdge("SafeAreaEdgeBottom", 0f, 0f, 1f, 0f, 0f, 0f, 0f, 4f, visible);
-            EnsureEdge("SafeAreaEdgeLeft", 0f, 0f, 0f, 1f, 0f, 0f, 4f, 0f, visible);
-            EnsureEdge("SafeAreaEdgeRight", 1f, 0f, 1f, 1f, -4f, 0f, 0f, 0f, visible);
-        }
-
-        private void EnsureEdge(string name, float minX, float minY, float maxX, float maxY, float left, float bottom, float right, float top, bool visible)
-        {
-            Transform existing = transform.Find(name);
-            RectTransform edge = existing as RectTransform;
-            if (edge == null)
+            foreach(string name in new[]{"SafeAreaEdgeTop","SafeAreaEdgeBottom","SafeAreaEdgeLeft","SafeAreaEdgeRight"})
             {
-                var image = new GameObject(name, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-                image.transform.SetParent(transform, false);
-                image.color = new Color(0.93f, 0.78f, 0.38f, 1f);
-                image.raycastTarget = false;
-                edge = image.rectTransform;
+                Transform edge=transform.Find(name);
+                if(edge!=null)edge.gameObject.SetActive(false);
             }
-
-            edge.gameObject.SetActive(visible);
-            edge.anchorMin = new Vector2(minX, minY);
-            edge.anchorMax = new Vector2(maxX, maxY);
-            edge.offsetMin = new Vector2(left, bottom);
-            edge.offsetMax = new Vector2(right, top);
-            edge.SetAsLastSibling();
         }
 
         private void ShowNotch(bool visible)

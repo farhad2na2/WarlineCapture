@@ -978,6 +978,8 @@ namespace Game.Editor
                 if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") != "1" &&
                     (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked))
                 {
+                    if (sagaMenuProof)
+                        ScreenCapture.CaptureScreenshot(LiveTracePath() + ".aria-stopped-" + aria.Phase + ".png");
                     Finish(abort: true, abortReason: "ariaStopped:" + aria.Phase);
                     return;
                 }

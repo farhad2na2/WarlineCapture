@@ -20,7 +20,7 @@ namespace Game.Editor
     /// Renders the SCN-13 battle library to PNG for Theatre, Map and Grid at 16:9, 20:9 and 4:3,
     /// in English and Persian. This is an Editor capture, not player-readiness evidence.
     /// </summary>
-    public static class SkirmishBattleLibraryCapture
+    public static partial class SkirmishBattleLibraryCapture
     {
         public const string OutputDirectory = "Design/AgentReports/SkirmishBattleLibrary/2026-10-14";
         public const string PassMarker = "[SkirmishBattleLibraryCapture] result=Passed";
@@ -198,8 +198,8 @@ namespace Game.Editor
                 var canvasRect = canvasObject.GetComponent<RectTransform>();
                 canvasRect.pivot = new Vector2(0.5f, 0.5f);
                 canvasRect.position = Vector3.zero;
-                canvasRect.sizeDelta = new Vector2(size.Width, size.Height);
-                canvasRect.localScale = Vector3.one;
+                canvasRect.sizeDelta = new Vector2(size.Width, size.Height) * SagaCanvasDensity;
+                canvasRect.localScale = Vector3.one / SagaCanvasDensity;
                 var canvas = canvasObject.GetComponent<Canvas>();
                 canvas.renderMode = RenderMode.WorldSpace;
                 canvas.worldCamera = camera;
@@ -244,9 +244,40 @@ namespace Game.Editor
                 Canvas.ForceUpdateCanvases();
                 TheatreSeatGeometry.SeatingReady = true;
                 view.PresentLibraryCapture(state);
+                if(state=="theater"&&!string.IsNullOrEmpty(SagaTheatreMap))
+                {view.Library.SelectMapCollection(SagaTheatreMap);view.Library.BackToTheater();}
+                if (state=="saga" && !string.IsNullOrEmpty(SagaBattleScenario)) view.SelectScenarioId(SagaBattleScenario);
+                if (state=="saga")
+                {
+                    TMP_Text description=null;
+                    foreach(var text in view.GetComponentsInChildren<TMP_Text>(false))
+                        if(text.name=="SeedHelp") { description=text; break; }
+                    if(description!=null)
+                    {
+                        if (SagaBriefingAtBottom)
+                            foreach(var scroll in view.GetComponentsInChildren<ScrollRect>(false))
+                                if(scroll.name=="BaseAssaultRules") { scroll.verticalNormalizedPosition=0; break; }
+                        description.GetComponent<V3LocalizedTextBindingView>()?.ApplyLocalization();
+                        Canvas.ForceUpdateCanvases();
+                        description.ForceMeshUpdate();
+                        var preview=description.transform.parent.Find("BriefingPreview/Picture") as RectTransform;
+                        if(preview != null)
+                        {
+                            var picCorners=new Vector3[4]; var textCorners=new Vector3[4];
+                            preview.GetWorldCorners(picCorners); description.rectTransform.GetWorldCorners(textCorners);
+                            if(picCorners[0].y<textCorners[1].y-.5f)
+                                throw new InvalidOperationException("Briefing preview overlaps the description row.");
+                        }
+                        if(description.fontSize < (GameLocalization.IsRightToLeft ? 22f : 20f) - .1f)
+                            throw new InvalidOperationException("Briefing shrank below the locale font floor: "+description.fontSize+" row="+description.rectTransform.rect+" rendered="+description.renderedHeight+" preferred="+description.preferredHeight+" scenario="+view.SelectedScenarioId);
+                        if(description.renderedHeight>description.rectTransform.rect.height-15f)
+                            throw new InvalidOperationException("Full briefing exceeds its measured row after localization: "+description.renderedHeight+" / "+description.rectTransform.rect.height);
+                    }
+                }
                 RejectUnresolvedSprites(view.Library);
                 Canvas.ForceUpdateCanvases();
                 RejectCollapsedLayout(instance);
+                RejectSagaReadability(instance);
                 foreach (var text in instance.GetComponentsInChildren<TMP_Text>(true))
                     text.ForceMeshUpdate();
                 RejectMissingGlyphs(instance);
@@ -260,10 +291,12 @@ namespace Game.Editor
                     safeFrame.SetSimulatedInsets(size.Width, size.Height, 132f, 84f, 0f, 0f);
                     safeFrame.CommitSimulatedInset();
                 }
+                RejectSagaReadability(instance);
                 IsolateCaptureLayer(canvasObject, camera);
 
                 target = new RenderTexture(size.Width, size.Height, 24, RenderTextureFormat.ARGB32);
                 camera.targetTexture = target;
+                SagaChromeProbe?.Invoke(instance,camera);
                 camera.Render();
                 RenderTexture previous = RenderTexture.active;
                 RenderTexture.active = target;
@@ -3001,7 +3034,7 @@ namespace Game.Editor
             }
 
             const float edgeInset = 26f;
-            const float step = 18f;
+            const float step = 12f;
             const int radius = 6;
             var samples = new List<float>();
             for (float y = minY + edgeInset; y <= maxY - edgeInset; y += step)
@@ -4090,7 +4123,8 @@ namespace Game.Editor
                 out float seamBriefingX,
                 out float seamBriefingWidth,
                 out float _,
-                out float _);
+                out float _,
+                theatre);
             SkirmishLibraryFrame.CloseTheatreSeam(
                 theatre,
                 briefingOnLeft,

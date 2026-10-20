@@ -83,7 +83,7 @@ public sealed class SkirmishSetupScreenTests
         var back = FindRecursive(prefab.transform, "BackButton").GetComponent<Button>();
         Assert.Greater(back.targetGraphic.color.a, 0.9f, "Back must be a visible control, not an invisible logo hit target.");
         Assert.NotNull(FindRecursive(back.transform, "BackIcon"));
-        Assert.AreEqual("ui.navigation.back_to_main_menu",
+        Assert.AreEqual("ui.navigation.back",
             back.GetComponentInChildren<V3LocalizedTextBindingView>(true).LocalizationKey);
     }
 
@@ -96,9 +96,9 @@ public sealed class SkirmishSetupScreenTests
         int passed = 0;
         try
         {
-            Run(nameof(MenuSceneRoutesSkirmishSetupWithoutReplacingSharedHeader), test => test.MenuSceneRoutesSkirmishSetupWithoutReplacingSharedHeader(), ref passed);
+            Run(nameof(MenuSceneRoutesSkirmishSetupWithItsCurrentChrome), test => test.MenuSceneRoutesSkirmishSetupWithItsCurrentChrome(), ref passed);
             Run(nameof(SkirmishSetupPrefabUsesLockedV3Structure), test => test.SkirmishSetupPrefabUsesLockedV3Structure(), ref passed);
-            Run(nameof(MainMenuSkirmishEntryOpensSetupAndDeployRemainsDirect), test => test.MainMenuSkirmishEntryOpensSetupAndDeployRemainsDirect(), ref passed);
+            Run(nameof(MainMenuSkirmishEntryAndBackUseMenuRouteHistory), test => test.MainMenuSkirmishEntryAndBackUseMenuRouteHistory(), ref passed);
             Run(nameof(SkirmishAndBackButtonsDriveShellRouteHistory), test => test.SkirmishAndBackButtonsDriveShellRouteHistory(), ref passed);
             Run(nameof(SkirmishSetupReadsVisibleControlsAndLaunchesThroughContracts), test => test.SkirmishSetupReadsVisibleControlsAndLaunchesThroughContracts(), ref passed);
             Debug.Log($"[SkirmishSetupScreenValidation] result=Passed tests={passed}");
@@ -175,7 +175,7 @@ public sealed class SkirmishSetupScreenTests
     }
 
     [Test]
-    public void MenuSceneRoutesSkirmishSetupWithoutReplacingSharedHeader()
+    public void MenuSceneRoutesSkirmishSetupWithItsCurrentChrome()
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
@@ -184,6 +184,11 @@ public sealed class SkirmishSetupScreenTests
         Assert.AreEqual("SCN13_SkirmishSetupContent", content.SkirmishSetupContentPrefab.name);
         Assert.IsNull(FindRecursive(content.SkirmishSetupContentPrefab.transform, "HeaderContent"), "SCN-13 must not duplicate the shared header.");
 
+        var sections=content.MainMenuContentPrefab.GetComponent<UIShellContentSectionsView>();
+        Assert.NotNull(sections,"Main menu requires its section registry.");
+        Assert.IsTrue(sections.TryGetSection(UIShellContentSectionId.Header,out var sourceHeader),"Main menu header section missing.");
+        Assert.IsTrue(content.ShellView.TryGetRegion(UIShellRegionId.HeaderRegion,out var headerRegion),"Header region missing.");
+        Assert.NotNull(headerRegion.ContentRoot,"Header region content root missing.");
         content.PrepareForCommandSequence(new[]
         {
             new UiShellPresentationCommandModel(UiShellCommandKind.EnterMenu, default, default, default, 0)
@@ -192,14 +197,17 @@ public sealed class SkirmishSetupScreenTests
 
         content.InstallMenuRouteBody(UIRoute.QuickCustomSetup);
 
-        GameObject headerAfter = AssertRegionHasChild(content.ShellView, UIShellRegionId.HeaderRegion);
-        Assert.AreSame(headerBefore, headerAfter, "Skirmish setup must preserve the shared Main Menu header instance.");
+        AssertRegionIsEmpty(content.ShellView, UIShellRegionId.HeaderRegion);
+        Assert.IsTrue(headerBefore==null,"The full-screen library replaces the main-menu header, as Campaign and Operations do.");
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.LeftRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.MiddleRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.RightRegion);
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.FooterRegion);
         GameObject setup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
         Assert.NotNull(setup.GetComponent<QuickCustomScreenView>(), "Routed SCN-13 must own the config controller.");
+        Assert.NotNull(FindRecursive(setup.transform,"ScreenTitlePanel"),"Routed library supplies the current title chrome.");
+        Assert.NotNull(FindRecursive(setup.transform,"WarlineLogo"));
+        Assert.NotNull(FindRecursive(setup.transform,"SettingsButton"));
         Assert.IsNull(FindRecursive(setup.transform, "PresetRail"));
         Assert.NotNull(FindRecursive(setup.transform, "OperationPreview"));
         Assert.NotNull(FindRecursive(setup.transform, "BaseAssaultRules"));
@@ -207,7 +215,7 @@ public sealed class SkirmishSetupScreenTests
     }
 
     [Test]
-    public void MainMenuSkirmishEntryOpensSetupAndDeployRemainsDirect()
+    public void MainMenuSkirmishEntryAndBackUseMenuRouteHistory()
     {
         Scene scene = EditorSceneManager.OpenScene(MenuScenePath, OpenSceneMode.Single);
         UIShellContentView content = FindInScene<UIShellContentView>(scene);
@@ -228,14 +236,10 @@ public sealed class SkirmishSetupScreenTests
         Assert.AreEqual(UiShellRouteIntent.BackMenuRoute, backRoute.Intent);
         Assert.AreEqual(UIRoute.MainMenu, backRoute.Route);
 
-        UIShellRouteButtonView[] routes = content.MainMenuContentPrefab.GetComponentsInChildren<UIShellRouteButtonView>(true);
-        int directDeployCount = 0;
-        for (int i = 0; i < routes.Length; i++)
-        {
-            if (routes[i].Intent == UiShellRouteIntent.EnterMatch && routes[i].Route == UIRoute.Match)
-                directDeployCount++;
-        }
-        Assert.GreaterOrEqual(directDeployCount, 1, "General Deploy must remain a direct Match launch.");
+        // The current main menu routes through its mode cards. Match launch is proved
+        // by SkirmishSetupReadsVisibleControlsAndLaunchesThroughContracts below.
+        Assert.AreNotEqual(UiShellRouteIntent.EnterMatch, skirmishRoute.Intent,
+            "Selecting Skirmish must first present its mission library.");
     }
 
     [Test]
@@ -406,7 +410,9 @@ public sealed class SkirmishSetupScreenTests
         SerializedObject serialized = new(gradient);
         SerializedProperty borderWidth = serialized.FindProperty("borderWidth");
         Assert.NotNull(borderWidth);
-        Assert.AreEqual(3f, borderWidth.floatValue, .001f, $"{name} must use the locked constant 3 px border.");
+        Assert.That(borderWidth.floatValue, Is.InRange(1f,3f), $"{name} must use the current thin steel frame.");
+        Color edge=serialized.FindProperty("borderColor").colorValue;
+        Assert.IsFalse(edge.r>.4f&&edge.g>.3f&&edge.b<edge.g*.8f,$"{name} must not restore a yellow frame.");
     }
 
     private static T FindInScene<T>(Scene scene) where T : Component

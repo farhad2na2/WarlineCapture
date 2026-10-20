@@ -109,6 +109,7 @@ namespace Game.Editor
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
                     terminalResultPresentation = SkirmishTerminalPresentationObservation.ReadResult(view, terminalAttempt.ToString(), match.Outcome);
                     if (!SkirmishTerminalPresentationObservation.AcceptResult(terminalResultPresentation, terminalAttempt.ToString(), match.Outcome)) return;
+                    if (sagaMenuProof && !ObserveSagaResultMedal(em,session,in match)) return;
                     if (UiShellRuntimeGateway.Localization.IsRightToLeft)
                     {
                         var card = UnityEngine.Object.FindAnyObjectByType<CampaignStyleResultCard>();
@@ -216,6 +217,7 @@ namespace Game.Editor
                             " fuel=" + SkirmishStartingSupplyService.ReadFuel(em, fresh, 1) +
                             " materials=" + SkirmishMaterialsService.Read(em, fresh, 1));
                     }
+                    if(sagaMenuProof) VerifySagaReturnedMedal(prefix);
                     ScreenCapture.CaptureScreenshot(prefix + "-destination.png");
                     terminalStep = 2;
                     terminalDue = now + 1d;

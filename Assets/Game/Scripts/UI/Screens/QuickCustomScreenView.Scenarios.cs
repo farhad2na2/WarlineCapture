@@ -286,7 +286,7 @@ namespace Game.UI.Runtime
             }
 
             if (battleLibrarySearch != null && battleLibrarySearch.placeholder is TMP_Text searchHint)
-                UiLocalizedText.Set(searchHint, fa ? "جستجوی نبرد (S004, کویر, ...)" : "Search battles (S004, Desert, ...)");
+                UiLocalizedText.Set(searchHint, fa ? "جستجوی نبردها" : "Search battles");
 
             PresentCompiledBriefing(selected, fa);
             _savedMatchAvailable = !_suppressSavedMatch && selected.IsPlayable &&

@@ -218,6 +218,7 @@ namespace Game.UI.Runtime
             PlaceTerrainShade(fit, slots, plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
                 DrawZoneOutline(fit, "ZoneOutline_" + slots[i].MapId, slots[i].Hex, slots[i].Zone, slots[i].Selected);
+            PresentSagaTheatreRoute(fit, slots, plateWidth, plateHeight);
             for (int i = 0; i < slots.Count; i++)
             {
                 if (slots[i].Card.width < 1f)
@@ -255,6 +256,7 @@ namespace Game.UI.Runtime
             }
 
             PresentTheatreDetailPanel(theater, fa, plateWidth, plateHeight);
+            _sagaTheatreLayoutStamp=new Vector4(_libraryRegions.rect.width,_libraryRegions.rect.height,_libraryRegions.lossyScale.x,_libraryRegions.lossyScale.y);
         }
 
         /// <summary>
@@ -1359,7 +1361,7 @@ namespace Game.UI.Runtime
         {
             if (plateWidth < 600f)
                 return 0f;
-            return Mathf.Clamp(plateWidth * 0.22f, 230f, 290f);
+            return TheatreSeatGeometry.SagaDetailReserve(plateWidth);
         }
 
         /// <summary>
@@ -2368,6 +2370,7 @@ namespace Game.UI.Runtime
             pin.rectTransform.localScale = Vector3.one;
             if (!slot.Selected)
                 return;
+            if(fa&&slot.Cue.height<56f){slot.Cue.y-=56f-slot.Cue.height;slot.Cue.height=56f;}
             var plate = new GameObject("CuePlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             plate.transform.SetParent(parent, false);
             plate.sprite = ZonePillSprite();
@@ -2386,7 +2389,7 @@ namespace Game.UI.Runtime
             cue.overflowMode = TextOverflowModes.Overflow;
             cue.fontStyle = FontStyles.Bold;
             cue.color = CueInkColor();
-            SetCopy(cue, fa ? "لمس برای بزرگنمایی" : "Tap to zoom", 16f, 26f);
+            SetCopy(cue, fa ? "بزرگ‌نمایی" : "Tap to zoom", fa?22f:16f, 26f);
             cue.alignment = TextAlignmentOptions.Center;
             cue.isRightToLeftText = fa;
             cue.textWrappingMode = TextWrappingModes.NoWrap;
@@ -3132,7 +3135,7 @@ namespace Game.UI.Runtime
                     var shape = new TheatreSeatGeometry.Vec2[points.Length];
                     for (int i = 0; i < points.Length; i++)
                         shape[i] = new TheatreSeatGeometry.Vec2(points[i].x, points[i].y);
-                    for (float drop = 4f; drop <= 40f; drop += 4f)
+                    for (float drop = 4f; drop <= SagaPortraitDropBudget; drop += 4f)
                     {
                         var moved = new TheatreSeatGeometry.Box(seatX, seatY + drop, seatW, seatH);
                         if (!TheatreSeatGeometry.CardInsideTerritory(moved, shape))
@@ -3267,7 +3270,7 @@ namespace Game.UI.Runtime
             const float height = 56f;
             float width = Mathf.Max(160f, cardW);
             float[] tracking = { -12f, -36f, -72f, -108f, 0f };
-            for (float drop = 0f; drop <= 48.1f; drop += 4f)
+            for (float drop = 0f; drop <= SagaPortraitDropBudget; drop += 4f)
             {
                 float nextY = cardY + drop;
                 float top = nextY - height;
@@ -3486,7 +3489,7 @@ namespace Game.UI.Runtime
             var shape = new TheatreSeatGeometry.Vec2[points.Length];
             for (int i = 0; i < points.Length; i++)
                 shape[i] = new TheatreSeatGeometry.Vec2(points[i].x, points[i].y);
-            for (float drop = 4f; drop <= 40f; drop += 4f)
+            for (float drop = 4f; drop <= SagaPortraitDropBudget; drop += 4f)
             {
                 var moved = new TheatreSeatGeometry.Box(cardX, cardY + drop, cardW, cardH);
                 if (!TheatreSeatGeometry.CardInsideTerritory(moved, shape))
@@ -4235,14 +4238,12 @@ namespace Game.UI.Runtime
                 : TheatreSeatGeometry.TryAttachCueToCard(frameW, frameH, pins, cards, hexes, detail, selected, out seated);
             if (attached)
             {
+                // Cue attachment may propose another portrait position. Keep the
+                // validated seating; the external saga cue can use a clear shelf.
                 for (int i = 0; i < cards.Length; i++)
-                {
-                    if (hexes[i] == null || cards[i].W < 1f)
-                        continue;
-                    if (TheatreSeatGeometry.CardInsideTerritory(cards[i], hexes[i]))
-                        continue;
                     cards[i] = cardSnapshot[i];
-                }
+                if (!TheatreSeatGeometry.ParkedCueHolds(seated,cards[selected],hexes,pins,cards,selected,detail,frameW,frameH,fa))
+                    attached=false;
 
                 if (!TheatreSeatGeometry.ParkedCueHolds(
                     seated, cards[selected], hexes, pins, cards, selected, detail, frameW, frameH, fa)
@@ -4255,6 +4256,8 @@ namespace Game.UI.Runtime
                 }
             }
 
+            if (!attached)
+                attached=TheatreSeatGeometry.TryParkSagaCue(hexes,pins,cards,selected,detail,frameW,frameH,fa,out seated);
             if (!attached)
                 return false;
             if ((Mathf.Abs(cards[selected].X - cardXBefore) > 0.5f
@@ -4754,6 +4757,7 @@ namespace Game.UI.Runtime
 
         private void FitZoomCue()
         {
+            if (!TheatreSeatGeometry.SeatingReady) return;
             if (_fittingZoomCue)
                 return;
             _fittingZoomCue = true;
@@ -4804,6 +4808,7 @@ namespace Game.UI.Runtime
                 FinishCuePaint(cue, heldSelection);
                 ReseatFramedCards(_libraryRegions);
                 LogTheatreCue(cue);
+                ReseatSagaZoomMarker(cue,heldSelection,fa);
                 LogTheatreSeats(cue.transform.parent, fa);
                 return;
             }
@@ -4812,6 +4817,7 @@ namespace Game.UI.Runtime
             FinishCuePaint(cue, heldSelection);
             ReseatFramedCards(_libraryRegions);
             LogTheatreCue(cue);
+            ReseatSagaZoomMarker(cue,heldSelection,fa);
             LogTheatreSeats(cue.transform.parent, fa);
         }
 
@@ -5041,6 +5047,7 @@ namespace Game.UI.Runtime
             if (layout.Seats == null)
                 return false;
             bool cardsOk = layout.CardsLegal && layout.CueNear && layout.HexAspectLegal;
+            if(fa&&TheatreSeatGeometry.ShotIsFourByThree())Debug.Log("[SagaSeatSelection] selected="+selected+" cards="+layout.CardsLegal+" near="+layout.CueNear+" aspects="+layout.HexAspectLegal+" cue="+layout.Cue.X+","+layout.Cue.Y+","+layout.Cue.W+","+layout.Cue.H);
             for (int i = 0; i < slots.Count; i++)
             {
                 TheatreZoneSlot slot = slots[i];
@@ -6175,7 +6182,9 @@ namespace Game.UI.Runtime
                 }
             }
 
-            for (float drop = 0f; drop <= 40.1f; drop += 4f)
+            // Keep the authored portrait centred. Cue fitting must not push a
+            // card down to make a tab fit; the saga pass can use a clear shelf.
+            for (float drop = 0f; drop < 0.5f; drop += 4f)
             {
                 float nextY = cardY + drop;
                 float top = nextY - cueBox.height - 2f;

@@ -240,9 +240,13 @@ namespace Game.UI.Runtime
                 _crestImage = title.Find("Crest")?.GetComponent<Image>();
         }
 
+        private bool _refittingSaga;
+        private bool _refittingTheatre;
+        private Vector4 _sagaTheatreLayoutStamp;
+
         private void OnLibraryLayoutApplied()
         {
-            if (_libraryPresenting)
+            if (_libraryPresenting || _refittingTheatre)
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             bool battlefield = LibraryLevel == SkirmishLibraryLevel.Battlefield;
@@ -283,8 +287,24 @@ namespace Game.UI.Runtime
                 }
             }
 
-            if (!battlefield)
+            if (!battlefield && _libraryViewModel!=null && _libraryRegions!=null && _libraryRegions.gameObject.activeInHierarchy)
+            {
+                var stamp=new Vector4(_libraryRegions.rect.width,_libraryRegions.rect.height,_libraryRegions.lossyScale.x,_libraryRegions.lossyScale.y);
+                if((stamp-_sagaTheatreLayoutStamp).sqrMagnitude>.001f)
+                {
+                    _refittingTheatre=true;
+                    try { PresentRegions(_libraryViewModel.Theater,fa);FinishLibraryText(); }
+                    finally { _refittingTheatre=false; }
+                }
                 FitZoomCue();
+            }
+            if (battlefield && !_refittingSaga && _libraryViewModel != null && _libraryPins != null)
+            {
+                _refittingSaga = true;
+                try { PresentSaga(_libraryViewModel.Battlefield, fa); }
+                finally { _refittingSaga = false; }
+            }
+            ApplySagaStyle();
         }
 
 

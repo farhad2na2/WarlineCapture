@@ -418,7 +418,7 @@ namespace Game.UI.Runtime
                 return;
             ClearChildren(_objectiveColumn);
             const float listWidth = ObjectiveListWidth;
-            const float rowHeight = 92f;
+            float rowHeight = fa ? 128f : 92f;
             PlaceTopLeft(_objectiveColumn, 8f, 8f, listWidth, 4f * (rowHeight + 8f));
             if (field.Tabs == null)
                 return;
@@ -445,13 +445,13 @@ namespace Game.UI.Runtime
                 PlaceTopLeft(icon.rectTransform, tileX + 12f, (rowHeight - 32f) * 0.5f, 32f, 32f);
                 icon.preserveAspect = true;
                 ShowIcon(icon, SkirmishBattleLibraryArt.ObjectiveIcon(objective.ObjectiveId), Color.white);
-                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out _, out string shortLabel);
+                SkirmishBattleLibraryArt.ObjectiveCopy(objective.ObjectiveId, fa, out string shortLabel, out _);
                 var label = CreateLabel(button.transform, "Label", 22f);
                 var count = CreateLabel(button.transform, "Count", 22f);
                 float textX = fa ? 6f : 6f + tile + 6f;
                 float textWidth = listWidth - tile - 18f;
-                PlaceTopLeft(label.rectTransform, textX, 6f, textWidth, 52f);
-                PlaceTopLeft(count.rectTransform, textX, 58f, textWidth, 28f);
+                PlaceTopLeft(label.rectTransform, textX, 6f, textWidth, fa ? 78f : 52f);
+                PlaceTopLeft(count.rectTransform, textX, fa ? 88f : 58f, textWidth, fa ? 36f : 28f);
                 label.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;
                 label.isRightToLeftText = fa;
                 label.textWrappingMode = TextWrappingModes.Normal;
@@ -459,7 +459,7 @@ namespace Game.UI.Runtime
                 label.maxVisibleLines = 2;
                 SetCopy(label, UpperLatin(shortLabel), LibraryFontFloor, 28f);
                 label.enableAutoSizing = false; // larger rail labels (Game PM); fixed so the Arabic line-box fit can't shrink them
-                label.fontSize = 24f;
+                label.fontSize = fa ? 22f : 24f;
                 label.fontStyle = FontStyles.Bold;
                 label.color = selected ? new Color(0.98f, 0.84f, 0.42f, 1f) : new Color(0.96f, 0.93f, 0.84f, 1f);
                 count.alignment = fa ? TextAlignmentOptions.MidlineRight : TextAlignmentOptions.MidlineLeft;

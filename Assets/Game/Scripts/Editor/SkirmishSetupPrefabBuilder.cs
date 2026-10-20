@@ -161,6 +161,7 @@ namespace Game.Editor
                 null,
                 widthTargets.ToArray());
             screen.LockBattleLibraryMedals();
+            screen.ApplySagaPrefabStyle();
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -797,6 +798,7 @@ namespace Game.Editor
                     3f);
                 TMP_Text text = CreateText("Label", button.transform, labels[i], fontSize, boldFont, TextAlignmentOptions.Center, selected ? TextPrimary : TextMuted);
                 Stretch(text.rectTransform);
+                if(name=="ArmySize")text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(new[]{"ui.skirmish.size.standard","ui.skirmish.size.war","ui.skirmish.size.large_war"}[i],labels[i]);
                 buttons[i] = button;
                 texts[i] = text;
                 gradients[i] = button.targetGraphic as V3GradientGraphic;
@@ -828,6 +830,7 @@ namespace Game.Editor
                 button.targetGraphic = image;
                 TMP_Text text = CreateText("Label", button.transform, labels[i], 1f, mediumFont, TextAlignmentOptions.Center, Color.clear);
                 Stretch(text.rectTransform);
+                if(name=="ArmySize")text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(new[]{"ui.skirmish.size.standard","ui.skirmish.size.war","ui.skirmish.size.large_war"}[i],labels[i]);
                 buttons[i] = button;
                 texts[i] = text;
             }

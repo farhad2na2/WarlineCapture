@@ -234,7 +234,7 @@ namespace Game.Tests.Editor.SkirmishLibrary
                 new[] { SkirmishFooterBarWidget.BackName, SkirmishLibraryControlNames.Filters, SkirmishLibraryControlNames.ZoomIn, SkirmishLibraryControlNames.QuickBattle },
                 Names(SkirmishLibraryLevel.Theater));
             CollectionAssert.AreEqual(
-                new[] { SkirmishFooterBarWidget.BackName, SkirmishLibraryControlNames.TheaterMap, SkirmishLibraryControlNames.StartBattle, SkirmishFooterBarWidget.AdvancedName },
+                new[] { SkirmishFooterBarWidget.BackName, SkirmishLibraryControlNames.TheaterMap, SkirmishLibraryControlNames.StartBattle, SkirmishLibraryControlNames.QuickBattle },
                 Names(SkirmishLibraryLevel.Battlefield));
         }
 

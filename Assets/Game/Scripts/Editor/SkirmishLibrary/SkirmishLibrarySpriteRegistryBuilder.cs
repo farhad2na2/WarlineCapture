@@ -42,6 +42,9 @@ namespace Game.Editor
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Theatre");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Zones");
                 Collect(entries, SkirmishLibraryPreviewAssets.Root + "/Blurs");
+                var medallion = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Game/Art/UI/Icons/scn09_icon_credits_star_coin.png");
+                if (medallion == null) throw new System.InvalidOperationException("Shared Campaign medallion art missing.");
+                entries.Add(new SkirmishLibrarySpriteRegistry.Entry { Key = "skirmish.shared.medallion", Sprite = medallion });
                 SkirmishLibrarySpriteRegistry.Entry[] next = entries.ToArray();
                 if (registry.Matches(next))
                     return;

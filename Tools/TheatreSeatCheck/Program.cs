@@ -51,6 +51,8 @@ internal static class Program
             Console.WriteLine("composition seated=" + seated + " failed=" + failed);
             return failed == 0 ? 0 : 1;
         }
+        if (args != null && Array.IndexOf(args, "pill") >= 0)
+            return ReplaySixteenByNineFaPill() ? 0 : 1;
         if (args != null && Array.IndexOf(args, "frames") >= 0)
             return DrawnFramesHold() ? 0 : 1;
         if (args != null && args.Length > 0 && args[0] == "probe")
@@ -548,11 +550,11 @@ internal static class Program
 
     private static void RunComposition(string ratio, float canvasWidth, float canvasHeight, ref int seated, ref int blocked, ref int failed)
     {
-        const float referenceWidth = 1672f;
-        const float referenceHeight = 941f;
-        float scale = Math.Min(canvasWidth / referenceWidth, canvasHeight / referenceHeight);
-        float extra = Math.Max(0f, canvasWidth / scale - referenceWidth);
-        TheatreSeatGeometry.CaptureMapSize(referenceWidth + extra, referenceHeight, out float plateWidth, out float plateHeight);
+        // Match the live library's reference frame, including the shell's dense canvas.
+        // The old 941-high section model no longer describes the full-screen library.
+        TheatreSeatGeometry.ResolveSagaFrame(canvasWidth, canvasHeight, out float frameWidth, out float frameHeight, out float scale);
+        TheatreSeatGeometry.CaptureMapSize(frameWidth, frameHeight, out float plateWidth, out float plateHeight);
+        Console.WriteLine("[CompositionFrame] ratio="+ratio+" canvas="+canvasWidth+"x"+canvasHeight+" frame="+frameWidth+"x"+frameHeight+" scale="+scale);
         for (int locale = 0; locale < 2; locale++)
         {
             bool fa = locale == 1;

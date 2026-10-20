@@ -208,7 +208,7 @@ namespace Game.UI.Runtime
             {
                 string first = UiShellRuntimeGateway.Localization.Get(medal.FirstLocKey, "First medal");
                 string difficulty = UiShellRuntimeGateway.Localization.Get(medal.DifficultyLocKey, "Medal");
-                medalText = first + "\n" + model.MedalScenarioId + "\n" + difficulty;
+                medalText = first + " · " + model.MedalScenarioId + " · " + difficulty;
             }
             return new ModeResultContent
             {

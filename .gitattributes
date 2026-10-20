@@ -385,3 +385,10 @@ Tools/CI/SkirmishProductionDrafts/S005MeasuredOpeningCanvasSuccessor/manifest.js
 /Assets/Tests/Editor/SkirmishExpansion/SkirmishProfileNamespaceTests.cs.meta -text
 /Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs -text
 /Assets/Tests/Editor/SkirmishExpansion/SkirmishCandidateSourceHashTests.cs -text
+
+# Native saga menu review evidence; keep large captures in LFS.
+/Design/AgentReports/SkirmishBattleLibrary/2026-10-20/**/*.png filter=lfs diff=lfs merge=lfs -text
+/Design/AgentReports/SkirmishBattleLibrary/2026-10-20/**/*.jpg filter=lfs diff=lfs merge=lfs -text
+/Design/AgentReports/SkirmishBattleLibrary/2026-10-20/**/*.zip filter=lfs diff=lfs merge=lfs -text
+/Design/SkirmishUIConcepts/2026-10-20-saga-map/*.jpg filter=lfs diff=lfs merge=lfs -text
+/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-*.png filter=lfs diff=lfs merge=lfs -text

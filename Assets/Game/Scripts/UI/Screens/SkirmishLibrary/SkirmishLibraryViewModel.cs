@@ -150,7 +150,7 @@ namespace Game.UI.Runtime
 
         public void SetLayout(SkirmishBattlefieldLayout layout)
         {
-            _layout = layout;
+            _layout = SkirmishBattlefieldLayout.Map;
             Persist();
             Notify();
             Raise(SkirmishLibraryInteractionKind.Clicked, layout.ToString(), UIAudioEventKind.TabSelect);
@@ -338,7 +338,7 @@ namespace Game.UI.Runtime
                     raw <= (byte)SkirmishDifficultyId.Commander)
                     _difficulty = (SkirmishDifficultyId)raw;
                 if (Enum.TryParse(layout, out SkirmishBattlefieldLayout parsedLayout))
-                    _layout = parsedLayout;
+                    _layout = SkirmishBattlefieldLayout.Map; // Migrate remembered Grid state to the saga.
                 if (!string.IsNullOrEmpty(scenario) && TryFind(scenario, out _))
                     SelectScenarioId(scenario);
                 else if (!string.IsNullOrEmpty(map))

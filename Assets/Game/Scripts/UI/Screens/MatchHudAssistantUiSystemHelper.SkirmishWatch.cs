@@ -505,6 +505,12 @@ namespace Game.UI.Runtime
                 // City Crossroads' wide eastern flank projected into blocked fabric here.
                 view.AdvancePreferred = !view.AssaultAtBase && close < 8;
             }
+            // A force within 50m can still be outside fog reveal range. Keep a
+            // separate, explicit Attack Move approach available until the public
+            // base becomes a visible target; focusing the camera remains navigation.
+            bool needsReveal = view.ExpandedSession && view.ExpandedBaseAssault && view.AssaultAtBase
+                && !watchSkirmish.EnemyBaseTargetVisible;
+            view.AdvancePreferred |= needsReveal;
             if (!view.AdvancePreferred) return;
             // The two labelled base objectives remain public when the camera leaves
             // the army. Keep a usable approach instead of repeatedly focusing the base.
@@ -513,6 +519,8 @@ namespace Game.UI.Runtime
             // Preserve the first battlefield's verified clear base approach. Wider
             // offsets project behind its neutral ruins and become rejected attacks.
             float standoff = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? 30f : 25f;
+            if (needsReveal && distance < float.MaxValue)
+                standoff = Mathf.Max(6f, Mathf.Min(standoff, Mathf.Sqrt(distance) * .5f));
             var ground = objective + direction.normalized * standoff;
             if (view.MapOpen)
             {

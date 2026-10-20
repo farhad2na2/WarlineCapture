@@ -27,6 +27,9 @@ namespace Game.Editor
         private static IDisposable candidateCatalogScope;
         private static SkirmishBattleCatalogConfig candidateCatalog;
 
+        public static void RunSagaS002EditorAriaEn() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("en", false, false, "S002", 104731); }
+        public static void RunSagaS002EditorAriaFa() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("fa-IR", false, false, "S002", 104731); }
+
         public static void RunS004EditorAriaEn() => RunEditorJourney("en", false);
         public static void RunS004EditorAriaStopEn() => RunEditorJourney("en", false, true);
         public static void RunS004EditorManualFa() => RunEditorJourney("fa-IR", true);
@@ -205,7 +208,8 @@ namespace Game.Editor
             if (EditorApplication.timeSinceStartup > menuDeadline)
             {
                 Debug.LogError("[S004MenuJourney] result=Failed reason=controlsTimeout step=" + menuStep);
-                Finish(true, "menuControlsTimeout");
+                if (sagaRestartActive) EndSagaRestart(false, "menuControlsTimeout");
+                else Finish(true, "menuControlsTimeout");
                 return;
             }
             menuTouch.Tick(Time.unscaledTime);
@@ -305,6 +309,7 @@ namespace Game.Editor
             }
             else if (menuStep == 4)
             {
+                if (sagaRestartActive) { VerifySagaRestartPresented(); return; }
                 var setup = SelectMenuSetupForLaunch(UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude), catalogId);
                 if (setup == null)
                 {
@@ -333,6 +338,7 @@ namespace Game.Editor
                         return;
                     }
                     if(codedSizeCameraActive && !CodedSizeMenuReady(setup)) return;
+                    if(sagaMenuProof && !CaptureNativeSagaMenuScale(setup)) return;
                     foreach (var label in setup.GetComponentsInChildren<TMP_Text>())
                         if (label.name == "OperationName" || label.name == "SeedHelp")
                         {
@@ -365,7 +371,11 @@ namespace Game.Editor
             {
                 Button pin = FindNamed(buttons, SkirmishLibraryControlNames.TheaterPin(menuLibraryMap));
                 if (pin == null)
-                    menuLibraryBeat = 1;
+                {
+                    // Restore through the visible theatre control when the prior session retained a battlefield.
+                    var theatre=FindNamed(buttons,SkirmishLibraryControlNames.TheaterMap);
+                    if(theatre!=null)MenuTap(theatre);
+                }
                 else if (MenuTap(pin))
                 {
                     Debug.Log("[S004MenuJourney] phase=TheaterPin input=Touch map=" + menuLibraryMap +
@@ -495,7 +505,7 @@ namespace Game.Editor
         {
             for (int i = 0; i < buttons.Length; i++)
             {
-                if (buttons[i] != null && buttons[i].name == name && TryPresentedButtonPoint(buttons[i], out _))
+                if (buttons[i] != null && (buttons[i].name == name || buttons[i].transform.Find(name) != null) && TryPresentedButtonPoint(buttons[i], out _))
                     return buttons[i];
             }
 

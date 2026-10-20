@@ -1,0 +1,104 @@
+{
+  "tool": "Built-in image_gen",
+  "ownerSelection": "Pending",
+  "runtimeChanged": false,
+  "status": "Concept mockups only; current saga direction not accepted",
+  "files": [
+    {
+      "key": "A-skirmish",
+      "title": "territory-atlas-skirmish",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-880ebcee-c24d-4ad6-b3ce-e98972eda4bd.png",
+      "file": "A-skirmish-territory-atlas.png",
+      "promptKey": "A-skirmish",
+      "sha256": "93968397ea5fb8be4aeed4d3b3c5f449ff7d9d577fdbc9acf1af396490af76a5",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "A-campaign",
+      "title": "territory-atlas-campaign",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-c91e7854-3349-4652-a24e-056cf1ad3f25.png",
+      "file": "A-campaign-territory-atlas.png",
+      "promptKey": "A-campaign",
+      "sha256": "9609e6298c93e633044bbd2f4d766583cb9b502a2a108462bc8793570c8aba79",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "B-skirmish",
+      "title": "mission-sectors-skirmish",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-35a4ca5b-0147-4577-827c-7925d0624d1e.png",
+      "file": "B-skirmish-mission-sectors.png",
+      "promptKey": "B-skirmish",
+      "sha256": "a14c805f56a6e75d8a4dc96edec073bc1b747a9997d0451c6f3b6040c76218ae",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "B-campaign",
+      "title": "mission-sectors-campaign",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-81581dfc-7f03-4fc5-89dc-9964c39487f9.png",
+      "file": "B-campaign-mission-sectors.png",
+      "promptKey": "B-campaign",
+      "sha256": "843933f3123596faa29f7876f33ace1e60a6106656d1141134b5ec84adc6fea7",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "C-skirmish",
+      "title": "map-and-mission-tray-skirmish",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-c27039d1-5fd8-473d-ab89-02554c24a286.png",
+      "file": "C-skirmish-map-and-mission-tray.png",
+      "promptKey": "C-skirmish",
+      "sha256": "9137e8da4af1323e0d43b746ff6bb765b31bed1bdc620f91ce31faa0dc7bc997",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "C-campaign",
+      "title": "map-and-mission-tray-campaign",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-3222ab20-2982-4aa1-a662-075968a375b9.png",
+      "file": "C-campaign-map-and-mission-tray.png",
+      "promptKey": "C-campaign",
+      "sha256": "26f0b15860b165e75625105d3872aceb1c2045efcf8f67cc3b739ca0d03b1d50",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "D-skirmish",
+      "title": "24-battle-overview-skirmish",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-35426918-00eb-4c1c-9e30-7777abe99da4.png",
+      "file": "D-skirmish-24-battle-overview.png",
+      "promptKey": "D-skirmish",
+      "sha256": "3f9ad0c79876561d90891670688f9e6e2c5c517bccec049e44d8d671c25961c4",
+      "size": [
+        1870,
+        841
+      ]
+    },
+    {
+      "key": "E-skirmish",
+      "title": "120-battle-index-skirmish",
+      "source": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-073bcc3e-addb-49b3-a2f3-f650fa1b21d4.png",
+      "file": "E-skirmish-120-battle-index.png",
+      "promptKey": "E-skirmish",
+      "sha256": "621f3036e7b70cfba0ad4a597ae2ae19dc1142341711c6ea40968c26c90c3c4f",
+      "size": [
+        1870,
+        841
+      ]
+    }
+  ]
+}

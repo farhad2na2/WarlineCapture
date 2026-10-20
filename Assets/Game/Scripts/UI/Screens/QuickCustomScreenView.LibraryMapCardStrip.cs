@@ -51,7 +51,8 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            float stripH = Mathf.Round(Mathf.Clamp(height * 0.14f, 30f, 40f));
+            // v50d: 12% of the card (24-40 px); v50's 30 px floor left the short 4:3 cards a thin art band.
+            float stripH = Mathf.Round(Mathf.Clamp(height * 0.12f, 24f, 40f));
             Image strip = card.Find(MapCardStripName)?.GetComponent<Image>();
             if (strip == null)
             {
@@ -127,7 +128,7 @@ namespace Game.UI.Runtime
                 bodyW = body != null && text.Length > 0 ? StripWidthAt(body, s) : 0f;
                 size = s;
                 track = t;
-                fits = idW + MapCardStripPad + bodyW <= inner && s * (fa ? 1.65f : 1.2f) <= stripH + 6f;
+                fits = idW + MapCardStripPad + bodyW <= inner && s * (fa ? 1.65f : 1.2f) <= stripH + 8f;
             }
 
             float lineH = stripH - 4f;
@@ -143,7 +144,8 @@ namespace Game.UI.Runtime
             Debug.Log("[MapCardStrip] locale=" + (fa ? "fa-IR" : "en") + " ratio=" + TheatreRatioLabel() + " battle=" + scenarioId +
                 " text=" + scenarioId + (text.Length > 0 ? " " + text : string.Empty) + " fits=" + (fits ? 1 : 0) +
                 " overlapArt=" + (overlapArt ? 1 : 0) + " size=" + size.ToString("0.0") + " track=" + track.ToString("0") + " strip=" + width.ToString("0") + "x" + stripH.ToString("0") +
-                " need=" + (idW + MapCardStripPad + bodyW).ToString("0") + "/" + inner.ToString("0"));
+                " need=" + (idW + MapCardStripPad + bodyW).ToString("0") + "/" + inner.ToString("0") +
+                " art=" + (art != null ? art.rectTransform.sizeDelta.y.ToString("0") : "-"));
         }
 
         /// <summary>

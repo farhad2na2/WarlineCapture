@@ -1,0 +1,49 @@
+{
+  "scope": "Proposed receipt invariants only, not executable controller",
+  "CHECK": [
+    "Validate exact target Editor/project/process/domain/run identity and approved file bytes before any ARM",
+    "Read unique observer slot and explicit phase state; reject foreign type/owner/key collision without clearing it",
+    "Return a typed user-result receipt; outer/inner eval success alone does not establish observer state"
+  ],
+  "ARM": [
+    "Within same AppDomain retain ORIGINAL System.Action Stop closure with exact registered delegate references in unique run-scoped slot, or forward to existing stable compiled owner",
+    "Do not reconstruct lambdas for later subtraction; reject key reuse and support owned partial-subscription cleanup",
+    "Write durable Armed receipt with owner/file hash, domain/process and bounded checkpoint scope; no after-reload promise unless separate bootstrap exists"
+  ],
+  "DISARM": [
+    "Retrieve original Action by exact owned key and invoke that existing object; do not recreate equivalent code delegates",
+    "Closure removes exact original subscriptions, clears only its own slot and writes Disarmed/closes writer exactly once",
+    "Require durable Disarmed receipt plus slot-clear confirmation; eval return null or transport success alone is insufficient"
+  ],
+  "timeout": [
+    "Classify as unknown operation outcome if execution could have started",
+    "Do not retry ARM blindly; reconcile owner slot/state/durable receipts only after same owned Editor is responsive",
+    "DISARM is itself main-thread work and cannot be assumed executable while a previous eval blocks the thread"
+  ],
+  "reload": [
+    "beforeAssemblyReload can invoke original Stop and persist a terminal pre-reload receipt",
+    "A real domain reload invalidates prior domain slot/static/delegate assumptions; no continuation credit from mere loss of connection or callback non-observation",
+    "Fresh-domain observation needs explicitly reviewed stable compiled InitializeOnLoad bootstrap/external receipt; not supplied by eval_file protocol itself"
+  ],
+  "actualWindowsObserver": {
+    "sourceSha256": "496621762e723e9eda6875e03d7ad4d0a2f0645f4038ea7fe73cedc15605d73c",
+    "attribution": "Windows source reread; uses AppDomain stored exact Stop, rejects key reuse; stops before real reload; not called broken",
+    "runtimeControls": "Pending on Windows; no Mac invocation"
+  },
+  "actualReceipts": {
+    "MacCheck": null,
+    "MacArm": null,
+    "MacDisarm": null,
+    "sameDomainControls": null,
+    "timeoutControl": null,
+    "realReloadControl": null,
+    "callbackDuplicateCount": null
+  },
+  "prohibited": [
+    "Private reflection/event invocation-list surgery",
+    "Package-private field reset",
+    "GetCompanionScene observer call",
+    "Automatic root deletion/cleanup baseline relaxation",
+    "Unity/native launch or shared Library copying in this review"
+  ]
+}

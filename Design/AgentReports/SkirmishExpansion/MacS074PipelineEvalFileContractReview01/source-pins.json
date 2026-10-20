@@ -1,0 +1,101 @@
+{
+  "baseCommit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "packageRoot": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c",
+  "packageVersion": "0.6.0-exp.1",
+  "repositoryRevision": "27af91a943315a5702ac7679241399b649d6a20d",
+  "files": [
+    {
+      "path": "package.json",
+      "bytes": 5456,
+      "sha256": "dbed6569d115fa60e438a254a15abc3442eda412ff615994ec5f0fd4b979b49b"
+    },
+    {
+      "path": "Runtime/Commands/CodeEvalCommand.cs",
+      "bytes": 7209,
+      "sha256": "4a725199300ae31d08c84f05fb3128c449c67bcc592de7efee21d6f5cb2d9fa4"
+    },
+    {
+      "path": "Runtime/Models/EvalResponse.cs",
+      "bytes": 3818,
+      "sha256": "335b6197bf1bd13ffc837ea99722450d60034527ddd53fcfd08647aa96424a32"
+    },
+    {
+      "path": "Runtime/Models/CommandExecutionResponse.cs",
+      "bytes": 9752,
+      "sha256": "8dfc44b78bcef6f7bfd48f65733fd125f011431769c234c3c878f3ecb029d888"
+    },
+    {
+      "path": "Runtime/Models/BaseResponse.cs",
+      "bytes": 2567,
+      "sha256": "0bb29a059fb99f8aa1445cf9cce4965cfc4fb179587660834fc03504852dec82"
+    },
+    {
+      "path": "Runtime/Models/CommandExecutionRequest.cs",
+      "bytes": 8548,
+      "sha256": "53f7e4eb64c3c3066b955f0c7b75f1748f84db0107e65cb5b63152ec18969986"
+    },
+    {
+      "path": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "bytes": 11913,
+      "sha256": "51d15e4bff39b499b53af34f422ee0c6a7938e62e1f9ccc657c8bbee343dc267"
+    },
+    {
+      "path": "Runtime/Compilation/RoslynCompilationService.cs",
+      "bytes": 24161,
+      "sha256": "9a72addb00a61fc6de3d2ebdf0960ccc52f721de6ea059200a36049876e4a807"
+    },
+    {
+      "path": "Runtime/Common/ExecResponseSerializer.cs",
+      "bytes": 8048,
+      "sha256": "c624856be53574f0b8d6cbb7b090a445542811a7d29e36f0bc58175357bcdd42"
+    },
+    {
+      "path": "Runtime/Common/BasePipelineServer.cs",
+      "bytes": 133072,
+      "sha256": "d2064d0c2631975699afad2dbc6821ef16a125369ce9b595d5fb8975476f306c"
+    },
+    {
+      "path": "Runtime/Common/Dispatcher.cs",
+      "bytes": 11390,
+      "sha256": "4f6bd0ebff3d12e47084e4fbcffc02a074bbcdde77aaa082e1d1a45d79f078ee"
+    },
+    {
+      "path": "Runtime/Common/PipelineUtils.cs",
+      "bytes": 11139,
+      "sha256": "46880f20785a9b86fb2b7bcb1db0017ae73c6c1e0c7fc995035c60bdc272769c"
+    },
+    {
+      "path": "Editor/Console/EditorConsoleCaptureBootstrap.cs",
+      "bytes": 2416,
+      "sha256": "ae90a080281ae27f687ee52feb346d4b575b7eccfbdc80c7e045b93b8c245250"
+    },
+    {
+      "path": "Documentation~/commands/runtime.md",
+      "bytes": 7322,
+      "sha256": "b6a17c571b17dd559133c847a7fffedf04459803545f0a7b48b8534c682c7501"
+    }
+  ],
+  "crossPlatformLimit": "No Windows raw Pipeline package pins supplied; local version/cache identity alone is not cross-platform equality.",
+  "cli": {
+    "symlink": "/opt/homebrew/bin/unity",
+    "resolvedPath": "/opt/homebrew/Caskroom/unity-cli/1.0.0-beta.9/1.0.0-beta.9",
+    "bytes": 22554304,
+    "sha256": "459d6830a411df86e9db0579b803932f0c6bc2eff6a7ab483385f1676fdab21f",
+    "versionProvenance": "1.0.0-beta.9 directory/install filename, NOT an executed version command",
+    "format": "Mach-O, no adjacent CLI source shipped",
+    "invoked": false,
+    "CLIOuterEnvelope": "Windows actual capture and pinned skill docs; no local CLI execution/source implementation claim"
+  },
+  "skillReferences": [
+    {
+      "path": "/Users/farhad/.agents/skills/unity-cli/SKILL.md",
+      "bytes": 32720,
+      "sha256": "683fbf8d396887edfaadea38acff4c12e02b35384120dc8e00b327bc808d1899"
+    },
+    {
+      "path": "/Users/farhad/.agents/skills/unity-cli/references/integration-advanced.md",
+      "bytes": 32634,
+      "sha256": "92cb30e049ae09b36e3a2a8afe5d8a497632dc2f0bbf5b62f484943bf8cb3aa4"
+    }
+  ]
+}

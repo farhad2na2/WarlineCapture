@@ -1,0 +1,155 @@
+{
+  "schema": 1,
+  "state": "SourceOnlyProtocolReview_NoInvocation",
+  "createdUtc": "2026-10-20T12:17:05.070298+00:00",
+  "baseCommit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "New Design receipts only; no game/package/harness edits or Unity/CLI/eval/compiler/native invocation",
+  "package": {
+    "cache": "com.unity.pipeline@9bb4172c603c",
+    "version": "0.6.0-exp.1",
+    "revision": "27af91a943315a5702ac7679241399b649d6a20d"
+  },
+  "windowsObservedEnvelope": {
+    "attribution": "Windows coordinator reread owned81372 delayed-exit stdout; Mac did not execute or retrieve raw capture",
+    "outerSuccessPath": "success",
+    "outerCommand": "command eval",
+    "dataCommand": "eval",
+    "evalSuccessPath": "data.result.success",
+    "evalDiagnosticsPath": "data.result.diagnostics",
+    "userReturnPath": "data.result.result",
+    "observedOutput": null,
+    "observedDiagnostics": [],
+    "observedEvalSuccess": true,
+    "observedUserReturn": null,
+    "targetProjectPath": "data.target.projectPath; exact Windows project as reported",
+    "extraResultLayer": false,
+    "portabilityLimit": "Actual captured command was eval, not eval_file. Same package evaluation path is source-proven; exact local CLI wrapper/Windows eval_file wire still needs own receipt."
+  },
+  "sourceFindings": [
+    {
+      "topic": "JSON layers",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        2036,
+        2046
+      ],
+      "finding": "Server wraps returned EvalResponse in CmdSuccess. A transport/command success can carry eval success=false. CLI observed Windows unwraps to data.result eval DTO. Check process exit, outer success/errors, exact target/bound command+parameters, inner typed success, diagnostic errors, and user-return phase receipt separately; HTTP200/outertrue is insufficient."
+    },
+    {
+      "topic": "DTO fidelity",
+      "source": "Runtime/Common/ExecResponseSerializer.cs",
+      "lines": [
+        15,
+        31,
+        58,
+        93
+      ],
+      "related": "Runtime/Models/EvalResponse.cs16-65",
+      "finding": "Lean mode strips command/executedAt/executionTime metadata on nested BaseResponse objects, drops null error/message keys and failure result; successful result stays present even null. output/diagnostics are DTO payload; optional warning/busy/dialog/argument fields can appear. Do not require exactly four total fields or require lean metadata. Keep full raw response. EvalSuccess/EvalFailure hardcode inner Command=\"eval\" even for eval_file; do not require inner command=eval_file. Verify bound CLI command/parameters/target separately."
+    },
+    {
+      "topic": "file/code",
+      "source": "Runtime/Commands/CodeEvalCommand.cs",
+      "lines": [
+        16,
+        54
+      ],
+      "related": "Documentation~/commands/runtime.md101-116",
+      "finding": "eval accepts inline code; eval_file takes file. eval_file checks nonempty path, case-insensitive.cs extension, existence/readability/nonempty content and then same EvaluateSource. File read happens on Unity side; relative path resolves Unity process cwd, not CLI shell/--project-path. Use an exact owned absolute path on target machine, raw hash before/after; no canonicalization/reparse guard is supplied by eval_file itself."
+    },
+    {
+      "topic": "body syntax",
+      "source": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "lines": [
+        87,
+        153,
+        190,
+        195,
+        251,
+        281
+      ],
+      "finding": "File content is embedded as method body in generated static Execute with limited using directives; not a full compilation unit. Explicit return supplies user-result; absent return yields null. JSON-returned strings remain strings, other objects are serialized to JSON-compatible values. Do not scrape Debug.Log or output for phase success."
+    },
+    {
+      "topic": "output/diagnostics limits",
+      "source": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "lines": [
+        41,
+        70,
+        190,
+        215
+      ],
+      "finding": "Compilation failure includes diagnostics. Successful compiler path does not pass collected compilation diagnostics into EvalSuccess; empty diagnostics is not proof of no warnings. ExecuteCompiledAssembly does not set Output; output may be null even if code logs elsewhere. Exception detail is carried as runtime/execution error; returned false/failed payload does not itself throw, so validate its schema."
+    },
+    {
+      "topic": "timeout",
+      "source": "Runtime/Commands/CodeEvalCommand.cs",
+      "lines": [
+        19,
+        30,
+        80,
+        112
+      ],
+      "related": "Runtime/Common/BasePipelineServer.cs2487-2549; Runtime/Common/Dispatcher.cs81-94; Runtime/Models/CommandExecutionRequest.cs62-66",
+      "finding": "eval parameter timeout defaults5000ms, accepted1..86400000ms. Server exec timeout is milliseconds; CLI global timeout is seconds per skill. Binding collision/forwarding not executed locally: inspect actual echoed parameters, never assume one flag controls both. Dispatcher uses requested eval wait budget except detached-job unbounded lane. Queued cancellation only; once started TryCancel is no-op. Eval compiler passes timeoutMs into a method that does not use it to cancel compilation/execution. Timeout/disconnect is not proof of rollback or disarm; no automatic ARM retry."
+    },
+    {
+      "topic": "assemblies/access",
+      "source": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "lines": [
+        89,
+        115,
+        133,
+        153
+      ],
+      "related": "Runtime/Compilation/RoslynCompilationService.cs132-142,238-257",
+      "finding": "Each eval generates a fresh GUID-derived assembly/type and loads it into memory. Editor references existing loaded non-dynamic assemblies with known paths, skipping failures; does not prove exact build/RSP identity or native compiler consumption. eval is not an installed project owner or native validation substitute."
+    },
+    {
+      "topic": "callback identity",
+      "source": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "lines": [
+        89,
+        99,
+        143,
+        150
+      ],
+      "related": "Microsoft Delegate equality and event unsubscribe documentation in references.json",
+      "finding": "Inference from fresh assembly/type plus delegate identity semantics: ARM lambda/localfunction defined in that eval and identical-text DISARM lambda compiled by later eval do not identify the same method/target. This concern does not apply to eval forwarding to the SAME existing stable compiled named-method owner or retrieving the exact saved delegate object from such an owner within same domain. A compiled owner is not mandatory if AppDomain.GetData returns the ORIGINAL System.Action retained by ARM; invoking that exact closure can unsubscribe its captured original delegates despite a fresh eval wrapper. AppDomain data is domain-local and does not establish cross-reload continuity."
+    },
+    {
+      "topic": "stable reload owner pattern",
+      "source": "Editor/Console/EditorConsoleCaptureBootstrap.cs",
+      "lines": [
+        11,
+        20,
+        22,
+        47
+      ],
+      "finding": "Installed package demonstrates compiled InitializeOnLoad bootstrap, durable pre-reload persistence and named -=/+= hooks. This is a pattern, not permission to modify it. Existing stable reviewed owner should retain exact delegate/owner token and report idempotent subscriptions; same-text fresh eval callbacks are insufficient. No proposed Windows observer code inspected, so its callback owner classification remains pending. This compiled bootstrap pattern is one option, not a requirement for a same-domain stored-closure observer. Windows reports its actual observer uses AppDomain exact original Stop and promises no after-reload continuation."
+    }
+  ],
+  "limits": [
+    "No local CLI execution or callback/timeout experiment",
+    "No proof of installed Windows Pipeline source equality; request exact pins if integration depends on these details",
+    "No private reflection into event invocation lists, package fields or GetCompanionScene calls",
+    "No full reload caused or observed; actual before/after callback receipts and observer owner remain null",
+    "Windows81372 inventory refusal and earlier parser failure retained as Windows evidence; no native mission/sourcefit credit",
+    "Even a pure CHECK body incurs eval compilation/new memory assembly and optional local telemetry writes; body read-only is not globally side-effect-free",
+    "Actual Windows observer stored-closure facts are coordinator source attribution, not independently read Mac observer bytes"
+  ],
+  "windowsObserverOwnership": {
+    "attribution": "Windows coordinator reread unrun observer; actual code not retrieved or executed Mac",
+    "sourceSha256": "496621762e723e9eda6875e03d7ad4d0a2f0645f4038ea7fe73cedc15605d73c",
+    "pattern": "ARM stores ORIGINAL Stop closure as System.Action under unique AppDomain.CurrentDomain key. DISARM GetData casts/invokes existing Action. Original Stop captures exact event delegates, removes them, clears slot, writes Disarmed and disposes writer. ARM rejects reused key. beforeAssemblyReload calls that same Stop.",
+    "sourceAssessment": "Reported pattern is compatible with exact stored-delegate option in SAME AppDomain and avoids reconstructing fresh eval lambdas. Actual observer is NOT classified as broken. Pattern/source report is not executed control acceptance.",
+    "crossReloadScope": "No after-real-reload continuation promised. Old AppDomain slot/delegates must not be assumed available in new domain.",
+    "pending": [
+      "actual same-domain ARM/DISARM",
+      "duplicate ARM refusal",
+      "timeout reconciliation/no automatic re-ARM",
+      "real beforeAssemblyReload receipt / cleanup",
+      "actual callback and writer exactly-once cleanup"
+    ]
+  }
+}

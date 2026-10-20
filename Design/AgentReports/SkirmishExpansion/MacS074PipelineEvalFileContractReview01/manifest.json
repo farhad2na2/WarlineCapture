@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "task": "MacS074PipelineEvalFileContractReview01",
+  "branch": "codex/s074-pipeline-evalfile-contract-review-20261020",
+  "parent": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "createdUtc": "2026-10-20T12:19:52.966623+00:00",
+  "scope": "New Design receipts only; no CLI/Editor/eval/compiler/native invocation or game/package/harness edit",
+  "package": "com.unity.pipeline@9bb4172c603c version0.6.0-exp.1",
+  "verification": "Raw14package/2skill/CLIbinary pins and source anchors PASS; not behavioral execution",
+  "WindowsDTOAttribution": "Actual81372 eval capture reported exact data.result.success / data.result.result paths; not Mac execution",
+  "WindowsObserverAttribution": "Unrun496621 uses exact original Stop Action stored/retrieved in same AppDomain; no identical-text unsubscribe alleged; runtime controls pending",
+  "processActions": false,
+  "LibraryCopy": false,
+  "native": false,
+  "compile": false,
+  "eval": false,
+  "missionAcceptance": false,
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/README.md",
+      "bytes": 3655,
+      "sha256": "14ab76262aecb411184745f89af7b80a6eba73555ead7457a6b3fb6e307ba1c2"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/check-arm-disarm-contract.json",
+      "bytes": 2907,
+      "sha256": "f4de44401daa69caebfe4cfd83d39332c6885645dffb72cd062f1392969b19ea"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/references.json",
+      "bytes": 1346,
+      "sha256": "67fd83301649ce8de5d4c39f2e426ead1b9f8925123375b2b81856c6d67e3b5b"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/review-receipt.json",
+      "bytes": 9909,
+      "sha256": "4372fdebeeb0a6ef6398088620ac92e684d54fa4959a6e05c66cb2672823fcce"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/source-pins.json",
+      "bytes": 3787,
+      "sha256": "0015bf52463e6bfbeed56dbd35430d55af82406f35fe0835891370537fd13c80"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/verification.log",
+      "bytes": 287,
+      "sha256": "671fd0de8a4473a8c52006ec2186a0535af72c3dc28df169f1ace1507bdfaecc"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineEvalFileContractReview01/verify_receipt.py",
+      "bytes": 2520,
+      "sha256": "a63ad6849ff0c53bdbe52066f608837b3bdba0ba1539e1b8ee2f3d726f0ec089"
+    }
+  ]
+}

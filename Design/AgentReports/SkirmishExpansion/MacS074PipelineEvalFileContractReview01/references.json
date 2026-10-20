@@ -1,0 +1,30 @@
+{
+  "accessedUtc": "2026-10-20T12:17:05.070657+00:00",
+  "sources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.delegate.op_equality?view=netframework-4.8.1",
+      "supports": "Delegate equality depends on same methods/targets/invocation entries, not textual similarity",
+      "linesInRetrievedPage": [
+        98,
+        109
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events",
+      "supports": "Anonymous callback removal requires retaining the delegate; named stable handlers support subtraction",
+      "linesInRetrievedPage": [
+        75,
+        91
+      ]
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.appdomain.setdata?view=netframework-4.8.1",
+      "supports": "Domain named storage can retain an object, including original Action closure; does not create a cross-domain delegate registry"
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/dotnet/api/system.appdomain.getdata?view=netframework-4.8.1",
+      "supports": "Retrieve object stored by name in current AppDomain; caller must verify expected type, owner and scope"
+    }
+  ],
+  "quotePolicy": "Paraphrases only; source references support language-level inference, not a live Unity result."
+}

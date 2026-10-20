@@ -5812,8 +5812,13 @@ namespace Game.UI.Runtime
                 float cardW = card.sizeDelta.x > 2f ? card.sizeDelta.x : card.rect.width;
                 float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
                 float stripH = NameStripHeight(cardH);
+                float titleTop = TitleBandY(card, stripH);
+                TheatreSeatGeometry.ZoneCardBands room = TheatreSeatGeometry.LayoutZoneCardBands(
+                    cardW, cardH, titleTop, stripH, 36f);
+                if (stripH > room.TitleH)
+                    stripH = room.TitleH;
                 float stripW = NameStripWidth(cardW, cardH, stripH);
-                float stripY = TitleBandY(card, stripH);
+                float stripY = room.TitleY;
                 if (card.TryGetComponent<Image>(out Image cardPlate))
                 {
                     cardPlate.sprite = ZoneSolidSprite();
@@ -5843,11 +5848,12 @@ namespace Game.UI.Runtime
                     titleText.characterSpacing = 0f;
                     SeatNameCopyInStrip(titleText, stripH);
                     ClampNameInsideCard(title, cardW, cardH);
+                    // A grown two-line title stays in the top bar. Reading its
+                    // anchored Y after OpenNameStrip used to park it on the bottom
+                    // edge and shove the painting off the card.
                     if (title.sizeDelta.y > stripH + 0.5f)
-                    {
                         stripH = title.sizeDelta.y;
-                        stripY = -title.anchoredPosition.y;
-                    }
+                    stripY = titleTop;
 
                     title.SetAsLastSibling();
                     int lines = titleText.textInfo != null ? titleText.textInfo.lineCount : 0;
@@ -5872,18 +5878,44 @@ namespace Game.UI.Runtime
                 float footerH = ownRow ? 36f : 44f;
                 if (footerH > cardH * 0.30f)
                     footerH = cardH * 0.30f;
-                float footerY = Mathf.Max(stripY + stripH + 8f, cardH - footerH);
-                float thumbY = stripY + stripH + 2f;
-                float thumbH = Mathf.Max(8f, footerY - 2f - thumbY);
-                PaintDistrictCard(card, 3f, thumbY, Mathf.Max(8f, cardW - 6f), thumbH);
+                TheatreSeatGeometry.ZoneCardBands bands = TheatreSeatGeometry.LayoutZoneCardBands(
+                    cardW, cardH, stripY, stripH, footerH);
+                stripY = bands.TitleY;
+                stripH = bands.TitleH;
+                footerH = bands.StatusH;
+                float footerY = bands.StatusY;
+                float thumbY = bands.ArtY;
+                float thumbH = bands.ArtH;
+                if (card.Find("NameShade") is RectTransform seatedShade)
+                {
+                    float shadeW = NameStripWidth(cardW, cardH, stripH);
+                    float shadeX = farsiLayout ? Mathf.Max(0f, cardW - shadeW) : 0f;
+                    PlaceTopLeft(seatedShade, shadeX, stripY, Mathf.Max(8f, shadeW), stripH);
+                    KeepAuthoredSize(seatedShade);
+                }
+
+                if (card.Find("ZoneName") is RectTransform seatedTitle)
+                {
+                    PlaceTopLeft(seatedTitle, 2f, stripY, Mathf.Max(8f, cardW - 4f), stripH);
+                    KeepAuthoredSize(seatedTitle);
+                    ClampNameInsideCard(seatedTitle, cardW, cardH);
+                }
+
+                PaintDistrictCard(card, bands.ArtX, thumbY, bands.ArtW, thumbH);
                 if (card.Find("ZoneCount") is RectTransform countRect && countRect.TryGetComponent(out TMP_Text countLabel))
                 {
                     bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
                     float ringSide = Mathf.Min(52f, Mathf.Max(28f, footerH - 4f));
-                    float countH = ownRow ? 32f : Mathf.Max(28f, footerH - 6f);
+                    if (ringSide > cardH - pad * 2f)
+                        ringSide = Mathf.Max(18f, cardH - pad * 2f);
+                    float countH = ownRow ? 32f : Mathf.Max(22f, footerH - 6f);
+                    if (countH > footerH)
+                        countH = footerH;
                     float countW;
                     float countX;
                     float countY = footerY + Mathf.Max(0f, (footerH - countH) * 0.5f);
+                    if (countY + countH > cardH)
+                        countH = Mathf.Max(8f, cardH - countY);
                     if (ownRow)
                     {
                         // Own row across the footer. "Coming soon" needs 110px; the ring stays above it.
@@ -5917,6 +5949,10 @@ namespace Game.UI.Runtime
                         float ringY = ownRow
                             ? Mathf.Max(thumbY, footerY - ringSide - 2f)
                             : footerY + Mathf.Max(0f, (footerH - ringSide) * 0.5f);
+                        if (ringY < pad)
+                            ringY = pad;
+                        if (ringY + ringSide > cardH - pad)
+                            ringY = Mathf.Max(pad, cardH - pad - ringSide);
                         PlaceTopLeft(ring, ringX, ringY, ringSide, ringSide);
                         KeepAuthoredSize(ring);
                         ring.SetSiblingIndex(countRect.GetSiblingIndex());
@@ -6543,8 +6579,9 @@ namespace Game.UI.Runtime
         }
 
         /// <summary>
-        /// Grows the bottom strip to <paramref name="needed"/> and narrows the shade so
-        /// the share stays under 0.25. The title keeps the card's content width.
+        /// Grows the top title bar to <paramref name="needed"/> and narrows the shade so
+        /// the share stays under 0.25. The bar stays under the top inset. The painting
+        /// and the status row keep their bands on the card.
         /// </summary>
         private static float OpenNameStrip(TMP_Text name, float needed)
         {
@@ -6554,13 +6591,19 @@ namespace Game.UI.Runtime
             float cardH = card.sizeDelta.y > 2f ? card.sizeDelta.y : card.rect.height;
             if (cardW < 8f || cardH < 8f)
                 return name.rectTransform.sizeDelta.y;
-            float stripH = Mathf.Max(needed, name.rectTransform.sizeDelta.y);
-            if (stripH > cardH)
-                stripH = cardH;
+            float wanted = Mathf.Max(needed, name.rectTransform.sizeDelta.y);
+            // The title stays under the top of the card. Anchoring the grown strip
+            // to the bottom covers the painting and pushes the status off the tile.
+            float stripY = -name.rectTransform.anchoredPosition.y;
+            if (stripY < 0f || stripY > cardH * 0.45f)
+                stripY = TitleBarInset;
+            TheatreSeatGeometry.ZoneCardBands bands = TheatreSeatGeometry.LayoutZoneCardBands(
+                cardW, cardH, stripY, wanted, 36f);
+            float stripH = bands.TitleH;
+            stripY = bands.TitleY;
             float shadeW = NameStripWidth(cardW, cardH, stripH);
             bool farsi = UiShellRuntimeGateway.Localization.IsRightToLeft;
             float shadeX = farsi ? Mathf.Max(0f, cardW - shadeW) : 0f;
-            float stripY = Mathf.Max(0f, cardH - stripH);
             if (card.Find("NameShade") is RectTransform shade)
             {
                 PlaceTopLeft(shade, shadeX, stripY, Mathf.Max(8f, shadeW), stripH);

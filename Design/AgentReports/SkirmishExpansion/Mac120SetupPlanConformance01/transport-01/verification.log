@@ -1,0 +1,5 @@
+ORIGINAL_REPORT_MANIFEST_GIT_CHECK result=Failed matches=8 mismatches=1 csvCRLFWorkingVsLFObject=1 preserved=1
+EXACT_CSV_BYTE_MAPPING result=Passed committedBytes=90655 workingBytes=91016 lineEndings=361 semanticRowsUnchanged=360
+CANONICAL_GIT_OBJECT_MANIFEST result=Passed payloads=9 sourceCommit=5f389ada216c748aa546b7893429f31a7208ce44 comparisonMode=ExactRawBytes
+CAPACITY_PAYLOAD_GIT_CHECK result=Passed payloads=1 preservedCommit=8dec2eb3e8b0ca7b83ff2dfdc42cbee5947b75a3
+No original artifacts edited; no source/plan/compiler/native/Library/process/gate changes.

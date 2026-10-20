@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "scope": "ExplicitGitObjectTransportSuccessor_NoContentOrGateChange",
+  "observedUtc": "2026-10-20T17:00:02.699122+00:00",
+  "sourceCommit": "5f389ada216c748aa546b7893429f31a7208ce44",
+  "parentCapacityCommit": "8dec2eb3e8b0ca7b83ff2dfdc42cbee5947b75a3",
+  "originalReportManifestPreserved": true,
+  "originalCsvManifestVerification": "FAILED for Git blob; remains failed under original manifest",
+  "causeVerified": "Original manifest measured Python csv.DictWriter CRLF working bytes. Committed Git object has LF only. Exact LF-to-CRLF reconstruction reproduces original byte count and SHA256; current original working CSV equals reconstruction. No report-row/plan semantics changed.",
+  "allOriginalReportPayloadComparisons": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/README.md",
+      "originalManifestBytes": 3298,
+      "originalManifestSha256": "11307bdc447d0c4b31a3bc2c56bce4f2d319a032131f608d1f2f5b340b8f8edb",
+      "gitObjectBytes": 3298,
+      "gitObjectSha256": "11307bdc447d0c4b31a3bc2c56bce4f2d319a032131f608d1f2f5b340b8f8edb",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv",
+      "originalManifestBytes": 91016,
+      "originalManifestSha256": "f327f2b6ecc8ae710fee2c0f0b72bacb1d8d4bdad8e700af4ebee216cadaf244",
+      "gitObjectBytes": 90655,
+      "gitObjectSha256": "45d702cb0c6eb2668b416db86e1e6fb7fa1b375e7c95fe53308435e729c47cad",
+      "originalManifestMatchesGitObject": false
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/ground-ba-next-actions.json",
+      "originalManifestBytes": 1807,
+      "originalManifestSha256": "6fead95dc873b79a4b41911c5c7dcaebefa633fe726e1d7e10af640a5aa347d7",
+      "gitObjectBytes": 1807,
+      "gitObjectSha256": "6fead95dc873b79a4b41911c5c7dcaebefa633fe726e1d7e10af640a5aa347d7",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/initial-model-failure.json",
+      "originalManifestBytes": 6837,
+      "originalManifestSha256": "4f39d844ae79b8f37f30b84a9940b9b2f617c390272a2d8570c9078d39a39711",
+      "gitObjectBytes": 6837,
+      "gitObjectSha256": "4f39d844ae79b8f37f30b84a9940b9b2f617c390272a2d8570c9078d39a39711",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/method.md",
+      "originalManifestBytes": 3002,
+      "originalManifestSha256": "5a12f8b860a157ee960c5affb2345dfaba8db4d46c8154c291757a0e386f6d2c",
+      "gitObjectBytes": 3002,
+      "gitObjectSha256": "5a12f8b860a157ee960c5affb2345dfaba8db4d46c8154c291757a0e386f6d2c",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/per-size-gap-table.json",
+      "originalManifestBytes": 2059456,
+      "originalManifestSha256": "78e6068aa8bb6d61e38a8ef54bca9dfd06a35a485476fb1c34ae032f8af5202b",
+      "gitObjectBytes": 2059456,
+      "gitObjectSha256": "78e6068aa8bb6d61e38a8ef54bca9dfd06a35a485476fb1c34ae032f8af5202b",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/source-pins.json",
+      "originalManifestBytes": 20163,
+      "originalManifestSha256": "2df771cd1475d6f4f198ab4722eee31ff0d5ddd36abbaa00f9fe63cb173a7dc6",
+      "gitObjectBytes": 20163,
+      "gitObjectSha256": "2df771cd1475d6f4f198ab4722eee31ff0d5ddd36abbaa00f9fe63cb173a7dc6",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/summary.json",
+      "originalManifestBytes": 8379,
+      "originalManifestSha256": "5bc2563ee0b27334cec5c85a02c4a76610b9f25a826d5324c7e373cd2c9ab734",
+      "gitObjectBytes": 8379,
+      "gitObjectSha256": "5bc2563ee0b27334cec5c85a02c4a76610b9f25a826d5324c7e373cd2c9ab734",
+      "originalManifestMatchesGitObject": true
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/verification.log",
+      "originalManifestBytes": 1037,
+      "originalManifestSha256": "95c8e1eed6d360049add99d8f3c17d743039e5824886c6a79b582f9d914d4696",
+      "gitObjectBytes": 1037,
+      "gitObjectSha256": "95c8e1eed6d360049add99d8f3c17d743039e5824886c6a79b582f9d914d4696",
+      "originalManifestMatchesGitObject": true
+    }
+  ],
+  "normalizationMapping": {
+    "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv",
+    "workingBytes": 91016,
+    "workingSha256": "f327f2b6ecc8ae710fee2c0f0b72bacb1d8d4bdad8e700af4ebee216cadaf244",
+    "committedBytes": 90655,
+    "committedSha256": "45d702cb0c6eb2668b416db86e1e6fb7fa1b375e7c95fe53308435e729c47cad",
+    "workingCRLF": 361,
+    "committedLF": 361,
+    "committedCRLF": 0,
+    "conversion": "Exact byte replacement LF -> CRLF for reconstruction only; no general verifier normalization permitted",
+    "reconstructionExactlyMatchesOriginalManifest": true,
+    "originalWorkingPathEqualsReconstruction": true,
+    "parsedRowsUnchanged": true,
+    "dataRows": 360,
+    "headers": 12
+  },
+  "gitAttributesObserved": [
+    "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv: text: auto",
+    "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv: eol: lf",
+    "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv: filter: unspecified"
+  ],
+  "coreAutocrlf": "input",
+  "unchangedAtCapacityCommit": "All9 report blob bytes equal between5f389 and8dec",
+  "capacityPayloadChecks": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/capacity/ownership.json",
+      "bytes": 7551,
+      "sha256": "f332cb485a1af54aa4a24f2943b25b023a9041196c1d486c3945c2e1e8f84db1",
+      "matches": true
+    }
+  ],
+  "capacityManifestSha256": "2b6a6504bdd9560906d88583891f2b51d1fe14f270d653b66eff8f3fa0760cef",
+  "successorVerificationRule": "Fetch exact sourceCommit, read each file with git show/source tree object API, require exact byte count and SHA256 in git-object-manifest.json. Do not normalize before comparison. Original working-byte manifest is not amended or silently accepted.",
+  "acceptance": {
+    "reportTransportOnly": true,
+    "sourceConformanceSemanticsChanged": false,
+    "compiler": false,
+    "native": false,
+    "mission": false,
+    "gateWaiver": false
+  },
+  "noProcessActions": true
+}

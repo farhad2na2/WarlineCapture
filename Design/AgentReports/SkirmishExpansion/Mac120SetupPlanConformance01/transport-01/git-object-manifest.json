@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "scope": "CanonicalGitObjectReportPayloadsOnly_NoAcceptance",
+  "sourceCommit": "5f389ada216c748aa546b7893429f31a7208ce44",
+  "preservedCapacityCommit": "8dec2eb3e8b0ca7b83ff2dfdc42cbee5947b75a3",
+  "originalManifest": {
+    "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/manifest.json",
+    "bytes": 2119,
+    "sha256": "e0196159c35531cfeece24dc309041b51671475efb93cceea19742caf85f2f72",
+    "validationAgainstCanonicalCsv": "FAILED_PRESERVED"
+  },
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/README.md",
+      "bytes": 3298,
+      "sha256": "11307bdc447d0c4b31a3bc2c56bce4f2d319a032131f608d1f2f5b340b8f8edb",
+      "gitBlob": "e8cfb3744f738fbdd5073d043dc63d08a11d7f9c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/gap-index.csv",
+      "bytes": 90655,
+      "sha256": "45d702cb0c6eb2668b416db86e1e6fb7fa1b375e7c95fe53308435e729c47cad",
+      "gitBlob": "2a3be724fdb4f940458c8673f7435da60bd7eb9a"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/ground-ba-next-actions.json",
+      "bytes": 1807,
+      "sha256": "6fead95dc873b79a4b41911c5c7dcaebefa633fe726e1d7e10af640a5aa347d7",
+      "gitBlob": "53c273d80b723ef3516d7547f8d020975b9f556c"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/initial-model-failure.json",
+      "bytes": 6837,
+      "sha256": "4f39d844ae79b8f37f30b84a9940b9b2f617c390272a2d8570c9078d39a39711",
+      "gitBlob": "8503eee8fa1aadcbf5ad2b3f44326fcb9b2be983"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/method.md",
+      "bytes": 3002,
+      "sha256": "5a12f8b860a157ee960c5affb2345dfaba8db4d46c8154c291757a0e386f6d2c",
+      "gitBlob": "89644787e27e68c2fff4c2685e0ae9216a9e6492"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/per-size-gap-table.json",
+      "bytes": 2059456,
+      "sha256": "78e6068aa8bb6d61e38a8ef54bca9dfd06a35a485476fb1c34ae032f8af5202b",
+      "gitBlob": "e7a6b14766a4823ed7b661005870abde3ea63931"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/source-pins.json",
+      "bytes": 20163,
+      "sha256": "2df771cd1475d6f4f198ab4722eee31ff0d5ddd36abbaa00f9fe63cb173a7dc6",
+      "gitBlob": "8e2ee2413ce69ab96767984c6ac1186f3d63e83e"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/summary.json",
+      "bytes": 8379,
+      "sha256": "5bc2563ee0b27334cec5c85a02c4a76610b9f25a826d5324c7e373cd2c9ab734",
+      "gitBlob": "26579774ac40a4672434b0ea7373b89c693fc7db"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/verification.log",
+      "bytes": 1037,
+      "sha256": "95c8e1eed6d360049add99d8f3c17d743039e5824886c6a79b582f9d914d4696",
+      "gitBlob": "d0c885a4066d7525d22185f6f28674bc3d30ea14"
+    }
+  ]
+}

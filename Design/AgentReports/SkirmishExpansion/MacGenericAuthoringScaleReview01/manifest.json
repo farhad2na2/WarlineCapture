@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "Source/data review and schema recommendation only; no implementation or execution",
+  "payloads": [
+    {
+      "name": "api-inventory.json",
+      "bytes": 13758,
+      "sha256": "6062a0fab859fa283c7a067fe65b710aa6fa08f3d893008e2fc57f96f5ef9ee9"
+    },
+    {
+      "name": "descriptor.schema.json",
+      "bytes": 13178,
+      "sha256": "3de1b5853c771501adc17429a658cdba7059d7cf3dacc729eac5d7d1e063ce93"
+    },
+    {
+      "name": "family-inputs.json",
+      "bytes": 2397,
+      "sha256": "52d22e3afd56e01ce6275adb598074def61bf9af2120dab80f762be842b8815a"
+    },
+    {
+      "name": "plan-index.json",
+      "bytes": 292483,
+      "sha256": "7e8269723222b6483a982b4cf69a5e6ded1b26b7e582f45f9a44706cea47f059"
+    },
+    {
+      "name": "proposed-changes.json",
+      "bytes": 4240,
+      "sha256": "709b6140973605336aad3cfb15eab15cf5f6d0602e0609067d7288c2b77ba114"
+    },
+    {
+      "name": "review.md",
+      "bytes": 9363,
+      "sha256": "c3b7921f21f12888fa6548519a78ab47f8a6f6eb7571d3f329a155ca03a373e4"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 15448,
+      "sha256": "3895892f95c0d2012d4539fb93590a133f57349f7a3ab9001947a890a885f290"
+    },
+    {
+      "name": "validation.log",
+      "bytes": 944,
+      "sha256": "c537dc3547af991bde85de1c97bc1154800a3e864c4ac48292196be99289d97b"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 5899,
+      "sha256": "238adaf2c12aa268f3bbc352dbfce41121e69e764acc4478d47d3d47bc826c50"
+    }
+  ]
+}

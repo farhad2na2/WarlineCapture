@@ -1,0 +1,594 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:warline:proposal:generic-authoring-descriptor:v1",
+  "title": "PROPOSED disabled descriptor; importer not implemented",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "enabled",
+    "base",
+    "catalogId",
+    "catalogManifestRow",
+    "canonicalSizeRows",
+    "sourceSelection",
+    "profileReferences",
+    "measuredLayout",
+    "logicalVariants",
+    "externalQualificationRefs"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "enabled": {
+      "const": false
+    },
+    "base": {
+      "const": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d"
+    },
+    "catalogId": {
+      "enum": [
+        "S001",
+        "S002",
+        "S003",
+        "S004",
+        "S005",
+        "S006",
+        "S007",
+        "S008",
+        "S009",
+        "S010",
+        "S011",
+        "S012",
+        "S013",
+        "S014",
+        "S015",
+        "S016",
+        "S017",
+        "S018",
+        "S019",
+        "S020",
+        "S021",
+        "S022",
+        "S023",
+        "S024",
+        "S025",
+        "S026",
+        "S027",
+        "S028",
+        "S029",
+        "S030",
+        "S031",
+        "S032",
+        "S033",
+        "S034",
+        "S035",
+        "S036",
+        "S037",
+        "S038",
+        "S039",
+        "S040",
+        "S041",
+        "S042",
+        "S043",
+        "S044",
+        "S045",
+        "S046",
+        "S047",
+        "S048",
+        "S049",
+        "S050",
+        "S051",
+        "S052",
+        "S053",
+        "S054",
+        "S055",
+        "S056",
+        "S057",
+        "S058",
+        "S059",
+        "S060",
+        "S061",
+        "S062",
+        "S063",
+        "S064",
+        "S065",
+        "S066",
+        "S067",
+        "S068",
+        "S069",
+        "S070",
+        "S071",
+        "S072",
+        "S073",
+        "S074",
+        "S075",
+        "S076",
+        "S077",
+        "S078",
+        "S079",
+        "S080",
+        "S081",
+        "S082",
+        "S083",
+        "S084",
+        "S085",
+        "S086",
+        "S087",
+        "S088",
+        "S089",
+        "S090",
+        "S091",
+        "S092",
+        "S093",
+        "S094",
+        "S095",
+        "S096",
+        "S097",
+        "S098",
+        "S099",
+        "S100",
+        "S101",
+        "S102",
+        "S103",
+        "S104",
+        "S105",
+        "S106",
+        "S107",
+        "S108",
+        "S109",
+        "S110",
+        "S111",
+        "S112",
+        "S113",
+        "S114",
+        "S115",
+        "S116",
+        "S117",
+        "S118",
+        "S119",
+        "S120"
+      ]
+    },
+    "catalogManifestRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "handoff_ordinal",
+        "remaining_after_three",
+        "legacy_runtime_index",
+        "map_id",
+        "operation_map_id",
+        "objective_id",
+        "army_profile",
+        "start_profile",
+        "definition_id",
+        "scenario_setup_id",
+        "layout_id",
+        "packet",
+        "objective_system",
+        "required_tickets",
+        "required_capabilities",
+        "asset_folder",
+        "first_visit_size",
+        "recommended_size",
+        "default_difficulty",
+        "regular_seeds",
+        "recruit_standard_en_seed",
+        "veteran_standard_en_seed",
+        "commander_standard_en_seed",
+        "war_regular_en_fa_seed",
+        "large_war_regular_en_fa_seed",
+        "implementation_status",
+        "manual_win",
+        "aria_win",
+        "checkpoint",
+        "device",
+        "evidence_path"
+      ],
+      "properties": {
+        "catalog_id": {
+          "type": "string"
+        },
+        "handoff_ordinal": {
+          "type": "string"
+        },
+        "remaining_after_three": {
+          "type": "string"
+        },
+        "legacy_runtime_index": {
+          "type": "string"
+        },
+        "map_id": {
+          "type": "string"
+        },
+        "operation_map_id": {
+          "type": "string"
+        },
+        "objective_id": {
+          "type": "string"
+        },
+        "army_profile": {
+          "type": "string"
+        },
+        "start_profile": {
+          "type": "string"
+        },
+        "definition_id": {
+          "type": "string"
+        },
+        "scenario_setup_id": {
+          "type": "string"
+        },
+        "layout_id": {
+          "type": "string"
+        },
+        "packet": {
+          "type": "string"
+        },
+        "objective_system": {
+          "type": "string"
+        },
+        "required_tickets": {
+          "type": "string"
+        },
+        "required_capabilities": {
+          "type": "string"
+        },
+        "asset_folder": {
+          "type": "string"
+        },
+        "first_visit_size": {
+          "type": "string"
+        },
+        "recommended_size": {
+          "type": "string"
+        },
+        "default_difficulty": {
+          "type": "string"
+        },
+        "regular_seeds": {
+          "type": "string"
+        },
+        "recruit_standard_en_seed": {
+          "type": "string"
+        },
+        "veteran_standard_en_seed": {
+          "type": "string"
+        },
+        "commander_standard_en_seed": {
+          "type": "string"
+        },
+        "war_regular_en_fa_seed": {
+          "type": "string"
+        },
+        "large_war_regular_en_fa_seed": {
+          "type": "string"
+        },
+        "implementation_status": {
+          "type": "string"
+        },
+        "manual_win": {
+          "type": "string"
+        },
+        "aria_win": {
+          "type": "string"
+        },
+        "checkpoint": {
+          "type": "string"
+        },
+        "device": {
+          "type": "string"
+        },
+        "evidence_path": {
+          "type": "string"
+        }
+      }
+    },
+    "canonicalSizeRows": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/sizeRow"
+      }
+    },
+    "sourceSelection": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "profileReferences": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "measuredLayout": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "logicalVariants": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "maxItems": 12,
+      "items": {
+        "type": "object"
+      }
+    },
+    "externalQualificationRefs": {
+      "type": "array",
+      "maxItems": 0
+    }
+  },
+  "$defs": {
+    "sizeRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "catalog_id",
+        "size_id",
+        "army_profile",
+        "start_profile",
+        "objective_id",
+        "readiness",
+        "deadline_seconds",
+        "player_rifle",
+        "player_gunner",
+        "player_rocketeer",
+        "player_car",
+        "player_apc",
+        "player_tank",
+        "player_aa",
+        "player_transport_heli",
+        "player_infantry",
+        "player_ground",
+        "player_air",
+        "player_combat",
+        "player_supply",
+        "player_logistics_support",
+        "player_objective_trucks",
+        "player_starting_structures",
+        "player_designated_rifles",
+        "enemy_rifle",
+        "enemy_gunner",
+        "enemy_rocketeer",
+        "enemy_car",
+        "enemy_apc",
+        "enemy_tank",
+        "enemy_aa",
+        "enemy_transport_heli",
+        "enemy_infantry",
+        "enemy_ground",
+        "enemy_air",
+        "enemy_combat",
+        "enemy_supply",
+        "enemy_logistics_support",
+        "enemy_objective_trucks",
+        "enemy_starting_structures",
+        "enemy_designated_rifles",
+        "materials_each",
+        "oil_each",
+        "usable_fuel_each",
+        "materials_capacity_each",
+        "oil_capacity_each",
+        "fuel_capacity_each",
+        "infantry_queues_each",
+        "vehicle_queues_each",
+        "logistics_queues_each",
+        "refinery_modules_each",
+        "infantry_cap_each",
+        "ground_cap_each",
+        "tactical_air_cap_each",
+        "supply_cap_each",
+        "logistics_support_cap_each",
+        "delivery_carrier_cap_each",
+        "objective_support_extra_player",
+        "player_built_structure_cap_each",
+        "barrier_segment_cap_each",
+        "loaded_vehicle_fuel",
+        "status"
+      ],
+      "properties": {
+        "catalog_id": {
+          "type": "string"
+        },
+        "size_id": {
+          "enum": [
+            "Standard",
+            "War",
+            "LargeWar"
+          ]
+        },
+        "army_profile": {
+          "type": "string"
+        },
+        "start_profile": {
+          "type": "string"
+        },
+        "objective_id": {
+          "type": "string"
+        },
+        "readiness": {
+          "type": "string"
+        },
+        "deadline_seconds": {
+          "type": "string"
+        },
+        "player_rifle": {
+          "type": "string"
+        },
+        "player_gunner": {
+          "type": "string"
+        },
+        "player_rocketeer": {
+          "type": "string"
+        },
+        "player_car": {
+          "type": "string"
+        },
+        "player_apc": {
+          "type": "string"
+        },
+        "player_tank": {
+          "type": "string"
+        },
+        "player_aa": {
+          "type": "string"
+        },
+        "player_transport_heli": {
+          "type": "string"
+        },
+        "player_infantry": {
+          "type": "string"
+        },
+        "player_ground": {
+          "type": "string"
+        },
+        "player_air": {
+          "type": "string"
+        },
+        "player_combat": {
+          "type": "string"
+        },
+        "player_supply": {
+          "type": "string"
+        },
+        "player_logistics_support": {
+          "type": "string"
+        },
+        "player_objective_trucks": {
+          "type": "string"
+        },
+        "player_starting_structures": {
+          "type": "string"
+        },
+        "player_designated_rifles": {
+          "type": "string"
+        },
+        "enemy_rifle": {
+          "type": "string"
+        },
+        "enemy_gunner": {
+          "type": "string"
+        },
+        "enemy_rocketeer": {
+          "type": "string"
+        },
+        "enemy_car": {
+          "type": "string"
+        },
+        "enemy_apc": {
+          "type": "string"
+        },
+        "enemy_tank": {
+          "type": "string"
+        },
+        "enemy_aa": {
+          "type": "string"
+        },
+        "enemy_transport_heli": {
+          "type": "string"
+        },
+        "enemy_infantry": {
+          "type": "string"
+        },
+        "enemy_ground": {
+          "type": "string"
+        },
+        "enemy_air": {
+          "type": "string"
+        },
+        "enemy_combat": {
+          "type": "string"
+        },
+        "enemy_supply": {
+          "type": "string"
+        },
+        "enemy_logistics_support": {
+          "type": "string"
+        },
+        "enemy_objective_trucks": {
+          "type": "string"
+        },
+        "enemy_starting_structures": {
+          "type": "string"
+        },
+        "enemy_designated_rifles": {
+          "type": "string"
+        },
+        "materials_each": {
+          "type": "string"
+        },
+        "oil_each": {
+          "type": "string"
+        },
+        "usable_fuel_each": {
+          "type": "string"
+        },
+        "materials_capacity_each": {
+          "type": "string"
+        },
+        "oil_capacity_each": {
+          "type": "string"
+        },
+        "fuel_capacity_each": {
+          "type": "string"
+        },
+        "infantry_queues_each": {
+          "type": "string"
+        },
+        "vehicle_queues_each": {
+          "type": "string"
+        },
+        "logistics_queues_each": {
+          "type": "string"
+        },
+        "refinery_modules_each": {
+          "type": "string"
+        },
+        "infantry_cap_each": {
+          "type": "string"
+        },
+        "ground_cap_each": {
+          "type": "string"
+        },
+        "tactical_air_cap_each": {
+          "type": "string"
+        },
+        "supply_cap_each": {
+          "type": "string"
+        },
+        "logistics_support_cap_each": {
+          "type": "string"
+        },
+        "delivery_carrier_cap_each": {
+          "type": "string"
+        },
+        "objective_support_extra_player": {
+          "type": "string"
+        },
+        "player_built_structure_cap_each": {
+          "type": "string"
+        },
+        "barrier_segment_cap_each": {
+          "type": "string"
+        },
+        "loaded_vehicle_fuel": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$comment": "Shape recommendation only, not an importer or complete nestedgeometry schema. Semantic owner must enforce one row eachsize, exact independent canonical row+manifest equality and catalogId, protected/ownership exclusions, fixedbudgets, current source pins, persistent profile refs and existing typed layout/area/view validators. Null unresolved. Schema-valid != input-complete/compiled/fit/player-ready. No gameplay-config qualification authority."
+}

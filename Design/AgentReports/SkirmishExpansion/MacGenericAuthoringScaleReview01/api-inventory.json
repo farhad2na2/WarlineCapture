@@ -1,0 +1,166 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "executed": false,
+  "apis": [
+    {
+      "name": "Definition composition",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+      "line": 84,
+      "symbol": "public void Configure(",
+      "sourceSha256": "b689509b7b886d6d21b6c97beb8078cb3f69d2ae91da43dfc38910b739458b5d",
+      "excerpt": "        public void Configure(\n            string configuredCatalogId,\n            SkirmishObjectiveConfig objective,\n            SkirmishArmyProfileConfig army,",
+      "scope": "Generic typed definition assembly; BindCampaignMap and BindMissionLogicalBinding separate",
+      "limits": "No persistence/certification; version2/Standard-only certified sizes and symmetric.ba sideRule defaults require compatibility review, not guessed semantic edits."
+    },
+    {
+      "name": "Generic lookup",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "line": 181,
+      "symbol": "public static bool TryGetDefinition(",
+      "sourceSha256": "3556c591ab5e21acf1057a9d44af1c646edb6200111dd868ba532353c9dd7a6c",
+      "excerpt": "        public static bool TryGetDefinition(\n            SkirmishExpansionAuthoredSet set,\n            string catalogId,\n            out SkirmishScenarioDefinitionConfig definition)",
+      "scope": "Compatibility fields plus generic Definitions list",
+      "limits": "CreateInMemory is coded compatibility content, not120-definition generation; ordinary additions need no new switch per ID."
+    },
+    {
+      "name": "Persistent profile graph",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "line": 87,
+      "symbol": "public SkirmishExpansionAuthoredSet ToAuthoredSet()",
+      "sourceSha256": "baefc65b6672de32d6fa7b944410348d4de23bb648e65502ffcba293bbb5decf",
+      "excerpt": "        public SkirmishExpansionAuthoredSet ToAuthoredSet()\n        {\n            var set = new SkirmishExpansionAuthoredSet\n            {",
+      "scope": "Read existing packaged references",
+      "limits": "ArmyCombined inferred from S005; no direct serialized armyCombined. No public catalog Add method; current batch registrar private."
+    },
+    {
+      "name": "Six-ID persistent BA builder",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConfigOnlyBatchBuilder.cs",
+      "line": 76,
+      "symbol": "public static Result BuildBatch(",
+      "sourceSha256": "fefd4f18db34f99e292e794a09ba0447c2959f9ee8d067b9461489a2d75b169d",
+      "excerpt": "        public static Result BuildBatch(IReadOnlyList<Request> requests, SkirmishExpansionCatalogConfig catalog,\n            string outputRoot = ScenarioRoot)\n        {\n            var result = new Result();",
+      "scope": "All3 Regular seed0 compile then layout/definition persist and supplied-catalog register",
+      "limits": "Only026049050074097098 BA/G; fixedfeatures/groupIDs; no logical-binding input or dry-run; preflightall-beforewrites but apply I/O not transactional; no publication/native fit."
+    },
+    {
+      "name": "Ground BA disposable",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs",
+      "line": 49,
+      "symbol": "public static bool TryCreateGroundBa10Candidate(",
+      "sourceSha256": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035",
+      "excerpt": "        public static bool TryCreateGroundBa10Candidate(JObject mission,OperationMapDefinition source,\n            out GroundObjective30CandidateOwner owner,out string error)\n            => TryCreateGroundBaCandidate(mission,source,false,out owner,out error);\n",
+      "scope": "Exact Full120 row and source/start-matched GroundFC template",
+      "limits": "Six unprotected BA/G; separate protected counterpart API; unmeasured disposable definition/layout, no area or logical binding."
+    },
+    {
+      "name": "Ground objectives disposable",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "line": 86,
+      "symbol": "public static bool TryCreateGroundObjective30Candidate(",
+      "sourceSha256": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+      "excerpt": "        public static bool TryCreateGroundObjective30Candidate(JObject mission,OperationMapDefinition source,\n            out GroundObjective30CandidateOwner owner,out string error)\n        {\n            owner=null;error=null;var created=new GroundObjective30CandidateOwner();",
+      "scope": "30 G FC/BT/CE exact envelope + current source/grid/surface pins",
+      "limits": "Draft deadline-specific objective/layout/areas; CE three proposed bays; no measured flags, area measurement/layoutfingerprint or persistence."
+    },
+    {
+      "name": "AirCombined disposable",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "line": 104,
+      "symbol": "public static bool TryCreateAirCombined80Candidate(",
+      "sourceSha256": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9",
+      "excerpt": "        public static bool TryCreateAirCombined80Candidate(JObject mission,OperationMapDefinition source,out AirCombined80CandidateOwner owner,out string error)\n            =>TryCreateAirCombined80CandidateCore(mission,source,ReadAirCombined80Envelope,out owner,out error);\n\n        static bool TryCreateAirCombined80CandidateCore(JObject mission,OperationMapDefinition source,Func<JObject> observeEnvelope,out AirCombined80CandidateOwner owner,out string error)",
+      "scope": "Unprotected A/C exact coherent80 rows + Ground30 template",
+      "limits": "Original AirCombined80 authority dependency absent at base; not callable-complete. Coded003004005 protected. Preserve CE adapted21pads on identity-only clone; no aircraft/fit acceptance."
+    },
+    {
+      "name": "Static diagnostics",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 77,
+      "symbol": "public static bool TryInspectStaticAuthoringBudget(",
+      "sourceSha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "excerpt": "        public static bool TryInspectStaticAuthoringBudget(SkirmishScenarioDefinitionConfig definition,\n            SkirmishDifficultyId difficulty, SkirmishSizeId size, int seed, SkirmishContentManifest manifest,\n            IReadOnlyList<SkirmishSetupMatrixRow> matrix, out SkirmishStaticAuthoringBudget budget,\n            out List<SkirmishCompileReason> reasons)",
+      "scope": "Compiler budget owner DTO, even if later gates reject",
+      "limits": "True means DTO produced; inspect ExactCanonicalQuantities and NormalCompilerPassed/reasons. Rejected setup/hash never returned; S002 mismatch remains separate."
+    },
+    {
+      "name": "Measured projection",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+      "line": 55,
+      "symbol": "public static bool TryBind(",
+      "sourceSha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994",
+      "excerpt": "        public static bool TryBind(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition,\n            List<SkirmishCompileReason> reasons, out string fingerprint)\n        {\n            fingerprint = null;",
+      "scope": "Projects typed actors/facilities into supplied existing Campaign/layout",
+      "limits": "Config consistency only; actual footprints/blockers/exits/census and source fit external; preserve packaged legacy adapter."
+    },
+    {
+      "name": "Logical input capture",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 120,
+      "symbol": "public static bool TryCaptureMissionLogicalAuthoringInputs(",
+      "sourceSha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "excerpt": "        public static bool TryCaptureMissionLogicalAuthoringInputs(SkirmishScenarioDefinitionConfig definition,\n            SkirmishDifficultyId difficulty,SkirmishSizeId size,int seed,SkirmishContentManifest manifest,\n            IReadOnlyList<SkirmishSetupMatrixRow> matrix,out SkirmishMissionLogicalAuthoringInputs inputs,\n            out List<SkirmishCompileReason> reasons)",
+      "scope": "Derived elevation/roles/actors/areabinding after other compile gates",
+      "limits": "Only tolerates missionLogicalBinding reasons and needs actual layout fingerprint; no rejected setup/hash/launch data."
+    },
+    {
+      "name": "Persistent supplied logical asset",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionLogicalBindingAuthoring.cs",
+      "line": 16,
+      "symbol": "public static void CreateExplicitBindingAsset(",
+      "sourceSha256": "b66878698688344516243dbfffb4bd0e01b60921b45da2ac5f2e67023f708905",
+      "excerpt": "        public static void CreateExplicitBindingAsset(SkirmishScenarioDefinitionConfig definition,\n            SkirmishMissionLogicalBindingConfig supplied,string assetPath,\n            string reviewedSourceSemanticFingerprint,string reviewedLayoutSemanticFingerprint)\n        {",
+      "scope": "Fresh mission-local Logical asset from supplied transient binding + exact reviewedsource/layout",
+      "limits": "Does not bind actual definition, generate variants/views or certify native; final explicit bind and recompile/readback required."
+    },
+    {
+      "name": "Attach three-size logical variants",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.EngineeringViewAuthoring.cs",
+      "line": 15,
+      "symbol": "public static bool TryAttachRefinementLogicalBinding(",
+      "sourceSha256": "de5c3cd105cbd961bba6a8c56d61ded3232ab0644bfc0445b66b71c274b687ae",
+      "excerpt": "        public static bool TryAttachRefinementLogicalBinding(SkirmishScenarioDefinitionConfig definition,\n            SkirmishMissionLogicalVariant[] variants,IReadOnlyList<SkirmishSetupMatrixRow> matrix,\n            out SkirmishMissionLogicalBindingConfig binding,out string error)\n        {",
+      "scope": "Transient binding + actual compiler all3 sizes at supplied difficulties seed1",
+      "limits": "Restores prior on failure; no persistence. Engineering view constructor needs EntityManager and actual aircraft facts, not offline universal defaults."
+    },
+    {
+      "name": "Typed areas",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveAreaConfig.cs",
+      "line": 115,
+      "symbol": "public static bool TryCompile(SkirmishObjectiveAreaConfig",
+      "sourceSha256": "3d32be055e3530783bf980e97ed203ba53e85719bdf8647b050d576832f1c90c",
+      "excerpt": "        public static bool TryCompile(SkirmishObjectiveAreaConfig config, in SkirmishObjectiveAreaBinding expected,\n            SkirmishObjectiveKind kind, out SkirmishCompiledObjectiveAreas compiled, out string error)\n        {\n            compiled = null; error = \"Invalid logical area identity, schema or source binding.\";",
+      "scope": "Exact area identity/binding/geometry and measurement artifact consistency",
+      "limits": "FC A/B/C; BT corridorA/B/exit; CE destination. Measurement declaration separate from native qualification; digest not walkability."
+    },
+    {
+      "name": "Logical variant compiler",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+      "line": 88,
+      "symbol": "public static bool TryCompile(SkirmishScenarioDefinitionConfig",
+      "sourceSha256": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb",
+      "excerpt": "        public static bool TryCompile(SkirmishScenarioDefinitionConfig definition,SkirmishResolvedSetup setup,\n            out SkirmishCompiledMissionLogicalBinding compiled,out string error)\n        {\n            compiled=null;error=\"Explicit definition-referenced logical binding required.\";",
+      "scope": "Exact source/layout/actors/areas/view/framing, unique size+difficulty keys",
+      "limits": "1..12variants, selected key required; BA forbids non-BA areas. SetupCompiler427 invokes non-BA OR non-null BA binding; RequiresBinding helper alone not unconditional BA rejection."
+    },
+    {
+      "name": "Whole catalog compiler",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "line": 144,
+      "symbol": "public static bool TryCompileCatalog(",
+      "sourceSha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f",
+      "excerpt": "        public static bool TryCompileCatalog(\n            SkirmishExpansionAuthoredSet authored,\n            IReadOnlyList<SkirmishSetupMatrixRow> matrix,\n            SkirmishContentManifest manifest,",
+      "scope": "Canonical matrix iteration Regular seed0; successes and reasons",
+      "limits": "Return is compiled.Count>0, NOT all360pass; independently require exact scoped rowcount, unique joins and zero reasons."
+    },
+    {
+      "name": "Legacy rebuild unsafe for scaling",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishDefinitionBuilder.cs",
+      "line": 36,
+      "symbol": "public static string Rebuild()",
+      "sourceSha256": "2af02ef1d3a4f704788593f01eefae9c2b22856cc880a637e11c5183e3e9564b",
+      "excerpt": "        public static string Rebuild()\n        {\n            if (EditorApplication.isPlaying)\n                throw new InvalidOperationException(\"Author expanded definitions in Edit mode.\");",
+      "scope": "Coded compatibility factory persistence",
+      "limits": "Writes shared/coded assets/publication-preservation logic and invokes S004 Campaign builder; not proposed mass-authoring entry."
+    }
+  ]
+}

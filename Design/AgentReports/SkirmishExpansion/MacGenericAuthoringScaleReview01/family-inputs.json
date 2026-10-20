@@ -1,0 +1,49 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "status": "RequirementsOnly_NoMeasuredCoordinates",
+  "common": [
+    "Exact tuple/IDs/seed families; full three unchanged62-field rows; canonical fixed quantities",
+    "Persistent objective/army/start/economy/upgrade/intel/roles; authority capabilities",
+    "Clean existing Campaign source; exact raw/payload/semantic and scene/grid/surface joins",
+    "Measured frame/deployments/anchors/pads/routes + all-size ordinary facility and force fit; no new physical map",
+    "Current compiler provenance and final persistent readback; no stale proof transfer"
+  ],
+  "families": {
+    "BA": {
+      "count": 30,
+      "areaRoles": [],
+      "required": "Base/enemy anchors, full facilities/staging/supply/service and approach access; generic view requirements retained; BA-null compile behavior not native readiness."
+    },
+    "FC": {
+      "count": 30,
+      "areaRoles": [
+        "FrontlineA",
+        "FrontlineB",
+        "FrontlineC"
+      ],
+      "required": "Distinct measured footprints and ownership/reachability facts; preserve canonical FC Standard1200deadline."
+    },
+    "BT": {
+      "count": 30,
+      "areaRoles": [
+        "BreakthroughCorridorA",
+        "BreakthroughCorridorB",
+        "BreakthroughExit"
+      ],
+      "required": "Distinct measured corridors/exit, actual walkability/connectivity, exact layout-bound measurement."
+    },
+    "CE": {
+      "count": 30,
+      "areaRoles": [
+        "ConvoyDestination"
+      ],
+      "required": "Three original objective trucks/bays + persistent convoy rolecatalog; measured destination, delivery/route/service facts; mechanical bay split not legal placement."
+    }
+  },
+  "armyProfiles": {
+    "G": "All-size actual ground roster/facilities and route/service fit. Static DTO not normal compile.",
+    "A": "Canonical actual air roles; rotor/runway/parking/taxi/service/altitude facts as required by actual roster, on existing source; otherwise retain unresolved source-fit gate.",
+    "C": "Canonical mixed profile and compiler-owned overlays/rollout; never reduce quantities or reuse measured ground-only fit for aircraft."
+  },
+  "viewVariants": "Exact elevations, actual openingactorIDs/required framingroles. Engineering targets not PNG acceptance. Three Regular sizes do not cover all12size/difficulty variants, actual manifest seeds or EN/FA journeys."
+}

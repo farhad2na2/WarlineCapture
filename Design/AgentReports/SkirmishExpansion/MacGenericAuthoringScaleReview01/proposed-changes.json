@@ -1,0 +1,48 @@
+{
+  "status": "ProposedOnly_NoImplementationOrExecution",
+  "orderedMinimalSteps": [
+    {
+      "order": 1,
+      "proposal": "Implement one read-only descriptor loader/preview",
+      "detail": "Check immutable catalog/matrix/manifest joins, all3 rows, capabilities, source/profile refs, ownership/protected IDs and exact raw/LFS payload distinctions. Return missing gates, no Unity import or filesystem mutation.",
+      "validationProposedOnly": "Reject one changed budget/seed/tuple, duplicate size/ID, path escape, stale source and unresolved measurements. Schema validity does not grant completeness."
+    },
+    {
+      "order": 2,
+      "proposal": "Resolve missing authority before family adapter reuse",
+      "detail": "Windows supplies the actual reviewed original80 authority and exact pins; preserve existing coherent/original checks. Do not fabricate replacement or drop comparison. Also verify actual ScenarioDefinitionConfig platform bytes: expected hash matches a CRLF-only mapping of base Git bytes. Preserve raw mismatch and do not infer actual file/compiler input equality or auto-refresh hashes.",
+      "validationProposedOnly": "Missing and wrong original envelope must fail closed with no candidate/persisted graph."
+    },
+    {
+      "order": 3,
+      "proposal": "Consolidate disposable typed composition only where repeated",
+      "detail": "Dispatch existing family constructors from canonical tuple. Optionally centralize objective-kind/deadline construction into one typed method; preserve FC deadlines and actual CE role/bay adaptation. No ID-specific builders. Review Configure symmetric.ba metadata and explicit Combined profile binding as compatibility questions, not automatic changes.",
+      "validationProposedOnly": "One representative each objective/profile/start plus immutable all360 budget comparisons; dispose all transient owners on refusal; preserve CE21pad identity-only clone and protected legacy values."
+    },
+    {
+      "order": 4,
+      "proposal": "Add explicit supplied logical graph support to a separate generic apply proposal",
+      "detail": "Keep current six-ID BuildBatch behavior/allowlist unchanged. Generic adapter accepts reviewed source/measured layout/objective/profile/area/view/binding graph, uses existing compiler/validators. Non-BA cannot pass without exact logical binding; explicitly settle generic BA binding policy.",
+      "validationProposedOnly": "Reject missing/wrong area role, stale semantic pin, missing exact size/difficulty, changed view/actor projection, fabricated measurement. No compile despite missing prerequisite."
+    },
+    {
+      "order": 5,
+      "proposal": "Factor narrow persistence and catalog registration",
+      "detail": "Reuse current persist/register mechanics after full graph preflight. Explicit output graph and development catalog; source/protected/duplicate target checks, collision refusal, no publication writes. Persist referenced objective/layout/view/binding before definition; rebind exact persistent refs and read back/recompile. Treat late I/O as partial failure with preserved evidence, never transactional success.",
+      "validationProposedOnly": "Repeat no-change/idempotent graph+GUID checks; stale/duplicate IDs or wrong target types refuse before writes; exercise late apply failure and never report all-or-nothing rollback."
+    },
+    {
+      "order": 6,
+      "proposal": "Emit per-case receipts and preserve separate qualification",
+      "detail": "Check expected scoped row cardinality and reasons, not TryCompileCatalog boolean. Pin source/build-input provenance and committed output refs; later independently assigned normal/native/device validation only. No current execution grant.",
+      "validationProposedOnly": "Mixture of onepass+onefail cannot become catalogpass; three Regular sizes cannot certify all12difficulty variants, mission wins, paid controls, APK or device."
+    }
+  ],
+  "nonChanges": [
+    "Fixed120IDs/36062-field rows and gameplay budgets",
+    "Current Campaign physical maps and coded/practice bindings",
+    "Current Windows implementation/native diagnostic ownership",
+    "Existing failed evidence and all separate acceptance gates"
+  ],
+  "executionAssigned": false
+}

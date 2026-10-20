@@ -1,0 +1,135 @@
+{
+  "scope": "FreshReadOnlyNativeCapacityOwnership_NoRunAdmission",
+  "observedUtc": "2026-10-20T16:56:33.914586+00:00",
+  "sourceAuditCommitUnchanged": "5f389ada216c748aa546b7893429f31a7208ce44",
+  "sourceAuditBase": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "observationMethods": [
+    "ps -axo pid,ppid,%cpu,rss,lstart,args",
+    "proc_pidpath read-only executable lookup",
+    "memory_pressure read-only report",
+    "compact wait_threads owner status, cursor aad235da-eb56-4056-a149-410ec80f36cf:2"
+  ],
+  "processes": [
+    {
+      "pid": 51962,
+      "ppid": 1,
+      "cpuPercent": 0.8,
+      "rssKiB": 61248,
+      "birthLocal": "Tue Oct 20 12:41:34 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity",
+      "sanitizedArgv": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/Fig/Fig",
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "owningChat": null,
+      "job": "Unknown current native activity; protected unrelated Fig Editor",
+      "attribution": "Project established by argv; exact owning chat/job unknown"
+    },
+    {
+      "pid": 99149,
+      "ppid": 23878,
+      "cpuPercent": 0.0,
+      "rssKiB": 5872,
+      "birthLocal": "Tue Oct 20 18:53:39 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/opt/homebrew/Cellar/rtk/0.49.0/bin/rtk",
+      "sanitizedArgv": "rtk proxy env WARLINE_S005_COMBAT_EVIDENCE=1 Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/skirmish-saga-normal-input-15-fa.log -- -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaFa",
+      "project": null,
+      "owningChat": {
+        "title": "Skirmish Menu",
+        "threadId": "01a15818-2610-7d42-86d1-8439e09ab44f"
+      },
+      "job": "Existing wrapper normal-input-15-fa / RunSagaS002EditorAriaFa",
+      "attribution": "Observed argv/project/parent chain and compact owner-chat active status; no new message or control to owner"
+    },
+    {
+      "pid": 99151,
+      "ppid": 99149,
+      "cpuPercent": 0.0,
+      "rssKiB": 1776,
+      "birthLocal": "Tue Oct 20 18:53:39 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/bin/bash",
+      "sanitizedArgv": "bash Tools/CI/invoke_unity_macos.sh --unity /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity --timeout 1200 --log /private/tmp/skirmish-saga-normal-input-15-fa.log -- -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaFa",
+      "project": null,
+      "owningChat": {
+        "title": "Skirmish Menu",
+        "threadId": "01a15818-2610-7d42-86d1-8439e09ab44f"
+      },
+      "job": "Existing wrapper normal-input-15-fa / RunSagaS002EditorAriaFa",
+      "attribution": "Observed argv/project/parent chain and compact owner-chat active status; no new message or control to owner"
+    },
+    {
+      "pid": 99157,
+      "ppid": 99151,
+      "cpuPercent": 168.3,
+      "rssKiB": 2028992,
+      "birthLocal": "Tue Oct 20 18:53:39 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "sanitizedArgv": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile /private/tmp/skirmish-saga-normal-input-15-fa.log -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaFa",
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "owningChat": {
+        "title": "Skirmish Menu",
+        "threadId": "01a15818-2610-7d42-86d1-8439e09ab44f"
+      },
+      "job": "Existing wrapper normal-input-15-fa / RunSagaS002EditorAriaFa",
+      "attribution": "Observed argv/project/parent chain and compact owner-chat active status; no new message or control to owner"
+    },
+    {
+      "pid": 99193,
+      "ppid": 99157,
+      "cpuPercent": 0.0,
+      "rssKiB": 53504,
+      "birthLocal": "Tue Oct 20 18:53:51 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "sanitizedArgv": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile Logs/AssetImportWorkerHW0.log -srvPort 58119 -parentPid 99157 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense [REDACTED] -cbmMachineId [REDACTED] -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+      "project": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture",
+      "owningChat": {
+        "title": "Skirmish Menu",
+        "threadId": "01a15818-2610-7d42-86d1-8439e09ab44f"
+      },
+      "job": "Existing wrapper normal-input-15-fa / RunSagaS002EditorAriaFa",
+      "attribution": "Observed argv/project/parent chain and compact owner-chat active status; no new message or control to owner"
+    }
+  ],
+  "hubPresent": true,
+  "hubProcesses": [
+    {
+      "pid": 55563,
+      "ppid": 1,
+      "cpuPercent": 0.0,
+      "rssKiB": 24256,
+      "birthLocal": "Wed Oct 14 21:02:25 2026",
+      "birthTimezone": "Europe/Berlin (ps local observation; seconds granularity)",
+      "executablePath": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "sanitizedArgv": "/Applications/Unity Hub.app/Contents/MacOS/Unity Hub",
+      "project": null,
+      "owningChat": null,
+      "job": null
+    }
+  ],
+  "hubSignedIn": "Not rechecked; presence alone does not prove current authentication",
+  "memoryPressureExit": 0,
+  "systemMemoryFreePercent": 32,
+  "heavyCapacity": {
+    "oneAdditionalNativeHeavySlotActuallyFree": false,
+    "assessment": "Observed active Skirmish Menu heavy native lane; do not admit another Mac heavy run. No global slot scheduler or owner release proof available.",
+    "reason": "Existing normal-input-15-fa wrapper/Editor and worker; fresh CPU/RSS observations above. Fig remains open/protected. Free memory alone is not launch authority.",
+    "nativeJobAssignedToThisChat": false,
+    "mayLaunch": false,
+    "noTakeoverFromTimeout": true
+  },
+  "actions": [],
+  "limits": [
+    "Point-in-time resource usage is not a future reservation or proof of application unsaved state.",
+    "No Editor/Hub/Fig interruption, process termination, source/Library edits, CLI/Unity/native launch or licensing action.",
+    "If owner native job finishes later, a new verified capacity/ownership/grant check is required before any future proposal."
+  ],
+  "ownerChatSnapshot": {
+    "title": "Skirmish Menu",
+    "threadId": "01a15818-2610-7d42-86d1-8439e09ab44f",
+    "status": "active",
+    "attributedState": "Reported frozen English cue journey passed; checking cold reload and Persian journey. This is owner-attributed progress, not Mac support visual/mission acceptance."
+  }
+}

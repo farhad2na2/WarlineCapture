@@ -1,0 +1,11 @@
+{
+  "scope": "CapacityObservationSupplementOnly_NoNativeAdmission",
+  "parentSourceReviewCommit": "5f389ada216c748aa546b7893429f31a7208ce44",
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/Mac120SetupPlanConformance01/capacity/ownership.json",
+      "bytes": 7551,
+      "sha256": "f332cb485a1af54aa4a24f2943b25b023a9041196c1d486c3945c2e1e8f84db1"
+    }
+  ]
+}

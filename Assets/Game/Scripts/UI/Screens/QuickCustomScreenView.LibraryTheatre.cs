@@ -2382,10 +2382,15 @@ namespace Game.UI.Runtime
             plate.sprite = ZonePillSprite();
             plate.type = Image.Type.Sliced;
             plate.color = CueTabColor();
-            plate.raycastTarget = false;
+            plate.raycastTarget = true;
+            var zoomButton = plate.gameObject.AddComponent<Button>();
+            zoomButton.targetGraphic = plate;
+            zoomButton.transition = Selectable.Transition.None;
+            zoomButton.onClick.AddListener(() => _libraryViewModel?.ZoomIn());
             PlaceTopLeft(plate.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             plate.rectTransform.localScale = Vector3.one;
             var cue = CreateLabel(parent, "ZoomCue", 20f);
+            cue.raycastTarget = false;
             PlaceTopLeft(cue.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             plate.rectTransform.SetAsLastSibling();
             cue.rectTransform.SetAsLastSibling();

@@ -9580,7 +9580,11 @@ namespace Game.UI.Runtime
             float plateHeight,
             bool fa)
         {
-            float minW = fa ? 206f : 176f;
+            float footer = card.H >= 190f ? 40f : 34f;
+            bool inline = card.H >= 176f && cue.X >= card.X + 2f && cue.Y >= card.Y + 70f
+                && cue.XMax <= card.XMax - 2f && cue.YMax <= card.YMax - footer - 2f
+                && cue.W >= PackedCueMinWidth && cue.H >= (fa ? 56f : 44f);
+            float minW = inline ? PackedCueMinWidth : fa ? 206f : 176f;
             float minH = fa ? 56f : 44f;
             if (cue.W + 0.5f < minW || cue.H + 0.5f < minH)
                 return false;
@@ -9614,13 +9618,13 @@ namespace Game.UI.Runtime
                 return false;
             if (!CueCountsAsNear(cue, card, pins[selected], hexes[selected]))
                 return false;
-            if (PolygonHitsRect(hexes[selected], cue) || PointInPolygon(cue.Center, hexes[selected]))
+            if (!inline && (PolygonHitsRect(hexes[selected], cue) || PointInPolygon(cue.Center, hexes[selected])))
                 return false;
             if (LeaderHitsRect(pins, cards, cue))
                 return false;
             for (int i = 0; i < hexes.Length; i++)
             {
-                if (hexes[i] == null)
+                if (hexes[i] == null || inline && i == selected)
                     continue;
                 if (!FarsiPillClearsDistrict(cue, hexes[i], i == selected))
                     return false;

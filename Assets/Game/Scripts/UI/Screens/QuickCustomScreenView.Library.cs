@@ -959,7 +959,7 @@ namespace Game.UI.Runtime
             hint.fontSizeMin = LibraryFontFloor;
             hint.fontSizeMax = LibraryFontFloor;
             hint.fontSize = LibraryFontFloor;
-            SetCopy(hint, fa ? "برای بزرگنمایی لمس یا جمع کن" : "Tap or pinch to zoom", LibraryFontFloor, LibraryFontFloor);
+            SetCopy(hint, fa ? "برای بزرگ‌نمایی دکمه را لمس کن" : "Tap the zoom button", LibraryFontFloor, LibraryFontFloor);
             hint.overflowMode = TextOverflowModes.Overflow;
             hint.enableAutoSizing = false;
             hint.fontSizeMin = LibraryFontFloor;

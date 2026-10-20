@@ -125,7 +125,14 @@ namespace Game.Tests.Editor
                         var layout = TheatreSeatGeometry.Arrange(plateWidth, 844f, fa, true, selected);
                         Assert.That(TheatreSeatGeometry.CollectViolations(plateWidth, 844f, fa, true, selected), Is.Empty,
                             "Coverage must not trade away the existing portrait, aspect, cue or halo checks.");
-                        float coverage = TheatreSeatGeometry.DrawnTerritoryCoverage(layout, plateWidth, 844f, fa, true);
+                        var shapes = layout.Seats.Select(seat => seat.Hex).ToArray();
+                    var cards = layout.Seats.Select(seat => seat.Card).ToArray();
+                    var pins = layout.Seats.Select(seat => seat.Pin).ToArray();
+                    int own = Array.IndexOf(TheatreSeatGeometry.MapIds, selected);
+                    Assert.IsTrue(TheatreSeatGeometry.ParkedCueHolds(layout.Cue, cards[own], shapes, pins, cards,
+                        own, TheatreSeatGeometry.DetailRect(plateWidth, 844f, fa, true), plateWidth, 844f, fa),
+                        "A legal portrait cue must not enter the legacy attachment path and move its card.");
+                    float coverage = TheatreSeatGeometry.DrawnTerritoryCoverage(layout, plateWidth, 844f, fa, true);
                         Assert.That(coverage, Is.InRange(.65f, .70f), selected + " " + (fa ? "fa" : "en"));
                     }
                 }
@@ -301,6 +308,22 @@ namespace Game.Tests.Editor
             Assert.AreEqual(24, _view.GetComponentsInChildren<Button>(false).Count(x => x.name.StartsWith("BattleCard_", StringComparison.Ordinal)));
             Assert.IsTrue(_view.GetComponentsInChildren<ScrollRect>(false).Any(x => x.name == "SagaViewport"));
             Assert.IsFalse(_view.GetComponentsInChildren<Button>(false).Any(x => x.name == SkirmishLibraryControlNames.LayoutGrid));
+        }
+
+        [Test]
+        public void VisibleZoomCueIsAnInteractiveBattlefieldAction()
+        {
+            TheatreSeatGeometry.SeatingReady = true;
+            var model = Bind();
+            model.BackToTheater();
+            Canvas.ForceUpdateCanvases();
+            var cue = _view.GetComponentsInChildren<Button>(false).Single(x => x.name == "CuePlate");
+            Assert.IsTrue(cue.interactable);
+            Assert.IsTrue(cue.targetGraphic.raycastTarget);
+            Assert.AreEqual(SkirmishLibraryLevel.Theater, model.Level);
+            cue.onClick.Invoke();
+            Assert.AreEqual(SkirmishLibraryLevel.Battlefield, model.Level);
+            Assert.IsNotNull(Stop("S001"));
         }
 
         [Test]

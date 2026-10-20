@@ -388,7 +388,7 @@ namespace Game.Editor
 
             if (menuLibraryBeat == 1)
             {
-                Button zoom = FindNamed(buttons, SkirmishLibraryControlNames.ZoomIn);
+                Button zoom = FindNamed(buttons, sagaMenuProof ? "CuePlate" : SkirmishLibraryControlNames.ZoomIn);
                 if (zoom != null && MenuTap(zoom))
                 {
                     Debug.Log("[S004MenuJourney] phase=ZoomIn input=Touch navigation=TheaterZoom map=" + menuLibraryMap);

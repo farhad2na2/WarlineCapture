@@ -375,6 +375,25 @@ namespace Game.Editor
                         }
                 }
 
+                // Selection changes use the same coast layout. These regressions
+                // include the Persian Desert Base attachment that used to move its card.
+                foreach (var selected in new[] { (Map: "DB", Locale: "fa-IR", Size: Sizes[0]),
+                    (Map: "AP", Locale: "en", Size: Sizes[1]) })
+                {
+                    GameLocalization.SetLocale(selected.Locale, false);
+                    SagaTheatreMap = selected.Map;
+                    string path = Path.Combine(folder, "theater-" + selected.Size.Name + "-" + selected.Locale
+                        + "-selected-" + selected.Map + ".png");
+                    try
+                    {
+                        Render(prefab, selected.Size, "theater", path, false);
+                        AcceptShot(path, "theater", selected.Locale, shots);
+                        Debug.Log("[SkirmishSagaCapture] shot=" + Path.GetFileName(path));
+                    }
+                    catch (Exception e)
+                    { failures.Add(Path.GetFileName(path) + ": " + e.Message); }
+                    finally { SagaTheatreMap = null; }
+                }
                 RejectDuplicateCaptures(shots);
                 try
                 {
@@ -385,11 +404,11 @@ namespace Game.Editor
                     failures.Add(e.Message);
                 }
 
-                if (shots.Count != 16)
-                    failures.Add("Expected 16 native captures; wrote " + shots.Count);
+                if (shots.Count != 18)
+                    failures.Add("Expected 16 matrix captures and 2 selection regressions; wrote " + shots.Count);
                 if (failures.Count > 0)
                     throw new InvalidOperationException(string.Join("\n", failures));
-                Debug.Log("[SkirmishSagaCapture] result=Passed files=16 visualReview=Pending deviceAcceptance=Pending");
+                Debug.Log("[SkirmishSagaCapture] result=Passed files=18 matrix=16 selectionRegressions=2 visualReview=Pending deviceAcceptance=Pending");
                 EditorApplication.Exit(0);
             }
             catch (Exception e)

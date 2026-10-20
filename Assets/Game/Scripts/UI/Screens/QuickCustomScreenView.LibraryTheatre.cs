@@ -257,6 +257,8 @@ namespace Game.UI.Runtime
 
             PresentTheatreDetailPanel(theater, fa, plateWidth, plateHeight);
             _sagaTheatreLayoutStamp=new Vector4(_libraryRegions.rect.width,_libraryRegions.rect.height,_libraryRegions.lossyScale.x,_libraryRegions.lossyScale.y);
+            _sagaTheatreLayoutRtl = fa;
+            _sagaTheatreLayoutSelection = theater.SelectedMapId;
         }
 
         /// <summary>
@@ -2386,7 +2388,7 @@ namespace Game.UI.Runtime
             var zoomButton = plate.gameObject.AddComponent<Button>();
             zoomButton.targetGraphic = plate;
             zoomButton.transition = Selectable.Transition.None;
-            zoomButton.onClick.AddListener(() => _libraryViewModel?.ZoomIn());
+            zoomButton.onClick.AddListener(OnLibraryZoom);
             PlaceTopLeft(plate.rectTransform, slot.Cue.x, slot.Cue.y, slot.Cue.width, slot.Cue.height);
             plate.rectTransform.localScale = Vector3.one;
             var cue = CreateLabel(parent, "ZoomCue", 20f);
@@ -2638,16 +2640,28 @@ namespace Game.UI.Runtime
         /// </summary>
         private void ReseatTheatreOnFinalPlate(RectTransform map)
         {
-            if (!TheatreSeatGeometry.SeatingReady || _libraryViewModel == null || map == null)
+            if (!TheatreSeatGeometry.SeatingReady || _refittingTheatre || _libraryViewModel == null || map == null)
                 return;
-            Transform clip = map.Find("MapPreviewClip");
-            if (clip is not RectTransform plate)
+            if (map.Find("MapPreviewClip") is not RectTransform plate)
                 return;
             Canvas.ForceUpdateCanvases();
             if (!TryFrameSize(plate, out float width, out float height) || width < 64f || height < 64f)
                 return;
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            PresentRegions(_libraryViewModel.Theater, fa);
+            if (_libraryRegions != null && _libraryRegions.Find("TheaterFit") != null)
+            {
+                var stamp = new Vector4(_libraryRegions.rect.width, _libraryRegions.rect.height,
+                    _libraryRegions.lossyScale.x, _libraryRegions.lossyScale.y);
+                if ((stamp - _sagaTheatreLayoutStamp).sqrMagnitude <= .001f
+                    && _sagaTheatreLayoutRtl == fa
+                    && _sagaTheatreLayoutSelection == _libraryViewModel.Theater.SelectedMapId)
+                    return;
+            }
+            // Layout callbacks must keep live pointer targets when the geometry
+            // is unchanged. Rebuilding here could discard a press before release.
+            _refittingTheatre = true;
+            try { PresentRegions(_libraryViewModel.Theater, fa); }
+            finally { _refittingTheatre = false; }
         }
 
         /// <summary>

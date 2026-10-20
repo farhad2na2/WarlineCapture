@@ -243,6 +243,8 @@ namespace Game.UI.Runtime
         private bool _refittingSaga;
         private bool _refittingTheatre;
         private Vector4 _sagaTheatreLayoutStamp;
+        private bool _sagaTheatreLayoutRtl;
+        private string _sagaTheatreLayoutSelection;
 
         private void OnLibraryLayoutApplied()
         {

@@ -313,6 +313,9 @@ namespace Game.Tests.Editor
         [Test]
         public void VisibleZoomCueIsAnInteractiveBattlefieldAction()
         {
+            _host.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+            ((RectTransform)_host.transform).sizeDelta = new Vector2(1920, 1080);
+            Canvas.ForceUpdateCanvases();
             TheatreSeatGeometry.SeatingReady = true;
             var model = Bind();
             model.BackToTheater();
@@ -324,6 +327,34 @@ namespace Game.Tests.Editor
             cue.onClick.Invoke();
             Assert.AreEqual(SkirmishLibraryLevel.Battlefield, model.Level);
             Assert.IsNotNull(Stop("S001"));
+        }
+
+        [Test]
+        public void RepeatedLayoutKeepsTheLiveTheatrePointerTargets()
+        {
+            _host.GetComponent<Canvas>().renderMode = RenderMode.WorldSpace;
+            ((RectTransform)_host.transform).sizeDelta = new Vector2(1920, 1080);
+            Canvas.ForceUpdateCanvases();
+            TheatreSeatGeometry.SeatingReady = true;
+            var model = Bind();
+            model.BackToTheater();
+            var layout = typeof(QuickCustomScreenView).GetMethod("OnLibraryLayoutApplied",
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            layout.Invoke(_view, null);
+            Canvas.ForceUpdateCanvases();
+            var names = new[] { "CuePlate", SkirmishLibraryControlNames.TheaterPin("DB") };
+            var original = names.Select(name => _view.GetComponentsInChildren<Button>(false).Single(x => x.name == name)).ToArray();
+            for (int pass = 0; pass < 3; pass++)
+            {
+                layout.Invoke(_view, null);
+                Canvas.ForceUpdateCanvases();
+                for (int i = 0; i < names.Length; i++)
+                {
+                    var current = _view.GetComponentsInChildren<Button>(false).Single(x => x.name == names[i]);
+                    Assert.AreSame(original[i], current, "A layout-only refresh must not discard a live pointer target.");
+                    Assert.IsTrue(current.interactable);
+                }
+            }
         }
 
         [Test]

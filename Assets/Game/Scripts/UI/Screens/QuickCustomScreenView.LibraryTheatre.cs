@@ -267,6 +267,11 @@ namespace Game.UI.Runtime
         {
             if (parent == null || slots == null || slots.Count == 0 || plateWidth < 32f || plateHeight < 32f)
                 return;
+            var shadeShapes = new Vector2[slots.Count][];
+            for (int i = 0; i < slots.Count; i++) shadeShapes[i] = slots[i].Hex;
+            string textureKey = SagaTextureKey("shade", plateWidth, plateHeight, Color.clear, shadeShapes);
+            if (TrySagaTexture(textureKey, out var cachedShade))
+            { PlaceSagaTerrainShade(parent, cachedShade); return; }
             const int width = 180;
             int height = Mathf.Max(48, Mathf.RoundToInt(width * plateHeight / plateWidth));
             var pixels = new Color32[width * height];
@@ -330,14 +335,8 @@ namespace Game.UI.Runtime
             texture.hideFlags = HideFlags.HideAndDontSave;
             Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
             sprite.hideFlags = HideFlags.HideAndDontSave;
-            var shade = new GameObject("TerrainShade", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
-            shade.transform.SetParent(parent, false);
-            shade.sprite = sprite;
-            shade.type = Image.Type.Simple;
-            shade.color = Color.white;
-            shade.raycastTarget = false;
-            Stretch(shade.rectTransform);
-            shade.rectTransform.localScale = Vector3.one;
+            RememberSagaTexture(textureKey, sprite);
+            PlaceSagaTerrainShade(parent, sprite);
         }
 
         private static void HideTheaterLabels(RawImage map)
@@ -1160,6 +1159,8 @@ namespace Game.UI.Runtime
             float width = Mathf.Max(206f, slot.Card.width);
             Rect card = slot.Card;
             Rect seated = slot.Cue;
+            if (card.height >= 176f && card.Contains(seated.min) && card.Contains(seated.max))
+                return;
             bool insideMap = seated.xMin >= 12f && seated.yMin >= 12f
                 && seated.xMax <= plateWidth - 12f && seated.yMax <= plateHeight - 12f;
             // The arranged pill is already off every hex. Replacing it with a shelf
@@ -2115,6 +2116,8 @@ namespace Game.UI.Runtime
             int height = Mathf.Max(8, Mathf.RoundToInt(spanY * scale));
             if (peak < 0.05f)
                 peak = TheatreSeatGeometry.TerritoryBorderAlpha;
+            string textureKey = SagaTextureKey("halo", pad, peak, color, localPoints);
+            if (TrySagaTexture(textureKey, out var cachedHalo)) return cachedHalo;
             float originX = minX - pad;
             float originY = minY - pad;
             var pixels = new Color32[width * height];
@@ -2155,6 +2158,7 @@ namespace Game.UI.Runtime
             texture.hideFlags = HideFlags.HideAndDontSave;
             Sprite sprite = Sprite.Create(texture, new Rect(0f, 0f, width, height), new Vector2(0.5f, 0.5f), 100f);
             sprite.hideFlags = HideFlags.HideAndDontSave;
+            RememberSagaTexture(textureKey, sprite);
             return sprite;
         }
 
@@ -2370,7 +2374,9 @@ namespace Game.UI.Runtime
             pin.rectTransform.localScale = Vector3.one;
             if (!slot.Selected)
                 return;
-            if(fa&&slot.Cue.height<56f){slot.Cue.y-=56f-slot.Cue.height;slot.Cue.height=56f;}
+            bool cueOnPortrait = slot.Card.Contains(slot.Cue.min) && slot.Card.Contains(slot.Cue.max);
+            if (fa && slot.Cue.height < 56f && !cueOnPortrait)
+            { slot.Cue.y -= 56f - slot.Cue.height; slot.Cue.height = 56f; }
             var plate = new GameObject("CuePlate", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image)).GetComponent<Image>();
             plate.transform.SetParent(parent, false);
             plate.sprite = ZonePillSprite();
@@ -2797,6 +2803,7 @@ namespace Game.UI.Runtime
         /// </summary>
         private static void FitCueInsidePackedRect(TMP_Text cue)
         {
+            if (TryFitSagaInlineCue(cue)) return;
             if (cue == null || cue.rectTransform == null || _fittingCue)
                 return;
             if (TheatreSeatGeometry.ZoomCueSealed && CueCycleMatches(cue))
@@ -3780,6 +3787,7 @@ namespace Game.UI.Runtime
         /// </summary>
         private static void FitCueInkToBox(TMP_Text cue)
         {
+            if (TryFitSagaInlineCue(cue)) return;
             if (cue == null || cue.rectTransform == null || cue.rectTransform.parent is not RectTransform parent)
                 return;
             string source = FlattenCopy(cue.text);
@@ -4356,6 +4364,7 @@ namespace Game.UI.Runtime
         /// </summary>
         private static void LockCueFont(TMP_Text cue)
         {
+            if (TryFitSagaInlineCue(cue)) return;
             if (cue == null)
                 return;
             // A snap back to the short seat used to keep the two-line newline.
@@ -4491,6 +4500,10 @@ namespace Game.UI.Runtime
             float nameH = name.sizeDelta.y;
             float cardY = -card.anchoredPosition.y;
             Rect cueBox = PlateRect(cue.rectTransform);
+            Rect cardBox = PlateRect(card);
+            if (cardBox.Contains(cueBox.min) && cardBox.Contains(cueBox.max)
+                && cueBox.y >= cardBox.y + 70f)
+                return;
             TMP_Text nameText = name.GetComponent<TMP_Text>();
             string title = nameText != null ? nameText.text : string.Empty;
             bool wide = parent.rect.height > 2f && parent.rect.width / parent.rect.height >= 2.4f;
@@ -4873,6 +4886,7 @@ namespace Game.UI.Runtime
         /// </summary>
         private static void FinishCuePaint(TMP_Text cue, string selectedId)
         {
+            if (TryFitSagaInlineCue(cue)) return;
             if (cue == null)
                 return;
             if (cue.GetComponent<TheatreZoomCueLock>() == null)
@@ -4883,6 +4897,10 @@ namespace Game.UI.Runtime
             if (!string.IsNullOrEmpty(selectedId))
                 DropNameBelowCue(cue, selectedId);
             AttachZoomPointer(cue.rectTransform);
+            // A cue seated inside the preview must paint above the portrait.
+            if (cue.transform.parent != null)
+                cue.transform.parent.Find("CuePlate")?.SetAsLastSibling();
+            cue.transform.SetAsLastSibling();
             LogRenderedMeasures(cue);
         }
 
@@ -8247,10 +8265,10 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.94f, 0.42f, 0.08f, 1f);
+                case "CC": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
-                case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
-                case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
+                case "IB": return new Color(0.86f, 0.66f, 0.12f, 1f);
+                case "AP": return new Color(0.14f, 0.64f, 0.58f, 1f);
                 case "DB": return new Color(1.00f, 0.40f, 0.02f, 1f);
                 default:
                     return fallback.a > 0f ? fallback : new Color(0.62f, 0.50f, 0.22f, 1f);
@@ -8261,10 +8279,10 @@ namespace Game.UI.Runtime
         {
             switch ((mapId ?? string.Empty).ToUpperInvariant())
             {
-                case "CC": return new Color(0.94f, 0.42f, 0.08f, 1f);
+                case "CC": return new Color(0.24f, 0.56f, 0.92f, 1f);
                 case "MP": return new Color(0.62f, 0.34f, 0.86f, 1f);
-                case "IB": return new Color(0.24f, 0.56f, 0.92f, 1f);
-                case "AP": return new Color(0.20f, 0.74f, 0.26f, 1f);
+                case "IB": return new Color(0.86f, 0.66f, 0.12f, 1f);
+                case "AP": return new Color(0.14f, 0.64f, 0.58f, 1f);
                 default: return new Color(1.00f, 0.40f, 0.02f, 1f);
             }
         }
@@ -8734,7 +8752,7 @@ namespace Game.UI.Runtime
     /// does not cover the painting or add a rect the overlap checks would see.
     /// The existing district fill brightens while the pointer is down, at the same alpha.
     /// </summary>
-    sealed class TheatreDistrictPress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler
+    sealed class TheatreDistrictPress : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerExitHandler, ICanvasRaycastFilter
     {
         private V3PolygonGraphic _fill;
         private Color _rest;
@@ -8746,6 +8764,25 @@ namespace Game.UI.Runtime
             _fill = outline != null ? outline.GetComponent<V3PolygonGraphic>() : null;
             if (_fill != null)
                 _rest = _fill.color;
+        }
+
+        public bool IsRaycastLocationValid(Vector2 screenPoint, Camera eventCamera)
+        {
+            if (_fill == null || _fill.PointCount < 3 ||
+                !RectTransformUtility.ScreenPointToLocalPointInRectangle(_fill.rectTransform,
+                    screenPoint, eventCamera, out Vector2 local))
+                return false;
+            bool inside = false;
+            Vector2 a = _fill.LocalPoint(_fill.PointCount - 1);
+            for (int i = 0; i < _fill.PointCount; i++)
+            {
+                Vector2 b = _fill.LocalPoint(i);
+                if ((a.y > local.y) != (b.y > local.y)
+                    && local.x < (b.x - a.x) * (local.y - a.y) / (b.y - a.y) + a.x)
+                    inside = !inside;
+                a = b;
+            }
+            return inside;
         }
 
         public void OnPointerDown(PointerEventData eventData)

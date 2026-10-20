@@ -104,6 +104,72 @@ namespace Game.Tests.Editor
             finally { UnityEngine.Object.DestroyImmediate(parent); }
         }
 
+        [TestCase(1079.6f, 1440f)]
+        [TestCase(1510f, 1920f)]
+        [TestCase(1894f, 2400f)]
+        public void TheatreCoverageKeepsAspectAndHaloLimitsForEverySelection(float plateWidth, float canvasWidth)
+        {
+            var prior = (TheatreSeatGeometry.ShotRatio, TheatreSeatGeometry.ShotNotch,
+                TheatreSeatGeometry.ShotLocale, TheatreSeatGeometry.ShotReserve,
+                TheatreSeatGeometry.ShotCanvasWidth, TheatreSeatGeometry.ShotCanvasHeight,
+                TheatreSeatGeometry.ShotInsetLeft, TheatreSeatGeometry.ShotInsetTop,
+                TheatreSeatGeometry.ShotInsetRight, TheatreSeatGeometry.ShotInsetBottom);
+            try
+            {
+                foreach (bool fa in new[] { false, true })
+                {
+                    TheatreSeatGeometry.SetShot(canvasWidth == 1440f ? "4:3" : "20:9", "none", fa ? "fa" : "en",
+                        true, canvasWidth, 1080f, 0, 0, 0, 0);
+                    foreach (string selected in TheatreSeatGeometry.MapIds)
+                    {
+                        var layout = TheatreSeatGeometry.Arrange(plateWidth, 844f, fa, true, selected);
+                        Assert.That(TheatreSeatGeometry.CollectViolations(plateWidth, 844f, fa, true, selected), Is.Empty,
+                            "Coverage must not trade away the existing portrait, aspect, cue or halo checks.");
+                        float coverage = TheatreSeatGeometry.DrawnTerritoryCoverage(layout, plateWidth, 844f, fa, true);
+                        Assert.That(coverage, Is.InRange(.65f, .70f), selected + " " + (fa ? "fa" : "en"));
+                    }
+                }
+            }
+            finally
+            {
+                TheatreSeatGeometry.SetShot(prior.Item1, prior.Item2, prior.Item3, prior.Item4,
+                    prior.Item5, prior.Item6, prior.Item7, prior.Item8, prior.Item9, prior.Item10);
+            }
+        }
+
+        [Test]
+        public void OverlappingDistrictBoundsHitOnlyTheirVisibleCoast()
+        {
+            var plate = new GameObject("HitFilterProbe", typeof(RectTransform));
+            plate.transform.SetParent(_host.transform, false);
+            var pressType = typeof(QuickCustomScreenView).Assembly.GetType("Game.UI.Runtime.TheatreDistrictPress");
+            Assert.IsNotNull(pressType);
+            ICanvasRaycastFilter Make(string id, Vector2[] vertices)
+            {
+                var shape = new GameObject("ZoneOutline_" + id, typeof(RectTransform), typeof(CanvasRenderer), typeof(V3PolygonGraphic));
+                shape.transform.SetParent(plate.transform, false);
+                var rect = (RectTransform)shape.transform;
+                rect.pivot = new Vector2(0, 1);
+                rect.sizeDelta = new Vector2(100, 100);
+                shape.GetComponent<V3PolygonGraphic>().Configure(vertices, Color.white);
+                var target = new GameObject("Hit_" + id);
+                target.transform.SetParent(plate.transform, false);
+                var press = target.AddComponent(pressType);
+                pressType.GetMethod("Bind").Invoke(press, new object[] { plate.transform, id });
+                return (ICanvasRaycastFilter)press;
+            }
+            var first = Make("DB", new[] { new Vector2(0,0), new Vector2(100,0), new Vector2(0,100) });
+            var second = Make("CC", new[] { new Vector2(100,100), new Vector2(0,100), new Vector2(100,0) });
+            Vector2 Point(float x, float y) => RectTransformUtility.WorldToScreenPoint(null,
+                plate.transform.Find("ZoneOutline_DB").TransformPoint(new Vector3(x, -y, 0)));
+            Assert.IsTrue(first.IsRaycastLocationValid(Point(20,20), null));
+            Assert.IsFalse(second.IsRaycastLocationValid(Point(20,20), null));
+            Assert.IsFalse(first.IsRaycastLocationValid(Point(80,80), null));
+            Assert.IsTrue(second.IsRaycastLocationValid(Point(80,80), null));
+            Assert.IsFalse(first.IsRaycastLocationValid(Point(120,50), null));
+            Assert.IsFalse(second.IsRaycastLocationValid(Point(120,50), null));
+        }
+
         [Test]
         public void DynamicTheatreShadersRemainIncludedInPlayerBuilds()
         {

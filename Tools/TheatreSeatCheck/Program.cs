@@ -1421,9 +1421,9 @@ internal static class Program
         bool onMap = pill.X >= 12f && pill.Y >= 12f
             && pill.X + pill.W <= plateW - 12f
             && pill.Y + pill.H <= plateH - 12f;
-        // Desert Base must be the real 206×56 pill, inside the map. Industrial Basin
-        // capture stays on the seated tab; a missing shelf still hangs the wide pill
-        // above that card, and that hang has to clear Desert Base.
+        // Exterior shelves keep the 206×56 minimum. A native portrait cue can use
+        // its preview width with the full Arabic line height; native TMP capture
+        // independently verifies the 22pt floor and complete unbroken label.
         if (wide && !onMap)
         {
             Console.WriteLine("FAIL replay 16:9 fa " + selected
@@ -1435,7 +1435,10 @@ internal static class Program
             return false;
         }
 
-        bool parked = wide && onMap;
+        bool inline = pill.X >= card.X + 2f && pill.Y >= card.Y + 70f
+            && pill.XMax <= card.XMax - 2f && pill.YMax <= card.YMax - 40f
+            && pill.W >= 124f && pill.H >= 56f;
+        bool parked = (wide || inline) && onMap;
         if (selected == "DB" && !parked)
         {
             Console.WriteLine("FAIL replay 16:9 fa DB pill="
@@ -1757,10 +1760,12 @@ internal static class Program
                 var drawn = new TheatreSeatGeometry.Vec2[coasts.Length][];
                 for (int i = 0; i < coasts.Length; i++)
                     drawn[i] = coasts[i] != null ? coasts[i] : hexes[i];
-                bool attached = fa
+                bool parkedBeforeAttach = TheatreSeatGeometry.ParkedCueHolds(layout.Cue,
+                    cards[own], drawn, pins, cards, own, detail, plateW, plateH, fa);
+                bool attached = !parkedBeforeAttach && (fa
                     ? TheatreSeatGeometry.TryAttachFarsiCue(plateW, plateH, pins, cards, drawn, detail, own, out TheatreSeatGeometry.Box seated)
                         || TheatreSeatGeometry.TryAttachCueToCard(plateW, plateH, pins, cards, drawn, detail, own, out seated)
-                    : TheatreSeatGeometry.TryAttachCueToCard(plateW, plateH, pins, cards, drawn, detail, own, out seated);
+                    : TheatreSeatGeometry.TryAttachCueToCard(plateW, plateH, pins, cards, drawn, detail, own, out seated));
                 if (attached)
                 {
                     for (int i = 0; i < cards.Length; i++)
@@ -1778,11 +1783,14 @@ internal static class Program
                 {
                     float minW = fa ? 206f : 176f;
                     float minH = fa ? 56f : 44f;
-                    pillOk = pill.W + 0.5f >= minW && pill.H + 0.5f >= minH
+                    bool inlineCue = pill.X >= cards[own].X + 2f && pill.Y >= cards[own].Y + 70f
+                        && pill.XMax <= cards[own].XMax - 2f && pill.YMax <= cards[own].YMax - 40f
+                        && pill.W >= 124f && pill.H >= (fa ? 56f : 44f);
+                    pillOk = inlineCue || parkedBeforeAttach || (pill.W + 0.5f >= minW && pill.H + 0.5f >= minH
                         && pill.X >= 12f && pill.Y >= 12f
                         && pill.X + pill.W <= plateW - 12f
                         && pill.Y + pill.H <= plateH - 12f
-                        && TheatreSeatGeometry.FarsiPillClearsDistrict(pill, coasts[own], true);
+                        && TheatreSeatGeometry.FarsiPillClearsDistrict(pill, coasts[own], true));
                 }
 
                 bool inside = true;
@@ -1793,10 +1801,10 @@ internal static class Program
                         inside = false;
                     if (layout.Seats[i].MapId != "DB" && layout.Seats[i].MapId != "CC")
                         continue;
-                    BoundsCentre(coasts[i], out float cx, out float cy);
+                    AreaCentre(coasts[i], out float cx, out float cy);
                     float dx = Math.Abs(cards[i].X + cards[i].W * 0.5f - cx);
                     float dy = Math.Abs(cards[i].Y + cards[i].H * 0.5f - cy);
-                    if (dx > 36f || dy > 36f)
+                    if (dx > TheatreSeatGeometry.CardCentreTolerance || dy > TheatreSeatGeometry.CardCentreTolerance)
                         centred = false;
                 }
 
@@ -1814,26 +1822,17 @@ internal static class Program
         return ok;
     }
 
-    private static void BoundsCentre(TheatreSeatGeometry.Vec2[] shape, out float cx, out float cy)
+    private static void AreaCentre(TheatreSeatGeometry.Vec2[] shape, out float cx, out float cy)
     {
-        cx = 0f;
-        cy = 0f;
-        if (shape == null || shape.Length == 0)
-            return;
-        float minX = shape[0].X;
-        float maxX = shape[0].X;
-        float minY = shape[0].Y;
-        float maxY = shape[0].Y;
-        for (int i = 1; i < shape.Length; i++)
+        // Match the native drawn-coast centroid, including its 20px tolerance.
+        double twice = 0, x = 0, y = 0;
+        for (int i = 0; i < shape.Length; i++)
         {
-            if (shape[i].X < minX) minX = shape[i].X;
-            if (shape[i].X > maxX) maxX = shape[i].X;
-            if (shape[i].Y < minY) minY = shape[i].Y;
-            if (shape[i].Y > maxY) maxY = shape[i].Y;
+            var a = shape[i]; var b = shape[(i + 1) % shape.Length];
+            double cross = a.X * b.Y - b.X * a.Y;
+            twice += cross; x += (a.X + b.X) * cross; y += (a.Y + b.Y) * cross;
         }
-
-        cx = (minX + maxX) * 0.5f;
-        cy = (minY + maxY) * 0.5f;
+        cx = (float)(x / (3 * twice)); cy = (float)(y / (3 * twice));
     }
 
     /// <summary>4:3 English footer. The Industrial Basin zoom label has to sit inside the button.</summary>

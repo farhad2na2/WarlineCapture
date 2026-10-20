@@ -5918,6 +5918,8 @@ namespace Game.UI.Runtime
                 ? OpenViewport(plateWidth, plateHeight, panelLeft, true)
                 : new Box(0f, 0f, plateWidth, plateHeight);
             float expected = HexAspect(mapId, view.W, view.H);
+            if (SagaCoastAlreadyFinished(hex, card, pin, others, cue, plateWidth, plateHeight, detail, hint, expected))
+                return hex;
             if (CompactRegionHolds(hex, card, plateWidth, plateHeight, detail, hint))
             {
                 Vec2[] compact = SeatThenClear(hex, hex, card, others, cue, plateWidth, plateHeight, detail, hint, expected);
@@ -16647,6 +16649,12 @@ namespace Game.UI.Runtime
             bool cacheable = PortraitCards == null;
             if (cacheable && ArrangeCacheHit(plateWidth, plateHeight, fa, reserveOn, selectedMapId, out Layout cached))
                 return cached;
+            if (TryArrangeDenseSaga(plateWidth, plateHeight, fa, reserveOn, selectedMapId, out var dense))
+            {
+                PortraitCards = null;
+                RememberArrange(plateWidth, plateHeight, fa, reserveOn, selectedMapId, dense);
+                return dense;
+            }
             if(cacheable&&TryArrangeStableSagaSelection(plateWidth,plateHeight,fa,reserveOn,selectedMapId,out var stable))
             {RememberArrange(plateWidth,plateHeight,fa,reserveOn,selectedMapId,stable);return stable;}
             ReserveSlideX = 0f;

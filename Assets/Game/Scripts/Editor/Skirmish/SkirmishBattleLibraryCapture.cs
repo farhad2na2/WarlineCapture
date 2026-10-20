@@ -2510,7 +2510,11 @@ namespace Game.Editor
             if (text.isTextTruncated || text.isTextOverflowing || !ZoneNameCoversSource(text, kind))
             {
                 throw new InvalidOperationException(
-                    "Theatre " + kind + " is truncated for " + mapId + " locale=" + locale + " text=" + text.text + ".");
+                    "Theatre " + kind + " is truncated for " + mapId + " locale=" + locale + " text=" + text.text
+                    + " truncated=" + text.isTextTruncated + " overflow=" + text.isTextOverflowing
+                    + " preferred=" + text.preferredWidth + "x" + text.preferredHeight
+                    + " rendered=" + text.GetRenderedValues(false) + " box=" + text.rectTransform.rect.size
+                    + " margin=" + text.margin + " spacing=" + text.lineSpacing + " font=" + text.fontSize + ".");
             }
 
             if (text.overflowMode == TextOverflowModes.Ellipsis || text.overflowMode == TextOverflowModes.Truncate)

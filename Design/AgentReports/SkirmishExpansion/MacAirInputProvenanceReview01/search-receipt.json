@@ -1,0 +1,97 @@
+{
+  "observedUtc": "2026-10-20T20:00:11.963787+00:00",
+  "scope": "Targeted original/coherent path history on local refs, literal hash references in relevant authored source, two committed authoring receipts and one31-entry archive central directory plus4selectedmembers. No bulk object/archive/source-tree census.",
+  "observations": [
+    {
+      "argv": [
+        "git",
+        "log",
+        "--all",
+        "--full-history",
+        "--format=%H:%s",
+        "--",
+        "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json"
+      ],
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "log",
+        "--all",
+        "--format=%H:%s",
+        "--",
+        "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+        "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json"
+      ],
+      "exit": 0,
+      "stdout": "3b388997e43e4f5cb7627943f987689e7a6a3ed7:Stabilize shared Skirmish authoring and validation controls\n358506ccf4e820035aa530da768d0b7b163e1347:Implement verified shared skirmish systems and full UI ARIA storage\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "check-ignore",
+        "-v",
+        "--no-index",
+        "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json"
+      ],
+      "exit": 1,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "grep",
+        "-l",
+        "-F",
+        "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+        "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+        "--",
+        "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+        "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs"
+      ],
+      "exit": 0,
+      "stdout": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d:Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs\ndd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d:Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs\n",
+      "stderr": ""
+    }
+  ],
+  "exactTreeAbsences": [
+    {
+      "commit": "358506ccf4e820035aa530da768d0b7b163e1347",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+      "exit": 128,
+      "stderr": "fatal: path 'Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json' does not exist in '358506ccf4e820035aa530da768d0b7b163e1347'\n"
+    },
+    {
+      "commit": "3b388997e43e4f5cb7627943f987689e7a6a3ed7",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+      "exit": 128,
+      "stderr": "fatal: path 'Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json' does not exist in '3b388997e43e4f5cb7627943f987689e7a6a3ed7'\n"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+      "exit": 128,
+      "stderr": "fatal: path 'Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json' does not exist in 'dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d'\n"
+    }
+  ],
+  "existingLocalPathObservations": [
+    {
+      "root": "/Volumes/T7/Projects/WarlineCapture",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+      "exists": false
+    },
+    {
+      "root": "/Users/farhad/.codex/worktrees/s006-entry-clearance-proposal/WarlineCapture",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+      "exists": false
+    }
+  ],
+  "exactAuthoritativeOriginalBlobFound": false,
+  "bounds": "No assertion that the original never existed or is absent from unknown remotes, unreachable objects, backups or Windows private receipts. No remote history fetched, no Git fsck or bulk hash scan, no bytes reconstructed/restored.",
+  "subsequentWindowsMetadata": "Direct coordinator reports exact expected815276byte existing input and saved snapshot; attributed only in windows-attribution.json. Local search observations unchanged; no payload/receipt transfer or independent Mac original replay."
+}

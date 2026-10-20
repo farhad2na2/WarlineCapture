@@ -1,0 +1,20 @@
+{
+  "attribution": "Direct Windows coordinator delegation to Mac chat; metadata only, not independently replayed by Mac",
+  "sourceChat": "01a13bfb-c3de-7542-b082-b3e90bae7f5a",
+  "receivedUtc": "2026-10-20T20:01:32.576628+00:00",
+  "reportedExistingPath": "D:/Projects/WarlineCapture/Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+  "reportedBytes": 815276,
+  "reportedRawSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+  "reportedBoundedRead": "d6d7f6",
+  "reportedSavedSnapshot": "Logs/SkirmishProduction/Offline/WindowsOriginalAirInputProvenance_20261020/air-combined-eighty.authoring.json",
+  "reportedSnapshotSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+  "reportedReceipt": "Logs/SkirmishProduction/Offline/WindowsOriginalAirInputProvenance_20261020/ROOT_INPUT_RECEIPT.json",
+  "reportedReceiptSha256": "98f2de58baf94f8726c7b3fc5eb40755c72bc735e72fb0c61e5b604f3783dcaf",
+  "payloadTransferredOrReadByMac": false,
+  "receiptTransferredOrReadByMac": false,
+  "authoritativeGitCommitIdentified": null,
+  "sourceEpochInclusionProven": false,
+  "compilerConsumptionProven": false,
+  "canonicalPlanReplayedFromOriginalByMac": false,
+  "acceptance": false
+}

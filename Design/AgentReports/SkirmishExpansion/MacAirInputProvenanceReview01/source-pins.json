@@ -1,0 +1,101 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "pins": [
+    {
+      "commit": "358506ccf4e820035aa530da768d0b7b163e1347",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "30f34d3dcf1fc71eb3c3c366d7008187ee65c17df0baaf6b190be4f885af0e5c",
+      "gitBlobId": "cc2f7b90b32dd8ba79bf543eb8309c63a2628b83"
+    },
+    {
+      "commit": "358506ccf4e820035aa530da768d0b7b163e1347",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 22318,
+      "sha256": "093247ec2fd2ae20b31c9230886dca17c86ed30b5de7cadb25452483dcb9e2f7",
+      "gitBlobId": "3eb93fb08fe0a454882c2e320bc34a3193da4884"
+    },
+    {
+      "commit": "3b388997e43e4f5cb7627943f987689e7a6a3ed7",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "gitBlobId": "eb7d0ac7b2bafd386ed5e247a15fa0634b12e08a"
+    },
+    {
+      "commit": "3b388997e43e4f5cb7627943f987689e7a6a3ed7",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 25485,
+      "sha256": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9",
+      "gitBlobId": "fcb255894c5a7b8197b9f4dae10f8e2196911cad"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "gitBlobId": "eb7d0ac7b2bafd386ed5e247a15fa0634b12e08a"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 25485,
+      "sha256": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9",
+      "gitBlobId": "fcb255894c5a7b8197b9f4dae10f8e2196911cad"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json",
+      "bytes": 1302003,
+      "sha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+      "gitBlobId": "65134408ad281cf193be52fead9f91f3fd01454f"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/RECEIPT.json",
+      "bytes": 471,
+      "sha256": "14a15d903ad33f60617c1448f532a777847789c0c0df405ea7efe59237222726",
+      "gitBlobId": "af7beb2cf7fcf089c9a5420f8df41b7f483d8032"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Design/AgentReports/SkirmishExpansion/ProductionAdapter/production-authoring-native-20261015/Unity5-8-run02/RECEIPT.json",
+      "bytes": 1253,
+      "sha256": "f6b147861a3e59b3e50f54ca82a65ee1e2f61213e5d321668ee637ac29474e0b",
+      "gitBlobId": "abf2fba2d3fdd8ef39637f5afb1fc8a21bdc3888"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+      "bytes": 2050866,
+      "sha256": "8a2b15db5d5cdb05ae95e5c6b0bd394ee553bd7b76074096640eadfa5f40a1b1",
+      "gitBlobId": "cdd67a698cff13c5a5f47db6756a4af774734c9c"
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Tools/CI/SkirmishProductionDrafts/All120SimultaneousRefinement/Sources/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 22318,
+      "sha256": "093247ec2fd2ae20b31c9230886dca17c86ed30b5de7cadb25452483dcb9e2f7",
+      "gitBlobId": "3eb93fb08fe0a454882c2e320bc34a3193da4884"
+    },
+    {
+      "commit": "a3d6547e25de4adfa5c11b65af3d30bf88301128",
+      "path": "Design/AgentReports/SkirmishExpansion/MacGenericAuthoringScaleReview01/source-pins.json",
+      "bytes": 15448,
+      "sha256": "3895892f95c0d2012d4539fb93590a133f57349f7a3ab9001947a890a885f290",
+      "gitBlobId": "5eb61c5e7b7cc24516391be79286a7dcee5790b8"
+    }
+  ],
+  "originalPath": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+  "expectedOriginalSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+  "exactOriginalBlob": null,
+  "ToolsAssetsRestoredOrChanged": false,
+  "compilerNativeSDKLibraryProcessActions": false,
+  "acceptance": false,
+  "windowsReportedOriginalAvailability": {
+    "reference": "windows-attribution.json",
+    "reportedExactExpectedBytesAvailable": true,
+    "MacIndependentlyVerified": false,
+    "authoritativeGitCommit": null
+  }
+}

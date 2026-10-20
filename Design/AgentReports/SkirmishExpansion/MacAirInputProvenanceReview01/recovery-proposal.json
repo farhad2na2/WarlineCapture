@@ -1,0 +1,22 @@
+{
+  "status": "WindowsReportedExpectedBytesAvailable_IndependentProvenanceAndCommitPending",
+  "immediateSteps": [
+    "Independently verify Windows-reported exact815276byte snapshot and ROOT_INPUT_RECEIPT.json, seal provenance; no need to reconstruct or substitute a coherent envelope.",
+    "Require exact full a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926 raw SHA256; preserve bytes/EOL, source provenance, actual size and durable immutable reference.",
+    "Independently peer-check exact original identity; propose narrow Windows-owned restore and preserve current failures. Mac performs no restore.",
+    "After separately reviewed restore, run existing coherent/original comparison and actual source/profile pin gates. Do not transfer historical native/mission readiness."
+  ],
+  "ifUnrecoverable": [
+    "Retain missing authority as unresolved.",
+    "Propose an explicitly named new successor authority and validator migration, independently reviewing all80missions/240canonical rows and source/profile/requirement pins.",
+    "Never call a reconstructed/coherent input the historical a869 original; never waive or delete the old requirement without an explicit reviewed change."
+  ],
+  "forbiddenInThisTask": [
+    "No Tools/Assets writes",
+    "No compiler/native/SDK/Library/process actions",
+    "No coherent substitution, guessed pin reconstruction or hash refresh",
+    "No physical map design or readiness credit"
+  ],
+  "originalExactBytesRecoveredByMac": false,
+  "WindowsReportsExpectedBytesAvailable": true
+}

@@ -1,0 +1,46 @@
+{
+  "archive": "Design/AgentReports/SkirmishExpansion/EngineeringCheckpoint/shared150-authoring-warmup-20261015-02/actual-native-evidence.zip",
+  "archiveSha256": "8a2b15db5d5cdb05ae95e5c6b0bd394ee553bd7b76074096640eadfa5f40a1b1",
+  "archiveBytes": 2050866,
+  "archiveEntries": 31,
+  "targetEnvelopeMemberPresent": false,
+  "selectedMembers": [
+    {
+      "name": "Logs/SkirmishProduction/SharedNativePreparation/20261015-02-verify-authoring-warmup/checkpoint-live-pin-check.json",
+      "bytes": 244,
+      "sha256": "919c9cd6d52437e338ec8570ed43b745b5359c4aef74807f0bb4dcdef7d56bf1",
+      "interpretation": "Historical source or small provenance metadata only; no original envelope payload."
+    },
+    {
+      "name": "Logs/SkirmishProduction/SharedNativePreparation/20261015-02-verify-authoring-warmup/provenance-input.json",
+      "bytes": 352,
+      "sha256": "85894234f4fc285f5f1acf6a043f70435b0de7db61c145fb599f68ed4ce801b2",
+      "interpretation": "Historical source or small provenance metadata only; no original envelope payload."
+    },
+    {
+      "name": "Logs/SkirmishProduction/SharedNativePreparation/20261015-02-verify-authoring-warmup/staged-blob-verification.json",
+      "bytes": 180,
+      "sha256": "8d7e2464ae9331a42232af1714ae0ee6a0c98d31dd38bca43e7a9c2d0229cfd3",
+      "interpretation": "Historical source or small provenance metadata only; no original envelope payload."
+    },
+    {
+      "name": "Logs/SkirmishProduction/SharedNativePreparation/20261015-02-verify-authoring-warmup/before/Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "bytes": 21202,
+      "sha256": "60f1a555b71e3c7d8589daca262ba947bb2fce10026bbdd9131b3f4d158722f8",
+      "interpretation": "Historical source or small provenance metadata only; no original envelope payload."
+    }
+  ],
+  "beforeReader": {
+    "originalPathLiteral": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+    "expectedSha256Literal": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+    "sourceMemberSha256": "60f1a555b71e3c7d8589daca262ba947bb2fce10026bbdd9131b3f4d158722f8",
+    "meaning": "Archived pre-coherent reader directly requires original bytes; confirms dependency lineage, does not recover input."
+  },
+  "receiptInterpretation": "Historical engineering markers only, no present original-byte closure, native source fit or mission acceptance. ProductionAuthoring receipt has airport/log/wrapper members, no original envelope reference.",
+  "externalWindowsProvenanceReference": {
+    "report": "D:/Projects/WarlineCapture/Logs/SkirmishProduction/AircraftRootProvenance/40aaa3bdcfba40ad881ae35c6c48977c.json",
+    "sha256": "5d7aa45d232a08b3a1336c0166d8f8834bf18758b92f1af9765acd218b1ea3bc",
+    "inspected": false,
+    "scope": "Aircraft root provenance, not an identified original-envelope recovery source."
+  }
+}

@@ -1,0 +1,166 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "originalPath": "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+  "expectedOriginalSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+  "versions": [
+    {
+      "commit": "358506ccf4e820035aa530da768d0b7b163e1347",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "30f34d3dcf1fc71eb3c3c366d7008187ee65c17df0baaf6b190be4f885af0e5c",
+      "LF": 21798,
+      "CRLF": 0,
+      "expectedOriginalSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+      "readerPermittedOriginalPinDifferences": [
+        "SkirmishSetupCompiler.cs",
+        "SkirmishMeasuredLayoutBinder.cs"
+      ],
+      "requirementSourcePins": [
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+          "sha256": "9932ce4d9a01773f43cc7355e47ecfea9cf7fcd14229edfe49a0fb76267897b7"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+          "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+          "sha256": "525f8dac45b6fc0fbbdede6a5c132754bffa2d6f16f0ad35376299b146389543"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+          "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveConfig.cs",
+          "sha256": "5267891a5b5ddc2e977f392f8ffc2dc3fb6ba874a3170fbc7bc0a78e146d9e98"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+          "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf"
+        }
+      ],
+      "missionCount": 80,
+      "sizeRows": 240,
+      "publicationEnabled": false,
+      "sourceFitCertified": false,
+      "playerReady": false,
+      "LFBytesSha256": "30f34d3dcf1fc71eb3c3c366d7008187ee65c17df0baaf6b190be4f885af0e5c",
+      "CRLFBytesSha256": "4ad00b3623cfa2c74b637dbaed1b0559ed55fe7f84f3e25773a8b56fb7ab6492",
+      "eitherEolFormMatchesOriginal": false
+    },
+    {
+      "commit": "3b388997e43e4f5cb7627943f987689e7a6a3ed7",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "LF": 21798,
+      "CRLF": 0,
+      "expectedOriginalSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+      "readerPermittedOriginalPinDifferences": [
+        "SkirmishSetupCompiler.cs",
+        "SkirmishMeasuredLayoutBinder.cs",
+        "SkirmishMissionLogicalBindingConfig.cs"
+      ],
+      "requirementSourcePins": [
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+          "sha256": "9932ce4d9a01773f43cc7355e47ecfea9cf7fcd14229edfe49a0fb76267897b7"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+          "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+          "sha256": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+          "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveConfig.cs",
+          "sha256": "5267891a5b5ddc2e977f392f8ffc2dc3fb6ba874a3170fbc7bc0a78e146d9e98"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+          "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf"
+        }
+      ],
+      "missionCount": 80,
+      "sizeRows": 240,
+      "publicationEnabled": false,
+      "sourceFitCertified": false,
+      "playerReady": false,
+      "LFBytesSha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "CRLFBytesSha256": "91a1e688e28241f6a74f9dafd854e68efcdfcbc9c7593dfc5dca7656dbc542f1",
+      "eitherEolFormMatchesOriginal": false
+    },
+    {
+      "commit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+      "path": "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json",
+      "bytes": 793478,
+      "sha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "LF": 21798,
+      "CRLF": 0,
+      "expectedOriginalSha256": "a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926",
+      "readerPermittedOriginalPinDifferences": [
+        "SkirmishSetupCompiler.cs",
+        "SkirmishMeasuredLayoutBinder.cs",
+        "SkirmishMissionLogicalBindingConfig.cs"
+      ],
+      "requirementSourcePins": [
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs",
+          "sha256": "9932ce4d9a01773f43cc7355e47ecfea9cf7fcd14229edfe49a0fb76267897b7"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+          "sha256": "cee4f1f9d8da693b6052c827173b590ff0b499dfae2d4efabe575b00c16d7b3f"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs",
+          "sha256": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs",
+          "sha256": "f0c59367f8b35bb139de28a256c5a21eafb0fa9d197045f8cbe2d4ee51293994"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveConfig.cs",
+          "sha256": "5267891a5b5ddc2e977f392f8ffc2dc3fb6ba874a3170fbc7bc0a78e146d9e98"
+        },
+        {
+          "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishArmyProfileConfig.cs",
+          "sha256": "a8952df8ee863986e00e2aa69cf8871b5d16e6ffd6a2849423dc16c94e4d80bf"
+        }
+      ],
+      "missionCount": 80,
+      "sizeRows": 240,
+      "publicationEnabled": false,
+      "sourceFitCertified": false,
+      "playerReady": false,
+      "LFBytesSha256": "2aa2be19f4bd7d975e6969e6db08170969ee2c6da4f273ac04d03adfa5f97401",
+      "CRLFBytesSha256": "91a1e688e28241f6a74f9dafd854e68efcdfcbc9c7593dfc5dca7656dbc542f1",
+      "eitherEolFormMatchesOriginal": false
+    }
+  ],
+  "historicalCoherentDiff": [
+    {
+      "path": "/requirement_source_pins/2/sha256",
+      "before": "525f8dac45b6fc0fbbdede6a5c132754bffa2d6f16f0ad35376299b146389543",
+      "after": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb"
+    }
+  ],
+  "missionsEqualAcrossCoherentVersions": true,
+  "canonicalFull120Joins": {
+    "missions": 80,
+    "rows": 240,
+    "allFullSizeRowsExact": true
+  },
+  "originalVsCoherentSemanticEquality": "UNKNOWN: original JSON unavailable; reader allowance is a conditional contract, not proof that it passed now.",
+  "originalAuthorityPins": "UNKNOWN originals for allowed successor pin paths; do not invent them or serialize a guessed envelope.",
+  "originalRecovered": false
+}

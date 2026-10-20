@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "Source/input provenance only; Windows original availability attributed, no restore or acceptance",
+  "payloads": [
+    {
+      "name": "authored-receipts.json",
+      "bytes": 2915,
+      "sha256": "ed1954b17632412650420a8863dd4562f2a007f8ba13953b8f715504473c59c1"
+    },
+    {
+      "name": "coherent-comparison.json",
+      "bytes": 7642,
+      "sha256": "b57f14f6b9e70f30ff2deef5dc539b3996d5db5aa524566c57e400d0bf9670aa"
+    },
+    {
+      "name": "recovery-proposal.json",
+      "bytes": 1548,
+      "sha256": "264f716cf05c9b66f3041706d4ab160dd5fc9a2f0c28cd653003eeff8df135bc"
+    },
+    {
+      "name": "review.md",
+      "bytes": 7747,
+      "sha256": "685d68c6888ae8b584f15a85d1456eba1cf21c493a6efa81cb6a86213b8d17bb"
+    },
+    {
+      "name": "search-receipt.json",
+      "bytes": 4575,
+      "sha256": "af3560c37f73cf5b5f9e6038a1beb2bb9514f8fcb79e647b3f5e59ebb3c9ccd7"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 5038,
+      "sha256": "7fe110c210a24d7bc0c0df995c0fc06bad60b572c3c62fef36a808045f02cc97"
+    },
+    {
+      "name": "validation.log",
+      "bytes": 734,
+      "sha256": "b87b854055912c170f0c04534e26cf0d3cfad315cd43dca01fdf26f701fe793d"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 4854,
+      "sha256": "6272304db12f0142aaa9c8bc86ef14eeffcc5dc2825cd9bb350b7e41a249479c"
+    },
+    {
+      "name": "windows-attribution.json",
+      "bytes": 1257,
+      "sha256": "3fa9ac8dd56fc24c6528ea6e35ccc49a68ca429c5ec231c7e5ac60ec3fffa19b"
+    }
+  ]
+}

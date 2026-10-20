@@ -1,0 +1,189 @@
+{
+  "schema": 1,
+  "state": "SourceReviewOnly_BindFailureObservedWindows_CausePending",
+  "baseCommit": "fc3ba7e7f621f45531f8cacf0933de4e03dd6206",
+  "package": "com.unity.pipeline@9bb4172c603c",
+  "version": "0.6.0-exp.1",
+  "WindowsEvidence": {
+    "attribution": "Direct Windows coordinator report; no Mac process/network/CLI probe performed",
+    "tool": 59869,
+    "compile": "Genuine CleanBuildCache192unique including17Game; status compiling->completed, failedfalse/errors[]; full SDKafter pending",
+    "failure": "3 editor_status calls each ~30sec empty stdout/stderr; 90sec readiness None; failed host retained",
+    "descriptorRedacted": {
+      "pid": 45116,
+      "project": "Exact Windows project per coordinator",
+      "unityVersion": "6000.5.8f1",
+      "port": 7801,
+      "startedAt": "2026-10-20T12:39:27.5415189Z",
+      "lastHeartbeat": "2026-10-20T12:39:27.5415189Z",
+      "readUtc": "2026-10-20T12:45:57Z"
+    },
+    "unityLog": {
+      "domainReloadLines": [
+        9349,
+        9353
+      ],
+      "bindFailureLine": 9390,
+      "bindFailure": "Failed to start Pipeline Server: Only one usage of each socket address ... permitted",
+      "startupStackLine": 9397,
+      "sourceStack": "PipelineServerStartup.StartServer line226"
+    },
+    "closure": "Original wrapper900sec timeout reached12:45:44, Editor watcherexit1, originaltool still postclosure as reported",
+    "proven": "Postreload startup reported listener bind failure. Failed readiness/host preserved.",
+    "notProven": [
+      "Socket owning PID or HTTP binding/prefix owner",
+      "TIME_WAIT or deferred teardown as underlying cause",
+      "Specific blocked callback or duplicate registration",
+      "Successful full SDK closure or mission/sourcefit acceptance"
+    ]
+  },
+  "sourceClaims": [
+    {
+      "id": "reload-handlers",
+      "source": "Editor/EditorPipelineStartup.cs",
+      "lines": [
+        23,
+        74,
+        184,
+        227,
+        315,
+        329
+      ],
+      "fact": "InitializeOnLoad static constructor attempts autoStart, then registers play/quitting/reload callbacks. before/afterAssemblyReload bodies are empty comments. They do not explicitly stop listener, close it, remove descriptor or shutdown dispatcher. Actual old-domain/native socket lifetime is not established by these comments."
+    },
+    {
+      "id": "startup-order",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        274,
+        313
+      ],
+      "related": "Editor/EditorPipelineStartup.cs212-226",
+      "fact": "Start picks port, initializes own main-thread dispatcher, warms token, marksrunningtrue and openslistener; only then descriptor, watchdog, ServerStarted. Startup restores auto-tick only AFTER Start returns. An initial bind failure prevents watchdog arming and auto-tick restoration in that attempt."
+    },
+    {
+      "id": "failure-cleanup-gap",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        307,
+        312,
+        349,
+        377
+      ],
+      "fact": "Start catch setsrunningfalse, calls listener.Stop and nulls it; no explicit listener.Close or dispatcher.Shutdown there. Stop returns immediately when notrunning, otherwise does Close/deleteDescriptor/Shutdown. Thus later owner Stop/Restart is not source proof that an already failed-start dispatcher was removed. This is a cleanup risk, not proof of the actual socket holder."
+    },
+    {
+      "id": "watchdog-limits",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        386,
+        450
+      ],
+      "fact": "Watchdog subscribes EditorApplication.update only when armed. It skips compiling/updating and closes an existing dead listener before reopen. It cannot be assumed to recover an initial Start failure before ArmWatchdog, nor to run when update callbacks are blocked."
+    },
+    {
+      "id": "port-probe",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        279,
+        280,
+        321,
+        344,
+        2675,
+        2708
+      ],
+      "fact": "Port0 scans first available Editor range using a disposable HttpListener with the SAME wildcard prefix; explicit port skips scan. Probe is released before actual OpenListener, with no atomic reservation or scan retry after actualbind failure. Underlying race/reservation/release delay possible but not observed. No TcpListener/IPv4-only-probe claim. Actual config port mode pending."
+    },
+    {
+      "id": "descriptor",
+      "source": "Runtime/Models/InstanceDescriptor.cs",
+      "lines": [
+        121,
+        149
+      ],
+      "related": "Editor/EditorPipelineStartup.cs255-277; Editor/EditorPipelineServer.cs279-319",
+      "fact": "StartedAt/LastHeartbeat initialize at descriptor creation, not OS process birth. Same PID can have new server descriptor after reload. Startup removes stale descriptor only if PID gone/lookup throws; livePID stale file is not automatically cleared. Descriptor creation is after listeneropen in normal Start sequence, but an existing/rewritten file alone cannot correlate which bind attempt currently serves HTTP."
+    },
+    {
+      "id": "heartbeat",
+      "source": "Editor/EditorPipelineServer.cs",
+      "lines": [
+        298,
+        360
+      ],
+      "related": "Runtime/Common/BasePipelineServer.cs757-776,784-849",
+      "fact": "Heartbeat refresh is called by /api/status and detailed status handling; no periodic heartbeat update registered in inspected Editor server/startup. Watchdog/update ticks are different. A descriptor stale since creation alone is not proof deadserver/mainthreadblock. Query failure, no requests or descriptorwrite failure can leave stale data; write failures log warning."
+    },
+    {
+      "id": "dispatch",
+      "source": "Runtime/Common/Dispatcher.cs",
+      "lines": [
+        29,
+        63,
+        73,
+        101
+      ],
+      "related": "Runtime/Common/BasePipelineServer.cs784-803; Editor/Commands/EditorStatusCommand.cs17-30",
+      "fact": "Dispatcher registers ProcessWorkQueue on EditorApplication.update and unregisters on Shutdown. Detailed editor_status is main-thread required and shares exec gate. It can wait behind running work or an unpumped main thread even if basic HTTP status is reachable; timeouts do not prove callback identity/cause."
+    },
+    {
+      "id": "status-query",
+      "source": "Runtime/Common/BasePipelineServer.cs",
+      "lines": [
+        517,
+        589,
+        757,
+        776
+      ],
+      "related": "Editor/EditorPipelineServer.cs324-360",
+      "fact": "GET/api/status is an existing authenticated loopback metadata endpoint directly calling GetServerStatus without exec gate or mainthread dispatch. It updates descriptor heartbeat and returns ready/settling/dialog state snapshot. A successful reply distinguishes a responding listener from command-dispatch failure, not fully working compiler/game. If listenerbind failed it cannot resurrect it."
+    },
+    {
+      "id": "supported-lifecycle",
+      "source": "Editor/EditorPipelineStartup.cs",
+      "lines": [
+        76,
+        113,
+        119,
+        137
+      ],
+      "related": "Editor/EditorPipelineManager.cs16-19,70-96; Editor/EditorPipelineManagerEditor.cs79-94",
+      "fact": "Existing Window/Pipeline Start Server / Stop Server menu and existing manager inspector Start/Stop/Restart are supported UI lifecycle surfaces. Startup and manager classes are internal despite public members, so they are not public C# APIs callable from ordinary project code. Stop menu disabled when IsRunning false; inspector Restart can attempt Stop+Start, with failed-start cleanup caveat. Settings menu creates asset if absent; do not open it as a no-change probe."
+    },
+    {
+      "id": "wrong-recovery-surfaces",
+      "source": "Editor/Commands/AutoTickCommand.cs",
+      "lines": [
+        46,
+        81
+      ],
+      "fact": "set_autotick is mainthread-required and needs a working transport; it cannot bootstrap a failed listener. Runtime-pipeline settings commands configure Player driver, not Editor listener. No dedicated Editor server restart/port command found in inspected shipped attributes; a CLI menu/eval request also cannot repair its own unreachable HTTP transport."
+    },
+    {
+      "id": "doc-drift",
+      "source": "Documentation~/connectivity.md",
+      "lines": [
+        36,
+        48,
+        68,
+        104
+      ],
+      "related": "Runtime/Common/BasePipelineServer.cs331-343",
+      "fact": "Docs describe localhost/IPv4 loopback prefix binds, while actual source binds wildcard prefix and enforces loopback/auth in request handling. Use pinned source for actual binding behavior; do not turn doc examples into cause evidence."
+    }
+  ],
+  "hypotheses": [
+    "Old listener/native binding release across real reload was not complete before newbind: possible, no holdercorrelation",
+    "Another owner or HTTP prefix reservation conflicts with7801: possible, no ownerPID evidence",
+    "Probe-to-actualbind race/release behavior: possible if autoassign, actualconfig unknown",
+    "Update/exec gate stall can explain detailedquery timeouts separately; cannot erase the concrete bindfailure or establish that stall caused it"
+  ],
+  "runtimeActions": false,
+  "privateReflection": false,
+  "sourceOrPackageEdits": false,
+  "licensingIPCReset": false,
+  "SDKClosure": "Separate artifact-only postterminal audit can inspect recorded192 assemblies/full references; it cannot retroactively pass failed readiness/host or restore live connection",
+  "causalWitness": null,
+  "recoveryWitness": null,
+  "nativeAcceptance": false
+}

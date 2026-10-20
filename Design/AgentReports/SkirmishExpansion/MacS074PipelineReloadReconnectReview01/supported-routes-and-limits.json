@@ -1,0 +1,72 @@
+{
+  "status": "SourceSupportedOptions_NotExecuted_NotRecoveryAuthority",
+  "queries": [
+    {
+      "surface": "Redacted descriptor and existing Unity/compiler/wrapper logs",
+      "supports": "Correlate sameEditor PID/OS birth/project/exe, descriptor servercreation time/port, exact bindfailure and start/stop/reload sequence",
+      "limits": "Do not expose auth token; do not rewrite/delete descriptor. StartedAt is not process birth. Preserve absent data."
+    },
+    {
+      "surface": "GET /api/status on verified owned loopback endpoint with existing valid auth",
+      "source": "BasePipelineServer517-589,757-776; EditorPipelineServer324-360",
+      "supports": "Direct background basic listener/status check; bypasses detailed command execgate/dispatcher",
+      "limits": "No call performed. Updates heartbeat metadata; ready is settle/descriptor snapshot, not proof of mainthread command completion or compiledSDK. Cannot revive failed listener. Distinguish refusal,timeout,401,503,JSONerror rather than normalize."
+    },
+    {
+      "surface": "Existing editor_status command or /api/editor_status",
+      "source": "BasePipelineServer784-849; EditorStatusCommand17",
+      "supports": "Once basicHTTP responds, separately tests mainthread command path",
+      "limits": "Shares execgate/dispatcher; a timeout alone cannot identify bindowner or callback. Do not rerun build to test readiness."
+    },
+    {
+      "surface": "Current CLI discovery/status --json per installed skill",
+      "supports": "Enumerates target metadata when available",
+      "limits": "No invocation. CLI may mark staleheartbeat unreachable withoutHTTP. Discovery failure is not an OSsocketowner proof or signal to resetIPC. No override port/token discovery invented."
+    }
+  ],
+  "lifecycleOptions": [
+    {
+      "surface": "Existing Window/Pipeline/Start Server and Stop Server menus",
+      "source": "EditorPipelineStartup93-113",
+      "scope": "Interactive verified owned Editor GUI via shipped MenuItem surface, not private reflection",
+      "limits": "Not run; source-frozen failed Editor may alreadybeclosed. Stop item disabled when !IsRunning; start/restart still subject actual portconflict. Do not open Settings menu as a no-change probe because it creates asset if absent."
+    },
+    {
+      "surface": "Existing Pipeline manager inspector Restart button",
+      "source": "EditorPipelineManagerEditor79-94; Startup87-90",
+      "scope": "Shipped GUI control on alreadyexisting settings asset; calls existing Stop+Start",
+      "limits": "Containing manager/startup types are internal, not ordinary public project APIs. Failed-start Stop guard may skip dispatcher cleanup; no recovery guarantee. No inspector asset created or changed here."
+    },
+    {
+      "surface": "Existing port setting applied next Start",
+      "source": "EditorPipelineManager18-19,52-53; Startup212; BasePipelineServer279",
+      "scope": "Prospective separately reviewed settings change only if exact owned portconflict established",
+      "limits": "Not assigned/performed. Changes settings asset and frozen identity, so not read-only. Port0 probes7800-7849, no actualbind retry; new descriptor/endpoint/ownership must be reverified. No editingprivatefields/forcingHTTPprefix cleanup."
+    }
+  ],
+  "notEquivalent": [
+    "set_autotick requires reachable mainthread transport; not failedlistener bootstrap",
+    "set_runtime_pipeline_settings affects Player Runtime driver, not Editor listener",
+    "PipelineServerStartup.RestartServer has public method but internal containing type; no reflection workaround",
+    "CLI menu/eval/command relies on failedtransport; cannot bootstrap through it",
+    "Deleting registration files does not release socket binding or restore dispatcher",
+    "Licensing/IPC resets, process kills, private reflection, package edits or duplicate native runs are not authorized recovery routes in this review"
+  ],
+  "futureDecisionEvidence": [
+    "Before any separatelyauthorized action, establish original wrapper/tool closure and exact current process/project ownership",
+    "Determine actual configured port mode, sequence of successfulbind/descriptorwrite/binderror and publicOS socket/prefix owner correlation; do not assume PID45116 owns7801",
+    "If basicHTTPalive but detailedstatustimeout, investigate commandgate/updatepump/modal/longcommand with existing supported evidence; do not erase bindfailure",
+    "If no listener/responding endpoint, evaluate only existing owned GUI lifecycle under separate authority; no guaranteed recovery inferred from source",
+    "Afterterminal fullSDK artifactclosure is independent audit; preserve prior failedhost/readiness, and do not repeat expensive unchangedcompile solely to recreateconnection"
+  ],
+  "actualResults": {
+    "basicStatus": null,
+    "detailedStatus": null,
+    "socketOwner": null,
+    "configuredPortMode": null,
+    "GUIRecovery": null,
+    "reconnect": null,
+    "fullSDKClosure": null
+  },
+  "acceptance": false
+}

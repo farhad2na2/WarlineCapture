@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "task": "MacS074PipelineReloadReconnectReview01",
+  "branch": "codex/s074-pipeline-reload-reconnect-review-20261020",
+  "parent": "fc3ba7e7f621f45531f8cacf0933de4e03dd6206",
+  "createdUtc": "2026-10-20T12:55:24.931906+00:00",
+  "scope": "New Design receipts only; no UnityCLI/network probe/Editor/compiler/native/process/recovery action or shared game/package/source edits",
+  "package": "com.unity.pipeline@9bb4172c603c /0.6.0-exp.1",
+  "rawSourcePins": 22,
+  "priorWindowsMatchedUnchanged": 14,
+  "newWindowsComparisonsPending": 8,
+  "verification": "Exact raw source hashes and lifecycle anchors PASS; not runtime behavior",
+  "WindowsObserved": "Postreload listener bindfailure reported9390; failed host/readiness preserved. Socketowner/TIME_WAIT/callbackcause pending.",
+  "supportedQuery": "Authenticated loopbackGET/api/status direct/noexecgate; not invoked; does update heartbeat metadata",
+  "supportedLifecycle": "Existing GUIStart/Stop/existingInspectorRestart, with accessibility/failure-cleanup limits; none run",
+  "causalWitness": null,
+  "recoveryWitness": null,
+  "acceptance": false,
+  "files": [
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/README.md",
+      "bytes": 3602,
+      "sha256": "c91081a4a8bbe5abc974fb6ecc0c5571c77c008accefde82c680c84c37910891"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/review-receipt.json",
+      "bytes": 9621,
+      "sha256": "cde1eb79f1442039220d6e8f75d84a3bed9b5e663b98762f0273833ab57a58ac"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/source-pins.json",
+      "bytes": 6287,
+      "sha256": "aeb34fd463552045415e2c8fa0fa0bf4abdacde5c24ba406ab7f1571768d2e22"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/supported-routes-and-limits.json",
+      "bytes": 5005,
+      "sha256": "dd5ffec451e88e3063f073b1fdf027a4bf3165849c3f83d15429e492113007ef"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/verification.log",
+      "bytes": 327,
+      "sha256": "7128faa0a81e07782d0092f750de7839ad296faec5ac8248099306222b3dc70d"
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/MacS074PipelineReloadReconnectReview01/verify_receipt.py",
+      "bytes": 2691,
+      "sha256": "1daf9909b24c8fa74eb0b75e2863f36dc69b9d338526ec8a4509f31c3285f6fa"
+    }
+  ]
+}

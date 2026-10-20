@@ -1,0 +1,163 @@
+{
+  "baseCommit": "fc3ba7e7f621f45531f8cacf0933de4e03dd6206",
+  "packageRoot": "/Volumes/T7/Projects/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c",
+  "packageVersion": "0.6.0-exp.1",
+  "files": [
+    {
+      "path": "package.json",
+      "bytes": 5456,
+      "sha256": "dbed6569d115fa60e438a254a15abc3442eda412ff615994ec5f0fd4b979b49b",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Commands/CodeEvalCommand.cs",
+      "bytes": 7209,
+      "sha256": "4a725199300ae31d08c84f05fb3128c449c67bcc592de7efee21d6f5cb2d9fa4",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Models/EvalResponse.cs",
+      "bytes": 3818,
+      "sha256": "335b6197bf1bd13ffc837ea99722450d60034527ddd53fcfd08647aa96424a32",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Models/CommandExecutionResponse.cs",
+      "bytes": 9752,
+      "sha256": "8dfc44b78bcef6f7bfd48f65733fd125f011431769c234c3c878f3ecb029d888",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Models/BaseResponse.cs",
+      "bytes": 2567,
+      "sha256": "0bb29a059fb99f8aa1445cf9cce4965cfc4fb179587660834fc03504852dec82",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Models/CommandExecutionRequest.cs",
+      "bytes": 8548,
+      "sha256": "53f7e4eb64c3c3066b955f0c7b75f1748f84db0107e65cb5b63152ec18969986",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Compilation/EvalCodeCompiler.cs",
+      "bytes": 11913,
+      "sha256": "51d15e4bff39b499b53af34f422ee0c6a7938e62e1f9ccc657c8bbee343dc267",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Compilation/RoslynCompilationService.cs",
+      "bytes": 24161,
+      "sha256": "9a72addb00a61fc6de3d2ebdf0960ccc52f721de6ea059200a36049876e4a807",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Common/ExecResponseSerializer.cs",
+      "bytes": 8048,
+      "sha256": "c624856be53574f0b8d6cbb7b090a445542811a7d29e36f0bc58175357bcdd42",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Common/BasePipelineServer.cs",
+      "bytes": 133072,
+      "sha256": "d2064d0c2631975699afad2dbc6821ef16a125369ce9b595d5fb8975476f306c",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Common/Dispatcher.cs",
+      "bytes": 11390,
+      "sha256": "4f6bd0ebff3d12e47084e4fbcffc02a074bbcdde77aaa082e1d1a45d79f078ee",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Runtime/Common/PipelineUtils.cs",
+      "bytes": 11139,
+      "sha256": "46880f20785a9b86fb2b7bcb1db0017ae73c6c1e0c7fc995035c60bdc272769c",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Editor/Console/EditorConsoleCaptureBootstrap.cs",
+      "bytes": 2416,
+      "sha256": "ae90a080281ae27f687ee52feb346d4b575b7eccfbdc80c7e045b93b8c245250",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Documentation~/commands/runtime.md",
+      "bytes": 7322,
+      "sha256": "b6a17c571b17dd559133c847a7fffedf04459803545f0a7b48b8534c682c7501",
+      "WindowsPriorRawMatch": true,
+      "matchAttribution": "Coordinator verified all14 prior fc3ba7e package pins"
+    },
+    {
+      "path": "Editor/EditorPipelineStartup.cs",
+      "bytes": 14532,
+      "sha256": "903f36944be249abd592b687d7ca40e8cf6befeee74ba92f0d996e193dbabfd9",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Editor/EditorPipelineServer.cs",
+      "bytes": 18713,
+      "sha256": "9e8b19e6112c60c888974bc9dcd57326f8369cebc30abff8e8b2fb5ba2ba7e23",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Editor/EditorPipelineManager.cs",
+      "bytes": 5933,
+      "sha256": "308dbb37a8a055536a754d5b1400b812a1723d9e3de2954319d841480948bcaa",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Editor/EditorPipelineManagerEditor.cs",
+      "bytes": 9527,
+      "sha256": "0b519ea958bde3cdf549faf1b25e2bd5cf1225d9c5545a8ec4ca2186c6810686",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Runtime/Models/InstanceDescriptor.cs",
+      "bytes": 11079,
+      "sha256": "5d0ffd5b63ea290e21a2360088838e47d71d6bb1da15590dfa6d0e74927c0d85",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Editor/Commands/EditorStatusCommand.cs",
+      "bytes": 1992,
+      "sha256": "9b51393f4ab3425f36c9da9a739d712d38428d0c309e3eb69237c741d2e01fce",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Editor/Commands/AutoTickCommand.cs",
+      "bytes": 8500,
+      "sha256": "86c8c67ae154e9801df85a77646023cc39b7fde5efb687ee9a344a6bfe1d1b2c",
+      "WindowsPriorRawMatch": null
+    },
+    {
+      "path": "Documentation~/connectivity.md",
+      "bytes": 31134,
+      "sha256": "493415a9c181d41988d5ba576b8d4fd71c73fa548ae85db08dc7f59859d6c558",
+      "WindowsPriorRawMatch": null
+    }
+  ],
+  "newWindowsComparisonPending": [
+    "Editor/EditorPipelineStartup.cs",
+    "Editor/EditorPipelineServer.cs",
+    "Editor/EditorPipelineManager.cs",
+    "Editor/EditorPipelineManagerEditor.cs",
+    "Runtime/Models/InstanceDescriptor.cs",
+    "Editor/Commands/EditorStatusCommand.cs",
+    "Editor/Commands/AutoTickCommand.cs",
+    "Documentation~/connectivity.md"
+  ]
+}

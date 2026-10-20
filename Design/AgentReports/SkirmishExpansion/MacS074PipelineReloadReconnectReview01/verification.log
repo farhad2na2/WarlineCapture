@@ -1,0 +1,3 @@
+PASS22 exact package source pins unchanged, including14 prior Windows-matched pins;8 new Windows comparisons pending
+PASS reload/startup/failed-start/port/query source anchors and pending-witness consistency ONLY
+NoCLI/network/eval/Editor/compiler/native/process/recovery actions; cause and reconnect=PENDING; acceptance=false

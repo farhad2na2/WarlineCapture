@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "Disabled source/data/spec integrity only",
+  "payloads": [
+    {
+      "name": "S050.json",
+      "bytes": 16754,
+      "sha256": "3f493ff27605ec652d5b9ac65ca889b0b0cf6f36557b8ab1f0eef0cdbf829fa9"
+    },
+    {
+      "name": "S097.json",
+      "bytes": 16752,
+      "sha256": "b3151cb6bbf216dd78a62c469e52fb6001886a345bcb21dfa619522c72c38ebe"
+    },
+    {
+      "name": "S098.json",
+      "bytes": 16780,
+      "sha256": "641c416f0f88309294b8546bb127878fd37da9833b3f9bc2ea09558e151b1cd8"
+    },
+    {
+      "name": "api-contract.json",
+      "bytes": 2877,
+      "sha256": "b5bdf377fe02b77fa61ae70295155525c337c9bc1e9d7c8f248786cdcacfe2ee"
+    },
+    {
+      "name": "review.md",
+      "bytes": 2325,
+      "sha256": "1401683cbd77029d8272d05200db867aafd71eef90e2994640042914b9fdf143"
+    },
+    {
+      "name": "source-evidence.json",
+      "bytes": 4891,
+      "sha256": "96a43c10b34ea8c30d0938f9522f9aafd210b23ec7ece81e0dce50da4a02b616"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 10150,
+      "sha256": "19ff6de3214baf106e01cb20bdd43e9d7ab1e6b71223e360858e7faa57381a85"
+    },
+    {
+      "name": "validation.log",
+      "bytes": 665,
+      "sha256": "0dcb0c0efb2042242a773296c6e9ce908097317c077b1562ae6dbcb708288e93"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 4820,
+      "sha256": "2879c2abbc5835f82a2bc3ff79be4d1e86fc1726e857d5520479bdba0d51f955"
+    }
+  ]
+}

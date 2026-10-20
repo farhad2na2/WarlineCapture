@@ -1,0 +1,9 @@
+Static verification before sealing this log into the final manifest (8 payloads; no validation.log yet):
+PASS manifest canonical Git payloads 8
+PASS exact-base Git source pins 48
+PASS LFS small definition payload identity 1
+PASS S050 3 unchanged 62-field rows, seeds, profiles, candidate identity, disabled/null gates
+PASS S097 3 unchanged 62-field rows, seeds, profiles, candidate identity, disabled/null gates
+PASS S098 3 unchanged 62-field rows, seeds, profiles, candidate identity, disabled/null gates
+PASS canonical Design/runtime matrix raw equality
+RESULT Passed: static integrity only; compiler/native/fit/mission/APK/device NOT_RUN; all acceptance pending

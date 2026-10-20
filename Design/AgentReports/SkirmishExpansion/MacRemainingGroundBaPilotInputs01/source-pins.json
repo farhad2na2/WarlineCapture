@@ -1,0 +1,198 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "pins": {
+    "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv": {
+      "gitBlobBytes": 15918,
+      "gitBlobSha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f"
+    },
+    "Design/Roadmap/Skirmish_Expansion/IMPLEMENTATION_MANIFEST.csv": {
+      "gitBlobBytes": 57646,
+      "gitBlobSha256": "a5b997c9a8bfaf21cc59be9c5d3d8c0edd822b5c68833e80cc09936b1f933ffa"
+    },
+    "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv": {
+      "gitBlobBytes": 90201,
+      "gitBlobSha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97"
+    },
+    "Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv": {
+      "gitBlobBytes": 90201,
+      "gitBlobSha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97"
+    },
+    "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json": {
+      "gitBlobBytes": 1302003,
+      "gitBlobSha256": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540"
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishConfigOnlyBatchBuilder.cs": {
+      "gitBlobBytes": 22657,
+      "gitBlobSha256": "fefd4f18db34f99e292e794a09ba0447c2959f9ee8d067b9461489a2d75b169d"
+    },
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs": {
+      "gitBlobBytes": 11289,
+      "gitBlobSha256": "3556c591ab5e21acf1057a9d44af1c646edb6200111dd868ba532353c9dd7a6c"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/SkirmishConfigOnlyBatchBuilderTests.cs": {
+      "gitBlobBytes": 12602,
+      "gitBlobSha256": "e13b3a252a974bb6450e0e190111097e3ae81ff37c0d8acc59885ea5da152942"
+    },
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": {
+      "gitBlobBytes": 8563,
+      "gitBlobSha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797"
+    },
+    "Assets/Game/Resources/SkirmishExpansionCatalog.asset": {
+      "gitBlobBytes": 2499,
+      "gitBlobSha256": "2bae1f1fa06a6ae3c3a4a2f8e547eafca5d70cc5c4883cb859deab8b98a3ffd6"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset": {
+      "gitBlobBytes": 660,
+      "gitBlobSha256": "70f7fbe9cab0e2713a1ea2efc4716e2e41d7d14c459a94fb40eee98e8c533435"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "9ab49f1e729575aa443011dcd6c220e0c58932f0f8858e6d60ec7ca41a6e50ff"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset": {
+      "gitBlobBytes": 949,
+      "gitBlobSha256": "10c4dc052bcdb51bf8209dfb89b4cc90f5a8ebea102fefd353dae44650f91571"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "71a46e50dea5f04bcacb18c4663c29f3a541870860279cbe352e6f59a045486a"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset": {
+      "gitBlobBytes": 549,
+      "gitBlobSha256": "1740ac38ae155acbd08b34c5ac3e9902973e4e7097f6124eb39f08509c5f460c"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Field.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "288f20f746c020d52c9121dcd265ad01c79af111c1b5d0504e72c63475bfea23"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset": {
+      "gitBlobBytes": 556,
+      "gitBlobSha256": "ba22dc27165807e102eb4fc757b70c3545499b85e34719bda8a2fc4b34a467ab"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "35e8b79e1bb35508e377544e5797f025d3db9bfb83dd7ecf1d6afc621614dc1e"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset": {
+      "gitBlobBytes": 815,
+      "gitBlobSha256": "88c3234d6e673999765b6f9faac76d5530e6c8ae41633c06dc6476efdc67a66b"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "2799bffcceb2f65eb94b9008f76ffb9a12f14692793e09c9537a2874d6009670"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset": {
+      "gitBlobBytes": 602,
+      "gitBlobSha256": "10ae9c5d84cba7a9b52b3344a73d98150529adbdd916f54de8e5c30e0cbbae88"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "ea7a0c72af3da8661b79435998785aa24d57d92338210e44eb6d7f2d7091fbdd"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset": {
+      "gitBlobBytes": 588,
+      "gitBlobSha256": "02dab0b3bd6e0f4974c347d6701b1e1bd6e3bc251bacfea36bc45dca86ea4d4f"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "190c178df3a71412736e0eacb1c88655ece2f496a4e52a4fa685e7fc8d8b0b47"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset": {
+      "gitBlobBytes": 6436,
+      "gitBlobSha256": "96d33151129ce63b1d88be27b603bab64b03afab173eaa2d6f630e147525fb6e"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "c4bc6577d0059a924bccdd0fd1dca3b6071a7b7f4f84cd836354172b9a81f3a3"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_Standard.asset": {
+      "gitBlobBytes": 677,
+      "gitBlobSha256": "76574f7f1dda37a5315d86cd8358cfcb13426d9b69ce6677eb0fe9133fdd94c3"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_Standard.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "5d56189be7d6935e326713fb5eee407d12fbc6c102eb4c1dbe7a3c5c4f696500"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_War.asset": {
+      "gitBlobBytes": 669,
+      "gitBlobSha256": "de6a94b79612016fa9868d53bf0d06e7a7d61d1295f3ebd65e1cbf57c2336141"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_War.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "20200df052de9bc0257977d47289f6176dd835dfddaf98dd1fc66ab5986a20fd"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_LargeWar.asset": {
+      "gitBlobBytes": 681,
+      "gitBlobSha256": "59505078541d73818dc7f61f69a256042a4415c7c0ed328e7caac218d6d7f33b"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishSize_LargeWar.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "0a5429823b935872a866408c78725cddbb19c8176452f0882923cec21ab97073"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Recruit.asset": {
+      "gitBlobBytes": 654,
+      "gitBlobSha256": "53a524fbaba6af9d4ab430ce91b62b182f953368e0026c7080e12730ccaa30b3"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Recruit.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "08c630030885fb0fc488f46d9a49ab1445ed771cca8ebbe3616236f21e1fbe08"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Regular.asset": {
+      "gitBlobBytes": 654,
+      "gitBlobSha256": "55ddd1c66ca22d4357182797a30a6b0246f95590b7eeb9472224672436e545b7"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Regular.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "31cc1a3e3d6ab3266496fa668f7e1b81968c82969596fc1a4e9d199c5465fa61"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Veteran.asset": {
+      "gitBlobBytes": 656,
+      "gitBlobSha256": "0d17d9f06907f8ea2b22d1436365ab62b145aa28c1923495f85f9eea8b038083"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Veteran.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "accbf20b397800dea2d7d10f49034bd33c54981e380ea3003b531fb319bc6ac8"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Commander.asset": {
+      "gitBlobBytes": 660,
+      "gitBlobSha256": "17c6905849a0d04b042887f270559271d5e7f9ee76a6537fe5debe91434446d9"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishDifficulty_Commander.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "0b15953d919dfe5e79adbdc72cddee333badf518d204b49cc81e873d41ce9586"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishGroundStaging.asset": {
+      "gitBlobBytes": 637,
+      "gitBlobSha256": "103a5130bdaeb64a1937aed313515a9cba216eecd653d09583c73a21d121e892"
+    },
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishGroundStaging.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "2aac07ac1df8330c32c8c390650cd9e62e4a2f4e0745884619eafe51681af61a"
+    },
+    "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset": {
+      "gitBlobBytes": 9364,
+      "gitBlobSha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4"
+    },
+    "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "467965444dc5383bd047c9a6a0c6aada2a6260f7c120b7dcbc9dc1073239d2ef"
+    },
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/MP_BA.md": {
+      "gitBlobBytes": 39856,
+      "gitBlobSha256": "f0077f0f6a96f88f284e6dd47327afa909bb183cc0ed23fa8c97dcdb614983f9"
+    },
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset": {
+      "gitBlobBytes": 129,
+      "gitBlobSha256": "a7b5c48e08f7ff6df344810c6124e7cfd605c490743fa9f8d11b6f6a62a63b1c"
+    },
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset.meta": {
+      "gitBlobBytes": 189,
+      "gitBlobSha256": "2f719d6d4a10e48702a45bd3587c639e1beae44a93b6bce7d00034b07f0faaf4"
+    },
+    "Design/Roadmap/Skirmish_Expansion/Scenarios/AP_BA.md": {
+      "gitBlobBytes": 39926,
+      "gitBlobSha256": "77a55144c5cc9ecde15e59178fa66f261e422f951b7a61d3d996fc5d5d8b0083"
+    }
+  },
+  "scope": "Canonical Git-object bytes; LFS pointers are not hydrated payload hashes. Payload evidence separately verified."
+}

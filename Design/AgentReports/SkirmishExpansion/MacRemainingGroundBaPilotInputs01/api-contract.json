@@ -1,0 +1,72 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "api": "Assets/Game/Scripts/Editor/Skirmish/SkirmishConfigOnlyBatchBuilder.cs",
+  "requestType": "Game.Editor.SkirmishConfigOnlyBatchBuilder.Request",
+  "entryPoint": "BuildBatch(IReadOnlyList<Request>, SkirmishExpansionCatalogConfig, string outputRoot = ScenarioRoot)",
+  "enabled": false,
+  "ownedIds": [
+    "S050",
+    "S097",
+    "S098"
+  ],
+  "excludedIds": [
+    "S026"
+  ],
+  "catalogReference": "Assets/Game/Resources/SkirmishExpansionCatalog.asset",
+  "outputRoot": "Assets/Game/Configs/SkirmishExpansion/Scenarios",
+  "requestFieldNames": [
+    "CatalogId",
+    "CampaignSource",
+    "ExpectedSourceIdentityHash",
+    "ExpectedSourceContentHash",
+    "ExpectedSourceAssetSha256",
+    "ExpectedSceneGuid",
+    "ExpectedGridGuid",
+    "ExpectedSurfaceGuid",
+    "MeasuredLayout",
+    "Profiles",
+    "Start"
+  ],
+  "persistentProfiles": [
+    "ObjectiveBa",
+    "ArmyGround",
+    "Economy",
+    "Upgrades",
+    "Intel",
+    "Roles",
+    "Start"
+  ],
+  "measuredLayoutRequirements": {
+    "identity": "Exact logical MP/AP group from each immutable manifest row, independent of Campaign source operationMapId",
+    "worldBinding": "HasWorldBinding, HasMeasuredDeployments, BindAllConfigurations; source hash exact; finite orthonormal axes/extents",
+    "anchorIds": [
+      "base.player",
+      "base.enemy",
+      "staging.player",
+      "staging.enemy",
+      "economy.player",
+      "economy.enemy",
+      "service.player",
+      "service.enemy"
+    ],
+    "baseAnchorDistanceToDeploymentMaxMetres": 0.5,
+    "padKindsEachFaction": [
+      "BaseBarracks",
+      "GroundStaging",
+      "InfantrySpawn",
+      "VehicleSpawn",
+      "Rally",
+      "Supply",
+      "Service"
+    ],
+    "padGeometry": "Finite positive dimensions, known anchor, every projected corner within source world bounds",
+    "routes": "At least two unique routes, >=2 known waypoint anchors each, positive width, >=2 distinct ordered paths; declaration does not establish native connectivity or independence"
+  },
+  "separateNativeRequirements": [
+    "Remeasure source projection, terrain/navigation/collision and facility footprints",
+    "All three canonical sizes: ordinary facilities plus complete actual force packing without illegal overlaps",
+    "Remeasure supply/service access, rally and approach paths; retain and requery failed route witnesses",
+    "Camera/readability and normal mission/ARIA/result-return evidence on exact candidate"
+  ],
+  "warning": "BuildBatch is a persistent write API, not a dry run. It loads canonical full matrix, preflights every request and compiles all three sizes at Regular seed 0 before applying. Any preflight error prevents writes, but I/O/import apply is not transactional. Compiled draft does not publish or certify native fit. Never invoke it to test these disabled incomplete specs."
+}

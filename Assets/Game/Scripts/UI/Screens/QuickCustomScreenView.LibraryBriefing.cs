@@ -486,11 +486,6 @@ namespace Game.UI.Runtime
 
             PresentFlaggedTile("Time", briefing.ShowTime, fa ? "زمان" : "TIME", FormatClock(briefing.DeadlineSeconds), true);
             PresentFlaggedTile("Size", briefing.ShowSize, fa ? "اندازه" : "SIZE", LibraryText(briefing.SizeLocKey, fa), false);
-            // approved-2/3: three tiles (Objective, Army, Start). Time/Size fold into the subtitle line when present.
-            string timeCopy = briefing.ShowTime ? FormatClock(briefing.DeadlineSeconds) : string.Empty;
-            string sizeCopy = briefing.ShowSize ? LibraryText(briefing.SizeLocKey, fa) : string.Empty;
-            SetActive(_statRow.Find("Time"), false);
-            SetActive(_statRow.Find("Size"), false);
 
             string army = hasCard ? card.ArmyProfile : string.Empty;
             string start = hasCard ? card.StartProfile : string.Empty;
@@ -514,14 +509,7 @@ namespace Game.UI.Runtime
             BindStatTile(_statRow.Find("Army"), fa ? "ارتش" : "ARMY", armyLabel, false);
             BindStatTile(_statRow.Find("Start"), fa ? "آغاز" : "START", startLabel, false);
             LayoutVisibleStatTiles();
-            // approved-2: icon tiles at mockup weight (icon over value, no caption). Only real values are shown.
-            DecorateIconTile(_statRow.Find("Time"), FooterGlyph.Clock, null, fa);
-            DecorateIconTile(_statRow.Find("Size"), FooterGlyph.Squares, null, fa);
-            DecorateIconTile(_statRow.Find("Objective"), FooterGlyph.None, string.IsNullOrEmpty(objectiveId) ? null : SkirmishBattleLibraryArt.ObjectiveIcon(objectiveId), fa);
-            DecorateIconTile(_statRow.Find("Army"), FooterGlyph.Shield, null, fa);
-            DecorateIconTile(_statRow.Find("Start"), FooterGlyph.Pin, null, fa);
-            string extra = string.IsNullOrEmpty(timeCopy) ? sizeCopy : string.IsNullOrEmpty(sizeCopy) ? timeCopy : timeCopy + " · " + sizeCopy;
-            PresentBriefingSubtitle(armyLabel, string.IsNullOrEmpty(extra) ? startLabel : (string.IsNullOrEmpty(startLabel) ? extra : startLabel + " · " + extra), fa);
+            PresentApproved2StatTiles(briefing, objectiveId, armyLabel, startLabel, fa); // v49d P1: approved-2 Time / Units / Size
         }
 
         private void DecorateIconTile(Transform tile, FooterGlyph glyph, string sprite, bool fa)

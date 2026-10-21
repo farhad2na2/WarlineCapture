@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
     {
         [SerializeField] private Sprite comic;
         [SerializeField] private Texture plate;
+        [SerializeField] private Rect sourceRegion = new Rect(0,0,1,1);
         [SerializeField] private Image containedIcon;
         [SerializeField] private MissionAtlasObjectiveGraphic objective;
         [SerializeField] private V3GradientGraphic iconPlate;
@@ -24,7 +25,8 @@ namespace Game.UI.Runtime
         private RawImage image;
         public RawImage Image => image!=null?image:image=GetComponent<RawImage>();
         public Sprite Comic => comic;
-        public void Set(Sprite sprite,Texture texture) {comic=sprite;plate=texture;Refresh();}
+        public void Set(Sprite sprite,Texture texture) {comic=sprite;plate=texture;sourceRegion=new Rect(0,0,1,1);Refresh();}
+        public void SetAtlasRegion(Texture texture,Rect region) {comic=null;plate=texture;sourceRegion=region;Refresh();}
         private void OnEnable()=>Refresh();
         private void OnRectTransformDimensionsChange()=>Refresh();
         public void Refresh()
@@ -36,7 +38,7 @@ namespace Game.UI.Runtime
             if(containedIcon!=null){containedIcon.gameObject.SetActive(contain&&!native&&comic!=null);containedIcon.sprite=comic;}
             if(contain)return;
             if(texture==null)return;
-            Rect uv=comic!=null?new Rect(comic.rect.x/texture.width,comic.rect.y/texture.height,comic.rect.width/texture.width,comic.rect.height/texture.height):new Rect(0,0,1,1);
+            Rect uv=comic!=null?new Rect(comic.rect.x/texture.width,comic.rect.y/texture.height,comic.rect.width/texture.width,comic.rect.height/texture.height):sourceRegion;
             Vector2 size=raw.rectTransform.rect.size;if(size.x<=0||size.y<=0)return;
             float source=(texture.width*uv.width)/(texture.height*uv.height),target=size.x/size.y;
             if(source>target) {float width=uv.width*target/source;uv.x+=(uv.width-width)*.5f;uv.width=width;}

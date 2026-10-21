@@ -20,6 +20,11 @@ namespace Game.Editor
             try { Build(); await ApprovedMissionAtlasReview.Run(); }
             catch(Exception error) {Debug.LogException(error);MissionEditorValidationExit.Complete(false);}
         }
+        public static async void ReviewExisting()
+        {
+            try { await ApprovedMissionAtlasReview.Run(); }
+            catch(Exception error) {Debug.LogException(error);MissionEditorValidationExit.Complete(false);}
+        }
         public static void Build()
         {
             RepairMainPageComics();BuildCampaign();BuildSkirmish();AssetDatabase.SaveAssets();
@@ -112,6 +117,15 @@ namespace Game.Editor
                     if(size.SegmentRoot is RectTransform segments)MissionAtlasScreenView.Fill(segments);
                     foreach(var label in size.GetComponentsInChildren<TMP_Text>(true))
                     {label.enableAutoSizing=false;label.fontSize=label.fontSizeMin=label.fontSizeMax=22;var fixedSize=label.GetComponent<LibraryFixedTextSize>();if(fixedSize!=null){fixedSize.Size=22;fixedSize.MaxLines=2;}}
+                    var sizeStyle=size.GetComponent<MissionAtlasArmySizeView>();
+                    if(sizeStyle==null)sizeStyle=size.gameObject.AddComponent<MissionAtlasArmySizeView>();
+                    else
+                    {
+                        foreach(var button in size.SegmentButtons)
+                            foreach(string childName in new[]{"ChoiceFace","SelectedChoice","UnavailableChoice"})
+                            {var child=button.transform.Find(childName);if(child!=null)UnityEngine.Object.DestroyImmediate(child.gameObject);}
+                    }
+                    sizeStyle.Author(size);
                     size.gameObject.SetActive(false);
                 }
                 var map=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);

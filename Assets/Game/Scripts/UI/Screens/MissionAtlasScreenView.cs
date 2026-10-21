@@ -93,6 +93,7 @@ namespace Game.UI.Runtime
         }
         public static readonly Color Top = new Color32(15,34,44,255), Bottom = new Color32(3,15,24,255),
             Border = new Color32(70,92,103,255), Cyan = new Color32(0,210,248,255), Muted = new Color32(171,192,204,255);
+        private static readonly Color[] ChoiceAccents = { Cyan, new Color32(245,196,85,255), new Color32(124,196,245,255), new Color32(142,219,126,255), new Color32(255,145,121,255) };
         private static readonly Color[] ZoneColors = { new(.03f,.65f,.95f,.20f),new(.96f,.61f,.10f,.18f),new(.14f,.65f,.93f,.18f),new(.35f,.76f,.21f,.18f),new(.86f,.25f,.25f,.18f) };
         [SerializeField] private TMP_FontAsset font;
         [SerializeField] private Sprite backIcon, settingsIcon, creditsIcon, mapIcon, launchIcon;
@@ -216,7 +217,16 @@ namespace Game.UI.Runtime
                 navigation[i].Rect.gameObject.SetActive(i<next.Navigation.Length);
                 if(i<next.Navigation.Length) navigation[i].Set(next.Navigation[i]);
                 zones[i].Rect.gameObject.SetActive(!next.Missions && i<next.Navigation.Length);
-                if(!next.Missions && i<next.Navigation.Length) { var z=next.Navigation[i]; z.Comic=null;z.Texture=null; zones[i].Set(z); }
+                if(!next.Missions && i<next.Navigation.Length)
+                {
+                    zones[i].Set(next.Navigation[i]);
+                    if(next.Skirmish && next.Overview!=null)
+                    {
+                        // UI illustration crops correspond to the five painted atlas districts.
+                        Rect[] crops={new(.04f,.66f,.38f,.30f),new(.50f,.66f,.48f,.32f),new(.02f,.26f,.42f,.39f),new(.52f,.26f,.46f,.40f),new(.30f,0,.50f,.30f)};
+                        zones[i].Art.SetAtlasRegion(next.Overview,crops[i]);
+                    }
+                }
             }
             for(int i=0;i<regions.Length;i++)
             {
@@ -293,7 +303,7 @@ namespace Game.UI.Runtime
             var secondaryIcon=secondary.transform.Find("Icon") as RectTransform;if(secondaryIcon!=null)Place(secondaryIcon,24,30,72,72);
             secondaryLabel.rectTransform.offsetMin=new Vector2(112,4);SetSize(secondaryLabel,w<1800?30:34);
             float nh=state!=null && state.Missions && state.Skirmish?165:148;
-            for(int i=0;i<5;i++) {Place(navigation[i].Rect,0,i*(nh+12),nav,nh); LayoutCard(navigation[i],nav,nh,true,false);}
+            for(int i=0;i<5;i++) {Place(navigation[i].Rect,0,i*(nh+12),nav,nh); LayoutCard(navigation[i],nav,nh,true,false);if(state!=null&&(!state.Missions||!state.Skirmish)&&i<state.Navigation.Length)StyleOverviewCopy(navigation[i],i);}
             Fill(overviewRoot);Fill(overviewArt.transform as RectTransform);Fill(missionRoot);Fill(scroll.viewport);
             scroll.viewport.offsetMax=new Vector2(-28,0);
             Place(scrollbar.transform as RectTransform,mapW-22,4,18,mainH-8);
@@ -339,14 +349,49 @@ namespace Game.UI.Runtime
                 };
                 centers=new[]{P(.24f,.17f),P(.76f,.17f),P(.23f,.51f),P(.75f,.52f),P(.52f,.86f)};
             }
-            float cw=Mathf.Min(380,w*.43f),ph=UiShellRuntimeGateway.Localization.IsRightToLeft?176:148;
+            float cw=Mathf.Min(440,w*.44f),ph=UiShellRuntimeGateway.Localization.IsRightToLeft?194:174;
             for(int i=0;i<5;i++)
-            {Fill(overviewZones[i].rectTransform);overviewZones[i].ConfigureResponsive(shapes[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?new Color(.0f,.50f,.82f,.40f):ZoneColors[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?Cyan:new Color(ZoneColors[i].r,ZoneColors[i].g,ZoneColors[i].b,.95f),3,new Vector2(w,h));Place(zones[i].Rect,Mathf.Clamp(centers[i].x-cw/2,12,Mathf.Max(12,w-cw-12)),Mathf.Clamp(centers[i].y-ph/2,12,Mathf.Max(12,h-ph-12)),cw,ph);LayoutCard(zones[i],cw,ph,false,true);}
+            {Fill(overviewZones[i].rectTransform);overviewZones[i].ConfigureResponsive(shapes[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?new Color(.0f,.50f,.82f,.40f):ZoneColors[i],state!=null&&i<state.Navigation.Length&&state.Navigation[i].Selected?Cyan:new Color(ZoneColors[i].r,ZoneColors[i].g,ZoneColors[i].b,.95f),3,new Vector2(w,h));Place(zones[i].Rect,Mathf.Clamp(centers[i].x-cw/2,12,Mathf.Max(12,w-cw-12)),Mathf.Clamp(centers[i].y-ph/2,12,Mathf.Max(12,h-ph-12)),cw,ph);LayoutOverviewCard(zones[i],cw,ph,i);}
+        }
+        private void LayoutOverviewCard(Card card,float w,float h,int index)
+        {
+            // Small illustrated map cards preserve the terrain while removing empty black plaques.
+            bool selected=state!=null&&index<state.Navigation.Length&&state.Navigation[index].Selected;
+            card.Face.Configure(selected?new Color32(6,53,74,255):new Color32(16,43,57,255),new Color32(4,23,36,255),selected?Cyan:Border,selected?3:2);
+            float art=Mathf.Clamp(w*.31f,84,136);
+            card.Art.gameObject.SetActive(true);
+            Place(card.Art.transform as RectTransform,10,10,art,h-20);
+            card.Art.Image.color=Color.white;
+            float x=art+24,tw=w-x-14;
+            bool fa=UiShellRuntimeGateway.Localization.IsRightToLeft;
+            Place(card.Title.rectTransform,x,10,tw,fa?76:66);SetSize(card.Title,fa?26:28);
+            float longest=0;
+            foreach(string word in (card.Title.text??string.Empty).Split(' '))longest=Mathf.Max(longest,card.Title.GetPreferredValues(word,10000,10000).x);
+            if(longest>tw-4)SetSize(card.Title,Mathf.Max(18,card.Title.fontSize*(tw-4)/longest));
+            FitLabelHeight(card.Title,18);
+            float progressY=fa?92:86;
+            Place(card.Subtitle.rectTransform,x,progressY,tw,34);SetSize(card.Subtitle,fa?21:22);FitLabelHeight(card.Subtitle,16);
+            Place(card.Status.rectTransform,x,h-40,tw,30);SetSize(card.Status,fa?20:21);
+            Copy(card.Status,(card.FullStatus??string.Empty).Replace("COMING SOON","SOON"));
+            StyleOverviewCopy(card,index);card.Status.gameObject.SetActive(true);FitLabelHeight(card.Status,16);
+            card.MissionCode.gameObject.SetActive(false);
+            if(card.Completion!=null)Place(card.Completion.rectTransform,art-20,16,24,24);
+            if(card.Lock!=null)Place(card.Lock.rectTransform,art-20,16,24,24);
+
+        }
+        private void StyleOverviewCopy(Card card,int index)
+        {
+            bool selected=state!=null&&index<state.Navigation.Length&&state.Navigation[index].Selected;
+            bool completed=state!=null&&index<state.Navigation.Length&&state.Navigation[index].Completed;
+            card.Title.color=selected?Cyan:ChoiceAccents[index];
+            card.Subtitle.color=new Color32(180,225,235,255);
+            card.Status.color=completed?new Color32(129,218,128,255):new Color32(224,192,138,255);
         }
         private void LayoutCard(Card c,float w,float h,bool nav,bool plaque)
         {
             if(c.MissionCode!=null)c.MissionCode.gameObject.SetActive(false);
             if(!nav&&!plaque&&state!=null&&state.Skirmish){LayoutSkirmishMissionCard(c,w,h);return;}
+            if(!nav&&!plaque&&state!=null&&!state.Skirmish){LayoutCampaignMissionCard(c,w,h);return;}
             bool objective=nav&&state!=null&&state.Missions&&state.Skirmish;
             float art=plaque?0:objective?Mathf.Min(104,w*.28f):nav?w*(w<380?.30f:.34f):w*(w<340?.25f:.28f);
             c.Art.gameObject.SetActive(!plaque);float imageHeight=nav?h-10:Mathf.Max(1,(art-10)*.5625f);Place(c.Art.transform as RectTransform,5,nav?5:(h-imageHeight)*.5f,Mathf.Max(1,art-10),imageHeight);
@@ -389,6 +434,21 @@ namespace Game.UI.Runtime
             }
             SetSize(c.Subtitle,nav||plaque?23:compactMission||fa?20:24);SetSize(c.Status,22);
             FitLabelHeight(c.Title,18);FitLabelHeight(c.Subtitle,16);
+        }
+        private void LayoutCampaignMissionCard(Card c,float w,float h)
+        {
+            bool fa=UiShellRuntimeGateway.Localization.IsRightToLeft;
+            float art=w*.40f,iw=art-24,ih=Mathf.Min(h-28,iw*.92f),x=art+16,tw=w-x-20;
+            c.Art.gameObject.SetActive(true);Place(c.Art.transform as RectTransform,14,(h-ih)*.5f,iw,ih);
+            Place(c.Subtitle.rectTransform,x,12,tw-26,30);SetSize(c.Subtitle,fa?22:24);c.Subtitle.color=new Color32(180,225,235,255);
+            Place(c.Title.rectTransform,x,48,tw,76);SetSize(c.Title,fa?26:30);
+            float longest=0;
+            foreach(string word in (c.Title.text??string.Empty).Split(' '))longest=Mathf.Max(longest,c.Title.GetPreferredValues(word,10000,10000).x);
+            if(longest>tw-4)SetSize(c.Title,Mathf.Max(18,c.Title.fontSize*(tw-4)/longest));
+            FitLabelHeight(c.Title,18);
+            Place(c.Status.rectTransform,x,h-44,tw,32);SetSize(c.Status,fa?21:22);FitLabelHeight(c.Status,16);c.Status.gameObject.SetActive(true);
+            if(c.Completion!=null)Place(c.Completion.rectTransform,w-35,10,24,24);
+            if(c.Lock!=null)Place(c.Lock.rectTransform,w-35,10,24,24);
         }
         private void LayoutSkirmishMissionCard(Card c,float w,float h)
         {

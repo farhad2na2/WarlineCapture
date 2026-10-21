@@ -153,8 +153,9 @@ namespace Game.UI.Runtime
             {
                 SetSize(label,22);
                 float longest=0;
-                foreach(string word in label.text.Split(' '))longest=Mathf.Max(longest,label.GetPreferredValues(word,10000,10000).x);
-                float available=(side-48)/3-12;
+                if(label.isRightToLeftText)longest=label.GetPreferredValues(label.text,10000,10000).x;
+                else foreach(string word in label.text.Split(' '))longest=Mathf.Max(longest,label.GetPreferredValues(word,10000,10000).x);
+                float available=(side-56)/3-24;
                 if(longest>available)SetSize(label,22*available/longest);
             }
             Place(difficultyHeading.rectTransform,18,mainH-190,side-36,34);Place(difficultyRoot,18,mainH-156,side-36,144);

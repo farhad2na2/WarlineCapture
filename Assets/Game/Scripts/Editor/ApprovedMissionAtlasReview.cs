@@ -43,7 +43,7 @@ namespace Game.Editor
                     if(campaign==null||campaign.ApprovedAtlas==null)throw new InvalidOperationException("Active Campaign native binding missing");
                     var c=campaign.ApprovedAtlas;
                     if(c.ShowingMissions)await Tap(touch,c.BackButton);
-                    Dump(c);await Shot(output,language,"campaign-chapters");await Matrix(output,language,"campaign-chapters",c);
+                    CheckOverviewArt(c);Dump(c);await Shot(output,language,"campaign-chapters");await Matrix(output,language,"campaign-chapters",c);
                     await Tap(touch,c.NavigationCards[2].Button);await Until(()=>campaign.IsChapterThree,15);await Task.Delay(700);
                     var comic=UnityEngine.Object.FindAnyObjectByType<FutureMissionComicPreviewController>();
                     if(comic!=null && comic.IsOpen)
@@ -73,11 +73,41 @@ namespace Game.Editor
                     await Tap(touch,c.BackButton);if(c.ShowingMissions)throw new InvalidOperationException("Back did not return to chapter atlas");
                     await Tap(touch,c.BackButton);await Route(UIRoute.MainMenu);
                     await Open(UIRoute.QuickCustomSetup);var skirmish=UnityEngine.Object.FindAnyObjectByType<QuickCustomScreenView>();var s=skirmish.ApprovedAtlas;
-                    if(s.ShowingMissions)await Tap(touch,s.BackButton);await Shot(output,language,"skirmish-maps");await Matrix(output,language,"skirmish-maps",s);
-                    await Tap(touch,s.NavigationCards[0].Button);await Tap(touch,s.PrimaryButton);await Until(()=>s.ShowingMissions,15);await Shot(output,language,"skirmish-missions");
+                    if(s.ShowingMissions)await Tap(touch,s.BackButton);CheckOverviewArt(s);await Shot(output,language,"skirmish-maps");await Matrix(output,language,"skirmish-maps",s);
+                    await Tap(touch,s.TerritoryCards[1].Button);
+                    if(s.TerritoryCards[1].Title.color==Color.white)throw new InvalidOperationException("Map choice lost its territory accent");
+                    await Tap(touch,s.TerritoryCards[0].Button);await Tap(touch,s.PrimaryButton);await Until(()=>s.ShowingMissions,15);await Shot(output,language,"skirmish-missions");
                     await Tap(touch,s.Regions[0].Cards[1].Button);await Until(()=>skirmish.LibraryViewModel.Briefing.ScenarioId=="S002",15);await Shot(output,language,"skirmish-s002");
                     if(skirmish.MissionSizeControl==null||!skirmish.MissionSizeControl.gameObject.activeInHierarchy)throw new InvalidOperationException("Real S002 mission-size control is missing");
                     await Matrix(output,language,"skirmish-missions",s);
+                    foreach(int option in new[]{1,2,0})
+                    {
+                        var control=skirmish.MissionSizeControl;
+                        var button=control.SegmentButtons[option];
+                        var expected=option==1?UiSkirmishMissionSize.War:option==2?UiSkirmishMissionSize.LargeWar:UiSkirmishMissionSize.Standard;
+                        if(control.SelectedIndex!=option && button.IsInteractable())
+                        {
+                            await Tap(touch,button);
+                            await Until(()=>skirmish.SelectedMissionSize==expected,10);
+                            var compiled=skirmish.PresentedMissionSizeSetup;
+                            var expectedSize=option==1?Game.Skirmish.Contracts.SkirmishSizeId.War:option==2?Game.Skirmish.Contracts.SkirmishSizeId.LargeWar:Game.Skirmish.Contracts.SkirmishSizeId.Standard;
+                            if(compiled==null||compiled.SizeId!=expectedSize)throw new InvalidOperationException("Army-size choice does not match compiled setup");
+                            await Shot(output,language,"army-size-"+expected);
+                        }
+                        else if(control.SelectedIndex!=option)
+                        {
+                            if(!button.transform.Find("UnavailableChoice").gameObject.activeSelf)throw new InvalidOperationException("Unavailable army-size choice lacks its lock cue");
+                            var before=skirmish.SelectedMissionSize;
+                            Vector2 point=Center((RectTransform)button.transform);
+                            if(!touch.TryGesture(point,point,.18f,0,Time.unscaledTime))throw new InvalidOperationException("Unavailable choice touch rejected");
+                            do{touch.Tick(Time.unscaledTime);await Task.Delay(50);}while(touch.IsBusy);await Task.Delay(700);
+                            if(skirmish.SelectedMissionSize!=before)throw new InvalidOperationException("Unavailable army-size choice changed setup");
+                            Debug.Log("[ArmySizeChoiceReview] unavailableChoice="+expected+" touchIgnored=true locale="+language);
+                        }
+                        if(control.SegmentButtons.Count(b=>b.transform.Find("SelectedChoice").gameObject.activeSelf)!=1 || !control.SegmentButtons[control.SelectedIndex].transform.Find("SelectedChoice").gameObject.activeSelf)
+                            throw new InvalidOperationException("Army-size choice check does not match the real selected size");
+                    }
+                    Debug.Log("[ArmySizeChoiceReview] result=Passed input=InputSystemTouch actualSelectionAndAvailability=true locale="+language);
                     await Tap(touch,s.DifficultyButtons[3]);
                     await Until(()=>skirmish.LibraryViewModel.Briefing.SelectedDifficulty==Game.Skirmish.Contracts.SkirmishDifficultyId.Commander,10);
                     await Tap(touch,s.DifficultyButtons[1]);
@@ -131,6 +161,17 @@ namespace Game.Editor
                     }
                 }
                 int issuesBefore=LabelIssues.Count;
+                var army=view.ExtraControls.GetComponentInChildren<UISegmentedControlView>(false);
+                if(army!=null)
+                {
+                    foreach(var button in army.SegmentButtons)
+                    {
+                        var text=button.GetComponentInChildren<TMPro.TMP_Text>();var owner=(RectTransform)button.transform;var ink=InkBounds(text,owner);var bounds=owner.rect;
+                        if(ink.xMin<bounds.xMin+8||ink.xMax>bounds.xMax-8||ink.yMin<bounds.yMin+5||ink.yMax>bounds.yMax-12)
+                            LabelIssues.Add("Army-size label padding: "+text.text+" at "+size+" ink="+ink+" owner="+bounds);
+                        if(button.targetGraphic is not V3GradientGraphic)throw new InvalidOperationException("Army-size choice is missing its native bordered face");
+                    }
+                }
                 foreach(var c in view.NavigationCards.Concat(view.ShowingMissions?view.Regions.SelectMany(r=>r.Cards):view.TerritoryCards))if(c.Rect.gameObject.activeInHierarchy)
                 {
                     if(c.MissionCode!=null&&c.MissionCode.gameObject.activeInHierarchy)CheckCardSpacing(c,size);
@@ -156,6 +197,18 @@ namespace Game.Editor
                     if(t.isTextTruncated)LabelIssues.Add("Native label truncation: "+t.name+"="+t.text+" at "+size);
                 }
                 Debug.Log("[ApprovedMissionAtlasReview] ratio="+size+" locale="+locale+" navigationText="+(LabelIssues.Count==issuesBefore?"Passed":"Failed"));
+            }
+        }
+        private static void CheckOverviewArt(MissionAtlasScreenView view)
+        {
+            for(int index=0;index<view.TerritoryCards.Length;index++)
+            {
+                var card=view.TerritoryCards[index];
+                if(!card.Rect.gameObject.activeInHierarchy)continue;
+                var rail=view.NavigationCards[index];
+                if(card.Title.color!=rail.Title.color||card.Subtitle.color!=rail.Subtitle.color||card.Status.color!=rail.Status.color)throw new InvalidOperationException("Map/chapter rail and territory copy colors differ: "+card.Rect.name);
+                if(!card.Art.gameObject.activeInHierarchy || (card.Art.Comic==null&&card.Art.Image.texture==null))
+                    throw new InvalidOperationException("Map/chapter choice is missing its own thumbnail: "+card.Rect.name);
             }
         }
         private static Rect InkBounds(TMPro.TMP_Text text,RectTransform owner)

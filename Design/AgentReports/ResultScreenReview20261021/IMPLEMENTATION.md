@@ -2,6 +2,8 @@
 
 Implemented locally on `codex/result-screen-design-review`, based on main `16ecb2c70f894180d40141e71e929bd714d30393`. No result-screen changes are published or merged.
 
+See [mockup fidelity correction](MOCKUP_FIDELITY.md) for the owner-rejected first revision and the corrected divider, optical centering, reward columns, typography, separators and footer order.
+
 ## Rendering and behavior
 
 All three modes use `Assets/Game/Resources/UI/SharedMissionResult.prefab`. Campaign nests this exact prefab; Skirmish and Operations mount it through the existing result adapter. Native validation checks the prefab identity. The shared asset owns layout, typography, objective rows, status symbols, stars, artwork viewport, performance/report module and footer styling. Existing mode projections and callbacks still own rewards, settlement, debrief, retry, replay and return permissions.
@@ -16,11 +18,11 @@ The artwork catalog reuses 25 existing Campaign comics, six existing Skirmish pr
 
 | Gate | Result | Scope |
 | --- | --- | --- |
-| Native visual/layout and callbacks | Passed: 4,185 checks, 30 renders | Three modes × two outcomes, English/Persian, 1920×1080, 1280×720, 2400×1080 and 1440×1080; border separation, right insets, text bounds, action routing/settlement, full-parent backdrop and actual long catalog title |
+| Native visual/layout and callbacks | Passed: 4,451 checks, 30 renders | Three modes × two outcomes, English/Persian, 1920×1080, 1280×720, 2400×1080 and 1440×1080; border separation, right insets, visible glyph centers, reward label/value columns, text bounds, action routing/settlement, full-parent backdrop and actual long catalog title |
 | Campaign adapter catalog | Passed: 100 cases | 25 mission adapters × both outcomes × both languages, using representative models; no gameplay readiness claim |
 | Focused result regressions | Passed: six suites | Stars, M01 result/progression/pointer targets, M02 result/debrief and settlement, native terminal observation, medal and Battlefield return bindings |
-| S002 live ARIA and result return | Passed | Normal menu/ARIA touch controls, real victory at 230.095 seconds, actual result touch to Main Menu; no outcome injection or physical interventions. Separate UI-return lane preserves the original saga-medal victory requirements |
-| Final Campaign normal-input journey | Passed | Bilingual M01 touch journey, actual victory/result/return, including settled stars; 26 menu gestures, no injected outcomes, wrapper exit 0 |
+| S002 live ARIA and result return | Passed | Normal menu/ARIA touch controls, real victory at 235.986 seconds, actual result touch to Main Menu; no outcome injection or physical interventions. Separate UI-return lane preserves the original saga-medal victory requirements |
+| Final Campaign normal-input journey | Passed | Bilingual M01 touch journey, actual victory/result/return, including settled stars; 25 menu gestures, no injected outcomes, wrapper exit 0 |
 | O001 live ARIA/result/return | Failed before result | Existing startup navigation refusal: objective blocked at `int2(1860, 710)`; see [Operations load gate](Implementation/OPERATIONS_LOAD_GATE.md) |
 | Broader legacy Campaign menu regression | Failed; retained | Old hidden chapter-tab Icon assertion at `M02EstablishBaseCampaignUiTests.cs:266`, outside the result renderer |
 | Broader repository architecture audit | Failed; retained | 30 helper paths require manifest authorizations; all 30 are byte-identical to the base commit. Existing guard remains unchanged. See [baseline proof](Implementation/ARCHITECTURE_BASELINE_FAILURE.json) |

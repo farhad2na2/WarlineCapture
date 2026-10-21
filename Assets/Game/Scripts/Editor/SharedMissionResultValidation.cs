@@ -116,7 +116,8 @@ namespace Game.Editor
                     view.Apply(in replay);var c=view.SharedResult.Controls;
                     if(locale=="fa-IR")Check(!System.Text.RegularExpressions.Regex.IsMatch(SharedMissionResultView.Source(c.Reason),"[A-Za-z]"),"Actual Campaign outcome reason is localized before sentence extraction");
                     Check(!c.RewardIcons[0].gameObject.activeSelf&&c.RewardIcons[1].gameObject.activeSelf,"Credits-only replay cannot display an XP award icon "+locale);
-                    Check(Mathf.Approximately(c.RewardIcons[1].rectTransform.anchoredPosition.y,-84),"Credits-only icon aligns with its actual reward row "+locale);
+                    var row=c.InfoScroll.content.Find("RewardRow0");
+                    Check(row!=null&&SharedMissionResultView.Source(row.Find("Amount").GetComponent<TMP_Text>())=="+250","Credits-only replay keeps its actual amount in a separate aligned column "+locale);
                 }
             }
             finally{GameLocalization.SetLocale("en",false);Object.DestroyImmediate(host);}
@@ -128,7 +129,8 @@ namespace Game.Editor
             {
                 var card=CampaignStyleResultCard.Mount(host.transform,null);
                 var model=new ModeResultContent{Mode=ResultScreenMode.Skirmish,MissionId="S002",Victory=true,Stars=2,Identity="SKIRMISH\nDesert Base · Base Assault · Established",Summary="Enemy main base destroyed.",ActionsEnabled=true,LeaveLabel="MAIN MENU",Signature="actual-catalog-title"};
-                card.Present(in model);var ui=card.SharedView.Controls;ui.SummaryTitle.ForceMeshUpdate();
+                card.Present(in model);var ui=card.SharedView.Controls;ui.SummaryTitle.ForceMeshUpdate();ui.Mission.ForceMeshUpdate();
+                Check(!ui.Mission.isTextOverflowing,"Actual long catalog identity fits the stacked header");
                 Check(!ui.SummaryTitle.isTextOverflowing,"Actual long catalog title fits the story heading");
                 float titleBottom=-ui.SummaryTitle.rectTransform.anchoredPosition.y+ui.SummaryTitle.rectTransform.rect.height;
                 Check(titleBottom+8<=-ui.SummaryViewport.anchoredPosition.y,"Long title and aftermath retain a separate gutter");
@@ -184,7 +186,23 @@ namespace Game.Editor
                     if(!scroll&&(text.isTextOverflowing||text.isTextTruncated))bounds.Add(text.name+" "+text.text+" size="+text.rectTransform.rect+" preferred="+text.preferredWidth+","+text.preferredHeight);
                     Check(text.margin.z>=8,name+" right text inset "+text.name);
                 }
+                var banner=(RectTransform)view.transform.Find("Outcome");
+                float Center(TMP_Text text,RectTransform panel)=>panel.InverseTransformPoint(text.transform.TransformPoint(text.textBounds.center)).y;
+                float reasonDelta=Mathf.Abs(Center(view.Controls.Reason,banner)-banner.rect.center.y);
+                float saveDelta=Mathf.Abs(Center(view.Controls.SaveStatus,view.Controls.SaveStrip)-view.Controls.SaveStrip.rect.center.y);
+                if(reasonDelta>2)bounds.Add("Outcome reason vertical center delta="+reasonDelta);
+                if(view.Controls.SaveIcon.gameObject.activeSelf&&saveDelta>2)bounds.Add("Saved-state vertical center delta="+saveDelta);
+                Check(view.Controls.OutcomeDivider.gameObject.activeSelf&&view.Controls.OutcomeDivider.rectTransform.rect.width>=2,name+" outcome divider present");
+                foreach(Transform child in view.Controls.InfoScroll.content)
+                {
+                    if(!child.name.StartsWith("RewardRow")||!child.gameObject.activeSelf)continue;
+                    var label=child.Find("Label").GetComponent<TMP_Text>();var amount=child.Find("Amount").GetComponent<TMP_Text>();
+                    float delta=Mathf.Abs(Center(label,(RectTransform)child)-Center(amount,(RectTransform)child));
+                    if(delta>2)bounds.Add("Reward row label/amount center delta="+delta);
+                    Check(label.color==SharedMissionResultView.White&&amount.color==SharedMissionResultView.Amber,name+" reward label/value hierarchy");
+                }
                 File.WriteAllLines(Output+"/"+name+"-layout.txt",bounds);
+                File.WriteAllText(Output+"/"+name+"-alignment.txt","reasonCenterDelta="+reasonDelta+" savedCenterDelta="+saveDelta+" summaryViewport="+view.Controls.SummaryScroll.viewport.rect.height+" summaryContent="+view.Controls.SummaryScroll.content.rect.height);
                 // Always preserve the render before failing the layout gate.
                 camera.Render();RenderTexture.active=target;texture.ReadPixels(new Rect(0,0,width,height),0,0);texture.Apply();File.WriteAllBytes(Output+"/"+name+".png",texture.EncodeToPNG());captures++;
                 Check(bounds.Count==0,name+" text bounds: "+string.Join("; ",bounds));

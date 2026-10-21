@@ -20,7 +20,7 @@ namespace Game.UI.Runtime
         public string MissionId, ModeLabel, MissionTitle, Context, OutcomeTitle, Reason, Elapsed, Summary;
         public SharedResultObjective[] Objectives = Array.Empty<SharedResultObjective>();
         public string[] PerformanceLabels = Array.Empty<string>(), PerformanceValues = Array.Empty<string>();
-        public string InfoHeading, InfoBody, SaveStatus, PrimaryLabel, SecondaryLabel, TertiaryLabel;
+        public string InfoHeading, InfoBody, InfoCaption, SaveStatus, PrimaryLabel, SecondaryLabel, TertiaryLabel;
         public ResultActionTone PrimaryTone, SecondaryTone, TertiaryTone;
         public int Stars, MedalTier;
         public bool ShowMedal, MedalEarned, ShowRewardIcons;

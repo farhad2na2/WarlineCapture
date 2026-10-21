@@ -1,8 +1,6 @@
 {
   "runtimeAndNativePrefabIdenticalToLiveRuns": true,
-  "changedSinceLiveFreeze": [
-    "Assets/Game/Scripts/Editor/ResultScreenDesignReviewCapture.cs",
-    "Assets/Game/Scripts/Editor/SharedMissionResultValidation.cs"
-  ],
-  "reason": "Only representative Persian capture literals and rendered-localization assertions changed after normal-input runs."
+  "changedSinceLiveFreeze": [],
+  "ownedFiles": 50,
+  "reason": "Both final normal-input journeys used exactly the frozen mockup-fidelity runtime/prefab. Harness-generated HUD/catalog assets were reversibly backed up and returned to their packaged baseline."
 }

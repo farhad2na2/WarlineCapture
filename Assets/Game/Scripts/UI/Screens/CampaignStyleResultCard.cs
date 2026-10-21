@@ -81,6 +81,7 @@ namespace Game.UI.Runtime
             Action secondary=c.Victory?replay:(battlefieldBack?battlefield:leave);
             Action tertiary=c.Victory?(skirmish?leave:null):(c.ShowAdjust?adjust:null);
             view.BindActions(primary,primary,secondary,tertiary);
+            string[] medalParts=(c.MedalText??"").Split(new[]{" · "},StringSplitOptions.RemoveEmptyEntries);
             var model=new SharedMissionResultPresentation
             {
                 Mode=c.Mode,Victory=c.Victory,Stars=c.Stars,UseRetry=!c.Victory,ActionsEnabled=c.ActionsEnabled,
@@ -89,7 +90,8 @@ namespace Game.UI.Runtime
                 OutcomeTitle=c.Title=="VICTORY"?W("victory","VICTORY","پیروزی"):c.Title=="DEFEAT"?W("defeat","DEFEAT","شکست"):c.Title=="OPERATION FAILED"?W("operation_failed","OPERATION FAILED","عملیات ناموفق"):c.Title,Reason=skirmish?(c.Victory?c.ObjectiveTitle:c.Status==c.Title?c.Summary:c.Status):c.Status,Elapsed=c.Elapsed,Summary=c.Summary,Objectives=objectives,
                 PerformanceLabels=new[]{c.Performance1,c.Performance2,c.Performance3},PerformanceValues=new[]{c.Performance1Value,c.Performance2Value,c.Performance3Value},
                 InfoHeading=skirmish?W("medal","MEDAL","نشان"):W("report","OPERATION REPORT","گزارش عملیات"),
-                InfoBody=skirmish?(c.ShowMedal?c.MedalText:W("no_medal","No new medal","نشان جدیدی دریافت نشد")):c.ObjectiveTitle,
+                InfoCaption=skirmish&&c.ShowMedal&&medalParts.Length==3?medalParts[0]+" · "+medalParts[1]:"",
+                InfoBody=skirmish?(c.ShowMedal?(medalParts.Length==3?string.Format(W("medal_earned_title","{0} earned","{0} دریافت شد"),medalParts[2]):c.MedalText):W("no_medal","No new medal","نشان جدیدی دریافت نشد")):c.ObjectiveTitle,
                 ShowMedal=skirmish,MedalEarned=c.ShowMedal,MedalTier=c.MedalTier,
                 SaveStatus=c.ShowMedal?W("medal_recorded","Medal recorded.","نشان ثبت شد."):!skirmish?(c.ActionsEnabled?W("report_saved","Report saved.","گزارش ذخیره شد."):W("saving","Saving result…","در حال ذخیرهٔ نتیجه…")):"",
                 PrimaryLabel=c.Victory?(battlefieldBack?W("battlefield","BATTLEFIELD","میدان نبرد"):skirmish?c.LeaveLabel:W("district_map","DISTRICT MAP","نقشهٔ منطقه")):skirmish?W("retry_battle","RETRY BATTLE","تلاش دوباره در نبرد"):W("retry_operation","RETRY OPERATION","تلاش دوباره در عملیات"),

@@ -11,6 +11,8 @@ namespace Game.UI.Runtime
         [SerializeField] private Kind kind;
         [SerializeField] private bool earned;
         [SerializeField] private int tier;
+        [SerializeField] private bool standaloneStar;
+        public void SetStandaloneStar(bool value){standaloneStar=value;SetVerticesDirty();}
         public bool Earned => kind==Kind.Medal&&earned;
         public void Configure(Kind value,bool shown,int medalTier=0)
         {kind=value;earned=shown;tier=medalTier;raycastTarget=false;SetVerticesDirty();}
@@ -21,6 +23,18 @@ namespace Game.UI.Runtime
             Color ink=new Color32(4,24,30,255);
             if(kind==Kind.Medal)
             {
+                if(standaloneStar)
+                {
+                    Color[] palette={new Color32(220,123,56,255),new Color32(211,232,247,255),new Color32(255,199,20,255),new Color32(247,58,48,255)};
+                    Color medalFace=earned?palette[Mathf.Clamp(tier,0,3)]:new Color32(83,101,113,255);
+                    for(int i=0;i<10;i++)
+                    {
+                        float a=(90+i*36)*Mathf.Deg2Rad,b=(90+(i+1)*36)*Mathf.Deg2Rad;
+                        float ra=radius*(i%2==0?1:.382f),rb=radius*((i+1)%2==0?1:.382f);
+                        Triangle(vh,center,center+new Vector2(Mathf.Cos(a),Mathf.Sin(a))*ra,center+new Vector2(Mathf.Cos(b),Mathf.Sin(b))*rb,i%2==0?Color.Lerp(medalFace,Color.white,.30f):Color.Lerp(medalFace,ink,.25f));
+                    }
+                    return;
+                }
                 if(!earned){Ring(vh,center,radius,radius*.86f,new Color32(151,183,200,255),new Color32(45,78,96,255));return;}
                 Color[] colors={new Color32(220,123,56,255),new Color32(211,232,247,255),new Color32(255,199,20,255),new Color32(247,58,48,255)};
                 Color c=colors[Mathf.Clamp(tier,0,3)];

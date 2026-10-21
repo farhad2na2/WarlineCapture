@@ -1,6 +1,6 @@
 {
   "csharpDiffCheckExit": 0,
   "output": "",
-  "unityPrefabSerialization": "Native Unity serializer emits five empty m_Name values with trailing spaces in the modified Campaign prefab; preserved as authored by Unity, no manual YAML edits.",
+  "unityPrefabSerialization": "Unity native serializer whitespace is preserved; prefab assets are built with the required wrapper rather than edited as YAML.",
   "conflictMarkers": false
 }

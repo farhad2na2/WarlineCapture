@@ -335,7 +335,7 @@ namespace Game.Tests.Editor
                     Mode = ResultScreenMode.Skirmish, Victory = true,
                     Title = "VICTORY",
                     ShowMedal = true,
-                    MedalText = "First medal\nS002\nRegular medal",
+                    MedalText = "First medal · S002 · Regular medal",
                     ShowBattlefieldBack = true,
                     BattlefieldBackLabel = "BATTLEFIELD",
                     ShowAdjust = true,
@@ -346,7 +346,9 @@ namespace Game.Tests.Editor
 
                 var controls=card.SharedView.Controls;
                 Assert.IsTrue(controls.Medal.gameObject.activeSelf);
-                Assert.AreEqual("First medal\nS002\nRegular medal", SharedMissionResultView.Source(controls.InfoBody));
+                Assert.AreEqual("Regular medal earned", SharedMissionResultView.Source(controls.InfoBody));
+                Assert.AreEqual("First medal · S002",SharedMissionResultView.Source(controls.InfoCaption));
+                Assert.Less(((RectTransform)controls.Tertiary.transform).anchoredPosition.x,((RectTransform)controls.Secondary.transform).anchoredPosition.x,"Main Menu precedes Replay as in the approved victory layout.");
                 Assert.IsTrue(controls.Primary.gameObject.activeSelf);
                 Assert.IsTrue(controls.Tertiary.gameObject.activeSelf);
                 controls.Primary.onClick.Invoke();

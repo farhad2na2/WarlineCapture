@@ -15,20 +15,20 @@ namespace Game.UI.Runtime
             White = new Color32(244,246,242,255), Line = new Color32(69,103,119,255);
         [Serializable] public sealed class Bindings
         {
-            public TMP_Text ObjectivesHeading, PerformanceHeading, DurationHeading;
+            public TMP_Text ObjectivesHeading, PerformanceHeading, DurationHeading, InfoCaption;
             public TMP_Text Mode, Mission, Context, Duration, Outcome, Reason, SummaryTitle, Summary, InfoHeading, InfoBody, SaveStatus;
             public TMP_Text[] ObjectiveLabels, ObjectiveValues, PerformanceLabels, PerformanceValues;
             public RawImage Artwork, Backdrop;
-            public Image BackdropShade;
-            public RectTransform ArtworkClip, SummaryViewport, InfoViewport, SaveStrip;
+            public Image BackdropShade, OutcomeDivider, SummaryDivider;
+            public RectTransform ArtworkClip, SummaryViewport, InfoViewport, SaveStrip, RewardTemplate;
             public ScrollRect SummaryScroll, InfoScroll;
             public V3GradientGraphic OutcomeSurface;
-            public SharedResultSymbolGraphic OutcomeIcon, ReportIcon;
+            public SharedResultSymbolGraphic OutcomeIcon, ReportIcon, ClockIcon, SaveIcon;
             public SharedResultSymbolGraphic[] ObjectiveIcons, StatusIcons;
             public V3GradientGraphic[] ObjectiveSurfaces, StatusSurfaces;
             public Image[] ObjectiveStripes;
             public GameObject[] ObjectiveRows;
-            public Image[] RewardIcons;
+            public Graphic[] RewardIcons;
             public V3StarGraphic[] FilledStars, OutlineStars;
             public RectTransform[] StarRects;
             public MissionAtlasStatusGraphic Medal;
@@ -79,13 +79,15 @@ namespace Game.UI.Runtime
             Copy(ui.ObjectivesHeading,Words("objectives","OBJECTIVES","اهداف"));
             Copy(ui.PerformanceHeading,Words("performance","PERFORMANCE","عملکرد"));
             Copy(ui.DurationHeading,Words("duration","MISSION DURATION","زمان مأموریت"));
-            Copy(ui.Mode, model.ModeLabel); Copy(ui.Mission, model.MissionTitle); Copy(ui.Context, model.Context);
+            Copy(ui.Mode, model.ModeLabel); Copy(ui.Context, model.Context);
+            Copy(ui.Mission,GameLocalization.IsRightToLeft?model.MissionTitle:model.MissionTitle?.ToUpperInvariant());
             Copy(ui.Duration, model.Elapsed); Copy(ui.Outcome, model.OutcomeTitle); Copy(ui.Reason, model.Reason);
-            Copy(ui.SummaryTitle, model.MissionTitle); Copy(ui.Summary, model.Summary);
+            string storyTitle=System.Text.RegularExpressions.Regex.Replace(model.MissionTitle??"",@"^\s*(?:M\d{2}|S\d{3}|O\d{3})\s*(?:[•·-]\s*)?","");
+            Copy(ui.SummaryTitle,GameLocalization.IsRightToLeft?storyTitle:storyTitle.ToUpperInvariant()); Copy(ui.Summary, model.Summary);
             Copy(ui.InfoHeading, model.InfoHeading); Copy(ui.InfoBody, model.InfoBody); Copy(ui.SaveStatus, model.SaveStatus);
-            ui.SaveStrip.gameObject.SetActive(!string.IsNullOrWhiteSpace(model.SaveStatus));
+            ui.SaveStrip.gameObject.SetActive(true);ui.SaveIcon.gameObject.SetActive(!string.IsNullOrWhiteSpace(model.SaveStatus));
             Color outcome = model.Victory ? Green : Red;
-            ui.Outcome.color = outcome;
+            ui.Outcome.color = outcome;ui.OutcomeDivider.color=outcome;
             ui.OutcomeSurface.Configure(model.Victory ? new Color32(10,58,22,255) : new Color32(63,13,21,255),new Color32(3,16,24,255),outcome,2);
             ui.OutcomeIcon.Configure(model.Victory ? SharedResultSymbolGraphic.Kind.OutcomeSuccess : SharedResultSymbolGraphic.Kind.OutcomeFailure,outcome);
             for(int i=0;i<3;i++)
@@ -95,7 +97,7 @@ namespace Game.UI.Runtime
                 if(shown)
                 {
                     var objective = model.Objectives[i]; Color ink = StatusColor(objective.State);
-                    Copy(ui.ObjectiveLabels[i],objective.Label); Copy(ui.ObjectiveValues[i],objective.Value); ui.ObjectiveValues[i].color=ink;
+                    Copy(ui.ObjectiveLabels[i],objective.Label); Copy(ui.ObjectiveValues[i],GameLocalization.IsRightToLeft?objective.Value:objective.Value?.ToUpperInvariant()); ui.ObjectiveValues[i].color=ink;
                     var kind=model.Mode==ResultScreenMode.Operations?(i==0?SharedResultSymbolGraphic.Kind.Target:i==1?SharedResultSymbolGraphic.Kind.Document:SharedResultSymbolGraphic.Kind.Squad):
                         model.Mode==ResultScreenMode.Skirmish?(i==0?SharedResultSymbolGraphic.Kind.Target:i==1?SharedResultSymbolGraphic.Kind.Shield:SharedResultSymbolGraphic.Kind.Squad):(SharedResultSymbolGraphic.Kind)i;
                     ui.ObjectiveIcons[i].Configure(kind,ink);
@@ -112,16 +114,7 @@ namespace Game.UI.Runtime
             if(ui.Backdrop!=null)ui.Backdrop.texture=SharedResultArtworkCatalog.Load()?.Backdrop;
             ui.Medal.gameObject.SetActive(model.ShowMedal); ui.Medal.Configure(MissionAtlasStatusGraphic.Kind.Medal,model.MedalEarned,model.MedalTier);
             if(ui.ReportIcon!=null){ui.ReportIcon.gameObject.SetActive(model.Mode==ResultScreenMode.Operations);ui.ReportIcon.Configure(SharedResultSymbolGraphic.Kind.Document,model.Victory?Green:Red);}
-            ui.InfoBody.color=(model.ShowMedal&&model.MedalEarned)||model.ShowRewardIcons?Amber:White;
-            if(ui.RewardIcons!=null&&ui.RewardIcons.Length>=2)
-            {
-                string rewards=model.InfoBody??"";
-                bool experience=rewards.IndexOf("XP",StringComparison.OrdinalIgnoreCase)>=0||rewards.Contains("تجربه");
-                bool credits=rewards.IndexOf("CREDIT",StringComparison.OrdinalIgnoreCase)>=0||rewards.Contains("اعتبار");
-                ui.RewardIcons[0].gameObject.SetActive(model.ShowRewardIcons&&experience);
-                ui.RewardIcons[1].gameObject.SetActive(model.ShowRewardIcons&&credits);
-                Place(ui.RewardIcons[1].rectTransform,24,experience?124:84,52,44);
-            }
+            PresentInformation(model);
             ConfigureAction(ui.Primary,ui.PrimaryLabel,ui.PrimaryIcon,model.PrimaryLabel,model.PrimaryTone,model.ActionsEnabled,model.PrimaryTone==ResultActionTone.Navigation?ui.MapIcon:model.Victory?ui.ContinueIcon:ui.ReplayIcon);
             ConfigureAction(ui.Retry,ui.RetryLabel,ui.RetryIcon,model.PrimaryLabel,model.PrimaryTone,model.ActionsEnabled,ui.ReplayIcon);
             ui.Primary.gameObject.SetActive(!model.UseRetry&&!string.IsNullOrWhiteSpace(model.PrimaryLabel)); ui.Retry.gameObject.SetActive(model.UseRetry&&!string.IsNullOrWhiteSpace(model.PrimaryLabel));

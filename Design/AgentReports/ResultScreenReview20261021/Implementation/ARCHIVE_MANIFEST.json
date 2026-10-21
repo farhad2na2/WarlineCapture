@@ -1,8 +1,8 @@
 {
   "archive": "validation-evidence.zip",
-  "sha256": "e71f2ce562100ef9c0dd353cda676c24d95b80419a70137bd1e3fe313b4bcfb7",
-  "files": 820,
-  "bytes": 377741553,
+  "sha256": "db6b90403f633ae8139c4d9cfaa50fe6c1ea86ab78bcd8bd561b08bdf06a6a53",
+  "files": 1170,
+  "bytes": 474670667,
   "items": [
     {
       "path": "Logs/shared-result-build-20261021-01.log",
@@ -103,6 +103,51 @@
       "path": "Logs/shared-result-matrix-20261021-05.log",
       "bytes": 317872,
       "sha256": "5a3afe8fed2317d61317f9f6023b2de33e8bb14106681f38f8dda0b1b1853ba2"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-01-stop.json",
+      "bytes": 3933,
+      "sha256": "f3585e6e2ef738a368d262a731ea05d283fa3c9ab100fcf49e14a062fb14d2c9"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-20261021-01.log",
+      "bytes": 307167,
+      "sha256": "ef7708314c277743b89bcd6b1d1858dee770953a0b644a21dda999a5ad29915d"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-20261021-02.log",
+      "bytes": 324871,
+      "sha256": "afe9a3cdf208e4902f70117e86a4d34de1badf51b19bbe7ebb8446388ec3beab"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-20261021-03.log",
+      "bytes": 328345,
+      "sha256": "a474aed5cb2b95f5edd21e95c55e4c036b13d7f442927421940b10e64efb132e"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-campaign-20261021-04.log",
+      "bytes": 313428,
+      "sha256": "f8bee3a94e50745ec1b00e2c4ad46632ed15b32caf60e8016e9cb17dae619354"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-campaign-20261021-05.log",
+      "bytes": 293800,
+      "sha256": "e41bec8099aebc9ada2163eab79bdf46a6f6daa1a30efe3f864590bd598333da"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-campaign-20261021-06.log",
+      "bytes": 306848,
+      "sha256": "731608dcd368bb8fe23b3e722da47fa49b6059a47094e76efd02a4a2a2e868fc"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-campaign-20261021-07.log",
+      "bytes": 13582551,
+      "sha256": "b0263ff39d5c778494fc481e0ad8ee28623d113b125b01df5741ffb14e2219c3"
+    },
+    {
+      "path": "Logs/shared-result-mockup-fidelity-skirmish-20261021-08.log",
+      "bytes": 245391,
+      "sha256": "24e1c67b0410498bd57f90e756f440b27878784b290159b6cde5882b11d08835"
     },
     {
       "path": "Logs/shared-result-operations-aria-20261021-01.log",
@@ -3575,6 +3620,1631 @@
       "sha256": "6694cb7fb182e3bf8ed21a3aeace03756c38d243c4594869782c84a3475facaf"
     },
     {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-defeat-en-1280.png",
+      "bytes": 454198,
+      "sha256": "b32d560109aba97a7ac4ce5e4cd62e9c78d1164d1a2d18c1d0fdf95c117852c4"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-defeat-en-1920.png",
+      "bytes": 848070,
+      "sha256": "0e71ea01cd856a2284742991d5c412d64778429e1c516637de7de334e9acecce"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-en-1280.png",
+      "bytes": 480187,
+      "sha256": "904f21de2173f7471d5cadd948cbad665404cde3f0b8a51d6f9ce2d46a0caea1"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-en-1920.png",
+      "bytes": 901334,
+      "sha256": "bf67bfc9503171f02336c330af5393e21d85f0133c5f24cc43974b72a1e65370"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 234,
+      "sha256": "057cb1a7f591383e44cb51bc0d255d17f32923b6b7d6924b119bb34687f29196"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/campaign-victory-fa-IR-1920.png",
+      "bytes": 906621,
+      "sha256": "22fa30bdb804a06044e6408988b1cbd05b39b03a29be77b59d96f7d1a8d4136c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-defeat-en-1280.png",
+      "bytes": 439141,
+      "sha256": "448be53f4a99e36c5c58644f55cb40efd1f6a3f493cb0850ea95b46f2e119154"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-defeat-en-1920.png",
+      "bytes": 799025,
+      "sha256": "14fdcf63e4141ce6e0c0717df1629b147d9af813d2cc288d2c6083f96b6d7b6d"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-victory-en-1280.png",
+      "bytes": 462761,
+      "sha256": "9f9284313a81d5aa23919f778393c81fee98591911b35ec1346d9e4d3ef645eb"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/operations-victory-en-1920.png",
+      "bytes": 846259,
+      "sha256": "bfdbb4e0f02df6ecded06cad0a2fb5be98959d2183419729a7c90998a0ee75d4"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-defeat-en-1280.png",
+      "bytes": 448022,
+      "sha256": "cbee3ff91aa472ed5eacd7bbabe128602272703273b7f0b507d1246ef53a67d9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-defeat-en-1920.png",
+      "bytes": 828204,
+      "sha256": "3777831dbef9f58eca6cc258ca61eda767c23fd4a5eac0949be6568ab1a5694c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-victory-en-1280.png",
+      "bytes": 475098,
+      "sha256": "12b5979903fe3b10598bc9db147523082255c9ccc8fc7ce6c5b74122af42d7e3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203247/skirmish-victory-en-1920.png",
+      "bytes": 883944,
+      "sha256": "a68aeffc2e80510b3c0c880b449f5c0ee5557e53244562ba4a096a75e61369e5"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1280-alignment.txt",
+      "bytes": 51,
+      "sha256": "8953c37a02b1c881ba3adc7f71f1d3c98bb6587e0ad3e14e6b7bafe6075b440e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1280.png",
+      "bytes": 446593,
+      "sha256": "5d47a0cdc8d970dab34077277e8b9ffee3fd26a197b72219e90d0d0b3c43050e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1920-alignment.txt",
+      "bytes": 51,
+      "sha256": "8953c37a02b1c881ba3adc7f71f1d3c98bb6587e0ad3e14e6b7bafe6075b440e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-defeat-en-1920.png",
+      "bytes": 832132,
+      "sha256": "574c917741c06fa6a71d5fb8868368ea78e71f1f83178b439ee3787c59f9c740"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1280-alignment.txt",
+      "bytes": 52,
+      "sha256": "80062ea4c1261e32dbc244a9cf8df963c56640481a5de9f413aac05a2cca0b57"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1280.png",
+      "bytes": 471228,
+      "sha256": "53c478f7555745f7c30899f07453e54fa7ed5a676da02e66b6b748883c965e17"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1920-alignment.txt",
+      "bytes": 52,
+      "sha256": "80062ea4c1261e32dbc244a9cf8df963c56640481a5de9f413aac05a2cca0b57"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-en-1920.png",
+      "bytes": 882315,
+      "sha256": "39375ead5f863705a0b1b47db83055b4f54a2180d4aed8ef053bf08e37b661ac"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-fa-IR-1920-alignment.txt",
+      "bytes": 52,
+      "sha256": "f77b49279c4de4221f97eba1a27b641fdf80f6a49369a71f9ebbe6126246cbfa"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 89,
+      "sha256": "3a6f5104bb5e208bd4cc9ee1e53614b5aab140e3f0713206af21004dc0f2c1d1"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/campaign-victory-fa-IR-1920.png",
+      "bytes": 890139,
+      "sha256": "04872b8a4036764e3e032f3db5428ae136559b330c8030c02758681623db64f6"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1280-alignment.txt",
+      "bytes": 53,
+      "sha256": "f603c6509e229f6c957619c79d68bd2833aaf67482effeb2dd04a259571d5e00"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1280.png",
+      "bytes": 431667,
+      "sha256": "1f1209a284994d16148abec949fa5ab4fef36ecea3271c306e26a8c6f1865afb"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1920-alignment.txt",
+      "bytes": 53,
+      "sha256": "f603c6509e229f6c957619c79d68bd2833aaf67482effeb2dd04a259571d5e00"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-defeat-en-1920.png",
+      "bytes": 784875,
+      "sha256": "ce6fccf0fbb43a281827dd2f40be6d02161bfb10d1e63a922166ab81a784663b"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1280-alignment.txt",
+      "bytes": 53,
+      "sha256": "f603c6509e229f6c957619c79d68bd2833aaf67482effeb2dd04a259571d5e00"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1280.png",
+      "bytes": 454294,
+      "sha256": "6539a357543ba80593f7258b4b475f6977c0b1e25b31ff2ce839828da7d6c925"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1920-alignment.txt",
+      "bytes": 53,
+      "sha256": "f603c6509e229f6c957619c79d68bd2833aaf67482effeb2dd04a259571d5e00"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/operations-victory-en-1920.png",
+      "bytes": 828889,
+      "sha256": "2d6daac5b474b01491c7d8ed3e63035ed21b0d079bd5bb444f53ee7b4e2a9e5d"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1280-alignment.txt",
+      "bytes": 47,
+      "sha256": "f331f0c622e2cc3566a27d0845b270e3c398ebd1ee89ad0a8ae72b3c0bce7c3f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1280.png",
+      "bytes": 437640,
+      "sha256": "f892381c03b90862abef2cf2aa2f958d413d584a10f61aa28088e4d138da8eea"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1920-alignment.txt",
+      "bytes": 47,
+      "sha256": "f331f0c622e2cc3566a27d0845b270e3c398ebd1ee89ad0a8ae72b3c0bce7c3f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-defeat-en-1920.png",
+      "bytes": 807912,
+      "sha256": "f8a99c7bb6bf349f8a58257ad25502720abfac1cf38b0099630081d79cf82249"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1280-alignment.txt",
+      "bytes": 53,
+      "sha256": "7a88a7750d7a95efada443f6826c5474c79109f2f20efb3ec636cd9a3bb45dd5"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1280.png",
+      "bytes": 464909,
+      "sha256": "daa6624bbaadf234551affa95d3d8c88999fe37f49b1e53704ab391b6f303322"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1920-alignment.txt",
+      "bytes": 53,
+      "sha256": "7a88a7750d7a95efada443f6826c5474c79109f2f20efb3ec636cd9a3bb45dd5"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-203649/skirmish-victory-en-1920.png",
+      "bytes": 860436,
+      "sha256": "0915440e61d3f88bae8cd7b91bfef7b55c1608ee42d8392a7f95cc5cf8cfd7a9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1280-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1280.png",
+      "bytes": 445818,
+      "sha256": "18541c1b02d08ba433d4b91791079a820353913f5ac6554b13381ed397180bfe"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-defeat-en-1920.png",
+      "bytes": 831058,
+      "sha256": "2d50d5c2bc3e7ec89fd3e02a333c5ba756124e4e983d0c59d125ef1b8847756f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1280-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1280.png",
+      "bytes": 471161,
+      "sha256": "0144b56d139fe882387c3f1e3805902b6d71c9c0d07f842202f0cd719115a744"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-en-1920.png",
+      "bytes": 882337,
+      "sha256": "0a6b196f2a819662d0ec83cc943ea17e5153a90c912b6814f5e47ed5a2126568"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-fa-IR-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/campaign-victory-fa-IR-1920.png",
+      "bytes": 888097,
+      "sha256": "1d9d15c4b95e92aaaadb7f03786315dadb9b37f8e8f5010b2e8dead34f1cdd14"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1280-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1280.png",
+      "bytes": 431175,
+      "sha256": "019c10647b77c39b4d08a44671cfc0c13f6bcde8b9a116f54629747a84767ce9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-defeat-en-1920.png",
+      "bytes": 783369,
+      "sha256": "195dbe9105ac2ec6948ae93e1c01bb17f6474ba41d94b796a22acdb3e1943e98"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1280-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1280.png",
+      "bytes": 453928,
+      "sha256": "25457f9a750a3a1c5c51c940ec999b7646ab9e416e8e80887d51c7d58d987489"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/operations-victory-en-1920.png",
+      "bytes": 826825,
+      "sha256": "491c401142484740e22312238113a0fe961edb404b6ddaf3535675516cf7ab0b"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1280-alignment.txt",
+      "bytes": 39,
+      "sha256": "02698b7fcf590e551d915026a4837e2335d359c6b9a1492cd169ac21a91acc16"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1280.png",
+      "bytes": 436504,
+      "sha256": "a1cc680e888f71e03500709b196bb8937bbaa7ed8fd1c46392eb215486c19418"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1920-alignment.txt",
+      "bytes": 39,
+      "sha256": "02698b7fcf590e551d915026a4837e2335d359c6b9a1492cd169ac21a91acc16"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-defeat-en-1920.png",
+      "bytes": 806099,
+      "sha256": "2a38f7f04d8f29019d01ccabcd590f4dd229f6c3628d1b3998f229bfd1da4fd9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1280-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1280.png",
+      "bytes": 463820,
+      "sha256": "c6fd4a4deb62261d47d8c810513c02800439f3d5cf7d5ed5b45924230518196a"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1920-alignment.txt",
+      "bytes": 38,
+      "sha256": "47b3fc84017d52bfbc9ac08a2a4b38ed66d11e70ed0b0fddaf50197fdea5edb3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204022/skirmish-victory-en-1920.png",
+      "bytes": 858945,
+      "sha256": "5f2ebeaac74e9339111014c298e647659273caea61922ffb127bb02354a1f785"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1280.png",
+      "bytes": 445818,
+      "sha256": "18541c1b02d08ba433d4b91791079a820353913f5ac6554b13381ed397180bfe"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-defeat-en-1920.png",
+      "bytes": 831058,
+      "sha256": "2d50d5c2bc3e7ec89fd3e02a333c5ba756124e4e983d0c59d125ef1b8847756f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1280.png",
+      "bytes": 471161,
+      "sha256": "0144b56d139fe882387c3f1e3805902b6d71c9c0d07f842202f0cd719115a744"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-en-1920.png",
+      "bytes": 882337,
+      "sha256": "0a6b196f2a819662d0ec83cc943ea17e5153a90c912b6814f5e47ed5a2126568"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-fa-IR-1920-alignment.txt",
+      "bytes": 81,
+      "sha256": "f19d6d3be297fd7bc326e8bb0f93769d625f8b5256da5989e40dcb6b0d7dae38"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/campaign-victory-fa-IR-1920.png",
+      "bytes": 888103,
+      "sha256": "ab9ee52ea2fe6ee8ed5557ea8ebdbcd6e508b8c62ea402ba13ee8ef184000949"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1280.png",
+      "bytes": 431175,
+      "sha256": "019c10647b77c39b4d08a44671cfc0c13f6bcde8b9a116f54629747a84767ce9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-defeat-en-1920.png",
+      "bytes": 783369,
+      "sha256": "195dbe9105ac2ec6948ae93e1c01bb17f6474ba41d94b796a22acdb3e1943e98"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1280.png",
+      "bytes": 453928,
+      "sha256": "25457f9a750a3a1c5c51c940ec999b7646ab9e416e8e80887d51c7d58d987489"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/operations-victory-en-1920.png",
+      "bytes": 826825,
+      "sha256": "491c401142484740e22312238113a0fe961edb404b6ddaf3535675516cf7ab0b"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1280-alignment.txt",
+      "bytes": 78,
+      "sha256": "3e9b144ce3e3055ed83a0f5e6e966b49fedc05eda8b30239c5819fdd710fd2c6"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1280.png",
+      "bytes": 436504,
+      "sha256": "a1cc680e888f71e03500709b196bb8937bbaa7ed8fd1c46392eb215486c19418"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1920-alignment.txt",
+      "bytes": 78,
+      "sha256": "3e9b144ce3e3055ed83a0f5e6e966b49fedc05eda8b30239c5819fdd710fd2c6"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-defeat-en-1920.png",
+      "bytes": 806099,
+      "sha256": "2a38f7f04d8f29019d01ccabcd590f4dd229f6c3628d1b3998f229bfd1da4fd9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1280.png",
+      "bytes": 463820,
+      "sha256": "c6fd4a4deb62261d47d8c810513c02800439f3d5cf7d5ed5b45924230518196a"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "ed2c523d6155fd6c0226471b5bff082bb86f43372610f15aa0d58f24f2e2782c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204303/skirmish-victory-en-1920.png",
+      "bytes": 858945,
+      "sha256": "5f2ebeaac74e9339111014c298e647659273caea61922ffb127bb02354a1f785"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-catalog-layout.txt",
+      "bytes": 327,
+      "sha256": "7d6539f30f6298d401a09976bc03be314cf591145022aea81491dd8ae748e3f0"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1280.png",
+      "bytes": 446004,
+      "sha256": "b11d86dc9ef232c81f29f1aad0745a24c44c3b794ce75a3fed21fb094ab61584"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-en-1920.png",
+      "bytes": 831236,
+      "sha256": "792f2861b707ac4c945e45cbbc14b07e6bfee8a2fa9f8239883965174c208b60"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1440.png",
+      "bytes": 832008,
+      "sha256": "3654fa68f6c6f02b2a84276049427aaea676c0de4f487fe70d44d900d6ed569f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-1920.png",
+      "bytes": 855589,
+      "sha256": "2e1e73891c77a66b63c525fa236a785725b8b426ee05391c93cc1c7d85f9a4a6"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-defeat-fa-IR-2400.png",
+      "bytes": 1277378,
+      "sha256": "f2451716be2aa39337bb8ced771eba7f8c5d313b097299f08b5c6965e2d2ced9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1280.png",
+      "bytes": 471262,
+      "sha256": "fa803a9fd357e93319d3df9c5d2cdcde1fd78d7835e9826dc5b8f674e40e5e3b"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-en-1920.png",
+      "bytes": 882618,
+      "sha256": "8f176c75fd7db858fd803c234af38eb8e8a3588cc2f9caa0c3d999a0d665bd2e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1440.png",
+      "bytes": 848705,
+      "sha256": "a85cb47c7dff0e247bdc11d42f878ebe6d8f58f9cf5c7c5f66f286b1c0d9fd0f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-1920.png",
+      "bytes": 887662,
+      "sha256": "71575ed3df14566a24bd4aeb419dedc3b9cb03b36f72ce15c31d6f1a777638ec"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/campaign-victory-fa-IR-2400.png",
+      "bytes": 1311427,
+      "sha256": "c77b162914b285e7f161a21fd7690040876c6ee78dbe37eb33ec2031e6238579"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1280.png",
+      "bytes": 431253,
+      "sha256": "2e2fbf68aaec22bd488ee130fc818009ac13e8e4d40bebbffd4f0133dbae6d8f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-en-1920.png",
+      "bytes": 783544,
+      "sha256": "6533ac5b1377b4c3b7fc105286f73863bc1f8616a018a1c8d1d2423d62b4c3a0"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1440.png",
+      "bytes": 804196,
+      "sha256": "1ec442770bb8608496105f38c5d573554ab84931751c5c3d2c12a05dfce6530e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-1920.png",
+      "bytes": 797050,
+      "sha256": "e83bc50b6599172e02fc0e4b2d5e64042746654d88b20b02a50cdf95e3df0977"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-defeat-fa-IR-2400.png",
+      "bytes": 1214464,
+      "sha256": "bfe38799e96dc0c93d7f27f647b129d5829f0978ecf31ae3e30df46d0e065ba4"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1280.png",
+      "bytes": 454112,
+      "sha256": "3fd74aba99477711fa315ebe4937e064cc16a0ec1ee6653622bb98d32ccc1a93"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-en-1920.png",
+      "bytes": 826967,
+      "sha256": "a33c1ef53dd6707d50754da02c5e8477f426f039fb00179ff60a07cbf443650e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1440.png",
+      "bytes": 827378,
+      "sha256": "8612dd710540a262b039fda38a95960cf7b28f81c4a96ef54e8e294949b9e6fa"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-1920.png",
+      "bytes": 837444,
+      "sha256": "94b24ee335668e9c6c3edf3768265fe5c674414224a28b7c50cbdaae14d6f17c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/operations-victory-fa-IR-2400.png",
+      "bytes": 1256834,
+      "sha256": "565f459b4822cd3cf87a247e0c1f8ca21f5f82fd3ec8e39a43ca29828480e0fe"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1280-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1280.png",
+      "bytes": 436500,
+      "sha256": "550861ff52082d5a391b3aae6e4bf28cca82e10d322ff6a45d000b5160916cc9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1920-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-en-1920.png",
+      "bytes": 806080,
+      "sha256": "e8194e842b8accd5439c1c8dcc1f50ee6549278b0f12b7daeb2a837707169ea3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1440.png",
+      "bytes": 819658,
+      "sha256": "c4676b82bce16909ade9c8c0f9530adb6640b4e6d8590be6ca987fc9c46a1863"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-1920.png",
+      "bytes": 832387,
+      "sha256": "3f89df07727754e22e07a3d1891d1843976f2b1cc60682fcb643f497108b73e5"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-defeat-fa-IR-2400.png",
+      "bytes": 1251511,
+      "sha256": "60ab314e1ab4d123b47e8228dbc10063ed1464e49efd7222250dadc6e7978430"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1280.png",
+      "bytes": 463794,
+      "sha256": "62575ec16536ab596d60b34baa4f0ae3162f6c1c13de7083eef42ca23db55e2a"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-en-1920.png",
+      "bytes": 858928,
+      "sha256": "bcb432239b026bad89db51ade534d77677136444730d98edc096654ccd6150da"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1440.png",
+      "bytes": 848761,
+      "sha256": "cf3211f65494a149ea4bf55c654c6fe4142c8b7db0e7b1325f41b493187c5177"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-1920.png",
+      "bytes": 884213,
+      "sha256": "69e4ce2ed9b3eb126f534f41e776a18e3802867934639cede960c8c3e8621324"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204615/skirmish-victory-fa-IR-2400.png",
+      "bytes": 1306452,
+      "sha256": "cac27c97c292e41da3cd96b64e9d01d65d77f8c366b8cfd2ae2678d9b1e413c9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-catalog-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1280.png",
+      "bytes": 446004,
+      "sha256": "b11d86dc9ef232c81f29f1aad0745a24c44c3b794ce75a3fed21fb094ab61584"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-en-1920.png",
+      "bytes": 831236,
+      "sha256": "792f2861b707ac4c945e45cbbc14b07e6bfee8a2fa9f8239883965174c208b60"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1440.png",
+      "bytes": 832008,
+      "sha256": "3654fa68f6c6f02b2a84276049427aaea676c0de4f487fe70d44d900d6ed569f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-1920.png",
+      "bytes": 855589,
+      "sha256": "2e1e73891c77a66b63c525fa236a785725b8b426ee05391c93cc1c7d85f9a4a6"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-defeat-fa-IR-2400.png",
+      "bytes": 1277378,
+      "sha256": "f2451716be2aa39337bb8ced771eba7f8c5d313b097299f08b5c6965e2d2ced9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1280.png",
+      "bytes": 471262,
+      "sha256": "fa803a9fd357e93319d3df9c5d2cdcde1fd78d7835e9826dc5b8f674e40e5e3b"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-en-1920.png",
+      "bytes": 882618,
+      "sha256": "8f176c75fd7db858fd803c234af38eb8e8a3588cc2f9caa0c3d999a0d665bd2e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1440.png",
+      "bytes": 848705,
+      "sha256": "a85cb47c7dff0e247bdc11d42f878ebe6d8f58f9cf5c7c5f66f286b1c0d9fd0f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-1920.png",
+      "bytes": 887662,
+      "sha256": "71575ed3df14566a24bd4aeb419dedc3b9cb03b36f72ce15c31d6f1a777638ec"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/campaign-victory-fa-IR-2400.png",
+      "bytes": 1311427,
+      "sha256": "c77b162914b285e7f161a21fd7690040876c6ee78dbe37eb33ec2031e6238579"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1280.png",
+      "bytes": 431253,
+      "sha256": "2e2fbf68aaec22bd488ee130fc818009ac13e8e4d40bebbffd4f0133dbae6d8f"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-en-1920.png",
+      "bytes": 783544,
+      "sha256": "6533ac5b1377b4c3b7fc105286f73863bc1f8616a018a1c8d1d2423d62b4c3a0"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1440.png",
+      "bytes": 804196,
+      "sha256": "1ec442770bb8608496105f38c5d573554ab84931751c5c3d2c12a05dfce6530e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-1920.png",
+      "bytes": 797050,
+      "sha256": "e83bc50b6599172e02fc0e4b2d5e64042746654d88b20b02a50cdf95e3df0977"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-defeat-fa-IR-2400.png",
+      "bytes": 1214464,
+      "sha256": "bfe38799e96dc0c93d7f27f647b129d5829f0978ecf31ae3e30df46d0e065ba4"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1280.png",
+      "bytes": 454112,
+      "sha256": "3fd74aba99477711fa315ebe4937e064cc16a0ec1ee6653622bb98d32ccc1a93"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-en-1920.png",
+      "bytes": 826967,
+      "sha256": "a33c1ef53dd6707d50754da02c5e8477f426f039fb00179ff60a07cbf443650e"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1440.png",
+      "bytes": 827378,
+      "sha256": "8612dd710540a262b039fda38a95960cf7b28f81c4a96ef54e8e294949b9e6fa"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-1920.png",
+      "bytes": 837444,
+      "sha256": "94b24ee335668e9c6c3edf3768265fe5c674414224a28b7c50cbdaae14d6f17c"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/operations-victory-fa-IR-2400.png",
+      "bytes": 1256834,
+      "sha256": "565f459b4822cd3cf87a247e0c1f8ca21f5f82fd3ec8e39a43ca29828480e0fe"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1280-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1280.png",
+      "bytes": 436500,
+      "sha256": "550861ff52082d5a391b3aae6e4bf28cca82e10d322ff6a45d000b5160916cc9"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1920-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-en-1920.png",
+      "bytes": 806080,
+      "sha256": "e8194e842b8accd5439c1c8dcc1f50ee6549278b0f12b7daeb2a837707169ea3"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1440-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1440.png",
+      "bytes": 819658,
+      "sha256": "c4676b82bce16909ade9c8c0f9530adb6640b4e6d8590be6ca987fc9c46a1863"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1920-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-1920.png",
+      "bytes": 832387,
+      "sha256": "3f89df07727754e22e07a3d1891d1843976f2b1cc60682fcb643f497108b73e5"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-2400-alignment.txt",
+      "bytes": 78,
+      "sha256": "8377dec9c9d3b8ba4e51f7c78289940ba24832a290557ac8d2ad759c72316d67"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-defeat-fa-IR-2400.png",
+      "bytes": 1251511,
+      "sha256": "60ab314e1ab4d123b47e8228dbc10063ed1464e49efd7222250dadc6e7978430"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1280-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1280-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1280.png",
+      "bytes": 463794,
+      "sha256": "62575ec16536ab596d60b34baa4f0ae3162f6c1c13de7083eef42ca23db55e2a"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-en-1920.png",
+      "bytes": 858928,
+      "sha256": "bcb432239b026bad89db51ade534d77677136444730d98edc096654ccd6150da"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1440-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1440-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1440.png",
+      "bytes": 848761,
+      "sha256": "cf3211f65494a149ea4bf55c654c6fe4142c8b7db0e7b1325f41b493187c5177"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1920-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1920-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-1920.png",
+      "bytes": 884213,
+      "sha256": "69e4ce2ed9b3eb126f534f41e776a18e3802867934639cede960c8c3e8621324"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-2400-alignment.txt",
+      "bytes": 77,
+      "sha256": "cdbe6825279f2c37de6f1bf45657270cc6c136f5f0e206a18186a8f27189eb74"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-2400-layout.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/NativeMatrix-20261021-204903/skirmish-victory-fa-IR-2400.png",
+      "bytes": 1306452,
+      "sha256": "cac27c97c292e41da3cd96b64e9d01d65d77f8c366b8cfd2ae2678d9b1e413c9"
+    },
+    {
       "path": "Iterations/RegressionGeneratedBackup/Assets/AddressableAssetsData/AddressableAssetSettings.asset",
       "bytes": 17081,
       "sha256": "09a30d7b682e14bff67c7fbb87881feadc7d145b14a777272a0bd4ae59b75506"
@@ -3701,6 +5371,26 @@
     },
     {
       "path": "Iterations/SkirmishGeneratedBackup05/generated.patch",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "Iterations/SkirmishGeneratedBackupFidelity08/Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "bytes": 1560659,
+      "sha256": "62f529979938c8dc6679d34b302353901060db20c8b2f199d48e5f09ecb8e7ba"
+    },
+    {
+      "path": "Iterations/SkirmishGeneratedBackupFidelity08/Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+      "bytes": 1760138,
+      "sha256": "17ba6a1a263d5b905cdc19584d278d45a103c37ab2baa4990f5308f0c55bd280"
+    },
+    {
+      "path": "Iterations/SkirmishGeneratedBackupFidelity08/SHA256.json",
+      "bytes": 279,
+      "sha256": "24d14525758a59d8d0468b42aa31fd81a48f9813091fa3d481c80197edec2cb6"
+    },
+    {
+      "path": "Iterations/SkirmishGeneratedBackupFidelity08/generated.patch",
       "bytes": 0,
       "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     },
@@ -3880,6 +5570,56 @@
       "sha256": "57d5b0e3e97d55c5970b2315678db841a062a1b9d95d5a34d89253dfe22ee4f6"
     },
     {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl",
+      "bytes": 28628,
+      "sha256": "f3da1b058e95bd728e2e575e43e8d36305f3c27a9ca294ecade99250abe6ece7"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.actors.jsonl",
+      "bytes": 4174033,
+      "sha256": "b5f36cc4fca2fb615653bc6199731b83648053b6b36f4d7fa084271c7db6cb08"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.commands.jsonl",
+      "bytes": 136,
+      "sha256": "d4b0525bc3c09cd4926f066fdf944a751f7ace64291e5b5eba0c694881b00914"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.input.jsonl",
+      "bytes": 918631,
+      "sha256": "561483b6f85ba866d270e493f658366223fd894dd596ca34f07619586df89a81"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.menu-selection-diagnostic.png",
+      "bytes": 3396025,
+      "sha256": "9377a3f3deec4fbf4416515d550dc936ae5764f1a52a825036895a5d898bb145"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.opening.png",
+      "bytes": 2742850,
+      "sha256": "275f086fa081af743dc30927dd66bbff46ed1c77f12c8afdca5e15836ba51bfc"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.setup.png",
+      "bytes": 1391903,
+      "sha256": "9c174c5975633f4f247ca6371cca40971447c52e4b0f7c30fdf767f9aaa08b6e"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.terminal-destination.png",
+      "bytes": 3396170,
+      "sha256": "32c4b9173c9bb3380dfe1f0aa18386693680b0a67beefb52ba18045afc4eaba5"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.terminal-result.png",
+      "bytes": 1228687,
+      "sha256": "e85fbb0628a6e1b41dc3af6602ecdb75b0af2b279d2c277b37540286de7baf4a"
+    },
+    {
+      "path": "Skirmish/s002-aria-live-104731-en-b30b50d5ab7c443992ae9e13d0e5585b.jsonl.touch.jsonl",
+      "bytes": 87023,
+      "sha256": "7f27c5b38849d434f7d1b45ac477b9efb2606b42878e74e21cacd36ace651e3d"
+    },
+    {
       "path": "Skirmish/s002-aria-live-104731-en-d5f0b702b97a40afaa2250443b453068.jsonl",
       "bytes": 11169,
       "sha256": "5973e7d73873d916b6d515b2a4b585dc2644182db6dc6e06e710373cabfed3ef"
@@ -3926,148 +5666,148 @@
     },
     {
       "path": "Skirmish/s002-aria-watch-controls.png",
-      "bytes": 2760978,
-      "sha256": "ea9dcb478ccae8a934db7044b7127acd456d591b7976e4e2206376e71a3a14c0"
+      "bytes": 2762870,
+      "sha256": "c96d49f8f50f14b786832be2bb556222858d58868565f4c9df98bf53384436f1"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-1-SelectCommand.png",
-      "bytes": 2505506,
-      "sha256": "b7aa44bf8b41449edf4aad52df0584187f5f708bab7d0bbe12a7f28523422f7a"
+      "bytes": 2509129,
+      "sha256": "b92c16b33381dc690c243195d64f763d2057157a86ffa23618f0e7f341518978"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-1-settled.png",
-      "bytes": 2499094,
-      "sha256": "76fc3d728a76bbf7feac374ff0f16a60422ed6e98079698982860ba6fc1086ad"
+      "bytes": 2464864,
+      "sha256": "92efdd772811aa27798999c07c399a35b7b052b1168aafd347df073d76907eda"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-1.png",
-      "bytes": 2507965,
-      "sha256": "e82f0ffbbbf46fa8b77a9873f7d3cd959a3bdfe01df233f24dff8e62c86a9940"
+      "bytes": 2516280,
+      "sha256": "ded9cf42de6c9e89349cf0201e99b1e0bb2e98df76b6a1a7feea7a471360553d"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-2-MoveCommand.png",
-      "bytes": 2459859,
-      "sha256": "7023a317652e79d28961694daa0c2534a1d12ab6877b0961324a79b7bef625b5"
+      "bytes": 2460336,
+      "sha256": "67ac2f0c238c8f62de33560524a7dbb7b9f9fc06f5953b04228cac0f20932c57"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-2-ShowMeButton.png",
-      "bytes": 2404399,
-      "sha256": "bfd69d02189c48ff0e3eaee218c20e54ba714b02a8dfb79f15056ea917728ded"
+      "bytes": 2405201,
+      "sha256": "d117f1caefe72b6fd87ba49cf3fa9f285566c18a7768d344329ad6119e70bc28"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-2-world-Move.png",
-      "bytes": 2423381,
-      "sha256": "948a38cde3d0f03a47cb4a920cc8a4582a00147361d2786adcdcd4e8ff2e779f"
+      "bytes": 2423923,
+      "sha256": "f80d06fccfb7b65c1e334ea5160c4390095448e7b4e07545e3321cd481f18e13"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-2-world-touch.png",
-      "bytes": 2399831,
-      "sha256": "7960338111f4bdd6f75413001ab12014e1356e2277dc1289bbb660f722842ba0"
+      "bytes": 2400235,
+      "sha256": "36e30bbbe81dc25b2fcb430e4f46693aa7b27377163a71dc5476b0d8d15be659"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-2.png",
-      "bytes": 2460207,
-      "sha256": "11299c91e7ab892221cedd64f52ead75c85df92d3f45c6a8b995cee6a1e78991"
+      "bytes": 2460701,
+      "sha256": "1656a785069a36c65056d20f3c01b0dae7ac2e02aa6e8d4f4efdb0a4e23d8cbd"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-3-AttackCommand.png",
-      "bytes": 2434779,
-      "sha256": "fc381f3b0b49e57a78a5610e6e33ddfdf8715c800301e6fdb419807000b7367d"
+      "bytes": 2432657,
+      "sha256": "5e1a59a3ca00b5f02cfd43e224ff70e71a546e7bad2688becfb83eedee058681"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-3-world-Attack.png",
-      "bytes": 2408889,
-      "sha256": "54f62b85775d7c90da134d1ce2bcb2bbc54af779ff37b6af0a0db1cb7988634d"
+      "bytes": 2409774,
+      "sha256": "67e70ed011398668b62ae311072b26d40c8a0d8d6498d538357a2bd639ec9472"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-3-world-touch.png",
-      "bytes": 2412190,
-      "sha256": "0153bc31c729aae195c2193f353d699420991d520ee99f35d53184930e50ca88"
+      "bytes": 2410025,
+      "sha256": "2a10c12d7a6c759d95a975281ba08b403e70e4e843521569b235504b8b3b5c9d"
     },
     {
       "path": "CampaignFinal/1-journey-lesson-3.png",
-      "bytes": 2439561,
-      "sha256": "838128f85027601edf1e4d629f122d00f0841d56a39c70170dea0f9f2e7895de"
+      "bytes": 2447759,
+      "sha256": "f15b6b17aaa8ad35c4ae22de4bcfe184c35a0afaae1b3cee6589384b6c6b5562"
     },
     {
       "path": "CampaignFinal/1-journey-victory.png",
-      "bytes": 773465,
-      "sha256": "7976e5e71db6c83bbd5bc4ac871c976b3af536c02fcb61078db76f5b1e7cd43e"
+      "bytes": 813453,
+      "sha256": "884e2e9b94728a3d0e87fff3f099b29ca8d22f384ef2f11ddaf4586089d88561"
     },
     {
       "path": "CampaignFinal/1-opening.png",
-      "bytes": 2479607,
-      "sha256": "bc5a2b1a9c488306f3da0354bfc65899c3178b56d9d969f2cf4df6eaa0cb41eb"
+      "bytes": 2484020,
+      "sha256": "5041a892981d875e051bc10533b1bb8b7cb8edabe2f28f94f22a7b1ba95c3c90"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-1-SelectCommand.png",
-      "bytes": 2498769,
-      "sha256": "8dd198937590c3f1339b3713554706c1acd7849f16c7ceaa185c6f89677ce19e"
+      "bytes": 2497864,
+      "sha256": "ad36a9ea3ec2f611aed7eb3c9cdd41a1a20d7bf337ac6f194ef0d22466e325f7"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-1-settled.png",
-      "bytes": 2469012,
-      "sha256": "18a2829ef8a5141f90b34998310258ce886c665009076fa0d895484efdecb9ad"
+      "bytes": 2469570,
+      "sha256": "e3331fefeb818e50095e1c0c36e2a556a914b881e340a378674652baa801f18a"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-1.png",
-      "bytes": 2494781,
-      "sha256": "a755185fe13a9660bad9e8a14902a831140a400f6ac88da26547436642ac1a49"
+      "bytes": 2495995,
+      "sha256": "e6f7dafa5556513b407c0500bd2fa3cf68464bb75736a58858551a74e6564549"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-2-MoveCommand.png",
-      "bytes": 2448625,
-      "sha256": "d3c3f01b2e76318bdb6334d4291d32d8b66458adb59f5116cdedf3b030229939"
+      "bytes": 2447260,
+      "sha256": "3985c5f09d9ea2446e7389c04efebfa4b46a519e3f3cd2e13d75255666c6b23b"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-2-ShowMeButton.png",
-      "bytes": 2410249,
-      "sha256": "5bfb62100c79bd1554912f83f3ba85c7fac5117c7c3188518367c92414bd1691"
+      "bytes": 2408659,
+      "sha256": "d7df57ea97d37d5daaa373c14a4623ec3cf02d3d52c32a23371a8ef0c538d570"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-2-world-Move.png",
-      "bytes": 2423318,
-      "sha256": "b93d86d521a8a39fdd33c2acd9e91ba54e6e42c4e098ebf57d4c323cc5cc1f00"
+      "bytes": 2422899,
+      "sha256": "002878fa172466ea402e1fce11a507debe089c28ce4e43c4a119fc13b758ad38"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-2-world-touch.png",
-      "bytes": 2401368,
-      "sha256": "ac4b459f4b2a694467eca1eb43e3093978bbb60b69b22341f8e0275a5ef48bb2"
+      "bytes": 2404438,
+      "sha256": "83f1ef2cb3db0695638bc0c3febba9aa3f26cbf276b6f8c39cea36c7a77e5db1"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-2.png",
-      "bytes": 2447912,
-      "sha256": "c12364843b6e3b6b0f20ba9fe8af3210d5255154079f9c4b5d4c4d36e937d68c"
+      "bytes": 2447924,
+      "sha256": "9bddabdf7d52d4364088d08d60761cb5a64007ef3e91fc95ec91a942c842bf42"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-3-AttackCommand.png",
-      "bytes": 2416635,
-      "sha256": "acdc027628c5ff872c2e4f01d471b87ccb893ed53831885f507268c90481b3c2"
+      "bytes": 2416698,
+      "sha256": "ae189ef4ec487c77160e5df385f32f810ff4959c818dc61396eb7204c535b5fc"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-3-world-Attack.png",
-      "bytes": 2411178,
-      "sha256": "3c257863dc7f7f1f990b58de0885f0d1d57cb24a7c1310878c3a7aecaa791485"
+      "bytes": 2410118,
+      "sha256": "745d4fb9f7538f4ded0af110a6fd6abf1668b86aa499b318230d8717ecb20426"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-3-world-touch.png",
-      "bytes": 2416470,
-      "sha256": "000e6db22cb8e24a9a7d97bb7c5365bfca135bfc483c295b4bd0ddd914438af2"
+      "bytes": 2415470,
+      "sha256": "2abae577d95ab5223730ddf4dd5f77b5e733990e16537f456539874a3ca219cf"
     },
     {
       "path": "CampaignFinal/6-journey-lesson-3.png",
-      "bytes": 2422575,
-      "sha256": "184efb8cb2edc9f48b13f18ff242e1805b35b4e42a58fdb530bc178e895792a5"
+      "bytes": 2419587,
+      "sha256": "afdae1f63bd642a2184171dac206d4e9f1b9e100c1d0b81500d081fb1764ac3f"
     },
     {
       "path": "CampaignFinal/6-journey-victory.png",
-      "bytes": 769685,
-      "sha256": "328ff52bd9269f655b34e81fd3c0b569052e7d506d0f61810acdf8545521f0c2"
+      "bytes": 810572,
+      "sha256": "56b26e1d2b85b4f664461771d4e0c790af331d266e93403553ef87362eedfbd8"
     },
     {
       "path": "CampaignFinal/6-opening.png",
-      "bytes": 2473289,
-      "sha256": "e7f3e546022137cafd17cfcbd58b71d86cabfe0b8c11a23ae3f7834325a5acbf"
+      "bytes": 2473921,
+      "sha256": "6571b481110ad32b889465acdb738759d6ade9af99eeb0848786383eb57576fc"
     },
     {
       "path": "DesignBaseline/native-capture.log",
@@ -4078,6 +5818,16 @@
       "path": "DesignBaseline/CaptureProbe.cs.txt",
       "bytes": 7721,
       "sha256": "6e1ab55436250e1601a58530399574701e254191271cab4404a472e38e8fb43f"
+    },
+    {
+      "path": "EarlierCandidates/CANDIDATE-c1c7b8f4b.json",
+      "bytes": 7456,
+      "sha256": "6269ff06456b4f55febc86a87ec8f83e9be965522d78ae2528f7c797282ae207"
+    },
+    {
+      "path": "EarlierCandidates/CANDIDATE-fidelity-live-freeze.json",
+      "bytes": 7838,
+      "sha256": "b9e3ca7bdf65b0196e1bf64fdf01a5df0f960fb053c204d45c0b7febfbc7105c"
     },
     {
       "path": "EarlierCandidates/CANDIDATE-live-star-final.json",

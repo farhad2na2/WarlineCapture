@@ -147,6 +147,28 @@ def quoted(value):
     return "'" + str(value).replace("'", "''") + "'"
 
 
+READ_ONLY_MEASUREMENT_FLAGS = (
+    'WARLINE_PRODUCTION_RESOURCE_LEDGER',
+    'WARLINE_REPAIR_RESOURCE_LEDGER',
+    'WARLINE_PRODUCTION_READ_ONLY_OBSERVER_PROOF',
+)
+
+
+def reviewed_measurement_environment(environ, descriptor_path):
+    """Forward only three existing read-only measurements; never gameplay overrides."""
+    enabled = {}
+    for key, value in environ.items():
+        canonical = key.upper()
+        if canonical in READ_ONLY_MEASUREMENT_FLAGS:
+            if key != canonical or value != '1':
+                raise ValueError('Measurement flag requires exact canonical name and literal 1')
+            enabled[key] = value
+    env = {key: value for key, value in environ.items() if not key.upper().startswith('WARLINE_')}
+    env.update(enabled)
+    env['WARLINE_SKIRMISH_PRODUCTION_BATCH'] = str(descriptor_path)
+    return env, enabled
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', type=Path, default=Path(__file__).resolve().parents[2])
@@ -168,16 +190,16 @@ def main():
     upm_log = output / 'upm.log'
     if os.path.lexists(upm_log):
         raise ValueError('Fresh owned UPM log required; retain existing evidence')
+    env, measurement_flags = reviewed_measurement_environment(os.environ, descriptor_path)
     plan = dict(result='PlanOnly', execute_method=METHOD, checked_wrapper='Tools/CI/InvokeUnity.ps1',
                 gui_licensing=True, quit_argument=False, timeout_seconds=args.timeout,
-                descriptor_sha256=sha(descriptor_path), queue_success_enabled=False)
+                descriptor_sha256=sha(descriptor_path), queue_success_enabled=False,
+                read_only_measurement_flags=measurement_flags)
     if not args.run:
         print(json.dumps(plan, indent=2)); return 0
     if os.name != 'nt':
         raise ValueError('This launcher is the checked Windows route only')
     write_new(output / 'outer-started.json', plan)
-    env = {key: value for key, value in os.environ.items() if not key.upper().startswith('WARLINE_')}
-    env['WARLINE_SKIRMISH_PRODUCTION_BATCH'] = str(descriptor_path)
     # All shell values are literal single-quoted strings. No user text is executable.
     check = output / 'checked-project-lane.ps1'
     check.write_text("$ErrorActionPreference='Stop'\nif(-not(Get-Process -Name 'Unity Hub' -ErrorAction SilentlyContinue)){throw 'Keep Unity Hub open and signed in'}\n" +

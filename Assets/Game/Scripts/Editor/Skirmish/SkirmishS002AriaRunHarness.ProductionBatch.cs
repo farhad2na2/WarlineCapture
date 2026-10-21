@@ -763,7 +763,7 @@ namespace Game.Editor
                     Write("CleanupMeasured",new JObject { ["worlds"]=new JArray(Worlds()),["scenes"]=Scenes(),["preview_count"]=EditorSceneManager.previewSceneCount,
                         ["job_sha256"]=current.JobHash,["queue_success_enabled"]=false });
                     EditorApplication.update-=WaitForCleanup;completed++;
-                    EditorApplication.delayCall+=DispatchNext;
+                    DispatchNext();
                 }
                 catch(Exception error){Fail(error);}
             }

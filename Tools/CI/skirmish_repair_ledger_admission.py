@@ -25,12 +25,12 @@ from s005_windows_source_snapshot import candidate_hash
 
 BASELINE='9f75b2f224cde04ea87f25b8c9fc097765889bcf'
 POLICY_PINS={
-'Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs':'0273a9cae359375fcd28438409a452b37e76ba3da7b09006c43bd4d226b9bfe0',
+'Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs':'1490f369ab3de1761b9c2a23eecaf026a0bd844620127f61b2cc52fea09a6192',
 'Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs':'43d1cc13c12c7db4b008ef17c66d8897d1e2015b1d2ffb89e9435f335c67631b',
 'Assets/Game/Scripts/Components/VehicleRepairComponents.cs':'07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3',
 'Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs':'10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0',
 'Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs':'d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb',
-'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs':'373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2',
+'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs':'829fca0f4bc03d689c1f9fb7aad0b26c1c1c18f4bc21bd7d31ed338b2394ac34',
 'Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs':'5972c3cda9e314403cde4718e933e03c7bf597c1f1de9136b8a11f959fc122d8'}
 SCOPE='RepairCommittedBoundariesPartial'
 FLAGS=set('unchanged_debt_retries_measured progress_history_measured paid_resources_qualified'.split())

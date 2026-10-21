@@ -1,0 +1,189 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "BoundedSourceReview_NoConcreteStaleCameraDefectEstablished",
+  "patchEnabled": false,
+  "diffProduced": false,
+  "actualTouchedGameOrToolsSources": [],
+  "sourceBeforePins": [
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs",
+      "bytes": 95972,
+      "sha256": "cf7c399d7240e3930b0250d3e087328e4b92cc97415cac65d32ae9622a84d574",
+      "reviewedLineRanges": [
+        [
+          427,
+          439
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedPresentedOrders.cs",
+      "bytes": 12111,
+      "sha256": "17eea4d7baba8dadfe06652b7447258523fb1123ee1534a23e718541022e51e5",
+      "reviewedLineRanges": [
+        [
+          154,
+          185
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmySelectionService.cs",
+      "bytes": 9396,
+      "sha256": "56dbd4a3a76835daa051f880c865f803afafb939516d37e4ff83bbbe449f7f6a",
+      "reviewedLineRanges": [
+        [
+          10,
+          56
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs",
+      "bytes": 19889,
+      "sha256": "38ba916432a1a77a74ffaee866181f24fc1cf3f457978ca029134803c752945c",
+      "reviewedLineRanges": [
+        [
+          65,
+          82
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FocusedUnitLifecycleCompositionSystemHelper.cs",
+      "bytes": 14665,
+      "sha256": "bfac5e01f50770a755664b71f7bd1bf7117ebd7ee28bda62b74bfaabf97bd525",
+      "reviewedLineRanges": [
+        [
+          130,
+          150
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs",
+      "bytes": 12921,
+      "sha256": "ae0bf6a9081e8d5e7138c7760a6c74bd6d9516f623c14e96357b8d75e7361c38",
+      "reviewedLineRanges": [
+        [
+          101,
+          107
+        ],
+        [
+          146,
+          149
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs",
+      "bytes": 46772,
+      "sha256": "52ce1077e81487acbb647eef6ab042b448159b40119cfedad9b328f147d5d4cb",
+      "reviewedLineRanges": [
+        [
+          121,
+          158
+        ],
+        [
+          177,
+          185
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishGroup.cs",
+      "bytes": 3363,
+      "sha256": "2329af44271f4189d3a02dc2d6456e788b677630416a0bf38af023c52a200534",
+      "reviewedLineRanges": [
+        [
+          10,
+          55
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs",
+      "bytes": 92232,
+      "sha256": "8c6b342358057faaa488e0af728967d9e9e1ac587fc3a2a4d2d69a94e2e36eaa",
+      "reviewedLineRanges": [
+        [
+          251,
+          307
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs",
+      "bytes": 39340,
+      "sha256": "8be845e6ab25939c5a866f373854dcb3ee0a24ae514ff3c10e3989aff1cc3f24",
+      "reviewedLineRanges": [
+        [
+          242,
+          263
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs",
+      "bytes": 19784,
+      "sha256": "32a45375e1981705f3677f9bb72746acb2b48cd31d3aa69f82b95aa048c3a7c3",
+      "reviewedLineRanges": [
+        [
+          115,
+          129
+        ],
+        [
+          230,
+          257
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs",
+      "bytes": 30858,
+      "sha256": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+      "reviewedLineRanges": [
+        [
+          351,
+          376
+        ],
+        [
+          471,
+          473
+        ]
+      ],
+      "sourceChanged": false
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsCameraSystem.cs",
+      "bytes": 30240,
+      "sha256": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
+      "reviewedLineRanges": [
+        [
+          205,
+          215
+        ],
+        [
+          672,
+          708
+        ]
+      ],
+      "sourceChanged": false
+    }
+  ],
+  "nativeReproduction": false,
+  "historicalScreenshotCauseProven": false,
+  "fixEstablished": false,
+  "acceptance": false
+}

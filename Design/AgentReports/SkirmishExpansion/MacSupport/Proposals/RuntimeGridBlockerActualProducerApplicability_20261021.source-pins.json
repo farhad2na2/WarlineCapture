@@ -1,0 +1,97 @@
+{
+  "baseCommit": "d1f4dfa2029428b3a0d6e5a46b2c8201f27fd5a8",
+  "comparisonScope": "Exact raw Mac Git source at base, not Windows native/build equivalence.",
+  "sourcePins": {
+    "Assets/Game/Scripts/Authorings/GridAuthoring.Baker.cs": {
+      "rawSha256": "099189e204aa8a24603231b0f0d6d839a1479725d815145782a984d414069b3e",
+      "gitBlob": "b4bba9901dcfa55c3da63d2a4e24f3d87bf4a527",
+      "lineCount": 55
+    },
+    "Assets/Game/Scripts/Authorings/StaticGridBlockerAuthoring.cs": {
+      "rawSha256": "336afcb051e398d80d387a65c879fd91df47c5e83356fd6d34198c3c72674487",
+      "gitBlob": "0305542a918e053e8b32227298fd4af9b2ec1c3d",
+      "lineCount": 50
+    },
+    "Assets/Game/Scripts/Authorings/OperationMapBuildingAuthoring.cs": {
+      "rawSha256": "c21c4becf586a79c44862f1513cbc11150a71879f921ff766dc5ac9699a25075",
+      "gitBlob": "70c61835b657f8c0d98567f2642deabc3ca44b1b",
+      "lineCount": 462
+    },
+    "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs": {
+      "rawSha256": "0d3c056a829b48f8618edd8c1a32990e0b241895250b4320657dc7f70f4557e3",
+      "gitBlob": "f7bae28c060aae69d818d4fda3baef42a3b004e1",
+      "lineCount": 110
+    },
+    "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs": {
+      "rawSha256": "79b9a11d1f621bc6b3bb5643f4716ee9fcdf73a471cb357ffd978e0f42befa22",
+      "gitBlob": "847b53dc303e42d9c0b2bd99d4dbb7bf07c6c91a",
+      "lineCount": 71
+    },
+    "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs": {
+      "rawSha256": "fe9eed2c43a6ca67a09e06c4235b9b7e05a4c6c14e506704982ad91a1cfd0e7d",
+      "gitBlob": "479ee07eabaa72a29e116e2d00df34e0c9d458fb",
+      "lineCount": 78
+    },
+    "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs": {
+      "rawSha256": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075",
+      "gitBlob": "8d26e2175b84d0893076b0fc613f91b46ab24083",
+      "lineCount": 199
+    },
+    "Assets/Game/Scripts/Systems/RuntimeGridStorageCleanupSystem.cs": {
+      "rawSha256": "2880818d1ade89faa441ddd1a3fa556f8358533f27c90514f4fc5b86d81d9eab",
+      "gitBlob": "5e44393a85e7dc8367e907797dc3c8d7320eb4b9",
+      "lineCount": 39
+    },
+    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs": {
+      "rawSha256": "f154d49f9ba486ea072d850334246e6a12fc87848f326cf98b88485b58a4f8d2",
+      "gitBlob": "d035b11cd61497efc637209488a146f19a30bcfa",
+      "lineCount": 203
+    },
+    "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs": {
+      "rawSha256": "32f7dd2e448ca4a69e424d88f975357e5233500f9516ee8a9f1227b4329bd113",
+      "gitBlob": "68978e146eb766ef9168f820ead3d4e59dd475e8",
+      "lineCount": 396
+    },
+    "Assets/Game/Scripts/Components/GridComponents.cs": {
+      "rawSha256": "494f74e590a4003f95971aacc71401ce7d4de5a63bdea3d26777bd8d66d11d1c",
+      "gitBlob": "933539faebedf3ae9c41c5e97a6c00d16ce3c113",
+      "lineCount": 488
+    },
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": {
+      "rawSha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
+      "gitBlob": "5f010bbc369ab14a7f34c14e3f2392084f2eb5ff",
+      "lineCount": 359
+    },
+    "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs": {
+      "rawSha256": "bc38bb25ff48bfb590aeeea361cea080f1377b640eb212618b299ebb9e49f5eb",
+      "gitBlob": "f180460a516a4d1c0b9807a519e06ea74fd7d9a1",
+      "lineCount": 896
+    },
+    "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs": {
+      "rawSha256": "d1c7060cfcfa9d40dac4f40cd5c550e7a2b219602f79adff0022d4b021143ade",
+      "gitBlob": "cea5188ded877c3d219e6ecd9fbe034251266e0b",
+      "lineCount": 128
+    },
+    "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs": {
+      "rawSha256": "7de4b793e2460fe2f8033e82379bbeb480d2f2be7866575fb7dcd7e919d3f826",
+      "gitBlob": "fc9064a72a65e3a784c7274303b39c1a29f5885d",
+      "lineCount": 1016
+    },
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs": {
+      "rawSha256": "03e807ecb53f47e5ac0c5c94f60efc0fd91fcd2d8a9135d6198818dcdff2b7bf",
+      "gitBlob": "d3319779ba213f15f447bf8c94604451d19bc2fb",
+      "lineCount": 525
+    },
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": {
+      "rawSha256": "87e01885f4bc834bd6e5cbff55c234e194fde45c14c148e37410455a7125032c",
+      "gitBlob": "08464d55ff94ec4f80a01197bad2e75e838244a2",
+      "lineCount": 325
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/S002RuntimeBlockerWitnessTests.cs": {
+      "rawSha256": "be96ff6414c211a1bf621b319167a781c10dfeba1de60ec01b2251db9208af37",
+      "gitBlob": "d79fcc3c0f91dcc6e8e130122d6ec43c948e583b",
+      "lineCount": 250
+    }
+  },
+  "windowsHelperComparison": "Windows reports matrix2618076b: its specific CBD0 helper versus b24 helper is LF-to-CRLF only across 896 lines. Windows raw SHA not supplied here; retain its original identity/receipt in Windows evidence. This manifest never substitutes a normalized hash or asserts a general equivalence."
+}

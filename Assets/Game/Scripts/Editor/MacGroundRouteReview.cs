@@ -109,6 +109,7 @@ namespace Game.Editor
         {
             MacGroundRouteReview.Begin("s002-fa");
             RunEditorJourney("fa-IR", false, false, "S002", 104731);
+            Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC", "1");
         }
     }
 }

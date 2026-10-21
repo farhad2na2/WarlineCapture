@@ -237,7 +237,7 @@ def ownership(value):
     v["scenes"].sort(key=lambda s:(s["path"],s["name"]))
     return v
 
-def inspect(project,spec,*,wrapper_platform='windows'):
+def _inspect(project,spec,*,wrapper_platform='windows',immutable_claims=False):
     result={"schema_version":1,"result":"Incomplete","wins":0,"attempts":[],
         "admission":{"result":"MissingAdmission","missing":list(MISSING)},
         "queue_success_enabled":False,"qualified":False,"mission_ready":False,"publication_changed":False,"errors":[]}
@@ -285,13 +285,24 @@ def inspect(project,spec,*,wrapper_platform='windows'):
         sessions=set();worlds=set();run_ids=set();profile_receipts=[];profile_errors=[];observer_receipts=[];observer_errors=[]
         for i,(item,entry) in enumerate(zip(declared,descriptor["jobs"])):
             need(isinstance(item,dict) and set(item)==ATTEMPT,"Exact attempt refs required")
-            jp,job=read.obj(item["job"]);cp,claim=read.obj(item["claim"]);ip,immutable=read.obj(item["immutable_claim"])
-            need(jp==read.path(entry["job_path"]) and cp==read.path(entry["claim_path"]),"Descriptor job/claim path splice")
+            jp,job=read.obj(item["job"]);cp,claim=read.obj(item["immutable_claim"] if immutable_claims else item["claim"]);ip,immutable=read.obj(item["immutable_claim"])
+            need(jp==read.path(entry["job_path"]),"Descriptor job path splice")
+            if immutable_claims:
+                # Saved-evidence replay after legitimate live-claim release.
+                # This changes the read source, never a completion/pass predicate.
+                live=Path(entry["claim_path"]);live=live if live.is_absolute() else read.root/live
+                declaredLivePath=Path(item["claim"]["path"]);declaredLivePath=declaredLivePath if declaredLivePath.is_absolute() else read.root/declaredLivePath
+                need(".." not in live.parts and ".." not in declaredLivePath.parts and
+                     live.absolute()==declaredLivePath.absolute()==ip.parent.parent/"claim.json" and
+                     cp==ip and item["claim"]["sha256"]==item["immutable_claim"]["sha256"],
+                     "Descriptor original live/immutable claim replay splice")
+            else:
+                need(cp==read.path(entry["claim_path"]),"Descriptor claim path splice")
             evidence_scope=sampling_scope(job)
             job_sha=fingerprint(job)
             need(claim==immutable and claim["job_sha256"]==job_sha,"Canonical/immutable claim differs")
             folder=Path(claim["artifact_directory"])
-            need(cp==jp.parent/"claim.json" and ip==folder/"claim.json" and folder.parent==jp.parent and
+            need((cp==ip if immutable_claims else cp==jp.parent/"claim.json") and ip==folder/"claim.json" and folder.parent==jp.parent and
                 folder.name==claim["attempt_id"] and jp.parent.name==job["job_id"],"Attempt folder ownership differs")
             need(dispatch[i]["job_sha256"]==job_sha and dispatch[i]["attempt_id"]==claim["attempt_id"],"Dispatch attempt splice")
             need(job["source_manifest"]==store["source_manifest"] and job["candidate_sha256"]==descriptor["candidate_sha256"] and
@@ -424,6 +435,14 @@ def inspect(project,spec,*,wrapper_platform='windows'):
         # No partial/earlier successful attempt becomes batch coverage on a failed batch.
         result["wins"]=0
     return result
+
+def inspect(project,spec,*,wrapper_platform='windows'):
+    """Existing live-claim inspection behavior remains unchanged."""
+    return _inspect(project,spec,wrapper_platform=wrapper_platform)
+
+def inspect_immutable_claims(project,spec,*,wrapper_platform='windows'):
+    """Read-only replay of the same immutable attempt; never native qualification."""
+    return _inspect(project,spec,wrapper_platform=wrapper_platform,immutable_claims=True)
 
 if __name__=="__main__":
     p=argparse.ArgumentParser(description=__doc__);p.add_argument("--project",type=Path,required=True);p.add_argument("--input",type=Path,required=True)

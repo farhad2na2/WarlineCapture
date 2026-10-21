@@ -9,6 +9,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import uuid
@@ -30,9 +31,20 @@ def require(condition, message):
         raise ContractError(message)
 
 
+def _io_path(path):
+    """Extended IO spelling only; queue identities and artifact metadata stay canonical."""
+    p = Path(path).absolute()
+    if os.name != "nt":
+        return p
+    value = str(p); prefix = chr(92) * 2 + "?" + chr(92)
+    if value.startswith(prefix):
+        return p
+    return Path(prefix + "UNC" + chr(92) + value[2:] if value.startswith(chr(92) * 2) else prefix + value)
+
+
 def digest(path):
     # Bound memory independently of source size; hash every byte without caching.
-    with Path(path).open("rb") as stream:
+    with _io_path(path).open("rb") as stream:
         if hasattr(hashlib, "file_digest"):
             return hashlib.file_digest(stream, "sha256").hexdigest()
         hasher = hashlib.sha256()
@@ -46,12 +58,12 @@ def fingerprint(value):
 
 
 def load(path):
-    return json.loads(Path(path).read_text(encoding="utf-8"))
+    return json.loads(_io_path(path).read_text(encoding="utf-8"))
 
 
 def write_new(path, value):
     """Exclusive creation: artifacts are never replaced, even after interruption."""
-    with Path(path).open("x", encoding="utf-8") as stream:
+    with _io_path(path).open("x", encoding="utf-8") as stream:
         json.dump(value, stream, indent=2, sort_keys=True)
         stream.write("\n")
 
@@ -172,7 +184,7 @@ def enqueue(queue, job, project, sampling_authority=None):
 def _enqueue_preflighted(queue, job, project):
     outside_assets(queue, project)
     directory = Path(queue) / identifier(job["job_id"])
-    directory.mkdir(parents=True, exist_ok=False)
+    _io_path(directory).mkdir(parents=True, exist_ok=False)
     write_new(directory / "job.json", job)
     return {"job_directory": str(directory.resolve()), "status": "pending"}
 
@@ -237,7 +249,7 @@ def guard(directory):
     Crash leaves the guard in place, fail closed. Operator may archive it after
     proving no metadata writer remains; it is never reclaimed by age alone.
     """
-    lock = Path(directory) / ".metadata-lock"
+    lock = _io_path(Path(directory) / ".metadata-lock")
     lock.mkdir()
     try:
         yield
@@ -259,10 +271,11 @@ def _claim_checked(directory, worker, project, validate, *, before_reserve=None)
     with guard(directory):
         job = load(directory / "job.json")
         validate(job)
-        require(not (directory / "claim.json").exists(), "job already claimed; explicit interruption required")
-        attempts = sorted(directory.glob("attempt-*/result.json"))
+        require(not _io_path(directory / "claim.json").exists(), "job already claimed; explicit interruption required")
+        attempts = sorted(_io_path(directory).glob("attempt-*/result.json"))
         results = [load(p) for p in attempts]
         require(not any(r["status"] == "qualified" for r in results), "job already qualified")
+        require(not any(r["status"] == "completed" and r.get("native_qualification") == "accepted_single_baseline_sample" for r in results), "job already has an accepted baseline sample")
         signatures = [r.get("failure_signature") for r in results if r["status"] == "failed"]
         require(not any(signatures.count(s) >= 2 for s in signatures), "two identical failure signatures; repair/revise job before retry")
         # Optional refusal-only final admission after fresh source/history IO.
@@ -271,7 +284,7 @@ def _claim_checked(directory, worker, project, validate, *, before_reserve=None)
             before_reserve()
         attempt = "attempt-" + uuid.uuid4().hex
         artifacts = directory / attempt
-        artifacts.mkdir()
+        _io_path(artifacts).mkdir()
         record = {"attempt_id": attempt, "token": uuid.uuid4().hex, "worker": worker, "started_utc": now(), "job_sha256": fingerprint(job), "artifact_directory": str(artifacts.resolve())}
         write_new(artifacts / "claim.json", record)
         write_new(directory / "claim.json", record)
@@ -288,15 +301,27 @@ def finish(directory, token, status, category=None, signature=None):
         require(record["token"] == token, "claim ownership mismatch")
         require(fingerprint(load(directory / "job.json")) == record["job_sha256"], "queued job changed during attempt")
         result_path = directory / record["attempt_id"] / "result.json"
-        if result_path.exists():
+        if _io_path(result_path).exists():
             # A crash after result creation but before claim release can be resumed.
             result = load(result_path)
             require(result.get("token") == token and result.get("status") == status and result.get("failure_category") == category and result.get("failure_signature") == signature, "existing result conflicts; preserve attempt and investigate")
         else:
             result = {**record, "finished_utc": now(), "status": status, "failure_category": category, "failure_signature": signature, "native_qualification": "pending"}
             write_new(result_path, result)
-        (directory / "claim.json").unlink()
+        _io_path(directory / "claim.json").unlink()
         return result
+
+
+
+def finish_accepted_sample(directory, token, project, completion_spec_ref, sampling_authority):
+    """Source-owned derivation only; no caller admission/facet booleans or CLI toggle.
+
+    The trusted adapter currently refuses missing full source-fit/paid/canary gates.
+    Its append-only slot transaction cannot be reached by the old reviewed receipt.
+    Existing finish(failed/interrupted), qualified history and CLI remain unchanged.
+    """
+    from skirmish_trusted_baseline_completion import finish_baseline_sample
+    return finish_baseline_sample(directory, token, project, completion_spec_ref, sampling_authority)
 
 
 def main():

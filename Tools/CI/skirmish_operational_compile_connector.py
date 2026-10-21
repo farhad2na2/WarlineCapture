@@ -1,6 +1,7 @@
 import re
 """Read-only optional compile connector; operational outcomes and five gates stay intact."""
 from skirmish_production_operational_inspector import inspect as inspect_operational,Reader,need,digest
+from skirmish_production_operational_inspector import inspect_immutable_claims as inspect_operational_immutable
 from skirmish_production_queue import fingerprint
 from skirmish_native_compile_admission import admit
 
@@ -15,9 +16,9 @@ def merge_proof_pins(read,refs):
   need(digest(p)==ref["sha256"],"Earlier proof bytes changed")
   read.pins[p]=ref["sha256"]
 
-def inspect(project,spec):
+def _inspect(project,spec,*,immutable_claims=False):
  need(isinstance(spec,dict)and set(spec)=={'schema_version','operational','compile_proof'}and type(spec['schema_version'])is int and spec['schema_version']==2,'Exact connector spec')
- result=inspect_operational(project,spec['operational'])
+ result=(inspect_operational_immutable if immutable_claims else inspect_operational)(project,spec['operational'])
  if result['result']!='NormalCompletedUnqualified':return result
  read=Reader(project);receipts=[];errors=[]
  try:
@@ -37,3 +38,11 @@ def inspect(project,spec):
  # No completed operational loss/draw becomes a win and no missing gate is inferred.
  result.update(qualified=False,queue_success_enabled=False,mission_ready=False,publication_changed=False)
  return result
+
+
+def inspect(project,spec):
+ return _inspect(project,spec)
+
+def inspect_immutable_claims(project,spec):
+ """Same derived compile/operational checks; immutable claim replay only."""
+ return _inspect(project,spec,immutable_claims=True)

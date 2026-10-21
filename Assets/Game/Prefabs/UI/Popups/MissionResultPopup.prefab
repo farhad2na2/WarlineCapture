@@ -67,6 +67,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -226,6 +227,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 03:14
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &147146534294214057
 GameObject:
   m_ObjectHideFlags: 0
@@ -454,6 +457,8 @@ MonoBehaviour:
   localizationKey: ui.v3.objectives.3f8152da90
   englishFallback: OBJECTIVES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &415987240757167979
 GameObject:
   m_ObjectHideFlags: 0
@@ -644,6 +649,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &840250354525103535
 GameObject:
   m_ObjectHideFlags: 0
@@ -797,6 +804,8 @@ MonoBehaviour:
   localizationKey: mission.m03.result.retry
   englishFallback: RETRY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &912320746957271758
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,6 +1187,7 @@ RectTransform:
   - {fileID: 797356118660611483}
   - {fileID: 4683458497375588751}
   - {fileID: 521957260515870416}
+  - {fileID: 2126828285039020290}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1235,6 +1245,7 @@ MonoBehaviour:
   outcomeBackdrop: {fileID: 5786569911159199148}
   m03ResultBackdrop: {fileID: 2800000, guid: 8a9f584496ddc46e2b18b66aa384e0ad, type: 3}
   m04ResultBackdrop: {fileID: 2800000, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
+  sharedResult: {fileID: 517672670234131091}
   titleText: {fileID: 5844326544162656718}
   missionNameText: {fileID: 8265096854907186122}
   summaryText: {fileID: 6474961372054016303}
@@ -1255,10 +1266,10 @@ MonoBehaviour:
   - {fileID: 8396553776415920555}
   - {fileID: 8452303846231522923}
   - {fileID: 2145978191992666272}
-  primaryButton: {fileID: 7840821907253108127}
-  primaryButtonLabel: {fileID: 2237444553262527467}
-  retryButton: {fileID: 1433225505497229885}
-  retryButtonLabel: {fileID: 7569070041084096609}
+  primaryButton: {fileID: 2428962727850297922}
+  primaryButtonLabel: {fileID: 5190770880086838254}
+  retryButton: {fileID: 5189054493729981794}
+  retryButtonLabel: {fileID: 5471685382955341405}
   hiddenLegacyRoots:
   - {fileID: 3085012964241968784}
   - {fileID: 2552304561181100103}
@@ -1418,6 +1429,7 @@ GameObject:
   m_Component:
   - component: {fileID: 797356118660611483}
   - component: {fileID: 3474226525498087556}
+  - component: {fileID: 8438450988154860917}
   m_Layer: 0
   m_Name: V3Composition
   m_TagString: Untagged
@@ -1565,6 +1577,8 @@ MonoBehaviour:
   - target: {fileID: 2836159632951929762}
     positionFactor: 0
     widthFactor: 0.5
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions: []
   centerTargetBasePositions: []
   widthTargetBaseSizes: []
@@ -1630,6 +1644,18 @@ MonoBehaviour:
   - {x: 888, y: 134}
   - {x: 67, y: 67}
   - {x: 596, y: 114}
+--- !u!225 &8438450988154860917
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643326189092797014}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &1663724025546394221
 GameObject:
   m_ObjectHideFlags: 0
@@ -1696,6 +1722,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -1855,6 +1882,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1753435248068013286
 GameObject:
   m_ObjectHideFlags: 0
@@ -2008,6 +2037,8 @@ MonoBehaviour:
   localizationKey: ui.v3.complete.894981ff02
   englishFallback: COMPLETE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1760640205559059854
 GameObject:
   m_ObjectHideFlags: 0
@@ -2386,6 +2417,8 @@ MonoBehaviour:
   localizationKey: mission.m03.result.rewards
   englishFallback: REWARDS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2048195133767045778
 GameObject:
   m_ObjectHideFlags: 0
@@ -2539,6 +2572,8 @@ MonoBehaviour:
   localizationKey: ui.v3.the_hostile_patrol_is_neutralize.18fa78ada4
   englishFallback: The hostile patrol is neutralized. The corridor is secure.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2078973828661986647
 GameObject:
   m_ObjectHideFlags: 0
@@ -2683,6 +2718,8 @@ MonoBehaviour:
   outlined: 1
   insetColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   insetScale: 0.67
+  gradientInset: 0
+  insetBottomColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &2487304830082829635
 GameObject:
   m_ObjectHideFlags: 0
@@ -2696,7 +2733,7 @@ GameObject:
   - component: {fileID: 6099454144053034575}
   - component: {fileID: 1433225505497229885}
   m_Layer: 0
-  m_Name: ReplayButton
+  m_Name: LegacyReplayButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2751,6 +2788,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.74509805, g: 0.1882353, b: 0.105882354, a: 1}
   topRightColor: {r: 0.74509805, g: 0.1882353, b: 0.105882354, a: 1}
   bottomLeftColor: {r: 0.29803923, g: 0.050980393, b: 0.039215688, a: 1}
@@ -2810,6 +2848,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 521957260515870416}
+  - component: {fileID: 206121098837393215}
   m_Layer: 0
   m_Name: LegacyCanonicalReferences
   m_TagString: Untagged
@@ -2839,6 +2878,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &206121098837393215
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2552304561181100103}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &2564517821593384937
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,6 +3086,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4683458497375588751}
+  - component: {fileID: 6287819943708371246}
   m_Layer: 0
   m_Name: MissionIdentityBlock
   m_TagString: Untagged
@@ -3062,6 +3114,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &6287819943708371246
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3085012964241968784}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0
 --- !u!1 &3126907057439583910
 GameObject:
   m_ObjectHideFlags: 0
@@ -3203,6 +3267,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -3553,6 +3618,8 @@ MonoBehaviour:
 
     OLD MARKET'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4160065937324492171
 GameObject:
   m_ObjectHideFlags: 0
@@ -3697,6 +3764,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -3716,7 +3784,7 @@ GameObject:
   - component: {fileID: 8941928922468529789}
   - component: {fileID: 7840821907253108127}
   m_Layer: 0
-  m_Name: ContinueButton
+  m_Name: LegacyContinueButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3771,6 +3839,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.27058825, g: 0.56078434, b: 0.14117648, a: 1}
   topRightColor: {r: 0.27058825, g: 0.56078434, b: 0.14117648, a: 1}
   bottomLeftColor: {r: 0.06666667, g: 0.24705882, b: 0.07450981, a: 1}
@@ -3890,6 +3959,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -3913,7 +3983,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7663226236414102529
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4124,6 +4194,8 @@ MonoBehaviour:
   localizationKey: ui.v3.squad_losses.56b2cceffa
   englishFallback: SQUAD LOSSES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5211537478525660673
 GameObject:
   m_ObjectHideFlags: 0
@@ -4282,6 +4354,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.open
   englishFallback: Field guide
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5234381427072369031
 GameObject:
   m_ObjectHideFlags: 0
@@ -4435,6 +4509,8 @@ MonoBehaviour:
   localizationKey: mission.m03.result.civilians
   englishFallback: CIVILIANS LOST
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5303166468133781758
 GameObject:
   m_ObjectHideFlags: 0
@@ -4577,6 +4653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -4803,6 +4880,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -4952,6 +5030,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -5111,6 +5190,8 @@ MonoBehaviour:
   localizationKey: ui.v3.3_3_stars.d909a26811
   englishFallback: 3 / 3 STARS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6734808406149279907
 GameObject:
   m_ObjectHideFlags: 0
@@ -5264,6 +5345,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 3 / 3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6740145694605388563
 GameObject:
   m_ObjectHideFlags: 0
@@ -5332,6 +5415,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -5566,6 +5650,8 @@ MonoBehaviour:
   localizationKey: ui.v3.keep_command_squad_alive.6094e1dda7
   englishFallback: KEEP COMMAND SQUAD ALIVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7272681672271763687
 GameObject:
   m_ObjectHideFlags: 0
@@ -5719,6 +5805,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7322406395454038133
 GameObject:
   m_ObjectHideFlags: 0
@@ -5872,6 +5960,8 @@ MonoBehaviour:
   localizationKey: mission.m03.result.performance
   englishFallback: PERFORMANCE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7504525458264876693
 GameObject:
   m_ObjectHideFlags: 0
@@ -6025,6 +6115,8 @@ MonoBehaviour:
   localizationKey: mission.m03.result.victory
   englishFallback: VICTORY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7578844436797108327
 GameObject:
   m_ObjectHideFlags: 0
@@ -6094,6 +6186,8 @@ MonoBehaviour:
   outlined: 0
   insetColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   insetScale: 0.67
+  gradientInset: 0
+  insetBottomColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &7691696742253892542
 GameObject:
   m_ObjectHideFlags: 0
@@ -6251,6 +6345,8 @@ MonoBehaviour:
 
     COMMANDER XP     +260'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7814335252658698939
 GameObject:
   m_ObjectHideFlags: 0
@@ -6321,6 +6417,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -6480,6 +6577,8 @@ MonoBehaviour:
   localizationKey: ui.v3.complete.894981ff02
   englishFallback: COMPLETE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7939662734044337833
 GameObject:
   m_ObjectHideFlags: 0
@@ -6633,6 +6732,8 @@ MonoBehaviour:
   localizationKey: ui.v3.civilian_consequence.c8ae82683e
   englishFallback: CIVILIAN CONSEQUENCE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8034082915607425583
 GameObject:
   m_ObjectHideFlags: 0
@@ -6861,6 +6962,8 @@ MonoBehaviour:
   localizationKey: ui.v3.stable.0436ac5f0b
   englishFallback: STABLE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8141816155891057097
 GameObject:
   m_ObjectHideFlags: 0
@@ -7089,6 +7192,8 @@ MonoBehaviour:
   localizationKey: ui.v3.neutralize_hostile_patrol.7140341615
   englishFallback: NEUTRALIZE HOSTILE PATROL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8363943620772181090
 GameObject:
   m_ObjectHideFlags: 0
@@ -7242,6 +7347,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8375593599710650748
 GameObject:
   m_ObjectHideFlags: 0
@@ -7395,6 +7502,8 @@ MonoBehaviour:
   localizationKey: mission.m03.action.continue
   englishFallback: CONTINUE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8396553776415920555
 GameObject:
   m_ObjectHideFlags: 0
@@ -7464,6 +7573,8 @@ MonoBehaviour:
   outlined: 1
   insetColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   insetScale: 0.67
+  gradientInset: 0
+  insetBottomColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &8426932988808815858
 GameObject:
   m_ObjectHideFlags: 0
@@ -7482,7 +7593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &460379615200862835
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7498,7 +7609,7 @@ RectTransform:
   m_Father: {fileID: 7007114274597387697}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -7695,6 +7806,8 @@ MonoBehaviour:
   outlined: 1
   insetColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   insetScale: 0.67
+  gradientInset: 0
+  insetBottomColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &8489123415283324286
 GameObject:
   m_ObjectHideFlags: 0
@@ -7763,6 +7876,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -7836,6 +7950,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -7911,6 +8026,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -7986,6 +8102,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   topRightColor: {r: 0.06666667, g: 0.11372549, b: 0.12941177, a: 0.972549}
   bottomLeftColor: {r: 0.019607844, g: 0.050980393, b: 0.0627451, a: 0.98039216}
@@ -8145,6 +8262,8 @@ MonoBehaviour:
   localizationKey: ui.v3.mission_complete.769817202f
   englishFallback: MISSION COMPLETE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9134610753827772204
 GameObject:
   m_ObjectHideFlags: 0
@@ -8298,6 +8417,8 @@ MonoBehaviour:
   localizationKey: ui.v3.enemies_defeated.6eb58898a8
   englishFallback: ENEMIES DEFEATED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9170442297489176018
 GameObject:
   m_ObjectHideFlags: 0
@@ -8368,6 +8489,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   topRightColor: {r: 0.06666667, g: 0.105882354, b: 0.12156863, a: 0.98039216}
   bottomLeftColor: {r: 0.007843138, g: 0.03137255, b: 0.039215688, a: 0.9882353}
@@ -8449,3 +8571,160 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1001 &3100766834423578621
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7007114274597387697}
+    m_Modifications:
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1080
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9031848303743464578, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+      propertyPath: m_Name
+      value: SharedMissionResult
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+--- !u!114 &517672670234131091 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3181519963430749550, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 111404e80c84475a8629e0e59abfedae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.SharedMissionResultView
+--- !u!224 &2126828285039020290 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 3930551825415026431, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2428962727850297922 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 773857976284837311, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &5189054493729981794 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7136827241816308383, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &5190770880086838254 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7134108203639747603, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &5471685382955341405 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6982681535998667168, guid: c899f382050f54e5a9e67abb68ae76c9, type: 3}
+  m_PrefabInstance: {fileID: 3100766834423578621}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI

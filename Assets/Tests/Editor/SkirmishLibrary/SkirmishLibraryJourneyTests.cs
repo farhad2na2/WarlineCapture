@@ -332,10 +332,10 @@ namespace Game.Tests.Editor
                 card.BindBattlefield(() => returned = true);
                 card.Present(new ModeResultContent
                 {
-                    Victory = true,
+                    Mode = ResultScreenMode.Skirmish, Victory = true,
                     Title = "VICTORY",
                     ShowMedal = true,
-                    MedalText = "First medal\nS002\nRegular medal",
+                    MedalText = "First medal · S002 · Regular medal",
                     ShowBattlefieldBack = true,
                     BattlefieldBackLabel = "BATTLEFIELD",
                     ShowAdjust = true,
@@ -344,34 +344,25 @@ namespace Game.Tests.Editor
                     Signature = "medal"
                 });
 
-                TMP_Text medal = null;
-                foreach (TMP_Text text in root.GetComponentsInChildren<TMP_Text>(true))
-                {
-                    if (text.name == "Medal")
-                        medal = text;
-                }
-
-                Assert.IsNotNull(medal);
-                Assert.IsTrue(medal.gameObject.activeSelf);
-                Assert.AreEqual("First medal\nS002\nRegular medal", medal.text);
-                Transform battlefield = root.transform.Find("CampaignStyleResult/Battlefield");
-                Transform leave = root.transform.Find("CampaignStyleResult/Leave");
-                Assert.IsNotNull(battlefield);
-                Assert.IsNotNull(leave);
-                Assert.IsTrue(battlefield.gameObject.activeSelf);
-                Assert.AreEqual("Leave", leave.name);
-                battlefield.GetComponent<Button>().onClick.Invoke();
+                var controls=card.SharedView.Controls;
+                Assert.IsTrue(controls.Medal.gameObject.activeSelf);
+                Assert.AreEqual("Regular medal earned", SharedMissionResultView.Source(controls.InfoBody));
+                Assert.AreEqual("First medal · S002",SharedMissionResultView.Source(controls.InfoCaption));
+                Assert.Less(((RectTransform)controls.Tertiary.transform).anchoredPosition.x,((RectTransform)controls.Secondary.transform).anchoredPosition.x,"Main Menu precedes Replay as in the approved victory layout.");
+                Assert.IsTrue(controls.Primary.gameObject.activeSelf);
+                Assert.IsTrue(controls.Tertiary.gameObject.activeSelf);
+                controls.Primary.onClick.Invoke();
                 Assert.IsTrue(returned);
 
                 card.Present(new ModeResultContent
                 {
-                    ShowMedal = false,
-                    ShowBattlefieldBack = false,
-                    ShowAdjust = true,
+                    Mode = ResultScreenMode.Skirmish, Victory=true,
+                    ShowMedal = false, ShowBattlefieldBack = false, ShowAdjust = true,
                     Signature = "medal"
                 });
-                Assert.IsFalse(medal.gameObject.activeSelf);
-                Assert.IsFalse(battlefield.gameObject.activeSelf);
+                Assert.IsTrue(controls.Medal.gameObject.activeSelf, "Unearned medals retain the neutral slot.");
+                Assert.AreEqual("No new medal", SharedMissionResultView.Source(controls.InfoBody));
+                Assert.IsFalse(controls.Primary.gameObject.activeSelf, "An unbound return action cannot be shown.");
             }
             finally
             {

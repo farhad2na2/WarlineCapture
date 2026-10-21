@@ -18,7 +18,7 @@ namespace Game.Tests.Editor
             string title = UiLocalizedText.CatalogLabel(SkirmishTerminalPresentationObservation.ExpectedResultTitle(outcome));
             return new SkirmishTerminalPresentationObservation.Proof { attempt=Attempt, nativeOutcome=outcome.ToString(),
                 locale=UiShellRuntimeGateway.Localization.CurrentLocaleCode, frame=17, rendered=true, copyMatches=true,
-                ownerPath="Canvas/SkirmishResult/CampaignStyleResult", titlePath="Canvas/SkirmishResult/CampaignStyleResult/Title/Label",
+                ownerPath="Canvas/SkirmishResult/CampaignStyleResult", titlePath="Canvas/SkirmishResult/CampaignStyleResult/Outcome/Title",
                 expectedTitle=title, actualTitle=title };
         }
         private static SkirmishTerminalPresentationObservation.Proof Menu()

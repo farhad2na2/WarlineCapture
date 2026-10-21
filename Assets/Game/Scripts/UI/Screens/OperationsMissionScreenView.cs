@@ -278,30 +278,33 @@ namespace Game.UI.Runtime
         private static void Send(UiOperationsMissionAction action,int index=0) => UiShellRuntimeGateway.TryRequestOperationsMission(action,index);
         private ModeResultContent BuildResult(UiOperationsMissionModel model)
         {
-            string complete = T("state_complete", "COMPLETE");
-            string missed = T("state_missed", "MISSED");
+            string W(string key,string en,string fa)=>SharedMissionResultView.Words("operations_"+key,en,fa);
+            string complete = W("complete","COMPLETE","تکمیل شد");
+            string missed = W("missed","MISSED","انجام نشد");
             return new ModeResultContent
             {
+                Mode = ResultScreenMode.Operations, MissionId = "O001", Context = T("district", "OLD QUARTER"),
+                HasObjectiveFacts = true, CompletedObjectives = (byte)((model.CompletedScans >= 3 ? 1 : 0) | (model.EvidenceRecovered ? 2 : 0) | (model.InfantryAtExit >= 2 ? 4 : 0)), IncompleteObjectives = (byte)(model.CompletedScans < 3 ? 1 : 0),
                 Victory = model.ResultStars > 0,
                 Title = string.IsNullOrEmpty(model.ResultTitle) ? T("victory", "VICTORY") : model.ResultTitle,
                 ObjectiveTitle = model.EvidenceRecovered
-                    ? T("evidence_saved", "Relay evidence recovered with the squad.")
-                    : T("evidence_missed", "Relay evidence was not recovered."),
+                    ? W("evidence_saved", "Relay evidence recovered with the squad.", "شواهد رله همراه گروه بازیابی شد.")
+                    : W("evidence_missed", "Relay evidence was not recovered.", "شواهد رله بازیابی نشد."),
                 Identity = T("short_title", "STREET SIGNALS") + "\n" + T("district", "OLD QUARTER"),
                 Status = model.ResultStatus,
                 Elapsed = model.ResultElapsed,
                 Stars = model.ResultStars,
-                Objective1 = T("check_scans_plain", "Scan signal sites"),
-                Objective2 = T("check_evidence_plain", "Recover relay evidence"),
-                Objective3 = T("check_extract_plain", "Extract with 2+ infantry"),
-                Objective1State = model.CompletedScans >= 3 ? complete : model.CompletedScans + "/3",
+                Objective1 = W("scans", "Scan signal sites", "بررسی پایگاه‌های سیگنال"),
+                Objective2 = W("evidence", "Recover relay evidence", "بازیابی شواهد رله"),
+                Objective3 = W("extract", "Extract with 2+ infantry", "خروج با دست‌کم ۲ پیاده‌نظام"),
+                Objective1State = model.CompletedScans + "/3",
                 Objective2State = model.EvidenceRecovered ? complete : missed,
-                Objective3State = model.InfantryAtExit >= 2 ? complete : model.InfantryAtExit + " " + T("at_exit", "AT EXIT"),
-                Performance1 = T("signals", "SIGNALS"),
+                Objective3State = model.InfantryAtExit + " " + W("at_exit", "AT EXIT", "در نقطهٔ خروج"),
+                Performance1 = W("signals", "SIGNALS", "سیگنال‌ها"),
                 Performance1Value = model.CompletedScans + "/3",
-                Performance2 = T("extracted", "EXTRACTED"),
+                Performance2 = W("extracted", "EXTRACTED", "خارج‌شده"),
                 Performance2Value = model.InfantryAtExit.ToString(),
-                Performance3 = T("survivors", "SURVIVORS"),
+                Performance3 = W("survivors", "SURVIVORS", "بازماندگان"),
                 Performance3Value = model.SurvivingInfantry.ToString(),
                 Summary = model.ResultSummary,
                 LeaveLabel = Text("ui.common.continue", "CONTINUE"),

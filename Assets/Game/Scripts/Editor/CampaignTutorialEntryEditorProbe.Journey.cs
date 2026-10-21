@@ -104,6 +104,7 @@ namespace Game.Editor
                 if (result.SettlementFailed) throw new InvalidOperationException("Victory reward settlement failed.");
                 var primary = Field<Button>(view, "primaryButton");
                 if (!Ready(primary)) return;
+                if (WaitApprovedResult(view,result.Stars,now)) return;
                 if (CaptureBeforeAction("victory", now)) return;
                 if (SessionState.GetBool(CampaignChain, false)) CheckCampaignSettlement(em, root, runtime);
                 ClickVisible(primary);

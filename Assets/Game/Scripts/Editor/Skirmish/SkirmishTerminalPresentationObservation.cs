@@ -46,7 +46,7 @@ namespace Game.Editor
             proof.locale == UiShellRuntimeGateway.Localization.CurrentLocaleCode && !string.IsNullOrEmpty(proof.locale) && !string.IsNullOrEmpty(ExpectedResultTitle(outcome)) &&
             proof.expectedTitle == UiLocalizedText.CatalogLabel(ExpectedResultTitle(outcome)) &&
             CopyMatches(proof.actualTitle, proof.expectedTitle) &&
-            !string.IsNullOrEmpty(proof.ownerPath) && proof.titlePath == proof.ownerPath + "/Title/Label" &&
+            !string.IsNullOrEmpty(proof.ownerPath) && proof.titlePath == proof.ownerPath + "/Outcome/Title" &&
             proof.ownerPath.EndsWith("/SkirmishResult/CampaignStyleResult", StringComparison.Ordinal);
 
         public static bool AcceptMenu(Proof proof, string attempt) =>
@@ -61,7 +61,7 @@ namespace Game.Editor
         public static Proof ReadResult(SkirmishMatchView view, string attempt, SkirmishOutcome outcome)
         {
             var owner = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult");
-            var title = owner == null ? null : owner.Find("Title/Label")?.GetComponent<TMP_Text>();
+            var title = owner == null ? null : owner.GetComponent<SharedMissionResultView>()?.Controls.Outcome;
             var proof = Read(title, owner, attempt, ExpectedResultTitle(outcome));
             proof.nativeOutcome = outcome.ToString();
             return proof;

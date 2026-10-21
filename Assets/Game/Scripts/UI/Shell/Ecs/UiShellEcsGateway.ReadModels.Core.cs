@@ -211,7 +211,10 @@ namespace Game.UI.Shell.Ecs
                 firstClear,
                 debriefRequired,
                 construction: establishBase ? new UiMissionConstructionResultDetails(
-                    facts.RequiredBuildingCompletedCount, facts.RequiredUnitProducedCount, facts.CivilianLossCount) : default);
+                    facts.RequiredBuildingCompletedCount, facts.RequiredUnitProducedCount, facts.CivilianLossCount) : default,
+                civilianLossCount: facts.CivilianLossCount,
+                firstContact: runtime.MissionId.Equals(new FixedString64Bytes("saga.ch01.m01.first_contact"))
+                    ? new UiMissionFirstContactResultDetails(facts.CommandSquadSpawned != 0, facts.CommandSquadAlive != 0) : default);
             if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor))) result=LocalizeAirCorridorResult(in result,in facts);
             if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront))) result=LocalizeSplitFrontResult(in result,in facts);
             if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SteelPush))) result=LocalizeSteelPushResult(in result,in facts);

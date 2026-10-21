@@ -212,6 +212,8 @@ namespace Game.UI.Runtime
             }
             return new ModeResultContent
             {
+                Mode = ResultScreenMode.Skirmish, MissionId = !string.IsNullOrEmpty(model.CatalogId) ? model.CatalogId : model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "S073" : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "S025" : "S001",
+                Context = UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback), MedalTier = (byte)Mathf.Clamp(model.MedalDifficulty - 1, 0, 3),
                 Victory = victory,
                 Title = string.IsNullOrEmpty(model.ResultTitle) ? (victory ? "VICTORY" : "DEFEAT") : model.ResultTitle,
                 Identity = Text("mode", "SKIRMISH") + "\n" + map,
@@ -227,7 +229,7 @@ namespace Game.UI.Runtime
                 Objective1State = model.EnemyBaseDestroyed ? complete : failed,
                 Objective2State = model.PlayerBaseHeld ? Text("held", "Held") : failed,
                 Objective3State = victory && model.PlayerUnitsLost <= 2 ? complete : failed,
-                HasObjectiveFacts = true,
+                HasObjectiveFacts = true, IncompleteObjectives = (byte)(model.EnemyBaseDestroyed ? 0 : 1),
                 CompletedObjectives = (byte)((model.EnemyBaseDestroyed ? 1 : 0) | (model.PlayerBaseHeld ? 2 : 0) |
                     (victory && model.PlayerUnitsLost <= 2 ? 4 : 0)),
                 Performance1 = Text("units_lost", "UNITS LOST"),

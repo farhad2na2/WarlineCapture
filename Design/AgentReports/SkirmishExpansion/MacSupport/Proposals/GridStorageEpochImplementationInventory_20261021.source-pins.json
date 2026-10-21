@@ -1,0 +1,14 @@
+{
+  "baseCommit": "4f88fe2863288c473f5a830f590ac43d98b7e2ee",
+  "rawSourceSha256": {
+    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs": "f154d49f9ba486ea072d850334246e6a12fc87848f326cf98b88485b58a4f8d2",
+    "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs": "2012a78fc1073e9949ee1e1635e99a9745e584a316f069e4a722ab5dd6429075",
+    "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs": "fe9eed2c43a6ca67a09e06c4235b9b7e05a4c6c14e506704982ad91a1cfd0e7d",
+    "Assets/Game/Scripts/Systems/RuntimeGridStorageCleanupSystem.cs": "2880818d1ade89faa441ddd1a3fa556f8358533f27c90514f4fc5b86d81d9eab",
+    "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs": "79b9a11d1f621bc6b3bb5643f4716ee9fcdf73a471cb357ffd978e0f42befa22",
+    "Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs": "0d3c056a829b48f8618edd8c1a32990e0b241895250b4320657dc7f70f4557e3",
+    "Assets/Game/Scripts/Components/GridComponents.cs": "494f74e590a4003f95971aacc71401ce7d4de5a63bdea3d26777bd8d66d11d1c",
+    "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "5964acbac90fbcb89bb1d9a4e64193e52e8a5cdf6b621aae623eac690754e8e5",
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": "87e01885f4bc834bd6e5cbff55c234e194fde45c14c148e37410455a7125032c"
+  }
+}

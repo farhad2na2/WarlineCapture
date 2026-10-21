@@ -1,0 +1,21 @@
+# Actual writer input and cleanup inventory before implementation
+
+Base `4f88fe2863288c473f5a830f590ac43d98b7e2ee`; adjacent manifest pins raw input files. Inventory commit precedes code edits. Native controls and heavy compilation are not assigned or executed.
+
+The selected grid is the global GridConfig singleton. Effective inputs: Width/Height/CellSize/Origin; allocated Counts/Blocked/FriendlyPass; UnitGrid and GridBlockerSize; OperationMapBuildingComponent plus RuntimeBuildingCombatInfo.OriginCell override; current opening IsValid/ContainsFullCell and previous opening SameGeometry; current FriendlyPassGridBlocker.AllowedFactionId or 255; previous bounds/pass; entity/component existence. Queries default-exclude disabled/prefab entities. They are global and do not filter source/attempt membership.
+
+Preserve exact three-phase ordering, with existing ECS query iteration order inside each phase; no entity sorting or movement to a different archetype for replay:
+
+1. Current StaticGridBlocker+UnitGrid+GridBlockerSize without PrevBounds: add clamped/opening-excluded positive rectangle, write friendly-pass rectangle if non-255, queue previous opening/bounds in ECB.
+2. Same current tuple with PrevBounds: skip only if bounds/opening/pass unchanged. Otherwise subtract old rectangle and add new when geometry changed; update previous opening ECB; clear old pass rectangle then assign current pass rectangle; update previous bounds/pass inline.
+3. PrevBounds without StaticGridBlocker: subtract old rectangle, clear old pass rectangle, queue previous opening/bounds removal. Playback ECB only after all phases.
+
+Counts accumulate overlaps; blocked flips only at zero crossings. Friendly-pass writes overwrite by actual phase/iteration order, not a commutative union. In particular removal may clear an overlapping surviving pass; preserve this existing incremental behavior, do not silently repair or reorder it. A rebuild must explicitly replay current contributions in the same new-then-existing query order, without old-epoch subtraction/removal pass clears against fresh masks. This is a reset recovery path, not a new general overlap policy.
+
+Storage owner EnsureStorage replaces all three blocker arrays on size mismatch/missing allocation: counts/blocked zero, pass=255. It currently preserves history; unchanged phase2 contributors then skip. Invalid occupancy separately replaces Occupied; path pool can clear when storage resized. No-op ensures must preserve blocker epoch. Runtime bootstrap may rewrite GridConfig and static buffers with equal cell count; writer layout checks must catch this even if arrays remain allocated. Buffer/source attribution stays a separate diagnostic boundary.
+
+Disposal entry points: storage cleanup for retired grids (no GridConfig), grid dedup before grid destruction, DynamicBlockerInitSystem.OnDestroy across owned storage, and runtime helper bootstrap/ensure. Retired cleanup completes jobs before disposal. History is currently cleanup data surviving component/entity removal; it lacks the grid entity/version and storage epoch. Old history must not subtract into a new empty epoch. Rebind/layout change or mismatched history requires full reset reapplication; do not delete global foreign history as a shortcut. Missing/foreign contributor provenance must make diagnostics unavailable, not stall gameplay or filter live masks.
+
+Implementation review split: (A) real storage/reapplication correctness and history ownership; (B) diagnostic ownership admission remains fail closed with pending/missing source applicability. Gameplay writer must not branch on diagnostic certificates. Keep EntityScene/helper-disabled applicability unchanged, all readiness/source/fence/copy checks, Occupied separate. No geometry/budget/binding/UI changes.
+
+Controls must use actual storage owner and actual writer+ECB with independently calculated expected masks. Twelve groups: initial commit; unchanged reset; old-epoch move/removal; overlap/opening/pass order; interrupted pending state; no-op/equal-count layout; grid retirement/replacement; global foreign contributions retained but unqualified; helper-disabled policy; admission mutation across fence; occupancy isolation; stale history cleanup. All remain unexecuted until a real permitted run. The ten b24 controls retain their unexecuted status.

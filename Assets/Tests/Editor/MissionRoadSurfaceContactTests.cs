@@ -9,6 +9,31 @@ using UnityEngine;
 
 public sealed class MissionRoadSurfaceContactTests
 {
+    public static void RunGeneratedPavingRepairAndObservation()
+    {
+        try
+        {
+            Game.Editor.MissionSurfaceContactRepair.RebuildGeneratedPavingSupport();
+            var tests = new MissionRoadSurfaceContactTests();
+            tests.RaisedCurbDoesNotLiftTheWholeRoad();
+            tests.MovingContactFollowsSlopedAndRotatedRoadFacesWithoutSteps();
+            tests.TriangleBoundsDoNotFillEmptyCorners();
+            tests.LegacyRotatedRectanglesStillResolve();
+            var integration = new MapSurfaceLayeredGridFocusedTests();
+            integration.SpawnAndMovementUseRoadFacesAndAnimationContact(false);
+            integration.SpawnAndMovementUseRoadFacesAndAnimationContact(true);
+            integration.AmbientCiviliansGroundWithoutGameplayMovementComponents();
+            Debug.Log("[GeneratedPavingContactRegression] result=Passed tests=7 nativeMissionAcceptance=Unmeasured");
+            Game.Editor.MacGroundRouteReview.RunCampaignM01();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[GeneratedPavingContactRegression] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
     public static void RunBuildAndChecks()
     {
         try

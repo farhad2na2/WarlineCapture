@@ -73,6 +73,9 @@ namespace Game.Runtime
             var job = new TrackUnitSurfacesJob
             {
                 Surface = surface,
+                UnitGrids = SystemAPI.GetComponentLookup<UnitGrid>(true),
+                MovementBehaviors = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
+                AmbientCivilians = SystemAPI.GetComponentLookup<CampaignMissionAmbientCivilianComponent>(true),
                 MeshTriangles=_meshCache.Triangles,MeshInstances=_meshCache.Instances,
                 SceneSurfaceOverlays = _sceneSurfaceOverlayCache,
                 SceneSurfaceOverlayBins = _sceneSurfaceOverlayBins.IsCreated
@@ -91,6 +94,9 @@ namespace Game.Runtime
         private partial struct TrackUnitSurfacesJob : IJobEntity
         {
             [ReadOnly] public MapSurfaceComponent Surface;
+            [ReadOnly] public ComponentLookup<UnitGrid> UnitGrids;
+            [ReadOnly] public ComponentLookup<UnitMovementBehavior> MovementBehaviors;
+            [ReadOnly] public ComponentLookup<CampaignMissionAmbientCivilianComponent> AmbientCivilians;
             [ReadOnly] public NativeArray<MapSurfaceMeshTriangle> MeshTriangles;
             [ReadOnly] public NativeArray<MapSurfaceMeshInstance> MeshInstances;
             [ReadOnly] public NativeArray<MapSurfaceSceneOverlay> SceneSurfaceOverlays;
@@ -100,11 +106,17 @@ namespace Game.Runtime
             [ReadOnly] public NativeArray<BuildingRuntimeSurfaceOverlay> RuntimeSurfaceOverlays;
 
             public void Execute(
+                Entity entity,
                 ref UnitSurfaceComponent unitSurface,
-                in UnitGrid unitGrid,
-                in UnitMovementBehavior movementBehavior,
                 in LocalTransform transform)
             {
+                bool hasMovement = UnitGrids.HasComponent(entity) && MovementBehaviors.HasComponent(entity);
+                // Ambient civilians have no gameplay pathfinding/grid components. Sample
+                // their presentation position without restoring those stripped components.
+                if (!hasMovement && !AmbientCivilians.HasComponent(entity)) return;
+                var unitGrid = hasMovement ? UnitGrids[entity] : new UnitGrid
+                { Cell = (int2)math.floor((transform.Position.xz - Surface.GridOrigin.xz) / Surface.CellSize) };
+                var movementBehavior = hasMovement ? MovementBehaviors[entity] : default;
                 if (!TrySampleInterpolatedSurface(transform.Position, unitSurface, movementBehavior, out MapSurfaceSample sample, out float height, out float3 normal))
                 {
                     if (!TryResolveSurface(unitGrid.Cell, unitSurface, out sample))

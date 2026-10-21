@@ -409,3 +409,7 @@ Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/*.png 
 /Design/AgentReports/MissionAtlasColorPolish/**/*.png filter=lfs diff=lfs merge=lfs -text
 
 /Design/AgentReports/MissionAtlasColorPolish/**/*.zip filter=lfs diff=lfs merge=lfs -text
+
+# Approved match HUD mockups and native review captures.
+/Design/AgentReports/MatchHudReview20261021/**/*.png filter=lfs diff=lfs merge=lfs -text
+/Design/AgentReports/MatchHudReview20261021/**/*.zip filter=lfs diff=lfs merge=lfs -text

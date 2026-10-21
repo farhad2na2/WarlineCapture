@@ -8,6 +8,17 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BattleHudRuntimeFeedbackView
     {
+        private AriaTutorialBriefingView _feedbackAria;
+        private readonly Vector3[] _feedbackCorners = new Vector3[4];
+        private readonly Vector3[] _ariaCorners = new Vector3[4];
+        private bool _feedbackExpandedError;
+
+        private void LateUpdate()
+        {
+            if (feedbackPanel != null && feedbackPanel.activeInHierarchy)
+                ApplyV3FeedbackLayout(_feedbackExpandedError);
+        }
+
         private static void SetText(TMP_Text label, string text)
         {
             text ??= string.Empty;
@@ -46,10 +57,11 @@ namespace Game.UI.Runtime
             V3GradientGraphic gradient = feedbackPanel.GetComponentInChildren<V3GradientGraphic>(true);
             gradient?.SetBorder(accent, 3f);
             if (feedbackText != null)
-                feedbackText.color = accent;
+                feedbackText.color = new Color32(244, 246, 242, 255);
             if (feedbackIcon != null)
                 feedbackIcon.color = accent;
-            ApplyV3FeedbackLayout(severity == CommandFeedbackSeverity.Error);
+            _feedbackExpandedError = severity == CommandFeedbackSeverity.Error;
+            ApplyV3FeedbackLayout(_feedbackExpandedError);
         }
 
         private void ApplyV3FeedbackLayout(bool expandedError)
@@ -63,11 +75,13 @@ namespace Game.UI.Runtime
             panelRect.anchorMin = panelRect.anchorMax = new Vector2(0f, 1f);
             panelRect.pivot = new Vector2(0f, 1f);
             panelRect.anchoredPosition = expandedError
-                ? new Vector2(465f, -660f)
-                : new Vector2(719f, -710f);
+                ? new Vector2(719f, -659f)
+                : new Vector2(719f, -683f);
             panelRect.sizeDelta = expandedError
-                ? new Vector2(816f + extraWidth, 70f)
-                : new Vector2(532f + extraWidth, 48f);
+                ? new Vector2(943f + extraWidth, 94f)
+                : new Vector2(943f + extraWidth, 70f);
+
+            KeepAriaControlsClear(panelRect);
 
             if (feedbackIcon != null)
             {
@@ -75,9 +89,9 @@ namespace Game.UI.Runtime
                 iconRect.anchorMin = iconRect.anchorMax = new Vector2(0f, 1f);
                 iconRect.pivot = new Vector2(0f, 1f);
                 iconRect.anchoredPosition = expandedError
-                    ? new Vector2(14f, -13f)
-                    : new Vector2(12f, -9f);
-                iconRect.sizeDelta = expandedError ? new Vector2(44f, 44f) : new Vector2(30f, 30f);
+                    ? new Vector2(16f, -25f)
+                    : new Vector2(16f, -15f);
+                iconRect.sizeDelta = expandedError ? new Vector2(44f, 44f) : new Vector2(40f, 40f);
             }
 
             if (feedbackText != null)
@@ -86,13 +100,31 @@ namespace Game.UI.Runtime
                 textRect.anchorMin = textRect.anchorMax = new Vector2(0f, 1f);
                 textRect.pivot = new Vector2(0f, 1f);
                 textRect.anchoredPosition = expandedError
-                    ? new Vector2(66f, -5f)
-                    : new Vector2(53f, -4f);
+                    ? new Vector2(76f, -9f)
+                    : new Vector2(76f, -7f);
                 textRect.sizeDelta = expandedError
-                    ? new Vector2(734f + extraWidth, 60f)
-                    : new Vector2(panelRect.sizeDelta.x - 53f - 16f, 40f);
-                feedbackText.fontSize = expandedError ? 24f : 18f;
+                    ? new Vector2(panelRect.sizeDelta.x - 96f, 76f)
+                    : new Vector2(panelRect.sizeDelta.x - 96f, 56f);
+                feedbackText.enableAutoSizing = false;
+                feedbackText.fontSize = 26f;
+                feedbackText.textWrappingMode = TMPro.TextWrappingModes.Normal;
+                feedbackText.margin = UnityEngine.Vector4.zero;
             }
+        }
+
+        private void KeepAriaControlsClear(RectTransform feedback)
+        {
+            if (_feedbackAria == null) _feedbackAria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
+            var aria = _feedbackAria != null ? _feedbackAria.transform as RectTransform : null;
+            if (aria == null || !aria.gameObject.activeInHierarchy || !_feedbackAria.IsPresentationVisible) return;
+            feedback.GetWorldCorners(_feedbackCorners); aria.GetWorldCorners(_ariaCorners);
+            Transform parent = feedback.parent;
+            Vector3 lower = parent.InverseTransformPoint(_feedbackCorners[0]);
+            Vector3 upper = parent.InverseTransformPoint(_feedbackCorners[2]);
+            Vector3 ariaLower = parent.InverseTransformPoint(_ariaCorners[0]);
+            Vector3 ariaUpper = parent.InverseTransformPoint(_ariaCorners[2]);
+            if (lower.y < ariaUpper.y && upper.y > ariaLower.y && upper.x > ariaLower.x && lower.x < ariaUpper.x)
+                feedback.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Max(360f, ariaLower.x - lower.x - 12f));
         }
 
         private void ApplyFeedbackIcon(CommandFeedbackSeverity severity)

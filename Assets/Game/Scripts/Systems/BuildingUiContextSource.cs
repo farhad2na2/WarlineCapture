@@ -41,6 +41,7 @@ namespace Game.Runtime
             public readonly Func<bool> RotateBuildingPlacement;
             public readonly Func<int> GetActivePlacementCreditsCost;
             public readonly Func<Vector2Int> GetPlacementFootprint;
+            public readonly Func<Sprite> GetPlacementPortrait;
 
             public Source(
                 RuntimeFactionResourceSystemHelper factionResourceSystem,
@@ -73,7 +74,7 @@ namespace Game.Runtime
                 Func<bool> confirmBuildingPlacement,
                 Action cancelBuildingPlacement,
                 Func<bool> rotateBuildingPlacement = null,
-                Func<int> getPlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null)
+                Func<int> getPlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null, Func<Sprite> getPlacementPortrait = null)
             {
                 RuntimeFactionResourceSystemHelper = factionResourceSystem;
                 DefinitionSystem = definitionSystem;
@@ -107,6 +108,7 @@ namespace Game.Runtime
                 RotateBuildingPlacement = rotateBuildingPlacement;
                 GetActivePlacementCreditsCost = getPlacementCreditsCost;
                 GetPlacementFootprint = getPlacementFootprint;
+                GetPlacementPortrait = getPlacementPortrait;
             }
         }
     }

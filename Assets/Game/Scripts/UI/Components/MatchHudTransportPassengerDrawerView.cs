@@ -111,8 +111,8 @@ namespace Game.UI.Runtime
                 return;
 
             SetText(headerText, ResolveHeaderText(model));
-            SetText(emptyStateText, "NO PASSENGERS ONBOARD");
-            SetText(exitAllLabel, "EXIT ALL");
+            SetText(emptyStateText, Game.Configs.GameLocalization.Get("hud.passenger.empty", "No passengers aboard."));
+            SetText(exitAllLabel, Game.Configs.GameLocalization.Get("hud.passenger.unload_all", "UNLOAD ALL"));
             SetText(closeLabel, "CLOSE");
             ApplyCapacitySlots(model.PassengerCount, model.Capacity);
             if (exitAllButton != null)
@@ -121,11 +121,13 @@ namespace Game.UI.Runtime
                     exitAllButton.interactable = model.ExitAllEnabled;
             }
 
+            HudActionVisuals.Refresh(exitAllButton);
             IReadOnlyList<MatchHudSelectionPanelPassengerItemModel> passengers = model.Passengers;
             int passengerCount = passengers?.Count ?? 0;
             if (emptyStateRoot != null && emptyStateRoot.activeSelf != (passengerCount == 0))
                 emptyStateRoot.SetActive(passengerCount == 0);
 
+            ApplyDrawerLayout(passengerCount);
             EnsureItemPool(passengerCount);
             for (int i = 0; i < _runtimeItems.Count; i++)
             {
@@ -160,7 +162,7 @@ namespace Game.UI.Runtime
         private void SetVisible(bool visible)
         {
             if (visible)
-                ApplySelectionLayout(true);
+                ApplySelectionLayout(false);
             else if (_selectionLayoutCached)
                 ApplySelectionLayout(false);
             if (drawerRoot != null)
@@ -222,14 +224,13 @@ namespace Game.UI.Runtime
                 return;
 
             value ??= string.Empty;
-            if (text.text != value)
-                text.text = value;
+            UiLocalizedText.Set(text, value);
         }
 
         private static string ResolveHeaderText(MatchHudTransportPassengersModel model)
         {
             if (model.SoldierCapacity > 0 && model.VehicleCapacity <= 0)
-                return $"PASSENGERS {model.PassengerCount}/{model.Capacity} | SOLDIERS {model.SoldierPassengerCount}/{model.SoldierCapacity}";
+                return Game.Configs.GameLocalization.Format("hud.passenger.capacity", "PASSENGERS {0}/{1}", model.PassengerCount, model.Capacity);
 
             if (model.SoldierCapacity <= 0 && model.VehicleCapacity <= 0)
                 return $"PASSENGERS {model.PassengerCount}/{model.Capacity}";

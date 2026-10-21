@@ -1,0 +1,1395 @@
+{
+  "note": "Intermediate captures retained locally; full validation logs and control receipts are in validation-evidence.zip. Curated final native screenshots are committed separately.",
+  "files": [
+    {
+      "file": "Native/menus-20261021-141956/01-hud.png",
+      "bytes": 1678399,
+      "sha256": "767077b8fa23bd2024f5d2f6f5f67b6607ef6ddbe088997bca534910688c62f0"
+    },
+    {
+      "file": "Native/menus-20261021-141956/03-exchange-request.png",
+      "bytes": 1691462,
+      "sha256": "6fc96b78d0855324883079d3d57e842e154abb2dd24b4acc262ae7354b23cb27"
+    },
+    {
+      "file": "Native/menus-20261021-141956/04-pause.png",
+      "bytes": 1407868,
+      "sha256": "079698d9759e20384dfbeeb01254a2b2a7316ba101e9088c2208c9252ed13fff"
+    },
+    {
+      "file": "Native/menus-20261021-141956/05-settings.png",
+      "bytes": 690078,
+      "sha256": "53158cebbcafb96f1debada980df3de5297b91b811fce51d3f1e99ab36ea419d"
+    },
+    {
+      "file": "Native/menus-20261021-141956/placement-confirmation.png",
+      "bytes": 1678390,
+      "sha256": "42a60f03d21d59d8334c6c26797342565f39ae270889c481f84833c3c4f44fb4"
+    },
+    {
+      "file": "Native/menus-20261021-142328/01-hud.png",
+      "bytes": 2584675,
+      "sha256": "97655b70158f7c9be074739d60c0cbaa8bfa3bb307f6064f4c6edc83ad454e54"
+    },
+    {
+      "file": "Native/menus-20261021-142328/03-exchange-request.png",
+      "bytes": 502779,
+      "sha256": "82f059b5c9a8f9961e5f086a6fc7ff31d2d4e23950cbdeb91eb6634459374f02"
+    },
+    {
+      "file": "Native/menus-20261021-142328/04-pause.png",
+      "bytes": 2081970,
+      "sha256": "26745be38b7f672522c51e6787b0aa375def49cc8c9e7b2e65c020056c8e0e03"
+    },
+    {
+      "file": "Native/menus-20261021-142328/05-settings.png",
+      "bytes": 1095696,
+      "sha256": "6bb6c2966b93f194cfa6627ec8a17aac4a217e53398fce033964b4927eacdea9"
+    },
+    {
+      "file": "Native/menus-20261021-142328/build-menu.png",
+      "bytes": 2024186,
+      "sha256": "a0afc33ac400211a90d148e36352c0b5c8a182a3bef102b455325eed6c435620"
+    },
+    {
+      "file": "Native/menus-20261021-142328/placement-confirmation.png",
+      "bytes": 2396023,
+      "sha256": "99b6146684d832d46db79d6facdc494cdf36ec3c10f772dc6ae0de593421298f"
+    },
+    {
+      "file": "Native/passengers-20261021-142550/01-hud.png",
+      "bytes": 2257179,
+      "sha256": "8dfa063ff98f68ef6f982bceffb7fad28071db3477ddade5914fca3641cd6169"
+    },
+    {
+      "file": "Native/passengers-20261021-142550/03-exchange-request.png",
+      "bytes": 508744,
+      "sha256": "c82fbbb0d52cc7e3d3abf60852f79a11d16fd881a2a18859f0c56e700cb4fcfc"
+    },
+    {
+      "file": "Native/passengers-20261021-142550/04-pause.png",
+      "bytes": 1901336,
+      "sha256": "64706d0579737577e20d1ec6cc59bb0715ec1b88fbed42da781db4d3986aa701"
+    },
+    {
+      "file": "Native/passengers-20261021-142550/05-settings.png",
+      "bytes": 954164,
+      "sha256": "064d3cd8cd8325ef05ba7dad088e096508e4a07d55cbd053a812b6e40e67feeb"
+    },
+    {
+      "file": "Native/passengers-20261021-143337/01-hud.png",
+      "bytes": 2257178,
+      "sha256": "ce72e33fba98db49fd966e39a35e87595b65978788de86874a6078fc885afa2a"
+    },
+    {
+      "file": "Native/passengers-20261021-143337/03-exchange-request.png",
+      "bytes": 505606,
+      "sha256": "c9cc9120842dcf810e772490c49962ad074c02f05a11e8853d5c75692283a90f"
+    },
+    {
+      "file": "Native/passengers-20261021-143337/04-pause.png",
+      "bytes": 1901257,
+      "sha256": "1fc9fb3c9b46c50fa41df0804ada2acaa2103af0db21e3714c381c92d3684bb7"
+    },
+    {
+      "file": "Native/passengers-20261021-143337/05-settings.png",
+      "bytes": 954134,
+      "sha256": "4425995094ba572c110de411959212f63077b15ed0bca611f46ec853d1488a5b"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/01-hud.png",
+      "bytes": 2255596,
+      "sha256": "439230a575a619283ce23e9bf67a7f5f9b5c2f21bb3624bf2867c980f3cd53b8"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/03-exchange-request.png",
+      "bytes": 505656,
+      "sha256": "f45c91468703d87710ca4994ed205bca7717834bcf3f3a8b00e66ffeeb4c7f78"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/04-pause.png",
+      "bytes": 1900473,
+      "sha256": "f29c087e2b191b1fee9cb8dba352b5490a7a3b07c6f673691281a8ae229b56d2"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/05-settings.png",
+      "bytes": 953611,
+      "sha256": "575824428bae81a60f9820f2bb38c31fd1cd8821a5e50a6a5312ae7271a9399a"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/command-menu.png",
+      "bytes": 2185531,
+      "sha256": "d69171b91886e2585387ec6914236ac7752f40668ad526138b1e1463c15ee11d"
+    },
+    {
+      "file": "Native/passengers-20261021-144150/selected-hud.png",
+      "bytes": 2240165,
+      "sha256": "b5c2bbda8252894d342c8d4a07f870b22e472a123a66c250734be5e0d85100d9"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/01-hud.png",
+      "bytes": 2256929,
+      "sha256": "a080b17e569a2ba01c7f5079d64ad61f8f442f6a8d1c3c5944eea382db019208"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/03-exchange-request.png",
+      "bytes": 505631,
+      "sha256": "34defb20b478f951008ed220fd2ea0fad58cbfb87f6c457359ba388485bfbf18"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/04-pause.png",
+      "bytes": 1900697,
+      "sha256": "f9c650316533eb1c85e994a1b7a9689fa034e1d513ac98f10fefd83818f6c054"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/05-settings.png",
+      "bytes": 953445,
+      "sha256": "1ec3f4593af17ece7c1ff2d2055949a1e911d7d34d4562bd1315c63bc42aa017"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/command-menu.png",
+      "bytes": 2185164,
+      "sha256": "b9bf5040cda22b3f373f476ccc090f9a62f03b351c98f01f2304bcf354e65579"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/passengers.png",
+      "bytes": 2238884,
+      "sha256": "4ad7ff0f13d1e8987c444024033c159bfc47526e93e75d5475aff4109d8f6b40"
+    },
+    {
+      "file": "Native/passengers-20261021-144803/selected-hud.png",
+      "bytes": 2240328,
+      "sha256": "1b57b56a0cb0746d03abdddb17d9d9f43524304881ae935564ed2a656577f68e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/01-hud.png",
+      "bytes": 2561564,
+      "sha256": "09f70776ed0917d04ba9110539d56c276279b4cec69352b170cdd2f414c64533"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/03-exchange-request.png",
+      "bytes": 635116,
+      "sha256": "d1ce8aa77c67652833d94f286cd3d41176fd62f4eb215ee0f28d2645cace7836"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/04-pause.png",
+      "bytes": 2064173,
+      "sha256": "e9b69a13aad1438307c4bfe409aadb9534e4e1bf1e359262f2fef0614ead5971"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/05-settings.png",
+      "bytes": 1083860,
+      "sha256": "f659e6ee67a3f5f7b92df7b73f5f5d6ff4223a2e6e46413b0fe95f5e11a26dcc"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/build-menu.png",
+      "bytes": 2227640,
+      "sha256": "4c58e881bb01ae5de4dfd6c889b3c1a24bffaad74f034fa01788fc3a0fd88fad"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155103/placement-confirmation.png",
+      "bytes": 2345220,
+      "sha256": "1ce20e229a8ab214f237548cabc7993f742eadcedc107274a7a4df0bea522af1"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/01-hud-en-1280.png",
+      "bytes": 1225134,
+      "sha256": "7ffa30f0d2c684692487f69c9ea33a3360678be36045ff1134c46339c75ffbcd"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/01-hud-en-1920.png",
+      "bytes": 2562353,
+      "sha256": "9b788d13c1cb7687aff61fc997e0e77e41218f7d42799f8b49a297ac0f812fad"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/01-hud-fa-IR-1920.png",
+      "bytes": 2560544,
+      "sha256": "2cf68942e6eb36afdd02d47a0ea088035f262ddddd6d174cfe4135b7d8b09d63"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/01-hud-fa-IR-2400.png",
+      "bytes": 3277936,
+      "sha256": "ef7611cd43fb7303235b2a064dc8d77cb10901bad6432c24c32472f2af7708f1"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/03-exchange-request-en-1280.png",
+      "bytes": 358336,
+      "sha256": "674312ab93a2619491e786070234dde95c60093972190eff4eaa4b3fe612c1e1"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/03-exchange-request-en-1920.png",
+      "bytes": 630164,
+      "sha256": "fa9b19dab2fd6a4e7079ab635af8a99dc600791160e0454193567ff31e1687c8"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/03-exchange-request-fa-IR-1920.png",
+      "bytes": 621150,
+      "sha256": "daa283b6c4aaf7187306ee73b5a82d89a3352dacb39cd2c95c669c7b5ec11b87"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/03-exchange-request-fa-IR-2400.png",
+      "bytes": 652113,
+      "sha256": "0d563286d76fd37530046073281cee3d00cf97edb26969e2cd98a688cce05871"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/04-pause-en-1280.png",
+      "bytes": 1010410,
+      "sha256": "7c021e2766de6a74114a5099801582c4354889158f8985b6a83d715d1fc5638e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/04-pause-en-1920.png",
+      "bytes": 2066636,
+      "sha256": "a952d7eaabe2d91badffd02aaf88d7af3d7b4f46c5498b1522e148c556ec950e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/04-pause-fa-IR-1920.png",
+      "bytes": 2072835,
+      "sha256": "9f3c316f65c14416e513c786d4a098cc7db11579ed255fab126a4872e06b1521"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/04-pause-fa-IR-2400.png",
+      "bytes": 2674676,
+      "sha256": "61f2557931ba5af8068a570030d0c18782762d7ac899144362f9b4cafab28c6c"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/05-settings-en-1280.png",
+      "bytes": 600150,
+      "sha256": "c69d0b3e1494df6bb8438d89d01bbb529f5fa5fc9088daf77db255be79a62a62"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/05-settings-en-1920.png",
+      "bytes": 1196495,
+      "sha256": "aecb46db70e41c4782ce49e521dd8c8c9b1ed16812f5cc2a034de900f83db65c"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/05-settings-fa-IR-1920.png",
+      "bytes": 1203888,
+      "sha256": "deff9639c0c21817472e0990d3607ccb08c7471e0a9cb14c7ed5e7e793a602cb"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/05-settings-fa-IR-2400.png",
+      "bytes": 1234034,
+      "sha256": "d6ee25a328849ae8b9e56e1a2c5525b5002a320ec96b7bfee4710842e6c920a4"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/build-menu-en-1280.png",
+      "bytes": 1105349,
+      "sha256": "7e1a3f3af1d665658786af9b601210736f6ad2576ff5eda9e26001b369a46e6e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/build-menu-en-1920.png",
+      "bytes": 2229971,
+      "sha256": "20a86af1bc36e5915f05a2a1568fab0e070f7f8d01035981ca0fd14d6ab5ef11"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/build-menu-fa-IR-1920.png",
+      "bytes": 2328194,
+      "sha256": "5f97c11482083ff8a9768ee00d863e36d082ca007c399ce808e3be894bc4d052"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/build-menu-fa-IR-2400.png",
+      "bytes": 2618851,
+      "sha256": "e1055a3299cf45471b1b3c42f900fb2b2d286447f077218dfeb8a01d7cf89c49"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/placement-confirmation-en-1280.png",
+      "bytes": 1095539,
+      "sha256": "e1f1eb2801c013dac629809a1bd641ddb45a72f8d62d103d8a49555ea9d825c6"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/placement-confirmation-en-1920.png",
+      "bytes": 2287477,
+      "sha256": "7b20c77f78c9c93ee384ce0a33199e5efbfcbbf49f836945c40faf4fbf98810e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2173725,
+      "sha256": "8733fa4c031bcacbdfaa35a2fe7e2a2687aab5a3cf374dde04635f8d93f27df6"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-155711/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2773971,
+      "sha256": "cbbec362a546951fa4759a9a87e8f2766d09cf0c79ae362fd91dbc484ebfdcdb"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/01-hud-en-1280.png",
+      "bytes": 1226256,
+      "sha256": "aca89e59198b35c83885ff2828fcb7aa1543c3fc97309adfa73f44e21d73e5ed"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/01-hud-en-1920.png",
+      "bytes": 2562710,
+      "sha256": "fffd5caceba766de53a9aea82ee5f5806a88dbaeed0a112cc284b065b01b4bcd"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/01-hud-fa-IR-1920.png",
+      "bytes": 2561469,
+      "sha256": "24db85dca64363009fb66b3490df8ff8b574c792b92af60621fae3f000524ea3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/01-hud-fa-IR-2400.png",
+      "bytes": 3275758,
+      "sha256": "b7384a55657d54424dab94a4cfb2ed6efe5447fe4590260d4cc023211536026a"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/03-exchange-request-en-1280.png",
+      "bytes": 359516,
+      "sha256": "7d1bf6985e7b206bea463d3068d833887b9022ce509a12c1bf98f7b9dad0b371"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/03-exchange-request-en-1920.png",
+      "bytes": 631673,
+      "sha256": "bce92f8cbadc7a00a64a21e0baaddbfcd5a7b1f0e56aa734ae374fa3d3d325fa"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/03-exchange-request-fa-IR-1920.png",
+      "bytes": 622760,
+      "sha256": "9d179e44a723eec70e4b813d42c31fe8caaa10366189193a6760394b40467bd2"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/03-exchange-request-fa-IR-2400.png",
+      "bytes": 653390,
+      "sha256": "03d28133eacc25dd3522775f47a2412c56300605328a6ea6369fea191f471d1c"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/04-pause-en-1280.png",
+      "bytes": 1010523,
+      "sha256": "471c2c37e44c0e383527db918ae2daa28cb0ff38150ffa24eb6c468da226af84"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/04-pause-en-1920.png",
+      "bytes": 2067789,
+      "sha256": "5a2911d2b115edc127cb3e6311bd8206b7e51c82adce9dfecbd69e6b0e804fcc"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/04-pause-fa-IR-1920.png",
+      "bytes": 2073469,
+      "sha256": "b63d66dccaefad1e1476addb61f8b91de3d08cf0e453f78eb62f3febf81e949b"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/04-pause-fa-IR-2400.png",
+      "bytes": 2676464,
+      "sha256": "caedfd9174917a855e8b4305c90933920ede6f1b5b80dca83f3f04781d8acd51"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/05-settings-en-1280.png",
+      "bytes": 600669,
+      "sha256": "2a4575d8ef0240faf3a1c6dbe32a5877bd9964632294adfbe5b29866f4337cc2"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/05-settings-en-1920.png",
+      "bytes": 1198973,
+      "sha256": "d5d408ffbea6fc8a50bffbc2cc46e969ecb35c18e52a37193b387a30d3bc7383"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/05-settings-fa-IR-1920.png",
+      "bytes": 1204310,
+      "sha256": "6e17990d914ecc6812accd5e2d06db0c74431825277dda504d4c5467176774f9"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/05-settings-fa-IR-2400.png",
+      "bytes": 1234232,
+      "sha256": "c33bfe7839c43a8917f994534130f3e07c8103cf8395f325dadf15a3cb6eccd0"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/build-menu-en-1280.png",
+      "bytes": 1136018,
+      "sha256": "e5a502fc3169283d27d1356e2cfe7602158a7f93ce78e7aa40853cf74cd9dcd5"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/build-menu-en-1920.png",
+      "bytes": 2293355,
+      "sha256": "8284653ae23c23bbb05f3d5a2e9b91ad11f631a9baf48221f5301442ca91b423"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/build-menu-fa-IR-1920.png",
+      "bytes": 2327571,
+      "sha256": "48d110766ecc929f0528a6e20796c20cf1d5426685cd0fac29cf0c8d27666c4f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/build-menu-fa-IR-2400.png",
+      "bytes": 2624011,
+      "sha256": "287b56451dbe8309d1b9d1bb93ce438b6843d72a4e4796d367fd8513c8827970"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/placement-confirmation-en-1280.png",
+      "bytes": 1094051,
+      "sha256": "71726f809474826765e1959e30714e401389d11d24816f15429105d5c03bf991"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/placement-confirmation-en-1920.png",
+      "bytes": 2344471,
+      "sha256": "29a93f77f4917613eba659fd79197edaf7747f7a464ac72bf5d6e700441a8409"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2168400,
+      "sha256": "537e058fce6e6d9b61f83ad0036e47a3bac6c3fe7620f34f6b358f293f485e36"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-160520/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2764458,
+      "sha256": "bf1a2ff3ec1ae0e4e965e7eeb756a325ea0876a34f110fb15252b3941a24daba"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/01-hud-en-1280.png",
+      "bytes": 1226073,
+      "sha256": "0aa4884d0866fd167776d783e1f4aca43f3d9bbc8cdaed56822cf855e8ba0cd4"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/01-hud-en-1920.png",
+      "bytes": 2560999,
+      "sha256": "e11958447cee6b464ebd847e8e35c675f7fe38f8dd950a1cb1517bd6e2a42b56"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/01-hud-fa-IR-1920.png",
+      "bytes": 2560494,
+      "sha256": "8ceaf511c7a7cbbd4268adf3275ace2fe1436f7e7be93384edcaab781c15be96"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/01-hud-fa-IR-2400.png",
+      "bytes": 3279633,
+      "sha256": "48e7788ec75fc2d2230e1fab923b94319a6f114b307090da12c6123951582210"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/03-exchange-request-en-1280.png",
+      "bytes": 358204,
+      "sha256": "bd9867396e002d44d00290b2035b46477117af20f638f3da646cf37e45959bae"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/03-exchange-request-en-1920.png",
+      "bytes": 633889,
+      "sha256": "0d8224a39b9ccfd9d17353e31f621e6515964645adffff92ebde97ffd6520a43"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/03-exchange-request-fa-IR-1920.png",
+      "bytes": 622095,
+      "sha256": "40372e840e37566d7401e7786525cf0ee79dc2681fabe49f803ac537622fcbf7"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/03-exchange-request-fa-IR-2400.png",
+      "bytes": 652237,
+      "sha256": "8b24927ec9071f007941af91b706f1284d675f0fac639dd8b71c3a1f8ffdd0f3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/04-pause-en-1280.png",
+      "bytes": 1011493,
+      "sha256": "28d79849011dd1e1060123b2a90d2185abde8f3afa3128707e64ff7526b0fa21"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/04-pause-en-1920.png",
+      "bytes": 2069623,
+      "sha256": "6ea21411e0d31bc29b6bb360922dc56bf2a39f3061d4fcff4eb03e20262776e3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/04-pause-fa-IR-1920.png",
+      "bytes": 2074107,
+      "sha256": "72b2c85fd68de74ad7dc5032c6a38491280a6b01d3d163bf1092529206ed36b5"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/04-pause-fa-IR-2400.png",
+      "bytes": 2679368,
+      "sha256": "15633d141e92e61e9794c8786a3371ae0ab3f92c31ac5aab3882454a5debb1d4"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/05-settings-en-1280.png",
+      "bytes": 599550,
+      "sha256": "759f7bacb3980df268066249cd7b8c7b7048649d16b119e4d6b5dc0152d77f2e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/05-settings-en-1920.png",
+      "bytes": 1199668,
+      "sha256": "6ec1050cf125a6b2803a7dbd945da15109f8aebb1cf07a38fa8529633af1246f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/05-settings-fa-IR-1920.png",
+      "bytes": 1204196,
+      "sha256": "600ee0613f481f9e34f4c9fc73930a0b65b1c567616b7607f551f1d630d29b46"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/05-settings-fa-IR-2400.png",
+      "bytes": 1236092,
+      "sha256": "2cb4afccf5d3e95e02a34f319e621248cffd541eff5e814cc038e2c6aad1de94"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/build-menu-en-1280.png",
+      "bytes": 1136216,
+      "sha256": "27797894b8d7995820e8ea2b987f049fd08b1ea71ef9ae4ce5b88d7e341b64b7"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/build-menu-en-1920.png",
+      "bytes": 2294898,
+      "sha256": "8ae87eb38bc57ac1a5715a92d998d7a19484866922e6cd64f648e30934b22b7f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/build-menu-fa-IR-1920.png",
+      "bytes": 2329717,
+      "sha256": "7430dbda8b51341d2b96794478fbfc0788a4daa4976589582a817f2da6a63d9f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/build-menu-fa-IR-2400.png",
+      "bytes": 2623730,
+      "sha256": "93b6e386fa56ee58997c4bc71a664da71d55653f26787290d640c773bbbe6baf"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/placement-confirmation-en-1280.png",
+      "bytes": 1161283,
+      "sha256": "6b8e47db610bdd876d62259d79592caa1b3fbb144a59eb29356a1cca9117971e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/placement-confirmation-en-1920.png",
+      "bytes": 2345590,
+      "sha256": "78c631f64bfdc3d2542d8b5acd7b2d5e78fcb5fe3cc55038bde6bc6adc0fa875"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2199831,
+      "sha256": "fb850fa8e4fd81542d729ad5090843976e4c96edadd24f16ebfa147453847d3e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-161318/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2791077,
+      "sha256": "c2873b39b47e91d12c6c754b18c442da0c9bd47dabc8e005e432da6b2b13d8d3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/01-hud-en-1280.png",
+      "bytes": 1226423,
+      "sha256": "7596802a137ab46fef2cbeaa8621e2ee5377e0de85217486224d3f1dd11af90c"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/01-hud-en-1920.png",
+      "bytes": 2561536,
+      "sha256": "f2223012fe726f4dcdb416885e3d80f30cf594825d7c50186774d03ed0e47527"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/01-hud-fa-IR-1920.png",
+      "bytes": 2561482,
+      "sha256": "a65163ec08c9853e799de6ee1bca565de7b4041602b26bbf06bf9eea583c7364"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/01-hud-fa-IR-2400.png",
+      "bytes": 3275052,
+      "sha256": "36d21e8f2b8b8da2d92cfb81e34156db5c57170d1c02e5569012dbdb2f4c35e1"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/03-exchange-request-en-1280.png",
+      "bytes": 359302,
+      "sha256": "44b83958719b5ec120b93873f14c406591993133a9d50ac8ef1a869d7c7e48bc"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/03-exchange-request-en-1920.png",
+      "bytes": 632117,
+      "sha256": "6afd69130791bd881bac450b869ba5645b939a6e96da2353434945c6702d58a9"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/03-exchange-request-fa-IR-1920.png",
+      "bytes": 623530,
+      "sha256": "a1975bbd2f279650061f17955c6d3cb1c54ba1f53dd3bfe9617a666377d6de7d"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/03-exchange-request-fa-IR-2400.png",
+      "bytes": 653365,
+      "sha256": "68f26e2b47d78f4f622d09cba3de8f6e51ab62ffa497078f6df2f1f581e6056a"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/04-pause-en-1280.png",
+      "bytes": 1010823,
+      "sha256": "5fcf4081b44f611587836daeb6cb03a99624c81f5c82c63d5448279ff1bc7eee"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/04-pause-en-1920.png",
+      "bytes": 2067925,
+      "sha256": "ba08a686d631864b8cb9d058ad02a9742edd627276045971b480768e5897a018"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/04-pause-fa-IR-1920.png",
+      "bytes": 2073477,
+      "sha256": "303995fbaee0b34e5db2dda7913dbcfd9d3cae51db0d6a7efe1ebe4f525acc14"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/04-pause-fa-IR-2400.png",
+      "bytes": 2677445,
+      "sha256": "ba622dbc74e82cab0a081d22b57a0d09cf876d54ee98a0751f7f7335fb96da04"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/05-settings-en-1280.png",
+      "bytes": 600608,
+      "sha256": "874401a9eb783b9f472ec5b4944047bbf9ba042613ea081410a24de3f6f01489"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/05-settings-en-1920.png",
+      "bytes": 1196980,
+      "sha256": "1e420caacd4943dc712b57da28b258fd4242087d3c4fe0c58afa531006a51a8d"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/05-settings-fa-IR-1920.png",
+      "bytes": 1203729,
+      "sha256": "d5bb8f20202a34995d09cdcb14556da55853e75ffde9ffe816f2c693f76b8959"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/05-settings-fa-IR-2400.png",
+      "bytes": 1235075,
+      "sha256": "038dc0cf3678e46e10fd9232f9ad0b6beb09d28e0af10147f792c4b0fb275b53"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/build-menu-en-1280.png",
+      "bytes": 1136231,
+      "sha256": "ab76a67f925e68dbb656886ab408b8594397be5b87ba69f918c8cdc2d710b662"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/build-menu-en-1920.png",
+      "bytes": 2294356,
+      "sha256": "1f18b05196b21f9af2bde7b8d483ad2f745c0e87db1126a6ea2847b039620f04"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/build-menu-fa-IR-1920.png",
+      "bytes": 2328292,
+      "sha256": "924428cf51fe24003b2e1d960893ce76bec1557fd2625db96cc128761130057f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/build-menu-fa-IR-2400.png",
+      "bytes": 2625719,
+      "sha256": "7ac3009a89fdd4865e247130868fd45926fef197ae4bac54662b67a6b284d454"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/placement-confirmation-en-1280.png",
+      "bytes": 1159554,
+      "sha256": "5bea80fb5508aea2ca2eb05f065f6766743879b4f21e065f576e1b00560393da"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/placement-confirmation-en-1920.png",
+      "bytes": 2344798,
+      "sha256": "484ba4db719e25594508ac3186de509baaaa97b7e64d25ceac23433b83419a0a"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2198884,
+      "sha256": "3ef35a19de08e3f76bb1b8b322c27e302980fa37d73b0444fbf541b13cfc4d87"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-163944/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2788111,
+      "sha256": "abf9fe3a3799601f4f61cab10598de9c21a13e10949f39ba12a349400a7bed5f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/01-hud-en-1280.png",
+      "bytes": 1223406,
+      "sha256": "bdcc0bbbae9e3f6251a3298ac892de6d2d673466006dd23f3dbf312755a21a50"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/01-hud-en-1920.png",
+      "bytes": 2560361,
+      "sha256": "84b76f9dc1ef32e464dfe14fddbc58e4f028c35a9ed6e9ca63d3ae9ea59ec7e4"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/01-hud-fa-IR-1920.png",
+      "bytes": 2559232,
+      "sha256": "a8dcbe386f8f6063a29f5397c04a56aabe7b4d6b8bac783903e52443a622a5d3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/01-hud-fa-IR-2400.png",
+      "bytes": 3276412,
+      "sha256": "8bbb67451d158da687f9285f65f2cec3c745427b020efb62208944f96af5abdb"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/03-exchange-request-en-1280.png",
+      "bytes": 359307,
+      "sha256": "7591173cd136c6fa66d737c6e70ae404d767dd0365a4d683e1f94914507d54c5"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/03-exchange-request-en-1920.png",
+      "bytes": 631721,
+      "sha256": "d327cd7749a05395479300505afb7759f5c0fac5597e4a81685f8eb33e44fd74"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/03-exchange-request-fa-IR-1920.png",
+      "bytes": 623634,
+      "sha256": "52c12cb8fc502f38aad8ae0da3d0cae810743e59619ef2980f51684215a5c440"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/03-exchange-request-fa-IR-2400.png",
+      "bytes": 653373,
+      "sha256": "0d76794ace7d823101ba03e36ce424cd7f4f31f4653bc6e5b08f86c40e3c920e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/04-pause-en-1280.png",
+      "bytes": 1010957,
+      "sha256": "cf77e8be4aefcb1d437d9925852f4caef25498a343bd2b71cd8ca8b32fd09ab9"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/04-pause-en-1920.png",
+      "bytes": 2070684,
+      "sha256": "65f760c54983b3064f1b02cdb4bd23541136b00a8a929aa3694243179c0583c8"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/04-pause-fa-IR-1920.png",
+      "bytes": 2074454,
+      "sha256": "091a594bd2e7198b65bf71ed1b1c3443170f4069496fbd08729f9c3fbf3c5dcb"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/04-pause-fa-IR-2400.png",
+      "bytes": 2676806,
+      "sha256": "34e531005cf8a1f35acebecc730141cb319f17db43b9beb991483b42968f28be"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/05-settings-en-1280.png",
+      "bytes": 600110,
+      "sha256": "499441f61ac2c7c3cc580ff81856b0096e27a45e61cf07158fe55799d711f2c3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/05-settings-en-1920.png",
+      "bytes": 1198971,
+      "sha256": "c8820a2a8e0f113752d186021a56414095c79ec560ddad3e9198d82cd29eab2c"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/05-settings-fa-IR-1920.png",
+      "bytes": 1203948,
+      "sha256": "69e2ac8894a437990777ca226c6bcb80f54fbdf09990b50e5d917f695b42d839"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/05-settings-fa-IR-2400.png",
+      "bytes": 1240548,
+      "sha256": "63af1614868bedb00624e5d1dc1b057ad49e8ac1f156296941e4b0de37dc1396"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/build-menu-en-1280.png",
+      "bytes": 1135929,
+      "sha256": "d247a4c4d090049aaa69af69fff3d585ddf32b11cb4f08f1ce28f2b738cd250e"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/build-menu-en-1920.png",
+      "bytes": 2293784,
+      "sha256": "a81ac16733859eb8cb26ce3f6aca2bd18f1081e1e33135dd8a74ad6acc331304"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/build-menu-fa-IR-1920.png",
+      "bytes": 2287616,
+      "sha256": "a986a9c0d381c57ba552ef3ef2ab7603ba955e1f815e05fd4ad596971d464820"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/build-menu-fa-IR-2400.png",
+      "bytes": 2563598,
+      "sha256": "4568f976d74d682d33802c1691c842f30cebb676ccea313a142d746f062042e2"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/placement-confirmation-en-1280.png",
+      "bytes": 1129693,
+      "sha256": "d32ddf6dfd89cf94c8c0c4c577172cd6693ace93fdb10b12e655b80bc16d53fd"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/placement-confirmation-en-1920.png",
+      "bytes": 2346733,
+      "sha256": "15347aa9df6af72c8a830147289df783486e2d9ea48a56fb248678dbe4ca1215"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2341347,
+      "sha256": "75161e51fcb1b629cd01ffec85f431f8a84f19de3fb92adfaf0b0e7fcfc4a5d8"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-164306/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2934695,
+      "sha256": "e9a98b981cb02e58170a0ce2f182c33496bb8684307bc75861e782d7b3572d53"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/01-hud-en-1280.png",
+      "bytes": 1226316,
+      "sha256": "62376ada6561851894040035bde1dfe582e6d76d4fe35da1e802c4cfba9c02f8"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/01-hud-en-1920.png",
+      "bytes": 2558833,
+      "sha256": "bb571322e79112d60f0f14e84ff8099d09dd89ac7ee78d9c5619940062ef92a2"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/01-hud-fa-IR-1920.png",
+      "bytes": 2560350,
+      "sha256": "f93376b93f957f934257cc671f03f532554144b28b50aca7d5756179f957f2b3"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/01-hud-fa-IR-2400.png",
+      "bytes": 3277738,
+      "sha256": "4d045d5080f2c8b14658efeef31c03058f3adafd601ca1b544e62c6a70607019"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-en-1280.png",
+      "bytes": 359321,
+      "sha256": "e96f8537ab14cd96815c0677385e9c28a9929931b1166b27adcc3c47d86967f0"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-en-1920.png",
+      "bytes": 633070,
+      "sha256": "647b93fdc98bd01f9f4492569199dd336a8c5d0ac8dbf32622d0a1f6c598988f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-fa-IR-1920.png",
+      "bytes": 623223,
+      "sha256": "05edfc00b18b93e92c5b279ae04aeadff69885b88cb1cc40d4d6e9de8909fc07"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-fa-IR-2400.png",
+      "bytes": 653176,
+      "sha256": "169259e54f723227cd30994d5307b03fc8af4ff0a0536d8b35a48696b4727969"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/04-pause-en-1280.png",
+      "bytes": 1010291,
+      "sha256": "05ae4432b0aec68e76100b3dcf38d58fcd55e949d7344f8cc9a266c6d07105aa"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/04-pause-en-1920.png",
+      "bytes": 2068044,
+      "sha256": "786e74d4ecc73501e90fdd86be7d3ee92689627762952be3ba97b1beac768583"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/04-pause-fa-IR-1920.png",
+      "bytes": 2072951,
+      "sha256": "cb32666e311fd64e79a5801dbfae7834ac07575be6cdb69db7e433fc26498a29"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/04-pause-fa-IR-2400.png",
+      "bytes": 2678112,
+      "sha256": "4a8ec1c63edd2075094339fa99548942687f7b3be66509930643395c8512c276"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/05-settings-en-1280.png",
+      "bytes": 600554,
+      "sha256": "2b79de82811461a27f2e1e11ab7007682ed33d755fc8c84913752d8458bf0415"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/05-settings-en-1920.png",
+      "bytes": 1202902,
+      "sha256": "501e0ec450dadc9a55d7c519e30de1e26baf87c263f669fe8f6987229896102f"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/05-settings-fa-IR-1920.png",
+      "bytes": 1208460,
+      "sha256": "a502766b444741b22f7c868b3e5a8b9bf9c31a4e3ba8882e370246767a508174"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/05-settings-fa-IR-2400.png",
+      "bytes": 1242965,
+      "sha256": "5c794574a800d0ed283270f695bb3bc6192f0ff90f9a09914eb6b3b5d932765a"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/build-menu-en-1280.png",
+      "bytes": 1135116,
+      "sha256": "fb861c880647a464a7a6478a290f146f307f773ea72a7cff4ebac82221410912"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/build-menu-en-1920.png",
+      "bytes": 2292498,
+      "sha256": "a108e150dee3e37a2992c8bbb864f177066a4aa4fd7b6ae694af3f6138135ddd"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/build-menu-fa-IR-1920.png",
+      "bytes": 2286392,
+      "sha256": "f7727e1e0fb15c672457aa9a4db512387d35968a70ee977f0b5bacc2ff5c28c2"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/build-menu-fa-IR-2400.png",
+      "bytes": 2563393,
+      "sha256": "271de9fc1f0a719232d6b714ec368cee0dd0eac167f8c75b568d67e664ec2b13"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-en-1280.png",
+      "bytes": 1129260,
+      "sha256": "3b0c495632ef87c3a34fdce572031fbe256196031d9db8be4c5ef0526e2d6fbc"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-en-1920.png",
+      "bytes": 2347338,
+      "sha256": "cf861d307fe6005a0a160f03eb14417fe9f4398880f57022d7735c3a59a36afe"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-fa-IR-1920.png",
+      "bytes": 2342685,
+      "sha256": "5abdf86be7858ec64c995e132012874c24f6208d89ef37c8af23d10a3e6df977"
+    },
+    {
+      "file": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-fa-IR-2400.png",
+      "bytes": 2933515,
+      "sha256": "0176445053a2e4221e7701e020dcdaeed8cbf820d487c690ef9438b5db060072"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/01-hud-en-1280.png",
+      "bytes": 1123051,
+      "sha256": "d91916feefd621d2363cc6ec9f8cf700fecf06a6b7b028b83e28cfe2e3c2d0d4"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/01-hud-en-1920.png",
+      "bytes": 2225781,
+      "sha256": "2d011cd9596181ab582bb96436187566a1b99695184bc580b6aa41cc6d87272c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/01-hud-fa-IR-1920.png",
+      "bytes": 2238997,
+      "sha256": "13b33007858bc60b16bd29c2366651dfbe9c3d7122ab9af0e7901ac59624c46d"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/01-hud-fa-IR-2400.png",
+      "bytes": 2836125,
+      "sha256": "34c5e8b2a42b526eeb7f2ef172089c852e916f6e29996b4abdb7e13f7ad7205e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/03-exchange-request-en-1280.png",
+      "bytes": 356051,
+      "sha256": "d11a52835fe8ee97288679e730dea57c0db304ca56ca2c7f85b7afcac4b7179a"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/03-exchange-request-en-1920.png",
+      "bytes": 632652,
+      "sha256": "5de60acafd8c6cd8277480069bd871bd44acbf1ea0b120343ab2a4347a8fa9ec"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/03-exchange-request-fa-IR-1920.png",
+      "bytes": 616400,
+      "sha256": "9058b15a1454320e5435df9a136b558cfe25d33a7be8a2bfe310a1d9091623b8"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/03-exchange-request-fa-IR-2400.png",
+      "bytes": 650856,
+      "sha256": "401b771ef33e482bd39e16f2d4909769ba0c50c0c1cf59bdf05bb43e447f7d71"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/04-pause-en-1280.png",
+      "bytes": 956163,
+      "sha256": "c6da1d0c803cd9f498682bad88b2a62c88c5f4a0b331d0a916878408cfa598b6"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/04-pause-en-1920.png",
+      "bytes": 1874856,
+      "sha256": "d1453d7bd5cfe837b2487c46dc0c1601bdb7a8e7e48e2b4b74a33022eaf2f87c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/04-pause-fa-IR-1920.png",
+      "bytes": 1891078,
+      "sha256": "b9e33a5efe06ea8bd4a1844e46bc17299892d0b965a8884898fd821b8f18d3d0"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/04-pause-fa-IR-2400.png",
+      "bytes": 2409016,
+      "sha256": "30e7480d956b6e093a2bc2fdc890d5e3cf1d11ea4aedab887b7dea2cf2371d32"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/05-settings-en-1280.png",
+      "bytes": 550316,
+      "sha256": "eed39118771d7690c0de69157abf17c9e477d86d7bbdbeae93b83b776d3dc72e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/05-settings-en-1920.png",
+      "bytes": 1047121,
+      "sha256": "c0744f95f61a84e61d25c8d63e402e29a998f0fe41786d431747cd23074893ef"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/05-settings-fa-IR-1920.png",
+      "bytes": 1055772,
+      "sha256": "e7a9bbb00d0d36b3c6965d4edfbe802676efae9bebead291ef800c47867894b4"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/05-settings-fa-IR-2400.png",
+      "bytes": 1093599,
+      "sha256": "05edb4595170a9d020f7a34717ba83d8c14a1948e008a6ce2049cebb50cce2db"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/command-menu-en-1280.png",
+      "bytes": 1088552,
+      "sha256": "c8c6263b9bb0cc2594c3d37ae68d92d244daf9f741124cef91737ee9ceb58d15"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/command-menu-en-1920.png",
+      "bytes": 2147686,
+      "sha256": "d09a5590eeb345a6a78261ce87a374479e1e4bfcdef6c296b37842cdde7a6a94"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/command-menu-fa-IR-1920.png",
+      "bytes": 2162316,
+      "sha256": "7d64d0569982c8428f2220af1094b7e59737e93872049401b63d6c3ed6193052"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/command-menu-fa-IR-2400.png",
+      "bytes": 2746071,
+      "sha256": "12e4e2d09fd9309583302246d4f1c38c3055369ba2d7ebcc9905fe0797f5f608"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/feedback-move-en-1280.png",
+      "bytes": 1097561,
+      "sha256": "476ee05ad9bfa7bbaed883c9051dc8df0069b764633f532960b4812b1d70eb90"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/feedback-move-en-1920.png",
+      "bytes": 2174860,
+      "sha256": "ab7b3222264062143fd416bfd736d8173a08c6faab882e9e03c029816fb31d9b"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/feedback-move-fa-IR-1920.png",
+      "bytes": 2191908,
+      "sha256": "a4d55a4e01a0d1d04e5950e7be8ea13b63c503c11d60b5d57e0ad49530969582"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/feedback-move-fa-IR-2400.png",
+      "bytes": 2754780,
+      "sha256": "5b4d532453097aabd079b2276baac910735c1c36345a816de725a2e926ad1d0d"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/passengers-en-1280.png",
+      "bytes": 1080466,
+      "sha256": "c8b14d9b3b1fb806f48e28abb9c0ce4743338fe38e03e50dfb5acc6b41cb774f"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/passengers-en-1920.png",
+      "bytes": 2132985,
+      "sha256": "3d58fa79280cd738c6a90fa13d1f236ca4e88ed24f4a1a6f7bda5b6f9b8194ed"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/passengers-fa-IR-1920.png",
+      "bytes": 2153442,
+      "sha256": "5965aa6a91456c563efe2eb431f1d7d950bba26c42970b48bf5587dea5ceae3c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/passengers-fa-IR-2400.png",
+      "bytes": 2727476,
+      "sha256": "4715fa4b59b8cc65fd553f9e65d0b06aae363b0fe4182623c112ecaf71d49596"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/selected-hud-en-1280.png",
+      "bytes": 1112554,
+      "sha256": "3b89d630f5dccc3be3b6de444a9951605e5eb6a809a949e0985294b4a9eb8a53"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/selected-hud-en-1920.png",
+      "bytes": 2210882,
+      "sha256": "4c6f3f53d592e91f77777290158d50c76d7c778ec533926873f53f5923687abf"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/selected-hud-fa-IR-1920.png",
+      "bytes": 2226740,
+      "sha256": "dec01657d07fbaef4f4d4e12872eab5f4828e50a972aa1f381c31bcddf55651b"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-161651/selected-hud-fa-IR-2400.png",
+      "bytes": 2808068,
+      "sha256": "c947adadff536c3803b8b2144cc60fbbad99db7fa4574f892735a5fa02b66828"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/01-hud-en-1280.png",
+      "bytes": 1122451,
+      "sha256": "c1637d9fe3f3b8aff54f7e60f11798d9603ecf5062a2536e7902d24e5f4899e4"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/01-hud-en-1920.png",
+      "bytes": 2226440,
+      "sha256": "7344865f1f543e402b5648b4a637ae2080b879f1c7980afc717ef5b958f82599"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/01-hud-fa-IR-1920.png",
+      "bytes": 2239394,
+      "sha256": "d2568818cf9dd8a235a217ef9c8567a1943001a8c5642d450b998d2aee2c6f14"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/01-hud-fa-IR-2400.png",
+      "bytes": 2836676,
+      "sha256": "d4781291ffc01820ee13fe328c5b97a31fffee4527fb32f56d104f6a0402b099"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/03-exchange-request-en-1280.png",
+      "bytes": 356074,
+      "sha256": "c7bc5507fb3d595648628c2fd992b74a962d25392ad7eed71793d3fa39e34b48"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/03-exchange-request-en-1920.png",
+      "bytes": 632102,
+      "sha256": "9d3407f83d2aec163ad5da5092bdf0b58caa29524df49d96065347372633f084"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/03-exchange-request-fa-IR-1920.png",
+      "bytes": 616279,
+      "sha256": "bf43c1776ac0dd569398c8cef2aa4af30b11774c1b91ec4666f7cda9108046ec"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/03-exchange-request-fa-IR-2400.png",
+      "bytes": 650709,
+      "sha256": "43ad1b8ead4add644d2c11385391e1dca27b5756a2a12297941aa281db55031a"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/04-pause-en-1280.png",
+      "bytes": 956351,
+      "sha256": "8581be317e741f5a3b52983f7f261c3482c99a3105d675569501ebe5c71f974e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/04-pause-en-1920.png",
+      "bytes": 1875749,
+      "sha256": "19ae779b8cb51a991f9f824f2d259b2eb7bddc46c132fa0f1a91289da400c57c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/04-pause-fa-IR-1920.png",
+      "bytes": 1891528,
+      "sha256": "60bd5e7f3133b22bb75003e1873a33042e37767cb2e01486c1bb75e4941c2abe"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/04-pause-fa-IR-2400.png",
+      "bytes": 2410344,
+      "sha256": "5485d262da42725667cb4ce90f4e4b8b4ac135dcd83b65360f221a3dc603db67"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/05-settings-en-1280.png",
+      "bytes": 550374,
+      "sha256": "21c40e1e43da55e2ebad0ba20723e4a08b6cff5c9227f37d24bd297d34f192ac"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/05-settings-en-1920.png",
+      "bytes": 1047069,
+      "sha256": "9b8706f83f37d6874d7afc932936b5d15f4a93ec737d8859198c1fcf3136746c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/05-settings-fa-IR-1920.png",
+      "bytes": 1056010,
+      "sha256": "99faea0d96221e1dd6742ad2f3e6084e0ee4ee74a849aa40f1b8dc242851e5f5"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/05-settings-fa-IR-2400.png",
+      "bytes": 1093015,
+      "sha256": "78c75dd91e5b6bd3eaaa0cf73cc56076cb2500c01d99b3886db2abcc3c79612c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/command-menu-en-1280.png",
+      "bytes": 1099037,
+      "sha256": "49581801a852dfcaac3e4b1ab1387e1f1f90979e01f377cf2604464926650964"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/command-menu-en-1920.png",
+      "bytes": 2168040,
+      "sha256": "1118a3f89352591e47e608198c00c32a6d11e03d73066cd5c00de36e3eeb4983"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/command-menu-fa-IR-1920.png",
+      "bytes": 2183727,
+      "sha256": "39a1ce75118ed34c5328d7dd4e9d2825e8298c1753b8ab193aec2a8560cc866e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/command-menu-fa-IR-2400.png",
+      "bytes": 2768264,
+      "sha256": "a6e19d72923fac098d2d7cf19c839b4514cbe3099c8898427927fee27284bdef"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/feedback-move-en-1280.png",
+      "bytes": 1110447,
+      "sha256": "8d4855ef65479979bef27dd01fe816b6a4e94d5c0142cc681956ceaab87adc4d"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/feedback-move-en-1920.png",
+      "bytes": 2203079,
+      "sha256": "a5ec450fb43b3868acf1c7ef62c315d5c24a4457ac46c367469bddc728294a6c"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/feedback-move-fa-IR-1920.png",
+      "bytes": 2219984,
+      "sha256": "9faeefd289b73409b701b3f14b47533231c5e2b7a8a0e165a6279d1ef9985496"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/feedback-move-fa-IR-2400.png",
+      "bytes": 2787891,
+      "sha256": "bb112b21b54dc784adc8a3a745e664ec3ec64d44592774816b4a21cd0f7d0820"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/passengers-en-1280.png",
+      "bytes": 1054368,
+      "sha256": "d3e305d78d2366761ac6920f2f5c2226492c6cd11f876266395295cde0686176"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/passengers-en-1920.png",
+      "bytes": 2071871,
+      "sha256": "6d93d939e5183062b2e2f79a7bf4ed1c701c32be5b98e88903b35ef5e8b1ce99"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/passengers-fa-IR-1920.png",
+      "bytes": 2092738,
+      "sha256": "7c7f91d21f5dbe3844f897ec8491525e3a45b235eb4c5613393349dfc7263902"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/passengers-fa-IR-2400.png",
+      "bytes": 2670286,
+      "sha256": "817fe5c42d35326e0d3f61987b9be5118974c360107948a1c88b2b0d9ba96f83"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/selected-hud-en-1280.png",
+      "bytes": 1113362,
+      "sha256": "cf8a746611994dbba8225a3e13592a8c64921b10a3c37df89d67b2f2cc5fac29"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/selected-hud-en-1920.png",
+      "bytes": 2211159,
+      "sha256": "152d472688e214fd62a420f6d09a4ae3e806522c349f1d43f028d974f8b83547"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/selected-hud-fa-IR-1920.png",
+      "bytes": 2227634,
+      "sha256": "9be61a58a4748910ad835823e599ec248d5a67e9f67ba8c06d442d69fe284953"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162430/selected-hud-fa-IR-2400.png",
+      "bytes": 2808798,
+      "sha256": "8988829f5b17598e49c805cddeb35c2f1357c9ad2f84becf770124404e675eb5"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/01-hud-en-1280.png",
+      "bytes": 1122541,
+      "sha256": "534663662fd5e24252a295f64c99149be7b21dba586baf9cd622c2da3770c287"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/01-hud-en-1920.png",
+      "bytes": 2225966,
+      "sha256": "fe9ba2a408cdd5e55e68827f59e7fac10859e434111c9c529f4b7be6b7ac7e07"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/01-hud-fa-IR-1920.png",
+      "bytes": 2238529,
+      "sha256": "920305636971e562eadc14e59dcd5dce612bddeb42683a8e4ce6da7ec56e0c6e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/01-hud-fa-IR-2400.png",
+      "bytes": 2834672,
+      "sha256": "9deb7dd6f04878c010432dbac58b5a63cf1da3f9e0dd5dfe5fff72d80dcea83b"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/03-exchange-request-en-1280.png",
+      "bytes": 356057,
+      "sha256": "2cf51c4bdcfbf1f160363a48d498e0c765604f73bfcab1cdcf30f1b8bf8a0204"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/03-exchange-request-en-1920.png",
+      "bytes": 639329,
+      "sha256": "736023159d2aa7c997b02c21831cd00b3d38ef6aa71d634869f01c1263f3ea4f"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/03-exchange-request-fa-IR-1920.png",
+      "bytes": 616409,
+      "sha256": "3c4583ae74f3e5709f6d8bda434c35dd1e89f625ceb732a364e02e18b5475622"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/03-exchange-request-fa-IR-2400.png",
+      "bytes": 650716,
+      "sha256": "209504c664c9199764cf06ca0a88e951e1c00e84a8edc5dcd57dea71e63c87c8"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/04-pause-en-1280.png",
+      "bytes": 955401,
+      "sha256": "bfd534dcf9a2b3499cdd8d412fa2e8530f1d642cc7b71a39b0cecc784946e750"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/04-pause-en-1920.png",
+      "bytes": 1874367,
+      "sha256": "bd303ed0454e271a3593ee90940b8f22e3241694c1edb4f011d9515adb8aeea8"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/04-pause-fa-IR-1920.png",
+      "bytes": 1891157,
+      "sha256": "c467bcf4e9804eebd12aa31e69213650d46f5924672e22ef2ac38845b03adabf"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/04-pause-fa-IR-2400.png",
+      "bytes": 2409996,
+      "sha256": "60beda22a7ac4a4227a76d406aac7f735d24e8478cbdfe7ce487c9d3845ba844"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/05-settings-en-1280.png",
+      "bytes": 550517,
+      "sha256": "22eaece773d899a9b30aa0628388a8d25bc1e7f345ee027f7447459d742d5145"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/05-settings-en-1920.png",
+      "bytes": 1046201,
+      "sha256": "2585f97406a976e79cfe1a9f1dc6a4fae162d08e091977ff45c6c8970591031e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/05-settings-fa-IR-1920.png",
+      "bytes": 1055639,
+      "sha256": "6af922cd17291a0b94437d0c0961d6889ad7c887d7b4493c1584a68a79c44f0e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/05-settings-fa-IR-2400.png",
+      "bytes": 1093794,
+      "sha256": "aa3e9c4af11ca4d7e9defa3b819f0eb5e268c596ff8b14c8d57ac2dd635eda81"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-en-1280.png",
+      "bytes": 1091097,
+      "sha256": "2f1656dc575164005adeb7fba2743ade9e537d46620653d7e65b412ab7ab27b4"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-en-1920.png",
+      "bytes": 2156732,
+      "sha256": "5d78725a388613eb20a33893f1fe0b290c4746f6583fd6989dc4055f4b9f272f"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-fa-IR-1920.png",
+      "bytes": 2170541,
+      "sha256": "3300a68de9b5e35191ff89762fa0864d4c916f33cc2e32d142fc56d1eb8aeb15"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-fa-IR-2400.png",
+      "bytes": 2754589,
+      "sha256": "33c0e4ba3753084e592dae35570460bb42170688352e9a7a32e66515bd513d6d"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-en-1280.png",
+      "bytes": 1110157,
+      "sha256": "497ab5155c34144c14d12ecd05d6f2f4a2cfb01bec124f8f3770ee3185cf8be0"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-en-1920.png",
+      "bytes": 2202798,
+      "sha256": "123890433d481703aa9da6193e6a369b01f6322e30423d844995b5a823c3c847"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-fa-IR-1920.png",
+      "bytes": 2221287,
+      "sha256": "8223d4ae0ff0932a0e015b91ff798fe5078901bda0a28c815731f2e8b99e7bf5"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-fa-IR-2400.png",
+      "bytes": 2785289,
+      "sha256": "2b4463766b190e9b108c6d2e71f7b914e270e094263b5f02b570ea661693fc54"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/passengers-en-1280.png",
+      "bytes": 1053129,
+      "sha256": "2032a22655790fccced42b8dae7c250d34ad5a070265d08f813a0e383d437679"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/passengers-en-1920.png",
+      "bytes": 2071292,
+      "sha256": "cb355afbdfd7f7664f983b6b6fe910ee6fc5ec4dd67cd46c2cab2ff1dda5f19b"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/passengers-fa-IR-1920.png",
+      "bytes": 2092143,
+      "sha256": "6dd9a27fba85fe433a615d88142f2d06c7a170b90a9e659a9243bf03f537237e"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/passengers-fa-IR-2400.png",
+      "bytes": 2668910,
+      "sha256": "54fb1ac593f6960a9cdd2ac9a5fef23d12c230e28bf3e109e40d4f72070621f7"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/selected-hud-en-1280.png",
+      "bytes": 1112422,
+      "sha256": "7f52e3c1b6f4b075e3679b48196e046f70b9e19565872c2e846f8e82fcf81ebc"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/selected-hud-en-1920.png",
+      "bytes": 2211488,
+      "sha256": "c878f6864966b4db050a99f68fa3b35509fb85d3bdb419f9801adb76e681e209"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/selected-hud-fa-IR-1920.png",
+      "bytes": 2226004,
+      "sha256": "4be81c830eb5d7ca261c2c39e2d46df97811aec99b4457873649bd697ae96383"
+    },
+    {
+      "file": "Implementation/NativeAfter/passengers-20261021-162947/selected-hud-fa-IR-2400.png",
+      "bytes": 2807364,
+      "sha256": "c7a983786d0278a95794cbe96816cbf3763db74f43665a98bef55b13dc6b2731"
+    }
+  ]
+}

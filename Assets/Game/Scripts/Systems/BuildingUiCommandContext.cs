@@ -27,6 +27,7 @@ namespace Game.Runtime
             public readonly Func<bool> RotateBuildingPlacement;
             public readonly Func<int> GetActivePlacementCreditsCost;
             public readonly Func<Vector2Int> GetPlacementFootprint;
+            public readonly Func<Sprite> GetPlacementPortrait;
 
             public Context(
                 Func<int> getCurrentDollars,
@@ -47,7 +48,7 @@ namespace Game.Runtime
                 Action cancelBuildingPlacement,
                 CancelProductionDelegate cancelProduction,
                 Func<bool> rotateBuildingPlacement = null,
-                Func<int> getActivePlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null)
+                Func<int> getActivePlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null, Func<Sprite> getPlacementPortrait = null)
             {
                 GetCurrentDollars = getCurrentDollars;
                 GetMaxQueuedUnitProductions = getMaxQueuedUnitProductions;
@@ -69,6 +70,7 @@ namespace Game.Runtime
                 RotateBuildingPlacement = rotateBuildingPlacement;
                 GetActivePlacementCreditsCost = getActivePlacementCreditsCost;
                 GetPlacementFootprint = getPlacementFootprint;
+                GetPlacementPortrait = getPlacementPortrait;
             }
         }
     }

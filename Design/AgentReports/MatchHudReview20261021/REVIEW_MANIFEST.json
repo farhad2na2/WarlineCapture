@@ -1,0 +1,38 @@
+{
+  "createdUtc": "2026-10-21",
+  "implementationChanged": false,
+  "generationTool": "built-in image_gen",
+  "referencePolicy": "Current native UI; older target concepts excluded as baselines",
+  "sourceHead": "d2aa736329d4cbeece77415ad9e04123661e8069",
+  "nativeUiBlobs": {
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab": "993596effddfade931061d07a4da7939b6637a81",
+    "Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.Presentation.cs": "4b3616fa74477fb15a4e72b78d5e8d2bdcacbe5e",
+    "Assets/Game/Prefabs/UI/Shell/Popups/POP12_ResourceExchangePopup.prefab": "09ddff5611530d002334ac01054b403508b2e0ef"
+  },
+  "mockupChecksums": {
+    "build-placement-proposal.png": "c7385289757918c208ca9b07465cb9d119531259ddf0f5bb08d16005cd0912df",
+    "command-proposal.png": "bdf3cf9e57a0dd9bce3284df6db89441e0b2705aad11d044132307858aeccd81",
+    "hud-proposal.png": "7c01ddc2004dc6d31fdd634a830a477c0c1780a92abfa0d079ded90f10703cca",
+    "passenger-proposal.png": "e35f0ca4bdb028aad4953df3ccc71485af829af5c768b20ccc8c57b9935a29de",
+    "exchange-proposal.png": "1caac95eab962fd4f818668716b5f081642296d77d12dab03e86e9edac2b8366",
+    "pause-settings-proposal.png": "b5c6583b4f295767aa86e19feeb28a87d35994b0a9177ffd0a6b591a1a87cb30"
+  },
+  "notes": [
+    "First attempt was obscured by first-launch overlay; excluded from design baseline.",
+    "Three incomplete passenger walkthrough attempts retained; fourth bounded native panel capture completed. No mission-readiness claim.",
+    "Only Editor capture probe and review artifacts authored; no runtime UI/prefab redesign implemented."
+  ],
+  "ownerCorrection": "Squad tray itself scrolls. No paging strip above squads.",
+  "nativeBaselines": {
+    "hud": "Design/AgentReports/MatchHudReview20261021/Native/passengers-20261021-144803/selected-hud.png",
+    "minimap": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/01-hud.png",
+    "build": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/build-menu.png",
+    "placement": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/placement-confirmation.png",
+    "command": "Design/AgentReports/MatchHudReview20261021/Native/passengers-20261021-144803/command-menu.png",
+    "passenger": "Design/AgentReports/MatchHudReview20261021/Native/passengers-20261021-144803/passengers.png",
+    "exchange": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/03-exchange-request.png",
+    "pause": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/04-pause.png",
+    "settings": "Design/AgentReports/MatchHudReview20261021/Native/menus-20261021-142328/05-settings.png"
+  },
+  "nativeCaptureResult": "Captured; wrapper exit0 for menus02 and passengers04"
+}

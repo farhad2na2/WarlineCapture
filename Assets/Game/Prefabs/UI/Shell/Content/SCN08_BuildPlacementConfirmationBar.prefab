@@ -237,12 +237,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   militaryMaterial: 1
-  topLeftColor: {r: 0.078431375, g: 0.1254902, b: 0.14509805, a: 1}
-  topRightColor: {r: 0.078431375, g: 0.1254902, b: 0.14509805, a: 1}
-  bottomLeftColor: {r: 0.011764706, g: 0.043137256, b: 0.05490196, a: 1}
-  bottomRightColor: {r: 0.011764706, g: 0.043137256, b: 0.05490196, a: 1}
-  borderColor: {r: 0.2627451, g: 0.32156864, b: 0.33333334, a: 1}
-  borderWidth: 3
+  topLeftColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  topRightColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  bottomLeftColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  bottomRightColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!114 &6919447942172312733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1236871239126409213}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -353,7 +353,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e736cacc966046628bf2dbce96aa59af, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1570,7 +1570,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9372549, g: 0.94509804, b: 0.92156863, a: 1}
+  m_fontColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1626,7 +1626,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2541,12 +2541,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   militaryMaterial: 1
-  topLeftColor: {r: 0.0627451, g: 0.5568628, b: 0.16078432, a: 1}
-  topRightColor: {r: 0.0627451, g: 0.5568628, b: 0.16078432, a: 1}
-  bottomLeftColor: {r: 0.011764706, g: 0.2627451, b: 0.09411765, a: 1}
-  bottomRightColor: {r: 0.011764706, g: 0.2627451, b: 0.09411765, a: 1}
-  borderColor: {r: 0.1882353, g: 0.89411765, b: 0.28627452, a: 1}
-  borderWidth: 3
+  topLeftColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  topRightColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  bottomLeftColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  bottomRightColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  borderColor: {r: 0.19215687, g: 0.8235294, b: 0.32941177, a: 1}
+  borderWidth: 2
 --- !u!114 &5551395367941684981
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2742,7 +2742,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9372549, g: 0.94509804, b: 0.92156863, a: 1}
+  m_fontColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2798,7 +2798,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2899,7 +2899,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9372549, g: 0.94509804, b: 0.92156863, a: 1}
+  m_fontColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2955,7 +2955,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3391,12 +3391,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   militaryMaterial: 1
-  topLeftColor: {r: 0.27450982, g: 0.3137255, b: 0.3254902, a: 1}
-  topRightColor: {r: 0.27450982, g: 0.3137255, b: 0.3254902, a: 1}
-  bottomLeftColor: {r: 0.1254902, g: 0.16078432, b: 0.17254902, a: 1}
-  bottomRightColor: {r: 0.1254902, g: 0.16078432, b: 0.17254902, a: 1}
-  borderColor: {r: 0.2627451, g: 0.32156864, b: 0.33333334, a: 1}
-  borderWidth: 3
+  topLeftColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  topRightColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  bottomLeftColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  bottomRightColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!114 &3345794978498541522
 MonoBehaviour:
   m_ObjectHideFlags: 0

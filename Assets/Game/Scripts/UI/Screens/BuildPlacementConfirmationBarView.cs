@@ -241,6 +241,12 @@ namespace Game.UI.Runtime
                 ? _gameTextResolver.Get("build.placement.title.default", "BUILDING")
                 : UiLocalizedText.CatalogLabel(title);
             SetText(titleText, _gameTextResolver.Format("ui.build.title", "BUILD {0}", buildingTitle));
+            if (buildingPortrait != null && _commandSystem is IBuildingPlacementArtworkQuery artwork)
+            {
+                Sprite selectedPortrait = artwork.ActivePlacementPortrait;
+                buildingPortrait.sprite = selectedPortrait;
+                buildingPortrait.enabled = selectedPortrait != null;
+            }
             SetText(costText, FormatResource(_commandSystem.ActivePlacementCost));
             bool materialsOnly = UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) &&
                 restrictions.UsesMaterialsOnlyConstruction;
@@ -281,6 +287,7 @@ namespace Game.UI.Runtime
                     canConfirm ? new Color32(48, 228, 73, 255) : new Color32(112, 123, 126, 255),
                     3f);
             }
+            HudActionVisuals.Refresh(confirmButton);
             if (cancelButton != null && !cancelButton.interactable)
                 cancelButton.interactable = true;
             if (rotateButton != null && !rotateButton.interactable)

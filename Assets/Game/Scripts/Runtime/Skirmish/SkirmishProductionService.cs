@@ -31,6 +31,28 @@ namespace Game.Runtime
             public SkirmishAttemptOwnedComponent ActorOwner;
             public bool HasActorOwner;
         }
+        // One optional immutable observation at the authoritative pre-Playing boundary.
+        // No gameplay state or transaction result is changed if the observer fails.
+        public static System.Action<EntityManager, Entity, byte> InitialPackageObserver { get; private set; }
+        public static long InitialPackageObservationFaults { get; private set; }
+        public static void OpenInitialPackageObserverOwned(System.Action<EntityManager, Entity, byte> sink)
+        {
+            if (sink == null) throw new System.ArgumentNullException(nameof(sink));
+            if (InitialPackageObserver != null) throw new System.InvalidOperationException("Initial package already observed");
+            InitialPackageObserver = sink;
+        }
+        public static bool CloseInitialPackageObserverOwned(System.Action<EntityManager, Entity, byte> sink)
+        {
+            if (sink == null || InitialPackageObserver != sink) return false;
+            InitialPackageObserver = null; return true;
+        }
+        internal static void ObserveInitialPackage(EntityManager em, Entity session, byte visualPending)
+        {
+            var sink = InitialPackageObserver; if (sink == null) return;
+            try { sink(em, session, visualPending); }
+            catch (System.Exception error) when (!(error is System.OutOfMemoryException))
+            { InitialPackageObservationFaults++; }
+        }
         public static System.Action<ProductionLedgerObservation> ProductionLedgerObserver;
         public static long ProductionLedgerObservationFaults { get; private set; }
         private static ProductionLedgerPoint LedgerPoint(EntityManager em, Entity session, byte faction, uint id)

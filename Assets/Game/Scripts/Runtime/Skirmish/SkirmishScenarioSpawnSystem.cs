@@ -104,6 +104,7 @@ namespace Game.Runtime
                 return;
             }
 
+            SkirmishProductionService.ObserveInitialPackage(em, entity, visualPending);
             session.SpawnComplete = 1;
             session.SpawnVisualPending = visualPending;
             session.Phase = SkirmishSessionPhase.Playing;

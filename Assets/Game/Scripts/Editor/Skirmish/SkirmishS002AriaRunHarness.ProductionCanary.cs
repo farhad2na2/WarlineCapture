@@ -282,6 +282,8 @@ namespace Game.Editor
                 setup.Seed != request.Seed || setup.SizeId != SkirmishSizeId.Standard || setup.DifficultyId != SkirmishDifficultyId.Regular)
                 throw new InvalidDataException("Actual resolved canary identity/setup differs from owned request.");
             productionCanary.CaptureVerifiedIdentity(identity,(string)facts["native_config_sha256"]);
+            productionCanary.ObservePackedPackageAtResolvedPlaying(em,session,in match);
+            productionCanary.ObserveConsumedSourceAtResolvedPlaying(em,session,in match);
             EndProductionObserverWindow(em, in match, observerBefore, "ExpandedResolvedSnapshot");
         }
 
@@ -687,6 +689,8 @@ namespace Game.Editor
         {
             if (!enabled) return;
             if (legacy) throw new InvalidDataException("Native queued ledger requires expanded setup");
+            if (Game.Runtime.SkirmishProductionService.InitialPackageObserver != null)
+                throw new InvalidOperationException("Initial package already observed");
             if (Game.Runtime.SkirmishProductionService.ProductionLedgerObserver != null)
                 throw new InvalidOperationException("Production ledger already observed");
             if (Game.Runtime.SkirmishResearchService.ResearchLedgerObserver != null)
@@ -929,6 +933,286 @@ namespace Game.Editor
             private int paidLedgerCount;
             private bool paidLedgerFailed;
             private long paidLedgerFaultStart;
+            private bool consumedSourceAttempted;
+            private bool consumedSourceFailed;
+            private int consumedSourceCount;
+            private static string InitialConsumedSemanticHash(Action<BinaryWriter> write)
+            {
+                using var digest=System.Security.Cryptography.SHA256.Create();
+                using var stream=new System.Security.Cryptography.CryptoStream(Stream.Null,digest,System.Security.Cryptography.CryptoStreamMode.Write);
+                using var buffered=new BufferedStream(stream,128*1024);
+                using var writer=new BinaryWriter(buffered,Encoding.UTF8,true);
+                write(writer);writer.Flush();buffered.Flush();stream.FlushFinalBlock();
+                return BitConverter.ToString(digest.Hash).Replace("-","").ToLowerInvariant();
+            }
+            private static JObject InitialSceneOrigin(EntityManager em,Entity entity)
+            {
+                var row=new JObject{["entity_index"]=entity.Index,["entity_version"]=entity.Version,["scene_tag_present"]=em.HasComponent<SceneTag>(entity)};
+                if(!em.HasComponent<SceneTag>(entity))return row;
+                var section=em.GetSharedComponent<SceneTag>(entity).SceneEntity;
+                row["tag_scene_entity_index"]=section.Index;row["tag_scene_entity_version"]=section.Version;
+                row["tag_scene_entity_exists"]=em.Exists(section);if(!em.Exists(section))return row;
+                if(em.HasComponent<SceneSectionData>(section))
+                {
+                    var data=em.GetComponentData<SceneSectionData>(section);row["section_scene_guid"]=data.SceneGUID.ToString();row["section_index"]=data.SubSectionIndex;
+                }
+                Entity root=section;
+                if(em.HasComponent<Unity.Scenes.SceneEntityReference>(section))root=em.GetComponentData<Unity.Scenes.SceneEntityReference>(section).SceneEntity;
+                row["root_entity_index"]=root.Index;row["root_entity_version"]=root.Version;row["root_exists"]=em.Exists(root);
+                if(!em.Exists(root))return row;
+                if(em.HasComponent<SceneReference>(root))row["root_scene_guid"]=em.GetComponentData<SceneReference>(root).SceneGUID.ToString();
+                if(em.HasBuffer<Unity.Scenes.ResolvedSectionEntity>(root))
+                {
+                    var sections=em.GetBuffer<Unity.Scenes.ResolvedSectionEntity>(root,true);
+                    if(sections.Length>1024)throw new InvalidDataException("Consumed scene section bound exceeded");
+                    row["resolved_section_count"]=sections.Length;bool found=false;
+                    foreach(var item in sections)if(item.SectionEntity==section)found=true;
+                    row["tag_entity_in_root_resolved_sections"]=found;
+                }
+                return row;
+            }
+            internal void ObserveConsumedSourceAtResolvedPlaying(EntityManager em,Entity session,in SkirmishMatchState match)
+            {
+                if(initialPackageSink==null||consumedSourceAttempted||match.Phase!=SkirmishPhase.Playing)return;
+                try
+                {
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    using var maps=em.CreateEntityQuery(ComponentType.ReadOnly<ActiveOperationMapComponent>(),ComponentType.ReadOnly<OperationMapReadinessComponent>(),ComponentType.ReadOnly<OperationMapMetadataComponent>());
+                    if(maps.CalculateEntityCount()!=1)return;
+                    var map=maps.GetSingletonEntity();var active=em.GetComponentData<ActiveOperationMapComponent>(map);
+                    var ready=em.GetComponentData<OperationMapReadinessComponent>(map);var metadata=em.GetComponentData<OperationMapMetadataComponent>(map);
+                    var required=OperationMapReadinessFlags.SubScene|OperationMapReadinessFlags.MapSurface|OperationMapReadinessFlags.AuthoredConversion;
+                    if(active.OperationMapId.ToString()!=setup.OperationMapId||active.Generation!=ready.Generation||ready.Generation!=metadata.Generation||
+                        metadata.PhysicalSourceValidated==0||!metadata.Blob.IsCreated||(ready.RequiredFlags&required)!=required||
+                        ready.FailedFlags!=OperationMapReadinessFlags.None||(ready.ReadyFlags&ready.RequiredFlags)!=ready.RequiredFlags)return;
+                    consumedSourceAttempted=true;
+                    using var grids=em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(),ComponentType.ReadOnly<GridWalkable>(),ComponentType.ReadOnly<GridRoad>());
+                    using var surfaces=em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+                    using var registries=em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+                    if(grids.CalculateEntityCount()!=1||surfaces.CalculateEntityCount()!=1)throw new InvalidDataException("Unique actual consumed grid/surface required");
+                    var gridEntity=grids.GetSingletonEntity();var grid=em.GetComponentData<GridConfig>(gridEntity);
+                    var walkable=em.GetBuffer<GridWalkable>(gridEntity,true).AsNativeArray();var road=em.GetBuffer<GridRoad>(gridEntity,true).AsNativeArray();
+                    long cells=(long)grid.Width*grid.Height;
+                    if(grid.Width<=0||grid.Height<=0||cells>4194304||walkable.Length!=cells||road.Length!=cells)throw new InvalidDataException("Consumed grid buffer bounds/shape differ");
+                    var surfaceEntity=surfaces.GetSingletonEntity();var surface=em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
+                    if(surface.HasSurfaceData==0||!surface.SurfaceBlob.IsCreated)throw new InvalidDataException("Actual consumed surface blob absent");
+                    ref var bounds=ref surface.SurfaceBlob.Value;
+                    if(bounds.Cells.Length>4194304||bounds.Samples.Length>16777216||bounds.Connections.Length>33554432||bounds.CompactSamples.Length>16777216)
+                        throw new InvalidDataException("Consumed surface semantic bounds exceeded");
+                    string surfaceHash=InitialConsumedSemanticHash(w=>
+                    {
+                        ref var value=ref surface.SurfaceBlob.Value;
+                        void V(Unity.Mathematics.float3 v){w.Write(v.x);w.Write(v.y);w.Write(v.z);}
+                        V(value.GridOrigin);w.Write(value.CellSize);w.Write(value.Dimensions.x);w.Write(value.Dimensions.y);
+                        w.Write((int)value.RuntimeEncoding);w.Write(value.CompactMinHeight);w.Write(value.CompactHeightStep);
+                        w.Write(value.Cells.Length);for(int i=0;i<value.Cells.Length;i++){var v=value.Cells[i];w.Write(v.FirstSurfaceIndex);w.Write(v.SurfaceCount);w.Write(v.InlineSurfaceIndex);}
+                        w.Write(value.Samples.Length);for(int i=0;i<value.Samples.Length;i++){var v=value.Samples[i];w.Write(v.Cell.x);w.Write(v.Cell.y);w.Write(v.SurfaceId);w.Write(v.LayerId);w.Write(v.Height);V(v.Normal);w.Write(v.SlopeDegrees);w.Write((int)v.SurfaceType);w.Write((int)v.MovementMask);w.Write((int)v.Flags);w.Write(v.FirstConnectionIndex);w.Write(v.ConnectionCount);}
+                        w.Write(value.Connections.Length);for(int i=0;i<value.Connections.Length;i++){var v=value.Connections[i];w.Write(v.FromSurfaceId);w.Write(v.ToSurfaceId);w.Write(v.Direction.x);w.Write(v.Direction.y);w.Write((int)v.ConnectionType);w.Write((int)v.MovementMask);}
+                        w.Write(value.CompactSamples.Length);for(int i=0;i<value.CompactSamples.Length;i++){var v=value.CompactSamples[i];w.Write(v.PackedHeight);w.Write(v.LayerId);w.Write((int)v.MovementMask);w.Write((int)v.Flags);w.Write(v.NormalX);w.Write(v.NormalY);w.Write((int)v.SurfaceType);}
+                    });
+                    var prefabs=new List<string>();var origins=new JArray();
+                    using(var owners=InitialEntities(registries,128))
+                        foreach(var owner in owners)
+                        {
+                            var entries=em.GetBuffer<UnitPrefabRegistryEntry>(owner,true);
+                            if(entries.Length>4096||prefabs.Count+entries.Length>4096)throw new InvalidDataException("Consumed prefab registry bound exceeded");
+                            foreach(var entry in entries)
+                            {
+                                if(!em.Exists(entry.Prefab)||!em.HasComponent<UnitSourcePrefabKey>(entry.Prefab))throw new InvalidDataException("Consumed registry prefab/source absent");
+                                string key=em.GetComponentData<UnitSourcePrefabKey>(entry.Prefab).Value.ToString();
+                                bool hasFootprint=em.HasComponent<UnitFootprint>(entry.Prefab);bool hasBehavior=em.HasComponent<UnitMovementBehavior>(entry.Prefab);bool hasAir=em.HasComponent<UnitAirMovement>(entry.Prefab);
+                                var footprint=hasFootprint?em.GetComponentData<UnitFootprint>(entry.Prefab):default;var behavior=hasBehavior?em.GetComponentData<UnitMovementBehavior>(entry.Prefab):default;var air=hasAir?em.GetComponentData<UnitAirMovement>(entry.Prefab):default;
+                                if(!float.IsFinite(air.CruiseHeight)||!float.IsFinite(air.RunwayTaxiSpeed))throw new InvalidDataException("Nonfinite consumed prefab movement fields");
+                                prefabs.Add(new JObject{["key"]=key,["hasFootprint"]=hasFootprint,["footprintX"]=footprint.Size.x,["footprintY"]=footprint.Size.y,
+                                    ["hasMovementBehavior"]=hasBehavior,["allowIdleWander"]=behavior.AllowIdleWander,["usesVehicleMotion"]=behavior.UsesVehicleMotion,
+                                    ["hasAirMovement"]=hasAir,["cruiseHeight"]=air.CruiseHeight,["runwayTaxiSpeed"]=air.RunwayTaxiSpeed}.ToString(Formatting.None));
+                                origins.Add(new JObject{["key"]=key,["registry_owner"]=InitialSceneOrigin(em,owner),["prefab"]=InitialSceneOrigin(em,entry.Prefab)});
+                            }
+                        }
+                    if(prefabs.Count==0)throw new InvalidDataException("Actual consumed prefab registry empty");prefabs.Sort(StringComparer.Ordinal);
+                    string walkHash=InitialConsumedSemanticHash(w=>{w.Write(walkable.Length);for(int i=0;i<walkable.Length;i++)w.Write(walkable[i].Value);});
+                    string roadHash=InitialConsumedSemanticHash(w=>{w.Write(road.Length);for(int i=0;i<road.Length;i++)w.Write(road[i].Value);});
+                    var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    var identity=SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,setup.ContentVersion,
+                        setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);Request.VerifyNativeSetupIdentity(identity);
+                    Record("NativeConsumedSourceObserved",new JObject{["schema"]="ConsumedGridSurfacePrefabSource-v1",["native_session_id"]=native.SessionId.ToString(),
+                        ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),["native_setup_identity"]=identity,
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),["operation_map_id"]=active.OperationMapId.ToString(),["generation"]=active.Generation,
+                        ["metadata_hash"]=metadata.MetadataHash.ToString(),["physical_source_validated"]=(int)metadata.PhysicalSourceValidated,
+                        ["blob_source_operation_map_id"]=metadata.Blob.Value.SourceOperationMapId.ToString(),["blob_source_identity_hash"]=metadata.Blob.Value.SourceIdentityHash.ToString(),
+                        ["blob_source_content_hash"]=metadata.Blob.Value.SourceContentHash.ToString(),["blob_content_hash"]=metadata.Blob.Value.ContentHash.ToString(),["blob_generated_metadata_hash"]=metadata.Blob.Value.GeneratedMetadataHash.ToString(),
+                        ["metadata_surface_runtime_blob_custom_key"]=metadata.Blob.Value.Surface.RuntimeBlobHash.ToString(),
+                        ["metadata_grid_asset_guid"]=metadata.Blob.Value.Grid.AssetGuid.ToString(),["metadata_grid_content_hash"]=metadata.Blob.Value.Grid.ContentHash.ToString(),
+                        ["metadata_surface_asset_guid"]=metadata.Blob.Value.Surface.AssetGuid.ToString(),["metadata_surface_content_hash"]=metadata.Blob.Value.Surface.ContentHash.ToString(),
+                        ["metadata_authored_subscene_guid"]=metadata.Blob.Value.Navigation.AuthoredSubSceneGuid.ToString(),["ready_flags"]=(int)ready.ReadyFlags,["required_flags"]=(int)ready.RequiredFlags,["failed_flags"]=(int)ready.FailedFlags,
+                        ["gridWidth"]=grid.Width,["gridHeight"]=grid.Height,["cellSize"]=grid.CellSize,["origin"]=new JArray(grid.Origin.x,grid.Origin.y,grid.Origin.z),
+                        ["walkableSha256"]=walkHash,["roadSha256"]=roadHash,["surfaceSemanticSha256"]=surfaceHash,["prefabKeyFootprints"]=new JArray(prefabs),
+                        ["grid_source"]=InitialSceneOrigin(em,gridEntity),["surface_source"]=InitialSceneOrigin(em,surfaceEntity),["prefab_sources"]=origins,
+                        ["capture_queries_read_only"]=true,["diagnostic_facts_fed_to_aria"]=false,["equivalence_established"]=false,
+                        ["scope"]="ActualConsumedGridSurfacePrefabFieldsAndSceneTagSectionReferences_NoPhysicsGeometryCacheOrBakerMutation"});
+                    consumedSourceCount++;
+                }
+                catch(Exception error) when (!(error is OutOfMemoryException))
+                {
+                    consumedSourceAttempted=true;consumedSourceFailed=true;
+                    try{Record("NativeConsumedSourceCaptureFailure",new JObject{["exception_type"]=error.GetType().FullName,["message"]=error.Message});}
+                    catch(Exception failure) when (!(failure is OutOfMemoryException)){}
+                }
+            }
+
+            private Action<EntityManager, Entity, byte> initialPackageSink;
+            private long initialPackageFaultStart;
+            private int initialPackageCount;
+            private int initialVisualPending = -1;
+            private int packedPackageCount;
+            private bool initialPackageFailed;
+            private void StartInitialPackageCapture()
+            {
+                if (Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER") != "1") return;
+                initialPackageFaultStart = Game.Runtime.SkirmishProductionService.InitialPackageObservationFaults;
+                initialPackageSink = ObserveInitialPackage;
+                Record("NativeInitialPackageCaptureStarted", new JObject { ["schema"]="ScopedInitialPackage-v1", ["paid_resources_qualified"]=false });
+                Game.Runtime.SkirmishProductionService.OpenInitialPackageObserverOwned(initialPackageSink);
+            }
+            private static JToken InitialPart<T>(EntityManager em, Entity entity) where T : unmanaged, IComponentData
+                => em.HasComponent<T>(entity) ? ObserverValue(em.GetComponentData<T>(entity)) : JValue.CreateNull();
+            private static NativeArray<Entity> InitialEntities(EntityQuery query,int maximum)
+            {
+                if(query.CalculateEntityCount()>maximum)throw new InvalidDataException("Initial capture preallocation bound exceeded");
+                return query.ToEntityArray(Allocator.Temp);
+            }
+            private void ObserveInitialPackage(EntityManager em, Entity session, byte visualPending)
+            {
+                initialVisualPending=visualPending;
+                CapturePaidPackage(em,session,visualPending,true);
+            }
+            internal void ObservePackedPackageAtResolvedPlaying(EntityManager em,Entity session,in SkirmishMatchState match)
+            {
+                if(initialPackageSink==null||initialPackageFailed||initialVisualPending!=1||packedPackageCount!=0||match.Phase!=SkirmishPhase.Playing)return;
+                try
+                {
+                    var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    using var query=em.CreateEntityQuery(ComponentType.ReadOnly<ActiveOperationMapComponent>(),ComponentType.ReadOnly<OperationMapReadinessComponent>(),ComponentType.ReadOnly<OperationMapMetadataComponent>());
+                    if(query.CalculateEntityCount()!=1)return;
+                    var root=query.GetSingletonEntity();var active=em.GetComponentData<ActiveOperationMapComponent>(root);
+                    var ready=em.GetComponentData<OperationMapReadinessComponent>(root);var metadata=em.GetComponentData<OperationMapMetadataComponent>(root);
+                    var required=OperationMapReadinessFlags.SubScene|OperationMapReadinessFlags.MapSurface|OperationMapReadinessFlags.AuthoredConversion;
+                    if(active.OperationMapId.ToString()!=setup.OperationMapId||active.Generation!=ready.Generation||ready.Generation!=metadata.Generation||
+                        metadata.PhysicalSourceValidated==0||!metadata.Blob.IsCreated||(ready.RequiredFlags&required)!=required||
+                        ready.FailedFlags!=OperationMapReadinessFlags.None||(ready.ReadyFlags&ready.RequiredFlags)!=ready.RequiredFlags)return;
+                    var native=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    CapturePaidPackage(em,session,native.SpawnVisualPending,false);
+                }
+                catch(Exception error) when (!(error is OutOfMemoryException))
+                {
+                    initialPackageFailed=true;
+                    try{Record("NativeInitialPackageCaptureFailure",new JObject{["stage"]="ExistingResolvedPlayingPackedRead",["exception_type"]=error.GetType().FullName,["message"]=error.Message});}
+                    catch(Exception failure) when (!(failure is OutOfMemoryException)){}
+                }
+            }
+            private void CapturePaidPackage(EntityManager em, Entity session, byte visualPending, bool initial)
+            {
+                if (initialPackageFailed) return;
+                try
+                {
+                    if(initial){if(++initialPackageCount!=1)throw new InvalidDataException("Duplicate initial package boundary");}
+                    else if(++packedPackageCount!=1)throw new InvalidDataException("Duplicate packed package boundary");
+                    var native = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                    var identity = SkirmishProductionCanaryRequest.CreateNativeSetupIdentity(setup.CatalogId,setup.DefinitionId,setup.ContentVersion,
+                        setup.DifficultyId.ToString(),setup.SizeId.ToString(),setup.Seed,GameLocalization.CurrentLocaleCode,setup.SetupHash,setup.ContentHash);
+                    Request.VerifyNativeSetupIdentity(identity);
+                    if ((initial && (native.SpawnComplete != 0 || native.Phase == Game.Skirmish.Contracts.SkirmishSessionPhase.Playing)) ||
+                        !em.HasComponent<Game.Runtime.SkirmishSharedMaterialsInitialized>(session) ||
+                        !em.HasComponent<Game.Runtime.SkirmishSharedBuildingsReady>(session) ||
+                        !em.HasComponent<Game.Runtime.SkirmishSharedSupplyInitialized>(session))
+                        throw new InvalidDataException("Initial package must follow authoritative grants before Playing");
+                    var banks = new JArray();
+                    using (var query = em.CreateEntityQuery(ComponentType.ReadOnly<FactionEconomy>(),ComponentType.ReadOnly<FactionTacticalMaterialsComponent>()))
+                    using (var entities = InitialEntities(query,2))
+                    {
+                        if (entities.Length != 2) throw new InvalidDataException("Exact two faction banks required");
+                        var ordered=entities.ToArray();Array.Sort(ordered,(a,b)=>a.Index.CompareTo(b.Index));
+                        foreach (var entity in ordered) banks.Add(new JObject { ["entity_index"]=entity.Index,["entity_version"]=entity.Version,
+                            ["economy"]=InitialPart<FactionEconomy>(em,entity),["materials"]=InitialPart<FactionTacticalMaterialsComponent>(em,entity) });
+                    }
+                    var actors = new JArray();
+                    using (var query = em.CreateEntityQuery(new EntityQueryDesc { All=new[]{ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>()},
+                        Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState }))
+                    using (var entities = InitialEntities(query,4096))
+                    {
+                        if (entities.Length > 4096) throw new InvalidDataException("Initial actor capture bound exceeded");
+                        var ordered=entities.ToArray();Array.Sort(ordered,(a,b)=>a.Index.CompareTo(b.Index));
+                        foreach (var entity in ordered)
+                        {
+                            var owner=em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);if(!owner.SessionId.Equals(native.SessionId))continue;
+                            actors.Add(new JObject { ["entity_index"]=entity.Index,["entity_version"]=entity.Version,
+                                ["stable_id"]=owner.StableObjectId.ToString(),["faction"]=(int)owner.FactionId,["is_structure"]=(int)owner.IsStructure,
+                                ["reservation_id"]=owner.ReservationId,["capacity_released"]=(int)owner.CapacityReleased,
+                                ["source_key"]=em.HasComponent<UnitSourcePrefabKey>(entity)?em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString():null,
+                                ["shared_actor"]=em.HasComponent<SkirmishSharedActorTag>(entity),["unit_role"]=InitialPart<SkirmishUnitRoleComponent>(em,entity),
+                                ["structure"]=InitialPart<SkirmishStructureIdentityComponent>(em,entity),["fuel_policy"]=InitialPart<UnitFuelConsumption>(em,entity),
+                                ["hauler"]=InitialPart<UnitResourceHauler>(em,entity),["visual_spawned"]=InitialPart<SkirmishVisualSpawnedComponent>(em,entity) });
+                        }
+                    }
+                    var stores = new JArray();
+                    using (var query = em.CreateEntityQuery(new EntityQueryDesc { All=new[]{ComponentType.ReadOnly<BuildingResourceStorageComponent>()},
+                        Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState }))
+                    using (var entities = InitialEntities(query,2048))
+                    {
+                        if (entities.Length > 2048) throw new InvalidDataException("Initial storage capture bound exceeded");
+                        var ordered=entities.ToArray();Array.Sort(ordered,(a,b)=>a.Index.CompareTo(b.Index));
+                        foreach (var entity in ordered)
+                        {
+                            bool owned=em.HasComponent<SkirmishAttemptOwnedComponent>(entity)&&em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId.Equals(native.SessionId);
+                            stores.Add(new JObject { ["entity_index"]=entity.Index,["entity_version"]=entity.Version,["session_owned"]=owned,
+                                ["stable_id"]=owned?em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).StableObjectId.ToString():null,
+                                ["storage"]=InitialPart<BuildingResourceStorageComponent>(em,entity) });
+                        }
+                    }
+                    var reservations=new JArray();
+                    if(em.HasBuffer<SkirmishProductionReservation>(session))
+                        foreach(var row in em.GetBuffer<SkirmishProductionReservation>(session,true)) reservations.Add(JObject.FromObject(row));
+                    var forces=new JArray();foreach(var row in setup.Forces)forces.Add(new JObject{["faction"]=(int)row.FactionId,["role"]=row.RoleKind.ToString(),
+                        ["source_key"]=row.RuntimePrefabKey,["quantity"]=row.Quantity,["supply_cost"]=row.SupplyCost,["objective_role"]=row.ObjectiveRoleId});
+                    var structures=new JArray();if(setup.Structures!=null)foreach(var row in setup.Structures)structures.Add(new JObject{["faction"]=(int)row.FactionId,
+                        ["structure_id"]=row.StructureId,["designated_base"]=row.DesignatedBase,["objective_role"]=row.ObjectiveRoleId});
+                    Record(initial?"NativeInitialPackageObserved":"NativePackedPackageObserved",new JObject { ["schema"]="ScopedInitialPackage-v1",
+                        ["native_world_sequence"]=em.WorldUnmanaged.SequenceNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ["native_session_id"]=native.SessionId.ToString(),["native_setup_identity"]=identity,
+                        ["native_config_sha256"]=SkirmishAcceptanceCensusCapture.ComputeConfigHash(setup),["spawn_complete_before"]=(int)native.SpawnComplete,
+                        ["phase_before"]=native.Phase.ToString(),["before_playing"]=initial,["grants_initialized"]=true,
+                        ["capture_is_initial_grant_origin"]=initial,["packed_actor_readiness_not_implied_by_origin"]=visualPending!=0,
+                        ["spawn_visual_pending"]=(int)visualPending,
+                        ["resolved_budget"]=new JObject { ["materials_each"]=setup.MaterialsEach,["oil_each"]=setup.OilEach,["usable_fuel_each"]=setup.UsableFuelEach,
+                            ["materials_capacity_each"]=setup.MaterialsCapacityEach,["oil_capacity_each"]=setup.OilCapacityEach,["fuel_capacity_each"]=setup.FuelCapacityEach,
+                            ["infantry_cap_each"]=setup.InfantryCapEach,["ground_cap_each"]=setup.GroundCapEach,["air_cap_each"]=setup.TacticalAirCapEach,["supply_cap_each"]=setup.SupplyCapEach,
+                            ["logistics_support_cap_each"]=setup.LogisticsSupportCapEach,["delivery_carrier_cap_each"]=setup.DeliveryCarrierCapEach,
+                            ["player_built_structure_cap_each"]=setup.PlayerBuiltStructureCapEach,["barrier_segment_cap_each"]=setup.BarrierSegmentCapEach,["objective_support_extra_player"]=setup.ObjectiveSupportExtraPlayer },
+                        ["banks"]=banks,["actors"]=actors,["stores"]=stores,["player_capacity"]=InitialPart<SkirmishCapacityComponent>(em,session),
+                        ["enemy_capacity"]=InitialPart<SkirmishEnemyCapacityComponent>(em,session),
+                        ["reservations"]=reservations,
+                        ["resolved_forces"]=forces,["resolved_structures"]=structures,
+                        ["capture_queries_read_only"]=true,["diagnostic_facts_fed_to_aria"]=false,["whole_world_conservation"]=false,["paid_resources_qualified"]=false });
+                }
+                catch(Exception error) when (!(error is OutOfMemoryException))
+                {
+                    initialPackageFailed=true;
+                    try { Record("NativeInitialPackageCaptureFailure",new JObject { ["exception_type"]=error.GetType().FullName,["message"]=error.Message }); }
+                    catch(Exception failure) when (!(failure is OutOfMemoryException)) { }
+                }
+            }
+            private void StopInitialPackageCapture()
+            {
+                if(initialPackageSink==null)return;
+                bool owned=Game.Runtime.SkirmishProductionService.CloseInitialPackageObserverOwned(initialPackageSink);initialPackageSink=null;
+                try { Record("NativeInitialPackageCaptureClosed",new JObject { ["schema"]="ScopedInitialPackage-v1",["observations"]=initialPackageCount,
+                    ["sink_owned"]=owned,["capture_failed"]=initialPackageFailed,["initial_visual_pending"]=initialVisualPending,["packed_observations"]=packedPackageCount,
+                    ["consumed_source_attempted"]=consumedSourceAttempted,["consumed_source_observations"]=consumedSourceCount,["consumed_source_failed"]=consumedSourceFailed,
+                    ["observer_faults"]=Game.Runtime.SkirmishProductionService.InitialPackageObservationFaults-initialPackageFaultStart,["paid_resources_qualified"]=false }); }
+                catch(Exception error) when (!(error is OutOfMemoryException)) { }
+            }
+
             private void StartPaidProductionLedger()
             {
                 if(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")!="1")return;
@@ -940,6 +1224,7 @@ namespace Game.Editor
                 Record("NativeProductionLedgerStarted",new JObject { ["ledger_schema"]=1,
                     ["scope"]="ProductionCommittedOriginsPartial",["paid_resources_qualified"]=false });
                 Game.Runtime.SkirmishProductionService.ProductionLedgerObserver=paidLedgerSink;
+                StartInitialPackageCapture();
             }
 
             private void ObservePaidProduction(Game.Runtime.SkirmishProductionService.ProductionLedgerObservation row)
@@ -974,6 +1259,7 @@ namespace Game.Editor
             }
             private void StopPaidProductionLedger()
             {
+                StopInitialPackageCapture();
                 if(paidLedgerSink==null)return;
                 bool same=ReleasePaidProductionObserver(paidLedgerSink);
                 paidLedgerSink=null;

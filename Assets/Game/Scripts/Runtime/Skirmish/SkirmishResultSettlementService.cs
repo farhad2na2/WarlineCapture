@@ -81,16 +81,27 @@ namespace Game.Runtime
     public static class SkirmishResultSettlementService
     {
         public static readonly SkirmishExpandedResultJournal Shared = new SkirmishExpandedResultJournal();
+        public static SkirmishMedalAwardResult LastMedalAward { get; private set; }
 
         public static bool TrySettleSession(
             EntityManager em,
             Entity session,
             SkirmishExpandedResultJournal journal,
             out SkirmishResultReceipt receipt,
-            out SkirmishReasonCode reason)
+            out SkirmishReasonCode reason) =>
+            TrySettleSession(em, session, journal, out receipt, out reason, out _);
+
+        public static bool TrySettleSession(
+            EntityManager em,
+            Entity session,
+            SkirmishExpandedResultJournal journal,
+            out SkirmishResultReceipt receipt,
+            out SkirmishReasonCode reason,
+            out SkirmishMedalAwardResult medal)
         {
             receipt = null;
             reason = SkirmishReasonCode.IncompatibleSave;
+            medal = default;
             if (em == default || session == Entity.Null ||
                 !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
                 !em.HasComponent<SkirmishResultComponent>(session))
@@ -126,8 +137,18 @@ namespace Game.Runtime
             if (!journal.TrySettle(incoming, out receipt, out reason))
                 return false;
 
+            // The medal write lands before acknowledgement. A failed commit leaves the
+            // result unacknowledged so the next settlement retries the same award once.
+            if (!SkirmishMedalProfileCommit.TryPersist(receipt, out medal))
+            {
+                reason = SkirmishReasonCode.IncompatibleSave;
+                medal = default;
+                return false;
+            }
+
             result.SaveAcknowledged = 1;
             em.SetComponentData(session, result);
+            LastMedalAward = medal;
             return true;
         }
     }

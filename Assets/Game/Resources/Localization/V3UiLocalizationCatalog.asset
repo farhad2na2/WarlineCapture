@@ -7093,6 +7093,12 @@ MonoBehaviour:
       value: Aggression
     - key: ui.skirmish.armor
       value: ARMORED CAR
+    - key: ui.skirmish.army.a
+      value: "Air mobile"
+    - key: ui.skirmish.army.c
+      value: "Combined arms"
+    - key: ui.skirmish.army.g
+      value: "Ground maneuver"
     - key: ui.skirmish.authored_count
       value: SHOWING 120 OF 120 BATTLES
     - key: ui.skirmish.base_assault
@@ -7194,6 +7200,18 @@ MonoBehaviour:
       value: Reveal enemy tech on scout.
     - key: ui.skirmish.intel_reveal
       value: INTEL REVEAL
+    - key: ui.skirmish.locked.missing
+      value: "This battle is missing."
+    - key: ui.skirmish.locked.not_owned
+      value: "This battle is not owned yet."
+    - key: ui.skirmish.locked.planned
+      value: "This battle is not ready."
+    - key: ui.skirmish.locked.progression
+      value: "This battle is still locked."
+    - key: ui.skirmish.locked.unavailable
+      value: "This battle is unavailable."
+    - key: ui.skirmish.locked.unknown
+      value: "This battle cannot open."
     - key: ui.skirmish.logistics_full
       value: 'Limit: 2 cargo trucks and 1 tanker, including queued vehicles.'
     - key: ui.skirmish.logistics_full.short
@@ -7203,8 +7221,26 @@ MonoBehaviour:
     - key: ui.skirmish.match_help
       value: Destroy the enemy base. Defend yours with Watchtowers and rifle squads.
         Tap a squad card, then Move or Attack.
+    - key: ui.skirmish.medal.commander
+      value: "Commander medal"
+    - key: ui.skirmish.medal.first
+      value: "First medal"
+    - key: ui.skirmish.medal.recruit
+      value: "Recruit medal"
+    - key: ui.skirmish.medal.regular
+      value: "Regular medal"
+    - key: ui.skirmish.medal.veteran
+      value: "Veteran medal"
     - key: ui.skirmish.no_resume
       value: Leaving ends this match. Your setup is saved for a new match.
+    - key: ui.skirmish.objective.ba
+      value: "Base assault"
+    - key: ui.skirmish.objective.bt
+      value: "Breakthrough"
+    - key: ui.skirmish.objective.ce
+      value: "Convoy escort"
+    - key: ui.skirmish.objective.fc
+      value: "Frontline control"
     - key: ui.skirmish.objective_explanation
       value: Destroy the enemy's main Barracks and protect yours. If both survive
         when time runs out, the match is a draw.
@@ -7250,6 +7286,8 @@ MonoBehaviour:
       value: Your main base was lost.
     - key: ui.skirmish.result.base_standing
       value: Your main base is still standing.
+    - key: ui.skirmish.result.battlefield
+      value: "BATTLEFIELD"
     - key: ui.skirmish.result.buildings
       value: BUILDINGS LOST / DESTROYED
     - key: ui.skirmish.result.complete
@@ -7284,6 +7322,966 @@ MonoBehaviour:
       value: VICTORY
     - key: ui.skirmish.retry
       value: RETRY
+    - key: ui.skirmish.s001.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s001.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s001.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s001.title
+      value: "Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s002.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s002.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s002.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s002.title
+      value: "Desert Base \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s003.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s003.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s003.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s003.title
+      value: "Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s004.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s004.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s004.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s004.title
+      value: Air Mobile
+    - key: ui.skirmish.s005.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s005.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s005.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s005.title
+      value: Combined Arms
+    - key: ui.skirmish.s006.description
+      value: "Briefing for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s006.purpose
+      value: "Objective for Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s006.subtitle
+      value: "Desert Base \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s006.title
+      value: Combined Arms
+    - key: ui.skirmish.s007.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s007.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s007.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s007.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s008.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s008.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s008.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s008.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s009.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s009.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s009.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s009.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s010.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s010.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s010.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s010.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s011.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s011.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s011.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s011.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s012.description
+      value: "Briefing for Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s012.purpose
+      value: "Objective for Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s012.subtitle
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s012.title
+      value: "Desert Base \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s013.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s013.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s013.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s013.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s014.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s014.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s014.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s014.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s015.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s015.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s015.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s015.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s016.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s016.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s016.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s016.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s017.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s017.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s017.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s017.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s018.description
+      value: "Briefing for Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s018.purpose
+      value: "Objective for Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s018.subtitle
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s018.title
+      value: "Desert Base \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s019.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s019.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s019.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s019.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s020.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s020.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s020.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s020.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s021.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s021.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s021.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s021.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s022.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s022.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s022.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s022.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s023.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s023.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s023.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s023.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s024.description
+      value: "Briefing for Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s024.purpose
+      value: "Objective for Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s024.subtitle
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s024.title
+      value: "Desert Base \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s025.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s025.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s025.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s025.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s026.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s026.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s026.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s026.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s027.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s027.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s027.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s027.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s028.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s028.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s028.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s028.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s029.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s029.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s029.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s029.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s030.description
+      value: "Briefing for City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s030.purpose
+      value: "Objective for City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s030.subtitle
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s030.title
+      value: "City Crossroads \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s031.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s031.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s031.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s031.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s032.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s032.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s032.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s032.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s033.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s033.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s033.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s033.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s034.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s034.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s034.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s034.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s035.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s035.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s035.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s035.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s036.description
+      value: "Briefing for City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s036.purpose
+      value: "Objective for City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s036.subtitle
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s036.title
+      value: "City Crossroads \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s037.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s037.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s037.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s037.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s038.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s038.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s038.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s038.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s039.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s039.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s039.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s039.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s040.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s040.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s040.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s040.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s041.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s041.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s041.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s041.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s042.description
+      value: "Briefing for City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s042.purpose
+      value: "Objective for City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s042.subtitle
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s042.title
+      value: "City Crossroads \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s043.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s043.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s043.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s043.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s044.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s044.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s044.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s044.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s045.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s045.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s045.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s045.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s046.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s046.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s046.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s046.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s047.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s047.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s047.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s047.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s048.description
+      value: "Briefing for City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s048.purpose
+      value: "Objective for City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s048.subtitle
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s048.title
+      value: "City Crossroads \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s049.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s049.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s049.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s049.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s050.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s050.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s050.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s050.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s051.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s051.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s051.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s051.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s052.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s052.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s052.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s052.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s053.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s053.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s053.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s053.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s054.description
+      value: "Briefing for Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s054.purpose
+      value: "Objective for Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s054.subtitle
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s054.title
+      value: "Mountain Pass \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s055.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s055.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s055.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s055.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s056.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s056.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s056.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s056.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s057.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s057.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s057.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s057.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s058.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s058.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s058.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s058.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s059.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s059.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s059.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s059.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s060.description
+      value: "Briefing for Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s060.purpose
+      value: "Objective for Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s060.subtitle
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s060.title
+      value: "Mountain Pass \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s061.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s061.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s061.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s061.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s062.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s062.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s062.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s062.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s063.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s063.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s063.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s063.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s064.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s064.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s064.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s064.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s065.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s065.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s065.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s065.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s066.description
+      value: "Briefing for Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s066.purpose
+      value: "Objective for Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s066.subtitle
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s066.title
+      value: "Mountain Pass \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s067.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s067.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s067.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s067.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s068.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s068.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s068.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s068.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s069.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s069.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s069.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s069.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s070.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s070.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s070.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s070.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s071.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s071.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s071.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s071.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s072.description
+      value: "Briefing for Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s072.purpose
+      value: "Objective for Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s072.subtitle
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s072.title
+      value: "Mountain Pass \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s073.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s073.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s073.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s073.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s074.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s074.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s074.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s074.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s075.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s075.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s075.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s075.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s076.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s076.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s076.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s076.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s077.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s077.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s077.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s077.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s078.description
+      value: "Briefing for Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s078.purpose
+      value: "Objective for Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s078.subtitle
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s078.title
+      value: "Industrial Basin \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s079.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s079.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s079.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s079.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s080.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s080.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s080.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s080.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s081.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s081.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s081.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s081.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s082.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s082.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s082.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s082.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s083.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s083.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s083.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s083.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s084.description
+      value: "Briefing for Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s084.purpose
+      value: "Objective for Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s084.subtitle
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s084.title
+      value: "Industrial Basin \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s085.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s085.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s085.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s085.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s086.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s086.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s086.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s086.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s087.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s087.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s087.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s087.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s088.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s088.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s088.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s088.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s089.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s089.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s089.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s089.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s090.description
+      value: "Briefing for Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s090.purpose
+      value: "Objective for Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s090.subtitle
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s090.title
+      value: "Industrial Basin \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s091.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s091.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s091.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s091.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s092.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s092.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s092.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s092.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s093.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s093.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s093.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s093.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s094.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s094.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s094.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s094.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s095.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s095.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s095.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s095.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s096.description
+      value: "Briefing for Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s096.purpose
+      value: "Objective for Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s096.subtitle
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s096.title
+      value: "Industrial Basin \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s097.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s097.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s097.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s097.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s098.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s098.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s098.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s098.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s099.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s099.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s099.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s099.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s100.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s100.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s100.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s100.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s101.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s101.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s101.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s101.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s102.description
+      value: "Briefing for Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s102.purpose
+      value: "Objective for Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s102.subtitle
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s102.title
+      value: "Airfield Plains \u00B7 Base Assault \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s103.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s103.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s103.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s103.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s104.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s104.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s104.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s104.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s105.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s105.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s105.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s105.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s106.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s106.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s106.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s106.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s107.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s107.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s107.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s107.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s108.description
+      value: "Briefing for Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s108.purpose
+      value: "Objective for Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s108.subtitle
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s108.title
+      value: "Airfield Plains \u00B7 Frontline Control \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s109.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s109.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s109.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s109.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s110.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s110.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s110.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s110.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s111.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s111.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s111.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s111.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s112.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s112.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s112.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s112.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s113.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s113.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s113.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s113.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s114.description
+      value: "Briefing for Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s114.purpose
+      value: "Objective for Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s114.subtitle
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s114.title
+      value: "Airfield Plains \u00B7 Breakthrough \u00B7 Combined Arms \u00B7 Established Base"
+    - key: ui.skirmish.s115.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s115.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base."
+    - key: ui.skirmish.s115.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base card"
+    - key: ui.skirmish.s115.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Field Base"
+    - key: ui.skirmish.s116.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s116.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base."
+    - key: ui.skirmish.s116.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base card"
+    - key: ui.skirmish.s116.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Ground Maneuver \u00B7 Established Base"
+    - key: ui.skirmish.s117.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s117.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base."
+    - key: ui.skirmish.s117.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base card"
+    - key: ui.skirmish.s117.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Field Base"
+    - key: ui.skirmish.s118.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s118.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base."
+    - key: ui.skirmish.s118.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base card"
+    - key: ui.skirmish.s118.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Air Mobile \u00B7 Established Base"
+    - key: ui.skirmish.s119.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s119.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base."
+    - key: ui.skirmish.s119.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base card"
+    - key: ui.skirmish.s119.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Field Base"
+    - key: ui.skirmish.s120.description
+      value: "Briefing for Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s120.purpose
+      value: "Objective for Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base."
+    - key: ui.skirmish.s120.subtitle
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base card"
+    - key: ui.skirmish.s120.title
+      value: "Airfield Plains \u00B7 Convoy Escort \u00B7 Combined Arms \u00B7 Established Base"
     - key: ui.skirmish.search_hint
       value: "Search battles (S001, Desert, BA, \u2026)"
     - key: ui.skirmish.seed
@@ -7312,6 +8310,16 @@ MonoBehaviour:
       value: '{0} unit'
     - key: ui.skirmish.squads.units
       value: '{0} units'
+    - key: ui.skirmish.start.e
+      value: "Established base"
+    - key: ui.skirmish.start.f
+      value: "Field base"
+    - key: ui.skirmish.size.large_war
+      value: Large War
+    - key: ui.skirmish.size.standard
+      value: Standard
+    - key: ui.skirmish.size.war
+      value: War
     - key: ui.skirmish.start_failed
       value: Skirmish could not start
     - key: ui.skirmish.start_failed.buildingplacement
@@ -7340,6 +8348,36 @@ MonoBehaviour:
       value: SURRENDER
     - key: ui.skirmish.surrender_confirm
       value: Surrender this match? This records a defeat.
+    - key: ui.skirmish.theater.ap.subtitle
+      value: "City airfield battles"
+    - key: ui.skirmish.theater.ap.title
+      value: "CITY AIRFIELD"
+    - key: ui.skirmish.theater.cc.subtitle
+      value: "City crossroads battles"
+    - key: ui.skirmish.theater.db.subtitle
+      value: "Desert base battles"
+    - key: ui.skirmish.theater.ib.subtitle
+      value: "Industrial basin battles"
+    - key: ui.skirmish.theater.mp.subtitle
+      value: "Armor approach battles"
+    - key: ui.skirmish.library.title.theatre_map
+      value: "SKIRMISH | THEATRE MAP"
+    - key: ui.skirmish.library.crumb.theatre
+      value: THEATER
+    - key: ui.common.credits
+      value: CREDITS
+    - key: ui.skirmish.library.title.battlefield
+      value: "SKIRMISH | {0}"
+    - key: ui.skirmish.library.battles_won
+      value: Battles won
+    - key: ui.skirmish.theatre_battles_one
+      value: '{0} battle'
+    - key: ui.skirmish.theatre_battles_other
+      value: '{0} battles'
+    - key: ui.skirmish.theatre_battles_won
+      value: '{0} won'
+    - key: ui.skirmish.theater.mp.title
+      value: "ARMOR APPROACH"
     - key: ui.skirmish.time_remaining
       value: TIME LEFT
     - key: ui.splash.default_tip
@@ -22189,6 +23227,12 @@ MonoBehaviour:
       value: "\u062A\u0647\u0627\u062C\u0645"
     - key: ui.skirmish.armor
       value: "\u062E\u0648\u062F\u0631\u0648\u06CC \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.army.a
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0647\u0648\u0627\u06CC\u06CC"
+    - key: ui.skirmish.army.c
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062A\u0631\u06A9\u06CC\u0628\u06CC"
+    - key: ui.skirmish.army.g
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u06CC"
     - key: ui.skirmish.authored_count
       value: "\u0646\u0645\u0627\u06CC\u0634 \u06F1\u06F2\u06F0 \u0627\u0632 \u06F1\u06F2\u06F0
         \u0646\u0628\u0631\u062F"
@@ -22373,6 +23417,18 @@ MonoBehaviour:
         \u0622\u0634\u06A9\u0627\u0631 \u06A9\u0646."
     - key: ui.skirmish.intel_reveal
       value: "\u0627\u0641\u0634\u0627\u06CC \u0627\u0637\u0644\u0627\u0639\u0627\u062A"
+    - key: ui.skirmish.locked.missing
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u06AF\u0645\u200C\u0634\u062F\u0647"
+    - key: ui.skirmish.locked.not_owned
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u0645\u0627\u0644 \u062A\u0648 \u0646\u06CC\u0633\u062A"
+    - key: ui.skirmish.locked.planned
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u0647\u0646\u0648\u0632 \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A"
+    - key: ui.skirmish.locked.progression
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u0647\u0646\u0648\u0632 \u0642\u0641\u0644\u200C\u0634\u062F\u0647"
+    - key: ui.skirmish.locked.unavailable
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: ui.skirmish.locked.unknown
+      value: "\u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u0628\u0627\u0632 \u0646\u0645\u06CC\u200C\u0634\u0647"
     - key: ui.skirmish.logistics_full
       value: "\u0638\u0631\u0641\u06CC\u062A \u067E\u0631\u0647: \u06F2 \u06A9\u0627\u0645\u06CC\u0648\u0646
         \u0628\u0627\u0631\u0628\u0631\u06CC \u0648 \u06F1 \u062A\u0627\u0646\u06A9\u0631\u060C
@@ -22389,12 +23445,30 @@ MonoBehaviour:
         \u062F\u0641\u0627\u0639 \u06A9\u0646. \u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647
         \u0631\u0648 \u0628\u0632\u0646\u060C \u0628\u0639\u062F \xAB\u062D\u0631\u06A9\u062A\xBB
         \u06CC\u0627 \xAB\u062D\u0645\u0644\u0647\xBB."
+    - key: ui.skirmish.medal.commander
+      value: "\u0646\u0634\u0627\u0646 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
+    - key: ui.skirmish.medal.first
+      value: "\u0646\u0634\u0627\u0646 \u0627\u0648\u0644"
+    - key: ui.skirmish.medal.recruit
+      value: "\u0646\u0634\u0627\u0646 \u062A\u0627\u0632\u0647\u200C\u06A9\u0627\u0631"
+    - key: ui.skirmish.medal.regular
+      value: "\u0646\u0634\u0627\u0646 \u0639\u0627\u062F\u06CC"
+    - key: ui.skirmish.medal.veteran
+      value: "\u0646\u0634\u0627\u0646 \u067E\u06CC\u0634\u0631\u0641\u062A\u0647"
     - key: ui.skirmish.no_resume
       value: "\u0627\u06AF\u0647 \u062E\u0627\u0631\u062C \u0628\u0634\u06CC\u060C
         \u0627\u06CC\u0646 \u0628\u0627\u0632\u06CC \u062A\u0645\u0648\u0645 \u0645\u06CC\u200C\u0634\u0647.
         \u062A\u0646\u0638\u06CC\u0645\u0627\u062A\u062A \u0628\u0631\u0627\u06CC
         \u06CC\u0647 \u0628\u0627\u0632\u06CC \u062A\u0627\u0632\u0647 \u0630\u062E\u06CC\u0631\u0647
         \u0645\u06CC\u200C\u0645\u0648\u0646\u0647."
+    - key: ui.skirmish.objective.ba
+      value: "\u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.objective.bt
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.objective.ce
+      value: "\u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.objective.fc
+      value: "\u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
     - key: ui.skirmish.objective_explanation
       value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0648\u0646\u0647\u0654 \u0627\u0635\u0644\u06CC
         \u062F\u0634\u0645\u0646 \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646
@@ -22469,6 +23543,8 @@ MonoBehaviour:
     - key: ui.skirmish.result.base_standing
       value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u0634\u0645\u0627
         \u0647\u0645\u0686\u0646\u0627\u0646 \u0633\u0627\u0644\u0645 \u0627\u0633\u062A."
+    - key: ui.skirmish.result.battlefield
+      value: "\u0645\u06CC\u062F\u0627\u0646 \u0646\u0628\u0631\u062F"
     - key: ui.skirmish.result.buildings
       value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
         \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647 / \u0646\u0627\u0628\u0648\u062F\u0634\u062F\u0647"
@@ -22510,6 +23586,966 @@ MonoBehaviour:
     - key: ui.skirmish.retry
       value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
         \u06A9\u0646"
+    - key: ui.skirmish.s001.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s001.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s001.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s001.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s002.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s002.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s002.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s002.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s003.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s003.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s003.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s003.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s004.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s004.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s004.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s004.title
+      value: "\u0647\u0648\u0627\u06CC\u06CC"
+    - key: ui.skirmish.s005.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s005.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s005.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s005.title
+      value: "\u062A\u0631\u06A9\u06CC\u0628\u06CC"
+    - key: ui.skirmish.s006.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s006.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s006.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s006.title
+      value: "\u062A\u0631\u06A9\u06CC\u0628\u06CC"
+    - key: ui.skirmish.s007.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s007.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s007.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s007.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s008.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s008.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s008.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s008.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s009.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s009.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s009.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s009.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s010.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s010.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s010.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s010.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s011.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s011.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s011.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s011.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s012.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s012.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s012.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s012.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s013.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s013.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s013.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s013.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s014.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s014.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s014.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s014.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s015.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s015.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s015.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s015.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s016.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s016.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s016.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s016.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s017.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s017.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s017.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s017.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s018.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s018.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s018.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s018.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s019.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s019.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s019.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s019.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s020.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s020.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s020.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s020.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s021.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s021.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s021.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s021.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s022.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s022.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s022.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s022.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s023.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s023.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s023.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s023.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s024.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s024.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s024.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.s024.title
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s025.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s025.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s025.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s025.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s026.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s026.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s026.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s026.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s027.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s027.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s027.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s027.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s028.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s028.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s028.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s028.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s029.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s029.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s029.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s029.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s030.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s030.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s030.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s030.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s031.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s031.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s031.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s031.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s032.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s032.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s032.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s032.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s033.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s033.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s033.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s033.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s034.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s034.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s034.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s034.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s035.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s035.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s035.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s035.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s036.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s036.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s036.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s036.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s037.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s037.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s037.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s037.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s038.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s038.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s038.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s038.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s039.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s039.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s039.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s039.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s040.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s040.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s040.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s040.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s041.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s041.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s041.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s041.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s042.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s042.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s042.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s042.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s043.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s043.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s043.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s043.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s044.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s044.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s044.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s044.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s045.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s045.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s045.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s045.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s046.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s046.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s046.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s046.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s047.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s047.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s047.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s047.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s048.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s048.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s048.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.s048.title
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s049.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s049.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s049.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s049.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s050.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s050.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s050.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s050.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s051.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s051.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s051.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s051.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s052.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s052.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s052.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s052.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s053.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s053.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s053.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s053.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s054.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s054.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s054.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s054.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s055.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s055.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s055.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s055.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s056.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s056.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s056.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s056.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s057.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s057.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s057.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s057.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s058.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s058.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s058.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s058.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s059.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s059.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s059.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s059.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s060.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s060.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s060.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s060.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s061.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s061.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s061.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s061.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s062.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s062.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s062.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s062.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s063.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s063.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s063.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s063.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s064.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s064.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s064.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s064.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s065.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s065.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s065.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s065.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s066.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s066.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s066.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s066.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s067.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s067.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s067.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s067.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s068.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s068.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s068.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s068.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s069.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s069.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s069.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s069.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s070.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s070.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s070.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s070.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s071.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s071.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s071.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s071.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s072.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s072.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s072.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.s072.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s073.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s073.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s073.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s073.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s074.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s074.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s074.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s074.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s075.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s075.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s075.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s075.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s076.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s076.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s076.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s076.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s077.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s077.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s077.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s077.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s078.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s078.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s078.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s078.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s079.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s079.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s079.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s079.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s080.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s080.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s080.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s080.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s081.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s081.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s081.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s081.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s082.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s082.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s082.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s082.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s083.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s083.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s083.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s083.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s084.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s084.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s084.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s084.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s085.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s085.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s085.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s085.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s086.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s086.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s086.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s086.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s087.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s087.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s087.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s087.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s088.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s088.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s088.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s088.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s089.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s089.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s089.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s089.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s090.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s090.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s090.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s090.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s091.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s091.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s091.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s091.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s092.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s092.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s092.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s092.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s093.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s093.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s093.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s093.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s094.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s094.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s094.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s094.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s095.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s095.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s095.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s095.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s096.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s096.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s096.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.s096.title
+      value: "\u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s097.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s097.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s097.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s097.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s098.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s098.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s098.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s098.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s099.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s099.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s099.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s099.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s100.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s100.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s100.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s100.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s101.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s101.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s101.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s101.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s102.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s102.purpose
+      value: "\u0647\u062F\u0641 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: ui.skirmish.s102.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s102.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06CC\u0648\u0631\u0634 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s103.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s103.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s103.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s103.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s104.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s104.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s104.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s104.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s105.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s105.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s105.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s105.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s106.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s106.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s106.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s106.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s107.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s107.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s107.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s107.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s108.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s108.purpose
+      value: "\u0647\u062F\u0641 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645"
+    - key: ui.skirmish.s108.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s108.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06A9\u0646\u062A\u0631\u0644 \u062E\u0637 \u0645\u0642\u062F\u0645 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s109.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s109.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s109.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s109.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s110.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s110.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s110.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s110.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s111.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s111.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s111.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s111.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s112.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s112.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s112.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s112.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s113.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s113.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s113.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s113.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s114.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s114.purpose
+      value: "\u0647\u062F\u0641 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637"
+    - key: ui.skirmish.s114.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s114.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u06A9\u0633\u062A\u0646 \u062E\u0637 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s115.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s115.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s115.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s115.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s116.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s116.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s116.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s116.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0632\u0645\u06CC\u0646\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s117.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s117.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s117.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s117.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s118.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s118.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s118.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s118.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u0647\u0648\u0627\u06CC\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s119.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s119.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s119.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s119.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.s120.description
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.s120.purpose
+      value: "\u0647\u062F\u0641 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646"
+    - key: ui.skirmish.s120.subtitle
+      value: "\u06A9\u0627\u0631\u062A \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: ui.skirmish.s120.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0627\u0631\u0648\u0627\u0646 \u062A\u0631\u06A9\u06CC\u0628\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
     - key: ui.skirmish.search_hint
       value: "\u062C\u0633\u062A\u200C\u0648\u062C\u0648\u06CC \u0646\u0628\u0631\u062F\u0647\u0627
         (S001\u060C \u0635\u062D\u0631\u0627\u060C \u062D\u0645\u0644\u0647 \u0628\u0647
@@ -22546,6 +24582,16 @@ MonoBehaviour:
       value: "{0} \u0646\u0641\u0631"
     - key: ui.skirmish.squads.units
       value: "{0} \u0646\u0641\u0631"
+    - key: ui.skirmish.start.e
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0622\u0645\u0627\u062F\u0647"
+    - key: ui.skirmish.start.f
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0645\u06CC\u062F\u0627\u0646\u06CC"
+    - key: ui.skirmish.size.large_war
+      value: "\u062C\u0646\u06AF \u0628\u0632\u0631\u06AF"
+    - key: ui.skirmish.size.standard
+      value: "\u0627\u0633\u062A\u0627\u0646\u062F\u0627\u0631\u062F"
+    - key: ui.skirmish.size.war
+      value: "\u062C\u0646\u06AF"
     - key: ui.skirmish.start_failed
       value: "\u0646\u0628\u0631\u062F \u0634\u0631\u0648\u0639 \u0646\u0634\u062F"
     - key: ui.skirmish.start_failed.buildingplacement
@@ -22598,6 +24644,36 @@ MonoBehaviour:
       value: "\u0627\u0632 \u0627\u06CC\u0646 \u0646\u0628\u0631\u062F \u0627\u0646\u0635\u0631\u0627\u0641
         \u0645\u06CC\u200C\u062F\u06CC\u061F \u0646\u062A\u06CC\u062C\u0647\u200C\u062A
         \u0634\u06A9\u0633\u062A \u062B\u0628\u062A \u0645\u06CC\u200C\u0634\u0647."
+    - key: ui.skirmish.theater.ap.subtitle
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u0647\u0631\u06CC"
+    - key: ui.skirmish.theater.ap.title
+      value: "\u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0634\u0647\u0631\u06CC"
+    - key: ui.skirmish.theater.cc.subtitle
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
+    - key: ui.skirmish.theater.db.subtitle
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647 \u06A9\u0648\u06CC\u0631\u06CC"
+    - key: ui.skirmish.theater.ib.subtitle
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u062D\u0648\u0636\u0647 \u0635\u0646\u0639\u062A\u06CC"
+    - key: ui.skirmish.theater.mp.subtitle
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
+    - key: ui.skirmish.library.title.theatre_map
+      value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | \u0646\u0642\u0634\u0647 \u0635\u062D\u0646\u0647"
+    - key: ui.skirmish.library.crumb.theatre
+      value: "\u0635\u062D\u0646\u0647 \u0646\u0628\u0631\u062F"
+    - key: ui.common.credits
+      value: "\u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.skirmish.library.title.battlefield
+      value: "\u0632\u062F \u0648 \u062E\u0648\u0631\u062F | {0}"
+    - key: ui.skirmish.library.battles_won
+      value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u0628\u0631\u062F\u0647"
+    - key: ui.skirmish.theatre_battles_one
+      value: "{0} \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.theatre_battles_other
+      value: "{0} \u0646\u0628\u0631\u062F"
+    - key: ui.skirmish.theatre_battles_won
+      value: "{0} \u0628\u0631\u062F\u0647"
+    - key: ui.skirmish.theater.mp.title
+      value: "\u06AF\u0630\u0631 \u0632\u0631\u0647\u06CC"
     - key: ui.skirmish.time_remaining
       value: "\u0632\u0645\u0627\u0646 \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647"
     - key: ui.splash.default_tip

@@ -189,6 +189,7 @@ namespace Game.Runtime
             }
             profile.operations = Game.Operations.Contracts.OperationsSaveMigration.Migrate(profile.operations).Data;
             profile.operationsAttemptJson ??= string.Empty;
+            profile.skirmishMedals ??= Array.Empty<SkirmishMedalSaveData>();
             return profile;
         }
 

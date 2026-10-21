@@ -28,6 +28,12 @@ namespace Game.UI.Contracts
         public string ResultElapsed;
         public int PlayerUnitsLost, EnemyUnitsLost, PlayerBuildingsLost, EnemyBuildingsLost;
         public bool PlayerBaseHeld, EnemyBaseDestroyed;
+        // First medal earned by the settlement that produced this result. Empty unless IsFirstAward.
+        public string MedalScenarioId;
+        public byte MedalDifficulty;
+        public bool MedalIsFirstAward;
+        // Expanded session catalog id, including repeats that earn no new medal.
+        public string CatalogId;
     }
     public struct UiExpandedPrecisionAttackResult
     {

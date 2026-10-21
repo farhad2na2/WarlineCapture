@@ -63,6 +63,7 @@ namespace Game.Editor
                 if (SessionState.GetBool(RecoveryJourney, false) || SessionState.GetBool(StoryReplay, false)) AuditReadinessPresentation();
                 if (SessionState.GetBool(StoryReplay, false)) AuditM01StorySetup();
                 double now = EditorApplication.timeSinceStartup;
+                if(SessionState.GetBool(ApprovedAtlasJourney,false)) approvedMenuTouch?.Tick(Time.unscaledTime);
                 if (deadline == 0) deadline = now + 180;
                 if (now > deadline) throw new TimeoutException($"entry={entry} stage={stage}");
                 if (now < waitUntil) return;
@@ -94,6 +95,8 @@ namespace Game.Editor
                 if (stage == 0)
                 {
                     if (!UiShellRuntimeGateway.TryReadCampaignOperations(out var campaign) || !campaign.IsValid) return;
+                    if(SessionState.GetBool(ApprovedAtlasJourney,false))
+                    {if(EnterApprovedCampaignThroughControls())Next(1);return;}
                     if (campaign.SelectedMission.MissionId != missionId)
                     { UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select, missionId); return; }
                     if (SessionState.GetBool(CampaignChain, false)) CheckCampaignBeforeDeploy(campaign);
@@ -239,6 +242,7 @@ namespace Game.Editor
             if (finished) return; finished = true; SessionState.SetBool(Active, false);
             EditorApplication.update -= Tick; Application.logMessageReceived -= Observe;
             Canvas.willRenderCanvases -= TickGameView;
+            FinishApprovedCampaign(pass);
             Debug.Log("[CampaignTutorialEntry] result=" + (pass ? "Passed " : "Failed ") + detail);
             MissionEditorValidationExit.Complete(pass);
         }

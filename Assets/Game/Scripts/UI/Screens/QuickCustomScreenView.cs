@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -66,10 +67,15 @@ namespace Game.UI.Runtime
                 PresentResumeFailure();
         }
 
-        private void PresentResumeFailure() => UiLocalizedText.Set(scenarioDescription,
-            GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode
+        private void PresentResumeFailure()
+        {
+            string message=GameLocalization.CurrentLocaleCode==GameLocalization.PersianLocaleCode
                 ? "ادامهٔ نبرد ممکن نشد. دوباره تلاش کن یا یک نبرد جدید شروع کن."
-                : "Could not continue this match. Try again or start a new match.");
+                : "Could not continue this match. Try again or start a new match.";
+            UiLocalizedText.Set(scenarioDescription,message);
+            if(approvedSkirmishAtlas!=null)approvedSkirmishAtlas.ShowNotice(message);
+        }
+
 
         private void Awake()
         {
@@ -211,12 +217,8 @@ namespace Game.UI.Runtime
                     titleRect.pivot = new Vector2(0f, 1f);
                     titleRect.anchoredPosition = new Vector2(8f, 0f);
                     titleRect.sizeDelta = new Vector2(784f, 54f);
-                    var previewRect = titleRect.parent.Find("MapPreviewClip") as RectTransform;
-                    if (previewRect != null)
-                    {
-                        previewRect.anchorMin = previewRect.anchorMax = new Vector2(0f, 1f);
-                        previewRect.pivot = new Vector2(0f, 1f);
-                    }
+                    // The battle library owns the stretched map viewport. Rebinding
+                    // a selected mission must not collapse that clip to a point anchor.
                     if (selected.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId)
                     {
                         UiLocalizedText.Set(mapNameText, UiShellRuntimeGateway.Localization.IsRightToLeft
@@ -244,10 +246,12 @@ namespace Game.UI.Runtime
 
         public void BindRuntimeDependencies(
             IQuickCustomGameConfigStore configStore,
-            IMatchLaunchCommand launchCommand)
+            IMatchLaunchCommand launchCommand,
+            SkirmishLibraryFactory libraryFactory = null)
         {
             _configStore = configStore;
             _launchCommand = launchCommand;
+            UseLibraryFactory(libraryFactory);
             flowSystem.Initialize(this, _configStore);
         }
 
@@ -255,6 +259,8 @@ namespace Game.UI.Runtime
         {
             if (!baseAssaultPreset) return;
             SelectScenario(scenarioIndex);
+            if (!string.IsNullOrEmpty(SkirmishLibraryReturn.PendingScenarioId))
+                ReturnLibraryToScenario(SkirmishLibraryReturn.PendingScenarioId);
             _config.MapSeed = seed;
             Bind(_config);
             _configStore?.Apply(ReadConfigFromControls());
@@ -305,11 +311,14 @@ namespace Game.UI.Runtime
             flowSystem.ApplyCurrentConfig(this, _configStore);
         }
 
+        public bool LibraryLaunchRequested { get; private set; }
+
         public void LaunchMatch()
         {
             if (baseAssaultPreset)
             {
                 EnsureLibraryCards();
+                EnsureLibraryViewModel();
                 if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable || !MatchesLibrarySelection(selected))
                     return;
                 _config.ScenarioIndex = selected.PlayableScenarioIndex;
@@ -317,10 +326,17 @@ namespace Game.UI.Runtime
                     (missionSizeSegmented == null || !missionSizeSegmented.gameObject.activeInHierarchy)) return;
                 if (_savedMatchAvailable)
                 {
+                    UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
                     if (!UiShellRuntimeGateway.TryResumeSavedSkirmish(_selectedScenarioId))
                         PresentResumeFailure();
                     return;
                 }
+
+                if (_libraryViewModel == null || !_libraryViewModel.Launch())
+                    return;
+                LibraryLaunchRequested = true;
+                Debug.Log("[SkirmishBattleLibrary] launch requested scenario=" + _selectedScenarioId);
+                PresentLaunchTransition(_selectedScenarioId);
             }
 
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
@@ -368,7 +384,7 @@ namespace Game.UI.Runtime
 
         private void RandomizeSeed()
         {
-            _config.MapSeed = Random.Range(1, int.MaxValue);
+            _config.MapSeed = UnityEngine.Random.Range(1, int.MaxValue);
             if (seedInput != null)
                 seedInput.SetTextWithoutNotify(_config.MapSeed.ToString());
 
@@ -471,6 +487,8 @@ namespace Game.UI.Runtime
                 }
             if (TryFindEntry(_selectedScenarioId, out var selected))
                 PresentCompiledBriefing(selected, UiShellRuntimeGateway.Localization.IsRightToLeft);
+            if (baseAssaultPreset && approvedSkirmishAtlas == null)
+                FitSagaMissionSizeLabels();
 
         }
 

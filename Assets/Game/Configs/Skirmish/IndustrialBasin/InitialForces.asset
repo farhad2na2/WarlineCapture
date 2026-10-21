@@ -65,15 +65,15 @@ MonoBehaviour:
       spawnOffset: {x: -8, y: 8}
     buildings:
     - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-      originOffset: {x: 4, y: -26}
+      originOffset: {x: 55, y: 33}
     - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
-      originOffset: {x: -24, y: 8}
+      originOffset: {x: -92, y: 10}
     - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
-      originOffset: {x: -24, y: -22}
+      originOffset: {x: -23, y: -22}
     - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
-      originOffset: {x: 8, y: 10}
+      originOffset: {x: 71, y: -26}
     - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-      originOffset: {x: -24, y: 42}
+      originOffset: {x: -59, y: 1}
   blockerCount: 0
   spawnRadiusCells: 6
   respawnDelaySeconds: 1

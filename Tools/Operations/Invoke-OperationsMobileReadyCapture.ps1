@@ -82,7 +82,7 @@ if (-not (Test-Path -LiteralPath $versionFile)) {
     throw "Shadow project is missing $versionFile"
 }
 
-$editorVersion = (Select-String -LiteralPath $versionFile -Pattern "m_EditorVersion:\s*(.+)$").Matches.Groups[1].Value.Trim()
+$editorVersion = (Select-String -LiteralPath $versionFile -Pattern "m_EditorVersion:\s*(.+)$").Matches.Groups[1].Value.Trim().Replace("`r", "")
 $wrapperRoot = Join-Path $shadow "Tools\CI"
 $resolveScript = Join-Path $wrapperRoot "ResolveUnityEditor.ps1"
 $invokeUnityScript = Join-Path $wrapperRoot "InvokeUnity.ps1"

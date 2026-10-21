@@ -1,0 +1,19 @@
+{
+  "originals": {
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl": "8f07efa80494b2c8915ed3e3e3393524f1e7fe7c29974cd0af5fceadf8cc8a47",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.actors.jsonl": "83c89be1e1f40bfb3119575cfcbb3103eec280789901e6c6220fb66bc5b03b18",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.commands.jsonl": "de99fcfb4e1ff8fb0ba182f5ac1522e487477be2b722c7a3135cbc2461392420",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.input.jsonl": "5e4b43bf2824032582b27be5066d5261aa84af6c674b2a3119444db44bf43a67",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.menu-scale.json": "71cecfd4fa7e0af3ffadf0d0e673aec4ee960de5e27cef23870a92c38fdab182",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.menu-scale.png": "96e90d9fe1adaaba265c578fdfe16b6daa68f75523880624995e292453c4ff92",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.opening.png": "12ed5e3e20b53cb704bba6e6889f26322dfbc9146a606f60de1e02ac8b88a382",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.setup.png": "96e90d9fe1adaaba265c578fdfe16b6daa68f75523880624995e292453c4ff92",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.terminal-destination.png": "51777ddbc0cbe1b76ad60f6775f142df1293e13818581d3340c98ae9bf635712",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.terminal-result.png": "b535286c10089f1cc7b40c70c1f9181c3b6f117a406e679f764e5be4c8e85387",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.terminal-saga-medal-proof.json": "9952ef588380ee31fed60eb5a3461c97f9fadf44ff716385d20b77c318a251fa",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.terminal-saga-medal-proof.json.process-restart.json": "44adb0e1dc06c585b1bc4f431a8bb396354af218eb36fc11614335c5c81c0c8d",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.terminal-saga-medal-proof.json.process-restart.png": "96d0d894c6b1e0bd5627cf3bc0cd41f579d71463aa578cc3eebf4d8ccf796eef",
+    "s002-aria-live-104731-fa-409d0354ca5e409581b4768dc5a4547c.jsonl.touch.jsonl": "8b64844a222f0bd224b5c84c72e41d5581ad76b048fbe34de28d85e8ca4896f9"
+  },
+  "archiveSha256": "5ecf5a5bed597a6fecb3329a6d53d2e5feceec4e7b6d2ea8662f3ca110358664"
+}

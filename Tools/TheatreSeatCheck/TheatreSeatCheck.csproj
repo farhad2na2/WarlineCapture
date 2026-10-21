@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="..\..\Assets\Game\Scripts\UI\Skirmish\TheatreSeatGeometry.cs" />
+    <Compile Include="..\..\Assets\Game\Scripts\UI\Skirmish\TheatreSeatGeometry.Saga.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaCueRepair.cs" Link="TheatreSeatGeometry.SagaCueRepair.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaStableSelection.cs" Link="TheatreSeatGeometry.SagaStableSelection.cs" />
+    <Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaPortraitCoast.cs" Link="TheatreSeatGeometry.SagaPortraitCoast.cs" />
+<Compile Include="../../Assets/Game/Scripts/UI/Skirmish/TheatreSeatGeometry.SagaDenseCoasts.cs" Link="TheatreSeatGeometry.SagaDenseCoasts.cs" />
+  </ItemGroup>
+</Project>

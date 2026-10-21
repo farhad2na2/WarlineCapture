@@ -1,0 +1,293 @@
+[
+  {
+    "run": 1,
+    "log": "/private/tmp/mission-atlas-polish-review-01.log",
+    "sha256": "2491768037871d3d4ac237dde75182c5a8941caae55f59a0f955a020d68516d6",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-220534",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-220534"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 2,
+    "log": "/private/tmp/mission-atlas-polish-review-02.log",
+    "sha256": "5ed0281f2f091097a6a18ab6230256d77c119026eb6e7acfc381e507c0a42e53",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-220843",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-220843"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 3,
+    "log": "/private/tmp/mission-atlas-polish-review-03.log",
+    "sha256": "a4db1e2af03f4a9e9676b05866a96b78ab5f72af3e17132ab4e26304d4593c5d",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-221219",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-221219"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 4,
+    "log": "/private/tmp/mission-atlas-polish-review-04.log",
+    "sha256": "b59df3368cc39bdd0cdce1f794d193ce8350cf6108076981b6752648e075f66a",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-221548",
+    "markers": [
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-221548"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 5,
+    "log": "/private/tmp/mission-atlas-polish-review-05.log",
+    "sha256": "b3753717a61769bb5a74c0fcc482db3ea9f46bd2f5adbc149fc9f9e04d496adb",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-221846",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-221846"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 6,
+    "log": "/private/tmp/mission-atlas-polish-review-06.log",
+    "sha256": "2de34e38994bfb7071e1ab9af61cb48910a055e2b39979ddba965545a03b306a",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-222030",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-222030"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 7,
+    "log": "/private/tmp/mission-atlas-polish-review-07.log",
+    "sha256": "636ad1dc6ebe2625405ad2d95aef5ee15080e99617a75837127b427a5dea5a6b",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-222622",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-222622"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 8,
+    "log": "/private/tmp/mission-atlas-polish-review-08.log",
+    "sha256": "ee70ffdaef4edef33ecc1e8f8e3b1317162dfdf7138c731e4597b85c20961c29",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-222836",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-222836"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 9,
+    "log": "/private/tmp/mission-atlas-polish-review-09.log",
+    "sha256": "1f0df1dcc6b8898a4a20919608503d8c164da12f0ed37d0eac47b539b3b7dba9",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-223034",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-223034"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 10,
+    "log": "/private/tmp/mission-atlas-polish-review-10.log",
+    "sha256": "ea3ab0fb307c949ea153413281c965096defa65412a551a9fcdaed4d57b8b101",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-223412",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-223412"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 11,
+    "log": "/private/tmp/mission-atlas-polish-review-11.log",
+    "sha256": "cf46464e09bc94dfa81671d991e49f33428c6759888792d03fcd622cec8772d8",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-223736",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-223736"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 12,
+    "log": "/private/tmp/mission-atlas-polish-review-12.log",
+    "sha256": "d299da588e533bff569ee322592212766a26f16be45a9faa9cae4a33b0e03ffe",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-224025",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Failed",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-224025"
+    ],
+    "note": "Retained failure."
+  },
+  {
+    "run": 13,
+    "log": "/private/tmp/mission-atlas-polish-review-13.log",
+    "sha256": "3a0fafdb85d6a227bd611209eb87f29a80b85b0e709dc43bfb634a6cd9ae532c",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-224543",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261020-224543"
+    ],
+    "note": "Passed layout; superseded after manual review caught untranslated shortened Campaign copy."
+  },
+  {
+    "run": 14,
+    "log": "/private/tmp/mission-atlas-polish-review-14.log",
+    "sha256": "52267e4d5030c06997719d13cfa70b5e268f2d0de2bbaa3b0c79440d5a8a4404",
+    "capture": "Design/AgentReports/ApprovedMissionAtlas/20261020-225027",
+    "markers": [
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed",
+      "[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261020-225027"
+    ],
+    "note": "Final native visual and touch candidate."
+  }
+]

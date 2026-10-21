@@ -1,0 +1,3 @@
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.ApprovedAtlas.cs(81,51): error CS0246: The type or namespace name 'MatchSceneView' could not be found (are you missing a using directive or an assembly reference?)
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.ApprovedAtlas.cs(81,51): error CS0246: The type or namespace name 'MatchSceneView' could not be found (are you missing a using directive or an assembly reference?)
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.ApprovedAtlas.cs(81,51): error CS0246: The type or namespace name 'MatchSceneView' could not be found (are you missing a using directive or an assembly reference?)

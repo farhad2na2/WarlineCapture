@@ -122,6 +122,7 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
+            ApprovedMissionAtlasBuilder.RepairMainPageComics();
             Debug.Log("[MainMenuV3PrefabBuilder] result=Passed v3=True Campaign-led home with native portraits, informational Credits, and independent mode routes.");
         }
 

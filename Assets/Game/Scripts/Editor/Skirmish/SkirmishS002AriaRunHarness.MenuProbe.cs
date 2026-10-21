@@ -13,6 +13,9 @@ namespace Game.Editor
     {
         private static AriaTouchInputUiSystemHelper menuTouch;
         private static int menuStep;
+        private static int menuLibraryBeat;
+        private static string menuLibraryMap = "DB";
+        private static string menuLibraryObjective = "BA";
         private static double menuDue;
         private static double menuDeadline;
         private static Button menuStableTarget;
@@ -23,6 +26,9 @@ namespace Game.Editor
         private static SkirmishMenuLaunchPreparation menuLaunchPreparation;
         private static IDisposable candidateCatalogScope;
         private static SkirmishBattleCatalogConfig candidateCatalog;
+
+        public static void RunSagaS002EditorAriaEn() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("en", false, false, "S002", 104731); }
+        public static void RunSagaS002EditorAriaFa() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("fa-IR", false, false, "S002", 104731); }
 
         public static void RunS004EditorAriaEn() => RunEditorJourney("en", false);
         public static void RunS004EditorAriaStopEn() => RunEditorJourney("en", false, true);
@@ -157,6 +163,7 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S004_STOP_PROBE", stopProbe ? "1" : null);
             Environment.SetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE", manual ? "1" : null);
             menuStep = 0;
+            menuLibraryBeat = 0;
             RunFocusedAriaAndExit();
         }
 
@@ -179,6 +186,7 @@ namespace Game.Editor
             {
                 ConfigureBackgroundInput();
                 menuStep = 0;
+                menuLibraryBeat = 0;
                 menuDeadline = EditorApplication.timeSinceStartup + 90d;
                 menuStableTarget = null;
                 menuStableSince = menuLastTapAt = 0;
@@ -200,7 +208,8 @@ namespace Game.Editor
             if (EditorApplication.timeSinceStartup > menuDeadline)
             {
                 Debug.LogError("[S004MenuJourney] result=Failed reason=controlsTimeout step=" + menuStep);
-                Finish(true, "menuControlsTimeout");
+                if (sagaRestartActive) EndSagaRestart(false, "menuControlsTimeout");
+                else Finish(true, "menuControlsTimeout");
                 return;
             }
             menuTouch.Tick(Time.unscaledTime);
@@ -260,6 +269,10 @@ namespace Game.Editor
             }
             else if (menuStep == 1)
             {
+                if (AdvancePresentedLibraryNavigation(buttons))
+                    return;
+                if (!HasNewLibraryChrome(buttons) && AdvanceLibraryViewModel())
+                    return;
                 foreach (var b in buttons)
                     if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
                     { if (MenuTap(b)) menuStep = 4; return; }
@@ -296,6 +309,7 @@ namespace Game.Editor
             }
             else if (menuStep == 4)
             {
+                if (sagaRestartActive) { VerifySagaRestartPresented(); return; }
                 var setup = SelectMenuSetupForLaunch(UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude), catalogId);
                 if (setup == null)
                 {
@@ -303,7 +317,9 @@ namespace Game.Editor
                     // when the actual exact selected setup is absent.
                     if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
                         foreach (var b in buttons)
-                            if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
+                            if ((b.name == "ScenarioCard_" + catalogId ||
+                                  b.name == SkirmishLibraryControlNames.BattleCard(catalogId)) &&
+                                 TryPresentedButtonPoint(b, out _))
                             {
                                 if (MenuTap(b)) Debug.Log("[S004MenuJourney] phase=ScenarioRetry input=Touch reason=SelectedSetupAbsent");
                                 return;
@@ -322,6 +338,7 @@ namespace Game.Editor
                         return;
                     }
                     if(codedSizeCameraActive && !CodedSizeMenuReady(setup)) return;
+                    if(sagaMenuProof && !CaptureNativeSagaMenuScale(setup)) return;
                     foreach (var label in setup.GetComponentsInChildren<TMP_Text>())
                         if (label.name == "OperationName" || label.name == "SeedHelp")
                         {
@@ -343,6 +360,184 @@ namespace Game.Editor
                         }
                 }
             }
+        }
+
+        private static bool AdvancePresentedLibraryNavigation(Button[] buttons)
+        {
+            foreach(var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                if(setup.ApprovedAtlas!=null)return AdvanceApprovedAtlasNavigation(setup,buttons);
+            if (!HasNewLibraryChrome(buttons))
+                return false;
+            ResolveLibraryTarget();
+            if (menuLibraryBeat == 0)
+            {
+                Button pin = FindNamed(buttons, SkirmishLibraryControlNames.TheaterPin(menuLibraryMap));
+                if (pin == null)
+                {
+                    // Restore through the visible theatre control when the prior session retained a battlefield.
+                    var theatre=FindNamed(buttons,SkirmishLibraryControlNames.TheaterMap);
+                    if(theatre!=null)MenuTap(theatre);
+                }
+                else if (MenuTap(pin))
+                {
+                    Debug.Log("[S004MenuJourney] phase=TheaterPin input=Touch map=" + menuLibraryMap +
+                        " navigation=TheaterZoom");
+                    menuLibraryBeat = 1;
+                }
+
+                return true;
+            }
+
+            if (menuLibraryBeat == 1)
+            {
+                Button zoom = FindNamed(buttons, sagaMenuProof ? "CuePlate" : SkirmishLibraryControlNames.ZoomIn);
+                if (zoom != null && MenuTap(zoom))
+                {
+                    Debug.Log("[S004MenuJourney] phase=ZoomIn input=Touch navigation=TheaterZoom map=" + menuLibraryMap);
+                    menuLibraryBeat = 2;
+                }
+
+                return true;
+            }
+
+            if (menuLibraryBeat == 2)
+            {
+                Button tab = FindNamed(buttons, SkirmishLibraryControlNames.ObjectiveTab(menuLibraryObjective));
+                if (tab == null)
+                    menuLibraryBeat = 3;
+                else if (MenuTap(tab))
+                {
+                    Debug.Log("[S004MenuJourney] phase=ObjectiveTab input=Touch objective=" + menuLibraryObjective);
+                    menuLibraryBeat = 3;
+                }
+
+                return true;
+            }
+
+            Button card = FindNamed(buttons, SkirmishLibraryControlNames.BattleCard(catalogId)) ??
+                          FindNamed(buttons, "ScenarioCard_" + catalogId);
+            if (card != null && MenuTap(card))
+            {
+                Debug.Log("[S004MenuJourney] phase=BattleCard input=Touch scenario=" + catalogId);
+                menuStep = 4;
+            }
+
+            return true;
+        }
+
+        private static bool AdvanceApprovedAtlasNavigation(QuickCustomScreenView setup,Button[] buttons)
+        {
+            ResolveLibraryTarget();var atlas=setup.ApprovedAtlas;
+            if(!atlas.ShowingMissions)
+            {
+                if(menuLibraryBeat==0)
+                {
+                    var map=FindNamed(buttons,SkirmishLibraryControlNames.TheaterPin(menuLibraryMap));
+                    if(map!=null&&MenuTap(map))menuLibraryBeat=1;
+                }
+                else if(MenuTap(atlas.PrimaryButton))menuLibraryBeat=2;
+                return true;
+            }
+            if(setup.LibraryViewModel.Battlefield.MapId!=menuLibraryMap)
+            {if(MenuTap(atlas.BackButton))menuLibraryBeat=0;return true;}
+            if(menuLibraryBeat<3)
+            {
+                var tab=FindNamed(buttons,SkirmishLibraryControlNames.ObjectiveTab(menuLibraryObjective));
+                if(tab!=null&&MenuTap(tab))menuLibraryBeat=3;
+                return true;
+            }
+            var card=FindNamed(buttons,SkirmishLibraryControlNames.BattleCard(catalogId));
+            if(card!=null&&MenuTap(card)){menuStep=4;Debug.Log("[ApprovedAtlasNativeJourney] selection="+catalogId+" input=Touch stages=Map,Mission");}
+            return true;
+        }
+
+        private static bool AdvanceLibraryViewModel()
+        {
+            if (menuLibraryBeat == 4)
+                return false;
+            ResolveLibraryTarget();
+            QuickCustomScreenView setup = null;
+            foreach (var candidate in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+            {
+                if (!candidate.IsBaseAssaultSetup)
+                    continue;
+                setup = candidate;
+                break;
+            }
+
+            if (setup == null)
+                return false;
+
+            ISkirmishLibraryViewModel library;
+            try
+            {
+                library = setup.Library;
+            }
+            catch (Exception exception)
+            {
+                Debug.LogWarning("[S004MenuJourney] phase=LibraryViewModel skipped=" + exception.Message);
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            if (!SkirmishLibraryNavigation.OpenTheaterBattlefieldCard(library, menuLibraryMap, catalogId))
+            {
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            setup.SelectScenarioId(catalogId);
+            if (!string.Equals(setup.SelectedScenarioId, catalogId, StringComparison.Ordinal) ||
+                !string.Equals(library.Briefing.ScenarioId, catalogId, StringComparison.OrdinalIgnoreCase))
+            {
+                menuLibraryBeat = 4;
+                return false;
+            }
+
+            menuLastTapAt = EditorApplication.timeSinceStartup;
+            menuStep = 4;
+            Debug.Log("[S004MenuJourney] phase=LibraryViewModel input=ViewModel navigation=Theater,Battlefield,Card map=" +
+                      menuLibraryMap + " scenario=" + catalogId + " briefing=" + library.Briefing.ScenarioId);
+            return true;
+        }
+
+        private static bool HasNewLibraryChrome(Button[] buttons)
+        {
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                string name = buttons[i] != null ? buttons[i].name : string.Empty;
+                if (name == SkirmishLibraryControlNames.ZoomIn ||
+                    name == SkirmishLibraryControlNames.QuickBattle ||
+                    name.StartsWith("TheaterPin_", StringComparison.Ordinal) ||
+                    name.StartsWith("ObjectiveTab_", StringComparison.Ordinal) ||
+                    name.StartsWith("BattleCard_", StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
+        }
+
+        private static void ResolveLibraryTarget()
+        {
+            SkirmishBattleCatalogConfig catalog = SkirmishBattleCatalogConfig.Load();
+            if (catalog != null && catalog.TryGet(catalogId, out SkirmishBattleCatalogEntry entry))
+            {
+                if (!string.IsNullOrEmpty(entry.MapId))
+                    menuLibraryMap = entry.MapId;
+                if (!string.IsNullOrEmpty(entry.ObjectiveId))
+                    menuLibraryObjective = entry.ObjectiveId;
+            }
+        }
+
+        private static Button FindNamed(Button[] buttons, string name)
+        {
+            for (int i = 0; i < buttons.Length; i++)
+            {
+                if (buttons[i] != null && (buttons[i].name == name || buttons[i].transform.Find(name) != null) && TryPresentedButtonPoint(buttons[i], out _))
+                    return buttons[i];
+            }
+
+            return null;
         }
 
         public static QuickCustomScreenView SelectMenuSetupForLaunch(QuickCustomScreenView[] setups, string requestedId)

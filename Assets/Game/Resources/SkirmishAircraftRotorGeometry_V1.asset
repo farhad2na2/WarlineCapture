@@ -22,7 +22,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: dd42f76ba58333cc3db5b9a2e36c9c8be0c6b6f7d020b6b2786ff401b2f3e967
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab
-    DependencyHash: 1044a32ea7720a8ca8d523d8e141c66a
+    DependencyHash: 06da3cf2cc3f881bda20b65457b1c3c2
     RendererPath: root/0
     BladePath: root/0
     MeshToBlade:
@@ -69,7 +69,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 3318e6644350f33e9dead24b685a3d69e5c05f3c571cf3b31f0245426f9ee969
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab
-    DependencyHash: 1044a32ea7720a8ca8d523d8e141c66a
+    DependencyHash: 06da3cf2cc3f881bda20b65457b1c3c2
     RendererPath: root/1
     BladePath: root/1
     MeshToBlade:
@@ -304,7 +304,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 0f113b49dda41801fbdcfe40cc00e06981d1d7d44226f64394348e22368dcb2d
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab
-    DependencyHash: 4883c1d4b4446a38c3b8cb8ba63e71c2
+    DependencyHash: 025566a81ad4ca2a61ba519906b75f9b
     RendererPath: root/1
     BladePath: root/1
     MeshToBlade:
@@ -351,7 +351,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 32a151a57c54e3c212f9a11384dc08604f995c67aeb8d547fcbee470b238eb29
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab
-    DependencyHash: 4883c1d4b4446a38c3b8cb8ba63e71c2
+    DependencyHash: 025566a81ad4ca2a61ba519906b75f9b
     RendererPath: root/2
     BladePath: root/2
     MeshToBlade:
@@ -586,7 +586,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 58274106548de36544d1a37d786baf645f7012a8b25c658b8edee63ebcb7181e
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab
-    DependencyHash: 1cdf1ad446af2307f7b9d1307d6217b0
+    DependencyHash: b7c3b54f1b7b74ebe1a92f7a5aaffd8e
     RendererPath: root/0
     BladePath: root/0
     MeshToBlade:
@@ -633,7 +633,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 6e549e1df6e45970d911eda9e8f9a7ec160c28b93f2a0d4bd8f80c34702ff317
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab
-    DependencyHash: 1cdf1ad446af2307f7b9d1307d6217b0
+    DependencyHash: b7c3b54f1b7b74ebe1a92f7a5aaffd8e
     RendererPath: root/1
     BladePath: root/1
     MeshToBlade:
@@ -868,7 +868,7 @@ MonoBehaviour:
     SubMesh: 0
     GeometrySha256: 0f320f03d4f9ecdaf9d522cbbf5b6484a388d67cd71917640e422051a21d5c35
     SourcePath: Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab
-    DependencyHash: 8cdc964f25ab01f918fdee079e83b909
+    DependencyHash: 1e470f0a92391c72cb31136343e101ac
     RendererPath: root/8
     BladePath: root/8
     MeshToBlade:

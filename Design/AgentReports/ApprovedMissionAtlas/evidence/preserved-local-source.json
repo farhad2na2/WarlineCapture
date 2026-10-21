@@ -1,0 +1,13 @@
+{
+  "note": "Preserved local differences outside this menu change; not staged into PR. Native checks run in this worktree, so their full-source fingerprints include these files. A clean-checkout/device pass remains a separate gate.",
+  "files": [
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "sha256": "d1c819be279b9bdc4814b4b0ac5ae9af6cfeada67be44a710c9e9bdbcf7616e6"
+    },
+    {
+      "path": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "sha256": "6b777fcfc9115d925e7bff209b1d3506e707cad7936fab7ac3be347beabb594a"
+    }
+  ]
+}

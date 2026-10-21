@@ -43,15 +43,25 @@ namespace Game.Editor
         static void MeasureRenderedSupport(EntityManager em, float3 point, JObject row)
         {
             float highest = float.NegativeInfinity; string source = null;
+            var graphics = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<EntitiesGraphicsSystem>();
+            var candidates = new HashSet<string>();
             using var query = em.CreateEntityQuery(typeof(WorldRenderBounds), typeof(MaterialMeshInfo), typeof(LocalToWorld));
             using var renderers = query.ToEntityArray(Allocator.Temp);
             foreach (var renderer in renderers)
             {
                 var bounds = em.GetComponentData<WorldRenderBounds>(renderer).Value;
                 if (math.any(math.abs(point.xz - bounds.Center.xz) > bounds.Extents.xz + .001f) ||
-                    !em.HasComponent<RenderMeshArray>(renderer) || !em.IsComponentEnabled<MaterialMeshInfo>(renderer)) continue;
-                var array = em.GetSharedComponentManaged<RenderMeshArray>(renderer);
+                    !em.IsComponentEnabled<MaterialMeshInfo>(renderer)) continue;
                 var info = em.GetComponentData<MaterialMeshInfo>(renderer);
+                if (info.Mesh >= 0 && !info.HasMaterialMeshIndexRange)
+                {
+                    var mesh = graphics.GetMesh(info.MeshID);
+                    if (mesh != null) candidates.Add(mesh.name);
+                    SampleRoadDraw(mesh, info.SubMesh, em.GetComponentData<LocalToWorld>(renderer).Value, point, ref highest, ref source);
+                    continue;
+                }
+                if (!em.HasComponent<RenderMeshArray>(renderer)) continue;
+                var array = em.GetSharedComponentManaged<RenderMeshArray>(renderer);
                 if (info.HasMaterialMeshIndexRange)
                 {
                     var range = info.MaterialMeshIndexRange;
@@ -66,6 +76,7 @@ namespace Game.Editor
                     SampleRoadDraw(array.GetMesh(info), info.SubMesh, em.GetComponentData<LocalToWorld>(renderer).Value,
                         point, ref highest, ref source);
             }
+            row["nearby_rendered_mesh_names"] = new JArray(candidates);
             row["rendered_support_measured"] = math.isfinite(highest);
             if (math.isfinite(highest)) { row["rendered_support_y"] = highest; row["rendered_support_mesh"] = source;
                 row["rendered_minus_sample"] = highest - (float)row["sampled_height"]; }

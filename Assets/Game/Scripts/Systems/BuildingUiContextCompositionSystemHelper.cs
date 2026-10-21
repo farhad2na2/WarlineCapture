@@ -25,7 +25,7 @@ namespace Game.Runtime
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
             Func<bool> rotateBuildingPlacement = null,
-            Func<int> getPlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null)
+            Func<int> getPlacementCreditsCost = null, Func<Vector2Int> getPlacementFootprint = null, Func<Sprite> getPlacementPortrait = null)
         {
             return new Source(
                 factionResourceSystem, definitionSystem,
@@ -45,7 +45,7 @@ namespace Game.Runtime
                 confirmBuildingPlacement,
                 cancelBuildingPlacement,
                 rotateBuildingPlacement,
-                getPlacementCreditsCost, getPlacementFootprint);
+                getPlacementCreditsCost, getPlacementFootprint, getPlacementPortrait);
         }
 
         public BuildingUiCommandSystemHelper.Context CreateCommandContext(Source source)
@@ -84,7 +84,7 @@ namespace Game.Runtime
                 source.CancelBuildingPlacement,
                 (buildingId, pendingProductionIndex) => CancelProduction(source, buildingId, pendingProductionIndex),
                 source.RotateBuildingPlacement,
-                source.GetActivePlacementCreditsCost, source.GetPlacementFootprint);
+                source.GetActivePlacementCreditsCost, source.GetPlacementFootprint, source.GetPlacementPortrait);
         }
 
         private static bool CancelProduction(Source source, int buildingId, int pendingProductionIndex)

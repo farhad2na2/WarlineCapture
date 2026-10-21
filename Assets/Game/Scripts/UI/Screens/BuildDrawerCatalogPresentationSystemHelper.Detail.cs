@@ -11,7 +11,9 @@ namespace Game.UI.Runtime
 {
     internal static partial class BuildDrawerCatalogPresentationSystemHelper
     {
-        private static void BindDetail(Context context, BuildDrawerCatalogItem model)
+        internal static void PreviewOnly(Context context, BuildDrawerCatalogItem model) => BindDetail(context, model, false);
+
+        private static void BindDetail(Context context, BuildDrawerCatalogItem model, bool selected = true)
         {
             BuildingUiCommandFailure failure = context.GetCampRequestFailure(model, out _);
             context.View.BindCreditCost(model.CreditsCost);
@@ -23,11 +25,12 @@ namespace Game.UI.Runtime
                 model.CreditsCost > 0 ? FormatPrice(model.CreditsCost) : "",
                 FormatDuration(model),
                 FormatPlacement(model),
-                FormatRequirements(context.TextResolver, model),
+                selected ? FormatRequirements(context.TextResolver, model)
+                    : context.TextResolver.Format("hud.build.preview_hint", "Select {0} to begin.", UiLocalizedText.CatalogLabel(model.DisplayName)),
                 model.ActionPortrait,
                 model.CardPortrait,
                 model.ActionLabel,
-                failure == BuildingUiCommandFailure.None);
+                selected && failure == BuildingUiCommandFailure.None);
         }
     }
 }

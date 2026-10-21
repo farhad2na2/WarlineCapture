@@ -292,6 +292,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.095764704, g: 0.1624706, b: 0.17729412, a: 1}
   topRightColor: {r: 0.043137256, g: 0.11372549, b: 0.12941177, a: 1}
   bottomLeftColor: {r: 0.013803923, g: 0.048313726, b: 0.05866667, a: 1}
@@ -527,6 +528,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &244473962731442249
 GameObject:
   m_ObjectHideFlags: 0
@@ -594,6 +597,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15505883, g: 0.5441765, b: 0.8221177, a: 1}
   topRightColor: {r: 0.105882354, g: 0.5176471, b: 0.8117647, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.2105098, b: 0.3865098, a: 1}
@@ -884,6 +888,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rate.fced8ff845
   englishFallback: RATE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &367594808588529398
 GameObject:
   m_ObjectHideFlags: 0
@@ -949,6 +955,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -1108,6 +1115,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.3
   englishFallback: YOU GIVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &521376618275867047
 GameObject:
   m_ObjectHideFlags: 0
@@ -1261,6 +1270,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &532462955165679264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,6 +1425,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &554636302488844859
 GameObject:
   m_ObjectHideFlags: 0
@@ -1567,6 +1580,8 @@ MonoBehaviour:
   localizationKey: ui.v3.selected_exchange.804c99abe7
   englishFallback: SELECTED EXCHANGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &674485222910396193
 GameObject:
   m_ObjectHideFlags: 0
@@ -1720,6 +1735,8 @@ MonoBehaviour:
   localizationKey: ui.skirmish.cancel
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &693954951608274466
 GameObject:
   m_ObjectHideFlags: 0
@@ -1804,6 +1821,8 @@ MonoBehaviour:
   - {fileID: 6370570286791421071}
   - {fileID: 391161293267580332}
   horizontalResponsiveTargets: []
+  useMenuFrame: 0
+  menuFrameTargets: []
   rightTargetBasePositions:
   - {x: 642, y: -0}
   - {x: 816, y: -0}
@@ -2045,6 +2064,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &733184792005376934
 GameObject:
   m_ObjectHideFlags: 0
@@ -2198,6 +2219,8 @@ MonoBehaviour:
   localizationKey: ui.v3.done.283e91eb85
   englishFallback: DONE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &734529851786088582
 GameObject:
   m_ObjectHideFlags: 0
@@ -2426,6 +2449,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.0
   englishFallback: RESOURCE EXCHANGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &754323960590118810
 GameObject:
   m_ObjectHideFlags: 0
@@ -2493,6 +2518,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.51823527, g: 0.19582354, b: 0.1587647, a: 1}
   topRightColor: {r: 0.49019608, g: 0.14901961, b: 0.10980392, a: 1}
   bottomLeftColor: {r: 0.18980393, g: 0.041411765, b: 0.034509804, a: 1}
@@ -2923,6 +2949,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &911029976726100502
 GameObject:
   m_ObjectHideFlags: 0
@@ -3190,6 +3218,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.20
   englishFallback: COMPLETE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1237939336123961647
 GameObject:
   m_ObjectHideFlags: 0
@@ -3343,6 +3373,8 @@ MonoBehaviour:
   localizationKey: ui.v3.queue.f4a35c7b33
   englishFallback: QUEUE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1244631497416761441
 GameObject:
   m_ObjectHideFlags: 0
@@ -3496,6 +3528,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 310
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1377839789103328105
 GameObject:
   m_ObjectHideFlags: 0
@@ -3649,6 +3683,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0%
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1382127323028789861
 GameObject:
   m_ObjectHideFlags: 0
@@ -3802,6 +3838,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1389237720871008091
 GameObject:
   m_ObjectHideFlags: 0
@@ -3912,8 +3950,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7505218810910132675
 CanvasRenderer:
@@ -3970,10 +4008,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -4030,6 +4068,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1417221775416955293
 GameObject:
   m_ObjectHideFlags: 0
@@ -4183,6 +4223,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0%
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1443887047309014938
 GameObject:
   m_ObjectHideFlags: 0
@@ -4411,6 +4453,8 @@ MonoBehaviour:
   localizationKey: ui.v3.your_resources.3bc9c6f551
   englishFallback: YOUR RESOURCES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1487784460202989156
 GameObject:
   m_ObjectHideFlags: 0
@@ -4478,6 +4522,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15505883, g: 0.5441765, b: 0.8221177, a: 1}
   topRightColor: {r: 0.105882354, g: 0.5176471, b: 0.8117647, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.2105098, b: 0.3865098, a: 1}
@@ -4822,6 +4867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -4863,8 +4909,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8330706494394626078
 CanvasRenderer:
@@ -4981,6 +5027,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1683817560500784480
 GameObject:
   m_ObjectHideFlags: 0
@@ -5113,7 +5161,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -5134,6 +5182,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1750570841590939457
 GameObject:
   m_ObjectHideFlags: 0
@@ -5287,6 +5337,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1759068289327335661
 GameObject:
   m_ObjectHideFlags: 0
@@ -5366,6 +5418,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -5550,6 +5603,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1784981384826566339
 GameObject:
   m_ObjectHideFlags: 0
@@ -5819,6 +5874,8 @@ MonoBehaviour:
   localizationKey: ui.v3.queue_capacity.a4c6f7efba
   englishFallback: QUEUE CAPACITY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1925874717650635248
 GameObject:
   m_ObjectHideFlags: 0
@@ -5854,8 +5911,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &9198454904921594701
 CanvasRenderer:
@@ -5912,10 +5969,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -5972,6 +6029,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1938777487236113336
 GameObject:
   m_ObjectHideFlags: 0
@@ -6050,6 +6109,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.36258826, g: 0.22917648, b: 0.5404706, a: 1}
   topRightColor: {r: 0.3254902, g: 0.18431373, b: 0.5137255, a: 1}
   bottomLeftColor: {r: 0.09165804, g: 0.051902745, b: 0.1446651, a: 1}
@@ -6277,6 +6337,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2096556118297182643
 GameObject:
   m_ObjectHideFlags: 0
@@ -6430,6 +6492,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2096980493948646023
 GameObject:
   m_ObjectHideFlags: 0
@@ -6583,6 +6647,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 0
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2107008039797342975
 GameObject:
   m_ObjectHideFlags: 0
@@ -6652,6 +6718,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -6734,10 +6801,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 3889122385736761462}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6833856996585507464
 CanvasRenderer:
@@ -6811,11 +6878,11 @@ RectTransform:
   - {fileID: 8228856406367127190}
   m_Father: {fileID: 6370570286791421071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 16, y: -118}
-  m_SizeDelta: {x: 94, y: 88}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: -210, y: -118}
+  m_SizeDelta: {x: 80, y: 80}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4932309539009881534
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6844,12 +6911,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
-  topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
-  bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
-  bottomRightColor: {r: 0.011764706, g: 0.043137256, b: 0.05490196, a: 1}
-  borderColor: {r: 0.2509804, g: 0.30980393, b: 0.32941177, a: 1}
-  borderWidth: 3
+  militaryMaterial: 1
+  topLeftColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  topRightColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  bottomLeftColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  bottomRightColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!114 &2959436484882620100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6869,13 +6937,13 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -7047,6 +7115,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel.0e2f3c1696
   englishFallback: FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2190427842181162491
 GameObject:
   m_ObjectHideFlags: 0
@@ -7113,6 +7183,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.095764704, g: 0.1624706, b: 0.17729412, a: 1}
   topRightColor: {r: 0.043137256, g: 0.11372549, b: 0.12941177, a: 1}
   bottomLeftColor: {r: 0.013803923, g: 0.048313726, b: 0.05866667, a: 1}
@@ -7154,8 +7225,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8300784478606835460
 CanvasRenderer:
@@ -7212,10 +7283,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -7272,6 +7343,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2307792763396458849
 GameObject:
   m_ObjectHideFlags: 0
@@ -7425,6 +7498,8 @@ MonoBehaviour:
   localizationKey: ui.v3.view_rates.7029cb8995
   englishFallback: VIEW RATES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2317296296061440426
 GameObject:
   m_ObjectHideFlags: 0
@@ -7579,6 +7654,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.46264705, g: 0.32923532, b: 0.099470586, a: 1}
   topRightColor: {r: 0.43137255, g: 0.2901961, b: 0.047058824, a: 1}
   bottomLeftColor: {r: 0.12147451, g: 0.08171922, b: 0.013251765, a: 1}
@@ -7882,6 +7958,8 @@ MonoBehaviour:
   localizationKey: ui.skirmish.cancel
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2351126659139546931
 GameObject:
   m_ObjectHideFlags: 0
@@ -7960,6 +8038,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.496, g: 0.19952942, b: 0.14764705, a: 1}
   topRightColor: {r: 0.46666667, g: 0.15294118, b: 0.09803922, a: 1}
   bottomLeftColor: {r: 0.13141333, g: 0.043068234, b: 0.027607841, a: 1}
@@ -8146,8 +8225,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8630098084645553583
 CanvasRenderer:
@@ -8204,10 +8283,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -8264,6 +8343,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2395555483355925321
 GameObject:
   m_ObjectHideFlags: 0
@@ -8644,6 +8725,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 620
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2556959483475326062
 GameObject:
   m_ObjectHideFlags: 0
@@ -8873,6 +8956,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '>'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2613292973817526506
 GameObject:
   m_ObjectHideFlags: 0
@@ -9026,6 +9111,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2636334573830520715
 GameObject:
   m_ObjectHideFlags: 0
@@ -9410,6 +9497,8 @@ MonoBehaviour:
     Exchanges keep running
     when you close this screen.'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2709616053771615583
 GameObject:
   m_ObjectHideFlags: 0
@@ -9445,8 +9534,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &671340375929289395
 CanvasRenderer:
@@ -9503,10 +9592,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -9563,6 +9652,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2736681021657119964
 GameObject:
   m_ObjectHideFlags: 0
@@ -9716,6 +9807,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2746166705594421134
 GameObject:
   m_ObjectHideFlags: 0
@@ -9869,6 +9962,8 @@ MonoBehaviour:
   localizationKey: ui.v3.180_materials.b42b11fe20
   englishFallback: 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2834666168700815821
 GameObject:
   m_ObjectHideFlags: 0
@@ -10022,6 +10117,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2837430086850325708
 GameObject:
   m_ObjectHideFlags: 0
@@ -10250,6 +10347,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rush_all.acc9ea684f
   englishFallback: RUSH ALL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2935517504764244321
 GameObject:
   m_ObjectHideFlags: 0
@@ -10342,7 +10441,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &515682885251545914
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10360,8 +10459,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8815802510855303596
 CanvasRenderer:
@@ -10391,6 +10490,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -10550,6 +10650,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3033337216438206172
 GameObject:
   m_ObjectHideFlags: 0
@@ -10617,6 +10719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -10820,6 +10923,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3082438061659832510
 GameObject:
   m_ObjectHideFlags: 0
@@ -10837,7 +10942,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2838059859790625345
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10855,8 +10960,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8097512513943928632
 CanvasRenderer:
@@ -10886,6 +10991,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -11045,6 +11151,8 @@ MonoBehaviour:
   localizationKey: ui.common.queued
   englishFallback: QUEUED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3160231798530896574
 GameObject:
   m_ObjectHideFlags: 0
@@ -11110,6 +11218,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.9592353, g: 0.9666471, b: 0.95182353, a: 1}
   topRightColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   bottomLeftColor: {r: 0.5797647, g: 0.6211765, b: 0.6246275, a: 1}
@@ -11269,6 +11378,8 @@ MonoBehaviour:
   localizationKey: ui.skirmish.cancel
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3211426118136979686
 GameObject:
   m_ObjectHideFlags: 0
@@ -11573,6 +11684,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3245424654659340122
 GameObject:
   m_ObjectHideFlags: 0
@@ -11645,6 +11758,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -11793,6 +11907,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -11832,8 +11947,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1007510544923965510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11952,6 +12067,8 @@ MonoBehaviour:
   localizationKey: ui.v3.x.4b68ab3847
   englishFallback: X
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3486564308549602079
 GameObject:
   m_ObjectHideFlags: 0
@@ -12105,6 +12222,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 4
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3518532285404568822
 GameObject:
   m_ObjectHideFlags: 0
@@ -12258,6 +12377,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.21
   englishFallback: IN PROGRESS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3563530456999047125
 GameObject:
   m_ObjectHideFlags: 0
@@ -12487,6 +12608,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.28
   englishFallback: CLEAR DONE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3577121794122231340
 GameObject:
   m_ObjectHideFlags: 0
@@ -12504,7 +12627,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1830956503490662002
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12522,8 +12645,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2818184017905348207
 CanvasRenderer:
@@ -12553,6 +12676,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -12626,6 +12750,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15505883, g: 0.5441765, b: 0.8221177, a: 1}
   topRightColor: {r: 0.105882354, g: 0.5176471, b: 0.8117647, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.2105098, b: 0.3865098, a: 1}
@@ -12693,7 +12818,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2752941808777238670
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12711,8 +12836,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5077580860353192853
 CanvasRenderer:
@@ -12742,6 +12867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -12816,6 +12942,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -13239,6 +13366,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.5330588, g: 0.38111764, b: 0.095764704, a: 1}
   topRightColor: {r: 0.5058824, g: 0.34509805, b: 0.043137256, a: 1}
   bottomLeftColor: {r: 0.14245647, g: 0.09717961, b: 0.012147451, a: 1}
@@ -13466,6 +13594,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 00:11
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3787994547519920351
 GameObject:
   m_ObjectHideFlags: 0
@@ -13587,6 +13717,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -13771,6 +13902,8 @@ MonoBehaviour:
   localizationKey: ui.v3.3_3_slots_used.04e0af3bec
   englishFallback: 3 / 3 SLOTS USED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3845862330534112698
 GameObject:
   m_ObjectHideFlags: 0
@@ -13924,6 +14057,8 @@ MonoBehaviour:
   localizationKey: ui.v3.180_materials.b42b11fe20
   englishFallback: 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3923922320735386087
 GameObject:
   m_ObjectHideFlags: 0
@@ -14077,6 +14212,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.2
   englishFallback: CHOOSE AN EXCHANGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3963754893322294777
 GameObject:
   m_ObjectHideFlags: 0
@@ -14230,6 +14367,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '>'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4017534441124514376
 GameObject:
   m_ObjectHideFlags: 0
@@ -14337,10 +14476,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 4782194255935340530}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &466874123530110991
 CanvasRenderer:
@@ -14415,8 +14554,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &264539825762903459
 CanvasRenderer:
@@ -14473,10 +14612,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -14533,6 +14672,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4127452410921642025
 GameObject:
   m_ObjectHideFlags: 0
@@ -14600,6 +14741,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.51823527, g: 0.19582354, b: 0.1587647, a: 1}
   topRightColor: {r: 0.49019608, g: 0.14901961, b: 0.10980392, a: 1}
   bottomLeftColor: {r: 0.18980393, g: 0.041411765, b: 0.034509804, a: 1}
@@ -14803,6 +14945,8 @@ MonoBehaviour:
   localizationKey: ui.v3.exchange_info.4b11aa9fa0
   englishFallback: EXCHANGE INFO
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4220256399496255776
 GameObject:
   m_ObjectHideFlags: 0
@@ -14956,6 +15100,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4287181689629347229
 GameObject:
   m_ObjectHideFlags: 0
@@ -15109,6 +15255,8 @@ MonoBehaviour:
   localizationKey: ui.v3.conversion_route.487be0d3db
   englishFallback: CONVERSION ROUTE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4333063004353108673
 GameObject:
   m_ObjectHideFlags: 0
@@ -15176,6 +15324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.51823527, g: 0.19582354, b: 0.1587647, a: 1}
   topRightColor: {r: 0.49019608, g: 0.14901961, b: 0.10980392, a: 1}
   bottomLeftColor: {r: 0.18980393, g: 0.041411765, b: 0.034509804, a: 1}
@@ -15358,7 +15507,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -15379,6 +15528,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.5
   englishFallback: START EXCHANGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4419510093491061964
 GameObject:
   m_ObjectHideFlags: 0
@@ -15414,8 +15565,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6711046856223243587
 CanvasRenderer:
@@ -15472,10 +15623,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -15532,6 +15683,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4510544423084401358
 GameObject:
   m_ObjectHideFlags: 0
@@ -15685,6 +15838,8 @@ MonoBehaviour:
   localizationKey: ui.common.queued
   englishFallback: QUEUED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4524807364950750228
 GameObject:
   m_ObjectHideFlags: 0
@@ -15717,10 +15872,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2752941808777238670}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5581767764449457371
 CanvasRenderer:
@@ -16064,6 +16219,8 @@ MonoBehaviour:
   localizationKey: ui.v3.oil.406978520b
   englishFallback: OIL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4662376252067072847
 GameObject:
   m_ObjectHideFlags: 0
@@ -16131,6 +16288,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -16334,6 +16492,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 65%
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4705354172660991889
 GameObject:
   m_ObjectHideFlags: 0
@@ -16487,6 +16647,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4741404522617893867
 GameObject:
   m_ObjectHideFlags: 0
@@ -16630,6 +16792,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -16671,8 +16834,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2590068750798296917
 CanvasRenderer:
@@ -16729,10 +16892,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -16789,6 +16952,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4806432121666571213
 GameObject:
   m_ObjectHideFlags: 0
@@ -16821,10 +16986,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 515682885251545914}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &3317618496942555805
 CanvasRenderer:
@@ -17017,6 +17182,8 @@ MonoBehaviour:
   localizationKey: ui.v3.100_fuel.41f50b3a86
   englishFallback: 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4881723190467050357
 GameObject:
   m_ObjectHideFlags: 0
@@ -17170,6 +17337,8 @@ MonoBehaviour:
   localizationKey: ui.v3.active_logistics_orders.fd1db076d5
   englishFallback: ACTIVE LOGISTICS ORDERS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4900999620792763912
 GameObject:
   m_ObjectHideFlags: 0
@@ -17323,6 +17492,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4904911785249674547
 GameObject:
   m_ObjectHideFlags: 0
@@ -17551,6 +17722,8 @@ MonoBehaviour:
   localizationKey: ui.v3.1_slot_required.da134e76cb
   englishFallback: 1 SLOT REQUIRED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5002172403802994006
 GameObject:
   m_ObjectHideFlags: 0
@@ -17908,7 +18081,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -17929,6 +18102,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '-'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5161167801888772741
 GameObject:
   m_ObjectHideFlags: 0
@@ -18082,6 +18257,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5166455186307619217
 GameObject:
   m_ObjectHideFlags: 0
@@ -18214,7 +18391,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -18235,6 +18412,8 @@ MonoBehaviour:
   localizationKey: ui.v3.convert.176e2c5772
   englishFallback: CONVERT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5170579758551139962
 GameObject:
   m_ObjectHideFlags: 0
@@ -18388,6 +18567,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5245655936622554467
 GameObject:
   m_ObjectHideFlags: 0
@@ -18616,6 +18797,8 @@ MonoBehaviour:
   localizationKey: ui.skirmish.cancel
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5346520729646825224
 GameObject:
   m_ObjectHideFlags: 0
@@ -18769,6 +18952,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 1
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5410627007310347170
 GameObject:
   m_ObjectHideFlags: 0
@@ -18922,6 +19107,8 @@ MonoBehaviour:
   localizationKey: ui.v3.100_fuel.41f50b3a86
   englishFallback: 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5424119533683510562
 GameObject:
   m_ObjectHideFlags: 0
@@ -19065,12 +19252,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  topLeftColor: {r: 0.3107059, g: 0.69611764, b: 0.27364707, a: 1}
-  topRightColor: {r: 0.27058825, g: 0.6784314, b: 0.23137255, a: 1}
-  bottomLeftColor: {r: 0.027607845, g: 0.26917648, b: 0.09662745, a: 1}
-  bottomRightColor: {r: 0.03137255, g: 0.30588236, b: 0.10980392, a: 1}
-  borderColor: {r: 0.23921569, g: 0.74509805, b: 0.2627451, a: 1}
-  borderWidth: 3
+  militaryMaterial: 1
+  topLeftColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  topRightColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  bottomLeftColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  bottomRightColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  borderColor: {r: 0.19215687, g: 0.8235294, b: 0.32941177, a: 1}
+  borderWidth: 2
 --- !u!114 &5558656817386230238
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19090,13 +19278,13 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -19343,6 +19531,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '>'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5474192658794658200
 GameObject:
   m_ObjectHideFlags: 0
@@ -19410,6 +19600,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.51823527, g: 0.19582354, b: 0.1587647, a: 1}
   topRightColor: {r: 0.49019608, g: 0.14901961, b: 0.10980392, a: 1}
   bottomLeftColor: {r: 0.18980393, g: 0.041411765, b: 0.034509804, a: 1}
@@ -19613,6 +19804,8 @@ MonoBehaviour:
   localizationKey: ui.v3.amount.1275005656
   englishFallback: AMOUNT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5500302939454767976
 GameObject:
   m_ObjectHideFlags: 0
@@ -19766,6 +19959,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5525601894639711660
 GameObject:
   m_ObjectHideFlags: 0
@@ -19919,6 +20114,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5569899848945976431
 GameObject:
   m_ObjectHideFlags: 0
@@ -19954,8 +20151,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6791494057879061063
 CanvasRenderer:
@@ -20072,6 +20269,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5582121083614884679
 GameObject:
   m_ObjectHideFlags: 0
@@ -20301,6 +20500,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5674961236602899518
 GameObject:
   m_ObjectHideFlags: 0
@@ -20529,6 +20730,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.4
   englishFallback: YOU RECEIVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5767661139795457516
 GameObject:
   m_ObjectHideFlags: 0
@@ -20639,8 +20842,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8985667449217463098
 CanvasRenderer:
@@ -20697,10 +20900,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -20757,6 +20960,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5838422307574737132
 GameObject:
   m_ObjectHideFlags: 0
@@ -20985,6 +21190,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5877033147193065225
 GameObject:
   m_ObjectHideFlags: 0
@@ -21213,6 +21420,8 @@ MonoBehaviour:
   localizationKey: ui.v3.180_materials.b42b11fe20
   englishFallback: 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5912989243072033804
 GameObject:
   m_ObjectHideFlags: 0
@@ -21248,8 +21457,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5107473595663977256
 CanvasRenderer:
@@ -21306,10 +21515,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -21366,6 +21575,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5919946870746776712
 GameObject:
   m_ObjectHideFlags: 0
@@ -21401,8 +21612,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6439326610461389448
 CanvasRenderer:
@@ -21519,6 +21730,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5924633753655442044
 GameObject:
   m_ObjectHideFlags: 0
@@ -21672,6 +21885,8 @@ MonoBehaviour:
   localizationKey: ui.skirmish.cancel
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5953520943197705083
 GameObject:
   m_ObjectHideFlags: 0
@@ -21764,7 +21979,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4782194255935340530
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21782,8 +21997,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &4699328454341107601
 CanvasRenderer:
@@ -21813,6 +22028,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -21896,6 +22112,78 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &6059168872861183083
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6930882286443916064}
+  - component: {fileID: 3501291082729355837}
+  - component: {fileID: 8278202605485596799}
+  m_Layer: 0
+  m_Name: AmountApprovedSurface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6930882286443916064
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6059168872861183083}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6370570286791421071}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -118}
+  m_SizeDelta: {x: 320, y: 80}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!222 &3501291082729355837
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6059168872861183083}
+  m_CullTransparentMesh: 1
+--- !u!114 &8278202605485596799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6059168872861183083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeb08b51ef6a947888c2dc78cbff3f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3GradientGraphic
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  militaryMaterial: 1
+  topLeftColor: {r: 0.09019608, g: 0.1764706, b: 0.23529412, a: 1}
+  topRightColor: {r: 0.09019608, g: 0.1764706, b: 0.23529412, a: 1}
+  bottomLeftColor: {r: 0.015686275, g: 0.0627451, b: 0.101960786, a: 1}
+  bottomRightColor: {r: 0.015686275, g: 0.0627451, b: 0.101960786, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!1 &6071709139695217061
 GameObject:
   m_ObjectHideFlags: 0
@@ -21913,7 +22201,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &185804746846972888
 RectTransform:
   m_ObjectHideFlags: 0
@@ -21931,8 +22219,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &85700800979772014
 CanvasRenderer:
@@ -21962,6 +22250,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -22121,6 +22410,8 @@ MonoBehaviour:
   localizationKey: ui.v3.exchange_details.d36c967c26
   englishFallback: EXCHANGE DETAILS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6109810533161360465
 GameObject:
   m_ObjectHideFlags: 0
@@ -22153,10 +22444,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2838059859790625345}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &3581985178135191993
 CanvasRenderer:
@@ -22349,6 +22640,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials_to_oil.3a278cb794
   englishFallback: MATERIALS TO OIL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6150928268256971114
 GameObject:
   m_ObjectHideFlags: 0
@@ -22416,6 +22709,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15505883, g: 0.5441765, b: 0.8221177, a: 1}
   topRightColor: {r: 0.105882354, g: 0.5176471, b: 0.8117647, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.2105098, b: 0.3865098, a: 1}
@@ -22608,6 +22902,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.095764704, g: 0.1624706, b: 0.17729412, a: 1}
   topRightColor: {r: 0.043137256, g: 0.11372549, b: 0.12941177, a: 1}
   bottomLeftColor: {r: 0.013803923, g: 0.048313726, b: 0.05866667, a: 1}
@@ -22724,8 +23019,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &2361476058075591204
 CanvasRenderer:
@@ -22782,10 +23077,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -22842,6 +23137,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6273271124981329029
 GameObject:
   m_ObjectHideFlags: 0
@@ -23070,6 +23367,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6305364654414457674
 GameObject:
   m_ObjectHideFlags: 0
@@ -23105,8 +23404,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7907775514676809256
 CanvasRenderer:
@@ -23163,10 +23462,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -23223,6 +23522,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6309236215789848901
 GameObject:
   m_ObjectHideFlags: 0
@@ -23291,6 +23592,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -23404,6 +23706,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6930882286443916064}
   - {fileID: 2790057736381503822}
   - {fileID: 8269995871093142969}
   - {fileID: 8773497907094381628}
@@ -23462,6 +23765,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -23621,6 +23925,8 @@ MonoBehaviour:
   localizationKey: ui.v3.duration.ebd293e02c
   englishFallback: DURATION
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6365836407130429043
 GameObject:
   m_ObjectHideFlags: 0
@@ -23774,6 +24080,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 100%
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6406679503616559971
 GameObject:
   m_ObjectHideFlags: 0
@@ -23927,6 +24235,8 @@ MonoBehaviour:
   localizationKey: ui.v3.100_fuel.41f50b3a86
   englishFallback: 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6456957189296181732
 GameObject:
   m_ObjectHideFlags: 0
@@ -23944,7 +24254,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3889122385736761462
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23962,8 +24272,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 8, y: -8}
-  m_SizeDelta: {x: 104, y: 104}
+  m_AnchoredPosition: {x: 10, y: -18}
+  m_SizeDelta: {x: 58, y: 58}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6161271181912451162
 CanvasRenderer:
@@ -23993,6 +24303,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -24152,6 +24463,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6470615607316256399
 GameObject:
   m_ObjectHideFlags: 0
@@ -24187,8 +24500,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 198, y: -48}
-  m_SizeDelta: {x: 166, y: 38}
+  m_AnchoredPosition: {x: 80, y: -68}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &8567978234903558642
 CanvasRenderer:
@@ -24245,10 +24558,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -24305,6 +24618,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.25
   englishFallback: RECEIVE 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6514190338520366690
 GameObject:
   m_ObjectHideFlags: 0
@@ -24458,6 +24773,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials.64b5791a58
   englishFallback: MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6596298424262192214
 GameObject:
   m_ObjectHideFlags: 0
@@ -24537,6 +24854,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -24678,8 +24996,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5228517241334872250
 CanvasRenderer:
@@ -24796,6 +25114,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6671306874533352698
 GameObject:
   m_ObjectHideFlags: 0
@@ -24863,6 +25183,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.106882356, g: 0.16988236, b: 0.18841177, a: 1}
   topRightColor: {r: 0.05490196, g: 0.12156863, b: 0.14117648, a: 1}
   bottomLeftColor: {r: 0.017254902, g: 0.051764708, b: 0.06211765, a: 1}
@@ -25010,6 +25331,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -25169,6 +25491,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials_to_oil.3a278cb794
   englishFallback: MATERIALS TO OIL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6785470899947538042
 GameObject:
   m_ObjectHideFlags: 0
@@ -25204,8 +25528,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &6129885294035520188
 CanvasRenderer:
@@ -25322,6 +25646,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6800697363672585713
 GameObject:
   m_ObjectHideFlags: 0
@@ -25475,6 +25801,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.6
   englishFallback: EXCHANGE PROGRESS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6816571398812954098
 GameObject:
   m_ObjectHideFlags: 0
@@ -25628,6 +25956,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6826736192003956607
 GameObject:
   m_ObjectHideFlags: 0
@@ -25858,6 +26188,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6903293366498949063
 GameObject:
   m_ObjectHideFlags: 0
@@ -26086,6 +26418,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6944254027068458330
 GameObject:
   m_ObjectHideFlags: 0
@@ -26239,6 +26573,8 @@ MonoBehaviour:
   localizationKey: ui.v3.180_materials.b42b11fe20
   englishFallback: 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6976350981861168457
 GameObject:
   m_ObjectHideFlags: 0
@@ -26317,6 +26653,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.13652942, g: 0.3922353, b: 0.49229413, a: 1}
   topRightColor: {r: 0.08627451, g: 0.35686275, b: 0.4627451, a: 1}
   bottomLeftColor: {r: 0.024294902, g: 0.100492544, b: 0.13030902, a: 1}
@@ -26470,6 +26807,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -26571,6 +26909,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -26810,10 +27149,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 185804746846972888}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7259988555786572089
 CanvasRenderer:
@@ -26985,7 +27324,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -27006,6 +27345,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: +
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7163150515475911487
 GameObject:
   m_ObjectHideFlags: 0
@@ -27159,6 +27500,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7215551893347569199
 GameObject:
   m_ObjectHideFlags: 0
@@ -27312,6 +27655,8 @@ MonoBehaviour:
   localizationKey: ui.v3.100_fuel.41f50b3a86
   englishFallback: 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7238281173443745134
 GameObject:
   m_ObjectHideFlags: 0
@@ -27453,6 +27798,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.095764704, g: 0.1624706, b: 0.17729412, a: 1}
   topRightColor: {r: 0.043137256, g: 0.11372549, b: 0.12941177, a: 1}
   bottomLeftColor: {r: 0.013803923, g: 0.048313726, b: 0.05866667, a: 1}
@@ -27526,6 +27872,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15505883, g: 0.5441765, b: 0.8221177, a: 1}
   topRightColor: {r: 0.105882354, g: 0.5176471, b: 0.8117647, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.2105098, b: 0.3865098, a: 1}
@@ -27729,6 +28076,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 180
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7364621400642331158
 GameObject:
   m_ObjectHideFlags: 0
@@ -27958,6 +28307,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 3/3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7388696316487862583
 GameObject:
   m_ObjectHideFlags: 0
@@ -28111,6 +28462,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 2
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7449868709879867190
 GameObject:
   m_ObjectHideFlags: 0
@@ -28221,11 +28574,11 @@ RectTransform:
   - {fileID: 4961385688695166757}
   m_Father: {fileID: 6370570286791421071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -16, y: -118}
-  m_SizeDelta: {x: 94, y: 88}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 210, y: -118}
+  m_SizeDelta: {x: 80, y: 80}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &6036257979085861614
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -28254,12 +28607,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
-  topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
-  bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
-  bottomRightColor: {r: 0.011764706, g: 0.043137256, b: 0.05490196, a: 1}
-  borderColor: {r: 0.2509804, g: 0.30980393, b: 0.32941177, a: 1}
-  borderWidth: 3
+  militaryMaterial: 1
+  topLeftColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  topRightColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  bottomLeftColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  bottomRightColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!114 &1907460939056015613
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28279,13 +28633,13 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 0
+  m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -28565,8 +28919,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1334974184389601269
 CanvasRenderer:
@@ -28683,6 +29037,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7630173296142214258
 GameObject:
   m_ObjectHideFlags: 0
@@ -28825,12 +29181,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  topLeftColor: {r: 0.3107059, g: 0.69611764, b: 0.27364707, a: 1}
-  topRightColor: {r: 0.27058825, g: 0.6784314, b: 0.23137255, a: 1}
-  bottomLeftColor: {r: 0.027607845, g: 0.26917648, b: 0.09662745, a: 1}
-  bottomRightColor: {r: 0.03137255, g: 0.30588236, b: 0.10980392, a: 1}
-  borderColor: {r: 0.23921569, g: 0.74509805, b: 0.2627451, a: 1}
-  borderWidth: 3
+  militaryMaterial: 1
+  topLeftColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  topRightColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  bottomLeftColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  bottomRightColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  borderColor: {r: 0.19215687, g: 0.8235294, b: 0.32941177, a: 1}
+  borderWidth: 2
 --- !u!114 &1740571177495678697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -28856,7 +29213,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.32, g: 0.32, b: 0.32, a: 1}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -28940,6 +29297,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.19952942, g: 0.7776471, b: 0.90364707, a: 1}
   topRightColor: {r: 0.15294118, g: 0.7647059, b: 0.8980392, a: 1}
   bottomLeftColor: {r: 0, g: 0.41066667, b: 0.5866667, a: 1}
@@ -29099,6 +29457,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.mobile.short.0
   englishFallback: "Available resources \u2014 choose an exchange"
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7798604112494837979
 GameObject:
   m_ObjectHideFlags: 0
@@ -29374,6 +29734,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7849944962397666641
 GameObject:
   m_ObjectHideFlags: 0
@@ -29564,6 +29926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -29767,6 +30130,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '>'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8002796274104499922
 GameObject:
   m_ObjectHideFlags: 0
@@ -29995,6 +30360,8 @@ MonoBehaviour:
   localizationKey: ui.v3.100_fuel.41f50b3a86
   englishFallback: 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8035212600806223018
 GameObject:
   m_ObjectHideFlags: 0
@@ -30148,6 +30515,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8059859689132296646
 GameObject:
   m_ObjectHideFlags: 0
@@ -30377,6 +30746,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8095777964307805086
 GameObject:
   m_ObjectHideFlags: 0
@@ -30680,6 +31051,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.14764705, g: 0.4589412, b: 0.63682353, a: 1}
   topRightColor: {r: 0.09803922, g: 0.42745098, b: 0.6156863, a: 1}
   bottomLeftColor: {r: 0.027607841, g: 0.120370194, b: 0.17337726, a: 1}
@@ -30789,8 +31161,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -48}
-  m_SizeDelta: {x: 180, y: 38}
+  m_AnchoredPosition: {x: 80, y: -42}
+  m_SizeDelta: {x: 250, y: 24}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7238201563777288429
 CanvasRenderer:
@@ -30847,10 +31219,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
+  m_fontSize: 17
   m_fontSizeBase: 20
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 20
   m_fontSizeMax: 20
   m_fontStyle: 0
@@ -30907,6 +31279,8 @@ MonoBehaviour:
   localizationKey: ui.exchange.fuel_amount
   englishFallback: SPEND 100 FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8174424177320021588
 GameObject:
   m_ObjectHideFlags: 0
@@ -31135,6 +31509,8 @@ MonoBehaviour:
   localizationKey: ui.v3.choose_a_logistics_conversion_ro.2ffa24ac77
   englishFallback: Choose a logistics conversion route
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8187241179741527018
 GameObject:
   m_ObjectHideFlags: 0
@@ -31288,6 +31664,8 @@ MonoBehaviour:
   localizationKey: ui.v3.1_fuel_1_8_materials.f67cd35f0d
   englishFallback: 1 FUEL = 1.8 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8257408627747874288
 GameObject:
   m_ObjectHideFlags: 0
@@ -31441,7 +31819,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.65882355, g: 0.7058824, b: 0.70980394, a: 1}
+  m_fontColor: {r: 0.96862745, g: 0.72156864, b: 0.11764706, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -31458,7 +31836,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22
+  m_fontSize: 23
   m_fontSizeBase: 22
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -31519,6 +31897,8 @@ MonoBehaviour:
   englishFallback: Adjust the amount, then convert to add this exchange to the logistics
     queue.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8295757829787705693
 GameObject:
   m_ObjectHideFlags: 0
@@ -31666,6 +32046,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.15135294, g: 0.19582354, b: 0.21064706, a: 1}
   topRightColor: {r: 0.101960786, g: 0.14901961, b: 0.16470589, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -31825,6 +32206,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8432763983072824515
 GameObject:
   m_ObjectHideFlags: 0
@@ -31894,6 +32277,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -32055,8 +32439,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 14, y: -9}
-  m_SizeDelta: {x: 316, y: 38}
+  m_AnchoredPosition: {x: 80, y: -8}
+  m_SizeDelta: {x: 224, y: 35}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &7772049718049830042
 CanvasRenderer:
@@ -32173,6 +32557,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel_to_materials.7b3d9a3858
   englishFallback: FUEL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8510570213100444808
 GameObject:
   m_ObjectHideFlags: 0
@@ -32402,6 +32788,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: '!'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8601702249019108679
 GameObject:
   m_ObjectHideFlags: 0
@@ -32631,6 +33019,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8619983089725220260
 GameObject:
   m_ObjectHideFlags: 0
@@ -32861,6 +33251,8 @@ MonoBehaviour:
   localizationKey: ui.v3.l.72dfcfb0c4
   englishFallback: L
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8725052443599106108
 GameObject:
   m_ObjectHideFlags: 0
@@ -32939,6 +33331,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.18100001, g: 0.48488235, b: 0.22547059, a: 1}
   topRightColor: {r: 0.13333334, g: 0.45490196, b: 0.18039216, a: 1}
   bottomLeftColor: {r: 0.03754667, g: 0.1281004, b: 0.05079843, a: 1}
@@ -33166,6 +33559,8 @@ MonoBehaviour:
   localizationKey: ui.v3.oil_to_materials.2095ef2c92
   englishFallback: OIL TO MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8773722900509190623
 GameObject:
   m_ObjectHideFlags: 0
@@ -33199,11 +33594,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6370570286791421071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 126, y: -118}
-  m_SizeDelta: {x: -252, y: 80}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -118}
+  m_SizeDelta: {x: 320, y: 80}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &5206357913535310774
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -33262,7 +33657,7 @@ MonoBehaviour:
   m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 1
+  m_enableAutoSizing: 0
   m_fontSizeMin: 36
   m_fontSizeMax: 36
   m_fontStyle: 0
@@ -33319,6 +33714,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 100
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8779346827985019965
 GameObject:
   m_ObjectHideFlags: 0
@@ -33426,10 +33823,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1830956503490662002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 20, y: -20}
-  m_SizeDelta: {x: 64, y: 64}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 5, y: -5}
+  m_SizeDelta: {x: -10, y: -10}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1756759410234298315
 CanvasRenderer:
@@ -33622,6 +34019,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8922218464462015285
 GameObject:
   m_ObjectHideFlags: 0
@@ -33775,6 +34174,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9014972129939501745
 GameObject:
   m_ObjectHideFlags: 0
@@ -33928,6 +34329,8 @@ MonoBehaviour:
   localizationKey: ui.v3.180_materials.b42b11fe20
   englishFallback: 180 MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9067766216179606822
 GameObject:
   m_ObjectHideFlags: 0
@@ -33995,6 +34398,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -34231,6 +34635,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 01:30
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9135278678689469564
 GameObject:
   m_ObjectHideFlags: 0
@@ -34373,6 +34779,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.21435295, g: 0.25511765, b: 0.26994118, a: 1}
   topRightColor: {r: 0.16862746, g: 0.21176471, b: 0.22745098, a: 1}
   bottomLeftColor: {r: 0.010352941, g: 0.037960786, b: 0.048313726, a: 1}
@@ -34532,6 +34939,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1001 &3847059595274378626
 PrefabInstance:
   m_ObjectHideFlags: 0

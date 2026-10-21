@@ -983,6 +983,8 @@ MonoBehaviour:
   localizationKey: ui.v3.pro.7821a03e83
   englishFallback: PRO
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &455883737720154244
 GameObject:
   m_ObjectHideFlags: 0
@@ -1273,6 +1275,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0, g: 0.24, b: 0.42, a: 1}
   topRightColor: {r: 0, g: 0.23, b: 0.4, a: 1}
   bottomLeftColor: {r: 0, g: 0.11, b: 0.18, a: 1}
@@ -2005,6 +2008,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -2212,6 +2216,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1267735647289861380
 GameObject:
   m_ObjectHideFlags: 0
@@ -2577,6 +2583,8 @@ MonoBehaviour:
   localizationKey: ui.common.music
   englishFallback: MUSIC
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1587733906633662709
 GameObject:
   m_ObjectHideFlags: 0
@@ -2828,8 +2836,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 28, y: 0}
-  m_SizeDelta: {x: -240, y: -16}
+  m_AnchoredPosition: {x: 12, y: 0}
+  m_SizeDelta: {x: -296, y: -24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9076105588730300307
 CanvasRenderer:
@@ -2925,7 +2933,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 12, y: 0, z: 12, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2946,6 +2954,8 @@ MonoBehaviour:
   localizationKey: ui.settings.command_title
   englishFallback: COMMAND SETTINGS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1709039690581172028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3099,6 +3109,8 @@ MonoBehaviour:
   localizationKey: ui.settings.threat_warnings
   englishFallback: THREAT WARNINGS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1714324292332841849
 GameObject:
   m_ObjectHideFlags: 0
@@ -3166,6 +3178,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -3448,6 +3461,8 @@ MonoBehaviour:
   localizationKey: ui.common.sound
   englishFallback: SOUND
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1808081123390002228
 GameObject:
   m_ObjectHideFlags: 0
@@ -3601,6 +3616,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1837184850647380025
 GameObject:
   m_ObjectHideFlags: 0
@@ -3666,6 +3683,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.055, g: 0.066, b: 0.074, a: 1}
   topRightColor: {r: 0.055, g: 0.066, b: 0.074, a: 1}
   bottomLeftColor: {r: 0.018, g: 0.024, b: 0.028, a: 1}
@@ -3825,6 +3843,8 @@ MonoBehaviour:
   localizationKey: ui.settings.camera_sensitivity
   englishFallback: CAMERA SENSITIVITY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1948841376227769133
 GameObject:
   m_ObjectHideFlags: 0
@@ -3901,7 +3921,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_fontColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -3957,7 +3977,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -3978,6 +3998,8 @@ MonoBehaviour:
   localizationKey: ui.v3.apply.2cbf6555f2
   englishFallback: APPLY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2014390254131421863
 GameObject:
   m_ObjectHideFlags: 0
@@ -4171,6 +4193,8 @@ MonoBehaviour:
   localizationKey: ui.v3.minimal.2bbc362944
   englishFallback: MINIMAL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2018045212670433904
 GameObject:
   m_ObjectHideFlags: 0
@@ -4272,6 +4296,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -4482,6 +4507,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -4802,7 +4828,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 0.9529412, g: 0.68235296, b: 0, a: 1}
+  m_fontColor: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -4858,7 +4884,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 6, y: 2, z: 6, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -4879,6 +4905,8 @@ MonoBehaviour:
   localizationKey: ui.v3.reset.7ef2fad58d
   englishFallback: RESET
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2287981337985203916
 GameObject:
   m_ObjectHideFlags: 0
@@ -5055,6 +5083,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -5214,6 +5243,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2504346944819756807
 GameObject:
   m_ObjectHideFlags: 0
@@ -5367,6 +5398,8 @@ MonoBehaviour:
   localizationKey: ui.v3.full.cb6839cad0
   englishFallback: FULL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2515589736474055620
 GameObject:
   m_ObjectHideFlags: 0
@@ -6014,6 +6047,8 @@ MonoBehaviour:
   localizationKey: ui.v3.120_fps.e3f90dba7a
   englishFallback: 120 FPS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2787535832737664434
 GameObject:
   m_ObjectHideFlags: 0
@@ -6216,6 +6251,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.04, g: 0.05, b: 0.055, a: 1}
   topRightColor: {r: 0.04, g: 0.05, b: 0.055, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.017, b: 0.02, a: 1}
@@ -6375,6 +6411,8 @@ MonoBehaviour:
   localizationKey: ui.v3.all.b5c7aed7cd
   englishFallback: ALL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2916749490781915020
 GameObject:
   m_ObjectHideFlags: 0
@@ -6528,6 +6566,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2999758782045618972
 GameObject:
   m_ObjectHideFlags: 0
@@ -6893,6 +6933,8 @@ MonoBehaviour:
   localizationKey: ui.settings.sound_description
   englishFallback: Adjust in-game sound effects volume.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3074203291124933468
 GameObject:
   m_ObjectHideFlags: 0
@@ -7121,6 +7163,8 @@ MonoBehaviour:
   localizationKey: ui.v3.en.69374b09b1
   englishFallback: EN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3096198346180579626
 GameObject:
   m_ObjectHideFlags: 0
@@ -7274,6 +7318,8 @@ MonoBehaviour:
   localizationKey: ui.v3.frame_rate.e72b587bb6
   englishFallback: FRAME RATE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3115171394751158603
 GameObject:
   m_ObjectHideFlags: 0
@@ -7383,7 +7429,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 48, y: 48}
+  m_SizeDelta: {x: 24, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5628970289864231271
 CanvasRenderer:
@@ -7406,7 +7452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_Color: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7713,6 +7759,8 @@ MonoBehaviour:
   localizationKey: ui.common.voice
   englishFallback: VOICE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3222724066234773140
 GameObject:
   m_ObjectHideFlags: 0
@@ -7730,7 +7778,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &374239973816915735
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7778,6 +7826,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.12, g: 0.085, b: 0.012, a: 1}
   topRightColor: {r: 0.055, g: 0.04, b: 0.008, a: 1}
   bottomLeftColor: {r: 0.006, g: 0.008, b: 0.006, a: 1}
@@ -7849,6 +7898,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.045, g: 0.06, b: 0.065, a: 1}
   topRightColor: {r: 0.045, g: 0.06, b: 0.065, a: 1}
   bottomLeftColor: {r: 0.014, g: 0.025, b: 0.028, a: 1}
@@ -8498,6 +8548,8 @@ MonoBehaviour:
   localizationKey: ui.v3.ultra.70934311f6
   englishFallback: ULTRA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3526010533268125520
 GameObject:
   m_ObjectHideFlags: 0
@@ -8651,6 +8703,8 @@ MonoBehaviour:
   localizationKey: ui.settings.subtitles_description
   englishFallback: Show narration subtitles in the assistant panel.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3529436563183633495
 GameObject:
   m_ObjectHideFlags: 0
@@ -9379,6 +9433,8 @@ MonoBehaviour:
   localizationKey: ui.settings.contrast_description
   englishFallback: Increase panel and text contrast.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3944953650139408787
 GameObject:
   m_ObjectHideFlags: 0
@@ -9745,6 +9801,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3994116398045796310
 GameObject:
   m_ObjectHideFlags: 0
@@ -9777,6 +9835,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3977089534911106623}
   - {fileID: 3902831592482970623}
   - {fileID: 374239973816915735}
   - {fileID: 6402990596440738960}
@@ -9809,14 +9868,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9529412, g: 0.68235296, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 745cd5ef9eefc40f5a24acc6dd5cf2cc, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -9851,7 +9910,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1.08, g: 1.08, b: 1.08, a: 1}
     m_PressedColor: {r: 0.82, g: 0.9, b: 0.94, a: 1}
     m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 0.36862746, g: 0.40784314, b: 0.42352942, a: 0.627451}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
   m_SpriteState:
@@ -9866,7 +9925,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 1029800132457744498}
+  m_TargetGraphic: {fileID: 5741486629093038423}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -10127,6 +10186,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4112538785244532180
 GameObject:
   m_ObjectHideFlags: 0
@@ -10259,7 +10320,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 8, y: 2, z: 24, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -10280,6 +10341,8 @@ MonoBehaviour:
   localizationKey: ui.v3.accessibility.62ee3e97f6
   englishFallback: ACCESSIBILITY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4153128723006951293
 GameObject:
   m_ObjectHideFlags: 0
@@ -10570,6 +10633,8 @@ MonoBehaviour:
   localizationKey: ui.settings.voice_description
   englishFallback: Adjust in-game voice volume.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4159798870816759835
 GameObject:
   m_ObjectHideFlags: 0
@@ -10702,7 +10767,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 8, y: 2, z: 24, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -10723,6 +10788,8 @@ MonoBehaviour:
   localizationKey: ui.v3.video.65b2f9ec33
   englishFallback: VIDEO
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4175744653462058280
 GameObject:
   m_ObjectHideFlags: 0
@@ -10876,6 +10943,8 @@ MonoBehaviour:
   localizationKey: ui.v3.60_fps.8de37d25b5
   englishFallback: 60 FPS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4242805210110101614
 GameObject:
   m_ObjectHideFlags: 0
@@ -11130,6 +11199,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   topRightColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   bottomLeftColor: {r: 0.053333335, g: 0.078431375, b: 0.09411765, a: 1}
@@ -11203,6 +11273,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -12032,6 +12103,8 @@ MonoBehaviour:
   localizationKey: ui.settings.threat_description
   englishFallback: Show tactical warnings during missions.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4730612075756679462
 GameObject:
   m_ObjectHideFlags: 0
@@ -12185,6 +12258,8 @@ MonoBehaviour:
   localizationKey: ui.v3.high_contrast_ui.e679bc3f6d
   englishFallback: HIGH CONTRAST UI
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4782971800018593216
 GameObject:
   m_ObjectHideFlags: 0
@@ -12338,6 +12413,8 @@ MonoBehaviour:
   localizationKey: ui.v3.language.1287750a09
   englishFallback: LANGUAGE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4832023094193864346
 GameObject:
   m_ObjectHideFlags: 0
@@ -12531,6 +12608,8 @@ MonoBehaviour:
   localizationKey: ui.v3.assistant_guidance.ce7a82f3a4
   englishFallback: ASSISTANT GUIDANCE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4908228812985626417
 GameObject:
   m_ObjectHideFlags: 0
@@ -12684,6 +12763,8 @@ MonoBehaviour:
   localizationKey: ui.settings.master_volume
   englishFallback: MASTER VOLUME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4961270520531024364
 GameObject:
   m_ObjectHideFlags: 0
@@ -12751,6 +12832,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -13049,6 +13131,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.055, g: 0.075, b: 0.085, a: 1}
   topRightColor: {r: 0.055, g: 0.075, b: 0.085, a: 1}
   bottomLeftColor: {r: 0.025, g: 0.04, b: 0.045, a: 1}
@@ -13120,6 +13203,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0, g: 0, b: 0, a: 0}
   topRightColor: {r: 0, g: 0, b: 0, a: 0}
   bottomLeftColor: {r: 0, g: 0, b: 0, a: 0}
@@ -13345,6 +13429,8 @@ MonoBehaviour:
   localizationKey: ui.v3.hints.66882d22af
   englishFallback: HINTS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5195052531508004125
 GameObject:
   m_ObjectHideFlags: 0
@@ -13514,6 +13600,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6278319983198080272}
   - {fileID: 1484920137218442889}
   - {fileID: 2156391133300283893}
   - {fileID: 4045502745624186791}
@@ -13546,14 +13633,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.1882353, g: 0.6509804, b: 0.27058825, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 745cd5ef9eefc40f5a24acc6dd5cf2cc, type: 3}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -13588,7 +13675,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 1.08, g: 1.08, b: 1.08, a: 1}
     m_PressedColor: {r: 0.82, g: 0.9, b: 0.94, a: 1}
     m_SelectedColor: {r: 1, g: 1, b: 1, a: 1}
-    m_DisabledColor: {r: 0.36862746, g: 0.40784314, b: 0.42352942, a: 0.627451}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.08
   m_SpriteState:
@@ -13603,7 +13690,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 6542743236462670098}
+  m_TargetGraphic: {fileID: 2573819663716853938}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -13686,6 +13773,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.09, g: 0.105, b: 0.11, a: 1}
   topRightColor: {r: 0.09, g: 0.105, b: 0.11, a: 1}
   bottomLeftColor: {r: 0.018, g: 0.022, b: 0.024, a: 1}
@@ -13729,6 +13817,78 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 64}
   m_SizeDelta: {x: -36, y: 104}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &5299493701865795329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3977089534911106623}
+  - component: {fileID: 6771718781112606595}
+  - component: {fileID: 5741486629093038423}
+  m_Layer: 0
+  m_Name: ApprovedSurface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3977089534911106623
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5299493701865795329}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8607348292675599753}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &6771718781112606595
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5299493701865795329}
+  m_CullTransparentMesh: 1
+--- !u!114 &5741486629093038423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5299493701865795329}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeb08b51ef6a947888c2dc78cbff3f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3GradientGraphic
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  militaryMaterial: 1
+  topLeftColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  topRightColor: {r: 0.19215687, g: 0.26666668, b: 0.3137255, a: 1}
+  bottomLeftColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  bottomRightColor: {r: 0.03529412, g: 0.09019608, b: 0.1254902, a: 1}
+  borderColor: {r: 0.32156864, g: 0.42352942, b: 0.47058824, a: 1}
+  borderWidth: 2
 --- !u!1 &5332450814667884136
 GameObject:
   m_ObjectHideFlags: 0
@@ -13882,6 +14042,8 @@ MonoBehaviour:
   localizationKey: ui.guidance.high
   englishFallback: HIGH
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5381325994671951794
 GameObject:
   m_ObjectHideFlags: 0
@@ -14172,6 +14334,8 @@ MonoBehaviour:
   localizationKey: ui.settings.takeover_description
   englishFallback: Allow assistant-guided bounded actions.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5498855217947879137
 GameObject:
   m_ObjectHideFlags: 0
@@ -14361,6 +14525,8 @@ MonoBehaviour:
   localizationKey: ui.guidance.medium
   englishFallback: MEDIUM
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5569752237141222305
 GameObject:
   m_ObjectHideFlags: 0
@@ -14378,7 +14544,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2156391133300283893
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14426,6 +14592,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.07, g: 0.29, b: 0.105, a: 1}
   topRightColor: {r: 0.07, g: 0.29, b: 0.105, a: 1}
   bottomLeftColor: {r: 0.024, g: 0.18, b: 0.063, a: 1}
@@ -14662,6 +14829,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   topRightColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   bottomLeftColor: {r: 0.053333335, g: 0.078431375, b: 0.09411765, a: 1}
@@ -15258,6 +15426,8 @@ MonoBehaviour:
   localizationKey: ui.v3.important.ed99f4e13c
   englishFallback: IMPORTANT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5956966664873749008
 GameObject:
   m_ObjectHideFlags: 0
@@ -15730,6 +15900,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.055, g: 0.06, b: 0.06, a: 1}
   topRightColor: {r: 0.055, g: 0.06, b: 0.06, a: 1}
   bottomLeftColor: {r: 0.018, g: 0.022, b: 0.022, a: 1}
@@ -16224,6 +16395,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -16420,6 +16592,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -16668,6 +16841,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -16827,6 +17001,8 @@ MonoBehaviour:
   localizationKey: ui.v3.assistant_takeover.eda15b1e82
   englishFallback: ASSISTANT TAKEOVER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6503301954280976282
 GameObject:
   m_ObjectHideFlags: 0
@@ -16959,7 +17135,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 8, y: 2, z: 24, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -16980,6 +17156,8 @@ MonoBehaviour:
   localizationKey: ui.v3.audio.859e89a729
   englishFallback: AUDIO
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6527567417756918963
 GameObject:
   m_ObjectHideFlags: 0
@@ -17015,7 +17193,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 48, y: 48}
+  m_SizeDelta: {x: 24, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7932039332217133042
 CanvasRenderer:
@@ -17038,7 +17216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_Color: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -17298,6 +17476,8 @@ MonoBehaviour:
   localizationKey: ui.settings.music_volume
   englishFallback: MUSIC VOLUME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6697409339781624154
 GameObject:
   m_ObjectHideFlags: 0
@@ -17575,6 +17755,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -17800,6 +17981,8 @@ MonoBehaviour:
   localizationKey: ui.guidance.low
   englishFallback: LOW
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6767952739900107124
 GameObject:
   m_ObjectHideFlags: 0
@@ -18168,6 +18351,8 @@ MonoBehaviour:
   localizationKey: ui.v3.tri.4f7fa34d06
   englishFallback: TRI
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6842518344402767786
 GameObject:
   m_ObjectHideFlags: 0
@@ -18536,6 +18721,8 @@ MonoBehaviour:
   localizationKey: ui.settings.large_text_description
   englishFallback: Increase UI text scale for readability.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6949836198145152815
 GameObject:
   m_ObjectHideFlags: 0
@@ -18989,6 +19176,8 @@ MonoBehaviour:
   localizationKey: ui.v3.critical.4457f2d1aa
   englishFallback: CRITICAL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7200434760625045862
 GameObject:
   m_ObjectHideFlags: 0
@@ -19142,6 +19331,8 @@ MonoBehaviour:
   localizationKey: ui.v3.assistant_subtitles.3dcdc7ab0f
   englishFallback: ASSISTANT SUBTITLES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7221840310103109426
 GameObject:
   m_ObjectHideFlags: 0
@@ -19174,10 +19365,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 8548098954452809841}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 48, y: 48}
+  m_SizeDelta: {x: 24, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7830091468571820908
 CanvasRenderer:
@@ -19200,7 +19391,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_Color: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -19569,6 +19760,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -19869,6 +20061,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7675316055093497938
 GameObject:
   m_ObjectHideFlags: 0
@@ -19934,6 +20128,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -20005,6 +20200,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   topRightColor: {r: 0.132, g: 0.16117647, b: 0.17941177, a: 1}
   bottomLeftColor: {r: 0.053333335, g: 0.078431375, b: 0.09411765, a: 1}
@@ -20239,6 +20435,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7728478512538313369
 GameObject:
   m_ObjectHideFlags: 0
@@ -20392,6 +20590,8 @@ MonoBehaviour:
   localizationKey: ui.v3.graphics_quality.d1b20d989e
   englishFallback: GRAPHICS QUALITY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7792560019005836551
 GameObject:
   m_ObjectHideFlags: 0
@@ -20620,6 +20820,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7803213085502120747
 GameObject:
   m_ObjectHideFlags: 0
@@ -20752,7 +20954,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 8, y: 2, z: 24, w: 2}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -20773,6 +20975,8 @@ MonoBehaviour:
   localizationKey: ui.v3.gameplay.0b04d93aa9
   englishFallback: GAMEPLAY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7806644538841950749
 GameObject:
   m_ObjectHideFlags: 0
@@ -21142,6 +21346,8 @@ MonoBehaviour:
   localizationKey: ui.settings.music_description
   englishFallback: Adjust in-game music volume.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7920306908356286332
 GameObject:
   m_ObjectHideFlags: 0
@@ -21406,6 +21612,8 @@ MonoBehaviour:
   localizationKey: ui.v3.30_fps.39f81d2101
   englishFallback: 30 FPS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8004190247623226475
 GameObject:
   m_ObjectHideFlags: 0
@@ -21887,6 +22095,8 @@ MonoBehaviour:
   localizationKey: ui.v3.large_text.ac2d9cd76a
   englishFallback: LARGE TEXT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8112371282806801452
 GameObject:
   m_ObjectHideFlags: 0
@@ -22115,6 +22325,8 @@ MonoBehaviour:
   localizationKey: ui.v3.colorblind_mode.7003446088
   englishFallback: COLORBLIND MODE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8250059779226233145
 GameObject:
   m_ObjectHideFlags: 0
@@ -22268,6 +22480,8 @@ MonoBehaviour:
   localizationKey: ui.v3.narration.de0718bf70
   englishFallback: NARRATION
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8252625955634531345
 GameObject:
   m_ObjectHideFlags: 0
@@ -22421,6 +22635,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8275464563262788684
 GameObject:
   m_ObjectHideFlags: 0
@@ -22487,6 +22703,78 @@ MonoBehaviour:
   offTrackColor: {r: 0.09803922, g: 0.13725491, b: 0.16078432, a: 1}
   onHandleColor: {r: 0.1882353, g: 0.6509804, b: 0.27058825, a: 1}
   offHandleColor: {r: 0.36862746, g: 0.40784314, b: 0.42352942, a: 0.627451}
+--- !u!1 &8324855603389329188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6278319983198080272}
+  - component: {fileID: 984148997269664018}
+  - component: {fileID: 2573819663716853938}
+  m_Layer: 0
+  m_Name: ApprovedSurface
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6278319983198080272
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8324855603389329188}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 677378712803587549}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &984148997269664018
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8324855603389329188}
+  m_CullTransparentMesh: 1
+--- !u!114 &2573819663716853938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8324855603389329188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aeb08b51ef6a947888c2dc78cbff3f0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.V3GradientGraphic
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  militaryMaterial: 1
+  topLeftColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  topRightColor: {r: 0.10980392, g: 0.60784316, b: 0.22745098, a: 1}
+  bottomLeftColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  bottomRightColor: {r: 0.011764706, g: 0.25490198, b: 0.11372549, a: 1}
+  borderColor: {r: 0.19215687, g: 0.8235294, b: 0.32941177, a: 1}
+  borderWidth: 2
 --- !u!1 &8358913135936315568
 GameObject:
   m_ObjectHideFlags: 0
@@ -22830,6 +23118,8 @@ MonoBehaviour:
   localizationKey: ui.settings.sound_volume
   englishFallback: SOUND VOLUME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8450065114990196354
 GameObject:
   m_ObjectHideFlags: 0
@@ -22983,6 +23273,8 @@ MonoBehaviour:
   localizationKey: ui.aria.state.off
   englishFallback: OFF
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8527639121341191544
 GameObject:
   m_ObjectHideFlags: 0
@@ -23048,6 +23340,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}
@@ -23193,7 +23486,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 48, y: 48}
+  m_SizeDelta: {x: 24, y: 38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1992236941793987530
 CanvasRenderer:
@@ -23216,7 +23509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_Color: {r: 0.95686275, g: 0.9647059, b: 0.9490196, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -23300,6 +23593,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   topRightColor: {r: 0.035, g: 0.39, b: 0.63, a: 1}
   bottomLeftColor: {r: 0.012, g: 0.22, b: 0.42, a: 1}
@@ -23698,6 +23992,8 @@ MonoBehaviour:
   localizationKey: ui.v3.deu.55f1f5b994
   englishFallback: DEU
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8969929989842462297
 GameObject:
   m_ObjectHideFlags: 0
@@ -23851,6 +24147,8 @@ MonoBehaviour:
   localizationKey: ui.v3.x.4b68ab3847
   englishFallback: X
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9072722355441851801
 GameObject:
   m_ObjectHideFlags: 0
@@ -23916,6 +24214,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  militaryMaterial: 0
   topLeftColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   topRightColor: {r: 0.3, g: 0.8, b: 0.22, a: 1}
   bottomLeftColor: {r: 0.08, g: 0.42, b: 0.08, a: 1}

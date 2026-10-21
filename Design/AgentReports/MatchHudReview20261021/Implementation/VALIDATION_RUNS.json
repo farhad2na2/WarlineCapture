@@ -1,0 +1,158 @@
+[
+  {
+    "log": "Logs/hud-approved-build-20261021-01.log",
+    "sha256": "64838fd056f9f7a1ab75a18b471fedfffa41dc5236c12c50903f752ad551f10d",
+    "status": "FailedOrIncomplete",
+    "markers": []
+  },
+  {
+    "log": "Logs/hud-approved-build-20261021-02.log",
+    "sha256": "53dbbf94a59d9bd0b0f2f2cc2a8e8f92a136e21d7615d130d106592c4c4b109b",
+    "status": "FailedOrIncomplete",
+    "markers": []
+  },
+  {
+    "log": "Logs/hud-approved-build-20261021-03.log",
+    "sha256": "cd94b8b1603ea21a3a9a1ae82a716a89bfd3742a079b088eb284ff8bf8dbf9e0",
+    "status": "FailedOrIncomplete",
+    "markers": []
+  },
+  {
+    "log": "Logs/hud-approved-build-20261021-04.log",
+    "sha256": "5b47de62bcd323b826f526d36a9de7ed1ccd55a211789c63f3c3f31ac8522b75",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-final-m02-20261021-01.log",
+    "sha256": "2de6ea905bf0b31dec885d9dce6a43eaf4e56402f40470f8137dd06513175ddd",
+    "status": "CapturedWithIncompleteVisualCoverage",
+    "markers": [
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-163944 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-final-m02-20261021-02.log",
+    "sha256": "7f1ce22ba2ec9091d04288072f8c88b10ed0cbee6b16b4eb87acaf6f6c8dc211",
+    "status": "Passed",
+    "markers": [
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-164306 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-m01-touch-20261021-01.log",
+    "sha256": "5f960a77ccdf7f863bbf24b83f0d86f445447feefc08707eaab53b96cbc00680",
+    "status": "FailedOrIncomplete",
+    "markers": []
+  },
+  {
+    "log": "Logs/hud-approved-m01-touch-20261021-02.log",
+    "sha256": "f0dd10b567df5dd8460b153a4ea37b89fa8e613c234b5227d5ff1dbb48654b1c",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedCampaignJourney] result=Passed menuGestures=25 outcomesInjected=0 deviceAcceptance=Pending",
+      "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-m01-touch-20261021-03.log",
+    "sha256": "7fbe3781afe2e96277feba73b8bc46b55831e2829b39602aaf7df8b389688d69",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedCampaignJourney] result=Passed menuGestures=25 outcomesInjected=0 deviceAcceptance=Pending",
+      "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-passengers-20261021-01.log",
+    "sha256": "3987994182986f7484832533e843eedafba16c4bfd1679adb6f71b5f97204cb2",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=162 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/passengers-20261021-161651 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-passengers-20261021-02.log",
+    "sha256": "6457dcae8fc748a966c37322db8516579940e5a5b77ccd1521dcea12f566d3ba",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=164 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/passengers-20261021-162430 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-passengers-20261021-03.log",
+    "sha256": "1570626db92dc00c3b8bd9183ca8a5b89a30a4a8abcf146cc547ef155e2fbd61",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=166 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/passengers-20261021-162947 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-review-20261021-01.log",
+    "sha256": "f5eab93b9fa9fd712484ced3103ce59e29dda640a8eaf469788ca84ecfda661a",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=140 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-155103 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-review-20261021-02.log",
+    "sha256": "6807fb98717ab4579489cc5789f46c0504d98e02204f33265d7666de113183f7",
+    "status": "FailedOrIncomplete",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=140 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-155711 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-review-20261021-03.log",
+    "sha256": "c454649982cf49f51a2347488cc7e97420f142ae7a4b5dfbc339b786a56af0aa",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=148 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-160520 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-review-20261021-04.log",
+    "sha256": "6f10f53c1fc692174c8db7370e131d41e54378711aa9781066cd2631242ec50f",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=154 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-161318 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-spacing-journey-01.log",
+    "sha256": "9c766eefdf533425c42f220d56efb3562038aacad88bbfed16d7640a379ffe2a",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=174 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[ApprovedCampaignJourney] result=Passed menuGestures=23 outcomesInjected=0 deviceAcceptance=Pending",
+      "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact"
+    ]
+  },
+  {
+    "log": "Logs/hud-approved-spacing-menus-01.log",
+    "sha256": "6262554767bc6b169a129eb24d15af8274deeaeb7ed15ddd97d3b07c1887cd4d",
+    "status": "Passed",
+    "markers": [
+      "[ApprovedMatchHudPolishBuilder] result=Passed nativePrefabs=true gameplayGatesUnchanged=true squadTray=DirectScroll",
+      "[ApprovedMatchHudPolishValidation] result=Passed checks=174 locales=en,fa-IR nativeViews=true fixtures=true missionReadiness=NotClaimed",
+      "[MatchHudLiveVisualReview] result=Captured output=Design/AgentReports/MatchHudReview20261021/Implementation/NativeAfter/menus-20261021-165251 missionReadiness=NotClaimed noOutcomesInjected=true"
+    ]
+  }
+]

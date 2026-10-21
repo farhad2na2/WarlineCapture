@@ -13,7 +13,7 @@ using Game.Runtime;
 
 namespace Game.Composition
 {
-    internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand, IBuildingPlacementFootprintQuery
+    internal sealed class BuildingUiCommandAdapter : IBuildingUiCommand, IBuildingPlacementFootprintQuery, IBuildingPlacementArtworkQuery
     {
         private readonly BuildingUiCommandSystemHelper boundary;
         private readonly BuildingUiCommandSystemHelper.Context context;
@@ -25,6 +25,7 @@ namespace Game.Composition
         }
 
         public Vector2Int ActivePlacementFootprint => context.GetPlacementFootprint?.Invoke() ?? Vector2Int.zero;
+        public Sprite ActivePlacementPortrait => context.GetPlacementPortrait?.Invoke();
         public int CurrentDollars => boundary != null ? boundary.CurrentDollars(context) : 0;
         public bool HasPendingBuildingPlacement => boundary != null && boundary.HasPendingBuildingPlacement(context);
         public bool CanConfirmBuildingPlacement => boundary != null && boundary.CanConfirmBuildingPlacement(context);

@@ -1,0 +1,19 @@
+{
+  "baseCommit": "dc802f217f5eb0068c93843821e95735c1908654",
+  "rawSourceSha256": {
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs": "5a98ac9ae2fdf6613b290bea4a718436a9e8100ab26ceb0b38ebd0b7504b5c00",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs": "4f27a8008616f5817592710eefbac93cb115149458fb40906edd0d4f544f79ad",
+    "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "24fb0a5dd66a0c02371ed58b043500ec4f9b63f087d1652c2cd4bf2f97da68e5",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs": "0fb2cae34f6df8b4c106ac957f7110415cced8c4dd4e6abe5b455fad8152af2c",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeCreationCompositionSystemHelper.cs": "b5beb421f574fadbe7752f39dc73acb142cee947268fe2715548d514f0f9cceb",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs": "51e38dc5a24a66c7b1efcc283182e9240aeee26ac16ace79bd9c3af109a0c5b4",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs": "3460e89dc313368817bcf003ce1fb870bdd6d0945c4c21d3efc6305f3632cdca",
+    "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs": "24f3bb047af55e8343f381ea2b82af68e0dbd8421702acf650aeb26f95606adf",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs": "d46c0eb8fc3eb9436d0588b1020f856422eb9bd31b76e9e56493578fc79273e4",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.Checkpoint.cs": "783b1e1955a0cdaddcecd534b9b7f0b36828d29e92e4a898a83014bf2f07b163",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishRuntimeActorOwnership.cs": "1bdc763d0225eeb072ebe3299d2357a695797b4c8df6b3a53a59ebb6da9c1be9",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs": "93ff16981342afe19e4b1aaaeb45a1cabe32215dc0dccd53f762e27ac0af5363"
+  },
+  "execution": "Source inspection and exact source checks only; no production edit, native run, compiler run or new executed control."
+}

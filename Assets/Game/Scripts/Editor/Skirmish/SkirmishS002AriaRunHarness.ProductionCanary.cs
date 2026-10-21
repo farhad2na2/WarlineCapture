@@ -766,6 +766,7 @@ namespace Game.Editor
             }
             private readonly Dictionary<string, string> environment = new Dictionary<string, string>(StringComparer.Ordinal);
             private readonly SceneSetup[] sceneSetup;
+            private readonly string baselineEffectiveLocale;
             private readonly bool optionsEnabled;
             private readonly EnterPlayModeOptions options;
             private readonly bool refreshAlreadyOwned;
@@ -778,6 +779,7 @@ namespace Game.Editor
                 GuardRepairObserverReservation(RepairCaptureEnabled,request.IsLegacyPreset,()=>{});
                 RequirePaidObserverGroupAvailable(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",request.IsLegacyPreset);
                 Request = request;
+                baselineEffectiveLocale = GameLocalization.CurrentLocaleCode;
                 EnsureScenesClean();
                 var restorableBaseline=PrepareProductionRestorableSceneBaseline();
                 sceneSetup = EditorSceneManager.GetSceneManagerSetup();
@@ -798,7 +800,8 @@ namespace Game.Editor
                 using (File.Open(events, FileMode.CreateNew, FileAccess.Write, FileShare.Read)) { }
                 Record("ContextCaptured", new JObject { ["source_sha256"] = (string)request.Job["candidate_sha256"],
                     ["compiled_dll_manifest_sha256"] = (string)request.Job["build_sha256"], ["scene_count"] = sceneSetup.Length,
-                    ["restorable_scene_baseline"] = restorableBaseline });
+                    ["restorable_scene_baseline"] = restorableBaseline,
+                    ["baseline_effective_locale"] = baselineEffectiveLocale, ["requested_mission_locale"] = request.Locale });
                 RecordProfileStage("ProfileBeforeDispatch");
                 StartRepairObserverScope(RepairCaptureEnabled,()=>StartPaidObserverGroup(Environment.GetEnvironmentVariable("WARLINE_PRODUCTION_RESOURCE_LEDGER")=="1",
                     StartPaidProductionLedger,StartPaidResearchLedger,StartConstructionLedger,
@@ -1536,11 +1539,23 @@ namespace Game.Editor
                     SessionState.EraseBool("Warline.MissionValidation.ResumeRefresh");
                     AssetDatabase.AllowAutoRefresh();
                 }
+                // The restored environment request is not evidence of the effective locale.
+                if (!string.Equals(GameLocalization.CurrentLocaleCode, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase))
+                    GameLocalization.SetLocale(baselineEffectiveLocale, false);
+                string actualEffectiveLocale = GameLocalization.CurrentLocaleCode;
+                bool effectiveLocaleMatches = string.Equals(actualEffectiveLocale, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase);
+                Record("EffectiveLocaleRestoreChecked", new JObject { ["baseline_effective_locale"] = baselineEffectiveLocale,
+                    ["expected_effective_locale"] = baselineEffectiveLocale, ["actual_effective_locale"] = actualEffectiveLocale,
+                    ["requested_mission_locale"] = Request.Locale, ["matches"] = effectiveLocaleMatches });
+                if (!effectiveLocaleMatches)
+                    throw new InvalidOperationException("Actual effective locale restore differs from captured baseline");
                 RecordProfileStage("ProfileAfterRestore");
                 Record("ContextRestored", new JObject { ["actual_save_root"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
                     ["actual_enter_play_options_enabled"] = EditorSettings.enterPlayModeOptionsEnabled,
                     ["actual_enter_play_options"] = (int)EditorSettings.enterPlayModeOptions,
                     ["actual_scene_count"] = EditorSceneManager.GetSceneManagerSetup().Length,
+                    ["baseline_effective_locale"] = baselineEffectiveLocale, ["expected_effective_locale"] = baselineEffectiveLocale,
+                    ["actual_effective_locale"] = actualEffectiveLocale, ["requested_mission_locale"] = Request.Locale,
                     ["native_qualification"] = "pending_adapter_canary" });
                 restored = true;
             }

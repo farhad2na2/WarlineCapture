@@ -1,0 +1,263 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "candidateGroups": {
+    "CC": {
+      "logicalGroup": "CC",
+      "ledgerDeclaredCandidate": {
+        "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+        "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+        "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+        "gridAssetSha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+        "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+        "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+        "operationMapId": "opmap.skirmish.desert_base_01",
+        "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+        "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+        "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+        "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0"
+      },
+      "assetGuidFromTrackedMeta": "cbfc2f62e3142413485019bd83197539",
+      "rawGitBytes": 5519,
+      "rawGitSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "declaredSourceHashJoin": "MatchesRawGitBytes",
+      "serializedSceneGuidFromGit": "dad0bd13fb20943dfb2f881cbe225f05",
+      "LfsPayloadNotRead": false,
+      "physicalSceneOrGridSurfaceReverified": false,
+      "currentRuntimeSelection": "UNKNOWN"
+    },
+    "AP": {
+      "logicalGroup": "AP",
+      "ledgerDeclaredCandidate": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+        "sourceAssetSha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+        "gridAssetSha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+        "surfaceAssetSha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7",
+        "operationMapId": "opmap.skirmish.cityedgeairfield_prepared",
+        "sourceIdentityHash": "3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db",
+        "contentHash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+        "sourceSceneGuid": "915718fcf0cd7422db987b388cd0d925",
+        "authoredSubSceneGuid": "cd836ff2ddd2a440e81db4a20332d266"
+      },
+      "assetGuidFromTrackedMeta": "6734dd62613b6488c97bc2287777edf4",
+      "rawGitBytes": 129,
+      "rawGitSha256": "a7b5c48e08f7ff6df344810c6124e7cfd605c490743fa9f8d11b6f6a62a63b1c",
+      "declaredSourceHashJoin": "MatchesLfsPayloadOidOnly_PayloadUnverified",
+      "serializedSceneGuidFromGit": null,
+      "LfsPayloadNotRead": true,
+      "physicalSceneOrGridSurfaceReverified": false,
+      "currentRuntimeSelection": "UNKNOWN"
+    },
+    "MP": {
+      "logicalGroup": "MP",
+      "ledgerDeclaredCandidate": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+        "sourceAssetSha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset",
+        "gridAssetSha256": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Surface.asset",
+        "surfaceAssetSha256": "219420a7ab9069ffbda9d48409a665b4b819853b192a3a553e85588250b67fa0",
+        "operationMapId": "opmap.ch04.armor_break",
+        "sourceIdentityHash": "83f10bf819165f5fa2a6b325f9a73df3780e14b023b1cf95d44e2f8c242cb368",
+        "contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+        "sourceSceneGuid": "b7c6bb84a6d0c4ed78be897c552f6ac1",
+        "authoredSubSceneGuid": "cff37b7367eda4910ab737672c2fe51b"
+      },
+      "assetGuidFromTrackedMeta": "be0f1c8c7ae1940d6a679b258bf79f7b",
+      "rawGitBytes": 9364,
+      "rawGitSha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+      "declaredSourceHashJoin": "MatchesRawGitBytes",
+      "serializedSceneGuidFromGit": "b7c6bb84a6d0c4ed78be897c552f6ac1",
+      "LfsPayloadNotRead": false,
+      "physicalSceneOrGridSurfaceReverified": false,
+      "currentRuntimeSelection": "UNKNOWN"
+    },
+    "IB": {
+      "logicalGroup": "IB",
+      "ledgerDeclaredCandidate": {
+        "sourcePath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+        "sourceAssetSha256": "76f749ba0a9e1d013fe18db4ca8b13ec04375a674ba91baca912384d43fa6dfa",
+        "gridPath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Grid.asset",
+        "gridAssetSha256": "0044ec7726416f0569393b9da8c19550c40c946181020cc25bac4ec1511b945a",
+        "surfacePath": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Surface.asset",
+        "surfaceAssetSha256": "02bd6bb3b7e623daf5358247a562d963653a4199b1e2d8a8df639a764fa03e2b",
+        "operationMapId": "opmap.skirmish.refinerydistrict_prepared",
+        "sourceIdentityHash": "f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d",
+        "contentHash": "2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778",
+        "sourceSceneGuid": "2f9acf3e55e194fb8941de959613dd4f",
+        "authoredSubSceneGuid": "4f2791431607a46dba63d71c60633f71"
+      },
+      "assetGuidFromTrackedMeta": "0064e5ac3442d4dcda5a04f2623647c5",
+      "rawGitBytes": 129,
+      "rawGitSha256": "162c370482c5fc514a4b6adb53482ba1082dfb32d91cf59ab15571abe5537663",
+      "declaredSourceHashJoin": "MatchesLfsPayloadOidOnly_PayloadUnverified",
+      "serializedSceneGuidFromGit": null,
+      "LfsPayloadNotRead": true,
+      "physicalSceneOrGridSurfaceReverified": false,
+      "currentRuntimeSelection": "UNKNOWN"
+    },
+    "DB": {
+      "logicalGroup": "DB",
+      "ledgerDeclaredCandidate": {
+        "sourcePath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+        "sourceAssetSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+        "gridPath": "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+        "gridAssetSha256": "20f6f29eb7253a56d8e172774a3152a60b42c9f416e01b622fd52bf5f6abecca",
+        "surfacePath": "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+        "surfaceAssetSha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+        "operationMapId": "opmap.skirmish.desert_base_01",
+        "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+        "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+        "sourceSceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+        "authoredSubSceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+        "candidate_scope": "ExistingSharedCampaignPhysicalSourceOnly_DBObjectiveGeometryUnqualified"
+      },
+      "assetGuidFromTrackedMeta": "cbfc2f62e3142413485019bd83197539",
+      "rawGitBytes": 5519,
+      "rawGitSha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+      "declaredSourceHashJoin": "MatchesRawGitBytes",
+      "serializedSceneGuidFromGit": "dad0bd13fb20943dfb2f881cbe225f05",
+      "LfsPayloadNotRead": false,
+      "physicalSceneOrGridSurfaceReverified": false,
+      "currentRuntimeSelection": "UNKNOWN"
+    }
+  },
+  "candidateGroupCount": 5,
+  "uniqueCandidateAssetPaths": [
+    "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+    "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+    "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset"
+  ],
+  "uniqueCandidatePathCount": 4,
+  "uniqueCandidateMeaning": "Existing Full120 proposal inventory only; not total Campaign map inventory, actual runtime selection or certified fit. DB and CC share same physical candidate.",
+  "persistentDefinitionBindings": [
+    {
+      "catalogId": "S002",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset",
+      "guid": "3e42a217591343f69076829c56903d0d",
+      "definitionLogicalOperationMapId": "opmap.skirmish.desert_base_01",
+      "definitionLayoutId": "layout.skirmish.db.ba",
+      "serializedCampaignGuid": null,
+      "campaignRefState": "SerializedFieldAbsentOrNull_PreserveCodedRuntimeBinding",
+      "resolvedCampaignReference": null,
+      "serializedLogicalBindingGuid": null,
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    },
+    {
+      "catalogId": "S003",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset",
+      "guid": "7f2c9e14b6a84d0e8f31c5a9d2b70418",
+      "definitionLogicalOperationMapId": "opmap.skirmish.desert_base_01",
+      "definitionLayoutId": "layout.skirmish.db.ba",
+      "serializedCampaignGuid": null,
+      "campaignRefState": "SerializedFieldAbsentOrNull_PreserveCodedRuntimeBinding",
+      "resolvedCampaignReference": null,
+      "serializedLogicalBindingGuid": null,
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    },
+    {
+      "catalogId": "S004",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset",
+      "guid": "2b7e4c91a0d64f3e8a5c1d9b6e0f4732",
+      "definitionLogicalOperationMapId": "opmap.skirmish.desert_base_01",
+      "definitionLayoutId": "layout.skirmish.db.ba",
+      "serializedCampaignGuid": null,
+      "campaignRefState": "SerializedFieldAbsentOrNull_PreserveCodedRuntimeBinding",
+      "resolvedCampaignReference": null,
+      "serializedLogicalBindingGuid": null,
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    },
+    {
+      "catalogId": "S005",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishScenario_S005.asset",
+      "guid": "ae31f3108b36b47cab4fb6ca76e84797",
+      "definitionLogicalOperationMapId": "opmap.skirmish.desert_base_01",
+      "definitionLayoutId": "layout.skirmish.db.ba",
+      "serializedCampaignGuid": "f19b45a50b78d434987e806634756d87",
+      "campaignRefState": "ExplicitSerializedReference",
+      "resolvedCampaignReference": {
+        "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset",
+        "assetGuid": "f19b45a50b78d434987e806634756d87",
+        "operationMapId": "opmap.skirmish.desert_base_01_s005",
+        "sceneGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+        "sourceIdentityHash": "2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900",
+        "contentHash": "de882aa416c9e65c42fe6e33f383bd89ba1bb4985f0647f048da6630946a96aa",
+        "oldProtectedLedgerHashJoin": "MatchesRawGitBytes"
+      },
+      "serializedLogicalBindingGuid": null,
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    },
+    {
+      "catalogId": "S049",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "guid": "4392fb1dc2ca10b43ba12754beb5350f",
+      "definitionLogicalOperationMapId": "opmap.ch04.armor_break",
+      "definitionLayoutId": "layout.s049.measured-pad-candidate.v2",
+      "serializedCampaignGuid": "be0f1c8c7ae1940d6a679b258bf79f7b",
+      "campaignRefState": "ExplicitSerializedReference",
+      "resolvedCampaignReference": {
+        "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+        "assetGuid": "be0f1c8c7ae1940d6a679b258bf79f7b",
+        "operationMapId": "opmap.ch04.armor_break",
+        "sceneGuid": "b7c6bb84a6d0c4ed78be897c552f6ac1",
+        "sourceIdentityHash": "83f10bf819165f5fa2a6b325f9a73df3780e14b023b1cf95d44e2f8c242cb368",
+        "contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+        "oldProtectedLedgerHashJoin": "NoOldProtectedHash"
+      },
+      "serializedLogicalBindingGuid": "05d7ce460c6183e469dffaf12392e55a",
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    },
+    {
+      "catalogId": "S074",
+      "path": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset",
+      "guid": "24ade16a4b012cd4085245c8e0101f55",
+      "definitionLogicalOperationMapId": "opmap.skirmish.refinerydistrict_prepared",
+      "definitionLayoutId": "layout.s074.measured-pad-candidate.v2",
+      "serializedCampaignGuid": "0064e5ac3442d4dcda5a04f2623647c5",
+      "campaignRefState": "ExplicitSerializedReference",
+      "resolvedCampaignReference": {
+        "path": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset",
+        "assetGuid": "0064e5ac3442d4dcda5a04f2623647c5",
+        "operationMapId": null,
+        "sceneGuid": null,
+        "sourceIdentityHash": null,
+        "contentHash": null,
+        "oldProtectedLedgerHashJoin": "NoOldProtectedHash"
+      },
+      "serializedLogicalBindingGuid": "fc22994aa28c24d478b8f9786e0d3de9",
+      "runtimePhysicalSource": "UNKNOWN",
+      "nativeSourceFit": "UNKNOWN",
+      "normalMissionCertification": "UNKNOWN"
+    }
+  ],
+  "definitionBindingDenominator": 6,
+  "ledgerDrift": [
+    {
+      "catalogId": "S049",
+      "field": "existing_definition_asset",
+      "Full120Declared": null,
+      "actualTrackedAtBase": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S049/SkirmishScenario_S049.asset",
+      "interpretation": "Historical source ledger predates asset materialization; existence still grants no fit/qualification."
+    },
+    {
+      "catalogId": "S074",
+      "field": "existing_definition_asset",
+      "Full120Declared": null,
+      "actualTrackedAtBase": "Assets/Game/Configs/SkirmishExpansion/Scenarios/S074/SkirmishScenario_S074.asset",
+      "interpretation": "Historical source ledger predates asset materialization; existence still grants no fit/qualification."
+    }
+  ],
+  "fixedBindingsPolicy": "Preserve coded/practice bindings; family candidate must not overwrite absent serialized coded refs. S005 mission-local logical source preserves existing Campaign scene; no new physical source authorized."
+}

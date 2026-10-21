@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "scope": "Source ledger declarations and authoring recommendations only; implementation/certification UNKNOWN; no native assignment",
+  "payloads": [
+    {
+      "name": "catalog-audit.json",
+      "bytes": 160398,
+      "sha256": "4010179117cca03e88f4e6d5d60b9676a9db80b4d4d47542b8c48570279eaa8d"
+    },
+    {
+      "name": "independent-work.json",
+      "bytes": 4055,
+      "sha256": "b9cc4021fcd6b12dcd4521859f898bf42ccb059964651f32bef525edc8cf0a65"
+    },
+    {
+      "name": "review.md",
+      "bytes": 8486,
+      "sha256": "d01f3c02d08e89f7bbece6d3ab9faa3fdd964f40fdd306f43cfcb7fa1f8c6182"
+    },
+    {
+      "name": "runtime-paths.json",
+      "bytes": 18443,
+      "sha256": "7d65a82f1a0d3460539352129c561e616cb8f7dccc1d061d38d376c2d4016bad"
+    },
+    {
+      "name": "source-bindings.json",
+      "bytes": 14885,
+      "sha256": "daab2079dda3959bbac4729a2ab7e8ce0f8d6c8a69f8f64517d53a55f8a4bb72"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 11770,
+      "sha256": "03ec48e0edf1df5a3a7833ab4e153662262388046726b6f09c23d1c86da30978"
+    },
+    {
+      "name": "validation.log",
+      "bytes": 900,
+      "sha256": "7efa432c24bc7911f370d9e267daf2ec06b8e1fde8c1329b931b78cf10893d18"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 8075,
+      "sha256": "ddedcef676124dc5d9bb8830e31162713301372ad1a45d107e5606ec64ecd7ef"
+    }
+  ]
+}

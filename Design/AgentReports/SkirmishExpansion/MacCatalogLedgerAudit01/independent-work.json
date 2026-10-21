@@ -1,0 +1,56 @@
+{
+  "status": "RecommendationsOnly_NotAssignedOrImplemented",
+  "priorityOne": {
+    "taskId": "S007S008FrontlinePersistenceInputDelta",
+    "catalogIds": [
+      "S007",
+      "S008"
+    ],
+    "family": "DB_FC",
+    "subset": "Ground F/E only; two of family six, six of planned360 size rows",
+    "whyDisjoint": "No S026 or current S074 cleanup/native work; existing shared FC and GroundObjective30 foundation reused. No additional native process required for input/reference audit.",
+    "existingInputs": [
+      "Design/Roadmap/Skirmish_Expansion/Scenarios/DB_FC.md",
+      "Design/AgentReports/SkirmishExpansion/Full120/LogicalInputs/20261015-01/DB_FC.json",
+      "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json"
+    ],
+    "deliverableProposed": "One disabled two-mission persistence-input delta pointing to existing authority, profiles/objective deadlines, current persistent target inventory and exact available measured-area/view artifact references. Explicitly enumerate missing refs with null measurements; do not regenerate Full120/familyfit reports or copy their coordinate proposals as legal.",
+    "concreteChecks": [
+      "Preserve all6 unchanged62-field vectors, canonical seeds and FC-specific deadlines; compare F/E start/profile/capability bindings.",
+      "List supplied/persistent objective definition/layout/view/logical-binding refs that actual normal compiler requires; distinguish persistent asset missing from generic API/source support present.",
+      "Join FrontlineA/B/C area roles and exact source/layout/geometry fingerprints to an independently current measured artifact only if one exists; otherwise leave null with explicit owner/data gate.",
+      "Reuse prior generic workflow and existing ground30/familyfit reports by immutable reference. Produce only the per-ID missing artifact delta and narrow target graph, no new foundation or new fit collector."
+    ],
+    "notThisTask": [
+      "No Game/Tools implementation or integration until Windows assigns it",
+      "No legal coordinate invention, measured flag, source-fit/compile/mission acceptance",
+      "No shared budget/AI/map/geometry/source changes",
+      "No normal run while protected/Windows lanes own capacity"
+    ],
+    "laterGates": [
+      "Current source-epoch and measured logical/facility/force fit evidence",
+      "Explicit development graph apply/persistent readback and real compiler cases",
+      "Separate native placement/sourcefit/visual/normal-input ARIA/result-return/strict cleanup/paid/queue/device acceptance"
+    ]
+  },
+  "followupOptions": [
+    {
+      "taskId": "AirOriginalAuthoritySeal",
+      "scope": "Independently verify already-reported Windows815276bytea869 snapshot+ROOT_INPUT_RECEIPT and record durable provenance/source inclusion if assigned.",
+      "reuse": "MacAirInputProvenanceReview01/89f5b647; do not repeat Git-history search or reconstruct/substitute coherent input.",
+      "runtime": "UNKNOWN; no payload transfer or Game restore assigned here."
+    },
+    {
+      "taskId": "SourceLedgerAssetPresenceSidecar",
+      "scope": "Record S049/S074 materialization and exact existing source aliases in an additive source-attributed sidecar, preserving the historical Full120 report.",
+      "reuse": "This audit already records the discrepancy; do not rebuild assets or promote publication.",
+      "purpose": "Only if Windows needs a machine-consumed current inventory; otherwise no new work needed."
+    },
+    {
+      "taskId": "SeparateProtectedCounterpartPreparation",
+      "scope": "If assigned, prepare exact input/reference gaps for S001/S025/S073 as expanded counterparts while preserving practice0/1/3 and stress2.",
+      "reuse": "Existing protected-counterpart API and reports; not a new factory or acceptance transfer."
+    }
+  ],
+  "nativeSourceFitWork": "Real fit measurements are later owner-assigned native work, not a task that can be completed by this source-only audit. Missing geometry/packing/aircraft/route evidence remains unresolved."
+}

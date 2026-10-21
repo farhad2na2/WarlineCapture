@@ -1,0 +1,95 @@
+{
+  "base": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "sourceOnly": true,
+  "traces": [
+    {
+      "name": "Runtime packaged lookup",
+      "path": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+      "startLine": 135,
+      "endLine": 160,
+      "excerpt": "        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed,string expectedDefinition=null,int expectedVersion=0,SkirmishSizeId missionSize=SkirmishSizeId.Standard)\n        {\n            // Packaged content only: a standalone player cannot read the repository\n            // Design directory, and the authored definition asset is the source of truth.\n            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))\n            {\n                Debug.LogError(\"[SkirmishLaunch] expanded queue failed. catalog=\" + catalogId + \" matrix=\" + error);\n                return false;\n            }\n\n            SkirmishExpansionCatalogConfig catalog = SkirmishExpansionCatalogConfig.Load();\n            if (catalog == null)\n            {\n                Debug.LogError(\"[SkirmishLaunch] expanded queue failed. catalog=\" + catalogId +\n                    \" missing Resources/\" + SkirmishExpansionCatalogConfig.ResourceName);\n                return false;\n            }\n\n            if (!catalog.TryGetDefinition(catalogId, out SkirmishScenarioDefinitionConfig definition) ||\n                definition == null || (expectedDefinition!=null&&(definition.DefinitionId!=expectedDefinition||definition.ContentVersion!=expectedVersion)))\n            {\n                Debug.LogError(\"[SkirmishLaunch] expanded queue failed. catalog=\" + catalogId + \" definition=missing\");\n                return false;\n            }\n\n            SkirmishExpansionAuthoredSet authored = catalog.ToAuthoredSet();",
+      "meaning": "Loads packaged matrix/catalog and refuses missing definition; does not synthesize missing IDs from Design CSV."
+    },
+    {
+      "name": "Factory transient coded set",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "startLine": 90,
+      "endLine": 118,
+      "excerpt": "        public static SkirmishExpansionAuthoredSet CreateInMemory()\n        {\n            var set = new SkirmishExpansionAuthoredSet\n            {\n                ObjectiveBa = Create<SkirmishObjectiveConfig>(),\n                ArmyGround = Create<SkirmishArmyProfileConfig>(),\n                ArmyAir = Create<SkirmishArmyProfileConfig>(),\n                ArmyCombined = Create<SkirmishArmyProfileConfig>(),\n                StartField = Create<SkirmishStartPackageConfig>(),\n                StartEstablished = Create<SkirmishStartPackageConfig>(),\n                SizeStandard = Create<SkirmishSizeConfig>(),\n                SizeWar = Create<SkirmishSizeConfig>(),\n                SizeLargeWar = Create<SkirmishSizeConfig>(),\n                DifficultyRecruit = Create<SkirmishDifficultyConfig>(),\n                DifficultyRegular = Create<SkirmishDifficultyConfig>(),\n                DifficultyVeteran = Create<SkirmishDifficultyConfig>(),\n                DifficultyCommander = Create<SkirmishDifficultyConfig>(),\n                Economy = Create<SkirmishEconomyConfig>(),\n                Upgrades = Create<SkirmishUpgradeConfig>(),\n                Intel = Create<SkirmishIntelConfig>(),\n                Roles = Create<SkirmishRoleCatalogConfig>(),\n                Overlays = Create<SkirmishRoleOverlayCatalog>(),\n                GroundStaging = Create<SkirmishGroundStagingConfig>(),\n                LayoutDbBa = Create<SkirmishMapLayoutConfig>(),\n                Publication = Create<SkirmishPublicationConfig>(),\n                DefinitionS002 = Create<SkirmishScenarioDefinitionConfig>(),\n                DefinitionS003 = Create<SkirmishScenarioDefinitionConfig>(),\n                DefinitionS004 = Create<SkirmishScenarioDefinitionConfig>(),\n                DefinitionS005 = Create<SkirmishScenarioDefinitionConfig>()",
+      "meaning": "Creates transient shared configs and four coded definition objects S002-S005; this is source capability, not measured current launches."
+    },
+    {
+      "name": "Generic authored lookup",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogFactory.cs",
+      "startLine": 214,
+      "endLine": 234,
+      "excerpt": "            if (set != null && set.Definitions != null)\n            {\n                for (int i = 0; i < set.Definitions.Count; i++)\n                {\n                    SkirmishScenarioDefinitionConfig candidate = set.Definitions[i];\n                    if (candidate != null &&\n                        string.Equals(candidate.CatalogId, catalogId, System.StringComparison.Ordinal))\n                    {\n                        // A malformed generic catalog must not silently choose an\n                        // arbitrary definition. Packaged validation also reports duplicates.\n                        if (definition != null)\n                        {\n                            definition = null;\n                            return false;\n                        }\n                        definition = candidate;\n                    }\n                }\n            }\n\n            return definition != null;",
+      "meaning": "Generic Definitions list supports other IDs without per-ID code; duplicate refuses."
+    },
+    {
+      "name": "Runtime/editor catalog boundary",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishExpansionCatalogConfig.cs",
+      "startLine": 42,
+      "endLine": 55,
+      "excerpt": "        public static SkirmishExpansionCatalogConfig Load()\n        {\n#if UNITY_EDITOR\n            if (editorValidationCatalog != null) return editorValidationCatalog;\n#endif\n            return Resources.Load<SkirmishExpansionCatalogConfig>(ResourceName);\n        }\n#if UNITY_EDITOR\n        private static SkirmishExpansionCatalogConfig editorValidationCatalog;\n        public static IDisposable UseEditorValidationCatalog(SkirmishExpansionCatalogConfig candidate)\n        {\n            if (candidate == null || editorValidationCatalog != null) throw new InvalidOperationException(\"One explicit Editor authored candidate required.\");\n            editorValidationCatalog = candidate; return new EditorValidationScope(candidate);\n        }",
+      "meaning": "Player Resources load; Editor may explicitly override with a development catalog."
+    },
+    {
+      "name": "Logical setup compiler",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupCompiler.cs",
+      "startLine": 144,
+      "endLine": 183,
+      "excerpt": "        public static bool TryCompileCatalog(\n            SkirmishExpansionAuthoredSet authored,\n            IReadOnlyList<SkirmishSetupMatrixRow> matrix,\n            SkirmishContentManifest manifest,\n            out List<SkirmishResolvedSetup> compiled,\n            out List<SkirmishCompileReason> reasons)\n        {\n            compiled = new List<SkirmishResolvedSetup>();\n            reasons = new List<SkirmishCompileReason>();\n            for (int i = 0; i < matrix.Count; i++)\n            {\n                SkirmishSetupMatrixRow vector = matrix[i];\n                if (!SkirmishExpansionCatalogFactory.TryGetDefinition(authored, vector.CatalogId, out SkirmishScenarioDefinitionConfig definition))\n                {\n                    reasons.Add(new SkirmishCompileReason(\n                        SkirmishReasonCode.MissingDefinition,\n                        \"catalog_id\",\n                        vector.CatalogId + \"/\" + SkirmishIdParsing.ToCode(vector.SizeId)));\n                    continue;\n                }\n\n                if (TryCompile(\n                    definition,\n                    SkirmishDifficultyId.Regular,\n                    vector.SizeId,\n                    0,\n                    manifest,\n                    matrix,\n                    out SkirmishResolvedSetup setup,\n                    out List<SkirmishCompileReason> compileReasons))\n                {\n                    compiled.Add(setup);\n                }\n                else\n                {\n                    reasons.AddRange(compileReasons);\n                }\n            }\n\n            return compiled.Count > 0;",
+      "meaning": "Generates resolved setups for supplied definitions and matrix rows; return anysuccess is not all360complete."
+    },
+    {
+      "name": "Ground BA disposable factory",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs",
+      "startLine": 49,
+      "endLine": 55,
+      "excerpt": "        public static bool TryCreateGroundBa10Candidate(JObject mission,OperationMapDefinition source,\n            out GroundObjective30CandidateOwner owner,out string error)\n            => TryCreateGroundBaCandidate(mission,source,false,out owner,out error);\n\n        public static bool TryCreateProtectedExpandedBaseAssaultCandidate(JObject mission,OperationMapDefinition source,\n            out GroundObjective30CandidateOwner owner,out string error)\n            => TryCreateGroundBaCandidate(mission,source,true,out owner,out error);",
+      "meaning": "Source API creates disposable ordinary or protected-counterpart candidate; no normal runtime availability count."
+    },
+    {
+      "name": "Ground objective disposable factory",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs",
+      "startLine": 84,
+      "endLine": 101,
+      "excerpt": "        // Disposable logical assets only. No AssetDatabase writes, publication,\n        // injected setup, fabricated measured flags or renderer/camera values.\n        public static bool TryCreateGroundObjective30Candidate(JObject mission,OperationMapDefinition source,\n            out GroundObjective30CandidateOwner owner,out string error)\n        {\n            owner=null;error=null;var created=new GroundObjective30CandidateOwner();\n            try\n            {\n                Require(Hash(GroundObjective30Inputs)==GroundObjective30InputsSha,\"Exact reviewed thirty-mission authoring envelope required\");\n                var envelope=JObject.Parse(File.ReadAllText(GroundObjective30Inputs));\n                var matches=((JArray)envelope[\"missions\"]).OfType<JObject>().Where(v=>(string)v[\"catalog_id\"]==(string)mission?[\"catalog_id\"]).ToArray();\n                Require(matches.Length==1&&JToken.DeepEquals(matches[0],mission),\"Exact immutable mission row required, not caller-authored geometry/budgets\");\n                Require((bool?)mission[\"publication_enabled\"]==false&&source!=null&&!EditorUtility.IsDirty(source),\"Unpublished candidate on a clean existing source required\");\n                var pin=(JObject)mission[\"source_candidate\"];string path=AssetDatabase.GetAssetPath(source);\n                Require(path==(string)pin[\"sourcePath\"]&&Hash(path)==(string)pin[\"sourceAssetSha256\"]&&\n                    source.OperationMapId==(string)pin[\"operationMapId\"]&&source.ContentHash==(string)pin[\"contentHash\"]&&source.SourceIdentityHash==(string)pin[\"sourceIdentityHash\"],\"Exact actual Campaign source identity/bytes required\");\n                foreach(var pair in new[]{new[]{\"gridPath\",\"gridAssetSha256\"},new[]{\"surfacePath\",\"surfaceAssetSha256\"}})\n                    Require(Hash((string)pin[pair[0]])==(string)pin[pair[1]],\"Exact current grid/surface bytes required\");",
+      "meaning": "Exact ground30 envelope candidate pipeline; existence of callable source is not successful compile or native fit."
+    },
+    {
+      "name": "AirCombined disposable factory",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs",
+      "startLine": 104,
+      "endLine": 119,
+      "excerpt": "        public static bool TryCreateAirCombined80Candidate(JObject mission,OperationMapDefinition source,out AirCombined80CandidateOwner owner,out string error)\n            =>TryCreateAirCombined80CandidateCore(mission,source,ReadAirCombined80Envelope,out owner,out error);\n\n        static bool TryCreateAirCombined80CandidateCore(JObject mission,OperationMapDefinition source,Func<JObject> observeEnvelope,out AirCombined80CandidateOwner owner,out string error)\n        {\n            owner=null;error=null;var created=new AirCombined80CandidateOwner();\n            try\n            {\n                RequireExactAirCombined80Row(mission,observeEnvelope,out var envelope);\n                Require(mission[\"protected_binding\"].Type==JTokenType.Null&&(string)mission[\"action\"]==\"DisposableGenericAuthoringCandidate\",\"Coded A/C binding is read-only, not a generic candidate\");\n                var ground=ReadGround30Envelope();var templateRows=((JArray)ground[\"missions\"]).OfType<JObject>().Where(v=>(string)v[\"catalog_id\"]==(string)mission[\"ground_template_catalog_id\"]).ToArray();\n                Require(templateRows.Length==1,\"Exact existing ground authoring template required\");var template=templateRows[0];\n                foreach(var key in new[]{\"map_id\",\"start_profile\"})Require(JToken.DeepEquals(template[\"tuple\"][key],mission[\"tuple\"][key]),\"Template source/start contract differs\");\n                string code=(string)mission[\"tuple\"][\"objective_id\"];\n                Require(code==\"BA\"||(string)template[\"tuple\"][\"objective_id\"]==code,\"Non-BA typed objective template differs\");\n                Require(TryCreateGroundObjective30Candidate(template,source,out var baseOwner,out string baseError),baseError);",
+      "meaning": "Exact coherent authority and Ground30 templates supply transient A/C candidates; original input dependency/provenance remains separate."
+    },
+    {
+      "name": "Protected development exposure",
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishProtectedExpandedCounterpartAuthoring.cs",
+      "startLine": 32,
+      "endLine": 66,
+      "excerpt": "            if(value==null||AssetDatabase.GetAssetPath(value)!=expected||EditorUtility.IsDirty(value)||\n                !value.TryGetDefinition(id,out var definition)||definition==null||definition.ContentVersion<=0)\n                throw new InvalidOperationException(\"Exact clean persisted counterpart development resource missing: \"+expected);\n            return value;\n        }\n\n        public static SkirmishProtectedExpandedCounterpartScope Open(SkirmishExpansionCatalogConfig exactAuthored,string id)\n        {\n            if(!SkirmishMissionDispatch.IsExpandedCounterpart(id)||exactAuthored==null||\n                !exactAuthored.TryGetDefinition(id,out var definition)||definition==null||definition.ContentVersion<=0||\n                definition.DefinitionId!=\"skirmish.\"+id.ToLowerInvariant()||definition.CampaignMap==null||\n                definition.MapLayout==null||definition.MissionLogicalBinding==null||definition.ObjectiveConfig==null||\n                definition.ObjectiveConfig.Kind!=SkirmishObjectiveKind.BaseAssault)\n                throw new ArgumentException(\"Exact real source-bound counterpart definition/layout/binding required.\");\n            if(!SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix,out string error))throw new InvalidOperationException(error);\n            foreach(var size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar})\n                if(!SkirmishSetupCompiler.TryCompile(definition,SkirmishDifficultyId.Regular,size,1,\n                    new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out _,out var reasons))\n                    throw new InvalidOperationException(\"Counterpart normal compiler refused \"+size+\": \"+string.Join(\";\",reasons));\n            var shipped=Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);\n            if(shipped==null||!ReferenceEquals(SkirmishBattleCatalogConfig.Load(),shipped)||!shipped.TryValidate(out error))\n                throw new InvalidOperationException(\"Unscoped actual main library required: \"+error);\n            var rows=shipped.Entries.ToArray();int found=0;\n            SkirmishMissionDispatch.TryGetLegacyIndex(id,out int index);\n            for(int i=0;i<rows.Length;i++)\n            {\n                if(rows[i].ScenarioId!=id)continue;\n                if(!rows[i].IsPlayable||rows[i].PlayableScenarioIndex!=index||rows[i].ContentVersion!=0||!string.IsNullOrEmpty(rows[i].DefinitionId))\n                    throw new InvalidOperationException(\"Exact unchanged practice row required before isolated counterpart exposure.\");\n                found++;rows[i].DefinitionId=definition.DefinitionId;rows[i].ContentVersion=definition.ContentVersion;\n            }\n            if(found!=1)throw new InvalidOperationException(\"Exactly one existing canonical row required.\");\n            var value=new SkirmishProtectedExpandedCounterpartScope();\n            try\n            {",
+      "meaning": "Editor-only scoped counterpart exposure uses supplied full definition and real compiler; no shipping practice mutation or legacy-win transfer."
+    }
+  ],
+  "countInterpretation": {
+    "persistedAssets": 6,
+    "trackedResourceReferences": 6,
+    "codedTransientFactoryDefinitions": 4,
+    "candidateFactoryLogicalCoverage": "GroundBA10/GroundObjective30/AirCombined80 source APIs; overlaps coded/protected rows, not120implemented/native-success cases",
+    "generatedSetupCountActuallyRun": "UNKNOWN",
+    "currentImplementedMissionTotal": "UNKNOWN",
+    "WindowsDirtyA7ImplementationTotal": "UNKNOWN",
+    "WindowsDirtyA7SourceComparisonsPerformed": false,
+    "ordinaryDisposableCandidateAuthorityRows": {
+      "GroundBA": 6,
+      "GroundFC_BT_CE": 30,
+      "AirCombined": 77,
+      "denominatorMeaning": "113 unprotected logical authority rows, including already-persistedS049/S074; not successful generation count. Protected counterparts3 use separate path; coded4 preserve binding."
+    }
+  },
+  "conclusion": "Six persisted assets does not establish only six implemented missions. Generic runtime/compiler and disposable authoring machinery exists; successful generated setups/current release readiness cannot be counted from static source."
+}

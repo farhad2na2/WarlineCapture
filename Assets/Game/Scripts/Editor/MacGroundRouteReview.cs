@@ -7,6 +7,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Unity.Rendering;
 using UnityEditor;
 using UnityEngine;
 using Newtonsoft.Json.Linq;
@@ -38,6 +39,61 @@ namespace Game.Editor
         public static void RunCampaignM01()
         {
             Begin("campaign-m01"); CampaignTutorialEntryEditorProbe.RunM01Journey();
+        }
+        static void MeasureRenderedSupport(EntityManager em, float3 point, JObject row)
+        {
+            float highest = float.NegativeInfinity; string source = null;
+            using var query = em.CreateEntityQuery(typeof(WorldRenderBounds), typeof(MaterialMeshInfo), typeof(LocalToWorld));
+            using var renderers = query.ToEntityArray(Allocator.Temp);
+            foreach (var renderer in renderers)
+            {
+                var bounds = em.GetComponentData<WorldRenderBounds>(renderer).Value;
+                if (math.any(math.abs(point.xz - bounds.Center.xz) > bounds.Extents.xz + .001f) ||
+                    !em.HasComponent<RenderMeshArray>(renderer) || !em.IsComponentEnabled<MaterialMeshInfo>(renderer)) continue;
+                var array = em.GetSharedComponentManaged<RenderMeshArray>(renderer);
+                var info = em.GetComponentData<MaterialMeshInfo>(renderer);
+                if (info.HasMaterialMeshIndexRange)
+                {
+                    var range = info.MaterialMeshIndexRange;
+                    for (int i = range.start; i < range.end; i++)
+                    {
+                        var index = array.MaterialMeshIndices[i];
+                        SampleRoadDraw(array.MeshReferences[index.MeshIndex].Value, index.SubMeshIndex,
+                            em.GetComponentData<LocalToWorld>(renderer).Value, point, ref highest, ref source);
+                    }
+                }
+                else if (info.Mesh < 0)
+                    SampleRoadDraw(array.GetMesh(info), info.SubMesh, em.GetComponentData<LocalToWorld>(renderer).Value,
+                        point, ref highest, ref source);
+            }
+            row["rendered_support_measured"] = math.isfinite(highest);
+            if (math.isfinite(highest)) { row["rendered_support_y"] = highest; row["rendered_support_mesh"] = source;
+                row["rendered_minus_sample"] = highest - (float)row["sampled_height"]; }
+        }
+        static void SampleRoadDraw(Mesh mesh, int submesh, float4x4 matrix, float3 point, ref float highest, ref string source)
+        {
+            if (mesh == null) return;
+            string name = mesh.name.ToLowerInvariant();
+            if (!name.Contains("road") && !name.Contains("street") && !name.Contains("pavement") && !name.Contains("sidewalk")) return;
+            using var data = MeshUtility.AcquireReadOnlyMeshData(mesh);
+            using var vertices = new NativeArray<Vector3>(data[0].vertexCount, Allocator.Temp);
+            using var indices = new NativeArray<int>(data[0].GetSubMesh(submesh).indexCount, Allocator.Temp);
+            data[0].GetVertices(vertices); data[0].GetIndices(indices, submesh, true);
+            for (int i = 0; i + 2 < indices.Length; i += 3)
+            {
+                float3 a = math.transform(matrix, (float3)vertices[indices[i]]);
+                float3 b = math.transform(matrix, (float3)vertices[indices[i + 1]]);
+                float3 c = math.transform(matrix, (float3)vertices[indices[i + 2]]);
+                float3 normal = math.cross(b - a, c - a);
+                if (math.abs(math.normalizesafe(normal).y) < .7f) continue;
+                float denominator = (b.z - c.z) * (a.x - c.x) + (c.x - b.x) * (a.z - c.z);
+                if (math.abs(denominator) < .000001f) continue;
+                float u = ((b.z - c.z) * (point.x - c.x) + (c.x - b.x) * (point.z - c.z)) / denominator;
+                float v = ((c.z - a.z) * (point.x - c.x) + (a.x - c.x) * (point.z - c.z)) / denominator;
+                if (u < -.00001f || v < -.00001f || u + v > 1.00001f) continue;
+                float y = u * a.y + v * b.y + (1 - u - v) * c.y;
+                if (y > highest && y < point.y + 2) { highest = y; source = AssetDatabase.GetAssetPath(mesh); }
+            }
         }
         static void Tick()
         {
@@ -115,6 +171,7 @@ namespace Game.Editor
                             row["environment_database"] = db.OperationMapId.ToString(); row["authored_placements_within_60m_by_category"] = nearby;
                         }
                     }
+                    MeasureRenderedSupport(em, transform.Position, row);
                     rows.Add(row);
                 }
                 if (rows.Count == 0) return;

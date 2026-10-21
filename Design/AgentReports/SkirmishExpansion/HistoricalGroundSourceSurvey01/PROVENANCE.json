@@ -1,0 +1,15 @@
+{
+  "scope": "ExactHistoricalSurveyTransfer_NotCurrentFitAcceptance",
+  "originalPath": "Logs/SkirmishProduction/ground-source-fit-20261015-11.json",
+  "bytes": 2340364,
+  "sha256": "18b520ff6cb45a25f645502cba1787b27375cb52a20843195dd501e3b7029f73",
+  "originalScope": "ReadOnlyPinnedSourceFitSurvey",
+  "baseCommit": "dd4a5bca3ed3c8988efc51e4a37ecdfe49890b5d",
+  "branch": "codex/skirmish-historical-source-survey-transfer-20261021",
+  "currentRuntimeSourceCorrespondenceProven": false,
+  "runtimeFitCertified": false,
+  "paidAircraftLifecycleCertified": false,
+  "playerReady": false,
+  "normalMissionCredit": 0,
+  "sourceOrGeometryEdited": false
+}

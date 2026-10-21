@@ -1,0 +1,55 @@
+{
+  "enabled": false,
+  "nativeAssigned": false,
+  "catalogId": "S007",
+  "specificQuestion": "Can this exact existing Campaign source support S007 Field Frontline facilities, both canonical armies and three typed Frontline areas simultaneously for all three sizes, with same-reservation legal route witnesses and an exact logical graph?",
+  "existingCollector": "Game.Editor.SkirmishGroundSourceFitSurvey.RunAll120SimultaneousLogicalRefinement",
+  "environmentSchema": {
+    "WARLINE_ALL120_REFINEMENT_CATALOG": "S007",
+    "WARLINE_ALL120_REFINEMENT_OUTPUT": null
+  },
+  "freshOutputRule": "Fresh absolute path below Logs/SkirmishProduction; root owner must assign path/log/timeout and checked platform wrapper. No command is authorized by this report.",
+  "prerequisites": [
+    "Exact base/current source epoch reviewed by owner; report source pins are not current-a7 equality",
+    "Original Ground30 survey authority available on Windows only; exact raw dependency needed in actual collector project",
+    "All index/authority/canonical/physical pins and clean loaded references pass existing checks",
+    "Fresh Editor project/PID/tree ownership, Hub and capacity checks; preserve Menu/Fig/SCN13 and other jobs",
+    "Explicit one-run assignment and checked platform wrapper; no native run is assigned here"
+  ],
+  "requiredOutputs": [
+    "Top-level result CollectedUnqualified with no error and cleanupVerified=true",
+    "sourcePinsRecheckedAfterMeasurement=true and exact nativeGridIdentity",
+    "One selected S007 mission row plus missionArtifacts path/hash and byte-equivalent parsed row",
+    "All three strict size passes: complete facilities, actors inside pads, same-reservation NativeQueryFoundExactGoal routes with failureCode0",
+    "Actual proposedLayoutJson/semantic fingerprint and authoredDefinitionLogicalBindingGraph, normalThreeSizeCompilerPassed",
+    "Fresh typed-perimeters artifact with raw hash, source/geometry/layout identities; measured samples are not full source-fit certification",
+    "Role-specific engineering view values and original framing scope; no camera/player acceptance"
+  ],
+  "existingPersistenceEntry": {
+    "enabled": false,
+    "method": "Game.Editor.SkirmishGroundSourceFitSurvey.MaterializeAll120ReviewedLogicalCandidate",
+    "environmentSchema": {
+      "WARLINE_ALL120_MATERIALIZATION_REPORT": null,
+      "WARLINE_ALL120_MATERIALIZATION_REPORT_SHA256": null,
+      "WARLINE_ALL120_MATERIALIZATION_CATALOG": "S007"
+    },
+    "requires": "Separate reviewed exact collector report and durable mission/typed artifacts, strict native three-size/route/compiler gates, clean catalogs and no existing definition; development-only output, publication unchanged",
+    "assigned": false
+  },
+  "whyGenericCollector": "Existing All120 collector writes missionArtifacts required by existing materializer; direct Ground30 collector is not recommended as that persistence envelope. No new collector/importer foundation needed.",
+  "S008": "Separate Established canonical measurement after S007; never inherit S007 proof",
+  "separatePendingAcceptance": [
+    "Actual full source-fit/interior/wall/no-build/legal approaches",
+    "Route independence/service/paid repair/aircraft lifecycle",
+    "All difficulty/seed families beyond three Regular engineering sizes",
+    "Native visual framing review",
+    "Normal-input ARIA/result/return/checkpoint",
+    "Strict cleanup",
+    "Paid-resource/queue",
+    "APK",
+    "Device/player acceptance"
+  ],
+  "sourceFitCertified": false,
+  "cameraAccepted": false,
+  "normalMissionReady": false
+}

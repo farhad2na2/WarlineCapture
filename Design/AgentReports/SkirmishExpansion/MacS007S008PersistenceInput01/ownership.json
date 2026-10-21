@@ -1,0 +1,22 @@
+{
+  "observedUtc": "2026-10-21T00:30:03.188886+00:00",
+  "scope": "Read-only planning observation; no native launch authority and absent processes are not proven terminal jobs",
+  "hubObserved": true,
+  "hubSignedIn": "UNKNOWN_NotProbed",
+  "editorsAndWrappers": [
+    {
+      "pid": 51962,
+      "parentPid": 1,
+      "startedHostLocalPs": "Tue Oct 20 12:41:34 2026",
+      "cpuPercent": 1.4,
+      "project": "/Volumes/T7/Projects/Fig/Fig",
+      "processKind": "Editor",
+      "redactedCommand": "/Applications/Unity/Hub/Editor/6000.0.58f2/Unity.app/Contents/MacOS/Unity -projectPath /Volumes/T7/Projects/Fig/Fig"
+    }
+  ],
+  "memoryPressureCommandExit": 0,
+  "memoryFreePercent": 75,
+  "nativeJobAssigned": false,
+  "processControlPerformed": false,
+  "capacityDecision": "No run admitted. Existing owners protected; exact future measurement assignment, source and fresh capacity/ownership gate required."
+}

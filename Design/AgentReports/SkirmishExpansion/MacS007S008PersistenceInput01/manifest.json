@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "scope": "DisabledSourceInputs_NotNativeOrAcceptance",
+  "payloads": [
+    {
+      "name": "S007.json",
+      "bytes": 20524,
+      "sha256": "ad9de53da4e6afd3f2995279549c01d3649bd0851a546b079abb66cde17936a4"
+    },
+    {
+      "name": "S008.json",
+      "bytes": 20557,
+      "sha256": "9ddae030ddbeca728ccbdbbc7d942ebcb7f4b954e9803815d88815ad4dcff1d5"
+    },
+    {
+      "name": "artifact-gap.json",
+      "bytes": 1459,
+      "sha256": "3a99ae17217bd45d32988f6c675781a4b3841e8238f76c51dc15c489fd4528b3"
+    },
+    {
+      "name": "next-measurement.json",
+      "bytes": 3585,
+      "sha256": "8858cbde673fc3e4beb7280a2a88411dc069676b1cb600f1d94d7e09bf6afb44"
+    },
+    {
+      "name": "ownership.json",
+      "bytes": 913,
+      "sha256": "d6bd2cb58e902fa708d9a375ac59cb7f84f66e306f4335f835243e39a7bce6ea"
+    },
+    {
+      "name": "review.md",
+      "bytes": 3861,
+      "sha256": "ea353901b5ec40ac422a93216ff1adac88e3e1a01ad113a44114fa7161143c3b"
+    },
+    {
+      "name": "source-pins.json",
+      "bytes": 8299,
+      "sha256": "3a9554e330aa4bf2cf9d6e46c53bd58bb3122306ff875d9f526fcba632560231"
+    },
+    {
+      "name": "validation-index.log",
+      "bytes": 416,
+      "sha256": "36ad0ea23a2015d8e232aaf9f983e20c2f2dd4ef88e07579903bb8b2732e40fd"
+    },
+    {
+      "name": "verify.py",
+      "bytes": 5858,
+      "sha256": "50963c53bede5f0d0ea5a7f1ba1ebd770383354154ef9d8ee34895544137f6db"
+    }
+  ]
+}

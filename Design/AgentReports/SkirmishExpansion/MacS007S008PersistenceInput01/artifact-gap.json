@@ -1,0 +1,39 @@
+{
+  "enabled": false,
+  "matchingS007S008AreaViewArtifact": "UNKNOWN_NoExactMatchInBoundedLocalReceiptSet",
+  "searchScope": {
+    "localDirectory": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction",
+    "topLevelNameFilter": [
+      "ground",
+      "refine",
+      "S007",
+      "S008",
+      "DB_FC"
+    ],
+    "neighborMetadataOnly": [
+      "MacS006ExistingCampaignSourceFitReview01/review.json",
+      "MacS050LogicalSourceFitProposal01/review-summary.md",
+      "MacGroundBaConsumedBakeAuthorityReview01/review.json"
+    ],
+    "neighborEvidenceTransfers": false,
+    "globalAbsenceClaim": false
+  },
+  "requiredHistoricalSurvey": {
+    "path": "Logs/SkirmishProduction/ground-source-fit-20261015-11.json",
+    "bytes": 2340364,
+    "sha256": "18b520ff6cb45a25f645502cba1787b27375cb52a20843195dd501e3b7029f73",
+    "Mac": "Absent_Untransferred",
+    "Windows": "Available_ExactDigestReportedByCoordinator",
+    "attribution": "Direct Windows coordinator message received during this report; certutil tool0c0fcd; metadata only, not independently read by Mac",
+    "scope": "ReadOnlyPinnedSourceFitSurvey",
+    "runtimeFitCertified": false,
+    "paidAircraftLifecycleCertified": false,
+    "playerReady": false,
+    "currentS007SourceFit": false,
+    "currentSourceAssetEqualityInferred": false,
+    "payloadTransferRequested": false
+  },
+  "committedAnalysesAreRawSurveySubstitutes": false,
+  "areaMeasurement": null,
+  "viewScalars": null
+}

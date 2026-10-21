@@ -1,0 +1,56 @@
+{
+  "implemented": true,
+  "merged": false,
+  "approvedDirection": "A during Campaign; C after full Campaign completion",
+  "visualReview": {
+    "status": "Self-reviewed final actual Game screens against approved A/C",
+    "ownerReview": "Pending",
+    "locales": [
+      "en",
+      "fa-IR"
+    ],
+    "nativeAspectRatios": [
+      "16:9",
+      "20:9",
+      "4:3"
+    ]
+  },
+  "automatedChecks": {
+    "status": "Passed",
+    "nativeChecks": 649,
+    "nativeCaptures": 12,
+    "persistenceTests": 16,
+    "sourceDiffCheck": "Passed",
+    "wrapperExit": 0,
+    "fullLog": "ValidationLogs/final-16.log"
+  },
+  "normalInputMenuJourney": {
+    "status": "Passed",
+    "input": "InputSystem touch through raycast-verified native controls",
+    "taps": 30,
+    "states": [
+      "A",
+      "C"
+    ],
+    "locales": [
+      "en",
+      "fa-IR"
+    ],
+    "nextShownAndLaunchIdentity": "S002 matches",
+    "campaignReplayAndReturns": true,
+    "profileUnchangedByNavigation": true,
+    "fixtureSaves": true
+  },
+  "completeNormalInputMissionAriaResultReturn": "Not established by this menu task",
+  "realPlayerDeviceAcceptance": "Pending",
+  "operationsGameplayGate": "Existing O001 objective/source-fit load failure documented in ResultScreenReview20261021/Implementation/OPERATIONS_LOAD_GATE.md; not revalidated here",
+  "validationFixtureDependencies": {
+    "restored": true,
+    "sha256": {
+      "Assets/Game/Resources/SkirmishRigidAircraftGeometry_Transport.asset": "3903e2a1a93af11e7254bbd3bf5a1dcf9849b83e403505f8ae19450daa54b9ae",
+      "Assets/Game/Resources/SkirmishCanonicalAircraftGeometry_V1.asset": "5028f5eea8aef4d31caee2d1a730cd8704c29a6a020f97784ae3e9533edfcb80",
+      "Assets/Game/Resources/SkirmishAircraftRotorGeometry_V1.asset": "0eb796b92051e4ac6d16e09769a227cf687b0fbc38b8f1f79517ce151e1bcf5d"
+    }
+  },
+  "unrelatedChanges": "Font assets and 19 preexisting/importer metadata changes excluded from candidate"
+}

@@ -1,0 +1,16 @@
+ModeTitle font=Oxanium-Bold SDF size=40 visible=10 rect=(x:0.00, y:-47.00, width:329.00, height:47.00) text=OPERATIONS
+NextPlayableMission font=Oxanium-Bold SDF size=22.8 visible=34 rect=(x:0.00, y:-32.00, width:519.00, height:32.00) text=NEXT: O001 · STREET SIGNALS — OLD QUARTER
+UniqueMissionProgress font=Oxanium-Bold SDF size=25.9 visible=13 rect=(x:0.00, y:-36.00, width:220.00, height:36.00) text=0/60 COMPLETED
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Label font=Oxanium-Bold SDF size=24 visible=5 rect=(x:-87.00, y:-15.00, width:174.00, height:30.00) text=OPEN  ›
+ModeTitle font=Oxanium-Bold SDF size=40 visible=8 rect=(x:0.00, y:-47.00, width:329.00, height:47.00) text=SKIRMISH
+NextPlayableMission font=Oxanium-Bold SDF size=25 visible=22 rect=(x:0.00, y:-32.00, width:519.00, height:32.00) text=NEXT: S002 · COMMAND SIEGE
+UniqueMissionProgress font=Oxanium-Bold SDF size=24.2 visible=14 rect=(x:0.00, y:-36.00, width:220.00, height:36.00) text=1/120 COMPLETED
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=1
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:43.75, height:31.00) text=0
+Label font=Oxanium-Bold SDF size=24 visible=5 rect=(x:-87.00, y:-15.00, width:174.00, height:30.00) text=OPEN  ›

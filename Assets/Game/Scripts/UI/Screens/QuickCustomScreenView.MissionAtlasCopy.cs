@@ -4,7 +4,7 @@ namespace Game.UI.Runtime
 {
     public sealed partial class QuickCustomScreenView
     {
-        private string AtlasMissionName(string objective,int slot)
+        public static string AtlasMissionName(string objective,int slot)
         {
             string[] en,fa;
             switch(objective)
@@ -23,7 +23,7 @@ namespace Game.UI.Runtime
                     fa=new[]{"یورش به پاسگاه","محاصره ستاد","یورش هوایی","حمله به پایگاه هوایی","پیشروی ترکیبی","محاصره ترکیبی"};break;
             }
             int index=Mathf.Clamp(slot,0,5);
-            return UiShellRuntimeGateway.Localization.Get("ui.atlas.mission."+objective?.ToLowerInvariant()+"."+index,UiShellRuntimeGateway.Localization.IsRightToLeft?fa[index]:en[index]);
+            return UiShellRuntimeGateway.Localization.Get("ui.atlas.mission."+objective?.ToLowerInvariant()+"."+index,Game.Configs.GameLocalization.CurrentLocaleCode==Game.Configs.GameLocalization.PersianLocaleCode?fa[index]:en[index]);
         }
         private static string AtlasObjectivePurpose(string objective)
         {

@@ -61,6 +61,29 @@ namespace Game.Editor
         }
 
         public static void Run()=>Run(true);
+        // A screenshot of the existing Campaign geometry at the real O001 objective.
+        // No physical map, terrain, road or gameplay configuration is created or changed.
+        public static void CaptureOperationsHomePreview()
+        {
+            var definition=Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
+            if(definition==null)throw new InvalidOperationException("Missing published Operations definition.");
+            string restore=SceneManager.GetActiveScene().path;
+            try
+            {
+                string path=MainMenuModeCardsAuthoring.OperationsPreviewPath;
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                var shots=new List<Shot>{new Shot{
+                    ScenePath=RequireScene(definition.operationMap,"O001"),
+                    OutputAssetPath=path,
+                    Camera=FrameCard("O001",definition.exitPosition,definition.scanPositions[1],true),
+                    Width=CardWidth,Height=CardHeight,CardSubject=definition.scanPositions[1],RefineCard=true,
+                    LogLine="[MainMenuMissionPreview] id=operation.o001 source=published-definition actualGeometry=true"
+                }};
+                RenderGrouped(shots);ImportSprites(shots);
+            }
+            finally{RestoreScene(restore);}
+        }
+
 
         private static void Run(bool includePlates)
         {

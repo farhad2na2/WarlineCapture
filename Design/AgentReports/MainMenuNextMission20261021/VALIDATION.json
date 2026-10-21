@@ -1,0 +1,6 @@
+{
+    "passed": true,
+    "checks": 649,
+    "captures": 12,
+    "evidence": "Native renders use isolated presentation fixtures; mission outcomes and player/device readiness are not claimed."
+}

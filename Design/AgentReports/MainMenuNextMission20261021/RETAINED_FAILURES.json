@@ -1,0 +1,93 @@
+{
+  "rawLogsArchive": "ValidationLogs/retained-attempts.zip",
+  "attempts": [
+    {
+      "log": "main-menu-next-missions-build-01.log",
+      "sha256": "250a8315be2521c5d093b81edb8fb02d2c428c199dd022ee6971c68ad7226f7e",
+      "note": "Compile failure: ContentAccessRuntime delegate signature; Editor terminated and wrapper143."
+    },
+    {
+      "log": "main-menu-next-missions-build-02.log",
+      "sha256": "486b6657901e53d96eb6aedba7cf22da300537595690254dcacd4354dd6df64d",
+      "note": "Skirmish difficulty enum starts at1; medal assertion failed."
+    },
+    {
+      "log": "main-menu-next-missions-final-14.log",
+      "sha256": "fca3b399b80d5816e09193b605d6651b3dffb950461daa63355a4455d4679758",
+      "note": "Native and launch checks passed; completed-Campaign replay route timed out."
+    },
+    {
+      "log": "main-menu-next-missions-final-15.log",
+      "sha256": "0261c5f56612b02ac14197ba08ede359513af9eee54b6a2e2e8bd2fb42034017",
+      "note": "Native checks passed; touch start refused physical controls held before first tap."
+    },
+    {
+      "log": "main-menu-next-missions-final-16.log",
+      "sha256": "4f60f68d131e0d1fa31fe6f1619c4ec45ea7dc0e11fd57e3f4d754e4a427dab3",
+      "note": "Final full pass, wrapper exit0."
+    },
+    {
+      "log": "main-menu-next-missions-input-13.log",
+      "sha256": "587bd03db74f730ebc924d301f23742e244868b93dcd24a4f680e95bf74ed2aa",
+      "note": "Passed touch journey; predates final text and launch identity checks."
+    },
+    {
+      "log": "main-menu-next-missions-native-03.log",
+      "sha256": "402bcfe0b441309502756e4da7b712a9a6bc04ba2225162fa4c4e7feaf1c82b2",
+      "note": "Operations probe command ID grammar rejected."
+    },
+    {
+      "log": "main-menu-next-missions-native-04.log",
+      "sha256": "6cda26f907769cd70aac5de30d06d88451f4aea5cb680bb9483dd7f6dcaaf720",
+      "note": "Checks passed but visual review rejected clipping, overlap and Persian blanks."
+    },
+    {
+      "log": "main-menu-next-missions-native-05.log",
+      "sha256": "788c24c725cd4682584387f81468f2d0e0dae45993c048ed83a8dc9342f04c2b",
+      "note": "Checks passed but visual review rejected Persian blanks and spacing."
+    },
+    {
+      "log": "main-menu-next-missions-native-06.log",
+      "sha256": "5d0ac9db5b958c484ca6792a48e41fc6b69e71af270c54c2e75591a7bbe6b43a",
+      "note": "Strengthened native check caught next/count overlap."
+    },
+    {
+      "log": "main-menu-next-missions-native-07.log",
+      "sha256": "0a86ba7abbd26be6d40ef5af13ba144260a95feb232c48b19ddbf56f79527d4a",
+      "note": "Missing contracts using in input fixture; compile failure, Editor terminated wrapper143."
+    },
+    {
+      "log": "main-menu-next-missions-review-input-08.log",
+      "sha256": "2f0ec3dc1327fd288f0a312200283727df0415dbf9d3a20ce7b7d3aa21a8566d",
+      "note": "Native check caught invisible Persian heading."
+    },
+    {
+      "log": "main-menu-next-missions-review-input-09.log",
+      "sha256": "3ebee448cdc8ac683f2ccc80d7617e851e909fb70cfad5b2bb4eea2c876d7b0f",
+      "note": "Native checks passed; strict Play-entry dependency stamps stale."
+    },
+    {
+      "log": "main-menu-next-missions-review-input-10.log",
+      "sha256": "0cd75b04b59e4bdc87bb11c8f018ad8c49f314c92ee690bcf2f4fda37a94e312",
+      "note": "Strict original guards passed after scoped stamp refresh; Back hierarchy timeout."
+    },
+    {
+      "log": "main-menu-next-missions-review-input-11.log",
+      "sha256": "7b28ecb3cb6c36d7a19b03839e96644b0e77f5fd6db2fd353982786bc0bbedf2",
+      "note": "Queued home mission selection was not consumed on route entry."
+    },
+    {
+      "log": "main-menu-next-missions-review-input-12.log",
+      "sha256": "c9332e59cc4541e0502a921f66357f6e88497e1a239b409b285174aeb648dc8a",
+      "note": "Dependency preparation refused transient busy Editor."
+    }
+  ],
+  "localVisualEvidenceDirectories": [
+    "PassedLive13",
+    "FailedLive11",
+    "FailedNative05",
+    "FailedNative04",
+    "FailedLive14",
+    "FailedLive15"
+  ]
+}

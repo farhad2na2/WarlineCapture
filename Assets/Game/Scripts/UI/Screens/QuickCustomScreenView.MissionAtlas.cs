@@ -18,6 +18,8 @@ namespace Game.UI.Runtime
         private string AtlasText(string key,string fallback="")=>UiShellRuntimeGateway.Localization.Get(key,fallback);
         private Texture AtlasPreview(string key,string id,string map)
         {
+            var shared=MissionAtlasMissionArtworkCatalog.Load()?.Find(id);
+            if(shared!=null)return shared;
             int index=id=="S001"?0:id=="S002"?1:id=="S003"?2:id=="S004"?3:-1;
             if(index>=0&&approvedMissionIllustrations!=null&&index<approvedMissionIllustrations.Length&&approvedMissionIllustrations[index]!=null)return approvedMissionIllustrations[index];
             return ResolveGridPreview(key,id,map,out _);

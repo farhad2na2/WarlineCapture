@@ -155,6 +155,63 @@ namespace Game.Editor
             return null;
         }
 
+        public static string WriterEpochUnavailableReason(GridConfig grid, DynamicBlockerComponent blockers) =>
+            RuntimeGridBlockerEpoch.IsCommitted(grid, blockers) ? null : "ActualWriterStorageEpochNotCommitted";
+
+        public static bool SameWriterEpoch(in DynamicBlockerComponent a, in DynamicBlockerComponent b) =>
+            a.StorageEpoch == b.StorageEpoch && a.AppliedStorageEpoch == b.AppliedStorageEpoch &&
+            a.AppliedRevision == b.AppliedRevision && a.WriteInProgress == b.WriteInProgress && a.EpochExhausted == b.EpochExhausted;
+
+        // Diagnostic only; never filters live writer inputs or marks a runtime producer source-owned.
+        // Current attempts/helpers without a real grid/source binding remain unavailable.
+        public static string WriterInputOwnershipUnavailableReason(EntityManager em, Entity gridEntity,
+            Unity.Entities.Hash128 authoredGuid, Entity sourceRoot, FixedString64Bytes sessionId)
+        {
+            if (sourceRoot == Entity.Null || !em.Exists(sourceRoot) || !em.HasComponent<SceneReference>(sourceRoot) ||
+                !em.GetComponentData<SceneReference>(sourceRoot).SceneGUID.Equals(authoredGuid) ||
+                !em.HasBuffer<ResolvedSectionEntity>(sourceRoot)) return "WriterSourceLifecycleUnavailable";
+            string reason = SceneOwnerUnavailableReason(em, gridEntity, authoredGuid, sourceRoot);
+            if (reason != null) return "WriterGridOwnership:" + reason;
+            var storage = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            using var inputs = em.CreateEntityQuery(typeof(StaticGridBlocker), typeof(UnitGrid), typeof(GridBlockerSize));
+            using var entities = inputs.ToEntityArray(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                if (em.HasComponent<SkirmishAttemptOwnedComponent>(entity))
+                {
+                    if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId.Equals(sessionId))
+                        return "ForeignAttemptWriterContributor";
+                    return "AttemptWriterGridSourceBindingUnavailable";
+                }
+                reason = SceneOwnerUnavailableReason(em, entity, authoredGuid, sourceRoot);
+                if (reason != null) return "WriterContributorOwnership:" + reason;
+                if (!em.HasComponent<StaticBlockerPrevBounds>(entity)) return "WriterNewContributorNotApplied";
+                var previous = em.GetComponentData<StaticBlockerPrevBounds>(entity);
+                int2 origin = em.HasComponent<OperationMapBuildingComponent>(entity) && em.HasComponent<RuntimeBuildingCombatInfo>(entity)
+                    ? em.GetComponentData<RuntimeBuildingCombatInfo>(entity).OriginCell : em.GetComponentData<UnitGrid>(entity).Cell;
+                int2 max = origin + math.max(em.GetComponentData<GridBlockerSize>(entity).Size, new int2(1, 1));
+                byte pass = em.HasComponent<FriendlyPassGridBlocker>(entity)
+                    ? em.GetComponentData<FriendlyPassGridBlocker>(entity).AllowedFactionId : byte.MaxValue;
+                var opening = em.HasComponent<StaticGridBlockerSurfaceOpeningComponent>(entity)
+                    ? em.GetComponentData<StaticGridBlockerSurfaceOpeningComponent>(entity) : default;
+                var oldOpening = em.HasComponent<StaticGridBlockerPrevSurfaceOpeningComponent>(entity)
+                    ? em.GetComponentData<StaticGridBlockerPrevSurfaceOpeningComponent>(entity).Value : default;
+                if (previous.AppliedGrid != gridEntity || previous.StorageEpoch != storage.StorageEpoch ||
+                    !math.all(previous.Min == origin) || !math.all(previous.Max == max) || previous.FriendlyPassFactionId != pass ||
+                    !opening.SameGeometry(oldOpening)) return "WriterInputChangedSinceApplication";
+            }
+            using var histories = em.CreateEntityQuery(typeof(StaticBlockerPrevBounds));
+            using var historyEntities = histories.ToEntityArray(Allocator.Temp);
+            foreach (var entity in historyEntities)
+                if (em.HasComponent<StaticGridBlocker>(entity) &&
+                    (!em.HasComponent<UnitGrid>(entity) || !em.HasComponent<GridBlockerSize>(entity)))
+                    return "WriterMalformedHistoryNotInCurrentInputDomain";
+            using var removals = em.CreateEntityQuery(new EntityQueryDesc {
+                All = new[] { ComponentType.ReadOnly<StaticBlockerPrevBounds>() },
+                None = new[] { ComponentType.ReadOnly<StaticGridBlocker>() } });
+            return removals.IsEmptyIgnoreFilter ? null : "WriterRemovalNotApplied";
+        }
+
         public static OwnedGridSnapshot CopyAvailableStorage(GridConfig grid, DynamicBlockerComponent blockers, DynamicOccupancyComponent occupancy)
         {
             string error = StorageUnavailableReason(grid, blockers, occupancy);
@@ -260,6 +317,9 @@ namespace Game.Editor
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
             var occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             reason = StorageUnavailableReason(grid, blockers, occupancy); if (reason != null) return Unavailable(facts, reason);
+            reason = WriterEpochUnavailableReason(grid, blockers); if (reason != null) return Unavailable(facts, reason);
+            reason = WriterInputOwnershipUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot, session.SessionId);
+            if (reason != null) return Unavailable(facts, reason);
             int frame = Time.frameCount;
             var owned = CopyAvailableStorage(grid, blockers, occupancy);
             try
@@ -275,6 +335,15 @@ namespace Game.Editor
                 if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
                     !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
                     return Unavailable(facts, reason ?? "SourceLifecycleChangedDuringCopy");
+                var writerAfter = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+                reason = WriterEpochUnavailableReason(grid, writerAfter);
+                if (reason != null || !SameWriterEpoch(blockers, writerAfter))
+                    return Unavailable(facts, reason ?? "WriterEpochChangedDuringCopy");
+                reason = WriterInputOwnershipUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot, session.SessionId);
+                if (reason != null) return Unavailable(facts, reason);
+                facts["actualWriterStorage"] = new JObject { ["storageEpoch"] = blockers.StorageEpoch,
+                    ["appliedStorageEpoch"] = blockers.AppliedStorageEpoch, ["appliedRevision"] = blockers.AppliedRevision,
+                    ["scope"] = "ActualDeltaAndReplayCommit_NotPresentationCompletenessOrHelperApplicability" };
                 int cells = grid.Width * grid.Height, blockedCount = 0, occupiedCount = 0;
                 byte[] blockedBytes = new byte[cells], occupiedBytes = new byte[cells];
                 for (int i = 0; i < cells; i++)

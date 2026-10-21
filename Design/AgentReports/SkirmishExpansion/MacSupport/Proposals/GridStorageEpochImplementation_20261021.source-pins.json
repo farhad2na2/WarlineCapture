@@ -1,0 +1,13 @@
+{
+  "baseCommit": "4f88fe2863288c473f5a830f590ac43d98b7e2ee",
+  "inventoryCommit": "3ccc3e838591bf3b02b2a27c4c46ba3ff0f99eab",
+  "implementationSourceSha256": {
+    "Assets/Game/Scripts/Components/GridComponents.cs": "ec3416ec19f9104420552573b6e7117701529118bd92318f1943013e3048db9a",
+    "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs": "c17db1628f4e70d45eb98928349b6b9936d0232fb24e1ec057c03e1993d59b8a",
+    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs": "0899ab33dc8a1cfa0441e7a85ec2dd4c8ecc9ccec0dc20628fa301742efc7dc9",
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": "92568fac365f00b2b11f901fb8d15715a05f493a429404400bc7f4ef40533b82",
+    "Assets/Tests/Editor/SkirmishExpansion/GridBlockerStorageEpochTests.cs": "a90f4022f5867b938b69d0694ebe8257a15bb9c4dc978798474b352247d435f5",
+    "Assets/Tests/Editor/SkirmishExpansion/GridBlockerStorageEpochTests.cs.meta": "bbe8b9211d924ea870f6194157a2ba563a42cc6d338b0760716a15b791e190cc"
+  },
+  "validation": "Uncompiled; twelve new controls written/unexecuted. Original ten b24 controls unchanged/unexecuted. Source pinning is not native evidence."
+}

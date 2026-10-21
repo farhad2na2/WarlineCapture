@@ -430,6 +430,9 @@ namespace Game.Components
         public int2 Min; // inclusive
         public int2 Max; // exclusive
         public byte FriendlyPassFactionId;
+        // Actual application owner, retained through entity/component destruction.
+        public Entity AppliedGrid;
+        public ulong StorageEpoch;
     }
 
     public struct RuntimeGridBlockerDependencyComponent : IComponentData
@@ -473,6 +476,31 @@ namespace Game.Components
         public NativeArray<int> Counts;
         public NativeBitArray Blocked;
         public NativeArray<byte> FriendlyPassFactionIds;
+        // Storage/writer correctness only. None of these fields certifies source ownership.
+        public ulong StorageEpoch;
+        public ulong AppliedStorageEpoch;
+        public ulong AppliedRevision;
+        public GridConfig AppliedGrid;
+        public byte WriteInProgress;
+        public byte EpochExhausted;
+    }
+
+    public static class RuntimeGridBlockerEpoch
+    {
+        public static bool SameLayout(in GridConfig a, in GridConfig b) =>
+            a.Width == b.Width && a.Height == b.Height && a.CellSize == b.CellSize && math.all(a.Origin == b.Origin);
+
+        public static void Invalidate(ref DynamicBlockerComponent data)
+        {
+            if (data.StorageEpoch == ulong.MaxValue) data.EpochExhausted = 1;
+            else data.StorageEpoch++;
+            data.AppliedStorageEpoch = 0;
+            data.WriteInProgress = 1;
+        }
+
+        public static bool IsCommitted(in GridConfig grid, in DynamicBlockerComponent data) =>
+            data.EpochExhausted == 0 && data.StorageEpoch != 0 && data.AppliedRevision != 0 &&
+            data.AppliedStorageEpoch == data.StorageEpoch && data.WriteInProgress == 0 && SameLayout(grid, data.AppliedGrid);
     }
 
     public struct PathPoolComponent : ICleanupComponentData

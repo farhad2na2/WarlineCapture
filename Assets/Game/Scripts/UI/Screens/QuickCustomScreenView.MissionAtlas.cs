@@ -9,12 +9,19 @@ namespace Game.UI.Runtime
     {
         [SerializeField] private MissionAtlasScreenView approvedSkirmishAtlas;
         [SerializeField] private Sprite[] approvedObjectiveIcons;
+        [SerializeField] private Texture2D[] approvedMissionIllustrations;
         private bool approvedAtlasBound;
         private string atlasBrowseMap;
         public MissionAtlasScreenView ApprovedAtlas=>approvedSkirmishAtlas;
-        private static string AtlasArmy(string id,bool fa)=>id=="A"?(fa?"هوایی":"AIR"):id=="C"?(fa?"ترکیبی":"COMBINED"):(fa?"زمینی":"GROUND");
-        private static string AtlasStart(string id,bool fa)=>id=="E"?(fa?"پایگاه":"BASE"):(fa?"میدانی":"FIELD");
+        private static string AtlasArmy(string id,bool fa)=>id=="A"?(fa?"هوایی":"Air"):id=="C"?(fa?"ترکیبی":"Combined"):(fa?"زمینی":"Ground");
+        private static string AtlasStart(string id,bool fa)=>id=="E"?(fa?"پایگاه":"Base"):(fa?"میدانی":"Field");
         private string AtlasText(string key,string fallback="")=>UiShellRuntimeGateway.Localization.Get(key,fallback);
+        private Texture AtlasPreview(string key,string id,string map)
+        {
+            int index=id=="S001"?0:id=="S002"?1:id=="S003"?2:id=="S004"?3:-1;
+            if(index>=0&&approvedMissionIllustrations!=null&&index<approvedMissionIllustrations.Length&&approvedMissionIllustrations[index]!=null)return approvedMissionIllustrations[index];
+            return ResolveGridPreview(key,id,map,out _);
+        }
         private void OpenAtlasMap(string id)
         {
             EnsureLibraryViewModel();
@@ -69,7 +76,7 @@ namespace Game.UI.Runtime
                     if(missions)
                     {
                         var tab=field.Tabs[i];string name=AtlasText(tab.TitleLocKey).ToUpperInvariant();
-                        navigation[i]=new MissionAtlasItem {Id=SkirmishLibraryControlNames.ObjectiveTab(tab.ObjectiveId),Title=name,Subtitle=AtlasWords.Complete(tab.WonCount,tab.PublishedCount),Enabled=true,Selected=i==objective,Icon=true,Status=AtlasWords.Soon(Mathf.Max(0,6-tab.PublishedCount)),Completed=tab.PublishedCount>0&&tab.WonCount==tab.PublishedCount,Comic=approvedObjectiveIcons!=null&&i<approvedObjectiveIcons.Length?approvedObjectiveIcons[i]:Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(tab.ObjectiveId)),Medals=-1};
+                        navigation[i]=new MissionAtlasItem {Id=SkirmishLibraryControlNames.ObjectiveTab(tab.ObjectiveId),Title=name,Subtitle=AtlasWords.Complete(tab.WonCount,tab.PublishedCount),Enabled=true,Selected=i==objective,Icon=true,ObjectiveId=tab.ObjectiveId,Status=AtlasWords.Soon(Mathf.Max(0,6-tab.PublishedCount)),Completed=tab.PublishedCount>0&&tab.WonCount==tab.PublishedCount,Comic=approvedObjectiveIcons!=null&&i<approvedObjectiveIcons.Length?approvedObjectiveIcons[i]:Resources.Load<Sprite>(SkirmishBattleLibraryArt.ObjectiveIcon(tab.ObjectiveId)),Medals=-1};
                     }
                     else
                     {
@@ -101,7 +108,7 @@ namespace Game.UI.Runtime
                         Subtitle=card.ScenarioId+"\n"+AtlasArmy(card.ArmyProfile,fa)+" · "+AtlasStart(card.StartProfile,fa),
                         Medals=ready?(int)card.Medals:-1,Dimmed=!ready,
                         Status=ready?"":card.Access==SkirmishCardAccess.NotOwned?AtlasWords.Get("store","GET IN STORE","دریافت از فروشگاه"):SkirmishBattleLibraryArt.ComingSoon(fa),
-                        Texture=ResolveGridPreview(card.PreviewSpriteKey,card.ScenarioId,card.MapId,out _),Selected=card.IsSelected,
+                        Texture=AtlasPreview(card.PreviewSpriteKey,card.ScenarioId,card.MapId),Selected=card.IsSelected,
                         Completed=card.Medals!=SkirmishMedalMask.None,Locked=!ready,
                         Enabled=!string.IsNullOrEmpty(card.ScenarioId)&&(ready||card.Access==SkirmishCardAccess.NotOwned||SkirmishLibraryViewModel.ShowPlannedCards)
                     };
@@ -118,7 +125,7 @@ namespace Game.UI.Runtime
                 var selectedMap=Array.Find(theater.Pins,p=>p.MapId==map);
                 Texture plate=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.ResolvePlateKey(map));
                 Texture preview=plate;var metadata=Array.Find(field.GridCards,c=>c.ScenarioId==briefing.ScenarioId);
-                foreach(var card in field.GridCards)if(card.ScenarioId==briefing.ScenarioId)preview=ResolveGridPreview(card.PreviewSpriteKey,card.ScenarioId,card.MapId,out _);
+                foreach(var card in field.GridCards)if(card.ScenarioId==briefing.ScenarioId)preview=AtlasPreview(card.PreviewSpriteKey,card.ScenarioId,card.MapId);
                 string purpose=AtlasText(briefing.PurposeLocKey,AtlasText(briefing.DescriptionLocKey));
                 if((purpose.StartsWith("Objective for ",StringComparison.OrdinalIgnoreCase)||purpose.StartsWith("هدف ",StringComparison.Ordinal)) )
                     purpose=AtlasObjectivePurpose(field.SelectedObjectiveId);

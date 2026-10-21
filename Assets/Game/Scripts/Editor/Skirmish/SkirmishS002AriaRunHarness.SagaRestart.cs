@@ -119,7 +119,7 @@ namespace Game.Editor
                 {
                     foreach(var region in setup.ApprovedAtlas.Regions)foreach(var card in region.Cards)
                         if(card.Rect.name==SkirmishLibraryControlNames.BattleCard(catalogId))
-                        {var icon=card.MedalIcons[(int)terminalSagaDifficulty-1];cardMedal=icon.gameObject.activeInHierarchy && icon.sprite==Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true,terminalSagaDifficulty));}
+                        {cardMedal=card.HasEarnedMedalVisual(terminalSagaDifficulty);}
                     ribbon=cardMedal;
                 }
                 if (!ledger.Has(catalogId, terminalSagaDifficulty) || (setup.Library.Briefing.Medals & mask) == 0 || !ribbon || setup.Library.Theater.OverallWonCount < 1)

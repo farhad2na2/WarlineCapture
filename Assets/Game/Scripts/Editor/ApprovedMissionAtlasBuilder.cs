@@ -20,6 +20,11 @@ namespace Game.Editor
             try { Build(); await ApprovedMissionAtlasReview.Run(); }
             catch(Exception error) {Debug.LogException(error);MissionEditorValidationExit.Complete(false);}
         }
+        public static async void ReviewExisting()
+        {
+            try { await ApprovedMissionAtlasReview.Run(); }
+            catch(Exception error) {Debug.LogException(error);MissionEditorValidationExit.Complete(false);}
+        }
         public static void Build()
         {
             RepairMainPageComics();BuildCampaign();BuildSkirmish();AssetDatabase.SaveAssets();
@@ -98,6 +103,13 @@ namespace Game.Editor
                 data.FindProperty("missionSizeSegmented").objectReferenceValue=size;
                 var icons=new[]{"Assets/Game/Art/UI/Icons/scn08_icon_objective_star.png","Assets/Game/Art/UI/Icons/scn09_icon_rally_flag.png","Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_damage_burst.png","Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_vehicle_truck.png"};
                 var iconArray=data.FindProperty("approvedObjectiveIcons");iconArray.arraySize=4;for(int i=0;i<4;i++)iconArray.GetArrayElementAtIndex(i).objectReferenceValue=SpriteAt(icons[i]);
+                var illustrations=data.FindProperty("approvedMissionIllustrations");illustrations.arraySize=4;
+                string[] illustrationPaths={"Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S001-menu-illustration.png","Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S002-menu-illustration.png","Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png","Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Action_512.png"};
+                for(int i=0;i<4;i++)
+                {
+                    illustrations.GetArrayElementAtIndex(i).objectReferenceValue=AssetDatabase.LoadAssetAtPath<Texture2D>(illustrationPaths[i]);
+                    if(illustrations.GetArrayElementAtIndex(i).objectReferenceValue==null)throw new InvalidOperationException("Missing exact mission illustration "+illustrationPaths[i]);
+                }
                 data.ApplyModifiedPropertiesWithoutUndo();
                 if(size!=null)
                 {
@@ -105,6 +117,15 @@ namespace Game.Editor
                     if(size.SegmentRoot is RectTransform segments)MissionAtlasScreenView.Fill(segments);
                     foreach(var label in size.GetComponentsInChildren<TMP_Text>(true))
                     {label.enableAutoSizing=false;label.fontSize=label.fontSizeMin=label.fontSizeMax=22;var fixedSize=label.GetComponent<LibraryFixedTextSize>();if(fixedSize!=null){fixedSize.Size=22;fixedSize.MaxLines=2;}}
+                    var sizeStyle=size.GetComponent<MissionAtlasArmySizeView>();
+                    if(sizeStyle==null)sizeStyle=size.gameObject.AddComponent<MissionAtlasArmySizeView>();
+                    else
+                    {
+                        foreach(var button in size.SegmentButtons)
+                            foreach(string childName in new[]{"ChoiceFace","SelectedChoice","UnavailableChoice"})
+                            {var child=button.transform.Find(childName);if(child!=null)UnityEngine.Object.DestroyImmediate(child.gameObject);}
+                    }
+                    sizeStyle.Author(size);
                     size.gameObject.SetActive(false);
                 }
                 var map=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey);

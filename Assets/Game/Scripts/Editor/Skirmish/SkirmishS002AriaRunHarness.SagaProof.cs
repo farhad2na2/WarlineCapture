@@ -124,8 +124,7 @@ namespace Game.Editor
                 foreach(var region in selected.ApprovedAtlas.Regions)foreach(var card in region.Cards)
                     if(card.Rect.name==SkirmishLibraryControlNames.BattleCard(catalogId))
                     {
-                        var icon=card.MedalIcons[(int)terminalSagaDifficulty-1];
-                        atlasCardMedal=icon.gameObject.activeInHierarchy && icon.sprite==Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true,terminalSagaDifficulty));
+                        atlasCardMedal=card.HasEarnedMedalVisual(terminalSagaDifficulty);
                     }
                 ribbon=atlasCardMedal;
             }

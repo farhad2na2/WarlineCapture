@@ -1,0 +1,71 @@
+[
+  {
+    "log": "mission-atlas-color-review-01.log",
+    "sha256": "542655b22309667c70d32a2f987365d10d7edcc66c81a49fc4af90ea78bcbd1f",
+    "verdict": [
+      "InvalidOperationException: Navigation glyph clipping: AIR BREAKTHROUGH at (1440, 1080) rect=(x:0.00, y:-60.00, width:143.21, height:60.00)",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-075852"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-02.log",
+    "sha256": "f983f80c9023177bc60cf46c146b433d34a149e35b613eb34b0604832929c8e0",
+    "verdict": [
+      "InvalidOperationException: Native scrollbar thumb extends outside its track",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-080412"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-03.log",
+    "sha256": "909252877a9c7d9bc581dabae9501b96380761bd2cd6e2911fcfff04eec4d1c7",
+    "verdict": [
+      "[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261021-080821"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-04.log",
+    "sha256": "e59338df0b81b7c0aa4b36ba59ced7a50baae2f6590ff8b89000a308b39c4847",
+    "verdict": [
+      "InvalidOperationException: Navigation glyph clipping: 100S",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-081819"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-05.log",
+    "sha256": "6ce6d349e2d5dd7147458a028ce815b4d80fe85412da967535f3c95b25cda5b3",
+    "verdict": [
+      "InvalidOperationException: Touch device unavailable",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-082446"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-06.log",
+    "sha256": "6be6d6d0b02eab376464e0f5de504135b52450798a5c70f67ae76af2c2289770",
+    "verdict": [
+      "[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261021-090604"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-07.log",
+    "sha256": "edb7e82f112e07e5befd3fcb00da2edf232e51d2dae5467e79be66839761c583",
+    "verdict": [
+      "InvalidOperationException: Navigation glyph clipping: OUTPOST STRIKE at (1920, 1080) rect=(x:0.00, y:-44.00, width:187.54, height:44.00)",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-091021"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-08.log",
+    "sha256": "6096f8dcb1b6bf6c3083c8b2ef648559020f056c38e91d169ecb0ad8ef5104b9",
+    "verdict": [
+      "InvalidOperationException: Mission text overlaps: BattleCard_S015 at (1920, 1080)",
+      "[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261021-091601"
+    ]
+  },
+  {
+    "log": "mission-atlas-color-review-09.log",
+    "sha256": "b79e93a894c078e4903b482a50f17d450b51fb8085a458515e513ff926c58a99",
+    "verdict": [
+      "[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261021-092003"
+    ]
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "reason": "Stop task-owned in-progress S002 validation to fix confirmed army-size style refresh on repeated binding; interrupted journey remains incomplete",
+  "verifiedEditor": "30688 30681 Wed Oct 21 14:34:14 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/s002-en.log -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaEn",
+  "ownedProcessTree": [
+    "30688 30681 Wed Oct 21 14:34:14 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/s002-en.log -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunSagaS002EditorAriaEn",
+    "30692 30688 Wed Oct 21 14:34:14 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager server -s 30688 --ipc-path /tmp/Unity-Upm-30688.sock -l 2 --log-file /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Logs/upm.log",
+    "30740 30688 Wed Oct 21 14:34:18 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/BuildPipeline/Compilation/Unity.ILPP.Runner/Unity.ILPP.Runner /tmp/ilpp.sock-d764b946e7f3526563d1195c0c828c15 -name ILPP",
+    "30741 30688 Wed Oct 21 14:34:18 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 30740",
+    "30817 30688 Wed Oct 21 14:34:28 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity -adb2 -batchMode -noUpm -name AssetImportWorkerHW0 -projectPath /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture -logFile Logs/AssetImportWorkerHW0.log -srvPort 54274 -parentPid 30688 -analyticsCloudUserId anonymous -analyticsCloudProjectId 328e4279-a98a-4284-a898-89ed1ab87d7d -analyticsLocalProjectId 98c811443438545e79bdcfd77df2c6b6 -editorAnalyticsEnabled 1 -cbmEditorLicense f679c656d2bcdeb1383fd2e06f2f623af252e31d -cbmMachineId 10T5sSSYWiUOOlqtQecUz0BYTYA= -noDiagnosticSwitchPersistentStore -job-worker-count 4 -background-job-worker-count 8 -asset-garbage-collectors 1 -force-metal -name AssetImport",
+    "30818 30688 Wed Oct 21 14:34:28 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityAutoQuitter 30817",
+    "30823 30688 Wed Oct 21 14:34:28 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-UnityShaderCompiler-0.log 0 -local-ipc-stream=ShaderCompilerIPC-30688-8329781632 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+    "30887 30817 Wed Oct 21 14:34:36 2026     /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Helpers/UnityShaderCompiler /Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents ./Logs/shadercompiler-AssetImportWorkerHW0-0.log 0 -local-ipc-stream=ShaderCompilerIPC-30817-8329781632 /Applications/Unity/Hub/Editor/6000.5.8f1/PlaybackEngines",
+    "30947 30688 Wed Oct 21 14:34:43 2026     /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/RelayApp~/relay_mac_arm64.app/Contents/MacOS/relay_mac_arm64 --relay --port 9001 --mcp-client-port 9002 --editor-pid 30688 --shutdown-delay 180 --log-dir /Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Logs"
+  ],
+  "signal": "SIGTERM to Editor only; no Hub, licensing or Package Manager signal",
+  "sceneBackups": [
+    {
+      "path": "Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/recovery/pre-style-refresh-0.backup",
+      "sha256": "c783b570838b5bf0c49434f40a7c1a5f2c7075739e15743a5e10dbd53a3da1f0"
+    }
+  ],
+  "time": 1792586205.356163,
+  "outcome": "Editor exited after SIGTERM; wrapper exited nonzero; native journey preserved as incomplete; no project Editor remained before source edits"
+}

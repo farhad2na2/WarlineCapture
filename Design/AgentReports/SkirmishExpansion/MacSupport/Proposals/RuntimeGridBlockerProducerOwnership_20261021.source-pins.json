@@ -1,0 +1,19 @@
+{
+  "baseCommit": "b24cfc2dfaef28cbf9b69236d22f64315eb018a9",
+  "sourceSha256": {
+    "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs": "bc38bb25ff48bfb590aeeea361cea080f1377b640eb212618b299ebb9e49f5eb",
+    "Assets/Game/Scripts/Composition/GameplayFeatureStartupCompositionSystemHelper.cs": "d1c7060cfcfa9d40dac4f40cd5c550e7a2b219602f79adff0022d4b021143ade",
+    "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs": "7de4b793e2460fe2f8033e82379bbeb480d2f2be7866575fb7dcd7e919d3f826",
+    "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs": "7e23b714ac19fc3ac821474d2f07c3f621d6c5f646a3b83da6f03ba3a1668ff4",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs": "03e807ecb53f47e5ac0c5c94f60efc0fd91fcd2d8a9135d6198818dcdff2b7bf",
+    "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs": "fcd486cadaec210bf09e842fcabc68014c504872164a48c5a9d8ad81a7b4950f",
+    "Assets/Game/Scripts/Composition/CampaignMissionOperationMapReuseUtility.cs": "14570cbdba72d52ac2bc8bfdc100ec55f2a7f2e642f67ce91adbb62dceba35cc",
+    "Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs": "fe9eed2c43a6ca67a09e06c4235b9b7e05a4c6c14e506704982ad91a1cfd0e7d",
+    "Assets/Game/Scripts/Systems/RuntimeGridDeduplicationSystem.cs": "79b9a11d1f621bc6b3bb5643f4716ee9fcdf73a471cb357ffd978e0f42befa22",
+    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs": "f154d49f9ba486ea072d850334246e6a12fc87848f326cf98b88485b58a4f8d2",
+    "Assets/Game/Scripts/Components/GridComponents.cs": "494f74e590a4003f95971aacc71401ce7d4de5a63bdea3d26777bd8d66d11d1c",
+    "Assets/Game/Scripts/Components/OperationMapComponents.cs": "6f76b54038e0965b806750cb96341a05bd2720e8dfb2986e27bd74fda8b9f8e1",
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": "87e01885f4bc834bd6e5cbff55c234e194fde45c14c148e37410455a7125032c"
+  },
+  "scope": "Public source-only proposal inputs; no native/runtime evidence or private grid/camera/geometry payload."
+}

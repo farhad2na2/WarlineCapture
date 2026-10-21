@@ -24,7 +24,7 @@ namespace Game.Tests.Editor
     {
 
 
-        private static Newtonsoft.Json.Linq.JObject CompanionTemplateCaptureStreamingWarmup()
+        private static System.Collections.IEnumerator CompanionTemplateCaptureStreamingWarmup(Action<Newtonsoft.Json.Linq.JObject> completed)
         {
             var own=typeof(SkirmishS002AriaRunHarness);
             var flags=System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static|
@@ -64,21 +64,39 @@ namespace Game.Tests.Editor
             var context=own.GetNestedType("ProductionBatchContext",System.Reflection.BindingFlags.NonPublic);
             Assert.IsNotNull(context);Assert.IsTrue(context.IsNestedPrivate);
             Assert.AreEqual(own,context.DeclaringType);Assert.AreEqual(context,batchField.FieldType);
-            var prepare=context.GetMethod("PrepareNativeSceneBaseline",flags,
-                null,new[]{typeof(IEnumerable<Newtonsoft.Json.Linq.JObject>)},null);
+            var prepare=context.GetMethod("BeginNativeSceneBaseline",flags,
+                null,new[]{typeof(IEnumerable<Newtonsoft.Json.Linq.JObject>),typeof(Action<Newtonsoft.Json.Linq.JObject>),typeof(Action<Exception>)},null);
             Assert.IsNotNull(prepare);Assert.AreEqual(context,prepare.DeclaringType);
             Assert.AreEqual(typeof(void),prepare.ReturnType);Assert.IsFalse(prepare.IsGenericMethod);
             var before=SkirmishProductionBatchOwnershipCensus.Capture();
+            bool done=false;Exception failure=null;Newtonsoft.Json.Linq.JObject preparation=null;
+            double deadline=UnityEditor.EditorApplication.timeSinceStartup+125d;
             prepare.Invoke(null,new object[]{new Newtonsoft.Json.Linq.JObject[]{
-                new Newtonsoft.Json.Linq.JObject{["catalog_id"]="S074",["schema_version"]=1}}});
-            return new Newtonsoft.Json.Linq.JObject{["scope"]="CompanionTemplateWarmupDiagnostic_NoMission",
+                new Newtonsoft.Json.Linq.JObject{["catalog_id"]="S074",["schema_version"]=1}},
+                new Action<Newtonsoft.Json.Linq.JObject>(value=>{preparation=value;done=true;}),
+                new Action<Exception>(error=>{failure=error;done=true;})});
+            while(!done)
+            {
+                Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline,"Async warmup callback did not terminate");
+                yield return null; // Let genuine EditorApplication.update and the installed async loader run.
+            }
+            if(failure!=null)throw new InvalidOperationException("Async source warmup failed; no baseline/mission credit",failure);
+            Assert.IsNotNull(preparation);Assert.IsTrue((bool)preparation["default_world_unchanged"]);
+            Assert.IsFalse((bool)preparation["blocking_stream_in"]);
+            foreach(Newtonsoft.Json.Linq.JObject row in (Newtonsoft.Json.Linq.JArray)preparation["completed"])
+            {
+                Assert.IsTrue((bool)row["loaded_before_dispose"]);Assert.IsTrue((bool)row["world_disposed"]);
+                Assert.Greater((int)row["genuine_editor_updates"],0);
+            }
+            completed(new Newtonsoft.Json.Linq.JObject{["scope"]="CompanionTemplateWarmupDiagnostic_NoMission",
                 ["catalog_id"]="S074",["operation_map_id"]=map.OperationMapId,
                 ["expected_view_operation_map_id"]=map.SourceBinding.IsConfigured?
                     map.SourceBinding.SourceOperationMapId:map.OperationMapId,
                 ["source_scene_guid"]=sourceGuid,["source_scene_path"]=sourcePath,
                 ["navigation_subscene_guid"]=navGuid,["runtime_subscene_guid"]=runtimeGuid,
                 ["before"]=before,["after"]=SkirmishProductionBatchOwnershipCensus.Capture(),
-                ["productionBaselineChanged"]=false,["missionAccepted"]=false};
+                ["async_scene_preparation"]=preparation,
+                ["productionBaselineChanged"]=false,["missionAccepted"]=false});
         }
 
 
@@ -188,7 +206,8 @@ namespace Game.Tests.Editor
             companionTemplateStarted=true;
             CompanionTemplateGuardControls();
             CompanionTemplateObserve("BeforeStreamingWarmup",0);
-            var warmup=CompanionTemplateCaptureStreamingWarmup();
+            Newtonsoft.Json.Linq.JObject warmup=null;
+            yield return CompanionTemplateCaptureStreamingWarmup(value=>warmup=value);
             Assert.IsNotNull(warmup);
             companionTemplateReport["streamingWarmup"]=warmup;
             CompanionTemplateObserve("AfterStreamingWarmup",0);
@@ -4161,7 +4180,8 @@ namespace Game.Tests.Editor
             companionSecondStarted=true;
             CompanionTemplateGuardControls();
             CompanionSecondObserve("BeforeStreamingWarmup",0);
-            var warmup=CompanionTemplateCaptureStreamingWarmup();
+            Newtonsoft.Json.Linq.JObject warmup=null;
+            yield return CompanionTemplateCaptureStreamingWarmup(value=>warmup=value);
             companionSecondReport["streamingWarmup"]=warmup;
             CompanionSecondObserve("AfterStreamingWarmup",0);
             CompanionSecondApplyPlayContext(1);

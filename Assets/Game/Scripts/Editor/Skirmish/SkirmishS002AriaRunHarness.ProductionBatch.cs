@@ -169,15 +169,20 @@ namespace Game.Editor
                 !Path.GetFullPath(path).StartsWith(Path.Combine(root,"Logs","SkirmishProduction")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase))
                 throw new InvalidDataException("Fresh absolute durable preparation output required");
             var timer=Stopwatch.StartNew();var before=SkirmishProductionBatchOwnershipCensus.Capture();
-            ProductionBatchContext.PrepareNativeSceneBaseline();
+            ProductionBatchContext.BeginNativeSceneBaseline(null,preparation=>
+            {
             var report=new JObject { ["schema_version"]=1,["collector_kind"]="SkirmishProductionBatchNativePreparation",
                 ["before_census"]=before,["after_census"]=SkirmishProductionBatchOwnershipCensus.Capture(),
                 ["native_compiled_setups"]=SkirmishProductionBatchOwnershipCensus.CaptureCompiledCanaryIdentities(),
-                ["elapsed_seconds"]=timer.Elapsed.TotalSeconds,["native_canaries_executed"]=0,["queue_success_enabled"]=false };
+                ["elapsed_seconds"]=timer.Elapsed.TotalSeconds,["native_canaries_executed"]=0,["queue_success_enabled"]=false,
+                ["async_scene_preparation"]=preparation };
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             using(var stream=new FileStream(path,FileMode.CreateNew,FileAccess.Write,FileShare.Read))
             using(var writer=new StreamWriter(stream,new UTF8Encoding(false)))writer.Write(report.ToString(Formatting.Indented));
+            // Focused source-preparation entry is launched GUI/no-quit; it owns this terminal only after completion.
             UnityEngine.Debug.Log("[SkirmishProductionBatchPreparation] result=Passed sources=2 compiledIdentities=2 gameplayCertified=0 output="+path);
+            EditorApplication.Exit(0);
+            },FailProductionNativeInputReadiness);
         }
 
         [InitializeOnLoadMethod] private static void PreserveInterruptedProductionBatch()
@@ -228,15 +233,239 @@ namespace Game.Editor
                 throw new InvalidOperationException("Batch requires an idle unowned Editor with native scene reload enabled.");
             string path=Path.GetFullPath(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"));
             var validateRequests=PreflightProductionBatchInputRequests(path);
-            BeginProductionNativeInputReadiness(report=>
+            BeginProductionNativeInputReadiness(inputReport=>
             {
-                if(Path.GetFullPath(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"))!=path)
-                    throw new InvalidDataException("Batch owner environment changed during input initialization.");
-                validateRequests();
-                var context=new ProductionBatchContext(path);
-                productionBatch=context;
-                SessionState.SetString(ProductionBatchOwnerKey,context.OutputDirectory);
-                context.DispatchNext();
+                void ValidateRequests()
+                {
+                    if(Path.GetFullPath(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_PRODUCTION_BATCH"))!=path)
+                        throw new InvalidDataException("Batch owner environment changed during preparation.");
+                    validateRequests();
+                }
+                ValidateRequests();
+                var scenePreparation=PrepareProductionRestorableSceneBaseline();
+                var originalScenes=ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup());
+                var before=SkirmishProductionBatchOwnershipCensus.Capture();
+                SkirmishProductionBatchOwnershipCensus.CleanupSignature(before);
+                if(((JArray)before["worlds"]).Count!=0)
+                    throw new InvalidOperationException("Preserve existing Worlds; companion preparation requires idle World-free Editor.");
+                var descriptor=SkirmishProductionCanaryRequest.ReadObject(path);
+                string rawOutput=(string)descriptor["artifact_directory"];
+                string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+                if(string.IsNullOrWhiteSpace(rawOutput)||!Path.IsPathRooted(rawOutput)||
+                    rawOutput.Replace('\\','/').Split('/').Any(p=>p==".."))
+                    throw new InvalidDataException("Ordinary absolute owned batch output required.");
+                string output=Path.GetFullPath(rawOutput);
+                if(!output.StartsWith(Path.Combine(root,"Logs","SkirmishProduction")+Path.DirectorySeparatorChar,StringComparison.OrdinalIgnoreCase)||
+                    !Directory.Exists(output)||Path.GetFileName(output)!=(string)descriptor["batch_id"])
+                    throw new InvalidDataException("Existing exact batch evidence directory required.");
+                for(var cursor=new DirectoryInfo(output);cursor!=null;cursor=cursor.Parent)
+                    if(cursor.Exists&&(cursor.Attributes&FileAttributes.ReparsePoint)!=0)
+                        throw new InvalidDataException("Ordinary batch evidence ancestry required.");
+                string profile=Path.Combine(output,"companion-prebaseline.isolated-profile");
+                if(Directory.Exists(profile)||File.Exists(profile))
+                    throw new InvalidDataException("Fresh owned warmup profile required; interrupted batches cannot resume.");
+                var originalOptions=EditorSettings.enterPlayModeOptions;
+                bool originalOptionsEnabled=EditorSettings.enterPlayModeOptionsEnabled;
+                bool originalBackground=Application.runInBackground;
+                string originalSaveRoot=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+                string originalLocale=GameLocalization.CurrentLocaleCode;
+                var facts=new JObject{["schema_version"]=1,["input_readiness"]=inputReport,
+                    ["restorable_scene_preparation"]=scenePreparation,["before_census"]=before,
+                    ["original_context"]=new JObject{["options"]=(int)originalOptions,["optionsEnabled"]=originalOptionsEnabled,
+                        ["background"]=originalBackground,["saveRoot"]=originalSaveRoot,["locale"]=originalLocale,["scenes"]=originalScenes.DeepClone()},
+                    ["plays"]=0,["mission_dispatched"]=false,["context_restored"]=false,
+                    ["strict_cleanup_projection_weakened"]=false,["stages"]=new JArray()};
+                var runtimeErrors=new ProductionRuntimeErrorGate();
+                EditorApplication.CallbackFunction tick=null;
+                Action quitting=null;
+                double deadline=EditorApplication.timeSinceStartup+120d;
+                int phase=0;
+                bool detached=false;
+                Exception failure=null;
+                void Record(string stage)
+                {
+                    var census=SkirmishProductionBatchOwnershipCensus.Capture();
+                    ((JArray)facts["stages"]).Add(new JObject{["stage"]=stage,["frame"]=Time.frameCount,["census"]=census});
+                    UnityEngine.Debug.Log("[ProductionCompanionWarmup] stage="+stage+" "+facts.ToString(Formatting.None));
+                    SkirmishProductionBatchOwnershipCensus.CleanupSignature(census);
+                }
+                void Detach(bool releaseOwnership)
+                {
+                    if(detached)return;detached=true;
+                    EditorApplication.update-=tick;EditorApplication.quitting-=quitting;
+                    Application.logMessageReceivedThreaded-=runtimeErrors.Observe;
+                    if(releaseOwnership){productionInputPreparationPending=false;SessionState.SetBool(ProductionInputPreparationKey,false);}
+                }
+                List<string> RestoreSettings()
+                {
+                    var errors=new List<string>();
+                    void Restore(string name,Action action){try{action();}catch(Exception error){errors.Add(name+": "+error);}}
+                    Restore("options",()=>EditorSettings.enterPlayModeOptions=originalOptions);
+                    Restore("optionsEnabled",()=>EditorSettings.enterPlayModeOptionsEnabled=originalOptionsEnabled);
+                    Restore("background",()=>Application.runInBackground=originalBackground);
+                    Restore("saveRoot",()=>Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",originalSaveRoot));
+                    Restore("locale",()=>{GameLocalization.SetLocale(originalLocale,false);});
+                    try{facts["restoration_observed"]=new JObject{
+                        ["options"]=(int)EditorSettings.enterPlayModeOptions,["optionsEnabled"]=EditorSettings.enterPlayModeOptionsEnabled,
+                        ["background"]=Application.runInBackground,["saveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
+                        ["locale"]=GameLocalization.CurrentLocaleCode,["scenes"]=ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup())};}
+                    catch(Exception error){errors.Add("restoration witness: "+error);}
+                    facts["restoration_errors"]=new JArray(errors);
+                    return errors;
+                }
+                void Finish()
+                {
+                    try
+                    {
+                    var errors=RestoreSettings();
+                    bool settingsEqual=EditorSettings.enterPlayModeOptions==originalOptions&&
+                        EditorSettings.enterPlayModeOptionsEnabled==originalOptionsEnabled&&Application.runInBackground==originalBackground&&
+                        Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")==originalSaveRoot&&GameLocalization.CurrentLocaleCode==originalLocale;
+                    bool scenesEqual=JToken.DeepEquals(originalScenes,ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup()));
+                    facts["context_restored"]=errors.Count==0&&settingsEqual&&scenesEqual&&!EditorApplication.isPlayingOrWillChangePlaymode;
+                    UnityEngine.Debug.Log("[ProductionCompanionWarmup] stage=RestorationObserved "+facts.ToString(Formatting.None));
+                        if(!(bool)facts["context_restored"])throw new InvalidOperationException("Owned companion preparation context did not restore exactly.");
+                        RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+                        var after=SkirmishProductionBatchOwnershipCensus.Capture();
+                        facts["after_census"]=after;
+                        UnityEngine.Debug.Log("[ProductionCompanionWarmup] stage=RestorationCensusObserved "+facts.ToString(Formatting.None));
+                        SkirmishProductionBatchOwnershipCensus.CleanupSignature(after);
+                        if(((JArray)after["worlds"]).Count!=0)throw new InvalidOperationException("Companion preparation left live Worlds.");
+                        if(failure!=null)throw failure;
+                        runtimeErrors.EnsureClean();ValidateRequests();
+                        Detach(true);
+                        // Play may rebuild native devices. Reuse the existing real two-update
+                        // readiness window after restoration; never infer it from the census.
+                        BeginProductionNativeInputReadiness(postPlayInputReport=>
+                        {
+                            ValidateRequests();
+                            if(productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false)||
+                                SessionState.GetBool(QuitPendingKey,false)||!string.IsNullOrEmpty(SessionState.GetString(ProductionBatchOwnerKey,""))||
+                                productionInputPreparationPending||SessionState.GetBool(ProductionInputPreparationKey,false)||
+                                EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                                throw new InvalidOperationException("Post-Play input handoff lost idle batch ownership.");
+                            RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+                            if(EditorSettings.enterPlayModeOptions!=originalOptions||
+                                EditorSettings.enterPlayModeOptionsEnabled!=originalOptionsEnabled||
+                                Application.runInBackground!=originalBackground||
+                                Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")!=originalSaveRoot||
+                                GameLocalization.CurrentLocaleCode!=originalLocale||
+                                !JToken.DeepEquals(originalScenes,ProductionSceneSetupFacts(EditorSceneManager.GetSceneManagerSetup())))
+                                throw new InvalidOperationException("Restored context changed during post-Play input readiness.");
+                            var handoff=SkirmishProductionBatchOwnershipCensus.Capture();
+                            facts["post_input_handoff_census"]=handoff;
+                            facts["post_play_input_readiness"]=postPlayInputReport;
+                            UnityEngine.Debug.Log("[ProductionCompanionWarmup] stage=PostInputHandoffObserved "+facts.ToString(Formatting.None));
+                            SkirmishProductionBatchOwnershipCensus.CleanupSignature(handoff);
+                            if(((JArray)handoff["worlds"]).Count!=0)
+                                throw new InvalidOperationException("Post-Play input handoff left live Worlds.");
+                            UnityEngine.Debug.Log("[ProductionCompanionWarmup] result=Prepared plays=1 missionDispatched=0 contextRestored=1 "+facts.ToString(Formatting.None));
+                            var context=new ProductionBatchContext(path);
+                            productionBatch=context;
+                            SessionState.SetString(ProductionBatchOwnerKey,context.OutputDirectory);
+                            context.BeginNativeScenePreparation();
+                        },error=>
+                        {
+                            var restoreErrors=RestoreSettings();
+                            try{RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());}
+                            catch(Exception restoreError){restoreErrors.Add("restorable scene witness: "+restoreError);}
+                            facts["restoration_errors"]=new JArray(restoreErrors);
+                            facts["context_restored"]=restoreErrors.Count==0&&!EditorApplication.isPlayingOrWillChangePlaymode&&
+                                JToken.DeepEquals(facts["original_context"],facts["restoration_observed"]);
+                            facts["failure"]="PostPlayNativeInputReadiness: "+error;
+                            UnityEngine.Debug.Log("[ProductionCompanionWarmup] result=Failed missionDispatched=0 "+facts.ToString(Formatting.None));
+                            FailProductionNativeInputReadiness(error);
+                        });
+                    }
+                    catch(Exception error)
+                    {
+                        RestoreSettings();
+                        facts["failure"]=error.ToString();Detach(!EditorApplication.isPlayingOrWillChangePlaymode);
+                        UnityEngine.Debug.Log("[ProductionCompanionWarmup] result=Failed missionDispatched=0 "+facts.ToString(Formatting.None));
+                        FailProductionNativeInputReadiness(error);
+                    }
+                }
+                void Fail(Exception error)
+                {
+                    if(failure==null)failure=error;
+                    facts["failure"]=failure.ToString();
+                    UnityEngine.Debug.Log("[ProductionCompanionWarmup] stage=FailureObserved "+facts.ToString(Formatting.None));
+                    if(EditorApplication.isPlayingOrWillChangePlaymode)
+                    {
+                        if(phase!=2){phase=2;deadline=EditorApplication.timeSinceStartup+30d;EditorApplication.ExitPlaymode();}
+                    }
+                    else Finish();
+                }
+                quitting=()=>
+                {
+                    RestoreSettings();Detach(false);
+                    UnityEngine.Debug.Log("[ProductionCompanionWarmup] result=Abandoned missionDispatched=0 contextRestored=0 "+facts.ToString(Formatting.None));
+                };
+                tick=()=>
+                {
+                    try
+                    {
+                        if(phase==0)return; // Async helper owns its bounded120s pending-load failure path.
+                        if(EditorApplication.timeSinceStartup>=deadline)
+                        {
+                            if(phase==2&&EditorApplication.isPlayingOrWillChangePlaymode)
+                            {
+                                facts["failure"]="Owned Play exit exceeded30s; no baseline or mission dispatch.";
+                                RestoreSettings();Detach(false);
+                                UnityEngine.Debug.Log("[ProductionCompanionWarmup] result=Failed missionDispatched=0 contextRestored=0 "+facts.ToString(Formatting.None));
+                                EditorApplication.Exit(2);return;
+                            }
+                            throw new TimeoutException("Owned companion Play preparation exceeded120s.");
+                        }
+                        if(productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false)||
+                            SessionState.GetBool(QuitPendingKey,false)||!productionInputPreparationPending||
+                            !SessionState.GetBool(ProductionInputPreparationKey,false))
+                            throw new InvalidOperationException("Companion preparation lost exclusive pre-dispatch ownership.");
+                        if(phase==2)
+                        {
+                            if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)return;
+                            if(((JArray)SkirmishProductionBatchOwnershipCensus.Capture()["worlds"]).Count!=0)return;
+                            Record("AfterExitPlay");facts["plays"]=1;Finish();return;
+                        }
+                        runtimeErrors.EnsureClean();
+                        if(phase==0)return; // Exact async streaming callback, not an early Play update, owns entry.
+                        if(!EditorApplication.isPlaying||Time.frameCount<1)return;
+                        Record("PreparedInPlay");
+                        phase=2;deadline=EditorApplication.timeSinceStartup+30d;
+                        EditorApplication.ExitPlaymode();
+                    }
+                    catch(Exception error){Fail(error);}
+                };
+                productionInputPreparationPending=true;SessionState.SetBool(ProductionInputPreparationKey,true);
+                EditorApplication.quitting+=quitting;EditorApplication.update+=tick;
+                Application.logMessageReceivedThreaded+=runtimeErrors.Observe;
+                try
+                {
+                    Record("BeforeStreamingWarmup");
+                    ProductionBatchContext.BeginNativeSceneBaseline(((JArray)descriptor["jobs"]).OfType<JObject>()
+                        .Select(v=>SkirmishProductionCanaryRequest.ReadObject((string)v["job_path"])),preparation=>
+                    {
+                        try
+                        {
+                            ValidateRequests();
+                            if(detached||failure!=null||EditorApplication.timeSinceStartup>=deadline||
+                                productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false)||
+                                SessionState.GetBool(QuitPendingKey,false)||!productionInputPreparationPending||
+                                !SessionState.GetBool(ProductionInputPreparationKey,false))
+                                throw new InvalidOperationException("Async preparation lost its existing warmup deadline/owner.");
+                            facts["async_scene_preparation"]=preparation;
+                            Record("AfterStreamingWarmup");
+                            EditorSettings.enterPlayModeOptionsEnabled=true;
+                            EditorSettings.enterPlayModeOptions=EnterPlayModeOptions.DisableDomainReload;
+                            Application.runInBackground=true;
+                            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",profile);
+                            phase=1;
+                            EditorApplication.EnterPlaymode();
+                        }
+                        catch(Exception error){Fail(error);}
+                    },Fail);
+                }
+                catch(Exception error){Fail(error);}
             },FailProductionNativeInputReadiness);
         }
 
@@ -278,7 +507,8 @@ namespace Game.Editor
             private readonly JArray jobs;
             internal readonly SkirmishProductionMatrixAuthority Matrix;
             private readonly Dictionary<string,string> previousEnvironment=new Dictionary<string,string>(StringComparer.Ordinal);
-            private readonly SkirmishProductionBatchContract contract;
+            private SkirmishProductionBatchContract contract;
+            private bool nativePreparationStarted,nativePreparationCompleted;
             private readonly Stopwatch wall=Stopwatch.StartNew();
             private readonly DateTimeOffset enteredAt=DateTimeOffset.UtcNow;
             private readonly string events;
@@ -287,7 +517,7 @@ namespace Game.Editor
             private double cleanupDeadline;
             private double jobDeadline;
             private bool stopped;
-            private readonly string baselineOwnership;
+            private string baselineOwnership;
             private bool finalExitRequested;
             private int exitInvocations;
             private readonly ProductionRuntimeErrorGate runtimeErrors=new ProductionRuntimeErrorGate();
@@ -385,24 +615,46 @@ namespace Game.Editor
                 // Same-process native streaming preparation establishes package-owned
                 // lazy companion scenes BEFORE the strict baseline. No gameplay
                 // systems/input/default World or unrelated preview scene are touched.
-                var preparationTimer=Stopwatch.StartNew();
-                PrepareNativeSceneBaseline(jobs.Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text((JObject)v,"job_path"))));
-                preparationTimer.Stop();
-                Write("NativeInputBaselinePrepared",PrepareProductionNativeInputBaseline());
-                RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
-                var ownership=SkirmishProductionBatchOwnershipCensus.Capture();
-                baselineOwnership=SkirmishProductionBatchOwnershipCensus.CleanupSignature(ownership);
-                contract=new SkirmishProductionBatchContract((string)descriptor["candidate_sha256"],(string)descriptor["build_sha256"],
-                    (string)descriptor["candidate_manifest_sha256"],Worlds(),Scenes(),EditorSceneManager.previewSceneCount);
                 foreach(string key in new[]{"WARLINE_SKIRMISH_PRODUCTION_JOB","WARLINE_SKIRMISH_PRODUCTION_CLAIM","WARLINE_ARIA_QUIT"})
                     previousEnvironment[key]=Environment.GetEnvironmentVariable(key);
-                Write("BatchCaptured",new JObject { ["baseline_worlds"]=new JArray(contract.BaselineWorlds),
-                    ["baseline_scenes"]=contract.BaselineScenes,["baseline_preview_count"]=contract.BaselinePreviewCount,
-                    ["baseline_ownership_census"]=ownership,["scene_preparation_milliseconds"]=preparationTimer.Elapsed.TotalMilliseconds });
+            }
+            internal void BeginNativeScenePreparation()
+            {
+                if(nativePreparationStarted||nativePreparationCompleted||stopped)
+                    throw new InvalidOperationException("Native scene preparation is exactly once before dispatch.");
+                nativePreparationStarted=true;ArmRuntimeObservation();
+                var validatePreparedRequests=PreflightProductionBatchInputRequests(descriptorPath);
+                var preparationTimer=Stopwatch.StartNew();
+                BeginNativeSceneBaseline(jobs.Select(v=>SkirmishProductionCanaryRequest.ReadObject(Text((JObject)v,"job_path"))),preparation=>
+                {
+                    try
+                    {
+                        runtimeErrors.EnsureClean();
+                        if(!ReferenceEquals(productionBatch,this)||stopped||
+                            SkirmishProductionCanaryRequest.FileHash(descriptorPath)!=descriptorHash)
+                            throw new InvalidOperationException("Async preparation lost its exact undispatched batch owner.");
+                        validatePreparedRequests();
+                        Write("NativeInputBaselinePrepared",PrepareProductionNativeInputBaseline());
+                        RequireProductionRestorableSetup(EditorSceneManager.GetSceneManagerSetup());
+                        var ownership=SkirmishProductionBatchOwnershipCensus.Capture();
+                        baselineOwnership=SkirmishProductionBatchOwnershipCensus.CleanupSignature(ownership);
+                        contract=new SkirmishProductionBatchContract((string)descriptor["candidate_sha256"],(string)descriptor["build_sha256"],
+                            (string)descriptor["candidate_manifest_sha256"],Worlds(),Scenes(),EditorSceneManager.previewSceneCount);
+                        preparationTimer.Stop();
+                        Write("BatchCaptured",new JObject { ["baseline_worlds"]=new JArray(contract.BaselineWorlds),
+                            ["baseline_scenes"]=contract.BaselineScenes,["baseline_preview_count"]=contract.BaselinePreviewCount,
+                            ["baseline_ownership_census"]=ownership,["scene_preparation_milliseconds"]=preparationTimer.Elapsed.TotalMilliseconds,
+                            ["async_scene_preparation"]=preparation });
+                        nativePreparationCompleted=true;DispatchNext();
+                    }
+                    catch(Exception error){Fail(error);}
+                },Fail);
             }
             internal void DispatchNext()
             {
                 if(stopped)return;
+                if(!nativePreparationCompleted||contract==null)
+                    throw new InvalidOperationException("No native dispatch before exact async preparation completion.");
                 ArmRuntimeObservation();
                 try
                 {
@@ -535,7 +787,7 @@ namespace Game.Editor
             }
             private void Fail(Exception error)
             {
-                if(stopped)return;stopped=true;contract.Fail(error.ToString());EditorApplication.update-=WaitForCleanup;
+                if(stopped)return;stopped=true;contract?.Fail(error.ToString());EditorApplication.update-=WaitForCleanup;
                 EditorApplication.update-=Watchdog;
                 Write("BatchFailed",new JObject { ["error"]=error.ToString(),["completed_jobs"]=completed,["queue_success_enabled"]=false });
                 UnityEngine.Debug.LogError("[SkirmishProductionBatch] result=Failed error="+error);
@@ -574,8 +826,14 @@ namespace Game.Editor
                     ["actual_process_exit"]="Pending external checked-wrapper receipt" });
             }
 
-            internal static void PrepareNativeSceneBaseline(IEnumerable<JObject> plannedJobs=null)
+            private static bool nativeScenePreparationPending;
+            // A failed pending operation is not disposed or called complete; Root-owned Editor shutdown owns it.
+            private static World failedPendingNativeSceneWorld;
+            internal static void BeginNativeSceneBaseline(IEnumerable<JObject> plannedJobs,Action<JObject> ready,Action<Exception> failed)
             {
+                if(ready==null||failed==null||nativeScenePreparationPending||failedPendingNativeSceneWorld!=null||
+                    EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating)
+                    throw new InvalidOperationException("Fresh idle owned async native scene preparation required.");
                 var original=World.DefaultGameObjectInjectionWorld;
                 var systems=DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Streaming,true);
                 foreach(var system in systems)
@@ -605,20 +863,79 @@ namespace Game.Editor
                         guids.Add(ResolveProductionBatchWarmupSource(definition).NavigationMetadata.AuthoredSubSceneGuid);
                     }
                     guids.Add(AssetDatabase.AssetPathToGUID("Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity"));
-                    foreach(string guid in guids.OrderBy(x=>x,StringComparer.Ordinal))
+                var ordered=guids.OrderBy(x=>x,StringComparer.Ordinal).ToArray();
+                if(ordered.Length==0||ordered.Any(string.IsNullOrWhiteSpace))
+                    throw new InvalidDataException("Exact nonempty source SubScene identities required.");
+                World world=null;Entity scene=Entity.Null;string guid=null;int nextGuid=0,worldUpdates=0,totalUpdates=0;
+                bool done=false;double start=EditorApplication.timeSinceStartup,last=start;
+                var completed=new JArray();
+                EditorApplication.CallbackFunction tick=null;Action quitting=null;
+                nativeScenePreparationPending=true;
+                void Detach(){EditorApplication.update-=tick;EditorApplication.quitting-=quitting;}
+                void Fail(Exception error,bool notify)
+                {
+                    if(done)return;done=true;Detach();
+                    try
                     {
-                      using(var world=new World("ProductionBatchNativeScenePreparation",WorldFlags.Game))
-                      {
-                        DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world,systems);
-                        if(string.IsNullOrWhiteSpace(guid))throw new InvalidDataException("Exact source SubScene identity absent");
-                        var scene=SceneSystem.LoadSceneAsync(world.Unmanaged,new Unity.Entities.Hash128(guid),new SceneSystem.LoadParameters {
-                            Flags=SceneLoadFlags.BlockOnImport|SceneLoadFlags.BlockOnStreamIn });
-                        world.Update();
-                        if(!SceneSystem.IsSceneLoaded(world.Unmanaged,scene))throw new InvalidOperationException("Native source preparation incomplete");
+                        if(world!=null&&world.IsCreated)
+                        {
+                            if(scene!=Entity.Null&&SceneSystem.IsSceneLoaded(world.Unmanaged,scene))world.Dispose();
+                            else
+                            {
+                                failedPendingNativeSceneWorld=world;
+                                error=new AggregateException(error,new InvalidOperationException("Incomplete owned streaming World retained until checked Editor shutdown; no retry/pass."));
+                            }
+                        }
                     }
+                    catch(Exception disposeError){failedPendingNativeSceneWorld=world;error=new AggregateException(error,disposeError);}
+                    nativeScenePreparationPending=failedPendingNativeSceneWorld!=null;
+                    UnityEngine.Debug.Log("[ProductionAsyncScenePreparation] result=Failed completed="+completed.Count+" pendingWorldRetained="+(failedPendingNativeSceneWorld!=null));
+                    if(notify)failed(error);
                 }
-                if(World.DefaultGameObjectInjectionWorld!=original)
-                    throw new InvalidOperationException("Streaming preparation changed default World ownership");
+                quitting=()=>Fail(new InvalidOperationException("Editor quit before async source preparation completed."),false);
+                tick=()=>
+                {
+                    if(done)return;
+                    try
+                    {
+                        double now=EditorApplication.timeSinceStartup;
+                        if(double.IsNaN(now)||double.IsInfinity(now)||now<=last)
+                            throw new InvalidOperationException("Distinct increasing genuine Editor update required.");
+                        last=now;
+                        if(now-start>=120d)throw new TimeoutException("Owned async source preparation exceeded120s; mission not dispatched.");
+                        if(EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                            World.DefaultGameObjectInjectionWorld!=original)
+                            throw new InvalidOperationException("Async preparation lost idle/default World ownership.");
+                        if(world==null)
+                        {
+                            guid=ordered[nextGuid];worldUpdates=0;
+                            world=new World("ProductionBatchNativeScenePreparation",WorldFlags.Game);
+                            DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups(world,systems);
+                            scene=SceneSystem.LoadSceneAsync(world.Unmanaged,new Unity.Entities.Hash128(guid),new SceneSystem.LoadParameters {
+                                Flags=SceneLoadFlags.BlockOnImport }); // No BlockOnStreamIn or WaitForCompletion fallback.
+                        }
+                        world.Update();worldUpdates++;totalUpdates++;
+                        if(!world.EntityManager.Exists(scene)||!world.EntityManager.HasComponent<SceneReference>(scene)||
+                            world.EntityManager.GetComponentData<SceneReference>(scene).SceneGUID!=new Unity.Entities.Hash128(guid))
+                            throw new InvalidOperationException("Retained exact requested scene entity/GUID changed.");
+                        if(!SceneSystem.IsSceneLoaded(world.Unmanaged,scene))return;
+                        var row=new JObject{["guid"]=guid,["world_sequence"]=world.SequenceNumber.ToString(),["entity_index"]=scene.Index,
+                            ["entity_version"]=scene.Version,["loaded_before_dispose"]=true,["genuine_editor_updates"]=worldUpdates};
+                        world.Dispose();world=null;scene=Entity.Null;
+                        if(World.DefaultGameObjectInjectionWorld!=original)
+                            throw new InvalidOperationException("Streaming preparation changed default World ownership.");
+                        row["world_disposed"]=true;completed.Add(row);nextGuid++;
+                        if(nextGuid<ordered.Length)return; // Next exact GUID starts on a later real Editor update.
+                        done=true;Detach();nativeScenePreparationPending=false;
+                        var report=new JObject{["requested_guids"]=new JArray(ordered),["completed"]=completed,
+                            ["genuine_editor_updates"]=totalUpdates,["elapsed_seconds"]=now-start,["timeout_seconds"]=120,
+                            ["default_world_unchanged"]=true,["blocking_stream_in"]=false,["mission_dispatched"]=false};
+                        UnityEngine.Debug.Log("[ProductionAsyncScenePreparation] result=Ready "+report.ToString(Formatting.None));
+                        try{ready(report);}catch(Exception callbackError){failed(callbackError);}
+                    }
+                    catch(Exception error){Fail(error,true);}
+                };
+                EditorApplication.quitting+=quitting;EditorApplication.update+=tick;
             }
             private void RestoreEnvironment(){foreach(var pair in previousEnvironment)Environment.SetEnvironmentVariable(pair.Key,pair.Value);}
             private void Write(string kind,JObject facts)

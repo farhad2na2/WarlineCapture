@@ -526,6 +526,15 @@ namespace Game.Editor
 
         public static void LaunchCatalog(string requestedCatalog, int requestedSeed, string requestedLocale)
         {
+            // Default-off diagnostic owns both engine calls; normal mission Tick never runs.
+            bool noMissionTransition = Environment.GetEnvironmentVariable("WARLINE_S074_NO_MISSION_TRANSITION") == "1";
+            var transitionOwner = noMissionTransition
+                ? AppDomain.CurrentDomain.GetData("Warline.S074.NoMissionTransition.Owner") as Action<Action, Action>
+                : null;
+            if (noMissionTransition && (transitionOwner == null || productionBatch != null || productionCanary != null ||
+                SessionState.GetBool(Key, false) || SessionState.GetBool(QuitPendingKey, false) ||
+                EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating))
+                throw new InvalidOperationException("Exact idle diagnostic transition owner required; no normal fallback.");
             nativeShadersReady = false;
             nativeShadersSettledAt = -1d;
             nativeOpeningRenderViewAccepted = false;
@@ -592,13 +601,38 @@ namespace Game.Editor
             // SessionState keeps the identity across play-mode domain reloads.
             if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") != "1")
                 ResetLiveTrace(LiveTracePath());
-            EditorApplication.update += Tick;
+            if (!noMissionTransition) EditorApplication.update += Tick;
             int width = int.TryParse(Environment.GetEnvironmentVariable("WARLINE_REVIEW_WIDTH"), out int requestedWidth)
                 ? Mathf.Clamp(requestedWidth, 1280, 2400) : 1920;
             int height = int.TryParse(Environment.GetEnvironmentVariable("WARLINE_REVIEW_HEIGHT"), out int requestedHeight)
                 ? Mathf.Clamp(requestedHeight, 720, 1440) : 1080;
             MainMenuV3PrefabBuilder.SetGameViewResolution(width, height);
-            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
+            Action openMenu = () =>
+            {
+                // Reopening an identical saved Menu may rebuild engine-owned companion objects.
+                // Preserve dirty scenes; this does not normalize preview scenes or cleanup evidence.
+                for (int i = 0; i < UnityEngine.SceneManagement.SceneManager.sceneCount; i++)
+                    if (UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty)
+                        throw new InvalidOperationException("Preserve dirty Editor scene before Menu transition");
+                var currentSetup = UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup();
+                var activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
+                if (currentSetup.Length == 1 && currentSetup[0].path == "Assets/Game/Scenes/Menu.unity" &&
+                    currentSetup[0].isLoaded && currentSetup[0].isActive && activeScene.IsValid() &&
+                    activeScene.isLoaded && activeScene.path == "Assets/Game/Scenes/Menu.unity" && !activeScene.isDirty)
+                    return;
+                UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
+            };
+            if (noMissionTransition)
+            {
+                // Prevent InitializeOnLoad from resuming normal Tick after a real domain reload.
+                SessionState.SetBool(Key, false);
+                SessionState.SetBool(NormalKey, false);
+                transitionOwner(
+                    openMenu,
+                    () => EditorApplication.EnterPlaymode());
+                return;
+            }
+            openMenu();
             EditorApplication.EnterPlaymode();
         }
 

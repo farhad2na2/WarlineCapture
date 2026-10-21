@@ -68,15 +68,24 @@ namespace Game.Editor
                     for (int i = range.start; i < range.end; i++)
                     {
                         var index = array.MaterialMeshIndices[i];
+                        candidates.Add(array.MeshReferences[index.MeshIndex].Value.name + "|" + AssetDatabase.GetAssetPath(array.MeshReferences[index.MeshIndex].Value));
                         SampleRoadDraw(array.MeshReferences[index.MeshIndex].Value, index.SubMeshIndex,
                             em.GetComponentData<LocalToWorld>(renderer).Value, point, ref highest, ref source);
                     }
                 }
                 else if (info.Mesh < 0)
+                {
+                    candidates.Add(array.GetMesh(info).name + "|" + AssetDatabase.GetAssetPath(array.GetMesh(info)));
                     SampleRoadDraw(array.GetMesh(info), info.SubMesh, em.GetComponentData<LocalToWorld>(renderer).Value,
                         point, ref highest, ref source);
+                }
             }
             row["nearby_rendered_mesh_names"] = new JArray(candidates);
+            row["rendered_entity_count"] = renderers.Length;
+            var worlds = new JObject();
+            foreach (var world in World.All)
+            { using var count = world.EntityManager.CreateEntityQuery(typeof(MaterialMeshInfo)); worlds[world.Name] = count.CalculateEntityCount(); }
+            row["world_render_entity_counts"] = worlds;
             row["rendered_support_measured"] = math.isfinite(highest);
             if (math.isfinite(highest)) { row["rendered_support_y"] = highest; row["rendered_support_mesh"] = source;
                 row["rendered_minus_sample"] = highest - (float)row["sampled_height"]; }
@@ -84,7 +93,7 @@ namespace Game.Editor
         static void SampleRoadDraw(Mesh mesh, int submesh, float4x4 matrix, float3 point, ref float highest, ref string source)
         {
             if (mesh == null) return;
-            string name = mesh.name.ToLowerInvariant();
+            string name = (mesh.name + "|" + AssetDatabase.GetAssetPath(mesh)).ToLowerInvariant();
             if (!name.Contains("road") && !name.Contains("street") && !name.Contains("pavement") && !name.Contains("sidewalk")) return;
             using var data = MeshUtility.AcquireReadOnlyMeshData(mesh);
             using var vertices = new NativeArray<Vector3>(data[0].vertexCount, Allocator.Temp);
@@ -148,7 +157,8 @@ namespace Game.Editor
                         ["has_surface"] = surface.HasSurface, ["grounded"] = surface.IsGrounded,
                         ["measured_posed_mesh"] = measured, ["mesh_errors"] = errors, ["measured_visual"] = measuredVisual,
                         ["animation_index"] = em.HasComponent<UnitResolvedAnimationIndex>(entity) ? em.GetComponentData<UnitResolvedAnimationIndex>(entity).Value : -1 };
-                    if (measured) { row["posed_mesh_min_y"] = feet; row["mesh_min_above_sample"] = feet - surface.LastSampledHeight; }
+                    if (measured) { row["posed_mesh_min_y"] = feet; row["mesh_min_above_sample"] = feet - surface.LastSampledHeight;
+                        row["posed_world_center"] = meshes[0].WorldBounds.center.ToString("F3"); }
                     if (em.HasBuffer<UnitAnimationGroundOffset>(entity))
                     { var offsets = em.GetBuffer<UnitAnimationGroundOffset>(entity, true); var values = new JArray(); foreach (var v in offsets) values.Add(v.Value); row["baked_animation_offsets"] = values; }
                     using var dbQuery = em.CreateEntityQuery(typeof(OperationMapRenderDatabaseComponent));
@@ -192,6 +202,11 @@ namespace Game.Editor
                     ["actors"] = rows }.ToString(Newtonsoft.Json.Formatting.None) + "\n");
                 ScreenCapture.CaptureScreenshot(Path.Combine(output, "normal-view-" + sample + ".png"));
                 Debug.Log("[MacGroundRouteReview] observed=" + rows.Count + " capture=" + sample);
+                if (sample >= 2 && output.Contains("campaign-m01"))
+                {
+                    Debug.Log("[MacGroundContactObservation] result=Captured missionAcceptance=Unmeasured");
+                    CampaignTutorialEntryEditorProbe.EndGroundContactObservation();
+                }
             }
             catch (Exception error)
             {
@@ -199,6 +214,10 @@ namespace Game.Editor
                 Debug.LogError("[MacGroundRouteReview] observation=Failed");
             }
         }
+    }
+    public static partial class CampaignTutorialEntryEditorProbe
+    {
+        internal static void EndGroundContactObservation() => Complete(false, "diagnosticContactCapturedNotMissionAcceptance");
     }
     public static partial class SkirmishS002AriaRunHarness
     {

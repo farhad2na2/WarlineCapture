@@ -20,7 +20,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Transport.prefab
-      DependencyHash: 06da3cf2cc3f881bda20b65457b1c3c2
+      DependencyHash: 1044a32ea7720a8ca8d523d8e141c66a
     - VisualKind: 2
       Prefab: {fileID: 50045807723467530, guid: e4011cdde31b24ed5b6888430659731c, type: 3}
       Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Transport.prefab
@@ -300,7 +300,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack_Small.prefab
-      DependencyHash: 025566a81ad4ca2a61ba519906b75f9b
+      DependencyHash: 4883c1d4b4446a38c3b8cb8ba63e71c2
     - VisualKind: 2
       Prefab: {fileID: 2090294392753675684, guid: 574f24c8b02514ebba0da146ea0b6ce4, type: 3}
       Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Attack_Small.prefab
@@ -484,7 +484,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Helicopter_Attack.prefab
-      DependencyHash: b7c3b54f1b7b74ebe1a92f7a5aaffd8e
+      DependencyHash: 1cdf1ad446af2307f7b9d1307d6217b0
     - VisualKind: 2
       Prefab: {fileID: 1211880870138892396, guid: 8f0cd6db019664f93b9763960a3dbf78, type: 3}
       Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Helicopter_Attack.prefab
@@ -788,7 +788,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Drone.prefab
-      DependencyHash: 1e470f0a92391c72cb31136343e101ac
+      DependencyHash: 8cdc964f25ab01f918fdee079e83b909
     - VisualKind: 2
       Prefab: {fileID: 7971616082418092104, guid: 845fdeeb487f341368ada70de6d10934, type: 3}
       Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Drone.prefab
@@ -1188,7 +1188,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: ec5587e89ce1a46889f0b8522b20e199, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_02.prefab
-      DependencyHash: c3fbe11955144f35a56d634c00ce573d
+      DependencyHash: 22a0da798ea78575e6e2e00e84c3700f
     Draws:
     - Mesh: {fileID: 4300000, guid: 03a718d020e8ec147bcf8e88bd26b3df, type: 3}
       SubMesh: 0
@@ -1324,7 +1324,7 @@ MonoBehaviour:
     - VisualKind: 1
       Prefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
       Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab
-      DependencyHash: 1fcf109fbfb92579babacbef28f70451
+      DependencyHash: dd5a895a3e8f437b9549f3cc541b7fea
     - VisualKind: 2
       Prefab: {fileID: 8201624416784725301, guid: 09e49deba4fe6401990e3da22ca87400, type: 3}
       Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Jet_01.prefab

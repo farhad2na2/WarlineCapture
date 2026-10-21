@@ -30,7 +30,7 @@ POLICY_PINS={
 'Assets/Game/Scripts/Components/VehicleRepairComponents.cs':'07a200ff94a67b24ddbf466e665e8855acc2eee60de1a697e61792573ff107b3',
 'Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs':'10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0',
 'Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs':'d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb',
-'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs':'829fca0f4bc03d689c1f9fb7aad0b26c1c1c18f4bc21bd7d31ed338b2394ac34',
+'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs':'b0c1e5601a65111904d7b750fbd9f6cf523f25327c9677af2df0d61ad2749c24',
 'Assets/Tests/Editor/SkirmishExpansion/VehicleFieldRepairNativeTests.cs':'5972c3cda9e314403cde4718e933e03c7bf597c1f1de9136b8a11f959fc122d8'}
 SCOPE='RepairCommittedBoundariesPartial'
 FLAGS=set('unchanged_debt_retries_measured progress_history_measured paid_resources_qualified'.split())

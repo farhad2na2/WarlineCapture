@@ -33,8 +33,9 @@ namespace Game.Configs
                 setup.OperationMapId != SkirmishMapLayoutBuilder.DesertBaseMapId || setup.LayoutId != SkirmishMapLayoutBuilder.DesertBaseLayoutId ||
                 definition.MapLayout == null || string.IsNullOrEmpty(reviewedLayoutSemanticFingerprint) ||
                 reviewedLayoutSemanticFingerprint != ComputeLayoutSemanticFingerprint(definition.MapLayout)) return false;
+            if (setup.CatalogId == "S002" && setup.ContentVersion != 2) return false;
             var catalog = SkirmishExpansionCatalogConfig.Load();
-            if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, out var packaged) || packaged.MapLayout == null) return false;
+            if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, setup.ContentVersion, out var packaged) || packaged.MapLayout == null) return false;
             if (setup.CatalogId == "S005")
                 return definition.CampaignMap != null && definition.CampaignMap == packaged.CampaignMap &&
                     definition.CampaignMap.OperationMapId == "opmap.skirmish.desert_base_01_s005" &&

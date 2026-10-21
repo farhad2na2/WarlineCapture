@@ -37,7 +37,14 @@ namespace Game.Configs
         [SerializeField] private SkirmishScenarioDefinitionConfig[] definitions =
             Array.Empty<SkirmishScenarioDefinitionConfig>();
 
+        // Explicit archived references preserve saved versions without adding duplicate current cards.
+        [SerializeField] private SkirmishScenarioDefinitionConfig[] historicalDefinitions =
+            Array.Empty<SkirmishScenarioDefinitionConfig>();
         public IReadOnlyList<SkirmishScenarioDefinitionConfig> Definitions => definitions;
+        public IReadOnlyList<SkirmishScenarioDefinitionConfig> HistoricalDefinitions => historicalDefinitions;
+
+        public bool TryGetDefinition(string catalogId, int version, out SkirmishScenarioDefinitionConfig definition) =>
+            SkirmishDefinitionVersionResolver.TryResolve(definitions, historicalDefinitions, catalogId, version, out definition);
 
         public static SkirmishExpansionCatalogConfig Load()
         {
@@ -91,6 +98,9 @@ namespace Game.Configs
                 Definitions = definitions == null
                     ? Array.Empty<SkirmishScenarioDefinitionConfig>()
                     : (SkirmishScenarioDefinitionConfig[])definitions.Clone(),
+                HistoricalDefinitions = historicalDefinitions == null
+                    ? Array.Empty<SkirmishScenarioDefinitionConfig>()
+                    : (SkirmishScenarioDefinitionConfig[])historicalDefinitions.Clone(),
                 ObjectiveBa = objectiveBa,
                 ArmyGround = armyGround,
                 ArmyAir = armyAir,

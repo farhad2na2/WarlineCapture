@@ -27,7 +27,7 @@ namespace Game.Runtime
 
             var catalog = Game.Configs.SkirmishExpansionCatalogConfig.Load();
             var candidate = Game.Configs.SkirmishMissionViewProfile.Load(setup.CatalogId);
-            if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, out var definition) ||
+            if (catalog == null || !catalog.TryGetDefinition(setup.CatalogId, setup.ContentVersion, out var definition) ||
                 candidate == null || !MatchesSource(em,setup,definition,candidate)) return false;
             if(candidate.UsesActiveMapIdentity)
             {

@@ -196,6 +196,8 @@ namespace Game.Configs
 
         private static void ValidateIdentity(SkirmishScenarioDefinitionConfig definition, List<SkirmishCompileReason> reasons)
         {
+            if (!SkirmishDefinitionVersionResolver.IsSupported(definition.CatalogId, definition.ContentVersion))
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InvalidIdentity, "contentVersion", "Unsupported exact definition revision."));
             if (!new SkirmishCatalogId(definition.CatalogId).IsValid)
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InvalidIdentity, "catalogId", definition.CatalogId));
             if (!new SkirmishDefinitionId(definition.DefinitionId).IsValid)
@@ -414,7 +416,7 @@ namespace Game.Configs
             {
                 var policyCatalog = SkirmishExpansionCatalogConfig.Load();
                 SkirmishDifficultyConfig difficultyConfig = policyCatalog != null &&
-                    policyCatalog.TryGetDefinition(setup.CatalogId, out var packagedDefinition) && packagedDefinition == definition
+                    policyCatalog.TryGetDefinition(setup.CatalogId, setup.ContentVersion, out var packagedDefinition) && packagedDefinition == definition
                     ? policyCatalog.GetDifficulty(setup.DifficultyId) : null;
                 if (!SkirmishEnemyPolicyCompiler.TryCompile(setup, definition.MapLayout, out var policy, difficultyConfig))
                     reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReference, "enemyPolicy", "Enemy policy could not resolve existing configuration/routes."));

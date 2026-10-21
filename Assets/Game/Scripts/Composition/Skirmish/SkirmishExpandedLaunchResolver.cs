@@ -19,17 +19,27 @@ namespace Game.Composition
             out SkirmishResolvedSetup setup,
             out SkirmishLaunchPayload payload,
             out List<SkirmishCompileReason> reasons,
-            UnitPrefabRegistryAuthoringConfig registry = null)
+            UnitPrefabRegistryAuthoringConfig registry = null,
+            int contentVersion = 0)
         {
             setup = null;
             payload = null;
             reasons = new List<SkirmishCompileReason>();
+            if (contentVersion < 0)
+            {
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "contentVersion", "Negative revision is invalid."));
+                return false;
+            }
             if (Game.Runtime.ContentAccessRuntime.Evaluate("skirmish." + (catalogId ?? string.Empty).ToLowerInvariant()) != Game.Missions.Contracts.ContentAccessState.Allowed)
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "contentAccess", catalogId));
                 return false;
             }
-            if (!SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out SkirmishScenarioDefinitionConfig definition))
+            SkirmishScenarioDefinitionConfig definition;
+            bool found = contentVersion > 0
+                ? SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, contentVersion, out definition)
+                : SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out definition);
+            if (!found)
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "catalogId", catalogId));
                 return false;

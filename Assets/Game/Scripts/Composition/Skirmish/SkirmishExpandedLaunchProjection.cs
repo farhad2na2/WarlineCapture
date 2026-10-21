@@ -21,12 +21,12 @@ namespace Game.Composition
                 return false;
             if (!SkirmishMissionDispatch.PayloadMatches(payload, setup)) return false;
             SkirmishMissionDispatch.TryGetLegacyIndex(payload.CatalogId,out int scenarioIndex);
-            bool generic = SkirmishMissionDispatch.RequiresSourceBoundDefinition(payload.CatalogId);
+            bool generic = SkirmishMissionDispatch.RequiresSourceBoundDefinition(payload.CatalogId, payload.ContentVersion);
             SkirmishScenarioDefinitionConfig definition = explicitDefinition;
             if (definition == null)
             {
                 var authored = SkirmishExpansionCatalogConfig.Load();
-                if (authored != null) authored.TryGetDefinition(payload.CatalogId, out definition);
+                if (authored != null) authored.TryGetDefinition(payload.CatalogId, payload.ContentVersion, out definition);
             }
             if (generic)
             {

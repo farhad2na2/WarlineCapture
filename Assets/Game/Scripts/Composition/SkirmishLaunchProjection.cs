@@ -150,7 +150,11 @@ namespace Game.Composition
                 return false;
             }
 
-            if (!catalog.TryGetDefinition(catalogId, out SkirmishScenarioDefinitionConfig definition) ||
+            SkirmishScenarioDefinitionConfig definition;
+            bool found = expectedVersion > 0
+                ? catalog.TryGetDefinition(catalogId, expectedVersion, out definition)
+                : catalog.TryGetDefinition(catalogId, out definition);
+            if (!found ||
                 definition == null || (expectedDefinition!=null&&(definition.DefinitionId!=expectedDefinition||definition.ContentVersion!=expectedVersion)))
             {
                 Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " definition=missing");
@@ -178,7 +182,7 @@ namespace Game.Composition
                     out SkirmishResolvedSetup setup,
                     out _,
                     out List<SkirmishCompileReason> reasons,
-                    registry))
+                    registry, definition.ContentVersion))
             {
                 string detail = reasons == null || reasons.Count == 0 ? "compile failed" : reasons[0].ToString();
                 Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " " + detail);

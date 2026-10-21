@@ -157,6 +157,8 @@ namespace Game.Skirmish.Contracts
     {
         public string SourceSessionId = string.Empty;
         public string CatalogId = string.Empty;
+        // Zero keeps old unversioned fresh-match requests; owned replay records pin their version.
+        public int ContentVersion;
         public SkirmishDifficultyId DifficultyId;
         public SkirmishSizeId SizeId;
         public int Seed;

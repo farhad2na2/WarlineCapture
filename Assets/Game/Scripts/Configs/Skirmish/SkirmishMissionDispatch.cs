@@ -24,6 +24,8 @@ namespace Game.Configs
         // practice. The four existing expanded coded missions keep their path.
         public static bool RequiresSourceBoundDefinition(string id)=>Canonical(id)&&
             id!="S002"&&id!="S003"&&id!="S004"&&id!="S005";
+        public static bool RequiresSourceBoundDefinition(string id, int version) =>
+            RequiresSourceBoundDefinition(id) || id == "S002" && version == 3;
         public static bool TryGetSelectedExpanded(SkirmishBattleCatalogConfig catalog,string id,string definitionId,int version,int index,out SkirmishBattleCatalogEntry entry)
         {
             entry=default;if(!Canonical(id)||version<=0||catalog?.Entries==null)return false;
@@ -40,8 +42,8 @@ namespace Game.Configs
             entry=default;if(index<0||catalog?.Entries==null)return false;int matches=0;
             foreach(var candidate in catalog.Entries)
                 if(candidate.IsPlayable&&candidate.PlayableScenarioIndex==index){entry=candidate;matches++;}
-            if(matches!=1||!Canonical(entry.ScenarioId)||!RequiresSourceBoundDefinition(entry.ScenarioId)||
-                (index<=7&&(!IsExpandedCounterpart(entry.ScenarioId)||!TryGetLegacyIndex(entry.ScenarioId,out int original)||original!=index))||entry.ContentVersion<=0||
+            if(matches!=1||!Canonical(entry.ScenarioId)||!RequiresSourceBoundDefinition(entry.ScenarioId, entry.ContentVersion)||
+                (index<=7&&(!(IsExpandedCounterpart(entry.ScenarioId) || entry.ScenarioId == "S002" && entry.ContentVersion == 3)||!TryGetLegacyIndex(entry.ScenarioId,out int original)||original!=index))||entry.ContentVersion<=0||
                 entry.DefinitionId!=SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(entry.ScenarioId)).Value)return false;
             int ids=0;foreach(var candidate in catalog.Entries)if(candidate.ScenarioId==entry.ScenarioId)ids++;
             return ids==1;

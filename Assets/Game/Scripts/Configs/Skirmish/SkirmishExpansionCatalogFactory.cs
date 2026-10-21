@@ -8,6 +8,8 @@ namespace Game.Configs
         // The concrete fields below remain compatibility adapters for existing callers.
         public System.Collections.Generic.IReadOnlyList<SkirmishScenarioDefinitionConfig> Definitions =
             System.Array.Empty<SkirmishScenarioDefinitionConfig>();
+        public System.Collections.Generic.IReadOnlyList<SkirmishScenarioDefinitionConfig> HistoricalDefinitions =
+            System.Array.Empty<SkirmishScenarioDefinitionConfig>();
         public SkirmishObjectiveConfig ObjectiveBa;
         public SkirmishArmyProfileConfig ArmyGround;
         public SkirmishArmyProfileConfig ArmyAir;
@@ -176,6 +178,17 @@ namespace Game.Configs
                 set.Economy, set.Upgrades, set.Intel, set.Roles, set.LayoutDbBa,
                 SkirmishSizeId.War, SkirmishS005FirstVisit.RequiredFeatureIds);
             return set;
+        }
+
+        public static bool TryGetDefinition(SkirmishExpansionAuthoredSet set, string catalogId, int version,
+            out SkirmishScenarioDefinitionConfig definition)
+        {
+            definition = null;
+            if (set == null) return false;
+            var current = set.Definitions != null && set.Definitions.Count > 0 ? set.Definitions :
+                new[] { set.DefinitionS002, set.DefinitionS003, set.DefinitionS004, set.DefinitionS005 };
+            return SkirmishDefinitionVersionResolver.TryResolve(current, set.HistoricalDefinitions,
+                catalogId, version, out definition);
         }
 
         public static bool TryGetDefinition(

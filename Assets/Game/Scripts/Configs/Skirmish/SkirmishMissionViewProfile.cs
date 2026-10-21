@@ -89,7 +89,7 @@ namespace Game.Configs
                 if (!AuthoredNonBaseAssault && !AuthoredGenericBaseAssault && !UsesActiveMapIdentity) return CatalogId == "S005" && DefinitionId == "skirmish.s005";
                 if (AuthoredNonBaseAssault && AuthoredGenericBaseAssault) return false;
                 bool kind = UsesActiveMapIdentity ? !AuthoredNonBaseAssault&&!AuthoredGenericBaseAssault : AuthoredGenericBaseAssault ? ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.BaseAssault &&
-                    SkirmishMissionDispatch.RequiresSourceBoundDefinition(CatalogId) :
+                    SkirmishMissionDispatch.RequiresSourceBoundDefinition(CatalogId, DefinitionVersion) :
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.FrontlineControl ||
                     ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.Breakthrough || ObjectiveKind == Game.Skirmish.Contracts.SkirmishObjectiveKind.ConvoyEscort;
                 return kind &&

@@ -44,7 +44,7 @@ namespace Game.Composition
                 document.Payload.DefinitionId != document.Header.DefinitionId ||
                 document.Payload.SetupHash != document.Header.SetupHash ||
                 document.Payload.ContentVersion != document.Header.ContentVersion ||
-                !SkirmishExpansionCatalogFactory.TryGetDefinition(authored, document.Header.CatalogId, out var definition) ||
+                !SkirmishExpansionCatalogFactory.TryGetDefinition(authored, document.Header.CatalogId, document.Header.ContentVersion, out var definition) ||
                 !SkirmishSetupCompiler.TryCompile(definition, document.Payload.DifficultyId,
                     document.Payload.SizeId, document.Payload.Seed, manifest, matrix, out var checkedSetup, out _) ||
                 !SkirmishCheckpointCodec.IsCompatible(document.Header, checkedSetup))
@@ -64,7 +64,7 @@ namespace Game.Composition
                     manifest,
                     out SkirmishResolvedSetup setup,
                     out SkirmishLaunchPayload payload,
-                    out _))
+                    out _, contentVersion: document.Header.ContentVersion))
                 return false;
 
             if (!SkirmishCheckpointCodec.IsCompatible(document.Header, setup))
@@ -130,9 +130,13 @@ namespace Game.Composition
             payload = null;
             setup = null;
             reason = SkirmishReasonCode.IncompatibleSave;
-            if (request == null || request.Mode != SkirmishReplayMode.FreshStart ||
-                !SkirmishExpansionCatalogFactory.TryGetDefinition(authored, request.CatalogId, out var definition))
+            if (request == null || request.Mode != SkirmishReplayMode.FreshStart || request.ContentVersion < 0)
                 return false;
+            SkirmishScenarioDefinitionConfig definition;
+            bool found = request.ContentVersion > 0
+                ? SkirmishExpansionCatalogFactory.TryGetDefinition(authored, request.CatalogId, request.ContentVersion, out definition)
+                : SkirmishExpansionCatalogFactory.TryGetDefinition(authored, request.CatalogId, out definition);
+            if (!found) return false;
 
             if (!SkirmishSetupCompiler.TryCompile(
                     definition,
@@ -171,6 +175,7 @@ namespace Game.Composition
             {
                 SourceSessionId = state.SessionId.ToString(),
                 CatalogId = state.CatalogId.ToString(),
+                ContentVersion = state.ContentVersion,
                 DifficultyId = state.DifficultyId,
                 SizeId = state.SizeId,
                 Seed = state.Seed,
@@ -216,6 +221,7 @@ namespace Game.Composition
             var payload = SkirmishReplayService.CreateFreshLaunch(new SkirmishReplayRequest
             {
                 SourceSessionId = state.SessionId.ToString(), CatalogId = state.CatalogId.ToString(),
+                ContentVersion = state.ContentVersion,
                 DifficultyId = state.DifficultyId, SizeId = state.SizeId, Seed = state.Seed,
                 Mode = SkirmishReplayMode.FreshStart
             }, setup);

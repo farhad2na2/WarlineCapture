@@ -18,7 +18,7 @@ namespace Game.Editor
             string reviewedSourceSemanticFingerprint,string reviewedLayoutSemanticFingerprint)
         {
             if(EditorApplication.isPlayingOrWillChangePlaymode||definition==null||supplied==null||
-                definition.ObjectiveConfig==null||(definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault&&!SkirmishMissionDispatch.RequiresSourceBoundDefinition(definition.CatalogId))||
+                definition.ObjectiveConfig==null||(definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault&&!SkirmishMissionDispatch.RequiresSourceBoundDefinition(definition.CatalogId, definition.ContentVersion))||
                 definition.CampaignMap==null||definition.MapLayout==null||
                 !SkirmishMissionLogicalBindingCompiler.Hex(reviewedSourceSemanticFingerprint)||
                 reviewedSourceSemanticFingerprint!=SkirmishMissionLogicalBindingCompiler.SourceFingerprint(definition.CampaignMap)||

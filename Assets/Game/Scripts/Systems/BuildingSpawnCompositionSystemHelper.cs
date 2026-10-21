@@ -358,7 +358,12 @@ namespace Game.Runtime
                     pending.ReceiptOwner, pending.ReceiptId, building.Id, building.OwnerFactionId, spawnUnitSourceKey, pending.ReceiptAttempt))
                 return false;
 
+            var birth = pending?.ReceiptId > 0
+                ? RuntimeActorBirthContext.CaptureNative(em, gridEntity, pending.ReceiptOwner, pending.ReceiptId,
+                    building.Id, building.OwnerFactionId, spawnUnitSourceKey, pending.ReceiptAttempt, grid)
+                : default;
             Entity instance = em.Instantiate(prefabEntity);
+            birth.StampFresh(em, instance, gridEntity);
             if (!isAirUnit)
                 new MapSurfaceSpawnGrounding().TryGroundCellCenter(em, grid, cell, ref pos, out _);
             em.SetComponentData(instance, new UnitGrid { Cell = cell });

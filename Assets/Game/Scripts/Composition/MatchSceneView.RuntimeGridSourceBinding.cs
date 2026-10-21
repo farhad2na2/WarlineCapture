@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Runtime;
 using Game.Rendering;
 using Unity.Entities;
 using Unity.Scenes;
@@ -24,8 +25,37 @@ namespace Game.Composition
             GeneratedMetadata == other.GeneratedMetadata;
     }
 
-    public sealed partial class MatchSceneView
+    public sealed partial class MatchSceneView : IRuntimeActorBirthSourceProvider
     {
+        private World birthProviderWorld;
+        private Entity birthProviderRoot;
+        private void RegisterActorBirthSourceProvider(World world)
+        {
+            if (operationMapRuntimeBootstrapSystem == null || !operationMapRuntimeBootstrapSystem.TryGetPublishedRoot(world, out var root)) return;
+            birthProviderWorld = world; birthProviderRoot = root;
+            world.EntityManager.AddComponentObject(root, new RuntimeActorBirthSourceProvider(this));
+        }
+        private void UnregisterActorBirthSourceProvider()
+        {
+            if (birthProviderWorld != null && birthProviderWorld.IsCreated && birthProviderWorld.EntityManager.Exists(birthProviderRoot))
+            {
+                var em = birthProviderWorld.EntityManager;
+                if (em.HasComponent<RuntimeActorBirthSourceProvider>(birthProviderRoot) &&
+                    ReferenceEquals(em.GetComponentObject<RuntimeActorBirthSourceProvider>(birthProviderRoot).Provider, this))
+                    em.RemoveComponent<RuntimeActorBirthSourceProvider>(birthProviderRoot);
+            }
+            birthProviderWorld = null; birthProviderRoot = Entity.Null;
+        }
+        public bool TryReadBirthSource(World world, Entity actualGrid, out RuntimeActorSourceIdentity source)
+        {
+            source = default;
+            if (this == null || world == null || world != birthProviderWorld ||
+                !TryReadEntitySceneGridBinding(world, birthProviderRoot, actualGrid, out var binding, out _)) return false;
+            source = new RuntimeActorSourceIdentity(world.Unmanaged.SequenceNumber, binding.MapRoot, binding.Grid, binding.SceneRoot,
+                binding.Generation, GetInstanceID(), binding.SourceView.GetInstanceID(), binding.SourceIdentity, binding.SourceContent, binding.GeneratedMetadata, world.EntityManager.GetComponentData<GridConfig>(actualGrid));
+            return true;
+        }
+
         // Passive producer-backed read. No scene load, readiness write, singleton adoption or synthetic SceneTag.
         public bool TryReadEntitySceneGridBinding(World world, Entity mapRoot, Entity grid,
             out RuntimeGridSourceBinding binding, out string reason)

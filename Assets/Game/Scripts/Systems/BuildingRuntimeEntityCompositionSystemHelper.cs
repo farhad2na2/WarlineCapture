@@ -42,7 +42,7 @@ namespace Game.Runtime
             }
         }
 
-        public Entity CreateBlockerEntity(Context context, BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells)
+        public Entity CreateBlockerEntity(Context context, BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, RuntimeActorBirthContext birth = default)
         {
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
                 return Entity.Null;
@@ -51,6 +51,7 @@ namespace Game.Runtime
             em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
             em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
             em.AddComponent<StaticGridBlocker>(entity);
+            birth.StampFresh(em, entity, birth.Source.Grid, pathingBlocker: true);
             return entity;
         }
 
@@ -61,13 +62,13 @@ namespace Game.Runtime
                 BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Helipad"));
         }
 
-        public Entity CreateBuildingCombatEntity(Context context, int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)
+        public Entity CreateBuildingCombatEntity(Context context, int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation, RuntimeActorBirthContext birth = default)
         {
             if (definition == null)
                 return Entity.Null;
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
                 return Entity.Null;
-            if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
+            if (context.TryGetGridData == null || !context.TryGetGridData(out Entity actualGrid, out GridConfig grid, out _, out _))
                 return Entity.Null;
             if (context.GetFootprintCenter == null)
                 return Entity.Null;
@@ -143,6 +144,7 @@ namespace Game.Runtime
                 AttackAnimationSeconds = 0.1f,
                 DeathAnimationSeconds = 0.01f
             });
+            birth.StampFresh(em, entity, actualGrid);
             return entity;
         }
 

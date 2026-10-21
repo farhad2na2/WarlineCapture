@@ -1,0 +1,55 @@
+{
+  "baseCommit": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+  "scope": "Source inspection/diff and exact-byte verification ONLY, no C# compiler or test execution",
+  "rawSourceSha256": {
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs": "8bb6902d03938172ec56624d17ec258a03571a9b5aab2393795bae1e43d9dc2e",
+    "Assets/Game/Scripts/Composition/MatchSceneView.RuntimeGridSourceBinding.cs": "aeae1c41614c4fc9c49c2b3456d61addf14adf618f70c510463035697ab543d8",
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": "0567f09a5e97c22da1aa682dbe8967f54e0e9d615030dd97538ddf8f8b2037f6",
+    "Assets/Game/Scripts/Runtime/Skirmish/RuntimeActorBirthContext.cs": "01e20861949b6ae36531b4ce8fc6b3706026d545d413beebed51e0ecc16588b4",
+    "Assets/Game/Scripts/Runtime/Skirmish/RuntimeActorBirthContext.cs.meta": "3d46bc9236eef67726d8c1c3b21b8ca48971fd55fb1d9c389b07f09a88c013b8",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs": "789427ec9ad26e7ee48ca76a26a425c5206248c65538a4a3b6ec2bb3eaae2562",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointRecoveryRunner.cs": "19759a263d464b7538da2311db718fbd17d4aa42f042a709e95dd30b8a374f0a",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeCheckpointStructureReconstruction.cs": "53a3cba769fae98fcb5f16d151ff95b38f3c4c2eabbf1a0e0500a5fa3b77e502",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs": "3e4e35c9e0e65f9f4abeb8e9a4a8148aa86e7a76e2786c3148dbe56604ab4fde",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.Checkpoint.cs": "b3c05120978ccac5682d39fdc6a57cd536f2de41e906eaad53fee0e7384e5956",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs": "2a7adf1cd41d80159c5c87d4eb85e55d018687ec40debda76712810f5d62bae1",
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs": "90b02241751e991c91d6311c411196eb52e689c3928da0554ffbe401260f1295",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeContextCompositionSystemHelper.cs": "8c453f1b81bf433391c5cde8e4ec030d5badb33fbe04f1c91d105efe3ceccc29",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeContextFactoryCompositionSystemHelper.cs": "0d4f294ea27137a2d217b8b41c722c62a8aa13a765e14812f419d9d73d7749dd",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeCreationCompositionSystemHelper.cs": "0369da47108508c47aaafaf7e7b6c4b8db40db9ed6f97d92d64cc5653cce9041",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs": "f0d8f5f56c3d4ff139775dee2ad930c32caac193527081f81f41d0cb6054ef6c",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "ee47eb446a8d2c69eb2d0d9aac59465e98d3ea2e4148e0a7c1efc535bbcdf95d",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs": "4323b6ba3b4449c83299adcbc2b4e4e6ec9e50534fa6addbd979911eb8382c9f",
+    "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs": "c5793d7871c5b1dab4bd1af8ba46aafec3ded23826768468dae71dd312881c90",
+    "Assets/Tests/Editor/SkirmishExpansion/RuntimeActorBirthContextTests.cs": "2dfff4484b74751b7519c0335c362c057739154dcdf8e73fce521b86015498ca",
+    "Assets/Tests/Editor/SkirmishExpansion/RuntimeActorBirthContextTests.cs.meta": "4bc7c837814ea37a8cce65d960fdfd0037cbf9e54cca6241b02bbfeb93066552"
+  },
+  "preservedSources": {
+    "Assets/Game/Scripts/Components/GridComponents.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "ec3416ec19f9104420552573b6e7117701529118bd92318f1943013e3048db9a"
+    },
+    "Assets/Game/Scripts/Systems/RuntimeGridPersistentStorageUtilitySystemHelper.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "c17db1628f4e70d45eb98928349b6b9936d0232fb24e1ec057c03e1993d59b8a"
+    },
+    "Assets/Game/Scripts/Systems/StaticGridBlockerUpdateSystem.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "0899ab33dc8a1cfa0441e7a85ec2dd4c8ecc9ccec0dc20628fa301742efc7dc9"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/GridBlockerStorageEpochTests.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "a90f4022f5867b938b69d0694ebe8257a15bb9c4dc978798474b352247d435f5"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/EntitySceneGridSourceBindingTests.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "15a850054dbcbbdee4f8809493a1fdeb71729bce724c54dcbcc6585e3724d723"
+    },
+    "Assets/Tests/Editor/SkirmishExpansion/S002RuntimeBlockerWitnessTests.cs": {
+      "unchangedFrom": "6c9a2cbc8be36cd18e7e48bde34450fcbd6d8047",
+      "sha256": "be96ff6414c211a1bf621b319167a781c10dfeba1de60ec01b2251db9208af37"
+    }
+  },
+  "newControlsWritten": 12,
+  "controlsExecuted": 0
+}

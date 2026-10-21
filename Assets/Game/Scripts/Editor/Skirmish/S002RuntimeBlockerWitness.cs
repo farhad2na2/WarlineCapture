@@ -206,10 +206,20 @@ namespace Game.Editor
                 {
                     if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId.Equals(sessionId))
                         return "ForeignAttemptWriterContributor";
-                    return "AttemptWriterGridSourceBindingUnavailable";
+                    reason = RuntimeActorBirthContext.ContributorUnavailableReason(em, entity, gridEntity, sourceRoot, sessionId);
+                    if (reason != null) return reason;
                 }
-                reason = SceneOwnerUnavailableReason(em, entity, authoredGuid, sourceRoot);
-                if (reason != null) return "WriterContributorOwnership:" + reason;
+                else if (RuntimeActorBirthContext.HasRecord(em, entity))
+                {
+                    // Separate runtime blocker: request provenance, never fabricated gameplay ownership.
+                    reason = RuntimeActorBirthContext.ContributorUnavailableReason(em, entity, gridEntity, sourceRoot, sessionId);
+                    if (reason != null) return reason;
+                }
+                else
+                {
+                    reason = SceneOwnerUnavailableReason(em, entity, authoredGuid, sourceRoot);
+                    if (reason != null) return "WriterContributorOwnership:" + reason;
+                }
                 if (!em.HasComponent<StaticBlockerPrevBounds>(entity)) return "WriterNewContributorNotApplied";
                 var previous = em.GetComponentData<StaticBlockerPrevBounds>(entity);
                 int2 origin = em.HasComponent<OperationMapBuildingComponent>(entity) && em.HasComponent<RuntimeBuildingCombatInfo>(entity)

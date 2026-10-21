@@ -426,11 +426,12 @@ namespace Game.Runtime
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
                 if(typedPlacement!=null&&!typedPlacement.TryRequestedWorld(force,member,out position))
                 {em.DestroyEntity(owned);return Entity.Null;}
-                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement))
+                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, out var birth))
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
                 }
+                birth.StampFresh(em, owned, birth.Source.Grid);
                 // Rendered by the shared impostor/model presentation, not a per-unit
                 // GameObject; the visual attach pass must skip prefab instances.
                 SetOrAdd(em, owned, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
@@ -494,10 +495,11 @@ namespace Game.Runtime
         }
 
         private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed)
-            =>TryPlaceTypedOnMap(em,entity,position,missionSeed,default,null);
+            =>TryPlaceTypedOnMap(em,entity,position,missionSeed,default,null, out _);
 
-        private static bool TryPlaceTypedOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed,SkirmishResolvedForceEntry force,SkirmishTypedSpawnConstraint typedPlacement)
+        private static bool TryPlaceTypedOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed,SkirmishResolvedForceEntry force,SkirmishTypedSpawnConstraint typedPlacement, out RuntimeActorBirthContext birth)
         {
+            birth = default;
             var pos = new float3(position.x, position.y, position.z);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if(typedPlacement!=null&&grids.CalculateEntityCount()!=1)return false;
@@ -554,6 +556,11 @@ namespace Game.Runtime
                 {
                     default(MapSurfaceSpawnGrounding).TryGroundCellCenter(em, grid, cell, ref pos, out _);
                     SetOrAdd(em, entity, new UnitGrid { Cell = cell });
+                    if (em.HasComponent<SkirmishAttemptOwnedComponent>(entity))
+                    {
+                        var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                        birth = RuntimeActorBirthContext.CaptureScenario(em, gridEntity, owner.SessionId, owner.StableObjectId, grid);
+                    }
                 }
             }
 

@@ -172,6 +172,7 @@ namespace Game.Runtime
                     if (!actualInfo.OriginCell.Equals(savedInfo.OriginCell) || !actualInfo.FootprintCells.Equals(savedInfo.FootprintCells) ||
                         actualInfo.OwnerFactionId != savedInfo.OwnerFactionId)
                     { failure = "NativeStructureRecoveryPlacementMismatch:" + item.Actor.Id; complete = false; return false; }
+                    RuntimeActorBirthContext.VerifyBuildingAdoption(em, building, result);
                     SkirmishNativeCheckpointParts.TryReadComponent(item.Actor.Parts, out SkirmishAttemptOwnedComponent identity);
                     Set(em, building, identity);
                     Set(em, building, new SkirmishSharedActorTag());

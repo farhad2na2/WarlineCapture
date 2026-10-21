@@ -151,6 +151,7 @@ namespace Game.Runtime
             public readonly BuildingRuntimeSpawnCompositionSystemHelper.CreateBuildingVisualInstanceDelegate CreateBuildingVisualInstance;
             public readonly BuildingRuntimeSpawnCompositionSystemHelper.PositionBuildingObjectDelegate PositionBuildingObject;
             public readonly BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
+            public readonly BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingWithBirthDelegate RegisterWithBirth;
             public readonly BuildingRuntimeSpawnCompositionSystemHelper.SetRuntimeBuildingOwnerFactionDelegate SetRuntimeBuildingOwnerFaction;
             public readonly RuntimeBuildingCollection<RuntimeBuildingEntity> RuntimeBuildingSystem;
             public readonly BuildingPlacementInteractionCompositionSystemHelper RuntimeLinkInteractionSystem;
@@ -215,7 +216,8 @@ namespace Game.Runtime
                 float buildingFactionTintStrength,
                 Func<int, bool> deleteBuildingById,
                 Action beginDeferredRuntimeBuildingSideEffects,
-                Action endDeferredRuntimeBuildingSideEffects)
+                Action endDeferredRuntimeBuildingSideEffects,
+                BuildingRuntimeSpawnCompositionSystemHelper.RegisterRuntimeBuildingWithBirthDelegate registerWithBirth = null)
             {
                 BuildingRoot = buildingRoot;
                 DefinitionSystem = definitionSystem;
@@ -230,6 +232,7 @@ namespace Game.Runtime
                 CreateBuildingVisualInstance = createBuildingVisualInstance;
                 PositionBuildingObject = positionBuildingObject;
                 RegisterRuntimeBuilding = registerRuntimeBuilding;
+                RegisterWithBirth = registerWithBirth;
                 SetRuntimeBuildingOwnerFaction = setRuntimeBuildingOwnerFaction;
                 RuntimeBuildingSystem = runtimeBuildingSystem;
                 RuntimeLinkInteractionSystem = runtimeLinkInteractionSystem;
@@ -273,7 +276,7 @@ namespace Game.Runtime
                 source.CreateBuildingVisualInstance,
                 source.PositionBuildingObject,
                 source.RegisterRuntimeBuilding,
-                source.SetRuntimeBuildingOwnerFaction);
+                source.SetRuntimeBuildingOwnerFaction, source.RegisterWithBirth);
 
         public BuildingRuntimeSpawnCommandSystemHelper.Context CreateSpawnCommandContext(
             Source source,
@@ -297,11 +300,11 @@ namespace Game.Runtime
                 source.ResolvePlacementRect,
                 definition => source.RuntimeEntitySystem == null || source.RuntimeEntitySystem.ShouldRuntimeBuildingBlockPathing(definition),
                 source.RemoveOverlappingBlockers,
-                (definition, originCell, footprintCells) => source.RuntimeEntitySystem != null
-                    ? source.RuntimeEntitySystem.CreateBlockerEntity(source.RuntimeEntityContext, definition, originCell, footprintCells)
+                (definition, originCell, footprintCells, birth) => source.RuntimeEntitySystem != null
+                    ? source.RuntimeEntitySystem.CreateBlockerEntity(source.RuntimeEntityContext, definition, originCell, footprintCells, birth)
                     : Entity.Null,
-                (runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation) => source.RuntimeEntitySystem != null
-                    ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation)
+                (runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation, birth) => source.RuntimeEntitySystem != null
+                    ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation, birth)
                     : Entity.Null,
                 footprint => source.PlacementRedirectSystem?.RedirectUnitsAroundPlacedBuilding(redirectContext, footprint),
                 footprint => source.PlacementRedirectSystem?.AddDeferredRedirectFootprint(footprint),

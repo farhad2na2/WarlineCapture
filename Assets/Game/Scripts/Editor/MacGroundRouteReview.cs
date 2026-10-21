@@ -94,7 +94,8 @@ namespace Game.Editor
         {
             if (mesh == null) return;
             string name = (mesh.name + "|" + AssetDatabase.GetAssetPath(mesh)).ToLowerInvariant();
-            if (!name.Contains("road") && !name.Contains("street") && !name.Contains("pavement") && !name.Contains("sidewalk")) return;
+            if (!name.Contains("road") && !name.Contains("street") && !name.Contains("pavement") && !name.Contains("sidewalk") &&
+                mesh.name != "DenseCity_Lanes" && mesh.name != "DenseCity_PavingBridgeCutouts" && mesh.name != "DenseCity_KerbPaving") return;
             using var data = MeshUtility.AcquireReadOnlyMeshData(mesh);
             using var vertices = new NativeArray<Vector3>(data[0].vertexCount, Allocator.Temp);
             using var indices = new NativeArray<int>(data[0].GetSubMesh(submesh).indexCount, Allocator.Temp);
@@ -119,9 +120,14 @@ namespace Game.Editor
         {
             if (!SessionState.GetBool(Active, false) || !EditorApplication.isPlaying ||
                 EditorApplication.timeSinceStartup < nextSample) return;
-            nextSample = EditorApplication.timeSinceStartup + 15;
+            nextSample = EditorApplication.timeSinceStartup + 2;
             var world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated) return;
+            if (SessionState.GetString(OutputKey, "").Contains("campaign-m01"))
+            {
+                var hud = UnityEngine.Object.FindAnyObjectByType<Game.UI.Runtime.AriaTutorialBriefingView>();
+                if (hud == null || !hud.IsPresentationVisible) return;
+            }
             try
             {
                 var em = world.EntityManager; em.CompleteAllTrackedJobs();
@@ -195,14 +201,24 @@ namespace Game.Editor
                     MeasureRenderedSupport(em, transform.Position, row);
                     rows.Add(row);
                 }
-                if (rows.Count == 0) return;
+                // Scene streaming can expose ambient prefabs before the mission and
+                // presentation meshes are ready. Those warm-up frames prove no contact.
+                bool playerReady = false, enemyReady = false;
+                foreach (JObject row in rows)
+                {
+                    bool ready = (bool)row["measured_posed_mesh"] && (int)row["has_surface"] != 0 &&
+                        (int)row["rendered_entity_count"] > 10000;
+                    playerReady |= ready && (int)row["faction"] == 1;
+                    enemyReady |= ready && (int)row["faction"] == 2;
+                }
+                if (!playerReady || !enemyReady) return;
                 string output = SessionState.GetString(OutputKey, ""); int sample = ++captures;
                 File.AppendAllText(Path.Combine(output, "contact.jsonl"), new JObject { ["frame"] = Time.frameCount,
                     ["utc"] = DateTime.UtcNow.ToString("O"), ["camera"] = Camera.main == null ? null : Camera.main.transform.position.ToString("F3"),
                     ["actors"] = rows }.ToString(Newtonsoft.Json.Formatting.None) + "\n");
                 ScreenCapture.CaptureScreenshot(Path.Combine(output, "normal-view-" + sample + ".png"));
                 Debug.Log("[MacGroundRouteReview] observed=" + rows.Count + " capture=" + sample);
-                if (sample >= 2 && output.Contains("campaign-m01"))
+                if (sample >= 5 && output.Contains("campaign-m01"))
                 {
                     Debug.Log("[MacGroundContactObservation] result=Captured missionAcceptance=Unmeasured");
                     CampaignTutorialEntryEditorProbe.EndGroundContactObservation();

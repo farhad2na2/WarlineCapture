@@ -16,7 +16,7 @@ MonoBehaviour:
   Sources:
   - Prefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
     Path: Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab
-    DependencyHash: f069b1b2392bd0276628a2f851f05e6c
+    DependencyHash: e8912be3c6f66f57dbc65b5a653b86ff
   - Prefab: {fileID: 8023284474783625476, guid: d55ce8286c4da4408b32ac8ab58709c4, type: 3}
     Path: Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Plane_Transport.prefab
     DependencyHash: a1ec5c7ad8214a3954c39b20758dabd1

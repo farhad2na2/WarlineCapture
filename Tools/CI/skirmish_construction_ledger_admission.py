@@ -26,7 +26,7 @@ from s005_windows_source_snapshot import candidate_hash
 
 BASELINE = '9f75b2f224cde04ea87f25b8c9fc097765889bcf'
 POLICY_PINS = {
-    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "309375ed8d054e41d817f49f1c2650111945eb20952063f7e7335c63c1e1dc21",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "b0c1e5601a65111904d7b750fbd9f6cf523f25327c9677af2df0d61ad2749c24",
     "Assets/Game/Scripts/Systems/BuildingConstructionResourceTransactionSystemHelper.cs": "38daf611d9103717b131f66112bf5ca1f793e80a79d5f34b9ae850e6356512ff",
     "Assets/Game/Scripts/Systems/BuildingPlacementConstructionTransaction.cs": "a977bccfe30c86e51a9a03a9f649af36f2c9d08e260da97fc41bf86a98343d17",
     "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs": "dfebb4af2b1a78815442f51aa299bfade96398875c3f8651ea3f6ebd3423e9b1",

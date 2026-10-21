@@ -739,6 +739,21 @@ namespace Game.Editor
             return true;
         }
 
+        private static string RestoreProductionEffectiveLocale(string baselineEffectiveLocale, string requestedMissionLocale, Action<string, JObject> record)
+        {
+            // The restored environment request is not evidence of the effective locale.
+            if (!string.Equals(GameLocalization.CurrentLocaleCode, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase))
+                GameLocalization.SetLocale(baselineEffectiveLocale, false);
+            string actualEffectiveLocale = GameLocalization.CurrentLocaleCode;
+            bool effectiveLocaleMatches = string.Equals(actualEffectiveLocale, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase);
+            record("EffectiveLocaleRestoreChecked", new JObject { ["baseline_effective_locale"] = baselineEffectiveLocale,
+                ["expected_effective_locale"] = baselineEffectiveLocale, ["actual_effective_locale"] = actualEffectiveLocale,
+                ["requested_mission_locale"] = requestedMissionLocale, ["matches"] = effectiveLocaleMatches });
+            if (!effectiveLocaleMatches)
+                throw new InvalidOperationException("Actual effective locale restore differs from captured baseline");
+            return actualEffectiveLocale;
+        }
+
         private sealed class ProductionCanaryContext
         {
             internal readonly SkirmishProductionCanaryRequest Request;
@@ -1539,16 +1554,7 @@ namespace Game.Editor
                     SessionState.EraseBool("Warline.MissionValidation.ResumeRefresh");
                     AssetDatabase.AllowAutoRefresh();
                 }
-                // The restored environment request is not evidence of the effective locale.
-                if (!string.Equals(GameLocalization.CurrentLocaleCode, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase))
-                    GameLocalization.SetLocale(baselineEffectiveLocale, false);
-                string actualEffectiveLocale = GameLocalization.CurrentLocaleCode;
-                bool effectiveLocaleMatches = string.Equals(actualEffectiveLocale, baselineEffectiveLocale, StringComparison.OrdinalIgnoreCase);
-                Record("EffectiveLocaleRestoreChecked", new JObject { ["baseline_effective_locale"] = baselineEffectiveLocale,
-                    ["expected_effective_locale"] = baselineEffectiveLocale, ["actual_effective_locale"] = actualEffectiveLocale,
-                    ["requested_mission_locale"] = Request.Locale, ["matches"] = effectiveLocaleMatches });
-                if (!effectiveLocaleMatches)
-                    throw new InvalidOperationException("Actual effective locale restore differs from captured baseline");
+                string actualEffectiveLocale = RestoreProductionEffectiveLocale(baselineEffectiveLocale, Request.Locale, Record);
                 RecordProfileStage("ProfileAfterRestore");
                 Record("ContextRestored", new JObject { ["actual_save_root"] = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
                     ["actual_enter_play_options_enabled"] = EditorSettings.enterPlayModeOptionsEnabled,

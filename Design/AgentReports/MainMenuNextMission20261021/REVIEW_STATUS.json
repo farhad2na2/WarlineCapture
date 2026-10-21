@@ -3,7 +3,7 @@
   "merged": false,
   "approvedDirection": "A during Campaign; C after full Campaign completion",
   "visualReview": {
-    "status": "Self-reviewed final actual Game screens against approved A/C",
+    "status": "Self-reviewed final polished actual Game screens and native aspect matrix",
     "ownerReview": "Pending",
     "locales": [
       "en",
@@ -17,12 +17,12 @@
   },
   "automatedChecks": {
     "status": "Passed",
-    "nativeChecks": 649,
+    "nativeChecks": 799,
     "nativeCaptures": 12,
     "persistenceTests": 16,
     "sourceDiffCheck": "Passed",
     "wrapperExit": 0,
-    "fullLog": "ValidationLogs/final-16.log"
+    "fullLog": "ValidationLogs/polish-19.log"
   },
   "normalInputMenuJourney": {
     "status": "Passed",
@@ -52,5 +52,21 @@
       "Assets/Game/Resources/SkirmishAircraftRotorGeometry_V1.asset": "0eb796b92051e4ac6d16e09769a227cf687b0fbc38b8f1f79517ce151e1bcf5d"
     }
   },
-  "unrelatedChanges": "Font assets and 19 preexisting/importer metadata changes excluded from candidate"
+  "unrelatedChanges": "Font assets and 19 preexisting/importer metadata changes excluded from candidate",
+  "requestedPolish": {
+    "continueHeight": 76,
+    "openSize": [
+      218,
+      58
+    ],
+    "openTopInset": 12,
+    "replaySize": [
+      480,
+      72
+    ],
+    "replayHorizontalTextPadding": 24,
+    "separateThumbnailRemoved": true,
+    "dedicatedEpiloguePanorama": true,
+    "proportionalCoverCrop": true
+  }
 }

@@ -21,3 +21,5 @@ Visual review, automated projection/persistence checks, native rendering, and no
 The existing O001 objective/source-fit load gate is documented in ../ResultScreenReview20261021/Implementation/OPERATIONS_LOAD_GATE.md. This UI feature does not change mission geometry, objectives, budgets or aircraft. A complete normal-input mission/ARIA/result/return journey is not claimed here.
 
 Unrelated font and importer changes in the shared checkout are excluded from this candidate. Validation-only dependency stamp refreshes retain all original strict Play-entry guards and must be restored byte-for-byte before staging.
+
+The requested button/banner polish is recorded in POLISH_NOTES.md. The completion strip now uses a dedicated proportionally cropped epilogue panorama with no separate thumbnail; EndingArtworkProvenance.json records its built-in ImageGen prompt and final asset path.

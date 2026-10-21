@@ -148,6 +148,43 @@ namespace Game.Editor
                 var n=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,next);
                 var c=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,count);
                 Require(n.min.y>=c.max.y-1,"Next mission and completion text overlap: "+name);
+                var action=(RectTransform)card.Action.transform;
+                var a=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,action);
+                bool expanded=root.GetComponentInChildren<MainMenuModeCardsView>(true).Expanded;
+                Require(action.rect.height>=(expanded?76:58),"Mode action must retain approved taller target: "+name);
+                var actionLabel=action.GetComponentInChildren<TMP_Text>();
+                Require(actionLabel.margin.x>=12&&actionLabel.margin.z>=12,"Action copy needs horizontal breathing room: "+name);
+                if(expanded)
+                {
+                    var rank=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,card.transform.Find("ModeRank") as RectTransform);
+                    var medals=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,card.transform.Find("DifficultyMedals") as RectTransform);
+                    var detail=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,card.transform.Find("MedalEligibility") as RectTransform);
+                    Require(rank.min.y>=a.max.y+6,"Rank and taller Continue action need a clean gap: "+name);
+                    Require(medals.min.y>=rank.max.y+3,"Medals and rank must not collide: "+name);
+                    Require(detail.min.y>=medals.max.y+3,"Medal detail and stars need a clean gap: "+name);
+                }
+                else
+                {
+                    var band=RectTransformUtility.CalculateRelativeRectTransformBounds(parent,card.transform.Find("InformationBand") as RectTransform);
+                    Require(band.max.y-a.max.y>=11.9f,"Open action must be inset from the band top: "+name);
+                    Require(a.min.y>=n.max.y+8,"Open action must clear the next-mission line: "+name);
+                }
+            }
+            var home=root.GetComponentInChildren<MainMenuModeCardsView>(true);
+            var hero=root.GetComponentInChildren<MainMenuCampaignCardView>(true).transform;
+            Require(hero.Find("CompletionThumbnail")==null,"Completed Campaign must not have a separate thumbnail.");
+            if(home.Expanded)
+            {
+                var panorama=hero.Find("CompletionPanorama").GetComponent<MissionAtlasArtworkView>();
+                Require(panorama.isActiveAndEnabled&&panorama.Image.texture==AssetDatabase.LoadAssetAtPath<Texture2D>(MainMenuModeCardsAuthoring.CompletionPanoramaPath),"Dedicated epilogue panorama required.");
+                Require(!hero.Find("CampaignArt").gameObject.activeSelf,"Tall mission art must not cover the narrow ending panorama.");
+                var replay=hero.Find("ContinueButton") as RectTransform;
+                var label=replay.GetComponentInChildren<TMP_Text>();label.ForceMeshUpdate(false,true);
+                Require(replay.rect.width>=480&&label.margin.x>=24&&label.margin.z>=24,"Replay Chapters needs wider face and padded copy.");
+                Require(!label.isTextTruncated,"Replay Chapters copy must fit.");
+                float source=panorama.Image.texture.width*panorama.Image.uvRect.width/(panorama.Image.texture.height*panorama.Image.uvRect.height);
+                float target=panorama.Image.rectTransform.rect.width/panorama.Image.rectTransform.rect.height;
+                Require(Mathf.Abs(source-target)<.01f,"Panoramic ending must crop proportionally without stretching.");
             }
             File.WriteAllText(Root+"/Native/"+name+".text-layout.txt",report.ToString());
         }

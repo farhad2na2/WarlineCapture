@@ -7,7 +7,7 @@ layout name=HeaderContent alignment=TopLeft appliedScale=0.9282297 extraWidth=0
   firstChild rect=(x:0.00, y:-86.00, width:1642.00, height:86.00) anchor=((0.00, 1.00),(0.00, 1.00)) pivot=(0.00, 1.00) anchored=(16.00, -10.00) local=(16.00, -10.00, 0.00) world=(-761.15, 566.72, 0.00) scale=(1.00, 1.00, 1.00) corners=((-761.15, 486.89, 0.00)..(763.00, 566.72, 0.00))
 layout name=LeftContent alignment=TopLeft appliedScale=0.9282297 extraWidth=0
   section rect=(x:0.00, y:-1241.07, width:1672.00, height:1241.07) anchor=((0.50, 0.50),(0.50, 0.50)) pivot=(0.00, 1.00) anchored=(-776.00, 576.00) local=(-776.00, 576.00, 0.00) world=(-776.00, 576.00, 0.00) scale=(0.93, 0.93, 0.93) corners=((-776.00, -576.00, 0.00)..(776.00, 576.00, 0.00))
-  firstChild rect=(x:0.00, y:-830.07, width:1270.00, height:830.07) anchor=((0.00, 1.00),(0.00, 1.00)) pivot=(0.00, 1.00) anchored=(388.00, -108.00) local=(388.00, -108.00, 0.00) world=(-415.85, 475.75, 0.00) scale=(1.00, 1.00, 1.00) corners=((-415.85, -294.75, 0.00)..(763.00, 475.75, 0.00))
+  firstChild rect=(x:0.00, y:-800.07, width:1270.00, height:800.07) anchor=((0.00, 1.00),(0.00, 1.00)) pivot=(0.00, 1.00) anchored=(388.00, -108.00) local=(388.00, -108.00, 0.00) world=(-415.85, 475.75, 0.00) scale=(1.00, 1.00, 1.00) corners=((-415.85, -266.90, 0.00)..(763.00, 475.75, 0.00))
 layout name=MiddleContent alignment=Center appliedScale=0.9282297 extraWidth=0
   section rect=(x:0.00, y:-1241.07, width:1672.00, height:1241.07) anchor=((0.50, 0.50),(0.50, 0.50)) pivot=(0.00, 1.00) anchored=(-776.00, 576.00) local=(-776.00, 576.00, 0.00) world=(-776.00, 576.00, 0.00) scale=(0.93, 0.93, 0.93) corners=((-776.00, -576.00, 0.00)..(776.00, 576.00, 0.00))
 layout name=RightContent alignment=TopRight appliedScale=0.9282297 extraWidth=0

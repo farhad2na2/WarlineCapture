@@ -12,15 +12,15 @@ namespace Game.UI.Runtime
         [SerializeField] private MainMenuCampaignCardView campaign;
         [SerializeField] private MainMenuModeCardView operations, skirmish;
         [SerializeField] private TMP_Text completeCount;
-        [SerializeField] private Image completeThumb;
+        [SerializeField] private MissionAtlasArtworkView completePanorama;
         [SerializeField] private RectTransform completeEmblem;
         private MainMenuV3SectionLayoutView frame;
         private double nextRead;
         private bool? fixtureCompletion;
         public bool Expanded { get; private set; }
         public void Configure(MainMenuCampaignCardView hero,MainMenuModeCardView op,MainMenuModeCardView sk,
-            TMP_Text count,Image thumb,RectTransform emblem)
-        {campaign=hero;operations=op;skirmish=sk;completeCount=count;completeThumb=thumb;completeEmblem=emblem;}
+            TMP_Text count,MissionAtlasArtworkView panorama,RectTransform emblem)
+        {campaign=hero;operations=op;skirmish=sk;completeCount=count;completePanorama=panorama;completeEmblem=emblem;}
         private void OnEnable()
         {
             frame=GetComponent<MainMenuV3SectionLayoutView>();
@@ -50,46 +50,53 @@ namespace Game.UI.Runtime
             var root=(RectTransform)transform;
             float extraX=Mathf.Max(0,root.rect.width-1672),extraY=Mathf.Max(0,root.rect.height-941);
             float width=1270+extraX,cardW=(width-12)/2;
-            float top=full?260:650+extraY;
-            float height=full?661+extraY:271;
-            Place(campaign.transform,14,108,width,full?140:530+extraY);
+            float top=full?260:620+extraY;
+            float height=full?661+extraY:301;
+            Place(campaign.transform,14,108,width,full?140:500+extraY);
             Place(operations.transform,14,top,cardW,height);
             Place(skirmish.transform,26+cardW,top,cardW,height);
             operations.Layout(cardW,height,full);skirmish.Layout(cardW,height,full);
-            completeCount.gameObject.SetActive(full);completeThumb.gameObject.SetActive(full);completeEmblem.gameObject.SetActive(full);
+            completeCount.gameObject.SetActive(full);completePanorama.gameObject.SetActive(full);completeEmblem.gameObject.SetActive(full);
             var hero=campaign.transform;
+            var shade=hero.Find("CampaignReadability")?.GetComponent<V3GradientGraphic>();
+            if(shade!=null)shade.Configure(full?new Color(0.01f,.035f,.055f,.42f):new Color(0,0,0,.05f),
+                full?new Color(0.01f,.025f,.04f,.64f):new Color(0,0,0,.95f),new Color32(62,83,93,255),2);
             SetActive(hero,"CampaignLabel",!full);SetActive(hero,"Purpose",!full);
             if(!full && !campaign.CompletionVisible)SetActive(hero,"Chapter",true);
             if(full)
             {
-                SetActive(hero,"Chapter",false);SetActive(hero,"CampaignArt",true);
-                var image=hero.Find("CampaignArt")?.GetComponent<Image>();
-                completeThumb.sprite=image!=null?image.sprite:null;
-                Place(completeThumb.transform,3,3,174,134);
-                Place(completeEmblem,194,37,64,64);
-                Place(hero.Find("Title"),278,18,width-710,64);
-                Place(completeCount.transform,278,82,width-710,35);
+                SetActive(hero,"Chapter",false);SetActive(hero,"CampaignArt",false);
+                Place(completePanorama.transform,3,3,width-6,134);
+                completePanorama.Refresh();
+                Place(completeEmblem,26,38,64,64);
+                Place(hero.Find("Title"),112,19,width-650,62);
+                Place(completeCount.transform,112,82,width-650,35);
                 UiLocalizedText.Set(completeCount,"25/25 "+T("MISSIONS","ماموریت"));
                 var title=hero.Find("Title")?.GetComponent<TMP_Text>();
                 if(title!=null){UiLocalizedText.Set(title,T("CAMPAIGN COMPLETE","کارزار تکمیل شد"));Font(title,46,32);}
-                Place(hero.Find("ContinueButton"),width-404,22,382,62);
+                Place(hero.Find("ContinueButton"),width-502,14,480,72);
+                var replayLabel=hero.Find("ContinueButton/Label")?.GetComponent<TMP_Text>();
+                if(replayLabel!=null)replayLabel.margin=new Vector4(24,0,24,0);
                 UiLocalizedText.Set(hero.Find("ContinueButton/Label")?.GetComponent<TMP_Text>(),T("REPLAY CHAPTERS  ›","تکرار فصل‌ها  ‹"));
-                Place(hero.Find("StoryArchiveButton"),width-404,90,382,36);
+                Place(hero.Find("StoryArchiveButton"),width-502,96,480,32);
             }
             else
             {
-                Place(hero.Find("CampaignLabel"),32,181+extraY,width-64,42);
-                Place(hero.Find("Chapter"),32,223+extraY,width-64,40);
-                Place(hero.Find("Title"),32,263+extraY,width-64,72);
-                Place(hero.Find("Purpose"),32,339+extraY,width-64,66);
+                SetActive(hero,"CampaignArt",true);
+                var continueLabel=hero.Find("ContinueButton/Label")?.GetComponent<TMP_Text>();
+                if(continueLabel!=null)continueLabel.margin=new Vector4(18,0,18,0);
+                Place(hero.Find("CampaignLabel"),32,151+extraY,width-64,42);
+                Place(hero.Find("Chapter"),32,193+extraY,width-64,40);
+                Place(hero.Find("Title"),32,233+extraY,width-64,72);
+                Place(hero.Find("Purpose"),32,309+extraY,width-64,66);
                 var purpose=hero.Find("Purpose")?.GetComponent<TMP_Text>();
                 if(purpose!=null)
                 {
                     purpose.textWrappingMode=TextWrappingModes.Normal;
                     purpose.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(Fa?18:22,Fa?24:27);
                 }
-                Place(hero.Find("ContinueButton"),32,426+extraY,650,82);
-                Place(hero.Find("StoryArchiveButton"),710,426+extraY,360,82);
+                Place(hero.Find("ContinueButton"),32,396+extraY,650,82);
+                Place(hero.Find("StoryArchiveButton"),710,396+extraY,360,82);
                 var title=hero.Find("Title")?.GetComponent<TMP_Text>();if(title!=null)Font(title,60,36);
             }
         }

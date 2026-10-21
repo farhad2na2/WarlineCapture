@@ -5,9 +5,9 @@ Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.3
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=0
-ModeRank font=Oxanium-Bold SDF size=24 visible=14 rect=(x:0.00, y:-32.00, width:581.00, height:32.00) text=MODE RANK · CADET
+ModeRank font=Oxanium-Bold SDF size=24 visible=14 rect=(x:0.00, y:-30.00, width:581.00, height:30.00) text=MODE RANK · CADET
 MedalEligibility font=Oxanium-Bold SDF size=21 visible=30 rect=(x:0.00, y:-26.00, width:581.00, height:26.00) text=1 RELEASED · DEFAULT MISSION MEDALS
-Label font=Oxanium-Bold SDF size=31 visible=19 rect=(x:-288.50, y:-18.00, width:577.00, height:36.00) text=CONTINUE OPERATIONS  ›
+Label font=Oxanium-Bold SDF size=34 visible=19 rect=(x:-288.50, y:-32.00, width:577.00, height:64.00) text=CONTINUE OPERATIONS  ›
 ModeTitle font=Oxanium-Bold SDF size=52 visible=8 rect=(x:0.00, y:-60.00, width:489.00, height:60.00) text=SKIRMISH
 NextPlayableMission font=Oxanium-Bold SDF size=38 visible=22 rect=(x:0.00, y:-70.00, width:581.00, height:70.00) text=NEXT: S002 · COMMAND SIEGE
 UniqueMissionProgress font=Oxanium-Bold SDF size=34 visible=14 rect=(x:0.00, y:-44.00, width:581.00, height:44.00) text=1/120 COMPLETED
@@ -15,6 +15,6 @@ Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.3
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=1
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:39.34, height:48.00) text=0
-ModeRank font=Oxanium-Bold SDF size=24 visible=14 rect=(x:0.00, y:-32.00, width:581.00, height:32.00) text=MODE RANK · CADET
+ModeRank font=Oxanium-Bold SDF size=24 visible=14 rect=(x:0.00, y:-30.00, width:581.00, height:30.00) text=MODE RANK · CADET
 MedalEligibility font=Oxanium-Bold SDF size=21 visible=30 rect=(x:0.00, y:-26.00, width:581.00, height:26.00) text=6 RELEASED · DEFAULT MISSION MEDALS
-Label font=Oxanium-Bold SDF size=31 visible=17 rect=(x:-288.50, y:-18.00, width:577.00, height:36.00) text=CONTINUE SKIRMISH  ›
+Label font=Oxanium-Bold SDF size=34 visible=17 rect=(x:-288.50, y:-32.00, width:577.00, height:64.00) text=CONTINUE SKIRMISH  ›

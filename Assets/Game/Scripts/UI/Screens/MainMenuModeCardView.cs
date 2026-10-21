@@ -98,50 +98,50 @@ namespace Game.UI.Runtime
             if(!layoutDirty && Mathf.Approximately(width,w) && Mathf.Approximately(height,h) &&
                 expanded==large && layoutLocale==GameLocalization.CurrentLocaleCode)return;
             width=w;height=h;expanded=large;layoutDirty=false;layoutLocale=GameLocalization.CurrentLocaleCode;
-            Place(preview.transform,3,3,w-6,large?h*.49f:Mathf.Min(166,h*.62f));
-            float band=large?h*.49f:Mathf.Min(111,h*.41f);
+            Place(preview.transform,3,3,w-6,large?h*.43f:Mathf.Min(166,h*.62f));
+            float band=large?h*.43f:Mathf.Min(111,h*.41f);
             Place(readability.transform,3,band,w-6,h-band-6);
             readability.Configure(new Color32(10,30,40,248),new Color32(3,13,21,255),Color.clear,0);
             var titleShade=transform.Find("ModeTitleShade");
             if(titleShade!=null){titleShade.gameObject.SetActive(large);Place(titleShade,3,3,w-6,118);}
-            float titleY=large?18:band+2;
+            float titleY=large?18:band+7;
             Place(iconCell,3,large?3:band,large?96:74,large?110:h-band-3);
             Place(icon,8,large?15:(h-band-3-64)/2,large?80:58,large?80:64);
             Place(heading.rectTransform,large?116:92,titleY,w-(large?140:112),large?60:48);
             Size(heading,large?52:40,large?34:30);heading.color=Color.white;
-            float nextY=large?band+18:band+48;
+            float nextY=large?band+18:band+80;
             Place(next.rectTransform,large?24:92,nextY,w-(large?48:110),large?70:32);
             Size(next,large?(Fa?30:38):25,large?(Fa?19:27):20);next.color=Accent;
             next.textWrappingMode=TextWrappingModes.Normal;
-            float countY=large?nextY+76:h-75;
+            float countY=large?nextY+76:h-68;
             float progressWidth=large?w-48:Mathf.Max(220,w*.30f);
             Place(progress.rectTransform,large?24:92,countY,large?w-48:progressWidth,large?44:36);
             Size(progress,large?34:27,large?27:22);
-            Place(progressTrack,large?24:92,large?countY+43:h-29,progressWidth,large?14:10);
+            Place(progressTrack,large?24:92,large?countY+43:h-24,progressWidth,large?14:10);
             float ratio=state.Total>0?Mathf.Clamp01((float)state.Completed/state.Total):0;
             Place(progressFill,2,2,Mathf.Max(0,(progressWidth-4)*ratio),large?10:6);
             progressFill.gameObject.SetActive(ratio>0);
-            float medalsY=large?h-148:h-70;
+            float medalsY=large?h-188:h-71;
             float medalsX=large?24:92+progressWidth+14;
             float medalWidth=large?Mathf.Min(350,w*.53f):Mathf.Max(150,w-medalsX-16);
-            Place(medalRow,medalsX,medalsY,medalWidth,large?56:46);
+            Place(medalRow,medalsX,medalsY,medalWidth,large?48:46);
             for(int i=0;i<4;i++)
             {
                 float cell=medalWidth/4;
                 var item=medalRow.GetChild(i) as RectTransform;
-                Place(item,i*cell,0,cell,large?52:42);
+                Place(item,i*cell,0,cell,large?48:42);
                 Place(item.Find("Star"),0,2,large?40:24,large?40:24);
                 Place(medalCounts[i].rectTransform,large?42:26,0,cell-(large?44:28),large?48:31);
                 Size(medalCounts[i],large?28:22,large?22:18);
             }
             rank.gameObject.SetActive(large);detail.gameObject.SetActive(large);
-            Place(rank.rectTransform,24,h-98,w-48,32);Size(rank,24,20);rank.color=new Color32(231,192,111,255);
+            Place(rank.rectTransform,24,h-134,w-48,30);Size(rank,24,20);rank.color=new Color32(231,192,111,255);
             Place(detail.rectTransform,24,countY+61,w-48,26);Size(detail,21,18);detail.color=new Color32(164,192,207,255);
-            Place(action.transform,large?20:w-202,large?h-62:band+3,large?w-40:186,large?48:42);
+            Place(action.transform,large?20:w-240,large?h-96:band+12,large?w-40:218,large?76:58);
             // Compact mode has one obvious arrow action; the next line keeps the entire name readable.
             if(!large)
             {
-                Place(heading.rectTransform,92,band+1,w-300,47);
+                Place(heading.rectTransform,92,band+7,w-348,50);
                 Set(actionLabel,T("OPEN","باز کردن")+"  ›");
             }
             if(large)
@@ -149,7 +149,7 @@ namespace Game.UI.Runtime
                 string verb=state.Resume?T("RESUME","ادامه"):state.HasNext?T("CONTINUE","ادامه"):T("OPEN","باز کردن");
                 Set(actionLabel,verb+" "+T(mode==MainMenuMode.Operations?"OPERATIONS":"SKIRMISH",mode==MainMenuMode.Operations?"عملیات":"درگیری")+"  ›");
             }
-            Size(actionLabel,large?31:24,large?24:20);
+            Size(actionLabel,large?34:28,large?26:22);
             actionFace.Configure(new Color32(12,140,65,255),new Color32(6,42,27,255),Accent,2);
             if(mode==MainMenuMode.Skirmish)actionFace.Configure(new Color32(197,70,7,255),new Color32(91,25,4,255),Accent,2);
             preview.Refresh();
@@ -169,7 +169,7 @@ namespace Game.UI.Runtime
             // Replacing its Overflow with Ellipsis can reject the entire Noto Arabic line.
             text.GetComponent<V3LocalizedTextBindingView>()?.SetFontBounds(min,max);
             text.alignment=Fa?TextAlignmentOptions.MidlineRight:TextAlignmentOptions.MidlineLeft;
-            if(text==actionLabel)text.alignment=TextAlignmentOptions.Center;
+            if(text==actionLabel){text.alignment=TextAlignmentOptions.Center;text.margin=new Vector4(12,2,12,2);}
         }
         private static void Set(TMP_Text text,string value)
         { if(text!=null)UiLocalizedText.Set(text,value??""); }

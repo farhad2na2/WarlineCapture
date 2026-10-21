@@ -14,6 +14,7 @@ namespace Game.Editor
     {
         public const string OperationsPreviewPath="Assets/Game/Art/UI/MainMenuPanels/Missions/operation.o001.png";
         public const string OperationsIllustrationPath="Assets/Game/Art/UI/MainMenuPanels/Missions/operation.o001-illustration.png";
+        public const string CompletionPanoramaPath="Assets/Game/Art/UI/V3Shared/MainMenuPlates/CampaignCompletion/home-campaign-complete-panorama-v01.png";
         private static TMP_FontAsset Font=>AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset");
         public static void BuildAndReview()
         {
@@ -49,18 +50,36 @@ namespace Game.Editor
             BuildSharedArtworkCatalog();
             var left=root.transform.Find("LeftContent");
             var existing=left.GetComponent<MainMenuModeCardsView>();if(existing!=null)UnityEngine.Object.DestroyImmediate(existing);
-            foreach(string name in new[]{"CompleteMissionCount","CompletionThumbnail","CompletionEmblem"})
+            foreach(string name in new[]{"CompleteMissionCount","CompletionThumbnail","CompletionEmblem","CompletionPanorama"})
             {var old=left.Find("Card_Campaign/"+name);if(old!=null)UnityEngine.Object.DestroyImmediate(old.gameObject);}
             var operations=BuildCard(left.Find("Card_Operations"),MainMenuMode.Operations);
             var skirmish=BuildCard(left.Find("Card_Skirmish"),MainMenuMode.Skirmish);
             var hero=left.Find("Card_Campaign");
             var count=Label(hero,"CompleteMissionCount",28,Color.white);
-            var thumb=Rect(hero,"CompletionThumbnail").gameObject.AddComponent<Image>();thumb.raycastTarget=false;thumb.preserveAspect=true;
+            var panorama=Rect(hero,"CompletionPanorama");panorama.SetAsFirstSibling();
+            panorama.gameObject.AddComponent<RawImage>().raycastTarget=false;
+            var artwork=panorama.gameObject.AddComponent<MissionAtlasArtworkView>();
+            ConfigurePanoramaImporter();
+            var ending=AssetDatabase.LoadAssetAtPath<Texture2D>(CompletionPanoramaPath);
+            if(ending==null)throw new InvalidOperationException("Dedicated Campaign ending panorama required.");
+            artwork.Set(null,ending);
             var emblem=Rect(hero,"CompletionEmblem");
             emblem.gameObject.AddComponent<MissionAtlasStatusGraphic>().Configure(MissionAtlasStatusGraphic.Kind.Medal,true,2);
             var controller=left.gameObject.AddComponent<MainMenuModeCardsView>();
-            controller.Configure(hero.GetComponent<MainMenuCampaignCardView>(),operations,skirmish,count,thumb,emblem);
+            controller.Configure(hero.GetComponent<MainMenuCampaignCardView>(),operations,skirmish,count,artwork,emblem);
             controller.ApplyLayout();
+        }
+        private static void ConfigurePanoramaImporter()
+        {
+            if(AssetImporter.GetAtPath(CompletionPanoramaPath) is not TextureImporter importer)
+                throw new InvalidOperationException("Missing ending panorama importer.");
+            if(!importer.mipmapEnabled && importer.textureCompression==TextureImporterCompression.CompressedHQ &&
+                importer.GetPlatformTextureSettings("Android").overridden)return;
+            importer.mipmapEnabled=false;importer.wrapMode=TextureWrapMode.Clamp;
+            importer.maxTextureSize=4096;importer.textureCompression=TextureImporterCompression.CompressedHQ;
+            foreach(string platform in new[]{"Android","iPhone"})
+                importer.SetPlatformTextureSettings(new TextureImporterPlatformSettings{name=platform,overridden=true,maxTextureSize=2048,format=TextureImporterFormat.ASTC_4x4,compressionQuality=100});
+            importer.SaveAndReimport();
         }
         private static void BuildSharedArtworkCatalog()
         {

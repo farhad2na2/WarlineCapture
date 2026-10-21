@@ -5,9 +5,9 @@ Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.5
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=0
-ModeRank font=NotoSansArabic-Narrative SDF size=15.15 visible=16 rect=(x:0.00, y:-32.00, width:817.30, height:32.00) text=ﺭﺗﺒﻪ ﺣﺎﻟﺖ · ﮐﺎﺭﺁﻣﻮﺯ
+ModeRank font=NotoSansArabic-Narrative SDF size=14.2 visible=16 rect=(x:0.00, y:-30.00, width:817.30, height:30.00) text=ﺭﺗﺒﻪ ﺣﺎﻟﺖ · ﮐﺎﺭﺁﻣﻮﺯ
 MedalEligibility font=NotoSansArabic-Narrative SDF size=12.3 visible=30 rect=(x:0.00, y:-26.00, width:817.30, height:26.00) text=1 ﻣﻨﺘﺸﺮﺷﺪﻩ · ﻣﺪﺍﻟﻬﺎﯼ ﻣﺎﻣﻮﺭﯾﺖ ﭘﯿﺸﻔﺮﺽ
-Label font=NotoSansArabic-Narrative SDF size=17 visible=12 rect=(x:-406.65, y:-18.00, width:813.30, height:36.00) text=ﺍﺩﺍﻣﻪ ﻋﻤﻠﯿﺎﺕ  ‹
+Label font=NotoSansArabic-Narrative SDF size=28.4 visible=12 rect=(x:-406.65, y:-32.00, width:813.30, height:64.00) text=ﺍﺩﺍﻣﻪ ﻋﻤﻠﯿﺎﺕ  ‹
 ModeTitle font=NotoSansArabic-Narrative SDF size=28.4 visible=6 rect=(x:0.00, y:-60.00, width:725.30, height:60.00) text=ﺩﺭﮔﯿﺮﯼ
 NextPlayableMission font=NotoSansArabic-Narrative SDF size=30 visible=20 rect=(x:0.00, y:-70.00, width:817.30, height:70.00) text=ﺑﻌﺪﯼ: 200S · ﻣﺤﺎﺻﺮﻩ ﺳﺘﺎﺩ
 UniqueMissionProgress font=NotoSansArabic-Narrative SDF size=20.8 visible=13 rect=(x:0.00, y:-44.00, width:817.30, height:44.00) text=021/1 ﺗﮑﻤﯿﻠﺸﺪﻩ
@@ -15,6 +15,6 @@ Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.5
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=1
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=0
 Count font=Oxanium-Bold SDF size=28 visible=1 rect=(x:0.00, y:-48.00, width:43.50, height:48.00) text=0
-ModeRank font=NotoSansArabic-Narrative SDF size=15.15 visible=16 rect=(x:0.00, y:-32.00, width:817.30, height:32.00) text=ﺭﺗﺒﻪ ﺣﺎﻟﺖ · ﮐﺎﺭﺁﻣﻮﺯ
+ModeRank font=NotoSansArabic-Narrative SDF size=14.2 visible=16 rect=(x:0.00, y:-30.00, width:817.30, height:30.00) text=ﺭﺗﺒﻪ ﺣﺎﻟﺖ · ﮐﺎﺭﺁﻣﻮﺯ
 MedalEligibility font=NotoSansArabic-Narrative SDF size=12.3 visible=30 rect=(x:0.00, y:-26.00, width:817.30, height:26.00) text=6 ﻣﻨﺘﺸﺮﺷﺪﻩ · ﻣﺪﺍﻟﻬﺎﯼ ﻣﺎﻣﻮﺭﯾﺖ ﭘﯿﺸﻔﺮﺽ
-Label font=NotoSansArabic-Narrative SDF size=17 visible=12 rect=(x:-406.65, y:-18.00, width:813.30, height:36.00) text=ﺍﺩﺍﻣﻪ ﺩﺭﮔﯿﺮﯼ  ‹
+Label font=NotoSansArabic-Narrative SDF size=28.4 visible=12 rect=(x:-406.65, y:-32.00, width:813.30, height:64.00) text=ﺍﺩﺍﻣﻪ ﺩﺭﮔﯿﺮﯼ  ‹

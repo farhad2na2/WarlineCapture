@@ -80,11 +80,28 @@
       "log": "main-menu-next-missions-review-input-12.log",
       "sha256": "c9332e59cc4541e0502a921f66357f6e88497e1a239b409b285174aeb648dc8a",
       "note": "Dependency preparation refused transient busy Editor."
+    },
+    {
+      "log": "main-menu-next-missions-polish-17.log",
+      "sha256": "d99a2b3ad4930850bc6ccfc4c67e7f1a674e1b281c06d1304abb2a21f8b81474",
+      "note": "Failed native medal/rank overlap check at16:9; no live input attempted; wrapper exit1."
+    },
+    {
+      "log": "main-menu-next-missions-polish-18.log",
+      "sha256": "cde37a961e7e4e5455abb124e0232c2c93e480a1f48f6177ec6d8d502cea972d",
+      "note": "Failed medal/rank gap check at4:3 after wide captures; no live input attempted; wrapper exit1."
+    },
+    {
+      "log": "main-menu-next-missions-polish-19.log",
+      "sha256": "8ed507f20c296580806680f14e7ea9c055ce9085c6424ada5e17f13810837de0",
+      "note": "Final polish passed:799 native checks,12 captures,16 persistence tests,30 normal touch actions; wrapper exit0."
     }
   ],
   "localVisualEvidenceDirectories": [
     "PassedLive13",
     "FailedLive11",
+    "FailedNative17",
+    "FailedNative18",
     "FailedNative05",
     "FailedNative04",
     "FailedLive14",

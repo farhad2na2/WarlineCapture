@@ -1,0 +1,24 @@
+{
+  "purpose": "Menu illustrations only; no physical Campaign map, scenario bounds, roster, budget or release-state changes.",
+  "groundIllustrations": [
+    {
+      "id": "S001",
+      "prompt": "Use case: stylized-concept. Asset type: finished Skirmish mission thumbnail illustration for a native military strategy game. Image 1 is actual existing Desert Base geometry, materials and buildings: use its sandy flat-roofed low-poly city, dark asphalt streets, muted tan masonry and palms as the environment reference. Image 2 is the approved UI mockup: match the rich illustrated 3D/comic art specifically inside its mission thumbnails. Produce ONLY one full-bleed landscape 16:9 illustration, no UI, text, numbers, stars, badges, borders, lettering or watermark. Camera close to street height or modest oblique, distinct clear centered subject, not an overhead planning map. Warm golden masonry, vivid blue sky, green palms, strong clean light/shadow separation and rich but tasteful color. Recognizable stylized low-poly military game art, consistent with the Campaign comic treatment. Keep primary subject centered and readable when center-cropped to a narrow card; safe content in central 50%. This is illustrative menu art, not new playable geometry. No new map layout claims, no humans injured, no explosions of buildings or civilians. OUTPOST STRIKE: show a small field-deployed rifle squad in tan uniforms approaching an existing city checkpoint through the street, with one low flat-roofed tan building and a modest watchtower in the middle distance. The central soldier and checkpoint form one strong readable composition. No large army or air vehicles. Ground/field identity."
+    },
+    {
+      "id": "S002",
+      "prompt": "Use case: stylized-concept. Asset type: finished Skirmish mission thumbnail illustration for a native military strategy game. Image 1 is actual existing Desert Base geometry, materials and buildings: use its sandy flat-roofed low-poly city, dark asphalt streets, muted tan masonry and palms as the environment reference. Image 2 is the approved UI mockup: match the rich illustrated 3D/comic art specifically inside its mission thumbnails. Produce ONLY one full-bleed landscape 16:9 illustration, no UI, text, numbers, stars, badges, borders, lettering or watermark. Camera close to street height or modest oblique, distinct clear centered subject, not an overhead planning map. Warm golden masonry, vivid blue sky, green palms, strong clean light/shadow separation and rich but tasteful color. Recognizable stylized low-poly military game art, consistent with the Campaign comic treatment. Keep primary subject centered and readable when center-cropped to a narrow card; safe content in central 50%. This is illustrative menu art, not new playable geometry. No new map layout claims, no humans injured, no explosions of buildings or civilians. COMMAND SIEGE: show an established enemy command post within the same tan low-poly desert city, framed by a watchtower, low fortified tan wall and an olive command/armored utility truck parked centrally on the road. A restrained red cloth pennant creates the warm accent. No huge castle, no modern skyscrapers, no aircraft. Ground/base identity."
+    }
+  ],
+  "aircraft": {
+    "S003": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png",
+    "S004": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Action_512.png"
+  },
+  "rejectedDrafts": "The S003 and S004 ImageGen A-10 drafts were rejected on owner correction. They were never imported or bound into the game.",
+  "sha256": {
+    "Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S001-menu-illustration.png": "73cf54d9982325e6d12969750dbec3960be936c75b90e09580dd7693fa96337f",
+    "Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S002-menu-illustration.png": "6a88d27c36e196bbf2befc70cdf4d750998d258bd917f1c2c22f41d2ebd44d2b",
+    "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png": "0e7b3ea3d5759f55f49fcbe051ac65a8551bccf9d57f8a8d2e31a5de65c6f588",
+    "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Action_512.png": "937ffcaaf9c302d547d4ddab09e23820af72a55ca3ec42f3e15d3b9cf0b7c71b"
+  }
+}

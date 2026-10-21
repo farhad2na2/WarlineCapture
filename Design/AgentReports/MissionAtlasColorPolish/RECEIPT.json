@@ -1,0 +1,32 @@
+{
+  "baseCommit": "5c194a11a5e3da279807c724a38ebfe4910924c4",
+  "branch": "codex/mission-atlas-color-polish",
+  "candidateSourceHash": "dd1cfb5c276aa6b0505c2d8e5532bd536580b4afbc87dc9c87b9a8c43ffd70b3",
+  "sourceStable": true,
+  "nativeLayoutCases": 24,
+  "nativeCaptures": 40,
+  "focusedTests": 35,
+  "completeNativeJourneys": {
+    "M01": [
+      "en",
+      "fa-IR"
+    ],
+    "S002": [
+      "en",
+      "fa-IR"
+    ]
+  },
+  "distinctProcessMedalReload": [
+    "en",
+    "fa-IR"
+  ],
+  "artHashesVerified": true,
+  "ownerVisualReview": "Pending",
+  "cleanCheckoutAcceptance": "Pending",
+  "windowsAcceptance": "Pending",
+  "realPlayerDeviceAcceptance": "Pending",
+  "preservedExcludedLocalPaths": [
+    "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+    "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset"
+  ]
+}

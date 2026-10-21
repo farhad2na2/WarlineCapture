@@ -116,10 +116,25 @@ namespace Game.Editor
                 var settings=view.transform.Find("AtlasFrame/SettingsButton") as RectTransform;
                 var gear=settings.Find("Icon") as RectTransform;
                 if(Vector2.Distance(Center(settings),Center(gear))>.5f)throw new InvalidOperationException("Settings gear is not centered in its own box");
+                if(view.ShowingMissions)
+                {
+                    var bar=view.MissionScroll.verticalScrollbar;
+                    if(bar.gameObject.activeInHierarchy)
+                    {
+                        var corners=new Vector3[4];bar.handleRect.GetWorldCorners(corners);
+                        foreach(var point in corners)
+                        {
+                            Vector2 local=((RectTransform)bar.transform).InverseTransformPoint(point);
+                            Rect track=((RectTransform)bar.transform).rect;track.xMin-=.5f;track.xMax+=.5f;track.yMin-=.5f;track.yMax+=.5f;
+                            if(!track.Contains(local))throw new InvalidOperationException("Native scrollbar thumb extends outside its track");
+                        }
+                    }
+                }
                 int issuesBefore=LabelIssues.Count;
                 foreach(var c in view.NavigationCards.Concat(view.ShowingMissions?view.Regions.SelectMany(r=>r.Cards):view.TerritoryCards))if(c.Rect.gameObject.activeInHierarchy)
                 {
-                    foreach(var t in new[]{c.Title,c.Subtitle,c.Status}.Where(t=>t.gameObject.activeInHierarchy&&!string.IsNullOrEmpty(t.text))){t.ForceMeshUpdate();var rect=t.rectTransform.rect;
+                    if(c.MissionCode!=null&&c.MissionCode.gameObject.activeInHierarchy)CheckCardSpacing(c,size);
+                    foreach(var t in new[]{c.Title,c.Subtitle,c.Status,c.MissionCode}.Where(t=>t!=null&&t.gameObject.activeInHierarchy&&!string.IsNullOrEmpty(t.text))){t.ForceMeshUpdate();var rect=t.rectTransform.rect;
                         // Glyph metrics use each character's actual fallback font and exclude transparent SDF padding.
                         // The primary Latin font's padding cannot describe Persian fallback glyph quads.
                         bool outside=false;
@@ -142,6 +157,35 @@ namespace Game.Editor
                 }
                 Debug.Log("[ApprovedMissionAtlasReview] ratio="+size+" locale="+locale+" navigationText="+(LabelIssues.Count==issuesBefore?"Passed":"Failed"));
             }
+        }
+        private static Rect InkBounds(TMPro.TMP_Text text,RectTransform owner)
+        {
+            text.ForceMeshUpdate();Vector2 lo=new(float.PositiveInfinity,float.PositiveInfinity),hi=new(float.NegativeInfinity,float.NegativeInfinity);
+            for(int i=0;i<text.textInfo.characterCount;i++)
+            {
+                var ch=text.textInfo.characterInfo[i];if(!ch.isVisible||ch.textElement==null)continue;
+                var m=ch.textElement.glyph.metrics;float x=ch.origin+m.horizontalBearingX*ch.scale,y=ch.baseLine+m.horizontalBearingY*ch.scale;
+                Vector2 a=owner.InverseTransformPoint(text.rectTransform.TransformPoint(new Vector2(x,y)));
+                Vector2 b=owner.InverseTransformPoint(text.rectTransform.TransformPoint(new Vector2(x+m.width*ch.scale,y-m.height*ch.scale)));
+                lo=Vector2.Min(lo,Vector2.Min(a,b));hi=Vector2.Max(hi,Vector2.Max(a,b));
+            }
+            return Rect.MinMaxRect(lo.x,lo.y,hi.x,hi.y);
+        }
+        private static void CheckCardSpacing(MissionAtlasScreenView.Card c,Vector2Int size)
+        {
+            var title=InkBounds(c.Title,c.Rect);var code=InkBounds(c.MissionCode,c.Rect);var profile=InkBounds(c.Subtitle,c.Rect);
+            string context=c.Rect.name+" at "+size;
+            if(title.yMin-code.yMax<2||code.yMin-profile.yMax<2)LabelIssues.Add("Mission text overlaps: "+context);
+            foreach(var ink in new[]{title,code,profile})
+                if(ink.xMin<c.Rect.rect.xMin+8||ink.xMax>c.Rect.rect.xMax-8||ink.yMax>c.Rect.rect.yMax-6||ink.yMin<c.Rect.rect.yMin+6)
+                    LabelIssues.Add("Mission text too close to card edge: "+context);
+            if(c.MedalIcons.Length>0&&c.MedalIcons[0].gameObject.activeInHierarchy)
+            {
+                var medal=c.MedalIcons[0].rectTransform;float top=c.Rect.InverseTransformPoint(medal.TransformPoint(new Vector2(medal.rect.xMin,medal.rect.yMax))).y;
+                if(profile.yMin-top<2)LabelIssues.Add("Mission profile overlaps medal row: "+context);
+            }
+            else if(c.Status.gameObject.activeInHierarchy&&!string.IsNullOrWhiteSpace(c.Status.text)&&profile.yMin-InkBounds(c.Status,c.Rect).yMax<2)
+                LabelIssues.Add("Mission profile overlaps release status: "+context);
         }
         private static void Dump(MissionAtlasScreenView view)
         {

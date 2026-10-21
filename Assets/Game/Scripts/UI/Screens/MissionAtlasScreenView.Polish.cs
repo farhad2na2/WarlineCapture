@@ -25,6 +25,8 @@ namespace Game.UI.Runtime
         [SerializeField] private TMP_Text[] summaryTitles, summaryValues;
         [SerializeField] private MissionAtlasStatusGraphic[] summaryChecks, difficultyChecks;
         [SerializeField] private Image[] difficultyMedals;
+        [SerializeField] private RectTransform medalLegendPanel;
+        [SerializeField] private MissionAtlasStatusGraphic[] legendMedals;
 
         public void RefreshLayout()=>Layout(true);
         public Button[] DifficultyButtons=>difficulties;
@@ -46,7 +48,9 @@ namespace Game.UI.Runtime
             copyHint=Label(detail,"MoreDetailsHint","",21);copyHint.color=Muted;copyHint.alignment=TextAlignmentOptions.BottomRight;
             stickyHeading=Panel(missionRoot,"PinnedRegionHeading",0,0,600,100).rectTransform;
             stickyTitle=Label(stickyHeading,"Title","",30);stickySummary=Label(stickyHeading,"Progress","",23);stickySummary.color=Muted;
-            medalLegend=Label(stickyHeading,"DifficultyMedalLegend","",21);medalLegend.color=Muted;medalLegend.alignment=TextAlignmentOptions.TopRight;
+            medalLegendPanel=Panel(missionRoot,"MedalLegend",0,0,240,90).rectTransform;
+            legendMedals=new MissionAtlasStatusGraphic[4];for(int i=0;i<4;i++){legendMedals[i]=Rect("Medal_"+i,medalLegendPanel).gameObject.AddComponent<MissionAtlasStatusGraphic>();legendMedals[i].Configure(MissionAtlasStatusGraphic.Kind.Medal,true,i);}
+            medalLegend=Label(medalLegendPanel,"DifficultyMedalLegend","",21);medalLegend.color=Muted;medalLegend.alignment=TextAlignmentOptions.TopRight;
             nextRegion=Command(missionRoot,"NextRegionButton","",null,0);nextRegionLabel=nextRegion.GetComponentInChildren<TMP_Text>();nextRegionLabel.alignment=TextAlignmentOptions.MidlineLeft;
             nextRegionArrow=Icon(nextRegion.transform,"Down",launchIcon);nextRegionArrow.rectTransform.localRotation=Quaternion.Euler(0,0,-90);
             armySizeHeading=Label(detail,"ArmySizeHeading","ARMY SIZE",23);armySizeHeading.color=Muted;
@@ -55,12 +59,14 @@ namespace Game.UI.Runtime
             for(int i=0;i<4;i++)
             {
                 difficultyMedals[i]=Icon(difficulties[i].transform,"TierMedal",Resources.Load<Sprite>(SkirmishBattleLibraryArt.Medal(true,(Game.Skirmish.Contracts.SkirmishDifficultyId)(i+1))));
+                difficultyMedals[i].color=new Color(1,1,1,0);
                 var star=Rect("Engraving",difficultyMedals[i].transform).gameObject.AddComponent<MissionAtlasStatusGraphic>();Fill(star.rectTransform);star.Configure(MissionAtlasStatusGraphic.Kind.Medal,true,i);
                 difficultyChecks[i]=Rect("Selected",difficulties[i].transform).gameObject.AddComponent<MissionAtlasStatusGraphic>();difficultyChecks[i].Configure(MissionAtlasStatusGraphic.Kind.Selected,true);
             }
             foreach(var region in regions)foreach(var card in region.Cards)
                 for(int i=0;i<4;i++)
                 {
+                    card.MedalIcons[i].color=new Color(1,1,1,0);
                     var star=Rect("Engraving",card.MedalIcons[i].transform).gameObject.AddComponent<MissionAtlasStatusGraphic>();Fill(star.rectTransform);card.MedalEngravings[i]=star;
                 }
             summaryRoot=Rect("ReadOnlyProgress",detail);summaryHeading=Label(summaryRoot,"Heading","",24);summaryHeading.color=Muted;
@@ -112,10 +118,14 @@ namespace Game.UI.Runtime
         {
             if(detailSubtitle==null)return;
             bool mission=state!=null&&state.Missions,skirmish=state!=null&&state.Skirmish;
-            Place(stickyHeading,18,14,mapW-64,96);Place(stickyTitle.rectTransform,16,6,mapW-96,48);Place(stickySummary.rectTransform,16,57,skirmish&&mapW>1000?mapW-356:mapW-96,30);
-            Place(medalLegend.rectTransform,mapW-314,60,234,28);medalLegend.gameObject.SetActive(skirmish&&mapW>1000);
-            Place(nextRegion.transform as RectTransform,18,mainH-52,mapW-64,42);SetSize(nextRegionLabel,24);
-            Place(nextRegionArrow.rectTransform,mapW-115,5,32,32);
+            bool legend=mission&&skirmish&&mapW>1000;
+            float headingWidth=legend?Mathf.Min(mapW-350,mapW*.58f):mapW-64;
+            Place(stickyHeading,18,14,headingWidth,96);Place(stickyTitle.rectTransform,16,6,headingWidth-32,48);Place(stickySummary.rectTransform,16,57,headingWidth-32,30);
+            medalLegendPanel.gameObject.SetActive(legend);Place(medalLegendPanel,mapW-314,14,268,96);Place(medalLegend.rectTransform,10,5,248,25);medalLegend.alignment=TextAlignmentOptions.TopLeft;SetSize(medalLegend,19);
+            for(int i=0;i<4;i++)Place(legendMedals[i].rectTransform,14+i*61,39,42,42);
+            float nextWidth=mapW>1000?Mathf.Min(640,mapW*.60f):mapW-64;
+            Place(nextRegion.transform as RectTransform,18,mainH-52,nextWidth,42);SetSize(nextRegionLabel,24);
+            Place(nextRegionArrow.rectTransform,nextWidth-50,5,32,32);
             var nextLabel=nextRegionLabel.rectTransform;nextLabel.offsetMin=new Vector2(14,2);nextLabel.offsetMax=new Vector2(-66,-2);
             SetSize(stickyTitle,mapW<900?26:30);SetSize(stickySummary,mapW<900?22:24);
             float previewH=Mathf.Min(270,(side-28)*.5625f);
@@ -152,10 +162,16 @@ namespace Game.UI.Runtime
             for(int i=0;i<4;i++)
             {
                 Place(difficulties[i].transform as RectTransform,(i%2)*(side-24)/2,(i/2)*72,dw,66);
-                Place(difficultyMedals[i].rectTransform,dw*.5f-14,4,28,28);Place(difficultyChecks[i].rectTransform,dw-23,4,18,18);
-                Place(difficultyLabels[i].rectTransform,4,33,dw-8,30);difficultyLabels[i].alignment=TextAlignmentOptions.Center;SetSize(difficultyLabels[i],22);
+                Place(difficultyMedals[i].rectTransform,dw*.5f-18,2,36,36);Place(difficultyChecks[i].rectTransform,dw-23,4,18,18);
+                Place(difficultyLabels[i].rectTransform,4,37,dw-8,27);difficultyLabels[i].alignment=TextAlignmentOptions.Center;SetSize(difficultyLabels[i],22);
+                if(side>=440)
+                {
+                    Place(difficultyMedals[i].rectTransform,12,9,48,48);Place(difficultyLabels[i].rectTransform,72,4,dw-86,58);
+                    difficultyLabels[i].alignment=TextAlignmentOptions.MidlineLeft;
+                }
+                float available=difficultyLabels[i].rectTransform.rect.width-4;
                 float labelWidth=difficultyLabels[i].GetPreferredValues(difficultyLabels[i].text,10000,10000).x;
-                if(labelWidth>dw-12)SetSize(difficultyLabels[i],22*(dw-12)/labelWidth);
+                if(labelWidth>available)SetSize(difficultyLabels[i],22*available/labelWidth);
             }
             Place(summaryRoot,18,y+(skirmish?78:88),side-36,mainH-y-106);Place(summaryHeading.rectTransform,0,0,side-36,28);
             float sh=side<440||skirmish?64:Mathf.Clamp((mainH-y-142)/Mathf.Max(1,state?.SummaryRows.Length??1),48,64);

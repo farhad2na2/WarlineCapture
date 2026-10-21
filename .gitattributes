@@ -403,3 +403,9 @@ Design/AgentReports/ApprovedMissionAtlas/**/*.zip filter=lfs diff=lfs merge=lfs 
 
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/skirmish-polish-03/*.png filter=lfs diff=lfs merge=lfs -text
 Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/*.png filter=lfs diff=lfs merge=lfs -text
+
+/Assets/Game/Art/UI/Generated/MissionAtlas/Previews/*.png filter=lfs diff=lfs merge=lfs -text
+
+/Design/AgentReports/MissionAtlasColorPolish/**/*.png filter=lfs diff=lfs merge=lfs -text
+
+/Design/AgentReports/MissionAtlasColorPolish/**/*.zip filter=lfs diff=lfs merge=lfs -text

@@ -98,6 +98,13 @@ namespace Game.Editor
                 data.FindProperty("missionSizeSegmented").objectReferenceValue=size;
                 var icons=new[]{"Assets/Game/Art/UI/Icons/scn08_icon_objective_star.png","Assets/Game/Art/UI/Icons/scn09_icon_rally_flag.png","Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_damage_burst.png","Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_vehicle_truck.png"};
                 var iconArray=data.FindProperty("approvedObjectiveIcons");iconArray.arraySize=4;for(int i=0;i<4;i++)iconArray.GetArrayElementAtIndex(i).objectReferenceValue=SpriteAt(icons[i]);
+                var illustrations=data.FindProperty("approvedMissionIllustrations");illustrations.arraySize=4;
+                string[] illustrationPaths={"Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S001-menu-illustration.png","Assets/Game/Art/UI/Generated/MissionAtlas/Previews/S002-menu-illustration.png","Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png","Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Action_512.png"};
+                for(int i=0;i<4;i++)
+                {
+                    illustrations.GetArrayElementAtIndex(i).objectReferenceValue=AssetDatabase.LoadAssetAtPath<Texture2D>(illustrationPaths[i]);
+                    if(illustrations.GetArrayElementAtIndex(i).objectReferenceValue==null)throw new InvalidOperationException("Missing exact mission illustration "+illustrationPaths[i]);
+                }
                 data.ApplyModifiedPropertiesWithoutUndo();
                 if(size!=null)
                 {

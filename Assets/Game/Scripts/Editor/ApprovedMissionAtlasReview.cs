@@ -111,6 +111,11 @@ namespace Game.Editor
                     await Tap(touch,s.DifficultyButtons[3]);
                     await Until(()=>skirmish.LibraryViewModel.Briefing.SelectedDifficulty==Game.Skirmish.Contracts.SkirmishDifficultyId.Commander,10);
                     await Tap(touch,s.DifficultyButtons[1]);
+                    var sizeControl=skirmish.MissionSizeControl;
+                    for(int i=0;i<sizeControl.SegmentButtons.Length;i++)
+                        if(i!=sizeControl.SelectedIndex&&!sizeControl.SegmentButtons[i].IsInteractable()&&sizeControl.SegmentLabels[i].color!=MissionAtlasScreenView.Muted)
+                            throw new InvalidOperationException("Locked army-size label lost its styling after difficulty rebind");
+                    Debug.Log("[ArmySizeChoiceReview] rebindStyles=Passed locale="+language);
                     await Tap(touch,s.NextRegionButton);await Until(()=>s.VisibleRegion==1,10);
                     await Tap(touch,s.NavigationCards[0].Button);await Until(()=>s.VisibleRegion==0,10);
                     var pinned=s.transform.Find("AtlasFrame/MapPanel/MissionMap/PinnedRegionHeading") as RectTransform;
@@ -127,7 +132,14 @@ namespace Game.Editor
                 if(LabelIssues.Count>0)throw new InvalidOperationException(string.Join("\n",LabelIssues.Distinct()));
                 passed=true;Debug.Log("[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output="+output);
             }
-            catch(Exception error){Debug.LogException(error);Debug.LogError("[ApprovedMissionAtlasReview] result=Failed output="+output);}
+            catch(Exception error)
+            {
+                Debug.LogException(error);
+                if(UiShellRuntimeGateway.TryReadShellState(out var failedState))
+                    File.WriteAllText(output+"/failure-shell.txt","route="+failedState.ActiveRoute+" mode="+failedState.CurrentMode+" transition="+failedState.IsTransitionRunning+"\n"+error);
+                ScreenCapture.CaptureScreenshot(output+"/failure-screen.png");await Task.Delay(700);
+                Debug.LogError("[ApprovedMissionAtlasReview] result=Failed output="+output);
+            }
             finally
             {
                 touch?.Dispose();if(EditorApplication.isPlayingOrWillChangePlaymode){EditorApplication.ExitPlaymode();await Until(()=>!EditorApplication.isPlayingOrWillChangePlaymode,60);}
@@ -260,11 +272,33 @@ namespace Game.Editor
             await Until(()=>button!=null&&button.IsActive()&&button.IsInteractable(),15);Vector2 point=Center(button.transform as RectTransform);
             var hits=new List<RaycastResult>();EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
             if(hits.Count==0||hits[0].gameObject.GetComponentInParent<Button>()!=button)throw new InvalidOperationException("Obstructed native target "+button.name+" hit="+(hits.Count>0?hits[0].gameObject.name:"none"));
-            string targetName=button.name;
-            if(!touch.TryGesture(point,point,.18f,0,Time.unscaledTime))throw new InvalidOperationException("Touch rejected");
-            double end=EditorApplication.timeSinceStartup+10;do{touch.Tick(Time.unscaledTime);await Task.Delay(50);if(EditorApplication.timeSinceStartup>end)throw new TimeoutException("Touch timeout");}while(touch.IsBusy);
-            await Task.Delay(700);Debug.Log("[ApprovedMissionAtlasReview] touch="+targetName);
+            string targetName=button.name;bool clicked=false;
+            UnityEngine.Events.UnityAction observe=()=>clicked=true;button.onClick.AddListener(observe);
+            try
+            {
+                if(!touch.TryGesture(point,point,.18f,0,Time.unscaledTime))throw new InvalidOperationException("Touch rejected");
+                double end=EditorApplication.timeSinceStartup+10;
+                // A press accepted during a long resize/render frame still needs one
+                // complete EventSystem opportunity before the probe queues its release.
+                while(!touch.IsPressed)
+                {
+                    if(!touch.IsRunning||EditorApplication.timeSinceStartup>end)throw new TimeoutException("Native touch press was not accepted");
+                    await Task.Delay(20);
+                }
+                int pressedFrame=Time.frameCount;
+                while(Time.frameCount<=pressedFrame)
+                {
+                    if(EditorApplication.timeSinceStartup>end)throw new TimeoutException("Native UI did not consume a press frame");
+                    await Task.Delay(20);
+                }
+                do{touch.Tick(Time.unscaledTime);await Task.Delay(50);if(EditorApplication.timeSinceStartup>end)throw new TimeoutException("Touch timeout");}while(touch.IsBusy);
+                await Task.Delay(700);
+                if(!clicked)throw new InvalidOperationException("Native button did not receive its touch click: "+targetName+" acceptedSamples="+touch.AcceptedSamples+" interrupted="+touch.PlayerInterrupted);
+                Debug.Log("[ApprovedMissionAtlasReview] touch="+targetName+" clicked=true");
+            }
+            finally{if(button!=null)button.onClick.RemoveListener(observe);}
         }
+
         private static async Task Shot(string output,string locale,string name) {Canvas.ForceUpdateCanvases();string path=output+"/"+name+"-"+locale+".png";ScreenCapture.CaptureScreenshot(path);await Until(()=>File.Exists(path)&&new FileInfo(path).Length>0,15);}
     }
 }

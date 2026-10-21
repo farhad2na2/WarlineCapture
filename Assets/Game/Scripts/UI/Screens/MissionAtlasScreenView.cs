@@ -384,8 +384,8 @@ namespace Game.UI.Runtime
             bool selected=state!=null&&index<state.Navigation.Length&&state.Navigation[index].Selected;
             bool completed=state!=null&&index<state.Navigation.Length&&state.Navigation[index].Completed;
             card.Title.color=selected?Cyan:ChoiceAccents[index];
-            card.Subtitle.color=new Color32(180,225,235,255);
-            card.Status.color=completed?new Color32(129,218,128,255):new Color32(224,192,138,255);
+            card.Subtitle.color=state!=null&&state.Skirmish&&completed?new Color32(129,218,128,255):new Color32(180,225,235,255);
+            card.Status.color=completed&&state!=null&&!state.Skirmish?new Color32(129,218,128,255):new Color32(224,192,138,255);
         }
         private void LayoutCard(Card c,float w,float h,bool nav,bool plaque)
         {

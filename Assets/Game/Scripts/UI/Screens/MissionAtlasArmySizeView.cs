@@ -53,6 +53,18 @@ namespace Game.UI.Runtime
             Refresh();
         }
 
+        private void OnEnable()
+        {
+            if (control != null) control.SelectionChanged += Invalidate;
+            Invalidate();
+        }
+
+        private void OnDisable()
+        {
+            if (control != null) control.SelectionChanged -= Invalidate;
+        }
+
+        private void Invalidate() => lastState = int.MinValue;
         private void LateUpdate() => Refresh();
 
         private void Refresh()

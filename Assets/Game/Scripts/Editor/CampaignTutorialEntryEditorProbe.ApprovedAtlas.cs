@@ -30,6 +30,20 @@ namespace Game.Editor
             RunM01Journey();SessionState.SetBool(ApprovedAtlasJourney,true);
             Debug.Log("[ApprovedCampaignJourney] started menuInput=InputSystemTouch gameplayInput=InputSystemTouch profileFixture=FirstLaunchOnly outcomesInjected=0");
         }
+        private static SharedMissionResultView resultViewInstance;
+        private static double resultVisibleAt;
+        private static bool WaitApprovedResult(MissionResultPopupView owner, byte stars, double now)
+        {
+            if(!SessionState.GetBool(ApprovedAtlasJourney,false)||owner.SharedResult==null)return false;
+            var view=owner.SharedResult;
+            if(resultViewInstance!=view){resultViewInstance=view;resultVisibleAt=now;}
+            if(now-resultVisibleAt<2.6)return true;
+            var c=view.Controls;
+            for(int i=0;i<3;i++)
+                if(c.FilledStars[i].gameObject.activeInHierarchy!=(i<stars)||i<stars&&c.StarRects[i].localScale.x<.99f||c.OutlineStars[i].gameObject.activeInHierarchy==(i<stars))
+                    throw new InvalidOperationException("Shared result earned-star animation did not settle.");
+            return false;
+        }
         private static bool EnterApprovedCampaignThroughControls()
         {
             if(approvedMenuTouch==null)

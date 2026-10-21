@@ -27,6 +27,9 @@ namespace Game.Editor
         private static IDisposable candidateCatalogScope;
         private static SkirmishBattleCatalogConfig candidateCatalog;
 
+        // UI regression lane: accepts the real outcome; the saga-medal victory gate remains unchanged.
+        public static void RunS002ResultUiEn()
+        {RunEditorJourney("en",false,false,"S002",104731);Environment.SetEnvironmentVariable("WARLINE_TERMINAL_ACTION","RESULT RETURN");}
         public static void RunSagaS002EditorAriaEn() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("en", false, false, "S002", 104731); }
         public static void RunSagaS002EditorAriaFa() { sagaMenuProof=true; sagaScaleRecorded=false; RunEditorJourney("fa-IR", false, false, "S002", 104731); }
 

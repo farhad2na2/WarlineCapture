@@ -413,3 +413,7 @@ Design/SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/*.png 
 # Approved match HUD mockups and native review captures.
 /Design/AgentReports/MatchHudReview20261021/**/*.png filter=lfs diff=lfs merge=lfs -text
 /Design/AgentReports/MatchHudReview20261021/**/*.zip filter=lfs diff=lfs merge=lfs -text
+
+# Approved shared result mockups and native validation evidence.
+/Design/AgentReports/ResultScreenReview20261021/**/*.png filter=lfs diff=lfs merge=lfs -text
+/Design/AgentReports/ResultScreenReview20261021/**/*.zip filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,25 @@
+Title/Label | OPERATION FAILED
+Stars/Label | 
+Identity/Label | STREET SIGNALS
+OLD QUARTER
+Identity/Label | TIME EXPIRED
+Time/Label | 12:00
+Objectives/Label | OBJECTIVES
+Objective0/Label | Scan signal sites
+Objective0/Label | 2/3
+Objective1/Label | Recover relay evidence
+Objective1/Label | MISSED
+Objective2/Label | Extract with 2+ infantry
+Objective2/Label | 0 AT EXIT
+Performance/Label | PERFORMANCE
+Stat0/Label | SIGNALS
+Stat0/Label | 2/3
+Stat1/Label | EXTRACTED
+Stat1/Label | 0
+Stat2/Label | SURVIVORS
+Stat2/Label | 2
+MatchFacts/Label | Relay evidence was not recovered.
+Summary/Label | The operation deadline passed before extraction.
+Retry/Label | RETRY
+Replay/Label | REPLAY
+Leave/Label | CONTINUE

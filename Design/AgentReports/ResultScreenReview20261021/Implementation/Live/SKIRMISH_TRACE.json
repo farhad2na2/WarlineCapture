@@ -1,0 +1,11 @@
+{
+  "trace": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-en-2bc31afbb7544a37ae709acf4e6b3bab.jsonl",
+  "log": "Logs/shared-result-skirmish-ui-return-20261021-05.log",
+  "actualOutcome": "Victory",
+  "elapsed": 230.095,
+  "return": "MAIN MENU",
+  "input": "normal ARIA touch plus native result touch",
+  "outcomesInjected": 0,
+  "interventions": 0,
+  "wholeMissionReadiness": "Not broadened beyond this recorded run"
+}

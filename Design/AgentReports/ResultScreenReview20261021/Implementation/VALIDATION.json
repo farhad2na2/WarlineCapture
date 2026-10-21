@@ -1,0 +1,38 @@
+{
+  "runs": [
+    {
+      "log": "Logs/shared-result-final-regressions-campaign-20261021-05.log",
+      "wrapperExitCode": 0,
+      "requiredPassMarkers": [
+        "[SharedMissionResultRegressions] result=Passed suites=6",
+        "[ApprovedCampaignJourney] result=Passed menuGestures=26 outcomesInjected=0",
+        "[CampaignTutorialEntry] result=Passed Bilingual"
+      ]
+    },
+    {
+      "log": "Logs/shared-result-skirmish-ui-return-20261021-05.log",
+      "wrapperExitCode": 0,
+      "requiredPassMarkers": [
+        "[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU completed=1 interventions=0"
+      ]
+    },
+    {
+      "log": "Logs/shared-result-final-localized-fixtures-20261021-02.log",
+      "wrapperExitCode": 0,
+      "requiredPassMarkers": [
+        "[SharedMissionResultCatalog] result=Passed adapters=25 cases=100",
+        "[SharedMissionResultValidation] result=Passed checks=4185 captures=30"
+      ]
+    }
+  ],
+  "nativeRenders": 30,
+  "nativeChecks": 4185,
+  "campaignAdapterCases": 100,
+  "fixtureOutcomesAreGameplayEvidence": false,
+  "visualReview": "Agent reviewed native and actual Campaign/S002 captures; owner visual review pending.",
+  "operationsLive": "Failed before result: existing objective blocked at int2(1860, 710)",
+  "wholeRepositoryChecks": "Two broader legacy/architecture failures retained in IMPLEMENTATION.md; no whole-repository pass claimed.",
+  "playerDeviceAcceptance": "Pending",
+  "published": false,
+  "merged": false
+}

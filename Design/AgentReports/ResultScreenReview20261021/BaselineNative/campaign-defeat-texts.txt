@@ -1,0 +1,24 @@
+OutcomeTitlePanel/TitleText | DEFEAT
+StarPanel/StarCountText | 0 / 3 STARS
+MissionIdentityPanel/V3MissionIdentityText | M01 FIRST CONTACT
+OLD MARKET
+MissionIdentityPanel/MissionStatusText | COMMAND SQUAD LOST
+MissionTimerPanel/MissionMetaText | 01:12
+ObjectivesPanel/SectionTitleText | OBJECTIVES
+Objective_DestroyHostilePatrol/Label | NEUTRALIZE HOSTILE PATROL
+Objective_DestroyHostilePatrol/Status | FAILED
+Objective_KeepCommandSquadAlive/Label | KEEP COMMAND SQUAD ALIVE
+Objective_KeepCommandSquadAlive/Status | FAILED
+Objective_CityConsequenceNeutral/Label | CIVILIAN CONSEQUENCE
+Objective_CityConsequenceNeutral/Status | AT RISK
+PerformancePanel/SectionTitleText | PERFORMANCE
+UnitsLostCard/Label | SQUAD LOSSES
+UnitsLostCard/ValueText | 1
+EnemiesDefeatedCard/Label | ENEMIES DEFEATED
+EnemiesDefeatedCard/ValueText | 1/3
+CiviliansLostCard/Label | CIVILIANS LOST
+CiviliansLostCard/ValueText | 0
+RewardsPanel/SectionTitleText | REWARDS
+RewardsPanel/AuthoritativeRewardsText | NO REWARD
+ConsequenceRow/ConsequenceText | The command squad was lost. Regroup and try again.
+ReplayButton/Label | RETRY MISSION

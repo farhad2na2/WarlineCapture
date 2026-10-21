@@ -1,0 +1,13 @@
+{
+  "output": "/private/tmp/warline-readiness-20261021-195729",
+  "log": "Logs/shared-result-final-regressions-campaign-20261021-05.log",
+  "input": "normal Input System touch",
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "result": "Bilingual player-action journey, victory and campaign return",
+  "menuGestures": 26,
+  "outcomesInjected": 0,
+  "deviceAcceptance": "Pending"
+}

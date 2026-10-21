@@ -1,0 +1,8 @@
+{
+  "runtimeAndNativePrefabIdenticalToLiveRuns": true,
+  "changedSinceLiveFreeze": [
+    "Assets/Game/Scripts/Editor/ResultScreenDesignReviewCapture.cs",
+    "Assets/Game/Scripts/Editor/SharedMissionResultValidation.cs"
+  ],
+  "reason": "Only representative Persian capture literals and rendered-localization assertions changed after normal-input runs."
+}

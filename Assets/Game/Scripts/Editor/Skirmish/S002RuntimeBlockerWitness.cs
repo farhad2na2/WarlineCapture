@@ -107,6 +107,54 @@ namespace Game.Editor
             return "SectionNotOwnedByLoadedSource";
         }
 
+        public struct CaptureAdmissionState
+        {
+            public ActiveOperationMapComponent Active;
+            public OperationMapMetadataComponent Metadata;
+            public OperationMapReadinessComponent Readiness;
+            public RuntimeGridBlockerDependencyComponent Dependency;
+            public GridConfig Grid;
+        }
+
+        // Read actual components again after synchronization and after copying. Do not let
+        // pre-fence readiness, dependency or grid values authorize a post-fence snapshot.
+        public static string RevalidateCaptureAdmission(EntityManager em, Entity mapEntity, Entity gridEntity,
+            Entity dependencyEntity, CaptureAdmissionState admitted)
+        {
+            if (!em.Exists(mapEntity) || !em.Exists(gridEntity) || !em.Exists(dependencyEntity) ||
+                !em.HasComponent<ActiveOperationMapComponent>(mapEntity) ||
+                !em.HasComponent<OperationMapMetadataComponent>(mapEntity) ||
+                !em.HasComponent<OperationMapReadinessComponent>(mapEntity) ||
+                !em.HasComponent<GridConfig>(gridEntity) ||
+                !em.HasComponent<RuntimeGridBlockerDependencyComponent>(dependencyEntity))
+                return "CaptureAdmissionOwnerUnavailable";
+            var active = em.GetComponentData<ActiveOperationMapComponent>(mapEntity);
+            var metadata = em.GetComponentData<OperationMapMetadataComponent>(mapEntity);
+            var readiness = em.GetComponentData<OperationMapReadinessComponent>(mapEntity);
+            var dependency = em.GetComponentData<RuntimeGridBlockerDependencyComponent>(dependencyEntity);
+            var grid = em.GetComponentData<GridConfig>(gridEntity);
+            string reason = ReadinessUnavailableReason(active.Generation, metadata.Generation,
+                metadata.PhysicalSourceValidated, readiness, dependency);
+            if (reason != null) return reason;
+            // Reject even still-ready identity/dependency changes; compare all admission fields.
+            var a = admitted.Active; var m = admitted.Metadata; var r = admitted.Readiness;
+            var d = admitted.Dependency; var g = admitted.Grid;
+            if (active.Generation != a.Generation || !active.OperationMapId.Equals(a.OperationMapId) ||
+                !active.ScenarioId.Equals(a.ScenarioId) || !active.MissionId.Equals(a.MissionId) ||
+                active.SchemaVersion != a.SchemaVersion || active.ContentVersion != a.ContentVersion ||
+                metadata.Generation != m.Generation || metadata.PhysicalSourceValidated != m.PhysicalSourceValidated ||
+                !metadata.Blob.Equals(m.Blob) || !metadata.MetadataHash.Equals(m.MetadataHash) ||
+                readiness.Generation != r.Generation || readiness.RequiredFlags != r.RequiredFlags ||
+                readiness.ReadyFlags != r.ReadyFlags || readiness.FailedFlags != r.FailedFlags ||
+                dependency.ReadyForDependents != d.ReadyForDependents || dependency.SpawnOnStart != d.SpawnOnStart ||
+                dependency.Spawned != d.Spawned || dependency.SpawnFinalizing != d.SpawnFinalizing ||
+                dependency.FinalizeAfterFrames != d.FinalizeAfterFrames || dependency.PendingCity != d.PendingCity ||
+                dependency.CityHasSpawned != d.CityHasSpawned || dependency.CityGenerating != d.CityGenerating ||
+                grid.Width != g.Width || grid.Height != g.Height || grid.CellSize != g.CellSize || !math.all(grid.Origin == g.Origin))
+                return "CaptureAdmissionChangedAcrossFenceOrCopy";
+            return null;
+        }
+
         public static OwnedGridSnapshot CopyAvailableStorage(GridConfig grid, DynamicBlockerComponent blockers, DynamicOccupancyComponent occupancy)
         {
             string error = StorageUnavailableReason(grid, blockers, occupancy);
@@ -200,7 +248,15 @@ namespace Game.Editor
             if (reason != null) return Unavailable(facts, reason);
             // Expensive one-shot synchronization and mask allocation happen only after admission.
             // This is not suitable for per-frame polling. No system Update or entity writes.
+            var admitted = new CaptureAdmissionState { Active = active, Metadata = metadata,
+                Readiness = readiness, Dependency = dependency, Grid = grid };
             em.CompleteAllTrackedJobs();
+            reason = RevalidateCaptureAdmission(em, mapEntity, gridEntity, dependencyEntity, admitted);
+            if (reason != null) return Unavailable(facts, reason);
+            reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+            if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
+                !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
+                return Unavailable(facts, reason ?? "SourceLifecycleChangedAcrossFence");
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
             var occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             reason = StorageUnavailableReason(grid, blockers, occupancy); if (reason != null) return Unavailable(facts, reason);
@@ -213,6 +269,8 @@ namespace Game.Editor
                     !after.OperationMapId.Equals(active.OperationMapId) || Time.frameCount != frame ||
                     !em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity).SessionId.Equals(session.SessionId))
                     return Unavailable(facts, "OwnerOrFrameChangedDuringCopy");
+                reason = RevalidateCaptureAdmission(em, mapEntity, gridEntity, dependencyEntity, admitted);
+                if (reason != null) return Unavailable(facts, reason);
                 reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
                 if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
                     !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))

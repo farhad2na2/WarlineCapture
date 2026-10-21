@@ -140,6 +140,49 @@ namespace Game.Tests.Editor
             Assert.AreEqual("GridSourceOwnership:SectionLifecycleUnavailable", f.Reason());
             Assert.AreEqual("AuthoredSourceLifecycleUnavailable", S002RuntimeBlockerWitness.OwnershipUnavailableReason(f.Em, f.Grid, f.Dependency, f.Guid, Entity.Null));
         }
+        [Test] public void ChangedFenceStateMustBeReReadFromActualComponents()
+        {
+            using var world = new World("S002 synthetic fence-state control");
+            var em = world.EntityManager;
+            var map = em.CreateEntity(typeof(ActiveOperationMapComponent), typeof(OperationMapMetadataComponent),
+                typeof(OperationMapReadinessComponent));
+            var grid = em.CreateEntity(typeof(GridConfig));
+            var dependency = em.CreateEntity(typeof(RuntimeGridBlockerDependencyComponent));
+            var admitted = new S002RuntimeBlockerWitness.CaptureAdmissionState {
+                Active = new ActiveOperationMapComponent { Generation = 7 },
+                Metadata = new OperationMapMetadataComponent { Generation = 7, PhysicalSourceValidated = 1 },
+                Readiness = Ready(), Dependency = Dependency(),
+                Grid = new GridConfig { Width = 8, Height = 8, CellSize = 1, Origin = float3.zero } };
+            em.SetComponentData(map, admitted.Active); em.SetComponentData(map, admitted.Metadata);
+            em.SetComponentData(map, admitted.Readiness); em.SetComponentData(grid, admitted.Grid);
+            em.SetComponentData(dependency, admitted.Dependency);
+            Assert.IsNull(S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            // Model writes becoming visible across the fence by changing actual ECS components
+            // after retaining the pre-fence admission. No scheduled-job or live runtime credit.
+            var changedReady = admitted.Readiness; changedReady.ReadyFlags &= ~OperationMapReadinessFlags.MapSurface;
+            em.SetComponentData(map, changedReady);
+            Assert.AreEqual("MapReadinessUnavailable", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.SetComponentData(map, admitted.Readiness);
+            var changedDependency = admitted.Dependency; changedDependency.PendingCity = 1;
+            em.SetComponentData(dependency, changedDependency);
+            Assert.AreEqual("RuntimeBlockerOwnerNotReady", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.SetComponentData(dependency, admitted.Dependency);
+            var changedGrid = admitted.Grid; changedGrid.Origin.x = 1;
+            em.SetComponentData(grid, changedGrid);
+            Assert.AreEqual("CaptureAdmissionChangedAcrossFenceOrCopy", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.SetComponentData(grid, admitted.Grid);
+            changedDependency = admitted.Dependency; changedDependency.FinalizeAfterFrames = 5;
+            em.SetComponentData(dependency, changedDependency);
+            Assert.AreEqual("CaptureAdmissionChangedAcrossFenceOrCopy", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.SetComponentData(dependency, admitted.Dependency);
+            var changedMetadata = admitted.Metadata; changedMetadata.Generation = 8;
+            em.SetComponentData(map, changedMetadata);
+            Assert.AreEqual("SourceGenerationOrValidationUnavailable", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.SetComponentData(map, admitted.Metadata);
+            Assert.IsNull(S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+            em.RemoveComponent<GridConfig>(grid);
+            Assert.AreEqual("CaptureAdmissionOwnerUnavailable", S002RuntimeBlockerWitness.RevalidateCaptureAdmission(em, map, grid, dependency, admitted));
+        }
         [Test] public void PendingCityAndBlockerFinalizationCannotLookReady()
         {
             foreach (string field in new[] { "ReadyForDependents", "PendingCity", "CityGenerating", "SpawnFinalizing", "Spawned" })
@@ -195,10 +238,11 @@ namespace Game.Tests.Editor
                 suite.EveryMandatoryFlagMustBeRequiredAndReady();
                 suite.GlobalDependencyAndMissingGridProvenanceRefuse();
                 suite.ForeignStaleAndUnownedSourceLifecycleRefuse();
+                suite.ChangedFenceStateMustBeReReadFromActualComponents();
                 suite.PendingCityAndBlockerFinalizationCannotLookReady();
                 suite.OwnedBlockedFactionAndOccupancyCopiesSurviveSourceMutationAndDisposal();
                 suite.EditModeCannotFabricateNormalRuntimeAvailability();
-                Debug.Log("[S002RuntimeBlockerWitnessTests] result=Passed controls=9 actualRuntimeObserved=0 sourceFitCertified=0 missionReady=0");
+                Debug.Log("[S002RuntimeBlockerWitnessTests] result=Passed controls=10 actualRuntimeObserved=0 sourceFitCertified=0 missionReady=0");
             }
             catch (Exception error) { Debug.LogError("[S002RuntimeBlockerWitnessTests] result=Failed\n" + error); throw; }
         }

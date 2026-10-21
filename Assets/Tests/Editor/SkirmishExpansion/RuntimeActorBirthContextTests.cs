@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -8,6 +9,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Game.Tests.Editor
@@ -18,8 +20,9 @@ namespace Game.Tests.Editor
         sealed class Provider : IRuntimeActorBirthSourceProvider
         {
             internal RuntimeActorSourceIdentity Identity;
+            internal Action OnRead;
             public bool TryReadBirthSource(World world, Entity grid, out RuntimeActorSourceIdentity source)
-            { source = Identity; return world.Unmanaged.SequenceNumber == Identity.WorldSequence && grid == Identity.Grid; }
+            { OnRead?.Invoke(); source = Identity; return world.Unmanaged.SequenceNumber == Identity.WorldSequence && grid == Identity.Grid; }
         }
         sealed class Fixture : IDisposable
         {
@@ -196,6 +199,68 @@ namespace Game.Tests.Editor
             for (int i = 0; i < withBirth.Length; i++)
             { Assert.AreEqual(withoutBirth[i].Type, withBirth[i].Type); Assert.AreEqual(withoutBirth[i].Data, withBirth[i].Data); }
         }
+        private static Entity CreateActualScenarioMember(Fixture f, Action<Entity> afterBirth, out Entity prefab)
+        {
+            // Exercise the real prefab Instantiate, placement, ownership, and record path; no helper-only stamping.
+            prefab = f.Em.CreateEntity(typeof(Prefab), typeof(LocalTransform), typeof(UnitGrid), typeof(UnitFootprint));
+            f.Em.SetComponentData(prefab, LocalTransform.Identity);
+            f.Em.SetComponentData(prefab, new UnitFootprint { Size = new int2(1, 1) });
+            var force = new SkirmishResolvedForceEntry { RoleId = "rifle", RoleKind = SkirmishRoleKind.Rifle,
+                FactionId = 1, Quantity = 1, SpawnWorldX = 3, SpawnWorldZ = 4 };
+            return SkirmishScenarioSpawnSystem.CreateForceMember(f.Em, f.Attempt, force, 0, 0, 1, "birth.control.prefab",
+                new Dictionary<string, Entity> { ["birth.control.prefab"] = prefab }, null, null, afterBirth);
+        }
+        [Test] public void RealScenarioCreatorCapturesBeforeInstantiateAndCarriesSelectedGrid()
+        {
+            using var f = new Fixture(); bool created = false; var reads = new List<bool>();
+            f.Source.OnRead = () => reads.Add(created);
+            var actor = CreateActualScenarioMember(f, born =>
+            {
+                Assert.IsTrue(f.Em.Exists(born)); Assert.IsFalse(f.Em.HasComponent<SkirmishAttemptOwnedComponent>(born));
+                Assert.AreEqual(1, reads.Count); Assert.IsFalse(reads[0]); created = true;
+            }, out var prefab);
+            Assert.AreNotEqual(Entity.Null, actor); Assert.IsTrue(RuntimeActorBirthContext.HasRecord(f.Em, actor));
+            Assert.GreaterOrEqual(reads.Count, 2); Assert.IsTrue(reads[1]);
+            var record = f.Em.GetComponentData<RuntimeActorBirthContext.RuntimeActorBirthRecord>(actor);
+            Assert.AreEqual(f.Grid, record.Grid); Assert.AreEqual(new int2(3, 4), f.Em.GetComponentData<UnitGrid>(actor).Cell);
+            Assert.AreEqual(new FixedString64Bytes("rifle.1.0.0"), f.Em.GetComponentData<SkirmishAttemptOwnedComponent>(actor).StableObjectId);
+            Assert.IsNull(f.Reason(actor)); Assert.IsFalse(RuntimeActorBirthContext.HasRecord(f.Em, prefab));
+        }
+        [Test] public void RealScenarioCreatorCannotStampAfterProviderRemovedAcrossInstantiate()
+        {
+            using var f = new Fixture(); int reads = 0; f.Source.OnRead = () => reads++;
+            var actor = CreateActualScenarioMember(f, _ =>
+            {
+                Assert.AreEqual(1, reads); f.Em.RemoveComponent<RuntimeActorBirthSourceProvider>(f.Root);
+            }, out _);
+            Assert.AreNotEqual(Entity.Null, actor); Assert.IsTrue(f.Em.HasComponent<SkirmishSharedActorTag>(actor));
+            Assert.AreEqual(new int2(3, 4), f.Em.GetComponentData<UnitGrid>(actor).Cell);
+            Assert.IsFalse(RuntimeActorBirthContext.HasRecord(f.Em, actor));
+            f.Em.AddComponentObject(f.Root, new RuntimeActorBirthSourceProvider(f.Source));
+            Assert.AreEqual("AttemptWriterGridSourceBindingUnavailable", f.Reason(actor));
+        }
+        [Test] public void RealScenarioCreatorCannotAdoptProviderThatAppearsOnlyAfterInstantiate()
+        {
+            using var f = new Fixture(); f.Em.RemoveComponent<RuntimeActorBirthSourceProvider>(f.Root);
+            int reads = 0; f.Source.OnRead = () => reads++;
+            var actor = CreateActualScenarioMember(f, _ => f.Em.AddComponentObject(f.Root, new RuntimeActorBirthSourceProvider(f.Source)), out _);
+            Assert.AreNotEqual(Entity.Null, actor); Assert.AreEqual(0, reads);
+            Assert.AreEqual(new int2(3, 4), f.Em.GetComponentData<UnitGrid>(actor).Cell);
+            Assert.IsFalse(RuntimeActorBirthContext.HasRecord(f.Em, actor));
+            Assert.AreEqual("AttemptWriterGridSourceBindingUnavailable", f.Reason(actor));
+        }
+        [Test] public void RealScenarioCreatorCannotReplaceWrongPreBirthSourceWithLaterValidSource()
+        {
+            using var f = new Fixture(); var foreignGrid = f.Em.CreateEntity();
+            f.Source.Identity = new RuntimeActorSourceIdentity(f.World.Unmanaged.SequenceNumber, f.Root, foreignGrid, f.Scene,
+                7, 123, 456, "foreign", "content", "generated", f.Layout);
+            int reads = 0; f.Source.OnRead = () => reads++;
+            var actor = CreateActualScenarioMember(f, _ => { Assert.AreEqual(1, reads); f.ResetSource(); }, out _);
+            Assert.AreNotEqual(Entity.Null, actor); Assert.AreEqual(1, reads);
+            Assert.IsFalse(RuntimeActorBirthContext.HasRecord(f.Em, actor));
+            Assert.AreEqual(new int2(3, 4), f.Em.GetComponentData<UnitGrid>(actor).Cell);
+            Assert.AreEqual("AttemptWriterGridSourceBindingUnavailable", f.Reason(actor));
+        }
         public static void RunFocusedValidation()
         {
             var t = new RuntimeActorBirthContextTests();
@@ -207,7 +272,9 @@ namespace Game.Tests.Editor
                 t.WorldAndSessionLifetimeMismatchRefuseUnchangedRecord(); t.RealReservationCorrelationRefusesWrongReceiptProducerAndAttempt();
                 t.ReconstructionRequiresFreshRealOwnerContextNotSavedEntityPointers(); t.ScenarioUsesExplicitUniqueSessionAndImmutableStableIdentity();
                 t.RealUnboundCompositionProviderCannotIssueBirthSource(); t.CheckpointWhitelistDoesNotSerializeBirthRecordOrSourcePointers();
-                Debug.Log("[RuntimeActorBirthContextTests] result=Passed controls=12 scope=IsolatedContractWithSyntheticProvider normalEntitySceneObserved=0 sourceFitCertified=0 missionReady=0");
+                t.RealScenarioCreatorCapturesBeforeInstantiateAndCarriesSelectedGrid(); t.RealScenarioCreatorCannotStampAfterProviderRemovedAcrossInstantiate();
+                t.RealScenarioCreatorCannotAdoptProviderThatAppearsOnlyAfterInstantiate(); t.RealScenarioCreatorCannotReplaceWrongPreBirthSourceWithLaterValidSource();
+                Debug.Log("[RuntimeActorBirthContextTests] result=Passed controls=16 scope=IsolatedContractWithSyntheticProviderAndActualScenarioCreator normalEntitySceneObserved=0 sourceFitCertified=0 missionReady=0");
             }
             catch (Exception error) { Debug.LogError("[RuntimeActorBirthContextTests] result=Failed\n" + error); throw; }
         }

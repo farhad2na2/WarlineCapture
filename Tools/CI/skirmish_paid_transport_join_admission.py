@@ -32,7 +32,7 @@ OPS = set('Queue BindProducer StartNativeQueue Deliver DirectDebit DirectDispatc
 PIN_SCOPE = 'WindowsReviewedTypedProducerAndLineageContractOnly_NoNativeAuthentication'
 POLICY_PINS = {
     'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.NormalPaidPlaneLineageCanary.cs': '1679fdb1289e18bb081d245260c15ce770228c809fb8e3a4f6559c9039e9ab40',
-    'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs': '829fca0f4bc03d689c1f9fb7aad0b26c1c1c18f4bc21bd7d31ed338b2394ac34',
+    'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs': '309375ed8d054e41d817f49f1c2650111945eb20952063f7e7335c63c1e1dc21',
     'Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs': 'eef2cc37eed1ea39072bd977de901a8cc88669d647aa9ded3801794b43cfb6cd',
     'Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs': 'd46c0eb8fc3eb9436d0588b1020f856422eb9bd31b76e9e56493578fc79273e4',
     'Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs': 'b520961e2139c99c5925895f436bfefc0254b0068571ddb9464349f1b9eb659c',

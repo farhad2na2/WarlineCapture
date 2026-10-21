@@ -58,8 +58,8 @@ namespace Game.Editor
             return null;
         }
 
-        public static string ReadinessUnavailableReason(int activeGeneration, int metadataGeneration, byte physicalSourceValidated,
-            OperationMapReadinessComponent readiness, RuntimeGridBlockerDependencyComponent dependency)
+        public static string MapReadinessUnavailableReason(int activeGeneration, int metadataGeneration, byte physicalSourceValidated,
+            OperationMapReadinessComponent readiness)
         {
             if (activeGeneration <= 0 || activeGeneration != metadataGeneration || readiness.Generation != activeGeneration ||
                 physicalSourceValidated != 1) return "SourceGenerationOrValidationUnavailable";
@@ -67,6 +67,14 @@ namespace Game.Editor
                 (readiness.ReadyFlags & MandatorySourceReadiness) != MandatorySourceReadiness ||
                 readiness.FailedFlags != OperationMapReadinessFlags.None ||
                 (readiness.ReadyFlags & readiness.RequiredFlags) != readiness.RequiredFlags) return "MapReadinessUnavailable";
+            return null;
+        }
+
+        public static string ReadinessUnavailableReason(int activeGeneration, int metadataGeneration, byte physicalSourceValidated,
+            OperationMapReadinessComponent readiness, RuntimeGridBlockerDependencyComponent dependency)
+        {
+            string reason = MapReadinessUnavailableReason(activeGeneration, metadataGeneration, physicalSourceValidated, readiness);
+            if (reason != null) return reason;
             if (dependency.ReadyForDependents != 1 || dependency.PendingCity != 0 || dependency.CityGenerating != 0 ||
                 dependency.SpawnFinalizing != 0 || (dependency.SpawnOnStart != 0 && dependency.Spawned != 1))
                 return "RuntimeBlockerOwnerNotReady";
@@ -119,22 +127,39 @@ namespace Game.Editor
         // Read actual components again after synchronization and after copying. Do not let
         // pre-fence readiness, dependency or grid values authorize a post-fence snapshot.
         public static string RevalidateCaptureAdmission(EntityManager em, Entity mapEntity, Entity gridEntity,
-            Entity dependencyEntity, CaptureAdmissionState admitted)
+            Entity dependencyEntity, CaptureAdmissionState admitted) =>
+            RevalidateCaptureAdmissionCore(em, mapEntity, gridEntity, dependencyEntity, admitted, true);
+
+        public static string RevalidateEntitySceneAdmission(EntityManager em, CaptureAdmissionState admitted,
+            RuntimeGridSourceBinding binding)
         {
-            if (!em.Exists(mapEntity) || !em.Exists(gridEntity) || !em.Exists(dependencyEntity) ||
+            if (binding.World == null || binding.World != em.World || binding.View == null) return "EntitySceneBindingUnavailable";
+            if (!binding.View.TryReadEntitySceneGridBinding(em.World, binding.MapRoot, binding.Grid, out var current, out var reason))
+                return reason ?? "EntitySceneBindingUnavailable";
+            if (!binding.SameIdentity(current)) return "EntitySceneBindingChanged";
+            using var dependencies = em.CreateEntityQuery(typeof(RuntimeGridBlockerDependencyComponent));
+            if (!dependencies.IsEmptyIgnoreFilter) return "UnexpectedLegacyDependencyInEntityScene";
+            return RevalidateCaptureAdmissionCore(em, binding.MapRoot, binding.Grid, Entity.Null, admitted, false);
+        }
+
+        static string RevalidateCaptureAdmissionCore(EntityManager em, Entity mapEntity, Entity gridEntity,
+            Entity dependencyEntity, CaptureAdmissionState admitted, bool requiresDependency)
+        {
+            if (!em.Exists(mapEntity) || !em.Exists(gridEntity) || (requiresDependency && !em.Exists(dependencyEntity)) ||
                 !em.HasComponent<ActiveOperationMapComponent>(mapEntity) ||
                 !em.HasComponent<OperationMapMetadataComponent>(mapEntity) ||
                 !em.HasComponent<OperationMapReadinessComponent>(mapEntity) ||
                 !em.HasComponent<GridConfig>(gridEntity) ||
-                !em.HasComponent<RuntimeGridBlockerDependencyComponent>(dependencyEntity))
+                (requiresDependency && !em.HasComponent<RuntimeGridBlockerDependencyComponent>(dependencyEntity)))
                 return "CaptureAdmissionOwnerUnavailable";
             var active = em.GetComponentData<ActiveOperationMapComponent>(mapEntity);
             var metadata = em.GetComponentData<OperationMapMetadataComponent>(mapEntity);
             var readiness = em.GetComponentData<OperationMapReadinessComponent>(mapEntity);
-            var dependency = em.GetComponentData<RuntimeGridBlockerDependencyComponent>(dependencyEntity);
+            var dependency = requiresDependency ? em.GetComponentData<RuntimeGridBlockerDependencyComponent>(dependencyEntity) : default;
             var grid = em.GetComponentData<GridConfig>(gridEntity);
-            string reason = ReadinessUnavailableReason(active.Generation, metadata.Generation,
-                metadata.PhysicalSourceValidated, readiness, dependency);
+            string reason = requiresDependency
+                ? ReadinessUnavailableReason(active.Generation, metadata.Generation, metadata.PhysicalSourceValidated, readiness, dependency)
+                : MapReadinessUnavailableReason(active.Generation, metadata.Generation, metadata.PhysicalSourceValidated, readiness);
             if (reason != null) return reason;
             // Reject even still-ready identity/dependency changes; compare all admission fields.
             var a = admitted.Active; var m = admitted.Metadata; var r = admitted.Readiness;
@@ -146,10 +171,10 @@ namespace Game.Editor
                 !metadata.Blob.Equals(m.Blob) || !metadata.MetadataHash.Equals(m.MetadataHash) ||
                 readiness.Generation != r.Generation || readiness.RequiredFlags != r.RequiredFlags ||
                 readiness.ReadyFlags != r.ReadyFlags || readiness.FailedFlags != r.FailedFlags ||
-                dependency.ReadyForDependents != d.ReadyForDependents || dependency.SpawnOnStart != d.SpawnOnStart ||
+                (requiresDependency && (dependency.ReadyForDependents != d.ReadyForDependents || dependency.SpawnOnStart != d.SpawnOnStart ||
                 dependency.Spawned != d.Spawned || dependency.SpawnFinalizing != d.SpawnFinalizing ||
                 dependency.FinalizeAfterFrames != d.FinalizeAfterFrames || dependency.PendingCity != d.PendingCity ||
-                dependency.CityHasSpawned != d.CityHasSpawned || dependency.CityGenerating != d.CityGenerating ||
+                dependency.CityHasSpawned != d.CityHasSpawned || dependency.CityGenerating != d.CityGenerating)) ||
                 grid.Width != g.Width || grid.Height != g.Height || grid.CellSize != g.CellSize || !math.all(grid.Origin == g.Origin))
                 return "CaptureAdmissionChangedAcrossFenceOrCopy";
             return null;
@@ -251,7 +276,7 @@ namespace Game.Editor
             facts["sessionCount"] = sessions.CalculateEntityCount(); facts["mapCount"] = maps.CalculateEntityCount();
             facts["gridCount"] = grids.CalculateEntityCount(); facts["blockerDependencyCount"] = dependencies.CalculateEntityCount();
             if (sessions.CalculateEntityCount() != 1 || maps.CalculateEntityCount() != 1 || grids.CalculateEntityCount() != 1 ||
-                dependencies.CalculateEntityCount() != 1) return Unavailable(facts, "UniqueReadyOwnersUnavailable");
+                dependencies.CalculateEntityCount() > 1) return Unavailable(facts, "UniqueReadyOwnersUnavailable");
             Entity sessionEntity = sessions.GetSingletonEntity(), mapEntity = maps.GetSingletonEntity(), gridEntity = grids.GetSingletonEntity();
             var session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
             var setupRecord = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity);
@@ -270,13 +295,16 @@ namespace Game.Editor
                 !em.HasComponent<DynamicOccupancyComponent>(gridEntity)) return Unavailable(facts, "ReadinessOrMaskComponentUnavailable");
             var active = maps.GetSingleton<ActiveOperationMapComponent>(); var metadata = maps.GetSingleton<OperationMapMetadataComponent>();
             var readiness = em.GetComponentData<OperationMapReadinessComponent>(mapEntity);
-            var dependency = dependencies.GetSingleton<RuntimeGridBlockerDependencyComponent>();
-            var dependencyEntity = dependencies.GetSingletonEntity();
-            facts["runtimeBlockerOwner"] = new JObject { ["entityIndex"] = dependencyEntity.Index, ["entityVersion"] = dependencyEntity.Version,
-                ["readyForDependents"] = dependency.ReadyForDependents, ["spawnOnStart"] = dependency.SpawnOnStart,
-                ["spawned"] = dependency.Spawned, ["spawnFinalizing"] = dependency.SpawnFinalizing,
-                ["pendingCity"] = dependency.PendingCity, ["cityHasSpawned"] = dependency.CityHasSpawned, ["cityGenerating"] = dependency.CityGenerating };
-            string reason = ReadinessUnavailableReason(active.Generation, metadata.Generation, metadata.PhysicalSourceValidated, readiness, dependency);
+            using var matchReferences = em.CreateEntityQuery(typeof(MatchSceneReferenceComponent));
+            if (matchReferences.CalculateEntityCount() != 1) return Unavailable(facts, "NormalMatchReferenceUnavailable");
+            var view = matchReferences.GetSingleton<MatchSceneReferenceComponent>().View.Value;
+            if (view == null) return Unavailable(facts, "NormalMatchViewUnavailable");
+            if (!view.TryReadEntitySceneGridBinding(world, mapEntity, gridEntity, out var sourceBinding, out var bindingReason))
+                return Unavailable(facts, bindingReason ?? "EntitySceneSourceBindingUnavailable");
+            if (!dependencies.IsEmptyIgnoreFilter) return Unavailable(facts, "UnexpectedLegacyDependencyInEntityScene");
+            var dependency = default(RuntimeGridBlockerDependencyComponent);
+            facts["helperApplicability"] = "DisabledByActualBoundEntityScenePolicy_NotAnEmptyMaskClaim";
+            string reason = MapReadinessUnavailableReason(active.Generation, metadata.Generation, metadata.PhysicalSourceValidated, readiness);
             if (reason != null) return Unavailable(facts, reason);
             if (!metadata.Blob.IsCreated) return Unavailable(facts, "SourceMetadataBlobUnavailable");
             ref var map = ref metadata.Blob.Value;
@@ -300,7 +328,8 @@ namespace Game.Editor
             Entity loadedSceneRoot = SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid);
             if (loadedSceneRoot == Entity.Null || !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
                 return Unavailable(facts, "AuthoredSourceSceneNotLoaded");
-            reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+            if (sourceBinding.SceneRoot != loadedSceneRoot) return Unavailable(facts, "EntitySceneSourceRootMismatch");
+            reason = SceneOwnerUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot);
             facts["sourceOwnership"] = reason ?? "JoinedExistingLoadedAuthoredSceneLifecycle";
             if (reason != null) return Unavailable(facts, reason);
             // Expensive one-shot synchronization and mask allocation happen only after admission.
@@ -308,9 +337,10 @@ namespace Game.Editor
             var admitted = new CaptureAdmissionState { Active = active, Metadata = metadata,
                 Readiness = readiness, Dependency = dependency, Grid = grid };
             em.CompleteAllTrackedJobs();
-            reason = RevalidateCaptureAdmission(em, mapEntity, gridEntity, dependencyEntity, admitted);
+            reason = RevalidateEntitySceneAdmission(em, admitted, sourceBinding);
             if (reason != null) return Unavailable(facts, reason);
-            reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+            if (sourceBinding.SceneRoot != loadedSceneRoot) return Unavailable(facts, "EntitySceneSourceRootMismatch");
+            reason = SceneOwnerUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot);
             if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
                 !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
                 return Unavailable(facts, reason ?? "SourceLifecycleChangedAcrossFence");
@@ -329,9 +359,10 @@ namespace Game.Editor
                     !after.OperationMapId.Equals(active.OperationMapId) || Time.frameCount != frame ||
                     !em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity).SessionId.Equals(session.SessionId))
                     return Unavailable(facts, "OwnerOrFrameChangedDuringCopy");
-                reason = RevalidateCaptureAdmission(em, mapEntity, gridEntity, dependencyEntity, admitted);
+                reason = RevalidateEntitySceneAdmission(em, admitted, sourceBinding);
                 if (reason != null) return Unavailable(facts, reason);
-                reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+                if (sourceBinding.SceneRoot != loadedSceneRoot) return Unavailable(facts, "EntitySceneSourceRootMismatch");
+                reason = SceneOwnerUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot);
                 if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
                     !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
                     return Unavailable(facts, reason ?? "SourceLifecycleChangedDuringCopy");

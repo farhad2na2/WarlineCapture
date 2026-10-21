@@ -92,6 +92,7 @@ namespace Game.Composition
         public IUnitAttackTraceRenderer UnitAttackTraces { get; private set; }
         public IUnitImpostorRenderer UnitImpostors { get; private set; }
         public bool GameplayInitialized { get; private set; }
+        internal bool? LegacyRuntimeBlockerEnabledAtStartup { get; private set; }
         public BuildingSelectionClickUtilitySystemHelper.Context BuildingSelectionClickContext { get; private set; }
         public BuildingUiCommandSystemHelper.Context BuildingUiCommandContext => _buildingUiCommandContext;
         public BuildingUiQueryUiSystemHelper.Context BuildingUiQueryContext => _buildingUiQueryContext;
@@ -341,6 +342,7 @@ namespace Game.Composition
             _deferredMatchHudSelectionPanelView = null;
             RuntimeDecorations = null;
             RuntimeGridBlockers = null;
+            LegacyRuntimeBlockerEnabledAtStartup = null;
             RuntimeCity = null;
             gameplayStartupSystem.ResetForShutdown();
             _managedRuntimeInitialized = false;
@@ -369,6 +371,7 @@ namespace Game.Composition
 
         public void Shutdown()
         {
+            LegacyRuntimeBlockerEnabledAtStartup = null;
             ReleaseRuntimeSettingsChangeSubscription();
             _runtimeGameplayStateSystem.ResetForMatchShutdown();
             if (runtimeWorld != null && runtimeWorld.IsCreated &&
@@ -979,10 +982,10 @@ namespace Game.Composition
             if (GameplayInitialized)
                 return;
 
+            bool enableLegacyPresentation = sceneView == null ||
+                sceneView.CanonicalPresentationMode != OperationMapCanonicalPresentationMode.EntityScene;
             GameplayFeatureStartupCompositionSystemHelper.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
-                sceneView == null ||
-                sceneView.CanonicalPresentationMode !=
-                OperationMapCanonicalPresentationMode.EntityScene,
+                enableLegacyPresentation,
                 RuntimeCitySpawnerConfig,
                 RuntimeGridBlockerConfig,
                 RuntimeDecorationSpawnerConfig,
@@ -1007,6 +1010,7 @@ namespace Game.Composition
 
             RuntimeCity = gameplaySystems.RuntimeCity;
             RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers;
+            LegacyRuntimeBlockerEnabledAtStartup = enableLegacyPresentation;
             RuntimeDecorations = gameplaySystems.RuntimeDecorations;
             GameplayInitialized = true;
             ApplyMainMenuFeatureBindingsIfReady();

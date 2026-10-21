@@ -13,6 +13,21 @@ namespace Game.Composition
         private bool disposed;
 
         internal int PublishedGeneration { get; private set; }
+        private Entity publishedRoot;
+
+        // Read the exact root actually returned by this producer, never adopt a new singleton.
+        internal bool TryGetPublishedRoot(World expectedWorld, out Entity root)
+        {
+            root = Entity.Null;
+            if (disposed || createdWorld != expectedWorld || !TryGetLiveEntityManager(out var em) ||
+                publishedRoot == Entity.Null || !em.Exists(publishedRoot) ||
+                !em.HasComponent<ActiveOperationMapComponent>(publishedRoot) ||
+                !em.HasComponent<OperationMapMetadataComponent>(publishedRoot)) return false;
+            var active = em.GetComponentData<ActiveOperationMapComponent>(publishedRoot);
+            var metadata = em.GetComponentData<OperationMapMetadataComponent>(publishedRoot);
+            if (PublishedGeneration <= 0 || active.Generation != PublishedGeneration || metadata.Generation != PublishedGeneration) return false;
+            root = publishedRoot; return true;
+        }
 
         public OperationMapRuntimeBootstrapSceneSystemHelper(World world)
         {
@@ -140,6 +155,7 @@ namespace Game.Composition
             {
                 PublishedGeneration = entityManager
                     .GetComponentData<ActiveOperationMapComponent>(rootEntity).Generation;
+                publishedRoot = rootEntity;
                 return true;
             }
 
@@ -222,6 +238,7 @@ namespace Game.Composition
                 });
                 entityManager.SetName(rootEntity, "OperationMapRuntimeRoot");
                 PublishedGeneration = generation;
+                publishedRoot = rootEntity;
 
                 BlobAssetReference<OperationMapBlob> previousOwnedBlob = ownedMetadataBlob;
                 ownedMetadataBlob = newMetadataBlob;
@@ -241,6 +258,7 @@ namespace Game.Composition
 
         public void ClearPublishedState()
         {
+            publishedRoot = Entity.Null;
             if (TryGetLiveEntityManager(out EntityManager entityManager))
             {
                 using EntityQuery query = entityManager.CreateEntityQuery(

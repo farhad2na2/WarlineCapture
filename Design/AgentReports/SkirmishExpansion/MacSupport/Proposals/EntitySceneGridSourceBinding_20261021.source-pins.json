@@ -1,0 +1,17 @@
+{
+  "baseCommit": "8200eb1d7404665af962604c2f92988463561e7f",
+  "sourceSha256": {
+    "Assets/Game/Scripts/Composition/OperationMapRuntimeBootstrapSceneSystemHelper.cs": "56021dd29b2dcd5a7d857ccb1688ae090a7c98bad24eb4e1880870695b082cd4",
+    "Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs": "c22e956c28d89bcbbb84cac4dbe9b8241e77b7797e83f734125dc139ea9e2a4f",
+    "Assets/Game/Scripts/Composition/MatchSceneView.RuntimeGridSourceBinding.cs": "fa2dfb12eba9ad2aa441d8322583f998e390c7d504db3c1a8f6a9f74783192f6",
+    "Assets/Game/Scripts/Composition/MatchSceneView.RuntimeGridSourceBinding.cs.meta": "53dbd89c13a141fbad9149d5521b08334f5c0834b6712219326e9312bb0af2d2",
+    "Assets/Game/Scripts/Editor/Skirmish/S002RuntimeBlockerWitness.cs": "d438bc73736ad21c9d3f4d437ee518186126a37ad42abd9c6c66c677395d841b",
+    "Assets/Tests/Editor/SkirmishExpansion/EntitySceneGridSourceBindingTests.cs": "15a850054dbcbbdee4f8809493a1fdeb71729bce724c54dcbcc6585e3724d723",
+    "Assets/Tests/Editor/SkirmishExpansion/EntitySceneGridSourceBindingTests.cs.meta": "0d803aa6f27d2af12b26f3ed6cf12e8a0d87238882f56a51a8c35fb3e3197728"
+  },
+  "remainingSeamInputs": {
+    "Assets/Game/Scripts/Runtime/Skirmish/SkirmishRuntimeActorOwnership.cs": "1bdc763d0225eeb072ebe3299d2357a695797b4c8df6b3a53a59ebb6da9c1be9",
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327"
+  },
+  "execution": "Source checks only. Six new controls, prior10 and prior12 all unexecuted; no native/heavy compilation."
+}

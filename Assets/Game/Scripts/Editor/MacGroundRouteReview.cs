@@ -55,17 +55,31 @@ namespace Game.Editor
                 foreach (var entity in entities)
                 {
                     string key = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-                    if (!key.Contains("Chr_") || !selected.Add(key) || rows.Count >= 12 || em.HasComponent<UnitTransportPassenger>(entity)) continue;
+                    int faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : -1;
+                    if (!key.Contains("Chr_") || !selected.Add(faction + ":" + key) || rows.Count >= 12 || em.HasComponent<UnitTransportPassenger>(entity)) continue;
                     var transform = em.GetComponentData<LocalTransform>(entity); var surface = em.GetComponentData<UnitSurfaceComponent>(entity);
-                    Entity visual = em.HasComponent<UnitDetailedVisualReference>(entity) ? em.GetComponentData<UnitDetailedVisualReference>(entity).Root : entity;
-                    bool measured = SkirmishCameraPosedMeshReader.TryCollect(em, visual, out var meshes, out string error);
+                    var candidates = new List<(string, Entity)>();
+                    if (em.HasComponent<UnitDetailedVisualReference>(entity)) candidates.Add(("Detail", em.GetComponentData<UnitDetailedVisualReference>(entity).Root));
+                    if (em.HasComponent<UnitModelInstanceReference>(entity)) candidates.Add(("Model", em.GetComponentData<UnitModelInstanceReference>(entity).Instance));
+                    if (em.HasComponent<UnitMidLodInstanceReference>(entity)) candidates.Add(("Mid", em.GetComponentData<UnitMidLodInstanceReference>(entity).Instance));
+                    if (em.HasComponent<UnitLowLodInstanceReference>(entity)) candidates.Add(("Low", em.GetComponentData<UnitLowLodInstanceReference>(entity).Instance));
+                    candidates.Add(("Root", entity));
+                    bool measured = false; SkirmishCameraPosedMeshReader.Fact[] meshes = null;
+                    var errors = new JObject(); string measuredVisual = null;
+                    foreach (var candidate in candidates)
+                    {
+                        if (candidate.Item2 == Entity.Null || !em.Exists(candidate.Item2)) continue;
+                        if (SkirmishCameraPosedMeshReader.TryCollect(em, candidate.Item2, out meshes, out string error))
+                        { measured = true; measuredVisual = candidate.Item1; break; }
+                        errors[candidate.Item1] = error;
+                    }
                     float feet = float.PositiveInfinity;
                     if (measured) foreach (var mesh in meshes) feet = Mathf.Min(feet, mesh.WorldBounds.min.y);
-                    var row = new JObject { ["entity"] = entity.ToString(), ["prefab"] = key,
+                    var row = new JObject { ["entity"] = entity.ToString(), ["prefab"] = key, ["faction"] = faction,
                         ["root_x"] = transform.Position.x, ["root_y"] = transform.Position.y, ["root_z"] = transform.Position.z,
                         ["scale"] = transform.Scale, ["sampled_height"] = surface.LastSampledHeight,
                         ["has_surface"] = surface.HasSurface, ["grounded"] = surface.IsGrounded,
-                        ["measured_posed_mesh"] = measured, ["mesh_error"] = error,
+                        ["measured_posed_mesh"] = measured, ["mesh_errors"] = errors, ["measured_visual"] = measuredVisual,
                         ["animation_index"] = em.HasComponent<UnitResolvedAnimationIndex>(entity) ? em.GetComponentData<UnitResolvedAnimationIndex>(entity).Value : -1 };
                     if (measured) { row["posed_mesh_min_y"] = feet; row["mesh_min_above_sample"] = feet - surface.LastSampledHeight; }
                     if (em.HasBuffer<UnitAnimationGroundOffset>(entity))
@@ -77,6 +91,21 @@ namespace Game.Editor
                         if (database.Blob.IsCreated)
                         {
                             ref var db = ref database.Blob.Value; var nearby = new JObject();
+                            string inventory = Path.Combine(SessionState.GetString(OutputKey, ""), "environment-layout.json");
+                            if (!File.Exists(inventory))
+                            {
+                                var cells = new JObject();
+                                for (int i = 0; i < db.Placements.Length; i++)
+                                {
+                                    ref var placement = ref db.Placements[i]; var point = placement.WorldMatrix.c3.xyz;
+                                    string bin = Mathf.FloorToInt(point.x / 64) + "," + Mathf.FloorToInt(point.z / 64);
+                                    var cell = cells[bin] as JObject;
+                                    if (cell == null) { cell = new JObject(); cells[bin] = cell; }
+                                    string category = placement.SemanticCategory.ToString(); cell[category] = ((int?)cell[category] ?? 0) + 1;
+                                }
+                                File.WriteAllText(inventory, new JObject { ["map"] = db.OperationMapId.ToString(),
+                                    ["placements"] = db.Placements.Length, ["cell_metres"] = 64, ["cells"] = cells }.ToString());
+                            }
                             for (int i = 0; i < db.Placements.Length; i++)
                             {
                                 ref var placement = ref db.Placements[i]; float3 p = placement.WorldMatrix.c3.xyz;

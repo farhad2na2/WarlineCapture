@@ -10,6 +10,7 @@ using Game.Skirmish.Contracts;
 using Newtonsoft.Json.Linq;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Scenes;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
@@ -20,6 +21,14 @@ namespace Game.Editor
     // writes a grid/entity, changes presentation or grants source-fit readiness.
     public static class S002RuntimeBlockerWitness
     {
+        // MatchSceneView.ResolveInitialOperationMapReadiness(true): physical loaded-map
+        // admission cannot be weakened by a caller supplying Metadata-only RequiredFlags.
+        public const OperationMapReadinessFlags MandatorySourceReadiness =
+            OperationMapReadinessFlags.SourceContent | OperationMapReadinessFlags.SubScene |
+            OperationMapReadinessFlags.Metadata | OperationMapReadinessFlags.MapSurface |
+            OperationMapReadinessFlags.AuthoredConversion | OperationMapReadinessFlags.PresentationManifest |
+            OperationMapReadinessFlags.RequiredPresentationPreload;
+
         public sealed class OwnedGridSnapshot : IDisposable
         {
             public NativeBitArray Blocked;
@@ -54,12 +63,48 @@ namespace Game.Editor
         {
             if (activeGeneration <= 0 || activeGeneration != metadataGeneration || readiness.Generation != activeGeneration ||
                 physicalSourceValidated != 1) return "SourceGenerationOrValidationUnavailable";
-            if (readiness.RequiredFlags == OperationMapReadinessFlags.None || readiness.FailedFlags != OperationMapReadinessFlags.None ||
+            if ((readiness.RequiredFlags & MandatorySourceReadiness) != MandatorySourceReadiness ||
+                (readiness.ReadyFlags & MandatorySourceReadiness) != MandatorySourceReadiness ||
+                readiness.FailedFlags != OperationMapReadinessFlags.None ||
                 (readiness.ReadyFlags & readiness.RequiredFlags) != readiness.RequiredFlags) return "MapReadinessUnavailable";
             if (dependency.ReadyForDependents != 1 || dependency.PendingCity != 0 || dependency.CityGenerating != 0 ||
                 dependency.SpawnFinalizing != 0 || (dependency.SpawnOnStart != 0 && dependency.Spawned != 1))
                 return "RuntimeBlockerOwnerNotReady";
             return null;
+        }
+
+        // Read existing ECS lifecycle ownership only. The normal presentation helper currently
+        // creates an untagged global dependency entity; it therefore cannot pass this join.
+        // Do not add tags/stamps or infer provenance from matching dimensions/readiness.
+        public static string OwnershipUnavailableReason(EntityManager em, Entity gridEntity, Entity dependencyEntity,
+            Unity.Entities.Hash128 authoredGuid, Entity loadedSceneRoot)
+        {
+            if (!authoredGuid.IsValid || loadedSceneRoot == Entity.Null || !em.Exists(loadedSceneRoot) ||
+                !em.HasComponent<SceneReference>(loadedSceneRoot) ||
+                !em.GetComponentData<SceneReference>(loadedSceneRoot).SceneGUID.Equals(authoredGuid) ||
+                !em.HasBuffer<ResolvedSectionEntity>(loadedSceneRoot))
+                return "AuthoredSourceLifecycleUnavailable";
+            string reason = SceneOwnerUnavailableReason(em, gridEntity, authoredGuid, loadedSceneRoot);
+            if (reason != null) return "GridSourceOwnership:" + reason;
+            reason = SceneOwnerUnavailableReason(em, dependencyEntity, authoredGuid, loadedSceneRoot);
+            return reason == null ? null : "BlockerDependencySourceOwnership:" + reason;
+        }
+
+        static string SceneOwnerUnavailableReason(EntityManager em, Entity entity,
+            Unity.Entities.Hash128 authoredGuid, Entity loadedSceneRoot)
+        {
+            if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<SceneTag>(entity))
+                return "SceneTagUnavailable";
+            Entity section = em.GetSharedComponent<SceneTag>(entity).SceneEntity;
+            if (section == Entity.Null || !em.Exists(section) || !em.HasComponent<SceneSectionData>(section) ||
+                !em.HasComponent<SceneEntityReference>(section)) return "SectionLifecycleUnavailable";
+            if (!em.GetComponentData<SceneSectionData>(section).SceneGUID.Equals(authoredGuid) ||
+                em.GetComponentData<SceneEntityReference>(section).SceneEntity != loadedSceneRoot)
+                return "AuthoredSourceOwnerMismatch";
+            var sections = em.GetBuffer<ResolvedSectionEntity>(loadedSceneRoot, true);
+            for (int i = 0; i < sections.Length; i++)
+                if (sections[i].SectionEntity == section) return null;
+            return "SectionNotOwnedByLoadedSource";
         }
 
         public static OwnedGridSnapshot CopyAvailableStorage(GridConfig grid, DynamicBlockerComponent blockers, DynamicOccupancyComponent occupancy)
@@ -94,8 +139,6 @@ namespace Game.Editor
             var world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated) return Unavailable(facts, "NormalWorldUnavailable");
             var em = world.EntityManager;
-            // Fence existing writers only. No system Update or entity writes.
-            em.CompleteAllTrackedJobs();
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupRecord));
             using var maps = em.CreateEntityQuery(typeof(ActiveOperationMapComponent), typeof(OperationMapMetadataComponent));
             using var grids = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable), typeof(GridRoad));
@@ -148,6 +191,16 @@ namespace Game.Editor
                 grid.Width != source.GridMetadata.Dimensions.x || grid.Height != source.GridMetadata.Dimensions.y ||
                 grid.CellSize != source.GridMetadata.CellSize || !math.all(grid.Origin == (float3)source.GridMetadata.Origin))
                 return Unavailable(facts, "ActualGridAndNormalSourceJoinMismatch");
+            var authoredGuid = new Unity.Entities.Hash128(source.NavigationMetadata.AuthoredSubSceneGuid);
+            Entity loadedSceneRoot = SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid);
+            if (loadedSceneRoot == Entity.Null || !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
+                return Unavailable(facts, "AuthoredSourceSceneNotLoaded");
+            reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+            facts["sourceOwnership"] = reason ?? "JoinedExistingLoadedAuthoredSceneLifecycle";
+            if (reason != null) return Unavailable(facts, reason);
+            // Expensive one-shot synchronization and mask allocation happen only after admission.
+            // This is not suitable for per-frame polling. No system Update or entity writes.
+            em.CompleteAllTrackedJobs();
             var blockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
             var occupancy = em.GetComponentData<DynamicOccupancyComponent>(gridEntity);
             reason = StorageUnavailableReason(grid, blockers, occupancy); if (reason != null) return Unavailable(facts, reason);
@@ -160,6 +213,10 @@ namespace Game.Editor
                     !after.OperationMapId.Equals(active.OperationMapId) || Time.frameCount != frame ||
                     !em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity).SessionId.Equals(session.SessionId))
                     return Unavailable(facts, "OwnerOrFrameChangedDuringCopy");
+                reason = OwnershipUnavailableReason(em, gridEntity, dependencyEntity, authoredGuid, loadedSceneRoot);
+                if (reason != null || SceneSystem.GetSceneEntity(world.Unmanaged, authoredGuid) != loadedSceneRoot ||
+                    !SceneSystem.IsSceneLoaded(world.Unmanaged, loadedSceneRoot))
+                    return Unavailable(facts, reason ?? "SourceLifecycleChangedDuringCopy");
                 int cells = grid.Width * grid.Height, blockedCount = 0, occupiedCount = 0;
                 byte[] blockedBytes = new byte[cells], occupiedBytes = new byte[cells];
                 for (int i = 0; i < cells; i++)

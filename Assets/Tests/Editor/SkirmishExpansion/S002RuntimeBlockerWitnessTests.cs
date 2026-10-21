@@ -3,6 +3,8 @@ using Game.Components;
 using Game.Editor;
 using NUnit.Framework;
 using Unity.Collections;
+using Unity.Entities;
+using Unity.Scenes;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -25,8 +27,8 @@ namespace Game.Tests.Editor
             { Blockers.Blocked.Dispose(); Blockers.Counts.Dispose(); Blockers.FriendlyPassFactionIds.Dispose(); Occupancy.Occupied.Dispose(); }
         }
         static OperationMapReadinessComponent Ready() => new OperationMapReadinessComponent { Generation = 7,
-            ReadyFlags = OperationMapReadinessFlags.SourceContent | OperationMapReadinessFlags.SubScene | OperationMapReadinessFlags.Metadata | OperationMapReadinessFlags.MapSurface,
-            RequiredFlags = OperationMapReadinessFlags.SourceContent | OperationMapReadinessFlags.SubScene | OperationMapReadinessFlags.Metadata | OperationMapReadinessFlags.MapSurface };
+            ReadyFlags = S002RuntimeBlockerWitness.MandatorySourceReadiness,
+            RequiredFlags = S002RuntimeBlockerWitness.MandatorySourceReadiness };
         static RuntimeGridBlockerDependencyComponent Dependency() => new RuntimeGridBlockerDependencyComponent { ReadyForDependents = 1, SpawnOnStart = 1, Spawned = 1 };
         [Test] public void MissingMasksNeverBecomeAnEmptyAvailableSnapshot()
         {
@@ -61,6 +63,82 @@ namespace Game.Tests.Editor
             Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, ready, Dependency()));
             ready = Ready(); ready.FailedFlags = OperationMapReadinessFlags.SubScene;
             Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, ready, Dependency()));
+        }
+        [Test] public void EveryMandatoryFlagMustBeRequiredAndReady()
+        {
+            foreach (OperationMapReadinessFlags flag in Enum.GetValues(typeof(OperationMapReadinessFlags)))
+            {
+                if (flag == OperationMapReadinessFlags.None) continue;
+                var ready = Ready(); ready.RequiredFlags &= ~flag; ready.ReadyFlags &= ~flag;
+                Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, ready, Dependency()), "omitted " + flag);
+                ready = Ready(); ready.RequiredFlags &= ~flag;
+                Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, ready, Dependency()), "undeclared " + flag);
+                ready = Ready(); ready.ReadyFlags &= ~flag;
+                Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, ready, Dependency()), "not ready " + flag);
+            }
+            var metadataOnly = Ready(); metadataOnly.RequiredFlags = metadataOnly.ReadyFlags = OperationMapReadinessFlags.Metadata;
+            Assert.IsNotNull(S002RuntimeBlockerWitness.ReadinessUnavailableReason(7, 7, 1, metadataOnly, Dependency()));
+        }
+
+        // Synthetic scene ownership only: does not establish SceneSystem-loaded runtime acceptance.
+        sealed class OwnershipFixture : IDisposable
+        {
+            public readonly World World = new World("S002 synthetic ownership controls");
+            public EntityManager Em => World.EntityManager;
+            public readonly Unity.Entities.Hash128 Guid = new Unity.Entities.Hash128("11111111111111111111111111111111");
+            public Entity Root, Section, Grid, Dependency;
+            public OwnershipFixture()
+            {
+                Root = Em.CreateEntity(typeof(SceneReference));
+                Em.SetComponentData(Root, new SceneReference { SceneGUID = Guid });
+                Section = Em.CreateEntity(typeof(SceneSectionData), typeof(SceneEntityReference));
+                Em.SetComponentData(Section, new SceneSectionData { SceneGUID = Guid });
+                Em.SetComponentData(Section, new SceneEntityReference { SceneEntity = Root });
+                Em.AddBuffer<ResolvedSectionEntity>(Root).Add(new ResolvedSectionEntity { SectionEntity = Section });
+                Grid = Em.CreateEntity(); Dependency = Em.CreateEntity();
+                Em.AddSharedComponent(Grid, new SceneTag { SceneEntity = Section });
+                Em.AddSharedComponent(Dependency, new SceneTag { SceneEntity = Section });
+            }
+            public string Reason() => S002RuntimeBlockerWitness.OwnershipUnavailableReason(Em, Grid, Dependency, Guid, Root);
+            public void Dispose() => World.Dispose();
+        }
+        [Test] public void GlobalDependencyAndMissingGridProvenanceRefuse()
+        {
+            using var f = new OwnershipFixture(); Assert.IsNull(f.Reason());
+            f.Em.RemoveComponent<SceneTag>(f.Dependency);
+            Assert.AreEqual("BlockerDependencySourceOwnership:SceneTagUnavailable", f.Reason());
+            f.Em.AddSharedComponent(f.Dependency, new SceneTag { SceneEntity = f.Section });
+            f.Em.RemoveComponent<SceneTag>(f.Grid);
+            Assert.AreEqual("GridSourceOwnership:SceneTagUnavailable", f.Reason());
+        }
+        [Test] public void ForeignStaleAndUnownedSourceLifecycleRefuse()
+        {
+            using var f = new OwnershipFixture();
+            var foreignGuid = new Unity.Entities.Hash128("22222222222222222222222222222222");
+            f.Em.SetComponentData(f.Section, new SceneSectionData { SceneGUID = foreignGuid });
+            Assert.AreEqual("GridSourceOwnership:AuthoredSourceOwnerMismatch", f.Reason());
+            f.Em.SetComponentData(f.Section, new SceneSectionData { SceneGUID = f.Guid });
+            var foreignRoot = f.Em.CreateEntity(typeof(SceneReference));
+            f.Em.SetComponentData(f.Section, new SceneEntityReference { SceneEntity = foreignRoot });
+            Assert.AreEqual("GridSourceOwnership:AuthoredSourceOwnerMismatch", f.Reason());
+            f.Em.SetComponentData(f.Section, new SceneEntityReference { SceneEntity = f.Root });
+            f.Em.GetBuffer<ResolvedSectionEntity>(f.Root).Clear();
+            Assert.AreEqual("GridSourceOwnership:SectionNotOwnedByLoadedSource", f.Reason());
+            f.Em.GetBuffer<ResolvedSectionEntity>(f.Root).Add(new ResolvedSectionEntity { SectionEntity = f.Section });
+            f.Em.SetSharedComponent(f.Dependency, new SceneTag { SceneEntity = foreignRoot });
+            Assert.AreEqual("BlockerDependencySourceOwnership:SectionLifecycleUnavailable", f.Reason());
+            var foreignSection = f.Em.CreateEntity(typeof(SceneSectionData), typeof(SceneEntityReference));
+            f.Em.SetComponentData(foreignSection, new SceneSectionData { SceneGUID = foreignGuid });
+            f.Em.SetComponentData(foreignSection, new SceneEntityReference { SceneEntity = f.Root });
+            f.Em.SetSharedComponent(f.Dependency, new SceneTag { SceneEntity = foreignSection });
+            Assert.AreEqual("BlockerDependencySourceOwnership:AuthoredSourceOwnerMismatch", f.Reason());
+            f.Em.SetSharedComponent(f.Dependency, new SceneTag { SceneEntity = f.Section });
+            f.Em.SetComponentData(f.Root, new SceneReference { SceneGUID = foreignGuid });
+            Assert.AreEqual("AuthoredSourceLifecycleUnavailable", f.Reason());
+            f.Em.SetComponentData(f.Root, new SceneReference { SceneGUID = f.Guid });
+            f.Em.DestroyEntity(f.Section);
+            Assert.AreEqual("GridSourceOwnership:SectionLifecycleUnavailable", f.Reason());
+            Assert.AreEqual("AuthoredSourceLifecycleUnavailable", S002RuntimeBlockerWitness.OwnershipUnavailableReason(f.Em, f.Grid, f.Dependency, f.Guid, Entity.Null));
         }
         [Test] public void PendingCityAndBlockerFinalizationCannotLookReady()
         {
@@ -114,10 +192,13 @@ namespace Game.Tests.Editor
                 suite.MissingMasksNeverBecomeAnEmptyAvailableSnapshot();
                 suite.ShapeAndFactionMaskMismatchRefuse();
                 suite.GenerationsReadinessAndSourceValidationAreMandatory();
+                suite.EveryMandatoryFlagMustBeRequiredAndReady();
+                suite.GlobalDependencyAndMissingGridProvenanceRefuse();
+                suite.ForeignStaleAndUnownedSourceLifecycleRefuse();
                 suite.PendingCityAndBlockerFinalizationCannotLookReady();
                 suite.OwnedBlockedFactionAndOccupancyCopiesSurviveSourceMutationAndDisposal();
                 suite.EditModeCannotFabricateNormalRuntimeAvailability();
-                Debug.Log("[S002RuntimeBlockerWitnessTests] result=Passed controls=6 actualRuntimeObserved=0 sourceFitCertified=0 missionReady=0");
+                Debug.Log("[S002RuntimeBlockerWitnessTests] result=Passed controls=9 actualRuntimeObserved=0 sourceFitCertified=0 missionReady=0");
             }
             catch (Exception error) { Debug.LogError("[S002RuntimeBlockerWitnessTests] result=Failed\n" + error); throw; }
         }

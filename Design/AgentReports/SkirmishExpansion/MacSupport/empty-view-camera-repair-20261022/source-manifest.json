@@ -18,6 +18,9 @@
     "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
     "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
     "Assets/Game/Scripts/Editor/Skirmish/SkirmishEmptyViewCameraRecorder.cs": "7518320be52ae852d3b056708f874df04b150316adda90be52d31499c785952a",
-    "Assets/Game/Scripts/Editor/Skirmish/SkirmishEmptyViewCameraRecorder.cs.meta": "e9712a6724580163e2a1ab9d8b2b2374203241de54c4b05682bb655ed6a6cd3a"
-  }
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishEmptyViewCameraRecorder.cs.meta": "e9712a6724580163e2a1ab9d8b2b2374203241de54c4b05682bb655ed6a6cd3a",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.CodedSizeCamera.cs": "eec5b101983a826a65b3102523be98c3443f4885e1020c461558c301c174cdde"
+  },
+  "captureRevision": "Normal-harness artifact/identity reuse; optional recorder unchanged and unarmed; pixel-frame seal remains explicit existing-harness gap"
 }

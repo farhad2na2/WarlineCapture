@@ -1,81 +1,115 @@
-"""Actual checked wrapper, owned child and taskkill stderr shim; never Unity."""
+"""Existing owned synthetic wrapper regression, adapted for cached-root-only cleanup; never Unity."""
+import argparse
+import datetime
+import hashlib
 import importlib.util
 import json
 import os
 from pathlib import Path
 import subprocess
 import tempfile
+import time
 
-SHIM=r'''
-using System;
-using System.Diagnostics;
-class TaskkillStderrProbe {
- static int Main(string[] args) {
-  int id=int.Parse(args[1]);
-  Console.WriteLine("OWNED_SYNTHETIC_TASKKILL_TARGET="+id);
-  if(Environment.GetEnvironmentVariable("WARLINE_TEST_TASKKILL_MODE")=="killthenstderr") {
-   try { Process.GetProcessById(id).Kill(); } catch(ArgumentException) {}
-  }
-  Console.Error.WriteLine("ERROR: Owned synthetic child could not be terminated: already ended or intentional failure.");
-  return 128;
- }
-}
-'''
+
+def quote(value):
+    return "'" + str(value).replace("'", "''") + "'"
+
 
 def main():
-    root=Path(__file__).resolve().parents[2]
-    spec=importlib.util.spec_from_file_location('exit_controls',root/'Tools/CI/invoke_unity_process_exit_test.py')
-    baseline=importlib.util.module_from_spec(spec);spec.loader.exec_module(baseline)
-    parent=root/'Logs/SkirmishProduction/Offline/InvokeUnityCleanupStderr';parent.mkdir(parents=True,exist_ok=True)
-    out=Path(tempfile.mkdtemp(prefix='owned-',dir=parent))
-    child=baseline.CHILD.replace('string log=Arg(args,"-logFile","");','''if(args.Length==2&&args[0]=="--check-pid") {
-    try { return System.Diagnostics.Process.GetProcessById(int.Parse(args[1])).HasExited?0:1; } catch(ArgumentException) { return 0; }
-   }
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--project-root', type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument('--wrapper', type=Path)
+    args = parser.parse_args()
+    root = args.project_root.resolve()
+    wrapper = (args.wrapper or root / 'Tools/CI/InvokeUnity.ps1').resolve()
+    baseline_path = root / 'Tools/CI/invoke_unity_process_exit_test.py'
+    spec = importlib.util.spec_from_file_location('existing_owned_exit_controls', baseline_path)
+    baseline = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(baseline)
+    out = Path(tempfile.mkdtemp(prefix='cached-root-', dir=root / 'Logs/SkirmishProduction/Offline'))
+    original_line = '   string log=Arg(args,"-logFile","");'
+    child = baseline.CHILD.replace(original_line, r'''   if(args.Length==1 && args[0]=="--sentinel") { Thread.Sleep(12000); return 0; }
    string log=Arg(args,"-logFile","");
+   var sentinel=System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName,"--sentinel") { UseShellExecute=false, CreateNoWindow=true, RedirectStandardOutput=true, RedirectStandardError=true, RedirectStandardInput=true });
+   File.WriteAllText(log+".sentinel-pid",sentinel.Id.ToString());
+   File.WriteAllText(log+".sentinel-start",sentinel.StartTime.ToUniversalTime().Ticks.ToString());
    File.WriteAllText(log+".owned-pid",System.Diagnostics.Process.GetCurrentProcess().Id.ToString());''')
-    compiler=Path(os.environ['WINDIR'])/'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
-    fake_root=out/'fake-system-root';taskkill=fake_root/'System32/taskkill.exe';taskkill.parent.mkdir(parents=True)
-    executable=out/'OwnedExitProbe.exe'
-    for name,code,exe in [('OwnedExitProbe',child,executable),('TaskkillStderrProbe',SHIM,taskkill)]:
-        source=out/(name+'.cs');source.write_text(code,encoding='utf-8')
-        build=subprocess.run(['rtk','proxy',str(compiler),'/nologo','/target:exe','/out:'+str(exe),str(source)],capture_output=True,text=True)
-        (out/(name+'.compiler.log')).write_text(build.stdout+build.stderr,encoding='utf-8')
-        if build.returncode:raise RuntimeError(build.stdout+build.stderr)
-    results=[]
-    for name,mode,fatal,expected in [('fatal-child-ended-stderr','killthenstderr',1,1),('fatal-stderr-root-fallback','no-kill',1,1),('timeout-stderr-root-fallback','no-kill',0,124)]:
-        log=out/(name+'.log');q=baseline.quote
-        command='$env:SystemRoot='+q(fake_root)+'\n$env:WARLINE_TEST_TASKKILL_MODE='+q(mode)+'\n'
-        command+='& '+q(root/'Tools/CI/InvokeUnity.ps1')+' -UnityExe '+q(executable)+' -ProjectPath '+q(out)+' -LogFile '+q(log)+\
-            " -GuiLicensing -TimeoutSeconds 1 -UnityArguments @('--sleep','20000','--fatal',"+q(fatal)+')\nexit $global:LASTEXITCODE\n'
-        script=out/(name+'.ps1');script.write_text(command,encoding='utf-8-sig')
-        process=subprocess.run(['rtk','proxy','powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(script)],cwd=root,capture_output=True,text=True,timeout=35)
-        console=process.stdout+process.stderr;(out/(name+'.console.log')).write_text(console,encoding='utf-8')
-        text=log.read_text(encoding='utf-8-sig',errors='replace')
-        pid=int(Path(str(log)+'.owned-pid').read_text())
-        check=subprocess.run(['rtk','proxy',str(executable),'--check-pid',str(pid)],capture_output=True,text=True)
-        passed=process.returncode==expected and '[UnityInvoke] ExitCode: '+str(expected) in text and \
-            '[UnityInvoke] taskkill ExitCode: 128' in text and 'OWNED_SYNTHETIC_TASKKILL_TARGET='+str(pid) in text and \
-            'could not be terminated' in text and check.returncode==0 and 'NativeCommandError' not in console
-        if mode=='no-kill':passed=passed and 'attempting its cached Process handle' in text
-        if fatal:passed=passed and 'fatal log marker' in text
-        results.append({'case':name,'passed':passed,'actual_exit':process.returncode,'expected_exit':expected,'owned_pid':pid,'owned_child_exited':check.returncode==0})
-        print(json.dumps(results[-1]),flush=True)
-    # The focused wrapper must still fail when its child exits zero without the
-    # exact required pass marker. Cleanup robustness is not marker acceptance.
-    name='focused-missing-pass-marker';log=out/(name+'.log');q=baseline.quote
-    script=out/(name+'.ps1')
-    script.write_text('& '+q(root/'Tools/CI/InvokeUnityExecuteMethodValidation.ps1')+' -UnityExe '+q(executable)+
-        ' -ProjectPath '+q(out)+' -ExecuteMethod OwnedSyntheticValidation -LogFile '+q(log)+
-        ' -RequiredPassMarker '+q('[OwnedSyntheticRequired] result=Passed')+' -GuiLicensing -TimeoutSeconds 10\n',encoding='utf-8-sig')
-    process=subprocess.run(['rtk','proxy','powershell.exe','-NoProfile','-ExecutionPolicy','Bypass','-File',str(script)],cwd=root,capture_output=True,text=True,timeout=25)
-    console=process.stdout+process.stderr;(out/(name+'.console.log')).write_text(console,encoding='utf-8')
-    text=log.read_text(encoding='utf-8-sig',errors='replace')
-    passed=process.returncode!=0 and 'missing required pass marker' in console and '[UnityInvoke] ExitCode: 0' in text and '[ArchitectureValidation] method=OwnedSyntheticValidation result=Passed' not in console
-    results.append({'case':name,'passed':passed,'actual_exit':process.returncode,'expected_exit':1});print(json.dumps(results[-1]),flush=True)
-    record={'result':'PassedOwnedCleanupStderrRegression' if all(x['passed'] for x in results) else 'FailedOwnedCleanupStderrRegression',
-        'cases':results,'output_directory':str(out),'unity_launched':False,'assets_changed':False,
-        'scope':'Actual InvokeUnity.ps1; synthetic stderr/status shim acts only on exact wrapper-owned child PID; fallback uses cached Process handle.'}
-    (out/'result.json').write_text(json.dumps(record,indent=2)+'\n',encoding='utf-8');print(json.dumps(record,indent=2))
-    return 0 if all(x['passed'] for x in results) else 1
+    assert child != baseline.CHILD
+    shim = r'''using System; class RefusedTaskkillProbe { static int Main(string[] args) { Console.WriteLine("UNEXPECTED_TASKKILL_CALLED "+string.Join(" ",args)); return 128; } }'''
+    compiler = Path(os.environ['WINDIR']) / 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
+    fake = out / 'fake-system-root'
+    (fake / 'System32').mkdir(parents=True)
+    executable = out / 'OwnedExitProbe.exe'
+    for name, source, target in [('OwnedExitProbe', child, executable), ('TaskkillProbe', shim, fake / 'System32/taskkill.exe')]:
+        path = out / (name + '.cs')
+        path.write_text(source, encoding='utf8')
+        build = subprocess.run(['rtk', 'proxy', str(compiler), '/nologo', '/target:exe', '/out:' + str(target), str(path)], capture_output=True, text=True)
+        (out / (name + '.compiler.log')).write_text(build.stdout + build.stderr, encoding='utf8')
+        assert build.returncode == 0, build.stdout + build.stderr
+    results = []
+    for name, fatal, sleep, expected, focused in [('timeout-owned-root', 0, 20000, 124, False), ('fatal-owned-root', 1, 20000, 1, False), ('focused-missing-pass-marker', 0, 0, 1, True)]:
+        log = out / (name + '.log')
+        script = out / (name + '.ps1')
+        command = '$env:SystemRoot=' + quote(fake) + '\n'
+        if focused:
+            command += '& ' + quote(wrapper.with_name('InvokeUnityExecuteMethodValidation.ps1')) + ' -UnityExe ' + quote(executable) + ' -ProjectPath ' + quote(out) + ' -ExecuteMethod OwnedSyntheticValidation -LogFile ' + quote(log) + ' -RequiredPassMarker ' + quote('[OwnedSyntheticRequired] result=Passed') + ' -GuiLicensing -TimeoutSeconds 10\n'
+        else:
+            command += '& ' + quote(wrapper) + ' -UnityExe ' + quote(executable) + ' -ProjectPath ' + quote(out) + ' -LogFile ' + quote(log) + ' -GuiLicensing -TimeoutSeconds ' + str(10 if fatal else 1) + " -UnityArguments @('--sleep'," + quote(sleep) + ",'--fatal'," + quote(fatal) + ')\nexit $global:LASTEXITCODE\n'
+        script.write_text(command, encoding='utf-8-sig')
+        console_out = out / (name + '.console.stdout.log')
+        console_err = out / (name + '.console.stderr.log')
+        sentinel = None
+        observed_while_wrapper_alive = False
+        query_errors = []
+        owned_pid = None
+        expected_marker = '[UnityInvoke] ExitCode: ' + str(0 if focused else expected)
+        with console_out.open('xb') as stdout, console_err.open('xb') as stderr:
+            process = subprocess.Popen(['rtk', 'proxy', 'powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(script)], cwd=root, stdout=stdout, stderr=stderr, stdin=subprocess.DEVNULL)
+            deadline = time.monotonic() + 35
+            while True:
+                try:
+                    current_log = log.read_text(encoding='utf-8-sig', errors='replace') if log.exists() else ''
+                except PermissionError:
+                    assert time.monotonic() < deadline, 'Synthetic log sharing violation exceeded bounded test deadline'
+                    time.sleep(.1)
+                    continue
+                pid_file = Path(str(log) + '.sentinel-pid')
+                if sentinel is None and expected_marker in current_log and pid_file.exists():
+                    pid = int(pid_file.read_text())
+                    birth = int(Path(str(log) + '.sentinel-start').read_text())
+                    owned_pid = int(Path(str(log) + '.owned-pid').read_text())
+                    query = '$p=Get-Process -Id ' + str(pid) + ' -ErrorAction Stop; $row=Get-CimInstance Win32_Process -Filter "ProcessId = ' + str(pid) + '"; $ownedRoot=Get-Process -Id ' + str(owned_pid) + ' -ErrorAction SilentlyContinue; [pscustomobject]@{Id=$p.Id;Path=$p.Path;StartTicks=$p.StartTime.ToUniversalTime().Ticks;HasExited=$p.HasExited;ParentProcessId=$row.ParentProcessId;CommandLine=$row.CommandLine;OwnedRootAbsent=($null -eq $ownedRoot)}|ConvertTo-Json -Compress'
+                    observed = subprocess.run(['rtk', 'proxy', 'powershell.exe', '-NoProfile', '-Command', query], capture_output=True, text=True, timeout=10)
+                    witness = json.loads(observed.stdout) if observed.returncode == 0 else None
+                    if witness is not None and witness['Id'] == pid and Path(witness['Path']).samefile(executable) and witness['StartTicks'] == birth and witness['HasExited'] is False and witness['ParentProcessId'] == owned_pid and '--sentinel' in witness['CommandLine'] and witness['OwnedRootAbsent'] is True:
+                        sentinel = dict(witness, observedAtUtc=datetime.datetime.now(datetime.timezone.utc).isoformat(), actualCleanupMarker=expected_marker)
+                        observed_while_wrapper_alive = process.poll() is None
+                        (out / (name + '.cleanup-boundary-witness.json')).write_text(json.dumps(sentinel, indent=2) + '\n', encoding='utf8')
+                    else:
+                        query_errors.append(dict(returncode=observed.returncode, stdout=observed.stdout, stderr=observed.stderr, observation=witness))
+                if process.poll() is not None:
+                    break
+                assert time.monotonic() < deadline, 'Synthetic wrapper exceeded bounded test deadline'
+                time.sleep(.1)
+            process.wait(timeout=5)
+        console = console_out.read_text(errors='replace') + console_err.read_text(errors='replace')
+        (out / (name + '.console.log')).write_text(console, encoding='utf8')
+        text = log.read_text(encoding='utf-8-sig', errors='replace')
+        survived = sentinel is not None
+        passed = process.returncode == expected and 'UNEXPECTED_TASKKILL_CALLED' not in console + text and survived
+        if focused:
+            passed = passed and 'missing required pass marker' in console and '[UnityInvoke] ExitCode: 0' in text
+        else:
+            passed = passed and '[UnityInvoke] ExitCode: ' + str(expected) in text and 'cached Process handle; descendant shutdown not claimed' in text
+        record = dict(case=name, passed=passed, actualExit=process.returncode, expectedExit=expected, exactSentinelSurvived=survived, sentinelObservation=sentinel, ownedRootPid=owned_pid, cleanupObservedWhileWrapperAlive=observed_while_wrapper_alive, queryErrors=query_errors, taskkillCalled='UNEXPECTED_TASKKILL_CALLED' in console + text, descendantShutdownClaimed=False)
+        results.append(record)
+        print(json.dumps(record), flush=True)
+        time.sleep(12)
+    result = dict(result='PassedCachedOwnedRootOnlyRegression' if all(row['passed'] for row in results) else 'FailedCachedOwnedRootOnlyRegression', cases=results, wrapper=dict(path=str(wrapper), sha256=hashlib.sha256(wrapper.read_bytes()).hexdigest()), existingBaseline=dict(path=str(baseline_path), sha256=hashlib.sha256(baseline_path.read_bytes()).hexdigest()), unityLaunched=False, sourceInstalled=False, testCleanupKilledProcesses=False, output=str(out))
+    (out / 'RESULT.json').write_text(json.dumps(result, indent=2) + '\n', encoding='utf8')
+    print(json.dumps(result), flush=True)
+    return 0 if all(row['passed'] for row in results) else 1
 
-if __name__=='__main__':raise SystemExit(main())
+
+if __name__ == '__main__':
+    raise SystemExit(main())

@@ -12,14 +12,14 @@ class UnityInvocationContractTests(unittest.TestCase):
         cls.source = WRAPPER.read_text(encoding="utf-8")
 
     def test_exit_code_is_captured_without_post_wait_refresh(self):
-        wait_index = self.source.index("$process.WaitForExit()")
+        wait_index = self.source.index("$cleanupIncomplete = -not $process.WaitForExit(10000)")
         exit_code_index = self.source.index("$exitCode =", wait_index)
         self.assertNotIn(
             "$process.Refresh()",
             self.source[wait_index:exit_code_index],
         )
         self.assertIn(
-            "$exitCode = if ($timedOut) {\n    124\n} elseif (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {\n    1\n} else {\n    $process.ExitCode\n}",
+            "$exitCode = if ($timedOut) {\n    124\n} elseif (-not [string]::IsNullOrWhiteSpace($fatalLogFailure)) {\n    1\n} elseif ($cleanupIncomplete) {\n    1\n} else {\n    $process.ExitCode\n}",
             self.source,
         )
 
@@ -75,14 +75,14 @@ class UnityInvocationContractTests(unittest.TestCase):
             self.source,
         )
 
-    def test_timeout_uses_absolute_windows_taskkill_path(self):
-        self.assertIn(
-            '$taskkillExe = Join-Path $env:SystemRoot "System32\\taskkill.exe"',
-            self.source,
-        )
-        self.assertIn("& $taskkillExe /PID $UnityProcess.Id /T /F", self.source)
+    def test_timeout_stops_only_the_cached_owned_root(self):
+        self.assertIn("$null = $process.Handle", self.source)
+        self.assertIn("$UnityProcess.Kill()", self.source)
+        self.assertIn("$UnityProcess.WaitForExit(5000)", self.source)
+        self.assertIn("descendant shutdown not claimed", self.source)
         self.assertIn("Stop-UnityProcessTree -UnityProcess $process", self.source)
-        self.assertNotIn("& taskkill.exe", self.source)
+        self.assertNotIn("taskkill", self.source)
+        self.assertNotIn("Stop-Process", self.source)
 
 
 if __name__ == "__main__":

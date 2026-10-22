@@ -117,6 +117,7 @@ namespace Game.Editor
             MenuAccountHeaderAuthoring.Apply(root);
             MenuUiApprovedAuthoring.Apply(root, "main-menu");
             MilitaryUiMaterialAuthoring.Apply(root);
+            MainMenuModeCardsAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -222,6 +223,7 @@ namespace Game.Editor
                 if (image.sprite == null)
                     continue;
                 string path = AssetDatabase.GetAssetPath(image.sprite);
+                if (path == MainMenuModeCardsAuthoring.OperationsPreviewPath) continue;
                 if (!allowedRasterPaths.Contains(path) && !path.StartsWith("Assets/Game/Art/Narrative/",StringComparison.Ordinal))
                     throw new InvalidOperationException($"Main Menu V3 references historical or duplicated raster chrome: {path}");
             }
@@ -1136,6 +1138,12 @@ namespace Game.Editor
         private static void ValidateRoute(GameObject prefab, string objectName, UIRoute expectedRoute)
         {
             Transform target = FindDeepChild(prefab.transform, objectName);
+            if (target != null && target.GetComponent<MainMenuModeCardView>() is MainMenuModeCardView modeCard)
+            {
+                if (modeCard.Action == null || (modeCard.Mode == MainMenuMode.Operations ? UIRoute.Operations : UIRoute.QuickCustomSetup) != expectedRoute)
+                    throw new InvalidOperationException("Mode card has invalid next-mission route.");
+                return;
+            }
             UIShellRouteButtonView route = target != null ? target.GetComponent<UIShellRouteButtonView>() : null;
             if (route == null)
                 route = target != null ? target.GetComponentInChildren<UIShellRouteButtonView>(true) : null;
@@ -1146,7 +1154,7 @@ namespace Game.Editor
         private static void Capture(string outputPath, int width, int height)
             => CaptureConfigured(outputPath,width,height,null);
 
-        public static void CaptureConfigured(string outputPath,int width,int height,Action<GameObject> configure)
+        public static void CaptureConfigured(string outputPath,int width,int height,Action<GameObject> configure,Action<GameObject> validateLayout=null)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
@@ -1208,7 +1216,13 @@ namespace Game.Editor
                 instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true);
             for (int i = 0; i < layouts.Length; i++)
                 layouts[i].RefreshLayout();
+            foreach(var mirror in instance.GetComponentsInChildren<MainMenuRtlLayoutView>(true)) mirror.Refresh();
+            foreach(var modes in instance.GetComponentsInChildren<MainMenuModeCardsView>(true)) modes.ApplyLayout();
             Canvas.ForceUpdateCanvases();
+            foreach(var text in instance.GetComponentsInChildren<TMP_Text>(true))
+                if(text.isActiveAndEnabled)text.ForceMeshUpdate(false,true);
+            Canvas.ForceUpdateCanvases();
+            validateLayout?.Invoke(instance);
             WriteLayoutDiagnostic(outputPath + ".layout.txt", canvas, canvasRect, instance, layouts);
 
             try

@@ -63,6 +63,15 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
+            // Home can enter a specific mission directly. Apply the one-time selection only
+            // after composition has supplied the live medal/access reader and the route is mounted.
+            if (baseAssaultPreset && _libraryFactoryBound &&
+                !string.IsNullOrEmpty(SkirmishLibraryReturn.PendingScenarioId) &&
+                UiShellRuntimeGateway.TryReadShellState(out var homeEntry) &&
+                homeEntry.ActiveRoute == UIRoute.QuickCustomSetup && !homeEntry.IsTransitionRunning &&
+                ReturnLibraryToScenario(SkirmishLibraryReturn.PendingScenarioId))
+                SelectScenarioId(_selectedScenarioId);
+
             if (baseAssaultPreset && !string.IsNullOrWhiteSpace(_selectedScenarioId) && UiShellRuntimeGateway.TryConsumeSkirmishResumeFailure())
                 PresentResumeFailure();
         }

@@ -1,0 +1,16 @@
+ModeTitle font=NotoSansArabic-Narrative SDF size=23.65 visible=6 rect=(x:0.00, y:-50.00, width:517.30, height:50.00) text=ﻋﻤﻠﯿﺎﺕ
+NextPlayableMission font=NotoSansArabic-Narrative SDF size=15.15 visible=36 rect=(x:0.00, y:-32.00, width:755.30, height:32.00) text=ﺑﻌﺪﯼ: 100O · ﺳﯿﮕﻨﺎﻟﻬﺎﯼ ﺧﯿﺎﺑﺎﻥ — ﻣﺤﻠﻪٔ ﻗﺪﯾﻤﯽ
+UniqueMissionProgress font=NotoSansArabic-Narrative SDF size=17 visible=12 rect=(x:0.00, y:-36.00, width:259.59, height:36.00) text=06/0 ﺗﮑﻤﯿﻠﺸﺪﻩ
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Label font=NotoSansArabic-Narrative SDF size=19.85 visible=8 rect=(x:-103.00, y:-23.00, width:206.00, height:46.00) text=ﺑﺎﺯ ﮐﺮﺩﻥ  ‹
+ModeTitle font=NotoSansArabic-Narrative SDF size=23.65 visible=6 rect=(x:0.00, y:-50.00, width:517.30, height:50.00) text=ﺩﺭﮔﯿﺮﯼ
+NextPlayableMission font=NotoSansArabic-Narrative SDF size=15.15 visible=20 rect=(x:0.00, y:-32.00, width:755.30, height:32.00) text=ﺑﻌﺪﯼ: 200S · ﻣﺤﺎﺻﺮﻩ ﺳﺘﺎﺩ
+UniqueMissionProgress font=NotoSansArabic-Narrative SDF size=17 visible=13 rect=(x:0.00, y:-36.00, width:259.59, height:36.00) text=021/1 ﺗﮑﻤﯿﻠﺸﺪﻩ
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=1
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Count font=Oxanium-Bold SDF size=22 visible=1 rect=(x:0.00, y:-31.00, width:92.93, height:31.00) text=0
+Label font=NotoSansArabic-Narrative SDF size=19.85 visible=8 rect=(x:-103.00, y:-23.00, width:206.00, height:46.00) text=ﺑﺎﺯ ﮐﺮﺩﻥ  ‹

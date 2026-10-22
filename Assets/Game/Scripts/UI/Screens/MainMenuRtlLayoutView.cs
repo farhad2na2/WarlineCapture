@@ -56,7 +56,8 @@ namespace Game.UI.Runtime
 
         private void OnEnable() => rightToLeft = null;
 
-        private void LateUpdate()
+        private void LateUpdate() => Refresh();
+        public void Refresh()
         {
             bool rtl = GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode;
             if (rightToLeft == rtl) return;

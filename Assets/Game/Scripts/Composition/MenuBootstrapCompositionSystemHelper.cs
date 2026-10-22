@@ -93,6 +93,7 @@ namespace Game.Composition
             bool wasInitialized = initialized;
             EnsurePersistentDiagnosticsInitialized();
             autoStartMatchRequested = ShouldAutoStartMatch();
+            MainMenuModeProgressGateway.Read = MainMenuModeProgressComposition.Read;
             view.ApplyRuntimeUiMode();
 
             if (view.ShellEcsPresentation != null)

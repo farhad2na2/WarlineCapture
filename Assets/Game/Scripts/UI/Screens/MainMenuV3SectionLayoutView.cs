@@ -107,6 +107,7 @@ namespace Game.UI.Runtime
                     position.x = parent.rect.width - position.x - size.x;
                 rule.Target.anchoredPosition = position;
             }
+            GetComponent<MainMenuModeCardsView>()?.ApplyLayout();
             _lastSafeArea = safe; _lastLocale = GameLocalization.CurrentLocaleCode;
             _lastCanvasSize = canvasRect.rect.size;
             LastAppliedScale = scale; LastAppliedExtraWidth = extra.x;

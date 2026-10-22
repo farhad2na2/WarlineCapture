@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "base": "3102e3c39dff1f93e7b97b6b8e197bba4a2699d6",
+  "branch": "codex/skirmish-empty-view-camera-repair-20261022",
+  "nativeExecuted": false,
+  "compilerExecuted": false,
+  "gameplayRepairProven": false,
+  "sourcePins": {
+    "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs": "5a523a0e1f47ec75f16c2af5acff2ef6d39e2290f3b922b2ebf3d3f66e4ba36f",
+    "Assets/Game/Scripts/Systems/RtsCameraSystem.cs": "6362df5155606d35540e463ddc3d5dba71b8b0dd23e7a710f6fd4a0019639e0e",
+    "Assets/Game/Scripts/Systems/RtsCameraSystem.AircraftFocus.cs": "ae0bf6a9081e8d5e7138c7760a6c74bd6d9516f623c14e96357b8d75e7361c38",
+    "Assets/Game/Scripts/Systems/RtsCameraSystem.PlacementPreview.cs": "0719c8828e4348e708c25dc22905dfb127b335b697574f68941839a2d5f6f3fb",
+    "Assets/Game/Scripts/Rendering/Systems/RuntimeCameraReferenceSystem.cs": "3e48d526edaae4ea425f75fd4470bde13222c026366dcbed8c7d817f0d08598f",
+    "Assets/Game/Scripts/Components/RuntimeCameraReferenceComponent.cs": "2d5b4005b0e33fcefd9eaaca4374f14648020d1c90be04347fc8094c1360d2e2",
+    "Assets/Game/Scripts/Components/TacticalFollowCameraComponents.cs": "b6e905e9bfa1140385a6903532392de79ec2fefe5a643984dd96ebc63f5f525d",
+    "Assets/Game/Scripts/Components/OperationMapComponents.cs": "6f76b54038e0965b806750cb96341a05bd2720e8dfb2986e27bd74fda8b9f8e1",
+    "Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs": "33f021c4dcc89f19c51b218548eed22525173253cc1a63aba614bbbac6faea3c",
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishEmptyViewCameraRecorder.cs": "7518320be52ae852d3b056708f874df04b150316adda90be52d31499c785952a",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishEmptyViewCameraRecorder.cs.meta": "e9712a6724580163e2a1ab9d8b2b2374203241de54c4b05682bb655ed6a6cd3a"
+  }
+}

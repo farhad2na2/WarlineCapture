@@ -1,0 +1,196 @@
+{
+  "assignmentId": "MacS050ExistingMapFitReview_20261023",
+  "receivedFrom": "Windows source-only delegation20261022T2335 heartbeat",
+  "base": "d0602a7b8ee1d26bb2cb103a8bf3ae4393f9c10b",
+  "branch": "codex/skirmish-s050-existing-map-fit-review-20261023",
+  "utc": "2026-10-22T23:39:03.215830+00:00",
+  "missionIdentity": {
+    "catalog_id": "S050",
+    "definition_id": "skirmish.s050",
+    "scenario_setup_id": "scenario.skirmish.s050",
+    "tuple": {
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E"
+    },
+    "canonical_size_rows_sha256": "f36d473ba02b0f7847d6ec589f47ad352698aa890ea2415f682be1281e09305a"
+  },
+  "canonicalBudgetsEachFaction": [
+    {
+      "size_id": "Standard",
+      "deadline_seconds": "1080",
+      "player_starting_structures": "10",
+      "enemy_starting_structures": "10",
+      "player_infantry": "20",
+      "player_ground": "3",
+      "player_logistics_support": "3",
+      "materials_each": "900",
+      "oil_each": "240",
+      "usable_fuel_each": "700",
+      "refinery_modules_each": "1",
+      "infantry_queues_each": "2",
+      "vehicle_queues_each": "1",
+      "logistics_queues_each": "1"
+    },
+    {
+      "size_id": "War",
+      "deadline_seconds": "1500",
+      "player_starting_structures": "11",
+      "enemy_starting_structures": "11",
+      "player_infantry": "28",
+      "player_ground": "5",
+      "player_logistics_support": "4",
+      "materials_each": "1350",
+      "oil_each": "360",
+      "usable_fuel_each": "1050",
+      "refinery_modules_each": "2",
+      "infantry_queues_each": "2",
+      "vehicle_queues_each": "2",
+      "logistics_queues_each": "1"
+    },
+    {
+      "size_id": "LargeWar",
+      "deadline_seconds": "1800",
+      "player_starting_structures": "11",
+      "enemy_starting_structures": "11",
+      "player_infantry": "40",
+      "player_ground": "7",
+      "player_logistics_support": "4",
+      "materials_each": "1800",
+      "oil_each": "480",
+      "usable_fuel_each": "1400",
+      "refinery_modules_each": "2",
+      "infantry_queues_each": "2",
+      "vehicle_queues_each": "2",
+      "logistics_queues_each": "1"
+    }
+  ],
+  "missionAssetLocallyPresent": false,
+  "historical60vs78": "Not verified on local current branch; no current isolated Windows S050 candidate/export/strict facility shelf derivation present. Do not promote that number to measured local fit proof.",
+  "sourceHashes": {
+    "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540",
+    "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "Tools/CI/SkirmishProductionDrafts/GroundObjective30/ground-objective-thirty.authoring.json": "95a9c7b25b9e4876465c7c7d41111605f6054e65ba5c6a3f37df646678ff10dc",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.MpGroundBaPilot.cs": "c00fddd9eb6b6b5b53f56912ed1966de42605ba3a4ba8887d31202214a344576",
+    "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+    "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Grid.asset": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset": "6dc011093e5298c07985d264c5483db6875e2593cdec0ff96bd2a05d6838ecfb",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Grid.asset": "7aa1a9744215a444064f6a9e09fb7e6aacbdc0155b4f5cf38b19be9a5d98df1a",
+    "Assets/Game/GeneratedOperationMaps/CH05M03NetworkCollapse/Definition.asset": "3af736311379a63ad436a18f95cc72388fb0232ea4974acd337d15731a357d81",
+    "Assets/Game/GeneratedOperationMaps/CH05M03NetworkCollapse/Grid.asset": "67dcc35ccaf29877b4378827cb25eba95efa1ad225eb9a488efc2ceec21e6674",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Surface.asset": "048fe898cea5c3a1158470d5c299222715d8a911ecde6c1155aa30bc75e347ce"
+  },
+  "currentPilotEnvelopeWorldXZ": [
+    1330,
+    640,
+    1709,
+    726.5
+  ],
+  "rawGridOnlyRectangles": {
+    "ArmorBreak": {
+      "cellsHalfOpen": [
+        603,
+        356,
+        1272,
+        412
+      ],
+      "worldXZHalfOpen": [
+        1343,
+        616,
+        2012,
+        672
+      ],
+      "dimensions": [
+        669,
+        56
+      ]
+    },
+    "CitywideAlert": {
+      "cellsHalfOpen": [
+        122,
+        47,
+        432,
+        161
+      ],
+      "worldXZHalfOpen": [
+        982,
+        347,
+        1292,
+        461
+      ],
+      "dimensions": [
+        310,
+        114
+      ]
+    },
+    "NetworkCollapse": {
+      "cellsHalfOpen": [
+        122,
+        47,
+        432,
+        161
+      ],
+      "worldXZHalfOpen": [
+        982,
+        347,
+        1292,
+        461
+      ],
+      "dimensions": [
+        310,
+        114
+      ]
+    }
+  },
+  "candidatePriority": "First alternate to measure: existing CitywideAlert; NetworkCollapse ties raw rectangle, not a proven better source. Same-source ArmorBreak alternative remains possible because maximum-area rectangle is not exhaustive packing.",
+  "candidateSearchOnly": {
+    "operationMapId": "opmap.ch05.citywide_alert",
+    "logicalWorldXZHalfOpen": [
+      982,
+      347,
+      1292,
+      461
+    ],
+    "playerSearchWorldXZHalfOpen": [
+      982,
+      354,
+      1082,
+      454
+    ],
+    "enemySearchWorldXZHalfOpen": [
+      1192,
+      354,
+      1292,
+      454
+    ],
+    "tentativeCentersXZ": [
+      [
+        1032,
+        404
+      ],
+      [
+        1242,
+        404
+      ]
+    ],
+    "routeSearchZ": [
+      364,
+      404,
+      444
+    ],
+    "typedAnchorsFinal": false,
+    "facilityPackingProven": false
+  },
+  "gates": [
+    "Current authoritative S050 disposable definition/layout and three-size actual certified facility footprints/spacing/strict solver receipts; re-establish60/78 if still applicable",
+    "Exact Campaign consumer/current scene binding and scene/grid/surface/metadata identity validation, normal loaded blocker-cache/source-building/road/water/sidewalk masks",
+    "Nonoverlapping all-size facilities plus complete infantry/vehicles/support spawns and dynamic reservations under unchanged budgets",
+    "Three independent heavy-vehicle routes, holding pockets, runtime service/refinery/support accessibility after all facilities placed",
+    "Reviewed generic logical source adaptation: current MP pilot source guard is hardcoded ArmorBreak and must not be bypassed or modified by this review",
+    "Per-source view elevation/readability/aircraft production-return framing and complete native normal-input manual/ARIA/result-return/checkpoint; separate APK/device gates"
+  ],
+  "acceptance": "No viable physical source certified. Raw authored-grid emptiness only, not runtime facility legality or source fit.",
+  "execution": "Local bounded text/raw-grid review only; no native/compiler/heavy job, geometry/source/mission asset edit, LFS or Git transport"
+}

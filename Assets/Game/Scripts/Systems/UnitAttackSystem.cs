@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
 using Game.Configs;
+using Game.Runtime.Combat;
 
 namespace Game.Runtime
 {
@@ -39,14 +40,6 @@ namespace Game.Runtime
             public byte ShowImpactVfx; // only shots that showed a tracer trigger impact VFX
         }
 
-        private enum StandardAttackPlanKind : byte
-        {
-            None = 0,
-            ClearTarget = 1,
-            Windup = 2,
-            Shot = 3
-        }
-
         private struct StandardAttackCandidate
         {
             public Entity Attacker;
@@ -76,7 +69,7 @@ namespace Game.Runtime
 
         private struct StandardAttackPlan
         {
-            public StandardAttackPlanKind Kind;
+            public StandardAttackKind Kind;
             public UnitAttackCooldownComponent BaseAttackState;
             public UnitAttackTraceComponent BaseTraceState;
             public UnitAttackAnimationComponent BaseAttackAnimationState;
@@ -633,17 +626,17 @@ namespace Game.Runtime
                 if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
                     em.SetComponentData(candidate.Attacker, plan.BaseAttackAnimationState);
 
-                if (plan.Kind == StandardAttackPlanKind.ClearTarget)
+                if (plan.Kind == StandardAttackKind.ClearTarget)
                 {
                     if (em.HasComponent<EngageTarget>(candidate.Attacker))
                         em.SetComponentData(candidate.Attacker, plan.Engage);
                     continue;
                 }
 
-                if (plan.Kind == StandardAttackPlanKind.None)
+                if (plan.Kind == StandardAttackKind.None)
                     continue;
 
-                if (plan.Kind == StandardAttackPlanKind.Windup)
+                if (plan.Kind == StandardAttackKind.Windup)
                 {
                     if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
                         em.SetComponentData(candidate.Attacker, plan.AttackState);
@@ -731,92 +724,66 @@ namespace Game.Runtime
             public void Execute(int index)
             {
                 StandardAttackCandidate candidate = Candidates[index];
-                UnitAttackCooldownComponent baseAttackState = candidate.AttackState;
-                UnitAttackTraceComponent baseTraceState = candidate.TraceState;
-                UnitAttackAnimationComponent baseAnimationState = candidate.AttackAnimationState;
-                baseAttackState.CooldownRemaining -= DeltaTime;
-                baseTraceState.TimeRemaining = math.max(0f, baseTraceState.TimeRemaining - DeltaTime);
-
-                StandardAttackPlan plan = new()
+                var input = new StandardAttackInput
                 {
-                    BaseAttackState = baseAttackState,
-                    BaseTraceState = baseTraceState,
-                    BaseAttackAnimationState = baseAnimationState,
-                    AttackState = baseAttackState,
-                    TraceState = baseTraceState,
-                    AttackAnimationState = baseAnimationState,
-                    Engage = candidate.Engage,
-                    AttackerCell = candidate.AttackerCell
+                    State = new StandardAttackState
+                    {
+                        CooldownRemaining = candidate.AttackState.CooldownRemaining,
+                        TraceTimeRemaining = candidate.TraceState.TimeRemaining,
+                        TracePhase = candidate.TraceState.Phase,
+                        ShotCounter = candidate.TraceState.ShotCounter,
+                        AnimationTimeRemaining = candidate.AttackAnimationState.TimeRemaining
+                    },
+                    SelfHealth = candidate.SelfHealth,
+                    TargetHealth = candidate.TargetHealth,
+                    HasTarget = (byte)(candidate.Engage.Target != Entity.Null ? 1 : 0),
+                    TargetExists = candidate.TargetExists,
+                    TargetHasHealth = candidate.TargetHasHealth,
+                    TargetHasTransform = candidate.TargetHasTransform,
+                    TargetIsStaticGridBlocker = candidate.TargetIsStaticGridBlocker,
+                    IsDebugFireTarget = candidate.IsDebugFireTarget,
+                    HasAnimationOrder = candidate.HasAnimationOrder,
+                    AircraftAttackWindowBlocked = candidate.AircraftAttackWindowBlocked,
+                    AttackerX = candidate.AttackerPosition.x,
+                    AttackerZ = candidate.AttackerPosition.z,
+                    TargetX = candidate.TargetPosition.x,
+                    TargetZ = candidate.TargetPosition.z,
+                    SelfCombatRadius = candidate.SelfCombatRadius,
+                    TargetCombatRadius = candidate.TargetCombatRadius,
+                    Range = candidate.Attack.Range,
+                    CooldownSeconds = candidate.Attack.CooldownSeconds,
+                    Damage = candidate.Attack.Damage,
+                    TraceVisibleSeconds = candidate.Attack.TraceVisibleSeconds,
+                    TracerEveryNthShot = candidate.Attack.TracerEveryNthShot,
+                    AttackAnimationSeconds = candidate.AttackAnimationSeconds
                 };
-
-                if (candidate.SelfHealth <= 0 ||
-                    candidate.Engage.Target == Entity.Null)
+                StandardAttackResult result = StandardAttackPlanner.Plan(input, DeltaTime, CellSize);
+                StandardAttackPlan plan = new StandardAttackPlan
                 {
-                    Plans[index] = plan;
-                    return;
-                }
-
-                if (candidate.TargetExists == 0 ||
-                    candidate.TargetHasHealth == 0 ||
-                    candidate.TargetHasTransform == 0 ||
-                    (candidate.TargetIsStaticGridBlocker != 0 && candidate.IsDebugFireTarget == 0) ||
-                    candidate.TargetHealth <= 0)
-                {
-                    plan.Kind = StandardAttackPlanKind.ClearTarget;
+                    Kind = result.Kind,
+                    BaseAttackState = new UnitAttackCooldownComponent { CooldownRemaining = result.BaseState.CooldownRemaining },
+                    BaseTraceState = new UnitAttackTraceComponent
+                    {
+                        TimeRemaining = result.BaseState.TraceTimeRemaining,
+                        Phase = result.BaseState.TracePhase,
+                        ShotCounter = result.BaseState.ShotCounter
+                    },
+                    BaseAttackAnimationState = new UnitAttackAnimationComponent { TimeRemaining = result.BaseState.AnimationTimeRemaining },
+                    AttackState = new UnitAttackCooldownComponent { CooldownRemaining = result.State.CooldownRemaining },
+                    TraceState = new UnitAttackTraceComponent
+                    {
+                        TimeRemaining = result.State.TraceTimeRemaining,
+                        Phase = result.State.TracePhase,
+                        ShotCounter = result.State.ShotCounter
+                    },
+                    AttackAnimationState = new UnitAttackAnimationComponent { TimeRemaining = result.State.AnimationTimeRemaining },
+                    Engage = candidate.Engage,
+                    AttackerCell = candidate.AttackerCell,
+                    Damage = result.Damage,
+                    ShowTracer = result.ShowTracer
+                };
+                if (result.Kind == StandardAttackKind.ClearTarget)
                     plan.Engage.Target = Entity.Null;
-                    Plans[index] = plan;
-                    return;
-                }
-
-                float attackRange = math.max(0f, candidate.Attack.Range);
-                if (attackRange <= 0f)
-                {
-                    Plans[index] = plan;
-                    return;
-                }
-
-                if (candidate.AircraftAttackWindowBlocked != 0)
-                {
-                    Plans[index] = plan;
-                    return;
-                }
-
-                float3 delta = candidate.TargetPosition - candidate.AttackerPosition;
-                delta.y = 0f;
-                float range = attackRange + candidate.SelfCombatRadius + candidate.TargetCombatRadius + CellSize * 0.25f;
-                if (math.lengthsq(delta) > range * range ||
-                    baseAttackState.CooldownRemaining > 0f)
-                {
-                    Plans[index] = plan;
-                    return;
-                }
-
-                if (baseAnimationState.TimeRemaining <= 0f && candidate.HasAnimationOrder != 0 &&
-                    candidate.AttackState.CooldownRemaining <= 0f)
-                {
-                    plan.Kind = StandardAttackPlanKind.Windup;
-                    plan.AttackAnimationState.TimeRemaining = math.max(0.01f, candidate.AttackAnimationSeconds);
-                    plan.AttackState.CooldownRemaining = math.clamp(candidate.Attack.CooldownSeconds * 0.5f, 0.05f, 0.18f);
-                    Plans[index] = plan;
-                    return;
-                }
-
-                plan.Kind = StandardAttackPlanKind.Shot;
-                plan.AttackState.CooldownRemaining = math.max(0.01f, candidate.Attack.CooldownSeconds);
-                plan.TraceState.ShotCounter++;
-                int tracerInterval = math.max(1, candidate.Attack.TracerEveryNthShot);
-                bool tracerShown = plan.TraceState.ShotCounter % tracerInterval == 0;
-                if (tracerShown)
-                {
-                    plan.TraceState.TimeRemaining = math.max(0.01f, candidate.Attack.TraceVisibleSeconds);
-                    plan.TraceState.Phase = math.frac(plan.TraceState.Phase + 0.371f);
-                }
-
-                plan.AttackAnimationState.TimeRemaining = math.max(
-                    math.max(0.01f, candidate.AttackAnimationSeconds),
-                    candidate.Attack.CooldownSeconds + 0.15f);
-                plan.Damage = candidate.Attack.Damage;
-                plan.ShowTracer = (byte)(tracerShown ? 1 : 0);
                 Plans[index] = plan;
             }
         }

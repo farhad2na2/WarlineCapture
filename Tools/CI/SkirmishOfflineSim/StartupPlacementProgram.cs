@@ -105,6 +105,9 @@ static class StartupPlacementProgram
         }
         var events = root.GetProperty("allocator_transactions").EnumerateArray().ToArray();
         int expected = root.GetProperty("expected_force_count").GetInt32(); Need(expected > 0 && expected <= 512 && events.Length == expected, "Complete actual allocator sequence required");
+        var actorInputs = new StartupActorState.Inputs(root);
+        Need(actorInputs.Forces.Count == expected, "Authored roster count differs from actual native allocator sequence");
+        var derivedActorStates = new List<object>();
         var existing = new Dictionary<string, Existing>(); var stableIds = new HashSet<string>(); var results = new List<object>();
         var finalActors = root.GetProperty("actors").EnumerateArray().Where(a => !a.GetProperty("is_structure").GetBoolean()).ToDictionary(a => a.GetProperty("stable_id").GetString());
         Need(finalActors.Count == expected, "Exact post-roster force census required");
@@ -153,10 +156,12 @@ static class StartupPlacementProgram
             Need(Identity(before) == Identity(final), "Post-roster actor identity differs at " + id);
             var finalCell = final.GetProperty("components").GetProperty("UnitGrid").GetProperty("Cell");
             Need(px == finalCell.GetProperty("x").GetInt32() && pz == finalCell.GetProperty("y").GetInt32(), "Post-roster cell differs at " + id);
+            var position = GridCoordinateKernel.CellToWorldCenter(grid.Frame, px, pz);
+            derivedActorStates.Add(StartupActorState.Derive(actorInputs, ordinal, row, final, px, pz, position.X, position.Z));
             Need(existing.TryAdd(Identity(before), new Existing(Identity(before), px, pz, size.X, size.Z)), "New actor identity already existed");
             results.Add(new { id, ordinal, cell = new[] { px, pz }, footprint = new[] { size.X, size.Z }, vehicle, typed_occupancy_input = row.GetProperty("typed").GetBoolean(), derived_random_state = random.State });
         }
-        return new { result = "PassedDerivedPlacementCells", scope = "CapturedRequestsAndAllocatorFacts_DerivedReservationsAndPlacement", force_actors = results.Count, initial_census = initialCensus, grid_width = grid.W, grid_height = grid.H, inspected_work = work, actors = results, grounding_derived = false, typed_pad_policy_derived = false, full_mission_initialized = false, terminal_parity = false, player_ready = false, source_capture_sha256 = Hash(bytes) };
+        return new { result = "PassedDerivedPlacementCellsAndSerializedActorDefaults", scope = "CapturedRequestsAndAllocatorFacts_DerivedReservationsPlacementAndSerializedActorDefaults", force_actors = results.Count, initial_census = initialCensus, grid_width = grid.W, grid_height = grid.H, inspected_work = work, actors = results, derived_actor_states = derivedActorStates, grounding_derived = false, typed_pad_policy_derived = false, full_mission_initialized = false, terminal_parity = false, player_ready = false, source_capture_sha256 = Hash(bytes) };
     }
     static int Main(string[] args)
     {

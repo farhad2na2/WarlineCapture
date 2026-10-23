@@ -8,6 +8,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import re
 import shutil
 import subprocess
 from xml.sax.saxutils import escape
@@ -17,6 +18,9 @@ ROOT = Path(__file__).resolve().parents[2]
 SOURCES = [
     'Tools/CI/SkirmishOfflineSim/StartupPlacementProgram.cs',
     'Tools/CI/SkirmishOfflineSim/SpawnJson.cs',
+    'Tools/CI/SkirmishOfflineSim/StartupActorState.cs',
+    'Assets/Game/Scripts/Runtime/Skirmish/SkirmishActorInitializationKernel.cs',
+    'Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs',
     'Assets/Game/Scripts/Utilities/SpawnCellSearchKernel.cs',
     'Assets/Game/Scripts/Components/GridCoordinateKernel.cs',
     'Assets/Game/Scripts/Systems/GridOccupancyKernel.cs',
@@ -37,10 +41,19 @@ def main():
     output.mkdir(parents=True, exist_ok=False)
     build = output / 'build'
     build.mkdir()
-    pinned = SOURCES + ['Tools/CI/skirmish_s002_startup_replay.py']
+    constant_source = 'Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs'
+    pinned = SOURCES + ['Tools/CI/skirmish_s002_startup_replay.py', constant_source,
+                        'Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs',
+                        'Assets/Game/Scripts/Runtime/Skirmish/SkirmishRosterProjectionSystem.cs']
     before = {p: sha(ROOT / p) for p in pinned}
     before[str(capture)] = sha(capture)
+    interval = re.findall(r'public const float ShotIntervalSeconds\s*=\s*([0-9]+(?:\.[0-9]+)?f)\s*;', (ROOT / constant_source).read_text())
+    if len(interval) != 1:
+        raise ValueError('Exact supported production shot interval declaration required')
+    constants = build / 'NativeStartupConstants.cs'
+    constants.write_text('internal static class NativeStartupConstants { internal const float ShotIntervalSeconds = ' + interval[0] + '; }')
     items = ''.join('<Compile Include="' + escape(str(ROOT / p), {'"': '&quot;'}) + '" />' for p in SOURCES)
+    items += '<Compile Include="' + escape(str(constants), {'"': '&quot;'}) + '" />'
     (build / 'Replay.csproj').write_text('<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><EnableDefaultCompileItems>false</EnableDefaultCompileItems><RestoreIgnoreFailedSources>true</RestoreIgnoreFailedSources><NuGetAudit>false</NuGetAudit></PropertyGroup><ItemGroup>' + items + '</ItemGroup></Project>')
     config = build / 'NuGet.Config'
     config.write_text('<configuration><packageSources><clear /></packageSources></configuration>')
@@ -96,6 +109,29 @@ def main():
             bad = copy.deepcopy(data)
             bad['artifacts']['walkable.u8']['sha256'] = '0' * 64
             cases.append(('artifact-integrity', bad, 'Artifact bytes differ'))
+            bad = copy.deepcopy(data)
+            first_id = bad['allocator_transactions'][0]['stable_id']
+            next(a for a in bad['actors'] if a['stable_id'] == first_id)['components']['UnitHealth']['Current'] -= 1
+            cases.append(('native-health-is-assertion', bad, 'derived actor components'))
+            bad = copy.deepcopy(data)
+            first_key = next(a for a in bad['actors'] if a['stable_id'] == first_id)['source_key']
+            next(t for t in bad['registry_templates']['registry_entries'] if t['key'] == first_key and t['selected_by_native_lookup'])['components']['UnitMove']['Speed'] += 1
+            cases.append(('baked-defaults-are-inputs', bad, 'instantiated baked defaults'))
+            bad = copy.deepcopy(data)
+            first_role = bad['resolved_setup']['Forces'][0]['RoleKind']
+            next(o for o in bad['resolved_setup']['RoleOverlays'] if o['RoleKind'] == first_role)['Damage'] += 1
+            cases.append(('authored-overlay-is-input', bad, 'derived actor components'))
+            bad = copy.deepcopy(data)
+            next(a for a in bad['actors'] if a['stable_id'] == first_id)['components']['UnitIdleWanderComponent']['RandomState'] ^= 1
+            cases.append(('idle-random-is-baked-default', bad, 'derived actor components'))
+            bad = copy.deepcopy(data)
+            next(a for a in bad['actors'] if a['stable_id'] == first_id)['entity_enabled'] = False
+            cases.append(('entity-enablement-is-derived', bad, 'derived entity enablement'))
+            bad = copy.deepcopy(data)
+            flags = next(a for a in bad['actors'] if a['stable_id'] == first_id)['enableable_components']
+            flag = next(iter(flags))
+            flags[flag] = not flags[flag]
+            cases.append(('component-enablement-is-derived', bad, 'derived component enablement'))
             bad = copy.deepcopy(data)
             initial = bad['allocator_transactions'][0]['reservation_census_native_query_order']
             initial.extend([initial[0]] * (65537 - len(initial)))

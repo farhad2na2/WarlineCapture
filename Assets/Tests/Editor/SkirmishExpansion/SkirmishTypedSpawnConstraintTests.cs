@@ -116,7 +116,10 @@ namespace Game.Tests.Editor
                 var typed=typeof(SkirmishScenarioSpawnSystem).GetMethod("TryPlaceTypedOnMap",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
                 var ordinary=typeof(SkirmishScenarioSpawnSystem).GetMethod("TryPlaceOnMap",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static);
                 var position=new Vector3(grid.Origin.x+16,0,grid.Origin.z+16);
-                Assert.IsFalse((bool)typed.Invoke(null,new object[]{manager,actor,position,1,force,cache}),"Typed path must refuse missing buffers before legacy fallback");
+                Assert.IsNotNull(typed);
+                var typedArguments=new object[]{manager,actor,position,1,force,cache,entity,Entity.Null};
+                Assert.IsFalse((bool)typed.Invoke(null,typedArguments),"Typed path must refuse missing buffers before legacy fallback");
+                Assert.AreEqual(Entity.Null,(Entity)typedArguments[7],"Rejected placement must not report an actual grid");
                 Assert.IsTrue((bool)ordinary.Invoke(null,new object[]{manager,actor,position,1}),"Unconstrained legacy path remains unchanged");
                 var walk=manager.AddBuffer<GridWalkable>(entity);walk.ResizeUninitialized(1024);
                 using var blocked=new NativeBitArray(1024,Allocator.Persistent,NativeArrayOptions.ClearMemory);

@@ -120,7 +120,9 @@ namespace Game.Runtime
             else
                 em.AddComponentData(entity, component);
 
-            var health = new UnitHealth { Current = overlay.MaxHealth, Max = overlay.MaxHealth };
+            var healthState = default(SkirmishActorInitializationState);
+            SkirmishActorInitializationKernel.ApplyHealth(ref healthState, SkirmishSharedCombatBinding.OverlayValues(overlay));
+            var health = new UnitHealth { Current = healthState.HealthCurrent, Max = healthState.HealthMax };
             if (em.HasComponent<UnitHealth>(entity))
                 em.SetComponentData(entity, health);
             else

@@ -12,23 +12,13 @@ namespace Game.Components
         public float2 Forward;
         public float2 HalfExtents;
 
-        public bool IsValid => math.all(math.isfinite(Center)) && math.all(math.isfinite(Right)) &&
-            math.all(math.isfinite(Forward)) && math.all(math.isfinite(HalfExtents)) &&
-            math.all(HalfExtents > 0f) && math.abs(math.lengthsq(Right) - 1f) < .001f &&
-            math.abs(math.lengthsq(Forward) - 1f) < .001f && math.abs(math.dot(Right, Forward)) < .001f;
+        public BlockerOpening ToKernel() => new BlockerOpening { CenterX=Center.x,CenterZ=Center.y,RightX=Right.x,RightZ=Right.y,
+            ForwardX=Forward.x,ForwardZ=Forward.y,HalfX=HalfExtents.x,HalfZ=HalfExtents.y };
+        public bool IsValid => StaticBlockerKernel.IsValid(ToKernel());
+        public bool ContainsFullCell(in GridConfig grid,int x,int z) => StaticBlockerKernel.ContainsFullCell(
+            new BlockerGrid {Width=grid.Width,Height=grid.Height,OriginX=grid.Origin.x,OriginY=grid.Origin.y,OriginZ=grid.Origin.z,CellSize=grid.CellSize},ToKernel(),x,z);
+        public bool SameGeometry(in StaticGridBlockerSurfaceOpeningComponent other) => StaticBlockerKernel.SameOpening(ToKernel(),other.ToKernel());
 
-        public bool ContainsFullCell(in GridConfig grid, int x, int z)
-        {
-            if (!IsValid || grid.CellSize <= 0f) return false;
-            float2 delta = grid.Origin.xz + new float2(x + .5f, z + .5f) * grid.CellSize - Center;
-            float half = grid.CellSize * .5f;
-            return math.abs(math.dot(delta, Right)) + half * math.csum(math.abs(Right)) <= HalfExtents.x &&
-                math.abs(math.dot(delta, Forward)) + half * math.csum(math.abs(Forward)) <= HalfExtents.y;
-        }
-
-        public bool SameGeometry(in StaticGridBlockerSurfaceOpeningComponent other) =>
-            math.all(Center == other.Center) && math.all(Right == other.Right) &&
-            math.all(Forward == other.Forward) && math.all(HalfExtents == other.HalfExtents);
     }
 
     // Retained after native entity destruction so subtraction exactly matches admission.

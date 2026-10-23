@@ -92,10 +92,10 @@ namespace Game.Runtime
         public static Unity.Mathematics.Random PlacementRandom(int missionSeed,FixedString64Bytes stableId,int2 requestedCell)
         {
             if(stableId.Length==0)throw new ArgumentException("Actual immutable original stable actor ID required");
-            uint placementSeed=2166136261u^unchecked((uint)missionSeed);
-            for(int i=0;i<stableId.Length;i++)placementSeed=unchecked((placementSeed^stableId[i])*16777619u);
-            placementSeed=math.hash(new uint3(unchecked((uint)requestedCell.x),unchecked((uint)requestedCell.y),placementSeed));
-            return new Unity.Mathematics.Random(math.max(1u,placementSeed));
+            uint placementSeed=Game.Runtime.Spawning.PlacementSeed.Begin(missionSeed);
+            for(int i=0;i<stableId.Length;i++)placementSeed=Game.Runtime.Spawning.PlacementSeed.AddByte(placementSeed,stableId[i]);
+            placementSeed=Game.Runtime.Spawning.PlacementSeed.Finish(placementSeed,requestedCell.x,requestedCell.y);
+            return new Unity.Mathematics.Random(placementSeed);
         }
         static bool Inside(float2[] quad,float2 point)
         {

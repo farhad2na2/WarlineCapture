@@ -248,12 +248,17 @@ namespace Game.Runtime
                         footprintSize,
                         requestFactions[i],
                         startIndex);
-                    if (assignedGoal.Equals(start) && !pathGoal.Equals(start) &&
-                        GridUtils.InBounds(pathGoal, grid.Width, grid.Height) &&
-                        new MapSurfaceTraversalValidation().CanTraverseFootprint(
+                    if (PathGoalAssignmentKernel.ShouldRestoreDesiredGoal(
+                        new PlacementCell(assignedGoal.x,assignedGoal.y),new PlacementCell(start.x,start.y),
+                        new PlacementCell(pathGoal.x,pathGoal.y),grid.Width,grid.Height))
+                    {
+                        bool validSurface=new MapSurfaceTraversalValidation().CanTraverseFootprint(
                             surfaceContext.Surface, surfaceContext.HasSurfaceData, grid,
-                            pathGoal, footprintSize, isVehicle))
-                        assignedGoal = pathGoal;
+                            pathGoal, footprintSize, isVehicle);
+                        var restored=PathGoalAssignmentKernel.RestoreDesiredGoal(new PlacementCell(assignedGoal.x,assignedGoal.y),
+                            new PlacementCell(pathGoal.x,pathGoal.y),validSurface);
+                        assignedGoal=new int2(restored.x,restored.y);
+                    }
                     assignedGoals[i] = assignedGoal;
 
                     if ((isManualMove || em.HasComponent<UnitResourceHaulOrder>(requestEntities[i])) && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)

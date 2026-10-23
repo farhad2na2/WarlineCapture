@@ -16,7 +16,9 @@ internal sealed class MovingWorldMap
     internal int[] Cardinal,Diagonal,Counts;
     internal readonly Dictionary<string,OccupancyBounds> Membership=new Dictionary<string,OccupancyBounds>();
     internal readonly List<PlacementCell> Pool=new List<PlacementCell>();
-    internal int NextEpoch;
+    internal int NextEpoch,ReservationGeneration,ReservationGridSize;
+    internal int[] ReservedEpochs;
+    internal void PrepareReservations(){var decision=PathGoalReservationKernel.DecidePrepare(ReservedEpochs!=null,ReservationGridSize,ReservationGeneration,Width*Height);if(decision.Reallocate)ReservedEpochs=new int[Width*Height];else if(decision.Clear)Array.Clear(ReservedEpochs);ReservationGeneration=decision.Generation;ReservationGridSize=decision.RememberedGridSize;}
     internal static MovingWorldMap Read(JsonElement j)
     {
         WorldJson.Shape(j,new[]{"width","height","coordinates","provenance","walkable","dynamic_blocked","friendly_pass","sidewalk","dirt_road","surface_cell","surface_footprint","cardinal_cost","diagonal_cost"});
@@ -38,7 +40,7 @@ internal sealed class MovingWorldMap
         foreach(string id in Membership.Keys.ToArray())if(!active.ContainsKey(id)){GridOccupancyKernel.Remove(Width,ref storage,Membership[id]);Membership.Remove(id);}
         foreach(var pair in active){var a=pair.Value.Actor;var bounds=GridOccupancyKernel.Bounds(Width,Height,a.CellX,a.CellZ,1,1);if(Membership.TryGetValue(pair.Key,out var previous))GridOccupancyKernel.Update(Width,ref storage,previous,bounds);else GridOccupancyKernel.Add(Width,ref storage,bounds);Membership[pair.Key]=bounds;}
     }
-    internal struct Context:IInfantryPathContext,IPathSearchContext,IEngagedMovementContext,IPathGoalIdentityContext
+    internal struct Context:IInfantryPathContext,IPathSearchContext,IEngagedMovementContext,IPathGoalIdentityContext,IPathGoalCandidateContext,IPathGoalReservationStorage
     {
         public MovingWorldMap Map;
         public MovingWorldReplay.Unit Self;
@@ -47,13 +49,16 @@ internal sealed class MovingWorldMap
         public Dictionary<string,MovingWorldReplay.Unit> ById;
         public int[] Epochs,Parents,Scores,Paths;public byte[] ClosedCells;public long[] OpenCells;
         public List<PathSearchCell> Output;
-        public HashSet<int> Reserved;
-        public bool CanUseGoal(PlacementCell cell)=>!Reserved.Contains(cell.y*Width+cell.x)&&CanPlace(cell.x,cell.y,Self.Actor.CellX,Self.Actor.CellZ)&&IsSurfaceFootprintPathable(cell.x,cell.y);
-        public void ReserveGoal(PlacementCell cell)=>Reserved.Add(cell.y*Width+cell.x);
+        public bool CanUseGoal(PlacementCell cell){var copy=this;return PathGoalAssignmentKernel.CanUseGoal(ref copy,cell,new PlacementCell(1,1),Map.ReservationGeneration);}
+        public bool CanPlaceGoal(PlacementCell cell){var copy=this;return PathPlacementKernel.CanPlaceForPathing(ref copy,new PlacementIdentity(Self.Actor.Index,Self.Actor.Version),cell,new PlacementCell(1,1),new PlacementCell(Self.Actor.CellX,Self.Actor.CellZ),false,false,Self.Actor.Faction);}
+        public bool CanTraverseGoalSurface(PlacementCell cell)=>IsSurfaceFootprintPathable(cell.x,cell.y);
+        public int ReservedEpoch(int index)=>Map.ReservedEpochs[index];
+        void IPathGoalReservationStorage.SetEpoch(int index,int generation)=>Map.ReservedEpochs[index]=generation;
+        public void ReserveGoal(PlacementCell cell){var copy=this;PathGoalReservationKernel.ReserveFootprint(ref copy,Width,Map.ReservationGeneration,cell,new PlacementCell(1,1));}
         public int Width=>Map.Width;public int Height=>Map.Height;public bool HasDynamicBlocked=>true;public bool HasOccupied=>true;public bool HasFriendlyPass=>true;public int FriendlyPassLength=>Map.Friendly.Length;
         public int UnitCount=>Live.Length;public int ManualGroupCount=>Live.Length;
         public byte Walkable(int i)=>Map.Walkable[i];public bool DynamicBlocked(int i)=>Map.Blocked[i];public bool Occupied(int i)=>Map.Occupied[i];public byte FriendlyPass(int i)=>Map.Friendly[i];
-        public PlacementIdentity UnitEntity(int i)=>new PlacementIdentity(Live[i].Actor.Index,Live[i].Actor.Version);public PlacementCell UnitCell(int i)=>LiveCells[i];public PlacementCell UnitSize(int i)=>new PlacementCell(1,1);public byte ManualGroup(int i)=>0;
+        public PlacementIdentity UnitEntity(int i)=>new PlacementIdentity(Live[i].Actor.Index,Live[i].Actor.Version);public PlacementCell UnitCell(int i)=>LiveCells[i];public PlacementCell UnitSize(int i)=>new PlacementCell(1,1);public byte ManualGroup(int i)=>(byte)(Live[i].GroupMember?1:0);
         public int PoolLength=>Map.Pool.Count;public PlacementCell PathCell(int i)=>Map.Pool[i];public PlacementCell WorldToCell(float x,float y,float z){var c=Map.Cell(x,z);return new PlacementCell(c.X,c.Z);}public void CellToWorld(PlacementCell c,out float x,out float z){var p=GridCoordinateKernel.CellToWorldCenter(Map.Frame,c.x,c.y);x=p.X;z=p.Z;}
         public byte Sidewalk(int i)=>Map.Sidewalk[i];public bool BoardingTransportOccupies(PlacementIdentity p,int i)=>false;
         public bool IsWalkable(int i)=>Map.Walkable[i]!=0;public bool IsSurfaceCellPathable(int x,int z)=>Map.CellSurface[z*Width+x];public bool IsSurfaceFootprintPathable(int x,int z)=>Map.FootprintSurface[z*Width+x];
@@ -68,6 +73,6 @@ internal sealed class MovingWorldMap
     }
     internal Context Make(MovingWorldReplay.Unit self,List<MovingWorldReplay.Unit> units,Dictionary<string,MovingWorldReplay.Unit> byId,bool search=false)
     {
-        int n=Width*Height;var live=units.Where(u=>u.Actor.Mobile&&!u.Destroyed).ToArray();return new Context{Map=this,Self=self,Live=live,LiveCells=live.Select(u=>new PlacementCell(u.Actor.CellX,u.Actor.CellZ)).ToArray(),ById=byId,Epochs=search?new int[n]:null,Parents=search?new int[n]:null,Scores=search?new int[n]:null,Paths=search?new int[n]:null,ClosedCells=search?new byte[n]:null,OpenCells=search?new long[n]:null,Output=new List<PathSearchCell>(),Reserved=new HashSet<int>()};
+        int n=Width*Height;var live=units.Where(u=>u.Actor.Mobile&&!u.Destroyed).ToArray();return new Context{Map=this,Self=self,Live=live,LiveCells=live.Select(u=>new PlacementCell(u.Actor.CellX,u.Actor.CellZ)).ToArray(),ById=byId,Epochs=search?new int[n]:null,Parents=search?new int[n]:null,Scores=search?new int[n]:null,Paths=search?new int[n]:null,ClosedCells=search?new byte[n]:null,OpenCells=search?new long[n]:null,Output=new List<PathSearchCell>()};
     }
 }

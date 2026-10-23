@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Entities;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {
@@ -37,41 +38,13 @@ namespace Game.Runtime
             requestBuffers.ClearForCollection();
             Update(ref state);
 
-            CollectFromQuery(
-                ref state,
-                queries.ManualRequestQuery,
-                ref requestBuffers,
-                ref ignoredOccupancy,
-                requestBudget,
-                _entityType,
-                _unitGridType,
-                _requestType,
-                _footprintType,
-                _movementBehaviorType,
-                _factionType,
-                _longDistanceLookup,
-                _manualMoveLookup,
-                manualMove: true,
-                skipManualMoveEntities: false);
-
-            if (requestBuffers.Entities.Length < requestBudget)
+            var admission=PathRequestAdmissionKernel.Initialize(requestBudget);
+            while(PathRequestAdmissionKernel.TryBeginPass(ref admission,out bool manualMove))
             {
-                CollectFromQuery(
-                    ref state,
-                    queries.RequestQuery,
-                    ref requestBuffers,
-                    ref ignoredOccupancy,
-                    requestBudget,
-                    _entityType,
-                    _unitGridType,
-                    _requestType,
-                    _footprintType,
-                    _movementBehaviorType,
-                    _factionType,
-                    _longDistanceLookup,
-                    _manualMoveLookup,
-                    manualMove: false,
-                    skipManualMoveEntities: true);
+                CollectFromQuery(ref state,manualMove?queries.ManualRequestQuery:queries.RequestQuery,
+                    ref requestBuffers,ref ignoredOccupancy,ref admission,
+                    _entityType,_unitGridType,_requestType,_footprintType,_movementBehaviorType,
+                    _factionType,_longDistanceLookup,_manualMoveLookup,manualMove);
             }
 
             return requestBuffers.Entities.Length;
@@ -94,7 +67,7 @@ namespace Game.Runtime
             EntityQuery query,
             ref UnitPathRequestBuffer requestBuffers,
             ref UnitPathIgnoredOccupancy ignoredOccupancy,
-            int requestBudget,
+            ref PathRequestAdmissionState admission,
             EntityTypeHandle entityType,
             ComponentTypeHandle<UnitGrid> unitGridType,
             ComponentTypeHandle<UnitPathRequest> requestType,
@@ -103,8 +76,7 @@ namespace Game.Runtime
             ComponentTypeHandle<Faction> factionType,
             ComponentLookup<UnitLongDistanceMove> longDistanceLookup,
             ComponentLookup<ManualMoveOrderTag> manualMoveLookup,
-            bool manualMove,
-            bool skipManualMoveEntities)
+            bool manualMove)
         {
             using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
@@ -120,7 +92,7 @@ namespace Game.Runtime
                 for (int i = 0; i < entities.Length; i++)
                 {
                     Entity entity = entities[i];
-                    if (skipManualMoveEntities && manualMoveLookup.HasComponent(entity))
+                    if (!PathRequestAdmissionKernel.IncludeCandidate(manualMove, !manualMove && manualMoveLookup.HasComponent(entity)))
                         continue;
 
                     requestBuffers.Entities.Add(entity);
@@ -133,7 +105,7 @@ namespace Game.Runtime
                     ignoredOccupancy.AddForRequest(ref state, ref requestBuffers, entity);
                     requestBuffers.ContinuationMoves.Add((byte)(longDistanceLookup.HasComponent(entity) ? 1 : 0));
 
-                    if (requestBuffers.Entities.Length >= requestBudget)
+                    if (PathRequestAdmissionKernel.RecordAppend(ref admission))
                         return;
                 }
             }

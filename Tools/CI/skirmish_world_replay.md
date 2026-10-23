@@ -56,3 +56,5 @@ Not simulated: full-world ordering, squad AI/world insertion, economy, spawns, c
 Input limits are 16 MiB, 256 cases, 128 actors, 2048 frames, and a two-million actor-pair/frame aggregate budget. Grid and range bounds further constrain acquisition work. Processes have the existing standalone runner timeout. The test suite includes two independent synthetic world cases and repeat equality, deferred acquisition, mutual lethal sequencing, paused delta-zero behavior, projection/surrender precedence, cadence/recovery, strict rejection, provenance and binary tamper controls, plus 120 repeated synthetic configurations. Retain failures alongside passing receipts.
 
 The separate moving profile is documented in [skirmish_moving_world_replay.md](skirmish_moving_world_replay.md). Its receipt and limits do not replace this stationary profile.
+
+Multi-unit request budgets, goal reservations, and manual retries use a separate captured profile; see [the multi-unit replay guide](skirmish_multi_unit_world_replay.md).

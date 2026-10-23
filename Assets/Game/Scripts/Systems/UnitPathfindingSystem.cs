@@ -11,6 +11,11 @@ namespace Game.Runtime
     [UpdateAfter(typeof(UnitMoveOrderRequestSystem))]
     public partial struct UnitPathfindingSystem : ISystem
     {
+#if UNITY_EDITOR
+        // Passive capture of the exact production admission decision; no second
+        // IsCompleted read, which could observe a different worker-job state.
+        public static System.Action<int, Pathfinding.PathJobAdmission> AdmissionObserved;
+#endif
         private static readonly bool EnablePathDiagnostics = false;
         private static readonly bool EnablePathFreezeLogs = false;
         private static readonly bool EnableHierarchicalPathValidationLog = false;
@@ -81,6 +86,9 @@ namespace Game.Runtime
             bool playRequested = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested != 0;
             var admission = Pathfinding.PathJobSchedulingKernel.Decide(playRequested, _hasPendingPathJob,
                 playRequested && _hasPendingPathJob && _pendingPathHandle.IsCompleted);
+#if UNITY_EDITOR
+            AdmissionObserved?.Invoke(Time.frameCount, admission);
+#endif
             if (admission == Pathfinding.PathJobAdmission.Inactive || admission == Pathfinding.PathJobAdmission.CancelPending)
             {
                 if (admission == Pathfinding.PathJobAdmission.CancelPending)

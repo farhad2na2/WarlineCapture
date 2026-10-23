@@ -29,101 +29,32 @@ namespace Game.Runtime
         private Entity _cachedGridEntity;
         private EntityTypeHandle _trackedEntityType;
 
-        private static void GetClampedFootprintBounds(in GridConfig grid, int2 centerCell, int2 size, out int2 clampedMin, out int2 clampedMax)
+        private struct OccupancyStorage : Navigation.IGridOccupancyStorage
         {
-            int2 clampedSize = UnitFootprintUtility.ClampSize(size);
-            int2 min = UnitFootprintUtility.GetMinCell(centerCell, clampedSize);
-            int2 max = min + clampedSize;
-            clampedMin = new int2(math.clamp(min.x, 0, grid.Width), math.clamp(min.y, 0, grid.Height));
-            clampedMax = new int2(math.clamp(max.x, 0, grid.Width), math.clamp(max.y, 0, grid.Height));
+            public NativeArray<int> Counts;
+            public NativeBitArray Occupied;
+            public int GetCount(int index) => Counts[index];
+            public void SetCount(int index, int count) => Counts[index] = count;
+            public void SetOccupied(int index, bool occupied) => Occupied.Set(index, occupied);
         }
-
-        private static void AddOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 centerCell, int2 size)
+        private static Navigation.OccupancyBounds Bounds(in GridConfig grid, int2 cell, int2 size) =>
+            Navigation.GridOccupancyKernel.Bounds(grid.Width, grid.Height, cell.x, cell.y, size.x, size.y);
+        private static void AddOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 cell, int2 size)
         {
-            GetClampedFootprintBounds(grid, centerCell, size, out int2 clampedMin, out int2 clampedMax);
-            AddOccupancyRect(grid, ref occ, counts, clampedMin, clampedMax);
+            var storage = new OccupancyStorage { Counts = counts, Occupied = occ.Occupied };
+            Navigation.GridOccupancyKernel.Add(grid.Width, ref storage, Bounds(grid, cell, size));
         }
-
-        private static void AddOccupancyRect(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
+        private static void RemoveOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 cell, int2 size)
         {
-            for (int y = clampedMin.y; y < clampedMax.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = clampedMin.x; x < clampedMax.x; x++)
-                {
-                    int index = row + x;
-                    int nextCount = counts[index] + 1;
-                    counts[index] = nextCount;
-                    if (nextCount == 1)
-                        occ.Occupied.Set(index, true);
-                }
-            }
+            var storage = new OccupancyStorage { Counts = counts, Occupied = occ.Occupied };
+            Navigation.GridOccupancyKernel.Remove(grid.Width, ref storage, Bounds(grid, cell, size));
         }
-
-        private static void RemoveOccupancy(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 centerCell, int2 size)
+        private static void UpdateOccupancyDelta(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts,
+            int2 previousCell, int2 previousSize, int2 currentCell, int2 currentSize)
         {
-            GetClampedFootprintBounds(grid, centerCell, size, out int2 clampedMin, out int2 clampedMax);
-            RemoveOccupancyRect(grid, ref occ, counts, clampedMin, clampedMax);
-        }
-
-        private static void RemoveOccupancyRect(in GridConfig grid, ref DynamicOccupancyComponent occ, NativeArray<int> counts, int2 clampedMin, int2 clampedMax)
-        {
-            for (int y = clampedMin.y; y < clampedMax.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = clampedMin.x; x < clampedMax.x; x++)
-                {
-                    int index = row + x;
-                    int nextCount = math.max(0, counts[index] - 1);
-                    counts[index] = nextCount;
-                    if (nextCount == 0)
-                        occ.Occupied.Set(index, false);
-                }
-            }
-        }
-
-        private static void UpdateOccupancyDelta(
-            in GridConfig grid,
-            ref DynamicOccupancyComponent occ,
-            NativeArray<int> counts,
-            int2 previousCell,
-            int2 previousSize,
-            int2 currentCell,
-            int2 currentSize)
-        {
-            GetClampedFootprintBounds(grid, previousCell, previousSize, out int2 previousMin, out int2 previousMax);
-            GetClampedFootprintBounds(grid, currentCell, currentSize, out int2 currentMin, out int2 currentMax);
-
-            if (previousMin.Equals(currentMin) && previousMax.Equals(currentMax))
-                return;
-
-            int2 overlapMin = new int2(math.max(previousMin.x, currentMin.x), math.max(previousMin.y, currentMin.y));
-            int2 overlapMax = new int2(math.min(previousMax.x, currentMax.x), math.min(previousMax.y, currentMax.y));
-            bool hasOverlap = overlapMin.x < overlapMax.x && overlapMin.y < overlapMax.y;
-            if (!hasOverlap)
-            {
-                RemoveOccupancyRect(grid, ref occ, counts, previousMin, previousMax);
-                AddOccupancyRect(grid, ref occ, counts, currentMin, currentMax);
-                return;
-            }
-
-            if (previousMin.x < overlapMin.x)
-                RemoveOccupancyRect(grid, ref occ, counts, new int2(previousMin.x, previousMin.y), new int2(overlapMin.x, previousMax.y));
-            if (overlapMax.x < previousMax.x)
-                RemoveOccupancyRect(grid, ref occ, counts, new int2(overlapMax.x, previousMin.y), new int2(previousMax.x, previousMax.y));
-            if (previousMin.y < overlapMin.y)
-                RemoveOccupancyRect(grid, ref occ, counts, new int2(overlapMin.x, previousMin.y), new int2(overlapMax.x, overlapMin.y));
-            if (overlapMax.y < previousMax.y)
-                RemoveOccupancyRect(grid, ref occ, counts, new int2(overlapMin.x, overlapMax.y), new int2(overlapMax.x, previousMax.y));
-
-            if (currentMin.x < overlapMin.x)
-                AddOccupancyRect(grid, ref occ, counts, new int2(currentMin.x, currentMin.y), new int2(overlapMin.x, currentMax.y));
-            if (overlapMax.x < currentMax.x)
-                AddOccupancyRect(grid, ref occ, counts, new int2(overlapMax.x, currentMin.y), new int2(currentMax.x, currentMax.y));
-            if (currentMin.y < overlapMin.y)
-                AddOccupancyRect(grid, ref occ, counts, new int2(overlapMin.x, currentMin.y), new int2(overlapMax.x, overlapMin.y));
-            if (overlapMax.y < currentMax.y)
-                AddOccupancyRect(grid, ref occ, counts, new int2(overlapMin.x, overlapMax.y), new int2(overlapMax.x, currentMax.y));
+            var storage = new OccupancyStorage { Counts = counts, Occupied = occ.Occupied };
+            Navigation.GridOccupancyKernel.Update(grid.Width, ref storage,
+                Bounds(grid, previousCell, previousSize), Bounds(grid, currentCell, currentSize));
         }
 
         public void OnCreate(ref SystemState state)

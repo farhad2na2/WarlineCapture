@@ -445,7 +445,11 @@ namespace Game.Runtime
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
                 if(typedPlacement!=null&&!typedPlacement.TryRequestedWorld(force,member,out position))
                 {em.DestroyEntity(owned);return Entity.Null;}
-                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, placementGrid, out var actualPlacementGrid))
+                bool placed = TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, placementGrid, out var actualPlacementGrid);
+#if UNITY_EDITOR
+                ObserveStartupPlacementResult?.Invoke(em, owned, placed);
+#endif
+                if (!placed)
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
@@ -566,6 +570,16 @@ namespace Game.Runtime
                         var rng = SkirmishTypedSpawnConstraint.PlacementRandom(missionSeed,stableId,cell);
                         int2 footprint = em.HasComponent<UnitFootprint>(entity)
                             ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+#if UNITY_EDITOR
+                        ObserveStartupAllocator?.Invoke(new StartupAllocatorObservation
+                        {
+                            EntityManager = em, Actor = entity, GridEntity = gridEntity, Grid = grid,
+                            Seed = missionSeed, RandomState = rng.state, RequestedCell = cell,
+                            RequestedWorld = pos, Footprint = footprint,
+                            Air = em.HasComponent<UnitAirMovement>(entity), Typed = typedPlacement != null,
+                            Blocked = blocked, Occupied = occupied, Reserved = reserved
+                        });
+#endif
                         if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
                             blocked, occupied, ref reserved, cell, 12, footprint,
                             em.HasComponent<UnitAirMovement>(entity), out cell)) return false;

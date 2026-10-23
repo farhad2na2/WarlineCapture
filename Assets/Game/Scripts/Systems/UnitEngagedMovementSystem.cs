@@ -126,8 +126,10 @@ namespace Game.Runtime
                     return;
                 }
 
-                if (StaticBlockerLookup.HasComponent(engage.Target) ||
-                    (HealthLookup.HasComponent(engage.Target) && HealthLookup[engage.Target].Current <= 0))
+                bool staticTarget = StaticBlockerLookup.HasComponent(engage.Target);
+                bool hasTargetHealth = !staticTarget && HealthLookup.HasComponent(engage.Target);
+                if (Targeting.TargetAcquisitionKernel.ShouldClearUnavailableTarget(staticTarget, hasTargetHealth,
+                    hasTargetHealth ? HealthLookup[engage.Target].Current : 0))
                 {
                     engage.Target = Entity.Null;
                     engage.Cell = default;

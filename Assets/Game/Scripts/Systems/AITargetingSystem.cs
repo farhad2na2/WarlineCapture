@@ -13,7 +13,7 @@ namespace Game.Runtime
     public partial struct AITargetingSystem : ISystem
     {
         private const float LogIntervalSeconds = 6f;
-        private const float TargetRefreshSeconds = 0.5f;
+        private const float TargetRefreshSeconds = WorldSchedulingKernel.AiTargetRefreshSeconds;
         private EntityQuery _squadQuery;
         private EntityQuery _targetQuery;
         private EntityQuery _targetPriorityQuery;
@@ -87,15 +87,10 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
+            if (!WorldSchedulingKernel.TryAdvanceAiTargetRefresh(
+                SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive != 0,
+                SystemAPI.Time.ElapsedTime, ref _nextTargetRefreshTime, out float now))
                 return;
-
-            double elapsedTime = SystemAPI.Time.ElapsedTime;
-            float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
-            if (now < _nextTargetRefreshTime)
-                return;
-
-            _nextTargetRefreshTime = now + TargetRefreshSeconds;
 
             if (SkirmishCombatPolicy.TryAssignTargets(state.EntityManager)) return;
 

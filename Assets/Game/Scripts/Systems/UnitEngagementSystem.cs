@@ -5,6 +5,7 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
+using Game.Runtime.Targeting;
 
 namespace Game.Runtime
 {
@@ -13,7 +14,7 @@ namespace Game.Runtime
     [UpdateBefore(typeof(UnitPathfindingSystem))]
     public partial struct UnitEngagementSystem : ISystem
     {
-        private const double TargetAcquisitionIntervalSeconds = 0.12d;
+        private const double TargetAcquisitionIntervalSeconds = WorldSchedulingKernel.UnitTargetAcquisitionSeconds;
         private EntityQuery _gridQuery;
         private EntityQuery _ecbSingletonQuery;
         private EntityQuery _unitsQuery;
@@ -84,10 +85,8 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             double now = SystemAPI.Time.ElapsedTime;
-            if (now < _nextTargetAcquisitionTime)
+            if (!WorldSchedulingKernel.TryAdvanceUnitAcquisition(now, ref _nextTargetAcquisitionTime))
                 return;
-
-            _nextTargetAcquisitionTime = now + TargetAcquisitionIntervalSeconds;
 
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
@@ -190,7 +189,7 @@ namespace Game.Runtime
 
         [BurstCompile]
         [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(BaseBreachOrder), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent), typeof(CampaignMissionCombatSuppressedTag))]
-        private partial struct AcquireTargetsJob : IJobEntity
+        internal partial struct AcquireTargetsJob : IJobEntity
         {
             [ReadOnly] public GridConfig Grid;
             [ReadOnly] public NativeParallelMultiHashMap<int, Entity> SpatialMap;
@@ -221,263 +220,83 @@ namespace Game.Runtime
 
             public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in UnitGrid selfGrid, in Faction selfFaction, in UnitCombat combat, in UnitAttack attack, in LocalTransform selfTransform)
             {
-                if (combat.CanAttack == 0)
-                    return;
-                if (combat.AutoEngage == 0 && !AttackMoveLookup.HasComponent(entity))
-                    return;
-                if (selfFaction.Id == FactionIdentity.NeutralFactionId)
-                    return;
-
-                bool hasActiveManualMove =
-                    ManualMoveLookup.HasComponent(entity) && !AttackMoveLookup.HasComponent(entity) &&
-                    (PathFollowLookup.HasComponent(entity) || PathRequestLookup.HasComponent(entity));
-
-                bool holdingPosition = HoldPositionLookup.HasComponent(entity);
-                bool scanning = TryGetActiveScanOrder(entity, out UnitScanOrder scanOrder);
-                int attackRangeCells = Grid.CellSize > 1e-6f && attack.Range > 0f
-                    ? (int)math.ceil(attack.Range / Grid.CellSize)
-                    : 0;
-                int scanRangeCells = holdingPosition
-                    ? attackRangeCells
-                    : math.max(math.max(0, combat.AggroRangeCells), attackRangeCells);
-                if (scanning)
-                    scanRangeCells = math.max(scanRangeCells, math.max(1, scanOrder.RadiusCells));
-
-                if (scanRangeCells <= 0)
-                    return;
-
-                float maxDist = holdingPosition && attack.Range > 0f
-                    ? attack.Range
-                    : scanRangeCells * Grid.CellSize;
-                if (!holdingPosition && attack.Range > 0f)
-                    maxDist = math.max(maxDist, attack.Range);
-                if (scanning)
-                    maxDist = math.max(maxDist, math.max(1, scanOrder.RadiusCells) * Grid.CellSize * 2f);
-                float maxDistSq = maxDist * maxDist;
-
-                float bestScore = float.MaxValue;
-                Entity best = Entity.Null;
-
-                if (RecentAttackerLookup.HasComponent(entity))
+                var context=new NativeContext{Job=this,Source=entity};
+                var input=new TargetAcquisitionInput
                 {
-                    RecentAttacker recent = RecentAttackerLookup[entity];
-                    bool movementBlocksCombat = hasActiveManualMove && !scanning;
-                    if (!movementBlocksCombat &&
-                        AllowsPolicy(entity, recent.Attacker) && IsValidRetaliationTarget(recent.Attacker, selfFaction.Id) &&
-                        (!scanning || IsTargetInsideScanArea(recent.Attacker, scanOrder)))
-                    {
-                        float3 recentPos = TransformLookup[recent.Attacker].Position;
-                        float3 recentDelta = recentPos - selfTransform.Position;
-                        recentDelta.y = 0f;
-                        if (!holdingPosition || math.lengthsq(recentDelta) <= maxDistSq)
-                        {
-                            int2 recentCell = GridUtils.WorldToCell(Grid, recentPos);
-                            Ecb.AddComponent(sortKey, entity, new EngageTarget
-                            {
-                                Target = recent.Attacker,
-                                Cell = recentCell,
-                                Position = recentPos,
-                                IsCommanded = 0
-                            });
-                            Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
-                            Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
-                            Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-                            Ecb.RemoveComponent<UnitPathRequest>(sortKey, entity);
-                            Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
-                            return;
-                        }
-                    }
-
-                    Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
-                }
-
-                if (hasActiveManualMove && !scanning)
-                    return;
-
-                int2 c0 = GridUtils.WorldToCell(Grid, selfTransform.Position);
-                if (!GridUtils.InBounds(c0, Grid.Width, Grid.Height))
-                    c0 = selfGrid.Cell;
-                int2 searchCenter = scanning ? scanOrder.CenterCell : c0;
-                int searchRangeCells = scanning ? math.max(1, scanOrder.RadiusCells) : scanRangeCells;
-                for (int dy = -searchRangeCells; dy <= searchRangeCells; dy++)
-                {
-                    int y = searchCenter.y + dy;
-                    if ((uint)y >= (uint)Grid.Height)
-                        continue;
-
-                    for (int dx = -searchRangeCells; dx <= searchRangeCells; dx++)
-                    {
-                        int x = searchCenter.x + dx;
-                        if ((uint)x >= (uint)Grid.Width)
-                            continue;
-
-                        int key = x + y * Grid.Width;
-                        if (!SpatialMap.TryGetFirstValue(key, out var candidate, out var it))
-                            continue;
-
-                        do
-                        {
-                            if (candidate == entity)
-                                continue;
-
-                            if (!FactionLookup.HasComponent(candidate) || !TransformLookup.HasComponent(candidate))
-                                continue;
-
-                            var otherFaction = FactionLookup[candidate];
-                            if (otherFaction.Id == selfFaction.Id)
-                            {
-                                // Ally assist: if a nearby ally is engaged, consider its target too.
-                                if (EngageLookup.HasComponent(candidate))
-                                {
-                                    var allyEngage = EngageLookup[candidate];
-                                    if (allyEngage.Target != Entity.Null)
-                                    {
-                                        EvaluateEnemyCandidate(entity, allyEngage.Target, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
-                                    }
-                                }
-                                continue;
-                            }
-
-                            EvaluateEnemyCandidate(entity, candidate, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
-                        } while (SpatialMap.TryGetNextValue(out candidate, ref it));
-                    }
-                }
-
-                // Attack Move also clears hostile structures along the route. Keep
-                // mobile threats first and preserve ordinary Move/Hold acquisition.
-                if (best == Entity.Null && AttackMoveLookup.HasComponent(entity))
-                    foreach (var building in BuildingTargets)
-                        EvaluateEnemyCandidate(entity, building, selfFaction.Id, selfTransform.Position,
-                            maxDistSq, scanning, scanOrder, ref bestScore, ref best);
-                if (best == Entity.Null)
-                    return;
-
-                float3 bestPos = TransformLookup.HasComponent(best) ? TransformLookup[best].Position : selfTransform.Position;
-                int2 bestCell = GridUtils.WorldToCell(Grid, bestPos);
-                if (!GridUtils.InBounds(bestCell, Grid.Width, Grid.Height))
-                    bestCell = selfGrid.Cell;
-                Ecb.AddComponent(sortKey, entity, new EngageTarget { Target = best, Cell = bestCell, Position = bestPos, IsCommanded = 0 });
-                Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
-                Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-                Ecb.RemoveComponent<UnitPathRequest>(sortKey, entity);
-                Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
-            }
-
-            private void EvaluateEnemyCandidate(
-                Entity source,
-                Entity candidate,
-                byte selfFactionId,
-                float3 selfPos,
-                float maxDistSq,
-                bool scanning,
-                in UnitScanOrder scanOrder,
-                ref float bestScore,
-                ref Entity best)
-            {
-                if (ProtectedRecordsLookup.HasComponent(candidate)) return;
-                if (!AllowsPolicy(source, candidate)) return;
-                if (!FactionLookup.HasComponent(candidate) || !TransformLookup.HasComponent(candidate))
-                    return;
-
-                var otherFaction = FactionLookup[candidate];
-                if (otherFaction.Id == FactionIdentity.NeutralFactionId ||
-                    otherFaction.Id == selfFactionId)
-                    return;
-
-                if (HealthLookup.HasComponent(candidate) && HealthLookup[candidate].Current <= 0)
-                    return;
-
-                float3 otherPos = TransformLookup[candidate].Position;
-                if (scanning && !IsPositionInsideScanArea(otherPos, scanOrder))
-                    return;
-
-                float3 delta = otherPos - selfPos;
-                delta.y = 0f;
-                float distSq = math.lengthsq(delta);
-                if (distSq > maxDistSq)
-                    return;
-
-                int attackers = 0;
-                AttackerCounts.TryGetValue(candidate, out attackers);
-                float score = distSq + attackers * (Grid.CellSize * Grid.CellSize * 9f);
-
-                if (score < bestScore)
-                {
-                    bestScore = score;
-                    best = candidate;
-                }
-            }
-
-            private bool TryGetActiveScanOrder(Entity entity, out UnitScanOrder scanOrder)
-            {
-                scanOrder = default;
-                if (!ScanOrderLookup.HasComponent(entity))
-                    return false;
-
-                scanOrder = ScanOrderLookup[entity];
-                return scanOrder.HasStarted != 0 &&
-                       scanOrder.EngageDetectedTargets != 0 &&
-                       scanOrder.RadiusCells > 0;
-            }
-
-            private bool IsTargetInsideScanArea(Entity target, in UnitScanOrder scanOrder)
-            {
-                return TransformLookup.HasComponent(target) &&
-                       IsPositionInsideScanArea(TransformLookup[target].Position, scanOrder);
-            }
-
-            private bool IsPositionInsideScanArea(float3 position, in UnitScanOrder scanOrder)
-            {
-                int2 cell = GridUtils.WorldToCell(Grid, position);
-                if (!GridUtils.InBounds(cell, Grid.Width, Grid.Height))
-                    return false;
-
-                return ChebyshevDistance(cell, scanOrder.CenterCell) <= math.max(1, scanOrder.RadiusCells);
-            }
-
-            private static int ChebyshevDistance(int2 a, int2 b)
-            {
-                int2 delta = math.abs(a - b);
-                return math.max(delta.x, delta.y);
-            }
-
-            private bool AllowsPolicy(Entity source, Entity target)
-            {
-                bool hasSource = TargetPolicyLookup.HasComponent(source);
-                bool hasTarget = TargetPolicyLookup.HasComponent(target);
-                var sourcePolicy = hasSource ? TargetPolicyLookup[source] : default;
-                var targetPolicy = hasTarget ? TargetPolicyLookup[target] : new CombatTargetPolicy
-                {
-                    Visible = 1,
-                    Domain = CombatTargetPolicyUtility.InferDomain(TargetBuildingLookup.HasComponent(target) || TargetBlockerLookup.HasComponent(target),
-                        TargetAirLookup.HasComponent(target), TargetMovementLookup.HasComponent(target) && TargetMovementLookup[target].UsesVehicleMotion != 0)
+                    Source=Identity(entity),Position=Point(selfTransform.Position),GridCell=new TargetCell(selfGrid.Cell.x,selfGrid.Cell.y),
+                    GridWidth=Grid.Width,GridHeight=Grid.Height,CellSize=Grid.CellSize,AggroRangeCells=combat.AggroRangeCells,
+                    AttackRange=attack.Range,FactionId=selfFaction.Id,CanAttack=combat.CanAttack,AutoEngage=combat.AutoEngage
                 };
-                if (FogOwnedLookup.HasComponent(source) && FogOwnedLookup.HasComponent(target))
-                {
-                    var observer = FogOwnedLookup[source];
-                    if (!observer.SessionId.Equals(FogOwnedLookup[target].SessionId) ||
-                        !SkirmishFogConsumerUtility.IsVisible(FogOwnedLookup, FogSightLookup,
-                            FogKnowledgeLookup, target, observer.FactionId)) return false;
-                    targetPolicy.Visible = 1;
-                }
-                return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
+                var result=TargetAcquisitionKernel.Acquire(ref context,input);
+                // Preserve the original deferred command sequence: invalid recent removal
+                // precedes normal acquisition; retaliation adds Engage before recent removal.
+                if(result.RemoveRecentAttacker&&!result.Retaliation)Ecb.RemoveComponent<RecentAttacker>(sortKey,entity);
+                if(!result.Acquired)return;
+                Ecb.AddComponent(sortKey,entity,new EngageTarget{Target=EntityOf(result.Target),Cell=new int2(result.Cell.X,result.Cell.Z),
+                    Position=new float3(result.Position.X,result.Position.Y,result.Position.Z),IsCommanded=0});
+                if(result.Retaliation)Ecb.RemoveComponent<RecentAttacker>(sortKey,entity);
+                Ecb.RemoveComponent<UnitPathFollow>(sortKey,entity);Ecb.RemoveComponent<UnitPathRange>(sortKey,entity);
+                Ecb.RemoveComponent<UnitPathRequest>(sortKey,entity);Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey,entity);
             }
-
-            private bool IsValidRetaliationTarget(Entity candidate, byte selfFactionId)
+            private static TargetIdentity Identity(Entity entity)=>new TargetIdentity(entity.Index,entity.Version);
+            private static Entity EntityOf(TargetIdentity identity)=>new Entity{Index=identity.Index,Version=identity.Version};
+            private static TargetPosition Point(float3 position)=>new TargetPosition(position.x,position.y,position.z);
+            private struct NativeContext:ITargetAcquisitionContext
             {
-                if (candidate == Entity.Null ||
-                    !FactionLookup.HasComponent(candidate) ||
-                    !TransformLookup.HasComponent(candidate))
+                public AcquireTargetsJob Job;public Entity Source;
+                private NativeParallelMultiHashMapIterator<int> iterator;
+                public bool SourceHasAttackMove()=>Job.AttackMoveLookup.HasComponent(Source);
+                public bool SourceHasManualMove()=>Job.ManualMoveLookup.HasComponent(Source);
+                public bool SourceHasPathFollow()=>Job.PathFollowLookup.HasComponent(Source);
+                public bool SourceHasPathRequest()=>Job.PathRequestLookup.HasComponent(Source);
+                public bool SourceHoldsPosition()=>Job.HoldPositionLookup.HasComponent(Source);
+                public bool TryReadScan(out TargetScanOrder order)
                 {
-                    return false;
+                    order=default;if(!Job.ScanOrderLookup.HasComponent(Source))return false;
+                    var value=Job.ScanOrderLookup[Source];order=new TargetScanOrder{CenterX=value.CenterCell.x,CenterZ=value.CenterCell.y,
+                        RadiusCells=value.RadiusCells,HasStarted=value.HasStarted,EngageDetectedTargets=value.EngageDetectedTargets};return true;
                 }
-
-                byte candidateFactionId = FactionLookup[candidate].Id;
-                if (candidateFactionId == FactionIdentity.NeutralFactionId ||
-                    candidateFactionId == selfFactionId)
-                    return false;
-
-                return !HealthLookup.HasComponent(candidate) || HealthLookup[candidate].Current > 0;
+                public bool TryReadRecent(out TargetIdentity target)
+                {target=default;if(!Job.RecentAttackerLookup.HasComponent(Source))return false;target=Identity(Job.RecentAttackerLookup[Source].Attacker);return true;}
+                public bool BeginCell(int key,out TargetIdentity candidate)
+                {bool found=Job.SpatialMap.TryGetFirstValue(key,out Entity value,out iterator);candidate=Identity(value);return found;}
+                public bool NextCell(out TargetIdentity candidate)
+                {bool found=Job.SpatialMap.TryGetNextValue(out Entity value,ref iterator);candidate=Identity(value);return found;}
+                public int BuildingCount()=>Job.BuildingTargets.Length;
+                public TargetIdentity BuildingAt(int index)=>Identity(Job.BuildingTargets[index]);
+                public bool HasFaction(TargetIdentity target)=>Job.FactionLookup.HasComponent(EntityOf(target));
+                public byte Faction(TargetIdentity target)=>Job.FactionLookup[EntityOf(target)].Id;
+                public bool HasTransform(TargetIdentity target)=>Job.TransformLookup.HasComponent(EntityOf(target));
+                public TargetPosition Position(TargetIdentity target)=>Point(Job.TransformLookup[EntityOf(target)].Position);
+                public bool HasHealth(TargetIdentity target)=>Job.HealthLookup.HasComponent(EntityOf(target));
+                public int Health(TargetIdentity target)=>Job.HealthLookup[EntityOf(target)].Current;
+                public bool HasEngagement(TargetIdentity target)=>Job.EngageLookup.HasComponent(EntityOf(target));
+                public TargetIdentity EngagementTarget(TargetIdentity target)=>Identity(Job.EngageLookup[EntityOf(target)].Target);
+                public bool ProtectedRecords(TargetIdentity target)=>Job.ProtectedRecordsLookup.HasComponent(EntityOf(target));
+                public int AttackerCount(TargetIdentity target){Job.AttackerCounts.TryGetValue(EntityOf(target),out int count);return count;}
+                public TargetCell WorldToCell(TargetPosition position)
+                {var cell=GridUtils.WorldToCell(Job.Grid,new float3(position.X,position.Y,position.Z));return new TargetCell(cell.x,cell.y);}
+                public TargetPolicyFacts PolicyFacts(TargetIdentity source,TargetIdentity target)
+                {
+                    Entity s=EntityOf(source),t=EntityOf(target);
+                    bool hasSource=Job.TargetPolicyLookup.HasComponent(s),hasTarget=Job.TargetPolicyLookup.HasComponent(t);
+                    var sourcePolicy=hasSource?Job.TargetPolicyLookup[s]:default;
+                    var facts=new TargetPolicyFacts{HasSourcePolicy=hasSource,HasTargetPolicy=hasTarget,SourceAllowedTargets=(byte)sourcePolicy.AllowedTargets};
+                    if(hasTarget){var policy=Job.TargetPolicyLookup[t];facts.TargetDomain=(byte)policy.Domain;facts.TargetVisible=policy.Visible;}
+                    else
+                    {
+                        facts.TargetIsStructure=Job.TargetBuildingLookup.HasComponent(t)||Job.TargetBlockerLookup.HasComponent(t);
+                        facts.TargetIsAir=Job.TargetAirLookup.HasComponent(t);
+                        facts.TargetUsesVehicleMotion=Job.TargetMovementLookup.HasComponent(t)&&Job.TargetMovementLookup[t].UsesVehicleMotion!=0;
+                    }
+                    if(Job.FogOwnedLookup.HasComponent(s)&&Job.FogOwnedLookup.HasComponent(t))
+                    {
+                        var observer=Job.FogOwnedLookup[s];facts.PairedFog=true;
+                        facts.SameFogSession=observer.SessionId.Equals(Job.FogOwnedLookup[t].SessionId);
+                        if(facts.SameFogSession)facts.FogVisibleToObserver=SkirmishFogConsumerUtility.IsVisible(Job.FogOwnedLookup,Job.FogSightLookup,Job.FogKnowledgeLookup,t,observer.FactionId);
+                    }
+                    return facts;
+                }
             }
         }
     }

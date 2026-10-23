@@ -143,42 +143,22 @@ namespace Game.Runtime
                 var own=squad.FactionId==2?match.EnemyMainBase:match.PlayerMainBase;
                 var target=squad.FactionId==2?match.PlayerMainBase:match.EnemyMainBase;
                 if(!em.Exists(own)||!em.HasComponent<LocalTransform>(own))continue;
-                float best=preset.baseDefenseRadius*preset.baseDefenseRadius;
-                bool threatened=false;
-                foreach(var candidate in targets)
+                var ownPosition = em.GetComponentData<LocalTransform>(own).Position;
+                var context = new SquadTargetContext
                 {
-                    byte faction=em.GetComponentData<Faction>(candidate).Id;
-                    if(faction==0||faction==squad.FactionId||em.GetComponentData<UnitHealth>(candidate).Current<=0||em.GetComponentData<UnitAttack>(candidate).Damage<=0)continue;
-                    float distance=math.distancesq(em.GetComponentData<LocalTransform>(candidate).Position.xz,em.GetComponentData<LocalTransform>(own).Position.xz);
-                    if(distance>=best)continue;
-                    best=distance;target=candidate;threatened=true;
-                }
-                // Attackers must fight the defenders they meet, rather than let
-                // those defenders shoot them while every order targets the base.
-                if (!threatened && em.HasBuffer<AISquadUnit>(squadEntity))
+                    Manager = em, Targets = targets, SelfFaction = squad.FactionId,
+                    HasMembers = em.HasBuffer<AISquadUnit>(squadEntity),
+                    Members = em.HasBuffer<AISquadUnit>(squadEntity) ? em.GetBuffer<AISquadUnit>(squadEntity) : default
+                };
+                var selection = SkirmishSquadTargetingKernel.Select(ref context, new SquadTargetInput
                 {
-                    best = float.MaxValue;
-                    foreach (var member in em.GetBuffer<AISquadUnit>(squadEntity))
-                    {
-                        var unit = member.Unit;
-                        if (!em.Exists(unit) || !em.HasComponent<UnitHealth>(unit) ||
-                            em.GetComponentData<UnitHealth>(unit).Current <= 0 ||
-                            !em.HasComponent<LocalTransform>(unit) || !em.HasComponent<UnitAttack>(unit)) continue;
-                        // A slower vehicle must not drag the squad's detection
-                        // center behind infantry already under fire.
-                        var position = em.GetComponentData<LocalTransform>(unit).Position.xz;
-                        float radius = em.GetComponentData<UnitAttack>(unit).Range + 8;
-                        foreach (var candidate in targets)
-                        {
-                            byte faction = em.GetComponentData<Faction>(candidate).Id;
-                            if (faction == 0 || faction == squad.FactionId || em.GetComponentData<UnitHealth>(candidate).Current <= 0 || em.GetComponentData<UnitAttack>(candidate).Damage <= 0) continue;
-                            float distance = math.distancesq(em.GetComponentData<LocalTransform>(candidate).Position.xz, position);
-                            if (distance >= radius * radius || distance >= best) continue;
-                            best = distance; target = candidate; threatened = true;
-                        }
-                    }
-                }
-                if(!threatened && match.ElapsedSeconds<preset.firstAttackSeconds)target=Entity.Null;
+                    Faction = squad.FactionId, OwnBaseX = ownPosition.x, OwnBaseZ = ownPosition.z,
+                    DefenseRadius = preset.baseDefenseRadius, ElapsedSeconds = match.ElapsedSeconds,
+                    FirstAttackSeconds = preset.firstAttackSeconds,
+                    OpposingBase = new SquadTargetIdentity(target.Index, target.Version)
+                });
+                target = new Entity { Index = selection.Target.Index, Version = selection.Target.Version };
+                bool threatened = selection.Threatened;
                 squad.TargetEntity=target;
                 if(em.Exists(target)&&em.HasComponent<UnitGrid>(target))
                 {
@@ -189,6 +169,43 @@ namespace Game.Runtime
                 em.SetComponentData(squadEntity,squad);
             }
             return true;
+        }
+        private struct SquadTargetContext : ISquadTargetContext
+        {
+            public EntityManager Manager;
+            public byte SelfFaction;
+            public NativeArray<Entity> Targets;
+            public bool HasMembers;
+            public DynamicBuffer<AISquadUnit> Members;
+            public int CandidateCount => Targets.Length;
+            public int MemberCount => HasMembers ? Members.Length : 0;
+            public SquadTargetCandidate Candidate(int index)
+            {
+                Entity entity = Targets[index];
+                var candidate = new SquadTargetCandidate { Faction = Manager.GetComponentData<Faction>(entity).Id };
+                if (candidate.Faction == 0 || candidate.Faction == SelfFaction) return candidate;
+                candidate.Health = Manager.GetComponentData<UnitHealth>(entity).Current;
+                if (candidate.Health <= 0) return candidate;
+                candidate.Damage = Manager.GetComponentData<UnitAttack>(entity).Damage;
+                if (candidate.Damage <= 0) return candidate;
+                var position = Manager.GetComponentData<LocalTransform>(entity).Position;
+                candidate.Entity = new SquadTargetIdentity(entity.Index, entity.Version);
+                candidate.X = position.x; candidate.Z = position.z;
+                return candidate;
+            }
+            public SquadTargetMember Member(int index)
+            {
+                Entity entity = Members[index].Unit;
+                if (!Manager.Exists(entity) || !Manager.HasComponent<UnitHealth>(entity) ||
+                    Manager.GetComponentData<UnitHealth>(entity).Current <= 0 ||
+                    !Manager.HasComponent<LocalTransform>(entity) || !Manager.HasComponent<UnitAttack>(entity)) return default;
+                var position = Manager.GetComponentData<LocalTransform>(entity).Position;
+                return new SquadTargetMember
+                {
+                    Eligible = true, X = position.x, Z = position.z,
+                    Range = Manager.GetComponentData<UnitAttack>(entity).Range
+                };
+            }
         }
     }
 }

@@ -674,9 +674,10 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             // Paused updates must not change facing, path state, or vehicle kinematics.
+            // Keep the native short circuit: a zero-delta tick never queries gameplay.
             if (SystemAPI.Time.DeltaTime <= 0f ||
-                (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
-                 gameplay.SimulationActive == 0))
+                !WorldSchedulingKernel.ShouldRunGridMovement(SystemAPI.Time.DeltaTime,
+                    SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay), gameplay.SimulationActive))
                 return;
 
             double startTime = Time.realtimeSinceStartupAsDouble;

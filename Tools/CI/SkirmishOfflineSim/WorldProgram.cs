@@ -1,0 +1,62 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text.Json;
+
+static class WorldProgram
+{
+    static object Run(JsonElement row)
+    {
+        WorldJson.Need(!string.IsNullOrWhiteSpace(row.GetProperty("id").GetString()), "Case ID required");
+        string kind = row.GetProperty("kind").GetString();
+        if (kind == "squad_target") return SquadReplay.Run(row);
+        if (kind == "world") return WorldFrameReplay.Run(row);
+        throw new ArgumentException("Unsupported world case kind: " + kind);
+    }
+    public static int Main(string[] args)
+    {
+        var watch = Stopwatch.StartNew();
+        try
+        {
+            WorldJson.Need(args.Length == 2, "Expected candidate JSON path");
+            WorldJson.Need(new System.IO.FileInfo(args[0]).Length <= 16 * 1024 * 1024, "Input exceeds 16 MiB");
+            WorldSchedule.Load(args[1]);
+            using var document = JsonDocument.Parse(System.IO.File.ReadAllBytes(args[0]));
+            var root = document.RootElement;
+            WorldJson.UniqueKeys(root);
+            WorldJson.Shape(root, new[] { "schema_version", "cases" });
+            WorldJson.Need(root.GetProperty("schema_version").GetInt32() == 1, "Unsupported schema");
+            var cases = root.GetProperty("cases");
+            WorldJson.Need(cases.ValueKind == JsonValueKind.Array && cases.GetArrayLength() >= 1 && cases.GetArrayLength() <= 256, "1..256 cases required");
+            long work=0;
+            foreach(var row in cases.EnumerateArray())
+                if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var kind)&&kind.GetString()=="world"&&row.TryGetProperty("actors",out var actors)&&actors.ValueKind==JsonValueKind.Array&&row.TryGetProperty("frames",out var frames)&&frames.ValueKind==JsonValueKind.Array)
+                    work+=(long)actors.GetArrayLength()*actors.GetArrayLength()*frames.GetArrayLength();
+            WorldJson.Need(work<=2000000,"Aggregate world work budget exceeded");
+            var ids = new HashSet<string>();
+            var results = new List<object>();
+            int failed = 0;
+            foreach (var row in cases.EnumerateArray())
+            {
+                string id = row.ValueKind == JsonValueKind.Object && row.TryGetProperty("id", out var identifier) ? identifier.ToString() : "<invalid>";
+                try
+                {
+                    WorldJson.Need(ids.Add(id), "Duplicate case ID");
+                    results.Add(new { id, status = "passed", plan = Run(row) });
+                }
+                catch (Exception error) { failed++; results.Add(new { id, status = "failed", error = error.Message }); }
+            }
+            Console.WriteLine(JsonSerializer.Serialize(new { schema_version = 1, scope = "ProductionBoundedWorldReplay",
+                result = failed == 0 ? "passed" : "failed", passed = results.Count - failed, failed,
+                elapsed_seconds = watch.Elapsed.TotalSeconds, native_runs = 0, full_battle_simulated = false,
+                mission_qualified = false, cases = results }, WorldJson.Json));
+            return failed == 0 ? 0 : 1;
+        }
+        catch (Exception error)
+        {
+            Console.WriteLine(JsonSerializer.Serialize(new { result = "failed", error = error.Message,
+                native_runs = 0, full_battle_simulated = false, mission_qualified = false }, WorldJson.Json));
+            return 1;
+        }
+    }
+}

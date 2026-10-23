@@ -100,8 +100,8 @@ namespace Game.Runtime
         {
             // A result is terminal, including attacks whose cooldown was ready
             // on the finishing frame. Campaign combat retains its own lifecycle.
-            if (SystemAPI.TryGetSingleton<SkirmishMatchState>(out var skirmish) &&
-                skirmish.Phase == SkirmishPhase.Finished)
+            if (!WorldSchedulingKernel.ShouldRunAttack(SystemAPI.TryGetSingleton<SkirmishMatchState>(out var skirmish),
+                skirmish.Phase == SkirmishPhase.Finished))
                 return;
 
             Entity gridEntity = _gridQuery.GetSingletonEntity();
@@ -133,12 +133,13 @@ namespace Game.Runtime
                         (em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack == 0))
                         continue;
 
-                    float cooldownRemaining = attackState.ValueRO.CooldownRemaining;
-                    if (cooldownRemaining > 0f)
-                        attackState.ValueRW.CooldownRemaining = math.max(0f, cooldownRemaining - dt);
-                    float traceRemaining = traceState.ValueRO.TimeRemaining;
-                    if (traceRemaining > 0f)
-                        traceState.ValueRW.TimeRemaining = math.max(0f, traceRemaining - dt);
+                    var recovered = DirectDamageSequencer.RecoverUnengaged(new StandardAttackState
+                    {
+                        CooldownRemaining = attackState.ValueRO.CooldownRemaining,
+                        TraceTimeRemaining = traceState.ValueRO.TimeRemaining
+                    }, dt);
+                    attackState.ValueRW.CooldownRemaining = recovered.CooldownRemaining;
+                    traceState.ValueRW.TimeRemaining = recovered.TraceTimeRemaining;
                 }
             }
 

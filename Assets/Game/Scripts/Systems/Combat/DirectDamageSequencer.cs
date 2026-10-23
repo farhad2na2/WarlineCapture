@@ -19,6 +19,26 @@ namespace Game.Runtime.Combat
     // candidate order, target eligibility, snapshot health and delayed health writes.
     public static class DirectDamageSequencer
     {
+        // The no-Engage query has different timer semantics from engaged planning.
+        public static StandardAttackState RecoverUnengaged(in StandardAttackState original, float deltaTime)
+        {
+            var state = original;
+            if (deltaTime > 0f)
+            {
+                if (state.CooldownRemaining > 0f)
+                {
+                    float next = state.CooldownRemaining - deltaTime;
+                    state.CooldownRemaining = float.IsNaN(next) || 0f > next ? 0f : next;
+                }
+                if (state.TraceTimeRemaining > 0f)
+                {
+                    float next = state.TraceTimeRemaining - deltaTime;
+                    state.TraceTimeRemaining = float.IsNaN(next) || 0f > next ? 0f : next;
+                }
+            }
+            return state;
+        }
+
         public static int ApplyCover(int damage, ushort permille)
         {
             if (damage <= 0) return 0;

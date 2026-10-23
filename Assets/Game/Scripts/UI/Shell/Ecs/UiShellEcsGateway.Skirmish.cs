@@ -213,7 +213,8 @@ namespace Game.UI.Shell.Ecs
                 {
                     if (!string.IsNullOrEmpty(setup.TitleKey)) model.MissionTitle = setup.CatalogId == "S005"
                         ? GameText.Get("ui.skirmish.s005.mission_name", GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode ? "میدان رزم ترکیبی" : "COMBINED ARMS FIELD")
-                        : GameText.Get(setup.TitleKey, setup.CatalogId);
+                        : GameText.TryGet(setup.TitleKey, out string existingMissionTitle) ? existingMissionTitle
+                        : GameText.Get(setup.TitleKey == "skirmish." + (setup.CatalogId ?? string.Empty).ToLowerInvariant() + ".title" ? "ui." + setup.TitleKey : setup.TitleKey, setup.CatalogId);
                     var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
                         SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
                     model.OwnMaterials = publicView.OwnMaterials;

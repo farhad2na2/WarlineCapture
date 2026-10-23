@@ -195,6 +195,18 @@ namespace Game.UI.Runtime
                 : "ui.skirmish.base_assault_map";
             string mapFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "INDUSTRIAL BASIN"
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
+            // Expanded catalog theatre identity must not fall through the legacy ScenarioIndex.
+            var catalog = SkirmishBattleCatalogConfig.Load();
+            if (!string.IsNullOrEmpty(model.CatalogId) && catalog != null && catalog.TryGet(model.CatalogId, out var entry))
+            {
+                mapKey = entry.MapId == "DB" ? "ui.skirmish.base_assault_map"
+                    : entry.MapId == "CC" ? "ui.skirmish.city_crossroads_map"
+                    : entry.MapId == "IB" ? "ui.skirmish.industrial_basin_map"
+                    : "ui.skirmish.theater." + entry.MapId.ToLowerInvariant() + ".title";
+                mapFallback = entry.MapId == "DB" ? "DESERT BASE"
+                    : entry.MapId == "CC" ? "CITY CROSSROADS"
+                    : entry.MapId == "IB" ? "INDUSTRIAL BASIN" : entry.MapId;
+            }
             string map = string.IsNullOrEmpty(model.MissionTitle)
                 ? UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback) : model.MissionTitle;
             string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get("ui.skirmish.result." + key, fallback);

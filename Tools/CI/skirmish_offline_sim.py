@@ -16,6 +16,7 @@ SOURCES = ["Assets/Game/Scripts/Skirmish/Contracts/" + name for name in
            ("SkirmishScenarioContracts.cs", "SkirmishObjectiveContracts.cs", "SkirmishReasonCodes.cs")]
 SOURCES += ["Assets/Game/Scripts/Runtime/Skirmish/Skirmish" + name + "Reducer.cs"
             for name in ("Frontline", "Breakthrough", "Convoy")]
+SOURCES += ["Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionOrchestrationKernel.cs"]
 BASE = "Assets/Game/Scripts/Runtime/Skirmish/SkirmishBaseAssaultObjectiveSystem.cs"
 HARNESS = "Tools/CI/SkirmishOfflineSim/Program.cs"
 
@@ -58,7 +59,8 @@ def extract_base(source):
     pattern = (r"(?m)^        public static bool TryEvaluate\(\s*"
                r"in SkirmishBaseAssaultFacts facts,\s*"
                r"out SkirmishOutcomeKind outcome,\s*"
-               r"out SkirmishEndReasonKind reason\)\s*\{[\s\S]*?^        \}")
+               r"out SkirmishEndReasonKind reason\)\s*(?:\{[\s\S]*?^        \}|=>\s*"
+               r"SkirmishMissionOrchestrationKernel\.TryEvaluateBaseAssault\(in facts, out outcome, out reason\);)")
     matches = list(re.finditer(pattern, source))
     if len(matches) != 1:
         raise ValueError("Expected exactly one production BA facts evaluator")

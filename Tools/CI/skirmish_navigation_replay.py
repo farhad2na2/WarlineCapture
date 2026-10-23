@@ -17,10 +17,13 @@ PATHFINDING = "Assets/Game/Scripts/Systems/Pathfinding/GridPathSearchKernel.cs"
 HARNESS = "Tools/CI/SkirmishOfflineSim/NavigationProgram.cs"
 PLACEMENT = "Assets/Game/Scripts/Systems/Pathfinding/PathPlacementKernel.cs"
 CONTEXT = "Tools/CI/SkirmishOfflineSim/NavigationContext.cs"
-SOURCES = [OCCUPANCY, PATHFINDING, PLACEMENT, HARNESS, CONTEXT]
+ROUTING = "Assets/Game/Scripts/Systems/Pathfinding/GridPathRoutingKernel.cs"
+SOURCES = [OCCUPANCY, PATHFINDING, PLACEMENT, ROUTING, HARNESS, CONTEXT]
 PINNED = SOURCES + ["Tools/CI/skirmish_navigation_replay.py",
     "Assets/Game/Scripts/Systems/DynamicOccupancyRebuildSystem.cs",
     "Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs",
+    "Assets/Game/Scripts/Systems/UnitPathScratchWorkspace.cs",
+    "Assets/Game/Scripts/Systems/UnitPathGoalAssignment.cs",
     "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs",
     "Assets/Game/Scripts/Systems/UnitPathPlacementValidation.cs",
     "Assets/Game/Scripts/Components/UnitFootprintUtility.cs"]

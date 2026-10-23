@@ -11,7 +11,7 @@ using Game.Skirmish.Contracts;
 // This is an objective fact-trace harness, not a fact producer or combat engine.
 static class Program
 {
-    static readonly JsonSerializerOptions Json = new()
+    internal static readonly JsonSerializerOptions Json = new()
     {
         IncludeFields = true,
         Converters = { new JsonStringEnumConverter(allowIntegerValues: false) }
@@ -25,10 +25,10 @@ static class Program
         public bool Terminal => Outcome != SkirmishOutcomeKind.None;
     }
 
-    static void Need(bool condition, string message)
+    internal static void Need(bool condition, string message)
     { if (!condition) throw new ArgumentException(message); }
 
-    static void Shape(JsonElement value, string[] required, params string[] optional)
+    internal static void Shape(JsonElement value, string[] required, params string[] optional)
     {
         Need(value.ValueKind == JsonValueKind.Object, "Expected an object");
         var names = value.EnumerateObject().Select(p => p.Name).ToHashSet();
@@ -36,7 +36,7 @@ static class Program
         Need(!names.Except(required.Concat(optional)).Any(), "Unknown fields: " + string.Join(",", names.Except(required.Concat(optional))));
     }
 
-    static void UniqueKeys(JsonElement value)
+    internal static void UniqueKeys(JsonElement value)
     {
         if (value.ValueKind == JsonValueKind.Object)
         {
@@ -48,7 +48,7 @@ static class Program
             foreach (var item in value.EnumerateArray()) UniqueKeys(item);
     }
 
-    static void FactsShape(JsonElement value, Type type)
+    internal static void FactsShape(JsonElement value, Type type)
     {
         if (type.IsArray)
         {
@@ -63,11 +63,12 @@ static class Program
         }
     }
 
-    static void Expect(JsonElement expected, JsonElement actual, string path)
+    internal static void Expect(JsonElement expected, JsonElement actual, string path)
     {
         if (expected.ValueKind == JsonValueKind.Object)
         {
             Need(actual.ValueKind == JsonValueKind.Object, path + ": expected object");
+            Need(expected.EnumerateObject().Any(), path + ": empty expectation object");
             foreach (var field in expected.EnumerateObject())
             {
                 Need(actual.TryGetProperty(field.Name, out var found), path + ": absent " + field.Name);
@@ -125,7 +126,7 @@ static class Program
         return new { iterations, state = final, snapshots };
     }
 
-    static string[] Strings(JsonElement value, int count, string label)
+    internal static string[] Strings(JsonElement value, int count, string label)
     {
         Need(value.ValueKind == JsonValueKind.Array && value.GetArrayLength() == count, label + ": exact count " + count + " required");
         var result = value.EnumerateArray().Select(v => v.GetString()).ToArray();

@@ -47,21 +47,10 @@ namespace Game.Runtime
                 if (session.IsLegacy != 0)
                     continue;
                 SkirmishObjectiveClockComponent clock = em.GetComponentData<SkirmishObjectiveClockComponent>(entity);
-                bool playing = session.Phase == SkirmishSessionPhase.Playing;
-                bool terminal = session.Phase is SkirmishSessionPhase.Finished
-                    or SkirmishSessionPhase.Failed or SkirmishSessionPhase.Cleaning;
-                clock.Playing = (byte)(playing ? 1 : 0);
-                clock.Paused = (byte)(paused || terminal ? 1 : 0);
-                if (clock.DeadlineSeconds <= 0 &&
-                    em.HasComponent<SkirmishResolvedSetupComponent>(entity))
-                {
-                    int healed = em.GetComponentData<SkirmishResolvedSetupComponent>(entity).DeadlineSeconds;
-                    if (healed > 0)
-                        clock.DeadlineSeconds = healed;
-                }
-
-                if (playing && !paused)
-                    clock.ElapsedSeconds += delta;
+                int setupDeadline = clock.DeadlineSeconds <= 0 && em.HasComponent<SkirmishResolvedSetupComponent>(entity)
+                    ? em.GetComponentData<SkirmishResolvedSetupComponent>(entity).DeadlineSeconds : 0;
+                SkirmishMissionOrchestrationKernel.ProjectClock(false, session.Phase, paused, delta, setupDeadline,
+                    ref clock.ElapsedSeconds, ref clock.DeadlineSeconds, ref clock.Playing, ref clock.Paused);
                 em.SetComponentData(entity, clock);
 
                 if (!em.HasComponent<SkirmishBaseAssaultFactComponent>(entity))
@@ -81,8 +70,7 @@ namespace Game.Runtime
                 var session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
                 // Keep terminal objective facts after destroyed entities are removed.
                 // The no-base startup fallback must not resurrect a finished base.
-                if (session.IsLegacy != 0 || session.Phase is SkirmishSessionPhase.Finished
-                    or SkirmishSessionPhase.Failed or SkirmishSessionPhase.Cleaning)
+                if (!SkirmishMissionOrchestrationKernel.ShouldRefreshFacts(session.IsLegacy != 0, session.Phase))
                     continue;
                 SkirmishBaseAssaultFacts facts = Collect(
                     em,

@@ -10,7 +10,8 @@ without Unity, physics, package downloads, or a realtime clock.
 - BT: current SkirmishBreakthroughReducer (corridor hold, original identities, evacuation).
 - CE: current SkirmishConvoyReducer (original trucks, continuous delivery dwell, deaths).
 - BA: the exact facts-based TryEvaluate overload extracted verbatim from the current
-  SkirmishBaseAssaultObjectiveSystem. No runtime file is edited. Its original file
+  SkirmishBaseAssaultObjectiveSystem. That retained overload now delegates to the
+  shared SkirmishMissionOrchestrationKernel, also compiled byte-for-byte. The source
   hash, method hash and source line are recorded. Extraction/compilation fails if
   the source structure no longer matches. The offline session retains terminal
   state, as the native system's terminal guard does.
@@ -105,3 +106,7 @@ fractional capture/dwell boundaries, contested capture, pause, non-retroactive B
 unlock, surrender precedence, invalid/missing identity and input rejection,
 false-expectation failure, source/binary drift and output isolation. All fixtures
 are explicitly synthetic. Re-run on Windows before adopting it there.
+
+For shared clock advancement, objective dispatch and terminal lifecycle sequencing,
+use [the mission orchestration runner](skirmish_mission_replay.md). It derives time
+facts internally while still requiring explicit world facts.

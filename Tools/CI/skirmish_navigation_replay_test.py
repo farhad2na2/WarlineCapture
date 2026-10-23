@@ -125,6 +125,71 @@ def route_fixtures():
     return dict(schema_version=1,cases=rows)
 
 
+def routing_query(w,h,x,z,**patch):
+    query=path_query(w,h,x,z)
+    query['kind']='route'
+    query['routing']=dict(desired_goal_x=x,desired_goal_z=z,goal_search_radius=10,max_candidate_attempts=16,
+        cheap_mode=0,has_modes=True,skip_alternate_search=False,
+        initial_state=dict(GoalX=x,GoalZ=z,FailureCode=0,ExpansionCount=77,AlternateAttempts=9,Status=0,Segmented=0))
+    query.update(patch)
+    return query
+
+
+def routing_fixtures():
+    rows=[]
+    def cells(*pairs):return [dict(X=x,Z=z) for x,z in pairs]
+    def add(name,w,h,steps,queries,grid=None):
+        rows.append(dict(id=name,width=w,height=h,map=grid or map_facts(w,h),steps=steps,expect=dict(queries=queries)))
+    def attempt(x,z,epoch,weight,found,code,expansions=None):
+        a=dict(GoalX=x,GoalZ=z,SearchEpoch=epoch,HeuristicWeight=weight,Found=found,FailureCode=code)
+        if expansions is not None:a['ExpansionCount']=expansions
+        return a
+    q=routing_query(5,5,4,2)
+    q['routing']['initial_state']['Segmented']=1
+    add('routing-direct-preserves-prior-metadata',5,5,[actor('add','self',0,2),q],
+        [dict(kind='route',state=dict(GoalX=4,GoalZ=2,Status=1,FailureCode=0,ExpansionCount=0,AlternateAttempts=9,Segmented=1),
+              attempts=[attempt(4,2,1,1,True,0,0)],cells=cells((0,2),(4,2)))])
+    grid=map_facts(5,5);grid['dynamic_blocked'][14]=1
+    q=routing_query(5,5,4,2)
+    add('routing-first-legal-alternate-ring',5,5,[actor('add','self',0,2),q],
+        [dict(state=dict(GoalX=3,GoalZ=3,Status=1,FailureCode=0,ExpansionCount=0,AlternateAttempts=1,Segmented=0),
+              attempts=[attempt(4,2,1,1,False,7),attempt(3,3,3,1,True,0,0)],cells=cells((0,2),(3,3)))],grid)
+    q=routing_query(5,5,4,2,manual_move=True);q['routing']['skip_alternate_search']=True
+    add('routing-manual-segment-progress-preserves-failure',5,5,[actor('add','self',0,2),q],
+        [dict(state=dict(GoalX=4,GoalZ=3,Status=1,FailureCode=7,ExpansionCount=77,AlternateAttempts=0,Segmented=1),
+              attempts=[attempt(4,2,1,1,False,7)],cells=cells((0,2),(4,3)))],grid)
+    q=routing_query(5,5,4,2);q['routing']['max_candidate_attempts']=0
+    add('routing-zero-alternate-limit',5,5,[actor('add','self',0,2),q],
+        [dict(state=dict(Status=0,FailureCode=7,ExpansionCount=77,AlternateAttempts=0),attempts=[attempt(4,2,1,1,False,7)],cells=[])],grid)
+    q=routing_query(5,5,4,2);q['routing']['initial_state']['Segmented']=1
+    add('routing-invalid-start-preserves-fields',5,5,[actor('add','self',-1,2),q],
+        [dict(state=dict(GoalX=4,GoalZ=2,Status=0,FailureCode=1,ExpansionCount=77,AlternateAttempts=9,Segmented=1),attempts=[],cells=[])])
+    # Synthetic low budget preserves production ordering without changing native budgets.
+    wall=map_facts(15,15)
+    for z in range(2,8):wall['dynamic_blocked'][z*15+7]=1
+    q=routing_query(15,15,12,7,vehicle=True,max_expansions=15)
+    q['routing'].update(cheap_mode=3,skip_alternate_search=True,goal_search_radius=20,max_candidate_attempts=32)
+    weighted_cells=cells((2,7),(5,7),(6,8),(8,8),(9,7),(12,7))
+    weighted_result=dict(state=dict(Status=1,FailureCode=0,ExpansionCount=13,AlternateAttempts=9,Segmented=0),
+        attempts=[attempt(12,7,1,1,False,9,16),attempt(12,7,2,2,True,0,13)],cells=weighted_cells)
+    add('routing-detailed-weighted-retry',15,15,[actor('add','self',2,7),q],[weighted_result],wall)
+    repeat=copy.deepcopy(weighted_result)
+    repeat['attempts'][0]['SearchEpoch']=129;repeat['attempts'][1]['SearchEpoch']=130
+    add('routing-repeated-epoch-slots',15,15,[actor('add','self',2,7),q,copy.deepcopy(q)],[weighted_result,repeat],wall)
+    for name,mode,has_modes in [('mode2-no-weighted-retry',2,True),('missing-modes-no-weighted-retry',3,False),('other-mode-no-weighted-retry',255,True)]:
+        wrong=copy.deepcopy(q);wrong['routing'].update(cheap_mode=mode,has_modes=has_modes)
+        add(name,15,15,[actor('add','self',2,7),wrong],
+            [dict(state=dict(Status=0,FailureCode=9,ExpansionCount=16,AlternateAttempts=0),attempts=[attempt(12,7,1,1,False,9,16)],cells=[])],wall)
+    exhausted=copy.deepcopy(q);exhausted['max_expansions']=0
+    add('routing-weighted-retry-also-exhausted',15,15,[actor('add','self',2,7),exhausted],
+        [dict(state=dict(Status=0,FailureCode=9,ExpansionCount=1,AlternateAttempts=0),
+              attempts=[attempt(12,7,1,1,False,9,1),attempt(12,7,2,2,False,9,1)],cells=[])],wall)
+    mixed=path_query(15,15,12,7,vehicle=True)
+    add('routing-slot-followed-by-bounded-path',15,15,[actor('add','self',2,7),q,mixed],
+        [weighted_result,dict(kind='path',epoch=129,result=dict(Found=True))],wall)
+    return dict(schema_version=1,cases=rows)
+
+
 class NavigationReplayTests(unittest.TestCase):
     def replay(self,data,tag):
         path=OUTPUT/(tag+'.json');path.write_text(data if isinstance(data,str) else json.dumps(data))
@@ -139,6 +204,27 @@ class NavigationReplayTests(unittest.TestCase):
         self.assertEqual(report['failed'],0,report)
         repeat=self.replay(route_fixtures(),'routes-repeat')
         self.assertEqual(report['cases'],repeat['cases'])
+
+    def test_shared_routing_state_order_and_repeat(self):
+        a=self.replay(routing_fixtures(),'routing');b=self.replay(routing_fixtures(),'routing-repeat')
+        self.assertEqual(a['failed'],0,[(x['id'],x.get('error')) for x in a.get('cases',[]) if x['status']=='failed'])
+        self.assertEqual(a['cases'],b['cases'])
+
+    def test_invalid_routing_state_policy_and_budget_rejected(self):
+        rows=[]
+        for i in range(9):
+            row=copy.deepcopy(routing_fixtures()['cases'][0]);row['id']=str(i);rows.append(row)
+        rows[0]['steps'][1]['routing']['initial_state']['GoalX']=3
+        rows[1]['steps'][1]['routing']['max_candidate_attempts']=33
+        rows[2]['steps'][1]['routing']['cheap_mode']=256
+        rows[3]['steps'][1]['routing']['has_modes']=1
+        rows[4]['steps'][1]['routing']['initial_state']['Segmented']=2
+        del rows[5]['steps'][1]['routing']['initial_state']['ExpansionCount']
+        rows[6]['steps'][1]['heuristic_weight']=2
+        rows[7]['steps'][1]['kind']='path'
+        rows[8]['steps'][1]['routing']['goal_search_radius']=-1
+        r=self.replay(dict(schema_version=1,cases=rows),'routing-invalid')
+        self.assertEqual(r['failed'],len(rows),r)
 
     def test_bulk_repeatability(self):
         rows=[dict(copy.deepcopy(route_fixtures()['cases'][i % len(route_fixtures()['cases'])]),id='bulk-'+str(i)) for i in range(720)]
@@ -218,6 +304,7 @@ if __name__ == '__main__':
     args=p.parse_args();BUILD=args.build.resolve();OUTPUT=args.output.resolve();OUTPUT.mkdir(parents=True,exist_ok=False)
     (OUTPUT/'examples.json').write_text(json.dumps(fixtures(),indent=2)+'\n')
     (OUTPUT/'navigation-examples.json').write_text(json.dumps(route_fixtures(),indent=2)+'\n')
+    (OUTPUT/'routing-examples.json').write_text(json.dumps(routing_fixtures(),indent=2)+'\n')
     result=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(NavigationReplayTests))
     print(json.dumps(dict(result='passed' if result.wasSuccessful() else 'failed',tests=result.testsRun,failures=len(result.failures),errors=len(result.errors),output=str(OUTPUT))))
     raise SystemExit(0 if result.wasSuccessful() else 1)

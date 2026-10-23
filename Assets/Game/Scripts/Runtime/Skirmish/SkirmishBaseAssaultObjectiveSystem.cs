@@ -97,55 +97,8 @@ namespace Game.Runtime
         public static bool TryEvaluate(
             in SkirmishBaseAssaultFacts facts,
             out SkirmishOutcomeKind outcome,
-            out SkirmishEndReasonKind reason)
-        {
-            outcome = SkirmishOutcomeKind.None;
-            reason = SkirmishEndReasonKind.None;
-            if (!facts.Playing)
-                return false;
-
-            if (facts.Surrender)
-            {
-                outcome = SkirmishOutcomeKind.Defeat;
-                reason = SkirmishEndReasonKind.Surrender;
-                return true;
-            }
-
-            if (!facts.PlayerDesignatedAlive && !facts.EnemyDesignatedAlive)
-            {
-                outcome = SkirmishOutcomeKind.Draw;
-                reason = SkirmishEndReasonKind.BothBasesDestroyed;
-                return true;
-            }
-
-            if (!facts.EnemyDesignatedAlive)
-            {
-                outcome = SkirmishOutcomeKind.Victory;
-                reason = SkirmishEndReasonKind.MainBaseDestroyed;
-                return true;
-            }
-
-            if (!facts.PlayerDesignatedAlive)
-            {
-                outcome = SkirmishOutcomeKind.Defeat;
-                reason = SkirmishEndReasonKind.MainBaseDestroyed;
-                return true;
-            }
-
-            if (facts.Paused)
-                return false;
-
-            if (facts.DeadlineSeconds > 0 && facts.ElapsedSeconds >= facts.DeadlineSeconds)
-            {
-                outcome = SkirmishOutcomeKind.Draw;
-                reason = SkirmishEndReasonKind.TimeLimit;
-                return true;
-            }
-
-            _ = facts.ReplacementBarracksPresent;
-            _ = facts.FieldArmyWiped;
-            return false;
-        }
+            out SkirmishEndReasonKind reason) =>
+            SkirmishMissionOrchestrationKernel.TryEvaluateBaseAssault(in facts, out outcome, out reason);
 
         /// <summary>
         /// Writes the Base Assault outcome from the clock and designated-base facts.

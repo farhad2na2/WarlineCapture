@@ -169,7 +169,7 @@ static class NavigationProgram
                 GridOccupancyKernel.Remove(width, ref storage, members[entity].Bounds);
                 members.Remove(entity);
             }
-            else if (kind == "placement" || kind == "path")
+            else if (kind == "placement" || kind == "path" || kind == "route")
             {
                 Need(map != null, "Explicit map facts required for navigation queries");
                 var context = new NavigationContext.Context { GridWidth = width, GridHeight = height, Facts = map,

@@ -30,16 +30,13 @@ namespace Game.Runtime
             int2 currentCell,
             byte factionId)
         {
-            return UnitFootprintUtility.CanPlace(
-                grid,
-                walkable,
-                dynamicBlocked,
-                friendlyPassFactionIds,
-                default,
-                targetCell,
-                footprintSize,
-                currentCell,
-                factionId);
+            var context = new InfantryContext { Job = new UnitGridMoveJob
+            {
+                Grid = grid, Walkable = walkable, DynamicBlocked = dynamicBlocked,
+                FriendlyPassFactionIds = friendlyPassFactionIds
+            } };
+            return Movement.InfantryPathLifecycleKernel.CanOccupyMovementTarget(
+                ref context, Cell(targetCell), Cell(footprintSize), factionId);
         }
 
         private bool IsBlockedForFaction(int index, byte factionId)

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Game.Runtime.Targeting;
+using Game.Components;
 
 internal static class WorldAcquisition
 {
@@ -23,7 +24,7 @@ internal static class WorldAcquisition
             AttackMove=v.GetProperty("attack_move").GetBoolean(),ManualMove=v.GetProperty("manual_move").GetBoolean(),PathFollow=v.GetProperty("path_follow").GetBoolean(),
             PathRequest=v.GetProperty("path_request").GetBoolean(),HoldPosition=v.GetProperty("hold_position").GetBoolean(),Recent=v.GetProperty("recent").GetString()};
         WorldJson.Need(o.GridWidth>=1&&o.GridWidth<=512&&o.GridHeight>=1&&o.GridHeight<=512&&o.AggroRangeCells>=0&&o.AggroRangeCells<=64&&o.AutoEngage<=1,"Invalid acquisition grid/range/flag");
-        WorldJson.Need(a.Radius==0&&o.HoldPosition&&!o.PathFollow&&!o.PathRequest,"Bounded stationary profile requires hold position and no path follow/request");
+        WorldJson.Need(a.Radius==0&&(a.MovingProfile||(o.HoldPosition&&!o.PathFollow&&!o.PathRequest)),"Bounded stationary profile requires hold position and no path follow/request");
         WorldJson.Need(o.Recent!=null,"Recent attacker must be an ID or empty string");
         if(v.GetProperty("scan").ValueKind!=JsonValueKind.Null)
         {
@@ -42,8 +43,8 @@ internal static class WorldAcquisition
         foreach(var a in actors)WorldJson.Need(!a.ProtectedRecords,"Protected-record actors outside unrestricted world profile");
         foreach(var a in mobile)
         {
-            var o=Read(a);WorldJson.Need(o.AggroRangeCells*cellSize>=a.Weapon.Range,"Aggro radius must conservatively cover attack range for stationary leash safety");
-            if(a.HasEngage&&a.Target!="")ValidateClose(a,byId);
+            var o=Read(a);WorldJson.Need(a.MovingProfile||o.AggroRangeCells*cellSize>=a.Weapon.Range,"Aggro radius must conservatively cover attack range for stationary leash safety");
+            if(!a.MovingProfile&&a.HasEngage&&a.Target!="")ValidateClose(a,byId);
         }
     }
     static void ValidateClose(WorldFrameReplay.Actor a,Dictionary<string,WorldFrameReplay.Actor> byId)
@@ -93,6 +94,7 @@ internal static class WorldAcquisition
         public int AttackerCount(TargetIdentity t)=>Counts.TryGetValue((t.Index,t.Version),out int n)?n:0;
         public TargetCell WorldToCell(TargetPosition p)
         {
+            if(Source.MovingProfile) {var cell=GridCoordinateKernel.WorldToCell(Source.Coordinates,p.X,p.Z);return new TargetCell(cell.X,cell.Z);}
             // Explicit captured native WorldToCell facts for fixed actor positions; no invented grid conversion.
             var matches=Actors.Values.Where(a=>a.X==p.X&&a.Y==p.Y&&a.Z==p.Z).ToArray();
             WorldJson.Need(matches.Length>0&&matches.All(a=>a.CellX==matches[0].CellX&&a.CellZ==matches[0].CellZ),"Missing/ambiguous captured WorldToCell facts");
@@ -108,6 +110,7 @@ internal static class WorldAcquisition
         foreach(string source in order)
         {
             var a=byId[source];var o=Read(a);var row=supplied.GetProperty(source);
+            TargetCell SpatialCell(WorldFrameReplay.Actor unit){if(!unit.MovingProfile)return new TargetCell(unit.CellX,unit.CellZ);var c=GridCoordinateKernel.WorldToCell(unit.Coordinates,unit.X,unit.Z);return c.X>=0&&c.X<o.GridWidth&&c.Z>=0&&c.Z<o.GridHeight?new TargetCell(c.X,c.Z):new TargetCell(unit.CellX,unit.CellZ);}
             WorldJson.Shape(row,new[]{"cells","buildings","policies"});var cells=new Dictionary<int,List<TargetIdentity>>();var seen=new HashSet<string>();
             foreach(var cell in row.GetProperty("cells").EnumerateArray())
             {
@@ -115,10 +118,10 @@ internal static class WorldAcquisition
                 var list=new List<TargetIdentity>();
                 foreach(var idJson in cell.GetProperty("actors").EnumerateArray())
                 { string name=idJson.GetString();WorldJson.Need(name!=null&&byId.ContainsKey(name)&&seen.Add(name),"Invalid/duplicate spatial actor");var actor=byId[name];
-                    WorldJson.Need(actor.Mobile&&actor.Health>0&&actor.CellX>=0&&actor.CellX<o.GridWidth&&actor.CellZ>=0&&actor.CellZ<o.GridHeight&&actor.CellX+actor.CellZ*o.GridWidth==key,"Spatial membership does not match live unit facts");list.Add(Id(actor)); }
+                    var spatial=SpatialCell(actor);WorldJson.Need(actor.Mobile&&actor.Health>0&&spatial.X>=0&&spatial.X<o.GridWidth&&spatial.Z>=0&&spatial.Z<o.GridHeight&&spatial.X+spatial.Z*o.GridWidth==key,"Spatial membership does not match live unit facts");list.Add(Id(actor)); }
                 WorldJson.Need(list.Count>0,"Empty spatial cells should be omitted");cells[key]=list;
             }
-            WorldJson.Need(seen.SetEquals(actors.Where(x=>x.Mobile&&x.Health>0&&x.CellX>=0&&x.CellX<o.GridWidth&&x.CellZ>=0&&x.CellZ<o.GridHeight).Select(x=>x.Id)),"Spatial snapshot must include every live in-grid infantry actor");
+            WorldJson.Need(seen.SetEquals(actors.Where(x=>x.Mobile&&x.Health>0&&SpatialCell(x).X>=0&&SpatialCell(x).X<o.GridWidth&&SpatialCell(x).Z>=0&&SpatialCell(x).Z<o.GridHeight).Select(x=>x.Id)),"Spatial snapshot must include every live in-grid infantry actor");
             var buildings=row.GetProperty("buildings").EnumerateArray().Select(x=>x.GetString()).ToList();
             WorldJson.Need(buildings.Count==buildings.Distinct().Count()&&buildings.ToHashSet().SetEquals(actors.Where(x=>!x.Mobile).Select(x=>x.Id)),"Building enumeration must contain exactly all runtime bases");
             var policies=new Dictionary<(int,int),TargetPolicyFacts>();
@@ -143,22 +146,23 @@ internal static class WorldAcquisition
     }
     internal static void ValidateOrders(List<WorldFrameReplay.Actor> actors,Dictionary<string,WorldFrameReplay.Actor> byId,List<string> order,JsonElement supplied)=>Contexts(actors,byId,order,supplied);
     internal static void Acquire(List<WorldFrameReplay.Actor> actors,Dictionary<string,WorldFrameReplay.Actor> byId,List<string> order,JsonElement supplied,float cellSize,
-        List<Action> pending,List<object> events)
+        List<Action> pending,List<object> events,HashSet<string> pendingIdentities=null,Action<WorldFrameReplay.Actor> onAcquired=null)
     {
         var contexts=Contexts(actors,byId,order,supplied);
         foreach(string id in order)
         {
             var context=contexts[id];var a=byId[id];var o=context.Options;
             var input=new TargetAcquisitionInput{Source=Id(a),Position=new TargetPosition(a.X,a.Y,a.Z),GridCell=new TargetCell(a.CellX,a.CellZ),GridWidth=o.GridWidth,GridHeight=o.GridHeight,
-                AggroRangeCells=o.AggroRangeCells,CellSize=cellSize,AttackRange=a.Weapon.Range,FactionId=a.Faction,CanAttack=1,AutoEngage=o.AutoEngage};
+                AggroRangeCells=o.AggroRangeCells,CellSize=cellSize,AttackRange=a.Weapon.Range,FactionId=a.Faction,CanAttack=a.CanAttack,AutoEngage=o.AutoEngage};
             var result=TargetAcquisitionKernel.Acquire(ref context,input);
             string target=result.Acquired?actors.Single(x=>x.Index==result.Target.Index&&x.Version==result.Target.Version).Id:"";
-            if(result.RemoveRecentAttacker)pending.Add(()=>a.Recent="");
+            if(result.RemoveRecentAttacker){pendingIdentities?.Add(id);pending.Add(()=>a.Recent="");}
             if(result.Acquired)
             {
+                pendingIdentities?.Add(id);
                 var chosen=byId[target];double dx=(double)a.X-chosen.X,dz=(double)a.Z-chosen.Z;
-                WorldJson.Need(dx*dx+dz*dz<=((double)a.Weapon.Range*.5)*((double)a.Weapon.Range*.5),"Acquired target outside conservative stationary profile");
-                pending.Add(()=>{a.HasEngage=true;a.Target=target;});
+                WorldJson.Need(a.MovingProfile||dx*dx+dz*dz<=((double)a.Weapon.Range*.5)*((double)a.Weapon.Range*.5),"Acquired target outside conservative stationary profile");
+                pending.Add(()=>{a.HasEngage=true;a.Target=target;a.EngageX=result.Position.X;a.EngageY=result.Position.Y;a.EngageZ=result.Position.Z;a.EngageCellX=result.Cell.X;a.EngageCellZ=result.Cell.Z;a.EngageIsCommanded=0;onAcquired?.Invoke(a);});
             }events.Add(new{actor=id,result,target});
         }
     }

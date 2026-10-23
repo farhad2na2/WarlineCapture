@@ -456,15 +456,21 @@ namespace Game.Components
 
         public static int2 IndexToCell(int index, int width) => new(index % width, index / width);
 
-        public static float3 CellToWorldCenter(in GridConfig grid, int2 cell) =>
-            grid.Origin + new float3((cell.x + 0.5f) * grid.CellSize, 0f, (cell.y + 0.5f) * grid.CellSize);
+        private static GridCoordinateFrame CoordinateFrame(in GridConfig grid) => new GridCoordinateFrame
+        {
+            OriginX = grid.Origin.x, OriginY = grid.Origin.y, OriginZ = grid.Origin.z, CellSize = grid.CellSize
+        };
+
+        public static float3 CellToWorldCenter(in GridConfig grid, int2 cell)
+        {
+            var value = GridCoordinateKernel.CellToWorldCenter(CoordinateFrame(grid), cell.x, cell.y);
+            return new float3(value.X, value.Y, value.Z);
+        }
 
         public static int2 WorldToCell(in GridConfig grid, float3 worldPos)
         {
-            float3 local = worldPos - grid.Origin;
-            int x = (int)math.floor(local.x / grid.CellSize);
-            int y = (int)math.floor(local.z / grid.CellSize);
-            return new int2(x, y);
+            var value = GridCoordinateKernel.WorldToCell(CoordinateFrame(grid), worldPos.x, worldPos.z);
+            return new int2(value.X, value.Z);
         }
     }
 

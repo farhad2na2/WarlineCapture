@@ -18,6 +18,13 @@ SOURCES = common.SOURCES + [SCHEDULING, TARGETING,
     "Tools/CI/SkirmishOfflineSim/SquadReplay.cs",
     "Tools/CI/SkirmishOfflineSim/WorldFrameReplay.cs", "Tools/CI/SkirmishOfflineSim/WorldAcquisition.cs", "Tools/CI/SkirmishOfflineSim/WorldSchedule.cs",
     "Tools/CI/SkirmishOfflineSim/WorldProgram.cs", "Tools/CI/SkirmishOfflineSim/WorldJson.cs"]
+SOURCES += ["Tools/CI/SkirmishOfflineSim/MovingWorldMap.cs", "Tools/CI/SkirmishOfflineSim/MovingWorldReplay.cs",
+    "Assets/Game/Scripts/Components/GridCoordinateKernel.cs",
+    "Assets/Game/Scripts/Systems/GridOccupancyKernel.cs", "Assets/Game/Scripts/Systems/GridPathMovementKernel.cs",
+    "Assets/Game/Scripts/Systems/InfantryPathLifecycleKernel.cs", "Assets/Game/Scripts/Systems/EngagedMovementKernel.cs",
+    "Assets/Game/Scripts/Systems/EngageTargetLifecycleKernel.cs", "Assets/Game/Scripts/Systems/UnitDeathLifecycleKernel.cs",
+    "Assets/Game/Scripts/Systems/Pathfinding/PathPlacementKernel.cs", "Assets/Game/Scripts/Systems/Pathfinding/GridPathSearchKernel.cs",
+    "Assets/Game/Scripts/Systems/Pathfinding/GridPathRoutingKernel.cs", "Assets/Game/Scripts/Systems/Pathfinding/PathJobSchedulingKernel.cs", "Assets/Game/Scripts/Systems/Pathfinding/PathGoalPolicyKernel.cs"]
 ADAPTERS = ["Assets/Game/Scripts/Systems/" + name + ".cs" for name in (
     "UnitEngagementSystem", "UnitAttackSystem", "UnitEngagedMovementSystem", "UnitGridMovementSystem", "SkirmishCombatPolicy", "AITargetingSystem", "DynamicOccupancyRebuildSystem", "CombatTargetPolicyUtility", "UnitDeathSystem")]
 ADAPTERS += ["Assets/Game/Scripts/Runtime/Skirmish/" + name + ".cs" for name in (
@@ -25,6 +32,11 @@ ADAPTERS += ["Assets/Game/Scripts/Runtime/Skirmish/" + name + ".cs" for name in 
 ADAPTERS += ["Assets/Game/Scripts/Systems/UnitAttackSystem.CampaignMissionSuppression.cs"]
 ADAPTERS += ["Assets/Game/Scripts/Components/CombatTargetPolicyComponents.cs", "Assets/Game/Scripts/Components/FactionIdentity.cs",
     "Assets/Game/Scripts/Runtime/Skirmish/SkirmishFogConsumerUtility.cs"]
+ADAPTERS += ["Assets/Game/Scripts/Systems/"+name+".cs" for name in (
+    "EngageTargetValidateSystem", "EngageTargetSyncSystem", "UnitGridMovementPolicy", "UnitPathfindingSystem", "UnitPathfindingScheduler",
+    "UnitPathfindingApply", "UnitPathResultApply", "UnitPathGoalAssignment", "UnitPathSegmentation", "UnitPathRequestCollection",
+    "UnitPathfindingEntitySets", "UnitPathSurfaceMetadata", "UnitPathRetry", "UnitPathfindingBudget")]
+ADAPTERS += ["Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs", "Assets/Game/Scripts/Components/GridComponents.cs"]
 PINS = list(dict.fromkeys(SOURCES + ADAPTERS + ["Tools/CI/skirmish_offline_sim.py", "Tools/CI/skirmish_world_replay.py"]))
 SCOPE = "ProductionBoundedWorldReplay"
 BINS = {"bin/WorldReplay" + suffix for suffix in (".dll", ".deps.json", ".runtimeconfig.json", ".pdb")} | {"profile.json"}
@@ -33,7 +45,7 @@ BINS = {"bin/WorldReplay" + suffix for suffix in (".dll", ".deps.json", ".runtim
 REQUIRED_NATIVE_MARKER = "[SharedWorldTargetingParity] result=Passed"
 
 
-def schedule_profile(project, receipt):
+def schedule_profile(project, receipt, moving=False):
     if receipt is None:
         return dict(enabled=False, reason="Native schedule receipt required for world cases")
     receipt = Path(receipt).resolve()
@@ -43,17 +55,26 @@ def schedule_profile(project, receipt):
     order = data['order']
     expected = {"Unity.Entities.BeginSimulationEntityCommandBufferSystem", "Unity.Entities.EndSimulationEntityCommandBufferSystem"}
     expected |= {"Game.Runtime." + name for name in ("DynamicOccupancyRebuildSystem", "UnitEngagementSystem", "UnitEngagedMovementSystem", "UnitAttackSystem", "SkirmishObjectiveFactProjectionSystem", "SkirmishBaseAssaultObjectiveSystem", "SkirmishOutcomeSystem")}
-    if set(order) != {"profile", "scope", "full_world", "systems"} or order['profile'] != 'IsolatedStationaryCombatScheduleV1' or order['scope'] != 'NativeSortedSubsetOnly' or order['full_world'] is not False or len(order['systems']) != len(expected) or set(order['systems']) != expected:
+    if moving: expected |= {'Game.Runtime.'+name for name in ('EngageTargetValidateSystem','EngageTargetSyncSystem','UnitPathfindingSystem','UnitGridMovementSystem','UnitDeathSystem')}
+    profile_name='IsolatedMovingCombatScheduleV1' if moving else 'IsolatedStationaryCombatScheduleV1'
+    marker='[SharedMovingLifecycleParity] result=Passed' if moving else REQUIRED_NATIVE_MARKER
+    if set(order) != {"profile", "scope", "full_world", "systems"} or order['profile'] != profile_name or order['scope'] != 'NativeSortedSubsetOnly' or order['full_world'] is not False or len(order['systems']) != len(expected) or set(order['systems']) != expected:
         raise ValueError("Unsupported captured native order")
     names = order['systems']
-    for first, last in [('DynamicOccupancyRebuildSystem','UnitEngagementSystem'),('UnitEngagementSystem','UnitEngagedMovementSystem'),('UnitEngagedMovementSystem','UnitAttackSystem'),('SkirmishObjectiveFactProjectionSystem','SkirmishBaseAssaultObjectiveSystem'),('SkirmishBaseAssaultObjectiveSystem','SkirmishOutcomeSystem')]:
+    for first, last in [('DynamicOccupancyRebuildSystem','UnitEngagedMovementSystem' if moving else 'UnitEngagementSystem'),('UnitEngagementSystem','UnitEngagedMovementSystem'),('UnitEngagedMovementSystem','UnitAttackSystem'),('SkirmishObjectiveFactProjectionSystem','SkirmishBaseAssaultObjectiveSystem'),('SkirmishBaseAssaultObjectiveSystem','SkirmishOutcomeSystem')]:
         if names.index('Game.Runtime.'+first) >= names.index('Game.Runtime.'+last): raise ValueError("Invalid native partial order")
+    if moving:
+        for first,last in [('EngageTargetValidateSystem','UnitEngagementSystem'),('UnitEngagementSystem','EngageTargetSyncSystem'),('EngageTargetSyncSystem','UnitEngagedMovementSystem'),('UnitEngagedMovementSystem','UnitGridMovementSystem'),('UnitPathfindingSystem','UnitGridMovementSystem'),('UnitAttackSystem','UnitDeathSystem')]:
+            if names.index('Game.Runtime.'+first)>=names.index('Game.Runtime.'+last): raise ValueError("Invalid moving native partial order")
     if not names[0].endswith('.BeginSimulationEntityCommandBufferSystem') or not names[-1].endswith('.EndSimulationEntityCommandBufferSystem'): raise ValueError("Invalid native playback order")
     log = Path(data['native_log']).resolve()
     if common.sha(log) != data['native_log_sha256']: raise ValueError("Native log hash differs")
     text = log.read_text(errors='replace')
-    matches = [json.loads(line.split('[WorldSchedulingNativeOrder] ',1)[1]) for line in text.splitlines() if '[WorldSchedulingNativeOrder] ' in line]
-    if order not in matches or REQUIRED_NATIVE_MARKER not in text or '[SharedWorldTargetingParity] result=Failed' in text:
+    if not moving and '[SharedMovingLifecycleParity] result=Passed' in text:
+        marker='[SharedMovingLifecycleParity] result=Passed'
+    order_marker='[MovingWorldSchedulingNativeOrder] ' if moving else '[WorldSchedulingNativeOrder] '
+    matches = [json.loads(line.split(order_marker,1)[1]) for line in text.splitlines() if order_marker in line]
+    if order not in matches or marker not in text or marker.replace('Passed','Failed') in text:
         raise ValueError("Missing captured order or successful native suite marker")
     required_sources = {p for p in PINS if p.startswith('Assets/')}
     if not required_sources <= set(data['source_pins']): raise ValueError("Native receipt lacks required source pins: " + ','.join(sorted(required_sources-set(data['source_pins']))))
@@ -64,16 +85,17 @@ def schedule_profile(project, receipt):
             if Path(relative).is_absolute() or not path.is_relative_to(project) or not relative.startswith(('Assets/','ProjectSettings/','Packages/')):
                 raise ValueError("Unsafe native receipt pin")
             if not isinstance(digest,str) or not re.fullmatch('[a-f0-9]{64}',digest) or common.sha(path)!=digest: raise ValueError("Native receipt source/settings drift: " + relative)
-    return dict(enabled=True,order=order,native_log_sha256=data['native_log_sha256'],required_marker=REQUIRED_NATIVE_MARKER,
+    return dict(enabled=True,order=order,native_log_sha256=data['native_log_sha256'],required_marker=marker,
                 source_pins=data['source_pins'],settings_pins=data['settings_pins'],receipt_sha256=common.sha(receipt))
 
 
-def build(project, output, schedule_receipt=None):
+def build(project, output, schedule_receipt=None, moving_schedule_receipt=None):
     project = Path(project).resolve()
     dotnet = shutil.which("dotnet")
     if not dotnet:
         raise ValueError("Installed .NET 8 SDK required; no download attempted")
     profile = schedule_profile(project, schedule_receipt)
+    profile["moving"] = schedule_profile(project, moving_schedule_receipt, True)
     output = common.new_output(project, output)
     listed = common.execute([dotnet, "--list-sdks"], output, "sdk-list")
     versions = re.findall(r"(?m)^(8\.\d+\.\d+) \[", listed.stdout.decode())
@@ -97,7 +119,7 @@ def build(project, output, schedule_receipt=None):
         raise RuntimeError("Standalone world compilation failed; see compile logs in " + str(output))
     if any(common.sha(project/name) != value for name, value in pins.items()) or any(common.sha(stage/Path(name).name) != pins[name] for name in SOURCES):
         raise ValueError("Source changed during build; discard candidate")
-    if schedule_receipt is not None and schedule_profile(project, schedule_receipt) != profile:
+    if dict(schedule_profile(project, schedule_receipt),moving=schedule_profile(project,moving_schedule_receipt,True)) != profile:
         raise ValueError("Native schedule receipt changed during build")
     (output/"profile.json").write_text(json.dumps(profile, sort_keys=True, indent=2)+"\n")
     build_files={str(p.relative_to(output)): common.sha(p) for p in sorted((output/"bin").iterdir()) if p.is_file()}
@@ -129,9 +151,10 @@ def run(build_path, input_path, output):
         if any(common.sha(build_path/p) != v for p,v in bins.items()):
             raise ValueError("Built artifact changed; rebuild")
         profile = json.loads((build_path/"profile.json").read_text())
-        if profile.get("enabled"):
+        for captured_profile in (profile,profile.get("moving",{})):
+          if captured_profile.get("enabled"):
             for group in ("source_pins", "settings_pins"):
-                for relative,digest in profile[group].items():
+                for relative,digest in captured_profile[group].items():
                     path=(project/relative).resolve()
                     if Path(relative).is_absolute() or not path.is_relative_to(project) or not relative.startswith(("Assets/","ProjectSettings/","Packages/")):
                         raise ValueError("Unsafe captured profile pin")
@@ -156,12 +179,12 @@ def run(build_path, input_path, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
-    b = sub.add_parser("build"); b.add_argument("--project", type=Path, required=True); b.add_argument("--output", type=Path, required=True); b.add_argument("--schedule-receipt", type=Path)
+    b = sub.add_parser("build"); b.add_argument("--project", type=Path, required=True); b.add_argument("--output", type=Path, required=True); b.add_argument("--schedule-receipt", type=Path); b.add_argument("--moving-schedule-receipt", type=Path)
     r = sub.add_parser("run"); r.add_argument("--build", type=Path, required=True); r.add_argument("--input", type=Path, required=True); r.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
         if args.command == "build":
-            result = build(args.project, args.output, args.schedule_receipt)
+            result = build(args.project, args.output, args.schedule_receipt, args.moving_schedule_receipt)
             print(json.dumps(dict(result="built", sdk=result["sdk"], source_files=len(result["source_pins"]), native_runs=0, output=str(args.output))))
             return 0
         result = run(args.build, args.input, args.output)

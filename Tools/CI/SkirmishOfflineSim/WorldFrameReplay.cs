@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Game.Runtime;
+using Game.Components;
 using Game.Runtime.Combat;
 using Game.Skirmish.Contracts;
 
@@ -25,6 +26,11 @@ internal static class WorldFrameReplay
         public ushort CoverPermille;
         public Weapon Weapon;
         public JsonElement Acquisition;
+        public bool MovingProfile;
+        public byte CanAttack=1,EngageIsCommanded=0;
+        public GridCoordinateFrame Coordinates;
+        public float EngageX,EngageY,EngageZ;
+        public int EngageCellX,EngageCellZ;
         public bool Mobile => Kind == "infantry";
     }
     internal static void Need(bool condition,string message) => WorldJson.Need(condition,message);
@@ -34,11 +40,11 @@ internal static class WorldFrameReplay
     { float n=j.GetProperty(name).GetSingle();Need(float.IsFinite(n)&&n>=min&&n<=max,name+" outside range");return n; }
     static string Text(JsonElement j,string name)
     { string s=j.GetProperty(name).GetString();Need(!string.IsNullOrWhiteSpace(s),name+" required");return s; }
-    static Actor ReadActor(JsonElement row)
+    internal static Actor ReadActor(JsonElement row,bool moving=false)
     {
         WorldJson.Shape(row,new[]{"id","kind","index","version","health","faction","x","y","z","cell_x","cell_z","radius",
             "has_unit_grid","combat_suppressed","has_animation_order","has_engage","target","cover_eligible","cover_permille","protected_records","weapon","acquisition"});
-        var a=new Actor { Id=Text(row,"id"),Kind=Text(row,"kind"),Index=Int(row,"index",1,int.MaxValue),Version=Int(row,"version",1,int.MaxValue),
+        var a=new Actor { MovingProfile=moving, Id=Text(row,"id"),Kind=Text(row,"kind"),Index=Int(row,"index",1,int.MaxValue),Version=Int(row,"version",1,int.MaxValue),
             Health=Int(row,"health",0,int.MaxValue),Faction=(byte)Int(row,"faction",1,255),X=Float(row,"x",-1000000,1000000),
             Y=Float(row,"y",-1000000,1000000),Z=Float(row,"z",-1000000,1000000),CellX=Int(row,"cell_x",-1000000,1000000),CellZ=Int(row,"cell_z",-1000000,1000000),
             Radius=Float(row,"radius",0,10000),HasEngage=row.GetProperty("has_engage").GetBoolean(),Target=row.GetProperty("target").GetString(),
@@ -82,7 +88,7 @@ internal static class WorldFrameReplay
         string provenance=WorldSchedule.Hash;
         float cellSize=Float(scenario,"cell_size",.001f,10000);
         var actorRows=scenario.GetProperty("actors");Need(actorRows.ValueKind==JsonValueKind.Array&&actorRows.GetArrayLength()>=2&&actorRows.GetArrayLength()<=128,"2..128 actors required");
-        var actors=actorRows.EnumerateArray().Select(ReadActor).ToList();
+        var actors=actorRows.EnumerateArray().Select(row=>ReadActor(row)).ToList();
         Need(actors.Select(a=>a.Id).Distinct().Count()==actors.Count&&actors.Select(a=>(a.Index,a.Version)).Distinct().Count()==actors.Count,"Duplicate actor identity");
         var byId=actors.ToDictionary(a=>a.Id,StringComparer.Ordinal);
         Need(actors.All(a=>a.Recent==""||byId.ContainsKey(a.Recent)),"Unknown initial recent-attacker identity");

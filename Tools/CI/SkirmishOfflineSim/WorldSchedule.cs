@@ -13,6 +13,7 @@ internal static class WorldSchedule
     {
         byte[] bytes=System.IO.File.ReadAllBytes(path);Hash=Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant();
         using var doc=JsonDocument.Parse(bytes);var root=doc.RootElement;
+        MovingWorldReplay.Load(root);
         Enabled=root.GetProperty("enabled").GetBoolean();
         if(!Enabled)return;
         var order=root.GetProperty("order");Profile=order.GetProperty("profile").GetString();

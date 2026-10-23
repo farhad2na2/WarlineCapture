@@ -8,10 +8,10 @@ namespace Game.Runtime
 {
     internal struct UnitPathGoalAssignment
     {
-        public const int InfantryGoalSearchRadius = 10;
-        public const int VehicleGoalSearchRadius = 20;
-        public const int InfantryAlternateGoalCandidates = 16;
-        public const int VehicleAlternateGoalCandidates = 32;
+        public const int InfantryGoalSearchRadius = PathGoalPolicyKernel.InfantryGoalSearchRadius;
+        public const int VehicleGoalSearchRadius = PathGoalPolicyKernel.VehicleGoalSearchRadius;
+        public const int InfantryAlternateGoalCandidates = PathGoalPolicyKernel.InfantryAlternateGoalCandidates;
+        public const int VehicleAlternateGoalCandidates = PathGoalPolicyKernel.VehicleAlternateGoalCandidates;
 
         public int2 FindNearestFreeGoal(
             in GridConfig grid,
@@ -50,36 +50,17 @@ namespace Game.Runtime
                 }
             }
 
-            if (GridUtils.InBounds(desiredGoal, grid.Width, grid.Height))
+            var identityContext = new GoalIdentityContext
             {
-                int desiredIndex = GridUtils.CellToIndex(desiredGoal, grid.Width);
-                if (desiredIndex == startIndex)
-                    return desiredGoal;
-                if (CanUseGoalCell(
-                        grid,
-                        walkable,
-                        dynamicBlocked,
-                        friendlyPassFactionIds,
-                        occupied,
-                        liveUnitEntities,
-                        liveUnitGrids,
-                        liveUnitFootprints,
-                        reservedGoalEpochs,
-                        reservedGoalGeneration,
-                        movingEntity,
-                        ignoredOccupancyEntity,
-                        ignoredOccupancyCell,
-                        ignoredOccupancySize,
-                        surfaceContext,
-                        desiredGoal,
-                        footprintSize,
-                        startCell,
-                        factionId))
-                {
-                    UnitPathReservedGoal.ReserveGoalFootprint(grid, reservedGoalEpochs, reservedGoalGeneration, desiredGoal, footprintSize);
-                    return desiredGoal;
-                }
-            }
+                Grid=grid, Walkable=walkable, DynamicBlocked=dynamicBlocked, Friendly=friendlyPassFactionIds, Occupied=occupied,
+                Entities=liveUnitEntities, Grids=liveUnitGrids, Footprints=liveUnitFootprints, Reserved=reservedGoalEpochs,
+                Generation=reservedGoalGeneration, Moving=movingEntity, Ignored=ignoredOccupancyEntity,
+                IgnoredCell=ignoredOccupancyCell, IgnoredSize=ignoredOccupancySize, Surface=surfaceContext,
+                Footprint=footprintSize, Start=startCell, Faction=factionId
+            };
+            if (PathGoalPolicyKernel.TryUseDesiredGoal(ref identityContext,
+                new PlacementCell(desiredGoal.x,desiredGoal.y),startIndex,out var directGoal))
+                return new int2(directGoal.x,directGoal.y);
 
             bool isVehicle = footprintSize.x > 1 || footprintSize.y > 1;
             int maxRadius = math.min(
@@ -140,6 +121,30 @@ namespace Game.Runtime
             }
 
             return startCell;
+        }
+
+        private struct GoalIdentityContext : IPathGoalIdentityContext
+        {
+            public GridConfig Grid;
+            public NativeArray<GridWalkable> Walkable;
+            public NativeBitArray DynamicBlocked, Occupied;
+            public NativeArray<byte> Friendly;
+            public NativeArray<Entity> Entities;
+            public NativeArray<UnitGrid> Grids;
+            public NativeArray<UnitFootprint> Footprints;
+            public NativeArray<int> Reserved;
+            public int Generation;
+            public Entity Moving, Ignored;
+            public int2 IgnoredCell, IgnoredSize, Footprint, Start;
+            public MapSurfacePathfindingSnapshot.Context Surface;
+            public byte Faction;
+            public int Width => Grid.Width;
+            public int Height => Grid.Height;
+            public bool CanUseGoal(PlacementCell cell) => CanUseGoalCell(Grid,Walkable,DynamicBlocked,Friendly,Occupied,
+                Entities,Grids,Footprints,Reserved,Generation,Moving,Ignored,IgnoredCell,IgnoredSize,Surface,
+                new int2(cell.x,cell.y),Footprint,Start,Faction);
+            public void ReserveGoal(PlacementCell cell) => UnitPathReservedGoal.ReserveGoalFootprint(
+                Grid,Reserved,Generation,new int2(cell.x,cell.y),Footprint);
         }
 
         public static bool CanUseGoalCell(

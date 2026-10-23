@@ -78,26 +78,26 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
+            bool playRequested = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested != 0;
+            var admission = Pathfinding.PathJobSchedulingKernel.Decide(playRequested, _hasPendingPathJob,
+                playRequested && _hasPendingPathJob && _pendingPathHandle.IsCompleted);
+            if (admission == Pathfinding.PathJobAdmission.Inactive || admission == Pathfinding.PathJobAdmission.CancelPending)
             {
-                if (_hasPendingPathJob)
+                if (admission == Pathfinding.PathJobAdmission.CancelPending)
                     DisposePendingPathJob(ref state);
                 PublishPendingState(ref state);
                 return;
             }
 
-            if (_hasPendingPathJob)
+            if (admission == Pathfinding.PathJobAdmission.WaitPending)
             {
-                if (!_pendingPathHandle.IsCompleted)
-                {
-                    _budget.ReduceForPendingJob(Time.frameCount, _pendingScheduleFrame, _pendingRequestBudget);
-                    // Intentionally NOT chained into state.Dependency: the job only reads
-                    // system-owned snapshots (see UnitPathGridSnapshot), so nothing on
-                    // the main thread should ever be forced to wait for it.
-                    PublishPendingState(ref state);
-                    return;
-                }
-
+                _budget.ReduceForPendingJob(Time.frameCount, _pendingScheduleFrame, _pendingRequestBudget);
+                // The job reads system-owned snapshots; never block the main thread here.
+                PublishPendingState(ref state);
+                return;
+            }
+            if (admission == Pathfinding.PathJobAdmission.ApplyThenSchedule)
+            {
                 _apply.Apply(
                     ref state,
                     ref _queries,

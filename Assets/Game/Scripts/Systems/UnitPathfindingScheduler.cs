@@ -223,8 +223,8 @@ namespace Game.Runtime
                     bool isSegmentedRequest = !pathGoal.Equals(requestedGoal);
                     segmented[i] = (byte)(isSegmentedRequest ? 1 : 0);
                     bool cheapSegmentMode = isManualMove && !isVehicle;
-                    cheapSegmentModes[i] = (byte)(detailedHaulerPath ? 3 : detailedVehiclePath && isVehicle ? 2 : cheapSegmentMode ? 1 : 0);
-                    bool skipAlternateSearch = detailedHaulerPath || isManualMove && (!isVehicle || detailedSkirmishPath);
+                    cheapSegmentModes[i] = PathGoalPolicyKernel.GetRoutingMode(isManualMove,isVehicle,detailedSkirmishPath,detailedHaulerPath);
+                    bool skipAlternateSearch = PathGoalPolicyKernel.SkipAlternateSearch(isManualMove,isVehicle,detailedSkirmishPath,detailedHaulerPath);
                     alternateSearchSkipped[i] = (byte)(skipAlternateSearch ? 1 : 0);
                     alternateAttempts[i] = 0;
                     int2 assignedGoal = goalAssignment.FindNearestFreeGoal(

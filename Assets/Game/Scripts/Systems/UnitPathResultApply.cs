@@ -2,6 +2,8 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Game.Components;
+using Game.Runtime.Movement;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {
@@ -46,15 +48,16 @@ namespace Game.Runtime
             for (int i = 0; i < entities.Length; i++)
             {
                 var entity = entities[i];
-                bool entityHasMatchingRequest =
-                    em.Exists(entity) &&
-                    em.HasComponent<UnitPathRequest>(entity) &&
-                    em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(requests[i].Goal);
+                bool exists = em.Exists(entity);
+                bool hasRequest = exists && em.HasComponent<UnitPathRequest>(entity);
+                int2 currentGoal = hasRequest ? em.GetComponentData<UnitPathRequest>(entity).Goal : default;
+                bool entityHasMatchingRequest = InfantryPathLifecycleKernel.MatchingRequest(exists, hasRequest,
+                    new PlacementCell(currentGoal.x, currentGoal.y), new PlacementCell(requests[i].Goal.x, requests[i].Goal.y));
 
                 int count = reader.BeginForEachIndex(i);
                 int start = pool.Cells.Length;
                 int2 pathEnd = default;
-                bool writePathSurfaceMetadata = entityHasMatchingRequest && status[i] == 1 && count > 0;
+                bool writePathSurfaceMetadata = entityHasMatchingRequest && InfantryPathLifecycleKernel.SuccessfulResult(status[i], count);
                 DynamicBuffer<UnitPathSurfaceNode> surfaceBuffer = default;
                 UnitSurfaceComponent currentSurface = default;
                 if (writePathSurfaceMetadata)
@@ -96,14 +99,18 @@ namespace Game.Runtime
                     continue;
 
                 if (em.HasComponent<SupportCollectOrderComponent>(entity) &&
-                    !SupportSupplyAdapterSystemHelper.ValidateCollectionPathResult(em, entity, em.GetComponentData<GridConfig>(gridEntity), pathEnd, status[i] == 1 && count > 0, segmented[i] != 0))
+                    !SupportSupplyAdapterSystemHelper.ValidateCollectionPathResult(em, entity, em.GetComponentData<GridConfig>(gridEntity), pathEnd, InfantryPathLifecycleKernel.SuccessfulResult(status[i], count), segmented[i] != 0))
                 {
                     surfaceMetadata.ClearIfPresent(em, entity);
                     abandonedCount++;
                     continue;
                 }
 
-                if (status[i] == 1 && count > 0)
+                var intent = InfantryPathLifecycleKernel.ApplyResult(entityHasMatchingRequest, status[i], count, start,
+                    new PlacementCell(requests[i].Goal.x, requests[i].Goal.y), new PlacementCell(assignedGoals[i].x, assignedGoals[i].y),
+                    segmented[i], manualMoves[i], em.HasComponent<ManualMoveOrderTag>(entity),
+                    em.HasComponent<UnitLongDistanceMove>(entity), UnityEngine.Time.frameCount);
+                if (intent.Disposition == PathResultDisposition.Success)
                 {
                     completedCount++;
                     if (segmented[i] != 0)
@@ -114,16 +121,16 @@ namespace Game.Runtime
                         em.RemoveComponent<UnitPathRetryCooldown>(entity);
 
                     if (em.HasComponent<UnitTarget>(entity))
-                        em.SetComponentData(entity, new UnitTarget { Cell = assignedGoals[i] });
+                        em.SetComponentData(entity, new UnitTarget { Cell = new int2(intent.Target.x, intent.Target.y) });
                     else
-                        em.AddComponentData(entity, new UnitTarget { Cell = assignedGoals[i] });
+                        em.AddComponentData(entity, new UnitTarget { Cell = new int2(intent.Target.x, intent.Target.y) });
 
                     if (em.HasComponent<UnitPathFollow>(entity))
                         em.SetComponentData(entity, follow);
                     else
                         em.AddComponentData(entity, follow);
 
-                    var range = new UnitPathRange { Start = start, Length = count };
+                    var range = new UnitPathRange { Start = intent.PathStart, Length = intent.PathLength };
                     if (em.HasComponent<UnitPathRange>(entity))
                         em.SetComponentData(entity, range);
                     else
@@ -156,7 +163,7 @@ namespace Game.Runtime
                     if (em.HasComponent<AutoWanderMoveTag>(entity))
                         em.RemoveComponent<AutoWanderMoveTag>(entity);
 
-                    if (retry.ShouldRetryManualMove(em, entity, segmented[i]))
+                    if (intent.Disposition == PathResultDisposition.Retry)
                     {
                         retry.ApplyRetry(em, entity, requests[i], segmented[i], manualMoves[i], ref retriedCount, ref retriedSegmentCount, ref manualRetriedCount);
                     }

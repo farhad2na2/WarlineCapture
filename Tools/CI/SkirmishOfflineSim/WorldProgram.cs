@@ -11,6 +11,7 @@ static class WorldProgram
         string kind = row.GetProperty("kind").GetString();
         if (kind == "squad_target") return SquadReplay.Run(row);
         if (kind == "world") return WorldFrameReplay.Run(row);
+        if (kind == "moving_world") return MovingWorldReplay.Run(row);
         throw new ArgumentException("Unsupported world case kind: " + kind);
     }
     public static int Main(string[] args)
@@ -32,6 +33,9 @@ static class WorldProgram
             foreach(var row in cases.EnumerateArray())
                 if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var kind)&&kind.GetString()=="world"&&row.TryGetProperty("actors",out var actors)&&actors.ValueKind==JsonValueKind.Array&&row.TryGetProperty("frames",out var frames)&&frames.ValueKind==JsonValueKind.Array)
                     work+=(long)actors.GetArrayLength()*actors.GetArrayLength()*frames.GetArrayLength();
+            foreach(var row in cases.EnumerateArray())
+                if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var movingKind)&&movingKind.GetString()=="moving_world"&&row.TryGetProperty("units",out var movingUnits)&&movingUnits.ValueKind==JsonValueKind.Array&&row.TryGetProperty("frames",out var movingFrames)&&movingFrames.ValueKind==JsonValueKind.Array)
+                    work+=(long)movingUnits.GetArrayLength()*movingUnits.GetArrayLength()*movingFrames.GetArrayLength();
             WorldJson.Need(work<=2000000,"Aggregate world work budget exceeded");
             var ids = new HashSet<string>();
             var results = new List<object>();

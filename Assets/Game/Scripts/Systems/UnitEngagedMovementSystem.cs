@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Game.Components;
+using Game.Runtime.Movement;
 
 namespace Game.Runtime
 {
@@ -76,7 +77,7 @@ namespace Game.Runtime
             typeof(UnitDeathAnimationComponent),
             typeof(UnitAirMovement),
             typeof(CampaignMissionStationaryUnitTag))]
-        private partial struct EngagedMoveJob : IJobEntity
+        internal partial struct EngagedMoveJob : IJobEntity
         {
             public GridConfig Grid;
             public float DeltaTime;
@@ -110,215 +111,53 @@ namespace Game.Runtime
                 in UnitVehicleMovement vehicleMovement,
                 in Faction faction)
             {
-                float attackRange = math.max(0f, attack.Range);
-                if (attackRange <= 0f)
-                    return;
-
-                if (engage.Target == Entity.Null)
-                {
-                    return;
-                }
-
-                if (DebugFireTargetLookup.HasComponent(engage.Target) &&
-                    DebugFireTargetLookup[engage.Target].Source == entity)
-                {
-                    vehicleKinematics.CurrentSpeed = 0f;
-                    return;
-                }
-
-                bool staticTarget = StaticBlockerLookup.HasComponent(engage.Target);
-                bool hasTargetHealth = !staticTarget && HealthLookup.HasComponent(engage.Target);
-                if (Targeting.TargetAcquisitionKernel.ShouldClearUnavailableTarget(staticTarget, hasTargetHealth,
-                    hasTargetHealth ? HealthLookup[engage.Target].Current : 0))
-                {
-                    engage.Target = Entity.Null;
-                    engage.Cell = default;
-                    engage.Position = default;
-                    engage.IsCommanded = 0;
-                    vehicleKinematics.CurrentSpeed = 0f;
-                    return;
-                }
-
-                bool holdingPosition = HoldPositionLookup.HasComponent(entity);
-                bool scanning = TryGetActiveScanOrder(entity, out UnitScanOrder scanOrder);
-
-                // Keep UnitGrid in sync for engaged units so occupancy reflects actual positions (prevents "pushing").
-                int2 selfWorldCell = GridUtils.WorldToCell(Grid, transform.Position);
-                if (GridUtils.InBounds(selfWorldCell, Grid.Width, Grid.Height))
-                    selfGrid.Cell = selfWorldCell;
-
-                float3 otherPos = engage.Position;
-                float3 toOther = otherPos - transform.Position;
-                toOther.y = 0f;
-                float distSq = math.lengthsq(toOther);
-                float dist = math.sqrt(distSq);
-                float selfCombatRadius = GetCombatRadius(footprint.Size, Grid.CellSize);
-                float targetCombatRadius = FootprintLookup.HasComponent(engage.Target)
-                    ? GetCombatRadius(FootprintLookup[engage.Target].Size, Grid.CellSize)
-                    : 0f;
-                float effectiveAttackRange = attackRange + selfCombatRadius + targetCombatRadius;
-                float chaseLeash = math.max(
-                    math.max(0f, combat.ChaseBreakDistance),
-                    math.max(0, combat.AggroRangeCells) * Grid.CellSize);
-
-                if (scanning && !IsTargetInsideScanArea(engage.Position, scanOrder))
-                {
-                    engage.Target = Entity.Null;
-                    engage.Cell = default;
-                    engage.Position = default;
-                    engage.IsCommanded = 0;
-                    vehicleKinematics.CurrentSpeed = 0f;
-                    return;
-                }
-
-                if (holdingPosition && distSq > effectiveAttackRange * effectiveAttackRange)
-                {
-                    engage.Target = Entity.Null;
-                    engage.Cell = default;
-                    engage.Position = default;
-                    engage.IsCommanded = 0;
-                    vehicleKinematics.CurrentSpeed = 0f;
-                    return;
-                }
-
-                if (engage.IsCommanded == 0 && chaseLeash > 0f && dist > chaseLeash)
-                {
-                    engage.Target = Entity.Null;
-                    engage.Cell = default;
-                    engage.Position = default;
-                    engage.IsCommanded = 0;
-                    return;
-                }
-
-                bool isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior);
-
-                // If the enemy is in attack range, never move. Vehicles can attack in any direction.
-                if (distSq <= effectiveAttackRange * effectiveAttackRange)
-                {
-                    vehicleKinematics.CurrentSpeed = 0f;
-                    if (!isVehicle && math.lengthsq(toOther) > 1e-8f)
-                    {
-                        float3 targetDir = math.normalizesafe(toOther);
-                        transform.Rotation = quaternion.LookRotationSafe(targetDir, math.up());
-                    }
-                    return;
-                }
-
-                float3 desiredDirection = math.normalizesafe(toOther);
-                if (!isVehicle && distSq > 1e-8f)
-                    transform.Rotation = quaternion.LookRotationSafe(desiredDirection, math.up());
-
-                // Use world-space approach for engaged combat so units stop cleanly inside attack range instead
-                // of oscillating between cell-center combat slots.
-                float desiredWorldDistance = math.max(0.05f, effectiveAttackRange - 0.05f);
-                if (desiredWorldDistance > 0f)
-                {
-                    float remaining = dist - desiredWorldDistance;
-                    if (remaining <= 0f)
-                        return;
-
-                    float directMoveSpeed = move.Speed;
-                    if (GridUtils.InBounds(selfGrid.Cell, Grid.Width, Grid.Height))
-                    {
-                        int currentIndex = GridUtils.CellToIndex(selfGrid.Cell, Grid.Width);
-                        bool onPreferredSurface = isVehicle
-                            ? DirtRoads[currentIndex].Value != 0
-                            : Sidewalks[currentIndex].Value != 0;
-                        if (onPreferredSurface)
-                            directMoveSpeed *= move.RoadSpeedMultiplier;
-                    }
-
-                    float moveDistance = math.min(remaining, directMoveSpeed * DeltaTime);
-                    if (isVehicle)
-                    {
-                        float3 oldPosition = transform.Position;
-                        bool moved = UnitVehicleMovementUtility.MoveVehicle(
-                            ref transform,
-                            ref vehicleKinematics,
-                            vehicleMovement,
-                            desiredDirection,
-                            math.radians(8f),
-                            directMoveSpeed,
-                            DeltaTime,
-                            remaining);
-                        if (!moved)
-                            return;
-
-                        if (!CanMoveAlongSegment(oldPosition, transform.Position, footprint.Size, selfGrid.Cell, faction.Id))
-                        {
-                            transform.Position = oldPosition;
-                            vehicleKinematics.CurrentSpeed = 0f;
-                            return;
-                        }
-                    }
-                    else
-                    {
-                        vehicleKinematics.CurrentSpeed = 0f;
-                        float3 nextPosition = transform.Position + desiredDirection * moveDistance;
-                        if (!CanMoveAlongSegment(transform.Position, nextPosition, footprint.Size, selfGrid.Cell, faction.Id))
-                            return;
-
-                        transform.Position += desiredDirection * moveDistance;
-                    }
-
-                    int2 movedCell = GridUtils.WorldToCell(Grid, transform.Position);
-                    if (GridUtils.InBounds(movedCell, Grid.Width, Grid.Height))
-                        selfGrid.Cell = movedCell;
-                    return;
-                }
+                var context=new NativeContext{Job=this,Source=entity,Target=engage.Target};
+                var input=new EngagedMovementInput{GridWidth=Grid.Width,GridHeight=Grid.Height,CellSize=Grid.CellSize,DeltaTime=DeltaTime,
+                    AttackRange=attack.Range,AggroRangeCells=combat.AggroRangeCells,ChaseBreakDistance=combat.ChaseBreakDistance,
+                    MoveSpeed=move.Speed,RoadSpeedMultiplier=move.RoadSpeedMultiplier,Footprint=Cell(footprint.Size),FactionId=faction.Id,
+                    IsVehicle=UnitVehicleMovementUtility.IsVehicle(footprint,movementBehavior)};
+                var movement=new EngagedMovementState{Position=Point(transform.Position),Cell=Cell(selfGrid.Cell),
+                    TargetIndex=engage.Target.Index,TargetVersion=engage.Target.Version,TargetCell=Cell(engage.Cell),TargetPosition=Point(engage.Position),
+                    IsCommanded=engage.IsCommanded,CurrentSpeed=vehicleKinematics.CurrentSpeed};
+                var result=EngagedMovementKernel.Step(ref context,input,ref movement);
+                transform.Position=Vector(movement.Position);selfGrid.Cell=IntCell(movement.Cell);
+                engage.Target=new Entity{Index=movement.TargetIndex,Version=movement.TargetVersion};engage.Cell=IntCell(movement.TargetCell);
+                engage.Position=Vector(movement.TargetPosition);engage.IsCommanded=movement.IsCommanded;vehicleKinematics.CurrentSpeed=movement.CurrentSpeed;
+                if(result.WriteFacing)transform.Rotation=quaternion.LookRotationSafe(Vector(result.Direction),math.up());
+                if(!result.DelegateVehicle)return;
+                // Steering/rotation/kinematics remain the original native vehicle branch.
+                // Offline contexts must reject vehicle motion until that utility is shared.
+                float3 oldPosition=transform.Position;
+                bool moved=UnitVehicleMovementUtility.MoveVehicle(ref transform,ref vehicleKinematics,vehicleMovement,
+                    Vector(result.Direction),math.radians(8f),result.DirectMoveSpeed,DeltaTime,result.Remaining);
+                if(!moved)return;
+                if(!EngagedMovementKernel.CanMoveAlongSegment(ref context,input,Point(oldPosition),Point(transform.Position),Cell(footprint.Size),Cell(selfGrid.Cell),faction.Id))
+                {transform.Position=oldPosition;vehicleKinematics.CurrentSpeed=0f;return;}
+                int2 movedCell=GridUtils.WorldToCell(Grid,transform.Position);
+                if(GridUtils.InBounds(movedCell,Grid.Width,Grid.Height))selfGrid.Cell=movedCell;
             }
-
-            private static float GetCombatRadius(int2 footprintSize, float cellSize)
+            private static EngagedPosition Point(float3 p)=>new EngagedPosition(p.x,p.y,p.z);
+            private static float3 Vector(EngagedPosition p)=>new float3(p.X,p.Y,p.Z);
+            private static EngagedCell Cell(int2 p)=>new EngagedCell(p.x,p.y);
+            private static int2 IntCell(EngagedCell p)=>new int2(p.X,p.Z);
+            private struct NativeContext:IEngagedMovementContext
             {
-                int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
-                float halfWidth = math.max(0f, (clamped.x - 1) * 0.5f * cellSize);
-                float halfDepth = math.max(0f, (clamped.y - 1) * 0.5f * cellSize);
-                return math.max(halfWidth, halfDepth);
-            }
-
-            private bool TryGetActiveScanOrder(Entity entity, out UnitScanOrder scanOrder)
-            {
-                scanOrder = default;
-                if (!ScanOrderLookup.HasComponent(entity))
-                    return false;
-
-                scanOrder = ScanOrderLookup[entity];
-                return scanOrder.HasStarted != 0 &&
-                       scanOrder.RadiusCells > 0;
-            }
-
-            private bool IsTargetInsideScanArea(float3 targetPosition, in UnitScanOrder scanOrder)
-            {
-                int2 targetCell = GridUtils.WorldToCell(Grid, targetPosition);
-                if (!GridUtils.InBounds(targetCell, Grid.Width, Grid.Height))
-                    return false;
-
-                return ChebyshevDistance(targetCell, scanOrder.CenterCell) <= math.max(1, scanOrder.RadiusCells);
-            }
-
-            private static int ChebyshevDistance(int2 a, int2 b)
-            {
-                int2 delta = math.abs(a - b);
-                return math.max(delta.x, delta.y);
-            }
-
-            private bool CanMoveAlongSegment(float3 startPosition, float3 endPosition, int2 footprintSize, int2 currentCell, byte factionId)
-            {
-                float2 delta = new float2(endPosition.x - startPosition.x, endPosition.z - startPosition.z);
-                float distance = math.length(delta);
-                float sampleDistance = math.max(0.05f, Grid.CellSize * 0.45f);
-                int steps = math.max(1, (int)math.ceil(distance / sampleDistance));
-
-                for (int i = 1; i <= steps; i++)
+                public EngagedMoveJob Job;public Entity Source,Target;
+                public bool DebugTargetForSource()=>Job.DebugFireTargetLookup.HasComponent(Target)&&Job.DebugFireTargetLookup[Target].Source==Source;
+                public bool TargetIsStatic()=>Job.StaticBlockerLookup.HasComponent(Target);
+                public bool TargetHasHealth()=>Job.HealthLookup.HasComponent(Target);
+                public int TargetHealth()=>Job.HealthLookup[Target].Current;
+                public bool HoldingPosition()=>Job.HoldPositionLookup.HasComponent(Source);
+                public bool TryReadScan(out EngagedScanOrder scan)
                 {
-                    float t = (float)i / steps;
-                    float3 samplePosition = math.lerp(startPosition, endPosition, t);
-                    int2 sampleCell = GridUtils.WorldToCell(Grid, samplePosition);
-                    if (!CanMoveIntoCell(sampleCell, footprintSize, currentCell, factionId))
-                        return false;
+                    scan=default;if(!Job.ScanOrderLookup.HasComponent(Source))return false;
+                    var value=Job.ScanOrderLookup[Source];scan=new EngagedScanOrder{Center=Cell(value.CenterCell),RadiusCells=value.RadiusCells,HasStarted=value.HasStarted};return true;
                 }
-
-                return true;
+                public bool TryTargetFootprint(out EngagedCell footprint)
+                {footprint=default;if(!Job.FootprintLookup.HasComponent(Target))return false;footprint=Cell(Job.FootprintLookup[Target].Size);return true;}
+                public EngagedCell WorldToCell(EngagedPosition p)=>Cell(GridUtils.WorldToCell(Job.Grid,Vector(p)));
+                public bool PreferredSurface(bool vehicle,int index)=>vehicle?Job.DirtRoads[index].Value!=0:Job.Sidewalks[index].Value!=0;
+                public bool CanMoveIntoCell(EngagedCell target,EngagedCell footprint,EngagedCell current,byte faction)=>Job.CanMoveIntoCell(IntCell(target),IntCell(footprint),IntCell(current),faction);
             }
 
             private bool CanMoveIntoCell(int2 targetCell, int2 footprintSize, int2 currentCell, byte factionId)

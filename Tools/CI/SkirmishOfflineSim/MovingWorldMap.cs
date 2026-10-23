@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.IO;
+using System.Security.Cryptography;
+using System.Buffers.Binary;
 using Game.Components;
 using Game.Runtime.Navigation;
 using Game.Runtime.Pathfinding;
@@ -19,17 +22,68 @@ internal sealed class MovingWorldMap
     internal int NextEpoch,ReservationGeneration,ReservationGridSize;
     internal int[] ReservedEpochs;
     internal void PrepareReservations(){var decision=PathGoalReservationKernel.DecidePrepare(ReservedEpochs!=null,ReservationGridSize,ReservationGeneration,Width*Height);if(decision.Reallocate)ReservedEpochs=new int[Width*Height];else if(decision.Clear)Array.Clear(ReservedEpochs);ReservationGeneration=decision.Generation;ReservationGridSize=decision.RememberedGridSize;}
-    internal static MovingWorldMap Read(JsonElement j)
+    // Full-grid admission is deliberately opt-in only for the multi-unit caller. These
+    // are complete evaluated production-policy facts, never a raw surface admission
+    // mask substituted for footprint legality or traversal costs.
+    internal static MovingWorldMap Read(JsonElement j,bool allowFullMap=false,string artifactRoot=null)
     {
-        WorldJson.Shape(j,new[]{"width","height","coordinates","provenance","walkable","dynamic_blocked","friendly_pass","sidewalk","dirt_road","surface_cell","surface_footprint","cardinal_cost","diagonal_cost"});
+        bool full=j.TryGetProperty("full_map_policy",out var policy);
+        var fields=new[]{"width","height","coordinates","provenance","walkable","dynamic_blocked","friendly_pass","sidewalk","dirt_road","surface_cell","surface_footprint","cardinal_cost","diagonal_cost"};
+        WorldJson.Shape(j,full?fields.Concat(new[]{"full_map_policy"}).ToArray():fields);
         var m=new MovingWorldMap{Width=j.GetProperty("width").GetInt32(),Height=j.GetProperty("height").GetInt32()};
-        WorldJson.Need(m.Width>0&&m.Width<=64&&m.Height>0&&m.Height<=64,"Moving profile requires grid dimensions 1..64");
+        long count=(long)m.Width*m.Height;
+        WorldJson.Need(m.Width>0&&m.Height>0&&count<=16777216,"Moving grid must contain 1..16777216 cells");
+        WorldJson.Need(full||m.Width<=64&&m.Height<=64,"Moving profile requires grid dimensions 1..64 without full_map_policy");
+        if(full)
+        {
+            WorldJson.Need(allowFullMap,"Full-map facts require the multi-unit ordinary infantry profile");
+            WorldJson.Shape(policy,new[]{"profile","complete","footprint_x","footprint_z","manual","vehicle","hierarchical","surface_policy","traversal_policy"});
+            WorldJson.Need(policy.GetProperty("profile").GetString()=="complete_cell_facts_ordinary_1x1_infantry_v1"&&policy.GetProperty("complete").GetBoolean()&&
+                policy.GetProperty("footprint_x").GetInt32()==1&&policy.GetProperty("footprint_z").GetInt32()==1&&!policy.GetProperty("manual").GetBoolean()&&
+                !policy.GetProperty("vehicle").GetBoolean()&&!policy.GetProperty("hierarchical").GetBoolean(),"Unsupported or incomplete full-map policy");
+            WorldJson.Need(!string.IsNullOrWhiteSpace(policy.GetProperty("surface_policy").GetString())&&!string.IsNullOrWhiteSpace(policy.GetProperty("traversal_policy").GetString()),"Production surface/traversal policy provenance required");
+            WorldJson.Need(!string.IsNullOrWhiteSpace(artifactRoot),"Captured artifact root required for full-map facts");
+        }
         WorldJson.Need(!string.IsNullOrWhiteSpace(j.GetProperty("provenance").GetString()),"Static map/surface provenance required; synthetic inputs must say synthetic");
         WorldJson.FactsShape(j.GetProperty("coordinates"),typeof(GridCoordinateFrame));m.Frame=j.GetProperty("coordinates").Deserialize<GridCoordinateFrame>(WorldJson.Json);WorldJson.FiniteFields(m.Frame);
-        WorldJson.Need(m.Frame.CellSize>=.01f&&m.Frame.CellSize<=100,"Invalid grid cell size");int n=m.Width*m.Height;
-        int[] Values(string name,int min,int max){var a=j.GetProperty(name);WorldJson.Need(a.ValueKind==JsonValueKind.Array&&a.GetArrayLength()==n,"Incomplete map array: "+name);return a.EnumerateArray().Select(v=>{int x=v.GetInt32();WorldJson.Need(x>=min&&x<=max,"Invalid "+name);return x;}).ToArray();}
-        m.Walkable=Values("walkable",0,1).Select(x=>(byte)x).ToArray();m.Blocked=Values("dynamic_blocked",0,1).Select(x=>x!=0).ToArray();m.Friendly=Values("friendly_pass",0,255).Select(x=>(byte)x).ToArray();
-        m.Sidewalk=Values("sidewalk",0,1).Select(x=>(byte)x).ToArray();m.Dirt=Values("dirt_road",0,1).Select(x=>(byte)x).ToArray();m.CellSurface=Values("surface_cell",0,1).Select(x=>x!=0).ToArray();m.FootprintSurface=Values("surface_footprint",0,1).Select(x=>x!=0).ToArray();m.Cardinal=Values("cardinal_cost",1,10000);m.Diagonal=Values("diagonal_cost",1,10000);m.Counts=new int[n];m.Occupied=new bool[n];return m;
+        WorldJson.Need(m.Frame.CellSize>=.01f&&m.Frame.CellSize<=100,"Invalid grid cell size");int n=(int)count;long artifactBytes=0;
+        byte[] Artifact(JsonElement value,string encoding,int stride,string name)
+        {
+            WorldJson.Need(artifactRoot!=null,"Captured artifact root required");
+            WorldJson.Shape(value,new[]{"path","sha256","bytes","encoding"});
+            string root=Path.GetFullPath(artifactRoot),supplied=value.GetProperty("path").GetString();
+            WorldJson.Need(!string.IsNullOrWhiteSpace(supplied),"Artifact path required");
+            string path=Path.GetFullPath(Path.IsPathRooted(supplied)?supplied:Path.Combine(root,supplied));
+            WorldJson.Need(path.StartsWith(root.TrimEnd(Path.DirectorySeparatorChar)+Path.DirectorySeparatorChar,StringComparison.Ordinal),"Artifact escape");
+            // Reject symlinks even within the captured directory: closure cannot depend
+            // on a link target changing between staging and execution.
+            for(var item=new FileInfo(path) as FileSystemInfo;item!=null;item=item is FileInfo file?file.Directory:((DirectoryInfo)item).Parent)
+                WorldJson.Need((item.Attributes&FileAttributes.ReparsePoint)==0,"Artifact symlink unsupported");
+            long expected=(long)n*stride;artifactBytes+=expected;
+            WorldJson.Need(artifactBytes<=512L*1024*1024&&value.GetProperty("encoding").GetString()==encoding&&value.GetProperty("bytes").GetInt64()==expected,"Artifact shape/encoding differs: "+name);
+            string hash=value.GetProperty("sha256").GetString();
+            WorldJson.Need(hash!=null&&hash.Length==64&&hash.All(c=>"0123456789abcdef".Contains(c)),"Artifact SHA256 required");
+            WorldJson.Need(new FileInfo(path).Length==expected,"Artifact length differs: "+name);
+            byte[] bytes=File.ReadAllBytes(path);
+            WorldJson.Need(bytes.LongLength==expected&&Convert.ToHexString(SHA256.HashData(bytes)).ToLowerInvariant()==hash,"Artifact bytes differ: "+name);
+            return bytes;
+        }
+        byte[] Bytes(string name,int max)
+        {
+            var value=j.GetProperty(name);byte[] result;
+            if(value.ValueKind==JsonValueKind.Array){WorldJson.Need(!full&&value.GetArrayLength()==n,"Complete captured artifacts required: "+name);result=new byte[n];int i=0;foreach(var v in value.EnumerateArray())result[i++]=v.GetByte();}
+            else result=Artifact(value,"u8",1,name);
+            WorldJson.Need(result.All(x=>x<=max),"Invalid "+name);return result;
+        }
+        int[] Costs(string name)
+        {
+            var value=j.GetProperty(name);var result=new int[n];
+            if(value.ValueKind==JsonValueKind.Array){WorldJson.Need(!full&&value.GetArrayLength()==n,"Complete captured artifacts required: "+name);int i=0;foreach(var v in value.EnumerateArray())result[i++]=v.GetInt32();}
+            else{var bytes=Artifact(value,"i32-le",4,name);for(int i=0;i<n;i++)result[i]=BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(i*4,4));}
+            WorldJson.Need(result.All(x=>x>=1&&x<=10000),"Invalid "+name);return result;
+        }
+        m.Walkable=Bytes("walkable",1);m.Blocked=Array.ConvertAll(Bytes("dynamic_blocked",1),x=>x!=0);m.Friendly=Bytes("friendly_pass",255);
+        m.Sidewalk=Bytes("sidewalk",1);m.Dirt=Bytes("dirt_road",1);m.CellSurface=Array.ConvertAll(Bytes("surface_cell",1),x=>x!=0);m.FootprintSurface=Array.ConvertAll(Bytes("surface_footprint",1),x=>x!=0);m.Cardinal=Costs("cardinal_cost");m.Diagonal=Costs("diagonal_cost");m.Counts=new int[n];m.Occupied=new bool[n];return m;
     }
     internal GridCellValue Cell(float x,float z)=>GridCoordinateKernel.WorldToCell(Frame,x,z);
     internal bool InBounds(int x,int z)=>(uint)x<(uint)Width&&(uint)z<(uint)Height;

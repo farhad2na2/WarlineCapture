@@ -100,6 +100,28 @@ namespace Game.Runtime
             var grid = SystemAPI.GetComponent<GridConfig>(gridEntity);
             var blockerDataRw = SystemAPI.GetComponentRW<DynamicBlockerComponent>(gridEntity);
 
+            var owner = blockerDataRw.ValueRO;
+            bool rebuild = owner.StorageEpoch == 0 || owner.AppliedStorageEpoch != owner.StorageEpoch ||
+                owner.WriteInProgress != 0 || !RuntimeGridBlockerEpoch.SameLayout(grid, owner.AppliedGrid);
+            // History is meaningful only for this exact grid entity/version and storage epoch.
+            // Scan the same existing/removal domains, without sorting or filtering foreign inputs.
+            foreach (var prev in SystemAPI.Query<RefRO<StaticBlockerPrevBounds>>()
+                         .WithAll<StaticGridBlocker, UnitGrid, GridBlockerSize>())
+                if (prev.ValueRO.AppliedGrid != gridEntity || prev.ValueRO.StorageEpoch != owner.StorageEpoch) rebuild = true;
+            foreach (var prev in SystemAPI.Query<RefRO<StaticBlockerPrevBounds>>().WithNone<StaticGridBlocker>())
+                if (prev.ValueRO.AppliedGrid != gridEntity || prev.ValueRO.StorageEpoch != owner.StorageEpoch) rebuild = true;
+            if (rebuild)
+            {
+                RuntimeGridBlockerEpoch.Invalidate(ref owner);
+                state.EntityManager.SetComponentData(gridEntity, owner);
+                for (int i = 0; i < owner.Counts.Length; i++) owner.Counts[i] = 0;
+                var cleared = owner.Blocked; cleared.Clear();
+                for (int i = 0; i < owner.FriendlyPassFactionIds.Length; i++) owner.FriendlyPassFactionIds[i] = byte.MaxValue;
+            }
+            // A failed/partial pass must remain unavailable to diagnostics; gameplay never waits on provenance.
+            owner.WriteInProgress = 1;
+            owner.AppliedStorageEpoch = 0;
+            state.EntityManager.SetComponentData(gridEntity, owner);
             var counts = blockerDataRw.ValueRW.Counts;
             var blocked = blockerDataRw.ValueRW.Blocked;
             var friendlyPassFactionIds = blockerDataRw.ValueRW.FriendlyPassFactionIds;
@@ -109,7 +131,7 @@ namespace Game.Runtime
             var openingLookup = SystemAPI.GetComponentLookup<StaticGridBlockerSurfaceOpeningComponent>(true);
             var prevOpeningLookup = SystemAPI.GetComponentLookup<StaticGridBlockerPrevSurfaceOpeningComponent>(true);
 
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            using var ecb = new EntityCommandBuffer(Allocator.Temp);
 
             foreach (var (unitGrid, size, entity) in
                      SystemAPI.Query<RefRO<UnitGrid>, RefRO<GridBlockerSize>>()
@@ -133,7 +155,7 @@ namespace Game.Runtime
                 {
                     Min = min,
                     Max = max,
-                    FriendlyPassFactionId = friendlyPassFactionId
+                    FriendlyPassFactionId = friendlyPassFactionId, AppliedGrid = gridEntity, StorageEpoch = owner.StorageEpoch
                 });
             }
 
@@ -154,12 +176,12 @@ namespace Game.Runtime
                 var opening = openingLookup.HasComponent(entity) ? openingLookup[entity] : default;
                 bool openingChanged = !opening.SameGeometry(oldOpening);
                 bool friendlyPassChanged = oldFriendlyPassFactionId != friendlyPassFactionId;
-                if (!boundsChanged && !friendlyPassChanged && !openingChanged)
+                if (!rebuild && !boundsChanged && !friendlyPassChanged && !openingChanged)
                     continue;
 
-                if (boundsChanged || openingChanged)
+                if (rebuild || boundsChanged || openingChanged)
                 {
-                    ApplyRectDelta(grid, ref counts, ref blocked, oldMin, oldMax, -1, oldOpening);
+                    if (!rebuild) ApplyRectDelta(grid, ref counts, ref blocked, oldMin, oldMax, -1, oldOpening);
                     ApplyRectDelta(grid, ref counts, ref blocked, min, max, +1, opening);
                     if (openingLookup.HasComponent(entity))
                     {
@@ -171,7 +193,7 @@ namespace Game.Runtime
                         ecb.RemoveComponent<StaticGridBlockerPrevSurfaceOpeningComponent>(entity);
                 }
 
-                if (oldFriendlyPassFactionId != byte.MaxValue)
+                if (!rebuild && oldFriendlyPassFactionId != byte.MaxValue)
                     ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, oldMin, oldMax, byte.MaxValue);
                 if (friendlyPassFactionId != byte.MaxValue)
                     ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, min, max, friendlyPassFactionId);
@@ -179,6 +201,8 @@ namespace Game.Runtime
                 prev.ValueRW.Min = min;
                 prev.ValueRW.Max = max;
                 prev.ValueRW.FriendlyPassFactionId = friendlyPassFactionId;
+                prev.ValueRW.AppliedGrid = gridEntity;
+                prev.ValueRW.StorageEpoch = owner.StorageEpoch;
             }
 
             foreach (var (prev, entity) in
@@ -187,17 +211,24 @@ namespace Game.Runtime
                          .WithEntityAccess())
             {
                 var oldOpening = prevOpeningLookup.HasComponent(entity) ? prevOpeningLookup[entity].Value : default;
-                ApplyRectDelta(grid, ref counts, ref blocked, prev.ValueRO.Min, prev.ValueRO.Max, -1, oldOpening);
+                if (!rebuild) ApplyRectDelta(grid, ref counts, ref blocked, prev.ValueRO.Min, prev.ValueRO.Max, -1, oldOpening);
                 if (prevOpeningLookup.HasComponent(entity))
                     ecb.RemoveComponent<StaticGridBlockerPrevSurfaceOpeningComponent>(entity);
-                if (prev.ValueRO.FriendlyPassFactionId != byte.MaxValue)
+                if (!rebuild && prev.ValueRO.FriendlyPassFactionId != byte.MaxValue)
                     ApplyFriendlyPassRect(grid, ref friendlyPassFactionIds, prev.ValueRO.Min, prev.ValueRO.Max, byte.MaxValue);
 
                 ecb.RemoveComponent<StaticBlockerPrevBounds>(entity);
             }
 
             ecb.Playback(state.EntityManager);
-            ecb.Dispose();
+            // Reacquire after structural playback; only successful genuine delta/replay work commits.
+            owner = state.EntityManager.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            if (owner.AppliedRevision == ulong.MaxValue) owner.EpochExhausted = 1;
+            else owner.AppliedRevision++;
+            owner.AppliedStorageEpoch = owner.StorageEpoch;
+            owner.AppliedGrid = grid;
+            owner.WriteInProgress = 0;
+            state.EntityManager.SetComponentData(gridEntity, owner);
         }
     }
 }

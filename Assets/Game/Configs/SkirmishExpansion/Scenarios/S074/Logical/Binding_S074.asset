@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Binding_S074
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMissionLogicalBindingConfig
   SchemaVersion: 1
-  ContentVersion: 1
+  ContentVersion: 9
   DefinitionVersion: 2
   CatalogId: S074
   DefinitionId: skirmish.s074
@@ -22,7 +22,7 @@ MonoBehaviour:
   SourceContentHash: 2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778
   SourceSemanticFingerprint: 8c10129d362c72863d3dfb879f8b4da869743daf27f72d6ae55c52cce92042ae
   LayoutId: layout.s074.measured-pad-candidate.v2
-  ReviewedLayoutSemanticFingerprint: 1480999783fe7cad4ee73a98b9a98ef5a65e447dfc1a6fb9bd9367ab97bd20b2
+  ReviewedLayoutSemanticFingerprint: 7ac867dfdaa65e1d31b97de34514dfd8e6aa3f23c7f317315352ff49b6fa9edc
   ObjectiveKind: 1
   Variants:
   - Size: 1
@@ -198,7 +198,7 @@ MonoBehaviour:
       MinimumSubjectElevation: 0
       MaximumSubjectElevation: 9
       Evidence: 15
-    ReviewedViewFingerprint: 2893ab013b5f73fb965c16e3c3cac625d2657389dd7a6704258b9e1589b146dc
+    ReviewedViewFingerprint: 133fb61cb04098826657ba28e1f1c97abd600867c324f89c027acb88e83fdabd
   - Size: 2
     Difficulty: 2
     Areas:
@@ -372,7 +372,7 @@ MonoBehaviour:
       MinimumSubjectElevation: 0
       MaximumSubjectElevation: 9
       Evidence: 15
-    ReviewedViewFingerprint: 2893ab013b5f73fb965c16e3c3cac625d2657389dd7a6704258b9e1589b146dc
+    ReviewedViewFingerprint: 133fb61cb04098826657ba28e1f1c97abd600867c324f89c027acb88e83fdabd
   - Size: 3
     Difficulty: 2
     Areas:
@@ -546,7 +546,7 @@ MonoBehaviour:
       MinimumSubjectElevation: 0
       MaximumSubjectElevation: 9
       Evidence: 15
-    ReviewedViewFingerprint: 2893ab013b5f73fb965c16e3c3cac625d2657389dd7a6704258b9e1589b146dc
+    ReviewedViewFingerprint: 133fb61cb04098826657ba28e1f1c97abd600867c324f89c027acb88e83fdabd
   references:
     version: 2
     RefIds:

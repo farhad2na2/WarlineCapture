@@ -23,12 +23,12 @@ MonoBehaviour:
   AuthoredGenericBaseAssault: 1
   ObjectiveKind: 1
   SchemaVersion: 1
-  ContentVersion: 1
+  ContentVersion: 9
   DefinitionVersion: 2
   CatalogId: S074
   DefinitionId: skirmish.s074
   CampaignSourceContentHash: 2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778
-  LayoutContentHash: logical.refinement.v1.042047aeea0398726fac1370ace2dcfa024b9b3c0140e00c97b8ff6cde150f9d
+  LayoutContentHash: logical.s074.measured-joint-route-candidate.v1.9badd9d70a642129cdcfceca573be76250d0de139303e2462c8c7b82efdca8f3
   MinHeight: 12
   MaxHeight: 20
   NormalHeight: 18

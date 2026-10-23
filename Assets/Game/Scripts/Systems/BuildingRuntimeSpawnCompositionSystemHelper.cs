@@ -20,6 +20,7 @@ namespace Game.Runtime
         public delegate GameObject CreateBuildingVisualInstanceDelegate(BuildingDefinition definition, Transform parent);
         public delegate void PositionBuildingObjectDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
         public delegate RuntimeBuildingEntity RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
+        public delegate RuntimeBuildingEntity RegisterRuntimeBuildingWithBirthDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers, RuntimeActorBirthContext birth);
         public delegate void SetRuntimeBuildingOwnerFactionDelegate(RuntimeBuildingEntity building, byte? ownerFactionId);
 
         public readonly struct SpawnRuntimeBuildingResult
@@ -42,8 +43,16 @@ namespace Game.Runtime
                 BuildingRoot, DefinitionSystem, RunwaySystem, PlacementValidationSystem, WallValidationContext,
                 TryGetGridData, GetPlacementFootprint, GetEffectivePlacementRect, validate,
                 HasCachedInvalidCellInFootprint, CreateBuildingVisualInstance, PositionBuildingObject,
-                RegisterRuntimeBuilding, SetRuntimeBuildingOwnerFaction);
+                RegisterRuntimeBuilding, SetRuntimeBuildingOwnerFaction, RegisterWithBirth, CaptureBirth);
 
+            public readonly RegisterRuntimeBuildingWithBirthDelegate RegisterWithBirth;
+            public readonly System.Func<Entity, GridConfig, RuntimeActorBirthContext> CaptureBirth;
+            public Context WithBirthRequest(EntityManager em, BuildingRuntimeSpawnRequest request) => new Context(
+                BuildingRoot, DefinitionSystem, RunwaySystem, PlacementValidationSystem, WallValidationContext,
+                TryGetGridData, GetPlacementFootprint, GetEffectivePlacementRect, IsPlacementValid,
+                HasCachedInvalidCellInFootprint, CreateBuildingVisualInstance, PositionBuildingObject,
+                RegisterRuntimeBuilding, SetRuntimeBuildingOwnerFaction, RegisterWithBirth,
+                (grid, layout) => RuntimeActorBirthContext.CaptureBuilding(em, grid, layout, request));
             public readonly Transform BuildingRoot;
             public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
             public readonly BuildingRunwaySystem RunwaySystem;
@@ -73,8 +82,12 @@ namespace Game.Runtime
                 CreateBuildingVisualInstanceDelegate createBuildingVisualInstance,
                 PositionBuildingObjectDelegate positionBuildingObject,
                 RegisterRuntimeBuildingDelegate registerRuntimeBuilding,
-                SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction)
+                SetRuntimeBuildingOwnerFactionDelegate setRuntimeBuildingOwnerFaction,
+                RegisterRuntimeBuildingWithBirthDelegate registerWithBirth = null,
+                System.Func<Entity, GridConfig, RuntimeActorBirthContext> captureBirth = null)
             {
+                RegisterWithBirth = registerWithBirth;
+                CaptureBirth = captureBirth;
                 BuildingRoot = buildingRoot;
                 DefinitionSystem = definitionSystem;
                 RunwaySystem = runwaySystem;
@@ -323,12 +336,13 @@ namespace Game.Runtime
             if (definition == null || definition.Prefab == null)
                 return false;
 
-            if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
+            if (context.TryGetGridData == null || !context.TryGetGridData(out Entity placementGrid, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
                 return false;
 
             if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell, requirePreferredOrigin, allowAuthoredRoadOverlap))
                 return false;
 
+            var birth = context.CaptureBirth?.Invoke(placementGrid, grid) ?? default;
             GameObject instance = context.CreateBuildingVisualInstance?.Invoke(definition, context.BuildingRoot);
             if (instance == null)
             {
@@ -341,7 +355,9 @@ namespace Game.Runtime
             Vector2Int footprint = context.GetPlacementFootprint != null
                 ? context.GetPlacementFootprint(definition, rotateVertical)
                 : definition.FootprintCells;
-            building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap);
+            building = context.RegisterWithBirth != null && context.CaptureBirth != null
+                ? context.RegisterWithBirth(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap, birth)
+                : context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap);
             if(building==null&&requirePreferredOrigin&&IsTrustPlacementDiagnostic())Debug.LogError($"[TrustPlacement] reject=register-building prefab={definition.Prefab.name} origin={originCell} footprint={footprint}");
             if(building==null&&requirePreferredOrigin&&IsCitywidePlacementDiagnostic())Debug.LogError($"[CitywidePlacement] reject=register-building prefab={definition.Prefab.name} origin={originCell} footprint={footprint}");
             return building != null;

@@ -391,7 +391,7 @@ namespace Game.Configs
 
             SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint(setup.CatalogId, out string reviewedLegacyLayoutFingerprint);
             bool preserveLegacyBinding = SkirmishMeasuredLayoutBinder.PreservesPackagedLegacyBinding(setup, definition, reviewedLegacyLayoutFingerprint);
-            setup.Structures = BuildStructures(definition, vector, preserveLegacyBinding);
+            setup.Structures = BuildStructures(definition, vector, preserveLegacyBinding, reasons);
             setup.TitleKey = definition.TitleKey ?? string.Empty;
             setup.BriefingKey = definition.BriefingKey ?? string.Empty;
             setup.ObjectiveKey = definition.ObjectiveKey ?? string.Empty;
@@ -537,7 +537,8 @@ namespace Game.Configs
         private static SkirmishResolvedStructureEntry[] BuildStructures(
             SkirmishScenarioDefinitionConfig definition,
             SkirmishSetupMatrixRow vector,
-            bool preserveLegacyBinding)
+            bool preserveLegacyBinding,
+            List<SkirmishCompileReason> reasons)
         {
             string playerAnchor = definition.MapLayout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig player)
                 ? player.AnchorId
@@ -604,7 +605,40 @@ namespace Game.Configs
                     structures.Add(Structure(2,pair.Item1,anchor,string.Empty,false));
                 }
             }
+            ApplyAuthoredFacilityOffsets(definition,vector,preserveLegacyBinding,structures,reasons);
             return structures.ToArray();
+        }
+
+        // Placement recipe data only. Roster creation, prices/capacities and canonical
+        // size conditions above remain the sole gameplay quantity owners.
+        private static void ApplyAuthoredFacilityOffsets(SkirmishScenarioDefinitionConfig definition,
+            SkirmishSetupMatrixRow vector,bool preserveLegacyBinding,List<SkirmishResolvedStructureEntry> structures,
+            List<SkirmishCompileReason> reasons)
+        {
+            var layout=definition.MapLayout;
+            if(layout==null||!layout.HasFacilityPlacements)return;
+            if(preserveLegacyBinding||!layout.HasFactionCompounds)
+            {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientAnchor,"facilityPlacements","Explicit generic faction-zone placement authority required."));return;}
+            var seen=new HashSet<string>(System.StringComparer.Ordinal);
+            foreach(var placement in layout.FacilityPlacements)
+            {
+                string key=placement.FactionId.ToString()+":"+placement.StructureId;
+                int index=structures.FindIndex(v=>v.FactionId==placement.FactionId&&v.StructureId==placement.StructureId);
+                bool dormantModule=index<0&&placement.StructureId==SkirmishStructureIds.RefineryModule&&vector.RefineryModulesEach==1;
+                var structure=index>=0?structures[index]:new SkirmishResolvedStructureEntry{FactionId=placement.FactionId,StructureId=placement.StructureId};
+                bool valid=placement.FactionId>=1&&placement.FactionId<=2&&!string.IsNullOrEmpty(placement.StructureId)&&
+                    !string.IsNullOrEmpty(placement.PadId)&&seen.Add(key)&&(index>=0||dormantModule)&&
+                    !float.IsNaN(placement.AcrossOffsetMetres)&&!float.IsInfinity(placement.AcrossOffsetMetres)&&
+                    !float.IsNaN(placement.ForwardOffsetMetres)&&!float.IsInfinity(placement.ForwardOffsetMetres)&&
+                    SkirmishMapLayoutBuilder.TryPadForStructure(layout,structure,out var pad)&&pad.PadId==placement.PadId&&
+                    layout.TryGetFactionCompound(placement.FactionId,out var zone)&&System.Array.IndexOf(zone.FacilityPadIds,placement.PadId)>=0;
+                if(!valid)
+                {reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientAnchor,"facilityPlacements/"+key,"Duplicate, foreign, nonfinite or nonmember typed placement override."));continue;}
+                if(index<0)continue; // Canonical Standard has no War/Large refinery module to add.
+                structure.AcrossOffsetMetres=placement.AcrossOffsetMetres;
+                structure.ForwardOffsetMetres=placement.ForwardOffsetMetres;
+                structures[index]=structure;
+            }
         }
 
         private static bool IsEstablished(SkirmishScenarioDefinitionConfig definition)

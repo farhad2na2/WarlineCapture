@@ -395,6 +395,21 @@ namespace Game.Runtime
             bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
             if (!fromPrefab && Application.isPlaying)
                 return Entity.Null;
+            var stableId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member);
+            Entity placementGrid = Entity.Null;
+            RuntimeActorBirthContext birth = default;
+            if (fromPrefab)
+            {
+                // Select/capture once while the creator still owns the pre-birth context.
+                // Missing proof never prevents the existing actor/placement path.
+                using var birthGrids = em.CreateEntityQuery(typeof(GridConfig));
+                if (birthGrids.CalculateEntityCount() == 1)
+                {
+                    placementGrid = birthGrids.GetSingletonEntity();
+                    var layout = em.GetComponentData<GridConfig>(placementGrid);
+                    birth = RuntimeActorBirthContext.CaptureScenario(em, placementGrid, sessionId, stableId, layout);
+                }
+            }
             Entity owned = fromPrefab
                 ? em.Instantiate(prefabEntity)
                 : em.CreateEntity();
@@ -402,7 +417,7 @@ namespace Game.Runtime
             SetOrAdd(em, owned, new SkirmishAttemptOwnedComponent
             {
                 SessionId = sessionId,
-                StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member),
+                StableObjectId = stableId,
                 FactionId = force.FactionId,
                 IsStructure = 0
             });
@@ -427,11 +442,13 @@ namespace Game.Runtime
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
                 if(typedPlacement!=null&&!typedPlacement.TryRequestedWorld(force,member,out position))
                 {em.DestroyEntity(owned);return Entity.Null;}
-                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement))
+                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, placementGrid, out var actualPlacementGrid))
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
                 }
+                // Verify the original pre-birth proof against the grid actually used; never recapture here.
+                birth.StampFresh(em, owned, actualPlacementGrid);
                 // Rendered by the shared impostor/model presentation, not a per-unit
                 // GameObject; the visual attach pass must skip prefab instances.
                 SetOrAdd(em, owned, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
@@ -495,17 +512,22 @@ namespace Game.Runtime
         }
 
         private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed)
-            =>TryPlaceTypedOnMap(em,entity,position,missionSeed,default,null);
+            =>TryPlaceTypedOnMap(em,entity,position,missionSeed,default,null, Entity.Null, out _);
 
-        private static bool TryPlaceTypedOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed,SkirmishResolvedForceEntry force,SkirmishTypedSpawnConstraint typedPlacement)
+        private static bool TryPlaceTypedOnMap(EntityManager em, Entity entity, Vector3 position, int missionSeed,SkirmishResolvedForceEntry force,SkirmishTypedSpawnConstraint typedPlacement, Entity selectedGrid, out Entity actualPlacementGrid)
         {
+            actualPlacementGrid = Entity.Null;
             var pos = new float3(position.x, position.y, position.z);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if(typedPlacement!=null&&grids.CalculateEntityCount()!=1)return false;
             if (!grids.IsEmptyIgnoreFilter)
             {
-                Entity gridEntity = grids.GetSingletonEntity();
-                GridConfig grid = grids.GetSingleton<GridConfig>();
+                // Carry the creator's selected grid through actual placement. If it is no
+                // longer available, preserve the existing gameplay lookup; the original
+                // birth context cannot qualify a different grid or changed layout.
+                Entity gridEntity = selectedGrid != Entity.Null && grids.CalculateEntityCount() == 1 && em.Exists(selectedGrid) && em.HasComponent<GridConfig>(selectedGrid)
+                    ? selectedGrid : grids.GetSingletonEntity();
+                GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
                 int2 cell = GridUtils.WorldToCell(grid, pos);
                 if(typedPlacement!=null&&!SkirmishTypedSpawnConstraint.HasCompleteAllocator(em,gridEntity,grid))return false;
                 if (em.HasBuffer<GridWalkable>(gridEntity) &&
@@ -555,6 +577,7 @@ namespace Game.Runtime
                 {
                     default(MapSurfaceSpawnGrounding).TryGroundCellCenter(em, grid, cell, ref pos, out _);
                     SetOrAdd(em, entity, new UnitGrid { Cell = cell });
+                    actualPlacementGrid = gridEntity;
                 }
             }
 

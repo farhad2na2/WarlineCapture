@@ -57,7 +57,7 @@ static class StartupActorState
     static bool Has(JsonObject values, string name) => values[name] != null;
     static int Int(JsonObject values, string name, string field) => values[name][field].GetValue<int>();
     static float Float(JsonObject values, string name, string field) => values[name][field].GetValue<float>();
-    internal static object Derive(Inputs input, int ordinal, JsonElement transaction, JsonElement final, int x, int z, float worldX, float worldZ)
+    internal static object Derive(Inputs input, int ordinal, JsonElement transaction, JsonElement final, int x, int z, float worldX, float worldZ, float? groundedY)
     {
         SpawnJson.Need(ordinal < input.Forces.Count, "Unexpected allocator actor beyond authored roster");
         Force force = input.Forces[ordinal];
@@ -115,8 +115,8 @@ static class StartupActorState
             v["Damage"] = state.GroundDamage; v["MaxRange"] = state.GroundMaxRange; v["MinRange"] = state.GroundMinRange;
         }
         values["UnitGrid"] = new JsonObject { ["Cell"] = new JsonObject { ["x"] = x, ["y"] = z } };
-        // Native FromPosition resets scale/rotation. Grounded Y is not inferred
-        // from a native answer; it remains an explicit missing startup dependency.
+        // Native FromPosition resets scale/rotation. The geometry batch computes
+        // Y before either native transform is read as an assertion.
         values.Remove("LocalTransform");
         SpawnJson.Expect(Element(values), final.GetProperty("components"), "derived actor components " + force.Id);
         var role = new JsonObject { ["Role"] = force.Role, ["Category"] = force.Category, ["SupplyCost"] = force.Supply };
@@ -126,11 +126,32 @@ static class StartupActorState
         SpawnJson.Expect(Element(policy), final.GetProperty("target_policy"), "derived combat target policy " + force.Id);
         SpawnJson.Expect(Element(overlayComponent), final.GetProperty("overlay"), "derived overlay " + force.Id);
         var transform = final.GetProperty("components").GetProperty("LocalTransform");
+        var placedTransform = transaction.GetProperty("placement_result").GetProperty("actor").GetProperty("components").GetProperty("LocalTransform");
+        if (groundedY.HasValue)
+        {
+            float nativeY = transform.GetProperty("Position").GetProperty("y").GetSingle();
+            SpawnJson.Need(BitConverter.SingleToInt32Bits(groundedY.Value) == BitConverter.SingleToInt32Bits(nativeY),
+                "Derived grounded Y differs from native assertion at " + force.Id + " derived=" + groundedY.Value.ToString("R") +
+                " native=" + nativeY.ToString("R") + " derivedBits=" + BitConverter.SingleToInt32Bits(groundedY.Value).ToString("x8") +
+                " nativeBits=" + BitConverter.SingleToInt32Bits(nativeY).ToString("x8"));
+            float placedY = placedTransform.GetProperty("Position").GetProperty("y").GetSingle();
+            SpawnJson.Need(BitConverter.SingleToInt32Bits(groundedY.Value) == BitConverter.SingleToInt32Bits(placedY),
+                "Derived grounded Y differs from immediate-placement assertion at " + force.Id);
+        }
         SpawnJson.Need(transform.GetProperty("Position").GetProperty("x").GetSingle() == worldX && transform.GetProperty("Position").GetProperty("z").GetSingle() == worldZ && transform.GetProperty("Scale").GetSingle() == 1, "Derived transform X/Z/scale differs");
         var rotation = transform.GetProperty("Rotation").GetProperty("value");
         SpawnJson.Need(rotation.GetProperty("x").GetSingle() == 0 && rotation.GetProperty("y").GetSingle() == 0 && rotation.GetProperty("z").GetSingle() == 0 && rotation.GetProperty("w").GetSingle() == 1, "Derived transform rotation differs");
+        SpawnJson.Need(placedTransform.GetProperty("Position").GetProperty("x").GetSingle() == worldX && placedTransform.GetProperty("Position").GetProperty("z").GetSingle() == worldZ && placedTransform.GetProperty("Scale").GetSingle() == 1, "Derived immediate-placement transform X/Z/scale differs");
+        var placedRotation = placedTransform.GetProperty("Rotation").GetProperty("value");
+        SpawnJson.Need(placedRotation.GetProperty("x").GetSingle() == 0 && placedRotation.GetProperty("y").GetSingle() == 0 && placedRotation.GetProperty("z").GetSingle() == 0 && placedRotation.GetProperty("w").GetSingle() == 1, "Derived immediate-placement transform rotation differs");
         var types = final.GetProperty("component_types").EnumerateArray().Select(x => x.GetString()).ToHashSet();
         SpawnJson.Need(types.Contains("Game.Components.SkirmishSharedActorTag") && !types.Contains("Game.Components.CampaignMissionCombatSuppressedTag"), "Shared actor suppression release differs");
-        return new { id = force.Id, source_key = force.Key, faction = force.Faction, entity_enabled = template.GetProperty("entity_enabled").GetBoolean(), enableable_components = expectedEnablement.Clone(), components = values, role, target_policy = policy, overlay = overlayComponent, ungrounded_transform = new { x = worldX, z = worldZ, scale = 1, rotation = new[] { 0, 0, 0, 1 }, grounded_y = (float?)null }, component_scope = "Captured serialized gameplay defaults plus authored overlay fields; unexported ECS values remain pending", full_actor_state = false };
+        if (groundedY.HasValue)
+            values["LocalTransform"] = new JsonObject
+            {
+                ["Position"] = new JsonObject { ["x"] = (double)worldX, ["y"] = (double)groundedY.Value, ["z"] = (double)worldZ },
+                ["Scale"] = 1, ["Rotation"] = new JsonObject { ["value"] = new JsonObject { ["x"] = 0, ["y"] = 0, ["z"] = 0, ["w"] = 1 } }
+            };
+        return new { id = force.Id, source_key = force.Key, faction = force.Faction, entity_enabled = template.GetProperty("entity_enabled").GetBoolean(), enableable_components = expectedEnablement.Clone(), components = values, role, target_policy = policy, overlay = overlayComponent, transform = new { x = worldX, z = worldZ, scale = 1, rotation = new[] { 0, 0, 0, 1 }, grounded_y = groundedY }, component_scope = "Captured serialized gameplay defaults plus authored overlay fields; unexported ECS values remain pending", full_actor_state = false };
     }
 }

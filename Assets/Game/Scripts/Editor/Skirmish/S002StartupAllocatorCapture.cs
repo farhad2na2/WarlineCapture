@@ -21,10 +21,12 @@ namespace Game.Editor
         internal static readonly JObject Artifacts = new JObject();
         static readonly Dictionary<Entity, JObject> Pending = new Dictionary<Entity, JObject>();
         static string path, sessionId;
+        static MapSurfaceComponent? observedSurface;
         internal static bool Completed;
 
         static S002StartupAllocatorCapture()
         {
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_OFFLINE_STARTUP_CAPTURE"))) return;
             SkirmishScenarioSpawnSystem.ObserveStartupAllocator = Observe;
             SkirmishScenarioSpawnSystem.ObserveStartupPlacementResult = ObserveResult;
         }
@@ -60,6 +62,13 @@ namespace Game.Editor
                 !value.Blocked.IsCreated || !value.Occupied.IsCreated || !value.Reserved.IsCreated ||
                 value.Blocked.Length != cells || value.Occupied.Length != cells || value.Reserved.Length != cells)
                 throw new InvalidOperationException("Incomplete actual allocator masks");
+            if (!value.HasMatch || value.SurfaceCount != 1 || !value.Surface.SurfaceBlob.IsCreated ||
+                !value.Walkable.IsCreated || value.Walkable.Length != cells)
+                throw new InvalidOperationException("Incomplete actual S002 match/surface/walkable context");
+            if (!observedSurface.HasValue) observedSurface = value.Surface;
+            RequireSameSurface(value.Surface);
+            var walkableBytes = new byte[cells];
+            for (int i = 0; i < cells; i++) walkableBytes[i] = value.Walkable[i].Value;
             var census = new JArray();
             using var units = em.CreateEntityQuery(typeof(UnitGrid), typeof(UnitFootprint));
             using var existing = units.ToEntityArray(Allocator.Temp);
@@ -86,6 +95,8 @@ namespace Game.Editor
                 ["requested_world"] = new JArray(value.RequestedWorld.x, value.RequestedWorld.y, value.RequestedWorld.z),
                 ["footprint"] = Pair(value.Footprint), ["air"] = value.Air, ["typed"] = value.Typed,
                 ["random_state_before_find"] = value.RandomState,
+                ["has_match"] = value.HasMatch, ["surface_count"] = value.SurfaceCount,
+                ["same_surface_blob_as_initial_allocator"] = true, ["walkable_sha256"] = Hash(walkableBytes),
                 ["initial_search_radius"] = 12, ["surface_correction_radius"] = 48,
                 ["blocked_artifact"] = WriteMask(value.Blocked), ["effective_occupied_artifact"] = WriteMask(value.Occupied),
                 ["reservation_census_native_query_order"] = census,
@@ -113,6 +124,19 @@ namespace Game.Editor
         {
             if (Events.Count != expected || Pending.Count != 0)
                 throw new InvalidOperationException("Incomplete startup allocator transaction: " + Events.Count + "/" + expected + " pending=" + Pending.Count);
+        }
+        internal static void RequireSameSurface(MapSurfaceComponent surface)
+        {
+            if (!observedSurface.HasValue || !surface.SurfaceBlob.Equals(observedSurface.Value.SurfaceBlob) ||
+                !Unity.Mathematics.math.all(surface.Dimensions == observedSurface.Value.Dimensions) ||
+                !Unity.Mathematics.math.all(surface.GridOrigin == observedSurface.Value.GridOrigin) || surface.CellSize != observedSurface.Value.CellSize)
+                throw new InvalidOperationException("Startup surface owner/blob/frame changed");
+        }
+        internal static void RequireWalkable(string hash)
+        {
+            foreach (JObject value in Events)
+                if ((string)value["walkable_sha256"] != hash)
+                    throw new InvalidOperationException("Post-roster walkable differs from native allocator input");
         }
         static JArray Pair(int2 value) => new JArray(value.x, value.y);
         static byte[] Bytes(NativeBitArray bits)

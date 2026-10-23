@@ -571,12 +571,16 @@ namespace Game.Runtime
                         int2 footprint = em.HasComponent<UnitFootprint>(entity)
                             ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
 #if UNITY_EDITOR
+                        MapSurfaceComponent observedSurface = default; int observedSurfaceCount = 0;
+                        if (ObserveStartupAllocator != null) observedSurface = StartupSurface(em, out observedSurfaceCount);
                         ObserveStartupAllocator?.Invoke(new StartupAllocatorObservation
                         {
                             EntityManager = em, Actor = entity, GridEntity = gridEntity, Grid = grid,
                             Seed = missionSeed, RandomState = rng.state, RequestedCell = cell,
                             RequestedWorld = pos, Footprint = footprint,
                             Air = em.HasComponent<UnitAirMovement>(entity), Typed = typedPlacement != null,
+                            HasMatch = StartupHasMatch(em), SurfaceCount = observedSurfaceCount,
+                            Surface = observedSurface, Walkable = walkable,
                             Blocked = blocked, Occupied = occupied, Reserved = reserved
                         });
 #endif

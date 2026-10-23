@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Game.Components;
@@ -78,7 +79,8 @@ static class StartupPlacementProgram
         Need(float.IsFinite(frame.OriginX) && float.IsFinite(frame.OriginY) && float.IsFinite(frame.OriginZ) && float.IsFinite(frame.CellSize) && frame.CellSize > 0, "Finite actual grid required");
         return (width, height, frame);
     }
-    static object Replay(string file)
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    static object Replay(string file, bool requireGrounding)
     {
         Need(new FileInfo(file).Length <= 128L * 1024 * 1024, "Capture JSON exceeds128MiB");
         byte[] bytes = File.ReadAllBytes(file); Need(bytes.Length <= 128 * 1024 * 1024, "Capture JSON exceeds128MiB");
@@ -87,6 +89,11 @@ static class StartupPlacementProgram
         var grid = Grid(root.GetProperty("grid")); int count = checked(grid.W * grid.H);
         var artifacts = new Artifacts(file, root.GetProperty("artifacts"));
         byte[] walk = artifacts.Read("walkable.u8", count);
+        StartupGrounding grounding = root.TryGetProperty("surface_runtime", out var surfaceRuntime)
+            ? StartupGrounding.Read(root, Path.GetDirectoryName(Path.GetFullPath(file))) : null;
+        Need(!requireGrounding || grounding != null, "Actual runtime grounding inputs required");
+        if (grounding != null)
+            Need(surfaceRuntime.GetProperty("same_blob_as_all_allocator_transactions").GetBoolean() && surfaceRuntime.GetProperty("ground_offset").GetSingle() == 0, "Exact original allocator grounding surface/offset required");
         var profiles = new Dictionary<string, Surface>();
         foreach (var profile in root.GetProperty("footprint_surface_profiles").EnumerateArray())
         {
@@ -108,6 +115,8 @@ static class StartupPlacementProgram
         var actorInputs = new StartupActorState.Inputs(root);
         Need(actorInputs.Forces.Count == expected, "Authored roster count differs from actual native allocator sequence");
         var derivedActorStates = new List<object>();
+        var pendingActors = new List<(int Ordinal, JsonElement Row, JsonElement Final, int X, int Z, float WorldX, float WorldZ)>();
+        var groundingQueries = new List<StartupGroundingQuery>();
         var existing = new Dictionary<string, Existing>(); var stableIds = new HashSet<string>(); var results = new List<object>();
         var finalActors = root.GetProperty("actors").EnumerateArray().Where(a => !a.GetProperty("is_structure").GetBoolean()).ToDictionary(a => a.GetProperty("stable_id").GetString());
         Need(finalActors.Count == expected, "Exact post-roster force census required");
@@ -120,6 +129,11 @@ static class StartupPlacementProgram
         {
             int ordinal = results.Count; Need(row.GetProperty("ordinal").GetInt32() == ordinal, "Native creation order differs");
             var g = Grid(row.GetProperty("grid")); Need(g.Equals(grid), "Allocator layout changed");
+            if (grounding != null)
+                Need(row.GetProperty("has_match").GetBoolean() && row.GetProperty("surface_count").GetInt32() == 1 &&
+                    row.GetProperty("same_surface_blob_as_initial_allocator").GetBoolean() &&
+                    row.GetProperty("walkable_sha256").GetString() == root.GetProperty("artifacts").GetProperty("walkable.u8").GetProperty("sha256").GetString(),
+                    "Native pre-placement walkable/match/surface context differs");
             string id = row.GetProperty("stable_id").GetString(); Need(!string.IsNullOrEmpty(id) && stableIds.Add(id), "Fresh stable actor ID required");
             Need(row.GetProperty("session_id").GetString() == root.GetProperty("session_id").GetString(), "Mixed sessions");
             Need(row.GetProperty("reservation_census_native_query_order").GetArrayLength() <= 65536, "Bounded complete census required");
@@ -157,15 +171,28 @@ static class StartupPlacementProgram
             var finalCell = final.GetProperty("components").GetProperty("UnitGrid").GetProperty("Cell");
             Need(px == finalCell.GetProperty("x").GetInt32() && pz == finalCell.GetProperty("y").GetInt32(), "Post-roster cell differs at " + id);
             var position = GridCoordinateKernel.CellToWorldCenter(grid.Frame, px, pz);
-            derivedActorStates.Add(StartupActorState.Derive(actorInputs, ordinal, row, final, px, pz, position.X, position.Z));
+            pendingActors.Add((ordinal, row, final, px, pz, position.X, position.Z));
+            groundingQueries.Add(new StartupGroundingQuery(px, pz, position.X, position.Z));
             Need(existing.TryAdd(Identity(before), new Existing(Identity(before), px, pz, size.X, size.Z)), "New actor identity already existed");
             results.Add(new { id, ordinal, cell = new[] { px, pz }, footprint = new[] { size.X, size.Z }, vehicle, typed_occupancy_input = row.GetProperty("typed").GetBoolean(), derived_random_state = random.State });
         }
-        return new { result = "PassedDerivedPlacementCellsAndSerializedActorDefaults", scope = "CapturedRequestsAndAllocatorFacts_DerivedReservationsPlacementAndSerializedActorDefaults", force_actors = results.Count, initial_census = initialCensus, grid_width = grid.W, grid_height = grid.H, inspected_work = work, actors = results, derived_actor_states = derivedActorStates, grounding_derived = false, typed_pad_policy_derived = false, full_mission_initialized = false, terminal_parity = false, player_ready = false, source_capture_sha256 = Hash(bytes) };
+        grounding?.Prepare(groundingQueries);
+        foreach (var actor in pendingActors)
+        {
+            float? groundedY = grounding?.HeightAt(actor.X, actor.Z, actor.WorldX, actor.WorldZ);
+            derivedActorStates.Add(StartupActorState.Derive(actorInputs, actor.Ordinal, actor.Row, actor.Final, actor.X, actor.Z, actor.WorldX, actor.WorldZ, groundedY));
+        }
+        var sessionState = StartupSessionState.Derive(root, actorInputs);
+        return new { result = "PassedDerivedPlacementCellsAndSerializedActorDefaults", scope = "CapturedRequestsAndAllocatorFacts_DerivedReservationsPlacementAndSerializedActorDefaults", force_actors = results.Count, initial_census = initialCensus, grid_width = grid.W, grid_height = grid.H, inspected_work = work, actors = results, derived_actor_states = derivedActorStates, derived_session_state = sessionState, grounding_derived = grounding != null, typed_pad_policy_derived = false, full_mission_initialized = false, terminal_parity = false, player_ready = false, source_capture_sha256 = Hash(bytes) };
     }
     static int Main(string[] args)
     {
-        try { Need(args.Length == 1, "One native capture path required"); Console.WriteLine(JsonSerializer.Serialize(Replay(args[0]))); return 0; }
+        try
+        {
+            Need(args.Length == 1 || (args.Length == 2 && args[1] == "--grounded"), "One native capture path and optional --grounded required");
+            StartupGroundingRuntime.LoadInstalledMath(NativeStartupConstants.MathImplementationPath, NativeStartupConstants.MathImplementationSha256);
+            Console.WriteLine(JsonSerializer.Serialize(Replay(args[0], args.Length == 2))); return 0;
+        }
         catch (Exception error) { Console.WriteLine(JsonSerializer.Serialize(new { result = "Failed", error = error.Message, full_mission_initialized = false, terminal_parity = false, player_ready = false })); return 1; }
     }
 }

@@ -85,6 +85,7 @@ namespace Game.Editor
             if (walk.Length != cells || road.Length != cells || sidewalk.Length != cells || dirt.Length != cells)
                 throw new InvalidOperationException("Incomplete real grid classification buffers");
             WriteBytes(path, "walkable.u8", cells, i => walk[i].Value, artifacts);
+            S002StartupAllocatorCapture.RequireWalkable((string)artifacts["walkable.u8"]["sha256"]);
             WriteBytes(path, "road.u8", cells, i => road[i].Value, artifacts);
             WriteBytes(path, "sidewalk.u8", cells, i => sidewalk[i].Value, artifacts);
             WriteBytes(path, "dirt-road.u8", cells, i => dirt[i].Value, artifacts);
@@ -94,6 +95,7 @@ namespace Game.Editor
             if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated || surface.Dimensions.x != grid.Width || surface.Dimensions.y != grid.Height ||
                 surface.CellSize != grid.CellSize || !Unity.Mathematics.math.all(surface.GridOrigin == grid.Origin))
                 throw new InvalidOperationException("Real surface frame unavailable or mismatched");
+            var surfaceRuntime = S002RuntimeGroundingCapture.Write(EntityManager, surfaces.GetSingletonEntity(), surface, path, artifacts);
             var profiles = new JArray(); var profileKeys = new System.Collections.Generic.HashSet<string>();
             foreach (var actor in entities)
             {
@@ -124,6 +126,7 @@ namespace Game.Editor
                 ["registry_templates"] = SkirmishBakedActorSnapshotExporter.Capture(EntityManager),
                 ["allocator_transactions"] = S002StartupAllocatorCapture.Events.DeepClone(),
                 ["footprint_surface_profiles"] = profiles,
+                ["surface_runtime"] = surfaceRuntime,
                 ["grid"] = JObject.Parse(JsonUtility.ToJson(grid)), ["actors"] = rows, ["expected_force_count"] = expected,
                 ["operation_map_id"] = map.OperationMapId.ToString(), ["physical_source_id"] = map.SourceOperationMapId.ToString(),
                 ["source_identity_hash"] = map.SourceIdentityHash.ToString(), ["content_hash"] = map.ContentHash.ToString(),
@@ -131,10 +134,13 @@ namespace Game.Editor
                 ["authored_subscene_guid"] = map.Navigation.AuthoredSubSceneGuid.ToString(), ["artifacts"] = artifacts,
                 ["blocker_storage_epoch"] = blocker.StorageEpoch, ["blocker_revision"] = blocker.AppliedRevision,
                 ["full_mission_initialized"] = false, ["offline_parity"] = false,
-                ["pending_capture"] = new JArray("full runtime surface/overlay", "complete building/economy graph", "source-pinned startup transaction", "offline-derived startup and placement") };
+                ["pending_capture"] = new JArray("complete building/economy graph", "source-pinned startup transaction", "offline-derived grounded transforms and complete startup") };
             File.WriteAllText(Path.Combine(path, "startup-observation.json"), report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             captured = true;
             S002StartupAllocatorCapture.Completed = true;
+            Debug.Log("[S002RuntimeGroundingInputs] result=Captured compactCells=" + surfaceRuntime["compact_count"] +
+                " overlays=" + surfaceRuntime["overlay_count"] + " triangles=" + surfaceRuntime["triangle_count"] +
+                " instances=" + surfaceRuntime["instance_count"] + " beforePlacementWalkableVerified=" + expected);
             Debug.Log("[S002NativeStartupObservation] result=Captured forceActors=" + forceCount + " expected=" + expected + " fullMissionInitialized=0 offlineParity=0");
         }
         JToken Value<T>(Entity entity) where T : unmanaged, IComponentData =>

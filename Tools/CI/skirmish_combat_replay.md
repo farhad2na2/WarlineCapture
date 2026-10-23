@@ -102,3 +102,12 @@ sentinel and unchanged source/settings hashes. Earlier compilation failures were
 retained and repaired before the successful run. The successful Unity shutdown
 reported four persistent allocations without attribution; that lifecycle warning
 remains open and is not represented as a clean leak check or mission acceptance.
+
+A subsequent run of the same published candidate with per-process
+`UNITY_JOBS_NATIVE_LEAK_DETECTION_MODE=2` again passed all eleven native checks
+with unchanged source/settings. Its four allocation stacks identify Unity
+Entities package storage: two static component-safety buffers, the shared
+per-chunk array and global entity-store storage. None of the reported stacks
+points to the attack planner, its scratch maps or the new parity arrays. Package
+ownership is established; shutdown cleanup timing versus retained storage is
+still unresolved. No game/package cleanup bypass or leak suppression was added.

@@ -11,7 +11,8 @@ namespace Game.Runtime
             bool campaignGuidedMove,
             bool manualMoveGroupMember,
             bool hasBoardingTarget) =>
-            !isVehicle && !campaignGuidedMove && manualMoveGroupMember && !hasBoardingTarget;
+            Movement.GridPathMovementKernel.ShouldUseGroupedManualStop(
+                isVehicle, campaignGuidedMove, manualMoveGroupMember, hasBoardingTarget);
 
         private static bool IsSoftBlocker(int2 size)
         {

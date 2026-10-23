@@ -10,15 +10,15 @@ using Game.Runtime.Combat;
 // Evaluates complete candidate snapshots, without inventing world/animation facts.
 static class CombatProgram
 {
-    static readonly JsonSerializerOptions Json = new()
+    internal static readonly JsonSerializerOptions Json = new()
     {
         IncludeFields = true,
         Converters = { new JsonStringEnumConverter(allowIntegerValues: false) }
     };
-    static void Need(bool condition, string message)
+    internal static void Need(bool condition, string message)
     { if (!condition) throw new ArgumentException(message); }
 
-    static void Shape(JsonElement value, string[] required, params string[] optional)
+    internal static void Shape(JsonElement value, string[] required, params string[] optional)
     {
         Need(value.ValueKind == JsonValueKind.Object, "Expected an object");
         var names = value.EnumerateObject().Select(p => p.Name).ToHashSet();
@@ -38,7 +38,7 @@ static class CombatProgram
             foreach (var item in value.EnumerateArray()) UniqueKeys(item);
     }
 
-    static void FactsShape(JsonElement value, Type type)
+    internal static void FactsShape(JsonElement value, Type type)
     {
         if (type.IsArray)
         {
@@ -53,7 +53,7 @@ static class CombatProgram
         }
     }
 
-    static void Expect(JsonElement expected, JsonElement actual, string path)
+    internal static void Expect(JsonElement expected, JsonElement actual, string path)
     {
         if (expected.ValueKind == JsonValueKind.Object)
         {
@@ -77,19 +77,21 @@ static class CombatProgram
     }
 
 
-    static void FiniteFields(object value)
+    internal static void FiniteFields(object value)
     {
         foreach (var field in value.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
         {
             var v = field.GetValue(value);
             if (v is float f) Need(float.IsFinite(f), "Non-finite input: " + field.Name);
-            else if (v is StandardAttackState) FiniteFields(v);
+            else if (v is Array array) { foreach (var item in array) FiniteFields(item); }
+            else if (v != null && v.GetType().IsValueType && !v.GetType().IsPrimitive && !v.GetType().IsEnum) FiniteFields(v);
             else if (v is byte b) Need(b <= 1, "Flag must be 0 or 1: " + field.Name);
         }
     }
 
     static object Run(JsonElement row)
     {
+        if (row.TryGetProperty("kind", out var kind)) return SequenceProgram.Run(row, kind.GetString());
         Shape(row, new[] { "id", "input", "delta_time", "cell_size", "expect" });
         Need(!string.IsNullOrWhiteSpace(row.GetProperty("id").GetString()), "Case ID required");
         var data = row.GetProperty("input");
@@ -135,7 +137,7 @@ static class CombatProgram
                 }
                 catch (Exception error) { failed++; results.Add(new { id, status = "failed", error = error.Message }); }
             }
-            Console.WriteLine(JsonSerializer.Serialize(new { schema_version = 1, scope = "ProductionStandardAttackPlanReplay",
+            Console.WriteLine(JsonSerializer.Serialize(new { schema_version = 1, scope = "ProductionCombatMovementReplay",
                 result = failed == 0 ? "passed" : "failed", passed = results.Count - failed, failed,
                 elapsed_seconds = watch.Elapsed.TotalSeconds, native_runs = 0, full_battle_simulated = false,
                 mission_qualified = false, cases = results }, Json));

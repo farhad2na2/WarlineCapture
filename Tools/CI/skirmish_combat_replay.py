@@ -15,8 +15,14 @@ sys.dont_write_bytecode = True
 KERNEL = "Assets/Game/Scripts/Systems/Combat/StandardAttackPlanner.cs"
 ADAPTER = "Assets/Game/Scripts/Systems/UnitAttackSystem.cs"
 HARNESS = "Tools/CI/SkirmishOfflineSim/CombatProgram.cs"
-SOURCES = [KERNEL, HARNESS]
-PINNED = SOURCES + [ADAPTER, "Tools/CI/skirmish_combat_replay.py"]
+DAMAGE = "Assets/Game/Scripts/Systems/Combat/DirectDamageSequencer.cs"
+MOVEMENT = "Assets/Game/Scripts/Systems/GridPathMovementKernel.cs"
+SEQUENCES = "Tools/CI/SkirmishOfflineSim/SequenceProgram.cs"
+SOURCES = [KERNEL, DAMAGE, MOVEMENT, HARNESS, SEQUENCES]
+PINNED = SOURCES + [ADAPTER, "Tools/CI/skirmish_combat_replay.py",
+    "Assets/Game/Scripts/Systems/Support/SupportDamageUtilitySystemHelper.cs",
+    "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs",
+    "Assets/Game/Scripts/Systems/UnitGridMovementPolicy.cs"]
 
 
 def sha(path):
@@ -89,7 +95,7 @@ def build(project, output):
     manifest = dict(schema_version=1, project=str(project), dotnet=dotnet, sdk=version,
                     source_pins=pins,
                     build_files={str(p.relative_to(output)): sha(p) for p in sorted((output/'bin').iterdir()) if p.is_file()},
-                    scope="ProductionStandardAttackPlanReplay", native_runs=0, full_battle_simulated=False)
+                    scope="ProductionCombatMovementReplay", native_runs=0, full_battle_simulated=False)
     (output/"build.json").write_text(json.dumps(manifest, indent=2)+"\n")
     return manifest
 

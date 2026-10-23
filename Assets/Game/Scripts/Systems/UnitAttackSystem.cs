@@ -28,18 +28,6 @@ namespace Game.Runtime
             public float3 AttackerPosition;
         }
 
-        private struct AggregatedTargetEffect
-        {
-            public int TotalDamage;
-            public Entity Attacker;
-            public int2 AttackerCell;
-            public float3 AttackerPosition;
-            public Entity ObservationSource;
-            public float3 ObservationSourcePosition;
-            public byte HasMixedObservationSources;
-            public byte ShowImpactVfx; // only shots that showed a tracer trigger impact VFX
-        }
-
         private struct StandardAttackCandidate
         {
             public Entity Attacker;
@@ -83,7 +71,7 @@ namespace Game.Runtime
         }
 
         private NativeParallelHashMap<Entity, int> _predictedHealth;
-        private NativeParallelHashMap<Entity, AggregatedTargetEffect> _aggregatedEffects;
+        private NativeParallelHashMap<Entity, DirectDamageAggregate> _aggregatedEffects;
         private EntityQuery _gridQuery;
         private EntityQuery _damageQueueQuery;
 
@@ -97,7 +85,7 @@ namespace Game.Runtime
             state.RequireForUpdate<UnitAttack>();
             state.RequireForUpdate<UnitAttackCooldownComponent>();
             _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);
-            _aggregatedEffects = new NativeParallelHashMap<Entity, AggregatedTargetEffect>(InitialAttackScratchCapacity, Allocator.Persistent);
+            _aggregatedEffects = new NativeParallelHashMap<Entity, DirectDamageAggregate>(InitialAttackScratchCapacity, Allocator.Persistent);
         }
 
         public void OnDestroy(ref SystemState state)
@@ -158,7 +146,7 @@ namespace Game.Runtime
             if (!_predictedHealth.IsCreated)
                 _predictedHealth = new NativeParallelHashMap<Entity, int>(InitialAttackScratchCapacity, Allocator.Persistent);
             if (!_aggregatedEffects.IsCreated)
-                _aggregatedEffects = new NativeParallelHashMap<Entity, AggregatedTargetEffect>(InitialAttackScratchCapacity, Allocator.Persistent);
+                _aggregatedEffects = new NativeParallelHashMap<Entity, DirectDamageAggregate>(InitialAttackScratchCapacity, Allocator.Persistent);
             _predictedHealth.Clear();
             _aggregatedEffects.Clear();
             using NativeList<StandardAttackCandidate> standardAttackCandidates = new(InitialAttackScratchCapacity, Allocator.TempJob);
@@ -350,31 +338,8 @@ namespace Game.Runtime
 
                 int shotDamage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, engageRw.Target, attackRo.Damage);
                 int2 attackerCell = GridUtils.WorldToCell(grid, selfTransform.ValueRO.Position);
-                _predictedHealth[engageRw.Target] = math.max(0, targetPredictedHealth - shotDamage);
-                if (_aggregatedEffects.TryGetValue(engageRw.Target, out AggregatedTargetEffect effect))
-                {
-                    effect.TotalDamage += shotDamage;
-                    if (effect.ObservationSource != entity)
-                        effect.HasMixedObservationSources = 1;
-                    effect.Attacker = entity;
-                    effect.AttackerCell = attackerCell;
-                    effect.AttackerPosition = selfTransform.ValueRO.Position;
-                    effect.ShowImpactVfx |= (byte)(tracerShown ? 1 : 0);
-                    _aggregatedEffects[engageRw.Target] = effect;
-                }
-                else
-                {
-                    _aggregatedEffects.Add(engageRw.Target, new AggregatedTargetEffect
-                    {
-                        TotalDamage = shotDamage,
-                        Attacker = entity,
-                        AttackerCell = attackerCell,
-                        AttackerPosition = selfTransform.ValueRO.Position,
-                        ObservationSource = entity,
-                        ObservationSourcePosition = selfTransform.ValueRO.Position,
-                        ShowImpactVfx = (byte)(tracerShown ? 1 : 0)
-                    });
-                }
+                AccumulateDirectDamage(engageRw.Target, targetPredictedHealth, shotDamage,
+                    entity, attackerCell, selfTransform.ValueRO.Position, (byte)(tracerShown ? 1 : 0));
             }
 
             ProcessStandardAttackPlans(em, ecb, grid, dt, standardAttackCandidates, (float)SystemAPI.Time.ElapsedTime);
@@ -382,7 +347,12 @@ namespace Game.Runtime
             foreach (var pair in _aggregatedEffects)
             {
                 Entity target = pair.Key;
-                AggregatedTargetEffect pending = pair.Value;
+                DirectDamageAggregate pending = pair.Value;
+                Entity lastAttacker = new Entity { Index = pending.LastSource.Index, Version = pending.LastSource.Version };
+                Entity observationSource = new Entity { Index = pending.ObservationSource.Index, Version = pending.ObservationSource.Version };
+                int2 lastCell = new int2(pending.LastSource.CellX, pending.LastSource.CellZ);
+                float3 lastPosition = new float3(pending.LastSource.X, pending.LastSource.Y, pending.LastSource.Z);
+                float3 observationPosition = new float3(pending.ObservationSource.X, pending.ObservationSource.Y, pending.ObservationSource.Z);
                 if (!em.Exists(target) || !em.HasComponent<UnitHealth>(target))
                     continue;
 
@@ -391,7 +361,7 @@ namespace Game.Runtime
                     continue;
 
                 int previousHealth = health.Current;
-                health.Current = math.max(0, health.Current - pending.TotalDamage);
+                health.Current = DirectDamageSequencer.RemainingHealth(health.Current, pending.TotalDamage);
                 em.SetComponentData(target, health);
                 float3 targetPosition = em.HasComponent<LocalTransform>(target)
                     ? em.GetComponentData<LocalTransform>(target).Position
@@ -399,14 +369,14 @@ namespace Game.Runtime
                 Combat.CombatDamageObservationUtility.Append(
                     em,
                     damageQueue,
-                    pending.HasMixedObservationSources != 0 ? Entity.Null : pending.ObservationSource,
+                    pending.HasMixedObservationSources != 0 ? Entity.Null : observationSource,
                     target,
                     CombatDamageSourceKind.DirectFire,
                     previousHealth,
                     health.Current,
                     health.Max,
                     (float)SystemAPI.Time.ElapsedTime,
-                    pending.HasMixedObservationSources != 0 ? float3.zero : pending.ObservationSourcePosition,
+                    pending.HasMixedObservationSources != 0 ? float3.zero : observationPosition,
                     targetPosition);
                 if (em.HasComponent<LocalTransform>(target))
                 {
@@ -420,7 +390,7 @@ namespace Game.Runtime
                     em,
                     target,
                     (float)SystemAPI.Time.ElapsedTime,
-                    pending.Attacker,
+                    lastAttacker,
                     pending.TotalDamage,
                     nameof(UnitAttackSystem));
 
@@ -428,25 +398,25 @@ namespace Game.Runtime
                 {
                     em.SetComponentData(target, new RecentAttacker
                     {
-                        Attacker = pending.Attacker,
-                        Cell = pending.AttackerCell,
-                        Position = pending.AttackerPosition
+                        Attacker = lastAttacker,
+                        Cell = lastCell,
+                        Position = lastPosition
                     });
                 }
                 else
                 {
                     ecb.AddComponent(target, new RecentAttacker
                     {
-                        Attacker = pending.Attacker,
-                        Cell = pending.AttackerCell,
-                        Position = pending.AttackerPosition
+                        Attacker = lastAttacker,
+                        Cell = lastCell,
+                        Position = lastPosition
                     });
                 }
 
                 if (health.Current > 0)
                 {
-                    TryIssueCounterEngage(em, ecb, grid, pending.Attacker, pending.AttackerPosition, target);
-                    TryIssueFleeOrder(em, ecb, grid, pending.AttackerPosition, target);
+                    TryIssueCounterEngage(em, ecb, grid, lastAttacker, lastPosition, target);
+                    TryIssueFleeOrder(em, ecb, grid, lastPosition, target);
                 }
 
                 if (pending.ShowImpactVfx != 0 && em.HasComponent<LocalTransform>(target))
@@ -455,9 +425,9 @@ namespace Game.Runtime
                         ecb,
                         em,
                         UnitAttackVfxRequestKind.Impact,
-                        pending.Attacker,
+                        lastAttacker,
                         target,
-                        pending.AttackerPosition,
+                        lastPosition,
                         em.GetComponentData<LocalTransform>(target).Position);
                 }
 
@@ -616,7 +586,10 @@ namespace Game.Runtime
             {
                 StandardAttackCandidate candidate = candidates[i];
                 StandardAttackPlan plan = plans[i];
-                if (!em.Exists(candidate.Attacker))
+                int targetPredictedHealth = _predictedHealth.TryGetValue(candidate.Target, out int existingPredictedHealth)
+                    ? existingPredictedHealth : candidate.TargetHealth;
+                StandardAttackCommit commit = DirectDamageSequencer.Decide(plan.Kind, em.Exists(candidate.Attacker), targetPredictedHealth);
+                if (commit == StandardAttackCommit.MissingAttacker)
                     continue;
 
                 if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
@@ -626,34 +599,24 @@ namespace Game.Runtime
                 if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
                     em.SetComponentData(candidate.Attacker, plan.BaseAttackAnimationState);
 
-                if (plan.Kind == StandardAttackKind.ClearTarget)
-                {
-                    if (em.HasComponent<EngageTarget>(candidate.Attacker))
-                        em.SetComponentData(candidate.Attacker, plan.Engage);
-                    continue;
-                }
-
-                if (plan.Kind == StandardAttackKind.None)
-                    continue;
-
-                if (plan.Kind == StandardAttackKind.Windup)
-                {
-                    if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
-                        em.SetComponentData(candidate.Attacker, plan.AttackState);
-                    if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
-                        em.SetComponentData(candidate.Attacker, plan.AttackAnimationState);
-                    continue;
-                }
-
-                int targetPredictedHealth = _predictedHealth.TryGetValue(candidate.Target, out int existingPredictedHealth)
-                    ? existingPredictedHealth
-                    : candidate.TargetHealth;
-                if (targetPredictedHealth <= 0)
+                if (commit == StandardAttackCommit.ClearTarget)
                 {
                     EngageTarget cleared = candidate.Engage;
                     cleared.Target = Entity.Null;
                     if (em.HasComponent<EngageTarget>(candidate.Attacker))
                         em.SetComponentData(candidate.Attacker, cleared);
+                    continue;
+                }
+
+                if (commit == StandardAttackCommit.BaseOnly)
+                    continue;
+
+                if (commit == StandardAttackCommit.Windup)
+                {
+                    if (em.HasComponent<UnitAttackCooldownComponent>(candidate.Attacker))
+                        em.SetComponentData(candidate.Attacker, plan.AttackState);
+                    if (em.HasComponent<UnitAttackAnimationComponent>(candidate.Attacker))
+                        em.SetComponentData(candidate.Attacker, plan.AttackAnimationState);
                     continue;
                 }
 
@@ -685,32 +648,24 @@ namespace Game.Runtime
                     continue;
 
                 int shotDamage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, candidate.Target, plan.Damage);
-                _predictedHealth[candidate.Target] = math.max(0, targetPredictedHealth - shotDamage);
-                if (_aggregatedEffects.TryGetValue(candidate.Target, out AggregatedTargetEffect effect))
-                {
-                    effect.TotalDamage += shotDamage;
-                    if (effect.ObservationSource != candidate.Attacker)
-                        effect.HasMixedObservationSources = 1;
-                    effect.Attacker = candidate.Attacker;
-                    effect.AttackerCell = plan.AttackerCell;
-                    effect.AttackerPosition = candidate.AttackerPosition;
-                    effect.ShowImpactVfx |= plan.ShowTracer;
-                    _aggregatedEffects[candidate.Target] = effect;
-                }
-                else
-                {
-                    _aggregatedEffects.Add(candidate.Target, new AggregatedTargetEffect
-                    {
-                        TotalDamage = shotDamage,
-                        Attacker = candidate.Attacker,
-                        AttackerCell = plan.AttackerCell,
-                        AttackerPosition = candidate.AttackerPosition,
-                        ObservationSource = candidate.Attacker,
-                        ObservationSourcePosition = candidate.AttackerPosition,
-                        ShowImpactVfx = plan.ShowTracer
-                    });
-                }
+                AccumulateDirectDamage(candidate.Target, targetPredictedHealth, shotDamage,
+                    candidate.Attacker, plan.AttackerCell, candidate.AttackerPosition, plan.ShowTracer);
             }
+        }
+
+        private void AccumulateDirectDamage(Entity target, int predictedHealth, int damage,
+            Entity attacker, int2 cell, float3 position, byte showTracer)
+        {
+            bool hasAggregate = _aggregatedEffects.TryGetValue(target, out DirectDamageAggregate aggregate);
+            var source = new DirectDamageSource
+            {
+                Index = attacker.Index, Version = attacker.Version, CellX = cell.x, CellZ = cell.y,
+                X = position.x, Y = position.y, Z = position.z
+            };
+            _predictedHealth[target] = DirectDamageSequencer.Accumulate(ref aggregate, hasAggregate,
+                predictedHealth, damage, source, showTracer);
+            if (hasAggregate) _aggregatedEffects[target] = aggregate;
+            else _aggregatedEffects.Add(target, aggregate);
         }
 
         [BurstCompile]

@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using Game.Components;
+using Game.Runtime.Movement;
 
 namespace Game.Runtime
 {
@@ -19,10 +20,10 @@ namespace Game.Runtime
     {
         private const int VehicleOccupancyPaddingCells = 1;
         private const int SoftBlockerDisplacementSearchRadius = 4;
-        private const float InfantryOccupiedRepathDelaySeconds = 0.35f;
+        private const float InfantryOccupiedRepathDelaySeconds = GridPathMovementKernel.InfantryOccupiedRepathDelaySeconds;
         private const float VehicleTurnInPlaceRepathDelaySeconds = 1.25f;
-        private const float InfantryGroupFinalStopDistanceCells = 1.25f;
-        private const int InfantryMaxWaypointAdvancesPerFrame = 8;
+        private const float InfantryGroupFinalStopDistanceCells = GridPathMovementKernel.InfantryGroupFinalStopDistanceCells;
+        private const int InfantryMaxWaypointAdvancesPerFrame = GridPathMovementKernel.InfantryMaxWaypointAdvancesPerFrame;
         public float DeltaTime;
         public GridConfig Grid;
         public EntityCommandBuffer.ParallelWriter Ecb;
@@ -59,16 +60,12 @@ namespace Game.Runtime
             in UnitVehicleMovement vehicleMovement,
             in Faction faction)
         {
-            if (range.Length <= 0)
+            var rangeDecision = GridPathMovementKernel.EvaluateRange(range.Start, range.Length, follow.PathIndex, Pool.Length);
+            if (rangeDecision == GridPathRangeDecision.NoWork)
                 return;
 
-            if ((uint)follow.PathIndex >= (uint)range.Length)
-                return;
-
-            // A resumed unit can retain a range after the shared pool changes.
-            // Checking only the current waypoint leaves the final waypoint read
-            // below out of bounds. Rebuild the path to the original destination.
-            if (range.Start < 0 || range.Start > Pool.Length || range.Length > Pool.Length - range.Start)
+            // A resumed range must still fit the current shared pool before final-node reads.
+            if (rangeDecision == GridPathRangeDecision.InvalidRange)
             {
                 vehicleKinematics.CurrentSpeed = 0f;
                 vehicleKinematics.StallSeconds = 0f;
@@ -129,15 +126,9 @@ namespace Game.Runtime
 
                 if (!targetOverlapsCurrentFootprint && targetBlockedByOccupant)
                 {
-                    if (!isVehicle)
-                    {
-                        vehicleKinematics.CurrentSpeed = 0f;
-                        vehicleKinematics.StallSeconds += DeltaTime;
-                        if (vehicleKinematics.StallSeconds < InfantryOccupiedRepathDelaySeconds)
-                            return;
-
-                        vehicleKinematics.StallSeconds = 0f;
-                    }
+                    if (GridPathMovementKernel.AdvanceOccupiedStall(isVehicle, DeltaTime,
+                        ref vehicleKinematics.CurrentSpeed, ref vehicleKinematics.StallSeconds) == GridPathOccupancyDecision.Wait)
+                        return;
 
                     RequestRepath(sortKey, entity);
                     return;
@@ -292,81 +283,48 @@ namespace Game.Runtime
             vehicleKinematics.CurrentSpeed = 0f;
             vehicleKinematics.StallSeconds = 0f;
 
-            float remainingDistance = math.max(0f, speed * DeltaTime);
-            float arriveDistance = move.ArriveDistance;
-            float arriveDistSq = arriveDistance * arriveDistance;
-            float groupedFinalStopDistance = math.max(move.ArriveDistance, Grid.CellSize * InfantryGroupFinalStopDistanceCells);
-            float groupedFinalStopDistSq = groupedFinalStopDistance * groupedFinalStopDistance;
-
-            for (int i = 0; i < InfantryMaxWaypointAdvancesPerFrame && remainingDistance > 0f; i++)
+            var state = new InfantryPathState
             {
-                if ((uint)follow.PathIndex >= (uint)range.Length)
-                    return;
-
-                int poolIndex = range.Start + follow.PathIndex;
-                if ((uint)poolIndex >= (uint)Pool.Length)
-                    return;
-
-                int2 targetCell = Pool[poolIndex];
-                bool finalPathStep = follow.PathIndex >= (range.Length - 1);
+                X = transform.Position.x, Y = transform.Position.y, Z = transform.Position.z,
+                CellX = unitGrid.Cell.x, CellZ = unitGrid.Cell.y, PathIndex = follow.PathIndex,
+                RemainingDistance = GridPathMovementKernel.BeginInfantryDistance(speed, DeltaTime)
+            };
+            for (int i = 0; i < GridPathMovementKernel.InfantryMaxWaypointAdvancesPerFrame && state.RemainingDistance > 0f; i++)
+            {
+                if ((uint)state.PathIndex >= (uint)range.Length) return;
+                int poolIndex = range.Start + state.PathIndex;
+                if ((uint)poolIndex >= (uint)Pool.Length) return;
                 int finalPoolIndex = range.Start + range.Length - 1;
-                if ((uint)finalPoolIndex >= (uint)Pool.Length)
-                    return;
-
-                int2 finalCell = Pool[finalPoolIndex];
-                float3 finalTargetPos = GridUtils.CellToWorldCenter(Grid, finalCell);
-                finalTargetPos.y = transform.Position.y;
-                float3 toFinalTarget = finalTargetPos - transform.Position;
-                toFinalTarget.y = 0f;
-
-                if (groupedManualMove && finalPathStep && math.lengthsq(toFinalTarget) <= groupedFinalStopDistSq)
+                if ((uint)finalPoolIndex >= (uint)Pool.Length) return;
+                int2 targetCell = Pool[poolIndex];
+                float3 targetPos = GridUtils.CellToWorldCenter(Grid, targetCell);
+                float3 finalTargetPos = GridUtils.CellToWorldCenter(Grid, Pool[finalPoolIndex]);
+                var result = GridPathMovementKernel.StepInfantryWaypoint(state, new InfantryWaypointInput
                 {
-                    follow.PathIndex = range.Length;
+                    PathLength = range.Length, PoolIndexValid = true, FinalPoolIndexValid = true,
+                    TargetCellX = targetCell.x, TargetCellZ = targetCell.y,
+                    TargetX = targetPos.x, TargetZ = targetPos.z,
+                    FinalTargetX = finalTargetPos.x, FinalTargetZ = finalTargetPos.z,
+                    ArriveDistance = move.ArriveDistance, CellSize = Grid.CellSize, GroupedManualMove = groupedManualMove
+                });
+                state = result.State;
+                transform.Position = new float3(state.X, state.Y, state.Z);
+                unitGrid.Cell = new int2(state.CellX, state.CellZ);
+                follow.PathIndex = state.PathIndex;
+                if (result.WriteFacing)
+                    transform.Rotation = quaternion.LookRotationSafe(new float3(result.DirectionX, result.DirectionY, result.DirectionZ), math.up());
+                if (result.SettleCurrentCell)
+                {
                     int2 settledCell = GridUtils.WorldToCell(Grid, transform.Position);
                     if (GridUtils.InBounds(settledCell, Grid.Width, Grid.Height) && !settledCell.Equals(unitGrid.Cell))
                         unitGrid.Cell = settledCell;
-                    return;
                 }
-
-                float3 targetPos = GridUtils.CellToWorldCenter(Grid, targetCell);
-                targetPos.y = transform.Position.y;
-                float3 toTarget = targetPos - transform.Position;
-                toTarget.y = 0f;
-                float distSq = math.lengthsq(toTarget);
-                if (distSq <= arriveDistSq)
-                {
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                float dist = math.sqrt(distSq);
-                if (dist <= 0.0001f)
-                {
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                float3 dir = toTarget / dist;
-                if (remainingDistance >= dist)
-                {
-                    transform.Position = targetPos;
-                    transform.Rotation = quaternion.LookRotationSafe(dir, math.up());
-                    remainingDistance -= dist;
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                transform.Position += dir * remainingDistance;
-                transform.Rotation = quaternion.LookRotationSafe(dir, math.up());
-                remainingDistance = 0f;
+                if (result.Action == InfantryWaypointAction.Stop || result.Action == InfantryWaypointAction.GroupedStop) return;
             }
         }
 
         internal static bool ShouldBlockPathCell(bool campaignGuidedMove, bool cellBlocked) =>
-            !campaignGuidedMove && cellBlocked;
+            GridPathMovementKernel.ShouldBlockPathCell(campaignGuidedMove, cellBlocked);
 
         private void RequestRepath(int sortKey, Entity entity)
         {

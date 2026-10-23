@@ -52,7 +52,7 @@ namespace Game.Composition
             if (this == null || world == null || world != birthProviderWorld ||
                 !TryReadEntitySceneGridBinding(world, birthProviderRoot, actualGrid, out var binding, out _)) return false;
             source = new RuntimeActorSourceIdentity(world.Unmanaged.SequenceNumber, binding.MapRoot, binding.Grid, binding.SceneRoot,
-                binding.Generation, GetInstanceID(), binding.SourceView.GetInstanceID(), binding.SourceIdentity, binding.SourceContent, binding.GeneratedMetadata, world.EntityManager.GetComponentData<GridConfig>(actualGrid));
+                binding.Generation, GetEntityId().GetHashCode(), binding.SourceView.GetEntityId().GetHashCode(), binding.SourceIdentity, binding.SourceContent, binding.GeneratedMetadata, world.EntityManager.GetComponentData<GridConfig>(actualGrid));
             return true;
         }
 

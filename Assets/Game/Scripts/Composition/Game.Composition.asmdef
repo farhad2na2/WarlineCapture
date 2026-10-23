@@ -25,6 +25,7 @@
         "Unity.Scenes",
         "Unity.InputSystem",
         "Unity.Mathematics",
+        "Unity.Mathematics.Extensions",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.RenderPipelines.Universal.Runtime",
         "Unity.ResourceManager",

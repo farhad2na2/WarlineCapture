@@ -21,6 +21,6 @@ namespace Unity.Collections {
   public void Clear(){data=null;}
  }
 }
-namespace Game.UI.Shell.Ecs {public sealed class AriaPlayDecisionSystem{}}
+namespace Game.UI.Shell.Ecs {public sealed class AriaPlayInputSystem{}}
 // Existing focused validation logging only; planner never references Debug.
 namespace UnityEngine{public static class Debug{public static void Log(object value)=>Console.Error.WriteLine(value);}}

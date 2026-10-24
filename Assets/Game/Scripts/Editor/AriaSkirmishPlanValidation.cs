@@ -134,6 +134,50 @@ namespace Game.Editor
                 "own normal recruitment drawer continues the eligible structure purchase");
             Reset(); plan.TargetPending = 1; NoRecruit("pending assault target retains priority");
             Reset(); plan.MapNavigationStage = 1; NoRecruit("active page navigation retains priority");
+            // Public UI sequence: Build opener -> completed input -> catalog -> role purchase.
+            // Acknowledgements below are sampled input-driver state, not production commands.
+            MissingStructure();
+            view.RecruitRocketeer.Id = 31;
+            view.CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 };
+            Step(); Check(output.TargetId == 31 && touch.Phase == AriaPlayPhase.Aiming,
+                "structure recruitment approaches the actual public Build opener");
+            view.Time = 101; view.Frame++; Step();
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                "drawer opening requires the ordinary Decision gesture");
+            view.DrawerOpen = true; view.RecruitRocketeer = default;
+            view.Time = 102; view.Frame = 103;
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0; touch.Pressed = 0;
+            touch.Actions = 1; touch.LastCompletedTargetId = 31;
+            touch.LastCompletedFrame = 102; touch.DueAt = 103;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0,
+                "completed Build opener not yet due must not become Inspect CloseDrawer");
+            view.Time = 103; view.Frame++; Step();
+            Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.GestureRequested == 0,
+                "own recruitment catalog presentation gap waits without a purchase or close");
+            view.Time = 103.5f; view.Frame++;
+            view.RecruitRocketeer = new AriaTouchTarget { Available = true, Id = 62,
+                Position = new UnityEngine.Vector2(50,40) };
+            Step(); Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.Actions == 1,
+                "fresh public role item gets its own Decision approach after the opener");
+            view.Time = 104.5f; view.Frame++; Step();
+            Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 1,
+                "only the presented eligible role requests the second ordinary gesture");
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0;
+            touch.Actions = 2; touch.LastCompletedTargetId = 62;
+            touch.LastCompletedFrame = view.Frame; touch.DueAt = view.Time + 1;
+            view.RocketeerRecruitPending = true; view.Time++; view.Frame++;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.ObserveBattle && output.TargetId == 63 &&
+                touch.Actions == 2, "public pending production ends recruitment without duplicate purchase");
+            MissingStructure(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.RecruitRocketeer = default; view.CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 };
+            plan.RecruitUnavailableAt = 96;
+            Step(); Check(output.TargetId == 63 && plan.NextRecruitAt == 112 &&
+                plan.Intent == AriaSkirmishIntent.Inspect,
+                "persistent unavailable role keeps bounded refusal and cooldown instead of looping forever");
             return checks;
         }
 

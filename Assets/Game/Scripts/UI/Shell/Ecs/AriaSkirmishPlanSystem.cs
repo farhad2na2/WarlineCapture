@@ -1002,9 +1002,34 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (view.CanAffordRocketeer && view.RecruitRocketeer.Available)
                 {
+                    plan.RecruitUnavailableAt = 0;
                     plan.Intent = AriaSkirmishIntent.Recruit;
                     Target(view.RecruitRocketeer, false, ref output);
                     return;
+                }
+            }
+            // Opening the public drawer is only the first recruitment gesture.
+            // Do not interpret its still-verifying acknowledgement or one short
+            // catalog presentation gap as a completed purchase and close it.
+            if (missingGroundStructure && view.DrawerOpen && !view.RocketeerRecruitPending &&
+                plan.Intent == AriaSkirmishIntent.Recruit && replacementUiReady &&
+                view.Time >= plan.NextRecruitAt)
+            {
+                bool ownCompletedRecruitTouch = touch.Phase == AriaPlayPhase.Verifying &&
+                    touch.Actions > 0 && touch.LastCompletedTargetId == touch.TargetId &&
+                    touch.LastCompletedFrame > 0;
+                if (view.DrawerOpen && view.CanAffordRocketeer && ownCompletedRecruitTouch &&
+                    !replacementTouchReady)
+                {
+                    output.Kind = AriaPlayObservationKind.Unavailable;
+                    return; // Keep verification intact; never advance its due/frame guards.
+                }
+                if (view.DrawerOpen && view.CanAffordRocketeer && replacementTouchReady &&
+                    !view.RecruitRocketeer.Available)
+                {
+                    if (plan.RecruitUnavailableAt == 0) plan.RecruitUnavailableAt = view.Time;
+                    if (view.Time - plan.RecruitUnavailableAt < 3f) return;
+                    plan.NextRecruitAt = view.Time + 12f;
                 }
             }
             if (view.AirProfile && plan.AssaultStarted == 0)

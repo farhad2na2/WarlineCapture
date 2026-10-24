@@ -638,8 +638,19 @@ namespace Game.UI.Shell.Ecs
             plan.AssaultInspectRevision = 0; plan.AssaultInspectDeadline = 0; plan.AssaultInspectReadyAt = 0;
             plan.AssaultInspectObjectiveHudIdentity = 0; plan.AssaultInspectObjectiveWorld = default;
         }
+        // A completed visible page is enough to inspect the moving cohort on the
+        // normal map. Paging itself never renews the objective watchdog.
+        static bool AcceptedAssaultInspectionPage(in AriaSkirmishObservation view,
+            in AriaSkirmishPlanComponent plan)
+            => plan.AssaultIssued == 0 && plan.PagesOrdered > 0 &&
+               plan.AssaultPageSeen == view.ExpandedPageIndex + 1 &&
+               plan.SweepRosterRevision == view.ExpandedRosterRevision &&
+               view.ExpandedAssaultMask != 0 &&
+               (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
+
         static bool AssaultInspectionUiBusy(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
-            => view.DrawerOpen || view.PlacementOpen || view.AttackMode || plan.AssaultSelecting != 0 ||
+            => view.DrawerOpen || view.PlacementOpen || view.AttackMode ||
+               (plan.AssaultSelecting != 0 && !AcceptedAssaultInspectionPage(view, plan)) ||
                plan.TargetPending != 0 || plan.AdvanceNavigation != 0 || plan.MapNavigationStage != 0 ||
                (plan.PadStage != 0 && plan.PadStage != 8) ||
                (view.AirProfile && plan.AirCycleCount == 0 && plan.AirCycleStage >= 1 && plan.AirCycleStage <= 4 &&
@@ -665,8 +676,13 @@ namespace Game.UI.Shell.Ecs
         {
             if (plan.AssaultInspectStage == 0)
             {
-                if (plan.AssaultIssued == 0 || plan.StructureOrdered == 0 ||
-                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting) ||
+                if (((plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                     !AcceptedAssaultInspectionPage(view, plan)) ||
+                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting &&
+                     !(touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0 &&
+                       touch.Pressed == 0 && touch.Actions > 0 &&
+                       touch.LastCompletedTargetId == touch.TargetId && touch.LastCompletedFrame > 0 &&
+                       view.Frame > touch.LastCompletedFrame && view.Time >= touch.DueAt)) ||
                     view.AssaultDistanceVisible || view.MapOpen || AssaultInspectionUiBusy(view,plan) ||
                     view.PresentedHomeThreat ||
                     view.Time < plan.AssaultInspectReadyAt || !view.AssaultMap.OpenMap.Available) return false;
@@ -772,7 +788,9 @@ namespace Game.UI.Shell.Ecs
         {
             // Public visible controls only. No gameplay Entity mutation from this planner.
             if (view.Finished || touch.Phase == AriaPlayPhase.Manual ||
-                plan.AssaultIssued == 0 || plan.StructureOrdered == 0)
+                (plan.AssaultInspectStage == 0 &&
+                 (plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                 !AcceptedAssaultInspectionPage(view, plan)))
                 ClearAssaultMapInspection(ref plan);
             if (view.Finished)
             {

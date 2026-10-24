@@ -11,6 +11,7 @@ import shutil
 import sys
 sys.dont_write_bytecode = True
 import skirmish_offline_sim as common
+import skirmish_production_worker as production
 
 SCHEDULING = "Assets/Game/Scripts/Systems/WorldSchedulingKernel.cs"
 TARGETING = "Assets/Game/Scripts/Systems/TargetAcquisitionKernel.cs"
@@ -57,14 +58,18 @@ BODY_SOURCES += ["Tools/CI/SkirmishOfflineSim/VehicleCallerReplay.cs",
     "Assets/Game/Scripts/Systems/UnitGridMovementPolicy.cs",
     "Assets/Game/Scripts/Systems/GridPathMovementKernel.cs",
     "Assets/Game/Scripts/Systems/InfantryPathLifecycleKernel.cs",
-    "Assets/Game/Scripts/Systems/Pathfinding/PathPlacementKernel.cs"]
+    "Assets/Game/Scripts/Systems/Pathfinding/PathPlacementKernel.cs",
+    "Tools/CI/SkirmishOfflineSim/ProductionChainReplay.cs"]
 BODY_PINS = BODY_SOURCES + ["Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs", "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs", "Assets/Game/Scripts/Components/UnitCombatComponents.cs", "ProjectSettings/ProjectVersion.txt"]
+
+BODY_PINS += list(production.ORIGINALS + production.CALLERS) + ["Tools/CI/skirmish_production_worker.py"] + ["Tools/CI/SkirmishOfflineSim/PhysicalProduction/" + name for name in production.PACKET]
+PRODUCTION_BINS = {"production-worker.json", "production-worker/ProductionMonoWorker.exe"}
 
 
 def body_files(enabled):
     return (list(dict.fromkeys(SOURCES + (BODY_SOURCES if enabled else []))),
             list(dict.fromkeys(PINS + (BODY_PINS if enabled else []))),
-            BINS | ({"math-module.json"} if enabled else set()))
+            BINS | (({"math-module.json"} | PRODUCTION_BINS) if enabled else set()))
 
 
 def installed_body_math(project):
@@ -174,11 +179,14 @@ def build(project, output, schedule_receipt=None, moving_schedule_receipt=None, 
         if installed_body_math(project) != math_config:
             raise ValueError("Installed math changed during build")
         (output/"math-module.json").write_text(json.dumps(math_config, indent=2) + "\n")
+        worker_config=production.build_worker(output/"production-worker", project, math_module=Path(math_config["module_path"]))
+        (output/"production-worker.json").write_bytes(worker_config.read_bytes())
     (output/"profile.json").write_text(json.dumps(profile, sort_keys=True, indent=2)+"\n")
     build_files={str(p.relative_to(output)): common.sha(p) for p in sorted((output/"bin").iterdir()) if p.is_file()}
     build_files["profile.json"]=common.sha(output/"profile.json")
     if body_transitions:
         build_files["math-module.json"] = common.sha(output/"math-module.json")
+        build_files.update({name:common.sha(output/name) for name in PRODUCTION_BINS})
     if set(build_files) != expected_bins:
         raise ValueError("Unexpected copied runtime/build output")
     manifest = dict(schema_version=1, project=str(project), sdk=version, scope=SCOPE, source_pins=pins, body_transitions=body_transitions,
@@ -214,6 +222,7 @@ def run(build_path, input_path, output):
             math_config = json.loads((build_path/"math-module.json").read_text())
             if installed_body_math(project) != math_config:
                 raise ValueError("Pinned installed body math changed")
+            production.verify_config(build_path/"production-worker.json")
         profile = json.loads((build_path/"profile.json").read_text())
         for captured_profile in (profile,profile.get("moving",{}),profile.get("multi_unit",{})):
           if captured_profile.get("enabled"):

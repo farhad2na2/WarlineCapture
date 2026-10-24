@@ -12,6 +12,7 @@ static class WorldProgram
 #if WORLD_BODY_TRANSITIONS
         if (kind == "body_transition") return CapturedBodyTransition.Run(row);
         if (kind == "vehicle_caller") return VehicleCallerReplay.Run(row);
+        if (kind == "physical_production_chain") return ProductionChainReplay.Run(row);
 #endif
         if (kind == "startup_import") return StartupFullMapImport.Run(row);
         if (kind == "squad_target") return SquadReplay.Run(row);
@@ -39,6 +40,7 @@ static class WorldProgram
 
 #if WORLD_BODY_TRANSITIONS
             RuntimeMathBootstrap.Initialize(args[1]);
+            ProductionChainReplay.Initialize(args[1]);
             BodyTransitionSourcePins.Verify(RuntimeMathBootstrap.ProjectRoot);
 #endif
             WorldSchedule.Load(args[1]);
@@ -64,7 +66,7 @@ static class WorldProgram
                 }
 #if WORLD_BODY_TRANSITIONS
             foreach(var row in cases.EnumerateArray())
-                if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var callerKind)&&callerKind.GetString()=="vehicle_caller")
+                if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var callerKind)&&(callerKind.GetString()=="vehicle_caller"||callerKind.GetString()=="physical_production_chain"))
                 {
                     long callerWork=row.GetProperty("work_limit").GetInt64();WorldJson.Need(callerWork>0&&callerWork<=2000000,"Bounded caller work admission required");work+=callerWork;
                 }

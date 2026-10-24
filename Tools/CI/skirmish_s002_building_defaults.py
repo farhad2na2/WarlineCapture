@@ -8,6 +8,8 @@ import copy
 import hashlib
 import json
 import math
+import os
+import stat
 from pathlib import Path
 import re
 import struct
@@ -268,13 +270,38 @@ def unique_object(pairs):
         need(key not in result,'Duplicate capture JSON key: '+key);result[key]=value
     return result
 
+def read_capture(path):
+    """Reject special files before open; bound reads even if a regular file grows."""
+    path = Path(path)
+    maximum = 128 * 1024 * 1024
+    before = path.lstat()
+    need(stat.S_ISREG(before.st_mode) and not stat.S_ISLNK(before.st_mode),
+         'Capture must be a non-symlink regular file')
+    need(0 <= before.st_size <= maximum, 'Capture exceeds128MiB')
+    # O_NONBLOCK prevents a racing replacement FIFO from blocking open, and
+    # O_NOFOLLOW prevents following a replacement symlink. fstat rejects any
+    # replacement/special file before any bytes are read.
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(descriptor, 'rb') as stream:
+        opened = os.fstat(stream.fileno())
+        need(stat.S_ISREG(opened.st_mode) and
+             (opened.st_dev, opened.st_ino) == (before.st_dev, before.st_ino),
+             'Capture regular-file identity changed before read')
+        need(0 <= opened.st_size <= maximum, 'Capture exceeds128MiB')
+        raw = stream.read(maximum + 1)
+        need(len(raw) <= maximum, 'Capture exceeds128MiB during bounded read')
+        after = os.fstat(stream.fileno())
+        need(after.st_size == opened.st_size == len(raw), 'Capture size changed during bounded read')
+        return raw
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--capture',type=Path,required=True);parser.add_argument('--output',type=Path,required=True);parser.add_argument('--controls',action='store_true');args=parser.parse_args()
-    output=args.output.resolve();output.mkdir(parents=True,exist_ok=False);need(args.capture.stat().st_size<=128*1024*1024,'Capture exceeds128MiB');capture_raw=args.capture.read_bytes();capture_hash=sha(capture_raw);capture=json.loads(capture_raw,object_pairs_hook=unique_object);sources=Sources();sources.read('Tools/CI/skirmish_s002_building_defaults.py');result=derive(capture,output/'derive',sources);assertions=compare(result,capture)
+    output=args.output.resolve();output.mkdir(parents=True,exist_ok=False);capture_raw=read_capture(args.capture);capture_hash=sha(capture_raw);capture=json.loads(capture_raw,object_pairs_hook=unique_object);sources=Sources();sources.read('Tools/CI/skirmish_s002_building_defaults.py');result=derive(capture,output/'derive',sources);assertions=compare(result,capture)
     checks=controls(result,capture,output/'controls') if args.controls else []
     result.update(result='PassedCandidateScalarAssertions',controls=checks,assertions=assertions,capture_sha256=capture_hash,full_mission_initialized=False,player_ready=False)
     for name,pin in sources.pins.items():need(sha((ROOT/name).read_bytes())==pin['sha256'],'Source drift after scalar derivation: ' + name)
-    need(sha(args.capture.read_bytes())==capture_hash,'Capture drift after scalar assertions')
+    need(sha(read_capture(args.capture))==capture_hash,'Capture drift after scalar assertions')
     (output/'result.json').write_text(json.dumps(result,indent=2)+'\n');print('[S002CandidateBuildingDefaults] result=Passed actors=18 active_selection_proven=false physical_startup_parity=false')
     return 0
 if __name__=='__main__':raise SystemExit(main())

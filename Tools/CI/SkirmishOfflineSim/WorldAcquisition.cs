@@ -23,7 +23,7 @@ internal static class WorldAcquisition
             AggroRangeCells=v.GetProperty("aggro_range_cells").GetInt32(),AutoEngage=v.GetProperty("auto_engage").GetByte(),
             AttackMove=v.GetProperty("attack_move").GetBoolean(),ManualMove=v.GetProperty("manual_move").GetBoolean(),PathFollow=v.GetProperty("path_follow").GetBoolean(),
             PathRequest=v.GetProperty("path_request").GetBoolean(),HoldPosition=v.GetProperty("hold_position").GetBoolean(),Recent=v.GetProperty("recent").GetString()};
-        WorldJson.Need(o.GridWidth>=1&&o.GridWidth<=512&&o.GridHeight>=1&&o.GridHeight<=512&&o.AggroRangeCells>=0&&o.AggroRangeCells<=64&&o.AutoEngage<=1,"Invalid acquisition grid/range/flag");
+        WorldJson.Need(o.GridWidth>=1&&o.GridHeight>=1&&(long)o.GridWidth*o.GridHeight<=16777216&&o.AggroRangeCells>=0&&o.AggroRangeCells<=64&&o.AutoEngage<=1,"Invalid acquisition grid/range/flag");
         WorldJson.Need(a.Radius==0&&(a.MovingProfile||(o.HoldPosition&&!o.PathFollow&&!o.PathRequest)),"Bounded stationary profile requires hold position and no path follow/request");
         WorldJson.Need(o.Recent!=null,"Recent attacker must be an ID or empty string");
         if(v.GetProperty("scan").ValueKind!=JsonValueKind.Null)

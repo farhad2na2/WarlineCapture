@@ -40,7 +40,7 @@ class FullMapReaderTests(unittest.TestCase):
         reader = source[start:end]
         # The executed reader body is byte-for-byte from the checked-in source.
         (cls.build / 'Reader.cs').write_text('using System;\nusing System.Linq;\nusing System.IO;\nusing System.Security.Cryptography;\nusing System.Buffers.Binary;\nusing System.Text.Json;\nusing Game.Components;\nclass MovingWorldMap {\n'
-            + 'internal int Width,Height; internal GridCoordinateFrame Frame; internal byte[] Walkable,Friendly,Sidewalk,Dirt; internal bool[] Blocked,CellSurface,FootprintSurface,Occupied; internal int[] Cardinal,Diagonal,Counts;\n'
+            + 'internal int Width,Height; internal bool FullMap; internal GridCoordinateFrame Frame; internal byte[] Walkable,Friendly,Sidewalk,Dirt; internal bool[] Blocked,CellSurface,FootprintSurface,Occupied; internal int[] Cardinal,Diagonal,Counts;\n'
             + reader + '}')
         shutil.copyfile(PROJECT / 'Assets/Game/Scripts/Components/GridCoordinateKernel.cs', cls.build / 'Coordinates.cs')
         # The unused namespace import has no runtime dependency in WorldJson.

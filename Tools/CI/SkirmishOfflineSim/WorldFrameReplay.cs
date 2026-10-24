@@ -31,7 +31,7 @@ internal static class WorldFrameReplay
         public GridCoordinateFrame Coordinates;
         public float EngageX,EngageY,EngageZ;
         public int EngageCellX,EngageCellZ;
-        public bool Mobile => Kind == "infantry";
+        public bool Mobile => Kind == "infantry" || Kind == "vehicle";
     }
     internal static void Need(bool condition,string message) => WorldJson.Need(condition,message);
     static int Int(JsonElement j,string name,int min,int max)
@@ -49,6 +49,7 @@ internal static class WorldFrameReplay
             Y=Float(row,"y",-1000000,1000000),Z=Float(row,"z",-1000000,1000000),CellX=Int(row,"cell_x",-1000000,1000000),CellZ=Int(row,"cell_z",-1000000,1000000),
             Radius=Float(row,"radius",0,10000),HasEngage=row.GetProperty("has_engage").GetBoolean(),Target=row.GetProperty("target").GetString(),
             CoverEligible=row.GetProperty("cover_eligible").GetBoolean(),ProtectedRecords=row.GetProperty("protected_records").GetBoolean(),CoverPermille=(ushort)Int(row,"cover_permille",0,65535),Acquisition=row.GetProperty("acquisition") };
+        Need(a.Kind!="vehicle","Vehicle forward actor caller/animation profile unsupported; no infantry coercion");
         Need(!row.GetProperty("combat_suppressed").GetBoolean(),"Campaign-suppressed actors outside bounded profile");
         Need(!row.GetProperty("has_animation_order").GetBoolean(),"Animation-order actors require native animation ticking");
         Need(row.GetProperty("has_unit_grid").GetBoolean()==a.Mobile,"Infantry must have UnitGrid; target-only bases must not");

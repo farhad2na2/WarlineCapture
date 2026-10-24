@@ -105,6 +105,9 @@ namespace Game.Runtime
             _lastTrackedComponentOrderVersion = -1;
             _cachedGridEntity = Entity.Null;
             _trackedEntityType = state.GetEntityTypeHandle();
+#if UNITY_EDITOR
+            ObserveInitialWorldCreate(ref state);
+#endif
         }
 
         public void OnDestroy(ref SystemState state)
@@ -265,6 +268,9 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+#if UNITY_EDITOR
+            ObserveInitialWorldUpdateEntry(ref state);
+#endif
             int trackedUnitCount = _trackedUnitsQuery.CalculateEntityCount();
             int componentOrderVersion = state.EntityManager.GetComponentOrderVersion<UnitGrid>();
             bool membershipChanged = trackedUnitCount != _lastTrackedUnitCount ||

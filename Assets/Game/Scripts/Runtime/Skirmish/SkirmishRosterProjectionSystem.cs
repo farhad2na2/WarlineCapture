@@ -23,6 +23,9 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+#if UNITY_EDITOR
+            int initialWorldOrderBefore = em.EntityOrderVersion;
+#endif
             // WriteOverlay adds components. A SystemAPI.Query foreach makes that
             // structural change illegal, so the live match threw before any tank
             // received Barracks damage.
@@ -38,6 +41,9 @@ namespace Game.Runtime
                 SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
                 Apply(em, ownedQuery, session.SessionId, setup);
             }
+#if UNITY_EDITOR
+            S002InitialWorldBoundaryWitness.RecordRosterTail(em, initialWorldOrderBefore);
+#endif
         }
 
         public static int Apply(

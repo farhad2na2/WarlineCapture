@@ -63,6 +63,9 @@ namespace Game.Runtime
 
             MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
             BuildingGameplaySourceCompositionSystemHelper childSystems = _childSystem.Create();
+#if UNITY_EDITOR
+            S002InitialWorldManagedAuthority.Register(childSystems);
+#endif
             childSystems.BuildingDefinitionPrefabSystemHelper.ConfigureAuthoringMetadataResolvers(
                 tryGetBuildingDefinitionMetadata,
                 tryGetUnitDefinitionMetadata);

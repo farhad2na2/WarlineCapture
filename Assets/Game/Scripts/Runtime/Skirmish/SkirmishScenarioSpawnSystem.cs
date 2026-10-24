@@ -137,6 +137,9 @@ namespace Game.Runtime
                 return;
             }
             SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
+#if UNITY_EDITOR
+            S002InitialWorldBoundaryWitness.RecordSpawnComplete(em, entity);
+#endif
         }
 
         public static bool TrySpawnLedgers(

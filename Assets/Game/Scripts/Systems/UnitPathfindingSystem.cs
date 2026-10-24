@@ -69,6 +69,9 @@ namespace Game.Runtime
 
             _requestBuffers.Initialize();
             _requestCollection.Initialize(ref state);
+#if UNITY_EDITOR
+            ObserveInitialWorldCreate(ref state);
+#endif
         }
 
         public void OnDestroy(ref SystemState state)
@@ -83,6 +86,9 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+#if UNITY_EDITOR
+            ObserveInitialWorldUpdateEntry(ref state);
+#endif
             bool playRequested = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested != 0;
             var admission = Pathfinding.PathJobSchedulingKernel.Decide(playRequested, _hasPendingPathJob,
                 playRequested && _hasPendingPathJob && _pendingPathHandle.IsCompleted);

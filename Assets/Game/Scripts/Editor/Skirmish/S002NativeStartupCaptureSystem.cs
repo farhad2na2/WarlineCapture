@@ -19,8 +19,32 @@ namespace Game.Editor
     public partial class S002NativeStartupCaptureSystem : SystemBase
     {
         bool captured;
+        bool insideInitialWorldRosterBoundary;
+        int initialWorldRosterOrderBefore, initialWorldRosterOrderAfter;
+        protected override void OnCreate()
+        {
+            if (S002InitialWorldBundleCapture.Enabled)
+                S002InitialWorldBoundaryWitness.RosterTailObserved += ObserveInitialWorldRosterTail;
+        }
+        protected override void OnDestroy()
+        {
+            S002InitialWorldBoundaryWitness.RosterTailObserved -= ObserveInitialWorldRosterTail;
+        }
+        void ObserveInitialWorldRosterTail(EntityManager em, int orderBefore, int orderAfter)
+        {
+            if (captured || !ReferenceEquals(em.World, World)) return;
+            // Original structural roster changes synchronize tracked jobs. Run here
+            // before any other Initialization system can schedule new work.
+            if (orderBefore == orderAfter) return;
+            S002InitialWorldBundleCapture.RequireSafeBoundary(World, true);
+            initialWorldRosterOrderBefore = orderBefore; initialWorldRosterOrderAfter = orderAfter;
+            insideInitialWorldRosterBoundary = true;
+            try { OnUpdate(); }
+            finally { insideInitialWorldRosterBoundary = false; }
+        }
         protected override void OnUpdate()
         {
+            if (S002InitialWorldBundleCapture.Enabled && !insideInitialWorldRosterBoundary) return;
             string output = Environment.GetEnvironmentVariable("WARLINE_S002_OFFLINE_STARTUP_CAPTURE");
             if (captured || string.IsNullOrEmpty(output)) return;
             using var sessions = EntityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupRecord));
@@ -137,6 +161,7 @@ namespace Game.Editor
                 ["full_mission_initialized"] = false, ["offline_parity"] = false,
                 ["pending_capture"] = new JArray("complete building/economy graph", "source-pinned startup transaction", "offline-derived grounded transforms and complete startup") };
             File.WriteAllText(Path.Combine(path, "startup-observation.json"), report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
+            S002InitialWorldBundleCapture.Write(EntityManager, sessionEntity, session, report, path, initialWorldRosterOrderBefore, initialWorldRosterOrderAfter);
             captured = true;
             S002StartupAllocatorCapture.Completed = true;
             Debug.Log("[S002PhysicalStartupInputs] result=Captured buildingTransactions=" + report["physical_startup_inputs"]["building_transactions"] +

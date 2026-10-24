@@ -26,7 +26,8 @@ namespace Game.Editor
         static readonly string[] OpeningKeys = {
             "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Chr_Soldier_Male_01", "Unit_Chr_Ghillie_Male_01",
             "Unit_Veh_Light_Armored_Car", "Unit_Veh_APC_Slow", "Unit_Veh_Tank_USA",
-            "Unit_Veh_Truck_Tanker", "Unit_Veh_Truck_Tray" };
+            "Unit_Veh_Truck_Tanker", "Unit_Veh_Truck_Tray", "Unit_Chr_Soldier_Female_01",
+            "Unit_Chr_Soldier_Female_02_Alt_02", "Unit_Veh_APC_Fast", "Unit_Veh_Radar_Tank" };
 
         // One-time ASSET reference data, not a player build or a mission run.
         // Subsequent gameplay-code fixes run against these values in the C# host.
@@ -104,6 +105,7 @@ namespace Game.Editor
                 }
                 finally { water.Dispose(); }
                 var staticBlockers = CaptureAuthoredNavigationBlockers(em, missing);
+                var dropBounds = CaptureSourceDropClearanceBounds(em, reader);
                 result = new JObject {
                     ["schema_version"] = 1, ["kind"] = "AuthoredSkirmishReferenceData",
                     ["authority"] = "ActualSourceAssetsAndNativeBakers_NotMissionState",
@@ -115,6 +117,7 @@ namespace Game.Editor
                     ["sidewalk_owner_count"] = owners.Length, ["sidewalks"] = sidewalks,
                     ["water_query_count"] = waterQueryCount, ["water_footprint_count"] = waterRows.Count, ["water_footprints"] = waterRows,
                     ["navigation_static_blocker_count"] = staticBlockers.Count, ["navigation_static_blockers"] = staticBlockers,
+                    ["production_drop_static_bounds"] = dropBounds,
                     ["fresh_world_allocator_exported"] = false, ["full_mission_initialized"] = false,
                     ["native_visual_readiness"] = false,
                     ["consumer_rule"] = "Compile-owned type/read-domain allowlist; reject unsupported REQUIRED values; remap source Entity IDs into fresh template identities" };
@@ -127,6 +130,47 @@ namespace Game.Editor
                 " entities=" + ((JArray)result["entities"]).Count + " meshes=" + ((JArray)result["meshes"]).Count +
                 " sidewalks=" + ((JArray)result["sidewalks"]).Count +
                 " navigationBlockers=" + ((JArray)result["navigation_static_blockers"]).Count + " fullMission=0");
+        }
+
+        static JObject CaptureSourceDropClearanceBounds(EntityManager em, Game.Rendering.Contracts.IRenderBoundsPresentation reader)
+        {
+            // Streaming-only worlds do not run presentation updates. Apply the
+            // package's exact per-entity AABB projection to authored values in
+            // this owned data world; no gameplay or renderer activation occurs.
+            using var projectionQuery = em.CreateEntityQuery(new EntityQueryDesc {
+                All = new[] { ComponentType.ChunkComponent<ChunkWorldRenderBounds>(), ComponentType.ReadWrite<WorldRenderBounds>(),
+                    ComponentType.ReadOnly<RenderBounds>(), ComponentType.ReadOnly<LocalToWorld>() },
+                None = new[] { ComponentType.ReadOnly(typeof(WorldRenderBounds).Assembly.GetType("Unity.Rendering.SkipWorldRenderBoundsUpdate", true)) } });
+            using var projectedEntities = projectionQuery.ToEntityArray(Allocator.Temp);
+            foreach (Entity entity in projectedEntities)
+                em.SetComponentData(entity, new WorldRenderBounds { Value = AABB.Transform(
+                    em.GetComponentData<LocalToWorld>(entity).Value, em.GetComponentData<RenderBounds>(entity).Value) });
+            using var query = em.CreateEntityQuery(typeof(GridConfig));
+            if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("One authored source grid required for drop-clearance bounds");
+            var grid = query.GetSingleton<GridConfig>();
+            Type owner = LoadedType("Game.Runtime.BuildingProductionTransportPresentationSystemHelper");
+            int Constant(string name) => (int)owner.GetField(name, BindingFlags.Static | BindingFlags.NonPublic).GetRawConstantValue();
+            int radius = Constant("HelicopterDropSearchRadiusCells"), padding = Constant("HelicopterDropStaticRenderBufferCells");
+            int extent = Constant("HelicopterDropMaxStaticRenderExtentCells");
+            float cell = Mathf.Max(0.01f, grid.CellSize);
+            int margin = checked(radius + padding + extent);
+            var area = new Rect(grid.Origin.x - margin * cell, grid.Origin.z - margin * cell,
+                (grid.Width + 2 * margin) * cell, (grid.Height + 2 * margin) * cell);
+            var bounds = new NativeList<Bounds>(Allocator.Temp); var rows = new JArray();
+            try
+            {
+                reader.CollectStaticBounds(em, area, cell * 0.25f, extent * cell, ref bounds);
+                foreach (var value in bounds) rows.Add(new JObject { ["center"] = Vector(value.center), ["extents"] = Vector(value.extents) });
+            }
+            finally { bounds.Dispose(); }
+            return new JObject { ["authority"] = "OriginalRenderBoundsPresentation.CollectStaticBounds_SourceBakedDomain",
+                ["authored_transform_projection_count"] = projectedEntities.Length,
+                ["projection_source"] = "Unity.Rendering.RenderBoundsUpdateSystem.BoundsJob:AABB.Transform(LocalToWorld,RenderBounds)",
+                ["grid_width"] = grid.Width, ["grid_height"] = grid.Height, ["grid_origin"] = Vector(grid.Origin), ["cell_size"] = cell,
+                ["query_rect"] = new JArray(area.x, area.y, area.width, area.height),
+                ["minimum_extent"] = cell * 0.25f, ["maximum_extent"] = extent * cell,
+                ["source_search_radius_cells"] = radius, ["source_padding_cells"] = padding, ["bounds"] = rows,
+                ["runtime_presentation_activation_sampled"] = false };
         }
 
         // Match the native StaticGridBlockerUpdateSystem new-blocker query. A

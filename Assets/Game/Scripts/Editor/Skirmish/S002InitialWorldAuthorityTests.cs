@@ -19,6 +19,12 @@ namespace Game.Editor
         public static void RunFocusedValidation()
         {
             checks = 0; var previous = World.DefaultGameObjectInjectionWorld;
+            var clock = S002InitialWorldBundleCapture.EncodeEngineClocks(1f, 2d, 3f, 4d, 0.5f, 0.25f, 0.75f, 16d);
+            Check((string)clock["time_f32_bits"] == "3f800000" && (string)clock["time_as_double_f64_bits"] == "4000000000000000" &&
+                (string)clock["unscaled_time_f32_bits"] == "40400000" && (string)clock["unscaled_time_as_double_f64_bits"] == "4010000000000000" &&
+                (string)clock["delta_time_f32_bits"] == "3f000000" && (string)clock["unscaled_delta_time_f32_bits"] == "3e800000" &&
+                (string)clock["time_scale_f32_bits"] == "3f400000" && (string)clock["realtime_since_startup_as_double_f64_bits"] == "4030000000000000" &&
+                !(bool)clock["future_native_clock_rows"], "distinct actual engine clock epochs retain their own bit widths; no future native rows");
             using (var world = new World("InitialWorldAuthorityFocusedValidation"))
             {
                 var ecb = world.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();

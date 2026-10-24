@@ -40,6 +40,11 @@ namespace Game.Editor
             if (!Enabled) return;
             bool originalStructuralSyncObserved = rosterOrderBefore != rosterOrderAfter;
             RequireSafeBoundary(em.World, originalStructuralSyncObserved);
+            // Capture actual Unity clock epochs once at the admitted initial barrier;
+            // world elapsed time is a distinct authority and is never substituted.
+            var engineClock = EncodeEngineClocks(Time.time, Time.timeAsDouble, Time.unscaledTime,
+                Time.unscaledTimeAsDouble, Time.deltaTime, Time.unscaledDeltaTime, Time.timeScale,
+                Time.realtimeSinceStartupAsDouble);
             var missing = new JArray();
             var consumerRequirements = new JArray("compiled_read_domain", "logical_identity_policy", "scheduler_backend");
             var nativeRequirements = new JArray("same_run_terminal_admission", "owning_compiler_source_loaded_assembly_join");
@@ -100,6 +105,7 @@ namespace Game.Editor
                     ["phase"] = "InitializationSystemGroup.AfterSkirmishRosterProjection.BeforeSimulation",
                     ["roster_entity_order_before"] = rosterOrderBefore, ["roster_entity_order_after"] = rosterOrderAfter,
                     ["original_structural_sync_observed"] = originalStructuralSyncObserved,
+                    ["engine_clock"] = engineClock,
                     ["world_sequence"] = em.World.SequenceNumber.ToString(),
                     ["engine_frame"] = Time.frameCount,
                     ["session_entity"] = session.Index + ":" + session.Version,
@@ -140,6 +146,30 @@ namespace Game.Editor
             File.WriteAllText(Path.Combine(directory, "initial-world-bundle.capture.json"), report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             Debug.Log("[S002InitialGroundWorldBundle] result=Captured closureComplete=0 missing=" + missing.Count + " autonomousQualified=0");
         }
+
+        // BEGIN PURE INITIAL ENGINE CLOCK CODEC
+        internal static JObject EncodeEngineClocks(float time, double timeAsDouble, float unscaledTime,
+            double unscaledTimeAsDouble, float deltaTime, float unscaledDeltaTime, float timeScale,
+            double realtimeSinceStartupAsDouble)
+        {
+            return new JObject
+            {
+                ["source"] = "UnityEngine.Time",
+                ["time_f32_bits"] = ClockFloatBits(time),
+                ["time_as_double_f64_bits"] = ClockDoubleBits(timeAsDouble),
+                ["unscaled_time_f32_bits"] = ClockFloatBits(unscaledTime),
+                ["unscaled_time_as_double_f64_bits"] = ClockDoubleBits(unscaledTimeAsDouble),
+                ["delta_time_f32_bits"] = ClockFloatBits(deltaTime),
+                ["unscaled_delta_time_f32_bits"] = ClockFloatBits(unscaledDeltaTime),
+                ["time_scale_f32_bits"] = ClockFloatBits(timeScale),
+                ["realtime_since_startup_as_double_f64_bits"] = ClockDoubleBits(realtimeSinceStartupAsDouble),
+                ["realtime_role"] = "initial_performance_clock_epoch",
+                ["future_native_clock_rows"] = false
+            };
+        }
+        static string ClockFloatBits(float value) => BitConverter.ToUInt32(BitConverter.GetBytes(value), 0).ToString("x8", System.Globalization.CultureInfo.InvariantCulture);
+        static string ClockDoubleBits(double value) => BitConverter.ToUInt64(BitConverter.GetBytes(value), 0).ToString("x16", System.Globalization.CultureInfo.InvariantCulture);
+        // END PURE INITIAL ENGINE CLOCK CODEC
 
         static JObject SourceAuthority(JArray missing)
         {

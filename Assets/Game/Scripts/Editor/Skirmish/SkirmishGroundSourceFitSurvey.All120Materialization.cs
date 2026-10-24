@@ -40,7 +40,9 @@ namespace Game.Editor
             Require((string)row["result"]=="CollectedUnqualified"&&row["error"]==null,"Failed mission rows cannot materialize");
             var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().Single(v=>(string)v["catalog_id"]==id);
             Require(counterpart?SkirmishMissionDispatch.IsExpandedCounterpart(id):authority["protected_binding"].Type==JTokenType.Null,"Protected binding is read-only except explicitly selected expanded counterpart authoring");
-            ResolveAll120RefinementCandidate(authority,out var candidate,out var template,counterpart);
+            var explicitLayouts=RequestedLogicalSourceLayouts.FromReport(report,row,authority);
+            Require(explicitLayouts==null||!counterpart,"Explicit source/layout report cannot change protected counterparts");
+            ResolveAll120RefinementSourceInput(authority,out var candidate,out var template,counterpart,explicitLayouts);
             var measurement=(JObject)row["measurement"];
             Require(JToken.DeepEquals(measurement["sourcePins"],template["source_candidate"]),"Measured physical source pins must match exact authority");
             var source=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)template["source_candidate"]["sourcePath"]);
@@ -50,7 +52,14 @@ namespace Game.Editor
             try
             {
                 string error;
-                if((string)authority["tuple"]["army_profile"]!="G")
+                if(explicitLayouts!=null)
+                {
+                    Require(explicitLayouts.CreateCandidate(candidate,source,out owner,out error),error);
+                    RequestedLogicalSourceLayouts.VerifyReconstructedLayout((JObject)row["logicalSourceLayoutInput"],owner.Layout);
+                    RequestedLogicalSourceLayouts.VerifyMeasurementJoin((JObject)row["logicalSourceLayoutInput"],measurement);
+                    receipt["logicalSourceLayoutInputJoin"]=measurement["logicalSourceLayoutJoin"].DeepClone();
+                }
+                else if((string)authority["tuple"]["army_profile"]!="G")
                 {Require(TryCreateAirCombined80Candidate(candidate,source,out airOwner,out error),error);owner=new GroundObjective30CandidateOwner{Definition=airOwner.Definition,Layout=airOwner.Layout,AreaDraft=airOwner.AreaDraft};}
                 else if((string)authority["tuple"]["objective_id"]=="BA")Require(counterpart?TryCreateProtectedExpandedBaseAssaultCandidate(candidate,source,out owner,out error):TryCreateGroundBa10Candidate(candidate,source,out owner,out error),error);
                 else Require(TryCreateGroundObjective30Candidate(candidate,source,out owner,out error),error);

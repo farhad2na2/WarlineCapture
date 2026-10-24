@@ -149,7 +149,12 @@ namespace Game.Editor
             Require(!string.IsNullOrEmpty(output)&&Path.IsPathRooted(output)&&
                 Path.GetFullPath(output).StartsWith(allowed,StringComparison.OrdinalIgnoreCase)&&!File.Exists(output),
                 "Fresh persistent requested-source output required");
-            var rows=ResolveRequestedSourceRows((JArray)ReadAll120RefinementIndex()["missions"],group,requested);
+            var explicitLayouts=RequestedLogicalSourceLayouts.ReadOptional(
+                Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_SOURCE_LAYOUT_INPUT"),
+                Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_SOURCE_LAYOUT_INPUT_SHA256"));
+            var rows=explicitLayouts==null
+                ?ResolveRequestedSourceRows((JArray)ReadAll120RefinementIndex()["missions"],group,requested)
+                :explicitLayouts.ResolveRequestedRows((JArray)ReadAll120RefinementIndex()["missions"],group,requested);
             string[] ids=rows.Select(r=>(string)r["catalog_id"]).ToArray();
             var report=new JObject{["schema"]=1,["scope"]="RequestedSequentialOneSourceLogicalAuthoring_NotMissionAcceptance",
                 ["sourceGroup"]=group,["requestedCatalogIds"]=new JArray(ids),["requestedMissionCount"]=ids.Length,
@@ -157,7 +162,8 @@ namespace Game.Editor
                 ["normalMissionReady"]=false,["result"]="Incomplete"};
             try
             {
-                CollectAll120Refinement(rows,report,output+".authoring");
+                if(explicitLayouts!=null)report["logicalSourceLayoutInput"]=explicitLayouts.Record();
+                CollectAll120Refinement(rows,report,output+".authoring",explicitLayouts:explicitLayouts);
                 ValidateRequestedSourceCollectionShape(report,ids,group);
                 foreach(JObject mission in (JArray)report["missions"])
                 {
@@ -373,6 +379,14 @@ namespace Game.Editor
             }
         }
 
+
+        static void ResolveAll120RefinementSourceInput(JObject authority,out JObject candidate,out JObject template,
+            bool counterpart,RequestedLogicalSourceLayouts explicitLayouts)
+        {
+            if(explicitLayouts==null){ResolveAll120RefinementCandidate(authority,out candidate,out template,counterpart);return;}
+            Require(!counterpart,"Explicit logical source/layout input cannot change protected counterparts");
+            explicitLayouts.Resolve(authority,out candidate,out template);
+        }
 
         static JObject recordedFacilityEgressInput;
         // Diagnostic only: shares the exact source loader and canonical profiles,
@@ -698,14 +712,22 @@ namespace Game.Editor
             finally{JsonUtility.FromJsonOverwrite(original,owner.Layout);Require(JsonUtility.ToJson(owner.Layout)==original,"Exact caller layout restoration required");}
         }
 
-        static void CollectAll120Refinement(JObject[] authorities,JObject report,string artifactPrefix,bool counterpart=false,bool apRouteProbeOnly=false)
+        static void CollectAll120Refinement(JObject[] authorities,JObject report,string artifactPrefix,bool counterpart=false,bool apRouteProbeOnly=false,RequestedLogicalSourceLayouts explicitLayouts=null)
         {
             Require(authorities.Length>0&&authorities.Length<=48,"Bounded sequential source rows required");
-            ResolveAll120RefinementCandidate(authorities[0],out _,out var template,counterpart);
+            if(explicitLayouts!=null)
+                Require(!counterpart&&!apRouteProbeOnly&&recordedFacilityEgressInput==null&&
+                    !strictLogicalCandidatesRequested&&!refinementJointPadSearchRequested&&!refinementCompoundSearchRequested&&
+                    !refinementLogicalFrameSearchRequested&&!refinementFacilityPreferencesRequested&&!mpGroundBaPilotRequested&&
+                    !s049BoundedCompoundRouteRequested&&!apGroundJointPreferencesRequested&&
+                    string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT"))&&
+                    string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_ALL120_LOGICAL_PAD_INPUT_SHA256")),
+                    "Explicit source/layout input requires the ordinary requested collector without legacy geometry overrides");
+            ResolveAll120RefinementSourceInput(authorities[0],out _,out var template,counterpart,explicitLayouts);
             var pin=(JObject)template["source_candidate"];
             foreach(var authority in authorities)
             {
-                ResolveAll120RefinementCandidate(authority,out _,out var sameSource,counterpart);
+                ResolveAll120RefinementSourceInput(authority,out _,out var sameSource,counterpart,explicitLayouts);
                 Require(JToken.DeepEquals(pin,sameSource["source_candidate"]),"Every sequential candidate must use the exact same physical source pins");
             }
             string path=(string)pin["sourcePath"],gridPath=(string)pin["gridPath"],surfacePath=(string)pin["surfacePath"];
@@ -744,16 +766,23 @@ namespace Game.Editor
                     var failures=new System.Collections.Generic.List<Exception>();
                     foreach(var authority in authorities)
                     {
-                        ResolveAll120RefinementCandidate(authority,out var candidate,out var candidateTemplate,counterpart);
+                        ResolveAll120RefinementSourceInput(authority,out var candidate,out var candidateTemplate,counterpart,explicitLayouts);
                         string id=(string)authority["catalog_id"];
                         bool air=(string)authority["tuple"]["army_profile"]!="G";
                         bool groundBa=!air&&(string)authority["tuple"]["objective_id"]=="BA";
                         var row=new JObject{["catalogId"]=id,["result"]="Incomplete",["managedBytesBefore"]=GC.GetTotalMemory(false)};collected.Add(row);
+                        if(explicitLayouts!=null)row["logicalSourceLayoutInput"]=explicitLayouts.RecordFor(authority,null);
                         GroundObjective30CandidateOwner owner=null;AirCombined80CandidateOwner airOwner=null;
                         try
                         {
                             string error;
-                            if(air)
+                            if(explicitLayouts!=null)
+                            {
+                                Require(groundBa&&!counterpart,"Explicit source/layout input is limited to unprotected Ground BA");
+                                Require(explicitLayouts.CreateCandidate(candidate,source,out owner,out error),error);
+                                row["logicalSourceLayoutInput"]=explicitLayouts.RecordFor(authority,owner.Layout);
+                            }
+                            else if(air)
                             {
                                 Require(TryCreateAirCombined80Candidate(candidate,source,out airOwner,out error),error);
                                 owner=new GroundObjective30CandidateOwner{Definition=airOwner.Definition,Layout=airOwner.Layout,AreaDraft=airOwner.AreaDraft};
@@ -778,6 +807,8 @@ namespace Game.Editor
                                 {writer.Write(checkpoint.ToString(Newtonsoft.Json.Formatting.None));writer.Flush();file.Flush(true);}
                                 sizeArtifacts.Add(new JObject{["path"]=sizePath,["sha256"]=Hash(sizePath),["size"]=checkpoint["size"],["pass"]=checkpoint["pass"]});
                             });
+                            if(explicitLayouts!=null)
+                                RequestedLogicalSourceLayouts.AttachMeasurementJoin((JObject)row["logicalSourceLayoutInput"],(JObject)row["measurement"]);
                             row["result"]="CollectedUnqualified";
                         }
                         catch(Exception failure){row["error"]=failure.ToString();failures.Add(new InvalidOperationException("Logical authoring failed: "+id,failure));}

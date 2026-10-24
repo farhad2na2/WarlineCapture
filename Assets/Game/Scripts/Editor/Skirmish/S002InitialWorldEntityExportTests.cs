@@ -11,6 +11,7 @@ namespace Game.Editor
 {
     public static class S002InitialWorldEntityExportTests
     {
+        [DisableAutoCreation]
         public partial class VersionWriter:SystemBase
         {
             public Entity Target;
@@ -39,6 +40,7 @@ namespace Game.Editor
             string output=Environment.GetEnvironmentVariable("WARLINE_INITIAL_WORLD_CODEC_TEST_OUTPUT");
             Check(!string.IsNullOrEmpty(output)&&Path.IsPathRooted(output)&&!Directory.Exists(output),"fresh absolute test output");Directory.CreateDirectory(output);
             var previous=World.DefaultGameObjectInjectionWorld;int checks=0;
+            Check(!DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default).Contains(typeof(VersionWriter)),"test writer excluded from automatic mission-world system inventory");checks++;
             using(var world=new World("InitialWorldCodecFocusedValidation"))
             {
                 var em=world.EntityManager;var target=em.CreateEntity(typeof(Tag),typeof(Prefab),typeof(Disabled));

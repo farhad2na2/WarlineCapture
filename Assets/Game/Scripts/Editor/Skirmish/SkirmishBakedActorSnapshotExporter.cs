@@ -15,7 +15,7 @@ using Unity.Transforms;
 namespace Game.Editor
 {
     // A read-only source-template snapshot, never a replacement for mission startup.
-    public static class SkirmishBakedActorSnapshotExporter
+    public static partial class SkirmishBakedActorSnapshotExporter
     {
         public const string SourceScene = "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity";
         public const string PassMarker = "[SkirmishBakedActorSnapshot] result=Passed";
@@ -52,11 +52,12 @@ namespace Game.Editor
             File.WriteAllText(Path.Combine(output, "baked-actors.json"), report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             Debug.Log(PassMarker + " entries=" + ((JArray)report["registry_entries"]).Count + " liveMissionReady=0");
         }
-        static SortedDictionary<string, string> SourcePins()
+        static SortedDictionary<string, string> SourcePins(params string[] additionalRoots)
         {
             var paths = new SortedSet<string>(StringComparer.Ordinal);
-            foreach (string path in AssetDatabase.GetDependencies(SourceScene, true))
-            { paths.Add(path); if (File.Exists(path + ".meta")) paths.Add(path + ".meta"); }
+            foreach (string root in new[] { SourceScene }.Concat(additionalRoots ?? Array.Empty<string>()))
+                foreach (string path in AssetDatabase.GetDependencies(root, true))
+                { paths.Add(path); if (File.Exists(path + ".meta")) paths.Add(path + ".meta"); }
             foreach (string path in Directory.GetFiles("Assets/Game/Scripts", "*", SearchOption.AllDirectories))
                 if (new[] { ".cs", ".asmdef", ".asmref" }.Contains(Path.GetExtension(path)))
                 { paths.Add(path); if (File.Exists(path + ".meta")) paths.Add(path + ".meta"); }

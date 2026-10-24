@@ -19,3 +19,9 @@ Pins resolve inside root (including symlink targets); missing/escaping files, ha
 Limits: this does not establish canonical numeric balance independently of the supplied canonical CSV; authored budgets are compared exactly with that authority. It does not validate every possible authored schema or every runtime semantic invariant. It does not resolve Unity imports/scene packaging, execute objectives, create combat/movement, establish full placement prefixes/path independence/service/fog correctness, certify manual/ARIA/result-return, or grant APK/device/player acceptance. Empty authored area lists remain allowed exactly as in the existing unqualified Ground30 contract; their explicit pending gates must remain. No tests execute gameplay.
 
 Tests use actual current canonical/index/Ground30 data plus synthetic temporary negative controls. Synthetic pinned payloads exercise diagnostics only, never pretend to be real map/source acceptance. Current-data drift/missing receipts are reported as observations rather than repaired or waived.
+
+## Shared serialized-grid newline portability
+
+Only source `gridPath` pins resolving to `Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset` may use the narrow LF/CRLF diagnostic proof. The bounded UTF-8 Unity YAML must have the exact grid name/script identity and uniform LF or CRLF endings; the expected raw SHA256 must equal the in-memory alternate representation exactly. Other content differences, mixed/bare-CR endings, binary data, other files and non-grid/authority contexts retain raw-byte failure. No file is normalized or repinned.
+
+`representation_equivalences` reports actual/expected raw hashes, byte sizes, exact transformation and proof per consumer. This is a diagnostic representation finding, never a native provenance substitute or source-fit certification. Strict Ground30/native validators retain their original raw checks, and missing survey authority still blocks downstream admission.

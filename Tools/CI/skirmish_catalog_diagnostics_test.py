@@ -237,5 +237,145 @@ class DiagnosticTests(unittest.TestCase):
         self.assertEqual("null", path.read_text())
 
 
+class GridLineEndingDiagnosticTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="skirmish-grid-newline-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+        self.path = self.root / subject.SERIALIZED_TEXT_GRID
+        self.path.parent.mkdir(parents=True)
+        self.raw = (ROOT / subject.SERIALIZED_TEXT_GRID).read_bytes().replace(b"\r\n", b"\n")
+        self.crlf = self.raw.replace(b"\n", b"\r\n")
+        self.path.write_bytes(self.raw)
+
+    def pin(self, raw=None, expected=None, context=True, relative=None):
+        if raw is not None:
+            self.path.write_bytes(raw)
+        d = subject.Diagnostics(self.root)
+        result = d.pin("fixture", "/source/gridPath", dict(path=relative or subject.SERIALIZED_TEXT_GRID,
+            sha256=hashlib.sha256(self.crlf if expected is None else expected).hexdigest()), serialized_grid=context)
+        return d, result
+
+    def test_lf_to_crlf_reports_both_raw_hashes_and_no_mutation(self):
+        d, result = self.pin()
+        self.assertEqual(self.path, result)
+        self.assertEqual([], d.errors)
+        self.assertEqual(self.raw, self.path.read_bytes())
+        proof = d.representation_equivalences[0]
+        self.assertEqual("LFToCRLF", proof["transformation"])
+        self.assertEqual(hashlib.sha256(self.raw).hexdigest(), proof["actual_raw_sha256"])
+        self.assertEqual(hashlib.sha256(self.crlf).hexdigest(), proof["expected_raw_sha256"])
+        self.assertEqual(len(self.raw), proof["actual_bytes"])
+        self.assertEqual(len(self.crlf), proof["equivalent_bytes"])
+        self.assertFalse(proof["native_provenance_substitute"])
+
+    def test_crlf_to_lf_is_symmetric(self):
+        d, result = self.pin(self.crlf, self.raw)
+        self.assertEqual(self.path, result)
+        self.assertEqual("CRLFToLF", d.representation_equivalences[0]["transformation"])
+        self.assertEqual(self.crlf, self.path.read_bytes())
+
+    def test_exact_raw_match_needs_no_representation_proof(self):
+        d, result = self.pin(expected=self.raw)
+        self.assertEqual(self.path, result)
+        self.assertEqual([], d.representation_equivalences)
+
+    def test_geometry_change_is_still_rejected(self):
+        d, result = self.pin(self.raw.replace(b"  width: 2048\n", b"  width: 2049\n"))
+        self.assertIsNone(result)
+        self.assertEqual("pin.drift", d.errors[0]["code"])
+        self.assertEqual([], d.representation_equivalences)
+
+    def test_non_geometry_content_change_is_still_rejected(self):
+        d, result = self.pin(self.raw.replace(b"  drawGrid: 1\n", b"  drawGrid: 0\n"))
+        self.assertIsNone(result)
+        self.assertTrue(d.errors)
+
+    def test_same_yaml_at_arbitrary_path_is_not_eligible(self):
+        p = self.root / "other-grid.asset"
+        p.write_bytes(self.raw)
+        d, result = self.pin(relative="other-grid.asset")
+        self.assertIsNone(result)
+        self.assertEqual([], d.representation_equivalences)
+
+    def test_authority_and_non_grid_context_keep_raw_check(self):
+        d, result = self.pin(context=False)
+        self.assertIsNone(result)
+        self.assertTrue(d.errors)
+        self.assertEqual([], d.representation_equivalences)
+
+    def test_source_surface_field_does_not_gain_grid_exception(self):
+        fixture = self.root / "other.bin"
+        fixture.write_bytes(b"Synthetic other pin")
+        h = hashlib.sha256(fixture.read_bytes()).hexdigest()
+        source = {key: "synthetic" for key in subject.SOURCE_KEYS}
+        source.update(sourcePath="other.bin", sourceAssetSha256=h,
+            gridPath=subject.SERIALIZED_TEXT_GRID, gridAssetSha256=hashlib.sha256(self.crlf).hexdigest(),
+            surfacePath=subject.SERIALIZED_TEXT_GRID, surfaceAssetSha256=hashlib.sha256(self.crlf).hexdigest())
+        d = subject.Diagnostics(self.root)
+        d.source("fixture", "/source", source)
+        self.assertEqual(1, len(d.representation_equivalences))
+        self.assertEqual(1, len(d.errors))
+        self.assertEqual("/source/surfacePath", d.errors[0]["location"])
+
+    def test_binary_payload_is_never_transformed(self):
+        raw = self.raw + b"\0binary\n"
+        d, result = self.pin(raw, raw.replace(b"\n", b"\r\n"))
+        self.assertIsNone(result)
+
+    def test_wrong_header_or_script_or_name_is_not_eligible(self):
+        for raw in (self.raw.replace(b"%YAML 1.1", b"not yaml"),
+                    self.raw.replace(b"a101000000000000000000000000000b", b"b101000000000000000000000000000b"),
+                    self.raw.replace(b"m_Name: MatchSubScene_GridAuthoring_Config", b"m_Name: arbitrary")):
+            with self.subTest(raw=raw[:30]):
+                d, result = self.pin(raw, raw.replace(b"\n", b"\r\n"))
+                self.assertIsNone(result)
+
+    def test_mixed_bare_cr_bom_and_invalid_utf8_rejected(self):
+        candidates = [self.raw.replace(b"\n", b"\r\n", 1), self.raw.replace(b"\n", b"\r", 1),
+                      b"\xef\xbb\xbf" + self.raw, self.raw + b"\xff\n"]
+        for raw in candidates:
+            with self.subTest(prefix=raw[:20]):
+                alternate = raw.replace(b"\r\n", b"\n").replace(b"\n", b"\r\n")
+                d, result = self.pin(raw, alternate)
+                self.assertIsNone(result)
+
+    def test_unrelated_expected_hash_is_not_waived(self):
+        d, result = self.pin(expected=b"Unrelated expected bytes")
+        self.assertIsNone(result)
+        self.assertTrue(d.errors)
+
+    def test_current_catalog_preserves_raw_authority_gate(self):
+        report = subject.diagnose(ROOT, inputs=[INDEX, GROUND])
+        survey = ROOT / "Logs/SkirmishProduction/ground-source-fit-20261015-11.json"
+        if not survey.exists():
+            self.assertTrue(any(e["location"] == "/authority/source_survey" for e in report["errors"]))
+            self.assertEqual("BlockedByAuthority", report["inputs"][1]["strict_contract"])
+        for proof in report["representation_equivalences"]:
+            self.assertFalse(proof["native_provenance_substitute"])
+        self.assertFalse(report["admission_replacement"])
+        self.assertFalse(report["source_fit_certified"])
+        self.assertFalse(report["mission_ready"])
+
+    def test_patched_cli_reports_representation_proof(self):
+        fixture = DiagnosticTests("test_valid_fixture_diagnostics_are_not_admission")
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        grid = fixture.root / subject.SERIALIZED_TEXT_GRID
+        grid.parent.mkdir(parents=True)
+        grid.write_bytes(self.raw)
+        fixture.doc["source_candidates"]["CC"]["gridPath"] = subject.SERIALIZED_TEXT_GRID
+        fixture.doc["source_candidates"]["CC"]["gridAssetSha256"] = hashlib.sha256(self.crlf).hexdigest()
+        path = fixture.root / "input.json"
+        path.write_text(json.dumps(fixture.doc))
+        result = subprocess.run([sys.executable, "-B", subject.__file__, "--root", str(fixture.root),
+            "--input", str(path)], capture_output=True, text=True)
+        self.assertEqual(0, result.returncode, result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual(1, len(report["representation_equivalences"]))
+        self.assertEqual([], report["errors"])
+        self.assertFalse(report["mission_ready"])
+
+
 if __name__ == "__main__":
     unittest.main()

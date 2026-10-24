@@ -17,6 +17,30 @@ TUPLE = ("map_id", "objective_id", "army_profile", "start_profile")
 SIZES = {"Standard", "War", "LargeWar"}
 KINDS = {"UnqualifiedFullCatalogLogicalAuthoringInputs", "UnqualifiedGroundObjective30Authoring"}
 
+# Narrow diagnostic portability proof, not native/raw provenance admission.
+SERIALIZED_TEXT_GRID = "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset"
+
+
+def _serialized_grid_representations(raw):
+    if len(raw) > 65536 or any(c < 32 and c not in (9, 10, 13) for c in raw):
+        return None
+    try:
+        raw.decode("utf-8")
+    except UnicodeError:
+        return None
+    lf = raw.replace(b"\r\n", b"\n")
+    crlf = lf.replace(b"\n", b"\r\n")
+    if b"\r" in lf or raw not in (lf, crlf):
+        return None  # Reject bare CR and mixed endings, not arbitrary normalization.
+    if not lf.startswith(b"%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n--- !u!114 &11400000\nMonoBehaviour:\n"):
+        return None
+    if lf.count(b"  m_Name: MatchSubScene_GridAuthoring_Config\n") != 1 or lf.count(
+            b"  m_Script: {fileID: 11500000, guid: a101000000000000000000000000000b, type: 3}\n") != 1:
+        return None
+    return {"actual_line_ending": "LF" if raw == lf else "CRLF", "actual_bytes": len(raw),
+            "LF": {"sha256": hashlib.sha256(lf).hexdigest(), "bytes": len(lf)},
+            "CRLF": {"sha256": hashlib.sha256(crlf).hexdigest(), "bytes": len(crlf)}}
+
 
 class Diagnostics:
     def __init__(self, root, max_pin_bytes=64 * 1024 * 1024):
@@ -26,6 +50,8 @@ class Diagnostics:
         self.blocked = []
         self.inputs = []
         self.hashes = {}
+        self.grid_representations = {}
+        self.representation_equivalences = []
 
     def error(self, source, location, code, message):
         self.errors.append(dict(source=str(source), location=location, code=code, message=message))
@@ -69,7 +95,7 @@ class Diagnostics:
             self.error(path, "$", "json.read", str(exc))
             return None
 
-    def pin(self, source, location, pin):
+    def pin(self, source, location, pin, *, serialized_grid=False):
         if not isinstance(pin, dict) or not isinstance(pin.get("path"), str) or not pin["path"]:
             self.error(source, location, "pin.shape", "Explicit path and SHA256 required")
             return None
@@ -90,8 +116,21 @@ class Diagnostics:
                 if raw.startswith(b"version https://git-lfs.github.com/spec/v1"):
                     raise ValueError("LFS pointer only; payload unavailable, no transfer attempted")
                 self.hashes[path] = hashlib.sha256(raw).hexdigest()
+                if path == self.root / SERIALIZED_TEXT_GRID:
+                    self.grid_representations[path] = _serialized_grid_representations(raw)
             if self.hashes[path] != digest:
-                raise ValueError("Pinned bytes differ: " + pin["path"])
+                representations = self.grid_representations.get(path) if serialized_grid else None
+                expected_style = next((style for style in ("LF", "CRLF") if representations and
+                                       representations[style]["sha256"] == digest), None)
+                if expected_style is None:
+                    raise ValueError("Pinned bytes differ: " + pin["path"])
+                self.representation_equivalences.append(dict(source=str(source), location=location,
+                    path=pin["path"], actual_raw_sha256=self.hashes[path], expected_raw_sha256=digest,
+                    actual_bytes=representations["actual_bytes"],
+                    equivalent_bytes=representations[expected_style]["bytes"],
+                    transformation=representations["actual_line_ending"] + "To" + expected_style,
+                    proof="ExpectedRawSha256EqualsInMemoryLineEndingOnlyRepresentation",
+                    native_provenance_substitute=False))
             return path
         except (OSError, ValueError) as exc:
             self.error(source, location, "pin.drift", str(exc))
@@ -199,7 +238,8 @@ class Diagnostics:
             if not isinstance(source.get(key), str) or not source[key]:
                 self.error(path, location + "/" + key, "source.field", "Explicit source identity field required")
         for k, h in (("sourcePath", "sourceAssetSha256"), ("gridPath", "gridAssetSha256"), ("surfacePath", "surfaceAssetSha256")):
-            self.pin(path, location + "/" + k, dict(path=source.get(k), sha256=source.get(h)))
+            self.pin(path, location + "/" + k, dict(path=source.get(k), sha256=source.get(h)),
+                     serialized_grid=(k == "gridPath"))
 
     def authority_object(self, path, key, checked):
         value = self.document(checked)
@@ -368,6 +408,7 @@ def diagnose(root, catalog=None, matrix=None, inputs=()):
         d.authored(Path(path), canonical, catalog, matrix)
     return dict(schema_version=1, result="ErrorsFound" if d.errors else "NoDiagnosticErrors",
                 errors=d.errors, blocked_checks=d.blocked, inputs=d.inputs,
+                representation_equivalences=d.representation_equivalences,
                 canonical_authority_valid=canonical is not None,
                 admission_replacement=False, source_fit_certified=False, mission_ready=False,
                 scope="Read-only config/data diagnostics only; no objective replay, combat simulation, Unity, LFS or native acceptance")

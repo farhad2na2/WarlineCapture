@@ -1,0 +1,11 @@
+# Retained causal-prefix source build
+
+`skirmish_causal_worker.build_worker(output, project, source_root=None, math_module=DEFAULT_MATH)` builds the retained Mono executable and returns its `runtime-config.json` path. Output must be new and outside `Assets`, `Packages`, `ProjectSettings`, and `.git`. The CLI owns native evidence admission and execution.
+
+The manifest reconstructs 41 reviewed portable sources and links three current original game sources. Original code is extracted as exact source slices after disabling only `UNITY_EDITOR` branches. Every source projection, slice, fixed template and generated output has an expected SHA256. Original material clock statements additionally use explicitly listed predicate/field bindings and whitespace compaction. Changes to gameplay code, templates, or generated source fail the build; no old generated gameplay copy is a fallback.
+
+Templates contain typed domain admission, query/lookup/buffer/ref bindings, assertion joins and declared source transplant seams. They provide no general ECS discovery, movement/path simulation, replacement math or mission pipeline. Full original production methods and the grid-coordinate kernel are linked directly. Vector/Mathf and float arithmetic use pinned installed Unity modules under the Editor distribution's standalone Mono with `--optimize=-float32`; the Editor is not launched and DLLs are not copied.
+
+The build pins its generator, source manifest, original source bytes, templates, 44 compiler inputs, compiler/runtime dependencies, response file, executable, and compile log. Runtime configuration reports `copied_dlls=[]`, `no_dotnet_fallback=true`, and keeps frame/mission support false. Runtime dependencies stay in place. Native capture data, prior temporary prototypes, fixtures and logs are not build inputs.
+
+The executable still requires the separately admitted legacy trace/window and external provenance gate. It carries one canonical storage bank through the bounded causal prefix and checks later native state as assertions. Upstream movement cells, actual query order and provider inputs remain explicit external prerequisites. Success does not establish full-frame derivation or normal mission acceptance.

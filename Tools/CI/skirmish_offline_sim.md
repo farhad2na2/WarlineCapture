@@ -110,3 +110,23 @@ are explicitly synthetic. Re-run on Windows before adopting it there.
 For shared clock advancement, objective dispatch and terminal lifecycle sequencing,
 use [the mission orchestration runner](skirmish_mission_replay.md). It derives time
 facts internally while still requiring explicit world facts.
+
+
+## Retained causal prefix
+
+The `skirmish_causal_replay.py` command currently runs on macOS with the qualified installed Editor Mono/engine backend. Windows numerical execution is not qualified. It builds the source-derived retained Mono worker and replays a complete captured S002 causal window, using one storage bank. It starts no Unity Editor and copies no engine DLLs. The installed Editor Mono/runtime modules and the installed Newtonsoft package are pinned in place. There is no .NET arithmetic fallback.
+
+```sh
+rtk proxy python3 Tools/CI/skirmish_causal_replay.py build \
+  --project "$PWD" --output "$PWD/Logs/CausalWorkerBuild"
+rtk proxy python3 Tools/CI/skirmish_causal_replay.py run \
+  --project "$PWD" --config "$PWD/Logs/CausalWorkerBuild/runtime-config.json" \
+  --trace /absolute/path/forward-interval.json --trace-sha256 TRACE_SHA256 \
+  --native-receipt /absolute/path/native-result.json \
+  --native-receipt-sha256 NATIVE_RECEIPT_SHA256 \
+  --output "$PWD/Logs/CausalReplay"
+```
+
+Each output directory must be new. Native capture must already be complete, reaped and admitted against its exact source baseline; the command verifies the receipt, baseline, source pins, raw artifact hashes and the full structural cursor before numerical execution. A successful result requires computed terminal storage, profiles and material state to match. Later native snapshots remain assertions. Failures keep their logs and stop execution.
+
+This proves the recorded prefix from the first production boundary through the first owned reservation root exit. Movement cells and query order remain observed external inputs. Intermediate writer-journal and initial-mirror diagnostics are reported separately. Full-frame derivation, a complete mission, clean native lifecycle and real player/device acceptance require their own evidence.

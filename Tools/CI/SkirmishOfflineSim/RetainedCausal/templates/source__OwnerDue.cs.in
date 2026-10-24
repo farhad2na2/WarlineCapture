@@ -1,0 +1,71 @@
+using System;
+using System.IO;
+
+// Retains the one original private due clock. This models only the reached
+// afterResources->hauler conditional, not the preceding owner Tick or a frame.
+internal sealed partial class OwnerDue
+{
+    sealed class FlagView { internal bool DisableBuildingResourceHaulerRuntime; }
+    sealed class Context { internal Action UpdateResourceHaulers; }
+    sealed class Marker
+    {
+        readonly OwnerDue owner;
+        internal Marker(OwnerDue value) { owner = value; }
+        internal Scope Auto() { owner.due = true; return default(Scope); }
+    }
+    struct Scope : IDisposable { public void Dispose() { } }
+    readonly FlagView GameplayRuntimeUpdateDebugFlags = new FlagView();
+    readonly Marker UpdateResourceHaulersMarker;
+    readonly Action dispatch;
+    readonly int frameLimit;
+    bool due, terminal, running, seen;
+    double lastNow;
+    int frames, callbackCount;
+
+    internal readonly struct Result
+    {
+        internal readonly ulong NextBeforeBits, NextAfterBits;
+        internal readonly bool Due, CallbackInvoked;
+        internal Result(double before, double after, bool wasDue, bool invoked)
+        {
+            NextBeforeBits = Bits(before); NextAfterBits = Bits(after);
+            Due = wasDue; CallbackInvoked = invoked;
+        }
+    }
+    static ulong Bits(double value) { return unchecked((ulong)BitConverter.DoubleToInt64Bits(value)); }
+    static void Need(bool value, string message) { if (!value) throw new InvalidDataException(message); }
+    static void Clock(double value) { Need(!double.IsNaN(value) && !double.IsInfinity(value) && value >= 0d && value <= 1e9d, "Finite bounded actual owner clock required"); }
+
+    internal OwnerDue(double initialNextResourceHaulerAt, Action onActualDueCallback, int maxFrames = 128)
+    {
+        Need(Type.GetType("Mono.Runtime") != null, "Original owner due generator requires retained Mono runtime");
+        Clock(initialNextResourceHaulerAt);
+        Need(onActualDueCallback != null && maxFrames > 0 && maxFrames <= 128, "Bounded owner/callback binding required");
+        _nextResourceHaulerAt = initialNextResourceHaulerAt;
+        dispatch = onActualDueCallback;
+        frameLimit = maxFrames;
+        UpdateResourceHaulersMarker = new Marker(this);
+    }
+
+    internal Result Advance(double actualAfterResources, bool actualDisableHaulerRuntime, bool actualCallbackPresent)
+    {
+        Need(!terminal && !running, "Failed/reentrant owner generator cannot continue");
+        try
+        {
+            Clock(actualAfterResources);
+            Need(!seen || actualAfterResources >= lastNow, "Actual realtime clock regressed");
+            Need(frames < frameLimit, "Owner frame limit exceeded");
+            frames++; seen = true; lastNow = actualAfterResources;
+            double before = _nextResourceHaulerAt;
+            int callbacksBefore = callbackCount;
+            due = false; running = true;
+            GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime = actualDisableHaulerRuntime;
+            var context = new Context { UpdateResourceHaulers = actualCallbackPresent
+                ? (Action)(() => { callbackCount++; dispatch(); }) : null };
+            AdvanceOriginal(actualAfterResources, context);
+            return new Result(before, _nextResourceHaulerAt, due, callbackCount != callbacksBefore);
+        }
+        catch { terminal = true; throw; }
+        finally { running = false; }
+    }
+}

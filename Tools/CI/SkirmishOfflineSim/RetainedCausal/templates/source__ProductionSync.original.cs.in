@@ -1,0 +1,2 @@
+using System;using Game.Components;using Unity.Entities;namespace Game.Runtime{internal sealed class BuildingProductionTickCompositionSystemHelper{
+@@SOURCE_0@@        }}}

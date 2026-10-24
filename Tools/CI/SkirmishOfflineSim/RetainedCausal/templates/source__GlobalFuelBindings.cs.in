@@ -1,0 +1,30 @@
+// Narrow field/lookup bindings, no World or second storage bank.
+@@SOURCE_0@@#if !WORLD_BODY_TRANSITIONS
+// Standalone worker only: the existing WorldReplay body module already owns these types.
+namespace Game.Components {
+ public struct GridConfig { public int Width,Height; public float CellSize; public float3 Origin; }
+ public static class GridUtils {
+@@SOURCE_1@@@@SOURCE_2@@ }
+}
+#endif
+namespace FuelPrototype {
+ public readonly struct GlobalFuelStateRef {
+  readonly UnitRow row;public GlobalFuelStateRef(UnitRow value){row=value;}
+  public ref Game.Components.UnitFuelConsumptionState ValueRW=>ref row.State;
+ }
+ public readonly struct GlobalAirLookup {
+  readonly UnitRow row;public GlobalAirLookup(UnitRow value){row=value;}
+  public bool HasComponent(int entity)=>row.IsAircraft;
+ }
+ public readonly struct GlobalTransformLookup {
+  readonly UnitRow row;public GlobalTransformLookup(UnitRow value){row=value;}
+  public bool HasComponent(int entity)=>row.HasTransform;
+  public Unity.Transforms.LocalTransform this[int entity]=>new Unity.Transforms.LocalTransform{Position=row.AirPosition};
+ }
+ // Caller supplies actual current prerequisite fields; deliberately no FuelState/request field.
+ public sealed class FuelStepUnitInput {
+  public string Id; public Game.Components.UnitGrid Grid; public Game.Components.Faction Faction;
+  public Game.Components.UnitMovementBehavior Movement; public Game.Components.UnitFuelConsumption Consumption;
+  public bool IsAircraft,HasTransform; public float3 AirPosition;
+ }
+}

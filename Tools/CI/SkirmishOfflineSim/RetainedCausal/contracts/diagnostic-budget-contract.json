@@ -1,0 +1,21 @@
+{
+  "revision": "aggregate-2MiB-record-timing-v1",
+  "schema_version": 8,
+  "pinned_byte_limit": 2097152,
+  "old_candidate_cap_unchanged": 1048576,
+  "work_limit": 1500000,
+  "source_writer_limit": 512,
+  "global_event_limit": 131072,
+  "bridge_row_admission_bound": 131072,
+  "sidecar_top_additions": {
+    "diagnostic_budget_revision": "exact string aggregate-2MiB-record-timing-v1",
+    "record_callback_stopwatch_ticks": "int64 nonnegative; summed admitted Record invocation timestamp deltas",
+    "record_callback_measurement_calls": "int64 nonnegative; includes Record attempts that passed initial timing admission, including guard-rejected ones",
+    "stopwatch_frequency": "int64 positive installed runtime Stopwatch.Frequency",
+    "timing_measurement": "exact string Record-body-only; excludes pre-Record source reads/copies, legacy snapshots/serialization, final export and logging; not total observer overhead"
+  },
+  "legacy_reference_addition": {
+    "diagnostic_byte_limit": "exact integer2097152"
+  },
+  "unchanged": "All event row shapes/roles and source-derived completeness/certificate gates unchanged. Fixed sidecar filename unchanged. Reader must explicitly pin successor cap/revision, not admit arbitrary self-declared limits."
+}

@@ -1,0 +1,1405 @@
+{
+  "schema_version": 1,
+  "scope": "RetainedOriginalCausalPrefix_MonoFloat32_NoMovementDerivation",
+  "source_projection": "Disable UNITY_EDITOR branches only; preserve every other directive and byte",
+  "originals": {
+    "Assets/Game/Scripts/Components/BuildingResourceProductionProfileComponent.cs": {
+      "projected_sha256": "421567d28b83b5b7d00ba74aae7954c02eed389ba170846629ffdd429d7e7f3c"
+    },
+    "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs": {
+      "projected_sha256": "b81c797aad5a0256fb331d772aa445c52d2337ce47617863f51b80f1011498d5"
+    },
+    "Assets/Game/Scripts/Components/FactionAIComponents.cs": {
+      "projected_sha256": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34"
+    },
+    "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs": {
+      "projected_sha256": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb"
+    },
+    "Assets/Game/Scripts/Components/GridComponents.cs": {
+      "projected_sha256": "eecfe09c12836db541242b45133db5e75659acb269469db9fdda884a1510ff02"
+    },
+    "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs": {
+      "projected_sha256": "cf953942ab496ab6cba6e8909ff879defb59956e04dae1a6c2a19affa36d8b2f"
+    },
+    "Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs": {
+      "projected_sha256": "fb1f515ecc6482fe5470ceb619a9e1a633718d523beb61b905f4d80b733b6327"
+    },
+    "Assets/Game/Scripts/Components/UnitCombatComponents.cs": {
+      "projected_sha256": "ee997571f3c93adfeeb0d39b49e13d48df34c954a2d5f8cbce9c936c18d1e5dc"
+    },
+    "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs": {
+      "projected_sha256": "8a8fc21f7bb058da6fa67a7e19e39fd825f742e2d643d58f2d8f718b62bceac8"
+    },
+    "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs": {
+      "projected_sha256": "1a85335900899a0cd7a9d8e9bbc8fa8402bfdf4fbefd202ddf6a997519e1d9af"
+    },
+    "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs": {
+      "projected_sha256": "81dce6ecea80604f1d17a2b0744a1e6793ccfe4375102803c1897ab2a28df0ad"
+    },
+    "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs": {
+      "projected_sha256": "6f586e8a9f5334624a82a4518a94577097d22b143c7c13c09b72bc5924ba87b5"
+    },
+    "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs": {
+      "projected_sha256": "9bc88b2bac299e8f4ca85f7e64ae38eaec0b8231d62ceac43d4c46e35f369a17"
+    },
+    "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs": {
+      "projected_sha256": "df4ffdb885aeebf8b97e8263dddc8a8a157d557e43e06da6e2b3de621ff0bf33"
+    },
+    "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs": {
+      "projected_sha256": "c05c98ca8e635afb8a1fe01f7aca14eb39fbf992fd6864af2ca3972ddda420af"
+    },
+    "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs": {
+      "projected_sha256": "3ad8db72317e746e41965695abcc828f0355b18dd52d7cc2690c6e2cee96b99a"
+    },
+    "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs": {
+      "projected_sha256": "428b967a00944e518cad9c6f5e4eaf969e5ffe443111d080d7bec46bf229c70b"
+    },
+    "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs": {
+      "projected_sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+    },
+    "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs": {
+      "projected_sha256": "b5d7b8ed60c6e505bc1b142abf84ddbbce331b86d9c9ef8db4e82236a5d1f162"
+    },
+    "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs": {
+      "projected_sha256": "49c2dec1faf41350439544433a7aee05f64f6dafc4d5640ce3c49f2925041aac"
+    },
+    "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs": {
+      "projected_sha256": "2497aeb7d94c99806c36acb5f298fe85ea205b4c3bc38b46017b4280e9a6a1e9"
+    },
+    "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs": {
+      "projected_sha256": "64638dccf054864622e12539d60afd7658c40e4cf310405d2ecc6966303f0b7e"
+    },
+    "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs": {
+      "projected_sha256": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be"
+    },
+    "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs": {
+      "projected_sha256": "dbd8d013ea559c214d9a5ef7e7197f339bfb0d2410a1c312f9078dd7ba73c13d"
+    },
+    "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs": {
+      "projected_sha256": "671e622f2efc70af508a3f9eed02f4291c2024b36ca08107e15d7ee42428cb5e"
+    },
+    "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs": {
+      "projected_sha256": "a3e538ba1531019f19540607c36fad81e344cc7da259d2965b9e83f29ff4c154"
+    }
+  },
+  "outputs": [
+    {
+      "output": "source/Access.original.cs",
+      "template": "templates/source__Access.original.cs.in",
+      "template_sha256": "b989c16f23438fb5a746779020fb6f044d2f496f051ea59900a6cae246c074c8",
+      "expected_output_sha256": "b01e317a8c6f3159e57dcac4cbd430f06dd05ee304f174e8019de77b0c81f17f",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs",
+          "start": 0,
+          "end": 90,
+          "sha256": "bbcaf8da7e7ec39245949989a8fa542d4ff92381bfed814f229aa7e8818756a7"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs",
+          "start": 156,
+          "end": 4136,
+          "sha256": "1c940eec480bcde8da5757f04652c47ac5f90caf801539300ff678379cdef2c0"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Admission.cs",
+      "template": "templates/source__Admission.cs.in",
+      "template_sha256": "7a19aea5e55a59a471093e4f15bc822fc23875dbff0fa16a83821ef0de5a82a5",
+      "expected_output_sha256": "7a19aea5e55a59a471093e4f15bc822fc23875dbff0fa16a83821ef0de5a82a5",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Bindings.cs",
+      "template": "templates/source__Bindings.cs.in",
+      "template_sha256": "baaebab83cfdee1da5daa79074c77bb41136e93715c21646df93a552c8fedbcc",
+      "expected_output_sha256": "baaebab83cfdee1da5daa79074c77bb41136e93715c21646df93a552c8fedbcc",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Bridge.original.cs",
+      "template": "templates/source__Bridge.original.cs.in",
+      "template_sha256": "d3f2f10793d67f983b4dca212b9e608dbcacf0a4385579b769aa40640d6facb0",
+      "expected_output_sha256": "833836b8f4c0b3f103f06e09ced17f3eaa28e55a2ef1f1c1360efc89f631ab5c",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 2479,
+          "end": 3456,
+          "sha256": "218218ffc632ee5e79848f76e04b01065d4e19c54f37c9b6cee3eded906961fa"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 6325,
+          "end": 9069,
+          "sha256": "c7c81e44c8770819b42a1da975fc4033ef05e409cd9312b2bce9321efb9e0a09"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 17505,
+          "end": 22154,
+          "sha256": "18dd55f995489d4df1e4f54e0aec7449b3fa8c48b48c498106647fcdaf14e690"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 22155,
+          "end": 22659,
+          "sha256": "27f975e6e475b4f9ea9668f993902eb89ec79e1a8725c0d7fa1c490c25f14ba3"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 22660,
+          "end": 23150,
+          "sha256": "20f2638501c9fc434d9c0eab651df0796baff652e696f7441c6afa646817676d"
+        },
+        {
+          "token": "@@SOURCE_5@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 23151,
+          "end": 23981,
+          "sha256": "8b3356860d45ae200fc99c594265c8facfb7d9abbace2f56d486aa9bf1e51de4"
+        },
+        {
+          "token": "@@SOURCE_6@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 24588,
+          "end": 25140,
+          "sha256": "1287ad3c7e05fd1a79090c17fcf2cb0d372da3c22303f71980e020d391931cb9"
+        },
+        {
+          "token": "@@SOURCE_7@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 25141,
+          "end": 26508,
+          "sha256": "6db9ec486810061b1d7106f506105e6c65a81173a252b09f22351731a2325db0"
+        },
+        {
+          "token": "@@SOURCE_8@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 26509,
+          "end": 29819,
+          "sha256": "38ed950ea64dd6e8862ad26c5145ec730e4688e0460c69af16c2b2be2e88664a"
+        },
+        {
+          "token": "@@SOURCE_9@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 31264,
+          "end": 32482,
+          "sha256": "4080bb567aa059bfe68b815080a9b74d9190192a760ee2a93667f84050edd85d"
+        },
+        {
+          "token": "@@SOURCE_10@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 32483,
+          "end": 32671,
+          "sha256": "fa8cde3636af0734a780fe93f175d8e977d0a5fd111924fca5866fb611e4dd7e"
+        },
+        {
+          "token": "@@SOURCE_11@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 32672,
+          "end": 32815,
+          "sha256": "7444421c0d4fc3a9c04804a15693bd66bf3ebc5b846995e3a74076bfc90df100"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/BuildingResourceStorageReservationSystemHelper.cs",
+      "template": "templates/source__BuildingResourceStorageReservationSystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "6f586e8a9f5334624a82a4518a94577097d22b143c7c13c09b72bc5924ba87b5",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
+          "start": 0,
+          "end": 6799,
+          "sha256": "6f586e8a9f5334624a82a4518a94577097d22b143c7c13c09b72bc5924ba87b5"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/BuildingResourceStorageTransferSystemHelper.cs",
+      "template": "templates/source__BuildingResourceStorageTransferSystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "9bc88b2bac299e8f4ca85f7e64ae38eaec0b8231d62ceac43d4c46e35f369a17",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs",
+          "start": 0,
+          "end": 8126,
+          "sha256": "9bc88b2bac299e8f4ca85f7e64ae38eaec0b8231d62ceac43d4c46e35f369a17"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/CapturedPhysicalFuel.cs",
+      "template": "templates/source__CapturedPhysicalFuel.cs.in",
+      "template_sha256": "173eacd66ee4dd3b5a9019cc9a8abb1b72f90ca6408a68a3cd54727305779d88",
+      "expected_output_sha256": "173eacd66ee4dd3b5a9019cc9a8abb1b72f90ca6408a68a3cd54727305779d88",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Contracts.original.cs",
+      "template": "templates/source__Contracts.original.cs.in",
+      "template_sha256": "ba926cad6f2817f07e801298936303d3bf4d7bd600b3546c811dba41a3047c83",
+      "expected_output_sha256": "a6bdbc311389578adc53c01f14d6321a57986ff68ffb26e11e5c6ab923826162",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 51,
+          "end": 167,
+          "sha256": "77988ac56521cdeadd760b04433ab7ab35e169a4a759a7b38e1fe3640e2fca36"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 168,
+          "end": 316,
+          "sha256": "24be0a533dacaef3c1803eb2ec3906ff19f21deaaaaa2c45879c831fb1677df2"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 317,
+          "end": 549,
+          "sha256": "40204451d64cab7f7f618de9411ee0d5fab68e4d12b86bb7bb9ac58df7afb325"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Components/UnitCombatComponents.cs",
+          "start": 5435,
+          "end": 5699,
+          "sha256": "aacf3737af7e7ab10268013d2be90ac82932d247f54715ec41e529afc3ba78e7"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Components/UnitCombatComponents.cs",
+          "start": 6018,
+          "end": 6294,
+          "sha256": "d9b269e565ab1f8763effbbe4dcbad651b7333c69e5af5fa9e3a2b774599623d"
+        },
+        {
+          "token": "@@SOURCE_5@@",
+          "source": "Assets/Game/Scripts/Components/UnitCombatComponents.cs",
+          "start": 6295,
+          "end": 6651,
+          "sha256": "6226f072e0260815516a615c5bf1e443b8593650b81c723f35c3f923f6bd3a49"
+        },
+        {
+          "token": "@@SOURCE_6@@",
+          "source": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "start": 101,
+          "end": 183,
+          "sha256": "1bb95012927e60b1b49c849060e9be1d45a314157bf7025ac4f2da9167e69cdc"
+        },
+        {
+          "token": "@@SOURCE_7@@",
+          "source": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "start": 5147,
+          "end": 5922,
+          "sha256": "0a119b3bcc6c113483949748dc4c0fe4a5321f53382e02274c334040478ae968"
+        },
+        {
+          "token": "@@SOURCE_8@@",
+          "source": "Assets/Game/Scripts/Components/BuildingResourceProductionProfileComponent.cs",
+          "start": 160,
+          "end": 516,
+          "sha256": "11a3650b9dad221cd7bdd09921a9aa359eba2cd10bae86fab18829f77ae3afee"
+        },
+        {
+          "token": "@@SOURCE_9@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 958,
+          "end": 1545,
+          "sha256": "f79dd7e5db480c1c2c43d997572d95ef7a517ec12a004cedbc87ca3c8903e9e8"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/CoreAliases.cs",
+      "template": "templates/source__CoreAliases.cs.in",
+      "template_sha256": "b6d303df4224c28cd88f183a75739710fd00b55bf99ea9c235088f1d658b9251",
+      "expected_output_sha256": "b6d303df4224c28cd88f183a75739710fd00b55bf99ea9c235088f1d658b9251",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs",
+      "template": "templates/source__FactionFuelLogisticsTelemetryUtilitySystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "3ad8db72317e746e41965695abcc828f0355b18dd52d7cc2690c6e2cee96b99a",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryUtilitySystemHelper.cs",
+          "start": 0,
+          "end": 2445,
+          "sha256": "3ad8db72317e746e41965695abcc828f0355b18dd52d7cc2690c6e2cee96b99a"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "template": "templates/source__FactionTacticalMaterialsUtilitySystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+          "start": 0,
+          "end": 9740,
+          "sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/FuelData.cs",
+      "template": "templates/source__FuelData.cs.in",
+      "template_sha256": "e0fef43dbe86337e7a6375a1a76aa3beb0b3ddc0fec8741e1eeacc39c0568bd9",
+      "expected_output_sha256": "fe8bfbe3dba78bfc0932f880b975bd3bd9aaf805b1dae3f3b75e62e58e353402",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 22,
+          "end": 47,
+          "sha256": "114ef39a270f937543d8566da2fdb2e2c779c9b3500c2001be20505252d8537a"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 1281,
+          "end": 1369,
+          "sha256": "86e0d32e4f0bc2eeebcb06325dd46e05796ccda44962ccddd7e176b5c3901717"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 1425,
+          "end": 1543,
+          "sha256": "e3bf2c2f52abaf59771b7a4d9b8778907a028cb7f1d865cd2ebf5db5088cfc11"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 1604,
+          "end": 1679,
+          "sha256": "93ccace05e84d88ab2d00126a713be1be82065b180a89e93a1f9dfa5019dfa10"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/GlobalFuelBindings.cs",
+      "template": "templates/source__GlobalFuelBindings.cs.in",
+      "template_sha256": "f0c04d12fba4ab07f9a2303f94f4f237d87d6ee6001c4eaa4d975185e2888ae2",
+      "expected_output_sha256": "93fa105c1008d7ecd9a9a09d61bafd40e08e2132fc1257ae39ad3a46023b1db1",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 22,
+          "end": 47,
+          "sha256": "114ef39a270f937543d8566da2fdb2e2c779c9b3500c2001be20505252d8537a"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 12774,
+          "end": 13013,
+          "sha256": "a9ee62b21c349061ee701f02877b08bc8e29ce44173f852238163bafcd433f92"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Components/GridComponents.cs",
+          "start": 13273,
+          "end": 13522,
+          "sha256": "5c3686f6568db2c3e94665e9e4a4bc401314fa10d36c6d08cf3578c41894c8c0"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/GuardedStorageQuery.cs",
+      "template": "templates/source__GuardedStorageQuery.cs.in",
+      "template_sha256": "8011978549e314dfcfad61be7f1f09fda06b77c1a73d75c7296fca55e0e56b17",
+      "expected_output_sha256": "8011978549e314dfcfad61be7f1f09fda06b77c1a73d75c7296fca55e0e56b17",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialContracts.original.cs",
+      "template": "templates/source__MaterialContracts.original.cs.in",
+      "template_sha256": "6a0ce939557bbf04d6bcd634dccfe51f6a256a5a79355e5e20902c01d7b16513",
+      "expected_output_sha256": "ec70ef0651c1b206af2b18e3258607df50d27c0b506fbb0d8f8dfad30c39396a",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 550,
+          "end": 957,
+          "sha256": "06be8effecea324eb19a3a91e781824a58a47525b2fb688f51165d3f353a8821"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs",
+          "start": 1622,
+          "end": 3232,
+          "sha256": "147e79e49acbd641560f64528863cfcf23c4f27fce911742e80d4e54e8a6bef4"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs",
+          "start": 51,
+          "end": 1939,
+          "sha256": "32170aad5d4f96487094a906b83cdd7da34c3600bcd4435a1e8a2ba229e3543c"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationAdapter.cs",
+      "template": "templates/source__MaterialFabricationAdapter.cs.in",
+      "template_sha256": "47754479ffb7ea986d238341927a25cd2bf4ac9a7e45dc4f9d5ebab6a10de133",
+      "expected_output_sha256": "19d8671cda1a6beaedc71acf1e7928261a950a2df171d35d649f49f9f91d9bee",
+      "fragments": [
+        {
+          "token": "@@SOURCE_CLOCK_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 1933,
+          "end": 2105,
+          "sha256": "50910ca3e10712ae288716146dd1bcd9a509d3e66643ca692d1edf18c1de520b",
+          "compact_whitespace": true,
+          "portable_substitutions": [
+            [
+              "SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive",
+              "simulationActive"
+            ]
+          ]
+        },
+        {
+          "token": "@@SOURCE_CLOCK_1@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 2175,
+          "end": 2268,
+          "sha256": "989493dc24e27061c9eaa216e9777bdabedca29af75c5f59c1f56e4f472cfc3f",
+          "compact_whitespace": true,
+          "portable_substitutions": []
+        },
+        {
+          "token": "@@SOURCE_CLOCK_2@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 2281,
+          "end": 2374,
+          "sha256": "a6ff4d1cc7901e3daa6182dddcd634e724f683a2560c7f9c59adab59e63447ba",
+          "compact_whitespace": true,
+          "portable_substitutions": []
+        },
+        {
+          "token": "@@SOURCE_CLOCK_3@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 2388,
+          "end": 2467,
+          "sha256": "760c1dda0e7775d37014c67d5164f4ea2672b58a1f8723d126ede9e04d28cfb1",
+          "compact_whitespace": true,
+          "portable_substitutions": [
+            [
+              "float fabricationDeltaTime",
+              "fabricationDeltaTime"
+            ]
+          ]
+        }
+      ],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationCommand.original.cs",
+      "template": "templates/source__MaterialFabricationCommand.original.cs.in",
+      "template_sha256": "c092930d2accb3dea063259594caa9b26680397fba97541cf279cc8b3336bded",
+      "expected_output_sha256": "ed4f5950d3067aa69f9293511e600b6c84f242c4b37d28d4fad3382ad363159b",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 147,
+          "end": 2256,
+          "sha256": "1d8c37efa147b3b7e192a5357d379493458b98b61b0bb97783b5477f4cbec51d"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 5159,
+          "end": 5310,
+          "sha256": "be68532496d2318719153ebd818a34a01c124d9916e3ce281bc544d3bdad5eb9"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationKernel.original.cs",
+      "template": "templates/source__MaterialFabricationKernel.original.cs.in",
+      "template_sha256": "f2ed5a429818ec914c1733788123060b90b439bc2fa2a9826881341a375b9f47",
+      "expected_output_sha256": "6cab9135f2db33e94d85b4ae1608a832732f56659cdeb0946b3e17c7596a1945",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 278,
+          "end": 446,
+          "sha256": "f5fff4926b3f6d64e637f50cab8a7efb979b9a2029904fa418dac6c5dfd4ff01"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 616,
+          "end": 1306,
+          "sha256": "837bd55879d5a2a2556240d8384dfdd529795e58510bda9a0d42221c55bce236"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 8743,
+          "end": 17257,
+          "sha256": "b9ed32d4f54de4bd7cadbfdc260190ad8c0eb548c0b88ea38e3307f9c770f59e"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 19191,
+          "end": 22596,
+          "sha256": "f3735f5461724174c16e5c51300cfe411db6f24873c835f9cc3ae4f118c01e27"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationProducer.transplant.cs",
+      "template": "templates/source__MaterialFabricationProducer.transplant.cs.in",
+      "template_sha256": "49154e70797d31da7891480fe0aa94d8927ccfe7cb5e525eb096226eff3ae67a",
+      "expected_output_sha256": "e4b85eec5157d9c12a8b2ad0ad3cd09294bbaf2b4f5a41404ff8aa655471e3f2",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 2354,
+          "end": 2506,
+          "sha256": "8657d360e1e34ac70415bdfaac36df7294320bf10524dc1dd00d7451f6e21867"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 2506,
+          "end": 2585,
+          "sha256": "3703f7c1e28b7cc7287bf677a741c997223f84e3f5fe1caa70c43caadc89a822"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 3046,
+          "end": 3166,
+          "sha256": "dbabd3541c7270acee98d4f758a88e22b1b0e16ba83968444a3107166fff3ac6"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 3275,
+          "end": 3411,
+          "sha256": "f7d2290ede2a86b797f29811918c942bb49c39f4898155a39a9116bc54fdeee0"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs",
+          "start": 3845,
+          "end": 4156,
+          "sha256": "2273dda0b4e2253f3775ec35e876c23cc6a4473f307ab18011a07ed62890bebb"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationRow.transplant.cs",
+      "template": "templates/source__MaterialFabricationRow.transplant.cs.in",
+      "template_sha256": "818339b863c114aaed3b4cf4228a98d146514af31f040f6caf406e56dff5e605",
+      "expected_output_sha256": "90f106692e5765d92ac8a530ef399b1f6eadc74d38ef320e3bfda9c763e1084a",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 4097,
+          "end": 4330,
+          "sha256": "edaf05fe9600e3b3d1805d1e2f38bb7550d7fa14dbffa4ef0e7f3a9c6a3c6ffc"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 4404,
+          "end": 4664,
+          "sha256": "9d025accaac514c65d7da83e5a3640aefa4ab6a257419edeed716da576adc0ab"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 4695,
+          "end": 4922,
+          "sha256": "1adebe3d71c5bf4cb1e9949b9d1c76ebbe0a95eaebd0dcd1414e453cd654d03e"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 4952,
+          "end": 5152,
+          "sha256": "4a676d021cb16f7f3391682a379087c231bcef565fa34258915f7208c70ffe2c"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 5182,
+          "end": 5763,
+          "sha256": "4cdd1ce470078f46b4402670fe0b60fdd4524c463f6b75164154125be01f84b2"
+        },
+        {
+          "token": "@@SOURCE_5@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 5763,
+          "end": 6300,
+          "sha256": "e6ee28fd491bd4340f3d7fef52d99a1c3fedc847a6c3a2a315aee2af7da8bad9"
+        },
+        {
+          "token": "@@SOURCE_6@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs",
+          "start": 6330,
+          "end": 7370,
+          "sha256": "ef65e4affbc3ed1900c83891e87cbd81a15fb93aca38357a16b4aa614370ffd4"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MaterialFabricationTelemetry.original.cs",
+      "template": "templates/source__MaterialFabricationTelemetry.original.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "2497aeb7d94c99806c36acb5f298fe85ea205b4c3bc38b46017b4280e9a6a1e9",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs",
+          "start": 0,
+          "end": 4027,
+          "sha256": "2497aeb7d94c99806c36acb5f298fe85ea205b4c3bc38b46017b4280e9a6a1e9"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/MultiSelectionProviderBoundary.cs",
+      "template": "templates/source__MultiSelectionProviderBoundary.cs.in",
+      "template_sha256": "466005423fb0536f85a18cfe4a815317850ce8a61dfa7013861eb4661ed3ba1c",
+      "expected_output_sha256": "466005423fb0536f85a18cfe4a815317850ce8a61dfa7013861eb4661ed3ba1c",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ObserverOrdinalAdmission.cs",
+      "template": "templates/source__ObserverOrdinalAdmission.cs.in",
+      "template_sha256": "76a9bfc28f468d97c1248ccd2a750b42f7d35917ac8c83b3b0b6518ed99346a5",
+      "expected_output_sha256": "76a9bfc28f468d97c1248ccd2a750b42f7d35917ac8c83b3b0b6518ed99346a5",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/OwnerDue.cs",
+      "template": "templates/source__OwnerDue.cs.in",
+      "template_sha256": "6d5342e1664d45a809675fb12b3f5015fda1c15b641ca8935d0f3453f6cfbcc8",
+      "expected_output_sha256": "6d5342e1664d45a809675fb12b3f5015fda1c15b641ca8935d0f3453f6cfbcc8",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/OwnerDue.original.cs",
+      "template": "templates/source__OwnerDue.original.cs.in",
+      "template_sha256": "80342bd339840792c998e0b3818218d230e9d8a050b4edd2c710516cc0c4f0ed",
+      "expected_output_sha256": "0b5fa10a2186612bee474aca51feb6efe11117c0bde7723f1d89d68964094ab1",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+          "start": 464,
+          "end": 532,
+          "sha256": "13a611c4b8d7e51db2eca837d3b2541dca5956b1a9a5ef4b1f6fb5eeb5d0971c"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+          "start": 2880,
+          "end": 2926,
+          "sha256": "24ae2eb963c239fc402f0aae33df4d1bf8ce897a2ab465c9d802b966ab938f41"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+          "start": 13276,
+          "end": 13746,
+          "sha256": "69a861b3733a2e8f449f3ca6587f1dcf655b5214650e9354c0ef3f5e4d2883fb"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Pair.original.cs",
+      "template": "templates/source__Pair.original.cs.in",
+      "template_sha256": "05acd27c4453a97482838f0344c364ec1118b3c2dcf8663966d45c8bac932741",
+      "expected_output_sha256": "cc7aae0f464296a149d6bceb120d6d81537ecad78d04d3f5b96449211ee1ae29",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 65160,
+          "end": 66804,
+          "sha256": "9bbbd95b65a05e84a9e79a1e03734e3f1b6f763eb89d5554e4c1744cd7df6601"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 67342,
+          "end": 67586,
+          "sha256": "df3a9550395be8e7adce05a88835741c031d07b1fbf65eedcb1abc8698ea18df"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 12311,
+          "end": 15780,
+          "sha256": "70812cb7d78a8ec70b02e946b4832b93c0fa03221291d2b7a09deb0c11893691"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ProductionGroundFuelKernel.cs",
+      "template": "templates/source__ProductionGroundFuelKernel.cs.in",
+      "template_sha256": "1b2c30a95af7fe6c5d859088677d28a9d25619a11f443dda0d4147df59c8dfde",
+      "expected_output_sha256": "ec37c63d54eecee9df494e5dac7c93b234e37e70374f722c50b95b1f0c3bf453",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 47,
+          "end": 72,
+          "sha256": "114ef39a270f937543d8566da2fdb2e2c779c9b3500c2001be20505252d8537a"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 96,
+          "end": 119,
+          "sha256": "7369e7c5fc7e15297ab4f9db348acf56bf4251d0227865eebfc8cc4547d468fe"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3751,
+          "end": 3797,
+          "sha256": "c0e3253a2f006e861aec3c7429ca36e62a18b2a3f9643bc9818687ba08addcd2"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3815,
+          "end": 3860,
+          "sha256": "0c5a355c6b63e71ebc931f8210bdd621ed633cd9a19764ec476d9382705cb961"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3860,
+          "end": 3905,
+          "sha256": "05260026c26b35fcda844a2f0440704ccfabc21cbdce9df37c09e0e607e25af1"
+        },
+        {
+          "token": "@@SOURCE_5@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3954,
+          "end": 4008,
+          "sha256": "359d94016c27e42ac54d10a215877d8364e1600d84c24e0d3f103f74d74daf63"
+        },
+        {
+          "token": "@@SOURCE_6@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4008,
+          "end": 4080,
+          "sha256": "2bac186d9784c8325b52e17a403e85e76cbcd039c5a4280a54c61d38b2639fd4"
+        },
+        {
+          "token": "@@SOURCE_7@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4080,
+          "end": 4117,
+          "sha256": "81129f65358428a4a18bd6a4c5b84aa9275cc3a8cc355e6d5c1e4b9b905be608"
+        },
+        {
+          "token": "@@SOURCE_8@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4148,
+          "end": 4242,
+          "sha256": "7c025a7a08b2bcacb429eab73e42263f477fa1be13026bc55e93d86bae790ab9"
+        },
+        {
+          "token": "@@SOURCE_9@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4242,
+          "end": 4280,
+          "sha256": "e1886b7e7d72ee8d67b2ffff95fd62ffc0a9747e40fe75e5dc2414c924f951a0"
+        },
+        {
+          "token": "@@SOURCE_10@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3815,
+          "end": 3860,
+          "sha256": "0c5a355c6b63e71ebc931f8210bdd621ed633cd9a19764ec476d9382705cb961"
+        },
+        {
+          "token": "@@SOURCE_11@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4392,
+          "end": 4439,
+          "sha256": "c08a9b24ae697d2bfa5eafbd613aba60fe36fee52765bdc90b2509a6ad7d45d2"
+        },
+        {
+          "token": "@@SOURCE_12@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4439,
+          "end": 4510,
+          "sha256": "429f4e107a3e54ad20077aa90db81ed4ea244fc0b549d4cc1b8c7f43aa54cf27"
+        },
+        {
+          "token": "@@SOURCE_13@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4510,
+          "end": 4585,
+          "sha256": "b9978c14bf688c49a5eac0609467198983ba2503ba3f431205596f5f7903af5d"
+        },
+        {
+          "token": "@@SOURCE_14@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4585,
+          "end": 4649,
+          "sha256": "71a8f60d7df0625e3e0904e68704add218749f0fd9604df18fec78171d3d42a7"
+        },
+        {
+          "token": "@@SOURCE_15@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4649,
+          "end": 4689,
+          "sha256": "3c5493fa7eaf38fcb59089a5a81efd147934d9df8613431e3081c5ff20ea3422"
+        },
+        {
+          "token": "@@SOURCE_16@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4707,
+          "end": 4800,
+          "sha256": "5f7725dd53b4c6e890a1e1c89222f70d85b87be3efc166ce5c1dce0c5309a240"
+        },
+        {
+          "token": "@@SOURCE_17@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4800,
+          "end": 4883,
+          "sha256": "bf9add5911187b8fc83683066c93733cd48d90e079ebbb66f4b869384818a5d9"
+        },
+        {
+          "token": "@@SOURCE_18@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 4921,
+          "end": 5014,
+          "sha256": "ee13fb4b845fe43ee9a566255c8f8f23893875c9d72f33d84a0bd460f563dce2"
+        },
+        {
+          "token": "@@SOURCE_19@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 5039,
+          "end": 5124,
+          "sha256": "cc08907e3f1b189ad3c59bd352a43fe53a6c1416291cf781ffc04847d8532573"
+        },
+        {
+          "token": "@@SOURCE_20@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3819,
+          "end": 3860,
+          "sha256": "779c9e5ab02e7e56cb50e216bef4ed698f12c736195808987d5d8b42ccfed65f"
+        },
+        {
+          "token": "@@SOURCE_21@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 2718,
+          "end": 2802,
+          "sha256": "267f6131d2691e5f1f480300c57bf92fca6492c83d61b89dbf7120e34fa4399c"
+        },
+        {
+          "token": "@@SOURCE_22@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 3093,
+          "end": 5184,
+          "sha256": "d81c4cdc073e5588133cc62d9e826acedfcd2c8edf936d5e0fabfdcec55900a2"
+        },
+        {
+          "token": "@@SOURCE_23@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 7531,
+          "end": 7784,
+          "sha256": "907bb28607fe0c0e3e79d3a2e56cbe5f80546ed3313a33f63a01df4a4580ae2b"
+        },
+        {
+          "token": "@@SOURCE_24@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 7923,
+          "end": 8032,
+          "sha256": "7954ac7e49100578ea43c30d200b4a04b8541599566d98b762685cadd640e818"
+        },
+        {
+          "token": "@@SOURCE_25@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 8032,
+          "end": 8719,
+          "sha256": "6f986dd4884715b3329ddf02720d00c4975888dddc4d567e2e04e2926f562563"
+        },
+        {
+          "token": "@@SOURCE_26@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 8719,
+          "end": 8837,
+          "sha256": "a9ecfaa834b6ac365c680da1debbfc10ed2ebb1774e5cacb0ace03cf2da403ae"
+        },
+        {
+          "token": "@@SOURCE_27@@",
+          "source": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
+          "start": 8838,
+          "end": 9110,
+          "sha256": "4e9ab5b1bbf75945203768f94f38103ed0622ee9167b9bbea76ac11bc93a0f84"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ProductionSync.original.cs",
+      "template": "templates/source__ProductionSync.original.cs.in",
+      "template_sha256": "2cf072cd1790741e442eb50c08b7ede93159a3ff705511aeef2eb470ecd26110",
+      "expected_output_sha256": "2b6b7cadd6e984ecc52016b6aaff020004a888f6c3d324632ef23d38cd13543d",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingProductionTickCompositionSystemHelper.cs",
+          "start": 2469,
+          "end": 4184,
+          "sha256": "3b41b94f4ead6064a5a96cbf5e1de34d9bfc4a7fdc4184e7ced668d8538d23c1"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ProviderBoundary.cs",
+      "template": "templates/source__ProviderBoundary.cs.in",
+      "template_sha256": "dd6e9d308f7264678fe5d946f0bd99c0d6301b0910093ab9020c8d8f018e71d2",
+      "expected_output_sha256": "dd6e9d308f7264678fe5d946f0bd99c0d6301b0910093ab9020c8d8f018e71d2",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ReadPolicies.original.cs",
+      "template": "templates/source__ReadPolicies.original.cs.in",
+      "template_sha256": "91220391472f5786d425fbe9b5293cc84a754719cd2d6822564bc82dad4fd5a1",
+      "expected_output_sha256": "90d148283949d2c3afb129b1d51dc2265fa535554c317f8fe588276bebfb189a",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingSelectionRuntimeCompositionSystemHelper.cs",
+          "start": 17932,
+          "end": 18614,
+          "sha256": "bc058a5cd2801da622d1c72ca3108d21d31f2438f79f186c0a091defba3276b7"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
+      "template": "templates/source__ResourceHaulerAIOilAllocationPolicySystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "64638dccf054864622e12539d60afd7658c40e4cf310405d2ecc6966303f0b7e",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerAIOilAllocationPolicySystemHelper.cs",
+          "start": 0,
+          "end": 3222,
+          "sha256": "64638dccf054864622e12539d60afd7658c40e4cf310405d2ecc6966303f0b7e"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+      "template": "templates/source__ResourceHaulerAutomaticRoutePolicySystemHelper.cs.in",
+      "template_sha256": "813dbe59567d3896d64a6f1a063737e5a0da8f06956616d86e61443ba4e22d7a",
+      "expected_output_sha256": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+          "start": 0,
+          "end": 23525,
+          "sha256": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/RetainedDispatch.cs",
+      "template": "templates/source__RetainedDispatch.cs.in",
+      "template_sha256": "b45e136ba5529291aea8c84e34631ffa1d801fd731adab363cabed96f1187c8f",
+      "expected_output_sha256": "b45e136ba5529291aea8c84e34631ffa1d801fd731adab363cabed96f1187c8f",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Status.original.cs",
+      "template": "templates/source__Status.original.cs.in",
+      "template_sha256": "d63bd6ad510049fc5dee3d0cce09886a6a1b9bb0aad609bb2acf85ff9aad15a2",
+      "expected_output_sha256": "12fa5d86412709fb798ff91534896b76dcb15460578090010a2b54abcb816be6",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeCompositionSystemHelper.cs",
+          "start": 62795,
+          "end": 63288,
+          "sha256": "06451ce16fdd3799b95d7000009496343450f6a80ef98ddb5dbb6667fd4e1f55"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+          "start": 359,
+          "end": 1558,
+          "sha256": "c0662e2ed58ecc2ac87339d2c0ed10787fa01a47e3ab51c7ba3d50bd32bc0dc4"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+          "start": 3820,
+          "end": 4562,
+          "sha256": "ba771282d37d74eeed6793e952192a4ad2b01fa978bcb5014a12b6864cf5ee32"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper.cs",
+          "start": 4563,
+          "end": 5333,
+          "sha256": "20658553a5af18ed39889819e99218d2b9fdcf300a9954ab28ccdf584f0dcba3"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/StatusContracts.original.cs",
+      "template": "templates/source__StatusContracts.original.cs.in",
+      "template_sha256": "df4bb6a138c7700fc110e7d34bf66c95b4debb33d3029208aeacc58673a91b76",
+      "expected_output_sha256": "3612a0a73c90589ca9c0a5901e034e30cba4c27ff61b9e5f3253dd2642df8f76",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "start": 184,
+          "end": 418,
+          "sha256": "0b9032b0a89efc44a27c81dd92e7b372e160cbba3fa087d459c8dbe794a4d80b"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs",
+          "start": 419,
+          "end": 724,
+          "sha256": "15a314afb99cb4dfc8ce17dc2390a78f6d8870b00a78e98139ca1113caf5ecf4"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Components/UnitCombatComponents.cs",
+          "start": 5700,
+          "end": 5868,
+          "sha256": "5f5e89d95e8ef63acee63b7ea8b0d8c04265f16033b44cdf844335d7675a7b04"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs",
+          "start": 1940,
+          "end": 2323,
+          "sha256": "990f480ed3417b13a26da0ce5ff393c6ed05f33df98fdd570f640835b9d9be70"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "source/Utility.original.cs",
+      "template": "templates/source__Utility.original.cs.in",
+      "template_sha256": "7c4b347281e13d61fb795f511d20eec5d888b77ce3a698abefe186c4a5c81b38",
+      "expected_output_sha256": "5fabacf7aae1611e8c7b981ccb208bbdbbdf2318315352fe9feafc25b8fff950",
+      "fragments": [
+        {
+          "token": "@@SOURCE_0@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 383,
+          "end": 578,
+          "sha256": "7daf7d9f07e21d4e7ad1c25d460307fb711921b38628371834bef087a22d9706"
+        },
+        {
+          "token": "@@SOURCE_1@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 579,
+          "end": 685,
+          "sha256": "c325b0359ad38a8b0c978ae7442b81288c346f4c5da60a08641cd2f776de95e0"
+        },
+        {
+          "token": "@@SOURCE_2@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 2164,
+          "end": 2753,
+          "sha256": "d0d8507545ec5c1dfbfebe10117b62f8bc5e383e608ee7b6485f8923c84f73d4"
+        },
+        {
+          "token": "@@SOURCE_3@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 686,
+          "end": 793,
+          "sha256": "41c7ace4cc1386af7b5bd678c053436044aa7a76e7c6c0790092110ba3be6d9c"
+        },
+        {
+          "token": "@@SOURCE_4@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 803,
+          "end": 842,
+          "sha256": "10457b49dd7be9d72704291f94b4dd7ec19095950ccdbcdfba3118c787b98445"
+        },
+        {
+          "token": "@@SOURCE_5@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 842,
+          "end": 895,
+          "sha256": "b7ce58d6b77c2144fba428fbdac6a34b67d96eb61da1831d06042ad4bd860aea"
+        },
+        {
+          "token": "@@SOURCE_6@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 895,
+          "end": 947,
+          "sha256": "02de2c2c1be527e304ff8186e7573205f47c4151525c5434faacd501027a05d0"
+        },
+        {
+          "token": "@@SOURCE_7@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 958,
+          "end": 1060,
+          "sha256": "e6dec4323d73d7a2e1b5b869c9208854aed0a2aef64a25b0f67fb44d7b9c5e41"
+        },
+        {
+          "token": "@@SOURCE_8@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 803,
+          "end": 842,
+          "sha256": "10457b49dd7be9d72704291f94b4dd7ec19095950ccdbcdfba3118c787b98445"
+        },
+        {
+          "token": "@@SOURCE_9@@",
+          "source": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+          "start": 34229,
+          "end": 34281,
+          "sha256": "0e419576d7bf83c06728b8baa4a7f831d430003fe4fbb6c3062aa09b50251b66"
+        },
+        {
+          "token": "@@SOURCE_10@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 1172,
+          "end": 1287,
+          "sha256": "715930b3bc91f2fd6c6ff3384795bf32432ae39f39c1d16a59c0bbab74c2f6fa"
+        },
+        {
+          "token": "@@SOURCE_11@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 803,
+          "end": 842,
+          "sha256": "10457b49dd7be9d72704291f94b4dd7ec19095950ccdbcdfba3118c787b98445"
+        },
+        {
+          "token": "@@SOURCE_12@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 1336,
+          "end": 1390,
+          "sha256": "afe8cd76fa0318f619cf54dab2563c16929396065d7957341558582f7e156a73"
+        },
+        {
+          "token": "@@SOURCE_13@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 1390,
+          "end": 1443,
+          "sha256": "4da6d5c622884d51871c95a521535b7e8d4e35ee7a0fb278f02fef1122860ed3"
+        },
+        {
+          "token": "@@SOURCE_14@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 3743,
+          "end": 3882,
+          "sha256": "ba825b4bd3d952cc51dc69f85bc8c784b2585b3b64ebf3ca204d65e40f305244"
+        },
+        {
+          "token": "@@SOURCE_15@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 4163,
+          "end": 4887,
+          "sha256": "d0bc4d653b2adfcc64db120d081c2864c6136794541d169ead2660564326662a"
+        },
+        {
+          "token": "@@SOURCE_16@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 6209,
+          "end": 6956,
+          "sha256": "3182ed6605d99fdd90bba0e2b6cd57c35177be7a610f876f78a0b20c04ff6665"
+        },
+        {
+          "token": "@@SOURCE_17@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 10776,
+          "end": 11514,
+          "sha256": "e1d24d61f67be2f5eb8baaea6554394b04dc2732cda8707a937a7fb6cadb13d2"
+        },
+        {
+          "token": "@@SOURCE_18@@",
+          "source": "Assets/Game/Scripts/Systems/ResourceHaulerUtilitySystemHelper.cs",
+          "start": 11515,
+          "end": 12310,
+          "sha256": "e1b969951370039c7f9dcc05e40be5a942193902981a0c6d92cd5dcc20c4f407"
+        },
+        {
+          "token": "@@SOURCE_19@@",
+          "source": "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+          "start": 33292,
+          "end": 33808,
+          "sha256": "87b1b6b8065c40e40bb575ff654a4b334d742f4951395edebd77f906a8630215"
+        }
+      ],
+      "kind": "source-backed-original-with-declared-portable-bindings",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "MaterialWireReplay.cs",
+      "template": "templates/MaterialWireReplay.cs.in",
+      "template_sha256": "c4b90d075736287dc0f2a2cc1dac035ee90a3578f990485f4bd72178bb58f4c9",
+      "expected_output_sha256": "c4b90d075736287dc0f2a2cc1dac035ee90a3578f990485f4bd72178bb58f4c9",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "V8FuelStepAdapter.cs",
+      "template": "templates/V8FuelStepAdapter.cs.in",
+      "template_sha256": "28f982990b8a96a48ed35e9acd8462438deb98899dcd7a49b19ba7222504f351",
+      "expected_output_sha256": "28f982990b8a96a48ed35e9acd8462438deb98899dcd7a49b19ba7222504f351",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "CanonicalStorageBank.cs",
+      "template": "templates/CanonicalStorageBank.cs.in",
+      "template_sha256": "cf762f9f39e50f8f7d33e30ee5d8395adb5f782c53e313fd3713d8fe39f226d2",
+      "expected_output_sha256": "cf762f9f39e50f8f7d33e30ee5d8395adb5f782c53e313fd3713d8fe39f226d2",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "NativeV8CallerAdapter.cs",
+      "template": "templates/NativeV8CallerAdapter.cs.in",
+      "template_sha256": "ef6e20f6a81af1400695072c9b9a04281d05a9a3ef4ad5b5a168854fa133d4da",
+      "expected_output_sha256": "ef6e20f6a81af1400695072c9b9a04281d05a9a3ef4ad5b5a168854fa133d4da",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    },
+    {
+      "output": "ChronologicalDriver.cs",
+      "template": "templates/ChronologicalDriver.cs.in",
+      "template_sha256": "cdbb953dcf6d6c6bbc97740043f36cd75bc7a2b85c3768db4f055acd5b792c2b",
+      "expected_output_sha256": "cdbb953dcf6d6c6bbc97740043f36cd75bc7a2b85c3768db4f055acd5b792c2b",
+      "fragments": [],
+      "kind": "fixed-typed-adapter-or-ECS-binding",
+      "portable_bindings": "Namespace/type/access/query/ref/buffer bindings and bounded typed admission/observation adapters; original copied statements are source slices, no formula substitution. See exact template/source splice boundary."
+    }
+  ],
+  "linked": [
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
+      "raw_sha256": "72718dd1144f7e0c8f7568462c4da57ea08265c95399f36b48d4a781891762b0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceProductionSystemHelper.cs",
+      "raw_sha256": "0737013dddfe9aa8f16847d81f5207e30551e7375d81831a0a1595572812534d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/GridCoordinateKernel.cs",
+      "raw_sha256": "6c1c954af6a53498e2d61700c73ded320d32c2000570cd9f8964eadefffc4711"
+    }
+  ],
+  "declared_scope": "Exactly working retained source union; portable typed adapters bind captured/exogenous prerequisites and compare assertions. No generic ECS, movement/path/service or complete mission.",
+  "source_input_count": 44
+}

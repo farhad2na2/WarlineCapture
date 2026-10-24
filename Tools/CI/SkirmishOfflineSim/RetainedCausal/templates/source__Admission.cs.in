@@ -1,0 +1,28 @@
+using System;using Game.Components;using Unity.Entities;using UnityEngine;
+namespace Game.Runtime {
+// Typed integration boundary. No native journal/after-state field exists here.
+internal static class AutomaticCallerAdmission {
+ internal sealed class Input {internal BuildingResourceHaulerBridgeCompositionSystemHelper.Context Context;internal EntityManager Manager;internal GridConfig Grid;internal Entity[] QueryOrder;internal int SchemaVersion=2;internal bool QueryComplete,RuntimeBuildingsComplete,PrivateStateComplete,FocusBoundaryProven,AIResultBoundaryProven;internal bool HasSignature;internal uint LastSignature,NextReservationId;internal float NextRefreshAt,Now;internal long WorkLimit;}
+ internal sealed class Result {internal bool SuspendedAtPair;internal PairRequestEmitted Request;internal bool CallerTickCompleted;}
+ static void Need(bool ok,string text){if(!ok)throw new NotSupportedException(text);}
+ internal static void ValidateAndBind(Input x){
+ Need(x!=null&&x.Context!=null&&x.Manager!=null,"Complete caller objects required");
+ Need(x.SchemaVersion==2,"FinalR7 schema2 caller census required");
+ Need(x.QueryComplete&&x.RuntimeBuildingsComplete&&x.PrivateStateComplete,"Complete actual caller census/private state required");
+ Need(x.FocusBoundaryProven,"Explicit focus provider boundary required");
+ Need(x.Context.TryResolveFactionAIOilAllocationInput==null||x.AIResultBoundaryProven,"Actual AI callback-result boundary unproved");
+ Need(x.QueryOrder!=null&&x.QueryOrder.Length>0&&x.QueryOrder.Length<=512&&x.Context.RuntimeBuildings!=null&&x.Context.RuntimeBuildings.Count<=4096,"Bounded actual dispatch census required");
+ Need(x.WorkLimit>0&&x.WorkLimit<=2000000&&16L*x.QueryOrder.Length*Math.Max(1,x.Context.RuntimeBuildings.Count)+x.QueryOrder.Length+x.Context.RuntimeBuildings.Count<=x.WorkLimit,"Dispatch work budget exceeded");
+ Need(!float.IsNaN(x.Now)&&!float.IsInfinity(x.Now)&&!float.IsNaN(x.NextRefreshAt)&&!float.IsInfinity(x.NextRefreshAt),"Finite actual caller clock/private refresh required");
+ Need(x.Grid.Width==2048&&x.Grid.Height==1024&&x.Grid.CellSize>0&&!float.IsInfinity(x.Grid.CellSize)&&!float.IsNaN(x.Grid.CellSize),"Actual fullmap caller grid required");
+ var seen=new System.Collections.Generic.HashSet<Entity>();foreach(var e in x.QueryOrder){Need(seen.Add(e)&&x.Manager.Exists(e)&&x.Manager.HasComponent<UnitResourceHauler>(e)&&x.Manager.HasComponent<UnitGrid>(e)&&x.Manager.HasComponent<UnitMove>(e),"Exact unique All(Hauler,Grid,Move) query membership required");}
+ // Bind to admitted snapshots; do not invoke a live native query/grid provider.
+ x.Context.TryGetEntityManager=(out EntityManager em)=>{em=x.Manager;return true;};x.Context.GetHaulerUnitsQuery=()=>new EntityQuery{Entities=x.QueryOrder};x.Context.TryGetGridData=(out Entity e,out GridConfig grid,out int roads,out int blockers)=>{e=default;grid=x.Grid;roads=0;blockers=0;return true;};x.Context.EnsureEntityQueries=null;
+ }
+ internal static Result Generate(Input x){ValidateAndBind(x);
+ var caller=new BuildingResourceHaulerBridgeCompositionSystemHelper();caller.Initial(x.HasSignature,x.LastSignature,x.NextRefreshAt,x.NextReservationId);
+ try{caller.UpdateResourceHaulers(x.Context,false,x.Now);return new Result{CallerTickCompleted=true};}
+ catch(PairRequestEmitted request){return new Result{SuspendedAtPair=true,Request=request,CallerTickCompleted=false};}
+ }
+}
+}

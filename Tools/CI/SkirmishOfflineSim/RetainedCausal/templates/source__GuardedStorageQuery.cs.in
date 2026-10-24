@@ -1,0 +1,58 @@
+using System;using System.Collections.Generic;using Game.Components;
+namespace FuelPrototype {
+// Canonically admitted actual query PREFIX, not native requested-fuel operands.
+public sealed class FuelDrainPrefix {
+ public bool AdmissionVerified,CompleteDomainVerified;
+ public string EvidenceSha256,CompleteDomainEvidenceSha256;
+ public int FactionId,EnumerationOccurrence;
+ public string[] PrefixEntityIds,CompleteQueryEntityIds;
+}
+public readonly struct FuelDrainVisit {
+ public readonly int FactionId,EnumerationOccurrence,CanonicalSlot;public readonly string EntityId;
+ internal FuelDrainVisit(int faction,int occurrence,int slot,string entity){FactionId=faction;EnumerationOccurrence=occurrence;CanonicalSlot=slot;EntityId=entity;}
+}
+// Immutable source-local observations; never accepted as source operands.
+public readonly struct FuelDrainObservation {
+ public readonly FuelDrainVisit Visit;public readonly bool After;public readonly uint RemainingBits,FuelBalanceBits,Version;
+ internal FuelDrainObservation(FuelDrainVisit visit,bool after,float remaining,in BuildingResourceStorageComponent storage){Visit=visit;After=after;RemainingBits=BitConverter.ToUInt32(BitConverter.GetBytes(remaining),0);FuelBalanceBits=after?BitConverter.ToUInt32(BitConverter.GetBytes(storage.StoredFuelBarrels),0):0;Version=after?storage.Version:0;}
+}
+internal sealed class GuardedStorageQuery:StorageQuery {
+ readonly BuildingResourceStorageComponent[] bank;readonly FuelDrainPrefix[] descriptors;readonly int[][] slots;
+ readonly string[] bankEntityIds;readonly List<FuelDrainVisit> visits=new List<FuelDrainVisit>();readonly long maxVisits;
+ readonly List<FuelDrainObservation> observations=new List<FuelDrainObservation>();
+ int[] computedFactions;int at;bool bound;
+ static void Need(bool value,string why){if(!value)throw new NotSupportedException(why);}
+ internal GuardedStorageQuery(BuildingResourceStorageComponent[] values,Dictionary<string,int> bankIds,FuelDrainPrefix[] captured,string evidence,string[] identities){
+ bank=values;bankEntityIds=identities;captured=captured??Array.Empty<FuelDrainPrefix>();Need(captured.Length<=256,"At most256 source faction queries");descriptors=new FuelDrainPrefix[captured.Length];slots=new int[descriptors.Length][];long total=0;
+ for(int n=0;n<descriptors.Length;n++){
+  var d=captured[n];Need(d!=null&&d.AdmissionVerified&&d.EvidenceSha256==evidence&&d.FactionId>=0&&d.FactionId<256&&d.EnumerationOccurrence==n,"Actual admitted query faction/occurrence/evidence required");
+  Need(d.PrefixEntityIds!=null&&d.PrefixEntityIds.Length<=bank.Length,"Bounded actual visited prefix required");total+=d.PrefixEntityIds.Length;Need(total<=1048576,"Source-bounded aggregate prefix slots exceeded");
+  var seen=new HashSet<string>(StringComparer.Ordinal);var order=new int[d.PrefixEntityIds.Length];for(int i=0;i<order.Length;i++){string id=d.PrefixEntityIds[i];int slot;Need(id!=null&&id.Length<=256&&seen.Add(id)&&bankIds.TryGetValue(id,out slot),"Actual prefix must name distinct canonical storage owners");order[i]=bankIds[id];}slots[n]=order;
+  if(d.CompleteDomainVerified){Need(d.CompleteDomainEvidenceSha256==evidence&&d.CompleteQueryEntityIds!=null&&d.CompleteQueryEntityIds.Length==bank.Length&&order.Length==bank.Length,"Explicit complete native query proof required for exhaustion");for(int i=0;i<order.Length;i++)Need(d.CompleteQueryEntityIds[i]==d.PrefixEntityIds[i],"Complete native order must equal observed full prefix");}
+  else Need(d.CompleteQueryEntityIds==null&&d.CompleteDomainEvidenceSha256==null,"Unadmitted complete-domain data forbidden");
+  descriptors[n]=new FuelDrainPrefix{FactionId=d.FactionId,EnumerationOccurrence=d.EnumerationOccurrence,CompleteDomainVerified=d.CompleteDomainVerified};
+ }
+ maxVisits=total;
+ }
+ internal FuelDrainVisit[] CopyVisits()=>visits.ToArray();
+ internal FuelDrainObservation[] CopyObservations()=>observations.ToArray();
+ public override void ObserveDrain(StorageRef actual,int faction,float remaining,bool after){
+ Need(bound&&visits.Count>0&&observations.Count<2*maxVisits,"Bounded source-local fuel observation required");var visit=visits[visits.Count-1];
+ Need(visit.FactionId==faction&&visit.CanonicalSlot==actual.CanonicalSlot&&bankEntityIds[actual.CanonicalSlot]==visit.EntityId,"Fuel source-local observation identity differs");
+ if(after)Need(observations.Count>0&&!observations[observations.Count-1].After&&observations[observations.Count-1].Visit.EnumerationOccurrence==visit.EnumerationOccurrence&&observations[observations.Count-1].Visit.CanonicalSlot==visit.CanonicalSlot,"Fuel post observation requires immediately preceding visit");
+ else Need(observations.Count==0||observations[observations.Count-1].Visit.EnumerationOccurrence!=visit.EnumerationOccurrence||observations[observations.Count-1].Visit.CanonicalSlot!=visit.CanonicalSlot,"Duplicate source visit observation");
+ observations.Add(new FuelDrainObservation(visit,after,remaining,actual.ValueRW));
+ }
+
+ internal void BindComputedRequests(NativeArray<float> computed){
+ Need(!bound,"Query binds computed source requests once");var positive=new List<int>();for(int f=0;f<computed.Length;f++)if(computed[f]>0f)positive.Add(f);
+ Need(positive.Count==descriptors.Length,"Missing/extra actual query descriptor for computed positive factions");for(int i=0;i<positive.Count;i++)Need(descriptors[i].FactionId==positive[i]&&descriptors[i].EnumerationOccurrence==i,"Actual faction/query occurrence differs from source-computed branch");computedFactions=positive.ToArray();bound=true;
+ }
+ public override IEnumerable<StorageRef> Enumerate(){
+ Need(bound&&at<computedFactions.Length,"Unexpected source storage enumeration");int n=at++;Need(descriptors[n].FactionId==computedFactions[n]&&descriptors[n].EnumerationOccurrence==n,"Actual query occurrence changed");
+ foreach(int slot in slots[n]){Need(visits.Count<maxVisits,"Bounded computed visit trace exceeded admitted prefix rows");visits.Add(new FuelDrainVisit(computedFactions[n],n,slot,bankEntityIds[slot]));yield return new StorageRef(bank,slot);}
+ Need(descriptors[n].CompleteDomainVerified,"Reached first unproven storage-query row; unknown native tail");
+ }
+ internal void AssertConsumed(){Need(bound&&at==computedFactions.Length,"Source skipped/unconsumed actual faction queries");}
+}
+}

@@ -1,0 +1,847 @@
+{
+  "status": "ROW SHAPES FROZEN v8.r1-final-frontier; source controls/typecompile pending; no native claim",
+  "version": 8,
+  "opt_in": "WARLINE_S002_CONTINUOUS_WINDOW_V8=1 with existing forwardtrace/startup flags",
+  "legacy_export_field": "continuous_causal_window_v8",
+  "reference_success": {
+    "schema_version": "8",
+    "path": "continuous-causal-window-v8.json EXACT basename only",
+    "bytes": "int32 exactcompactUTF8",
+    "sha256": "lowercasehex64",
+    "window_complete": "bool advisory mustvalidatecursor",
+    "failure": "null|string",
+    "charged_work": "int32",
+    "aggregate_causal_actual_utf8_bytes": "int32 exact sidecarcompactUTF8+measured earlylegacy pretty/framing<=1048576; chargedheaderreserve separately",
+    "legacy_early_causal_utf8_bytes": "int32",
+    "temporary_utf8_buffer_allocated_bytes": "int32 partialallocationmeasurement",
+    "events": "int64<=131072",
+    "sourcewriter_facts": "int32<=512",
+    "ordinal_space": "v8-causal-window-only"
+  },
+  "reference_failure": {
+    "schema_version": 8,
+    "window_complete": false,
+    "failure": "string",
+    "path": null,
+    "bytes": 0,
+    "sha256": null
+  },
+  "sidecar_top_required": [
+    "schema_version",
+    "ordinal_space",
+    "legacy_v7_space_distinct",
+    "start_observed",
+    "end_observed",
+    "window_complete",
+    "failure",
+    "charged_work",
+    "aggregate_causal_charged_utf8_bytes_including_header_reserve",
+    "legacy_early_causal_pretty_utf8_bytes_including_indent_separator",
+    "temporary_utf8_buffer_allocated_bytes",
+    "managed_object_allocations_measurement",
+    "end_header_reserved_bytes",
+    "work_limit",
+    "byte_limit",
+    "global_event_limit",
+    "source_event_counts",
+    "sourcewriter_facts",
+    "owner_loops",
+    "dispatches",
+    "fuel_calls",
+    "provider_events",
+    "timing_measurement",
+    "events",
+    "root_rows_including_end_header"
+  ],
+  "event_base": {
+    "observer_ordinal": "int64 dense 0..131071 in ONE v8 space",
+    "kind": "exact key from event_kinds"
+  },
+  "event_kinds": {
+    "window-start": {
+      "required": [
+        "schema_version",
+        "session_entity",
+        "session_id",
+        "catalog_id",
+        "definition_id",
+        "content_version",
+        "setup_hash",
+        "seed",
+        "phase",
+        "is_legacy",
+        "is_custom",
+        "initialization_complete",
+        "spawn_complete",
+        "tick_clock",
+        "ordinal_space",
+        "start_boundary",
+        "producer_callsite",
+        "session_discovery_query",
+        "work_limit",
+        "byte_limit",
+        "source_writer_fact_limit",
+        "root_completion_reservation_bytes"
+      ],
+      "types": {
+        "schema_version": "uint32=8",
+        "session_entity": "Entity{index:int32,version:int32}",
+        "session_id": "losslessFixedString64",
+        "catalog_id": "losslessFixedString64=S002",
+        "definition_id": "losslessFixedString64",
+        "content_version": "int32",
+        "setup_hash": "uint32",
+        "seed": "int32",
+        "phase": "uint8 actual",
+        "is_legacy": "uint8",
+        "is_custom": "uint8",
+        "initialization_complete": "uint8",
+        "spawn_complete": "uint8",
+        "tick_clock": "int32",
+        "ordinal_space": "v8-causal-window-only",
+        "start_boundary": "first-observed-S002-before-production",
+        "producer_callsite": "BuildingResourceProductionEcsSystem.ApplyStorageQuery.before-production",
+        "session_discovery_query": "Expanded+ResolvedSetup+EconomyStock+EnemyStock",
+        "work_limit": "int32=1500000",
+        "byte_limit": "int32=1048576",
+        "source_writer_fact_limit": "int32=512",
+        "root_completion_reservation_bytes": "int32=327680"
+      },
+      "roles": "Actual initial source-bound session identity; phase not inferred",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "initial-broad-expanded-sessions": {
+      "required": [
+        "query",
+        "rows"
+      ],
+      "types": {
+        "query": "SkirmishExpandedSessionComponent-only",
+        "rows": "ordered array{entity:Entity,SessionId:losslessFixedString64,IsLegacy:uint8},<=16 complete"
+      },
+      "roles": "Initial BEFORE inputs, broadquery includes partialroots",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "production": {
+      "required": [
+        "boundary",
+        "session_entity",
+        "seconds_per_day_bits",
+        "delta_time_bits",
+        "oil_ratio_bits",
+        "snapshot_role",
+        "legacy_production_history_index",
+        "legacy_observer_ordinal",
+        "frame"
+      ],
+      "types": {
+        "boundary": "before-production|after-production",
+        "session_entity": "Entity{index:int32,version:int32}",
+        "seconds_per_day_bits": "uint32",
+        "delta_time_bits": "uint32",
+        "oil_ratio_bits": "uint32",
+        "snapshot_role": "initial-before-input|assertion-only-against-carried-bank",
+        "legacy_production_history_index": "int32",
+        "legacy_observer_ordinal": "int64",
+        "frame": "int32"
+      },
+      "roles": "Snapshot raw rows/stamp remain exact legacy production_boundary_history[index], match ordinal+boundary+session; ONLY first before initializes bank, subsequent rows ASSERTIONS",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "owner-hauler-check-before": {
+      "required": [
+        "owner_loop",
+        "realtime_now_bits",
+        "before_due_bits",
+        "after_due_bits",
+        "disabled",
+        "callback_present",
+        "due_role",
+        "frame"
+      ],
+      "types": {
+        "owner_loop": "int32<=128",
+        "realtime_now_bits": "uint64",
+        "before_due_bits": "uint64",
+        "after_due_bits": "uint64",
+        "disabled": "bool",
+        "callback_present": "bool",
+        "due_role": "initial-private-input|assertion-derived-owner-private",
+        "frame": "int32"
+      },
+      "roles": "Actual realtime argument everyownerloop. ONLY first before due_role initial, invoke/post due private values ASSERTIONS. Terminal owner legitimately OPEN after invoke.",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "owner-hauler-invoke": {
+      "required": [
+        "owner_loop",
+        "realtime_now_bits",
+        "before_due_bits",
+        "after_due_bits",
+        "disabled",
+        "callback_present",
+        "due_role",
+        "frame"
+      ],
+      "types": {
+        "owner_loop": "int32<=128",
+        "realtime_now_bits": "uint64",
+        "before_due_bits": "uint64",
+        "after_due_bits": "uint64",
+        "disabled": "bool",
+        "callback_present": "bool",
+        "due_role": "initial-private-input|assertion-derived-owner-private",
+        "frame": "int32"
+      },
+      "roles": "Actual realtime argument everyownerloop. ONLY first before due_role initial, invoke/post due private values ASSERTIONS. Terminal owner legitimately OPEN after invoke.",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "owner-hauler-check-after": {
+      "required": [
+        "owner_loop",
+        "realtime_now_bits",
+        "before_due_bits",
+        "after_due_bits",
+        "disabled",
+        "callback_present",
+        "due_role",
+        "frame"
+      ],
+      "types": {
+        "owner_loop": "int32<=128",
+        "realtime_now_bits": "uint64",
+        "before_due_bits": "uint64",
+        "after_due_bits": "uint64",
+        "disabled": "bool",
+        "callback_present": "bool",
+        "due_role": "initial-private-input|assertion-derived-owner-private",
+        "frame": "int32"
+      },
+      "roles": "Actual realtime argument everyownerloop. ONLY first before due_role initial, invoke/post due private values ASSERTIONS. Terminal owner legitimately OPEN after invoke.",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "bridge-dispatch-before": {
+      "required": [
+        "dispatch_id",
+        "owner_loop",
+        "session_entity",
+        "session_id",
+        "now_argument_bits",
+        "pending_path_argument",
+        "grid",
+        "hauler_order_and_observed_components",
+        "candidate_order_and_observed_components",
+        "candidate_static_initial_input_ref",
+        "field_partition",
+        "private_state_role",
+        "has_signature",
+        "last_signature",
+        "next_refresh_bits",
+        "next_reservation_id",
+        "approach_query_created",
+        "ai_policy_present",
+        "frame"
+      ],
+      "types": {
+        "dispatch_id": "int64<=16",
+        "owner_loop": "int32",
+        "session_entity": "Entity{index:int32,version:int32}",
+        "session_id": "losslessFixedString64",
+        "now_argument_bits": "uint32",
+        "pending_path_argument": "bool",
+        "grid": "StorageBits<GridConfig>",
+        "hauler_order_and_observed_components": "ordered InitialHauler objects<=8, exhaustive partition below",
+        "candidate_order_and_observed_components": "ordered candidate descriptors<=18: enumeration_ordinal:int32,dictionary_key:int32,runtime_id:int32?,combat_entity:Entity?,runtime_binding_ref:int32?,static_equals_first_dispatch_guard:bool,storage_assertion:StorageBits?,profile_assertion:StorageBits?,fabrication_assertion:StorageBits?",
+        "candidate_static_initial_input_ref": "exact fixed local legacy path string",
+        "field_partition": "exact object string arrays emitted by source",
+        "private_state_role": "initial-input|assertion-only",
+        "has_signature": "bool",
+        "last_signature": "uint32",
+        "next_refresh_bits": "uint32",
+        "next_reservation_id": "uint32",
+        "approach_query_created": "bool",
+        "ai_policy_present": "bool",
+        "frame": "int32"
+      },
+      "roles": "Initial private inputs ONCE, actual argument clocks/exogenous movement fields eachcall. Later private/nativecomputed components ASSERTIONS; staticfullguards source-backed. No reseed",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "bridge-dispatch-after": {
+      "required": [
+        "dispatch_id",
+        "owner_loop",
+        "has_signature_assertion",
+        "last_signature_assertion",
+        "next_refresh_bits_assertion",
+        "counter_assertion"
+      ],
+      "types": {
+        "dispatch_id": "int64",
+        "owner_loop": "int32",
+        "has_signature_assertion": "bool",
+        "last_signature_assertion": "uint32",
+        "next_refresh_bits_assertion": "uint32",
+        "counter_assertion": "uint32"
+      },
+      "roles": "ASSERTIONS only; absentterminaldispatch post",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "selector-entry": {
+      "required": [
+        "selection_id",
+        "dispatch_id",
+        "unit",
+        "entry_ordinal",
+        "result_assertion"
+      ],
+      "types": {
+        "selection_id": "int64<=128",
+        "dispatch_id": "int64",
+        "unit": "Entity{index:int32,version:int32}",
+        "entry_ordinal": "int64",
+        "result_assertion": "null|bool"
+      },
+      "roles": "Actual entry, resultnull; no request input",
+      "nullable": [
+        "result_assertion"
+      ],
+      "additional_keys": false
+    },
+    "selector-exit": {
+      "required": [
+        "selection_id",
+        "dispatch_id",
+        "unit",
+        "entry_ordinal",
+        "result_assertion"
+      ],
+      "types": {
+        "selection_id": "int64<=128",
+        "dispatch_id": "int64",
+        "unit": "Entity{index:int32,version:int32}",
+        "entry_ordinal": "int64",
+        "result_assertion": "null|bool"
+      },
+      "roles": "Actual closed earlier scopes only, real bool; terminalowned exit absent",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "selector-provider": {
+      "variants": {
+        "focus-return": {
+          "required": [
+            "dispatch_id",
+            "selection_id",
+            "unit",
+            "provider_kind",
+            "callsite",
+            "runtime_id",
+            "position_bits"
+          ],
+          "types": {
+            "dispatch_id": "int64",
+            "selection_id": "int64",
+            "unit": "Entity{index:int32,version:int32}",
+            "provider_kind": "focus-return",
+            "callsite": "automatic-route.focus-0..4",
+            "runtime_id": "int32",
+            "position_bits": "uint32[3]"
+          },
+          "roles": "Actual returned scoped provider inputs; no reinvocation",
+          "nullable": [],
+          "additional_keys": false
+        },
+        "ai-resolver-return": {
+          "required": [
+            "dispatch_id",
+            "selection_id",
+            "unit",
+            "provider_kind",
+            "callsite",
+            "faction",
+            "resolver_present",
+            "has_input",
+            "input"
+          ],
+          "types": {
+            "dispatch_id": "int64",
+            "selection_id": "int64",
+            "unit": "Entity{index:int32,version:int32}",
+            "provider_kind": "ai-resolver-return",
+            "callsite": "TryResolveCachedInput.actual-resolver-expression",
+            "faction": "uint8",
+            "resolver_present": "bool",
+            "has_input": "bool",
+            "input": "[int32 PlannedCost,int32 Available,int32 Capacity,uint32 StoredFuelBits,int32 FuelCapacity]"
+          },
+          "roles": "Actual returned provider inputs; cachehits do not fabricate resolvercalls",
+          "nullable": [],
+          "additional_keys": false
+        }
+      }
+    },
+    "broad-root-use-guard": {
+      "required": [
+        "dispatch_id",
+        "selection_id",
+        "exact_order"
+      ],
+      "types": {
+        "dispatch_id": "int64",
+        "selection_id": "int64",
+        "exact_order": "Entity[]<=16"
+      },
+      "roles": "Actual originalquery order; eachactualSessionId/IsLegacy equals initial checked by source, no newquery",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-before-ground-fuel-consumer": {
+      "required": [
+        "fuel_call_id",
+        "steel_push",
+        "expanded_four_component_count",
+        "legacy_routing",
+        "grid_count",
+        "grid",
+        "frame"
+      ],
+      "types": {
+        "fuel_call_id": "int32<=32",
+        "steel_push": "bool=false",
+        "expanded_four_component_count": "int32=1",
+        "legacy_routing": "bool=false",
+        "grid_count": "int32=1",
+        "grid": "StorageBits<GridConfig> positivefiniteCellSize",
+        "frame": "int32"
+      },
+      "roles": "Actual call boundary/mode/grid inputs; no deltaTime consumed",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-after-ground-fuel-consumer": {
+      "required": [
+        "fuel_call_id",
+        "steel_push",
+        "expanded_four_component_count",
+        "legacy_routing",
+        "grid_count",
+        "grid",
+        "frame"
+      ],
+      "types": {
+        "fuel_call_id": "int32<=32",
+        "steel_push": "bool=false",
+        "expanded_four_component_count": "int32=1",
+        "legacy_routing": "bool=false",
+        "grid_count": "int32=1",
+        "grid": "StorageBits<GridConfig> positivefiniteCellSize",
+        "frame": "int32"
+      },
+      "roles": "Actual call boundary/mode/grid inputs; no deltaTime consumed",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-unit-before": {
+      "required": [
+        "fuel_call_id",
+        "query_index",
+        "entity",
+        "initial_state_input",
+        "static_input_delta",
+        "cell_before_external",
+        "air",
+        "transform_used_presence",
+        "air_position_bits",
+        "fuel_state_semantics",
+        "observed_state"
+      ],
+      "types": {
+        "fuel_call_id": "int32",
+        "query_index": "int32 dense0..33",
+        "entity": "Entity{index:int32,version:int32}",
+        "initial_state_input": "bool",
+        "static_input_delta": "null|[uint8 faction,uint8 UsesVehicleMotion,uint8 Enabled,uint32 GroundRateBits,uint32 AirRateBits,bool air]",
+        "cell_before_external": "int32[2]",
+        "air": "bool",
+        "transform_used_presence": "bool",
+        "air_position_bits": "null|uint32[3]",
+        "fuel_state_semantics": "initial-before-input|assertion-only-carried-state",
+        "observed_state": "[int32 LastCellX,int32 LastCellY,uint8 Initialized]"
+      },
+      "roles": "Firstglobalcall state initial only. Everylater state ASSERTION, never rebase. Cell/airposition explicit upstreamborrowed input, notmovementderived. Disabledallrows captured. Groundtransform unused false doesnotclaimHasComponent false. No laterquerybirth.",
+      "nullable": [
+        "static_input_delta",
+        "air_position_bits"
+      ],
+      "additional_keys": false
+    },
+    "fuel-state-post-assertion": {
+      "required": [
+        "fuel_call_id",
+        "entity",
+        "last_cell_assertion",
+        "initialized_assertion"
+      ],
+      "types": {
+        "fuel_call_id": "int32",
+        "entity": "Entity{index:int32,version:int32}",
+        "last_cell_assertion": "int32[2]",
+        "initialized_assertion": "uint8"
+      },
+      "roles": "Actual original writes ONLY; includes Initialized0\u21921 and nonvehicleLastCell changes",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-requested-assertions": {
+      "required": [
+        "fuel_call_id",
+        "bits_assertion"
+      ],
+      "types": {
+        "fuel_call_id": "int32",
+        "bits_assertion": "uint32[256]"
+      },
+      "roles": "Dense assertions ONLY; never drain input",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-drain-visit": {
+      "required": [
+        "fuel_call_id",
+        "entity",
+        "faction",
+        "visit_index",
+        "remaining_before_bits_assertion"
+      ],
+      "types": {
+        "fuel_call_id": "int32",
+        "entity": "Entity{index:int32,version:int32}",
+        "faction": "int32 0..255",
+        "visit_index": "int32 dense per-faction",
+        "remaining_before_bits_assertion": "uint32"
+      },
+      "roles": "Every actual visited identity/order inclmismatch filters, prefixcomplete; no inventedtail",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "fuel-drain-post": {
+      "required": [
+        "fuel_call_id",
+        "entity",
+        "faction",
+        "remaining_after_bits_assertion",
+        "fuel_balance_bits_assertion",
+        "version_assertion"
+      ],
+      "types": {
+        "fuel_call_id": "int32",
+        "entity": "Entity{index:int32,version:int32}",
+        "faction": "int32",
+        "remaining_after_bits_assertion": "uint32",
+        "fuel_balance_bits_assertion": "uint32",
+        "version_assertion": "uint32"
+      },
+      "roles": "Minimal actual changedstore assertions, linked immediatepreceding visit; no full15field copy",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "sync-before": {
+      "required": [
+        "session_entity",
+        "dispatch_id",
+        "production_call_id",
+        "runtime_binding_ref",
+        "runtime_id",
+        "runtime_metadata_inputs",
+        "target_entity",
+        "pre_ordinal",
+        "before_storage_assertion",
+        "prepared_storage_assertion",
+        "profile_assertion",
+        "oil_mirror_bits_assertion",
+        "fuel_mirror_bits_assertion"
+      ],
+      "types": {
+        "session_entity": "Entity{index:int32,version:int32}",
+        "dispatch_id": "int64",
+        "production_call_id": "int32",
+        "runtime_binding_ref": "int32",
+        "runtime_id": "int32",
+        "runtime_metadata_inputs": "{owner:uint8,oil_capacity:int32,fuel_capacity:int32,oil_rate_bits:uint32,fuel_rate_bits:uint32}",
+        "target_entity": "Entity{index:int32,version:int32}",
+        "pre_ordinal": "int64",
+        "before_storage_assertion": "StorageBits15fields",
+        "prepared_storage_assertion": "StorageBits15fields",
+        "profile_assertion": "null|StorageBits7fields",
+        "oil_mirror_bits_assertion": "uint32",
+        "fuel_mirror_bits_assertion": "uint32"
+      },
+      "roles": "Same exactbinding/Entitypre-post; before_storage/prepared/profile/mirror ASSERTIONS. Metadata static source values initially admitted/guarded; derive originalSync or prove no-op, never bankreplace",
+      "nullable": [
+        "profile_assertion"
+      ],
+      "additional_keys": false
+    },
+    "sync-after": {
+      "required": [
+        "session_entity",
+        "dispatch_id",
+        "production_call_id",
+        "runtime_binding_ref",
+        "runtime_id",
+        "runtime_metadata_inputs",
+        "target_entity",
+        "pre_ordinal",
+        "before_storage_assertion",
+        "prepared_storage_assertion",
+        "profile_assertion",
+        "oil_mirror_bits_assertion",
+        "fuel_mirror_bits_assertion"
+      ],
+      "types": {
+        "session_entity": "Entity{index:int32,version:int32}",
+        "dispatch_id": "int64",
+        "production_call_id": "int32",
+        "runtime_binding_ref": "int32",
+        "runtime_id": "int32",
+        "runtime_metadata_inputs": "{owner:uint8,oil_capacity:int32,fuel_capacity:int32,oil_rate_bits:uint32,fuel_rate_bits:uint32}",
+        "target_entity": "Entity{index:int32,version:int32}",
+        "pre_ordinal": "int64",
+        "before_storage_assertion": "StorageBits15fields",
+        "prepared_storage_assertion": "StorageBits15fields",
+        "profile_assertion": "null|StorageBits7fields",
+        "oil_mirror_bits_assertion": "uint32",
+        "fuel_mirror_bits_assertion": "uint32"
+      },
+      "roles": "Same exactbinding/Entitypre-post; before_storage/prepared/profile/mirror ASSERTIONS. Metadata static source values initially admitted/guarded; derive originalSync or prove no-op, never bankreplace",
+      "nullable": [
+        "profile_assertion"
+      ],
+      "additional_keys": false
+    },
+    "status-before-write-assertion": {
+      "required": [
+        "dispatch_id",
+        "selection_id",
+        "unit",
+        "entered_blocked_episode_assertion",
+        "prepared_status_assertion",
+        "telemetry_query_not_reached_source_guard"
+      ],
+      "types": {
+        "dispatch_id": "int64",
+        "selection_id": "int64",
+        "unit": "Entity{index:int32,version:int32}",
+        "entered_blocked_episode_assertion": "bool",
+        "prepared_status_assertion": "StorageBits<UnitResourceHaulStatus>",
+        "telemetry_query_not_reached_source_guard": "bool=true"
+      },
+      "roles": "Original statuswrite assertions; reblocked andFuel/nonTray sourceguards. NewoilTray blockedepisode unsupported=>wholewindowinvalid",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "status-after-write-assertion": {
+      "required": [
+        "dispatch_id",
+        "selection_id",
+        "unit",
+        "entered_blocked_episode_assertion",
+        "prepared_status_assertion",
+        "telemetry_query_not_reached_source_guard"
+      ],
+      "types": {
+        "dispatch_id": "int64",
+        "selection_id": "int64",
+        "unit": "Entity{index:int32,version:int32}",
+        "entered_blocked_episode_assertion": "bool",
+        "prepared_status_assertion": "StorageBits<UnitResourceHaulStatus>",
+        "telemetry_query_not_reached_source_guard": "bool=true"
+      },
+      "roles": "Original statuswrite assertions; reblocked andFuel/nonTray sourceguards. NewoilTray blockedepisode unsupported=>wholewindowinvalid",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "storage-writer": {
+      "required": [
+        "legacy_writer_index",
+        "invocation_id",
+        "parent_invocation_id",
+        "operation",
+        "stage",
+        "dispatch_id",
+        "selection_id",
+        "unit"
+      ],
+      "types": {
+        "legacy_writer_index": "int32",
+        "invocation_id": "int64",
+        "parent_invocation_id": "null|int64",
+        "operation": "exact source operation",
+        "stage": "exact source stage",
+        "dispatch_id": "int64",
+        "selection_id": "int64",
+        "unit": "Entity{index:int32,version:int32}"
+      },
+      "roles": "Exact local legacy storage_writer_journal[index] referenced; nativeargs/results/commits ASSERTIONS only; firstownedroot producedindependently. ROOTEXIT ONLY adds window_end_certificate",
+      "nullable": [
+        "parent_invocation_id"
+      ],
+      "additional_keys": false,
+      "optional": [
+        "window_end_certificate"
+      ]
+    },
+    "window-end": {
+      "required": [
+        "root_exit_ordinal",
+        "root_invocation_id",
+        "session_entity",
+        "session_id",
+        "dispatch_id",
+        "selection_id",
+        "selection_entry_ordinal",
+        "unit",
+        "owner_loop",
+        "owner_pre_ordinal",
+        "owner_invoke_ordinal",
+        "terminal_selector_exit_absent",
+        "terminal_owner_after_absent",
+        "all_prior_scopes_closed",
+        "all_root_children_closed",
+        "terminal_bank_ordinal"
+      ],
+      "types": {
+        "root_exit_ordinal": "int64",
+        "root_invocation_id": "int64",
+        "session_entity": "Entity{index:int32,version:int32}",
+        "session_id": "losslessFixedString64",
+        "dispatch_id": "int64",
+        "selection_id": "int64",
+        "selection_entry_ordinal": "int64",
+        "unit": "Entity{index:int32,version:int32}",
+        "owner_loop": "int32",
+        "owner_pre_ordinal": "int64",
+        "owner_invoke_ordinal": "int64",
+        "terminal_selector_exit_absent": "bool=true",
+        "terminal_owner_after_absent": "bool=true",
+        "all_prior_scopes_closed": "bool=true",
+        "all_root_children_closed": "bool=true",
+        "terminal_bank_ordinal": "int64 points sameROOTEXIT terminal-full-bank-assertion event"
+      },
+      "roles": "Header eventafterROOTEXIT; booleans validated against source-backed entireeventcursor/calltree, not trustedstandalone. Nativepairargs absent; terminalselector+ownerremainopen.",
+      "nullable": [],
+      "additional_keys": false
+    },
+    "terminal-full-bank-assertion": {
+      "required": [
+        "root_exit_ordinal",
+        "session_entity",
+        "assertion_only_never_reseed",
+        "query",
+        "encoding",
+        "count",
+        "wire_bytes",
+        "rows_base64"
+      ],
+      "types": {
+        "root_exit_ordinal": "int64 preceding actualROOTEXIT",
+        "session_entity": "Entity{index:int32,version:int32}",
+        "assertion_only_never_reseed": "bool=true",
+        "query": "BuildingResourceStorageComponent defaultquery",
+        "encoding": "entity8-storage57-profileflag1-profile28-le-v1",
+        "count": "int32 same initialglobalstorageIDs<=51",
+        "wire_bytes": "int32<=4794",
+        "rows_base64": "canonicalbase64length exactly4*ceil(wire_bytes/3), littleendian rowvariable66/94B, entityI32pair+original57Bstorage+bytepresence+28Bprofileifpresent"
+      },
+      "roles": "ALL ASSERTIONS againstcarriedfinalbank atROOTEXIT. Querymusthaveexactinitialentityindex/versiondomain, no duplicates/new/missing/reversioned IDs; profilepresence mustsameinitial. Never finalbankseed",
+      "additional_keys": false
+    }
+  },
+  "root_exit_certificate": {
+    "session_entity": "Entity{index:int32,version:int32}",
+    "session_id": "losslessFixedString64",
+    "dispatch_id": "int64",
+    "selection_id": "int64",
+    "selection_entry_ordinal": "int64",
+    "owner_loop": "int32",
+    "owner_pre_ordinal": "int64",
+    "owner_invoke_ordinal": "int64",
+    "terminal_owner_after_absent": "bool=true",
+    "unit": "Entity{index:int32,version:int32}",
+    "root_invocation_id": "int64",
+    "root_entry_ordinal": "int64",
+    "root_exit_ordinal": "int64",
+    "terminal_selector_exit_absent": "bool=true",
+    "prior_selector_scopes_closed": "bool=true",
+    "all_child_calls_closed": "bool=true",
+    "provider_prefix_complete_through_root_exit": "bool=true"
+  },
+  "hauler_partition": {
+    "static_exact": [
+      "source_prefab_key",
+      "Faction",
+      "UnitResourceHauler",
+      "UnitFootprint",
+      "UnitHealth",
+      "UnitDeathAnimationComponent",
+      "ManualMoveOrderTag",
+      "UnitAirMovement",
+      "AutoWanderMoveTag",
+      "attempt_owned",
+      "SkirmishUnitRoleComponent"
+    ],
+    "exogenous_before": [
+      "UnitGrid",
+      "LocalTransform",
+      "UnitPrevWorldPos",
+      "UnitVehicleKinematics"
+    ],
+    "assertion_or_unused_pre_pair": [
+      "UnitFuelConsumptionState",
+      "UnitResourceHaulOrder",
+      "UnitResourceHaulReservation",
+      "UnitResourceHaulStatus",
+      "UnitTarget",
+      "UnitPathRequest",
+      "UnitPathFollow",
+      "UnitPathRange",
+      "UnitPathRetryCooldown",
+      "UnitLongDistanceMove",
+      "EngageTarget"
+    ],
+    "presence_only": [
+      "UnitMove"
+    ],
+    "structural_identity": [
+      "query_ordinal",
+      "entity"
+    ]
+  },
+  "source_partition_note": "StableCandidate preserves all initialfields except enumorder and computedstoragebalances/reserves/version, profileprogress, fabricationprogress/status/reason/version. No fabricationrecipe/owner/ProductionEnabled omission. Unknownrawcomponentkey captureinvalidates.",
+  "source_accounting_notes": {
+    "aggregate": "ONE1MiB cap v8compactsidecar actualbytes plus legacyearlycausal pretty/framingbytes. No independent second1MiB. Late normalmovement evidence separate",
+    "production": "v8 refs exact original legacy rows byindex+v7ordinal, nativebank notduplicated/reseeded",
+    "writer": "v8 refs exact legacy storage_writer_journal index; fullnative args/results assertions there",
+    "legacyinitial": "legacy initialcensus pretty bytes plus laterfirstscopeproviderrows separatelycharged; immutableinitialcomponentrefs only, no R7providerrelabelling",
+    "root_rows_including_end_header": "historicalcountername: currentlycounts rootwriterrefs only, explicitwindow-end usesEndHold ratherthanRootHold",
+    "terminal": "own16384B hold plus ROOT40*8192B and EndHold16384B, allwithinaggregate1MiB; actual base64/UTF8framing checked"
+  },
+  "wire_codec_source": {
+    "path": "Tools/CI/SkirmishOfflineSim/PhysicalProduction/ProductionMonoWorker.cs",
+    "sha256": "904fb1b79f249f492da09ba1b168b3086577021d67c6505ee76ec58a8d570578",
+    "method_spans": "Write(BinaryWriter,BuildingResourceStorageComponent) andprofile overload exacttext retained"
+  },
+  "admission_guards": {
+    "legacy_causal_copy_after_failure": "forbidden before arrays/JSON; ProductionBegin bool plus five entrypoint guards",
+    "continuous_error_scope": "active admission callback only; before-start/after-end ignored",
+    "legacy_fuel_header": "exact bounded pretty UTF8 plus indentation charged once while active"
+  }
+}

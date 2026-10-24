@@ -1,0 +1,100 @@
+using System;
+using System.Collections.Generic;
+using Game.Components;
+namespace FuelPrototype {
+// Rows are already the exact eligible ECS query members, in captured native query order.
+// These assertions require native evidence. Synthetic mechanics controls set them explicitly.
+public sealed class FuelBoundary {
+ public bool UnitQueryComplete, StorageQueryComplete, BeforeConsumerBoundary, SharedSupplyInitialized, SteelPush, ContainsAircraft;
+ public int ExpandedSessionCount; public string EvidenceSha256; public string[] StorageEntityIds; public string[] StorageBankEntityIds;
+}
+public static class CapturedPhysicalFuel {
+ static void Need(bool x,string s){if(!x)throw new ArgumentException(s);}
+ static bool Finite(float x)=>float.IsFinite(x)&&Math.Abs(x)<=1e12f;
+ public static float[] Advance(FuelBoundary boundary,UnitRow[] units,BuildingResourceStorageComponent[] stores){
+ Need(boundary!=null&&boundary.UnitQueryComplete&&boundary.StorageQueryComplete&&boundary.BeforeConsumerBoundary,"exact complete native query orders at before-consumer boundary required");
+ Need(boundary.SharedSupplyInitialized&&boundary.ExpandedSessionCount==1&&!boundary.SteelPush&&!boundary.ContainsAircraft,"only migrated single-session ground physical fuel supported; no aircraft/SteelPush/legacy routing");
+ Need(boundary.EvidenceSha256!=null&&boundary.EvidenceSha256.Length==64&&System.Text.RegularExpressions.Regex.IsMatch(boundary.EvidenceSha256,"^[0-9a-f]{64}$"),"input evidence SHA256 required");
+ Need(units!=null&&units.Length<=512&&stores!=null&&stores.Length<=4096,"bounded 512 unit / 4096 storage query rows required");
+ Need(boundary.StorageEntityIds!=null&&boundary.StorageEntityIds.Length==stores.Length,"captured ordered storage entity identities required");
+ var storeIds=new HashSet<string>();foreach(var id in boundary.StorageEntityIds)Need(!string.IsNullOrEmpty(id)&&storeIds.Add(id),"unique captured storage identities required");
+ var ids=new HashSet<string>();
+ foreach(var u in units){Need(u!=null&&!string.IsNullOrEmpty(u.Id)&&ids.Add(u.Id),"unique captured unit identities required");Need(u.CapturedValueMask==31&&u.QueryEligible&&!u.IsAircraft,"all five query component values and eligibility must be captured; aircraft unsupported");Need(u.State.Initialized<=1,"unsupported nonboolean Initialized");
+ Need(Math.Abs((long)u.Grid.Cell.x)<=1048576&&Math.Abs((long)u.Grid.Cell.y)<=1048576&&Math.Abs((long)u.State.LastCell.x)<=1048576&&Math.Abs((long)u.State.LastCell.y)<=1048576,"cell bound prevents integer-delta overflow");
+ Need(Finite(u.Consumption.GroundFuelPerCell)&&Finite(u.Consumption.AirFuelPerCell),"finite bounded fuel rates required");}
+ foreach(var s in stores)Need(Finite(s.StoredFuelBarrels)&&Finite(s.ReservedFuelOutboundBarrels)&&Finite(s.CivilianFuelReserveBarrels)&&Finite(s.FuelBarrelsPerDay)&&Finite(s.OilBarrelsPerDay),"finite bounded physical fuel fields required");
+ var kernel=new ProductionGroundFuelKernel(stores);var requested=kernel.Accumulate(units);var state=new SystemState();kernel.DrainRequestedFuel(ref state,requested);return requested.Copy();
+ }
+ // This sequence owns only carried FuelState. Stores are the caller's live computed projection.
+ public static GlobalSequence StartGlobal(FuelBoundary first,UnitRow[] initial){
+  Need(Type.GetType("Mono.Runtime")!=null,"global fuel requires pinned installed Mono; no .NET fallback");
+  return new GlobalSequence(first,initial);
+ }
+ public static GlobalSequence StartGlobalGuarded(FuelBoundary first,UnitRow[] initial){
+  Need(Type.GetType("Mono.Runtime")!=null,"global fuel requires pinned installed Mono; no .NET fallback");return new GlobalSequence(first,initial,true);
+ }
+ static void GlobalBoundary(FuelBoundary b,bool prefix=false){
+  Need(b!=null&&b.UnitQueryComplete&&(prefix||b.StorageQueryComplete)&&b.BeforeConsumerBoundary,"complete actual before-consumer query authority required");
+  Need(b.SharedSupplyInitialized&&b.ExpandedSessionCount==1&&!b.SteelPush,"only migrated physical routing supported");
+  Need(b.EvidenceSha256!=null&&b.EvidenceSha256.Length==64&&System.Text.RegularExpressions.Regex.IsMatch(b.EvidenceSha256,"^[0-9a-f]{64}$"),"exact input evidence hash required");
+ }
+ static bool CellBound(Unity.Mathematics.int2 cell)=>Math.Abs((long)cell.x)<=1048576&&Math.Abs((long)cell.y)<=1048576;
+ static void InputFields(FuelStepUnitInput u,int gridCount,Game.Components.GridConfig grid){
+  Need(u!=null&&!string.IsNullOrEmpty(u.Id)&&u.Id.Length<=256,"bounded actual unit identity required");
+  Need(CellBound(u.Grid.Cell)&&Finite(u.Consumption.GroundFuelPerCell)&&Finite(u.Consumption.AirFuelPerCell),"bounded cell/rates required");
+  if(u.Consumption.Enabled!=0&&u.IsAircraft&&gridCount==1&&grid.CellSize>0&&u.HasTransform){
+   Need(Finite(grid.CellSize)&&Finite(grid.Origin.x)&&Finite(grid.Origin.y)&&Finite(grid.Origin.z)&&Finite(u.AirPosition.x)&&Finite(u.AirPosition.y)&&Finite(u.AirPosition.z),"finite actual aircraft conversion prerequisites required");
+   Need(CellBound(Game.Components.GridUtils.WorldToCell(grid,u.AirPosition)),"effective aircraft cell out of bounded integer domain");
+  }
+ }
+ public sealed class GlobalSequence {
+  readonly Dictionary<string,UnitRow> states=new Dictionary<string,UnitRow>(StringComparer.Ordinal);
+  readonly bool prefixMode;bool prefixStopped;GuardedStorageQuery lastPrefixQuery;BuildingResourceStorageComponent[] prefixBank;string[] prefixBankIds;Dictionary<string,int> prefixSlots;
+  internal GlobalSequence(FuelBoundary first,UnitRow[] initial,bool guarded=false){
+   prefixMode=guarded;GlobalBoundary(first,guarded);Need(initial!=null&&initial.Length<=512,"bounded initial complete fuel query required");
+   foreach(var u in initial){Need(u!=null&&u.CapturedValueMask==31&&u.QueryEligible&&CellBound(u.State.LastCell),"all5 native query components including initial fuel state required");
+    InputFields(new FuelStepUnitInput{Id=u.Id,Grid=u.Grid,Consumption=u.Consumption},0,default);
+    Need(!states.ContainsKey(u.Id),"duplicate initial fuel owner");
+    states.Add(u.Id,new UnitRow{Id=u.Id,State=u.State,CapturedValueMask=31,QueryEligible=true});
+   }
+  }
+  public FuelDrainVisit[] LastDrainVisits=>lastPrefixQuery==null?Array.Empty<FuelDrainVisit>():lastPrefixQuery.CopyVisits();
+  public FuelDrainObservation[] LastDrainObservations=>lastPrefixQuery==null?Array.Empty<FuelDrainObservation>():lastPrefixQuery.CopyObservations();
+  public UnitFuelConsumptionState State(string id){Need(states.ContainsKey(id),"unknown fuel owner");return states[id].State;}
+  // Actual query order must stay a complete permutation of the once-observed initial members.
+  // Births/removals/FuelState resets are an explicit unsupported frontier, never a reseed.
+  public float[] Step(FuelBoundary boundary,FuelStepUnitInput[] inputs,int physicalGridCount,Game.Components.GridConfig physicalGrid,BuildingResourceStorageComponent[] stores){
+   Need(!prefixMode,"Guarded sequence cannot silently use full-query mode");return StepCore(boundary,inputs,physicalGridCount,physicalGrid,stores,null);
+  }
+  public float[] StepPrefixes(FuelBoundary boundary,FuelStepUnitInput[] inputs,int physicalGridCount,Game.Components.GridConfig physicalGrid,BuildingResourceStorageComponent[] stores,FuelDrainPrefix[] actualQueries){
+   Need(prefixMode&&!prefixStopped,"Explicit guarded sequence required; failed prefix sequence is terminal");
+   lastPrefixQuery=null;try{return StepCore(boundary,inputs,physicalGridCount,physicalGrid,stores,actualQueries);}catch{prefixStopped=true;throw;}
+  }
+  float[] StepCore(FuelBoundary boundary,FuelStepUnitInput[] inputs,int physicalGridCount,Game.Components.GridConfig physicalGrid,BuildingResourceStorageComponent[] stores,FuelDrainPrefix[] actualQueries){
+   GlobalBoundary(boundary,prefixMode);Need(inputs!=null&&inputs.Length==states.Count&&inputs.Length<=512,"complete fixed-membership actual query order required");
+   Need(physicalGridCount>=0&&physicalGridCount<=4096,"bounded actual physical-grid query cardinality required");
+   Need(stores!=null&&stores.Length<=4096&&boundary.StorageBankEntityIds!=null&&boundary.StorageBankEntityIds.Length==stores.Length,"same bounded live computed storage bank identities required");
+   Dictionary<string,int> bankIds;int[] storeOrder=null;GuardedStorageQuery prefixQuery=null;
+   if(prefixMode){
+    if(prefixBank==null){var admitted=new Dictionary<string,int>(StringComparer.Ordinal);for(int i=0;i<stores.Length;i++){var id=boundary.StorageBankEntityIds[i];Need(!string.IsNullOrEmpty(id)&&id.Length<=256&&!admitted.ContainsKey(id),"unique bounded fixed bank identities required");admitted.Add(id,i);}prefixBank=stores;prefixBankIds=(string[])boundary.StorageBankEntityIds.Clone();prefixSlots=admitted;}
+    Need(Object.ReferenceEquals(prefixBank,stores),"Guarded fuel bank array replacement/reseed forbidden");for(int i=0;i<stores.Length;i++)Need(prefixBankIds[i]==boundary.StorageBankEntityIds[i],"Guarded fixed bank identity/order changed");bankIds=prefixSlots;
+    Need(boundary.StorageEntityIds==null,"Guarded prefix must not supply an invented full storage order");prefixQuery=new GuardedStorageQuery(stores,bankIds,actualQueries,boundary.EvidenceSha256,prefixBankIds);lastPrefixQuery=prefixQuery;
+   }else{
+    Need(boundary.StorageEntityIds!=null&&boundary.StorageEntityIds.Length==stores.Length,"complete ordered storage query required");
+    bankIds=new Dictionary<string,int>(StringComparer.Ordinal);for(int i=0;i<stores.Length;i++){string id=boundary.StorageBankEntityIds[i];Need(!string.IsNullOrEmpty(id)&&id.Length<=256&&!bankIds.ContainsKey(id),"unique bounded fixed bank identities required");bankIds.Add(id,i);}
+    var storeIds=new HashSet<string>(StringComparer.Ordinal);storeOrder=new int[stores.Length];for(int i=0;i<stores.Length;i++){string id=boundary.StorageEntityIds[i];Need(!string.IsNullOrEmpty(id)&&id.Length<=256&&storeIds.Add(id)&&bankIds.ContainsKey(id),"actual storage query order must completely name the shared bank");storeOrder[i]=bankIds[id];}
+   }
+   foreach(var s in stores)Need(Finite(s.StoredFuelBarrels)&&Finite(s.ReservedFuelOutboundBarrels)&&Finite(s.CivilianFuelReserveBarrels)&&Finite(s.FuelBarrelsPerDay)&&Finite(s.OilBarrelsPerDay),"bounded physical fuel storage fields required");
+   var ids=new HashSet<string>(StringComparer.Ordinal);bool aircraft=false;
+   foreach(var u in inputs){InputFields(u,physicalGridCount,physicalGrid);Need(ids.Add(u.Id)&&states.ContainsKey(u.Id),"membership changed/duplicate owner; explicit unsupported frontier");aircraft|=u.IsAircraft;}
+   Need(boundary.ContainsAircraft==aircraft,"actual aircraft presence differs");
+   var ordered=new UnitRow[inputs.Length];
+   for(int i=0;i<inputs.Length;i++){var u=inputs[i];var row=states[u.Id];row.Grid=u.Grid;row.Faction=u.Faction;row.Movement=u.Movement;row.Consumption=u.Consumption;row.IsAircraft=u.IsAircraft;row.HasTransform=u.HasTransform;row.AirPosition=u.AirPosition;ordered[i]=row;}
+   var kernel=prefixMode?new ProductionGroundFuelKernel(prefixQuery):new ProductionGroundFuelKernel(stores,storeOrder);var requested=kernel.AccumulateGlobal(ordered,physicalGridCount==1,physicalGrid);
+   if(prefixMode)prefixQuery.BindComputedRequests(requested);
+   var system=new SystemState();kernel.DrainRequestedFuel(ref system,requested);if(prefixMode)prefixQuery.AssertConsumed();return requested.Copy();
+  }
+ }
+
+}
+}

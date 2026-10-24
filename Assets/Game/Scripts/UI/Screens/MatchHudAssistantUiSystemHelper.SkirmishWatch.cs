@@ -640,7 +640,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < frontCount; i++) armyCenter += watchFront[i];
             armyCenter /= frontCount;
             MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
-            float homeDistance = 120f * 120f;
+            float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;
             float trackedDistance = 12 * 12;
             foreach (var enemy in watchMap.PresentedContacts)
             {
@@ -652,8 +652,10 @@ namespace Game.UI.Runtime
                     ((Vector2)groundPoint - watchSkirmish.VisibleEnemyBasePoint).sqrMagnitude < 1) continue;
                 if (watchSkirmish != null)
                 {
-                    float distance = (enemy.Model.Position - watchSkirmish.PlayerBaseObjectivePosition).sqrMagnitude;
-                    if (distance < homeDistance) { homeDistance = distance; homeThreat = enemy; }
+                    var publicContact=enemy.Model.Position;var publicHome=watchSkirmish.PlayerBaseObjectivePosition;
+                    if (Game.Simulation.AriaPublicHomeThreatPolicy.Consider(
+                        new Game.Simulation.AriaGroundPosition(publicContact.x,publicContact.y,publicContact.z),
+                        new Game.Simulation.AriaGroundPosition(publicHome.x,publicHome.y,publicHome.z),ref homeDistance)) homeThreat=enemy;
                 }
                 float nearest = (enemy.Model.Position - armyCenter).sqrMagnitude;
                 float continuity = (enemy.Model.Position - watchThreatPosition).sqrMagnitude;

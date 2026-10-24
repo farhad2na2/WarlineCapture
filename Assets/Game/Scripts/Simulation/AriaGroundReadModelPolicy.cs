@@ -8,6 +8,7 @@ public readonly struct AriaAssaultDistances {
  public AriaAssaultDistances(AriaGroundPosition nearest,float squared,int close,int assault,int required){Nearest=nearest;SquaredDistance=squared;Close=close;Assault=assault;DistanceVisible=squared<float.MaxValue;Distance=DistanceVisible?(float)Math.Sqrt(squared):0f;AssaultAtBase=assault>=required;}
 }
 public static class AriaGroundApproachPolicy {
+ public static float SquaredDistance(AriaGroundPosition a,AriaGroundPosition b)=>Squared(Difference(a,b));
  public static AriaAssaultDistances Observe(AriaGroundPosition objective,IReadOnlyList<AriaGroundPosition> publicPlayers,float enemyDisplayedHealth,int selectedCount){
   if(publicPlayers==null)throw new ArgumentNullException(nameof(publicPlayers));var nearest=objective;float distance=float.MaxValue;int close=0,assault=0;
   for(int i=0;i<publicPlayers.Count;i++){var p=publicPlayers[i];float d=Squared(Difference(p,objective));if(d<45*45)close++;if(d<50*50)assault++;if(d<distance){distance=d;nearest=p;}}

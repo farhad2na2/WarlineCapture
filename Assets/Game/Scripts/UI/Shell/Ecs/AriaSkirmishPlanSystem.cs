@@ -810,15 +810,11 @@ namespace Game.UI.Shell.Ecs
             // Supply and construction are public progress, but each milestone
             // counts once. Repeated taps and spending/earning loops cannot
             // indefinitely refresh the watchdog.
-            int milestones = (view.LogisticsTruckCommitted ? 1 : 0) |
-                (view.ReadinessEligible ? 2 : 0) | (view.PadPresent ? 4 : 0);
-            bool newMilestone = view.AirProfile && (milestones & ~plan.EconomicMilestones) != 0;
-            if (newMilestone) plan.MaterialsHighWater = view.OwnMaterials;
-            bool savingForAir = view.AirProfile && view.LogisticsTruckCommitted && !view.AirQueueOffered;
-            int savedMaterials = UnityEngine.Mathf.Min(view.OwnMaterials, 300);
-            bool supplyProgress = savingForAir && savedMaterials > plan.MaterialsHighWater;
-            plan.EconomicMilestones |= milestones;
-            if (supplyProgress) plan.MaterialsHighWater = savedMaterials;
+            var economicState=new Game.Simulation.AriaEconomicProgressState{EconomicMilestones=plan.EconomicMilestones,MaterialsHighWater=plan.MaterialsHighWater};
+            var economic=Game.Simulation.AriaEconomicProgressPolicy.Observe(new Game.Simulation.AriaEconomicProgressView {
+                AirProfile=view.AirProfile,LogisticsTruckCommitted=view.LogisticsTruckCommitted,ReadinessEligible=view.ReadinessEligible,PadPresent=view.PadPresent,AirQueueOffered=view.AirQueueOffered,OwnMaterials=view.OwnMaterials },ref economicState);
+            plan.EconomicMilestones=economicState.EconomicMilestones;plan.MaterialsHighWater=economicState.MaterialsHighWater;
+            bool newMilestone=economic.NewMilestone,supplyProgress=economic.SupplyProgress;
             // Only a new closest approach on the player's presented minimap
             // counts. Paging, jitter and retreat/re-advance cannot mask a stall.
             bool assaultAdvance = false;
@@ -891,27 +887,15 @@ namespace Game.UI.Shell.Ecs
             // Preserve a viable base-assault force, then establish physical
             // Oil and Fuel delivery before research or repeated aircraft sorties.
             // These are visible paid catalog controls, with queue/capacity eligibility.
-            bool openingNeedsInfantry = !view.CombinedArmsField && plan.AssaultStarted == 0 && view.Infantry < 20 &&
-                (plan.OpeningUntil == 0 || view.Time < plan.OpeningUntil);
-            bool supplyReady = view.AirProfile && !openingNeedsInfantry &&
-                (!view.CombinedArmsField || view.OwnStructureAttackUnits >= 8);
-            // The opening force or its existing deadline is complete before
-            // a supply touch can return from this frame.
-            if (supplyReady && !view.CombinedArmsField) plan.AssaultStarted = 1;
-            if (supplyReady && !view.LogisticsTruckCommitted && view.CanAffordLogisticsTruck &&
-                view.RecruitLogisticsTruck.Available)
-            {
-                plan.Intent = AriaSkirmishIntent.Recruit;
-                Target(view.RecruitLogisticsTruck, false, ref output);
-                return;
-            }
-            if (supplyReady && view.LogisticsTruckCommitted && view.TankersCommitted < 2 &&
-                view.CanAffordTanker && view.RecruitTanker.Available)
-            {
-                plan.Intent = AriaSkirmishIntent.Recruit;
-                Target(view.RecruitTanker, false, ref output);
-                return;
-            }
+            var preparationView=new Game.Simulation.AriaPreparationView {
+                AirProfile=view.AirProfile,CombinedArmsField=view.CombinedArmsField,Infantry=view.Infantry,Time=view.Time,OwnStructureAttackUnits=view.OwnStructureAttackUnits,
+                LogisticsTruckCommitted=view.LogisticsTruckCommitted,CanAffordLogisticsTruck=view.CanAffordLogisticsTruck,LogisticsTargetAvailable=view.RecruitLogisticsTruck.Available,
+                TankersCommitted=view.TankersCommitted,CanAffordTanker=view.CanAffordTanker,TankerTargetAvailable=view.RecruitTanker.Available };
+            var preparationState=new Game.Simulation.AriaPreparationState{AssaultStarted=plan.AssaultStarted,OpeningUntil=plan.OpeningUntil};
+            var preparationAction=Game.Simulation.AriaExpandedPreparationPolicy.Supply(preparationView,ref preparationState);
+            plan.AssaultStarted=preparationState.AssaultStarted;
+            if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitLogisticsTruck){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitLogisticsTruck,false,ref output);return;}
+            if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
@@ -1083,7 +1067,8 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (!view.AirProfile && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            if (Game.Simulation.AriaExpandedPreparationPolicy.FallbackGroundRecruit(new Game.Simulation.AriaPreparationView {
+                AirProfile=view.AirProfile,RifleRecruitPending=view.RifleRecruitPending,Infantry=view.Infantry,CanAffordRifle=view.CanAffordRifle,RifleTargetAvailable=view.Recruit.Available }) == Game.Simulation.AriaPreparationAction.RecruitRifle)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.Recruit, false, ref output);
@@ -1123,101 +1108,37 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
         {
-            if (!view.PresentedHomeThreat)
-            {
-                if (plan.HomeDefenseStage != 0)
-                {
-                    plan.HomeDefenseStage = 0;
-                    // Defensive orders do not prove the enemy-base sweep was issued.
-                    plan.AssaultIssued = plan.PagedToAssault = plan.AssaultSelecting = plan.StructureOrdered = 0;
-                    plan.PagesOrdered = plan.AssaultPageSeen = 0;
-                }
-                return false;
+            var facts=new Game.Simulation.AriaHomeDefenseView {
+                PresentedHomeThreat=view.PresentedHomeThreat,PlacementOpen=view.PlacementOpen,DrawerOpen=view.DrawerOpen,MapOpen=view.MapOpen,AttackMode=view.AttackMode,
+                CancelAvailable=view.PlacementCancel.Available,CloseDrawerAvailable=view.CloseDrawer.Available,CloseMapAvailable=view.CloseMap.Available,
+                FocusAvailable=view.FocusPlayer.Available,PreviousAvailable=view.PreviousSquadPage.Available,NextAvailable=view.NextSquadPage.Available,
+                ToggleAvailable=view.SelectedSquadToToggle.Available,AttackAvailable=view.Attack.Available,
+                ThreatGroundAvailable=view.ThreatGround.Available,ThreatVisibleAvailable=view.Threat.Available,
+                ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
+                CompletedContacts=touch.Actions,Time=view.Time };
+            for(int slot=0;slot<5;slot++)if(view.Squad(slot).Available)facts.AvailableSquadMask|=1<<slot;
+            var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
+                Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
+            bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
+            plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
+            plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
+            if(decision.Defend)plan.Intent=AriaSkirmishIntent.DefendBase;
+            switch(decision.Action){
+                case Game.Simulation.AriaHomeDefenseAction.Waiting:output.Kind=AriaPlayObservationKind.Waiting;break;
+                case Game.Simulation.AriaHomeDefenseAction.Unavailable:output.Kind=AriaPlayObservationKind.Unavailable;break;
+                case Game.Simulation.AriaHomeDefenseAction.CancelPlacement:Target(view.PlacementCancel,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.CloseDrawer:Target(view.CloseDrawer,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.CloseMap:Target(view.CloseMap,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.InspectHome:Target(view.FocusPlayer,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.PreviousPage:Target(view.PreviousSquadPage,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.NextPage:Target(view.NextSquadPage,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.ToggleSelected:Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.SelectSlot:Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.ArmAttack:Target(view.Attack,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackThreatTerrain:Target(view.ThreatGround,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackThreatVisible:Target(view.Threat,true,ref output);break;
             }
-            plan.Intent = AriaSkirmishIntent.DefendBase;
-            // Finish through the same player controls before selecting defenders.
-            if (view.PlacementOpen) { Target(view.PlacementCancel, false, ref output); return true; }
-            if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
-            if (view.MapOpen) { Target(view.CloseMap, false, ref output); return true; }
-            if (plan.HomeDefenseStage == 0)
-            {
-                if (!view.FocusPlayer.Available) return true;
-                plan.DefenseStage = 4;
-                plan.HomeDefenseAction = touch.Actions;
-                plan.HomeDefenseStage = 1;
-                Target(view.FocusPlayer, false, ref output);
-                return true;
-            }
-            if (plan.HomeDefenseStage == 1)
-            {
-                if (touch.Actions <= plan.HomeDefenseAction)
-                { Target(view.FocusPlayer, false, ref output); return true; }
-                if (view.ExpandedPageIndex > 0)
-                { Target(view.PreviousSquadPage, false, ref output); return true; }
-                plan.HomeDefensePage = 0;
-                plan.HomeDefenseStage = 2;
-            }
-            if (plan.HomeDefenseStage == 2)
-            {
-                if (TryDeselectSquads(view, ref output)) return true;
-                // Deselecting an off-screen squad may have moved the roster.
-                // Restore this sweep's window, including later defense windows.
-                if (view.ExpandedPageIndex != plan.HomeDefensePage)
-                {
-                    Target(view.ExpandedPageIndex < plan.HomeDefensePage
-                        ? view.NextSquadPage : view.PreviousSquadPage, false, ref output);
-                    return true;
-                }
-                plan.HomeDefenseStage = 3;
-            }
-            if (plan.HomeDefenseStage == 3)
-            {
-                int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
-                if (pending != 0)
-                { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
-                plan.HomeDefenseStage = view.ExpandedAssaultMask == 0 ? 6 : 4;
-            }
-            if (plan.HomeDefenseStage == 4)
-            {
-                if (!view.AttackMode) { Target(view.Attack, false, ref output); return true; }
-                var threat = view.ThreatGround.Available ? view.ThreatGround : view.Threat;
-                if (!threat.Available) { Target(view.FocusPlayer, false, ref output); return true; }
-                plan.HomeDefenseAction = touch.Actions;
-                plan.HomeDefenseStage = 5;
-                Target(threat, true, ref output);
-                return true;
-            }
-            if (plan.HomeDefenseStage == 5)
-            {
-                if (touch.Actions <= plan.HomeDefenseAction || view.AttackMode)
-                { Target(view.ThreatGround.Available ? view.ThreatGround : view.Threat, true, ref output); return true; }
-                plan.HomeDefenseStage = 6;
-            }
-            if (plan.HomeDefenseStage == 6)
-            {
-                if (view.NextSquadPage.Available)
-                {
-                    plan.HomeDefensePage = view.ExpandedPageIndex;
-                    plan.HomeDefenseStage = 7;
-                    Target(view.NextSquadPage, false, ref output);
-                    return true;
-                }
-                plan.HomeDefenseObserveUntil = view.Time + 8f;
-                plan.HomeDefenseStage = 8;
-            }
-            if (plan.HomeDefenseStage == 7)
-            {
-                if (view.ExpandedPageIndex == plan.HomeDefensePage)
-                    Target(view.NextSquadPage, false, ref output);
-                else
-                {
-                    plan.HomeDefensePage = view.ExpandedPageIndex;
-                    plan.HomeDefenseStage = 2;
-                }
-                return true;
-            }
-            if (view.Time >= plan.HomeDefenseObserveUntil) plan.HomeDefenseStage = 0;
-            return true;
+            return handled;
         }
 
         private static bool StepAircraftCycle(in AriaSkirmishObservation view,

@@ -9,8 +9,6 @@ namespace Game.Runtime
         private const double ProductionIntervalSeconds = 0.1d;
         private const double ActiveProductionTransportIntervalSeconds = 0.08d;
         private const double IdleActiveProductionTransportProbeIntervalSeconds = 0.5d;
-        private const double ResourceProductionIntervalSeconds = 1d;
-        private const double ResourceHaulerIntervalSeconds = 0.25d;
         private const double ResourceVisualIntervalSeconds = 0.25d;
         private const double ReservationCleanupIntervalSeconds = 0.5d;
         private const double DestroyedCleanupIntervalSeconds = 0.5d;
@@ -191,10 +189,9 @@ namespace Game.Runtime
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
                 double now = afterBoundary;
-                float deltaTime = context.GetDeltaTime != null
-                    ? Mathf.Max(0f, context.GetDeltaTime())
-                    : Mathf.Max(0f, UnityEngine.Time.deltaTime);
-                _resourceProductionElapsedSeconds += deltaTime;
+                float deltaTime = Game.Simulation.BuildingResourceCadenceKernel.ClampDelta(
+                    context.GetDeltaTime != null ? context.GetDeltaTime() : UnityEngine.Time.deltaTime);
+                Game.Simulation.BuildingResourceCadenceKernel.AccumulateDelta(deltaTime, ref _resourceProductionElapsedSeconds);
                 bool pendingProductionObservedActiveTransport = false;
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
                     now >= _nextProductionAt)
@@ -231,14 +228,13 @@ namespace Game.Runtime
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterProductions;
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime &&
-                    now >= _nextResourceProductionAt)
+                if (Game.Simulation.BuildingResourceCadenceKernel.BeginProduction(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime, ref _nextResourceProductionAt))
                 {
-                    _nextResourceProductionAt = now + ResourceProductionIntervalSeconds;
                     using (UpdateResourceProductionMarker.Auto())
                     {
-                        float resourceDeltaTime = Mathf.Max(deltaTime, _resourceProductionElapsedSeconds);
-                        _resourceProductionElapsedSeconds = 0f;
+                        float resourceDeltaTime = Game.Simulation.BuildingResourceCadenceKernel.ConsumeProductionDelta(
+                            deltaTime, ref _resourceProductionElapsedSeconds);
                         context.UpdateResourceProduction?.Invoke(resourceDeltaTime);
                     }
                 }
@@ -250,10 +246,9 @@ namespace Game.Runtime
                 if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
                     S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = continuousBeforeDue, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
 #endif
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime &&
-                    now >= _nextResourceHaulerAt)
+                if (Game.Simulation.BuildingResourceCadenceKernel.BeginHaulers(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, ref _nextResourceHaulerAt))
                 {
-                    _nextResourceHaulerAt = now + ResourceHaulerIntervalSeconds;
 #if UNITY_EDITOR
                     if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
                         if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))

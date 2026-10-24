@@ -9,6 +9,89 @@ namespace Game.Editor
     {
         public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
 
+        static int RunSurvivingStructureRifleDrawerControls()
+        {
+            int checks = 0;
+            void Check(bool ok, string name) { if (!ok) throw new InvalidOperationException(name); checks++; }
+            var view = new AriaSkirmishObservation(); var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent(); var output = new AriaPlayObservationComponent();
+            void Reset()
+            {
+                view = new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                    ExpandedBaseAssault = true, Time = 100, Frame = 100, Infantry = 12,
+                    PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                    ExpandedPageCount = 2, ExpandedPageIndex = 1, ExpandedTotalGroups = 7,
+                    ExpandedRosterRevision = 10, CanAffordRifle = true, OwnStructureAttackUnits = 4,
+                    Recruit = new AriaTouchTarget { Available = true, Id = 31,
+                        Position = new UnityEngine.Vector2(30,40) },
+                    CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 } };
+                plan = new AriaSkirmishPlanComponent { AssaultIssued = 1, StructureOrdered = 1,
+                    PagesOrdered = 3, SweepRosterRevision = 10, LastProgressAt = 100,
+                    Infantry = 12, PlayerHealth = 800, EnemyHealth = 800,
+                    Intent = AriaSkirmishIntent.ObserveBattle };
+                touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Waiting,
+                    GoalId = 10000, LastProgressAt = 100, LastObjectiveProgressAt = 100,
+                    ObjectiveWatchdogInitialized = 1, VisitedGoalMask = 1UL << (10000 & 63) };
+            }
+            void Step()
+            {
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            Reset(); Step();
+            Check(output.TargetId == 31 && touch.Phase == AriaPlayPhase.Aiming,
+                "surviving structure force approaches public Rifle Build opener");
+            view.Time = 101; view.Frame++; Step();
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                "Rifle Build opener requires ordinary aim and touch");
+            // Sample a completed input acknowledgement; no production command is fabricated.
+            view.DrawerOpen = true; view.Recruit = default; view.Time = 102; view.Frame = 103;
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0; touch.Pressed = 0;
+            touch.Actions = 1; touch.LastCompletedTargetId = 31;
+            touch.LastCompletedFrame = 102; touch.DueAt = 103;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0,
+                "surviving structure Rifle catalog gap must not become Inspect CloseDrawer");
+            view.Time = 103; view.Frame++; Step();
+            Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.GestureRequested == 0, "Rifle presentation gap retains owned recruitment without purchase");
+            view.Time = 103.5f; view.Frame++;
+            view.Recruit = new AriaTouchTarget { Available = true, Id = 61,
+                Position = new UnityEngine.Vector2(50,40) };
+            Step(); Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.Actions == 1,
+                "fresh eligible Rifle item receives its own normal approach");
+            view.Time = 104.5f; view.Frame++; Step();
+            Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 1,
+                "Rifle purchase remains a second ordinary UI gesture");
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0;
+            touch.Actions = 2; touch.LastCompletedTargetId = 61;
+            touch.LastCompletedFrame = view.Frame; touch.DueAt = view.Time + 1;
+            view.RifleRecruitPending = true; view.Time++; view.Frame++;
+            Step(); Check(output.TargetId == 63 && touch.Actions == 2,
+                "public pending Rifle production closes without duplicate purchase");
+            Reset(); view.DrawerOpen = true; view.Recruit = default;
+            plan.Intent = AriaSkirmishIntent.Recruit; plan.RecruitUnavailableAt = 96;
+            Step(); Check(output.TargetId == 63 && plan.NextRecruitAt == 112 &&
+                plan.Intent == AriaSkirmishIntent.Inspect,
+                "persistent Rifle catalog refusal retains bounded close and cooldown");
+            Reset(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.CanAffordRifle = false; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "Rifle public affordability refusal cannot be overridden by drawer recovery");
+            Reset(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.RifleRecruitPending = true; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "existing pending Rifle prevents another purchase");
+            Reset(); view.DrawerOpen = true; view.Recruit = default;
+            plan.Intent = AriaSkirmishIntent.Recruit;
+            touch.Phase = AriaPlayPhase.Aiming; touch.TargetId = 77; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "Rifle catalog recovery cannot replace unrelated active aim");
+            return checks;
+        }
+
         static int RunExpandedAssaultRecruitmentControls()
         {
             int checks = 0;
@@ -1148,6 +1231,7 @@ namespace Game.Editor
                     "unselected in-flight assault observes battle instead of exhausting Hold retries");
             }
             checks += RunExpandedAssaultRecruitmentControls();
+            checks += RunSurvivingStructureRifleDrawerControls();
             checks += RunPublicApproachProgressControls();
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 

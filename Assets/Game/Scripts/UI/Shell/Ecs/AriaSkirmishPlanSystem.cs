@@ -1032,6 +1032,33 @@ namespace Game.UI.Shell.Ecs
                     plan.NextRecruitAt = view.Time + 12f;
                 }
             }
+            // The accepted structure force buys its depleted Rifle screen through
+            // the same public Build/category/item sequence, not a synthetic order.
+            if (!view.AirProfile && view.OwnStructureAttackUnits > 0 &&
+                plan.AssaultIssued != 0 && plan.StructureOrdered != 0 && view.Infantry < 16 &&
+                !view.RifleRecruitPending && view.CanAffordRifle && view.VisibleHostileAir == 0 &&
+                !view.AirQueueOffered && view.DrawerOpen && plan.Intent == AriaSkirmishIntent.Recruit &&
+                replacementUiReady && view.Time >= plan.NextRecruitAt)
+            {
+                if (view.Recruit.Available) plan.RecruitUnavailableAt = 0;
+                else
+                {
+                    bool ownCompletedRecruitTouch = touch.Phase == AriaPlayPhase.Verifying &&
+                        touch.Actions > 0 && touch.LastCompletedTargetId == touch.TargetId &&
+                        touch.LastCompletedFrame > 0;
+                    if (ownCompletedRecruitTouch && !replacementTouchReady)
+                    {
+                        output.Kind = AriaPlayObservationKind.Unavailable;
+                        return;
+                    }
+                    if (replacementTouchReady)
+                    {
+                        if (plan.RecruitUnavailableAt == 0) plan.RecruitUnavailableAt = view.Time;
+                        if (view.Time - plan.RecruitUnavailableAt < 3f) return;
+                        plan.NextRecruitAt = view.Time + 12f;
+                    }
+                }
+            }
             if (view.AirProfile && plan.AssaultStarted == 0)
             {
                 if (plan.OpeningUntil == 0) plan.OpeningUntil = view.Time + 75f;

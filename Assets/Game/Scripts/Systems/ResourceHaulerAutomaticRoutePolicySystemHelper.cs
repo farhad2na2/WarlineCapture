@@ -74,6 +74,9 @@ namespace Game.Runtime
             Vector3 truckPosition = grid.Origin + new float3(
                 (unitCell.x + 0.5f) * grid.CellSize, 0f, (unitCell.y + 0.5f) * grid.CellSize);
             Vector3 destinationPosition = context.ResolveBuildingFocusWorldPosition(destination);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ObserveInitialHaulerFocus(em, destination, destinationPosition, "automatic-route.focus-0");
+#endif
             float bestTravel = float.MaxValue;
             foreach (var pair in context.RuntimeBuildings)
             {
@@ -83,6 +86,9 @@ namespace Game.Runtime
                         ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil, loadAmount))
                     continue;
                 Vector3 sourcePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ObserveInitialHaulerFocus(em, candidate, sourcePosition, "automatic-route.focus-1");
+#endif
                 // Include the initial pickup and the delivery/return legs of
                 // continued supply. The existing reservation checks still
                 // govern assignment, including future Oil production.
@@ -206,6 +212,9 @@ namespace Game.Runtime
                 }
 
                 Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ObserveInitialHaulerFocus(em, candidate, candidatePosition, "automatic-route.focus-2");
+#endif
                 float distanceSq = (candidatePosition - origin).sqrMagnitude;
                 if (!IsBetterDistanceCandidate(candidate, result, distanceSq, bestDistanceSq))
                     continue;
@@ -233,6 +242,9 @@ namespace Game.Runtime
                 return false;
 
             Vector3 origin = context.ResolveBuildingFocusWorldPosition(source);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ObserveInitialHaulerFocus(em, source, origin, "automatic-route.focus-3");
+#endif
             float bestDistanceSq = float.MaxValue;
             int bestStrategicPriority = -1;
             int bestStarvationPriority = -1;
@@ -249,6 +261,9 @@ namespace Game.Runtime
                 }
 
                 Vector3 candidatePosition = context.ResolveBuildingFocusWorldPosition(candidate);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ObserveInitialHaulerFocus(em, candidate, candidatePosition, "automatic-route.focus-4");
+#endif
                 float distanceSq = (candidatePosition - origin).sqrMagnitude;
                 int strategicPriority = 0;
                 int starvationPriority = 0;

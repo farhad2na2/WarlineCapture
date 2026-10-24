@@ -145,6 +145,15 @@ namespace Game.Runtime
                 }
             }
 
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.InitialHaulerDispatch != null)
+                S002PhysicalStartupObservation.ObserveInitialHaulerDispatch(new S002PhysicalStartupObservation.InitialHaulerDispatchFacts {
+                    Manager = em, Context = context, Haulers = _haulerEntities, Grid = grid, ActualQueryCount = haulerCount,
+                    HasPendingPathJob = hasPendingPathJob, HasSignature = _hasAutomaticAssignmentSignature,
+                    LastSignature = _lastAutomaticAssignmentSignature, NextReservationId = _nextReservationId,
+                    NextRefreshAt = _nextAutomaticAssignmentRefreshAt, Now = now,
+                    ApproachQueryCreated = _approachQueryCreated, AIPolicyPresent = _aiOilAllocationPolicy != null });
+#endif
             bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, _haulerEntities, now);
             if (runAutomaticAssignment)
                 _aiOilAllocationPolicy.ClearInputCache();
@@ -266,6 +275,10 @@ namespace Game.Runtime
                         resourceKind);
                     continue;
                 }
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = unit;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.selected-haul-input";
+#endif
                 if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out UnitResourceHaulReservation reservation))
                 {
                     LogSelectedHaulInput(clickedBuildingId, selected.Length, "ReservationFailed");
@@ -322,12 +335,22 @@ namespace Game.Runtime
 
         private bool TryAssignAutomaticHaulerOrder(Context context, EntityManager em, GridConfig grid, Entity unit)
         {
+#if UNITY_EDITOR
+            bool? initialObservedResult = null;
+            S002PhysicalStartupObservation.BeginInitialHaulerSelection(em, unit);
+            try
+            {
+#endif
             if (context.ResourceHaulerUtilitySystemHelper == null ||
                 context.FactionResourceCompositionSystemHelper == null ||
                 context.RuntimeBuildings == null ||
                 !TryGetAutomaticHaulerKind(em, unit, out ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind))
             {
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(unit);
@@ -340,7 +363,11 @@ namespace Game.Runtime
                     FuelLogisticsTaskStatusCode.Blocked,
                     FuelLogisticsBlockReasonCode.HaulerUnavailable,
                     resourceKind);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             byte factionId = em.GetComponentData<Faction>(unit).Id;
@@ -380,11 +407,19 @@ namespace Game.Runtime
                         hasAIInput,
                         aiInput),
                     resourceKind);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             bool allowDeferredSourceReservation = resourceKind == ResourceHaulerUtilitySystemHelper.ResourceHaulKind.Oil &&
                                                   context.ResourceHaulerUtilitySystemHelper.IsOilSourceBuilding(source);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = unit;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.assign-hauler-order";
+#endif
             if (!TryReserveHaulCapacity(
                     context,
                     em,
@@ -401,7 +436,11 @@ namespace Game.Runtime
                     FuelLogisticsTaskStatusCode.Blocked,
                     FuelLogisticsBlockReasonCode.ReservationFailed,
                     resourceKind);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             if (!TryIssueHaulerMoveToBuilding(context, em, unit, source, out int2 sourceGoal))
@@ -413,7 +452,11 @@ namespace Game.Runtime
                     FuelLogisticsTaskStatusCode.Blocked,
                     FuelLogisticsBlockReasonCode.RouteUnavailable,
                     resourceKind);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             UnitResourceHaulOrder order = context.ResourceHaulerUtilitySystemHelper.CreateOrder(
@@ -430,7 +473,15 @@ namespace Game.Runtime
                 FuelLogisticsBlockReasonCode.None,
                 resourceKind);
             RecordRouteAssignmentTelemetry(em, unit, resourceKind, isReassignment: false);
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.InitialHaulerSelectionResult(ref initialObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.EndInitialHaulerSelection(em, unit, initialObservedResult); }
+#endif
         }
 
         private bool ShouldRunAutomaticAssignmentScan(
@@ -888,6 +939,10 @@ namespace Game.Runtime
                 reservation.DestinationReservationActive == 0)
             {
                 ReleaseOrderReservations(context, em, entity);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = entity;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.ensure-source-reservation";
+#endif
                 if (!TryReserveHaulCapacity(context, em, source, destination, resourceKind, loadAmount, out reservation))
                     return;
                 SetOrAddResourceHaulReservation(em, entity, reservation);
@@ -1019,6 +1074,10 @@ namespace Game.Runtime
 
             if (hasSourceReservation)
                 ReleaseSourceReservationForOrder(context, em, entity, source, resourceKind, loadAmount);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = entity;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.complete-load";
+#endif
             if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteLoad(em, source, resourceKind, loadAmount, ref hauler))
                 return;
             em.SetComponentData(entity, hauler);
@@ -1028,6 +1087,10 @@ namespace Game.Runtime
             if (!TryIssueHaulerMoveToBuilding(context, em, entity, destination, out int2 destinationGoal))
             {
                 ReleaseDestinationReservationForOrder(context, em, entity, destination, resourceKind, loadAmount);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = entity;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.revert-load";
+#endif
                 context.ResourceHaulerUtilitySystemHelper.RevertLoad(em, source, resourceKind, loadAmount, ref hauler);
                 em.SetComponentData(entity, hauler);
                 em.RemoveComponent<UnitResourceHaulOrder>(entity);
@@ -1132,6 +1195,10 @@ namespace Game.Runtime
 
             if (hasDestinationReservation)
                 ReleaseDestinationReservationForOrder(context, em, entity, destination, resourceKind, cargo);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.StorageCallerUnit = entity;
+            S002PhysicalStartupObservation.StorageCallerSite = "BuildingResourceHaulerBridge.complete-unload";
+#endif
             if (!context.ResourceHaulerUtilitySystemHelper.TryCompleteUnload(em, destination, resourceKind, ref hauler))
                 return;
             RecordOilDeliveryTelemetry(em, entity, destination, resourceKind, cargo);
@@ -1370,18 +1437,36 @@ namespace Game.Runtime
             out UnitResourceHaulReservation reservation)
         {
             reservation = default;
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(em, "ReservePair", source, destination, (byte)resourceKind, loadAmount, allowDeferredSourceReservation, _nextReservationId, context.ResourceHaulerUtilitySystemHelper != null);
+            try
+            {
+#endif
             if (context.ResourceHaulerUtilitySystemHelper == null || source == null || destination == null || loadAmount <= 0f)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             bool sourceReserved = context.ResourceHaulerUtilitySystemHelper.TryReserveSource(em, source, resourceKind, loadAmount);
             if (!sourceReserved && !allowDeferredSourceReservation)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             if (!context.ResourceHaulerUtilitySystemHelper.TryReserveDestination(em, destination, resourceKind, loadAmount))
             {
                 if (sourceReserved)
                     context.ResourceHaulerUtilitySystemHelper.ReleaseSourceReservation(em, source, resourceKind, loadAmount);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             reservation = new UnitResourceHaulReservation
@@ -1394,7 +1479,15 @@ namespace Game.Runtime
                 DestinationReservationActive = 1,
                 ReservationId = NextReservationId()
             };
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, storageObservedResult, _nextReservationId, reservation); }
+#endif
         }
 
 #if UNITY_INCLUDE_TESTS

@@ -1516,6 +1516,18 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan,
             ref AriaPlayObservationComponent output)
         {
+            // PagesOrdered is the contiguous prefix of publicly accepted pages.
+            // A long/inertial swipe may skip a page; return to the missing page
+            // before accepting later pages or declaring the roster sweep complete.
+            if (plan.PagesOrdered < view.ExpandedPageCount &&
+                view.ExpandedPageIndex > plan.PagesOrdered)
+            {
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                if (view.PreviousSquadPage.Available)
+                    Target(view.PreviousSquadPage, false, ref output);
+                else output.Kind = AriaPlayObservationKind.Waiting;
+                return true;
+            }
             if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0)
             {
                 plan.SelectionResetPage = view.ExpandedPageIndex;
@@ -1576,9 +1588,10 @@ namespace Game.UI.Shell.Ecs
             }
 
             bool pageInspected = assaultOrdered;
-            if (pageInspected && plan.AssaultPageSeen != view.ExpandedPageIndex + 1)
+            if (pageInspected)
             {
-                plan.PagesOrdered++;
+                if (view.ExpandedPageIndex == plan.PagesOrdered)
+                    plan.PagesOrdered++;
                 plan.AssaultPageSeen = view.ExpandedPageIndex + 1;
             }
             if (plan.PagedToAssault == 2)

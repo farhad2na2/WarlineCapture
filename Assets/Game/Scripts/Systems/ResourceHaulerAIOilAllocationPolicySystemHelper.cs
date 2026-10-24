@@ -38,6 +38,9 @@ namespace Game.Runtime
             }
 
             bool hasInput = resolver != null && resolver(em, factionId, out input);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ObserveInitialHaulerAI(em, factionId, resolver != null, hasInput, input);
+#endif
             if (_inputCache.Length < _inputCache.Capacity)
             {
                 _inputCache.Add(new CacheEntry

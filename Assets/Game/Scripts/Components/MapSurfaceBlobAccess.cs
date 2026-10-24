@@ -164,6 +164,11 @@ namespace Game.Components
             return count;
         }
 
+        // Keep one binary32 storage boundary after the original Mono multiply/add expression.
+        // Inputs remain the authored binary32 min/step and exact unsigned packed height.
+        internal static float DecodeCompactHeight(float minHeight, ushort packedHeight, float heightStep)
+            => (float)((double)minHeight + (double)packedHeight * heightStep);
+
         private static bool TryGetCompactSurface(ref MapSurfaceBlob blob, int surfaceIndex, out MapSurfaceSample sample)
         {
             sample = default;
@@ -185,7 +190,7 @@ namespace Game.Components
                 Cell = new int2(surfaceIndex % blob.Dimensions.x, surfaceIndex / blob.Dimensions.x),
                 SurfaceId = surfaceIndex,
                 LayerId = compact.LayerId,
-                Height = blob.CompactMinHeight + compact.PackedHeight * blob.CompactHeightStep,
+                Height = DecodeCompactHeight(blob.CompactMinHeight, compact.PackedHeight, blob.CompactHeightStep),
                 Normal = normal,
                 SlopeDegrees = CalculateSlopeDegrees(normal),
                 SurfaceType = compact.SurfaceType,

@@ -15,7 +15,7 @@ CATALOG = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv"
 MATRIX = "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv"
 TUPLE = ("map_id", "objective_id", "army_profile", "start_profile")
 SIZES = {"Standard", "War", "LargeWar"}
-KINDS = {"UnqualifiedFullCatalogLogicalAuthoringInputs", "UnqualifiedGroundObjective30Authoring"}
+KINDS = {"UnqualifiedFullCatalogLogicalAuthoringInputs", "UnqualifiedGroundObjective30Authoring", "UnqualifiedAirCombined80Authoring"}
 
 # Narrow diagnostic portability proof, not native/raw provenance admission.
 SERIALIZED_TEXT_GRID = "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset"
@@ -280,6 +280,214 @@ class Diagnostics:
             self.error(path, "/authority/" + key, "authority.shape", "Pinned authority has invalid structural contract")
         return valid
 
+    def air_template(self, path, location, mission):
+        """Internal references only; the source/native anchor registry remains a separate gate."""
+        tup = mission.get("tuple")
+        if not isinstance(tup, dict) or not isinstance(tup.get("objective_id"), str):
+            self.error(path, location + "/tuple", "air.template_tuple", "Existing ground objective tuple required")
+            return
+        self.areas(path, location + "/typed_objective_areas", mission)
+        layout = mission.get("layout_input")
+        if not isinstance(layout, dict):
+            self.error(path, location + "/layout_input", "air.template_layout", "Existing ground layout input required")
+            return
+        routes = layout.get("retained_routes")
+        pilot = layout.get("pilot_candidate")
+        pads = pilot.get("typed_pad_world_axis_candidates") if isinstance(pilot, dict) else None
+        if not isinstance(routes, list) or not isinstance(pads, list):
+            self.error(path, location, "air.template_references", "Retained routes and typed pads required")
+            return
+        route_map, pad_ids = {}, []
+        for i, route in enumerate(routes):
+            loc = location + "/layout_input/retained_routes/" + str(i)
+            if not isinstance(route, dict) or not isinstance(route.get("RouteId"), str) or not route["RouteId"] or route["RouteId"] in route_map:
+                self.error(path, loc, "air.route_id", "Unique nonempty retained route identity required")
+                continue
+            anchors = route.get("WaypointAnchorIds")
+            if not isinstance(anchors, list) or len(anchors) < 2 or any(not isinstance(a, str) or not a for a in anchors):
+                self.error(path, loc, "air.route_anchors", "Explicit route waypoint references required")
+                anchors = []
+            route_map[route["RouteId"]] = anchors
+        for i, pad in enumerate(pads):
+            pid = pad.get("pad_id") if isinstance(pad, dict) else None
+            if not isinstance(pid, str) or not pid or pid in pad_ids:
+                self.error(path, location + "/layout_input/pilot_candidate/typed_pad_world_axis_candidates/" + str(i), "air.pad_id", "Unique typed pad identity required")
+            else:
+                pad_ids.append(pid)
+        areas = mission.get("typed_objective_areas")
+        derivations = areas.get("derivation") if isinstance(areas, dict) else None
+        if not isinstance(derivations, list):
+            self.error(path, location, "air.area_derivation", "Explicit existing typed-area derivations required")
+            return
+        expected_roles = ROLES.get(tup["objective_id"], set())
+        derivation_roles = [v.get("role") for v in derivations if isinstance(v, dict)]
+        if any(type(v) is not int for v in derivation_roles) or len(derivation_roles) != len(expected_roles) or set(derivation_roles) != expected_roles:
+            self.error(path, location + "/typed_objective_areas/derivation", "air.area_roles", "One derivation per existing objective-specific typed role required")
+        for i, item in enumerate(derivations):
+            loc = location + "/typed_objective_areas/derivation/" + str(i)
+            if not isinstance(item, dict):
+                self.error(path, loc, "air.area_reference", "Typed-area reference object required")
+                continue
+            if "route_id" in item:
+                rid = item["route_id"]
+                if not isinstance(rid, str) or rid not in route_map or item.get("anchor_id") not in route_map.get(rid, []):
+                    self.error(path, loc, "air.area_reference", "Typed-area route/anchor must reference that retained route")
+            elif "pad_id" in item:
+                if item["pad_id"] not in pad_ids:
+                    self.error(path, loc, "air.area_reference", "Typed-area pad must exist in the retained typed pads")
+            else:
+                self.error(path, loc, "air.area_reference", "Explicit retained route/anchor or pad reference required")
+
+    def air_authored(self, path, doc, canonical, catalog_path, matrix_path):
+        # Reuse existing diagnostics for the actual pinned dependencies, without replacing strict native admission.
+        dependencies = {}
+        authority = doc.get("authority")
+        for key, kind in (("full_index", "UnqualifiedFullCatalogLogicalAuthoringInputs"),
+                          ("ground_authoring", "UnqualifiedGroundObjective30Authoring"), ("map_reuse_policy", None)):
+            pin = authority.get(key) if isinstance(authority, dict) else None
+            checked = self.pin(path, "/authority/" + key, pin)
+            value = self.document(checked) if checked and kind else None
+            if kind and checked:
+                if not value or value.get("kind") != kind or value.get("schema_version") != 1:
+                    self.error(path, "/authority/" + key, "air.authority_schema", "Exact existing dependency schema required")
+                else:
+                    dependencies[key] = value
+                    if not any(Path(v["source"]).resolve() == checked for v in self.inputs):
+                        self.authored(checked, canonical, catalog_path, matrix_path)
+        original = self.pin(path, "/native_original_authority", dict(
+            path="Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json",
+            sha256="a869c03469d655f87389961242ffc0dc05720248ab6f6480cec43138793d8926"))
+        if not original:
+            self.block(path, "air_native_original_successor_semantics", "Missing original a869 authority; no reconstruction or native envelope admission")
+        requirements = doc.get("requirement_source_pins")
+        wanted = {"Assets/Game/Scripts/Configs/Skirmish/" + n + ".cs" for n in (
+            "SkirmishScenarioDefinitionConfig", "SkirmishSetupCompiler", "SkirmishMissionLogicalBindingConfig",
+            "SkirmishMeasuredLayoutBinder", "SkirmishObjectiveConfig", "SkirmishArmyProfileConfig")}
+        if not isinstance(requirements, list) or len(requirements) != 6 or {p["path"] for p in requirements if isinstance(p, dict) and isinstance(p.get("path"), str)} != wanted:
+            self.error(path, "/requirement_source_pins", "air.requirement_pins", "All six existing requirement source pins required")
+        for i, pin in enumerate(requirements if isinstance(requirements, list) else []):
+            self.pin(path, "/requirement_source_pins/" + str(i), pin)
+        profiles, roles = doc.get("profile_asset_pins"), {}
+        if not isinstance(profiles, dict) or set(profiles) != {"A", "C"}:
+            self.error(path, "/profile_asset_pins", "air.profile_pins", "Exact A/C typed profile pins required")
+        for key in ("A", "C"):
+            checked = self.pin(path, "/profile_asset_pins/" + key, profiles.get(key) if isinstance(profiles, dict) else None)
+            if checked:
+                try:
+                    lines = checked.read_text(encoding="utf-8").splitlines()
+                    if lines.count("  profileId: " + key) != 1: raise ValueError()
+                    start = lines.index("  allowedRoleIds:") + 1
+                    values = []
+                    for line in lines[start:]:
+                        if not line.startswith("  - "): break
+                        values.append(line[4:])
+                    if not values or len(values) != len(set(values)) or any(not x.startswith("role.") for x in values): raise ValueError()
+                    roles[key] = set(values)
+                except (OSError, UnicodeError, ValueError):
+                    self.error(path, "/profile_asset_pins/" + key, "air.profile_roles", "Expected existing serialized typed profile/allowed role list required")
+        for key, value in (("mission_count", 80), ("canonical_size_vectors", 240), ("generic_candidate_count", 77), ("protected_read_only_count", 3)):
+            if doc.get(key) != value: self.error(path, "/" + key, "air.count", "Exact80/240/77/3 schema counts required")
+        for key in ("publication_enabled", "source_fit_certified", "player_ready"):
+            if doc.get(key) is not False: self.error(path, "/" + key, "air.qualification", "Unqualified authoring cannot grant publication/fit/readiness")
+        sources = doc.get("source_candidates")
+        if not isinstance(sources, dict) or set(sources) != {"DB", "CC", "MP", "IB", "AP"}:
+            self.error(path, "/source_candidates", "air.source_groups", "Exact existing five source groups required")
+        if isinstance(sources, dict):
+            for key, value in sources.items(): self.source(path, "/source_candidates/" + key, value)
+        if isinstance(sources, dict):
+            scenes = {v["sourceSceneGuid"] for v in sources.values() if isinstance(v, dict) and isinstance(v.get("sourceSceneGuid"), str)}
+            if doc.get("physical_candidate_world_count") != len(scenes):
+                self.error(path, "/physical_candidate_world_count", "air.count", "Physical-source count must match existing source scene identities")
+        index = dependencies.get("full_index")
+        ground = dependencies.get("ground_authoring")
+        if index and sources != index.get("source_candidates"):
+            self.error(path, "/source_candidates", "air.source_join", "Family source candidates differ from pinned Full120 input")
+        index_rows = index.get("missions", []) if index else []
+        ground_rows = ground.get("missions", []) if ground else []
+        index_rows = index_rows if isinstance(index_rows, list) else []
+        ground_rows = ground_rows if isinstance(ground_rows, list) else []
+        full = {m.get("catalog_id"): m for m in index_rows if isinstance(m, dict) and isinstance(m.get("catalog_id"), str)}
+        templates = {m.get("catalog_id"): m for m in ground_rows if isinstance(m, dict) and isinstance(m.get("catalog_id"), str)}
+        if not index or not ground or canonical is None:
+            self.block(path, "air_canonical_template_joins", "Missing/invalid pinned dependencies or canonical authority; structural diagnostics only")
+        expected = {m["scenario_id"] for m in canonical[0] if m["army_profile"] in ("A", "C")} if canonical else None
+        missions = doc.get("missions")
+        if not isinstance(missions, list):
+            self.error(path, "/missions", "air.missions", "Explicit eighty mission rows required")
+            missions = []
+        seen, used, protected = [], set(), []
+        for i, mission in enumerate(missions):
+            loc = "/missions/" + str(i)
+            if not isinstance(mission, dict):
+                self.error(path, loc, "air.mission", "Mission object required")
+                continue
+            sid = mission.get("catalog_id")
+            if not isinstance(sid, str) or not sid or sid in seen or (expected is not None and sid not in expected):
+                self.error(path, loc + "/catalog_id", "air.identity", "Unique canonical A/C catalog identity required")
+            if not isinstance(sid, str): continue
+            seen.append(sid)
+            original_row = full.get(sid) if isinstance(sid, str) else None
+            if original_row and canonical:
+                for key in ("definition_id", "scenario_setup_id", "tuple", "packet", "packet_section", "canonical_size_rows", "canonical_size_rows_sha256", "required_capabilities", "protected_binding"):
+                    if mission.get(key) != original_row.get(key): self.error(path, loc + "/" + key, "air.canonical_join", "Field differs from existing Full120 row")
+            self.pin(path, loc + "/packet", mission.get("packet"))
+            if mission.get("publication_enabled") is not False or mission.get("normal_mission_qualified") is not False or mission.get("camera_scalars") is not None:
+                self.error(path, loc, "air.qualification", "Unpublished/unqualified row with unmeasured camera required")
+            pending = mission.get("pending_gates")
+            if not isinstance(pending, list) or not pending or any(not isinstance(v, str) or not v for v in pending):
+                self.error(path, loc + "/pending_gates", "air.gates", "Explicit pending mechanics/source/native gates required")
+            if sid in {"S003", "S004", "S005"}:
+                protected.append(sid)
+                if not isinstance(mission.get("protected_binding"), dict) or mission.get("action") != "PreserveCodedBinding_ReadOnlyNativeCensus" or mission.get("family_source_candidate_key") is not None or mission.get("ground_template_catalog_id") is not None or mission.get("typed_areas") != "NoReplacementForProtectedBinding" or mission.get("view_intent") is not None:
+                    self.error(path, loc, "air.protected", "Existing coded binding must remain read-only without family/template replacement")
+                continue
+            tup = mission.get("tuple")
+            if not isinstance(tup, dict):
+                self.error(path, loc + "/tuple", "air.tuple", "Canonical tuple object required")
+                continue
+            if mission.get("protected_binding") is not None or mission.get("action") != "DisposableGenericAuthoringCandidate" or mission.get("family_source_candidate_key") != tup.get("map_id"):
+                self.error(path, loc, "air.candidate", "Explicit disposable candidate with own family source required")
+            template_id = mission.get("ground_template_catalog_id")
+            template = templates.get(template_id) if isinstance(template_id, str) else None
+            if ground:
+                if template is None or sum(isinstance(v, dict) and v.get("catalog_id") == template_id for v in ground_rows) != 1:
+                    self.error(path, loc + "/ground_template_catalog_id", "air.template", "One existing Ground30 template required")
+                else:
+                    tt = template.get("tuple", {})
+                    tt = tt if isinstance(tt, dict) else {}
+                    if tt.get("map_id") != tup.get("map_id") or tt.get("start_profile") != tup.get("start_profile") or (tup.get("objective_id") != "BA" and tt.get("objective_id") != tup.get("objective_id")):
+                        self.error(path, loc + "/ground_template_catalog_id", "air.template_join", "Template map/start and non-BA objective must match")
+                    if template_id not in used:
+                        used.add(template_id)
+                        self.air_template(path, "/ground_templates/" + template_id, template)
+            typed = "NotApplicableBA_ViewOnly" if tup.get("objective_id") == "BA" else "ReuseExplicitUnmeasuredObjectiveGeometry_RebindOwnIdentity"
+            if mission.get("typed_areas") != typed:
+                self.error(path, loc + "/typed_areas", "air.typed_areas", "Existing unmeasured typed-area reuse boundary required")
+            view = mission.get("view_intent")
+            if not isinstance(view, dict) or view.get("scalars") is not None or view.get("measurement") is not None or view.get("role_scope") != "AllPermittedProfileRoles_NotAnOpeningRoster":
+                self.error(path, loc + "/view_intent", "air.view", "Unmeasured all-permitted-role view intent required")
+            else:
+                values = view.get("required_role_ids")
+                if not isinstance(values, list) or not values or any(not isinstance(v, str) or not v.startswith("role.") for v in values) or len(values) != len(set(values)):
+                    self.error(path, loc + "/view_intent/required_role_ids", "air.view_roles", "Unique explicit permitted role identities required")
+                elif isinstance(tup.get("army_profile"), str) and tup["army_profile"] in roles and set(values) != roles[tup["army_profile"]]:
+                    self.error(path, loc + "/view_intent/required_role_ids", "air.view_roles", "View scope must include the actual pinned profile's complete permitted role set")
+        if len(missions) != 80 or (expected is not None and set(seen) != expected) or len(seen) != len(set(seen)):
+            self.error(path, "/missions", "air.coverage", "Exact80 distinct canonical A/C rows required")
+        scoped = doc.get("protection_sets", {})
+        scoped = scoped.get("scoped_protected_read_only_ids") if isinstance(scoped, dict) else None
+        if not isinstance(scoped, list) or any(not isinstance(v, str) for v in scoped) or len(scoped) != 3 or set(scoped) != {"S003", "S004", "S005"} or set(protected) != {"S003", "S004", "S005"}:
+            self.error(path, "/protection_sets", "air.protected", "Exactly S003/S004/S005 must remain protected")
+        for field, key, want in (("objective_counts", "objective_id", {k: 20 for k in ("BA", "FC", "BT", "CE")}),
+                                 ("profile_counts", "army_profile", {"A": 40, "C": 40})):
+            actual = Counter(m["tuple"][key] for m in missions if isinstance(m, dict) and isinstance(m.get("tuple"), dict) and isinstance(m["tuple"].get(key), str))
+            if doc.get(field) != want or actual != want:
+                self.error(path, "/" + field, "air.count", "Declared and actual objective/profile distribution differs")
+        self.block(path, "air_native_source_fit_and_mission_acceptance", "Static metadata/references do not prove native anchor registry, routes, facilities, aircraft lifecycle, views or missions")
+        self.inputs.append(dict(source=str(path), kind=doc.get("kind"), strict_contract="NotAdmission_AirCombined80DiagnosticsOnly",
+                                generic_candidates=sum(isinstance(m, dict) and m.get("action") == "DisposableGenericAuthoringCandidate" for m in missions),
+                                protected_records=len(protected), referenced_ground_templates=len(used)))
+
     def authored(self, path, canonical, catalog_path, matrix_path):
         start = len(self.errors)
         doc = self.document(path)
@@ -287,7 +495,10 @@ class Diagnostics:
             return
         kind = doc.get("kind")
         if kind not in KINDS or doc.get("schema_version") != 1:
-            self.error(path, "$", "input.schema", "Supported version1 Full120 or GroundObjective30 authoring object required")
+            self.error(path, "$", "input.schema", "Supported version1 Full120, GroundObjective30 or AirCombined80 authoring object required")
+            return
+        if kind == "UnqualifiedAirCombined80Authoring":
+            self.air_authored(path, doc, canonical, catalog_path, matrix_path)
             return
         expected_count = 120 if kind == "UnqualifiedFullCatalogLogicalAuthoringInputs" else 30
         if doc.get("mission_count") != expected_count or doc.get("canonical_size_vectors") != expected_count * 3:

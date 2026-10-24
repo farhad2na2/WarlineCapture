@@ -377,5 +377,117 @@ class GridLineEndingDiagnosticTests(unittest.TestCase):
         self.assertFalse(report["mission_ready"])
 
 
+class AirCombined80DiagnosticTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="skirmish-air-diagnostics-")
+        self.addCleanup(self.temp.cleanup)
+        self.path = Path(self.temp.name) / "air.json"
+        self.doc = json.loads((ROOT / "Tools/CI/SkirmishProductionDrafts/AirCombined80CoherentAuthority/air-combined-eighty.coherent.authoring.json").read_text())
+        self.ground = json.loads(GROUND.read_text())
+
+    def report(self, edit=None):
+        doc = copy.deepcopy(self.doc)
+        if edit: edit(doc)
+        self.path.write_text(json.dumps(doc))
+        return subject.diagnose(ROOT, inputs=[self.path])
+
+    @staticmethod
+    def generic(doc, objective="BA"):
+        return next(m for m in doc["missions"] if m["catalog_id"] not in {"S003", "S004", "S005"} and m["tuple"]["objective_id"] == objective)
+
+    def has(self, report, code):
+        self.assertTrue(any(e["code"] == code for e in report["errors"]), code)
+
+    def template_report(self, objective, edit):
+        mission = copy.deepcopy(next(m for m in self.ground["missions"] if m["tuple"]["objective_id"] == objective))
+        edit(mission)
+        d = subject.Diagnostics(ROOT)
+        d.air_template(self.path, "/template", mission)
+        return {"errors": d.errors}
+
+    def test_actual80_is_supported_with77_candidates_and_raw_native_gates(self):
+        report = self.report()
+        air = next(v for v in report["inputs"] if v["kind"] == "UnqualifiedAirCombined80Authoring")
+        self.assertEqual((77, 3, 30), (air["generic_candidates"], air["protected_records"], air["referenced_ground_templates"]))
+        self.assertEqual("NotAdmission_AirCombined80DiagnosticsOnly", air["strict_contract"])
+        self.assertFalse(any(e["code"].startswith("air.") for e in report["errors"]))
+        original = ROOT / "Tools/CI/SkirmishProductionDrafts/AirCombined80/air-combined-eighty.authoring.json"
+        if not original.exists():
+            self.assertTrue(any(e["location"] == "/native_original_authority" for e in report["errors"]))
+        self.assertTrue(any(v["check"] == "air_native_source_fit_and_mission_acceptance" for v in report["blocked_checks"]))
+        self.assertFalse(report["mission_ready"])
+        self.assertFalse(report["source_fit_certified"])
+
+    def test_missing_duplicate_and_ground_only_ids_rejected(self):
+        for edit in [lambda d:d["missions"].pop(),
+                     lambda d:d["missions"][1].update(catalog_id=d["missions"][0]["catalog_id"]),
+                     lambda d:self.generic(d).update(catalog_id="S007")]:
+            with self.subTest(edit=edit): self.has(self.report(edit), "air.coverage")
+
+    def test_changed_own_budget_and_capabilities_rejected(self):
+        self.has(self.report(lambda d:self.generic(d)["canonical_size_rows"][0].update(materials_each="99999")), "air.canonical_join")
+        self.has(self.report(lambda d:self.generic(d)["required_capabilities"].append("invented_capability")), "air.canonical_join")
+
+    def test_template_unknown_and_wrong_map_or_start_rejected(self):
+        self.has(self.report(lambda d:self.generic(d).update(ground_template_catalog_id="S999")), "air.template")
+        self.has(self.report(lambda d:self.generic(d).update(ground_template_catalog_id="S031")), "air.template_join")
+
+    def test_non_ba_objective_template_must_match(self):
+        self.has(self.report(lambda d:self.generic(d, "FC").update(ground_template_catalog_id="S019")), "air.template_join")
+
+    def test_ba_keeps_permitted_existing_non_ba_template(self):
+        report = self.report()
+        self.assertFalse(any(e["code"] == "air.template_join" for e in report["errors"]))
+
+    def test_protected_binding_cannot_gain_family_or_generic_owner(self):
+        self.has(self.report(lambda d:d["missions"][0].update(family_source_candidate_key="DB", action="DisposableGenericAuthoringCandidate")), "air.protected")
+
+    def test_scope_counts_and_qualification_claims_rejected(self):
+        self.has(self.report(lambda d:d.update(generic_candidate_count=80)), "air.count")
+        self.has(self.report(lambda d:d.update(objective_counts={"BA": 80})), "air.count")
+        self.has(self.report(lambda d:d.update(source_fit_certified=True)), "air.qualification")
+        self.has(self.report(lambda d:self.generic(d).update(normal_mission_qualified=True)), "air.qualification")
+
+    def test_profile_view_roles_must_cover_actual_permitted_set(self):
+        self.has(self.report(lambda d:self.generic(d)["view_intent"]["required_role_ids"].remove("role.fighter")), "air.view_roles")
+        self.has(self.report(lambda d:self.generic(d)["view_intent"]["required_role_ids"].append("role.not_real")), "air.view_roles")
+
+    def test_view_and_typed_area_reuse_do_not_acquire_measured_proof(self):
+        self.has(self.report(lambda d:self.generic(d)["view_intent"].update(measurement={"accepted": True})), "air.view")
+        self.has(self.report(lambda d:self.generic(d, "FC").update(typed_areas="Certified")), "air.typed_areas")
+
+    def test_requirement_pin_closure_and_family_source_join_rejected(self):
+        self.has(self.report(lambda d:d["requirement_source_pins"].pop()), "air.requirement_pins")
+        self.has(self.report(lambda d:d["source_candidates"].pop("MP")), "air.source_groups")
+
+    def test_pending_mechanic_gates_are_explicit(self):
+        self.has(self.report(lambda d:self.generic(d).update(pending_gates=[])), "air.gates")
+
+    def test_malformed_air_fields_collect_errors_without_crash(self):
+        self.has(self.report(lambda d:self.generic(d).update(catalog_id=[])), "air.identity")
+        self.has(self.report(lambda d:d["requirement_source_pins"][0].update(path=[])), "air.requirement_pins")
+
+    def test_route_and_anchor_references_must_match_retained_route(self):
+        self.has(self.template_report("FC", lambda m:m["typed_objective_areas"]["derivation"][0].update(route_id="route.unknown")), "air.area_reference")
+        self.has(self.template_report("FC", lambda m:m["typed_objective_areas"]["derivation"][0].update(anchor_id="anchor.unknown")), "air.area_reference")
+
+    def test_ce_destination_pad_reference_must_exist(self):
+        self.has(self.template_report("CE", lambda m:m["typed_objective_areas"]["derivation"][0].update(pad_id="pad.unknown")), "air.area_reference")
+
+    def test_duplicate_routes_and_missing_waypoint_list_rejected(self):
+        self.has(self.template_report("FC", lambda m:m["layout_input"]["retained_routes"].append(copy.deepcopy(m["layout_input"]["retained_routes"][0]))), "air.route_id")
+        self.has(self.template_report("FC", lambda m:m["layout_input"]["retained_routes"][0].update(WaypointAnchorIds=[])), "air.route_anchors")
+
+
+    def test_typed_derivation_roles_match_existing_objective_roles(self):
+        self.has(self.template_report("FC", lambda m:m["typed_objective_areas"]["derivation"][0].update(role=999)), "air.area_roles")
+
+    def test_declared_physical_count_does_not_invent_extra_maps(self):
+        self.has(self.report(lambda d:d.update(physical_candidate_world_count=80)), "air.count")
+
+    def test_malformed_template_tuple_is_reported_not_executed(self):
+        self.has(self.template_report("FC", lambda m:m.update(tuple=[])), "air.template_tuple")
+
+
 if __name__ == "__main__":
     unittest.main()

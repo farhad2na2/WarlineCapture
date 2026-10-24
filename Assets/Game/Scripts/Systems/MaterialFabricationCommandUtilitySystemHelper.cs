@@ -66,6 +66,12 @@ namespace Game.Runtime
             out int requestId)
         {
             requestId = 0;
+#if UNITY_EDITOR
+            var continuousIngress = S002PhysicalStartupObservation.MaterialIngressBegin(entityManager, fabricationEntity, requesterFactionId, productionEnabled);
+            bool? continuousIngressResult = null;
+            try
+            {
+#endif
             if (fabricationEntity == Entity.Null ||
                 !entityManager.Exists(fabricationEntity) ||
                 !entityManager.HasComponent<MaterialFabricationComponent>(fabricationEntity) ||
@@ -73,7 +79,11 @@ namespace Game.Runtime
                 !entityManager.HasBuffer<MaterialFabricationRequestComponent>(fabricationEntity) ||
                 !entityManager.HasBuffer<MaterialFabricationResultComponent>(fabricationEntity))
             {
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.MaterialIngressResult(ref continuousIngressResult, false);
+#else
                 return false;
+#endif
             }
 
             MaterialFabricationCommandQueueComponent queue =
@@ -93,7 +103,15 @@ namespace Game.Runtime
                 ProductionEnabled = productionEnabled ? (byte)1 : (byte)0,
                 Kind = MaterialFabricationRequestKind.SetProductionEnabled
             });
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.MaterialIngressResult(ref continuousIngressResult, true);
+#else
             return true;
+#endif
+#if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.MaterialIngressEnd(continuousIngress, continuousIngressResult, requestId); }
+#endif
         }
 
         public static bool TryGetProductionResult(

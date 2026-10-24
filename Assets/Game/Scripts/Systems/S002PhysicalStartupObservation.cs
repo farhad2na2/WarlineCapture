@@ -14,6 +14,58 @@ namespace Game.Runtime
     // attached. Observers must not retain buffers or change the world.
     internal static partial class S002PhysicalStartupObservation
     {
+        // Material views are synchronous borrowed inputs. Never retain their buffers or mutate gameplay.
+        internal static Func<EntityManager, bool, bool> ContinuousMaterialAdmission;
+        internal static Action<MaterialFacts> ContinuousMaterial;
+        internal sealed class MaterialSourceScope
+        {
+            internal EntityManager Manager; internal SystemHandle System; internal int Id;
+            internal Entity Entity; internal byte Requester; internal bool Enabled, Ingress;
+        }
+        internal struct MaterialFacts
+        {
+            internal MaterialSourceScope Scope; internal string Stage; internal Entity Entity, Selected;
+            internal int Index, Count, Health; internal byte Simulation, OwnerCount;
+            internal bool After, Normal, LookupReached, Disabled, Death, Operational, HasMaterials, Applied;
+            internal bool? Success; internal int RequestId; internal float Elapsed, Delta;
+            internal MaterialFabricationComponent Fabrication; internal BuildingResourceStorageComponent Storage;
+            internal FactionTacticalMaterialsComponent Materials; internal MaterialFabricationSystem.TickResult Tick;
+            internal DynamicBuffer<MaterialFabricationRequestComponent> Requests;
+            internal DynamicBuffer<MaterialFabricationResultComponent> Results;
+        }
+        internal static MaterialSourceScope MaterialBegin(EntityManager manager, SystemHandle system, float elapsed)
+        {
+            if (ContinuousMaterial == null || ContinuousMaterialAdmission == null) return null;
+            try { if (!ContinuousMaterialAdmission(manager, false)) return null;
+                var scope = new MaterialSourceScope { Manager=manager, System=system };
+                ContinuousSend(ContinuousMaterial, new MaterialFacts { Scope=scope, Stage="update-before", Elapsed=elapsed });return scope;
+            } catch (Exception ex) { ContinuousError(ex.ToString());return null; }
+        }
+        internal static bool MaterialRead(MaterialSourceScope scope, int cost) => scope != null && ContinuousMaterial != null && ContinuousRead(Math.Max(cost, 768));
+        internal static void MaterialEmit(MaterialFacts facts) { ContinuousSend(ContinuousMaterial, facts); }
+        internal static MaterialSourceScope MaterialIngressBegin(EntityManager manager, Entity entity, byte requester, bool enabled)
+        {
+            if (ContinuousMaterial == null || ContinuousMaterialAdmission == null) return null;
+            try { if (!ContinuousMaterialAdmission(manager, true)) return null;
+                var scope = new MaterialSourceScope { Manager=manager, Entity=entity, Requester=requester, Enabled=enabled, Ingress=true };
+                ContinuousSend(ContinuousMaterial, new MaterialFacts { Scope=scope, Stage="ingress-before", Entity=entity });return scope;
+            } catch (Exception ex) { ContinuousError(ex.ToString());return null; }
+        }
+        internal static void MaterialTickAfter(ref MaterialFacts facts, in MaterialFabricationComponent fabrication,
+            in BuildingResourceStorageComponent storage, bool applied, in MaterialFabricationSystem.TickResult result)
+        {
+            if (!MaterialRead(facts.Scope, 96)) return;
+            try { facts.Stage="tick-after";facts.Fabrication=fabrication;facts.Storage=storage;facts.Applied=applied;facts.Tick=result;
+                if (facts.HasMaterials) facts.Materials=facts.Scope.Manager.GetComponentData<FactionTacticalMaterialsComponent>(facts.Selected);
+                MaterialEmit(facts);
+            } catch (Exception ex) { ContinuousError(ex.ToString()); }
+        }
+        internal static bool MaterialIngressResult(ref bool? observed, bool result) { observed=result;return result; }
+        internal static void MaterialIngressEnd(MaterialSourceScope scope, bool? success, int requestId)
+        {
+            if (!MaterialRead(scope, 4)) return;
+            MaterialEmit(new MaterialFacts { Scope=scope, Stage="ingress-after", Entity=scope.Entity, Success=success, RequestId=requestId });
+        }
         internal static Action<EntityManager, BuildingRuntimeSpawnRequest, BuildingDefinition,
             BuildingRuntimeSpawnCompositionSystemHelper.Context, BuildingPlacementAuthoredBuildingCache,
             BuildingPlacementAuthoredRoadCache> BeforePlacement;

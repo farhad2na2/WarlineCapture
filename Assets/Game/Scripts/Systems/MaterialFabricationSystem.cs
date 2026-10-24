@@ -51,23 +51,58 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+#if UNITY_EDITOR
+            var continuousMaterial = S002PhysicalStartupObservation.MaterialBegin(state.EntityManager, state.SystemHandle, _elapsedSeconds);
+            bool continuousMaterialNormal = false, continuousLookupReached = false;
+            int continuousRequestOwners = 0, continuousLookupOwners = 0, continuousTickOwners = 0;
+            try
+            {
+            continuousRequestOwners = ProcessProductionRequests(ref state, continuousMaterial);
+#else
             ProcessProductionRequests(ref state);
+#endif
 
+#if UNITY_EDITOR
+            byte continuousSimulationActive = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive;
+            if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 4))
+                S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="requests-complete", Count=continuousRequestOwners, Simulation=continuousSimulationActive });
+            if (continuousSimulationActive == 0)
+#else
             if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
+#endif
             {
                 _elapsedSeconds = 0f;
+#if UNITY_EDITOR
+                continuousMaterialNormal = true;
+#endif
                 return;
             }
 
             float deltaTime = SystemAPI.Time.DeltaTime;
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 4))
+                S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="delta-input", Delta=deltaTime });
+#endif
             if (math.isfinite(deltaTime) && deltaTime > 0f)
                 _elapsedSeconds += deltaTime;
+#if UNITY_EDITOR
+            if (_elapsedSeconds + MinimumProgressTolerance < TickIntervalSeconds)
+            { continuousMaterialNormal = true; return; }
+#else
             if (_elapsedSeconds + MinimumProgressTolerance < TickIntervalSeconds)
                 return;
+#endif
 
             float fabricationDeltaTime = _elapsedSeconds;
             _elapsedSeconds = 0f;
+#if UNITY_EDITOR
+            continuousLookupReached = true;
+            continuousLookupOwners = RebuildFactionMaterialsLookup(ref state, continuousMaterial);
+            if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 4))
+                S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="lookup-complete", Count=continuousLookupOwners });
+#else
             RebuildFactionMaterialsLookup(ref state);
+#endif
 
             ComponentLookup<FactionTacticalMaterialsComponent> materialsLookup =
                 SystemAPI.GetComponentLookup<FactionTacticalMaterialsComponent>();
@@ -93,24 +128,55 @@ namespace Game.Runtime
                 bool buildingOperational = !disabledLookup.HasComponent(entity) &&
                                            !deathAnimationLookup.HasComponent(entity) &&
                                            healthRef.ValueRO.Current > 0;
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.MaterialFacts continuousTick = default;
+                if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 96))
+                {
+                    try
+                    {
+                    byte continuousCount = _materialsEntityCountByFaction[factionId];
+                    Entity continuousSelected = continuousCount == 1 ? _materialsEntityByFaction[factionId] : Entity.Null;
+                    bool continuousHasMaterials = continuousSelected != Entity.Null && materialsLookup.HasComponent(continuousSelected);
+                    continuousTick = new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="tick-before", Index=continuousTickOwners, Entity=entity, Fabrication=fabrication, Storage=storage, Health=healthRef.ValueRO.Current, Disabled=disabledLookup.HasComponent(entity), Death=deathAnimationLookup.HasComponent(entity), Operational=buildingOperational, OwnerCount=continuousCount, Selected=continuousSelected, HasMaterials=continuousHasMaterials, Materials=continuousHasMaterials ? materialsLookup[continuousSelected] : default };
+                    S002PhysicalStartupObservation.MaterialEmit(continuousTick);
+                    }
+                    catch (System.Exception ex) { S002PhysicalStartupObservation.ContinuousError(ex.ToString()); }
+                }
+#endif
                 if (_materialsEntityCountByFaction[factionId] != 1)
                 {
                     FactionTacticalMaterialsComponent unavailableMaterials = new()
                     {
                         FactionId = factionId
                     };
+#if UNITY_EDITOR
+                    var continuousUnavailableResult = ApplyTick(
+#else
                     ApplyTick(
+#endif
                         ref fabrication,
                         ref storage,
                         ref unavailableMaterials,
                         fabricationDeltaTime,
                         buildingOperational: false);
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.MaterialTickAfter(ref continuousTick, fabrication, storage, true, continuousUnavailableResult);
+                    continuousTickOwners++;
+#endif
                     continue;
                 }
 
                 Entity materialsEntity = _materialsEntityByFaction[factionId];
+#if UNITY_EDITOR
+                if (materialsEntity == Entity.Null || !materialsLookup.HasComponent(materialsEntity))
+                {
+                    S002PhysicalStartupObservation.MaterialTickAfter(ref continuousTick, fabrication, storage, false, default);
+                    continuousTickOwners++; continue;
+                }
+#else
                 if (materialsEntity == Entity.Null || !materialsLookup.HasComponent(materialsEntity))
                     continue;
+#endif
 
                 FactionTacticalMaterialsComponent materials = materialsLookup[materialsEntity];
                 uint previousMaterialsVersion = materials.Version;
@@ -134,6 +200,10 @@ namespace Game.Runtime
                 if (!eventQueueLookup.HasComponent(materialsEntity) ||
                     !eventBufferLookup.HasBuffer(materialsEntity))
                 {
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.MaterialTickAfter(ref continuousTick, fabrication, storage, true, result);
+                    continuousTickOwners++;
+#endif
                     continue;
                 }
 
@@ -160,7 +230,22 @@ namespace Game.Runtime
                 }
 
                 eventQueueLookup[materialsEntity] = eventQueue;
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.MaterialTickAfter(ref continuousTick, fabrication, storage, true, result);
+                continuousTickOwners++;
+#endif
             }
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 4))
+                S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="ticks-complete", Count=continuousTickOwners });
+            continuousMaterialNormal = true;
+            }
+            finally
+            {
+                if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 8))
+                    S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="update-after", Elapsed=_elapsedSeconds, Normal=continuousMaterialNormal, Count=continuousRequestOwners, LookupReached=continuousLookupReached, Index=continuousTickOwners });
+            }
+#endif
         }
 
         [BurstCompile]
@@ -172,8 +257,15 @@ namespace Game.Runtime
                 _materialsEntityCountByFaction.Dispose();
         }
 
+#if UNITY_EDITOR
+        private int RebuildFactionMaterialsLookup(ref SystemState state, S002PhysicalStartupObservation.MaterialSourceScope continuousMaterial)
+#else
         private void RebuildFactionMaterialsLookup(ref SystemState state)
+#endif
         {
+#if UNITY_EDITOR
+            int continuousLookupIndex = 0;
+#endif
             for (int i = 0; i < FactionCapacity; i++)
             {
                 _materialsEntityByFaction[i] = Entity.Null;
@@ -184,6 +276,14 @@ namespace Game.Runtime
                          .Query<RefRO<FactionEconomy>, RefRO<FactionTacticalMaterialsComponent>>()
                          .WithEntityAccess())
             {
+#if UNITY_EDITOR
+                if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 24))
+                {
+                    try { S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="lookup-row", Entity=entity, Index=continuousLookupIndex, Simulation=economyRef.ValueRO.FactionId, Materials=materialsRef.ValueRO }); }
+                    catch (System.Exception ex) { S002PhysicalStartupObservation.ContinuousError(ex.ToString()); }
+                }
+                continuousLookupIndex++;
+#endif
                 byte factionId = economyRef.ValueRO.FactionId;
                 if (materialsRef.ValueRO.FactionId != factionId)
                     continue;
@@ -195,6 +295,9 @@ namespace Game.Runtime
                 if (count == 0)
                     _materialsEntityByFaction[factionId] = entity;
             }
+        #if UNITY_EDITOR
+            return continuousLookupIndex;
+#endif
         }
 
         public static TickResult ApplyTick(
@@ -400,14 +503,31 @@ namespace Game.Runtime
                 out result);
         }
 
+#if UNITY_EDITOR
+        private int ProcessProductionRequests(ref SystemState state, S002PhysicalStartupObservation.MaterialSourceScope continuousMaterial)
+#else
         private void ProcessProductionRequests(ref SystemState state)
+#endif
         {
+#if UNITY_EDITOR
+            int continuousRequestIndex = 0;
+            foreach (var (fabricationRef, requests, results, entity) in SystemAPI
+                         .Query<RefRW<MaterialFabricationComponent>, DynamicBuffer<MaterialFabricationRequestComponent>, DynamicBuffer<MaterialFabricationResultComponent>>()
+                         .WithAll<MaterialFabricationInputTag>()
+                         .WithOptions(EntityQueryOptions.IncludeDisabledEntities)
+                         .WithEntityAccess())
+#else
             foreach (var (fabricationRef, requests, results) in SystemAPI
                          .Query<RefRW<MaterialFabricationComponent>, DynamicBuffer<MaterialFabricationRequestComponent>, DynamicBuffer<MaterialFabricationResultComponent>>()
                          .WithAll<MaterialFabricationInputTag>()
                          .WithOptions(EntityQueryOptions.IncludeDisabledEntities))
+#endif
             {
                 ref MaterialFabricationComponent fabrication = ref fabricationRef.ValueRW;
+#if UNITY_EDITOR
+                if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 32))
+                    S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="request-owner-before", Entity=entity, Index=continuousRequestIndex, Fabrication=fabrication, Requests=requests, Results=results });
+#endif
                 for (int i = 0; i < requests.Length; i++)
                 {
                     while (results.Length >= MaterialFabricationCommandQueueComponent.Capacity)
@@ -415,7 +535,15 @@ namespace Game.Runtime
                     results.Add(ApplyProductionRequest(ref fabrication, requests[i]));
                 }
                 requests.Clear();
+#if UNITY_EDITOR
+                if (S002PhysicalStartupObservation.MaterialRead(continuousMaterial, 32))
+                    S002PhysicalStartupObservation.MaterialEmit(new S002PhysicalStartupObservation.MaterialFacts { Scope=continuousMaterial, Stage="request-owner-after", Entity=entity, Index=continuousRequestIndex, Fabrication=fabrication, Requests=requests, Results=results });
+                continuousRequestIndex++;
+#endif
             }
+#if UNITY_EDITOR
+            return continuousRequestIndex;
+#endif
         }
 
         private static bool HasValidConfiguration(in MaterialFabricationComponent fabrication)

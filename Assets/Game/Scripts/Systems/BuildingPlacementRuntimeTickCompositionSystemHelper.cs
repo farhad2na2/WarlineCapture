@@ -193,10 +193,9 @@ namespace Game.Runtime
                     context.GetDeltaTime != null ? context.GetDeltaTime() : UnityEngine.Time.deltaTime);
                 Game.Simulation.BuildingResourceCadenceKernel.AccumulateDelta(deltaTime, ref _resourceProductionElapsedSeconds);
                 bool pendingProductionObservedActiveTransport = false;
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
-                    now >= _nextProductionAt)
+                if (Game.Simulation.BuildingProductionCadenceKernel.BeginPending(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime, ref _nextProductionAt))
                 {
-                    _nextProductionAt = now + ProductionIntervalSeconds;
                     using (ProcessPendingProductionsMarker.Auto())
                     {
                         pendingProductionObservedActiveTransport =
@@ -208,10 +207,10 @@ namespace Game.Runtime
 
                 now = afterPendingProductions;
                 bool shouldUpdateActiveTransports =
-                    !GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
-                    ((_activeProductionTransportsObserved && now >= _nextActiveProductionTransportProbeAt) ||
-                     pendingProductionObservedActiveTransport ||
-                     now >= _nextActiveProductionTransportProbeAt);
+                    Game.Simulation.BuildingProductionCadenceKernel.ShouldUpdateActive(now,
+                        GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime,
+                        _activeProductionTransportsObserved, pendingProductionObservedActiveTransport,
+                        _nextActiveProductionTransportProbeAt);
                 if (shouldUpdateActiveTransports)
                 {
                     using (UpdateActiveProductionTransportsMarker.Auto())
@@ -221,9 +220,9 @@ namespace Game.Runtime
                             context.UpdateActiveProductionTransports();
                     }
 
-                    _nextActiveProductionTransportProbeAt = _activeProductionTransportsObserved
-                        ? now + ActiveProductionTransportIntervalSeconds
-                        : now + IdleActiveProductionTransportProbeIntervalSeconds;
+                    Game.Simulation.BuildingProductionCadenceKernel.RecordActiveResult(now,
+                        _activeProductionTransportsObserved, ref _activeProductionTransportsObserved,
+                        ref _nextActiveProductionTransportProbeAt);
                 }
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 

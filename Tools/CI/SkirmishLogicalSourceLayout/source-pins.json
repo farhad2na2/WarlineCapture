@@ -1,0 +1,38 @@
+{
+  "authority": {
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset": "6dc011093e5298c07985d264c5483db6875e2593cdec0ff96bd2a05d6838ecfb",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Grid.asset": "7aa1a9744215a444064f6a9e09fb7e6aacbdc0155b4f5cf38b19be9a5d98df1a",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Surface.asset": "048fe898cea5c3a1158470d5c299222715d8a911ecde6c1155aa30bc75e347ce",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutBuilder.cs": "b0cde693fd2cbb818bdf561ffd4711a463d0b484671500dae2381b8417a85c11",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMapLayoutConfig.cs": "4a0c21818846ccad670563cbf36c7c238948502c204907556f088e6b7126954f",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs": "85e95dbba6f80256605d684d238599933a92fb6df3b60fd0f9612f805500bfd4",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionDispatch.cs": "4c324fae4dffb0efece9772dd46ddc895792ac639ed055d3b2051d36da0df99c",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs": "63d0a6c1e221bb40900ebe8b36137eccfa150fe0d264ac1cb004c6ed53b3cfbb",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishObjectiveConfig.cs": "5267891a5b5ddc2e977f392f8ffc2dc3fb6ba874a3170fbc7bc0a78e146d9e98",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishResolvedSetup.cs": "54fde884ec9610388f1f7613b4f05307da7c09f709ce612cfb3d2170532b9aed",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishScenarioDefinitionConfig.cs": "b689509b7b886d6d21b6c97beb8078cb3f69d2ae91da43dfc38910b739458b5d",
+    "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs": "97ce4618264011098b465c95da5fe88ea307fc403dd9d2c03fb6603ffbc11c2d",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.AirCombined80Authoring.cs": "d1d016b7c010901d3f19e73164b5ccd3d43395bf8bc6f3ba98fa5d36ab8f63b9",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundBa10Authoring.cs": "daa7e606a7450a0af3a6287e0ead40f17abf3c14dab48715fb7edaf3e7ca3035",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30.cs": "aad0003e7f795091a84d0146afb2009e61664b28e25a29a9a20cfb79c916f109",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.GroundObjective30Authoring.cs": "3d316af76f5d3f49cbc385b4a4cfc1dfa5086222e366b0770d03605ceb24eac0",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishObjectiveContracts.cs": "1827b2fec9a1afc2867e3957994b785d4bc9ef726f2e50930c4d39e1d2760ec9",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishReasonCodes.cs": "9afc595c6625b71208028c67d0b097b2fd0b3727ff5cf344b9fe943581f08ee9",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs": "4b72ea8fd6a591539d1025b09b64ab086da96494e09b741e7dfb2084e5fda228",
+    "Assets/Game/Scripts/Skirmish/Contracts/SkirmishScenarioContracts.cs": "08420f35bea3da3abc2be02b6d2f5944443a20847082a9929ab2a44af88277c7",
+    "Design/AgentReports/SkirmishExpansion/Full120/source-fit-authoring-batches-20261015-v2.json": "0a37b558422b2d95ee4338fda61cb9b0c43c3f429ac4ef15b189e79248107540"
+  },
+  "base": "97df692e737f03699550ad0eea72d8e19eb36cc0",
+  "candidate": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishConfigOnlyBatchBuilder.cs": "a83aa9206d6c6ef4cf3566e2faecebbae335b080d033d69a41a2979104af00ec",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalSourceLayoutAuthoring.cs": "3fd9ec3e5709a338a68b7ce216eea420acf69519df715e43e2f0140bfa84926d",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.LogicalSourceLayoutAuthoringControls.cs": "e7341fbfd1b98301f099ffb090e6b9bacc6df5d93e8bef466fa3fdd8186c7091"
+  },
+  "newtonsoft_sha256": "7292d3eb508652d14726749dd27094f2d481aeccf2db6427b62f68a71460897e",
+  "test_inputs": {
+    "ApiDoubles.cs": "0a610567f894492bd8a1b86af3db0f3a7a53295239745ec72dd3c92c9a422929",
+    "LogicalLayoutChecks.cs": "232a8154e6a2759dd19af7feba227bebe5d561730442e06cd8469e25d6c1a398",
+    "PortableLauncher.cs": "67a3eba53ad8edb6621a0680712e34dcc30ef1989539b04ab2b72c651131ce24",
+    "full-layout.fixture.json": "77e0aac3a5957526f19389a87daf8d38783d32b47b24210cf833f3ff9d0e09da"
+  }
+}

@@ -181,22 +181,7 @@ namespace Game.Editor
                 if (r.Start.Kind != (field ? SkirmishStartPackageId.FieldBase : SkirmishStartPackageId.EstablishedBase))
                     errors.Add("Start profile does not match the catalog tuple.");
             }
-            if (!Persistent(r.CampaignSource)) errors.Add("Explicit persistent existing Campaign source required.");
-            else
-            {
-                var source = r.CampaignSource;
-                if (!CampaignSources.Contains(AssetDatabase.GetAssetPath(source))) errors.Add("Source is outside the current Campaign reuse inventory.");
-                if (EditorUtility.IsDirty(source)) errors.Add("Campaign source has unsaved changes; freeze before authoring.");
-                if (!source.TryValidateMetadata(out string error) || !source.TryValidateLocalContentReferences(out error))
-                    errors.Add("Campaign metadata: " + error);
-                if (string.IsNullOrEmpty(r.ExpectedSourceIdentityHash) || source.SourceIdentityHash != r.ExpectedSourceIdentityHash ||
-                    string.IsNullOrEmpty(r.ExpectedSourceContentHash) || source.ContentHash != r.ExpectedSourceContentHash ||
-                    string.IsNullOrEmpty(r.ExpectedSourceAssetSha256) || HashFile(AssetDatabase.GetAssetPath(source)) != r.ExpectedSourceAssetSha256 ||
-                    string.IsNullOrEmpty(r.ExpectedSceneGuid) || source.SourceSceneReference?.AssetGUID != r.ExpectedSceneGuid ||
-                    string.IsNullOrEmpty(r.ExpectedGridGuid) || source.GridMetadata.AssetGuid != r.ExpectedGridGuid ||
-                    string.IsNullOrEmpty(r.ExpectedSurfaceGuid) || source.MapSurfaceDataReference?.AssetGUID != r.ExpectedSurfaceGuid)
-                    errors.Add("Pinned Campaign source/hash/scene/grid/surface mismatch.");
-            }
+            ValidateCampaignSource(r, errors);
             if (!Persistent(r.MeasuredLayout)) errors.Add("Explicit persistent measured logical layout required.");
             else
             {
@@ -218,6 +203,30 @@ namespace Game.Editor
                     AssetDatabase.GetAssetPath(existing) != definitionPath) errors.Add("Catalog identity already belongs to a different definition path.");
             }
         }
+
+        // Shared source admission only; measured-layout/publication guards stay in ValidateRequest.
+        internal static void ValidateCampaignSource(Request r, List<string> errors)
+        {
+            if (!Persistent(r.CampaignSource)) errors.Add("Explicit persistent existing Campaign source required.");
+            else
+            {
+                var source = r.CampaignSource;
+                if (!CampaignSources.Contains(AssetDatabase.GetAssetPath(source))) errors.Add("Source is outside the current Campaign reuse inventory.");
+                if (EditorUtility.IsDirty(source)) errors.Add("Campaign source has unsaved changes; freeze before authoring.");
+                if (!source.TryValidateMetadata(out string error) || !source.TryValidateLocalContentReferences(out error))
+                    errors.Add("Campaign metadata: " + error);
+                if (string.IsNullOrEmpty(r.ExpectedSourceIdentityHash) || source.SourceIdentityHash != r.ExpectedSourceIdentityHash ||
+                    string.IsNullOrEmpty(r.ExpectedSourceContentHash) || source.ContentHash != r.ExpectedSourceContentHash ||
+                    string.IsNullOrEmpty(r.ExpectedSourceAssetSha256) || HashFile(AssetDatabase.GetAssetPath(source)) != r.ExpectedSourceAssetSha256 ||
+                    string.IsNullOrEmpty(r.ExpectedSceneGuid) || source.SourceSceneReference?.AssetGUID != r.ExpectedSceneGuid ||
+                    string.IsNullOrEmpty(r.ExpectedGridGuid) || source.GridMetadata.AssetGuid != r.ExpectedGridGuid ||
+                    string.IsNullOrEmpty(r.ExpectedSurfaceGuid) || source.MapSurfaceDataReference?.AssetGUID != r.ExpectedSurfaceGuid)
+                    errors.Add("Pinned Campaign source/hash/scene/grid/surface mismatch.");
+            }
+        }
+
+        internal static void ValidateLogicalGeometryDeclaration(SkirmishMapLayoutConfig layout, OperationMapDefinition source, List<string> errors)
+            => ValidateGeometryDeclaration(layout, source, errors);
 
         private static void ValidateGeometryDeclaration(SkirmishMapLayoutConfig layout, OperationMapDefinition source, List<string> errors)
         {

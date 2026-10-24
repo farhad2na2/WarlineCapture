@@ -1,0 +1,1 @@
+using System;using System.Reflection;static class PortableLauncher{static int Main(string[] a){Assembly.LoadFrom(a[0]);return (int)typeof(LogicalLayoutChecks).GetMethod("Main",BindingFlags.Static|BindingFlags.NonPublic).Invoke(null,null);}}

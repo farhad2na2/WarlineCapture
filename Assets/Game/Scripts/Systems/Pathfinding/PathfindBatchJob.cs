@@ -50,6 +50,7 @@ namespace Game.Runtime
         [ReadOnly] public NativeArray<UnitGrid> LiveUnitGrids;
         [ReadOnly] public NativeArray<UnitFootprint> LiveUnitFootprints;
         [ReadOnly] public NativeArray<byte> LiveUnitManualGroupMembers;
+        [ReadOnly] public UnitPathPlacementValidation.UnitCoverage LiveUnitCoverage;
         [ReadOnly] public NativeArray<Entity> Entities;
         [ReadOnly] public NativeArray<UnitGrid> UnitGrids;
         [ReadOnly] public NativeArray<UnitFootprint> Footprints;
@@ -147,7 +148,7 @@ namespace Game.Runtime
                 Job.Grid, Job.Walkable, Job.DynamicBlocked, Job.FriendlyPassFactionIds, Job.Occupied,
                 Job.LiveUnitEntities, Job.LiveUnitGrids, Job.LiveUnitFootprints, Job.LiveUnitManualGroupMembers,
                 MovingEntity, new int2(x, z), FootprintSize, new int2(cx, cz), IsVehicle, ManualMove, FactionId,
-                IgnoredEntity, IgnoredCell, IgnoredSize);
+                IgnoredEntity, IgnoredCell, IgnoredSize, Job.LiveUnitCoverage);
             public int TraversalCost(int index, bool diagonal) => Job.GetTraversalCost(index, diagonal, IsVehicle);
             public int Epoch(int index) => Job.ScratchEpoch[index];
             public void SetEpoch(int index, int value) => Job.ScratchEpoch[index] = value;

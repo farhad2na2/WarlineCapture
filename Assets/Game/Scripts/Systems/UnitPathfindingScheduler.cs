@@ -92,7 +92,7 @@ namespace Game.Runtime
                 NativeBitArray dynamicBlockers = dynamicBlockerData.Blocked;
                 NativeArray<byte> friendlyPassFactionIds = dynamicBlockerData.FriendlyPassFactionIds;
                 NativeBitArray occupied = dynamicOccupancyData.Occupied;
-                liveUnitSnapshot.Capture(ref state, queries.LiveUnitsQuery);
+                liveUnitSnapshot.Capture(ref state, queries.LiveUnitsQuery, grid);
                 NativeArray<Entity> liveUnitEntities = liveUnitSnapshot.Entities;
                 NativeArray<UnitGrid> liveUnitGrids = liveUnitSnapshot.Grids;
                 NativeArray<UnitFootprint> liveUnitFootprints = liveUnitSnapshot.Footprints;
@@ -321,6 +321,7 @@ namespace Game.Runtime
                     LiveUnitGrids = liveUnitGrids,
                     LiveUnitFootprints = liveUnitFootprints,
                     LiveUnitManualGroupMembers = liveUnitManualGroupMembers,
+                    LiveUnitCoverage = liveUnitSnapshot.Coverage,
                     Entities = requestEntities,
                     UnitGrids = requestUnitGrids,
                     Footprints = requestFootprints,

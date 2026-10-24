@@ -1,5 +1,8 @@
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Collections.LowLevel.Unsafe;
+using Game.Runtime.Pathfinding;
 using Game.Components;
 
 namespace Game.Runtime
@@ -10,6 +13,34 @@ namespace Game.Runtime
         private NativeList<UnitGrid> _grids;
         private NativeList<UnitFootprint> _footprints;
         private NativeList<byte> _manualGroupMembers;
+        private NativeBitArray _coverageCells;
+        private PathUnitCoverageGrid _coverageGrid;
+        private bool _coverageComplete;
+        public UnitPathPlacementValidation.UnitCoverage Coverage => new UnitPathPlacementValidation.UnitCoverage(_coverageCells,_coverageGrid,_coverageComplete);
+        private struct CoverageWriter : IPathUnitCoverageStorage
+        {
+            public NativeBitArray Cells;
+            public bool IsMarked(int i)=>Cells.IsSet(i);
+            public void Mark(int i)=>Cells.Set(i,true);
+        }
+        private void BuildCoverage(in GridConfig grid)
+        {
+            _coverageComplete=false;
+            if(!PathUnitCoverageKernel.TryCreateGrid(grid.Width,grid.Height,out _coverageGrid))return;
+            if(!_coverageCells.IsCreated||_coverageCells.Length!=_coverageGrid.TileCount)
+            {
+                if(_coverageCells.IsCreated)_coverageCells.Dispose();
+                _coverageCells=new NativeBitArray(_coverageGrid.TileCount,Allocator.Persistent,NativeArrayOptions.ClearMemory);
+            }
+            else _coverageCells.Clear();
+            var writer=new CoverageWriter{Cells=_coverageCells};int writesRemaining=_coverageGrid.TileCount;
+            for(int i=0;i<_entities.Length;i++)
+            {
+                int2 cell=_grids[i].Cell,size=_footprints[i].Size;
+                if(!PathUnitCoverageKernel.TryAppend(in _coverageGrid,ref writer,cell.x,cell.y,size.x,size.y,ref writesRemaining))return;
+            }
+            _coverageComplete=true;
+        }
         private EntityTypeHandle _entityType;
         private ComponentTypeHandle<UnitGrid> _gridType;
         private ComponentTypeHandle<UnitFootprint> _footprintType;
@@ -30,8 +61,9 @@ namespace Game.Runtime
             _manualGroupLookup = state.GetComponentLookup<ManualMoveGroupMemberTag>(true);
         }
 
-        public void Capture(ref SystemState state, EntityQuery liveUnitsQuery)
+        public void Capture(ref SystemState state, EntityQuery liveUnitsQuery, in GridConfig grid)
         {
+            _coverageComplete=false;
             int capacity = liveUnitsQuery.CalculateEntityCount();
             if (capacity < 1)
                 capacity = 1;
@@ -65,10 +97,15 @@ namespace Game.Runtime
                     _manualGroupMembers.Add((byte)(_manualGroupLookup.HasComponent(entity) ? 1 : 0));
                 }
             }
+            BuildCoverage(grid);
         }
 
         public void Dispose()
         {
+            _coverageComplete=false;
+            if(_coverageCells.IsCreated)_coverageCells.Dispose();
+            _coverageCells=default;
+            _coverageGrid=default;
             if (_entities.IsCreated)
                 _entities.Dispose();
             if (_grids.IsCreated)

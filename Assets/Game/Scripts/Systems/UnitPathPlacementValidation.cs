@@ -9,6 +9,26 @@ namespace Game.Runtime
     internal struct UnitPathPlacementValidation
     {
         public const int VehicleOccupancyPaddingCells = PathPlacementKernel.VehicleOccupancyPaddingCells;
+        internal readonly struct UnitCoverage
+        {
+            private readonly NativeBitArray cells;
+            private readonly PathUnitCoverageGrid grid;
+            private readonly byte complete;
+            internal UnitCoverage(NativeBitArray cells,PathUnitCoverageGrid grid,bool complete)
+            { this.cells=cells;this.grid=grid;this.complete=(byte)(complete?1:0); }
+            private struct Reader : IPathUnitCoverageStorage
+            {
+                public NativeBitArray Cells;
+                public bool IsMarked(int i)=>Cells.IsSet(i);
+                public void Mark(int i)=>Cells.Set(i,true);
+            }
+            internal bool CanSkip(in GridConfig actual,int2 cell,int2 footprint)
+            {
+                if(complete==0||!cells.IsCreated||cells.Length!=grid.TileCount||grid.Width!=actual.Width||grid.Height!=actual.Height)return false;
+                var reader=new Reader{Cells=cells};
+                return !PathUnitCoverageKernel.MayOverlap(in grid,ref reader,cell.x,cell.y,footprint.x,footprint.y);
+            }
+        }
         public static bool CanPlaceForPathing(
             in GridConfig grid,
             NativeArray<GridWalkable> walkable,
@@ -28,10 +48,11 @@ namespace Game.Runtime
             byte factionId,
             Entity ignoredOccupancyEntity = default,
             int2 ignoredOccupancyCell = default,
-            int2 ignoredOccupancySize = default)
+            int2 ignoredOccupancySize = default,
+            UnitCoverage unitCoverage = default)
         {
             var context = new NativeContext { Grid=grid, WalkableCells=walkable,BlockedCells=dynamicBlocked,FriendlyIds=friendlyPassFactionIds,OccupiedCells=occupied,Entities=liveUnitEntities,Grids=liveUnitGrids,Footprints=liveUnitFootprints,Groups=liveUnitManualGroupMembers };
-            return PathPlacementKernel.CanPlaceForPathing(ref context,Identity(movingEntity),Cell(cell),Cell(footprintSize),Cell(currentCell),isVehicle,manualMove,factionId,Identity(ignoredOccupancyEntity),Cell(ignoredOccupancyCell),Cell(ignoredOccupancySize));
+            return PathPlacementKernel.CanPlaceForPathingWithCoverage(ref context,Identity(movingEntity),Cell(cell),Cell(footprintSize),Cell(currentCell),isVehicle,manualMove,factionId,Identity(ignoredOccupancyEntity),Cell(ignoredOccupancyCell),Cell(ignoredOccupancySize),unitCoverage.CanSkip(grid,cell,footprintSize));
         }
         private struct NativeContext : IPathPlacementContext
         {

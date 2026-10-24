@@ -55,6 +55,21 @@ namespace Game.Runtime.Pathfinding
             PlacementIdentity ignoredOccupancyEntity = default,
             PlacementCell ignoredOccupancyCell = default,
             PlacementCell ignoredOccupancySize = default) where T : struct, IPathPlacementContext
+        { return CanPlaceForPathingWithCoverage(ref context,movingEntity,cell,footprintSize,currentCell,isVehicle,manualMove,factionId,ignoredOccupancyEntity,ignoredOccupancyCell,ignoredOccupancySize,false); }
+
+        internal static bool CanPlaceForPathingWithCoverage<T>(
+            ref T context,
+            PlacementIdentity movingEntity,
+            PlacementCell cell,
+            PlacementCell footprintSize,
+            PlacementCell currentCell,
+            bool isVehicle,
+            bool manualMove,
+            byte factionId,
+            PlacementIdentity ignoredOccupancyEntity = default,
+            PlacementCell ignoredOccupancyCell = default,
+            PlacementCell ignoredOccupancySize = default,
+            bool noUnitOverlap = false) where T : struct, IPathPlacementContext
         {
             bool canPlace = isVehicle
                 ? CanVehiclePlaceForPathing(ref context,
@@ -65,7 +80,8 @@ namespace Game.Runtime.Pathfinding
                     factionId,
                     ignoredOccupancyEntity,
                     ignoredOccupancyCell,
-                    ignoredOccupancySize)
+                    ignoredOccupancySize,
+                    noUnitOverlap)
                 : CanInfantryPlaceForPathing(ref context,
                     movingEntity,
                     cell,
@@ -75,7 +91,8 @@ namespace Game.Runtime.Pathfinding
                     factionId,
                     ignoredOccupancyEntity,
                     ignoredOccupancyCell,
-                    ignoredOccupancySize);
+                    ignoredOccupancySize,
+                    noUnitOverlap);
             if (!canPlace)
                 return false;
 
@@ -95,7 +112,7 @@ namespace Game.Runtime.Pathfinding
             byte factionId,
             PlacementIdentity ignoredOccupancyEntity,
             PlacementCell ignoredOccupancyCell,
-            PlacementCell ignoredOccupancySize) where T : struct, IPathPlacementContext
+            PlacementCell ignoredOccupancySize, bool noUnitOverlap) where T : struct, IPathPlacementContext
         {
             PlacementCell clamped = PlacementFootprint.ClampSize(footprintSize);
             PlacementCell min = PlacementFootprint.GetMinCell(cell, clamped);
@@ -127,6 +144,10 @@ namespace Game.Runtime.Pathfinding
                         return false;
                 }
             }
+
+            // All original grid/static/occupancy/padding checks above still execute.
+            // The native snapshot may only prove the target cannot overlap ANY unit rectangle.
+            if(noUnitOverlap)return true;
 
             for (int i = 0; i < context.UnitCount; i++)
             {
@@ -182,7 +203,7 @@ namespace Game.Runtime.Pathfinding
             byte factionId,
             PlacementIdentity ignoredOccupancyEntity,
             PlacementCell ignoredOccupancyCell,
-            PlacementCell ignoredOccupancySize) where T : struct, IPathPlacementContext
+            PlacementCell ignoredOccupancySize, bool noUnitOverlap) where T : struct, IPathPlacementContext
         {
             int padding = System.Math.Max(0, VehicleOccupancyPaddingCells);
             PlacementCell clamped = PlacementFootprint.ClampSize(footprintSize);
@@ -236,6 +257,10 @@ namespace Game.Runtime.Pathfinding
                     }
                 }
             }
+
+            // All original grid/static/occupancy/padding checks above still execute.
+            // The native snapshot may only prove the target cannot overlap ANY unit rectangle.
+            if(noUnitOverlap)return true;
 
             for (int i = 0; i < context.UnitCount; i++)
             {

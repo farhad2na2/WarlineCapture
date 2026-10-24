@@ -1,0 +1,6109 @@
+{
+  "base": "97df692e737f03699550ad0eea72d8e19eb36cc0",
+  "source_paths_and_sha256": {
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset": "6dc011093e5298c07985d264c5483db6875e2593cdec0ff96bd2a05d6838ecfb",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Grid.asset": "7aa1a9744215a444064f6a9e09fb7e6aacbdc0155b4f5cf38b19be9a5d98df1a",
+    "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Surface.asset": "048fe898cea5c3a1158470d5c299222715d8a911ecde6c1155aa30bc75e347ce"
+  },
+  "coordinate_frame": {
+    "origin": [
+      860.0,
+      0.0,
+      300.0
+    ],
+    "cell_size": 1,
+    "grid_dimensions": [
+      440,
+      220
+    ],
+    "cell_bounds": "half-open"
+  },
+  "logical_sector_cells_half_open": [
+    122,
+    47,
+    432,
+    161
+  ],
+  "logical_sector_world_xz_half_open": [
+    982,
+    347,
+    1292,
+    461
+  ],
+  "scope": "ConstructedSourceCellPackingAndConnectivityProposalOnly",
+  "sizes": [
+    {
+      "size": "Standard",
+      "canonical_size_row": {
+        "catalog_id": "S050",
+        "size_id": "Standard",
+        "army_profile": "G",
+        "start_profile": "E",
+        "objective_id": "BA",
+        "readiness": "2",
+        "deadline_seconds": "1080",
+        "player_rifle": "12",
+        "player_gunner": "4",
+        "player_rocketeer": "4",
+        "player_car": "1",
+        "player_apc": "1",
+        "player_tank": "1",
+        "player_aa": "0",
+        "player_transport_heli": "0",
+        "player_infantry": "20",
+        "player_ground": "3",
+        "player_air": "0",
+        "player_combat": "23",
+        "player_supply": "34",
+        "player_logistics_support": "3",
+        "player_objective_trucks": "0",
+        "player_starting_structures": "10",
+        "player_designated_rifles": "0",
+        "enemy_rifle": "12",
+        "enemy_gunner": "4",
+        "enemy_rocketeer": "4",
+        "enemy_car": "1",
+        "enemy_apc": "1",
+        "enemy_tank": "1",
+        "enemy_aa": "0",
+        "enemy_transport_heli": "0",
+        "enemy_infantry": "20",
+        "enemy_ground": "3",
+        "enemy_air": "0",
+        "enemy_combat": "23",
+        "enemy_supply": "34",
+        "enemy_logistics_support": "3",
+        "enemy_objective_trucks": "0",
+        "enemy_starting_structures": "10",
+        "enemy_designated_rifles": "0",
+        "materials_each": "900",
+        "oil_each": "240",
+        "usable_fuel_each": "700",
+        "materials_capacity_each": "1800",
+        "oil_capacity_each": "1000",
+        "fuel_capacity_each": "1600",
+        "infantry_queues_each": "2",
+        "vehicle_queues_each": "1",
+        "logistics_queues_each": "1",
+        "refinery_modules_each": "1",
+        "infantry_cap_each": "48",
+        "ground_cap_each": "8",
+        "tactical_air_cap_each": "2",
+        "supply_cap_each": "128",
+        "logistics_support_cap_each": "6",
+        "delivery_carrier_cap_each": "2",
+        "objective_support_extra_player": "0",
+        "player_built_structure_cap_each": "20",
+        "barrier_segment_cap_each": "40",
+        "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+        "status": "Planned"
+      },
+      "compounds_cells_half_open": [
+        [
+          133,
+          47,
+          243,
+          137
+        ],
+        [
+          322,
+          47,
+          432,
+          137
+        ]
+      ],
+      "compound_dimensions": [
+        110,
+        90
+      ],
+      "compound_horizontal_gap_cells": 79,
+      "facility_shelf_widths": [
+        88,
+        84,
+        46
+      ],
+      "row1_width_88_with_gaps_fits_110": true,
+      "facility_count_each": 10,
+      "facilities": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            139,
+            52,
+            164,
+            67
+          ],
+          "proposed_world_xz": [
+            1011.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            199,
+            52,
+            227,
+            67
+          ],
+          "proposed_world_xz": [
+            1073.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            139,
+            72,
+            158,
+            88
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            163,
+            72,
+            183,
+            86
+          ],
+          "proposed_world_xz": [
+            1033.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            188,
+            72,
+            202,
+            82
+          ],
+          "proposed_world_xz": [
+            1055.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            207,
+            72,
+            223,
+            87
+          ],
+          "proposed_world_xz": [
+            1075.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            139,
+            93,
+            154,
+            97
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            159,
+            93,
+            169,
+            103
+          ],
+          "proposed_world_xz": [
+            1024.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            174,
+            93,
+            177,
+            97
+          ],
+          "proposed_world_xz": [
+            1035.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            182,
+            93,
+            185,
+            97
+          ],
+          "proposed_world_xz": [
+            1043.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            328,
+            52,
+            353,
+            67
+          ],
+          "proposed_world_xz": [
+            1200.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            388,
+            52,
+            416,
+            67
+          ],
+          "proposed_world_xz": [
+            1262.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            328,
+            72,
+            347,
+            88
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            352,
+            72,
+            372,
+            86
+          ],
+          "proposed_world_xz": [
+            1222.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            377,
+            72,
+            391,
+            82
+          ],
+          "proposed_world_xz": [
+            1244.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            396,
+            72,
+            412,
+            87
+          ],
+          "proposed_world_xz": [
+            1264.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            328,
+            93,
+            343,
+            97
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            348,
+            93,
+            358,
+            103
+          ],
+          "proposed_world_xz": [
+            1213.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            363,
+            93,
+            366,
+            97
+          ],
+          "proposed_world_xz": [
+            1224.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            371,
+            93,
+            374,
+            97
+          ],
+          "proposed_world_xz": [
+            1232.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        }
+      ],
+      "spawns": [
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            148,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            150,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            152,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            154,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            156,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            158,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            144,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            146,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            148,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            150,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            152,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            154,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            156,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            158,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "car",
+          "cell": [
+            174,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1034.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "apc",
+          "cell": [
+            179,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1039.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            184,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1044.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tanker",
+          "cell": [
+            189,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1049.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            194,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1054.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            199,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1059.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            337,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            339,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            341,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            343,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            345,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            347,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            333,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            335,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            337,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            339,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            341,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            343,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            345,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            347,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "car",
+          "cell": [
+            363,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1223.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "apc",
+          "cell": [
+            368,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1228.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            373,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1233.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tanker",
+          "cell": [
+            378,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1238.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            383,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1243.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            388,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1248.5,
+            418.5
+          ]
+        }
+      ],
+      "spawn_count_each": 26,
+      "minimum_opposing_spawn_center_distance": 130.0,
+      "conservative_unit_graph_cells": 29490,
+      "connected_facility_approaches": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            151,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            213,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            148,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            173,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            195,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            215,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            146,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            164,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            175,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            183,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            340,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            402,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            337,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            362,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            384,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            404,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            335,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            353,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            364,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            372,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        }
+      ],
+      "approaches": [
+        {
+          "route_id": "proposal.approach.0",
+          "source_cell_polyline": [
+            [
+              240,
+              55
+            ],
+            [
+              324,
+              55
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              355.5
+            ],
+            [
+              1184.5,
+              355.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.1",
+          "source_cell_polyline": [
+            [
+              240,
+              91
+            ],
+            [
+              324,
+              91
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              391.5
+            ],
+            [
+              1184.5,
+              391.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.2",
+          "source_cell_polyline": [
+            [
+              240,
+              139
+            ],
+            [
+              324,
+              139
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              439.5
+            ],
+            [
+              1184.5,
+              439.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        }
+      ],
+      "runtime_occupancy_included": false,
+      "source_geometry_cache_included": false,
+      "source_fit_certified": false
+    },
+    {
+      "size": "War",
+      "canonical_size_row": {
+        "catalog_id": "S050",
+        "size_id": "War",
+        "army_profile": "G",
+        "start_profile": "E",
+        "objective_id": "BA",
+        "readiness": "2",
+        "deadline_seconds": "1500",
+        "player_rifle": "16",
+        "player_gunner": "4",
+        "player_rocketeer": "8",
+        "player_car": "1",
+        "player_apc": "2",
+        "player_tank": "2",
+        "player_aa": "0",
+        "player_transport_heli": "0",
+        "player_infantry": "28",
+        "player_ground": "5",
+        "player_air": "0",
+        "player_combat": "33",
+        "player_supply": "52",
+        "player_logistics_support": "4",
+        "player_objective_trucks": "0",
+        "player_starting_structures": "11",
+        "player_designated_rifles": "0",
+        "enemy_rifle": "16",
+        "enemy_gunner": "4",
+        "enemy_rocketeer": "8",
+        "enemy_car": "1",
+        "enemy_apc": "2",
+        "enemy_tank": "2",
+        "enemy_aa": "0",
+        "enemy_transport_heli": "0",
+        "enemy_infantry": "28",
+        "enemy_ground": "5",
+        "enemy_air": "0",
+        "enemy_combat": "33",
+        "enemy_supply": "52",
+        "enemy_logistics_support": "4",
+        "enemy_objective_trucks": "0",
+        "enemy_starting_structures": "11",
+        "enemy_designated_rifles": "0",
+        "materials_each": "1350",
+        "oil_each": "360",
+        "usable_fuel_each": "1050",
+        "materials_capacity_each": "2700",
+        "oil_capacity_each": "1500",
+        "fuel_capacity_each": "2400",
+        "infantry_queues_each": "2",
+        "vehicle_queues_each": "2",
+        "logistics_queues_each": "1",
+        "refinery_modules_each": "2",
+        "infantry_cap_each": "96",
+        "ground_cap_each": "12",
+        "tactical_air_cap_each": "4",
+        "supply_cap_each": "200",
+        "logistics_support_cap_each": "8",
+        "delivery_carrier_cap_each": "2",
+        "objective_support_extra_player": "0",
+        "player_built_structure_cap_each": "30",
+        "barrier_segment_cap_each": "60",
+        "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+        "status": "Planned"
+      },
+      "compounds_cells_half_open": [
+        [
+          133,
+          47,
+          243,
+          137
+        ],
+        [
+          322,
+          47,
+          432,
+          137
+        ]
+      ],
+      "compound_dimensions": [
+        110,
+        90
+      ],
+      "compound_horizontal_gap_cells": 79,
+      "facility_shelf_widths": [
+        88,
+        84,
+        46
+      ],
+      "row1_width_88_with_gaps_fits_110": true,
+      "facility_count_each": 11,
+      "facilities": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            139,
+            52,
+            164,
+            67
+          ],
+          "proposed_world_xz": [
+            1011.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.refinery.module",
+          "unrotated_configured_reserved_cells": [
+            169,
+            52,
+            194,
+            67
+          ],
+          "proposed_world_xz": [
+            1041.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            199,
+            52,
+            227,
+            67
+          ],
+          "proposed_world_xz": [
+            1073.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            139,
+            72,
+            158,
+            88
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            163,
+            72,
+            183,
+            86
+          ],
+          "proposed_world_xz": [
+            1033.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            188,
+            72,
+            202,
+            82
+          ],
+          "proposed_world_xz": [
+            1055.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            207,
+            72,
+            223,
+            87
+          ],
+          "proposed_world_xz": [
+            1075.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            139,
+            93,
+            154,
+            97
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            159,
+            93,
+            169,
+            103
+          ],
+          "proposed_world_xz": [
+            1024.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            174,
+            93,
+            177,
+            97
+          ],
+          "proposed_world_xz": [
+            1035.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            182,
+            93,
+            185,
+            97
+          ],
+          "proposed_world_xz": [
+            1043.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            328,
+            52,
+            353,
+            67
+          ],
+          "proposed_world_xz": [
+            1200.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery.module",
+          "unrotated_configured_reserved_cells": [
+            358,
+            52,
+            383,
+            67
+          ],
+          "proposed_world_xz": [
+            1230.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            388,
+            52,
+            416,
+            67
+          ],
+          "proposed_world_xz": [
+            1262.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            328,
+            72,
+            347,
+            88
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            352,
+            72,
+            372,
+            86
+          ],
+          "proposed_world_xz": [
+            1222.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            377,
+            72,
+            391,
+            82
+          ],
+          "proposed_world_xz": [
+            1244.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            396,
+            72,
+            412,
+            87
+          ],
+          "proposed_world_xz": [
+            1264.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            328,
+            93,
+            343,
+            97
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            348,
+            93,
+            358,
+            103
+          ],
+          "proposed_world_xz": [
+            1213.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            363,
+            93,
+            366,
+            97
+          ],
+          "proposed_world_xz": [
+            1224.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            371,
+            93,
+            374,
+            97
+          ],
+          "proposed_world_xz": [
+            1232.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        }
+      ],
+      "spawns": [
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            148,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            150,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            152,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            154,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            156,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            158,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            148,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            150,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            152,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            154,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            156,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            158,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            140,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            142,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            144,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            146,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            148,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            150,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            152,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            154,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "car",
+          "cell": [
+            174,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1034.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "apc",
+          "cell": [
+            179,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1039.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "apc",
+          "cell": [
+            184,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1044.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            189,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1049.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            194,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1054.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tanker",
+          "cell": [
+            199,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1059.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            174,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1034.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            179,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1039.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            184,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1044.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            337,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            339,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            341,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            343,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            345,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            347,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            337,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            339,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            341,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            343,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            345,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            347,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            329,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            331,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            333,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            335,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            337,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            339,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            341,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            343,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "car",
+          "cell": [
+            363,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1223.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "apc",
+          "cell": [
+            368,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1228.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "apc",
+          "cell": [
+            373,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1233.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            378,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1238.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            383,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1243.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tanker",
+          "cell": [
+            388,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1248.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            363,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1223.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            368,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1228.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            373,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1233.5,
+            424.5
+          ]
+        }
+      ],
+      "spawn_count_each": 37,
+      "minimum_opposing_spawn_center_distance": 130.0,
+      "conservative_unit_graph_cells": 28572,
+      "connected_facility_approaches": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            151,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.refinery.module",
+          "conservative_edge_cell": [
+            181,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            213,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            148,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            173,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            195,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            215,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            146,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            164,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            175,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            183,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            340,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery.module",
+          "conservative_edge_cell": [
+            370,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            402,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            337,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            362,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            384,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            404,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            335,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            353,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            364,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            372,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        }
+      ],
+      "approaches": [
+        {
+          "route_id": "proposal.approach.0",
+          "source_cell_polyline": [
+            [
+              240,
+              55
+            ],
+            [
+              324,
+              55
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              355.5
+            ],
+            [
+              1184.5,
+              355.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.1",
+          "source_cell_polyline": [
+            [
+              240,
+              91
+            ],
+            [
+              324,
+              91
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              391.5
+            ],
+            [
+              1184.5,
+              391.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.2",
+          "source_cell_polyline": [
+            [
+              240,
+              139
+            ],
+            [
+              324,
+              139
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              439.5
+            ],
+            [
+              1184.5,
+              439.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        }
+      ],
+      "runtime_occupancy_included": false,
+      "source_geometry_cache_included": false,
+      "source_fit_certified": false
+    },
+    {
+      "size": "LargeWar",
+      "canonical_size_row": {
+        "catalog_id": "S050",
+        "size_id": "LargeWar",
+        "army_profile": "G",
+        "start_profile": "E",
+        "objective_id": "BA",
+        "readiness": "2",
+        "deadline_seconds": "1800",
+        "player_rifle": "24",
+        "player_gunner": "8",
+        "player_rocketeer": "8",
+        "player_car": "2",
+        "player_apc": "2",
+        "player_tank": "3",
+        "player_aa": "0",
+        "player_transport_heli": "0",
+        "player_infantry": "40",
+        "player_ground": "7",
+        "player_air": "0",
+        "player_combat": "47",
+        "player_supply": "74",
+        "player_logistics_support": "4",
+        "player_objective_trucks": "0",
+        "player_starting_structures": "11",
+        "player_designated_rifles": "0",
+        "enemy_rifle": "24",
+        "enemy_gunner": "8",
+        "enemy_rocketeer": "8",
+        "enemy_car": "2",
+        "enemy_apc": "2",
+        "enemy_tank": "3",
+        "enemy_aa": "0",
+        "enemy_transport_heli": "0",
+        "enemy_infantry": "40",
+        "enemy_ground": "7",
+        "enemy_air": "0",
+        "enemy_combat": "47",
+        "enemy_supply": "74",
+        "enemy_logistics_support": "4",
+        "enemy_objective_trucks": "0",
+        "enemy_starting_structures": "11",
+        "enemy_designated_rifles": "0",
+        "materials_each": "1800",
+        "oil_each": "480",
+        "usable_fuel_each": "1400",
+        "materials_capacity_each": "3600",
+        "oil_capacity_each": "2000",
+        "fuel_capacity_each": "3200",
+        "infantry_queues_each": "2",
+        "vehicle_queues_each": "2",
+        "logistics_queues_each": "1",
+        "refinery_modules_each": "2",
+        "infantry_cap_each": "144",
+        "ground_cap_each": "20",
+        "tactical_air_cap_each": "6",
+        "supply_cap_each": "320",
+        "logistics_support_cap_each": "10",
+        "delivery_carrier_cap_each": "2",
+        "objective_support_extra_player": "0",
+        "player_built_structure_cap_each": "40",
+        "barrier_segment_cap_each": "80",
+        "loaded_vehicle_fuel": "Full certified role tanks; report actual totals separately from usable store",
+        "status": "Planned"
+      },
+      "compounds_cells_half_open": [
+        [
+          133,
+          47,
+          243,
+          137
+        ],
+        [
+          322,
+          47,
+          432,
+          137
+        ]
+      ],
+      "compound_dimensions": [
+        110,
+        90
+      ],
+      "compound_horizontal_gap_cells": 79,
+      "facility_shelf_widths": [
+        88,
+        84,
+        46
+      ],
+      "row1_width_88_with_gaps_fits_110": true,
+      "facility_count_each": 11,
+      "facilities": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            139,
+            52,
+            164,
+            67
+          ],
+          "proposed_world_xz": [
+            1011.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.refinery.module",
+          "unrotated_configured_reserved_cells": [
+            169,
+            52,
+            194,
+            67
+          ],
+          "proposed_world_xz": [
+            1041.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            199,
+            52,
+            227,
+            67
+          ],
+          "proposed_world_xz": [
+            1073.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            139,
+            72,
+            158,
+            88
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            163,
+            72,
+            183,
+            86
+          ],
+          "proposed_world_xz": [
+            1033.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            188,
+            72,
+            202,
+            82
+          ],
+          "proposed_world_xz": [
+            1055.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            207,
+            72,
+            223,
+            87
+          ],
+          "proposed_world_xz": [
+            1075.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            139,
+            93,
+            154,
+            97
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            159,
+            93,
+            169,
+            103
+          ],
+          "proposed_world_xz": [
+            1024.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            174,
+            93,
+            177,
+            97
+          ],
+          "proposed_world_xz": [
+            1035.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            182,
+            93,
+            185,
+            97
+          ],
+          "proposed_world_xz": [
+            1043.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "unrotated_configured_reserved_cells": [
+            328,
+            52,
+            353,
+            67
+          ],
+          "proposed_world_xz": [
+            1200.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery.module",
+          "unrotated_configured_reserved_cells": [
+            358,
+            52,
+            383,
+            67
+          ],
+          "proposed_world_xz": [
+            1230.5,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "unrotated_configured_reserved_cells": [
+            388,
+            52,
+            416,
+            67
+          ],
+          "proposed_world_xz": [
+            1262.0,
+            359.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "unrotated_configured_reserved_cells": [
+            328,
+            72,
+            347,
+            88
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            380.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "unrotated_configured_reserved_cells": [
+            352,
+            72,
+            372,
+            86
+          ],
+          "proposed_world_xz": [
+            1222.0,
+            379.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "unrotated_configured_reserved_cells": [
+            377,
+            72,
+            391,
+            82
+          ],
+          "proposed_world_xz": [
+            1244.0,
+            377.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "unrotated_configured_reserved_cells": [
+            396,
+            72,
+            412,
+            87
+          ],
+          "proposed_world_xz": [
+            1264.0,
+            379.5
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "unrotated_configured_reserved_cells": [
+            328,
+            93,
+            343,
+            97
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "unrotated_configured_reserved_cells": [
+            348,
+            93,
+            358,
+            103
+          ],
+          "proposed_world_xz": [
+            1213.0,
+            398.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "unrotated_configured_reserved_cells": [
+            363,
+            93,
+            366,
+            97
+          ],
+          "proposed_world_xz": [
+            1224.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "unrotated_configured_reserved_cells": [
+            371,
+            93,
+            374,
+            97
+          ],
+          "proposed_world_xz": [
+            1232.5,
+            395.0
+          ],
+          "height_min": 0.009179776534438133,
+          "height_max": 0.009179776534438133,
+          "configured_height_span": 0.0,
+          "conservative_serialized_cell_screen_pass": true,
+          "actual_model_origin_and_ordinary_placement_certified": false
+        }
+      ],
+      "spawns": [
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            148,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            150,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            152,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            154,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            156,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            158,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            148,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            150,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            152,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            154,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            156,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            158,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            140,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            142,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            144,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rifle",
+          "cell": [
+            146,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            148,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            150,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            152,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            154,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            156,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            158,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            140,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1000.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "gunner",
+          "cell": [
+            142,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1002.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            144,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1004.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            146,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1006.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            148,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1008.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            150,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1010.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            152,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1012.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            154,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1014.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            156,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1016.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "rocketeer",
+          "cell": [
+            158,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1018.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "car",
+          "cell": [
+            174,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1034.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "car",
+          "cell": [
+            179,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1039.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "apc",
+          "cell": [
+            184,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1044.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "apc",
+          "cell": [
+            189,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1049.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            194,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1054.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            199,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1059.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tank",
+          "cell": [
+            174,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1034.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "tanker",
+          "cell": [
+            179,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1039.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            184,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1044.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            189,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1049.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 1,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            194,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1054.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            337,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            339,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            341,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            343,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            345,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            347,
+            116
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            416.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            337,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            339,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            341,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            343,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            345,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            347,
+            118
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            329,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            331,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            333,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rifle",
+          "cell": [
+            335,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            337,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            339,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            341,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            343,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            345,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            347,
+            120
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            420.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            329,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1189.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "gunner",
+          "cell": [
+            331,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1191.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            333,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1193.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            335,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1195.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            337,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1197.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            339,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1199.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            341,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1201.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            343,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1203.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            345,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1205.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "rocketeer",
+          "cell": [
+            347,
+            122
+          ],
+          "footprint": [
+            1,
+            1
+          ],
+          "proposed_world_xz": [
+            1207.5,
+            422.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "car",
+          "cell": [
+            363,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1223.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "car",
+          "cell": [
+            368,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1228.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "apc",
+          "cell": [
+            373,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1233.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "apc",
+          "cell": [
+            378,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1238.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            383,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1243.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            388,
+            118
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1248.5,
+            418.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tank",
+          "cell": [
+            363,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1223.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "tanker",
+          "cell": [
+            368,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1228.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            373,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1233.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            378,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1238.5,
+            424.5
+          ]
+        },
+        {
+          "faction": 2,
+          "canonical_role": "logistics_truck",
+          "cell": [
+            383,
+            124
+          ],
+          "footprint": [
+            3,
+            3
+          ],
+          "proposed_world_xz": [
+            1243.5,
+            424.5
+          ]
+        }
+      ],
+      "spawn_count_each": 51,
+      "minimum_opposing_spawn_center_distance": 130.0,
+      "conservative_unit_graph_cells": 28572,
+      "connected_facility_approaches": [
+        {
+          "faction": 1,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            151,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.refinery.module",
+          "conservative_edge_cell": [
+            181,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            213,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            148,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            173,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            195,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            215,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            146,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            164,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            175,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 1,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            183,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery",
+          "conservative_edge_cell": [
+            340,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.refinery.module",
+          "conservative_edge_cell": [
+            370,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.barracks",
+          "conservative_edge_cell": [
+            402,
+            69
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fabrication_depot",
+          "conservative_edge_cell": [
+            337,
+            90
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.ground_staging",
+          "conservative_edge_cell": [
+            362,
+            88
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.fuel_bladder",
+          "conservative_edge_cell": [
+            384,
+            84
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.helipad",
+          "conservative_edge_cell": [
+            404,
+            89
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.oil_pump",
+          "conservative_edge_cell": [
+            335,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.satellite_dish",
+          "conservative_edge_cell": [
+            353,
+            105
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower",
+          "conservative_edge_cell": [
+            364,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        },
+        {
+          "faction": 2,
+          "structure": "building.watchtower.approach",
+          "conservative_edge_cell": [
+            372,
+            99
+          ],
+          "source_graph_connected": true,
+          "native_service_goal_certified": false
+        }
+      ],
+      "approaches": [
+        {
+          "route_id": "proposal.approach.0",
+          "source_cell_polyline": [
+            [
+              240,
+              55
+            ],
+            [
+              324,
+              55
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              355.5
+            ],
+            [
+              1184.5,
+              355.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.1",
+          "source_cell_polyline": [
+            [
+              240,
+              91
+            ],
+            [
+              324,
+              91
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              391.5
+            ],
+            [
+              1184.5,
+              391.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        },
+        {
+          "route_id": "proposal.approach.2",
+          "source_cell_polyline": [
+            [
+              240,
+              139
+            ],
+            [
+              324,
+              139
+            ]
+          ],
+          "world_xz_polyline": [
+            [
+              1100.5,
+              439.5
+            ],
+            [
+              1184.5,
+              439.5
+            ]
+          ],
+          "cardinal_length_cells": 84,
+          "max_center_height_step": 0.0,
+          "all_3x3_footprints_source_connected": true,
+          "native_route_or_tactical_independence_certified": false
+        }
+      ],
+      "runtime_occupancy_included": false,
+      "source_geometry_cache_included": false,
+      "source_fit_certified": false
+    }
+  ],
+  "physical_geometry_modified": false,
+  "canonical_budget_modified": false,
+  "new_native_run": false,
+  "source_fit_certified": false,
+  "y_policy": "XZ proposal only; actual original grounding/factory buildPlaneY remains authoritative, not zeroed or reconstructed here"
+}

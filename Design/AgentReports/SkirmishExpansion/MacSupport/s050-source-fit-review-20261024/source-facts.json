@@ -1,0 +1,838 @@
+{
+  "base": "97df692e737f03699550ad0eea72d8e19eb36cc0",
+  "policy": {
+    "path": "Design/MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md",
+    "git_blob_sha1": "5be330902cf4e8a641d5fb5ecfaf6956df9804ea",
+    "raw_sha256": "763182e59584116e9529e34937cae01380027523c3d78df6b604b2a68f373797",
+    "bytes": 8563
+  },
+  "campaign_catalog": {
+    "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+    "git_blob_sha1": "0c1e95c2bf540f7d6304ff09d8a53ed7ecc00699",
+    "raw_sha256": "5aa0b753552b5a98d54016239695355c0fa0fb24b4f19fcb66c475bf6b5fa085",
+    "bytes": 5694
+  },
+  "operation_map_catalog": {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+    "git_blob_sha1": "5eb8058c2f1ead8567721aee15dcd8d86cdfbebc",
+    "raw_sha256": "7ba73f190fc9030900fcaa811401962bd337e515ff48e950352660b8b8f21600",
+    "bytes": 11967
+  },
+  "sources": [
+    {
+      "name": "CH04M05ArmorBreak",
+      "legal_existing_campaign_source": true,
+      "mission": {
+        "path": "Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M05_ArmorBreak.asset",
+        "git_blob_sha1": "529d8d781b15c3fa8ab654c1c1e41af11bcb1e92",
+        "raw_sha256": "61b543c574bba7b40bb87c97c93675b112ee5007a96eb6d57116c1bda97a93fa",
+        "bytes": 2513,
+        "asset_guid": "4f8ed8fe62c1e4ff6a71bcc75a7f7d6f",
+        "mission_id": "saga.ch04.m05.armor_break",
+        "operation_map_id": "opmap.ch04.armor_break",
+        "campaign_catalog_entry_verified": true,
+        "require_operation_map_ready": "1"
+      },
+      "definition": {
+        "path": "Assets/Game/GeneratedOperationMaps/CH04M05ArmorBreak/Definition.asset",
+        "git_blob_sha1": "3e48fdfd2f701b7264edc23bf1058e5f043aa696",
+        "raw_sha256": "181418e5b316d8a5625913d0251e5f5a9a83ab81f56baec49e4adcb2bb89e3b4",
+        "bytes": 9364,
+        "asset_guid": "be0f1c8c7ae1940d6a679b258bf79f7b",
+        "operation_map_id": "opmap.ch04.armor_break",
+        "source_identity_hash": "83f10bf819165f5fa2a6b325f9a73df3780e14b023b1cf95d44e2f8c242cb368",
+        "content_hash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+        "generated_metadata_hash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86",
+        "content_version": "1"
+      },
+      "registered_content_pack": {
+        "contentPackId": "opmap-pack.ch04.armor_break",
+        "deliveryKind": "0",
+        "contentVersion": "1",
+        "contentHash": "da42d5bc876e1f2eed02b3d7050d41759c010de973dfd7c51c51eba1a26e5a86"
+      },
+      "grid_metadata": {
+        "assetGuid": "039421c6da35547c1a82a1dce0de37a4",
+        "contentHash": "6ad20b46d11a34488ecec7e656fa3dcf2eb39b4c55c10d6583099cf01213861c",
+        "origin": "{x: 740, y: 0, z: 260}",
+        "dimensions": "{x: 1280, y: 520}",
+        "cellSize": "1",
+        "authoredBlockedCellCount": "61131"
+      },
+      "surface_metadata_declared": {
+        "assetGuid": "4d993162c8c844f27b6f7775e5324ef6",
+        "contentHash": "219420a7ab9069ffbda9d48409a665b4b819853b192a3a553e85588250b67fa0",
+        "runtimeBlobHash": "130d22cf27ee03d1da7e9eed60c9954c",
+        "surfaceCount": "665600",
+        "payloadVersion": "3",
+        "payloadEncoding": "1",
+        "minimumHeight": "-4",
+        "maximumHeight": "9"
+      },
+      "navigation_metadata_declared": {
+        "authoredSubSceneGuid": "cff37b7367eda4910ab737672c2fe51b",
+        "gridAuthoringLocalId": "2019771608",
+        "staticGridBlockerCount": "667",
+        "usesSurfaceMovementMetadata": "1",
+        "supportsDynamicBlockers": "1",
+        "supportsDynamicOccupancy": "1"
+      },
+      "coordinate_frame": {
+        "world": "Metres in world X/Z; world Y follows source surface",
+        "origin": "{x: 740, y: 0, z: 260}",
+        "dimensions": "{x: 1280, y: 520}",
+        "cell_size_metres": 1.0,
+        "actual_authored_blocked_cells": 61131,
+        "grid_surface_metadata_frames_match": true,
+        "conversion_source": "Assets/Game/Scripts/Components/GridComponents.cs:459,462; exact-base GridUtils CellToWorldCenter/WorldToCell",
+        "conversion": "WorldToCell floors (worldPos.xz-Origin.xz)/CellSize; CellToWorldCenter uses Origin + (cell+0.5)*CellSize. Do not treat logical normalized coordinates or candidate worldBinding as loaded source proof."
+      }
+    },
+    {
+      "name": "CH05M01CitywideAlert",
+      "legal_existing_campaign_source": true,
+      "mission": {
+        "path": "Assets/Game/Configs/Missions/Chapter05/MissionDefinition_Ch05_M01_CitywideAlert.asset",
+        "git_blob_sha1": "c2ffea77cc151a468fcddadd8632b335b310399e",
+        "raw_sha256": "72447700864bb9caa633b6f20b6e951fc4be31a0c9383bcc2ee5045e456a0046",
+        "bytes": 2555,
+        "asset_guid": "d24d1d7c6961340f3a74a4558152d580",
+        "mission_id": "saga.ch05.m01.citywide_alert",
+        "operation_map_id": "opmap.ch05.citywide_alert",
+        "campaign_catalog_entry_verified": true,
+        "require_operation_map_ready": "1"
+      },
+      "definition": {
+        "path": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+        "git_blob_sha1": "af90fa10a84217b33f15d912cc156c593694c8b8",
+        "raw_sha256": "6dc011093e5298c07985d264c5483db6875e2593cdec0ff96bd2a05d6838ecfb",
+        "bytes": 11023,
+        "asset_guid": "78813262332a14b309f1e5bf59e95d9d",
+        "operation_map_id": "opmap.ch05.citywide_alert",
+        "source_identity_hash": "6c258da69b63e5d391ad820c9c38a0df56859db7dc062e69a7f345d390c70fbe",
+        "content_hash": "5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d",
+        "generated_metadata_hash": "5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d",
+        "content_version": "4"
+      },
+      "registered_content_pack": {
+        "contentPackId": "opmap-pack.ch05.citywide_alert",
+        "deliveryKind": "0",
+        "contentVersion": "4",
+        "contentHash": "5c9233dca1ecae738c3883dcac6eaed33da51596bc8bb87613881794005a463d"
+      },
+      "grid_metadata": {
+        "assetGuid": "61d7b7f9c413a41bea1cb7267696c46c",
+        "contentHash": "7aa1a9744215a444064f6a9e09fb7e6aacbdc0155b4f5cf38b19be9a5d98df1a",
+        "origin": "{x: 860, y: 0, z: 300}",
+        "dimensions": "{x: 440, y: 220}",
+        "cellSize": "1",
+        "authoredBlockedCellCount": "16392"
+      },
+      "surface_metadata_declared": {
+        "assetGuid": "a04245b024f1940dc829f8eb6675c6ce",
+        "contentHash": "048fe898cea5c3a1158470d5c299222715d8a911ecde6c1155aa30bc75e347ce",
+        "runtimeBlobHash": "96618bbadd5bd96a239996a60dfa19e1",
+        "surfaceCount": "96800",
+        "payloadVersion": "3",
+        "payloadEncoding": "1",
+        "minimumHeight": "-5.31082",
+        "maximumHeight": "17.199179"
+      },
+      "navigation_metadata_declared": {
+        "authoredSubSceneGuid": "a6ddd07d983ae4b01a2f4f65c6eafb02",
+        "gridAuthoringLocalId": "146043441",
+        "staticGridBlockerCount": "348",
+        "usesSurfaceMovementMetadata": "1",
+        "supportsDynamicBlockers": "1",
+        "supportsDynamicOccupancy": "1"
+      },
+      "coordinate_frame": {
+        "world": "Metres in world X/Z; world Y follows source surface",
+        "origin": "{x: 860, y: 0, z: 300}",
+        "dimensions": "{x: 440, y: 220}",
+        "cell_size_metres": 1.0,
+        "actual_authored_blocked_cells": 16392,
+        "grid_surface_metadata_frames_match": true,
+        "conversion_source": "Assets/Game/Scripts/Components/GridComponents.cs:459,462; exact-base GridUtils CellToWorldCenter/WorldToCell",
+        "conversion": "WorldToCell floors (worldPos.xz-Origin.xz)/CellSize; CellToWorldCenter uses Origin + (cell+0.5)*CellSize. Do not treat logical normalized coordinates or candidate worldBinding as loaded source proof."
+      }
+    },
+    {
+      "name": "CH05M03NetworkCollapse",
+      "legal_existing_campaign_source": true,
+      "mission": {
+        "path": "Assets/Game/Configs/Missions/Chapter05/MissionDefinition_Ch05_M03_NetworkCollapse.asset",
+        "git_blob_sha1": "91c0f642916f0a49c2c5549bfb46e6818481008f",
+        "raw_sha256": "54e47e0c7ff224b2a4c675dc5486434646a4c2e77ad1bb74cfb004383c479712",
+        "bytes": 2564,
+        "asset_guid": "eb2efdf568bcb488fbf37c41a805dc0a",
+        "mission_id": "saga.ch05.m03.network_collapse",
+        "operation_map_id": "opmap.ch05.network_collapse",
+        "campaign_catalog_entry_verified": true,
+        "require_operation_map_ready": "1"
+      },
+      "definition": {
+        "path": "Assets/Game/GeneratedOperationMaps/CH05M03NetworkCollapse/Definition.asset",
+        "git_blob_sha1": "e41a1debb2337223904d71a3710f6eef27024e0f",
+        "raw_sha256": "3af736311379a63ad436a18f95cc72388fb0232ea4974acd337d15731a357d81",
+        "bytes": 9786,
+        "asset_guid": "a39c7acde1803494d8620838d388cc8a",
+        "operation_map_id": "opmap.ch05.network_collapse",
+        "source_identity_hash": "7c2d619b4c8496ee14bd60ca4410abd879fd8b52630b5050efdd0d8b143daf81",
+        "content_hash": "245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8",
+        "generated_metadata_hash": "245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8",
+        "content_version": "4"
+      },
+      "registered_content_pack": {
+        "contentPackId": "opmap-pack.ch05.network_collapse",
+        "deliveryKind": "0",
+        "contentVersion": "4",
+        "contentHash": "245ec7a94460ff5593ccadeb69fe1d1d5e48583098cd099fd0eac59ba2658ca8"
+      },
+      "grid_metadata": {
+        "assetGuid": "d307d30e56c0542eb980cfb25303ffef",
+        "contentHash": "67dcc35ccaf29877b4378827cb25eba95efa1ad225eb9a488efc2ceec21e6674",
+        "origin": "{x: 860, y: 0, z: 300}",
+        "dimensions": "{x: 440, y: 220}",
+        "cellSize": "1",
+        "authoredBlockedCellCount": "14379"
+      },
+      "surface_metadata_declared": {
+        "assetGuid": "55e166dea54754dabab66e8469269813",
+        "contentHash": "02f40263a82e8e9ff3a2e0ccb32a136fbef6683650ac8c14abf62213a8a73730",
+        "runtimeBlobHash": "64ff2597e64ae60082dc00ec835ef2eb",
+        "surfaceCount": "96800",
+        "payloadVersion": "3",
+        "payloadEncoding": "1",
+        "minimumHeight": "-5.31082",
+        "maximumHeight": "17.199179"
+      },
+      "navigation_metadata_declared": {
+        "authoredSubSceneGuid": "6e51ec1d41cd54e2a9d19c8b17193103",
+        "gridAuthoringLocalId": "146043441",
+        "staticGridBlockerCount": "337",
+        "usesSurfaceMovementMetadata": "1",
+        "supportsDynamicBlockers": "1",
+        "supportsDynamicOccupancy": "1"
+      },
+      "coordinate_frame": {
+        "world": "Metres in world X/Z; world Y follows source surface",
+        "origin": "{x: 860, y: 0, z: 300}",
+        "dimensions": "{x: 440, y: 220}",
+        "cell_size_metres": 1.0,
+        "actual_authored_blocked_cells": 14379,
+        "grid_surface_metadata_frames_match": true,
+        "conversion_source": "Assets/Game/Scripts/Components/GridComponents.cs:459,462; exact-base GridUtils CellToWorldCenter/WorldToCell",
+        "conversion": "WorldToCell floors (worldPos.xz-Origin.xz)/CellSize; CellToWorldCenter uses Origin + (cell+0.5)*CellSize. Do not treat logical normalized coordinates or candidate worldBinding as loaded source proof."
+      }
+    }
+  ],
+  "facility_dimensions": {
+    "building.barracks": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "survey_sha256": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        28,
+        15
+      ],
+      "historical_actual_model_footprint_cells": [
+        28,
+        15
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "b3010000000000000000000000000005",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "285ace58c011c369fc89cb2f78354c27f2f189243451160ca3b19cdf7bf9f6e1",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Barrack_Config.asset",
+      "config_sha256": "5b1074fda52a417fa1177491f5a19b03457508869e3d0be0b54075de5e466672",
+      "config_meta_sha256": "c91db7ba904be7cc1ac5331d9abe6a64e79c19d711a17c0447ba539b9fb09b51"
+    },
+    "building.ground_staging": {
+      "prefab": "Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab",
+      "survey_sha256": "1041515d1178ae44769023fa3834d8603b25f95de776b8142e6683c9c1c9fed2",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "1041515d1178ae44769023fa3834d8603b25f95de776b8142e6683c9c1c9fed2",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        20,
+        14
+      ],
+      "historical_actual_model_footprint_cells": [
+        14,
+        7
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "e6c58e75eb676422b8b24e937cbb1097",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "8998daa8c17612bb45bc1c6ba50553241c41036c0427c641d9833330c5ef3916",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset",
+      "config_sha256": "0cfec908a817157285da7f6a0038c49ab570a629852462036a0a0741fab74016",
+      "config_meta_sha256": "0a2955863872c8da3af8ec189c75e1bfe8857ebb826bd44af975f4443b55b544"
+    },
+    "building.oil_pump": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "survey_sha256": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        15,
+        4
+      ],
+      "historical_actual_model_footprint_cells": [
+        15,
+        4
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "7324cd1a656df4aada5a074c7eafd236",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilPump_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "4372acd5dec1e1cc08d074094c5287b605c7a204f6d9006e145f27e97023b921",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilPump_Config.asset",
+      "config_sha256": "79e1d50fc14d971b0dff735bcb5917a42c0361cedf80d6970bda1033a5e953c0",
+      "config_meta_sha256": "fbf070d0a81d801eca01f3d173a0fc85a33f9d55264898b1e422290ef5c49c1b"
+    },
+    "building.refinery": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "survey_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        25,
+        15
+      ],
+      "historical_actual_model_footprint_cells": [
+        25,
+        15
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "1f235e6b1ad2441939af25f88d506af1",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset",
+      "config_sha256": "3cfd46b274959c3b86f6f54f0fbfb23f5e5bae5036c0826180e6fd96fdf59ae1",
+      "config_meta_sha256": "5ce411c61cd2eb1c47b5a8f45d17d8ab872b99790b6797fa4ad61c23535f7f2f"
+    },
+    "building.fuel_bladder": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "survey_sha256": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        14,
+        10
+      ],
+      "historical_actual_model_footprint_cells": [
+        14,
+        10
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "ce27600d951b541a6b42eecfa673f158",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "7e78163c5322d52a796f7b92e8ca66aefbb21ce3a2b2db20206ccb731b32a00b",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Fuel_Bladder_Config.asset",
+      "config_sha256": "060dc80659bceb46c7688bdbf50b561802429dd71eedf39753308fd9fb8b298c",
+      "config_meta_sha256": "3697937470e0ff8bf8d7d344ac68ad6b8621992d93b5dc03ad383c67ab043fbf"
+    },
+    "building.fabrication_depot": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "survey_sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        19,
+        16
+      ],
+      "historical_actual_model_footprint_cells": [
+        19,
+        16
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "b980392114c1142cea5b43e3c45dafe2",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Ammunition_Depot_Config.asset",
+      "config_sha256": "a2f735866085e00eb25395d329657d8b44b871516eeb6b94c55f5f980f4d69ac",
+      "config_meta_sha256": "8aaf8557f2c84df9477ccda4a55a287e4a55c23505cef87dce50c4e1ac1e731f"
+    },
+    "building.watchtower": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "survey_sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        3,
+        4
+      ],
+      "historical_actual_model_footprint_cells": [
+        3,
+        4
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "243575a10c0a948d4a3ee14955fa160a",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "002346b190a736f3c15990a5f52bc7fb66580ff5f7726fcd32b7a804d2fdf3f4",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset",
+      "config_sha256": "0d998e6d33f2c59108dae0be496e9680757eeecad71c81de15166428217cb46e",
+      "config_meta_sha256": "da348c98710c7cc844611193f92f60ca11f0a434f535d6c44f8515a3434cd19e"
+    },
+    "building.watchtower.approach": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "survey_sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        3,
+        4
+      ],
+      "historical_actual_model_footprint_cells": [
+        3,
+        4
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "243575a10c0a948d4a3ee14955fa160a",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "002346b190a736f3c15990a5f52bc7fb66580ff5f7726fcd32b7a804d2fdf3f4",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GuardTower_Config.asset",
+      "config_sha256": "0d998e6d33f2c59108dae0be496e9680757eeecad71c81de15166428217cb46e",
+      "config_meta_sha256": "da348c98710c7cc844611193f92f60ca11f0a434f535d6c44f8515a3434cd19e"
+    },
+    "building.satellite_dish": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab",
+      "survey_sha256": "5e1fde7405baa7258e96fabc1528416b08182b034ec99d41cc5002d108e3b462",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "5e1fde7405baa7258e96fabc1528416b08182b034ec99d41cc5002d108e3b462",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        10,
+        10
+      ],
+      "historical_actual_model_footprint_cells": [
+        10,
+        10
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "2b70db4780979459fab85ddbb4e401df",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "c08c51269d5bafaaf7adcb7ee2d82e398ad7b7ba20264730f39d358220c82f97",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset",
+      "config_sha256": "8489bff4eba03347b2ca444442a665b40b03da5659333ece7c8e656acb01871c",
+      "config_meta_sha256": "d2cfd0a08ac237b94e47de68cf2dc9a00e5948ac26d7e455c1e338db55ee819c"
+    },
+    "building.helipad": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Helipad.prefab",
+      "survey_sha256": "6b86df628d5d70fc32665920202896abdc47aa6bcc18606865ba989078a944aa",
+      "sizes": [
+        "LargeWar",
+        "Standard",
+        "War"
+      ],
+      "exactbase_sha256": "6b86df628d5d70fc32665920202896abdc47aa6bcc18606865ba989078a944aa",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        16,
+        15
+      ],
+      "historical_actual_model_footprint_cells": [
+        16,
+        15
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "b3010000000000000000000000000004",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "257ae5d03bb19d89c17c22ba93bd42cd739eac8264d466e7edd291e4fce52950",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Helipad_Config.asset",
+      "config_sha256": "3689f7caf4b8c7bdaa18ed44b272d6663d3056a31ca205aedc124c4f085eea52",
+      "config_meta_sha256": "e798e8f6566c84690390f326b4a8eaba9a69e510122519753f87d1cb50313fdb"
+    },
+    "building.refinery.module": {
+      "prefab": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "survey_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "sizes": [
+        "LargeWar",
+        "War"
+      ],
+      "exactbase_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "matches_survey": true,
+      "configured_footprint_cells": [
+        25,
+        15
+      ],
+      "historical_actual_model_footprint_cells": [
+        25,
+        15
+      ],
+      "model_authority": "Native survey normalFacilityRelocationProposals; exact prefab hash remains equal; mesh dependency closure not remeasured",
+      "config_link": {
+        "guid": "1f235e6b1ad2441939af25f88d506af1",
+        "meta_paths": [
+          "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset.meta"
+        ]
+      },
+      "prefab_meta_sha256": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1",
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_OilRefinery_Config.asset",
+      "config_sha256": "3cfd46b274959c3b86f6f54f0fbfb23f5e5bae5036c0826180e6fd96fdf59ae1",
+      "config_meta_sha256": "5ce411c61cd2eb1c47b5a8f45d17d8ab872b99790b6797fa4ad61c23535f7f2f"
+    }
+  },
+  "unit_canonical_asset_chains": {
+    "Rifle": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_02_Alt_04_Config.asset",
+      "config_sha256": "34681b1a3417aacc35b6292b3880e440a0552a6da1d57d6d57a7a93d8a4e6e83",
+      "runtime_key": "Unit_Chr_Soldier_Male_02_Alt_04",
+      "fields": {
+        "autoCalculateFootprint": "0",
+        "footprintCells": "{x: 1, y: 1}",
+        "usesVehicleMotion": "0"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab",
+      "prefab_sha256": "0243f1561511a7d32786d9480f49bddd98bee71504a253fd376deb019f24ccbb",
+      "prefab_guid": "ff73c8b7cbf844778916da330e9cd3e3",
+      "config_guid": "a3d36fd8847164cc596e0b5ba7bd9bb9",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "Gunner": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_01_Config.asset",
+      "config_sha256": "4c9d1a9e2637fdfd141a95ed501f6b61bdd09c81315555de1de99506f561c39d",
+      "runtime_key": "Unit_Chr_Soldier_Male_01",
+      "fields": {
+        "autoCalculateFootprint": "0",
+        "footprintCells": "{x: 1, y: 1}",
+        "usesVehicleMotion": "0"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01.prefab",
+      "prefab_sha256": "106478002106e012aee5dcc2d289a1d916bf3f823f47a0009c8c1fbf4b81e147",
+      "prefab_guid": "b3a1493b12f414f31a0d79a02ec4321d",
+      "config_guid": "de04c4e00b56400b966ca5ef60038b35",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "Rocketeer": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Ghillie_Male_01_Config.asset",
+      "config_sha256": "e1a8e7e754a354bf282db62223f978567e60f2b8725f585821b25294c8b94ea4",
+      "runtime_key": "Unit_Chr_Ghillie_Male_01",
+      "fields": {
+        "autoCalculateFootprint": "0",
+        "footprintCells": "{x: 1, y: 1}",
+        "usesVehicleMotion": "0"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Ghillie_Male_01.prefab",
+      "prefab_sha256": "5acf486eb811a929b0024cf33833505ecc6f8fdc8ea129bff4036ff573760db3",
+      "prefab_guid": "5d6231a4823504efbbedb18b1d852c6b",
+      "config_guid": "d0f8da6ed5d948f2a04a26ff3438cb8f",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "Car": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Light_Armored_Car_Config.asset",
+      "config_sha256": "d46586f83de40492076d7fdee517edbfb696088a5acaac62b64c49659a0ea636",
+      "runtime_key": "Unit_Veh_Light_Armored_Car",
+      "fields": {
+        "autoCalculateFootprint": "1",
+        "footprintCells": "{x: 3, y: 3}",
+        "usesVehicleMotion": "1"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab",
+      "prefab_sha256": "8adc7b9ab94dc27cd1a1986782d8c675ba5a3c56ad99d6f41d1cf7a3bec4c5e1",
+      "prefab_guid": "4d17399a465c144abb394cfee95e63d8",
+      "config_guid": "b0ffc9714da994462a1e48679b4863de",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "ApcArmored": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_APC_Slow_Config.asset",
+      "config_sha256": "17bdabfe8db4f3a5423204dfde7469d8c277d822e520a93557a5e57bc691ec8a",
+      "runtime_key": "Unit_Veh_APC_Slow",
+      "fields": {
+        "autoCalculateFootprint": "1",
+        "footprintCells": "{x: 3, y: 3}",
+        "usesVehicleMotion": "1"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Slow.prefab",
+      "prefab_sha256": "efcf46487621444ae84a33ca11b008e0569b6d0b117c27543d290f745cacfc69",
+      "prefab_guid": "807d71c09b501438ba26e9ef9f5ec132",
+      "config_guid": "8b5d1d3f1c504543907a45c4d4c1a101",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "Tank": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Tank_USA_Config.asset",
+      "config_sha256": "9dc6cfbcd4a32ebbe6b26d634ec949e3ab51d90112538dd971f47f1ac5313942",
+      "runtime_key": "Unit_Veh_Tank_USA",
+      "fields": {
+        "autoCalculateFootprint": "1",
+        "footprintCells": "{x: 3, y: 3}",
+        "usesVehicleMotion": "1"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+      "prefab_sha256": "e50a84d97f803090542ed7148988fde932664d9e18cc7b75c49a9e6abf1ef4d9",
+      "prefab_guid": "d08c88d57a5f34f80a264cbfd1e2da4b",
+      "config_guid": "96b6f5e350d2b485db1437bbfb66cad8",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "LogisticsTruck": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tray.asset",
+      "config_sha256": "b1929a11b54282519c105a02bc51dc1a390ee1c64103ad7253bc06c3ab5b16c7",
+      "runtime_key": "Unit_Veh_Truck_Tray",
+      "fields": {
+        "autoCalculateFootprint": "1",
+        "footprintCells": "{x: 3, y: 3}",
+        "usesVehicleMotion": "1"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab",
+      "prefab_sha256": "09773ac29bfa8c4203e8a74e879360b445b88fdc68214bb763fe78531620651a",
+      "prefab_guid": "57f2dccc00faf49bca391aa1cc44d70a",
+      "config_guid": "eb6918590ad5141f29fd1afb977a1da6",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    },
+    "Tanker": {
+      "config_path": "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tanker.asset",
+      "config_sha256": "b985152245f6eeacb70e07812ae44fe419e7ac1264f0ff962da6a3af5c42a93d",
+      "runtime_key": "Unit_Veh_Truck_Tanker",
+      "fields": {
+        "autoCalculateFootprint": "1",
+        "footprintCells": "{x: 3, y: 3}",
+        "usesVehicleMotion": "1"
+      },
+      "prefab_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab",
+      "prefab_sha256": "ea20391585e88214b8504a67056bc1c400d2006404411a54be1d2604d14b09d4",
+      "prefab_guid": "e9015a8d3f0294ca6ac7bf8614ac2e7e",
+      "config_guid": "0c84edcb251114cbfaba8f9ed23b2132",
+      "config_guid_in_prefab": true,
+      "prefab_guid_in_game_registry": true
+    }
+  },
+  "placement_policy": {
+    "rotation": "GetPlacementFootprint(false)=definition.FootprintCells; true swaps axes for ordinary buildings. Starting service request does not set RotateVertical; no source automatic rotation search.",
+    "center_origin": "StartingBuildingsService.cs57\u201365: center=WorldToCell(authored SpawnWorldXZ); PreferredOrigin=center-readmodelFootprint/2 integer. GridCamera.cs10\u201315 worldcenter=gridOrigin+(origin+footprint*.5)*CellSize, Y=buildPlaneY.",
+    "center_binding_gate": "Readmodel-selected actual definition/model footprint, visual local-bounds offset and prefab dependency closure must be verified. Configured rectangles around same grid center are conservative source-review constructions, not exact native object transforms.",
+    "foundation": "BuildingPlacementAdapter.cs13\u201315/167\u2013194: every primary sample exists with finite height/slope, slope<=8degrees, max-min<=.5m, maxHeight-gridOriginY<=.75m; every footprint cell required.",
+    "foundation_scope": "Runtime IsSkirmishSurfaceValid skips foundation gate absent match/phase!=Playing; survey NativeValid explicitly enforces foundation even for proposed initial facilities. Preserve distinction.",
+    "mask": "MapSurfaceComponents.cs193 BuildingPlacement bit=16. Conservative source-data filter; actual ordinary foundation method does not directly test this bit. Mask rectangle alone cannot certify runtime placement.",
+    "obstacles": "InvalidCellCache.RoadValidation.cs38\u201352 excludes authored-building overlap, water and ordinary road/sidewalk-surface overlap; PlacementValidationUtility.RoadValidation.cs13\u201342 checks fullgrid bounds, invalidprefix or percell roads/staticblocked except actual runtimeblockers, then runtime/live placement-occupant overlap. Ordinary facilities have no roadgate exemption.",
+    "initial_search": "InitialPlacement.cs25\u201391: clamp preferred origin, same fixed rotation; radius=max(80,min(160,max(maxAxis*4,effectiveWidth,effectiveHeight))), ring in radius/dy/dx order; requirePreferredOrigin forbids clamp and sets radius0. Additional authored-road-overlap path is identity-gated mission obstruction, not ordinary S050 facility authority.",
+    "spacing": "No universal1m or5m facility clearance found in these ordinary predicates. Historical engineering_gap_metres1 in Full120 is shelf planning only; root-proposed5cell gaps are conservative review construction.",
+    "survey_additional": "PilotFacilityRelocation.cs148\u2013160 additionally requires whole effective rect within declaredcompound+typedpad, no spawn/rally/repair/approach reserved-rect overlap, serviceAvailable; prior facility reservations are accumulated. These QA checks do not replace native occupancy/geometry.",
+    "service": "PilotRepairInteractionFootprints.cs478\u2013504 requires actual prefab UnitFootprint and UsesVehicleMotion at unique typedService interaction point, NativeEndpointLegal and wholefootprintinsideServicePad; all10 future ground/logistics role cases must be present. Historical nativeServiceAccessQueries proves only Tank/Siege/LogTruck3x3 static endpoints, no facility/liveoccupancy/paidrepair."
+  },
+  "fixed_size_summary": [
+    {
+      "size": "Standard",
+      "same_per_faction": true,
+      "role_counts_each": {
+        "rifle": 12,
+        "gunner": 4,
+        "rocketeer": 4,
+        "car": 1,
+        "armored_apc": 1,
+        "tank": 1,
+        "tanker": 1,
+        "logistics_truck": 2,
+        "aircraft": 0,
+        "objective_trucks": 0
+      },
+      "infantry_each": 20,
+      "ground_combat_each": 3,
+      "logistics_each": 3,
+      "total_starting_units_each": 26,
+      "total_starting_units_both": 52,
+      "raw_unit_footprint_area_lower_bound_cells_each": 74,
+      "area_is_not_packing_or_supply_capacity": true,
+      "starting_structures_each": 10,
+      "fixed_combat_supply_each": 34,
+      "deadline_seconds": 1080,
+      "materials_oil_usable_fuel_each": [
+        900,
+        240,
+        700
+      ],
+      "materials_oil_fuel_caps_each": [
+        1800,
+        1000,
+        1600
+      ],
+      "queues_each": [
+        2,
+        1,
+        1
+      ],
+      "refinery_modules_each": 1
+    },
+    {
+      "size": "War",
+      "same_per_faction": true,
+      "role_counts_each": {
+        "rifle": 16,
+        "gunner": 4,
+        "rocketeer": 8,
+        "car": 1,
+        "armored_apc": 2,
+        "tank": 2,
+        "tanker": 1,
+        "logistics_truck": 3,
+        "aircraft": 0,
+        "objective_trucks": 0
+      },
+      "infantry_each": 28,
+      "ground_combat_each": 5,
+      "logistics_each": 4,
+      "total_starting_units_each": 37,
+      "total_starting_units_both": 74,
+      "raw_unit_footprint_area_lower_bound_cells_each": 109,
+      "area_is_not_packing_or_supply_capacity": true,
+      "starting_structures_each": 11,
+      "fixed_combat_supply_each": 52,
+      "deadline_seconds": 1500,
+      "materials_oil_usable_fuel_each": [
+        1350,
+        360,
+        1050
+      ],
+      "materials_oil_fuel_caps_each": [
+        2700,
+        1500,
+        2400
+      ],
+      "queues_each": [
+        2,
+        2,
+        1
+      ],
+      "refinery_modules_each": 2
+    },
+    {
+      "size": "LargeWar",
+      "same_per_faction": true,
+      "role_counts_each": {
+        "rifle": 24,
+        "gunner": 8,
+        "rocketeer": 8,
+        "car": 2,
+        "armored_apc": 2,
+        "tank": 3,
+        "tanker": 1,
+        "logistics_truck": 3,
+        "aircraft": 0,
+        "objective_trucks": 0
+      },
+      "infantry_each": 40,
+      "ground_combat_each": 7,
+      "logistics_each": 4,
+      "total_starting_units_each": 51,
+      "total_starting_units_both": 102,
+      "raw_unit_footprint_area_lower_bound_cells_each": 139,
+      "area_is_not_packing_or_supply_capacity": true,
+      "starting_structures_each": 11,
+      "fixed_combat_supply_each": 74,
+      "deadline_seconds": 1800,
+      "materials_oil_usable_fuel_each": [
+        1800,
+        480,
+        1400
+      ],
+      "materials_oil_fuel_caps_each": [
+        3600,
+        2000,
+        3200
+      ],
+      "queues_each": [
+        2,
+        2,
+        1
+      ],
+      "refinery_modules_each": 2
+    }
+  ],
+  "canonical_csv_sha256": "b28cfe04f72ab0161dea86813fc12a9a61c5d46361fc9299839394ee91a2cf97",
+  "canonical_rows_sha256": "f36d473ba02b0f7847d6ec589f47ad352698aa890ea2415f682be1281e09305a",
+  "survey_sha256": "18b520ff6cb45a25f645502cba1787b27375cb52a20843195dd501e3b7029f73",
+  "survey_payload_included": false,
+  "source_binding_audit_sha256": "cd6fe5c2b0e1495e00db51256848bd0cc9d5951ef9e9c9fb25afe09941197ff8",
+  "dimension_audit_sha256": "abe7874009ba7a81988ff97e8922b8b53da406d82bdf07f9ed0a0b6dc8bf484a"
+}

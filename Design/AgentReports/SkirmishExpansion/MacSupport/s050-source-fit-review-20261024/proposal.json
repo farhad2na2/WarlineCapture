@@ -1,0 +1,137 @@
+{
+  "status": "BoundedSourceCellProposal_ReviewOnly_NotExecutableMissionAuthoring",
+  "base": "97df692e737f03699550ad0eea72d8e19eb36cc0",
+  "branch": "codex/mac-s050-source-fit-review-20261024",
+  "mission": {
+    "catalog": "S050",
+    "definition": "skirmish.s050",
+    "setup": "scenario.skirmish.s050",
+    "tuple": {
+      "map": "MP",
+      "objective": "BA",
+      "army": "G",
+      "start": "E"
+    },
+    "sizes": [
+      "Standard",
+      "War",
+      "LargeWar"
+    ],
+    "canonical_rows_sha256": "f36d473ba02b0f7847d6ec589f47ad352698aa890ea2415f682be1281e09305a"
+  },
+  "recommended_existing_source": {
+    "path": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+    "operationMapId": "opmap.ch05.citywide_alert",
+    "raw_sha256": "6dc011093e5298c07985d264c5483db6875e2593cdec0ff96bd2a05d6838ecfb",
+    "selection_status": "CandidateForSourceFamilyReview_StaticConstructionOnly",
+    "sourceFitAccepted": false
+  },
+  "historical_obstruction": {
+    "attribution": "Windows coordinator historical finite-domain report; not re-executed or transferred as a current native certificate",
+    "dimension": "linear grid-cell width; 1m cells",
+    "widths": [
+      28,
+      25,
+      25
+    ],
+    "required_width_sum": 78,
+    "available_width": 60,
+    "common_vertical_slice_half_open": [
+      359,
+      369
+    ],
+    "horizontal_envelope_half_open": [
+      911,
+      971
+    ],
+    "reported_independently_legal_largewar_origins": 174,
+    "reported_triples_checked": 190512,
+    "source_fit_failure_report_sha256": "547ccad8f4a4f11ee3cc47e3a1c9390f0d64cbacc91560ca45b2c61f6a08678f",
+    "actual_result_sha256": "6740d9841235d1602c866bb8a03b1bc9edad5b5172e7ea872640f72429013562",
+    "historical_strict_run_failed": 17579,
+    "cached17_input_proof_is_not_fresh_compiler_closure": true,
+    "whole_ArmorBreak_map_impossible": false
+  },
+  "new_construction": {
+    "logical_sector_cells_half_open": [
+      122,
+      47,
+      432,
+      161
+    ],
+    "logical_sector_world_xz_half_open": [
+      982,
+      347,
+      1292,
+      461
+    ],
+    "compound_cells_half_open": [
+      [
+        133,
+        47,
+        243,
+        137
+      ],
+      [
+        322,
+        47,
+        432,
+        137
+      ]
+    ],
+    "compound_dimensions": [
+      110,
+      90
+    ],
+    "row1_widths": [
+      25,
+      25,
+      28
+    ],
+    "row1_gap_cells": 5,
+    "row1_total_width": 88,
+    "row1_usable_compound_width": 110,
+    "other_row_widths": [
+      84,
+      46
+    ],
+    "facility_shelf_height": 51,
+    "uniform_cell_gap_is_engineering_choice_not_runtime_constant": true,
+    "all_three_sizes_calculated": true,
+    "source_cell_packing_pass": true,
+    "decoded_per_footprint_height_spread_max": 0.0,
+    "opposing_spawn_center_distance_min": 130.0,
+    "barracks_center_distance": 189.0,
+    "route_world_z": [
+      355.5,
+      391.5,
+      439.5
+    ],
+    "route_centerline_length_m": 84,
+    "route_center_height_step_max": 0.0
+  },
+  "preserved": {
+    "fixed_budgets_and_three_sizes": true,
+    "Campaign_physical_geometry": true,
+    "current_coded_bindings": true,
+    "S049_Windows_ownership": true,
+    "CLI_receipts_and_original_failures": true
+  },
+  "unresolved_gates": [
+    "Current MP constructor/source guard is explicitly ArmorBreak-bound; a reviewed general logical-source/layout seam and affected-consumer review are required before this alternate can be materialized. No per-S-ID runtime switch or global MP rebind is proposed.",
+    "Exact ordinary factory/placement-cache/static scenery/collider and visual dependency closure, actual model footprint/origin selection, source-scene runtime binding and source-owned initialization must be validated. Serialized cell/movement masks are a conservative screen, not a complete placement predicate.",
+    "Actual normal service-goal/repair/rally/approach reservations and all-size normal compiler/materialization receipts are pending. Source graph endpoints are conservative rectangle-edge candidates only.",
+    "Initial live occupancy, grounded actor Y, normal spawn fallback/seed, opposing-force exclusion policy, route traversal and tactical three-approach independence remain pending. The graph includes proposed facilities but not current moving-unit occupancy.",
+    "Normal-input manual/ARIA mission, result/return, lifecycle, checkpoint/recovery and device/player acceptance remain separate. No new native run is assigned."
+  ],
+  "changes": {
+    "physical_geometry": false,
+    "mission_assets": false,
+    "shared_gameplay_code": false,
+    "budget_reduction": false,
+    "native_execution": false
+  },
+  "calculation_sha256": "c3c167b0807fe2a64a5a2791efbc22e34e6a8dcc7a82eaa322e451435b73c959",
+  "source_facts_sha256": "4721f0cf1145ca46006b389b41747e997baaf96a33b3a60519ebac8a05bb2ea7",
+  "script_sha256": "3628ffbd805c60dd1396b7b0c310fec60e4441cba989bcfc502803367409511a"
+}

@@ -34,7 +34,8 @@
         "UnityEngine.UI",
         "Game.Runtime.Combat",
         "Game.Runtime.Pathfinding",
-        "Game.Operations.Strategic"
+        "Game.Operations.Strategic",
+        "Game.Simulation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

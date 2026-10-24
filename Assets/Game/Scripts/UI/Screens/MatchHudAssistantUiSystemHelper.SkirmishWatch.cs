@@ -454,21 +454,21 @@ namespace Game.UI.Runtime
             // Use the base objective and contacts already presented on the player's map.
             // A point on its approach lets ordinary Attack Move fight the route's defenders.
             var objective = watchSkirmish.EnemyBaseObjectivePosition;
-            Vector3 nearest = objective; float distance = float.MaxValue; int close = 0, assault = 0;
+            var publicPlayers = new System.Collections.Generic.List<Game.Simulation.AriaGroundPosition>();
             foreach (var ally in watchMap.PresentedContacts)
             {
                 if (ally.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Player ||
                     !watchMap.IsContactCurrentlyPresented(ally, ResolveEventCamera(watchMap.MapImage))) continue;
-                float d = (ally.Model.Position - objective).sqrMagnitude;
-                if (d < 45 * 45) close++;
-                if (d < 50 * 50) assault++;
-                if (d < distance) { distance = d; nearest = ally.Model.Position; }
+                var p = ally.Model.Position;
+                publicPlayers.Add(new Game.Simulation.AriaGroundPosition(p.x, p.y, p.z));
             }
-            view.AssaultDistanceVisible = distance < float.MaxValue;
-            view.NearestFriendlyObjectiveDistance = view.AssaultDistanceVisible ? Mathf.Sqrt(distance) : 0f;
-            int required = view.EnemyHealth > 0 && view.EnemyHealth <= 400
-                ? 1 : Mathf.Max(4, Mathf.Min(8, view.SelectedCount));
-            view.AssaultAtBase = assault >= required;
+            var objectivePoint = new Game.Simulation.AriaGroundPosition(objective.x, objective.y, objective.z);
+            var distances = Game.Simulation.AriaGroundApproachPolicy.Observe(objectivePoint, publicPlayers, view.EnemyHealth, view.SelectedCount);
+            Vector3 nearest = new Vector3(distances.Nearest.X, distances.Nearest.Y, distances.Nearest.Z);
+            float distance = distances.SquaredDistance; int close = distances.Close, assault = distances.Assault;
+            view.AssaultDistanceVisible = distances.DistanceVisible;
+            view.NearestFriendlyObjectiveDistance = distances.Distance;
+            view.AssaultAtBase = distances.AssaultAtBase;
             view.AdvancePreferred = close < 4;
             if (watchScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex)
             {
@@ -499,21 +499,13 @@ namespace Game.UI.Runtime
                 }
                 return;
             }
-            if (watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
-            {
-                // NW→SE basin uses the verified base-relative approach corridor below.
-                // City Crossroads' wide eastern flank projected into blocked fabric here.
-                view.AdvancePreferred = !view.AssaultAtBase && close < 8;
-            }
+            bool industrialBasin = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
+            view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.AdvancePreferred(industrialBasin, distances);
             if (!view.AdvancePreferred) return;
-            // The two labelled base objectives remain public when the camera leaves
-            // the army. Keep a usable approach instead of repeatedly focusing the base.
-            if (distance == float.MaxValue) nearest = watchSkirmish.PlayerBaseObjectivePosition;
-            var direction = nearest - objective; direction.y = 0;
-            // Preserve the first battlefield's verified clear base approach. Wider
-            // offsets project behind its neutral ruins and become rejected attacks.
-            float standoff = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? 30f : 25f;
-            var ground = objective + direction.normalized * standoff;
+            var home = watchSkirmish.PlayerBaseObjectivePosition;
+            var approach = Game.Simulation.AriaGroundApproachPolicy.Approach(industrialBasin, objectivePoint,
+                new Game.Simulation.AriaGroundPosition(home.x, home.y, home.z), distances);
+            var ground = new Vector3(approach.X, approach.Y, approach.Z);
             if (view.MapOpen)
             {
                 if (watchScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)

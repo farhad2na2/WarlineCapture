@@ -85,3 +85,13 @@ python3 Tools/CI/SkirmishAriaReplay/test_protocol_limits.py --build-dir BUILD --
 ```
 
 The boundary probe reflects private state only in its separate test process, exercising IDs beyond 65536 and rejecting signed-int overflow. The production RPC exposes no counter-reset or state-injection operation. Buffered standard-input reads preserve one JSON request/response at a time.
+
+## Incremental liveness checks
+
+`skirmish_aria_trace.TraceAnalyzer` keeps diagnostic state across sampled source frames. Use `push(frame)` to consume each frame once and `report()` at action/terminal boundaries, or `feed(frame)` to obtain an independent report immediately. Invalid frames stop that analyzer permanently; start a separate analyzer for a new mission/session. The existing batch `analyze(trace)` API and CLI retain the same rules and report shape. UI navigation and accepted receipts still do not establish mission progress.
+
+This avoids rescanning the full mission history after every contact. A synthetic 1,200-frame diagnostic benchmark with 400 report checks produced identical results while reducing checker time from 1.17 s to 0.016 s on this host. This measures diagnostics only, not complete mission throughput.
+
+```sh
+python3 -B -m unittest discover -s Tools/CI -p skirmish_aria_stream_test.py -v
+```

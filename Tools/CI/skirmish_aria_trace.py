@@ -5,6 +5,7 @@ This checker observes receipts and public state. It does not execute commands,
 invent action success, or qualify a mission.
 """
 import argparse
+from copy import deepcopy
 import hashlib
 import json
 import math
@@ -48,11 +49,7 @@ def field(value, path):
     return value
 
 
-def analyze(trace, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress_fields=PROGRESS_FIELDS):
-    need(isinstance(trace, dict) and type(trace.get("schema_version")) is int
-         and trace["schema_version"] == 1, "Trace schema_version must be 1")
-    rows = trace.get("frames")
-    need(isinstance(rows, list) and 0 < len(rows) <= MAX_FRAMES, "A bounded nonempty frames list is required")
+def _analyze_stream(repeat_limit=5, stall_seconds=15.0, action_limit=12, progress_fields=PROGRESS_FIELDS):
     need(type(repeat_limit) is int and repeat_limit >= 2, "repeat_limit must be at least 2")
     need(type(action_limit) is int and action_limit >= repeat_limit, "action_limit must be at least repeat_limit")
     stall_seconds = number(stall_seconds, "stall_seconds")
@@ -65,6 +62,7 @@ def analyze(trace, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress
     repeats, failures, proposal_key, proposal_count = {}, {}, None, 0
     executed = accepted = rejected = no_effect = total_since_progress = 0
     receipt_evidence = False
+    frames, first_time = 0, None
 
     def issue(kind, severity, index, now, target, intent, **detail):
         key = (kind, target)
@@ -73,12 +71,17 @@ def analyze(trace, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress
             issues.append(dict(kind=kind, severity=severity, index=index, time=now,
                                target_id=target, intent=intent, **detail))
 
-    for index, row in enumerate(rows):
+    row = yield None
+    while True:
+        need(frames < MAX_FRAMES, "Trace frame limit exceeded")
+        index = frames
         need(isinstance(row, dict), "Every frame must be an object")
         observation = row.get("observation")
         need(isinstance(observation, dict), "Each frame must retain its public observation")
         now = number(row.get("time", observation.get("Time")), "Frame time")
         frame = integer(row.get("frame", observation.get("Frame")), "Frame number")
+        if first_time is None:
+            first_time = now
         need(now >= last_time and frame >= last_frame, "Time and frames cannot move backwards")
         need(isinstance(row.get("before"), dict) and isinstance(row.get("after"), dict),
              "Before/after state objects required")
@@ -156,19 +159,59 @@ def analyze(trace, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress
         proposed = (target, intent)
         proposal_count = proposal_count + 1 if proposed == proposal_key else 1
         if (target and proposal_count >= action_limit and executed == 0
-                and now - rows[0].get("time", rows[0]["observation"].get("Time", now)) >= stall_seconds):
+                and now - first_time >= stall_seconds):
             issue("proposal_repeated_without_execution", "inconclusive", index, now, target, intent,
                   count=proposal_count)
-        proposal_key, previous_session, previous_progress = proposed, after, progress
+        proposal_key, previous_session, previous_progress = proposed, dict(after), progress
         last_time, last_frame = now, frame
 
-    status = "failed" if any(x["severity"] == "error" for x in issues) else "inconclusive" if issues else "passed"
-    return dict(schema_version=1, scope="aria-trace-liveness", status=status, frames=len(rows),
-                executed_actions=executed, accepted_receipts=accepted, rejected_receipts=rejected,
-                no_effect_receipts=no_effect, receipt_evidence=receipt_evidence,
-                progress_fields=list(progress_fields), issues=issues,
-                thresholds=dict(repeat_limit=repeat_limit, stall_seconds=stall_seconds, action_limit=action_limit),
-                full_battle_simulated=False, mission_qualified=False)
+        frames += 1
+        status = "failed" if any(x["severity"] == "error" for x in issues) else "inconclusive" if issues else "passed"
+        report = dict(schema_version=1, scope="aria-trace-liveness", status=status, frames=frames,
+                    executed_actions=executed, accepted_receipts=accepted, rejected_receipts=rejected,
+                    no_effect_receipts=no_effect, receipt_evidence=receipt_evidence,
+                    progress_fields=list(progress_fields), issues=issues,
+                    thresholds=dict(repeat_limit=repeat_limit, stall_seconds=stall_seconds, action_limit=action_limit),
+                    full_battle_simulated=False, mission_qualified=False)
+        row = yield report
+
+
+class TraceAnalyzer:
+    """One retained liveness state; each sampled source frame is processed once."""
+    def __init__(self, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress_fields=PROGRESS_FIELDS):
+        self._stream = _analyze_stream(repeat_limit, stall_seconds, action_limit, tuple(progress_fields))
+        next(self._stream)
+        self._report = None
+        self._failed = False
+
+    def feed(self, row):
+        self.push(row)
+        return self.report()
+
+    def push(self, row):
+        """Consume one row without copying a report; use report() when needed."""
+        need(not self._failed, "Trace analyzer stopped after an invalid frame")
+        try:
+            self._report = self._stream.send(row)
+        except Exception:
+            self._failed = True
+            raise
+
+    def report(self):
+        need(not self._failed, "Trace analyzer stopped after an invalid frame")
+        need(self._report is not None, "A nonempty trace is required")
+        return deepcopy(self._report)
+
+
+def analyze(trace, repeat_limit=5, stall_seconds=15.0, action_limit=12, progress_fields=PROGRESS_FIELDS):
+    need(isinstance(trace, dict) and type(trace.get("schema_version")) is int
+         and trace["schema_version"] == 1, "Trace schema_version must be 1")
+    rows = trace.get("frames")
+    need(isinstance(rows, list) and 0 < len(rows) <= MAX_FRAMES, "A bounded nonempty frames list is required")
+    checker = TraceAnalyzer(repeat_limit, stall_seconds, action_limit, progress_fields)
+    for row in rows:
+        checker.push(row)
+    return checker.report()
 
 
 def unique_object(pairs):

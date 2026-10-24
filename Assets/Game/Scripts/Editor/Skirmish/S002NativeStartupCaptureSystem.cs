@@ -127,6 +127,7 @@ namespace Game.Editor
                 ["allocator_transactions"] = S002StartupAllocatorCapture.Events.DeepClone(),
                 ["footprint_surface_profiles"] = profiles,
                 ["surface_runtime"] = surfaceRuntime,
+                ["physical_startup_inputs"] = S002PhysicalStartupCapture.Finish(setup.Structures?.Length ?? 0),
                 ["grid"] = JObject.Parse(JsonUtility.ToJson(grid)), ["actors"] = rows, ["expected_force_count"] = expected,
                 ["operation_map_id"] = map.OperationMapId.ToString(), ["physical_source_id"] = map.SourceOperationMapId.ToString(),
                 ["source_identity_hash"] = map.SourceIdentityHash.ToString(), ["content_hash"] = map.ContentHash.ToString(),
@@ -138,6 +139,8 @@ namespace Game.Editor
             File.WriteAllText(Path.Combine(path, "startup-observation.json"), report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             captured = true;
             S002StartupAllocatorCapture.Completed = true;
+            Debug.Log("[S002PhysicalStartupInputs] result=Captured buildingTransactions=" + report["physical_startup_inputs"]["building_transactions"] +
+                " supplyStages=" + report["physical_startup_inputs"]["supply_stages"] + " fullPhysicalStartupDerived=0");
             Debug.Log("[S002RuntimeGroundingInputs] result=Captured compactCells=" + surfaceRuntime["compact_count"] +
                 " overlays=" + surfaceRuntime["overlay_count"] + " triangles=" + surfaceRuntime["triangle_count"] +
                 " instances=" + surfaceRuntime["instance_count"] + " beforePlacementWalkableVerified=" + expected);

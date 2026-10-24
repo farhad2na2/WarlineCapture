@@ -28,6 +28,9 @@ namespace Game.Runtime
                     em.GetComponentData<SkirmishAttemptOwnedComponent>(left).StableObjectId.ToString(),
                     em.GetComponentData<SkirmishAttemptOwnedComponent>(right).StableObjectId.ToString());
             });
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.SupplyStage?.Invoke(em, session, "before-preflight", grantOrder);
+#endif
             // Validate both factions before granting either side anything.
             for (byte faction = 1; faction <= 2; faction++)
             {
@@ -41,7 +44,13 @@ namespace Game.Runtime
                     if (IsUsableFuelStorage(storage))
                         fuelRoom += math.max(0, storage.FuelStorageCapacity - storage.StoredFuelBarrels - storage.ReservedFuelInboundBarrels);
                 }
-                if (oilRoom < setup.OilEach || fuelRoom < setup.UsableFuelEach) return false;
+                if (oilRoom < setup.OilEach || fuelRoom < setup.UsableFuelEach)
+                {
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.SupplyStage?.Invoke(em, session, "insufficient-room", grantOrder);
+#endif
+                    return false;
+                }
             }
             for (byte faction = 1; faction <= 2; faction++)
             {
@@ -64,6 +73,9 @@ namespace Game.Runtime
                 }
             }
             em.AddComponent<SkirmishSharedSupplyInitialized>(session);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.SupplyStage?.Invoke(em, session, "after-grant", grantOrder);
+#endif
             return true;
         }
 

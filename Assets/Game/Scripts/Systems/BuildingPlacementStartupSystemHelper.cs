@@ -23,6 +23,9 @@ namespace Game.Runtime
 
         public Camera WorldCamera => _worldCamera;
         public float BuildPlaneY => _buildPlaneY;
+#if UNITY_EDITOR
+        internal BuildingPlacementSystemConfig ObservedSourceConfig => _config;
+#endif
         public Transform BuildingRoot => _buildingRoot;
         public BuildingDefinition SoldierBaseDefinition => _soldierBaseDefinition;
         public BuildingDefinition SoldierTentDefinition => _soldierTentDefinition;

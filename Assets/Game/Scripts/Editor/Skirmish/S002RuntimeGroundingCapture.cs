@@ -21,6 +21,7 @@ namespace Game.Editor
                 !math.all(blob.Dimensions == surface.Dimensions) || blob.CellSize != surface.CellSize || !math.all(blob.GridOrigin == surface.GridOrigin))
                 throw new InvalidOperationException("Unsupported actual S002 grounding surface; no flat fallback");
             S002StartupAllocatorCapture.RequireSameSurface(surface);
+            S002PhysicalStartupCapture.RequireSameSurface(surface);
             bool hasOverlays = em.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
             bool hasTriangles = em.HasBuffer<MapSurfaceMeshTriangle>(surfaceEntity);
             bool hasInstances = em.HasBuffer<MapSurfaceMeshInstance>(surfaceEntity);

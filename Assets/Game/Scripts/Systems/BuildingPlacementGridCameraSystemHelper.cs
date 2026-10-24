@@ -9,6 +9,9 @@ namespace Game.Runtime
     {
         public Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, float buildPlaneY)
         {
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.FootprintCenter?.Invoke(originCell, footprintCells, grid, buildPlaneY);
+#endif
             return new Vector3(
                 grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
                 buildPlaneY,

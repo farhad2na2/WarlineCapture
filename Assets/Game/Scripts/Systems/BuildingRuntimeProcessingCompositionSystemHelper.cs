@@ -462,6 +462,9 @@ namespace Game.Runtime
                     }
                 }
 
+#if UNITY_EDITOR
+                if (startingGrant) S002PhysicalStartupObservation.BeforePlacement?.Invoke(em, request, definition, requestSpawnContext, _skirmishBuildings, _skirmishRoads);
+#endif
                 // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
                 bool placed;
                 BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result = default;
@@ -525,6 +528,9 @@ namespace Game.Runtime
                 request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
                 request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
                 WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+#if UNITY_EDITOR
+                if (startingGrant) S002PhysicalStartupObservation.AfterPlacement?.Invoke(em, request);
+#endif
                 if (enemyConstruction && placed)
                 {
                     SkirmishEnemyConstructionAdapter.RecordNativeResult(em, request);

@@ -35,6 +35,15 @@ namespace Game.Runtime
                 if (!IsRoad(center) || !BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(center,IsRoad,out var roadCenter,out bool acrossRoad) ||
                     roadCenter!=center || acrossRoad!=rotateVertical) return false;
             }
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.OriginalPlacement?.Invoke(new S002PhysicalStartupObservation.OriginalPlacementFacts
+            {
+                Definition = definition, Origin = originCell, Footprint = footprintCells, EffectiveRect = placementRect,
+                Rotated = rotateVertical, Grid = grid, HasInvalidPrefix = _hasPlacementInvalidPrefix,
+                InvalidPrefix = _placementInvalidPrefix, PrefixWidth = _placementInvalidPrefixWidth, PrefixHeight = _placementInvalidPrefixHeight,
+                Buildings = AuthoredBuildings, Roads = RoadSurfaces, Startup = startupSystem, Dependencies = dependencySystem
+            });
+#endif
             return !AuthoredBuildings.Overlaps(grid, placementRect.position, placementRect.size) &&
                 !RoadSurfaces.OverlapsWater(grid,placementRect.position,placementRect.size) &&
                 (roadGate || !RoadSurfaces.Overlaps(grid,placementRect.position,placementRect.size)) &&

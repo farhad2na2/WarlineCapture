@@ -136,11 +136,28 @@ namespace Game.Editor
             Value<UnitAttackCooldownComponent>(em, actor, data); Value<UnitAnimationSettings>(em, actor, data);
             Value<UnitIdleWanderComponent>(em, actor, data); Value<UnitFuelConsumption>(em, actor, data);
             Value<AirMissileLauncherComponent>(em, actor, data); Value<GroundMissileLauncherComponent>(em, actor, data);
+            Value<UnitAttackAnimationComponent>(em, actor, data); Value<UnitGroundOffsetComponent>(em, actor, data);
+            Buffer<UnitAnimationOrderEntry>(em, actor, data); Buffer<UnitAnimationGroundOffset>(em, actor, data);
             Value<LocalTransform>(em, actor, data);
             row["unexported_component_values"] = new JArray(types.Where(t => !data.ContainsKey(t.GetManagedType().Name))
                 .Select(t => t.GetManagedType().FullName).OrderBy(x => x, StringComparer.Ordinal));
             row["replay_ready"] = false;
             return row;
+        }
+        static void Buffer<T>(EntityManager em, Entity actor, JObject data) where T : unmanaged, IBufferElementData
+        {
+            if (!em.HasBuffer<T>(actor)) { data[typeof(T).Name] = JValue.CreateNull(); return; }
+            var values = em.GetBuffer<T>(actor, true);
+            if (values.Length > 65536) throw new InvalidOperationException("Bounded native animation buffer required");
+            var rows = new JArray();
+            foreach (var value in values)
+            {
+                string encoded = JsonUtility.ToJson(value);
+                if (JsonUtility.ToJson(JsonUtility.FromJson<T>(encoded)) != encoded)
+                    throw new InvalidOperationException("Buffer serialization roundtrip differs: " + typeof(T).FullName);
+                rows.Add(JObject.Parse(encoded));
+            }
+            data[typeof(T).Name] = rows;
         }
         static void Value<T>(EntityManager em, Entity actor, JObject data) where T : unmanaged, IComponentData
         {

@@ -73,6 +73,10 @@ namespace Game.Runtime
             if (context.GetFootprintCenter == null)
                 return Entity.Null;
 
+#if UNITY_EDITOR
+            if (birth.Origin == RuntimeActorBirthContext.Kind.BuildingRequest)
+                S002PhysicalStartupObservation.BeforeFactory?.Invoke(em, actualGrid, definition, runtimeBuildingId, originCell, ownerFactionId, worldRotation, birth);
+#endif
             Vector2Int footprintCells = new(Mathf.Max(1, definition.FootprintCells.x), Mathf.Max(1, definition.FootprintCells.y));
             float3 center = (float3)context.GetFootprintCenter(originCell, footprintCells, grid);
             int maxHealth = Mathf.Max(1, definition.MaxHealth);
@@ -145,6 +149,10 @@ namespace Game.Runtime
                 DeathAnimationSeconds = 0.01f
             });
             birth.StampFresh(em, entity, actualGrid);
+#if UNITY_EDITOR
+            if (birth.Origin == RuntimeActorBirthContext.Kind.BuildingRequest)
+                S002PhysicalStartupObservation.AfterFactory?.Invoke(em, entity, birth);
+#endif
             return entity;
         }
 

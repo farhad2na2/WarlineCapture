@@ -1666,7 +1666,11 @@ namespace Game.UI.Shell.Ecs
                 { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.PreviousSquadPage, false, ref output); return true; }
                 if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 &&
                     plan.PagesOrdered >= (view.ExpandedPageCount > 0 ? view.ExpandedPageCount : 1))
-                { plan.AssaultIssued = 1; return false; }
+                {
+                    plan.AssaultIssued = 1;
+                    if (view.ExpandedAssaultMask != 0 && assaultOrdered) plan.AssaultSelecting = 0;
+                    return false;
+                }
             }
             if (view.NextSquadPage.Available)
             {
@@ -1687,7 +1691,11 @@ namespace Game.UI.Shell.Ecs
             // A one-page roster completes in place. Multi-page sweeps complete only
             // after the observed Previous actions have returned the tray to page zero.
             if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 && plan.PagesOrdered >= view.ExpandedPageCount)
-            { plan.AssaultIssued = 1; return false; }
+            {
+                    plan.AssaultIssued = 1;
+                    if (view.ExpandedAssaultMask != 0 && assaultOrdered) plan.AssaultSelecting = 0;
+                    return false;
+                }
             if (!pageInspected || plan.StructureOrdered == 0)
             {
                 plan.Intent = AriaSkirmishIntent.Inspect;

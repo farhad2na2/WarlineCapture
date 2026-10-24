@@ -9,6 +9,95 @@ namespace Game.Editor
     {
         public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
 
+        static int RunAcceptedAssaultSelectionCompletionControls()
+        {
+            int checks = 0;
+            void Check(bool ok, string name) { if (!ok) throw new InvalidOperationException(name); checks++; }
+            var view = new AriaSkirmishObservation(); var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent(); var output = new AriaPlayObservationComponent();
+            void Reset()
+            {
+                view = new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                    ExpandedBaseAssault = true, Time = 100, Frame = 100, Infantry = 10,
+                    PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                    ExpandedPageCount = 1, ExpandedPageIndex = 0, ExpandedTotalGroups = 5,
+                    ExpandedRosterRevision = 10, ExpandedAssaultMask = 25, ExpandedAttackOrderMask = 25,
+                    ExpandedStructureMask = 1, ExpandedSelectedMask = 16, ExpandedSelectedGroups = 1,
+                    SelectionVisible = true, OwnStructureAttackUnits = 2, CanAffordRifle = true,
+                    Recruit = new AriaTouchTarget { Available = true, Id = 31,
+                        Position = new UnityEngine.Vector2(30,40) },
+                    Squad0 = new AriaTouchTarget { Available = true, Id = 40,
+                        Position = new UnityEngine.Vector2(60,40) } };
+                plan = new AriaSkirmishPlanComponent { AssaultSelecting = 1, PagedToAssault = 1,
+                    StructureOrdered = 1, LastProgressAt = 100, Infantry = 10,
+                    PlayerHealth = 800, EnemyHealth = 800, SweepRosterRevision = 10,
+                    Intent = AriaSkirmishIntent.ObserveBattle };
+                touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Waiting,
+                    GoalId = 10000, LastProgressAt = 100, LastObjectiveProgressAt = 100,
+                    ObjectiveWatchdogInitialized = 1, VisitedGoalMask = ulong.MaxValue };
+            }
+            void Step()
+            {
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            void Completed()
+            {
+                Reset(); Step(); view.Time = 101; view.Frame++;
+            }
+            void NoRecruit(string name)
+            {
+                Step(); Check(output.TargetId != 31 && touch.GestureRequested == 0 && touch.Actions == 0, name);
+            }
+            Reset(); Step();
+            Check(plan.AssaultIssued == 1 && plan.StructureOrdered == 1 && plan.AssaultSelecting == 0 &&
+                output.Kind == AriaPlayObservationKind.Waiting && touch.GestureRequested == 0,
+                "completed accepted assault clears selection latch before recruitment");
+            view.Time = 101; view.Frame++; Step();
+            Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId == 31 &&
+                touch.Phase == AriaPlayPhase.Aiming && touch.GestureRequested == 0 && touch.Actions == 0,
+                "post-completion depleted screen approaches its public eligible Rifle opener");
+            view.Time = 102; view.Frame++; Step();
+            Check(output.TargetId == 31 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 0,
+                "selection completion still requires ordinary Decision aim then gesture");
+            Check(plan.AssaultIssued == 1 && plan.StructureOrdered == 1 && plan.LastProgressAt == 100 &&
+                touch.LastObjectiveProgressAt == 100,
+                "completion latch does not reset progress or replace accepted orders");
+            Reset(); plan.PagedToAssault = 2; plan.PagesOrdered = 1; view.ExpandedPageCount = 2; Step();
+            Check(plan.AssaultIssued == 1 && plan.AssaultSelecting == 0 && plan.PagesOrdered == 2,
+                "returned multi-page sweep releases only its completed selection latch");
+            Reset(); view.ExpandedAttackOrderMask = 24; Step();
+            Check(plan.AssaultIssued == 0 && plan.AssaultSelecting == 1 && output.TargetId == 40 &&
+                touch.GestureRequested == 0, "incomplete public order mask retains normal unordered-card selection");
+            Reset(); view.ExpandedAssaultMask = 0; view.ExpandedAttackOrderMask = 0; Step();
+            Check(plan.AssaultSelecting == 1 && output.TargetId != 31 && touch.GestureRequested == 0,
+                "empty page is not evidence of current accepted-mask coverage");
+            Completed(); touch.Phase = AriaPlayPhase.Aiming; touch.TargetId = 77; touch.DueAt = 105;
+            NoRecruit("completed sweep cannot override another active aim");
+            Completed(); touch.Phase = AriaPlayPhase.Touching; touch.TargetId = 77;
+            touch.GestureRequested = 1; touch.Pressed = 1; Step();
+            Check(output.TargetId != 31 && touch.TargetId == 77 && touch.GestureRequested == 1,
+                "completed sweep leaves the active gesture lifecycle unchanged");
+            Completed(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77;
+            NoRecruit("completion does not invent a missing input acknowledgement");
+            Completed(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            touch.LastCompletedTargetId = 77; touch.LastCompletedFrame = 100; touch.DueAt = 105; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0 && touch.Actions == 1 && touch.DueAt == 105,
+                "completed but not-due input cannot buy through the existing cooldown");
+            Completed(); view.MapOpen = true; NoRecruit("open map still refuses replacement recruitment");
+            Completed(); view.PlacementOpen = true;
+            view.PlacementCancel = new AriaTouchTarget { Available = true, Id = 81 };
+            NoRecruit("placement still uses its own public cancellation path");
+            Completed(); view.AttackMode = true; NoRecruit("active attack targeting does not become recruitment");
+            Completed(); plan.NextRecruitAt = 200; NoRecruit("recruitment cooldown is preserved after selection completion");
+            Completed(); view.CanAffordRifle = false; NoRecruit("public affordability refusal remains authoritative");
+            Completed(); view.RifleRecruitPending = true; NoRecruit("pending Rifle production cannot duplicate a purchase");
+            Completed(); view.OwnStructureAttackUnits = 0; NoRecruit("Rifles cannot substitute for missing structure capability");
+            if (checks != 18) throw new InvalidOperationException("All actual selection-completion controls required");
+            return checks;
+        }
+
         static int RunSurvivingStructureRifleDrawerControls()
         {
             int checks = 0;
@@ -1232,6 +1321,7 @@ namespace Game.Editor
             }
             checks += RunExpandedAssaultRecruitmentControls();
             checks += RunSurvivingStructureRifleDrawerControls();
+            checks += RunAcceptedAssaultSelectionCompletionControls();
             checks += RunPublicApproachProgressControls();
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 

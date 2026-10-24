@@ -226,6 +226,29 @@ namespace Game.Editor
 
         public static void RunProductionBatchCanariesFromEnvironment()
         {
+            BeginProductionBatchWithCompanionWarmup(false, false);
+        }
+
+        // Focused only: real warmup and real final-exit owner, never dispatch a mission.
+        public static void RunProductionCompanionWarmupShutdownControl()
+        {
+            RequireOwnedWarmupShutdownControl();
+            SkirmishProductionBatchOwnershipCensus.RunPackageCompanionShutdownControls();
+            BeginProductionBatchWithCompanionWarmup(true, false);
+        }
+        public static void RunProductionCompanionWarmupShutdownExpectedFailureControl()
+        {
+            RequireOwnedWarmupShutdownControl();
+            SkirmishProductionBatchOwnershipCensus.RunPackageCompanionShutdownControls();
+            BeginProductionBatchWithCompanionWarmup(true, true);
+        }
+        private static void RequireOwnedWarmupShutdownControl()
+        {
+            if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
+                throw new InvalidOperationException("Focused warmup shutdown requires its checked executeMethod-owned Editor");
+        }
+        private static void BeginProductionBatchWithCompanionWarmup(bool shutdownControl, bool expectedFailure)
+        {
             if(productionBatch!=null||productionCanary!=null||SessionState.GetBool(Key,false)||
                 SessionState.GetBool(QuitPendingKey,false)||!string.IsNullOrEmpty(SessionState.GetString(ProductionBatchOwnerKey,""))||
                 EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
@@ -363,7 +386,8 @@ namespace Game.Editor
                             var context=new ProductionBatchContext(path);
                             productionBatch=context;
                             SessionState.SetString(ProductionBatchOwnerKey,context.OutputDirectory);
-                            context.BeginNativeScenePreparation();
+                            if (shutdownControl) context.CompleteWarmupShutdownControl(facts, expectedFailure);
+                            else context.BeginNativeScenePreparation();
                         },error=>
                         {
                             var restoreErrors=RestoreSettings();
@@ -524,6 +548,10 @@ namespace Game.Editor
             private bool runtimeObservationArmed;
             private volatile bool quitGateEmitted;
             private int finalRequestedCode=2;
+            private bool warmupShutdownControl;
+            private bool warmupShutdownExpectedFailure;
+            private bool warmupShutdownCleanupVerified;
+            private JObject warmupShutdownBefore;
             internal bool RuntimeErrorsClean=>runtimeErrors.Count==0;
             private void ArmRuntimeObservation()
             {
@@ -543,6 +571,17 @@ namespace Game.Editor
             private void RuntimeQuittingGate()
             {
                 quitGateEmitted=true;
+                if (warmupShutdownControl)
+                {
+                    bool observed=RuntimeErrorsClean&&stopped&&warmupShutdownCleanupVerified&&finalExitRequested&&
+                        finalRequestedCode==(warmupShutdownExpectedFailure?2:0)&&exitInvocations==1;
+                    Write("WarmupShutdownControlQuittingGate",new JObject { ["observed_expected_lifecycle"]=observed,
+                        ["expected_negative"]=warmupShutdownExpectedFailure,["passed"]=observed&&!warmupShutdownExpectedFailure,
+                        ["errors"]=runtimeErrors.Count,["mission_dispatched"]=false,["mission_credit"]=0 });
+                    UnityEngine.Debug.Log("[ProductionWarmupShutdownControlQuittingGate] result="+
+                        (observed&&!warmupShutdownExpectedFailure?"Passed":"Failed")+" expectedNegative="+warmupShutdownExpectedFailure);
+                    return;
+                }
                 bool clean=RuntimeErrorsClean&&stopped&&completed==jobs.Count&&finalExitRequested&&finalRequestedCode==0&&exitInvocations==1;
                 Write("RuntimeQuittingGate",new JObject{["errors"]=runtimeErrors.Count,["completed_jobs"]=completed,["passed"]=clean});
                 UnityEngine.Debug.Log("[SkirmishProductionRuntimeGate] result="+(clean?"Passed":"Failed")+" errors="+runtimeErrors.Count+" jobs="+completed+" actualWrapperExitStillRequired=1");
@@ -617,6 +656,26 @@ namespace Game.Editor
                 // systems/input/default World or unrelated preview scene are touched.
                 foreach(string key in new[]{"WARLINE_SKIRMISH_PRODUCTION_JOB","WARLINE_SKIRMISH_PRODUCTION_CLAIM","WARLINE_ARIA_QUIT"})
                     previousEnvironment[key]=Environment.GetEnvironmentVariable(key);
+            }
+            internal void CompleteWarmupShutdownControl(JObject facts, bool expectedFailure)
+            {
+                if (!ReferenceEquals(productionBatch,this)||stopped||nativePreparationStarted||nativePreparationCompleted||
+                    (int?)facts["plays"]!=1||(bool?)facts["context_restored"]!=true||
+                    EditorApplication.isPlayingOrWillChangePlaymode||EditorApplication.isCompiling||EditorApplication.isUpdating||
+                    Worlds().Length!=0||SessionState.GetString(ProductionBatchOwnerKey,"")!=OutputDirectory)
+                    throw new InvalidOperationException("Actual restored one-Play World-free warmup owner required");
+                var before=(JObject)facts["before_census"];
+                if (((JArray)before["companion_package_owner_fields"]).OfType<JObject>().Any(f=>(bool?)f["valid"]==true)||
+                    ((JArray)SkirmishProductionBatchOwnershipCensus.Capture()["companion_package_owner_fields"]).OfType<JObject>()
+                        .Count(f=>(bool?)f["valid"]==true)!=2)
+                    throw new InvalidOperationException("Real warmup must create both exact package owner scenes after the five owner controls");
+                warmupShutdownBefore=(JObject)before.DeepClone();
+                warmupShutdownControl=true;warmupShutdownExpectedFailure=expectedFailure;
+                ArmRuntimeObservation();
+                Write("WarmupShutdownControlRestored",new JObject { ["warmup"]=facts.DeepClone(),
+                    ["expected_negative"]=expectedFailure,["mission_dispatched"]=false,["completed_jobs"]=0 });
+                stopped=true;SessionState.EraseString(ProductionBatchOwnerKey);productionBatch=null;
+                QueueFinalExit(expectedFailure?2:0);
             }
             internal void BeginNativeScenePreparation()
             {
@@ -808,15 +867,30 @@ namespace Game.Editor
                 finalRequestedCode=code;
                 finalExitRequested=true;productionBatchExitOwner=this;
                 Write("FinalExitQueued",new JObject { ["requested_code"]=code,["actual_process_exit"]="Pending checked wrapper" });
-                // Never call the native Exit owner from inside its current update
-                // callback. Consume the old request, restore, then queue once.
-                EditorApplication.delayCall+=()=>RequestFinalExit(code);
+                // RequestFinalExit schedules the existing persistent quit/update owner;
+                // it does not invoke EditorApplication.Exit inside this callback.
+                RequestFinalExit(code);
             }
             private void RequestFinalExit(int code)
             {
                 try
                 {
-                    Write("FinalPackageCompanionCleanup", SkirmishProductionBatchOwnershipCensus.CloseEmptyPackageCompanionScenesAtFinalExit());
+                    var cleanup=SkirmishProductionBatchOwnershipCensus.CloseEmptyPackageCompanionScenesAtFinalExit();
+                    Write("FinalPackageCompanionCleanup", cleanup);
+                    if (warmupShutdownControl)
+                    {
+                        var after=SkirmishProductionBatchOwnershipCensus.Capture();
+                        JArray Previews(JObject census)=>new JArray(((JArray)census["scenes"]).OfType<JObject>()
+                            .Where(s=>(bool?)s["preview"]==true).OrderBy(s=>(string)s["handle"]).Select(s=>s.DeepClone()));
+                        if ((int?)cleanup["closed_count"]!=2||(bool?)cleanup["foreign_scenes_unchanged"]!=true||
+                            (bool?)cleanup["worlds_disposed"]!=true||Worlds().Length!=0||
+                            !JToken.DeepEquals(Previews(warmupShutdownBefore),Previews(after)))
+                            throw new InvalidOperationException("Focused real warmup cleanup must close exact owned two and preserve original foreign previews");
+                        warmupShutdownCleanupVerified=true;
+                        Write("WarmupShutdownControlCleanupVerified",new JObject { ["before"]=warmupShutdownBefore.DeepClone(),
+                            ["after"]=after,["cleanup"]=cleanup.DeepClone(),["expected_negative"]=warmupShutdownExpectedFailure,
+                            ["mission_dispatched"]=false,["persistent_allocations_qualified"]=false });
+                    }
                 }
                 catch(Exception error)
                 {
@@ -834,6 +908,15 @@ namespace Game.Editor
                     throw new InvalidOperationException("Repeated or unowned native Editor exit invocation refused");
                 Write("NativeExitInvocation",new JObject { ["requested_code"]=code,["invocations"]=exitInvocations,
                     ["actual_process_exit"]="Pending external checked-wrapper receipt" });
+                if (warmupShutdownControl)
+                {
+                    bool observed=warmupShutdownCleanupVerified&&RuntimeErrorsClean&&code==(warmupShutdownExpectedFailure?2:0);
+                    string result=observed?(warmupShutdownExpectedFailure?"ExpectedFailure":"Passed"):"Failed";
+                    UnityEngine.Debug.Log("[ProductionWarmupShutdownControl] result="+result+
+                        (observed?" plays=1 ownedClosed=2 foreignPreserved=1 worlds=0":" cleanupVerified="+warmupShutdownCleanupVerified)+
+                        " actualExitInvocations="+exitInvocations+" requestedCode="+code+
+                        " nativeExitPending=1 missionDispatched=0 missionCredit=0 persistentAllocationsQualified=0");
+                }
             }
 
             private static bool nativeScenePreparationPending;

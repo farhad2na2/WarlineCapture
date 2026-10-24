@@ -23,21 +23,8 @@ namespace Game.Runtime
             BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult,
             BuildingSurfacePlacementUtilitySystemHelper surfacePlacementSystem)
         {
-            if (entity == Entity.Null || !em.Exists(entity) || surfacePlacementSystem == null)
-                return;
-
-            if (em.HasComponent<LocalTransform>(entity))
-            {
-                LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-                transform.Position.y = surfaceResult.FoundationHeight;
-                em.SetComponentData(entity, transform);
-            }
-
-            BuildingSurfaceComponent surfaceComponent = surfacePlacementSystem.ToComponent(surfaceResult);
-            if (em.HasComponent<BuildingSurfaceComponent>(entity))
-                em.SetComponentData(entity, surfaceComponent);
-            else
-                em.AddComponentData(entity, surfaceComponent);
+            BuildingRuntimeDataRegistrationSystemHelper.ApplyCombatEntityFoundation(
+                em, entity, surfaceResult, surfacePlacementSystem);
         }
     }
 }

@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Unity.Collections;
 using Game.Rendering.Contracts;
+using Game.Simulation;
 
 namespace Game.Runtime
 {
@@ -39,15 +40,13 @@ namespace Game.Runtime
                 ref var placement = ref data.Placements[i];
                 var bounds = data.Prototypes[placement.PrototypeIndex].CombinedLocalBounds;
                 var matrix = placement.WorldMatrix;
-                float3 center = math.transform(matrix, bounds.Center);
-                float3 extents = math.abs(matrix.c0.xyz) * bounds.Extents.x +
-                    math.abs(matrix.c1.xyz) * bounds.Extents.y + math.abs(matrix.c2.xyz) * bounds.Extents.z;
+                var worldBounds = SharedPlacementGeometry.TransformBounds(matrix, bounds.Center, bounds.Extents);
                 bool building = placement.SemanticCategory == DenseCityPresentationSemanticCategory.GameplayBuildingIntact;
                 bool solidScenery = placement.SemanticCategory is DenseCityPresentationSemanticCategory.Vegetation or
                     DenseCityPresentationSemanticCategory.Prop or DenseCityPresentationSemanticCategory.BuildingAttachmentIntact;
                 // Ground cover and flat decals can stay beneath a foundation; standing scenery cannot.
-                if (!building && !(solidScenery && extents.y >= .5f)) continue;
-                Reserve(center, extents);
+                if (!SharedPlacementGeometry.ShouldReservePackedBounds(building, solidScenery, worldBounds.Extents.y)) continue;
+                Reserve(worldBounds.Center, worldBounds.Extents);
             }
             }
             // Older operation-map scenes retain authored ECS renderers outside the packed database.
@@ -67,12 +66,8 @@ namespace Game.Runtime
         }
         private void Reserve(float3 center, float3 extents)
         {
-            // Keep one metre between foundations and roof overhangs. Conservatively reserve rotated bounds.
-            int2 min = math.max(0, (int2)math.floor((center.xz - extents.xz - 1f - grid.Origin.xz) / grid.CellSize));
-            int2 max = math.min(new int2(grid.Width, grid.Height),
-                (int2)math.ceil((center.xz + extents.xz + 1f - grid.Origin.xz) / grid.CellSize));
-            for (int y = min.y; y < max.y; y++)
-                for (int x = min.x; x < max.x; x++) mask[y * grid.Width + x] = true;
+            SharedPlacementGeometry.Reserve(mask, grid.Width, grid.Height, grid.CellSize,
+                grid.Origin, center, extents);
         }
 
         internal void AppendTo(bool[] target)

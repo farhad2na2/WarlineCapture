@@ -137,6 +137,9 @@ namespace Game.Runtime
                 return;
             }
             SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
+#if UNITY_EDITOR
+            S002InitialWorldBoundaryWitness.RecordSpawnComplete(em, entity);
+#endif
         }
 
         public static bool TrySpawnLedgers(
@@ -208,93 +211,43 @@ namespace Game.Runtime
             // every other mode; the bare-entity fallback only covers Editor fixtures
             // without a baked registry and keeps SpawnVisualPending set.
             Dictionary<string, Entity> prefabLookup = BuildPrefabEntityLookup(em);
-            bool startingSetBound = true;
-            int infantryLive = 0;
-            int groundLive = 0;
-            int airLive = 0;
-            int supplyLive = 0;
-            int enemyInfantryLive = 0;
-            int enemyGroundLive = 0;
-            int enemyAirLive = 0;
-            int enemySupplyLive = 0;
-            uint openGroupId = 0;
-            byte openFaction = 0;
-            SkirmishRoleKind openRole = SkirmishRoleKind.None;
-            int openFill = 0;
-
-            for (int i = 0; i < setup.Forces.Length; i++)
+            var openingForces = new Game.Simulation.SkirmishBootstrapForce[setup.Forces.Length];
+            for (int index = 0; index < openingForces.Length; index++)
             {
-                SkirmishResolvedForceEntry force = setup.Forces[i];
-                int quantity = force.Quantity < 1 ? 1 : force.Quantity;
-                int perMemberSupply = quantity == 0 ? 0 : force.SupplyCost / quantity;
-                string prefabKey = force.RuntimePrefabKey ?? string.Empty;
-                if (string.IsNullOrEmpty(prefabKey))
-                    startingSetBound = false;
-                SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
-                for (int member = 0; member < quantity; member++)
-                {
-                    Entity spawned = CreateForceMember(
-                        em,
-                        sessionId,
-                        force,
-                        i,
-                        member,
-                        perMemberSupply,
-                        prefabKey,
-                        prefabLookup,
-                        setup,typedPlacement);
-                    if (spawned == Entity.Null)
-                    {
-                        UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + prefabKey +
-                            " faction=" + force.FactionId + " member=" + member);
-                        DestroyAttemptOwned(em, sessionId);
-                        reason = SkirmishReasonCode.BlockedSpawn;
-                        return false;
-                    }
-                    bool infantry = category == SkirmishPopulationCategory.Infantry;
-                    bool needNew = openGroupId == 0 ||
-                                   force.FactionId != openFaction ||
-                                   force.RoleKind != openRole ||
-                                   !infantry ||
-                                   openFill >= SkirmishRoleIds.InfantrySquadMembers;
-                    if (needNew)
-                    {
-                        openGroupId = SkirmishArmyGroupSystem.OpenGroup(
-                            em, session, force.FactionId, force.RoleKind, category);
-                        openFaction = force.FactionId;
-                        openRole = force.RoleKind;
-                        openFill = 0;
-                    }
-
-                    SkirmishArmyGroupSystem.BindMember(em, session, spawned, openGroupId);
-                    openFill++;
-                    if (category == SkirmishPopulationCategory.Infantry ||
-                        category == SkirmishPopulationCategory.Ground ||
-                        category == SkirmishPopulationCategory.Air)
-                    {
-                        if (force.FactionId == 1)
-                        {
-                            if (category == SkirmishPopulationCategory.Infantry)
-                                infantryLive++;
-                            else if (category == SkirmishPopulationCategory.Ground)
-                                groundLive++;
-                            else
-                                airLive++;
-                            supplyLive += perMemberSupply;
-                        }
-                        else if (force.FactionId == 2)
-                        {
-                            if (category == SkirmishPopulationCategory.Infantry)
-                                enemyInfantryLive++;
-                            else if (category == SkirmishPopulationCategory.Ground)
-                                enemyGroundLive++;
-                            else
-                                enemyAirLive++;
-                            enemySupplyLive += perMemberSupply;
-                        }
-                    }
-                }
+                var force = setup.Forces[index];
+                openingForces[index] = new Game.Simulation.SkirmishBootstrapForce(force.RoleId, force.FactionId,
+                    force.RoleKind, force.Quantity, force.SupplyCost, force.RuntimePrefabKey);
             }
+            var opening = new Game.Simulation.SkirmishMissionBootstrapKernel(openingForces);
+            while (opening.TryBeginMember(out var member))
+            {
+                SkirmishResolvedForceEntry force = setup.Forces[member.ForceIndex];
+                Entity spawned = CreateForceMember(em, sessionId, force, member.ForceIndex, member.MemberIndex,
+                    member.PerMemberSupply, member.SourceKey, prefabLookup, setup, typedPlacement);
+                if (spawned == Entity.Null)
+                {
+                    UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + member.SourceKey +
+                        " faction=" + force.FactionId + " member=" + member.MemberIndex);
+                    opening.Abort();
+                    DestroyAttemptOwned(em, sessionId);
+                    reason = SkirmishReasonCode.BlockedSpawn;
+                    return false;
+                }
+                uint groupId = opening.RequiresNewGroup
+                    ? SkirmishArmyGroupSystem.OpenGroup(em, session, member.Faction, member.Role, member.Category)
+                    : opening.OpenGroupId;
+                SkirmishArmyGroupSystem.BindMember(em, session, spawned, groupId);
+                opening.RecordCreatedAndBound(groupId);
+            }
+            bool startingSetBound = opening.StartingSetBound;
+            int infantryLive = opening.Player.Infantry;
+            int groundLive = opening.Player.Ground;
+            int airLive = opening.Player.Air;
+            int supplyLive = opening.Player.Supply;
+            int enemyInfantryLive = opening.Enemy.Infantry;
+            int enemyGroundLive = opening.Enemy.Ground;
+            int enemyAirLive = opening.Enemy.Air;
+            int enemySupplyLive = opening.Enemy.Supply;
 
             if (setup.Structures != null && !em.HasComponent<SkirmishSharedBuildingsReady>(session))
             {
@@ -394,7 +347,7 @@ namespace Game.Runtime
             bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
             if (!fromPrefab && Application.isPlaying)
                 return Entity.Null;
-            var stableId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member);
+            var stableId = new FixedString64Bytes(Game.Simulation.SkirmishMissionBootstrapKernel.StableActorId(force.RoleId, force.FactionId, forceIndex, member));
             Entity placementGrid = Entity.Null;
             RuntimeActorBirthContext birth = default;
             if (fromPrefab)

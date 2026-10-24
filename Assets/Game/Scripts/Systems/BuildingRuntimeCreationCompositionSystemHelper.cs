@@ -92,83 +92,81 @@ namespace Game.Runtime
         {
             if (context.RuntimeBuildingSystem == null || definition == null || instance == null)
                 return null;
-            bool defer = context.DeferSideEffects?.Invoke() == true;
-            int buildingId = context.RuntimeBuildingSystem.AllocateId();
-            instance.name = $"{definition.DisplayName}_{buildingId}";
 
             EntityManager entityManager = default;
-            bool hasEntityManager = context.TryGetEntityManager != null && context.TryGetEntityManager(out entityManager);
-            MapAuthoredBuildingVisualComponent mapAuthoredVisual = instance.GetComponent<MapAuthoredBuildingVisualComponent>();
-            bool preserveAuthoredTransform = mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredTransform;
+            bool hasEntityManager = false;
+            bool preserveAuthoredTransform = false;
             bool hasSurfaceResult = false;
             BuildingSurfacePlacementUtilitySystemHelper.Result surfaceResult = default;
-            RectInt occupiedRect = new(originCell, definition.FootprintCells);
-            if (context.TryGetGrid != null &&
-                context.ResolvePlacementRect != null &&
-                context.TryGetGrid(out GridConfig grid))
-            {
-                occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
-                hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
-                if (hasSurfaceResult && !preserveAuthoredTransform)
-                    FoundationVisuals?.ApplyVisualFoundation(instance, surfaceResult);
-            }
-
-            bool pathBlocking = context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition);
-            if (removeOverlappingBlockers && pathBlocking)
-                context.RemoveOverlappingBlockers?.Invoke(originCell, definition.FootprintCells);
-
-            Entity blockerEntity = pathBlocking && context.CreateBlockerEntity != null
-                ? context.CreateBlockerEntity(definition, originCell, definition.FootprintCells, birth)
-                : Entity.Null;
-            Entity combatEntity = context.CreateCombatEntity != null
-                ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation, birth)
-                : Entity.Null;
-            if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
-                FoundationVisuals?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
-
-            if (defer)
-            {
-                if (pathBlocking)
-                    context.AddDeferredRedirectFootprint?.Invoke(occupiedRect);
-            }
-            else if (pathBlocking)
-            {
-                context.RedirectUnits?.Invoke(occupiedRect);
-            }
-
-            var building = new RuntimeBuildingEntity
-            {
-                Id = buildingId,
-                Definition = definition,
-                Instance = instance,
-                OriginCell = originCell,
-                CombatEntity = combatEntity,
-                BlockerEntity = blockerEntity,
-                ProductionSpawnLocalPositions = definition.ProductionSpawnLocalPositions,
-                ProducedUnits = new List<Entity>(),
-                PendingProductions = new List<RuntimeBuildingEntity.PendingProduction>(),
-                StoredOilBarrels = 0f,
-                StoredFuelBarrels = 0f
-            };
-            if (building.ProductionSpawnLocalPositions != null && building.ProductionSpawnLocalPositions.Length > 0)
-                building.ProducedUnitSlots = new Entity[building.ProductionSpawnLocalPositions.Length];
-
-            context.InitializeVisuals?.Invoke(building);
-            if (hasEntityManager) BuildingRunwayPathingSurface.Attach(entityManager, building);
-            AttachRuntimeLink(
-                context.RuntimeLinkInteractionSystem,
-                context.RuntimeLinkInteractionContext,
-                context.RuntimeBuildingEntityLinks,
-                building);
-            context.RuntimeBuildingSystem.AddBuilding(building.Id, building);
-            if (hasEntityManager && combatEntity != Entity.Null && entityManager.Exists(combatEntity))
-                entityManager.AddComponentObject(combatEntity, new SkirmishNativeBuildingCheckpointRecord { Building = building });
-
-            if (defer)
-                context.MarkPendingMarkerRefresh?.Invoke();
-            else
-                context.RefreshMarkers?.Invoke();
-
+            RectInt occupiedRect = default;
+            Entity blockerEntity = Entity.Null;
+            Entity combatEntity = Entity.Null;
+            RuntimeBuildingEntity building = null;
+            Game.Simulation.BuildingRegistrationKernel.Register(
+                new Game.Simulation.BuildingRegistrationKernel.Context
+                {
+                    DeferSideEffects = context.DeferSideEffects,
+                    AllocateId = context.RuntimeBuildingSystem.AllocateId,
+                    PrepareSourceData = buildingId =>
+                    {
+                        instance.name = $"{definition.DisplayName}_{buildingId}";
+                        hasEntityManager = context.TryGetEntityManager != null && context.TryGetEntityManager(out entityManager);
+                        MapAuthoredBuildingVisualComponent mapAuthoredVisual = instance.GetComponent<MapAuthoredBuildingVisualComponent>();
+                        preserveAuthoredTransform = mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredTransform;
+                        occupiedRect = new RectInt(originCell, definition.FootprintCells);
+                        if (context.TryGetGrid != null && context.ResolvePlacementRect != null &&
+                            context.TryGetGrid(out GridConfig grid))
+                        {
+                            occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
+                            hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
+                            if (hasSurfaceResult && !preserveAuthoredTransform)
+                                FoundationVisuals?.ApplyVisualFoundation(instance, surfaceResult);
+                        }
+                    },
+                    ShouldBlockPathing = () => context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition),
+                    RemoveOverlappingBlockers = () => context.RemoveOverlappingBlockers?.Invoke(originCell, definition.FootprintCells),
+                    CreateActorsAndFoundation = (buildingId, pathBlocking) =>
+                    {
+                        blockerEntity = pathBlocking && context.CreateBlockerEntity != null
+                            ? context.CreateBlockerEntity(definition, originCell, definition.FootprintCells, birth)
+                            : Entity.Null;
+                        combatEntity = context.CreateCombatEntity != null
+                            ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation, birth)
+                            : Entity.Null;
+                        if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
+                            FoundationVisuals?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
+                    },
+                    AddDeferredRedirectFootprint = () => context.AddDeferredRedirectFootprint?.Invoke(occupiedRect),
+                    RedirectUnits = () => context.RedirectUnits?.Invoke(occupiedRect),
+                    CommitData = (buildingId, defer) =>
+                    {
+                        building = new RuntimeBuildingEntity
+                        {
+                            Id = buildingId,
+                            Definition = definition,
+                            Instance = instance,
+                            OriginCell = originCell,
+                            CombatEntity = combatEntity,
+                            BlockerEntity = blockerEntity
+                        };
+                        BuildingRuntimeDataRegistrationSystemHelper.InitializeAndRegister(
+                            context.RuntimeBuildingSystem, building, defer,
+                            value => context.InitializeVisuals?.Invoke(value),
+                            value =>
+                            {
+                                if (hasEntityManager) BuildingRunwayPathingSurface.Attach(entityManager, value);
+                                AttachRuntimeLink(context.RuntimeLinkInteractionSystem, context.RuntimeLinkInteractionContext,
+                                    context.RuntimeBuildingEntityLinks, value);
+                            },
+                            value =>
+                            {
+                                if (hasEntityManager && combatEntity != Entity.Null && entityManager.Exists(combatEntity))
+                                    entityManager.AddComponentObject(combatEntity, new SkirmishNativeBuildingCheckpointRecord { Building = value });
+                            },
+                            () => context.MarkPendingMarkerRefresh?.Invoke(),
+                            () => context.RefreshMarkers?.Invoke());
+                    }
+                }, removeOverlappingBlockers);
             return building;
         }
 

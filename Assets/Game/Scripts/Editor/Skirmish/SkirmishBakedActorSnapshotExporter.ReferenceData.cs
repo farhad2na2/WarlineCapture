@@ -11,7 +11,9 @@ using Newtonsoft.Json.Linq;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Scenes;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
@@ -88,6 +90,20 @@ namespace Game.Editor
                         ["world_to_local"] = Matrix(value.WorldToLocal), ["local_min"] = Vector(value.LocalMin),
                         ["local_max"] = Vector(value.LocalMax), ["world_min"] = Vector(value.WorldMin), ["world_max"] = Vector(value.WorldMax) });
                 }
+                var waterRows = new JArray();
+                using var waterQuery = em.CreateEntityQuery(typeof(RenderMeshArray), typeof(MaterialMeshInfo), typeof(LocalToWorld));
+                int waterQueryCount = waterQuery.CalculateEntityCount();
+                var water = new NativeList<Game.Rendering.Contracts.RenderSurfaceFootprint>(Allocator.Temp);
+                try
+                {
+                    reader.CollectWaterFootprints(em, ref water);
+                    foreach (var value in water) waterRows.Add(new JObject {
+                        ["world_to_local"] = Matrix((float4x4)value.WorldToLocal),
+                        ["local_bounds_center"] = Vector(value.LocalBounds.center), ["local_bounds_extents"] = Vector(value.LocalBounds.extents),
+                        ["world_bounds_center"] = Vector(value.WorldBounds.center), ["world_bounds_extents"] = Vector(value.WorldBounds.extents) });
+                }
+                finally { water.Dispose(); }
+                var staticBlockers = CaptureAuthoredNavigationBlockers(em, missing);
                 result = new JObject {
                     ["schema_version"] = 1, ["kind"] = "AuthoredSkirmishReferenceData",
                     ["authority"] = "ActualSourceAssetsAndNativeBakers_NotMissionState",
@@ -97,6 +113,8 @@ namespace Game.Editor
                     ["mesh_database"] = MeshDatabase, ["mesh_database_sha256"] = SkirmishOfflineDataExporter.HashFile(MeshDatabase),
                     ["meshes"] = meshes, ["authored_bounds_count"] = count, ["authored_bounds"] = authoredBounds,
                     ["sidewalk_owner_count"] = owners.Length, ["sidewalks"] = sidewalks,
+                    ["water_query_count"] = waterQueryCount, ["water_footprint_count"] = waterRows.Count, ["water_footprints"] = waterRows,
+                    ["navigation_static_blocker_count"] = staticBlockers.Count, ["navigation_static_blockers"] = staticBlockers,
                     ["fresh_world_allocator_exported"] = false, ["full_mission_initialized"] = false,
                     ["native_visual_readiness"] = false,
                     ["consumer_rule"] = "Compile-owned type/read-domain allowlist; reject unsupported REQUIRED values; remap source Entity IDs into fresh template identities" };
@@ -107,7 +125,41 @@ namespace Game.Editor
             File.WriteAllText(Path.Combine(output, "reference-data.json"), result.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             Debug.Log("[SkirmishAuthoredReferenceData] result=Passed prefabs=" + OpeningKeys.Length +
                 " entities=" + ((JArray)result["entities"]).Count + " meshes=" + ((JArray)result["meshes"]).Count +
-                " sidewalks=" + ((JArray)result["sidewalks"]).Count + " fullMission=0");
+                " sidewalks=" + ((JArray)result["sidewalks"]).Count +
+                " navigationBlockers=" + ((JArray)result["navigation_static_blockers"]).Count + " fullMission=0");
+        }
+
+        // Match the native StaticGridBlockerUpdateSystem new-blocker query. A
+        // placement exclusion mask is not an authoritative navigation footprint.
+        // These are authored Baker values before gameplay or a private allocator runs.
+        static JArray CaptureAuthoredNavigationBlockers(EntityManager em, JArray missing)
+        {
+            using var query = em.CreateEntityQuery(typeof(StaticGridBlocker), typeof(UnitGrid), typeof(GridBlockerSize));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            if (entities.Length > 100000) throw new InvalidOperationException("Authored navigation blocker domain exceeded");
+            var selected = new HashSet<Type> {
+                typeof(StaticGridBlocker), typeof(UnitGrid), typeof(GridBlockerSize),
+                typeof(FriendlyPassGridBlocker), typeof(OperationMapBuildingComponent), typeof(RuntimeBuildingCombatInfo),
+                typeof(StaticGridBlockerSurfaceOpeningComponent), typeof(LocalTransform), typeof(UnitHealth), typeof(Faction) };
+            var rows = new JArray();
+            foreach (Entity entity in entities)
+            {
+                var values = new JObject(); using var types = em.GetComponentTypes(entity);
+                foreach (var component in types)
+                {
+                    Type type = component.GetManagedType();
+                    if (!selected.Contains(type)) continue;
+                    if (TypeManager.GetTypeInfo(component.TypeIndex).Category == TypeManager.TypeCategory.BufferData)
+                        throw new InvalidOperationException("Unexpected buffer in authored blocker scalar domain: " + type.FullName);
+                    JToken value = component.TypeIndex.IsZeroSized ? new JObject { ["codec"] = "tag-v1" } :
+                        S002InitialWorldEntityExport.CaptureValue(em.Debug.GetComponentBoxed(entity, component),
+                            EntityId(entity) + "/" + type.FullName, missing);
+                    values[type.FullName] = new JObject { ["present"] = true, ["buffer"] = false,
+                        ["enabled"] = component.IsEnableable ? (JToken)em.IsComponentEnabled(entity, component) : JValue.CreateNull(), ["value"] = value };
+                }
+                rows.Add(new JObject { ["id"] = EntityId(entity), ["entity_enabled"] = em.IsEnabled(entity), ["components"] = values });
+            }
+            return rows;
         }
 
         static Dictionary<string, string> OpeningPrefabRoots(EntityManager em)

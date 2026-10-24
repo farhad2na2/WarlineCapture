@@ -11,6 +11,7 @@ static class WorldProgram
         string kind = row.GetProperty("kind").GetString();
 #if WORLD_BODY_TRANSITIONS
         if (kind == "body_transition") return CapturedBodyTransition.Run(row);
+        if (kind == "vehicle_caller") return VehicleCallerReplay.Run(row);
 #endif
         if (kind == "startup_import") return StartupFullMapImport.Run(row);
         if (kind == "squad_target") return SquadReplay.Run(row);
@@ -61,6 +62,13 @@ static class WorldProgram
                     int storageRows=row.TryGetProperty("stores",out var stores)&&stores.ValueKind==JsonValueKind.Array?stores.GetArrayLength():0;
                     work+=(long)bodyRows.GetArrayLength()*Math.Max(1,storageRows);
                 }
+#if WORLD_BODY_TRANSITIONS
+            foreach(var row in cases.EnumerateArray())
+                if(row.ValueKind==JsonValueKind.Object&&row.TryGetProperty("kind",out var callerKind)&&callerKind.GetString()=="vehicle_caller")
+                {
+                    long callerWork=row.GetProperty("work_limit").GetInt64();WorldJson.Need(callerWork>0&&callerWork<=2000000,"Bounded caller work admission required");work+=callerWork;
+                }
+#endif
             WorldJson.Need(work<=2000000,"Aggregate world work budget exceeded");
             var ids = new HashSet<string>();
             var results = new List<object>();

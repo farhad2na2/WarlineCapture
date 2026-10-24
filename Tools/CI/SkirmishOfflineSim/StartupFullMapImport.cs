@@ -19,13 +19,28 @@ internal static class StartupFullMapImport
     {
         WorldJson.Shape(descriptor,new[]{"path","sha256"});string path=descriptor.GetProperty("path").GetString();
         Need(!string.IsNullOrWhiteSpace(path)&&Path.IsPathRooted(path),"Pinned absolute import path required");
+        return BoundedPinnedFile(path,descriptor.GetProperty("sha256").GetString(),maximum);
+    }
+    internal static byte[] ReadPinnedArtifact(string path,string hash,long maximum,long? length=null)
+    {
+        Need(!string.IsNullOrWhiteSpace(path)&&Path.IsPathRooted(path),"Absolute pinned artifact required");
+        for(var item=new FileInfo(path)as FileSystemInfo;item!=null;item=item is FileInfo f?f.Directory:((DirectoryInfo)item).Parent)
+            Need((item.Attributes&FileAttributes.ReparsePoint)==0,"Artifact symlink rejected");
+        return BoundedPinnedFile(path,hash,maximum,length);
+    }
+    static byte[] BoundedPinnedFile(string path,string expectedHash,long maximum,long? expectedLength=null)
+    {
+        Need(!expectedLength.HasValue||expectedLength.Value>0&&expectedLength.Value<=maximum,"Positive bounded artifact descriptor required");
         var info=new FileInfo(path);
         Need(info.Exists&&(info.Attributes&(FileAttributes.ReparsePoint|FileAttributes.Directory|FileAttributes.Device))==0&&info.Length>0&&info.Length<=maximum,"Bounded regular import file required");
+        long length=info.Length;
+        Need(!expectedLength.HasValue||length==expectedLength.Value,"Artifact length differs before read");
         using var stream=new FileStream(path,FileMode.Open,FileAccess.Read,FileShare.Read);
-        Need(stream.Length==info.Length&&stream.Length<=maximum,"Import file budget changed");
-        byte[] bytes=new byte[checked((int)stream.Length)];stream.ReadExactly(bytes);
-        Need(stream.ReadByte()==-1&&Hash(bytes)==descriptor.GetProperty("sha256").GetString(),"Import bytes differ");return bytes;
+        Need(stream.CanSeek&&stream.Length==length,"Import file budget/type changed");
+        byte[] bytes=new byte[checked((int)length)];stream.ReadExactly(bytes);
+        Need(stream.ReadByte()==-1&&Hash(bytes)==expectedHash,"Import bytes differ");return bytes;
     }
+
     struct Storage:IGridOccupancyStorage
     {
         internal int[] Counts;internal byte[] Occupied;
@@ -95,10 +110,10 @@ internal static class StartupFullMapImport
         string root=Path.GetDirectoryName(row.GetProperty("capture").GetProperty("path").GetString());long artifactBytes=0;byte[] observedOccupied=null;int artifactCount=0;
         foreach(var artifact in capture.GetProperty("artifacts").EnumerateObject())
         {
-            string name=artifact.Name;Need(Path.GetFileName(name)==name&&name!="."&&name!="..","Artifact path escape");var spec=artifact.Value;long length=spec.GetProperty("bytes").GetInt64();artifactBytes+=length;
-            Need(length>=0&&artifactBytes<=512L*1024*1024,"Artifact byte budget exceeded");string path=Path.Combine(root,name);
+            string name=artifact.Name;Need(Path.GetFileName(name)==name&&name!="."&&name!="..","Artifact path escape");var spec=artifact.Value;long length=spec.GetProperty("bytes").GetInt64();
+            Need(length>0&&length<=128L*1024*1024&&artifactBytes<=512L*1024*1024-length,"Artifact byte budget exceeded");artifactBytes+=length;string path=Path.Combine(root,name);
             for(var item=new FileInfo(path)as FileSystemInfo;item!=null;item=item is FileInfo f?f.Directory:((DirectoryInfo)item).Parent)Need((item.Attributes&FileAttributes.ReparsePoint)==0,"Artifact symlink rejected");
-            Need(new FileInfo(path).Length==length,"Artifact length differs");byte[] bytes=File.ReadAllBytes(path);Need(Hash(bytes)==spec.GetProperty("sha256").GetString(),"Captured artifact hash differs");artifactCount++;
+            byte[] bytes=BoundedPinnedFile(path,spec.GetProperty("sha256").GetString(),128L*1024*1024,length);artifactCount++;
             if(name=="dynamic-occupied.u8"){Need(length==cells&&bytes.All(b=>b<=1),"Complete observed occupancy mask required");observedOccupied=bytes;}
         }
         Need(observedOccupied!=null,"Observed occupancy artifact absent");

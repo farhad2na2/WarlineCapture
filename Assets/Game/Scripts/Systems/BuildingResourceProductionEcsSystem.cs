@@ -43,6 +43,9 @@ namespace Game.Runtime
             if (storageQuery.IsEmptyIgnoreFilter)
                 return new TickResult(0f, 0f);
 
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ForwardProductionBoundary?.Invoke(entityManager, storageQuery, "before-production", secondsPerDay, deltaTime, oilBarrelsPerFuelBarrel);
+#endif
             secondsPerDay = UnityEngine.Mathf.Max(1f, secondsPerDay);
             deltaTime = UnityEngine.Mathf.Max(0f, deltaTime);
             oilBarrelsPerFuelBarrel = UnityEngine.Mathf.Max(0.001f, oilBarrelsPerFuelBarrel);
@@ -84,6 +87,9 @@ namespace Game.Runtime
                 }
             }
 
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ForwardProductionBoundary?.Invoke(entityManager, storageQuery, "after-production", secondsPerDay, deltaTime, oilBarrelsPerFuelBarrel);
+#endif
             return new TickResult(oilExtracted, fuelProduced);
         }
 

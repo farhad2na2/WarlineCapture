@@ -50,6 +50,14 @@ BINS = {"bin/WorldReplay" + suffix for suffix in (".dll", ".deps.json", ".runtim
 BODY_SOURCES = ["Tools/CI/SkirmishOfflineSim/" + name + ".cs" for name in (
     "BodyTransitionData", "CapturedPhysicalFuel", "ProductionGroundFuelKernel", "CapturedVehicleSteering", "CapturedBodyTransition", "BodyTransitionSourcePins", "RuntimeMathBootstrap")]
 BODY_SOURCES += ["Assets/Game/Scripts/Components/UnitVehicleMovementUtility.cs"]
+BODY_SOURCES += ["Tools/CI/SkirmishOfflineSim/VehicleCaller/" + name + ".cs" for name in (
+    "UnitGridJobs.original", "VehicleCallerBindings", "VehicleCallerData", "CapturedVehicleCaller")]
+BODY_SOURCES += ["Tools/CI/SkirmishOfflineSim/VehicleCallerReplay.cs",
+    "Assets/Game/Scripts/Components/UnitFootprintUtility.cs",
+    "Assets/Game/Scripts/Systems/UnitGridMovementPolicy.cs",
+    "Assets/Game/Scripts/Systems/GridPathMovementKernel.cs",
+    "Assets/Game/Scripts/Systems/InfantryPathLifecycleKernel.cs",
+    "Assets/Game/Scripts/Systems/Pathfinding/PathPlacementKernel.cs"]
 BODY_PINS = BODY_SOURCES + ["Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs", "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs", "Assets/Game/Scripts/Components/UnitCombatComponents.cs", "ProjectSettings/ProjectVersion.txt"]
 
 

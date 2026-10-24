@@ -25,6 +25,13 @@ namespace Game.Runtime
         private const float VehicleTurnInPlaceRepathDelaySeconds = 1.25f;
         private const float InfantryGroupFinalStopDistanceCells = GridPathMovementKernel.InfantryGroupFinalStopDistanceCells;
         private const int InfantryMaxWaypointAdvancesPerFrame = GridPathMovementKernel.InfantryMaxWaypointAdvancesPerFrame;
+#if UNITY_EDITOR
+        // Optional observer allocation. Disabled safety only avoids treating this
+        // unrelated trace buffer as a gameplay dependency; ownership is external.
+        [Unity.Collections.LowLevel.Unsafe.NativeDisableContainerSafetyRestriction]
+        [Unity.Collections.NativeDisableParallelForRestriction]
+        internal NativeArray<S002PhysicalStartupObservation.ForwardVehicleStep> ForwardTrace;
+#endif
         public float DeltaTime;
         public GridConfig Grid;
         public EntityCommandBuffer.ParallelWriter Ecb;
@@ -61,6 +68,12 @@ namespace Game.Runtime
             in UnitVehicleMovement vehicleMovement,
             in Faction faction)
         {
+#if UNITY_EDITOR
+            // Query index is identity/order evidence, never parallel execution order.
+            if (ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length)
+                ForwardTrace[sortKey] = new S002PhysicalStartupObservation.ForwardVehicleStep
+                    { Seen = 1, Entity = entity, QueryIndex = sortKey };
+#endif
             if (!UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior))
             {
                 MoveSharedInfantry(sortKey, entity, ref transform, ref unitGrid, ref follow,
@@ -216,6 +229,18 @@ namespace Game.Runtime
 
                 float3 oldPosition = transform.Position;
                 float turnThresholdRadians = math.radians(finalPathStep ? 18f : 10f);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ForwardVehicleStep forwardStep = default;
+                bool traceStep = ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length;
+                if (traceStep)
+                {
+                    forwardStep = ForwardTrace[sortKey]; forwardStep.Called = 1;
+                    forwardStep.Before = transform; forwardStep.KinematicsBefore = vehicleKinematics;
+                    forwardStep.Movement = vehicleMovement; forwardStep.Direction = dir;
+                    forwardStep.Threshold = turnThresholdRadians; forwardStep.Speed = speed;
+                    forwardStep.DeltaTime = DeltaTime; forwardStep.MaxDistance = math.length(toTarget);
+                }
+#endif
                 bool moved = UnitVehicleMovementUtility.MoveVehicle(
                     ref transform,
                     ref vehicleKinematics,
@@ -225,6 +250,13 @@ namespace Game.Runtime
                     speed,
                     DeltaTime,
                     math.length(toTarget));
+#if UNITY_EDITOR
+                if (traceStep)
+                {
+                    forwardStep.After = transform; forwardStep.KinematicsAfter = vehicleKinematics;
+                    forwardStep.Moved = (byte)(moved ? 1 : 0); ForwardTrace[sortKey] = forwardStep;
+                }
+#endif
 
                 if (!moved)
                 {
@@ -628,6 +660,11 @@ namespace Game.Runtime
     [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
     public partial struct UnitPathFollowCleanupJob : IJobEntity
     {
+#if UNITY_EDITOR
+        [Unity.Collections.LowLevel.Unsafe.NativeDisableContainerSafetyRestriction]
+        [Unity.Collections.NativeDisableParallelForRestriction]
+        internal NativeArray<S002PhysicalStartupObservation.ForwardCleanupStep> ForwardTrace;
+#endif
         public EntityCommandBuffer.ParallelWriter Ecb;
         [ReadOnly] public ComponentLookup<UnitGrid> UnitGridLookup;
         [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
@@ -636,6 +673,11 @@ namespace Game.Runtime
 
         public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref UnitVehicleKinematics vehicleKinematics, in UnitPathFollow follow, in UnitPathRange range)
         {
+#if UNITY_EDITOR
+            if (ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length)
+                ForwardTrace[sortKey] = new S002PhysicalStartupObservation.ForwardCleanupStep
+                    { Seen = 1, Entity = entity, QueryIndex = sortKey };
+#endif
             bool hasLongDistance = LongDistanceMoveLookup.HasComponent(entity);
             bool hasGrid = UnitGridLookup.HasComponent(entity);
             var longMove = hasLongDistance ? LongDistanceMoveLookup[entity] : default;
@@ -757,8 +799,20 @@ namespace Game.Runtime
                 var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
                 var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
+#if UNITY_EDITOR
+                var forwardTrace = S002PhysicalStartupObservation.BeginGridInterval != null
+                    ? S002PhysicalStartupObservation.BeginGridInterval(state.EntityManager, SystemAPI.Time.DeltaTime,
+                        new S002PhysicalStartupObservation.ForwardGridFacts { Grid = grid, Pool = poolArray,
+                            Walkable = walkable, DynamicBlocked = dynamicBlocked, FriendlyPass = friendlyPassFactionIds,
+                            Occupied = occupied, Roads = roads, Sidewalks = sidewalks, DirtRoads = dirtRoads,
+                            LiveEntities = liveUnitEntities.AsArray(), LiveGrids = liveUnitGrids.AsArray(), LiveFootprints = liveUnitFootprints.AsArray() })
+                    : default;
+#endif
                 var moveHandle = new UnitGridMoveJob
                 {
+#if UNITY_EDITOR
+                    ForwardTrace = forwardTrace.Movement,
+#endif
                     DeltaTime = SystemAPI.Time.DeltaTime,
                     Grid = grid,
                     Ecb = ecb,
@@ -784,6 +838,9 @@ namespace Game.Runtime
 
                 var cleanupHandle = new UnitPathFollowCleanupJob
                 {
+#if UNITY_EDITOR
+                    ForwardTrace = forwardTrace.Cleanup,
+#endif
                     Ecb = ecb,
                     UnitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true),
                     LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),

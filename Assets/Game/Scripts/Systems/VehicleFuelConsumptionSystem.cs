@@ -40,10 +40,16 @@ namespace Game.Runtime
             SkirmishExpandedSessionComponent session = hasExpanded
                 ? state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity) : default;
 
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ForwardFuelBoundary?.Invoke(state.EntityManager, "before-ground-fuel-consumer", steelPush, expanded.CalculateEntityCount(), hasExpanded);
+#endif
             foreach (var (unitGrid, faction, movement, consumption, consumptionState, entity) in SystemAPI
                          .Query<RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitMovementBehavior>, RefRO<UnitFuelConsumption>, RefRW<UnitFuelConsumptionState>>()
                          .WithEntityAccess())
             {
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ForwardFuelUnit?.Invoke(state.EntityManager, entity);
+#endif
                 if (consumption.ValueRO.Enabled == 0)
                     continue;
                 if(steelPush && (!state.EntityManager.HasComponent<CampaignMissionUnitRoleComponent>(entity)||
@@ -94,10 +100,16 @@ namespace Game.Runtime
                 stateRw.LastCell = cell;
             }
 
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ForwardFuelRequested?.Invoke(requestedFuelByFaction);
+#endif
             if(steelPush)CampaignSteelPushFuelScope.Drain(state.EntityManager,steelReserve,requestedFuelByFaction[1]);
             else DrainRequestedFuel(ref state, requestedFuelByFaction);
             if (hasExpanded)
                 DrainExpandedFuel(ref state, sessionEntity, requestedExpandedFuelByFaction);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ForwardFuelBoundary?.Invoke(state.EntityManager, "after-ground-fuel-consumer", steelPush, expanded.CalculateEntityCount(), hasExpanded);
+#endif
             requestedFuelByFaction.Dispose();
             requestedExpandedFuelByFaction.Dispose();
         }
@@ -144,8 +156,15 @@ namespace Game.Runtime
                 if (remaining <= 0f)
                     continue;
 
+#if UNITY_EDITOR
+                foreach (var (storageRef, storageEntity) in SystemAPI.Query<RefRW<BuildingResourceStorageComponent>>().WithEntityAccess())
+#else
                 foreach (RefRW<BuildingResourceStorageComponent> storageRef in SystemAPI.Query<RefRW<BuildingResourceStorageComponent>>())
+#endif
                 {
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.ForwardFuelStorageVisit?.Invoke(state.EntityManager, storageEntity, factionId, remaining);
+#endif
                     ref BuildingResourceStorageComponent storage = ref storageRef.ValueRW;
                     if (storage.OwnerFactionId != (byte)factionId ||
                         !IsUsableFuelStorage(storage))

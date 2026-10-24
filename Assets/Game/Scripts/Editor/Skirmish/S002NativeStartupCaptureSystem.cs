@@ -36,7 +36,15 @@ namespace Game.Editor
             // Original structural roster changes synchronize tracked jobs. Run here
             // before any other Initialization system can schedule new work.
             if (orderBefore == orderAfter) return;
-            S002InitialWorldBundleCapture.RequireSafeBoundary(World, true);
+            try { S002InitialWorldBundleCapture.RequireSafeBoundary(World, true); }
+            catch (S002InitialWorldBoundaryAdmissionException rejected)
+            {
+                // Diagnostic only: preserve this exact rejected boundary and the
+                // original failure. No census, playback or later capture is allowed.
+                try { S002InitialWorldBoundaryDiagnostic.Write(World, orderBefore, orderAfter, rejected.Authority); }
+                catch (Exception diagnosticError) { Debug.LogError("[InitialWorldBoundaryDiagnostic] result=Failed dataCaptureGate=0 " + diagnosticError); }
+                throw;
+            }
             initialWorldRosterOrderBefore = orderBefore; initialWorldRosterOrderAfter = orderAfter;
             insideInitialWorldRosterBoundary = true;
             try { OnUpdate(); }

@@ -31,7 +31,7 @@ namespace Game.Editor
                 {
                     var ecb = S002InitialWorldEcbAuthority.Capture(owner, originalStructuralSyncObserved);
                     if (!(ecb["supported"] is bool supported && supported))
-                        throw new InvalidOperationException("Initial-world command domain is not quiescent: " + owner.GetType().FullName + " " + ecb["reason"]);
+                        throw new S002InitialWorldBoundaryAdmissionException(owner.GetType().FullName, ecb);
                 }
         }
 

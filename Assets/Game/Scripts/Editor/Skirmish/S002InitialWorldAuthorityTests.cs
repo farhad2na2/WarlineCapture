@@ -19,6 +19,7 @@ namespace Game.Editor
         public static void RunFocusedValidation()
         {
             checks = 0; var previous = World.DefaultGameObjectInjectionWorld;
+            S002InitialWorldEcbHeaderDiagnosticTests.RunFocusedValidation();
             var clock = S002InitialWorldBundleCapture.EncodeEngineClocks(1f, 2d, 3f, 4d, 0.5f, 0.25f, 0.75f, 16d);
             Check((string)clock["time_f32_bits"] == "3f800000" && (string)clock["time_as_double_f64_bits"] == "4000000000000000" &&
                 (string)clock["unscaled_time_f32_bits"] == "40400000" && (string)clock["unscaled_time_as_double_f64_bits"] == "4010000000000000" &&
@@ -76,6 +77,29 @@ namespace Game.Editor
                 Check(refused, "zero-length source rejected before open");
             }
             finally { Directory.Delete(directory, true); }
+            string diagnosticDirectory = Path.Combine(Directory.GetCurrentDirectory(), "Logs", "initial-world-rejection-controls-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(diagnosticDirectory);
+            try
+            {
+                var control = new Newtonsoft.Json.Linq.JObject { ["kind"] = "SyntheticRejectedBoundaryWriterControl", ["initial_world_bundle"] = false, ["label"] = "آ" };
+                string path = Path.Combine(diagnosticDirectory, "writer-control.json");
+                S002InitialWorldBoundaryDiagnostic.WriteFresh(path, control);
+                byte[] original = File.ReadAllBytes(path);
+                Check(Newtonsoft.Json.Linq.JObject.Parse(System.Text.Encoding.UTF8.GetString(original))["label"].ToString() == "آ", "fresh diagnostic UTF-8 control writes without claiming native World data");
+                bool refused = false;
+                try { S002InitialWorldBoundaryDiagnostic.WriteFresh(path, new Newtonsoft.Json.Linq.JObject { ["different"] = true }); }
+                catch (InvalidOperationException) { refused = true; }
+                Check(refused && System.Linq.Enumerable.SequenceEqual(original, File.ReadAllBytes(path)), "diagnostic cannot overwrite an existing receipt");
+                string oversizePath = Path.Combine(diagnosticDirectory, "oversize.json"); refused = false;
+                try { S002InitialWorldBoundaryDiagnostic.WriteFresh(oversizePath, new Newtonsoft.Json.Linq.JObject { ["escaped"] = new string('"', S002InitialWorldBoundaryDiagnostic.MaximumCharacters / 2) }); }
+                catch (InvalidOperationException) { refused = true; }
+                Check(refused && !File.Exists(oversizePath), "escaped diagnostic character budget refuses before file creation");
+                refused = false;
+                try { S002InitialWorldBoundaryDiagnostic.WriteFresh("relative-rejection-control.json", control); }
+                catch (InvalidOperationException) { refused = true; }
+                Check(refused && !File.Exists("relative-rejection-control.json"), "relative diagnostic path refused before file creation");
+            }
+            finally { Directory.Delete(diagnosticDirectory, true); }
             Check(ReferenceEquals(previous, World.DefaultGameObjectInjectionWorld), "default World remains unchanged");
             Debug.Log("[InitialWorldAuthority] result=Passed checks=" + checks + " nativeMissionQualified=0");
         }

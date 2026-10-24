@@ -21,6 +21,7 @@ namespace Game.Configs
         public static string ComputeLayoutSemanticFingerprint(SkirmishMapLayoutConfig layout)
         {
             if (layout == null) throw new ArgumentNullException(nameof(layout));
+            if (SkirmishLegacyLayoutValueContract.TryGetCompatibilityFingerprint(layout, out string compatibilityFingerprint)) return compatibilityFingerprint;
             using var hash = SHA256.Create();
             return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout))))).Replace("-", "").ToLowerInvariant();
         }
@@ -371,7 +372,7 @@ namespace Game.Configs
             };
         }
         [Serializable]
-        private sealed class LayoutValues
+        internal sealed class LayoutValues
         {
             public string Id, OperationMapId, ContentHash;
             public int Version;

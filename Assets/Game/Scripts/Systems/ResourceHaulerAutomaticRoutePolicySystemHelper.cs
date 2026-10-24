@@ -460,6 +460,9 @@ namespace Game.Runtime
             if (owner.CapacityReleased != 0 || owner.FactionId != candidate.OwnerFactionId) return false;
             using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
             using var roots = sessions.ToEntityArray(Unity.Collections.Allocator.Temp);
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ContinuousRootSnapshot(em, roots);
+#endif
             bool expanded = false;
             foreach (var root in roots)
             {

@@ -245,15 +245,29 @@ namespace Game.Runtime
                 afterResources = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterResources;
+#if UNITY_EDITOR
+                double continuousBeforeDue = _nextResourceHaulerAt;
+                if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = continuousBeforeDue, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime &&
                     now >= _nextResourceHaulerAt)
                 {
                     _nextResourceHaulerAt = now + ResourceHaulerIntervalSeconds;
+#if UNITY_EDITOR
+                    if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                        if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = _nextResourceHaulerAt, Invoke = true, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
                     using (UpdateResourceHaulersMarker.Auto())
                     {
                         context.UpdateResourceHaulers?.Invoke();
                     }
                 }
+#if UNITY_EDITOR
+                if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = _nextResourceHaulerAt, After = true, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
                 afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
                 now = afterHaulers;

@@ -154,6 +154,13 @@ namespace Game.Runtime
                     NextRefreshAt = _nextAutomaticAssignmentRefreshAt, Now = now,
                     ApproachQueryCreated = _approachQueryCreated, AIPolicyPresent = _aiOilAllocationPolicy != null });
 #endif
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.ContinuousDispatch != null && S002PhysicalStartupObservation.ContinuousRead(1))
+                S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousDispatch, new S002PhysicalStartupObservation.InitialHaulerDispatchFacts { Manager = em, Context = context, Haulers = _haulerEntities, Grid = grid, ActualQueryCount = haulerCount, HasPendingPathJob = hasPendingPathJob, HasSignature = _hasAutomaticAssignmentSignature, LastSignature = _lastAutomaticAssignmentSignature, NextRefreshAt = _nextAutomaticAssignmentRefreshAt, NextReservationId = _nextReservationId, Now = now, ApproachQueryCreated = _approachQueryCreated, AIPolicyPresent = _aiOilAllocationPolicy != null });
+#endif
+#if UNITY_EDITOR
+            try {
+#endif
             bool runAutomaticAssignment = ShouldRunAutomaticAssignmentScan(context, em, grid, _haulerEntities, now);
             if (runAutomaticAssignment)
                 _aiOilAllocationPolicy.ClearInputCache();
@@ -171,6 +178,12 @@ namespace Game.Runtime
                         TryAssignAutomaticHaulerOrder(context, em, grid, hauler);
                 }
             }
+#if UNITY_EDITOR
+            } finally {
+                if (S002PhysicalStartupObservation.ContinuousDispatch != null && S002PhysicalStartupObservation.ContinuousRead(1))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousDispatch, new S002PhysicalStartupObservation.InitialHaulerDispatchFacts { Manager = em, Context = context, Haulers = _haulerEntities, Grid = grid, ActualQueryCount = haulerCount, HasPendingPathJob = hasPendingPathJob, HasSignature = _hasAutomaticAssignmentSignature, LastSignature = _lastAutomaticAssignmentSignature, NextRefreshAt = _nextAutomaticAssignmentRefreshAt, NextReservationId = _nextReservationId, Now = now, ApproachQueryCreated = _approachQueryCreated, AIPolicyPresent = _aiOilAllocationPolicy != null, ContinuousAfter = true });
+            }
+#endif
         }
 
         public bool TryAssignSelectedHaulerOrders(Context context, int clickedBuildingId)

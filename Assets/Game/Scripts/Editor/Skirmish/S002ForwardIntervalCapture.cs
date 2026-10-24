@@ -44,6 +44,7 @@ namespace Game.Editor
                 string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_OFFLINE_STARTUP_CAPTURE"))) return;
             try { SerializerPreflight(); }
             catch (Exception ex) { Fail(ex); completed = true; Debug.LogError("[S002ForwardSerializer] result=Failed reason=" + failure); return; }
+            S002ContinuousCausalWindowCapture.Attach();
             S002PhysicalStartupObservation.BeginGridInterval = Begin;
             S002PhysicalStartupObservation.ForwardFuelBoundary = Boundary;
             S002PhysicalStartupObservation.ForwardFuelUnit = FuelUnit;
@@ -96,10 +97,11 @@ namespace Game.Editor
         }
         static void Production(EntityManager em, EntityQuery query, string boundary, float secondsPerDay, float deltaTime, float oilRatio)
         {
-            if (completed) return;
+            if (completed || !S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
             try
             {
                 if (!FindSession(em)) return;
+                if (!S002ContinuousCausalWindowCapture.ProductionBegin(em, sessionEntity, query, boundary)) return;
                 Require(productionHistory.Count < 512, "Production boundary history bound exceeded");
                 Require(query.CalculateEntityCount() <= StorageLimit, "Production query bound exceeded");
                 var rows = new JArray();
@@ -107,9 +109,11 @@ namespace Game.Editor
                 foreach (var entity in entities) rows.Add(new JObject { ["id"] = Id(entity),
                     ["storage"] = Value<BuildingResourceStorageComponent>(em, entity),
                     ["profile"] = Value<BuildingResourceProductionProfileComponent>(em, entity) });
-                productionHistory.Add(new JObject { ["observer_ordinal"] = StorageOrdinal(), ["stamp"] = Stamp(em, boundary), ["seconds_per_day_bits"] = Bits(secondsPerDay),
+                var productionRow = new JObject { ["observer_ordinal"] = StorageOrdinal(), ["stamp"] = Stamp(em, boundary), ["seconds_per_day_bits"] = Bits(secondsPerDay),
                     ["delta_time_bits"] = Bits(deltaTime), ["oil_ratio_bits"] = Bits(oilRatio),
-                    ["readonly_query_snapshot"] = rows, ["actual_loop_order_proven"] = false });
+                    ["readonly_query_snapshot"] = rows, ["actual_loop_order_proven"] = false };
+                S002ContinuousCausalWindowCapture.ProductionRows(em, boundary, secondsPerDay, deltaTime, oilRatio, rows, productionRow, productionHistory.Count);
+                productionHistory.Add(productionRow);
             }
             catch (Exception ex) { Fail(ex); completed = true; Release(); }
         }
@@ -121,7 +125,7 @@ namespace Game.Editor
         static readonly JArray initialHaulerProviders = new JArray();
         static void CaptureInitialHaulerProvider(S002PhysicalStartupObservation.InitialHaulerProviderFacts facts)
         {
-            if (completed || failure != null || initialHaulerDispatch == null) return;
+            if (completed || failure != null || initialHaulerDispatch == null || !S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
             try
             {
                 Require(ReferenceEquals(initialHaulerWorld, facts.Manager.World), "Initial provider escaped dispatch World");
@@ -141,7 +145,7 @@ namespace Game.Editor
                         ["StoredFuelBarrelsBits"] = unchecked((uint)Bits(facts.Input.StoredFuelBarrels)), ["FuelStorageCapacity"] = facts.Input.FuelStorageCapacity }; }
                 int bytes = System.Text.Encoding.UTF8.GetByteCount(row.ToString(Newtonsoft.Json.Formatting.None)) + 1;
                 Require(bytes <= 512, "Initial provider row allowance exceeded");
-                storageWriterBytes += bytes; initialHaulerBytes += bytes; initialHaulerProviders.Add(row);
+                storageWriterBytes += bytes; initialHaulerBytes += bytes; S002ContinuousCausalWindowCapture.LegacyProvider(row); initialHaulerProviders.Add(row);
                 if (facts.Kind == "selection-exit") { Require(facts.Result.HasValue, "First selection threw before actual return");
                     initialHaulerDispatch["provider_returns_complete"] = true; }
             }
@@ -156,7 +160,7 @@ namespace Game.Editor
             return new JObject { ["SessionId"] = session, ["StableObjectId"] = stable, ["FactionId"] = owned.FactionId,
                 ["IsStructure"] = owned.IsStructure, ["CapacityReleased"] = owned.CapacityReleased, ["ReservationId"] = owned.ReservationId };
         }
-        static JObject InitialHauler(EntityManager em, Entity entity, int ordinal)
+        internal static JObject InitialHauler(EntityManager em, Entity entity, int ordinal)
         {
             Require(em.Exists(entity), "Initial hauler disappeared from actual query");
             string sourceKey = null;
@@ -178,7 +182,7 @@ namespace Game.Editor
                 ["UnitPrevWorldPos"] = StorageComponent<UnitPrevWorldPos>(em, entity), ["attempt_owned"] = InitialOwned(em, entity),
                 ["SkirmishUnitRoleComponent"] = StorageComponent<SkirmishUnitRoleComponent>(em, entity) };
         }
-        static JObject InitialCandidate(EntityManager em, int key, RuntimeBuildingEntity building, int ordinal)
+        internal static JObject InitialCandidate(EntityManager em, int key, RuntimeBuildingEntity building, int ordinal)
         {
             if (building == null) return new JObject { ["enumeration_ordinal"] = ordinal, ["dictionary_key"] = key, ["runtime"] = JValue.CreateNull() };
             var definition = building.Definition;
@@ -203,7 +207,7 @@ namespace Game.Editor
         }
         static void CaptureInitialHaulerDispatch(S002PhysicalStartupObservation.InitialHaulerDispatchFacts facts)
         {
-            if (completed || failure != null || initialHaulerDispatchTaken) return;
+            if (completed || failure != null || initialHaulerDispatchTaken || !S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
             try
             {
                 if (!FindSession(facts.Manager)) return;
@@ -251,7 +255,7 @@ namespace Game.Editor
                         "caller-time approach masks/live-footprint query and queue/ECB state not captured", "owner scheduler realtime/due/private clocks not in this dispatch Context") };
                 int bytes = System.Text.Encoding.UTF8.GetByteCount(snapshot.ToString(Newtonsoft.Json.Formatting.None));
                 Require(bytes <= allowance && bytes <= InitialCensusByteLimit, "Initial census actual serialized budget exceeded");
-                storageWriterBytes += bytes; initialHaulerBytes = bytes; initialHaulerWork = checked((int)work); initialHaulerDispatch = snapshot;
+                storageWriterBytes += bytes; initialHaulerBytes = bytes; initialHaulerWork = checked((int)work); initialHaulerDispatch = snapshot; S002ContinuousCausalWindowCapture.LegacyInitial(snapshot);
                 S002PhysicalStartupObservation.InitialHaulerProvider = CaptureInitialHaulerProvider;
             }
             catch (Exception ex) { Fail(new InvalidOperationException(ex.Message + StorageFailureMetrics())); completed = true; S002PhysicalStartupObservation.InitialHaulerDispatch = null; S002PhysicalStartupObservation.InitialHaulerProvider = null; }
@@ -318,7 +322,7 @@ namespace Game.Editor
         }
         static void StorageBoundary(EntityManager em, string boundary, bool steelPush, int expandedCount, bool legacy)
         {
-            if (completed || failure != null) return;
+            if (completed || failure != null || !S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
             try { if (!FindSession(em)) return;
                 StorageStage(boundary);
                 Require(S002PhysicalStartupObservation.StorageWriterFailure == null, "Storage source observer failed: " + S002PhysicalStartupObservation.StorageWriterFailure);
@@ -332,6 +336,8 @@ namespace Game.Editor
                     var header = FuelCausalHeader(session.SessionId.ToString(), sessionEntity.Index, sessionEntity.Version);
                     int contextBytes = System.Text.Encoding.UTF8.GetByteCount(header.ToString(Newtonsoft.Json.Formatting.None));
                     Require(contextBytes <= 2048, "Causal session header exceeded pre-copy allowance");
+                    S002ContinuousCausalWindowCapture.LegacyFuelHeader(header);
+                    if (!S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
                     storageWriterBytes += contextBytes; storageCausalHeader = header;
                 }
                 Require(ReferenceEquals(storageCausalWorld, em.World) && storageCausalSessionEntity == sessionEntity &&
@@ -344,10 +350,10 @@ namespace Game.Editor
                     unchecked((uint)Bits(em.World.Time.DeltaTime)), (byte)session.Phase, steelPush, expandedCount, legacy);
                 int bytes = System.Text.Encoding.UTF8.GetByteCount(row.ToString(Newtonsoft.Json.Formatting.None)) + 1;
                 Require(bytes <= 95, "Causal event exceeded pre-copy allowance");
-                storageWriterBytes += bytes; storageCausalBoundaries.Add(row);
+                storageWriterBytes += bytes; S002ContinuousCausalWindowCapture.LegacyFuel(row); storageCausalBoundaries.Add(row);
             } catch (Exception ex) { Fail(new InvalidOperationException(ex.Message + StorageFailureMetrics())); completed = true; S002PhysicalStartupObservation.StorageWriter = null; }
         }
-        static JToken StorageBits(object value)
+        internal static JToken StorageBits(object value)
         {
             if (value == null) return JValue.CreateNull();
             if (value is float scalar) return new JValue(unchecked((uint)Bits(scalar)));
@@ -364,7 +370,7 @@ namespace Game.Editor
             if (TypeManager.GetTypeInfo<T>().IsZeroSized) return new JObject();
             return StorageBits(em.GetComponentData<T>(unit));
         }
-        static JObject StorageBinding(EntityManager em, RuntimeBuildingEntity building)
+        internal static JObject StorageBinding(EntityManager em, RuntimeBuildingEntity building)
         {
             if (building == null) return null;
             var entity = building.CombatEntity;
@@ -380,9 +386,10 @@ namespace Game.Editor
                 ["storage"] = StorageComponent<BuildingResourceStorageComponent>(em, entity),
                 ["profile"] = StorageComponent<BuildingResourceProductionProfileComponent>(em, entity) };
         }
+        internal static int LegacyWriterRowCount => storageWriterJournal.Count;
         static void StorageWriter(S002PhysicalStartupObservation.StorageWriterFacts facts)
         {
-            if (completed || failure != null) return;
+            if (completed || failure != null || !S002ContinuousCausalWindowCapture.AllowLegacyCopies) return;
             try
             {
                 if (!FindSession(facts.Manager)) return;
@@ -424,7 +431,7 @@ namespace Game.Editor
                     ["uncommitted_pure_leaf_outputs_captured"] = false };
                 int bytes = System.Text.Encoding.UTF8.GetByteCount(row.ToString(Newtonsoft.Json.Formatting.None)) + 1;
                 Require(bytes <= 8192, "Storage journal event exceeded conservative pre-copy allowance");
-                storageWriterBytes += bytes; storageWriterJournal.Add(row);
+                storageWriterBytes += bytes; S002ContinuousCausalWindowCapture.LegacyWriter(facts, row); storageWriterJournal.Add(row);
             }
             catch (Exception ex) { Fail(new InvalidOperationException(ex.Message + StorageFailureMetrics())); completed = true; S002PhysicalStartupObservation.StorageWriter = null; }
         }
@@ -651,6 +658,7 @@ namespace Game.Editor
                     trace["accepted_command_count"] = AriaCommandEvidence.AcceptedCommands;
                     trace["command_receipt_violations"] = AriaCommandEvidence.Violations;
                     trace["production_boundary_history"] = productionHistory.DeepClone();
+                    trace["continuous_causal_window_v8"] = S002ContinuousCausalWindowCapture.Export(output);
                     trace["storage_writer_journal"] = storageWriterJournal.DeepClone();
                     trace["initial_hauler_dispatch"] = initialHaulerDispatch == null ? JValue.CreateNull() : initialHaulerDispatch.DeepClone();
                     trace["storage_causal_boundaries"] = storageCausalHeader == null ? JValue.CreateNull() : storageCausalHeader.DeepClone();
@@ -679,7 +687,7 @@ namespace Game.Editor
             foreach (var buffer in pendingBuffers) { using var binary = new FileStream(Path.Combine(output, buffer.Key), FileMode.CreateNew, FileAccess.Write); binary.Write(buffer.Value, 0, buffer.Value.Length); }
             using var stream = new FileStream(Path.Combine(output, "forward-interval.json"), FileMode.CreateNew, FileAccess.Write); stream.Write(bytes, 0, bytes.Length);
         }
-        static void DetachStorageWriter() { S002PhysicalStartupObservation.StorageWriter = null; S002PhysicalStartupObservation.InitialHaulerDispatch = null; S002PhysicalStartupObservation.InitialHaulerProvider = null; }
+        static void DetachStorageWriter() { S002ContinuousCausalWindowCapture.Detach(); S002PhysicalStartupObservation.StorageWriter = null; S002PhysicalStartupObservation.InitialHaulerDispatch = null; S002PhysicalStartupObservation.InitialHaulerProvider = null; }
         static void Release()
         {
             try

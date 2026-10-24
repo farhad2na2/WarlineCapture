@@ -12,7 +12,7 @@ namespace Game.Runtime
 {
     // Borrowed input views, invoked only when a fresh opt-in Editor observer is
     // attached. Observers must not retain buffers or change the world.
-    internal static class S002PhysicalStartupObservation
+    internal static partial class S002PhysicalStartupObservation
     {
         internal static Action<EntityManager, BuildingRuntimeSpawnRequest, BuildingDefinition,
             BuildingRuntimeSpawnCompositionSystemHelper.Context, BuildingPlacementAuthoredBuildingCache,
@@ -81,6 +81,7 @@ namespace Game.Runtime
         }
         internal static void BeginInitialHaulerSelection(EntityManager em, Entity unit)
         {
+            ContinuousSelect(em, unit, "entry", null);
             if (InitialHaulerProvider == null || firstHaulerSelectionTaken) return;
             firstHaulerSelectionTaken = true; firstHaulerSelectionActive = true; firstHaulerSelectionUnit = unit;
             SendInitialHaulerProvider(em, "selection-entry", "TryAssignAutomaticHaulerOrder", null, default, 0, false, false, default, null);
@@ -88,15 +89,18 @@ namespace Game.Runtime
         internal static bool InitialHaulerSelectionResult(ref bool? result, bool value) { result = value; return value; }
         internal static void EndInitialHaulerSelection(EntityManager em, Entity unit, bool? result)
         {
+            ContinuousSelect(em, unit, "exit", result);
             if (!firstHaulerSelectionActive || unit != firstHaulerSelectionUnit) return;
             try { SendInitialHaulerProvider(em, "selection-exit", "TryAssignAutomaticHaulerOrder", null, default, 0, false, false, default, result); }
             finally { firstHaulerSelectionActive = false; InitialHaulerProvider = null; }
         }
         internal static void ObserveInitialHaulerFocus(EntityManager em, RuntimeBuildingEntity building, Vector3 position, string callsite)
-            => SendInitialHaulerProvider(em, "focus-return", callsite, building, position, 0, false, false, default, null);
+            { if (ContinuousProvider != null && ContinuousRead(20)) ContinuousSend(ContinuousProvider, new InitialHaulerProviderFacts { Manager = em, Kind = "focus-return", Callsite = callsite, Building = building, Position = position });
+                SendInitialHaulerProvider(em, "focus-return", callsite, building, position, 0, false, false, default, null); }
         internal static void ObserveInitialHaulerAI(EntityManager em, byte faction, bool resolverPresent, bool hasInput,
             BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input)
-            => SendInitialHaulerProvider(em, "ai-resolver-return", "TryResolveCachedInput.actual-resolver-expression", null, default, faction, resolverPresent, hasInput, input, null);
+            { if (ContinuousProvider != null && ContinuousRead(20)) ContinuousSend(ContinuousProvider, new InitialHaulerProviderFacts { Manager = em, Kind = "ai-resolver-return", Callsite = "TryResolveCachedInput.actual-resolver-expression", Faction = faction, ResolverPresent = resolverPresent, HasInput = hasInput, Input = input });
+                SendInitialHaulerProvider(em, "ai-resolver-return", "TryResolveCachedInput.actual-resolver-expression", null, default, faction, resolverPresent, hasInput, input, null); }
         static void SendInitialHaulerProvider(EntityManager em, string kind, string callsite, RuntimeBuildingEntity building,
             Vector3 position, byte faction, bool resolverPresent, bool hasInput,
             BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input, bool? result)
@@ -117,7 +121,7 @@ namespace Game.Runtime
             internal System.Collections.Generic.List<Entity> Haulers;
             internal GridConfig Grid;
             internal int ActualQueryCount;
-            internal bool HasPendingPathJob, HasSignature, ApproachQueryCreated, AIPolicyPresent;
+            internal bool HasPendingPathJob, HasSignature, ApproachQueryCreated, AIPolicyPresent, ContinuousAfter;
             internal uint LastSignature, NextReservationId;
             internal float NextRefreshAt, Now;
         }
@@ -136,6 +140,7 @@ namespace Game.Runtime
         internal static int StorageReadonlySyncSkipped, StorageUnparentedWrites;
         static void UnsupportedStorageWrite(string stage)
         {
+            ContinuousError("Unsupported unparented storage write: " + stage);
             StorageUnparentedWrites++;
             StorageWriterFailure = "Unsupported unparented actual storage write stage=" + stage +
                 " facts=" + storageFactAllocations + " readonly_sync_skipped=" + StorageReadonlySyncSkipped;
@@ -143,7 +148,7 @@ namespace Game.Runtime
         }
         static bool StorageAllocation()
         {
-            if (StorageWriter == null) return false;
+            if (StorageWriter == null && ContinuousStorage == null) return false;
             if (storageFactAllocations >= 512) { StorageWriterFailure = "Storage writer fact allocation limit512 exceeded"; StorageWriter = null; return false; }
             storageFactAllocations++; return true;
         }
@@ -204,7 +209,7 @@ namespace Game.Runtime
         internal static void StoragePoint(EntityManager em, RuntimeBuildingEntity building, string stage,
             bool hasStorage, in BuildingResourceStorageComponent storage)
         {
-            if (StorageWriter == null) return;
+            if (StorageWriter == null && ContinuousStorage == null) return;
             // Source-only readonly accesses are frequent queries, not writer calls.
             // Exclude only these two unparented stages BEFORE allocating facts.
             if (activeStorage == null)
@@ -226,13 +231,13 @@ namespace Game.Runtime
         internal static void StorageMirror(FactionResourceCompositionSystemHelper.IResourceBuilding building,
             string stage, in BuildingResourceStorageComponent storage)
         {
-            if (StorageWriter == null) return;
+            if (StorageWriter == null && ContinuousStorage == null) return;
             if (activeStorage == null) { UnsupportedStorageWrite(stage); return; }
             StoragePoint(activeStorage.Manager, building as RuntimeBuildingEntity, stage, true, storage);
         }
         static void StorageSend(StorageWriterFacts facts)
         {
-            try { StorageWriter?.Invoke(facts); }
+            try { ContinuousSend(ContinuousStorage, facts); StorageWriter?.Invoke(facts); }
             catch (Exception ex) { StorageWriterFailure = ex.ToString(); StorageWriter = null; }
         }
         internal static Action<OriginalPlacementFacts> OriginalPlacement;

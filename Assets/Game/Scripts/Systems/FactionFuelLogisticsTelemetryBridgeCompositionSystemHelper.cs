@@ -27,11 +27,19 @@ namespace Game.Runtime
                 ReasonCode = (byte)reasonCode,
                 ResourceKind = (byte)resourceKind
             };
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.ContinuousStatus != null && S002PhysicalStartupObservation.ContinuousRead(8))
+                S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousStatus, new S002PhysicalStartupObservation.ContinuousStatusFacts { Manager = em, Entity = entity, Status = status, EnteredBlockedEpisode = enteredBlockedEpisode, ResourceKind = (byte)resourceKind });
+#endif
             if (em.HasComponent<UnitResourceHaulStatus>(entity))
                 em.SetComponentData(entity, status);
             else
                 em.AddComponentData(entity, status);
 
+#if UNITY_EDITOR
+            if (S002PhysicalStartupObservation.ContinuousStatus != null && S002PhysicalStartupObservation.ContinuousRead(8))
+                S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousStatus, new S002PhysicalStartupObservation.ContinuousStatusFacts { Manager = em, Entity = entity, Status = status, EnteredBlockedEpisode = enteredBlockedEpisode, ResourceKind = (byte)resourceKind, After = true });
+#endif
             if (enteredBlockedEpisode)
                 RecordRouteFailure(em, entity, resourceKind);
         }

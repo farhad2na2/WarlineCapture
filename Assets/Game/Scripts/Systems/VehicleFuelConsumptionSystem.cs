@@ -26,14 +26,24 @@ namespace Game.Runtime
             ComponentLookup<UnitAirMovement> airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
             ComponentLookup<LocalTransform> transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
             var physicalGrids = SystemAPI.QueryBuilder().WithAll<GridConfig>().Build();
+#if UNITY_EDITOR
+            int continuousGridCount = physicalGrids.CalculateEntityCount();
+            bool hasGrid = continuousGridCount == 1;
+#else
             bool hasGrid = physicalGrids.CalculateEntityCount() == 1;
+#endif
             GridConfig physicalGrid = hasGrid ? physicalGrids.GetSingleton<GridConfig>() : default;
             ComponentLookup<SkirmishAttemptOwnedComponent> attemptLookup =
                 SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true);
             using var expanded = state.EntityManager.CreateEntityQuery(
                 typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
                 typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
+#if UNITY_EDITOR
+            int continuousExpandedCount = expanded.CalculateEntityCount();
+            bool hasExpanded = continuousExpandedCount == 1;
+#else
             bool hasExpanded = expanded.CalculateEntityCount() == 1;
+#endif
             Entity sessionEntity = hasExpanded ? expanded.GetSingletonEntity() : Entity.Null;
             // Migrated sessions use the same physical drain as every other mode.
             hasExpanded = hasExpanded && !state.EntityManager.HasComponent<SkirmishSharedSupplyInitialized>(sessionEntity);
@@ -43,12 +53,24 @@ namespace Game.Runtime
 #if UNITY_EDITOR
             S002PhysicalStartupObservation.ForwardFuelBoundary?.Invoke(state.EntityManager, "before-ground-fuel-consumer", steelPush, expanded.CalculateEntityCount(), hasExpanded);
 #endif
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ContinuousFuelStart(state.EntityManager, "before-ground-fuel-consumer", steelPush, continuousExpandedCount, hasExpanded, continuousGridCount, physicalGrid);
+#endif
             foreach (var (unitGrid, faction, movement, consumption, consumptionState, entity) in SystemAPI
                          .Query<RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitMovementBehavior>, RefRO<UnitFuelConsumption>, RefRW<UnitFuelConsumptionState>>()
                          .WithEntityAccess())
             {
 #if UNITY_EDITOR
                 S002PhysicalStartupObservation.ForwardFuelUnit?.Invoke(state.EntityManager, entity);
+#endif
+#if UNITY_EDITOR
+                if (consumption.ValueRO.Enabled == 0 && S002PhysicalStartupObservation.ContinuousFuel != null && S002PhysicalStartupObservation.ContinuousRead(3))
+                {
+                    bool continuousAirDisabled = airMovementLookup.HasComponent(entity);
+                    bool continuousTransformDisabled = transformLookup.HasComponent(entity);
+                    var continuousPositionDisabled = continuousTransformDisabled ? transformLookup[entity].Position : default;
+                    if (S002PhysicalStartupObservation.ContinuousRead(20)) S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousFuel, new S002PhysicalStartupObservation.ContinuousFuelFacts { Manager = state.EntityManager, Entity = entity, Cell = unitGrid.ValueRO.Cell, Faction = faction.ValueRO.Id, Motion = movement.ValueRO.UsesVehicleMotion, Enabled = consumption.ValueRO.Enabled, GroundRate = consumption.ValueRO.GroundFuelPerCell, AirRate = consumption.ValueRO.AirFuelPerCell, LastCell = consumptionState.ValueRO.LastCell, Initialized = consumptionState.ValueRO.Initialized, Air = continuousAirDisabled, HasTransform = continuousTransformDisabled, Position = continuousPositionDisabled, HasGrid = hasGrid, Grid = physicalGrid });
+                }
 #endif
                 if (consumption.ValueRO.Enabled == 0)
                     continue;
@@ -61,13 +83,24 @@ namespace Game.Runtime
                 // Runway approaches can fly beyond the ground grid. Its bounded
                 // membership cell then stays unchanged; charge the aircraft's
                 // actual travel without putting external cells into grid buffers.
+#if UNITY_EDITOR
+                bool continuousHasTransform = false;
+                float3 continuousPosition = default;
+                bool continuousUseTransform = isAircraft && hasGrid && physicalGrid.CellSize > 0 && (continuousHasTransform = transformLookup.HasComponent(entity));
+                int2 cell = continuousUseTransform ? GridUtils.WorldToCell(physicalGrid, continuousPosition = transformLookup[entity].Position) : unitGrid.ValueRO.Cell;
+                if (S002PhysicalStartupObservation.ContinuousFuel != null && S002PhysicalStartupObservation.ContinuousRead(20)) S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousFuel, new S002PhysicalStartupObservation.ContinuousFuelFacts { Manager = state.EntityManager, Entity = entity, Cell = unitGrid.ValueRO.Cell, Faction = faction.ValueRO.Id, Motion = movement.ValueRO.UsesVehicleMotion, Enabled = consumption.ValueRO.Enabled, GroundRate = consumption.ValueRO.GroundFuelPerCell, AirRate = consumption.ValueRO.AirFuelPerCell, LastCell = stateRw.LastCell, Initialized = stateRw.Initialized, Air = isAircraft, HasTransform = continuousHasTransform, Position = continuousPosition, HasGrid = hasGrid, Grid = physicalGrid });
+#else
                 int2 cell = isAircraft && hasGrid && physicalGrid.CellSize > 0 && transformLookup.HasComponent(entity)
                     ? GridUtils.WorldToCell(physicalGrid, transformLookup[entity].Position)
                     : unitGrid.ValueRO.Cell;
+#endif
                 if (stateRw.Initialized == 0)
                 {
                     stateRw.LastCell = cell;
                     stateRw.Initialized = 1;
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.ContinuousStatePost(state.EntityManager, entity, stateRw.LastCell, stateRw.Initialized);
+#endif
                     continue;
                 }
 
@@ -80,6 +113,9 @@ namespace Game.Runtime
                 if (!isFuelUsingUnit)
                 {
                     stateRw.LastCell = cell;
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.ContinuousStatePost(state.EntityManager, entity, stateRw.LastCell, stateRw.Initialized);
+#endif
                     continue;
                 }
 
@@ -98,10 +134,16 @@ namespace Game.Runtime
                 }
 
                 stateRw.LastCell = cell;
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ContinuousStatePost(state.EntityManager, entity, stateRw.LastCell, stateRw.Initialized);
+#endif
             }
 
 #if UNITY_EDITOR
             S002PhysicalStartupObservation.ForwardFuelRequested?.Invoke(requestedFuelByFaction);
+#endif
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousRequested, requestedFuelByFaction);
 #endif
             if(steelPush)CampaignSteelPushFuelScope.Drain(state.EntityManager,steelReserve,requestedFuelByFaction[1]);
             else DrainRequestedFuel(ref state, requestedFuelByFaction);
@@ -109,6 +151,9 @@ namespace Game.Runtime
                 DrainExpandedFuel(ref state, sessionEntity, requestedExpandedFuelByFaction);
 #if UNITY_EDITOR
             S002PhysicalStartupObservation.ForwardFuelBoundary?.Invoke(state.EntityManager, "after-ground-fuel-consumer", steelPush, expanded.CalculateEntityCount(), hasExpanded);
+#endif
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.ContinuousFuelStart(state.EntityManager, "after-ground-fuel-consumer", steelPush, continuousExpandedCount, hasExpanded, continuousGridCount, physicalGrid);
 #endif
             requestedFuelByFaction.Dispose();
             requestedExpandedFuelByFaction.Dispose();
@@ -166,6 +211,9 @@ namespace Game.Runtime
                     S002PhysicalStartupObservation.ForwardFuelStorageVisit?.Invoke(state.EntityManager, storageEntity, factionId, remaining);
 #endif
                     ref BuildingResourceStorageComponent storage = ref storageRef.ValueRW;
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.ContinuousVisit(state.EntityManager, storageEntity, factionId, remaining);
+#endif
                     if (storage.OwnerFactionId != (byte)factionId ||
                         !IsUsableFuelStorage(storage))
                     {
@@ -180,6 +228,9 @@ namespace Game.Runtime
                     storage.StoredFuelBarrels = math.max(0f, storage.StoredFuelBarrels - drained);
                     storage.Version++;
                     remaining -= drained;
+#if UNITY_EDITOR
+                    S002PhysicalStartupObservation.ContinuousPost(state.EntityManager, storageEntity, factionId, remaining, storage.StoredFuelBarrels, storage.Version);
+#endif
                     if (remaining <= 0.001f)
                         break;
                 }

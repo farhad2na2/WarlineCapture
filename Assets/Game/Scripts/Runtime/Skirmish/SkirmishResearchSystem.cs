@@ -6,6 +6,7 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(SkirmishCapacityLifecycleSystem))]
+    [UpdateBefore(typeof(UnitDeathSystem))]
     public partial struct SkirmishResearchSystem : ISystem
     {
         public void OnCreate(ref SystemState state)

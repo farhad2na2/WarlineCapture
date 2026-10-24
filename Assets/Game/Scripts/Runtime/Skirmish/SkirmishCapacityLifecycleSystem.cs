@@ -7,6 +7,7 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(SkirmishObjectiveFactProjectionSystem))]
+    [UpdateAfter(typeof(BuildingDefenseAttackSystem))]
     public partial struct SkirmishCapacityLifecycleSystem : ISystem
     {
         private EntityQuery ownedUnits;

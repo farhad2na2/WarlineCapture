@@ -814,6 +814,16 @@ namespace Game.Editor
             }
             private void RequestFinalExit(int code)
             {
+                try
+                {
+                    Write("FinalPackageCompanionCleanup", SkirmishProductionBatchOwnershipCensus.CloseEmptyPackageCompanionScenesAtFinalExit());
+                }
+                catch(Exception error)
+                {
+                    code=2;finalRequestedCode=2;
+                    Write("FinalPackageCompanionCleanupFailed",new JObject{["error"]=error.ToString(),["persistent_allocation_cleanliness_claimed"]=false});
+                    UnityEngine.Debug.LogError("[ProductionFinalCompanionCleanup] result=Failed error="+error);
+                }
                 Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT","1");
                 RequestQuitIfAsked(RuntimeErrorsClean?code:2);
                 RestoreEnvironment();

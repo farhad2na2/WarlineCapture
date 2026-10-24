@@ -972,9 +972,27 @@ namespace Game.UI.Shell.Ecs
                 Target(view.RecruitAntiAir, false, ref output);
                 return;
             }
+            // Ground replacements still use public eligibility and ordinary UI gestures.
+            AriaTouchTarget replacementRecruit = view.OwnStructureAttackUnits == 0
+                ? view.RecruitRocketeer : view.Recruit;
+            bool replacementTouchReady = touch.GestureRequested == 0 && touch.Pressed == 0 &&
+                (touch.Phase is AriaPlayPhase.Observing or AriaPlayPhase.Waiting ||
+                 (touch.Phase == AriaPlayPhase.Aiming && plan.Intent == AriaSkirmishIntent.Recruit &&
+                  touch.TargetId == replacementRecruit.Id) ||
+                 (touch.Phase == AriaPlayPhase.Verifying && touch.Actions > 0 &&
+                  touch.LastCompletedTargetId == touch.TargetId && touch.LastCompletedFrame > 0 &&
+                  view.Frame > touch.LastCompletedFrame && view.Time >= touch.DueAt));
+            bool replacementUiReady = !view.MapOpen && !view.PlacementOpen && !view.AttackMode &&
+                (!view.DrawerOpen || plan.Intent == AriaSkirmishIntent.Recruit) &&
+                plan.TargetPending == 0 && plan.AdvanceNavigation == 0 && plan.MapNavigationStage == 0 &&
+                plan.AssaultSelecting == 0 && (plan.PadStage == 0 || plan.PadStage == 8);
+            bool missingGroundStructure = !view.AirProfile && view.EnemyDesignatedAlive &&
+                view.OwnStructureAttackUnits == 0;
+            bool restoreGroundStructure = missingGroundStructure && view.Time >= plan.NextRecruitAt &&
+                replacementTouchReady && replacementUiReady;
             // Combined Arms needs a viable structure force before spending
             // its remaining materials on rifles that cannot hurt the base.
-            if (view.CombinedArmsField && view.OwnStructureAttackUnits < 8 && view.Infantry < 24)
+            if ((view.CombinedArmsField && view.OwnStructureAttackUnits < 8 && view.Infantry < 24) || restoreGroundStructure)
             {
                 if (view.RocketeerRecruitPending)
                 {
@@ -1037,7 +1055,7 @@ namespace Game.UI.Shell.Ecs
             }
             if (view.DrawerOpen)
             {
-                if (!view.AirProfile && !view.RifleRecruitPending && plan.Intent == AriaSkirmishIntent.Recruit && view.Infantry < 16 &&
+                if (!view.AirProfile && !missingGroundStructure && !view.RifleRecruitPending && plan.Intent == AriaSkirmishIntent.Recruit && view.Infantry < 16 &&
                     view.CanAffordRifle && view.Recruit.Available &&
                     view.VisibleHostileAir == 0 && !view.AirQueueOffered)
                 {
@@ -1063,6 +1081,15 @@ namespace Game.UI.Shell.Ecs
             // column with the rifle card on page 0.
             if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0)
             {
+                // Keep accepted structure orders while a depleted screen buys replacements.
+                if (!view.AirProfile && view.OwnStructureAttackUnits > 0 && !view.RifleRecruitPending &&
+                    view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available &&
+                    view.Time >= plan.NextRecruitAt && replacementTouchReady && replacementUiReady)
+                {
+                    plan.Intent = AriaSkirmishIntent.Recruit;
+                    Target(view.Recruit, false, ref output);
+                    return;
+                }
                 // New reinforcements can arrive on another page. Inspect the
                 // public tray periodically without replacing existing orders.
                 if (plan.MapNavigationStage == 1 && view.ExpandedPageIndex != plan.AssaultPageSeen)
@@ -1092,7 +1119,7 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (!view.AirProfile && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            if (!view.AirProfile && !missingGroundStructure && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.Recruit, false, ref output);

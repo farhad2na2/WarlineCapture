@@ -16,7 +16,7 @@ using UnityEngine.InputSystem;
 
 namespace Game.Editor
 {
-    // Read-only ownership census. Never creates or closes a preview scene.
+    // Read-only census plus explicit final-exit package-owner cleanup and focused controls.
     public static class SkirmishProductionBatchOwnershipCensus
     {
         public static JArray CaptureCompiledCanaryIdentities()
@@ -142,6 +142,124 @@ namespace Game.Editor
                 .ThenBy(r => (string)r["name"], StringComparer.Ordinal));
             return SkirmishProductionCanaryRequest.Canonical(stable);
         }
+        static bool HasCreatedWorld()
+        {
+            foreach (var world in World.All) if (world.IsCreated) return true;
+            return false;
+        }
+
+        // Final owned Editor exit only: per-job baselines retain package caches unchanged.
+        public static JObject CloseEmptyPackageCompanionScenesAtFinalExit()
+        {
+            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode ||
+                UnityEditor.EditorApplication.isCompiling || UnityEditor.EditorApplication.isUpdating ||
+                HasCreatedWorld())
+                throw new InvalidOperationException("Companion disposal requires idle final exit after every World is disposed");
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(a => a.GetType("Unity.Entities.CompanionGameObjectUtility", false)).Where(t => t != null).ToArray();
+            if (types.Length != 1 || types[0].Assembly.GetName().Name != "Unity.Scenes")
+                throw new InvalidOperationException("Exact installed companion owner required");
+            var type = types[0];
+            var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(type.Assembly);
+            if (package == null || package.name != "com.unity.entities" || package.version != "6.5.0" ||
+                SkirmishProductionCanaryRequest.FileHash(System.IO.Path.Combine(package.resolvedPath,
+                    "Unity.Scenes", "Hybrid", "CompanionSceneUtility.cs")) !=
+                    "a775ad88d466afbebac429d19d40b2c3bac9311e936ab9b3f4d87b6b00dac489")
+                throw new InvalidOperationException("Companion cleanup implementation changed; no generic preview fallback");
+            const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
+            var fields = new[] { "_companionScene", "_companionSceneLiveConversion" }
+                .Select(name => type.GetField(name, flags)).ToArray();
+            var dispose = type.GetMethod("AssemblyReloadEventsOnbeforeAssemblyReload", flags, null, Type.EmptyTypes, null);
+            if (fields.Any(f => f == null || f.FieldType != typeof(Scene)) ||
+                dispose == null || dispose.DeclaringType != type || dispose.ReturnType != typeof(void))
+                throw new InvalidOperationException("Exact package field/disposal API required");
+            var scenes = fields.Select(f => (Scene)f.GetValue(null)).ToArray();
+            if (scenes.All(s => s == default))
+                return new JObject { ["closed_count"] = 0, ["already_disposed"] = true, ["worlds_disposed"] = true };
+            if (scenes.Any(s => !s.IsValid() || !s.isLoaded || !EditorSceneManager.IsPreviewScene(s) || s.GetRootGameObjects().Length != 0) ||
+                Handle(scenes[0]) == Handle(scenes[1]))
+                throw new InvalidOperationException("Both exact package scenes must be valid, distinct and empty; foreign scenes cannot substitute");
+            var handles = new HashSet<string>(scenes.Select(Handle), StringComparer.Ordinal);
+            var before = Capture();
+            JArray Foreign(JObject census) => new JArray(((JArray)census["scenes"]).OfType<JObject>()
+                .Where(s => !handles.Contains((string)s["handle"])).OrderBy(s => (string)s["handle"], StringComparer.Ordinal));
+            var foreignBefore = Foreign(before);
+            // Invoke the actual package closer, never close arbitrary census scenes.
+            dispose.Invoke(null, null);
+            if (scenes.Any(s => s.IsValid()))
+                throw new InvalidOperationException("Original package disposal did not close both cached scenes");
+            foreach (var field in fields) field.SetValue(null, default(Scene));
+            // The package callback is unconditional; remove its stale registration after final disposal.
+            UnityEditor.AssemblyReloadEvents.beforeAssemblyReload -=
+                (UnityEditor.AssemblyReloadEvents.AssemblyReloadCallback)Delegate.CreateDelegate(
+                    typeof(UnityEditor.AssemblyReloadEvents.AssemblyReloadCallback), dispose);
+            var after = Capture();
+            if (HasCreatedWorld() || !JToken.DeepEquals(foreignBefore, Foreign(after)) ||
+                (int)before["actual_preview_count"] - (int)after["actual_preview_count"] != 2 ||
+                fields.Any(f => (Scene)f.GetValue(null) != default))
+                throw new InvalidOperationException("Package disposal changed foreign ownership or failed exact two-scene removal");
+            return new JObject { ["closed_count"] = 2, ["already_disposed"] = false, ["worlds_disposed"] = true,
+                ["owner_type"] = type.FullName, ["closed_handles"] = new JArray(handles.OrderBy(h => h, StringComparer.Ordinal)),
+                ["foreign_scenes_unchanged"] = true, ["persistent_allocation_cleanliness_claimed"] = false };
+        }
+
+        public static void RunPackageCompanionShutdownControls()
+        {
+            if (UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode || HasCreatedWorld())
+                throw new InvalidOperationException("Fresh idle World-free focused control required");
+            var foreign = EditorSceneManager.NewPreviewScene();
+            int controls = 0;
+            try
+            {
+                var foreignRoot = new GameObject("OwnedCompanionControlForeignRoot");
+                SceneManager.MoveGameObjectToScene(foreignRoot, foreign);
+                var type = AppDomain.CurrentDomain.GetAssemblies().Select(a => a.GetType("Unity.Entities.CompanionGameObjectUtility", false))
+                    .Where(t => t != null).Single();
+                const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
+                var initialize = type.GetMethod("GetCompanionScene", flags, null, new[] { typeof(bool) }, null);
+                if (initialize == null || initialize.ReturnType != typeof(Scene)) throw new InvalidOperationException("Actual package initializer required");
+                var companion = (Scene)initialize.Invoke(null, new object[] { false });
+                bool Refused()
+                {
+                    try { CloseEmptyPackageCompanionScenesAtFinalExit(); return false; }
+                    catch (InvalidOperationException) { return true; }
+                }
+                using (var world = new World("OwnedCompanionShutdownRefusalControl"))
+                {
+                    if (!Refused() || !companion.IsValid() || !foreign.IsValid()) throw new InvalidOperationException("Live World must refuse without scene disposal");
+                    controls++;
+                }
+                var companionRoot = new GameObject("OwnedCompanionControlBusyRoot");
+                SceneManager.MoveGameObjectToScene(companionRoot, companion);
+                try
+                {
+                    if (!Refused() || !companion.IsValid() || companionRoot == null || !foreign.IsValid())
+                        throw new InvalidOperationException("Nonempty companion must refuse without deleting its root");
+                    controls++;
+                }
+                finally { UnityEngine.Object.DestroyImmediate(companionRoot); }
+                var closed = CloseEmptyPackageCompanionScenesAtFinalExit();
+                if ((int)closed["closed_count"] != 2 || companion.IsValid() || !foreign.IsValid() || foreignRoot == null || foreignRoot.scene != foreign)
+                    throw new InvalidOperationException("Actual owner cleanup must preserve foreign preview/root identity");
+                controls++;
+                var twice = CloseEmptyPackageCompanionScenesAtFinalExit();
+                if ((int)twice["closed_count"] != 0 || !(bool)twice["already_disposed"] || !foreign.IsValid() || foreignRoot == null)
+                    throw new InvalidOperationException("Repeated cleanup must be idempotent and preserve foreign ownership");
+                controls++;
+                var recreated = (Scene)initialize.Invoke(null, new object[] { false });
+                if (!recreated.IsValid() || (int)CloseEmptyPackageCompanionScenesAtFinalExit()["closed_count"] != 2 || recreated.IsValid())
+                    throw new InvalidOperationException("Package reinitialization after cache reset must retain valid disposal semantics");
+                controls++;
+            }
+            finally
+            {
+                // Only this control's explicitly created foreign preview is owned here.
+                if (foreign.IsValid()) EditorSceneManager.ClosePreviewScene(foreign);
+            }
+            if (controls != 5) throw new InvalidOperationException("All real owner controls required");
+            Debug.Log("[PackageCompanionShutdownControls] result=Passed controls=5 actualOwner=1 foreignPreviewPreserved=1 idempotent=1 persistentAllocationsQualified=0");
+        }
+
         static string Handle(Scene scene) => scene.handle.GetRawData().ToString(System.Globalization.CultureInfo.InvariantCulture);
     }
 }

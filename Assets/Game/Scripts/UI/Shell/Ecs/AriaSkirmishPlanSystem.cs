@@ -42,6 +42,7 @@ namespace Game.UI.Shell.Ecs
         public static void Step(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
+            if(AriaS002NativeAdapter.CanHandle(view)){AriaS002NativeAdapter.Step(view,ref plan,ref touch,ref output);return;}
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.PublicObjective.Applicable)
             {

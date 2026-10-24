@@ -114,7 +114,7 @@ namespace Game.UI.Runtime
             if (watchSkirmish == null) watchSkirmish = Object.FindAnyObjectByType<SkirmishMatchView>();
             if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (watchBuild == null) watchBuild = Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
-            var view = new AriaSkirmishObservation { Active = true, Finished = model.Finished || model.StartupFailed,
+            var view = new AriaSkirmishObservation { SourceScenarioIndex=model.ScenarioIndex, Active = true, Finished = model.Finished || model.StartupFailed,
                 Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen,
                 ExpandedSession = model.Expanded, PlayerDesignatedAlive = model.PlayerDesignatedAlive,
                 EnemyDesignatedAlive = model.EnemyDesignatedAlive };

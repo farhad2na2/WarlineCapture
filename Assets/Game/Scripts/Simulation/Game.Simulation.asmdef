@@ -1,16 +1,16 @@
 {
-    "name": "Game.Simulation",
-    "rootNamespace": "Game.Simulation",
-    "references": [
-        "Game.Skirmish.Contracts"
-    ],
-    "includePlatforms": [],
-    "excludePlatforms": [],
-    "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
-    "defineConstraints": [],
-    "versionDefines": [],
-    "noEngineReferences": true
+  "name": "Game.Simulation",
+  "rootNamespace": "Game.Simulation",
+  "references": [
+    "Game.Skirmish.Contracts"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": true
 }

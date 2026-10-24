@@ -41,6 +41,7 @@ namespace Game.UI.Contracts
     [System.Serializable]
     public struct AriaSkirmishObservation
     {
+        public int SourceScenarioIndex;
         public AriaObjectiveTouchObservation PublicObjective;
         public AriaObjectiveSupportObservation ObjectiveSupport;
         public AriaAircraftServiceObservation AircraftService;

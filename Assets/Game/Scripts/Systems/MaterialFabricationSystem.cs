@@ -48,7 +48,9 @@ namespace Game.Runtime
             state.RequireForUpdate<MaterialFabricationComponent>();
         }
 
+#if !UNITY_EDITOR
         [BurstCompile]
+#endif
         public void OnUpdate(ref SystemState state)
         {
 #if UNITY_EDITOR

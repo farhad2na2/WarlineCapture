@@ -2,10 +2,15 @@ using System;using Game.Components;using Game.Skirmish.Contracts;using Newtonsof
 namespace Game.Runtime {
 internal sealed partial class AutonomousWorld {
  private SourceAriaS002Controller sourceS002Aria;
+ internal Game.Simulation.GroundMissionContext SourceAriaGroundContext { get; private set; }
  internal void InitializeSourceS002Aria(SourceAriaRecruitmentBoundary actualPaid){
   if(disposed||sourceS002Aria!=null||Session==Unity.Entities.Entity.Null||!Entities.Exists(Session)||StorageBank==null)throw new InvalidOperationException("Bind unified ARIA once after actual world/public owners");
   var s=Entities.GetComponentData<SkirmishExpandedSessionComponent>(Session);if(s.Phase!=SkirmishSessionPhase.Playing||s.SpawnComplete==0)throw new InvalidOperationException("Actual S002 source Playing startup required");
-  sourceS002Aria=new SourceAriaS002Controller(Entities,Session,Army,WorldId,actualPaid,ActualDefinitionScenarioIndex,sourceNumericCamera);
+  var canonical=ActualCanonicalCatalog??throw new InvalidOperationException("Actual pinned canonical catalog was not initialized");
+  var match=Entities.GetComponentData<SkirmishMatchState>(Session);
+  if(!GroundMissionContextFactory.TryCreateLogicalPublicData(ActualDefinition,Setup,ActualCompileManifest,ActualCompileMatrix,canonical,s,match.ScenarioIndex,ActualDefinitionScenarioIndex,out var context,out string reason))throw new InvalidOperationException("Actual compiled ground context rejected: "+reason);
+  SourceAriaGroundContext=context;
+  sourceS002Aria=new SourceAriaS002Controller(Entities,Session,Army,WorldId,actualPaid,ActualDefinitionScenarioIndex,context,sourceNumericCamera);
  }
  // Existing scheduler invokes this after actual fog/objective/HUD publication.
  // World clock and paid queue source time remain distinct from ARIA unscaled time.

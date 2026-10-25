@@ -30,6 +30,9 @@ namespace Game.Runtime
         internal Entity Boundary { get; private set; }
         internal SkirmishScenarioDefinitionConfig ActualDefinition { get; private set; }
         internal SkirmishResolvedSetup Setup { get; private set; }
+        internal SkirmishBattleCatalogConfig ActualCanonicalCatalog { get; private set; }
+        internal System.Collections.Generic.IReadOnlyList<SkirmishSetupMatrixRow> ActualCompileMatrix { get; private set; }
+        internal SkirmishContentManifest ActualCompileManifest { get; private set; }
         internal SkirmishArmyProfileConfig Army { get; private set; }
         internal int ActualDefinitionScenarioIndex { get; private set; }
         internal string WorldId { get; } = "generated-" + Guid.NewGuid().ToString("N");
@@ -84,6 +87,19 @@ namespace Game.Runtime
             var graph = Parse(Descriptor(request["source_config_graph"], 16 * 1024 * 1024));
             foreach (var pin in ((JObject)graph["source_pins"]).Properties()) PinnedFile(pin.Name, (string)pin.Value, 4 * 1024 * 1024);
             var assets = new SourceConfigMaterializer(graph);
+            var canonicalDescriptor = request["canonical_battle_catalog"] as JObject ?? throw new ArgumentException("Explicit pinned canonical battle catalog required");
+            if (canonicalDescriptor.Properties().Count() != 2 || canonicalDescriptor["path"] == null || canonicalDescriptor["sha256"] == null)
+                throw new ArgumentException("Exact canonical catalog path/sha descriptor required");
+            Descriptor(canonicalDescriptor, 4 * 1024 * 1024);
+            string canonicalPath = (string)canonicalDescriptor["path"], canonicalHash = (string)canonicalDescriptor["sha256"];
+            if ((string)graph["source_pins"]?[canonicalPath] != canonicalHash)
+                throw new InvalidOperationException("Canonical catalog descriptor is not in actual source graph pins");
+            var canonicalNodes = ((JArray)graph["nodes"]).OfType<JObject>().Where(n =>
+                (string)n["source_type"] == nameof(SkirmishBattleCatalogConfig) &&
+                (string)n["source_sha256"] == canonicalHash &&
+                canonicalPath.Replace('\\', '/').EndsWith("/" + (string)n["source_path"], StringComparison.Ordinal)).ToArray();
+            if (canonicalNodes.Length != 1) throw new InvalidOperationException("Unique actual canonical catalog graph node required");
+            var canonicalCatalog = assets.ByPath<SkirmishBattleCatalogConfig>((string)canonicalNodes[0]["source_path"]);
             var definition = assets.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
             if (definition.CatalogId != "S002" || definition.ObjectiveConfig.Kind != SkirmishObjectiveKind.BaseAssault || (string)request["mission_id"] != definition.CatalogId)
                 throw new NotSupportedException("First generated profile is the actual authored S002 BaseAssault");
@@ -103,6 +119,9 @@ namespace Game.Runtime
                 throw new InvalidOperationException("Original setup compiler rejected authored input: " + string.Join(";", reasons));
             Setup = setup;
             ActualDefinition = definition;
+            ActualCanonicalCatalog = canonicalCatalog;
+            ActualCompileMatrix = matrix;
+            ActualCompileManifest = manifest;
             Army = definition.ArmyProfileConfig;
             if(!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId,out int actualScenarioIndex))throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;

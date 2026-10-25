@@ -31,11 +31,24 @@ namespace Game.Configs
         public const string IndustrialBasinScenarioSetupId = "scenario.skirmish.industrial_basin";
         public const string IndustrialBasinOperationMapId = "opmap.skirmish.industrial_basin";
         public OperationMapDefinition operationMap;
+        // Original resource selection, shared with data-only compiled mission contexts.
+        // The requested dispatch token and selected source preset are different identities.
+        public static int SourcePresetIndex(int scenarioIndex)
+        {
+            return scenarioIndex == StressScaleProbeScenarioIndex ? StressScaleProbeScenarioIndex :
+            scenarioIndex == IndustrialBasinScenarioIndex ? IndustrialBasinScenarioIndex :
+            scenarioIndex == CityCrossroadsScenarioIndex ? CityCrossroadsScenarioIndex : DesertBaseScenarioIndex;
+        }
+
+        public static string SourcePresetResourceName(int scenarioIndex)
+        {
+            return scenarioIndex == StressScaleProbeScenarioIndex ? StressResourceName :
+            scenarioIndex == IndustrialBasinScenarioIndex ? ThirdResourceName :
+            scenarioIndex == CityCrossroadsScenarioIndex ? SecondResourceName : ResourceName;
+        }
+
         public static SkirmishPresetConfig Load(int scenarioIndex) =>
-            Resources.Load<SkirmishPresetConfig>(
-                scenarioIndex == StressScaleProbeScenarioIndex ? StressResourceName :
-                scenarioIndex == IndustrialBasinScenarioIndex ? ThirdResourceName :
-                scenarioIndex == CityCrossroadsScenarioIndex ? SecondResourceName : ResourceName);
+            Resources.Load<SkirmishPresetConfig>(SourcePresetResourceName(scenarioIndex));
 
         public static bool IsPlayerBattlefield(int scenarioIndex) =>
             scenarioIndex == DesertBaseScenarioIndex ||

@@ -200,3 +200,24 @@ The checked-build qualification command completed S002 smoke in 10.77 seconds
 (including 8.99 seconds ordinary startup and 0.41 seconds for 1,800 synthetic rule
 probes). These are functional wall observations, not a speed benchmark or a
 full-mission claim. Genuine S026 returned Blocked on its original compiler gate.
+
+
+## Shared compiled ground mission context
+
+The existing S002 controller/approach now consume the same native Runtime
+`GroundMissionContextFactory` compiled by the source tool. The factory reruns the
+original setup compiler and matches the real session and a unique canonical
+BattleCatalog row. Requested dispatch 4, selected original BaseAssault resource
+index 0, playable transport index 4 and canonical map DB remain separate fields.
+The resulting observation scope is LogicalPublicData; it cannot grant rendered
+observation, publication, owner capability or new-mission admission.
+
+Initialization must include `canonical_battle_catalog` as an explicit absolute
+`path`/`sha256` descriptor. Prepare that actual asset through the existing
+source-config graph reader with the catalog as an additional input. Its typed
+catalog node, raw asset hash and graph source pin must match the descriptor;
+there is no guessed resource fallback. Existing graph node values and source
+pins remain required. This is current configuration input, not a new data bank,
+mission binding or readiness flag. S002-only entry guards and the original
+native AriaS002 wrapper remain in force. S026 needs its genuine compiler and
+source-fit gates before a separate admission change.

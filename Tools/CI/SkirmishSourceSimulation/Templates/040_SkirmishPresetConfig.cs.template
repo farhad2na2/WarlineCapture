@@ -15,4 +15,6 @@ namespace Game.Configs { public sealed class SkirmishPresetConfig {
         /*SOURCE:constant_13*/
         /*SOURCE:constant_14*/
         /*SOURCE:constant_15*/
+        /*SOURCE:source_preset_index*/
+        /*SOURCE:source_preset_resource*/
 }}

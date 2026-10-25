@@ -591,10 +591,22 @@
           "path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
           "constant_name": "InfantryLimitPerFaction",
           "bindings": []
+        },
+        {
+          "id": "source_preset_index",
+          "path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
+          "signature": "public static int SourcePresetIndex(",
+          "bindings": []
+        },
+        {
+          "id": "source_preset_resource",
+          "path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
+          "signature": "public static string SourcePresetResourceName(",
+          "bindings": []
         }
       ],
       "output": "040_SkirmishPresetConfig.cs",
-      "scope": "Current original literal constants. Only explicit owner/visibility wrapper retained; no copied old values."
+      "scope": "Current original constants and source-preset selector methods used by native Load. No resource object/Unity loading is emulated."
     },
     {
       "id": "041_SkirmishPublicationConfig.cs",
@@ -3139,7 +3151,7 @@
       ],
       "generator_output": "SkirmishBaseAssaultObjectiveSystem.cs",
       "output": "258_SkirmishBaseAssaultObjectiveSystem.cs",
-      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem\u2192Step/constructor/singleton/time boundary."
+      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem→Step/constructor/singleton/time boundary."
     },
     {
       "id": "259_SkirmishBreakthroughReducer.cs",
@@ -3217,7 +3229,7 @@
       ],
       "generator_output": "SkirmishObjectiveFactProjectionSystem.cs",
       "output": "266_SkirmishObjectiveFactProjectionSystem.cs",
-      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem\u2192Step/constructor/singleton/time boundary."
+      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem→Step/constructor/singleton/time boundary."
     },
     {
       "id": "267_SkirmishOutcomeSystem.cs",
@@ -3230,7 +3242,7 @@
       ],
       "generator_output": "SkirmishOutcomeSystem.cs",
       "output": "267_SkirmishOutcomeSystem.cs",
-      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem\u2192Step/constructor/singleton/time boundary."
+      "binding_scope": "Complete current source privatequeries/policy/helpers, explicit ISystem→Step/constructor/singleton/time boundary."
     },
     {
       "id": "268_SkirmishRulesSystem.losses.cs",
@@ -7750,6 +7762,14 @@
       "role": "entrypoint",
       "contains_original_gameplay": false,
       "scope": "Preworld original authored catalog/matrix/compiler/static-budget diagnostics only; no world, outcome, fit or readiness injection."
+    },
+    {
+      "id": "GroundMissionContextFactory.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/GroundMissionContextFactory.cs",
+      "require_declarations": [
+        "public static class GroundMissionContextFactory"
+      ]
     }
   ],
   "excluded_nonruntime_sources": [

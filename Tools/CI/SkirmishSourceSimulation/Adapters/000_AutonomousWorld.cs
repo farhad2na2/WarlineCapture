@@ -73,6 +73,7 @@ namespace Game.Runtime
             initializationAttempted = true;
             if (!(fixedDeltaTime > 0) || fixedDeltaTime > 1 || float.IsNaN(fixedDeltaTime) || float.IsInfinity(fixedDeltaTime))
                 throw new ArgumentException("Finite user schedule delta in (0,1] required");
+            RequireInitialRoadsBeforeWrites();
             var request = Parse(PinnedFile(path, sha256, 4 * 1024 * 1024));
             if ((int)request["schema_version"] != 1 || (string)request["kind"] != "GeneratedMissionInitialization" ||
                 (string)request["authority"] != "AuthoredConfigAndBakedCampaignMap")
@@ -147,6 +148,6 @@ namespace Game.Runtime
                 ["computed_setup"] = Setup == null ? null : new JObject { ["catalog_id"] = Setup.CatalogId, ["setup_hash"] = Setup.SetupHash, ["force_actors"] = Setup.Forces.Sum(force => force.Quantity), ["structure_bindings"] = Setup.Structures.Length }
             };
         }
-        public void Dispose() { disposed = true; }
+        public void Dispose() { initialRoads?.Dispose(); disposed = true; }
     }
 }

@@ -7700,6 +7700,48 @@
       "contains_original_gameplay": false,
       "role": "host_glue",
       "scope": "Exact four-input raw-bit native 6000.5.8f1 asset-data rotation reference. No Euler implementation/fallback; current conversion-member drift and unknown inputs reject. Does not admit native root/world readiness."
+    },
+    {
+      "id": "SourceNativeRoadNetwork.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_initial_roads.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs",
+        "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Environment/RuntimeCityStartupSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadNetworkCompositionSystemHelper.cs"
+      ],
+      "generator_output": "SourceNativeRoadNetwork.cs",
+      "output": "SourceNativeRoadNetwork.cs",
+      "binding_scope": "Complete current original class and constructor unchanged; only file-local alias binds inert Rotation value to already-qualified actual UnityEngine.Quaternion."
+    },
+    {
+      "id": "SourceFreshRoadProjection.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_initial_roads.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs",
+        "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadBuildCompositionLifecycleCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Environment/RuntimeCityStartupSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/RoadNetworkCompositionSystemHelper.cs"
+      ],
+      "generator_output": "SourceFreshRoadProjection.cs",
+      "output": "SourceFreshRoadProjection.cs",
+      "binding_scope": "Complete current original Sync/Clear/query bodies; actual fresh RoadNetwork, source-proven empty profile only, unsupported nonempty footprint callback throws before writes."
+    },
+    {
+      "id": "SourceFreshInitialRoadOwner.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceFreshInitialRoadOwner.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Actual scene/config identity and current native getter plus fresh original network; original generated sync executes before actors/path; all nonempty/mutation/restore domains reject."
     }
   ],
   "excluded_nonruntime_sources": [

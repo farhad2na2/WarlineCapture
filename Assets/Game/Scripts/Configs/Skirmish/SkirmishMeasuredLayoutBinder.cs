@@ -21,6 +21,8 @@ namespace Game.Configs
         public static string ComputeLayoutSemanticFingerprint(SkirmishMapLayoutConfig layout)
         {
             if (layout == null) throw new ArgumentNullException(nameof(layout));
+            if(layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2)return SkirmishBindingCanonicalValues.LayoutFingerprint(layout);
+            if(layout.BindingValueFormat!=SkirmishBindingValueFormat.NativeJsonV1)throw new NotSupportedException("Unsupported binding value format.");
             if (SkirmishLegacyLayoutValueContract.TryGetCompatibilityFingerprint(layout, out string compatibilityFingerprint)) return compatibilityFingerprint;
             using var hash = SHA256.Create();
             return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout))))).Replace("-", "").ToLowerInvariant();
@@ -295,7 +297,7 @@ namespace Game.Configs
             public SkirmishResolvedStructureEntry[] Structures;
         }
         [Serializable]
-        private sealed class StableReference
+        internal sealed class StableReference
         {
             public string Guid;
             public string SubObjectName;
@@ -303,7 +305,7 @@ namespace Game.Configs
                 new StableReference { Guid = value.AssetGUID, SubObjectName = value.SubObjectName };
         }
         [Serializable]
-        private sealed class PlacementValue
+        internal sealed class PlacementValue
         {
             // SourcePath is the authored dependency identity. Never hash a prefab instance ID.
             public string SourcePath;
@@ -323,7 +325,7 @@ namespace Game.Configs
             };
         }
         [Serializable]
-        private sealed class PlacementValues
+        internal sealed class PlacementValues
         {
             public bool SpawnOnMatchStart, HideAuthoringVisualsAfterSpawn, UseExistingStaticPresentationWhenAuthoringVisualMissing;
             public PlacementValue[] Placements;
@@ -341,7 +343,7 @@ namespace Game.Configs
             }
         }
         [Serializable]
-        private sealed class SourceValues
+        internal sealed class SourceValues
         {
             public string OperationMapId, SourceIdentityHash, ContentHash, GeneratedMetadataHash, PlanningCameraId, BattleCameraId;
             public int SchemaVersion, ContentVersion;
@@ -388,6 +390,8 @@ namespace Game.Configs
                 CellSize = source.CellSize, Frame = source.WorldBinding, Anchors = source.Anchors, Routes = source.Routes, Pads = source.Pads
             };
         }
+        internal static SourceValues CanonicalSourceValueSnapshot(OperationMapDefinition source) => SourceValues.From(source);
+
         private static string Fingerprint(OperationMapDefinition source, SkirmishMapLayoutConfig layout,
             SkirmishResolvedForceEntry[] forces, SkirmishResolvedStructureEntry[] structures)
         {
@@ -395,6 +399,9 @@ namespace Game.Configs
             // a deterministic layout/source dependency fingerprint for generic setup hashing.
             // The projections contain only strings, scalars, vectors, value structs and arrays.
             // Do not serialize ScriptableObjects, prefab refs or Addressables cached state.
+            if(layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2)
+                return SkirmishBindingCanonicalValues.LayoutBindingFingerprint(source,layout,forces,structures);
+            if(layout.BindingValueFormat!=SkirmishBindingValueFormat.NativeJsonV1)throw new NotSupportedException("Unsupported binding value format.");
             string text = "generic-layout-v1|" + JsonUtility.ToJson(SourceValues.From(source)) + "|" + JsonUtility.ToJson(LayoutValues.From(layout)) + "|" +
                 JsonUtility.ToJson(new ProjectedActors { Forces = forces, Structures = structures });
             using (var sha = SHA256.Create())

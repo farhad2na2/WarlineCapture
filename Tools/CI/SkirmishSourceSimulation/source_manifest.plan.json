@@ -7645,6 +7645,31 @@
       "role": "engine_boundary",
       "contains_original_gameplay": false,
       "scope": "Fresh-source same-bank request/factory/profile capability and structural plumbing. Original pending/native scope/actor/profile values retained; no gameplay acceptance, availability or recipe policy."
+    },
+    {
+      "id": "Shared_SkirmishBindingCanonicalBytes.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/SkirmishBindingCanonicalBytes.cs",
+      "require_declarations": [
+        "public sealed class SkirmishBindingCanonicalBytes"
+      ]
+    },
+    {
+      "id": "Shared_SkirmishBindingCanonicalValues.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishBindingCanonicalValues.cs",
+      "require_declarations": [
+        "public enum SkirmishBindingValueFormat",
+        "public static class SkirmishBindingCanonicalValues"
+      ]
+    },
+    {
+      "id": "Shared_SkirmishMissionLogicalAuthoringInputs.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalAuthoringInputs.cs",
+      "require_declarations": [
+        "public sealed class SkirmishMissionLogicalAuthoringInputs"
+      ]
     }
   ],
   "excluded_nonruntime_sources": [

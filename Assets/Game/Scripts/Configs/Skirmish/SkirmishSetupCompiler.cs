@@ -117,6 +117,7 @@ namespace Game.Configs
                 resolved.Forces,resolved.Structures,normal,errors.ToArray());
             return true;
         }
+#endif
         public static bool TryCaptureMissionLogicalAuthoringInputs(SkirmishScenarioDefinitionConfig definition,
             SkirmishDifficultyId difficulty,SkirmishSizeId size,int seed,SkirmishContentManifest manifest,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,out SkirmishMissionLogicalAuthoringInputs inputs,
@@ -140,7 +141,7 @@ namespace Game.Configs
             if(setup==null||string.IsNullOrEmpty(setup.LayoutBindingFingerprint))return false;
             inputs=SkirmishMissionLogicalAuthoringInputs.Capture(definition,setup);return true;
         }
-#endif
+
         public static bool TryCompileCatalog(
             SkirmishExpansionAuthoredSet authored,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,

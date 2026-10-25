@@ -127,6 +127,10 @@ namespace Game.Configs
         [SerializeField] private SkirmishLayoutRouteConfig[] routes = Array.Empty<SkirmishLayoutRouteConfig>();
         [SerializeField] private SkirmishLegalPadConfig[] pads = Array.Empty<SkirmishLegalPadConfig>();
         [SerializeField] private SkirmishLayoutWorldBindingConfig worldBinding;
+        [SerializeField] private SkirmishBindingValueFormat bindingValueFormat = SkirmishBindingValueFormat.NativeJsonV1;
+        public SkirmishBindingValueFormat BindingValueFormat => bindingValueFormat;
+        public void SetBindingValueFormat(SkirmishBindingValueFormat value)
+        { if(value!=SkirmishBindingValueFormat.NativeJsonV1&&value!=SkirmishBindingValueFormat.CanonicalBinaryV2)throw new NotSupportedException("Unsupported binding value format."); bindingValueFormat=value; }
 
         public string LayoutId => layoutId;
         public string OperationMapId => operationMapId;

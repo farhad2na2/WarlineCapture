@@ -29,7 +29,7 @@ namespace Game.Configs
         // A newly serialized nested field can never retain the old reviewed identity.
         public static bool HasSupportedSchema()
         {
-            return Fields(typeof(SkirmishMeasuredLayoutBinder.LayoutValues),
+            return SkirmishBindingCanonicalValues.HasLayoutDeclarationSchema() && Fields(typeof(SkirmishMeasuredLayoutBinder.LayoutValues),
                 "Id:System.String", "OperationMapId:System.String", "ContentHash:System.String", "Version:System.Int32",
                 "Width:System.Single", "Depth:System.Single", "OriginX:System.Single", "OriginZ:System.Single", "CellSize:System.Single",
                 "Frame:Game.Configs.SkirmishLayoutWorldBindingConfig", "Anchors:Game.Configs.SkirmishLayoutAnchorConfig[]",
@@ -139,7 +139,7 @@ namespace Game.Configs
         public static bool TryGetCompatibilityFingerprint(SkirmishMapLayoutConfig layout, out string fingerprint)
         {
             fingerprint = null;
-            if (layout == null || !HasSupportedSchema() || CanonicalFieldsSha256(layout) != ReviewedCanonicalSha256)
+            if (layout == null || layout.BindingValueFormat != SkirmishBindingValueFormat.NativeJsonV1 || !HasSupportedSchema() || CanonicalFieldsSha256(layout) != ReviewedCanonicalSha256)
                 return false;
             return SkirmishLegacyLayoutBaselineContract.TryGetReviewedLayoutFingerprint("S002", out fingerprint);
         }

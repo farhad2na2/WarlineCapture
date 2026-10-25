@@ -30,7 +30,6 @@ namespace Game.Runtime
         internal Entity Boundary { get; private set; }
         internal SkirmishScenarioDefinitionConfig ActualDefinition { get; private set; }
         internal SkirmishResolvedSetup Setup { get; private set; }
-        internal SourceMetadataCompatibility MetadataCompatibility { get; private set; }
         internal SkirmishBattleCatalogConfig ActualCanonicalCatalog { get; private set; }
         internal System.Collections.Generic.IReadOnlyList<SkirmishSetupMatrixRow> ActualCompileMatrix { get; private set; }
         internal SkirmishContentManifest ActualCompileManifest { get; private set; }
@@ -71,6 +70,7 @@ namespace Game.Runtime
             var value = token as JObject ?? throw new ArgumentException("Pinned source descriptor required");
             return PinnedFile((string)value["path"], (string)value["sha256"], maximum);
         }
+        internal SourceMetadataCompatibility MetadataCompatibility { get; private set; }
         internal void Initialize(string path, string sha256, float fixedDeltaTime, string metadataSourceRepo=null, string metadataDataRepo=null)
         {
             if (disposed || initializationAttempted) throw new InvalidOperationException("Initialize a fresh generated world exactly once");
@@ -78,7 +78,8 @@ namespace Game.Runtime
             if (!(fixedDeltaTime > 0) || fixedDeltaTime > 1 || float.IsNaN(fixedDeltaTime) || float.IsInfinity(fixedDeltaTime))
                 throw new ArgumentException("Finite user schedule delta in (0,1] required");
             RequireInitialRoadsBeforeWrites();
-            var request = Parse(PinnedFile(path, sha256, 4 * 1024 * 1024));
+            sourceInitializationBytes=PinnedFile(path, sha256, 4 * 1024 * 1024);
+            var request = Parse(sourceInitializationBytes);
             if ((int)request["schema_version"] != 1 || (string)request["kind"] != "GeneratedMissionInitialization" ||
                 (string)request["authority"] != "AuthoredConfigAndBakedCampaignMap")
                 throw new NotSupportedException("Explicit authored generated initialization profile required");
@@ -101,9 +102,26 @@ namespace Game.Runtime
                 canonicalPath.Replace('\\', '/').EndsWith("/" + (string)n["source_path"], StringComparison.Ordinal)).ToArray();
             if (canonicalNodes.Length != 1) throw new InvalidOperationException("Unique actual canonical catalog graph node required");
             var canonicalCatalog = assets.ByPath<SkirmishBattleCatalogConfig>((string)canonicalNodes[0]["source_path"]);
-            var definition = assets.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
-            if (definition.CatalogId != "S002" || definition.ObjectiveConfig.Kind != SkirmishObjectiveKind.BaseAssault || (string)request["mission_id"] != definition.CatalogId)
-                throw new NotSupportedException("First generated profile is the actual authored S002 BaseAssault");
+            SkirmishScenarioDefinitionConfig definition;JObject nativeLogicalBinding=null;
+            bool sourceOnlyS026 = (string)request["mission_id"] == "S026";
+            if (sourceOnlyS026) {
+                var typed = request["typed_mission_configuration"] as JObject;
+                string[] fields = { "profiles", "campaign_source_path", "layout" };
+                if (typed == null || typed.Properties().Count() != fields.Length || typed.Properties().Any(p => !fields.Contains(p.Name)) ||
+                    (string)typed["campaign_source_path"] != SourceS026TypedConfiguration.SourcePath)
+                    throw new NotSupportedException("Exact S026 typed configuration descriptor required");
+                var logical = assets.LogicalLayout(Parse(Descriptor(typed["layout"], 1024 * 1024)));
+                SourceS026TypedConfiguration.RequireFrozenMeasuredLayout(logical);
+                definition = SourceS026TypedConfiguration.Configure(assets, typed["profiles"] as JObject, logical,
+                    assets.ByPath<OperationMapDefinition>(SourceS026TypedConfiguration.SourcePath));
+                nativeLogicalBinding=SourceNativeMissionLogicalBindingReference.Bind(request["mission_logical_binding"] as JObject,definition);
+                SourceS026TypedConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog);
+            } else {
+                if (request["typed_mission_configuration"] != null || request["mission_logical_binding"] != null) throw new NotSupportedException("Typed S026 configuration cannot override another mission");
+                definition = assets.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
+                if (definition.CatalogId != "S002" || definition.ObjectiveConfig.Kind != SkirmishObjectiveKind.BaseAssault || (string)request["mission_id"] != definition.CatalogId)
+                    throw new NotSupportedException("Actual authored S002 BaseAssault required");
+            }
             var catalog = assets.ByPath<SkirmishExpansionCatalogConfig>("Assets/Game/Resources/SkirmishExpansionCatalog.asset");
             var matrixBytes = Descriptor(request["setup_matrix"], 4 * 1024 * 1024);
             UnityEngine.Resources.BindSourceResources(new Dictionary<string, object>
@@ -118,16 +136,20 @@ namespace Game.Runtime
             if (!SkirmishSetupCompiler.TryCompile(definition, (SkirmishDifficultyId)(int)selection["difficulty_id"],
                 (SkirmishSizeId)(int)selection["size_id"], (int)selection["seed"], manifest, matrix, out var setup, out var reasons))
                 throw new InvalidOperationException("Original setup compiler rejected authored input: " + string.Join(";", reasons));
+            if(nativeLogicalBinding!=null)SourceNativeMissionLogicalBindingReference.RequireCompiled(nativeLogicalBinding,definition,setup);
             Setup = setup;
             ActualDefinition = definition;
             ActualCanonicalCatalog = canonicalCatalog;
             ActualCompileMatrix = matrix;
             ActualCompileManifest = manifest;
             Army = definition.ArmyProfileConfig;
-            if(!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId,out int actualScenarioIndex))throw new InvalidOperationException("Source catalog dispatch index missing");
+            int actualScenarioIndex;
+            if (sourceOnlyS026) actualScenarioIndex = SourceS026TypedConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog);
+            else if (!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId, out actualScenarioIndex)) throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;
             MetadataCompatibility=SourceMetadataCompatibility.Load(request,Setup,metadataSourceRepo,metadataDataRepo);
             RetainSelectedOperationMapInputs(request, graph, assets);
+            freshStorageAuthority=FreshSourceStorageLifetimeAuthority.FromValidatedSource(request,inputHash,sourceInitializationBytes,ActualDefinition,Setup,ActualCompileManifest,ActualCompileMatrix);
             InitializationStage = "ConstructingBakedCampaignMap";
             Entities.LogicalAllocatorAdmitted = true;
             Entities.AllocateLogicalIdentity = () => new Entity { Index = checked(nextIdentity++), Version = 1 };

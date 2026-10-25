@@ -3,7 +3,7 @@ from pathlib import Path
 import argparse,hashlib,json,re
 SYSTEMS='Assets/Game/Scripts/Systems/'
 SOURCE_INPUTS=('BuildingCombatUtilitySystemHelper.cs', 'BuildingPlacementRuntimeTickCompositionSystemHelper.cs', 'BuildingRuntimeTickCompositionSystemHelper.cs', 'BuildingGameplayCompositionSystemHelper.cs', 'BuildingBarrierUtilitySystemHelper.cs')
-HELPER_PINS={'utility-method-contract.json':'bca95245d1bcedb408fb31de5c571c70d089346ee994bcaa6c2551c3ae7fbe7c','utility-header.txt':'527030fd0dad8511ba0872954caff5e4c5784f3734350a2a196a3c33c03b6578','owner-adapter.cs.template':'39337dbb3d24a6b77a46a17466ddd3950b558158d76ec213f3fbd113efe14abf'}
+HELPER_PINS={'utility-method-contract.json':'bca95245d1bcedb408fb31de5c571c70d089346ee994bcaa6c2551c3ae7fbe7c','utility-header.txt':'527030fd0dad8511ba0872954caff5e4c5784f3734350a2a196a3c33c03b6578','owner-adapter.cs.template':'85ae2b7a8a05bd7023b8ec6b79471a81696e182b799ae3be544cda6412d92561'}
 NAMES={'TryResolveBaseBreachedAudioEvent','TryEmitBaseBreachedAudio','IsPlayerOwnedBaseBarrier','ResolveRuntimeCombatState','DestroyBlockerEntity','UpdateDestroyedBuildings','CollectDestroyedCleanupIds','AddDestroyedCleanupId','SyncDestroyedRuntimeBuildingCombatEntities','SyncDestroyedRuntimeBuildingCombatEntity','BeginDestroyedBuildingState','TryResolveBuildingWorldPosition','DestroyRuntimeBuildingBlockerEntity','FinalizeDestroyedBuilding','DestroyRuntimeBuildingEntities','DestroyEntity','DestroyRuntimeBuildingObject'}
 PATTERN=r'^        (?:public|private|internal)\s+(?:static\s+)?[^\n]+?\s+(\w+)(?:<[^\n>]+>)?\s*\('
 def sha(b):return hashlib.sha256(b).hexdigest()

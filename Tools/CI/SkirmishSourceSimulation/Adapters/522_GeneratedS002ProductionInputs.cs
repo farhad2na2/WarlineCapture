@@ -22,12 +22,15 @@ namespace Game.Runtime
         internal IReadOnlyList<SourceUnitPrefab> ActualConfiguredUnits { get; private set; }
         internal IReadOnlyDictionary<string, SourceUnitPrefab> ActualUnitsByKey { get; private set; }
 
+        internal static void RequireActualStartupDomain(SkirmishResolvedSetup setup,int buildings,int actors){if(setup==null||setup.Structures==null||setup.Forces==null||buildings!=setup.Structures.Length||actors!=setup.Forces.Sum(force=>force.Quantity))throw new InvalidOperationException("Actual compiled structures and force totals must be constructed exactly");}
+
         internal void PrepareActualProductionInputs(int actualGlobalQueueLimit, uint actualConstructorRandomState,
             BuildingProductionQueueCompositionSystemHelper.TryGetUnitProductionMetadataDelegate metadataResolver)
         {
             if (ActualDeliveryOwner != null || ActualUnitMetadata == null || SourceDefinitions == null ||
-                Buildings.Count != 18 || OpeningActors.Count != 52)
-                throw new InvalidOperationException("Fresh complete actual S002 startup and metadata required once");
+                Setup==null)
+                throw new InvalidOperationException("Fresh complete compiled startup and metadata required once");
+            RequireActualStartupDomain(Setup,Buildings.Count,OpeningActors.Count);
             var catalog = Entities.GetComponentObject<SkirmishProductionCatalogRecord>(Session).Catalog;
             var units = ActualUnitMetadata.Ordered.Select(row => row.Prefab).ToArray();
             var byKey = new Dictionary<string, SourceUnitPrefab>(StringComparer.Ordinal);
@@ -58,6 +61,7 @@ namespace Game.Runtime
                     CreditsCost = 0, UseProducerGroundExit = GeneratedProductionRecipeSource.UsesGroundExit(role)
                 });
             }
+            MetadataCompatibility?.RequireProductionFacts(Setup,catalog,ActualUnitMetadata,SourceDefinitions,recipes);
             var roots = new Dictionary<int, SourceProducerRootFrame>();
             var instances = new Dictionary<int, RuntimeInstance>();
             var grid = Entities.GetComponentData<GridConfig>(GridEntity);

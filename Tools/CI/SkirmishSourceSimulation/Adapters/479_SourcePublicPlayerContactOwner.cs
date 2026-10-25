@@ -11,7 +11,7 @@ internal sealed class SourcePublicPlayerContactOwner {
 
  readonly struct Row{internal readonly Entity Source;internal readonly AriaGroundPosition Position;internal Row(Entity e,AriaGroundPosition p){Source=e;Position=p;}}
  internal SourcePublicPlayerContactOwner(EntityManager em,Entity session){this.em=em??throw new ArgumentNullException(nameof(em));this.session=session;identity=System.Threading.Interlocked.Increment(ref nextIdentity);if(identity<=0)throw new InvalidOperationException("Logical data observation identity exhausted");}
- void Guard(){var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);if(s.CatalogId.ToString()!="S002"||s.IsLegacy!=0)throw new NotSupportedException("Only ordinary source S002 public player marker pass");using var campaign=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent));if(!campaign.IsEmptyIgnoreFilter)throw new NotSupportedException("Campaign/defense marker roster not admitted");}
+ void Guard(){SourceGroundMissionFamily.RequireSession(em,session);using var campaign=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent));if(!campaign.IsEmptyIgnoreFilter)throw new NotSupportedException("Campaign/defense marker roster not admitted");}
  internal void UpdateAfterFog(int frame,float ariaTime){Guard();
   if(frame<=0||frame<lastOwnerFrame||!float.IsFinite(ariaTime)||ariaTime<lastOwnerAriaTime)throw new InvalidOperationException("Actual ordered frame/ARIA clock required");
   lastOwnerFrame=frame;lastOwnerAriaTime=ariaTime;bool changed=false;double now=em.WorldUnmanaged.Time.ElapsedTime;if(now<lastUpdate)throw new InvalidOperationException("Source public marker clock moved backward");lastUpdate=now;

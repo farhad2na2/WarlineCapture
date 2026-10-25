@@ -296,9 +296,9 @@
       "id": "016_SkirmishConvoyTruckDefinition.cs",
       "kind": "finite_adapter",
       "path": "Tools/CI/SkirmishSourceSimulation/Adapters/016_SkirmishConvoyTruckDefinition.cs",
-      "role": "engine_boundary",
+      "role": "host_glue",
       "contains_original_gameplay": false,
-      "scope": "Explicit unsupported Convoy authoring entrypoints; every consumed method throws before any world/config mutation. Supported S002/BaseAssault remains original compiler policy."
+      "scope": "Convoy remains explicitly unsupported; originalhook constants only, allactualS026BAforces nonConvoy."
     },
     {
       "id": "017_SkirmishDefinitionVersionResolver.cs",
@@ -8529,6 +8529,200 @@
       "contains_original_gameplay": false,
       "scope": "Strict typed S026 config/source and frozen layout identity checks only; no executable profile or world admission.",
       "role": "host_glue"
+    },
+    {
+      "id": "SourceGroundMissionFamily.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceGroundMissionFamily.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Private compiled source family identity/context boundaries; public SourceAdmittedProfiles unchanged."
+    },
+    {
+      "id": "engineering-SkirmishEngineeringViewProfileFactory.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishEngineeringViewProfileFactory.cs",
+      "require_declarations": [
+        "public static class SkirmishEngineeringViewProfileFactory"
+      ]
+    },
+    {
+      "id": "SourceEngineeringCameraProfile.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceEngineeringCameraProfile.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Exact native engineering header and original sharedFactory/TryCapture identity adapter; no visual or mission acceptance."
+    },
+    {
+      "id": "SourceNumericCameraEngineAdapterContract.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNumericCameraEngineAdapterContract.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Explicit schema/hash-bound finite engine ray adapter domains; no policy thresholds, runtime state or public mission admission."
+    },
+    {
+      "id": "SourceNativeMissionLogicalBindingReference.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNativeMissionLogicalBindingReference.cs",
+      "contains_original_gameplay": false,
+      "scope": "Exact qualified native raw-bit logical config reconstruction into original typed constructors; original compiler/fingerprint verification. No actor policy.",
+      "role": "host_glue"
+    },
+    {
+      "id": "typed-SkirmishNativeMissionLogicalBindingRecord",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs",
+      "signature": "public sealed class SkirmishNativeMissionLogicalBindingRecord",
+      "prefix": "using System;using System.Linq;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishNativeMissionLogicalBindingRecord.cs"
+    },
+    {
+      "id": "typed-SkirmishMissionLogicalBindingProvider",
+      "kind": "current_original",
+      "template": "Tools/CI/SkirmishSourceSimulation/Templates/typed-SkirmishMissionLogicalBindingProvider.cs.template",
+      "output": "typed-SkirmishMissionLogicalBindingProvider.cs",
+      "members": [
+        {
+          "id": "TryCompileForLaunch",
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs",
+          "signature": "public static bool TryCompileForLaunch"
+        },
+        {
+          "id": "TryAttachCompiled",
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs",
+          "signature": "public static bool TryAttachCompiled"
+        },
+        {
+          "id": "TryRead",
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishMissionLogicalBindingProvider.cs",
+          "signature": "public static bool TryRead"
+        }
+      ]
+    },
+    {
+      "id": "typed-SkirmishTypedSpawnConstraint",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs",
+      "signature": "public sealed class SkirmishTypedSpawnConstraint",
+      "prefix": "using System;using System.Linq;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishTypedSpawnConstraint.cs",
+      "bindings": [
+        {
+          "from": "SkirmishVisualSpawnService.OffsetOnPad",
+          "to": "GeneratedSpawnLayoutValues.OffsetOnPad",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "id": "typed-SkirmishOriginalObjectiveSpawnHooks",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveSpawnHooks.cs",
+      "signature": "public static class SkirmishOriginalObjectiveSpawnHooks",
+      "prefix": "using System;using System.Linq;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishOriginalObjectiveSpawnHooks.cs"
+    },
+    {
+      "id": "typed-SkirmishConvoySpawnHooks",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishConvoySpawnHooks.cs",
+      "signature": "public static class SkirmishConvoySpawnHooks",
+      "prefix": "using System;using System.Linq;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishConvoySpawnHooks.cs"
+    },
+    {
+      "id": "typed-SkirmishOriginalForceDeclaration",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveBindingPlan.cs",
+      "signature": "public struct SkirmishOriginalForceDeclaration",
+      "prefix": "using System;using System.Collections.Generic;using System.Globalization;using Game.Skirmish.Contracts;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishOriginalForceDeclaration.cs"
+    },
+    {
+      "id": "typed-SkirmishOriginalObjectiveBinding",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveBindingPlan.cs",
+      "signature": "public struct SkirmishOriginalObjectiveBinding",
+      "prefix": "using System;using System.Collections.Generic;using System.Globalization;using Game.Skirmish.Contracts;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishOriginalObjectiveBinding.cs"
+    },
+    {
+      "id": "typed-SkirmishOriginalObjectiveBindingPlan",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveBindingPlan.cs",
+      "signature": "public static class SkirmishOriginalObjectiveBindingPlan",
+      "prefix": "using System;using System.Collections.Generic;using System.Globalization;using Game.Skirmish.Contracts;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishOriginalObjectiveBindingPlan.cs"
+    },
+    {
+      "id": "typed-SkirmishNativeObjectiveRecoveryBinding",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeObjectiveCheckpoint.cs",
+      "signature": "internal sealed class SkirmishNativeObjectiveRecoveryBinding",
+      "prefix": "using System;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Entities;using Unity.Collections;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "typed-SkirmishNativeObjectiveRecoveryBinding.cs"
+    },
+    {
+      "id": "SourceTypedManagedComponentApi.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceTypedManagedComponentApi.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Original managed component AddComponentObject API delegates actual same EntityManager component storage; no fabricated provider."
+    },
+    {
+      "id": "SourceUnsupportedConvoyActor.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceUnsupportedConvoyActor.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Honest unsupportedCE owner leaf. Originalconvoycondition/hook retained; noCE admission."
+    },
+    {
+      "id": "typed-GeneratedTypedOpeningActorSource.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/opening/regenerate_opening.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishTypedSpawnConstraint.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
+        "Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishOriginalObjectiveSpawnHooks.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/SkirmishSourceSimulation/Recipes/opening/templates/GeneratedS002SessionConstruction.cs.txt",
+        "Tools/CI/SkirmishSourceSimulation/Recipes/opening/templates/BirthDiagnosticRegion.cs.txt"
+      ],
+      "generator_output": "GeneratedTypedOpeningActorSource.cs",
+      "output": "typed-GeneratedTypedOpeningActorSource.cs"
+    },
+    {
+      "id": "SourceOpeningBirthContext.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceOpeningBirthContext.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Live zero-native-provider and no-inherited-record specialization of original scenario birth capture/stamp diagnostic branch; original call order kept, anyprovider/record rejects, never certificates."
+    },
+    {
+      "id": "SourceTypedFreshBuildingLifetime.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceTypedFreshBuildingLifetime.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Checked actual typed fresh bank/session/metadata/logical/actor constructor boundary for original building lifetime. Existing S2 route and complete lifecycle policy unchanged."
     }
   ],
   "excluded_nonruntime_sources": [

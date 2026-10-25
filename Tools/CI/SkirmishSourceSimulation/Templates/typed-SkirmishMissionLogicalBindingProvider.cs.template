@@ -1,0 +1,5 @@
+using System;using Game.Skirmish.Contracts;using Game.Components;using Game.Configs;using Unity.Entities;namespace Game.Runtime{public static class SkirmishMissionLogicalBindingProvider{
+/*SOURCE:TryCompileForLaunch*/
+/*SOURCE:TryAttachCompiled*/
+/*SOURCE:TryRead*/
+}}

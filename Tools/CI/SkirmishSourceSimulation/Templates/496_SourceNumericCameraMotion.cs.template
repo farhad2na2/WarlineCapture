@@ -3,13 +3,22 @@ using System;using Unity.Mathematics;using Game.Runtime.TransportPose;
 using V3=ActualCore::UnityEngine.Vector3;using V2=ActualCore::UnityEngine.Vector2;using NativePlane=ActualCore::UnityEngine.Plane;using NativeRay=ActualCore::UnityEngine.Ray;using NativeRect=ActualCore::UnityEngine.Rect;using NativeMath=ActualCore::UnityEngine.Mathf;
 namespace Game.Runtime{
 internal sealed class SourceNumericCameraData{
+ internal SourceCameraRayAdapterMode RayAdapterMode;
  internal V3 Position;internal quaternion Rotation;internal float FieldOfView,Near,Far,Aspect;internal bool Orthographic;internal float OrthographicSize;
  internal float4x4 WorldToCamera=>math.mul(float4x4.Scale(new float3(1,1,-1)),math.inverse(float4x4.TRS(new float3(Position.x,Position.y,Position.z),Rotation,new float3(1))));
  internal float4x4 Projection=>float4x4.PerspectiveFov(math.radians(FieldOfView),Aspect,Near,Far);
  internal NativeRay ViewportRay(V3 viewport){
   if(Orthographic)throw new NotSupportedException("Active orthographic camera not admitted");
-  float4 camera=math.mul(math.inverse(Projection),new float4(viewport.x*2-1,viewport.y*2-1,-1,1));float3 local=camera.xyz/camera.w;local.z=-local.z;
-  float3 offset=math.rotate(Rotation,local),origin=new float3(Position.x,Position.y,Position.z)+offset,direction=math.normalize(offset);
+  float3 origin,direction;
+  if(RayAdapterMode==SourceCameraRayAdapterMode.LegacySchemaOne){
+   float4 camera=math.mul(math.inverse(Projection),new float4(viewport.x*2-1,viewport.y*2-1,-1,1));float3 local=camera.xyz/camera.w;local.z=-local.z;
+   float3 offset=math.rotate(Rotation,local);origin=new float3(Position.x,Position.y,Position.z)+offset;direction=math.normalize(offset);
+  }else if(RayAdapterMode==SourceCameraRayAdapterMode.EngineeringWorldNearTwo){
+   // Versioned engine boundary only: current near point goes through camera-to-world TRS before world subtraction.
+   float4 camera=math.mul(math.inverse(Projection),new float4(viewport.x*2-1,viewport.y*2-1,-1,1));
+   float4 world=math.mul(math.mul(float4x4.TRS(new float3(Position.x,Position.y,Position.z),Rotation,new float3(1)),float4x4.Scale(new float3(1,1,-1))),camera);
+   origin=world.xyz/world.w;direction=math.normalize(origin-new float3(Position.x,Position.y,Position.z));
+  }else throw new NotSupportedException("Unqualified engine camera ray adapter version");
   return new NativeRay(new V3(origin.x,origin.y,origin.z),new V3(direction.x,direction.y,direction.z));
  }
 }

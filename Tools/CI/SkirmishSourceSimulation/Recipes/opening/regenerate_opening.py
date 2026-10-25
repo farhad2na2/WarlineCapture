@@ -158,7 +158,13 @@ def generate(repo,output):
  enemy='private static bool EnsureEnemySessionSource(EntityManager em,Entity session,SkirmishResolvedSetup setup) => SkirmishEnemyPlannerService.EnsureSession(em,session,setup);'
  constructor=once(constructor,'            GeneratedSessionRoles.ProjectRoles(em,entity,setup);','            GeneratedSessionRoles.ProjectRoles(em,entity,setup);\n            if(!EnsureEnemySessionSource(em,entity,setup))throw new NotSupportedException("Current source enemy initialization rejects setup");')
  pos=constructor.rfind('    }');constructor=constructor[:pos]+enemy+'\n'+constructor[pos:]
- files={'GeneratedOpeningActorSource.cs':actor,'GeneratedOpeningLedgerCompletion.cs':ledger,'GeneratedS002SessionConstruction.cs':constructor,'GeneratedSessionRoles.cs':roles}
+ typed_create=editor_projection(selected('spawn','CreateForceMember','internal static'))
+ typed_create=once(typed_create,'if (!fromPrefab && Application.isPlaying)','if (!fromPrefab)')
+ typed_create=typed_create.replace('RuntimeActorBirthContext','SourceOpeningBirthContext').replace('SkirmishVisualSpawnService.TryResolveUnitSpawnWorld','GeneratedSpawnLayoutValues.TryResolveUnitSpawnWorld').replace('SkirmishVisualSpawnService.ResolveUnitFallbackWorld','GeneratedSpawnLayoutValues.ResolveUnitFallbackWorld')
+ brace=typed_create.index('{');typed_guard='\n if(setup==null||!SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup)||typedPlacement==null)throw new NotSupportedException("Actual original launch-owned typed constraint required");SourceGroundMissionFamily.RequireCatalogSetup(setup);\n';typed_create=typed_create[:brace+1]+typed_guard+typed_create[brace+1:]
+ typed_place=editor_projection(selected('spawn','TryPlaceTypedOnMap')).replace('InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell','SpawnCellUtility.TryFind')
+ typed_actor='using System;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using Unity.Transforms;\nnamespace Game.Runtime{internal static class GeneratedTypedOpeningActorSource{\n'+'\n'.join([typed_create,typed_place,lookup,setadd])+'\n}}\n'
+ files={'GeneratedTypedOpeningActorSource.cs':typed_actor,'GeneratedOpeningActorSource.cs':actor,'GeneratedOpeningLedgerCompletion.cs':ledger,'GeneratedS002SessionConstruction.cs':constructor,'GeneratedSessionRoles.cs':roles}
  def unchanged():
   if any(paths[k].read_bytes()!=v for k,v in raw.items()):raise ValueError('Current opening source byte drift')
   if any((here/'templates'/k).read_bytes()!=v for k,v in templates.items()):raise ValueError('Owned opening template drift')

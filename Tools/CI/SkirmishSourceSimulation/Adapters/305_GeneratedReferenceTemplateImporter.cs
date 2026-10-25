@@ -18,19 +18,23 @@ namespace Game.Runtime
         private sealed class Row { internal Entity Source; internal bool Enabled; internal readonly List<Cell> Cells = new List<Cell>(); }
         private sealed class Cell { internal Type Type;internal bool Buffer;internal bool? Enabled;internal object Value;internal object[] Items; }
         private static readonly HashSet<string> PresentationOnly = new HashSet<string>(StringComparer.Ordinal) {
-            "Game.Components.UnitAttackImpactVfxReference", "Game.Components.UnitMuzzleFlashVfxReference" };
+            "Game.Components.UnitAttackImpactVfxReference", "Game.Components.UnitMuzzleFlashVfxReference", "Game.Components.GroundMissileLauncherVfxReferenceComponent" };
         private static void Need(bool value,string reason) { if(!value)throw new InvalidOperationException(reason); }
-        internal static Result Import(EntityManager em,JObject source,string binaryDirectory,IEnumerable<string> requiredSourceKeys)
+        // Shares the exact importer decoder/type/closure checks; allocates no world identities.
+        internal static JObject Preflight(JObject source,string binaryDirectory,IEnumerable<string> requiredSourceKeys){var rows=DecodeAndValidate(source,binaryDirectory,requiredSourceKeys,out var roots,out int omitted);return new JObject{["roots"]=roots.Count,["entities"]=rows.Count,["decoded_components"]=rows.Sum(r=>r.Cells.Count),["omitted_presentation_components"]=omitted,["unsupported_unconsumed_values"]=(source["unsupported_values"]as JArray)?.Count??0,["world_allocated"]=false,["entity_identities_allocated"]=0};}
+        private static List<Row> DecodeAndValidate(JObject source,string binaryDirectory,IEnumerable<string> requiredSourceKeys,out JObject roots,out int omitted)
         {
-            Need(em!=null && (int?)source["schema_version"]==1 && (string)source["kind"]=="AuthoredSkirmishReferenceData" &&
+            bool focused=(string)source["kind"]=="AuthoredSkirmishPrefabReferenceData";
+            Need((int?)source["schema_version"]==1 && (focused||(string)source["kind"]=="AuthoredSkirmishReferenceData") &&
                 (string)source["authority"]=="ActualSourceAssetsAndNativeBakers_NotMissionState","Actual source-asset bake profile required");
-            var entities=source["entities"] as JArray;var roots=source["opening_prefabs"] as JObject;
+            var entities=source["entities"] as JArray;roots=source["opening_prefabs"] as JObject;var rootDomain=roots;
             Need(entities!=null&&entities.Count>0&&entities.Count<=4096&&roots!=null&&roots.Count>0&&roots.Count<=256,"Bounded complete template graph required");
+            if(focused){var requested=source["requested_prefab_keys"]as JArray;Need(Guid.TryParse((string)source["template_namespace_id"],out var ns)&&ns!=Guid.Empty&&(bool?)source["geometry_exported"]==false&&FocusedUnsupportedValuesAreUnconsumed(source)&&requested!=null&&requested.Count==roots.Count&&requested.Values<string>().Distinct(StringComparer.Ordinal).Count()==requested.Count&&requested.Values<string>().All(k=>rootDomain[k]!=null),"Exact single captured prefab namespace and immutable root domain required");}
             var required=new HashSet<string>(requiredSourceKeys??throw new ArgumentNullException(nameof(requiredSourceKeys)),StringComparer.Ordinal);
-            Need(required.Count>0&&required.All(k=>!string.IsNullOrEmpty(k)&&roots[k]!=null),"All actual force template keys required");
+            Need(required.Count>0&&required.All(k=>!string.IsNullOrEmpty(k)&&rootDomain[k]!=null),"All actual force template keys required");
             var codec=new ExactInitialValueCodec(binaryDirectory,new JObject());
             var assembly=typeof(GeneratedReferenceTemplateImporter).Assembly;
-            var rows=new List<Row>();var bySource=new Dictionary<Entity,Row>();int omitted=0;
+            var rows=new List<Row>();var bySource=new Dictionary<Entity,Row>();omitted=0;
             foreach(JObject input in entities)
             {
                 Entity id=ExactInitialValueCodec.EntityId((string)input["id"]);
@@ -67,6 +71,12 @@ namespace Game.Runtime
                 var keyCell=bySource[id].Cells.FirstOrDefault(c=>c.Type==typeof(UnitSourcePrefabKey));
                 Need(keyCell!=null&&((UnitSourcePrefabKey)keyCell.Value).Value.ToString()==root.Name,"Actual source prefab key/root mismatch");
             }
+            return rows;
+        }
+        internal static Result Import(EntityManager em,JObject source,string binaryDirectory,IEnumerable<string> requiredSourceKeys)
+        {
+            Need(em!=null,"Actual template import manager required");
+            var rows=DecodeAndValidate(source,binaryDirectory,requiredSourceKeys,out var roots,out int omitted);
             var result=new Result {OmittedPresentationComponents=omitted};
             foreach(var row in rows)result.SourceToLogical.Add(row.Source,em.CreateEntity());
             try
@@ -92,6 +102,8 @@ namespace Game.Runtime
             }
             catch { foreach(var entity in result.SourceToLogical.Values)if(em.Exists(entity))em.DestroyEntity(entity);throw; }
         }
+        // Only these exact native UnityObjectRef GameObject fields are outside the logical gameplay read domain.
+        private static bool FocusedUnsupportedValuesAreUnconsumed(JObject source){var records=source["unsupported_values"]as JArray;if(records==null)return false;var fields=new Dictionary<string,string[]>(StringComparer.Ordinal){["Game.Components.UnitAttackImpactVfxReference"]=new[]{"Prefab"},["Game.Components.UnitMuzzleFlashVfxReference"]=new[]{"Prefab"},["Game.Components.GroundMissileLauncherVfxReferenceComponent"]=new[]{"LauncherBackfirePrefab","RocketTrailPrefab","ImpactExplosionPrefab","ImpactSmokePrefab"}};foreach(JObject row in records){var path=((string)row["path"])?.Split('/');if(path==null||path.Length!=3||!fields.TryGetValue(path[1],out var allowed)||!allowed.Contains(path[2])||(string)row["reason"]!="unity_object_ref_requires_bound_source_identity"||!((string)row["type"]??"").StartsWith("Unity.Entities.UnityObjectRef`1[[UnityEngine.GameObject,",StringComparison.Ordinal))return false;ExactInitialValueCodec.EntityId(path[0]);}return true;}
         private static void VisitEntities(object value,Type type,Action<Entity> visit)
         {
             if(type==typeof(Entity)){visit((Entity)value);return;}

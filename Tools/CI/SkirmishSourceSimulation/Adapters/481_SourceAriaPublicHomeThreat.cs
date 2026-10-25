@@ -3,7 +3,7 @@ namespace Game.Runtime {
  internal readonly struct SourceAriaHomeThreat {internal readonly Entity Entity;internal readonly float3 PublicPosition;internal SourceAriaHomeThreat(Entity e,float3 p){Entity=e;PublicPosition=p;}}
  internal static class SourceAriaPublicHomeThreat {
   internal static SourceAriaHomeThreat? Read(EntityManager em,Entity session,PublicCommandCatalog.View publicCatalog){
-   var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);if(s.CatalogId.ToString()!="S002"||s.IsLegacy!=0)throw new NotSupportedException("Only current source S002 public home threat scope");
+   SourceGroundMissionFamily.RequireSession(em,session);
    var match=em.GetComponentData<SkirmishMatchState>(session);var bases=SkirmishPublicObjectiveProjection.Read(em,match);if(!bases.PlayerPositionKnown)throw new NotSupportedException("Current known mission home position required");
    float closest=AriaPublicHomeThreatPolicy.RadiusSquared;SourceAriaHomeThreat? chosen=null;
    foreach(var target in publicCatalog.Targets){

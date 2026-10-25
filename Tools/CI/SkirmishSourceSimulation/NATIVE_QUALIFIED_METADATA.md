@@ -1,0 +1,15 @@
+# Native qualified immutable metadata
+
+This successor uses the existing building, unit and configured-provider readers. It adds a qualified schema 2 path for exact native metadata facts, with a pinned capture and actual compiled context. It does not add a public mission execution profile.
+
+The S026 native qualification is SHA-256 `06ff2cf07f069988a04f9e1740cbc9d29461207014b566fe3f2845c205e7be17`. Its 12 size/difficulty contexts at seed 104755 select nine buildings and sixteen units. These are different from S002: production slots, recipes, delivery timing and configured unit order differ. The old S002 artifacts must remain unchanged and are rejected as S026 projections.
+
+`Recipes/project_native_qualified_metadata.py` projects each exact native context into three schema 2 artifacts. Building fields, unit metadata, immutable prefab identities and transport graphs are copied without substitution. The configured supplement copies actual requestability/display values and raw provider indices (a native absent index is represented as null, matching the reader contract). Headers identify the native artifact, catalog, size, difficulty, seed, setup hash and native metadata digest. They describe metadata-only scope; no session entities, opening positions, storage bank or runtime state is projected. Native source/dependency identities are retained. No Campaign geometry is authored.
+
+The compatibility bridge checks the exact capture, actual current compiled setup, grants/roles, target binding, native domain, all consumed factory sources and script metas, six owner assembly definitions and metas, conservative native asset closure and package manifests. It rejects old S002 schema/provenance, mismatched targets and changed facts. The readers admit the native context's count only after that qualification; S002 schema 1 keeps its original strict eight-building/twelve-unit behavior.
+
+The production adapter compares current role-derived recipes and the original source delivery-timing calculation with the qualified native context before production inputs are published. Static catalog getter decoding uses the already-admitted unit metadata/count; no native rendered-input or player acceptance is claimed.
+
+Run the projection tool with explicit `--native`, `--bridge` and a fresh `--output` directory. `Tests/QualifiedMetadataControls.cs` is an isolated noWorld fixture compiled with the current complete source closure. It accepts projection-index.json, source repository and fresh result JSON arguments; its current frozen authoring graph/layout references are qualification inputs, not runtime mission aliases. The fixture compiles all 12 actual configurations, reads nine buildings/sixteen units, checks configured getters and original recipe/timing facts, and rejects altered origins, contexts, fields, provider indices, old references and wrong target bindings.
+
+Existing full mission/native normal-input/device gates remain separate. A qualified metadata artifact does not authorize a public S026 run or establish mission readiness.

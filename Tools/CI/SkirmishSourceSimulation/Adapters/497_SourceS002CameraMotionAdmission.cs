@@ -7,20 +7,28 @@ internal sealed partial class SourceS002NumericCameraProvider{
  internal void AdmitConsumedMotionOracle(string path,string sha){
   Ready();RequirePose();if(!nativeValuesAdmitted||motionValuesAdmitted)throw new InvalidOperationException("Matrix proof first; consumedmotion admitsonce");
   var root=Json(AutonomousWorld.PinnedFile(path,sha,2*1024*1024));var input=root["input"];
+  engineAdapter.RequireMotion(sha,root);ValidateConsumedMotionReference(root,profile,catalogId,ProfileSha256,motion.GroundBoundary,engineAdapter);MotionOracleSha256=sha;motionValuesAdmitted=true;RequireInterior();
+ }
+ internal int PreflightConsumedMotionReference(JObject root,string sha,ActualCore::UnityEngine.Rect boundary){Ready();engineAdapter.RequireMotion(sha,root);return ValidateConsumedMotionReference(root,profile,catalogId,ProfileSha256,boundary,engineAdapter);}
+ internal static int ValidateConsumedMotionReference(JObject root,Game.Configs.SkirmishMissionViewProfile profile,string catalogId,string ProfileSha256,ActualCore::UnityEngine.Rect bound,SourceNumericCameraEngineAdapterContract adapter){var input=root["input"];
   if((string)root["kind"]!="SkirmishNumericCameraMotionUnityOracle"||(string)root["status"]!="Passed"||(bool?)root["mission_executed"]!=false||(int?)input["width"]!=1280||(int?)input["height"]!=720||(float?)input["delta_seconds"]!=1f/60||(float?)input["smooth_seconds"]!=.35f||(int?)input["steps"]!=180)throw new InvalidDataException("Exact consumed-source camera reference required");
-  var b=input["boundary"].Values<float>().ToArray();var bound=motion.GroundBoundary;
-  if(b.Length!=4||b[0]!=bound.xMin||b[1]!=bound.yMin||b[2]!=bound.width||b[3]!=bound.height||profile.Pitch!=65||profile.Yaw!=307||profile.NormalFieldOfView!=46||profile.NormalHeight!=20)throw new NotSupportedException("Actual S002 camera profile/boundary outside measured source domain");
-  var target=input["public_objective"].Values<float>().ToArray();if(target.Length!=3)throw new InvalidDataException("Actual publicobjective fixture required");
+  var b=input["boundary"].Values<float>().ToArray();
+  if(b.Length!=4||b[0]!=bound.xMin||b[1]!=bound.yMin||b[2]!=bound.width||b[3]!=bound.height)throw new NotSupportedException("Actual camera boundary outside measured source domain");
+  bool engineering=adapter.Engineering;
+  if(engineering){if((int?)input["schema_version"]!=2||(string)input["kind"]!="SourceEngineeringCameraMotionInput"||(string)input["scope"]!="CompiledAuthoringReferenceInput_NotRuntimePublicObservation"||(string)input["engineering_profile_sha256"]!=ProfileSha256||(float?)input["pitch"]!=profile.Pitch||(float?)input["yaw"]!=profile.Yaw||(float?)input["fov"]!=profile.NormalFieldOfView||(float?)input["normal_height"]!=profile.NormalHeight)throw new InvalidDataException("Engineering camera motion input differs from actual shared profile");}
+  else if(profile.Pitch!=65||profile.Yaw!=307||profile.NormalFieldOfView!=46||profile.NormalHeight!=20)throw new NotSupportedException("Actual S002 camera profile outside measured source domain");
+  var target=input[engineering?"reference_target":"public_objective"].Values<float>().ToArray();if(target.Length!=3)throw new InvalidDataException("Actual publicobjective fixture required");
   var poses=root["poses"]as JArray;if(poses?.Count!=5)throw new InvalidDataException("Five actual consumed-output source cases required");
   int rows=0;foreach(JObject row in poses){
    var start=row["initial"].Values<float>().ToArray();if(start.Length!=3)throw new InvalidDataException("Pose fixture shape");
-   Func<SourceNumericCameraData> make=()=>new SourceNumericCameraData{Position=new V3(start[0],start[1],start[2]),Rotation=PoseMath.Euler(new float3(65,307,0)),FieldOfView=46,Near=.3f,Far=10000,Aspect=1280f/720};
-   var c=make();var m=new SourceNumericCameraMotion(b[0],b[1],b[0]+b[2],b[1]+b[3]);CheckMotion(m,c,(JObject)row["before"]);rows++;m.ClampCameraToGroundBoundary(c);CheckMotion(m,c,(JObject)row["after_clamp"]);rows++;m.MoveCameraGroundCenterTo(c,new V3(target[0],target[1],target[2]));CheckMotion(m,c,(JObject)row["after_pan"]);rows++;
+   Func<SourceNumericCameraData> make=()=>new SourceNumericCameraData{RayAdapterMode=adapter.Mode,Position=new V3(start[0],start[1],start[2]),Rotation=PoseMath.Euler(new float3(profile.Pitch,profile.Yaw,0)),FieldOfView=profile.NormalFieldOfView,Near=.3f,Far=10000,Aspect=1280f/720};
+   var c=make();var m=new SourceNumericCameraMotion(b[0],b[1],b[0]+b[2],b[1]+b[3]);CheckMotionAt(m,c,(JObject)row["before"],rows);rows++;m.ClampCameraToGroundBoundary(c);CheckMotionAt(m,c,(JObject)row["after_clamp"],rows);rows++;m.MoveCameraGroundCenterTo(c,new V3(target[0],target[1],target[2]));CheckMotionAt(m,c,(JObject)row["after_pan"],rows);rows++;
    c=make();m=new SourceNumericCameraMotion(b[0],b[1],b[0]+b[2],b[1]+b[3]);m.ClampCameraToGroundBoundary(c);m.SetSmoothFocusTarget(new V3(target[0],target[1],target[2]),true,.35f);var sequence=row["smooth"]as JArray;if(sequence?.Count!=180)throw new InvalidDataException("Complete source smooth sequence missing");
-   foreach(JObject expected in sequence){m.SourceUnscaledDelta=1f/60;var next=m.UpdateSmoothFocus(m.GetCameraGroundCenterWorld(c),.25f,c);m.MoveCameraGroundCenterTo(c,next);CheckMotion(m,c,expected);rows++;}
+   foreach(JObject expected in sequence){m.SourceUnscaledDelta=1f/60;var next=m.UpdateSmoothFocus(m.GetCameraGroundCenterWorld(c),.25f,c);m.MoveCameraGroundCenterTo(c,next);CheckMotionAt(m,c,expected,rows);rows++;}
   }
-  if(rows!=915)throw new InvalidDataException("Incomplete consumed camera proof");MotionOracleSha256=sha;motionValuesAdmitted=true;RequireInterior();
+  if(rows!=915)throw new InvalidDataException("Incomplete consumed camera proof");return rows;
  }
+ static void CheckMotionAt(SourceNumericCameraMotion m,SourceNumericCameraData c,JObject expected,int state){try{CheckMotion(m,c,expected);}catch(Exception error){throw new InvalidDataException("Consumed camera state="+state+" pose="+(state/183)+" phase="+(state%183),error);}}
  static void CheckMotion(SourceNumericCameraMotion m,SourceNumericCameraData c,JObject e){
   NearVector(new float3(c.Position.x,c.Position.y,c.Position.z),(JArray)e["position"],PositionEnvelope);var center=m.GetCameraGroundCenterWorld(c);NearVector(new float3(center.x,center.y,center.z),(JArray)e["center"],CenterEnvelope);
   if(!m.TryGetCameraGroundBounds(c,out var r))throw new InvalidDataException("Unknown consumed camera footprint");var f=e["footprint"].Values<float>().ToArray();if(f.Length!=4||f.Any(x=>!math.isfinite(x))||math.cmax(math.abs(new float4(r.xMin,r.yMin,r.width,r.height)-new float4(f[0],f[1],f[2],f[3])))>FootprintEnvelope||m.HasSmoothFocusTarget!=(bool)e["has_target"])throw new InvalidDataException("Consumed footprint/completion branch outside measured reference envelope");

@@ -9,15 +9,20 @@ namespace Game.Runtime
     // Immutable asset-domain projection; gameplay source hashes do not invalidate it.
     internal static class GeneratedReferenceTemplateView
     {
+        // Exact diagnostic native bytes; only the declared typed consumer subset may qualify. Full Unity replay remains false.
+        internal const string QualifiedFocusedPrefabSha="21e7474adfe2682a638bc6c23708f48b9611c526051871c0d93b4cb18a6ae4aa";
         internal static JObject Read(JObject descriptor, out string binaryDirectory)
         {
             string path = (string)descriptor["path"], sha = (string)descriptor["sha256"];
             JObject domain = Parse(AutonomousWorld.PinnedFile(path, sha, 32 * 1024 * 1024));
             binaryDirectory = Path.GetDirectoryName(path);
+            bool focused=(string)domain["kind"]=="AuthoredSkirmishPrefabReferenceData";
+            if(focused&&descriptor["source_reference_path"]==null)throw new InvalidDataException("Exact focused prefab consumer projection/provenance required; full native replay remains unqualified");
             if (descriptor["source_reference_path"] == null) return domain;
 
             string source = (string)descriptor["source_reference_path"];
             string sourceSha = (string)descriptor["source_reference_sha256"];
+            if(sourceSha==QualifiedFocusedPrefabSha&&!focused)throw new InvalidDataException("Focused diagnostic namespace cannot be relabelled as another template schema");
             var info = new FileInfo(source);
             if (!Path.IsPathRooted(source) || !info.Exists || info.Length < 1 || info.Length > 128 * 1024 * 1024 ||
                 (info.Attributes & FileAttributes.ReparsePoint) != 0)
@@ -29,7 +34,8 @@ namespace Game.Runtime
 
             JObject manifest = Parse(AutonomousWorld.PinnedFile((string)descriptor["projection_manifest_path"],
                 (string)descriptor["projection_manifest_sha256"], 1024 * 1024));
-            string[] selected = { "schema_version", "kind", "authority", "opening_prefabs", "entities" };
+            string[] selected = focused?new[]{"schema_version","kind","authority","source_scenes","unity_version","template_namespace_id","requested_prefab_keys","requested_prefab_keys_sha256","opening_prefabs","entities","unsupported_values","replay_ready","fresh_world_allocator_exported","full_mission_initialized","native_visual_readiness","geometry_exported","consumer_rule"}:new[]{"schema_version","kind","authority","opening_prefabs","entities"};
+            if(focused){if(sourceSha!=QualifiedFocusedPrefabSha)throw new InvalidDataException("Unqualified focused native source identity");var original=Parse(File.ReadAllBytes(source));foreach(string name in selected)if(!JToken.DeepEquals(domain[name],original[name]))throw new InvalidDataException("Focused projection changed native field/namespace: "+name);if((bool?)domain["replay_ready"]!=false||(bool?)domain["full_mission_initialized"]!=false||(bool?)domain["geometry_exported"]!=false)throw new InvalidDataException("Focused diagnostic native scope must remain explicit");}
             if ((int?)manifest["schema_version"] != 1 ||
                 (string)manifest["kind"] != "PinnedExactTemplateDomainProjection" ||
                 (string)manifest["source_path"] != source || (string)manifest["source_sha256"] != sourceSha ||

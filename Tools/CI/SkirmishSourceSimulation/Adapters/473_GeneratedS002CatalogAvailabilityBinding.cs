@@ -11,7 +11,7 @@ internal sealed class GeneratedS002CatalogAvailabilityBinding{
   var root=JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes),new JsonLoadSettings{DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error});
   var units=DecodeConfiguredUnits(root,admittedMetadata,metadataPath);
   var record=em.GetComponentObject<SkirmishProductionCatalogRecord>(session).Catalog;
-  if(record?.Setup?.CatalogId!="S002")throw new NotSupportedException("Actual S002 source catalog required");
+  SourceGroundMissionFamily.RequireCatalogSetup(record?.Setup);
   var allowed=units.Where(p=>record.TryRole(p.name,out _)).ToArray();
   var store=CatalogPrefabStore.FromResolvedConfiguredUnits(units,allowed);
   var bindings=new List<SourceCampPrefabBinding>();
@@ -22,8 +22,8 @@ internal sealed class GeneratedS002CatalogAvailabilityBinding{
   return new GeneratedS002CatalogAvailabilityBinding(em,session,store,rows,map,units);
  }
  internal static List<LogicalCatalogPrefab> DecodeConfiguredUnits(JObject root,GeneratedUnitProductionMetadata admitted,string path){
-  if(root==null||admitted==null||(string)root["kind"]!="AuthoredSkirmishUnitProductionMetadata"||(int?)root["schema_version"]!=1||(bool?)root["ui_catalog_runtime_policy_sampled"]!=false)throw new InvalidDataException("Original static authoring data, not sampled runtime policy, required");
-  var rows=root["units"] as JArray;if(rows==null||rows.Count!=12||admitted.Ordered.Count!=12)throw new InvalidDataException("Complete resolved configured12 order required");
+  if(root==null||admitted==null||(string)root["kind"]!=(admitted.NativeQualified?"NativeQualifiedSkirmishUnitProductionMetadata":"AuthoredSkirmishUnitProductionMetadata")||(int?)root["schema_version"]!=(admitted.NativeQualified?2:1)||(bool?)root["ui_catalog_runtime_policy_sampled"]!=false)throw new InvalidDataException("Original static authoring data, not sampled runtime policy, required");
+  var rows=root["units"] as JArray;if(rows==null||rows.Count!=admitted.Ordered.Count||(!admitted.NativeQualified&&admitted.Ordered.Count!=12))throw new InvalidDataException("Complete admitted configured unit order required");
   var codec=new ExactInitialValueCodec(Path.GetDirectoryName(path),new JObject());var sprites=new Dictionary<string,CatalogSpriteHandle>(StringComparer.Ordinal);var spritePaths=new Dictionary<string,string>(StringComparer.Ordinal);var result=new List<LogicalCatalogPrefab>();var ids=new HashSet<string>(StringComparer.Ordinal);
   for(int i=0;i<rows.Count;i++){
    var row=rows[i] as JObject;var source=admitted.Ordered[i];

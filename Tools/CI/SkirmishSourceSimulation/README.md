@@ -143,3 +143,60 @@ marker, and the fresh output. Reverify recorded asset/source, assembly, method I
 and Editor identity pins. The probe rejects a changed coded source asset; it is
 not a general quaternion implementation or mission-readiness certificate. Reuse
 these reference values only within their source/producer read domain.
+
+## Fast smoke before a full simulation
+
+Use the same entry point for one ordered report:
+
+```sh
+rtk proxy python3 -B Tools/CI/run_skirmish_source_simulation.py smoke \
+  --repo <source-repository> --data-repo <asset-repository> \
+  --mission S002 --seed 104731 --data-bundle <pinned-bundle.json> \
+  --build-receipt <checked-source-build/build.json> \
+  --objective-build <checked-objective-build> --output <fresh-smoke-output> --timeout 120
+```
+
+Both build arguments are optional. Missing producers build once; supplied producers
+must still match their recorded sources, binaries and current selected source.
+The existing .NET8 objective producer runs its original BA/FC/BT/CE rules against
+1,800 synthetic probes generated from the actual 120-entry catalog/360-row matrix.
+Those facts do not represent 1,800 battles. The source producer separately runs
+original authored-definition, matrix, all-size static-budget and selected compiler
+diagnostics without a World. Standalone S002 smoke ends with one ordinary five-tick
+startup. Known startup failures propagate. No Unity or player build launches.
+
+`smoke-report.json` lists each stage, field, reason, evidence, duration and a repro
+command. Cheap independent checks are collected; failed dependencies skip later
+work. The report also lists unimplemented physical/infrastructure coverage. It
+does not load historical temporary placement/route/runtime-owner success flags.
+Add a small current-source stage to the finite `STAGES` list when those adapters
+are available. Exit 0 means `SmokePassed` for the declared required checks only;
+exit 1 is `Failed`, and exit 2 is `Blocked` or unsupported. `mission_ready`,
+`validation_passed`, `source_fit_verified`, `native_acceptance` and full-outcome
+claims remain false. A passed smoke is never mission acceptance.
+
+For S026/104755, use `smoke --authoring-input <actual-draft.json>` instead of a
+runtime bundle. The existing native author command preserves original compiler
+reasons; current missing world binding/source-fit returns a blocked smoke, without
+allocating a mission World. Unsupported runtime families remain explicit.
+
+Ordinary full `run` now performs the same config/objective preflight automatically,
+reusing its checked source build. It defers startup to the actual full worker to
+avoid a second world initialization. With an existing build receipt, its report
+is `<run-output>-smoke/smoke-report.json`. Without one, cheap input/CSV checks run
+first, the one source build is created by preflight, and the report is
+`<output>/smoke/smoke-report.json` with the full worker under `<output>/run`.
+A failing preflight does not build dependent producers or launch the worker. Explicit `run --max-ticks` retains its diagnostic-prefix semantics and does
+not recurse through smoke. Smoke owns only its launched process group on timeout.
+
+Qualification scope: the integrated source build/native-config/startup lane is
+currently qualified on macOS with the recorded installed Mono numeric profile.
+Catalog/matrix CSV checks are Python data checks; the existing objective producer
+uses installed .NET8 and has portable source-only semantics. This does not grant
+Windows source-world numerical parity or a fallback runtime. No runtime is
+silently substituted when the qualified source-world lane is unavailable.
+
+The checked-build qualification command completed S002 smoke in 10.77 seconds
+(including 8.99 seconds ordinary startup and 0.41 seconds for 1,800 synthetic rule
+probes). These are functional wall observations, not a speed benchmark or a
+full-mission claim. Genuine S026 returned Blocked on its original compiler gate.

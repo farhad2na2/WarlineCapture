@@ -7742,6 +7742,14 @@
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Actual scene/config identity and current native getter plus fresh original network; original generated sync executes before actors/path; all nonempty/mutation/restore domains reject."
+    },
+    {
+      "id": "SourceSmokeTool.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceSmokeTool.cs",
+      "role": "entrypoint",
+      "contains_original_gameplay": false,
+      "scope": "Preworld original authored catalog/matrix/compiler/static-budget diagnostics only; no world, outcome, fit or readiness injection."
     }
   ],
   "excluded_nonruntime_sources": [

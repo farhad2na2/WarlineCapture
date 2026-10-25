@@ -14,7 +14,7 @@ ci=Path(__file__).resolve().parent
 runpy.run_path(str(ci/'run_skirmish_source_simulation.py'),run_name='qualified_test_bootstrap')
 patterns={'test_skirmish_source_build.py':20,'test_skirmish_source_manifest.py':19,
           'test_skirmish_source_syntax.py':4,'test_skirmish_navigation_identity_execution.py':3,
-          'test_skirmish_source_pin_batch.py':5,'test_skirmish_owned_source.py':18,'test_skirmish_source_authoring.py':8}
+          'test_skirmish_source_pin_batch.py':5,'test_skirmish_owned_source.py':18,'test_skirmish_source_authoring.py':8,'test_skirmish_source_smoke.py':29}
 total=0
 for pattern,expected in patterns.items():
     suite=unittest.defaultTestLoader.discover(str(ci/'tests'),pattern=pattern)

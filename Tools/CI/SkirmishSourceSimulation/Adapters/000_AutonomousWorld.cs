@@ -125,6 +125,7 @@ namespace Game.Runtime
             Army = definition.ArmyProfileConfig;
             if(!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId,out int actualScenarioIndex))throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;
+            RetainSelectedOperationMapInputs(request, graph, assets);
             InitializationStage = "ConstructingBakedCampaignMap";
             Entities.LogicalAllocatorAdmitted = true;
             Entities.AllocateLogicalIdentity = () => new Entity { Index = checked(nextIdentity++), Version = 1 };
@@ -167,6 +168,6 @@ namespace Game.Runtime
                 ["computed_setup"] = Setup == null ? null : new JObject { ["catalog_id"] = Setup.CatalogId, ["setup_hash"] = Setup.SetupHash, ["force_actors"] = Setup.Forces.Sum(force => force.Quantity), ["structure_bindings"] = Setup.Structures.Length }
             };
         }
-        public void Dispose() { initialRoads?.Dispose(); disposed = true; }
+        public void Dispose() { DisposeActualOperationMapPublication(); initialRoads?.Dispose(); disposed = true; }
     }
 }

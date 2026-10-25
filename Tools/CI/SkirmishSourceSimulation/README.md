@@ -221,3 +221,35 @@ pins remain required. This is current configuration input, not a new data bank,
 mission binding or readiness flag. S002-only entry guards and the original
 native AriaS002 wrapper remain in force. S026 needs its genuine compiler and
 source-fit gates before a separate admission change.
+
+
+## Selected metadata root and complete production publication
+
+The S002 source profile now requires three explicit initialization descriptors. Each is an exact `path` / `sha256` pair:
+
+- `selected_operation_map`: the actual map selected by the native preset/fallback/catalog chain. Its unique typed node must be in the same `source_config_graph` as the mission and canonical battle catalog.
+- `operation_map_rotation_reference`: the qualified native Quaternion.Euler reference. The provider rejects unknown raw Euler keys or incompatible source methods. It does not assume identity rotations.
+- `building_request_metadata`: a qualified `CurrentSourceBuildingRequestMetadataSupplement`, including native configured-provider indices and requestability. Construction and scene lists remain distinct; missing values do not receive defaults.
+
+Keep the existing `canonical_battle_catalog`, baked map, road, unit-production and other descriptors. The graph remains bounded at 64 nodes; this qualified S002 closure has 36.
+
+Use the data-only preparation entry below. The older unused data wrapper in `generate_current.py` is unsupported; `generate.py` remains the source resolver entry and `prepare_inputs.py` is the supported data entry.
+
+```sh
+python3 Tools/CI/SkirmishSourceSimulation/Recipes/selected_operation_map/prepare_inputs.py \
+  --repo /absolute/current/source-repo --data-repo /absolute/current/data-repo \
+  --output /absolute/new/prepared-directory \
+  --graph /absolute/existing/source-config-graph.json --graph-sha GRAPH_SHA256 \
+  --initialization /absolute/existing/initialization.json --initialization-sha INITIALIZATION_SHA256 \
+  --bundle /absolute/existing/data-bundle.json --bundle-sha BUNDLE_SHA256 \
+  --rotation-reference /absolute/qualified/metadata-reference.json --rotation-reference-sha ROTATION_SHA256 \
+  --building-request-metadata /absolute/qualified/supplement.json --building-request-metadata-sha SUPPLEMENT_SHA256
+```
+
+The output directory must be new. The command uses the existing safe source reader, verifies the actual serialized selection chain, preserves existing input descriptors and compares both generated C# files with the qualified source-only generator. It writes `source-config-graph.json`, `initialization.json`, `data-bundle.json` and `preparation-proof.json`. It starts no World and grants no mission admission. Supply its data bundle to the ordinary `run` or `smoke` command documented above.
+
+First use still requires qualified baked/native inputs. The rotation reference must come from the existing native OperationMap metadata reference exporter through the repository's checked Unity wrapper; the CLI does not manufacture native quaternion results. The qualified configured-building supplement combines the admitted R6 selected-prefab/definition reference with current original configured-provider selection over `Assets/Game/Configs/Skirmish/Construction.asset` and `Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset`. It retains source/selector/prefab pins, both original list indices and explicit/initialized native requestability. This preparation entry consumes that qualified supplement; it does not invent one from names or prices. The reviewed S002 supplement has SHA256 `413c28c09e82c639fad78ec60c00fbf3608cffb7e5ab1d5663ca0cc45253f553`.
+
+Actual startup order is road synchronization, selected-source validation, original initial facility/bank/actor and owner registration, configured metadata binding without publication, selected metadata-root creation, then the original first publication and three bootstrap owner steps before ARIA initialization. The numeric facility roots remain sourced from the original PositionBuildingObject/prefab TRS path; the metadata root does not fabricate a physical scene frame. Startup evidence records root identity/generation, actual readiness flags, every publication buffer count and ordered spawn-point float bits.
+
+The current-source regression used S002/104731 Standard/Regular with normal preflight, autonomous ARIA, original clocks and actual command results. It observed original Victory/MainBaseDestroyed at tick 12267. This is source-world coverage, not rendered normal-input/device acceptance, S026 readiness or a 10x speed claim. Metadata publication keeps PhysicalSourceValidated unset. Existing-root reuse, positive unbound runtime runway/overlay geometry, owned boarding/deploy/disembark and active scan remain explicit unsupported frontiers. Original no-runway branches execute normally. Return command mechanics are qualified separately; no Return command is injected into the regression.

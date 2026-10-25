@@ -1,4 +1,4 @@
-using System;using System.Linq;using Game.Components;using Unity.Entities;using Unity.Collections;
+using System;using System.Linq;using UnityEngine;using Game.Components;using Unity.Entities;using Unity.Collections;
 namespace Game.Runtime {
  internal sealed partial class AutonomousWorld {
   internal GeneratedS002CatalogAvailabilityBinding ActualCatalog {get;private set;}
@@ -19,6 +19,8 @@ namespace Game.Runtime {
    var dispatcher=availability.CreateFactionRequestDispatcher(Boundary,ActualDeliveryOwner,ReadActualConfiguredEntry,(f,id)=>productionReadModel.CountPendingProductionsForFaction(productionReadContext,f,id),(f,id)=>productionReadModel.CountRuntimeProducedUnitsForFaction(productionReadContext,f,id),true);
    var paid=new SourceAriaPaidRecruitment(Entities,Session,availability,catalog.Rows,ActualDeliveryOwner,()=>SourceS002CatalogPublicFacts.Read(Entities,Session));
    ActualCatalog=catalog;ActualAvailability=availability;ActualFactionDispatcher=dispatcher;ActualAriaPaid=paid;
+   StartingPipeline.BindSourceReadModels(ActualUnitMetadata.Ordered.Count,ReadActualConfiguredEntry,availability.SameReadModelCostOwner,(building,local)=>{var point=ActualProductionWorld.ProducerPoint(building,new Unity.Mathematics.float3(local.x,local.y,local.z));return new Vector3(point.x,point.y,point.z);});
+   InitializeActualSelectedOperationMapPublication();
   }
   bool ReadActualConfiguredEntry(int index,out SourceUnitPrefab prefab,out string name,out int price,out bool can,out bool vehicle){
    prefab=null;name=string.Empty;price=0;can=false;vehicle=false;if(index<0||index>=ActualUnitMetadata.Ordered.Count)return false;

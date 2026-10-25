@@ -1,5 +1,5 @@
 using System;using System.IO;using System.Linq;using System.Collections.Generic;using System.Security.Cryptography;using Newtonsoft.Json.Linq;using Unity.Entities;namespace Game.Runtime{internal sealed partial class AutonomousWorld{
- internal JObject BindActualBuildingRequestMetadata(string path,string expected,string sourceRepo,string dataRepo){
+ internal JObject BindActualBuildingRequestMetadata(string path,string expected,string sourceRepo,string dataRepo,bool publishImmediately=true){
  if(StartingPipeline==null||StartingPipeline.ConfiguredRequestMetadataKnown||ActualUnitMetadata==null)throw new InvalidOperationException("Bind real configured metadata once after canonical source initialization");
  var raw=File.ReadAllBytes(path);if(HashConfigured(raw)!=expected)throw new InvalidDataException("Building request metadata changed");var root=JObject.Parse(System.Text.Encoding.UTF8.GetString(raw));
  if((int?)root["schema_version"]!=1||(string)root["kind"]!="CurrentSourceBuildingRequestMetadataSupplement")throw new InvalidDataException("Unsupported configured metadata scope");
@@ -15,7 +15,7 @@ using System;using System.IO;using System.Linq;using System.Collections.Generic;
  // Relevant scene names have an actual selected-prefab witness in the R6 export. Every current selector/factory and prefab dependency is checked above; unrelated scene UI inventory is not reconstructed.
  var order=SourceConfiguredBuildingSelection.Select(Setup,new SourceBuildingProvider(baselineRows.Select(r=>mapped[r]).ToArray()),new SourceBuildingProvider(sceneRows.Select(r=>mapped[r]).ToArray()),ActualUnitMetadata.Ordered.ToDictionary(r=>r.Prefab.name,r=>r.Prefab,StringComparer.Ordinal));
  foreach(var pin in pins)if(HashConfigured(File.ReadAllBytes(pin.Key))!=pin.Value)throw new InvalidDataException("Metadata changed before publication");if(HashConfigured(File.ReadAllBytes(path))!=expected||HashConfigured(File.ReadAllBytes((string)refs["path"]))!=(string)refs["sha256"])throw new InvalidDataException("Configured metadata/reference changed before publication");
- StartingPipeline.BindConfiguredRequestMetadata(order,entries);return new JObject{["kind"]="SourceConfiguredBuildingFacts",["count"]=order.Count,["order"]=new JArray(order.Select(p=>p.name)),["dependency_pins"]=JObject.FromObject(pins),["scope"]="Current source native configured-provider selection over existing R6 selected-prefab witness and current serialized authoring supplement; no raw scene UI inventory/native readiness claim"};
+ StartingPipeline.BindConfiguredRequestMetadata(order,entries,publishImmediately);return new JObject{["kind"]="SourceConfiguredBuildingFacts",["count"]=order.Count,["order"]=new JArray(order.Select(p=>p.name)),["dependency_pins"]=JObject.FromObject(pins),["scope"]="Current source native configured-provider selection over existing R6 selected-prefab witness and current serialized authoring supplement; no raw scene UI inventory/native readiness claim"};
  }
  private static string HashConfigured(byte[] value){using(var sha=SHA256.Create())return BitConverter.ToString(sha.ComputeHash(value)).Replace("-","").ToLowerInvariant();}
 }}

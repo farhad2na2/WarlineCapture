@@ -227,7 +227,7 @@ namespace Game.Runtime
                     GridWidth=Grid.Width,GridHeight=Grid.Height,CellSize=Grid.CellSize,AggroRangeCells=combat.AggroRangeCells,
                     AttackRange=attack.Range,FactionId=selfFaction.Id,CanAttack=combat.CanAttack,AutoEngage=combat.AutoEngage
                 };
-                var result=TargetAcquisitionKernel.Acquire(ref context,input);
+                var result=TargetAcquisitionKernel.AcquireFromReadOnlyFacts(ref context,input);
                 // Preserve the original deferred command sequence: invalid recent removal
                 // precedes normal acquisition; retaliation adds Engage before recent removal.
                 if(result.RemoveRecentAttacker&&!result.Retaliation)Ecb.RemoveComponent<RecentAttacker>(sortKey,entity);
@@ -241,7 +241,7 @@ namespace Game.Runtime
             private static TargetIdentity Identity(Entity entity)=>new TargetIdentity(entity.Index,entity.Version);
             private static Entity EntityOf(TargetIdentity identity)=>new Entity{Index=identity.Index,Version=identity.Version};
             private static TargetPosition Point(float3 position)=>new TargetPosition(position.x,position.y,position.z);
-            private struct NativeContext:ITargetAcquisitionContext
+            private struct NativeContext:IReadOnlyTargetAcquisitionContext
             {
                 public AcquireTargetsJob Job;public Entity Source;
                 // This context is local to one Execute. ReadOnly policy inputs cannot change

@@ -53,11 +53,21 @@ namespace Game.Runtime.Targeting
         int AttackerCount(TargetIdentity target);
         TargetCell WorldToCell(TargetPosition position);
     }
+    // Opt-in for complete, stable readonly fact domains during one acquisition call.
+    // Fact reads must not perform lazy admission/proof checks or external writes.
+    // Replay/admission providers retain the original Acquire entry and read order.
+    public interface IReadOnlyTargetAcquisitionContext : ITargetAcquisitionContext { }
     public static class TargetAcquisitionKernel
     {
         public static bool ShouldClearUnavailableTarget(bool isStatic,bool hasHealth,int health)=>isStatic||(hasHealth&&health<=0);
 
         public static TargetAcquisitionResult Acquire<T>(ref T context,in TargetAcquisitionInput input)
+            where T:struct,ITargetAcquisitionContext => AcquireCore(ref context,input,false);
+
+        public static TargetAcquisitionResult AcquireFromReadOnlyFacts<T>(ref T context,in TargetAcquisitionInput input)
+            where T:struct,IReadOnlyTargetAcquisitionContext => AcquireCore(ref context,input,true);
+
+        private static TargetAcquisitionResult AcquireCore<T>(ref T context,in TargetAcquisitionInput input,bool distancePrecheck)
             where T:struct,ITargetAcquisitionContext
         {
             var result=new TargetAcquisitionResult{WinningScore=float.MaxValue};
@@ -111,33 +121,44 @@ namespace Game.Runtime.Targeting
                             if(context.HasEngagement(candidate))
                             {
                                 var allyTarget=context.EngagementTarget(candidate);
-                                if(!allyTarget.IsNull)Evaluate(ref context,input,allyTarget,maxDistSq,scanning,scan,ref bestScore,ref best);
+                                if(!allyTarget.IsNull)Evaluate(ref context,input,allyTarget,maxDistSq,scanning,scan,ref bestScore,ref best,distancePrecheck);
                             }
                             continue;
                         }
-                        Evaluate(ref context,input,candidate,maxDistSq,scanning,scan,ref bestScore,ref best);
+                        Evaluate(ref context,input,candidate,maxDistSq,scanning,scan,ref bestScore,ref best,distancePrecheck);
                     }while(context.NextCell(out candidate));
                 }
             }
             if(best.IsNull&&context.SourceHasAttackMove())
-                for(int i=0;i<context.BuildingCount();i++)Evaluate(ref context,input,context.BuildingAt(i),maxDistSq,scanning,scan,ref bestScore,ref best);
+                for(int i=0;i<context.BuildingCount();i++)Evaluate(ref context,input,context.BuildingAt(i),maxDistSq,scanning,scan,ref bestScore,ref best,distancePrecheck);
             if(best.IsNull)return result;
             var bestPos=context.HasTransform(best)?context.Position(best):input.Position;
             var bestCell=context.WorldToCell(bestPos);if(!InBounds(bestCell,input))bestCell=input.GridCell;
             result.Acquired=true;result.Target=best;result.Cell=bestCell;result.Position=bestPos;result.WinningScore=bestScore;return result;
         }
         private static void Evaluate<T>(ref T context,in TargetAcquisitionInput input,TargetIdentity candidate,float maxDistSq,bool scanning,
-            in TargetScanOrder scan,ref float bestScore,ref TargetIdentity best)where T:struct,ITargetAcquisitionContext
+            in TargetScanOrder scan,ref float bestScore,ref TargetIdentity best,bool distancePrecheck)where T:struct,ITargetAcquisitionContext
         {
             if(context.ProtectedRecords(candidate))return;
+            TargetPosition position=default;float distSq=0f;
+            if(distancePrecheck)
+            {
+                if(!context.HasTransform(candidate))return;
+                position=context.Position(candidate);
+                var delta=new Scalar3(position)-new Scalar3(input.Position);delta.Y=0f;
+                distSq=LengthSquared(delta);if(distSq>maxDistSq)return;
+            }
             if(!AllowsPolicy(context.PolicyFacts(input.Source,candidate)))return;
-            if(!context.HasFaction(candidate)||!context.HasTransform(candidate))return;
+            if(!context.HasFaction(candidate)||(!distancePrecheck&&!context.HasTransform(candidate)))return;
             byte faction=context.Faction(candidate);if(faction==0||faction==input.FactionId)return;
             if(context.HasHealth(candidate)&&context.Health(candidate)<=0)return;
-            var position=context.Position(candidate);
+            if(!distancePrecheck)position=context.Position(candidate);
             if(scanning&&!PositionInsideScan(ref context,position,scan,input))return;
-            var delta=new Scalar3(position)-new Scalar3(input.Position);delta.Y=0f;
-            float distSq=LengthSquared(delta);if(distSq>maxDistSq)return;
+            if(!distancePrecheck)
+            {
+                var delta=new Scalar3(position)-new Scalar3(input.Position);delta.Y=0f;
+                distSq=LengthSquared(delta);if(distSq>maxDistSq)return;
+            }
             int attackers=context.AttackerCount(candidate);
             float score=distSq+attackers*(input.CellSize*input.CellSize*9f);
             if(score<bestScore){bestScore=score;best=candidate;}

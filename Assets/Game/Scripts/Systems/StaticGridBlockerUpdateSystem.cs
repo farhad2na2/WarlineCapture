@@ -108,8 +108,8 @@ namespace Game.Runtime
             {
                 // Authored map buildings use UnitGrid for their selection centre.
                 // Their authoritative foundation origin is stored separately.
-                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
-                    ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
+                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.TryGetComponent(entity, out var buildingInfo)
+                    ? buildingInfo.OriginCell : unitGrid.ValueRO.Cell;
                 var blockerSize = size.ValueRO.Size;
                 var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,blockerSize.x,blockerSize.y);
                 byte faction=GetFriendlyPassFactionId(friendlyPassLookup,entity);
@@ -124,8 +124,8 @@ namespace Game.Runtime
                          .WithAll<StaticGridBlocker>()
                          .WithEntityAccess())
             {
-                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
-                    ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
+                int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.TryGetComponent(entity, out var buildingInfo)
+                    ? buildingInfo.OriginCell : unitGrid.ValueRO.Cell;
                 var blockerSize = size.ValueRO.Size;
                 var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,blockerSize.x,blockerSize.y);
                 byte faction=GetFriendlyPassFactionId(friendlyPassLookup,entity);

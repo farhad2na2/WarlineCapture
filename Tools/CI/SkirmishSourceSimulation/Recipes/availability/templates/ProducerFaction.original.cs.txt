@@ -1,0 +1,1 @@
+using Game.Components;namespace Game.Runtime{internal static class SourceCampSpawnFaction{@@member27@@}}

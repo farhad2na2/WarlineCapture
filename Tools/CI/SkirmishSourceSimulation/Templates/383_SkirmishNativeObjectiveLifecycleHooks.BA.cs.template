@@ -1,0 +1,4 @@
+using Game.Components;using Game.Skirmish.Contracts;using Unity.Collections;using Unity.Entities;namespace Game.Runtime{public static class SkirmishNativeObjectiveLifecycleHooks{
+        public static bool TryBeforeDestroyedActorRemoved(EntityManager em,Entity actor,out string error)
+        {
+            /*SOURCE:ordinary_ba_prefix*/throw new System.NotSupportedException("Non-BA objective collector owner not admitted by first S002 profile");}}}

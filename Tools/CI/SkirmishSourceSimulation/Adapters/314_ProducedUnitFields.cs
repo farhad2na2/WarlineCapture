@@ -1,0 +1,1 @@
+using System.Collections.Generic;using Unity.Entities;using Unity.Collections;namespace Game.Runtime{internal sealed partial class RuntimeBuildingEntity{public List<Entity> ProducedUnits;public Dictionary<Entity,SourceUnitPrefab> ProducedUnitPrefabs;public Dictionary<Entity,FixedString64Bytes> ProducedUnitSourceKeys;}}

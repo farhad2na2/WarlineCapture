@@ -1,0 +1,29 @@
+{
+  "schema_version": 2,
+  "module": "generate.py",
+  "entrypoint": "generate",
+  "generator_inputs": [
+    "Assets/Game/Scripts/Systems/BuildingCombatUtilitySystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeTickCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs"
+  ],
+  "generator_helpers": [
+    "helpers/utility-method-contract.json",
+    "helpers/utility-header.txt",
+    "helpers/owner-adapter.cs.template"
+  ],
+  "native_admission": "FRESH_READ_CURRENT_BYTES_SUPPORTED_MEMBER_AND_BINDING_SHAPES_ONLY",
+  "outputs": [
+    "SourceBuildingCombatUtility.cs",
+    "SourceBuildingLifetimeOwner.cs"
+  ],
+  "output_sha256": {
+    "SourceBuildingCombatUtility.cs": "6785b295de498a017655c72fd19e546a3bbb543f9f56bba94c761b4d02004192",
+    "SourceBuildingLifetimeOwner.cs": "612c8e4da47e3e63a404cf6df0b197c78798344fa812f78b6b842809ef362e03"
+  },
+  "proof": "source-proof.json",
+  "native_historical_hash_guard": false,
+  "uses_frozen_gameplay_method_payloads": false
+}

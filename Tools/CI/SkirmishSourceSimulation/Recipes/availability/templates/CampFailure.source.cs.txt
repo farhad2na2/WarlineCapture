@@ -1,0 +1,1 @@
+namespace Game.Runtime{public sealed partial class BuildingUiCommandSystemHelper{@@member17@@}}

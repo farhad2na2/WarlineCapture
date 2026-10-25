@@ -1,0 +1,42 @@
+using System;
+using Game.Components;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+namespace Game.Runtime
+{
+    // Asset-compiled source setup only. No native snapshot or expected post-state is accepted.
+    internal static class GeneratedS002SessionConstruction
+    {
+        internal static Entity Create(EntityManager em, SkirmishResolvedSetup setup, string attempt)
+        {
+            if (em==null || setup==null || setup.CatalogId!="S002" || setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault ||
+                setup.EnemyPolicy!=null || setup.PlayerFaction!=1 || setup.EnemyFaction!=2)
+                throw new NotSupportedException("Source S002 BA/null-policy constructor profile required");
+            if (string.IsNullOrWhiteSpace(attempt) || System.Text.Encoding.UTF8.GetByteCount(attempt)>61 || attempt.IndexOf('\0')>=0)
+                throw new ArgumentException("Exact bounded fresh logical attempt identity required");
+            using var old=em.CreateEntityQuery(new EntityQueryDesc { Any=new[]{ComponentType.ReadOnly<SkirmishMatchState>(),ComponentType.ReadOnly<SkirmishExpandedSessionComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities });
+            if (!old.IsEmptyIgnoreFilter) throw new InvalidOperationException("Construct a fresh mission once; never reseed an existing attempt");
+            // Original SkirmishExpandedLaunchProjection constructors and original role projector.
+            Entity entity=em.CreateEntity(typeof(SkirmishMatchState));
+            em.SetName(entity,"SkirmishExpandedSession");
+            em.AddBuffer<SkirmishActionRequest>(entity);em.AddBuffer<SkirmishTrackedUnit>(entity);
+            SkirmishMissionDispatch.TryGetLegacyIndex(setup.CatalogId,out int scenarioIndex);
+            em.SetComponentData(entity,new SkirmishMatchState {SessionId=new FixedString64Bytes(attempt),Seed=setup.Seed,ScenarioIndex=scenarioIndex,Phase=SkirmishPhase.Queued});
+            var session=new SkirmishExpandedSessionComponent {SessionId=new FixedString64Bytes(attempt),CatalogId=new FixedString64Bytes(setup.CatalogId),
+                DefinitionId=new FixedString64Bytes(setup.DefinitionId),ContentVersion=setup.ContentVersion,SetupHash=setup.SetupHash,Seed=setup.Seed,
+                SizeId=setup.SizeId,DifficultyId=setup.DifficultyId,ObjectiveKind=setup.ObjectiveKind,Phase=SkirmishSessionPhase.Queued,IsLegacy=0,IsCustom=0};
+            em.AddComponentData(entity,session);
+            var owners=em.AddBuffer<ExternalFactionStrategy>(entity);owners.Add(new ExternalFactionStrategy{FactionId=1});owners.Add(new ExternalFactionStrategy{FactionId=2});
+            em.AddComponentData(entity,new SkirmishResolvedSetupComponent {SetupHash=setup.SetupHash,ContentVersion=setup.ContentVersion,
+                DefinitionId=new FixedString64Bytes(setup.DefinitionId),DeadlineSeconds=setup.DeadlineSeconds,PlayerFaction=setup.PlayerFaction,EnemyFaction=setup.EnemyFaction});
+            em.AddComponentData(entity,new SkirmishResolvedSetupRecord{Setup=setup});
+            GeneratedSessionRoles.ProjectRoles(em,entity,setup);
+            // Exact original EnsureSession early return for this admitted S002/null policy.
+            // Non-null/new-policy paths are rejected BEFORE entity allocation above.
+            session.InitializationComplete=1;session.Phase=SkirmishSessionPhase.Spawning;em.SetComponentData(entity,session);
+            return entity;
+        }
+    }
+}

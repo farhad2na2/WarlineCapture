@@ -1,0 +1,6 @@
+using Unity.Entities;using Game.UI.Contracts;namespace Game.UI.Shell.Contracts.Ecs{
+    /*SOURCE:type_0*/
+
+    /*SOURCE:type_1*/
+
+}

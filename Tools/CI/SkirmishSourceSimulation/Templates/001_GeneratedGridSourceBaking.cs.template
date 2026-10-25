@@ -1,0 +1,6 @@
+using System;using Game.Configs;using Game.Components;using Unity.Entities;using Unity.Mathematics;
+namespace Game.Runtime {internal static class GeneratedGridSourceBaking {
+ internal sealed class Authoring{internal GridAuthoringConfig config;internal int Width=>config.Width;internal int Height=>config.Height;internal float CellSize=>config.CellSize;internal Vector2Int[] BlockedCells=>config.BlockedCells;}
+ static float3 MissingTransformFallback()=>throw new NotSupportedException("Generated grid requires actual authored config origin");
+ internal static void Bake(EntityManager em,Entity gridEntity,GridAuthoringConfig config){if(config==null||config.Width<1||config.Height<1||(long)config.Width*config.Height>4194304||!(config.CellSize>0))throw new NotSupportedException("Complete finite authored grid required");var authoring=new Authoring{config=config};void AddComponent<T>(Entity entity,T value)=>em.AddComponentData(entity,value);DynamicBuffer<T>AddBuffer<T>(Entity entity)=>em.AddBuffer<T>(entity);
+                /*SOURCE:bake*/}}}

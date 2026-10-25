@@ -1,0 +1,3 @@
+using System;using GameObject=Game.Runtime.SourceUnitPrefab;using System.Collections.Generic;using Unity.Entities;using Unity.Mathematics;using Game.Components;using BuildingDefinition=Game.Runtime.RuntimeDefinition;namespace Game.Runtime{internal sealed partial class GeneratedRuntimeSpawnProcessor{
+@@RequestConstants@@
+@@ProcessRuntimeSpawnRequests@@@@ResolveOwnerFaction@@@@WriteRuntimeSpawnRequest@@@@TryResolveConfiguredBuildingDefinition@@}}

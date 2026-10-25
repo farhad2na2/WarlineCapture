@@ -1,0 +1,5 @@
+using System.Collections.Generic;
+using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;
+using Game.Components;using Game.Configs;
+using GameObject=Game.Runtime.RuntimeInstance;using Object=Game.Runtime.RuntimeInstance;using Transform=Game.Runtime.RuntimeTransform;
+namespace Game.Runtime { internal sealed class SourceBuildingCombatUtility {

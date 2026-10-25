@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "module": "generate.py",
+  "entrypoint": "generate",
+  "generator_inputs": [
+    "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.ManagedDelivery.cs",
+    "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Simulation/Mathematics/SharedProductionDeliveryKernel.cs"
+  ],
+  "generator_helpers": [
+    "helpers/complete_heli_fragment.py",
+    "helpers/engine-binding-contract.json",
+    "helpers/ground-bridge.cs.template",
+    "helpers/helicopter-bridge.cs.template",
+    "helpers/native-method-contract.json",
+    "helpers/partial_generate.py",
+    "helpers/prepare_ground.py",
+    "helpers/prepare_heli.py",
+    "helpers/prepare_queue.py",
+    "helpers/queue-bridge.cs.template",
+    "helpers/source_extract.py"
+  ],
+  "outputs": [
+    "SourceHelicopterDelivery.cs",
+    "SourceProductionDeliveryOwner.cs",
+    "SourceProductionGroundWorld.cs",
+    "SourceProductionSpawnReadModels.cs"
+  ],
+  "output_sha256": {
+    "SourceHelicopterDelivery.cs": "2d2c9cb4553c05f66e590c8be119742bed16592f2982fe9b9d43e895b6f36e40",
+    "SourceProductionDeliveryOwner.cs": "2caf0c6daa465dd4a202d1932399d8a18062a1e1965cdebc4821bfa7aa1fbf27",
+    "SourceProductionGroundWorld.cs": "cddf5c519f579619bc21858d9d7fbe8228aac061274042872dfcdb21d1607991",
+    "SourceProductionSpawnReadModels.cs": "c74dcdd122d95ee926d7069bd1742376f5426bd88492e12b74d3c7c2c69ec3d0"
+  },
+  "finite_method_contracts": 50,
+  "fresh_native_body_flow": true,
+  "native_historical_hash_guard": false,
+  "raw_and_LF_pins_recorded": true,
+  "original_selected_paths": [
+    466,
+    467,
+    468,
+    469
+  ]
+}

@@ -1,0 +1,4 @@
+namespace Game.Runtime {internal static partial class BuildingDefinitionPrefabSystemHelper {
+        public static string NormalizeSpawnableKey(string value)
+        {/*SOURCE:body_0*/}
+}}

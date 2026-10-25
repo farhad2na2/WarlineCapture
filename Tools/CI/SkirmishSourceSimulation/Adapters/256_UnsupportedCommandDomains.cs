@@ -1,0 +1,1 @@
+using System;using Unity.Entities;namespace Game.Runtime {public static class SkirmishConvoyTruckCommandEligibility {public static bool AcceptsMove(EntityManager em,Entity e)=>throw new NotSupportedException("Original convoy collector/typed original actor authority requires exported initial objective domain; no fabricated eligibility");}}

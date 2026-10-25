@@ -1,0 +1,1 @@
+using Game.Skirmish.Contracts;namespace Game.Runtime{internal static class SourceCampCatalogNames{@@member28@@}}

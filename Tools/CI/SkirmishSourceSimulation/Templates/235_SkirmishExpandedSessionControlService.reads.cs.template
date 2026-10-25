@@ -1,0 +1,4 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime {public static partial class SkirmishExpandedSessionControlService {
+        public static bool IsExpanded(EntityManager em, Entity session)
+        {/*SOURCE:body_0*/}
+}}

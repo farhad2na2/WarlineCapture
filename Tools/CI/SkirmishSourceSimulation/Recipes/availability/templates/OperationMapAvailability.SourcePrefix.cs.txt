@@ -1,0 +1,1 @@
+using Unity.Entities;using GameObject=Game.Runtime.SourceUnitPrefab;using SkirmishNativeProduction=Game.Runtime.SourceCampNativeProduction;namespace Game.Runtime{internal sealed partial class SourceCampAvailabilityKernel{@@member25@@}}

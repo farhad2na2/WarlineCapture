@@ -1,0 +1,359 @@
+[
+  {
+    "output": "AvailabilityKernel.original.cs",
+    "template": "AvailabilityKernel.original.cs.txt",
+    "members": [
+      {
+        "id": "member1",
+        "member": "GetCampRequestFailure",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionCampRequestTransaction.cs",
+        "replace": [
+          [
+            "SkirmishCatalogPolicy.",
+            "SourceCampCatalogPolicy."
+          ],
+          [
+            "SkirmishNativeProduction.",
+            "SourceCampNativeProduction."
+          ],
+          [
+            "SkirmishPopulationPolicy.",
+            "SourceCampPopulationPolicy."
+          ],
+          [
+            "BuildingCampItemCommandPolicySystemHelper.",
+            "SourceCampResourceFailure."
+          ]
+        ]
+      },
+      {
+        "id": "member2",
+        "member": "TryResolveUnitResourceCosts",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionCampRequestTransaction.cs"
+      },
+      {
+        "id": "member3",
+        "member": "TryFindFirstFriendlyProducerBuilding",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+        "signature": "private bool"
+      },
+      {
+        "id": "member4",
+        "member": "TryUseFriendlyProducerBuilding",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member5",
+        "member": "IsFriendlyProducerBuildingForPass",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member6",
+        "member": "HasGlobalQueueCapacity",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member7",
+        "member": "CountPendingProductionsForGlobalLimit",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member8",
+        "member": "IsFriendlyProductionQueueOwner",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member9",
+        "member": "CanQueueUnitFromBuilding",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+        "signature": "public bool"
+      },
+      {
+        "id": "member10",
+        "member": "CanQueueUnitFromBuilding",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+        "signature": "private bool",
+        "replace": [
+          [
+            "BuildingSpawnCompositionSystemHelper.",
+            "SourceCampSpawnFaction."
+          ]
+        ]
+      },
+      {
+        "id": "member11",
+        "member": "CanQueueTransportForAnyProducer",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member12",
+        "member": "HasAvailableProductionSlotForRequest",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member13",
+        "member": "ResolveProductionTransportSettings",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs",
+        "signature": "private static"
+      },
+      {
+        "id": "member14",
+        "member": "TryGetRequiredProducerDisplayName",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member15",
+        "member": "GetProductionCount",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs"
+      },
+      {
+        "id": "member16",
+        "member": "CountFriendlyPendingUnitProductions",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.QueueCapacity.cs"
+      }
+    ]
+  },
+  {
+    "output": "CampFailure.source.cs",
+    "template": "CampFailure.source.cs.txt",
+    "members": [
+      {
+        "id": "member17",
+        "member": "CampRequestFailure",
+        "source": "Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs",
+        "declaration": "enum"
+      }
+    ]
+  },
+  {
+    "output": "CanInspectUnavailable.source.cs",
+    "template": "CanInspectUnavailable.source.cs.txt",
+    "members": [
+      {
+        "id": "member18",
+        "member": "CanInspectUnavailable",
+        "source": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs",
+        "expression": true
+      }
+    ]
+  },
+  {
+    "output": "DefinitionReads.original.cs",
+    "template": "DefinitionReads.original.cs.txt",
+    "members": [
+      {
+        "id": "member19",
+        "member": "GetProductionPrefab",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+        "signature": "public static"
+      },
+      {
+        "id": "member20",
+        "member": "GetProductionQuantity",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs"
+      }
+    ]
+  },
+  {
+    "output": "NativeAvailability.Support.cs",
+    "template": "NativeAvailability.Support.cs.txt",
+    "members": [
+      {
+        "id": "member21",
+        "member": "ResearchBlocks",
+        "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs"
+      }
+    ]
+  },
+  {
+    "output": "NativeAvailability.original.cs",
+    "template": "NativeAvailability.original.cs.txt",
+    "members": [
+      {
+        "id": "member22",
+        "member": "RequestFailure",
+        "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs"
+      },
+      {
+        "id": "member23",
+        "member": "TryRequiredProducerDisplayName",
+        "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs",
+        "replace": [
+          [
+            "SkirmishProductionCatalog.",
+            "SourceCampCatalogNames."
+          ]
+        ]
+      },
+      {
+        "id": "member24",
+        "member": "CanQueue",
+        "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs"
+      }
+    ]
+  },
+  {
+    "output": "OperationMapAvailability.SourcePrefix.cs",
+    "template": "OperationMapAvailability.SourcePrefix.cs.txt",
+    "members": [
+      {
+        "id": "member25",
+        "member": "TryFindFirstFriendlyOperationMapProducer",
+        "source": "Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.ProducerSelection.cs",
+        "replace": [
+          [
+            "SkirmishNativeProduction.",
+            "SourceCampNativeProduction."
+          ]
+        ],
+        "prefix_through": "            if (SkirmishNativeProduction.TrySession(em, out _)) return false;",
+        "unsupported_tail": "throw new System.NotSupportedException(\"Legacy operation-map producer selection outside admitted S002 profile\");}"
+      }
+    ]
+  },
+  {
+    "output": "PopulationAvailability.SourcePrefix.cs",
+    "template": "PopulationAvailability.SourcePrefix.cs.txt",
+    "members": [
+      {
+        "id": "member26",
+        "member": "CanQueue",
+        "source": "Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs",
+        "replace": [
+          [
+            "SkirmishCatalogPolicy.",
+            "SourceCampCatalogPolicy."
+          ],
+          [
+            "SkirmishNativeProduction.",
+            "SourceCampNativeProduction."
+          ]
+        ],
+        "prefix_through": "                return SkirmishNativeProduction.CanQueue(em, expanded, producer, prefab);",
+        "unsupported_tail": "throw new System.NotSupportedException(\"Non-expanded population availability outside admitted S002 source profile\");}"
+      }
+    ]
+  },
+  {
+    "output": "ProducerFaction.original.cs",
+    "template": "ProducerFaction.original.cs.txt",
+    "members": [
+      {
+        "id": "member27",
+        "member": "ResolveProducedUnitFaction",
+        "source": "Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs"
+      }
+    ]
+  },
+  {
+    "output": "ProducerNames.original.cs",
+    "template": "ProducerNames.original.cs.txt",
+    "members": [
+      {
+        "id": "member28",
+        "member": "ProducerPrefabKey",
+        "source": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs"
+      }
+    ]
+  },
+  {
+    "output": "ResourceEvaluate.original.cs",
+    "template": "ResourceEvaluate.original.cs.txt",
+    "members": [
+      {
+        "id": "member29",
+        "member": "Evaluate",
+        "source": "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs"
+      }
+    ]
+  },
+  {
+    "output": "ResourceFailureMap.original.cs",
+    "template": "ResourceFailureMap.original.cs.txt",
+    "members": [
+      {
+        "id": "member30",
+        "member": "MapConstructionResourceFailure",
+        "source": "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs"
+      }
+    ]
+  },
+  {
+    "output": "ResourceReads.SourceMethods.cs",
+    "template": "ResourceReads.SourceMethods.cs.txt",
+    "members": [
+      {
+        "id": "member31",
+        "member": "EvaluateConstructionResources",
+        "source": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
+        "replace": [
+          [
+            "FactionConstructionResourceUtilitySystemHelper.Evaluate",
+            "SourceCampResourceEvaluate.Evaluate"
+          ]
+        ]
+      },
+      {
+        "id": "member32",
+        "member": "TryGetControlledFactionResources",
+        "source": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs"
+      },
+      {
+        "id": "member33",
+        "member": "TryGetControlledFactionEconomy",
+        "source": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs"
+      }
+    ]
+  },
+  {
+    "output": "UiCampFailure.source.cs",
+    "template": "UiCampFailure.source.cs.txt",
+    "members": [
+      {
+        "id": "member34",
+        "member": "BuildingUiCommandFailure",
+        "source": "Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs",
+        "declaration": "enum"
+      }
+    ]
+  },
+  {
+    "output": "UiFailureMap.original.cs",
+    "template": "UiFailureMap.original.cs.txt",
+    "members": [
+      {
+        "id": "member35",
+        "member": "Map",
+        "source": "Assets/Game/Scripts/Composition/BuildingUiCommandAdapter.cs",
+        "replace": [
+          [
+            "private static BuildingUiCommandFailure Map",
+            "internal static BuildingUiCommandFailure Map"
+          ]
+        ]
+      }
+    ]
+  },
+  {
+    "output": "UnitCostReads.SourceMethods.cs",
+    "template": "UnitCostReads.SourceMethods.cs.txt",
+    "members": [
+      {
+        "id": "member36",
+        "member": "UnitDefinitionMetadata",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+        "declaration": "struct"
+      },
+      {
+        "id": "member37",
+        "member": "TryGetUnitDefinitionMetadata",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs"
+      },
+      {
+        "id": "member38",
+        "member": "TryResolveConfiguredUnitResourceCosts",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionUnitProductionResources.cs"
+      }
+    ]
+  }
+]

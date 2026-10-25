@@ -1,0 +1,22 @@
+using System;using Unity.Mathematics;using UnityEngine;using Game.Components;using Game.Rendering.Contracts;namespace Game.Simulation{public static class SharedWaterGeometryKernel{public struct Footprint{public float4x4 WorldToLocal;public float3 LocalCenter,LocalExtents,WorldCenter,WorldExtents;}
+        static bool Finite(float4x4 m)=>math.all(math.isfinite(m.c0))&&math.all(math.isfinite(m.c1))&&math.all(math.isfinite(m.c2))&&math.all(math.isfinite(m.c3));
+        static long Admit(Footprint f,int width,int height,float cellSize,float3 origin)
+        {
+            if(!Finite(f.WorldToLocal)||!math.all(math.isfinite(f.LocalCenter))||!math.all(math.isfinite(f.LocalExtents))||!math.all(math.isfinite(f.WorldCenter))||!math.all(math.isfinite(f.WorldExtents))||math.any(f.LocalExtents<0)||math.any(f.WorldExtents<0))throw new ArgumentException("Complete finite actual water footprint required");
+            var lo=(f.WorldCenter-f.WorldExtents).xz;var hi=(f.WorldCenter+f.WorldExtents).xz;
+            if(!math.all(math.isfinite(lo))||!math.all(math.isfinite(hi)))throw new ArgumentException("Source bounds overflow");
+            int2 min=(int2)math.clamp(math.floor((lo-origin.xz)/cellSize),0,new float2(width,height));
+            int2 max=(int2)math.clamp(math.ceil((hi-origin.xz)/cellSize),0,new float2(width,height));
+            return (long)math.max(0,max.x-min.x)*math.max(0,max.y-min.y);
+        }
+        public static bool[] BuildMask(bool skirmishMatchPresent,Footprint[] footprints,int width,int height,float cellSize,float3 origin)
+        {
+            // Source SkirmishWaterPlacement returns before touching geometry/grid.
+            if(!skirmishMatchPresent)return null;
+            if(footprints==null||footprints.Length>262144||width<1||height<1||(long)width*height>4194304||!(cellSize>0)||!math.isfinite(cellSize)||!math.all(math.isfinite(origin)))throw new ArgumentException("Complete actual water domain/grid required");
+            long work=0;foreach(var f in footprints){work+=Admit(f,width,height,cellSize,origin);if(work>67108864)throw new NotSupportedException("Water raster work exceeds admission before allocation");}
+            var mask=new bool[width*height];foreach(var f in footprints)AppendFootprint(mask,f,width,height,cellSize,origin);return mask;
+        }
+public static void AppendFootprint(bool[] mask,Footprint value,int gridWidth,int gridHeight,float gridCellSize,float3 gridOrigin){var local=new Bounds();local.center=(Vector3)value.LocalCenter;local.extents=(Vector3)value.LocalExtents;var world=new Bounds();world.center=(Vector3)value.WorldCenter;world.extents=(Vector3)value.WorldExtents;var footprint=new RenderSurfaceFootprint{LocalBounds=local,WorldBounds=world,WorldToLocal=(Matrix4x4)value.WorldToLocal};var grid=new GridConfig{Width=gridWidth,Height=gridHeight,CellSize=gridCellSize,Origin=gridOrigin};AppendOriginal(mask,footprint,grid);}
+static void AppendOriginal(bool[]mask,RenderSurfaceFootprint footprint,GridConfig grid){/*SOURCE:water*/}
+}}

@@ -1,0 +1,7 @@
+using Game.Components;using Game.Skirmish.Contracts;using Unity.Entities;
+namespace Game.Runtime { internal static class GeneratedEnemyProductionRequests {
+internal static int RequestEnemyCounter(EntityManager em, Entity session, string prefabKey)
+        {/*SOURCE:body_0*/}
+internal static bool RequestAttemptActive(EntityManager em, in BuildingFactionUnitProductionRequest request)
+        {/*SOURCE:body_1*/}
+}}

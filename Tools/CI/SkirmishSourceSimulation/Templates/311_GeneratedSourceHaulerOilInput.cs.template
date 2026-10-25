@@ -1,0 +1,11 @@
+using Unity.Collections;using Unity.Entities;using Game.Components;namespace Game.Runtime{internal sealed class GeneratedSourceHaulerOilInput{private World _queryWorld;private EntityQuery _aiBuildPlanQuery,_factionEconomyQuery,_factionControlQuery,_skirmishQuery;
+internal bool TryResolveFactionAIOilAllocationInput(
+            EntityManager em,
+            byte factionId,
+            out BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input)
+        {/*SOURCE:member_0*/throw new System.NotSupportedException("Active AI building plan requires full current pure decision composition; absent-plan source prefix only is admitted in generated S002");
+        }
+/*SOURCE:member_1*/
+/*SOURCE:member_2*/
+/*SOURCE:member_3*/
+}}

@@ -1,0 +1,7 @@
+using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Entities;using GameObject=Game.Runtime.SourceUnitPrefab;namespace Game.Runtime {internal static class SkirmishNativeProduction {
+        @@TrySession@@
+        @@Readiness@@
+        @@ResearchBlocks@@
+        @@CanQueue@@
+        @@TryReserve@@
+}}

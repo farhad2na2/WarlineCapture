@@ -1,0 +1,19 @@
+using ProductionTransportMode=Game.Runtime.BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode;using System;using System.Collections.Generic;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using UnityEngine;using Game.Components;using Game.Configs;using GameObject=Game.Runtime.SourceUnitPrefab;using BuildingDefinition=Game.Runtime.RuntimeDefinition;using SkirmishCatalogPolicy=Game.Runtime.SourceCampCatalogPolicy;using SkirmishNativeProduction=Game.Runtime.SourceCampNativeProduction;using SkirmishPopulationPolicy=Game.Runtime.SourceCampPopulationPolicy;using BuildingSpawnCompositionSystemHelper=Game.Runtime.SourceCampSpawnFaction;using BuildingCampItemCommandPolicySystemHelper=Game.Runtime.SourceCampResourceFailure;using CampRequestFailure=Game.Runtime.BuildingUiCommandSystemHelper.CampRequestFailure;namespace Game.Runtime{internal sealed partial class SourceCampAvailabilityKernel{
+@@member1@@
+@@member2@@
+@@member3@@
+@@member4@@
+@@member5@@
+@@member6@@
+@@member7@@
+@@member8@@
+@@member9@@
+@@member10@@
+@@member11@@
+@@member12@@
+@@member13@@
+@@member14@@
+@@member15@@
+@@member16@@
+internal bool TrySelectSourcePrimaryProducer(Context context,SourceUnitPrefab prefab,out int producerId,out int productionIndex,out string name)=>TryFindFirstFriendlyProducerBuilding(context,prefab,true,out producerId,out productionIndex,out name);
+}}

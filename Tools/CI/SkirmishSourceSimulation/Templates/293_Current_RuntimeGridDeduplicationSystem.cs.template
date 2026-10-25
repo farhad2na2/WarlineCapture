@@ -1,0 +1,19 @@
+using Unity.Collections;
+using Unity.Entities;
+using Game.Components;
+
+namespace Game.Runtime
+{
+    public partial struct RuntimeGridDeduplicationSystem : ISystem
+    {
+        private EntityQuery _gridQuery;
+        private EntityTypeHandle _entityType;
+        private ComponentLookup<RuntimeGridBootstrapGridTag> _runtimeGridLookup;
+
+        public void OnCreate(ref SystemState state)
+        {/*SOURCE:body_0*/}
+
+        public void OnUpdate(ref SystemState state)
+        {/*SOURCE:body_1*/}
+    }
+}

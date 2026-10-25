@@ -1,0 +1,20 @@
+using System.Collections.Generic;using UnityEngine;using GameObject=Game.Runtime.SourceUnitPrefab;namespace Game.Runtime {public sealed partial class BuildingProductionQueueCompositionSystemHelper {
+        @@ProductionTransportMode@@
+
+        @@IPendingProduction@@
+        @@PendingProductionProgress@@
+        @@InitializePendingProduction@@
+        @@GetProgress@@
+
+        @@IsReady@@
+
+        @@IsReadyWithin@@
+
+        @@GetTransportLaunchAt@@
+
+        @@ShouldLaunchTransport@@
+
+        @@RebuildPendingProductionTimeline@@
+
+        @@DelayPendingProduction@@
+}}

@@ -1,0 +1,1 @@
+using Unity.Entities;namespace Unity.Transforms{[InternalBufferCapacity(0)]/*SOURCE:type_0*/}

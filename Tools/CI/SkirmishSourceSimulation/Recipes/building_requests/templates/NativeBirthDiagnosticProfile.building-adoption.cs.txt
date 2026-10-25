@@ -1,0 +1,13 @@
+using System;using Game.Components;using System.Runtime.CompilerServices;using Unity.Entities;using Unity.Collections;
+namespace Game.Runtime {
+// Explicit branch specialization of original RuntimeActorBirthContext.VerifyNativeAdoption: no record => return.
+// The host validates complete initial entity+prefab component census and supplies a LIVE named-component read.
+internal static class RuntimeActorBirthContext {
+ sealed class NoRecordProfile {internal Func<Entity,bool> HasRecord;}
+ static readonly ConditionalWeakTable<EntityManager,NoRecordProfile> profiles=new ConditionalWeakTable<EntityManager,NoRecordProfile>();
+ internal static void BindNoNativeBirthRecordProfile(EntityManager em,bool completeInitialComponentCensus,bool completePrefabComponentCensus,Entity[] completeInitialAndPrefabDomain,Func<Entity,bool> hasNativeBirthRecord){if(em==null||!completeInitialComponentCensus||!completePrefabComponentCensus||completeInitialAndPrefabDomain==null||completeInitialAndPrefabDomain.Length>65536||hasNativeBirthRecord==null)throw new NotSupportedException("Complete initial+prefab no-native-birth-record profile proof required");object existing;NoRecordProfile prior;if(profiles.TryGetValue(em,out prior))throw new NotSupportedException("Native diagnostic profile binds once");var seen=new System.Collections.Generic.HashSet<Entity>();foreach(var e in completeInitialAndPrefabDomain){if(!em.Exists(e)||!seen.Add(e)||hasNativeBirthRecord(e))throw new NotSupportedException("Native RuntimeActorBirthRecord unsupported; do not import/fabricate certificates");}profiles.Add(em,new NoRecordProfile{HasRecord=hasNativeBirthRecord});}
+ internal static void RequireNoRecordProfile(EntityManager em,Entity actor){NoRecordProfile profile;if(!profiles.TryGetValue(em,out profile)||profile.HasRecord(actor))throw new NotSupportedException("No-native-birth-record profile missing or active record unsupported");}
+ @@VerifyBuildingAdoption@@
+ internal static void VerifyNativeAdoption(EntityManager em,Entity actor,Entity session,uint receipt,int producer,FixedString64Bytes attempt){NoRecordProfile profile;if(!profiles.TryGetValue(em,out profile)||profile.HasRecord(actor))throw new NotSupportedException("No-native-birth-record profile missing or record appeared before adoption");/* Exact proven original no-record branch returns; this never grants delivery permission. */}
+ }
+}

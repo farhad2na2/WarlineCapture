@@ -1,0 +1,19 @@
+using System;using System.Collections.Generic;using UnityEngine;using GameObject=Game.Runtime.SourceUnitPrefab;namespace Game.Runtime{internal sealed class SourceCampUnitCostReads{@@member36@@internal delegate bool TryGetUnitDefinitionMetadataDelegate(SourceUnitPrefab prefab,out UnitDefinitionMetadata metadata);readonly TryGetUnitDefinitionMetadataDelegate _tryGetUnitDefinitionMetadata;readonly Dictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe> unitRecipes;readonly CatalogPrefabStore store;readonly SourceCampIdentityMap map;internal SourceCampUnitCostReads(CatalogPrefabStore store,SourceCampIdentityMap map,IReadOnlyDictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe> actualConfiguredRecipes,bool sourceRecipeDomainKnown){if(!sourceRecipeDomainKnown||actualConfiguredRecipes==null)throw new NotSupportedException("Source configured recipe domain required");this.store=store;this.map=map;unitRecipes=new Dictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe>(actualConfiguredRecipes);_tryGetUnitDefinitionMetadata=ReadRawMetadata;}private bool ReadRawMetadata(
+            GameObject prefab,
+            out UnitDefinitionMetadata metadata)
+        {
+            metadata = default;
+            if (prefab == null || !store.TryGetUnit(map.Logical(prefab),out CatalogUnitAuthoringValues authoring))
+                return false;
+
+            metadata = new UnitDefinitionMetadata
+            {
+                DisplayName = authoring.ConfiguredDisplayName,
+                Description = authoring.ConfiguredDescription,
+                FootprintCells = authoring.GetConfiguredFootprintCells(),
+                CanRequest = authoring.CanRequest,
+                Price = authoring.MaterialsCost,
+                CreditsCost = authoring.Price
+            };
+            return true;
+        }@@member37@@@@member38@@}}

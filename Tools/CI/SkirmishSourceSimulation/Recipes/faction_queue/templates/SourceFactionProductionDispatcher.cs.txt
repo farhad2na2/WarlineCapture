@@ -1,0 +1,37 @@
+using System;
+using Game.Components;
+using Unity.Collections;
+using Unity.Entities;
+namespace Game.Runtime
+{
+    internal sealed partial class SourceFactionProductionDispatcher
+    {
+        readonly EntityManager em;readonly Entity boundary;readonly SourceProductionDeliveryOwner owner;
+        readonly SourceCampAvailability availability;readonly SourceCampAvailabilityKernel requestSystem;
+        readonly SourceCampAvailabilityKernel.Context context;readonly SourceFactionProductionReadModels readModels=new SourceFactionProductionReadModels();
+        @@IdleProbeConstant@@
+        float _nextProductionRequestProbeAt;bool _forcePublishNextUpdate;
+        internal bool Poisoned{get;private set;}
+        internal bool ForcePublishNextUpdate=>_forcePublishNextUpdate;
+        internal float NextProbeAt=>_nextProductionRequestProbeAt;
+        internal SourceFactionProductionDispatcher(EntityManager em,Entity boundary,SourceProductionDeliveryOwner owner,SourceCampAvailability availability,SourceCampAvailabilityKernel system,SourceCampAvailabilityKernel.Context context)
+        {this.em=em;this.boundary=boundary;this.owner=owner;this.availability=availability;requestSystem=system;this.context=context;if(!em.Exists(boundary)||!em.HasComponent<BuildingRuntimeStateTag>(boundary))throw new NotSupportedException("Actual runtime production boundary required");}
+        internal void Step(float now,CatalogPublicFacts facts)
+        {
+            if(Poisoned||owner.Poisoned)throw new InvalidOperationException("Faction dispatcher/queue poisoned");
+            if(float.IsNaN(now)||float.IsInfinity(now))throw new ArgumentException("Finite original production clock required");
+            @@CurrentProbeGuard@@
+            var requests=EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em,boundary);
+            // Root's admitted actual S002 initializer has EnemyPolicy=null and no
+            // V1 intent component. Reject an unsupported present branch BEFORE
+            // any request can commit payment; never fabricate its correlation.
+            foreach(var request in requests)
+                if(request.Status==BuildingFactionUnitProductionRequest.Pending&&em.Exists(request.RequestOwner)&&em.HasComponent<SkirmishEnemyProductionIntentV1Component>(request.RequestOwner))
+                    throw new NotSupportedException("V1 paid-dispatch correlation helper/read domain not linked for this S002 profile");
+            try{using(var scope=availability.OpenFactionReadScope(facts))ProcessProductionRequests(requestSystem,context,readModels,context,em,boundary,now);}
+            catch{Poisoned=true;owner.Poisoned=true;throw;}
+        }
+        static DynamicBuffer<T> EnsureBoundaryBuffer<T>(EntityManager em,Entity entity)where T:struct
+            =>em.HasBuffer<T>(entity)?em.GetBuffer<T>(entity):em.AddBuffer<T>(entity);
+    }
+}

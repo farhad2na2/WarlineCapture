@@ -1,0 +1,9 @@
+using System;using Game.Tactical.Contracts;using Game.Missions.Contracts;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using UnityEngine;
+namespace Game.Missions.Contracts{/*SOURCE:type_0*/}
+namespace Game.Missions.Contracts{/*SOURCE:type_1*/}
+namespace Game.Missions.Contracts{/*SOURCE:type_2*/}
+namespace Game.Narrative.Contracts{/*SOURCE:type_3*/}
+namespace Game.Missions.Contracts{/*SOURCE:type_4*/}
+namespace Game.Components{/*SOURCE:type_5*/}
+namespace Game.Components{/*SOURCE:type_6*/}
+namespace Game.Components{/*SOURCE:type_7*/}

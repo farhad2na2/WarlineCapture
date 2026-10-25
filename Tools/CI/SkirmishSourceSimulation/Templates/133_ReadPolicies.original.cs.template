@@ -1,0 +1,6 @@
+using System;using Unity.Entities;using Unity.Mathematics;using UnityEngine;using Game.Components;namespace Game.Runtime {internal static partial class ResourceHaulerStorageAccessSystemHelper {
+
+} internal sealed partial class BuildingSelectionRuntimeCompositionSystemHelper {
+        public Vector3 ResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingEntity building)
+        {/*SOURCE:body_0*/}
+}}

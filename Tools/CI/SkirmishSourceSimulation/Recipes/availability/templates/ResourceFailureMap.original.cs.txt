@@ -1,0 +1,1 @@
+using Game.Components;using CampRequestFailure=Game.Runtime.BuildingUiCommandSystemHelper.CampRequestFailure;namespace Game.Runtime{internal static class SourceCampResourceFailure{@@member30@@}}

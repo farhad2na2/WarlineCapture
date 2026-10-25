@@ -1,0 +1,28 @@
+using System;using System.Runtime.CompilerServices;using Game.Components;using Game.Skirmish.Contracts;using Unity.Entities;using Unity.Collections;
+namespace Game.Runtime {
+// Typed owner acquisition only. Every clock/fact/fog/result mutation below is
+// performed by the original source methods, against the existing retained EM.
+internal static class AutonomousOwnerSingleton {
+ internal static bool Try<T>(EntityManager em,out T value)where T:struct{using var query=em.CreateEntityQuery(typeof(T));int n=query.CalculateEntityCount();if(n>1)throw new NotSupportedException("Ambiguous original singleton "+typeof(T).Name);if(n==0){value=default;return false;}value=query.GetSingleton<T>();return true;}
+ internal static Unity.Entities.Entity Entity<T>(EntityManager em)where T:struct{using var query=em.CreateEntityQuery(typeof(T));return query.GetSingletonEntity();}
+}
+internal sealed class AutonomousFogObjectiveOwners {
+ static readonly ConditionalWeakTable<EntityManager,object> bound=new ConditionalWeakTable<EntityManager,object>();readonly EntityManager em;SkirmishObjectiveFactProjectionSystem facts;SkirmishBaseAssaultObjectiveSystem baseAssault;SkirmishOutcomeSystem outcome;int lastFogTick=-1,lastObjectiveTick=-1;bool stopped;
+ internal AutonomousFogObjectiveOwners(EntityManager manager){if(manager==null||!manager.BankBound)throw new NotSupportedException("Same existing retained canonical world manager required");em=manager;ValidateScope();lock(bound){if(bound.TryGetValue(em,out _))throw new NotSupportedException("Original fog/objective owners bind once per retained world");bound.Add(em,new object());}facts=new SkirmishObjectiveFactProjectionSystem(em);baseAssault=new SkirmishBaseAssaultObjectiveSystem(em);outcome=new SkirmishOutcomeSystem(em);}
+ void ValidateScope(){using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));using var sessions=query.ToEntityArray(Allocator.Temp);int admitted=0;foreach(var e in sessions){var s=em.GetComponentData<SkirmishExpandedSessionComponent>(e);if(s.IsLegacy!=0)continue;admitted++;if(s.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||!em.HasComponent<SkirmishObjectiveStateComponent>(e)||em.GetComponentData<SkirmishObjectiveStateComponent>(e).Kind!=SkirmishObjectiveKind.BaseAssault)throw new NotSupportedException("Non-BaseAssault native collector/areas/tombstones/departure authority is not admitted; no alternate objective policy");if(!em.HasComponent<SkirmishResolvedSetupComponent>(e))throw new NotSupportedException("Genuine original BaseAssault resolved setup query member required; no missing setup default");if(!em.HasComponent<SkirmishObjectiveClockComponent>(e)||!em.HasComponent<SkirmishFogStateComponent>(e))throw new NotSupportedException("Genuine initial original objective clock and fog state required; never seed a replacement");if(em.HasComponent<SkirmishExpandedPauseRequest>(e))throw new NotSupportedException("Original pause/checkpoint backend not admitted by projection-only owner profile");}if(admitted!=1)throw new NotSupportedException("Exactly one genuine expanded BaseAssault session required");AutonomousOwnerSingleton.Try<RuntimeGameplayStateComponent>(em,out _);AutonomousOwnerSingleton.Try<SkirmishMatchState>(em,out _);}
+ internal void BeforeEngagementFog(int worldTick){if(stopped)throw new NotSupportedException("Failed owner phase is terminal");try{ValidateScope();if(worldTick<0||worldTick<=lastFogTick||worldTick<=lastObjectiveTick)throw new NotSupportedException("Original fog phase runs once per ordered world tick");lastFogTick=worldTick;
+ // Original SharedFogUpdateSystem positive-delta predicate and complete source query.
+ // The headless scheduler must already have completed all preceding source writers.
+ /*SOURCE:fog_update*/}catch{stopped=true;throw;}}
+ internal void AfterDeathObjectives(int worldTick){AfterDeathObjectiveFacts(worldTick);AfterEnemyOutcomeAndPublic(worldTick);}
+ int pendingFactsTick=-1;
+ internal void AfterDeathObjectiveFacts(int worldTick){if(stopped)throw new NotSupportedException("Failed owner phase is terminal");try{ValidateScope();if(worldTick<0||worldTick!=lastFogTick||worldTick<=lastObjectiveTick||pendingFactsTick!=-1)throw new NotSupportedException("Original facts require same tick fog/death frontier once");pendingFactsTick=worldTick;facts.Step(em);baseAssault.Step(em);
+ // Original NativeObjectiveTickSystem excludes BaseAssault. ValidateScope admits exactly that source branch;
+ // this named barrier preserves its declared After(Facts,Death) and Before(Enemy) dependencies.
+ }catch{stopped=true;throw;}}
+ internal void AfterEnemyOutcomeAndPublic(int worldTick){if(stopped)throw new NotSupportedException("Failed owner phase is terminal");try{ValidateScope();if(pendingFactsTick!=worldTick||worldTick<=lastObjectiveTick)throw new NotSupportedException("Original outcome requires this tick facts/native-tick frontier");
+ outcome.Step(em);bool paused=AutonomousOwnerSingleton.Try(em,out RuntimeGameplayStateComponent gameplay)&&gameplay.SimulationActive==0;using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));using var sessions=query.ToEntityArray(Allocator.Temp);foreach(var e in sessions){if(em.GetComponentData<SkirmishExpandedSessionComponent>(e).IsLegacy!=0)continue;SkirmishExpandedSessionControlService.ProjectMatchPhase(em,e);SkirmishBaseAssaultHudProjection.Observe(em,e,em.WorldUnmanaged.Time.DeltaTime,paused);SkirmishExpandedSessionControlService.ProjectTerminalMatch(em,e);}lastObjectiveTick=worldTick;pendingFactsTick=-1;
+ }catch{stopped=true;throw;}}
+
+}
+}

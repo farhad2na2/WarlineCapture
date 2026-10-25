@@ -1,0 +1,11 @@
+using System;using System.Collections.Generic;using Unity.Collections;using Unity.Entities;using UnityEngine;using Game.Components;using GameObject=Game.Runtime.SourceUnitPrefab;using SkirmishPopulationPolicy=Game.Runtime.SourceCampPopulationPolicy;using SkirmishNativeProduction=Game.Runtime.GeneratedEnemyProductionRequests;namespace Game.Runtime{internal sealed partial class SourceCampAvailabilityKernel{
+ @@UnitIdCache@@
+        @@QueueFactionUnitProductionRequest@@
+        @@GetCachedUnitIdString@@
+        @@TryFindFirstFactionProducerBuilding@@
+        @@TryUseFactionProducerBuilding@@
+        @@TryResolveConfiguredUnit@@
+        @@ConfiguredUnitMatchesId@@
+        @@TryBuildConfiguredUnit@@
+        @@ToFixedString128@@
+}}

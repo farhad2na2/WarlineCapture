@@ -1,0 +1,39 @@
+extern alias ActualCore;
+using System;using Unity.Mathematics;using Game.Runtime.TransportPose;
+using V3=ActualCore::UnityEngine.Vector3;using V2=ActualCore::UnityEngine.Vector2;using NativePlane=ActualCore::UnityEngine.Plane;using NativeRay=ActualCore::UnityEngine.Ray;using NativeRect=ActualCore::UnityEngine.Rect;using NativeMath=ActualCore::UnityEngine.Mathf;
+namespace Game.Runtime{
+internal sealed class SourceNumericCameraData{
+ internal V3 Position;internal quaternion Rotation;internal float FieldOfView,Near,Far,Aspect;internal bool Orthographic;internal float OrthographicSize;
+ internal float4x4 WorldToCamera=>math.mul(float4x4.Scale(new float3(1,1,-1)),math.inverse(float4x4.TRS(new float3(Position.x,Position.y,Position.z),Rotation,new float3(1))));
+ internal float4x4 Projection=>float4x4.PerspectiveFov(math.radians(FieldOfView),Aspect,Near,Far);
+ internal NativeRay ViewportRay(V3 viewport){
+  if(Orthographic)throw new NotSupportedException("Active orthographic camera not admitted");
+  float4 camera=math.mul(math.inverse(Projection),new float4(viewport.x*2-1,viewport.y*2-1,-1,1));float3 local=camera.xyz/camera.w;local.z=-local.z;
+  float3 offset=math.rotate(Rotation,local),origin=new float3(Position.x,Position.y,Position.z)+offset,direction=math.normalize(offset);
+  return new NativeRay(new V3(origin.x,origin.y,origin.z),new V3(direction.x,direction.y,direction.z));
+ }
+}
+internal sealed class SourceNumericCameraMotion{
+ /*SOURCE:smooth_tolerance*/bool _hasGroundBoundary;NativeRect _groundBoundary;
+ V3 _smoothFocusVelocity;float _smoothFocusTimeSeconds;internal float SourceUnscaledDelta;
+ public bool HasSmoothFocusTarget{get;private set;}public V3 SmoothFocusTarget{get;private set;}
+ // This scope admits only the original public-objective position-only smooth request.
+ // Explicit smooth perspective/tactical follow request is rejected by the owner.
+ public bool HasSmoothPerspectiveTarget=>false;
+ internal NativeRect GroundBoundary=>_groundBoundary;
+ internal void RequireQualifiedInterior(SourceNumericCameraData camera,float uncertainty){if(!TryGetCameraGroundBounds(camera,out var r)||r.xMin-_groundBoundary.xMin<=uncertainty||_groundBoundary.xMax-r.xMax<=uncertainty||r.yMin-_groundBoundary.yMin<=uncertainty||_groundBoundary.yMax-r.yMax<=uncertainty)throw new NotSupportedException("Numeric camera footprint overlaps source clamp uncertainty band");}
+ internal SourceNumericCameraMotion(float minX,float minZ,float maxX,float maxZ){if(!math.isfinite(minX)||!math.isfinite(minZ)||!math.isfinite(maxX)||!math.isfinite(maxZ)||maxX-minX<=.01f||maxZ-minZ<=.01f)throw new ArgumentException("Actual source ground boundary required");_hasGroundBoundary=true;_groundBoundary=new NativeRect(minX,minZ,maxX-minX,maxZ-minZ);}
+/*SOURCE:camera_0*/
+/*SOURCE:camera_1*/
+/*SOURCE:camera_2*/
+/*SOURCE:camera_3*/
+/*SOURCE:camera_4*/
+/*SOURCE:camera_5*/
+/*SOURCE:camera_6*/
+/*SOURCE:camera_7*/
+/*SOURCE:camera_8*/
+/*SOURCE:camera_9*/
+/*SOURCE:camera_10*/
+/*SOURCE:camera_11*/
+/*SOURCE:camera_12*/
+}}

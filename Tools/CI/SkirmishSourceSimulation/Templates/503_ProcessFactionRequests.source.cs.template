@@ -1,0 +1,11 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime{internal sealed partial class SourceFactionProductionDispatcher{
+        private void ProcessProductionRequests(
+            SourceCampAvailabilityKernel productionRequestSystem,
+            SourceCampAvailabilityKernel.Context productionRequestContext,
+            SourceFactionProductionReadModels runtimeQuerySystem,
+            SourceCampAvailabilityKernel.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity,
+            float now)
+        {/*SOURCE:body_0*/}
+}}

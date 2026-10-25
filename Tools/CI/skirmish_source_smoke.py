@@ -82,7 +82,8 @@ def _source_build(ctx):
 def _native_data(ctx):
  if ctx['mission']=='S026':
   author=owned.require('skirmish_source_authoring').author(ctx['repo'],ctx['package'],ctx['manifest'],ctx['out']/'native-author',ctx['mission'],ctx['seed'],ctx['authoring_input'],ctx['build_receipt'],ctx['data_repo'],ctx['remaining']())
-  if author.get('status')!='DraftInspected':return 'Failed','authoring','Current native author invocation failed.',author
+  if author.get('status')not in{'DraftInspected','ConfigurationCompiled'}:return 'Failed','authoring','Current native author invocation failed.',author
+  if author['status']=='ConfigurationCompiled':return 'Passed','authoring.compiler','Original config compiler/capture consistent; runtime/source-fit/player gates remain separate.',author['source_result']
   return 'Blocked','authoring.compiler','Original source compiler rejects this draft; no world was allocated.',author['source_result']
  receipt=ctx['build'];tools={k:Path(v)for k,v in receipt['runtime_selection'].items()};out=ctx['out']/'native-data';out.mkdir();config,extra=b.prepare_mono_config(tools,out);request={'schema_version':1,'kind':'SkirmishSourceSmokeData','mission':'S002','seed':ctx['seed'],'initialization':{k:ctx['bundle_value']['initialization'][k]for k in['path','sha256']},'runtime_config':b.pin(config),'output_directory':str(out)};request['runtime_config']={k:request['runtime_config'][k]for k in ['path','sha256']};b.write(out/'request.json',request);request_pin=b.pin(out/'request.json');pins=dict(receipt['source_and_reference_pins']);b.merge_pins(pins,owned.pins());b.merge_pins(pins,extra);b.merge_pins(pins,{request_pin['path']:request_pin['sha256'],str(config):b.pin(config)['sha256']});b.verify(pins)
  env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(ctx['repo']/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);command=[tools['mono'],'--config',config,'--optimize=-float32',receipt['executable']['path'],'--source-smoke-data',out/'request.json',request_pin['sha256']]
@@ -104,7 +105,7 @@ def _objective_rules(ctx):
 
 def _startup(ctx):
  if not ctx['startup']:return 'DeferredToFullRun','startup','Actual full worker startup is the check; no duplicate world initialization.',None
- if ctx['mission']!='S002':return 'Unsupported','startup','S026 runtime admission remains gated by genuine compile/source-fit/owners.',None
+ if ctx['mission']!='S002':return 'Blocked','startup','S026 runtime admission remains gated by genuine compile/source-fit/owners.',None
  result=b.run(ctx['repo'],ctx['build_receipt'],ctx['bundle'],ctx['out']/'startup',5,ctx['remaining'](),ctx['data_repo']);ctx['startup_result']=result
  return ('Passed'if result.get('diagnostic_prefix_completed')and result.get('process_exit')==0 else'Failed'),'startup','Ordinary five-tick source startup; actual failures propagate.',{k:result.get(k)for k in ['status','process_exit','timed_out','wall_seconds','validation_passed','full_outcome_observed','diagnostic_prefix_completed','source_result']}
 

@@ -61,8 +61,8 @@ class SourceManifestTests(unittest.TestCase):
   with self.assertRaisesRegex(m.UnsupportedSourceShape,"Editor source profile"):self.runresolve([self.entry()],defines=["UNITY_EDITOR"])
  def test_mission_seed_gate(self):
   path=self.manifest([self.entry()])
-  for mission,seed in [("S003",104731),("S002",1)]:
-   with self.assertRaisesRegex(m.UnsupportedSourceShape,"Unsupported mission/seed"):m.resolve_manifest(self.repo,self.package,path,self.base/"out",mission,seed)
+  for mission,seed in [("S003",104731),("S002",2)]:
+   with self.assertRaisesRegex(ValueError,"Unqualified source execution profile"):m.resolve_manifest(self.repo,self.package,path,self.base/"out",mission,seed)
  def test_frozen_gameplay_adapter_declaration_rejected(self):
   (self.package/"Frozen.cs").write_text("public class Frozen{}")
   e={"id":"frozen","kind":"finite_adapter","path":"Frozen.cs","role":"engine_boundary","contains_original_gameplay":True}

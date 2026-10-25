@@ -14,6 +14,7 @@ CI=Path(__file__).resolve().parents[1]
 FILES=['skirmish_owned_source.py','run_skirmish_source_simulation.py',
        'skirmish_source_syntax.py','skirmish_production_worker.py','skirmish_causal_worker.py',
        'skirmish_source_manifest.py','skirmish_source_build.py','skirmish_source_authoring.py',
+       'skirmish_source_profiles.py','SkirmishSourceSimulation/admitted_profiles.json',
        'build_skirmish_authoring_batches.py','skirmish_offline_sim.py',
        'skirmish_offline_sim_cases.py','skirmish_source_smoke.py',
        'SkirmishSourceSimulation/Placement/regenerate_placement_numeric.py',

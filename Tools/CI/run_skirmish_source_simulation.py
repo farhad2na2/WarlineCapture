@@ -22,7 +22,7 @@ owned=_bootstrap_owned_source()
 from skirmish_source_manifest import resolve_manifest,UnsupportedSourceShape
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run','author','smoke']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--objective-build',help='Existing checked .NET8 objective build directory for smoke reuse');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--authoring-input',help='Hash-bound new data draft; DraftInspected is not mission validation, source-fit or world execution');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float);a=p.parse_args();a.timeout=a.timeout if a.timeout is not None else(120 if a.command in {'smoke','author'}else 1800)
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run','author','smoke']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--objective-build',help='Existing checked .NET8 objective build directory for smoke reuse');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--authoring-input',help='Hash-bound typed config diagnostics; ConfigurationCompiled/DraftInspected do not certify source-fit or mission readiness');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float);a=p.parse_args();a.timeout=a.timeout if a.timeout is not None else(120 if a.command in {'smoke','author'}else 1800)
  package=Path(a.package_root).resolve();manifest=Path(a.manifest)if a.manifest else package/'Tools/CI/SkirmishSourceSimulation/source_manifest.plan.json'
  try:
   if a.command=='smoke':
@@ -30,7 +30,7 @@ def main():
    print(json.dumps({k:result[k]for k in ['status','exit_code','mission','seed','wall_seconds','validation_passed','mission_ready','full_outcome_observed']}));return result['exit_code']
   if a.command=='author':
    if not a.authoring_input:p.error('author requires --authoring-input')
-   result=owned.require('skirmish_source_authoring').author(a.repo,package,manifest,a.output,a.mission,a.seed,a.authoring_input,a.build_receipt,a.data_repo,a.timeout);print(json.dumps({k:result[k]for k in ['status','authoring_mission','authoring_seed','process_exit','world_allocated','validation_passed','source_fit_verified']}));return 0 if result['status']=='DraftInspected'else 1
+   result=owned.require('skirmish_source_authoring').author(a.repo,package,manifest,a.output,a.mission,a.seed,a.authoring_input,a.build_receipt,a.data_repo,a.timeout);print(json.dumps({k:result[k]for k in ['status','authoring_mission','authoring_seed','process_exit','world_allocated','validation_passed','source_fit_verified']}));return 0 if result['status']in{'DraftInspected','ConfigurationCompiled'}else 1
   require_profile=owned.require("skirmish_source_profiles").require_profile
   require_profile(a.mission,a.seed)
   if a.command=='resolve':

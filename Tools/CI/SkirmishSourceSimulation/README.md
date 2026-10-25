@@ -97,11 +97,14 @@ python3 Tools/CI/run_skirmish_source_simulation.py author \
   --authoring-input /path/to/s026-authoring-input.json
 ```
 
-The initial supported authoring input is an **unmeasured S026/104755 draft**.
-`DraftInspected` with exit 0 means the native compiler rejected the draft and its
-original reasons were recorded. It explicitly means `validation_passed=false`,
-`source_fit_verified=false` and `world_allocated=false`; it does not accept the
-mission, modify the catalog, publish an asset or enable autonomous S026 execution.
+S026/104755 authoring diagnostics accept the exact typed BA/Ground/Established
+profiles. An unmeasured draft retains `DraftInspected` with exit 0 and the original
+compiler rejection reasons. The frozen V2 measured layout fingerprint
+`c74d05162216ff09c5b953966a35e7d56bf9f1935a55cf7076d23fe23badc18e` can return
+`ConfigurationCompiled` with exit 0 when the original compiler and authoring
+capture agree. This reports configuration consistency only. Both outcomes retain
+`validation_passed=false`, `source_fit_verified=false`, `mission_ready=false`,
+`native_acceptance=false`, and `world_allocated=false`.
 S002 resolve/build/run supports only the finite selections in admitted_profiles.json; S026 author diagnostics do not grant runtime admission.
 
 Input schema 1 has exact fields `schema_version`, `kind`
@@ -111,10 +114,12 @@ Input schema 1 has exact fields `schema_version`, `kind`
 the existing pinned source-config graph. `profiles` maps exactly `objective`,
 `army`, `start`, `economy`, `upgrades`, `intel`, `roles` to real asset paths in that
 graph. `layout` is the finite native config field object with explicit
-`bindingValueFormat=2`; measured deployments and bind-all remain false. Unknown
+`bindingValueFormat=2`; measured inputs require both deployment/bind-all flags and
+the exact frozen fingerprint. Unknown
 fields, duplicate fields, trailing JSON, changed pins and unsupported profiles or
-formats reject. Positive source-fit input is explicitly unsupported until complete
-hash-bound fixed-budget placement, service/egress, route and packing facts exist.
+formats reject. Physical certificates are not an accepted input and configuration
+compilation does not certify source fit. In smoke, a compiled configuration passes
+the native-author diagnostic stage while S026 runtime startup remains Blocked.
 
 The receipt distinguishes the S002 finite **tool compilation profile** from the
 actual S026 authoring identity; compiling that closure does not initialize an S002

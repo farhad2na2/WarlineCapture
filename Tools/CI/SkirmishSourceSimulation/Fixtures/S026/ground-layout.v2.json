@@ -1,0 +1,1133 @@
+{
+  "layoutId": "layout.s026.measured-pad-candidate.v2",
+  "operationMapId": "opmap.skirmish.desert_base_01",
+  "contentVersion": 2,
+  "contentHash": "unqualified.9303662a122caaa1256f67fc21eeb8bd684364958ecd5f42ae8753d626ef7634",
+  "worldWidthMetres": 2048.0,
+  "worldDepthMetres": 1024.0,
+  "originX": 0.0,
+  "originZ": 0.0,
+  "cellSize": 1.0,
+  "anchors": [
+    {
+      "AnchorId": "anchor.skirmish.db.base_player",
+      "RoleId": "base.player",
+      "NormalizedU": 0.456542969,
+      "NormalizedV": 0.6347656,
+      "WorldX": 935.0,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.base_enemy",
+      "RoleId": "base.enemy",
+      "NormalizedU": 0.677636743,
+      "NormalizedV": 0.6347656,
+      "WorldX": 1387.8,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.staging_player",
+      "RoleId": "staging.player",
+      "NormalizedU": 0.473876953,
+      "NormalizedV": 0.6352539,
+      "WorldX": 970.5,
+      "WorldZ": 650.5
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.staging_enemy",
+      "RoleId": "staging.enemy",
+      "NormalizedU": 0.656494141,
+      "NormalizedV": 0.623535156,
+      "WorldX": 1344.5,
+      "WorldZ": 638.5
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.economy_player",
+      "RoleId": "economy.player",
+      "NormalizedU": 0.450724721,
+      "NormalizedV": 0.594140649,
+      "WorldX": 923.0842,
+      "WorldZ": 608.4
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.economy_enemy",
+      "RoleId": "economy.enemy",
+      "NormalizedU": 0.6982422,
+      "NormalizedV": 0.6347656,
+      "WorldX": 1430.0,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.service_player",
+      "RoleId": "service.player",
+      "NormalizedU": 0.456542969,
+      "NormalizedV": 0.6628906,
+      "WorldX": 935.0,
+      "WorldZ": 678.8
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.service_enemy",
+      "RoleId": "service.enemy",
+      "NormalizedU": 0.677636743,
+      "NormalizedV": 0.606640637,
+      "WorldX": 1387.8,
+      "WorldZ": 621.2
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.air_player",
+      "RoleId": "air.player",
+      "NormalizedU": 0.441997319,
+      "NormalizedV": 0.6785156,
+      "WorldX": 905.2105,
+      "WorldZ": 694.8
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.air_enemy",
+      "RoleId": "air.enemy",
+      "NormalizedU": 0.692182362,
+      "NormalizedV": 0.591015637,
+      "WorldX": 1417.58948,
+      "WorldZ": 605.2
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.supply_expansion_a",
+      "RoleId": "supply.expansion.a",
+      "NormalizedU": 0.526362062,
+      "NormalizedV": 0.591015637,
+      "WorldX": 1077.9895,
+      "WorldZ": 605.2
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.supply_expansion_b",
+      "RoleId": "supply.expansion.b",
+      "NormalizedU": 0.60781765,
+      "NormalizedV": 0.6785156,
+      "WorldX": 1244.81055,
+      "WorldZ": 694.8
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.highway_near",
+      "RoleId": "highway.near",
+      "NormalizedU": 0.5147255,
+      "NormalizedV": 0.6347656,
+      "WorldX": 1054.15784,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.highway_mid",
+      "RoleId": "highway.mid",
+      "NormalizedU": 0.567089856,
+      "NormalizedV": 0.6347656,
+      "WorldX": 1161.4,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.highway_far",
+      "RoleId": "highway.far",
+      "NormalizedU": 0.619454145,
+      "NormalizedV": 0.6347656,
+      "WorldX": 1268.64209,
+      "WorldZ": 650.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.ruins_own",
+      "RoleId": "ruins.own",
+      "NormalizedU": 0.479816,
+      "NormalizedV": 0.6894531,
+      "WorldX": 982.663147,
+      "WorldZ": 706.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.ruins_west",
+      "RoleId": "ruins.west",
+      "NormalizedU": 0.523452938,
+      "NormalizedV": 0.700390637,
+      "WorldX": 1072.03162,
+      "WorldZ": 717.2
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.ruins_north",
+      "RoleId": "ruins.north",
+      "NormalizedU": 0.567089856,
+      "NormalizedV": 0.7050781,
+      "WorldX": 1161.4,
+      "WorldZ": 722.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.ruins_east",
+      "RoleId": "ruins.east",
+      "NormalizedU": 0.611572266,
+      "NormalizedV": 0.7026367,
+      "WorldX": 1252.5,
+      "WorldZ": 719.5
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.ruins_far",
+      "RoleId": "ruins.far",
+      "NormalizedU": 0.6543637,
+      "NormalizedV": 0.6894531,
+      "WorldX": 1340.13684,
+      "WorldZ": 706.0
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.sweep_own",
+      "RoleId": "sweep.own",
+      "NormalizedU": 0.491452515,
+      "NormalizedV": 0.5847656,
+      "WorldX": 1006.49475,
+      "WorldZ": 598.8
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.sweep_west",
+      "RoleId": "sweep.west",
+      "NormalizedU": 0.5373535,
+      "NormalizedV": 0.5678711,
+      "WorldX": 1100.5,
+      "WorldZ": 581.5
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.sweep_south",
+      "RoleId": "sweep.south",
+      "NormalizedU": 0.596181154,
+      "NormalizedV": 0.5691406,
+      "WorldX": 1220.979,
+      "WorldZ": 582.8
+    },
+    {
+      "AnchorId": "anchor.skirmish.db.sweep_east",
+      "RoleId": "sweep.east",
+      "NormalizedU": 0.640380859,
+      "NormalizedV": 0.589355469,
+      "WorldX": 1311.5,
+      "WorldZ": 603.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.1",
+      "RoleId": "route.s026.joint.main.1",
+      "NormalizedU": 0.489990234,
+      "NormalizedV": 0.6352539,
+      "WorldX": 1003.5,
+      "WorldZ": 650.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.2",
+      "RoleId": "route.s026.joint.main.2",
+      "NormalizedU": 0.4885254,
+      "NormalizedV": 0.659667969,
+      "WorldX": 1000.5,
+      "WorldZ": 675.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.3",
+      "RoleId": "route.s026.joint.main.3",
+      "NormalizedU": 0.4958496,
+      "NormalizedV": 0.659667969,
+      "WorldX": 1015.5,
+      "WorldZ": 675.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.4",
+      "RoleId": "route.s026.joint.main.4",
+      "NormalizedU": 0.508056641,
+      "NormalizedV": 0.659667969,
+      "WorldX": 1040.5,
+      "WorldZ": 675.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.5",
+      "RoleId": "route.s026.joint.main.5",
+      "NormalizedU": 0.508056641,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1040.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.6",
+      "RoleId": "route.s026.joint.main.6",
+      "NormalizedU": 0.5275879,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1080.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.7",
+      "RoleId": "route.s026.joint.main.7",
+      "NormalizedU": 0.547119141,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1120.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.8",
+      "RoleId": "route.s026.joint.main.8",
+      "NormalizedU": 0.5666504,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1160.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.9",
+      "RoleId": "route.s026.joint.main.9",
+      "NormalizedU": 0.586181641,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1200.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.10",
+      "RoleId": "route.s026.joint.main.10",
+      "NormalizedU": 0.6057129,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1240.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.11",
+      "RoleId": "route.s026.joint.main.11",
+      "NormalizedU": 0.625244141,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1280.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.12",
+      "RoleId": "route.s026.joint.main.12",
+      "NormalizedU": 0.635009766,
+      "NormalizedV": 0.6694336,
+      "WorldX": 1300.5,
+      "WorldZ": 685.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.13",
+      "RoleId": "route.s026.joint.main.13",
+      "NormalizedU": 0.635009766,
+      "NormalizedV": 0.645019531,
+      "WorldX": 1300.5,
+      "WorldZ": 660.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.14",
+      "RoleId": "route.s026.joint.main.14",
+      "NormalizedU": 0.654541,
+      "NormalizedV": 0.645019531,
+      "WorldX": 1340.5,
+      "WorldZ": 660.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.main.15",
+      "RoleId": "route.s026.joint.main.15",
+      "NormalizedU": 0.654541,
+      "NormalizedV": 0.6274414,
+      "WorldX": 1340.5,
+      "WorldZ": 642.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.1",
+      "RoleId": "route.s026.joint.flank_a.1",
+      "NormalizedU": 0.469482422,
+      "NormalizedV": 0.6352539,
+      "WorldX": 961.5,
+      "WorldZ": 650.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.2",
+      "RoleId": "route.s026.joint.flank_a.2",
+      "NormalizedU": 0.4777832,
+      "NormalizedV": 0.645019531,
+      "WorldX": 978.5,
+      "WorldZ": 660.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.3",
+      "RoleId": "route.s026.joint.flank_a.3",
+      "NormalizedU": 0.4777832,
+      "NormalizedV": 0.686035156,
+      "WorldX": 978.5,
+      "WorldZ": 702.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.4",
+      "RoleId": "route.s026.joint.flank_a.4",
+      "NormalizedU": 0.479736328,
+      "NormalizedV": 0.6899414,
+      "WorldX": 982.5,
+      "WorldZ": 706.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.5",
+      "RoleId": "route.s026.joint.flank_a.5",
+      "NormalizedU": 0.4885254,
+      "NormalizedV": 0.7084961,
+      "WorldX": 1000.5,
+      "WorldZ": 725.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.6",
+      "RoleId": "route.s026.joint.flank_a.6",
+      "NormalizedU": 0.4885254,
+      "NormalizedV": 0.7426758,
+      "WorldX": 1000.5,
+      "WorldZ": 760.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.7",
+      "RoleId": "route.s026.joint.flank_a.7",
+      "NormalizedU": 0.4885254,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1000.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.8",
+      "RoleId": "route.s026.joint.flank_a.8",
+      "NormalizedU": 0.508056641,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1040.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.9",
+      "RoleId": "route.s026.joint.flank_a.9",
+      "NormalizedU": 0.5275879,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1080.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.10",
+      "RoleId": "route.s026.joint.flank_a.10",
+      "NormalizedU": 0.547119141,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1120.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.11",
+      "RoleId": "route.s026.joint.flank_a.11",
+      "NormalizedU": 0.5666504,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1160.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.12",
+      "RoleId": "route.s026.joint.flank_a.12",
+      "NormalizedU": 0.586181641,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1200.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.13",
+      "RoleId": "route.s026.joint.flank_a.13",
+      "NormalizedU": 0.6032715,
+      "NormalizedV": 0.771972656,
+      "WorldX": 1235.5,
+      "WorldZ": 790.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.14",
+      "RoleId": "route.s026.joint.flank_a.14",
+      "NormalizedU": 0.6032715,
+      "NormalizedV": 0.776855469,
+      "WorldX": 1235.5,
+      "WorldZ": 795.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.15",
+      "RoleId": "route.s026.joint.flank_a.15",
+      "NormalizedU": 0.622802734,
+      "NormalizedV": 0.776855469,
+      "WorldX": 1275.5,
+      "WorldZ": 795.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.16",
+      "RoleId": "route.s026.joint.flank_a.16",
+      "NormalizedU": 0.632568359,
+      "NormalizedV": 0.776855469,
+      "WorldX": 1295.5,
+      "WorldZ": 795.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.17",
+      "RoleId": "route.s026.joint.flank_a.17",
+      "NormalizedU": 0.632568359,
+      "NormalizedV": 0.737792969,
+      "WorldX": 1295.5,
+      "WorldZ": 755.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.18",
+      "RoleId": "route.s026.joint.flank_a.18",
+      "NormalizedU": 0.632568359,
+      "NormalizedV": 0.732910156,
+      "WorldX": 1295.5,
+      "WorldZ": 750.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.19",
+      "RoleId": "route.s026.joint.flank_a.19",
+      "NormalizedU": 0.6520996,
+      "NormalizedV": 0.732910156,
+      "WorldX": 1335.5,
+      "WorldZ": 750.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.20",
+      "RoleId": "route.s026.joint.flank_a.20",
+      "NormalizedU": 0.674072266,
+      "NormalizedV": 0.732910156,
+      "WorldX": 1380.5,
+      "WorldZ": 750.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.21",
+      "RoleId": "route.s026.joint.flank_a.21",
+      "NormalizedU": 0.674072266,
+      "NormalizedV": 0.693847656,
+      "WorldX": 1380.5,
+      "WorldZ": 710.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.22",
+      "RoleId": "route.s026.joint.flank_a.22",
+      "NormalizedU": 0.674072266,
+      "NormalizedV": 0.654785156,
+      "WorldX": 1380.5,
+      "WorldZ": 670.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.23",
+      "RoleId": "route.s026.joint.flank_a.23",
+      "NormalizedU": 0.674072266,
+      "NormalizedV": 0.6196289,
+      "WorldX": 1380.5,
+      "WorldZ": 634.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_a.24",
+      "RoleId": "route.s026.joint.flank_a.24",
+      "NormalizedU": 0.656494141,
+      "NormalizedV": 0.6196289,
+      "WorldX": 1344.5,
+      "WorldZ": 634.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.1",
+      "RoleId": "route.s026.joint.flank_b.1",
+      "NormalizedU": 0.471923828,
+      "NormalizedV": 0.6352539,
+      "WorldX": 966.5,
+      "WorldZ": 650.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.5",
+      "RoleId": "route.s026.joint.flank_b.5",
+      "NormalizedU": 0.485107422,
+      "NormalizedV": 0.597167969,
+      "WorldX": 993.5,
+      "WorldZ": 611.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.6",
+      "RoleId": "route.s026.joint.flank_b.6",
+      "NormalizedU": 0.487548828,
+      "NormalizedV": 0.592285156,
+      "WorldX": 998.5,
+      "WorldZ": 606.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.7",
+      "RoleId": "route.s026.joint.flank_b.7",
+      "NormalizedU": 0.487548828,
+      "NormalizedV": 0.584472656,
+      "WorldX": 998.5,
+      "WorldZ": 598.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.8",
+      "RoleId": "route.s026.joint.flank_b.8",
+      "NormalizedU": 0.491455078,
+      "NormalizedV": 0.584472656,
+      "WorldX": 1006.5,
+      "WorldZ": 598.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.9",
+      "RoleId": "route.s026.joint.flank_b.9",
+      "NormalizedU": 0.510498047,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1045.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.10",
+      "RoleId": "route.s026.joint.flank_b.10",
+      "NormalizedU": 0.517822266,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1060.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.11",
+      "RoleId": "route.s026.joint.flank_b.11",
+      "NormalizedU": 0.5373535,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1100.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.12",
+      "RoleId": "route.s026.joint.flank_b.12",
+      "NormalizedU": 0.556884766,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1140.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.13",
+      "RoleId": "route.s026.joint.flank_b.13",
+      "NormalizedU": 0.5788574,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1185.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.14",
+      "RoleId": "route.s026.joint.flank_b.14",
+      "NormalizedU": 0.5983887,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1225.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.15",
+      "RoleId": "route.s026.joint.flank_b.15",
+      "NormalizedU": 0.6179199,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1265.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.16",
+      "RoleId": "route.s026.joint.flank_b.16",
+      "NormalizedU": 0.630126953,
+      "NormalizedV": 0.5522461,
+      "WorldX": 1290.5,
+      "WorldZ": 565.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.17",
+      "RoleId": "route.s026.joint.flank_b.17",
+      "NormalizedU": 0.630126953,
+      "NormalizedV": 0.589355469,
+      "WorldX": 1290.5,
+      "WorldZ": 603.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.18",
+      "RoleId": "route.s026.joint.flank_b.18",
+      "NormalizedU": 0.640380859,
+      "NormalizedV": 0.589355469,
+      "WorldX": 1311.5,
+      "WorldZ": 603.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.19",
+      "RoleId": "route.s026.joint.flank_b.19",
+      "NormalizedU": 0.6594238,
+      "NormalizedV": 0.610839844,
+      "WorldX": 1350.5,
+      "WorldZ": 625.5
+    },
+    {
+      "AnchorId": "anchor.s026.joint.flank_b.20",
+      "RoleId": "route.s026.joint.flank_b.20",
+      "NormalizedU": 0.656494141,
+      "NormalizedV": 0.615722656,
+      "WorldX": 1344.5,
+      "WorldZ": 630.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.north.0",
+      "RoleId": "route.s026.repair.north.0",
+      "NormalizedU": 0.6032715,
+      "NormalizedV": 0.8120117,
+      "WorldX": 1235.5,
+      "WorldZ": 831.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.north.1",
+      "RoleId": "route.s026.repair.north.1",
+      "NormalizedU": 0.622802734,
+      "NormalizedV": 0.8120117,
+      "WorldX": 1275.5,
+      "WorldZ": 831.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.southwest.0",
+      "RoleId": "route.s026.repair.southwest.0",
+      "NormalizedU": 0.499267578,
+      "NormalizedV": 0.5786133,
+      "WorldX": 1022.5,
+      "WorldZ": 592.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.southwest.1",
+      "RoleId": "route.s026.repair.southwest.1",
+      "NormalizedU": 0.510498047,
+      "NormalizedV": 0.5786133,
+      "WorldX": 1045.5,
+      "WorldZ": 592.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.southeast.0",
+      "RoleId": "route.s026.repair.southeast.0",
+      "NormalizedU": 0.642334,
+      "NormalizedV": 0.595214844,
+      "WorldX": 1315.5,
+      "WorldZ": 609.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.southeast.1",
+      "RoleId": "route.s026.repair.southeast.1",
+      "NormalizedU": 0.642334,
+      "NormalizedV": 0.6069336,
+      "WorldX": 1315.5,
+      "WorldZ": 621.5
+    },
+    {
+      "AnchorId": "anchor.s026.repair.southeast.2",
+      "RoleId": "route.s026.repair.southeast.2",
+      "NormalizedU": 0.6501465,
+      "NormalizedV": 0.605957031,
+      "WorldX": 1331.5,
+      "WorldZ": 620.5
+    },
+    {
+      "AnchorId": "anchor.s026.route.flank_a.west_bypass",
+      "RoleId": "route.s026.flank_a.west_bypass",
+      "NormalizedU": 0.469482422,
+      "NormalizedV": 0.6459961,
+      "WorldX": 961.5,
+      "WorldZ": 661.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.later-reconnect.0",
+      "RoleId": "route.s026.south.later-reconnect.0",
+      "NormalizedU": 0.471923828,
+      "NormalizedV": 0.6303711,
+      "WorldX": 966.5,
+      "WorldZ": 645.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.later-reconnect.1",
+      "RoleId": "route.s026.south.later-reconnect.1",
+      "NormalizedU": 0.461181641,
+      "NormalizedV": 0.605957031,
+      "WorldX": 944.5,
+      "WorldZ": 620.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.southward-corner",
+      "RoleId": "route.s026.south.southward-corner",
+      "NormalizedU": 0.461181641,
+      "NormalizedV": 0.5932617,
+      "WorldX": 944.5,
+      "WorldZ": 607.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.measured-crossing.0",
+      "RoleId": "route.s026.south.measured-crossing.0",
+      "NormalizedU": 0.461181641,
+      "NormalizedV": 0.576660156,
+      "WorldX": 944.5,
+      "WorldZ": 590.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.measured-crossing.1",
+      "RoleId": "route.s026.south.measured-crossing.1",
+      "NormalizedU": 0.468994141,
+      "NormalizedV": 0.571777344,
+      "WorldX": 960.5,
+      "WorldZ": 585.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.measured-crossing.2",
+      "RoleId": "route.s026.south.measured-crossing.2",
+      "NormalizedU": 0.479736328,
+      "NormalizedV": 0.5727539,
+      "WorldX": 982.5,
+      "WorldZ": 586.5
+    },
+    {
+      "AnchorId": "anchor.s026.south.measured-crossing.3",
+      "RoleId": "route.s026.south.measured-crossing.3",
+      "NormalizedU": 0.485107422,
+      "NormalizedV": 0.5834961,
+      "WorldX": 993.5,
+      "WorldZ": 597.5
+    },
+    {
+      "AnchorId": "anchor.s026.main.east-departure",
+      "RoleId": "route.s026.main.east-departure",
+      "NormalizedU": 0.475830078,
+      "NormalizedV": 0.629394531,
+      "WorldX": 974.5,
+      "WorldZ": 644.5
+    }
+  ],
+  "routes": [
+    {
+      "RouteId": "route.skirmish.db.main",
+      "WaypointAnchorIds": [
+        "anchor.skirmish.db.staging_player",
+        "anchor.s026.main.east-departure",
+        "anchor.s026.joint.main.1",
+        "anchor.s026.joint.main.2",
+        "anchor.s026.joint.main.3",
+        "anchor.s026.joint.main.4",
+        "anchor.s026.joint.main.5",
+        "anchor.s026.joint.main.6",
+        "anchor.s026.joint.main.7",
+        "anchor.s026.joint.main.8",
+        "anchor.s026.joint.main.9",
+        "anchor.s026.joint.main.10",
+        "anchor.s026.joint.main.11",
+        "anchor.s026.joint.main.12",
+        "anchor.s026.joint.main.13",
+        "anchor.s026.joint.main.14",
+        "anchor.s026.joint.main.15",
+        "anchor.skirmish.db.staging_enemy"
+      ],
+      "Kind": 1,
+      "LengthMetres": 460.6615,
+      "InfantryTransitSeconds": 115.165375,
+      "GroundTransitSeconds": 57.5826874,
+      "AirTransitSeconds": 28.7913437,
+      "InfantryFirstContactSeconds": 57.5826874,
+      "GroundFirstContactSeconds": 28.7913437,
+      "ProvisionalTimes": true,
+      "WidthMetres": 12.0,
+      "AllowsVehicles": true,
+      "AllowsAircraft": true
+    },
+    {
+      "RouteId": "route.skirmish.db.flank_a",
+      "WaypointAnchorIds": [
+        "anchor.skirmish.db.staging_player",
+        "anchor.s026.joint.flank_a.1",
+        "anchor.s026.route.flank_a.west_bypass",
+        "anchor.s026.joint.flank_a.2",
+        "anchor.s026.joint.flank_a.3",
+        "anchor.s026.joint.flank_a.4",
+        "anchor.s026.joint.flank_a.5",
+        "anchor.s026.joint.flank_a.6",
+        "anchor.s026.joint.flank_a.7",
+        "anchor.s026.joint.flank_a.8",
+        "anchor.s026.joint.flank_a.9",
+        "anchor.s026.joint.flank_a.10",
+        "anchor.s026.joint.flank_a.11",
+        "anchor.s026.joint.flank_a.12",
+        "anchor.s026.joint.flank_a.13",
+        "anchor.s026.joint.flank_a.14",
+        "anchor.s026.repair.north.0",
+        "anchor.s026.repair.north.1",
+        "anchor.s026.joint.flank_a.15",
+        "anchor.s026.joint.flank_a.16",
+        "anchor.s026.joint.flank_a.17",
+        "anchor.s026.joint.flank_a.18",
+        "anchor.s026.joint.flank_a.19",
+        "anchor.s026.joint.flank_a.20",
+        "anchor.s026.joint.flank_a.21",
+        "anchor.s026.joint.flank_a.22",
+        "anchor.s026.joint.flank_a.23",
+        "anchor.s026.joint.flank_a.24",
+        "anchor.skirmish.db.staging_enemy"
+      ],
+      "Kind": 2,
+      "LengthMetres": 833.858765,
+      "InfantryTransitSeconds": 291.602081,
+      "GroundTransitSeconds": 145.801041,
+      "AirTransitSeconds": 72.90052,
+      "InfantryFirstContactSeconds": 145.801041,
+      "GroundFirstContactSeconds": 72.90052,
+      "ProvisionalTimes": true,
+      "WidthMetres": 6.0,
+      "AllowsVehicles": true,
+      "AllowsAircraft": false
+    },
+    {
+      "RouteId": "route.skirmish.db.flank_b",
+      "WaypointAnchorIds": [
+        "anchor.skirmish.db.staging_player",
+        "anchor.s026.joint.flank_b.1",
+        "anchor.s026.south.later-reconnect.0",
+        "anchor.s026.south.later-reconnect.1",
+        "anchor.s026.south.southward-corner",
+        "anchor.s026.south.measured-crossing.0",
+        "anchor.s026.south.measured-crossing.1",
+        "anchor.s026.south.measured-crossing.2",
+        "anchor.s026.south.measured-crossing.3",
+        "anchor.s026.joint.flank_b.5",
+        "anchor.s026.joint.flank_b.6",
+        "anchor.s026.joint.flank_b.7",
+        "anchor.s026.joint.flank_b.8",
+        "anchor.s026.repair.southwest.0",
+        "anchor.s026.repair.southwest.1",
+        "anchor.s026.joint.flank_b.9",
+        "anchor.s026.joint.flank_b.10",
+        "anchor.s026.joint.flank_b.11",
+        "anchor.s026.joint.flank_b.12",
+        "anchor.s026.joint.flank_b.13",
+        "anchor.s026.joint.flank_b.14",
+        "anchor.s026.joint.flank_b.15",
+        "anchor.s026.joint.flank_b.16",
+        "anchor.s026.joint.flank_b.17",
+        "anchor.s026.joint.flank_b.18",
+        "anchor.s026.repair.southeast.0",
+        "anchor.s026.repair.southeast.1",
+        "anchor.s026.repair.southeast.2",
+        "anchor.s026.joint.flank_b.19",
+        "anchor.s026.joint.flank_b.20",
+        "anchor.skirmish.db.staging_enemy"
+      ],
+      "Kind": 3,
+      "LengthMetres": 605.5023,
+      "InfantryTransitSeconds": 209.202927,
+      "GroundTransitSeconds": 104.601463,
+      "AirTransitSeconds": 52.30073,
+      "InfantryFirstContactSeconds": 104.601463,
+      "GroundFirstContactSeconds": 52.30073,
+      "ProvisionalTimes": true,
+      "WidthMetres": 12.0,
+      "AllowsVehicles": true,
+      "AllowsAircraft": true
+    }
+  ],
+  "pads": [
+    {
+      "PadId": "pad.skirmish.db.base_player",
+      "AnchorId": "anchor.skirmish.db.base_player",
+      "RoleId": "base.player",
+      "Kind": 1,
+      "CenterX": 920.0,
+      "CenterZ": 615.5,
+      "WidthMetres": 30.0,
+      "DepthMetres": 17.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.base_enemy",
+      "AnchorId": "anchor.skirmish.db.base_enemy",
+      "RoleId": "base.enemy",
+      "Kind": 1,
+      "CenterX": 1426.0,
+      "CenterZ": 611.5,
+      "WidthMetres": 30.0,
+      "DepthMetres": 17.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.staging_player",
+      "AnchorId": "anchor.skirmish.db.staging_player",
+      "RoleId": "staging.player",
+      "Kind": 2,
+      "CenterX": 970.0,
+      "CenterZ": 655.5,
+      "WidthMetres": 16.0,
+      "DepthMetres": 10.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.staging_enemy",
+      "AnchorId": "anchor.skirmish.db.staging_enemy",
+      "RoleId": "staging.enemy",
+      "Kind": 2,
+      "CenterX": 1336.0,
+      "CenterZ": 634.5,
+      "WidthMetres": 16.0,
+      "DepthMetres": 9.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.spawn_infantry_player",
+      "AnchorId": "anchor.skirmish.db.staging_player",
+      "RoleId": "spawn.infantry.player",
+      "Kind": 3,
+      "CenterX": 956.5,
+      "CenterZ": 640.5,
+      "WidthMetres": 24.0,
+      "DepthMetres": 23.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.spawn_infantry_enemy",
+      "AnchorId": "anchor.skirmish.db.staging_enemy",
+      "RoleId": "spawn.infantry.enemy",
+      "Kind": 3,
+      "CenterX": 1369.5,
+      "CenterZ": 665.5,
+      "WidthMetres": 24.0,
+      "DepthMetres": 25.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.spawn_vehicle_player",
+      "AnchorId": "anchor.skirmish.db.staging_player",
+      "RoleId": "spawn.vehicle.player",
+      "Kind": 4,
+      "CenterX": 913.5,
+      "CenterZ": 650.5,
+      "WidthMetres": 25.0,
+      "DepthMetres": 27.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.spawn_vehicle_enemy",
+      "AnchorId": "anchor.skirmish.db.staging_enemy",
+      "RoleId": "spawn.vehicle.enemy",
+      "Kind": 4,
+      "CenterX": 1410.5,
+      "CenterZ": 650.5,
+      "WidthMetres": 27.0,
+      "DepthMetres": 27.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.rally_player",
+      "AnchorId": "anchor.skirmish.db.staging_player",
+      "RoleId": "rally.player",
+      "Kind": 5,
+      "CenterX": 1014.5,
+      "CenterZ": 650.5,
+      "WidthMetres": 9.92981,
+      "DepthMetres": 8.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.rally_enemy",
+      "AnchorId": "anchor.skirmish.db.staging_enemy",
+      "RoleId": "rally.enemy",
+      "Kind": 5,
+      "CenterX": 1308.5,
+      "CenterZ": 650.5,
+      "WidthMetres": 9.92981,
+      "DepthMetres": 8.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.service_player",
+      "AnchorId": "anchor.skirmish.db.service_player",
+      "RoleId": "service.player",
+      "Kind": 8,
+      "CenterX": 935.5,
+      "CenterZ": 678.5,
+      "WidthMetres": 63.0,
+      "DepthMetres": 25.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.service_enemy",
+      "AnchorId": "anchor.skirmish.db.service_enemy",
+      "RoleId": "service.enemy",
+      "Kind": 8,
+      "CenterX": 1387.5,
+      "CenterZ": 621.5,
+      "WidthMetres": 39.0,
+      "DepthMetres": 33.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.air_player",
+      "AnchorId": "anchor.skirmish.db.air_player",
+      "RoleId": "air.player",
+      "Kind": 6,
+      "CenterX": 878.0,
+      "CenterZ": 721.5,
+      "WidthMetres": 18.0,
+      "DepthMetres": 17.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.air_enemy",
+      "AnchorId": "anchor.skirmish.db.air_enemy",
+      "RoleId": "air.enemy",
+      "Kind": 6,
+      "CenterX": 1509.0,
+      "CenterZ": 668.5,
+      "WidthMetres": 18.0,
+      "DepthMetres": 17.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.supply_player",
+      "AnchorId": "anchor.skirmish.db.economy_player",
+      "RoleId": "economy.player",
+      "Kind": 7,
+      "CenterX": 923.5,
+      "CenterZ": 608.0,
+      "WidthMetres": 159.0,
+      "DepthMetres": 122.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.skirmish.db.supply_enemy",
+      "AnchorId": "anchor.skirmish.db.economy_enemy",
+      "RoleId": "economy.enemy",
+      "Kind": 7,
+      "CenterX": 1765.5,
+      "CenterZ": 873.0,
+      "WidthMetres": 83.0,
+      "DepthMetres": 42.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.skirmish.db.supply_expansion_a",
+      "AnchorId": "anchor.skirmish.db.supply_expansion_a",
+      "RoleId": "supply.expansion.a",
+      "Kind": 9,
+      "CenterX": 1077.9895,
+      "CenterZ": 605.2,
+      "WidthMetres": 13.9017334,
+      "DepthMetres": 12.0,
+      "FactionId": 0
+    },
+    {
+      "PadId": "pad.skirmish.db.supply_expansion_b",
+      "AnchorId": "anchor.skirmish.db.supply_expansion_b",
+      "RoleId": "supply.expansion.b",
+      "Kind": 9,
+      "CenterX": 1244.81055,
+      "CenterZ": 694.8,
+      "WidthMetres": 13.9017334,
+      "DepthMetres": 12.0,
+      "FactionId": 0
+    }
+  ],
+  "worldBinding": {
+    "OriginX": 0.0,
+    "OriginZ": 512.0,
+    "ForwardX": 1.0,
+    "ForwardZ": 0.0,
+    "AcrossX": 0.0,
+    "AcrossZ": 1.0,
+    "ForwardMetres": 2048.0,
+    "AcrossMetres": 1024.0,
+    "PlayerAnchorId": "anchor.skirmish.db.base_player",
+    "EnemyAnchorId": "anchor.skirmish.db.base_enemy",
+    "SourceHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "HasMeasuredDeployments": true,
+    "PlayerDeployment": {
+      "x": 935.0,
+      "y": 650.0
+    },
+    "EnemyDeployment": {
+      "x": 1387.8,
+      "y": 650.0
+    },
+    "BindAllConfigurations": true
+  },
+  "bindingValueFormat": 2
+}

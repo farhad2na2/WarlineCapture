@@ -56,7 +56,7 @@ class SourceBuildProtocolTests(unittest.TestCase):
         self.build=self.base/'build.json';self.save_build()
         self.inputs={'schema_version':1,'mission':'S002','seed':104731}
         for name in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
-            path=self.base/(name+'.data');path.write_bytes(('PROTOCOL_DATA_ONLY:'+name).encode());self.inputs[name]=m.pin(path)
+            path=self.base/(name+'.data');path.write_bytes(json.dumps({'mission_id':'S002','selection':{'seed':104731,'difficulty_id':2,'size_id':1}}).encode()if name=='initialization'else('PROTOCOL_DATA_ONLY:'+name).encode());self.inputs[name]=m.pin(path)
         self.bundle=self.base/'bundle.json';self.bundle.write_text(json.dumps(self.inputs));self.children=[]
     def save_build(self):self.build.write_text(json.dumps(self.receipt))
     def invoke(self,result=None,exit_code=0,max_ticks=None,timeout=10,kill_required=False,child_timeout=False,manifests=True,on_exit=None,data_repo=None):

@@ -8521,6 +8521,14 @@
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Immutable native metadata compatibility for two qualified original S002 compiler contexts; preserves provenance and exact source/prefab/provider/recipe checks. No seed or world admission."
+    },
+    {
+      "id": "SourceS026TypedConfiguration.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS026TypedConfiguration.cs",
+      "contains_original_gameplay": false,
+      "scope": "Strict typed S026 config/source and frozen layout identity checks only; no executable profile or world admission.",
+      "role": "host_glue"
     }
   ],
   "excluded_nonruntime_sources": [

@@ -3,8 +3,8 @@ namespace Game.Runtime{
 internal static class SourceNativeMissionLogicalBindingReference{
  internal const string QualifiedSha256="a6f7e1040b97c5daf76f86a9a81fcb48101863698c5f1593a2f6b00d1e70bf18";
  internal static JObject ReadPinnedReference(JObject descriptor){
- if(descriptor==null||descriptor.Properties().Count()!=2||(string)descriptor["sha256"]!=QualifiedSha256||descriptor["path"]?.Type!=JTokenType.String)throw new InvalidDataException("Qualified actual native logical binding descriptor required");
- var root=JObject.Parse(System.Text.Encoding.UTF8.GetString(AutonomousWorld.PinnedFile((string)descriptor["path"],QualifiedSha256,4*1024*1024)),new Newtonsoft.Json.Linq.JsonLoadSettings{DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error});
+ if(descriptor==null||descriptor.Properties().Count()!=2||descriptor["path"]?.Type!=JTokenType.String)throw new InvalidDataException("Qualified actual native logical binding descriptor required");
+ string digest=SourceNativeMetadataEpoch.RequireLogicalSha((string)descriptor["sha256"]);var root=JObject.Parse(System.Text.Encoding.UTF8.GetString(AutonomousWorld.PinnedFile((string)descriptor["path"],digest,4*1024*1024)),new Newtonsoft.Json.Linq.JsonLoadSettings{DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error});
  if((string)root["kind"]!="NativeAuthoredS026LogicalBindingReference"||(bool?)root["definition_instance_shared_across_all_capture"]!=true||(bool?)root["mission_initialized"]!=false||(bool?)root["positions_or_state_transferred"]!=false||(bool?)root["public_admission_changed"]!=false)throw new InvalidDataException("Actual native logical authoring-only reference required");
  var portable=root["portable_binding"]as JObject;if(portable==null||(int?)portable["schema_version"]!=1||(string)portable["kind"]!="DeclaredOriginalLogicalBindingFieldsWithInlineViews"||(string)portable["float_encoding"]!="IEEE754_float32_hex_bits"||(bool?)portable["unity_object_ids_exported"]!=false)throw new InvalidDataException("Exact raw-bit portable logical binding required");
  return root;

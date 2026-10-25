@@ -8723,6 +8723,14 @@
       "contains_original_gameplay": false,
       "role": "host_glue",
       "scope": "Checked actual typed fresh bank/session/metadata/logical/actor constructor boundary for original building lifetime. Existing S2 route and complete lifecycle policy unchanged."
+    },
+    {
+      "id": "SourceNativeMetadataEpoch.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNativeMetadataEpoch.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Finite reviewed native artifact/logical pair lookup; old epochs only until genuine new qualification seal."
     }
   ],
   "excluded_nonruntime_sources": [

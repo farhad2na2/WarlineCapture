@@ -206,9 +206,11 @@ namespace Game.Editor
             return rows;
         }
 
-        static Dictionary<string, string> OpeningPrefabRoots(EntityManager em)
+        static Dictionary<string, string> OpeningPrefabRoots(EntityManager em) => OpeningPrefabRoots(em, OpeningKeys);
+
+        static Dictionary<string, string> OpeningPrefabRoots(EntityManager em, IReadOnlyList<string> keys)
         {
-            var wanted = new HashSet<string>(OpeningKeys, StringComparer.OrdinalIgnoreCase);
+            var wanted = new HashSet<string>(keys, StringComparer.OrdinalIgnoreCase);
             var roots = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             using var query = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
             using var owners = query.ToEntityArray(Allocator.Temp);

@@ -7683,6 +7683,15 @@
       "contains_original_gameplay": false,
       "scope": "Data-only native Configure/TryCompile/TryCapture invocation before world allocation; no new gameplay/serializer or mission runtime admission.",
       "role": "host_glue"
+    },
+    {
+      "id": "Shared_SkirmishStaticAuthoringBudget.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStaticAuthoringBudget.cs",
+      "require_declarations": [
+        "public sealed class SkirmishStaticAuthoringBudget"
+      ],
+      "scope": "Current immutable data-only native authoring budget. Exposes cloned force/structure rows and canonical diagnostics, never rejected setup/hash/launch payload."
     }
   ],
   "excluded_nonruntime_sources": [

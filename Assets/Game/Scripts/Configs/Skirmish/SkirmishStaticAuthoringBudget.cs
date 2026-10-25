@@ -1,4 +1,3 @@
-#if UNITY_EDITOR
 using System;
 using Game.Skirmish.Contracts;
 namespace Game.Configs
@@ -18,4 +17,3 @@ namespace Game.Configs
             forces=(SkirmishResolvedForceEntry[])forceRows.Clone();structures=(SkirmishResolvedStructureEntry[])structureRows.Clone();errors=(string[])diagnostics.Clone();}
     }
 }
-#endif

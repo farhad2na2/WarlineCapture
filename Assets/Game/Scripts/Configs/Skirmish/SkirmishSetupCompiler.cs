@@ -71,7 +71,6 @@ namespace Game.Configs
             return true;
         }
 
-#if UNITY_EDITOR
         // Read-only authoring diagnostics. A returned roster is NOT a compiled setup,
         // source-fit proof, native identity, launch permission or readiness declaration.
         public static bool TryInspectStaticAuthoringBudget(SkirmishScenarioDefinitionConfig definition,
@@ -117,7 +116,6 @@ namespace Game.Configs
                 resolved.Forces,resolved.Structures,normal,errors.ToArray());
             return true;
         }
-#endif
         public static bool TryCaptureMissionLogicalAuthoringInputs(SkirmishScenarioDefinitionConfig definition,
             SkirmishDifficultyId difficulty,SkirmishSizeId size,int seed,SkirmishContentManifest manifest,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,out SkirmishMissionLogicalAuthoringInputs inputs,

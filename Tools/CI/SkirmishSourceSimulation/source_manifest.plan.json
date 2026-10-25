@@ -7670,6 +7670,11 @@
       "require_declarations": [
         "public sealed class SkirmishMissionLogicalAuthoringInputs"
       ]
+    },
+    {
+      "id": "ground-return-UnitReturnToBaseCommandService.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/UnitReturnToBaseCommandService.cs"
     }
   ],
   "excluded_nonruntime_sources": [

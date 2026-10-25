@@ -36,7 +36,9 @@ def generate(repo,output):
    text=text[:a]+transport+text[b:]
    sig2='static bool Return(EntityManager em,Entity session,OwnActor actor,ref SkirmishEnemyCapabilityOperationV1 op,float now)'
    if text.count(sig2)!=1:raise ValueError('Unique current return command signature required')
-   ra,rb=method_span(text,sig2);text=text[:ra]+sig2+' { throw new System.NotSupportedException("Original generic-ground return-to-base command owner is not admitted in this incremental host"); }'+text[rb:]
+   ra,rb=method_span(text,sig2);native_return=text[ra:rb]
+   if native_return.count('UnitReturnToBaseCommandService.TryIssueOwned(em,session,2,actor.Entity)')!=1:raise ValueError('Unique current owned return command required')
+   proof.append({'source_method':sig2,'source_body_sha256':hashlib.sha256(native_return.encode()).hexdigest(),'binding':'Complete current native Return body unchanged; observed native UnitTarget owns home evidence, not assumed queue acceptance.'})
    proof.append({'source_method':sig,'source_body_sha256':hashlib.sha256(old.encode()).hexdigest(),'binding':'Full current transport survey/state/casualty/ready-Hold/query/timeout/no-work branches retained; only owned boarding/deploy/disembark invocation frontiers throw. No false feasibility or transport success.'})
   else:
    marker='    public partial struct TransportBoardingCommandSystem'

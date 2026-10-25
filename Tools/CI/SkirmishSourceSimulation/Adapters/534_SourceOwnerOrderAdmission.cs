@@ -2,7 +2,7 @@ using System;using System.Collections.Generic;using System.Linq;using System.Ref
 namespace Game.Runtime {
 // Finite admission of the named current-source owners, not a scheduler implementation.
 internal sealed class SourceOwnerOrderAdmission {
- internal static readonly string[] DeclaredOrder = {"CombatDamageObservationBootstrapSystem","UnitAttackStateEnsureSystem","UnitAttackTraceStateEnsureSystem","SkirmishRosterProjectionSystem","RuntimeGridDeduplicationSystem","DynamicBlockerInitSystem","StaticGridBlockerUpdateSystem","MaterialFabricationSystem","UnitMoveOrderRequestSystem","SkirmishSharedFogUpdateSystem","EngageTargetValidateSystem","DynamicOccupancyRebuildSystem","AttackMoveSystem","UnitEngagementSystem","EngageTargetSyncSystem","UnitManualMoveRetrySystem","UnitPathfindingSystem","UnitEngagedMovementSystem","UnitGridMovementSystem","VehicleFuelConsumptionSystem","UnitAttackSystem","BuildingDefenseAttackSystem","SkirmishCapacityLifecycleSystem","SkirmishArmyGroupSystem","SkirmishResearchSystem","UnitDeathSystem","VehicleWreckCleanupSystem","SkirmishObjectiveFactProjectionSystem","SkirmishBaseAssaultObjectiveSystem","SkirmishNativeObjectiveTickSystem","SkirmishEnemyStrategySystem","SkirmishOutcomeSystem"};
+ internal static readonly string[] DeclaredOrder = {"CombatDamageObservationBootstrapSystem","UnitAttackStateEnsureSystem","UnitAttackTraceStateEnsureSystem","SkirmishRosterProjectionSystem","RuntimeGridDeduplicationSystem","DynamicBlockerInitSystem","StaticGridBlockerUpdateSystem","MaterialFabricationSystem","UnitMoveOrderRequestSystem","SkirmishSharedFogUpdateSystem","EngageTargetValidateSystem","DynamicOccupancyRebuildSystem","AttackMoveSystem","UnitEngagementSystem","EngageTargetSyncSystem","UnitManualMoveRetrySystem","UnitPathfindingSystem","UnitEngagedMovementSystem","UnitGridMovementSystem","VehicleFuelConsumptionSystem","UnitAttackSystem","BuildingDefenseAttackSystem","SkirmishCapacityLifecycleSystem","SkirmishArmyGroupSystem","SkirmishResearchSystem","UnitDeathSystem","VehicleWreckCleanupSystem","SkirmishObjectiveFactProjectionSystem","SkirmishBaseAssaultObjectiveSystem","VehicleFieldRepairSystem","SkirmishNativeObjectiveTickSystem","SkirmishEnemyStrategySystem","SkirmishOutcomeSystem"};
  static readonly Dictionary<string,string[]> PhaseOwners=new Dictionary<string,string[]>(StringComparer.Ordinal){
  {"combat_ensure",new[]{"CombatDamageObservationBootstrapSystem","UnitAttackStateEnsureSystem","UnitAttackTraceStateEnsureSystem"}},
  {"roster",new[]{"SkirmishRosterProjectionSystem"}},
@@ -27,7 +27,9 @@ internal sealed class SourceOwnerOrderAdmission {
  {"research",new[]{"SkirmishResearchSystem"}},
  {"death",new[]{"UnitDeathSystem"}},
  {"vehicle_wreck",new[]{"VehicleWreckCleanupSystem"}},
- {"objective_facts",new[]{"SkirmishObjectiveFactProjectionSystem","SkirmishBaseAssaultObjectiveSystem","SkirmishNativeObjectiveTickSystem"}},
+ {"objective_facts",new[]{"SkirmishObjectiveFactProjectionSystem","SkirmishBaseAssaultObjectiveSystem"}},
+ {"vehicle_repair",new[]{"VehicleFieldRepairSystem"}},
+ {"objective_tick",new[]{"SkirmishNativeObjectiveTickSystem"}},
  {"enemy",new[]{"SkirmishEnemyStrategySystem"}},
  {"objective_outcome",new[]{"SkirmishOutcomeSystem"}}
  };

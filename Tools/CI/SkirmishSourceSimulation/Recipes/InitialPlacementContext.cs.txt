@@ -9,8 +9,6 @@ namespace Game.Runtime { internal sealed partial class BuildingRuntimeSpawnCompo
   internal Func<Vector2Int,Vector2Int,bool> HasCachedInvalidCellInFootprint;
   internal BuildingPlacementValidationUtilitySystemHelper.WallValidationContext WallValidationContext;
  }
- static bool IsTrustPlacementDiagnostic()=>throw new NotSupportedException("Active Campaign diagnostic profile outside generated starting-grant scope");
- static bool IsCitywidePlacementDiagnostic()=>throw new NotSupportedException("Active Campaign diagnostic profile outside generated starting-grant scope");
  static void LogTrustPlacementCells(Context c,RuntimeDefinition d,RectInt r,GridConfig g,DynamicBuffer<GridRoad> b,DynamicBlockerComponent k,string reason)=>throw new NotSupportedException();
  static void LogCitywidePlacementCells(Context c,RuntimeDefinition d,RectInt r,GridConfig g,DynamicBuffer<GridRoad> b,DynamicBlockerComponent k,string reason)=>throw new NotSupportedException();
  static void SurveyCitywideReserveCandidates(Context c,GridConfig g,DynamicBuffer<GridRoad> b,DynamicBlockerComponent k,Vector2Int p)=>throw new NotSupportedException();

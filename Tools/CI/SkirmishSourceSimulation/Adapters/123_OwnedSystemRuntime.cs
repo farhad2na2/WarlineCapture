@@ -37,7 +37,7 @@ namespace Unity.Entities {
   internal ref T BorrowOriginal<T>(Entity e,bool writable)where T:struct{
    if(!HasComponent<T>(e))throw new InvalidOperationException("Source reference requires present component");if(writable)MarkWrite(e,typeof(T));
    if(bank!=null&&bank.Contains(e)){
-    int slot=Array.IndexOf(bank.EntityIds,e.Index+":"+e.Version);
+    int slot=bank.FreshSourceLifetime?bank.CurrentSlot(e):Array.IndexOf(bank.EntityIds,e.Index+":"+e.Version);
     if(typeof(T)==typeof(Game.Components.BuildingResourceStorageComponent))return ref ((T[])(object)bank.Storage)[slot];
     if(typeof(T)==typeof(Game.Components.BuildingResourceProductionProfileComponent))return ref ((T[])(object)bank.Profiles)[slot];
    }

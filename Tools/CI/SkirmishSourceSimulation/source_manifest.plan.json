@@ -2502,15 +2502,6 @@
       "scope": "Explicit package-owned host_glue; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
     },
     {
-      "id": "214_VehicleFieldRepairMovement.source.cs",
-      "kind": "current_original",
-      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs",
-      "signature": "public static void NotifyNewMovement(EntityManager em,Entity actor)",
-      "prefix": "using Unity.Entities;using Game.Components;namespace Game.Runtime{public static class VehicleFieldRepairService{",
-      "suffix": "}}",
-      "output": "214_VehicleFieldRepairMovement.source.cs"
-    },
-    {
       "id": "215_VehicleFuelConsumptionSystem.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs",
@@ -4263,11 +4254,18 @@
         {
           "id": "structure_1",
           "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs",
-          "signature": "public static void BindStructure(EntityManager em, Entity owned, FixedString64Bytes sessionId,"
+          "signature": "public static void BindStructure(EntityManager em, Entity owned, FixedString64Bytes sessionId,",
+          "bindings": [
+            {
+              "from": "SkirmishFacilityEconomyProfile.Apply(em, owned, sessionId, structure.StructureId);",
+              "to": "using(em.BeginSourceEconomyProfileBinding(owned,sessionId,structure.StructureId))\n                SkirmishFacilityEconomyProfile.Apply(em, owned, sessionId, structure.StructureId);",
+              "count": 1
+            }
+          ]
         }
       ],
       "output": "335_SkirmishScenarioStructureBinding.source.cs",
-      "scope": "CURRENT original structure ownership/role/economy binding and generic SetOrAdd; finite host struct constraint only."
+      "scope": "CURRENT original structure ownership/role/economy binding and generic SetOrAdd; finite host struct constraint only. Explicit source-only canonical profile-binding scope around original Apply call; original body/recipe values current-native."
     },
     {
       "id": "336_RuntimeSpawnRequestProcessor.source.cs",
@@ -7107,31 +7105,6 @@
       ]
     },
     {
-      "id": "517_SkirmishEnemyConstructionAdapter.ProducerLoss.cs",
-      "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/517_SkirmishEnemyConstructionAdapter.ProducerLoss.cs",
-      "role": "host_glue",
-      "contains_original_gameplay": false,
-      "scope": "Explicit package-owned host_glue; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
-    },
-    {
-      "id": "518_SkirmishEnemyPlannerService.ActiveClock.cs",
-      "kind": "current_original",
-      "template": "Tools/CI/SkirmishSourceSimulation/Templates/518_SkirmishEnemyPlannerService.ActiveClock.cs.template",
-      "members": [
-        {
-          "id": "body_0",
-          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs",
-          "signature": "public static bool TryReadActiveClock(EntityManager em, Entity session, out float elapsed)",
-          "body_only": true,
-          "shipping": true,
-          "binding_scope": "Exact body tokens unchanged; wrapper signature/namespace are explicit adapter type contract."
-        }
-      ],
-      "output": "518_SkirmishEnemyPlannerService.ActiveClock.cs",
-      "scope": "Original current method bodies; explicit empty-data/state wrapper, no frozen executable residue."
-    },
-    {
       "id": "519_SkirmishResearchService.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs",
@@ -7387,6 +7360,291 @@
       "require_declarations": [
         "public static class AriaGroundBaseAssaultPolicy"
       ]
+    },
+    {
+      "id": "generic-ground-0_SkirmishEnemyPlannerService.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPlannerService.cs"
+    },
+    {
+      "id": "generic-ground-1_SkirmishEnemyCommanderService.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCommanderService.cs"
+    },
+    {
+      "id": "generic-ground-2_SkirmishEnemyEconomicCoordinator.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomicCoordinator.cs"
+    },
+    {
+      "id": "generic-ground-3_SkirmishEnemyEconomyService.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyEconomyService.cs"
+    },
+    {
+      "id": "generic-ground-4_SkirmishEnemyPerceptionBuilder.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPerceptionBuilder.cs"
+    },
+    {
+      "id": "generic-ground-5_SkirmishEnemyCapabilityService.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_ground_enemy_services.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs"
+      ],
+      "generator_output": "SkirmishEnemyCapabilityService.cs",
+      "output": "generic-SkirmishEnemyCapabilityService.cs",
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ]
+    },
+    {
+      "id": "generic-ground-6_SkirmishEnemyCapabilityCommands.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_ground_enemy_services.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs"
+      ],
+      "generator_output": "SkirmishEnemyCapabilityCommands.cs",
+      "output": "generic-SkirmishEnemyCapabilityCommands.cs",
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ]
+    },
+    {
+      "id": "generic-ground-7_SkirmishEnemyPaidProductionAdapter.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyPaidProductionAdapter.cs"
+    },
+    {
+      "id": "generic-ground-8_SkirmishEnemyGroupAllocation.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyGroupAllocation.cs"
+    },
+    {
+      "id": "generic-ground-9_SkirmishEnemyDecisionRules.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyDecisionRules.cs"
+    },
+    {
+      "id": "generic-ground-10_SkirmishEnemyVehicleRepairPolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyVehicleRepairPolicy.cs"
+    },
+    {
+      "id": "ground-VehicleFieldRepairService.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_ground_enemy_services.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityService.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ],
+      "generator_output": "VehicleFieldRepairService.cs",
+      "output": "ground-VehicleFieldRepairService.cs"
+    },
+    {
+      "id": "ground-FactionConstructionResourceUtilitySystemHelper.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs"
+    },
+    {
+      "id": "ground-BuildingRuntimeSpawnCommandSystemHelper.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystemHelper.cs"
+    },
+    {
+      "id": "ground-SkirmishLaunchDefinitionRecord.cs",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishLaunchDefinitionRecord.cs",
+      "signature": "public sealed class SkirmishLaunchDefinitionRecord",
+      "prefix": "using Game.Components;using Game.Configs;using Unity.Entities;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "ground-SkirmishLaunchDefinitionRecord.cs"
+    },
+    {
+      "id": "ground-SkirmishConstructionLedger.cs",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
+      "signature": "public static class SkirmishConstructionLedger",
+      "prefix": "using Game.Components;using Unity.Entities;using UnityEngine;namespace Game.Runtime{",
+      "suffix": "}",
+      "output": "ground-SkirmishConstructionLedger.cs"
+    },
+    {
+      "id": "ground-ScanCapability.cs",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.CommandCapabilities.cs",
+      "signature": "public static bool IsSelectedUnitScanCapable(EntityManager entityManager, Entity entity)",
+      "prefix": "using Unity.Entities;using Game.Components;using Game.Skirmish.Contracts;namespace Game.Runtime{public sealed partial class SelectionUiReadModelLookup{",
+      "suffix": "}}",
+      "output": "ground-ScanCapability.cs"
+    },
+    {
+      "id": "ground-existing-native-bindings.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceGenericGroundEnemyBindings.cs",
+      "role": "host_glue",
+      "contains_original_gameplay": false,
+      "scope": "Only forwards an existing complete current-native method projection under its original call-site class name."
+    },
+    {
+      "id": "ground-NativeProductionTiming.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_ground_timing.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ],
+      "generator_output": "NativeProductionTiming.cs",
+      "output": "ground-NativeProductionTiming.cs"
+    },
+    {
+      "id": "ground-CapabilityPredicates.cs",
+      "kind": "current_original",
+      "template": "Tools/CI/SkirmishSourceSimulation/Templates/GroundEnemyCapabilityPredicates.cs.template",
+      "members": [
+        {
+          "id": "state",
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+          "signature": "internal static bool ValidState(SkirmishEnemyCapabilityStateV1Component state)",
+          "expression_body": true
+        },
+        {
+          "id": "carrier",
+          "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyCapabilityCheckpoint.cs",
+          "signature": "internal static bool IsCarrierRole(SkirmishRoleKind role)",
+          "expression_body": true
+        }
+      ],
+      "output": "ground-CapabilityPredicates.cs",
+      "scope": "Only two original pure predicates consumed by current capability owner; no checkpoint serialization or restore admitted."
+    },
+    {
+      "id": "ground-VehicleRepairRules.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/VehicleRepairRules.cs"
+    },
+    {
+      "id": "ground-OriginalVehicleFieldRepairOwner.cs",
+      "kind": "current_original",
+      "path": "Assets/Game/Scripts/Systems/VehicleFieldRepairSystem.cs",
+      "signature": "protected override void OnUpdate()",
+      "prefix": "using Game.Components;using Unity.Collections;using Unity.Entities;namespace Game.Runtime{internal sealed class SourceVehicleFieldRepairOwner{readonly EntityManager EntityManager;SystemState state;internal SourceVehicleFieldRepairOwner(EntityManager em){EntityManager=em;state=new SystemState{EntityManager=em};}readonly System.Collections.Generic.Dictionary<System.Type,EntityQuery> cached=new System.Collections.Generic.Dictionary<System.Type,EntityQuery>();EntityQuery GetEntityQuery(EntityQueryDesc d){if(d.All==null||d.All.Length!=1||(d.Any!=null&&d.Any.Length!=0)||(d.None!=null&&d.None.Length!=0)||d.Options!=(EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IgnoreComponentEnabledState))throw new System.NotSupportedException(\"Original finite repair query shape changed\");var t=d.All[0].Type;if(t!=typeof(VehicleRepairRequestComponent)&&t!=typeof(VehicleRepairStateComponent))throw new System.NotSupportedException(\"Original repair query type changed\");if(!cached.TryGetValue(t,out var q)){q=state.GetEntityQuery(d);cached.Add(t,q);}return q;}internal void Step(){state.Begin();try{UpdateSource();}finally{state.End();}}",
+      "suffix": "}}",
+      "output": "ground-OriginalVehicleFieldRepairOwner.cs",
+      "bindings": [
+        {
+          "from": "protected override void OnUpdate()",
+          "to": "private void UpdateSource()",
+          "count": 1
+        }
+      ],
+      "scope": "Complete current original request-snapshot/ProcessRequest then active-snapshot/Tick body; finite cached-query SystemState adapter only. Current native ordering admitted separately."
+    },
+    {
+      "id": "ground-NativeConfiguredBuildingSelection.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_building_configuration.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ],
+      "generator_output": "NativeConfiguredBuildingSelection.cs",
+      "output": "ground-NativeConfiguredBuildingSelection.cs"
+    },
+    {
+      "id": "ground-NativeConfiguredBuildingPublisher.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_building_configuration.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ],
+      "generator_output": "NativeConfiguredBuildingPublisher.cs",
+      "output": "ground-NativeConfiguredBuildingPublisher.cs"
+    },
+    {
+      "id": "ground-SkirmishEnemyConstructionAdapter.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_building_configuration.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs",
+        "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyConstructionAdapter.cs",
+        "Assets/Game/Scripts/Systems/BuildingRuntimePublishCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs"
+      ],
+      "generator_helpers": [
+        "Tools/CI/skirmish_source_syntax.py"
+      ],
+      "generator_output": "SkirmishEnemyConstructionAdapter.cs",
+      "output": "ground-SkirmishEnemyConstructionAdapter.cs"
+    },
+    {
+      "id": "ground-ConfiguredBuildingAdmission.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceConfiguredBuildingAdmission.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Owned finite configured source-data capability marker/precondition; no policy or unavailable defaults."
+    },
+    {
+      "id": "ground-ConfiguredBuildingMetadata.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/GeneratedConfiguredBuildingMetadata.cs",
+      "contains_original_gameplay": false,
+      "role": "data_decoder",
+      "scope": "Owned exact selected-prefab/authoring data binder; native selection/publication are current-generated. Same definitions/provider/registry; no policy or geometry defaults."
+    },
+    {
+      "id": "ground-LiveBuildingRedirect.cs",
+      "kind": "current_original",
+      "generator": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_live_building_redirect.py",
+      "generator_inputs": [
+        "Assets/Game/Scripts/Systems/BuildingPlacementRedirectCompositionSystemHelper.cs",
+        "Assets/Game/Scripts/Systems/BuildingGameplayEcsQueryCompositionSystemHelper.cs"
+      ],
+      "generator_output": "BuildingPlacementRedirectCompositionSystemHelper.cs",
+      "output": "ground-LiveBuildingRedirect.cs"
+    },
+    {
+      "id": "ground-CampaignMissionSequence.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Missions/Contracts/CampaignMissionSequence.cs"
+    },
+    {
+      "id": "FreshCanonicalBuildingBirth_Backend.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/FreshCanonicalBuildingBirth_Backend.cs",
+      "role": "engine_boundary",
+      "contains_original_gameplay": false,
+      "scope": "Fresh-source same-bank request/factory/profile capability and structural plumbing. Original pending/native scope/actor/profile values retained; no gameplay acceptance, availability or recipe policy."
     }
   ],
   "excluded_nonruntime_sources": [

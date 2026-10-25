@@ -9,11 +9,13 @@ namespace Game.Runtime
     // Asset-compiled source setup only. No native snapshot or expected post-state is accepted.
     internal static class GeneratedS002SessionConstruction
     {
-        internal static Entity Create(EntityManager em, SkirmishResolvedSetup setup, string attempt)
+        internal static Entity Create(EntityManager em, SkirmishResolvedSetup setup, string attempt, SkirmishScenarioDefinitionConfig actualDefinition)
         {
-            if (em==null || setup==null || setup.CatalogId!="S002" || setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault ||
-                setup.EnemyPolicy!=null || setup.PlayerFaction!=1 || setup.EnemyFaction!=2)
-                throw new NotSupportedException("Source S002 BA/null-policy constructor profile required");
+            if (em==null || setup==null || setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault ||
+                setup.PlayerFaction!=1 || setup.EnemyFaction!=2)
+                throw new NotSupportedException("Source ground BaseAssault constructor profile required");
+            SourceGroundEnemyPolicyAdmission.Require(setup);
+            if(actualDefinition==null||actualDefinition.CatalogId!=setup.CatalogId||actualDefinition.DefinitionId!=setup.DefinitionId||actualDefinition.ContentVersion!=setup.ContentVersion||actualDefinition.OperationMapId!=setup.OperationMapId||actualDefinition.MapLayoutId!=setup.LayoutId)throw new NotSupportedException("Exact actual compiled definition identity required");
             if (string.IsNullOrWhiteSpace(attempt) || System.Text.Encoding.UTF8.GetByteCount(attempt)>61 || attempt.IndexOf('\0')>=0)
                 throw new ArgumentException("Exact bounded fresh logical attempt identity required");
             using var old=em.CreateEntityQuery(new EntityQueryDesc { Any=new[]{ComponentType.ReadOnly<SkirmishMatchState>(),ComponentType.ReadOnly<SkirmishExpandedSessionComponent>()},Options=EntityQueryOptions.IncludeDisabledEntities });
@@ -32,6 +34,7 @@ namespace Game.Runtime
             em.AddComponentData(entity,new SkirmishResolvedSetupComponent {SetupHash=setup.SetupHash,ContentVersion=setup.ContentVersion,
                 DefinitionId=new FixedString64Bytes(setup.DefinitionId),DeadlineSeconds=setup.DeadlineSeconds,PlayerFaction=setup.PlayerFaction,EnemyFaction=setup.EnemyFaction});
             em.AddComponentData(entity,new SkirmishResolvedSetupRecord{Setup=setup});
+            em.AddComponentData(entity,new SkirmishLaunchDefinitionRecord(actualDefinition,setup,SkirmishMissionDispatch.RequiresSourceBoundDefinition(setup.CatalogId,setup.ContentVersion)));
             GeneratedSessionRoles.ProjectRoles(em,entity,setup);
             // Exact original EnsureSession early return for this admitted S002/null policy.
             // Non-null/new-policy paths are rejected BEFORE entity allocation above.

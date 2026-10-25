@@ -18,8 +18,9 @@ internal sealed class AutonomousFogObjectiveOwners {
  int pendingFactsTick=-1;
  internal void AfterDeathObjectiveFacts(int worldTick){if(stopped)throw new NotSupportedException("Failed owner phase is terminal");try{ValidateScope();if(worldTick<0||worldTick!=lastFogTick||worldTick<=lastObjectiveTick||pendingFactsTick!=-1)throw new NotSupportedException("Original facts require same tick fog/death frontier once");pendingFactsTick=worldTick;facts.Step(em);baseAssault.Step(em);
  // Original NativeObjectiveTickSystem excludes BaseAssault. ValidateScope admits exactly that source branch;
- // this named barrier preserves its declared After(Facts,Death) and Before(Enemy) dependencies.
+ // the separately named objective_tick barrier preserves its After(Facts,Death,Repair) and Before(Enemy) dependencies.
  }catch{stopped=true;throw;}}
+ internal void ObserveExcludedBaseAssaultNativeTick(int worldTick){ValidateScope();if(stopped||pendingFactsTick!=worldTick||worldTick<=lastObjectiveTick)throw new NotSupportedException("Native BaseAssault tick exclusion requires this same facts frontier");}
  internal void AfterEnemyOutcomeAndPublic(int worldTick){if(stopped)throw new NotSupportedException("Failed owner phase is terminal");try{ValidateScope();if(pendingFactsTick!=worldTick||worldTick<=lastObjectiveTick)throw new NotSupportedException("Original outcome requires this tick facts/native-tick frontier");
  outcome.Step(em);bool paused=AutonomousOwnerSingleton.Try(em,out RuntimeGameplayStateComponent gameplay)&&gameplay.SimulationActive==0;using var query=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));using var sessions=query.ToEntityArray(Allocator.Temp);foreach(var e in sessions){if(em.GetComponentData<SkirmishExpandedSessionComponent>(e).IsLegacy!=0)continue;SkirmishExpandedSessionControlService.ProjectMatchPhase(em,e);SkirmishBaseAssaultHudProjection.Observe(em,e,em.WorldUnmanaged.Time.DeltaTime,paused);SkirmishExpandedSessionControlService.ProjectTerminalMatch(em,e);}lastObjectiveTick=worldTick;pendingFactsTick=-1;
  }catch{stopped=true;throw;}}

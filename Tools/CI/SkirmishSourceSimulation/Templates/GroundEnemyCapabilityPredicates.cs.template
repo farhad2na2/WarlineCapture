@@ -1,0 +1,2 @@
+using Game.Components;using Game.Skirmish.Contracts;namespace Game.Runtime{internal static class SkirmishEnemyCapabilityCheckpoint{internal static bool ValidState(SkirmishEnemyCapabilityStateV1Component state)=>/*SOURCE:state*/;
+internal static bool IsCarrierRole(SkirmishRoleKind role)=>/*SOURCE:carrier*/;}}

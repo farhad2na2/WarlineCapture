@@ -9,6 +9,7 @@ namespace Game.Runtime {
   internal void BindActualPaidCatalog(string metadataPath,string metadataSha){
    if(ActualCatalog!=null||ActualDeliveryOwner?.Helicopters==null)throw new InvalidOperationException("Complete actual paid delivery context required once");
    var catalog=GeneratedS002CatalogAvailabilityBinding.Bind(Entities,Session,ActualUnitMetadata,metadataPath,metadataSha);
+   Entities.GetComponentObject<SkirmishProductionCatalogRecord>(Session).Catalog.BindSourceDeliveryMetadata(ActualUnitMetadata.Ordered.ToDictionary(row=>row.Prefab.name,row=>row.Prefab,StringComparer.Ordinal),ActualUnitMetadata.TryMetadata);
    Entity bank=Entity.Null;using(var q=Entities.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent)))using(var es=q.ToEntityArray(Allocator.Temp))foreach(var e in es){if(!FactionIdentity.IsPlayerControlled(Entities.GetComponentData<FactionEconomy>(e).FactionId))continue;if(bank!=Entity.Null)throw new NotSupportedException("Ambiguous source controlled-faction bank");bank=e;}
    if(bank==Entity.Null)throw new NotSupportedException("Actual source material bank missing");
    if(SourceDefinitions.Definitions.Any(d=>d.HasRunway))throw new NotSupportedException("Runway owner is outside current ordinary S002 ground profile");

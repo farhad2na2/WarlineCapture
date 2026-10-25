@@ -7692,6 +7692,14 @@
         "public sealed class SkirmishStaticAuthoringBudget"
       ],
       "scope": "Current immutable data-only native authoring budget. Exposes cloned force/structure rows and canonical diagnostics, never rejected setup/hash/launch payload."
+    },
+    {
+      "id": "SourceOperationMapRotationReference.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceOperationMapRotationReference.cs",
+      "contains_original_gameplay": false,
+      "role": "host_glue",
+      "scope": "Exact four-input raw-bit native 6000.5.8f1 asset-data rotation reference. No Euler implementation/fallback; current conversion-member drift and unknown inputs reject. Does not admit native root/world readiness."
     }
   ],
   "excluded_nonruntime_sources": [

@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib,json,os,platform,re,shutil,subprocess,sys,time,importlib.util,math,types
 from pathlib import Path
 from skirmish_source_manifest import resolve_manifest,need,sha
+import skirmish_owned_source as owned
 sys.dont_write_bytecode=True
 
 def pin(path):
@@ -53,8 +54,8 @@ def build(repo,package,manifest,output,mission='S002',seed=104731):
  repo=Path(repo).resolve(strict=True);package=Path(package).resolve(strict=True);out=Path(output).absolute();need(not out.exists(),'Fresh isolated build output required');out.mkdir(parents=True)
  result=resolve_manifest(repo,package,manifest,out/'source',mission,seed)
  need(not result['unresolved'],'Unmaterialized source recipes: '+', '.join(x['id']for x in result['unresolved']))
- tools=runtime_paths(repo);placement_root=package/'Tools/CI/SkirmishSourceSimulation/Placement';sys.path.insert(0,str(placement_root));spec=importlib.util.spec_from_file_location('source_placement_build',placement_root/'build_source_placement_domain.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);placement=module.build(repo,tools['engine'],out/'placement')
- pins=dict(result['pins']);verify(pins);merge_pins(pins,{x['path']:x['sha256']for x in result['resolved']});merge_pins(pins,placement['source_and_reference_pins']);code=out/'SourceSimulation.exe';sources=[Path(x['path'])for x in result['resolved']]
+ tools=runtime_paths(repo);placement_root=package/'Tools/CI/SkirmishSourceSimulation/Placement';module=owned.load_placement(placement_root);placement=module.build(repo,tools['engine'],out/'placement')
+ pins=dict(result['pins']);merge_pins(pins,owned.pins());verify(pins);merge_pins(pins,{x['path']:x['sha256']for x in result['resolved']});merge_pins(pins,placement['source_and_reference_pins']);code=out/'SourceSimulation.exe';sources=[Path(x['path'])for x in result['resolved']]
  identity_tool=package/'Tools/CI/generate_navigation_facts_identity.py';identity_output=out/'source/generated/SourceNavigationFactsIdentity.cs';identity_inputs=out/'navigation-facts-sources.rsp'
  identity_inputs.write_text('\n'.join(json.dumps(str(x))for x in sources)+'\n')
  _generate_navigation_identity(identity_tool,identity_inputs,identity_output,pins);sources.append(identity_output)
@@ -79,7 +80,7 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
   row=inputs[key];p=Path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks
- write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,extra);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
+ write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
  start=time.monotonic();returncode=None;timed_out=False
  with (out/'process.log').open('w')as log:
   process=subprocess.Popen([str(tools['mono']),'--config',str(config),'--optimize=-float32',exe['path'],str(out/'run-request.json')],env=env,stdout=log,stderr=subprocess.STDOUT)

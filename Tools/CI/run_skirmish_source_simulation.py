@@ -4,6 +4,21 @@ from __future__ import annotations
 import argparse,json,sys
 from pathlib import Path
 sys.dont_write_bytecode=True
+def _bootstrap_owned_source():
+ import hashlib,types
+ root=Path(__file__).resolve().parent;path=root/'skirmish_owned_source.py';raw=path.read_bytes()
+ if len(raw)>2*1024*1024:raise ValueError('Bounded owned loader source required')
+ if 'skirmish_owned_source' in sys.modules:raise ValueError('Unowned loader module collision')
+ module=types.ModuleType('skirmish_owned_source');module.__file__=str(path);module.__executed_source_pin__={'path':str(path),'sha256':hashlib.sha256(raw).hexdigest()};sys.modules[module.__name__]=module
+ try:
+  exec(compile(raw,str(path),'exec'),module.__dict__)
+  if path.read_bytes()!=raw:raise ValueError('Owned loader source changed during bootstrap')
+  module.load_cli(root)
+ except BaseException:
+  if sys.modules.get(module.__name__)is module:del sys.modules[module.__name__]
+  raise
+ return module
+owned=_bootstrap_owned_source()
 from skirmish_source_manifest import resolve_manifest,UnsupportedSourceShape
 
 def main():

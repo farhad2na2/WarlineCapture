@@ -6,8 +6,8 @@ sys.dont_write_bytecode=True
 sys.path.insert(0,str(REAL/"Tools/CI"))
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import skirmish_causal_worker,skirmish_source_syntax
-SPEC=importlib.util.spec_from_file_location("source_manifest",Path(__file__).resolve().parents[1]/"skirmish_source_manifest.py")
-m=importlib.util.module_from_spec(SPEC);SPEC.loader.exec_module(m)
+import skirmish_owned_source as owned
+m=owned.require("skirmish_source_manifest")
 class SourceManifestTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup);self.base=Path(self.tmp.name);self.repo=self.base/"repo";self.package=self.base/"package";(self.repo/"Tools/CI").mkdir(parents=True);self.package.mkdir()

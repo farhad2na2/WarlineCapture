@@ -8,6 +8,21 @@ from __future__ import annotations
 import argparse, json, math, os, subprocess, sys, time
 from pathlib import Path
 sys.dont_write_bytecode = True
+def _bootstrap_owned_source():
+ import hashlib,types
+ root=Path(__file__).resolve().parent;path=root/'skirmish_owned_source.py';raw=path.read_bytes()
+ if len(raw)>2*1024*1024:raise ValueError('Bounded owned loader source required')
+ if 'skirmish_owned_source' in sys.modules:raise ValueError('Unowned loader module collision')
+ module=types.ModuleType('skirmish_owned_source');module.__file__=str(path);module.__executed_source_pin__={'path':str(path),'sha256':hashlib.sha256(raw).hexdigest()};sys.modules[module.__name__]=module
+ try:
+  exec(compile(raw,str(path),'exec'),module.__dict__)
+  if path.read_bytes()!=raw:raise ValueError('Owned loader source changed during bootstrap')
+  module.load_cli(root)
+ except BaseException:
+  if sys.modules.get(module.__name__)is module:del sys.modules[module.__name__]
+  raise
+ return module
+owned=_bootstrap_owned_source()
 from skirmish_source_build import need, verify, sha, pin, write, merge_pins, prepare_mono_config
 from skirmish_source_manifest import UnsupportedSourceShape
 
@@ -37,7 +52,7 @@ def prepare(build_receipt, data_bundle, output, timeout=60):
     initialization,ip=read_json_pinned(bundle['initialization']['path']);need(ip['sha256']==bundle['initialization']['sha256'],'Initialization changed')
     raw=initialization['navigation_reference'];need('facts' not in raw,'Preparation starts from retained raw descriptor')
     descriptor=out/'raw-descriptor.json';write(descriptor,raw);config,extra=prepare_mono_config(tools,out)
-    pins=dict(build['source_and_reference_pins']);merge_pins(pins,extra);merge_pins(pins,{bp['path']:bp['sha256'],dp['path']:dp['sha256'],ip['path']:ip['sha256'],exe['path']:exe['sha256'],str(descriptor):sha(descriptor.read_bytes()),raw['path']:raw['sha256']});verify(pins)
+    pins=dict(build['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,{bp['path']:bp['sha256'],dp['path']:dp['sha256'],ip['path']:ip['sha256'],exe['path']:exe['sha256'],str(descriptor):sha(descriptor.read_bytes()),raw['path']:raw['sha256']});verify(pins)
     env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(Path(build['repository_root'])/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(build['placement_build']).parent)])
     command=[str(tools['mono']),'--config',str(config),'--optimize=-float32',exe['path'],'prepare-navigation-facts',str(descriptor),str(out/'facts')]
     start=time.monotonic();timed_out=False

@@ -8,8 +8,9 @@ from __future__ import annotations
 import hashlib,json,os,sys,re,tempfile
 from pathlib import Path,PurePosixPath
 sys.dont_write_bytecode=True
+import skirmish_owned_source as owned
 MAX_SOURCE=16*1024*1024
-MODULE_SOURCE_SHA=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+MODULE_SOURCE_SHA=owned.module_pin(__name__,__file__)
 
 class UnsupportedSourceShape(ValueError):pass
 def need(ok,message):
@@ -86,8 +87,8 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
     need(mission=="S002"and seed==104731,"Unsupported mission/seed; admitted source profile is S002/104731")
     # Reuse repository primitives; importing has no build/run effects.
     sys.path.insert(0,str(repo/"Tools/CI"))
-    import skirmish_causal_worker as causal
-    import skirmish_source_syntax as aria
+    causal=owned.require("skirmish_causal_worker")
+    aria=owned.require("skirmish_source_syntax")
     raw_manifest=Path(manifest_path).read_bytes()
     data=json.loads(raw_manifest,object_pairs_hook=aria.no_duplicates)
     need(data.get("schema_version")==1 and data.get("profile")=={"mission":"S002","seed":104731,"numeric_runtime":"InstalledMono"},
@@ -96,8 +97,11 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
     output=Path(output).absolute();generated_root=(output/"generated").resolve()
     entries=data.get("sources");need(isinstance(entries,list)and 0<len(entries)<=2048,"Finite source list required")
     pins={str(Path(manifest_path).resolve()):sha(raw_manifest),str(Path(__file__).resolve()):MODULE_SOURCE_SHA}
+    pins.update(owned.pins())
     for helper in [repo/"Tools/CI/skirmish_causal_worker.py",Path(aria.__file__).resolve()]:
-        pins[str(helper)]=sha(helper.read_bytes())
+        key=str(helper);digest=sha(helper.read_bytes())
+        need(key not in pins or pins[key]==digest,"Conflicting executed helper epoch: "+key)
+        pins[key]=digest
     resolved=[];pending=[];ids=set();destinations=set();emissions=[];generator_cache={}
     for entry in entries:
         identity=entry.get("id");need(isinstance(identity,str)and identity and identity not in ids,"Unique source id required");ids.add(identity)
@@ -187,6 +191,9 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
             for required in detail.get("generation_proof",{}).get("required_current_links",[]):
                 need(str((Path(required)if Path(required).is_absolute()else repo/Path(required)).resolve())in direct_paths,"Missing coherent current source companion: "+required)
     # No source writes until all entries and shapes were checked.
+    for path,expected in owned.pins().items():
+        need(path not in pins or pins[path]==expected,"Conflicting executed owned-source epoch: "+path)
+        pins[path]=expected
     for path,expected in pins.items():
         need(sha(Path(path).read_bytes())==expected,"Source/helper/manifest changed before emission: "+path)
     need(not output.exists(),"New isolated output directory required")

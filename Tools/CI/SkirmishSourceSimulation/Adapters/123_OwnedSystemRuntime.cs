@@ -28,7 +28,7 @@ namespace Unity.Entities {
   internal ref T Borrow<T>(Entity e,bool writable)where T:struct{
    // Preserve canonical routing and all unusual/missing/buffer-only failure behavior.
    // Ordinary present cells need only one row/type lookup. No value or reference is cached.
-   if(typeof(T)!=typeof(Game.Components.BuildingResourceStorageComponent)&&typeof(T)!=typeof(Game.Components.BuildingResourceProductionProfileComponent)&&data.TryGetValue(e,out var row)&&row.TryGetValue(typeof(T),out var value)){
+   if(typeof(T)!=typeof(Game.Components.BuildingResourceStorageComponent)&&typeof(T)!=typeof(Game.Components.BuildingResourceProductionProfileComponent)&&TryLogicalDataRow(e,out var row)&&row.TryGetValue(typeof(T),out var value)){
     if(writable)MarkWrite(e,typeof(T));
     return ref ((ComponentCell<T>)value).Value;
    }

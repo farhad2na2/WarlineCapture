@@ -7363,6 +7363,14 @@
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Explicit data-only CLI preparation using current original decoder; no runtime entities or grid decisions cached."
+    },
+    {
+      "id": "LogicalRowDirectory_Backend.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/LogicalRowDirectory.cs",
+      "role": "engine_boundary",
+      "contains_original_gameplay": false,
+      "scope": "Private bounded fresh-logical Entity+Version directory of same authoritative row dictionaries; exact generic/default fallback, no component presence/value or query-state cache."
     }
   ],
   "excluded_nonruntime_sources": [

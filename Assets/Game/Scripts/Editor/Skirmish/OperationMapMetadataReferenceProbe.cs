@@ -29,6 +29,51 @@ namespace Game.Tests.Editor
         static JArray Q(quaternion q) => F(q.value.x, q.value.y, q.value.z, q.value.w);
         static JObject Method(MethodInfo method) { if (method == null || method.GetMethodBody() == null) throw new InvalidOperationException("Expected exact managed conversion method"); return new JObject { ["declaring_type"] = method.DeclaringType.FullName, ["name"] = method.Name, ["metadata_token"] = method.MetadataToken, ["il_sha256"] = Sha(method.GetMethodBody().GetILAsByteArray()) }; }
 
+        // Separate receipt: actual imported source values through the shared V2 writers.
+        // Keeps the existing 9-rotation metadata reference format unchanged.
+        public static void RunBindingSourceFingerprints()
+        {
+            int exit = 1;
+            try
+            {
+                CaptureBindingSourceFingerprints("WARLINE_OPMAP_BINDING_SOURCE_REFERENCE_OUTPUT", "binding-source-reference.json", AssetPath, AssetSha, "cbfc2f62e3142413485019bd83197539");
+                CaptureBindingSourceFingerprints("WARLINE_OPMAP_LEGACY_BINDING_SOURCE_REFERENCE_OUTPUT", "legacy-binding-source-reference.json", "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset", "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0", "55e36a8d7e7a84e2b9893cee052b0e61");
+                Debug.Log("[OperationMapBindingSourceReference] result=Passed assets=2 valueFormat=2");
+                exit = 0;
+            }
+            catch (Exception exception) { Debug.LogException(exception); }
+            EditorApplication.Exit(exit);
+        }
+
+        // Private fixed-two-source helper; no public asset selection/export surface.
+        static void CaptureBindingSourceFingerprints(string outputEnvironment, string outputName, string sourcePath, string sourceSha, string expectedGuid)
+        {
+            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            string output = Environment.GetEnvironmentVariable(outputEnvironment);
+            if (string.IsNullOrEmpty(output) || !Path.IsPathRooted(output)) throw new InvalidOperationException("Explicit absolute binding reference output required");
+            output = Path.GetFullPath(output);
+            if (!output.StartsWith("/private/tmp/", StringComparison.Ordinal) || Path.GetFileName(output) != outputName) throw new InvalidOperationException("Owned private/tmp binding-source-reference.json required");
+            if (FileSha(Path.Combine(root, sourcePath)) != sourceSha) throw new InvalidOperationException("Approved source asset changed");
+            var definition = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(sourcePath);
+            if (definition == null || AssetDatabase.GetAssetPath(definition) != sourcePath || EditorUtility.IsDirty(definition)) throw new InvalidOperationException("Clean actual approved source required");
+            if (!AssetDatabase.TryGetGUIDAndLocalFileIdentifier(definition, out string guid, out long localId) || guid != expectedGuid || localId != 11400000) throw new InvalidOperationException("Actual source identity changed");
+            string[] relativePins = { sourcePath, sourcePath + ".meta", "Assets/Game/Scripts/Configs/OperationMapConfigModels.cs", "Assets/Game/Scripts/Configs/OperationMapDefinition.cs", "Assets/Game/Scripts/Configs/Skirmish/SkirmishBindingCanonicalValues.cs", "Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs", "Assets/Game/Scripts/Configs/Skirmish/SkirmishMissionLogicalBindingConfig.cs", "Assets/Game/Scripts/Simulation/SkirmishBindingCanonicalBytes.cs", "Assets/Game/Scripts/Configs/Game.Configs.asmdef", "Assets/Game/Scripts/Editor/Skirmish/OperationMapMetadataReferenceProbe.cs", "Assets/Game/Scripts/Editor/Skirmish/OperationMapMetadataReferenceProbe.cs.meta" };
+            var pins = new JObject(); foreach (string path in relativePins) pins[path] = FileSha(Path.Combine(root, path));
+            if (!SkirmishBindingCanonicalValues.HasSupportedSchema()) throw new InvalidOperationException("Exact shared canonical value schema required");
+            string missionSource = SkirmishBindingCanonicalValues.SourceFingerprint(definition);
+            string fullSource = SkirmishBindingCanonicalValues.FullSourceFingerprint(definition);
+            var producers = new JObject { ["Game.Configs"] = AssemblyIdentity(typeof(SkirmishBindingCanonicalValues).Assembly), ["probe_owner"] = AssemblyIdentity(typeof(OperationMapMetadataReferenceProbe).Assembly) };
+            Assembly simulation = null; foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies()) if (assembly.GetName().Name == "Game.Simulation") { if (simulation != null) throw new InvalidOperationException("Ambiguous loaded Simulation assembly"); simulation = assembly; }
+            if (simulation == null) throw new InvalidOperationException("Actual shared byte writer assembly not loaded"); producers["Game.Simulation"] = AssemblyIdentity(simulation);
+            var result = new JObject { ["schema_version"] = 1, ["kind"] = "NativeOperationMapBindingSourceFingerprints", ["value_format"] = 2, ["source_asset"] = new JObject { ["path"] = sourcePath, ["sha256"] = sourceSha, ["guid"] = guid, ["local_id"] = localId }, ["source_pins"] = pins, ["schema_supported"] = true, ["mission_source_v2"] = missionSource, ["full_layout_source_v2"] = fullSource, ["source_input_transcripts"] = OperationMapBindingValueTranscript.Capture(definition), ["writer_methods"] = new JObject { ["mission_source"] = Method(typeof(SkirmishBindingCanonicalValues).GetMethod("SourceFingerprint", new[] { typeof(OperationMapDefinition) })), ["full_layout_source"] = Method(typeof(SkirmishBindingCanonicalValues).GetMethod("FullSourceFingerprint", new[] { typeof(OperationMapDefinition) })) }, ["producer_assemblies"] = producers, ["unity_version"] = Application.unityVersion, ["little_endian"] = BitConverter.IsLittleEndian, ["world_created"] = false, ["mission_run"] = false, ["scope"] = "Actual clean imported source values through SAME schema-checked canonical C# byte writers. Source identity only, no source-fit/native-root/renderer/playability claim." };
+            foreach (string path in relativePins) if ((string)pins[path] != FileSha(Path.Combine(root, path))) throw new InvalidOperationException("Source changed during binding fingerprint probe");
+            foreach (var producer in producers.Properties()) if ((string)producer.Value["sha256"] != FileSha((string)producer.Value["path"])) throw new InvalidOperationException("Loaded producer changed");
+            if (EditorUtility.IsDirty(definition)) throw new InvalidOperationException("Probe dirtied source asset");
+            byte[] bytes = Encoding.UTF8.GetBytes(result.ToString(Formatting.Indented) + "\n"); if (bytes.Length > 65536) throw new InvalidOperationException("Bounded binding reference exceeded64KiB");
+            Directory.CreateDirectory(Path.GetDirectoryName(output)); using (var stream = new FileStream(output, FileMode.CreateNew, FileAccess.Write, FileShare.None)) { stream.Write(bytes, 0, bytes.Length); stream.Flush(true); }
+            Debug.Log("[OperationMapBindingSourceReceipt] result=Passed valueFormat=2 missionSource=" + missionSource + " fullSource=" + fullSource + " output=" + output + " sha256=" + Sha(bytes));
+        }
+
         public static void Run()
         {
             int exit = 1;
@@ -109,5 +154,53 @@ namespace Game.Tests.Editor
             EditorApplication.Exit(exit);
         }
     }
+    // Field-only diagnostic reader. Finite existing canonical DTO shapes only.
+    internal static class OperationMapBindingValueTranscript
+    {
+        static int nodes;
+        static readonly System.Collections.Generic.Dictionary<string,string[]> Shapes = new System.Collections.Generic.Dictionary<string,string[]> {
+            ["Game.Configs.SkirmishMeasuredLayoutBinder+SourceValues"] = "OperationMapId SourceIdentityHash ContentHash GeneratedMetadataHash PlanningCameraId BattleCameraId SchemaVersion ContentVersion PresentationKind RenderResidencyMode SourceBinding Bounds Grid Surface Navigation Cameras Anchors Minimap Scene SurfaceData MinimapRaster StaticPresentation Buildings Vehicles HeavyMetadata AdditionalBuildings".Split(' '),
+            ["Game.Configs.SkirmishMissionLogicalBindingCompiler+Source"] = "Id Identity Content Metadata Scene SchemaVersion ContentVersion Bounds Grid Surface Navigation".Split(' '),
+            ["Game.Configs.SkirmishMeasuredLayoutBinder+StableReference"] = "Guid SubObjectName".Split(' '),
+            ["Game.Configs.SkirmishMeasuredLayoutBinder+PlacementValues"] = "SpawnOnMatchStart HideAuthoringVisualsAfterSpawn UseExistingStaticPresentationWhenAuthoringVisualMissing Placements".Split(' '),
+            ["Game.Configs.SkirmishMeasuredLayoutBinder+PlacementValue"] = "SourcePath Category PrefabPresent Faction Center Position EulerAngles Scale Yaw RotateVertical InstantiateVisualWhenSourceMissing UseGeometricFootprintCenter".Split(' '),
+            ["Game.Configs.OperationMapBoundsConfig"] = "worldMin worldMax playableMin playableMax cameraMin cameraMax".Split(' '),
+            ["Game.Configs.OperationMapGridMetadataConfig"] = "assetGuid contentHash origin dimensions cellSize authoredBlockedCellCount".Split(' '),
+            ["Game.Configs.OperationMapSurfaceMetadataConfig"] = "assetGuid contentHash runtimeBlobHash surfaceCount payloadVersion payloadEncoding minimumHeight maximumHeight".Split(' '),
+            ["Game.Configs.OperationMapNavigationMetadataConfig"] = "authoredSubSceneGuid gridAuthoringLocalId staticGridBlockerCount usesSurfaceMovementMetadata supportsDynamicBlockers supportsDynamicOccupancy".Split(' '),
+            ["Game.Configs.OperationMapCameraConfig"] = "cameraId position eulerAngles orthographic fieldOfView orthographicSize clampToCameraBounds".Split(' '),
+            ["Game.Configs.OperationMapAnchorConfig"] = "anchorId kind position eulerAngles radius factionId laneIndex".Split(' '),
+            ["Game.Configs.OperationMapMinimapConfig"] = "minimapId projectionOrigin projectionSize orientationDegrees".Split(' '),
+            ["Game.Configs.OperationMapSourceBindingConfig"] = "sourceOperationMapId sourceIdentityHash sourceContentHash".Split(' '),
+            ["UnityEngine.Vector3"] = "x y z".Split(' '), ["UnityEngine.Vector2"] = "x y".Split(' '), ["UnityEngine.Vector2Int"] = "m_X m_Y".Split(' ')
+        };
+        static object Snapshot(Type owner, string methodName, OperationMapDefinition source)
+        {
+            var method = owner.GetMethod(methodName, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, new[] { typeof(OperationMapDefinition) }, null);
+            if (method == null || !Shapes.ContainsKey(method.ReturnType.FullName)) throw new InvalidOperationException("Finite original typed source snapshot missing");
+            return method.Invoke(null, new object[] { source });
+        }
+        internal static JObject Capture(OperationMapDefinition source)
+        {
+            if (!SkirmishBindingCanonicalValues.HasSupportedSchema()) throw new InvalidOperationException("Exact shared value schema required before transcript"); nodes = 0;
+            return new JObject { ["mission_source"] = Read(Snapshot(typeof(SkirmishMissionLogicalBindingCompiler), "SourceValueSnapshot", source), 0), ["full_layout_source"] = Read(Snapshot(typeof(SkirmishMeasuredLayoutBinder), "CanonicalSourceValueSnapshot", source), 0) };
+        }
+        static JToken Read(object value, int depth)
+        {
+            if (++nodes > 4096 || depth > 16) throw new InvalidOperationException("Bounded source transcript exceeded");
+            if (value == null) return JValue.CreateNull(); Type type = value.GetType();
+            if (type == typeof(string)) return new JValue((string)value);
+            if (type == typeof(float)) return new JObject { ["f32bits"] = BitConverter.ToInt32(BitConverter.GetBytes((float)value), 0) };
+            if (type == typeof(bool)) return new JValue((bool)value);
+            if (type == typeof(int) || type == typeof(long) || type == typeof(byte)) return new JValue(Convert.ToInt64(value));
+            if (type.IsEnum) return new JObject { ["enum_type"] = type.FullName, ["value"] = Convert.ToInt64(value) };
+            if (type.IsArray) { var array = (Array)value; if (array.Rank != 1 || array.Length > 256) throw new InvalidOperationException("Finite source array bound"); var result = new JArray(); for (int i = 0; i < array.Length; i++) result.Add(Read(array.GetValue(i), depth + 1)); return result; }
+            if (!Shapes.TryGetValue(type.FullName, out var names)) throw new InvalidOperationException("Unadmitted transcript type: " + type.FullName);
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            if (fields.Length != names.Length) throw new InvalidOperationException("Finite source field schema changed: " + type.FullName);
+            var output = new JObject(); foreach (string name in names) { var field = type.GetField(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic); if (field == null) throw new InvalidOperationException("Missing finite source field " + name); output[name] = Read(field.GetValue(value), depth + 1); } return output;
+        }
+    }
+
 }
 #endif

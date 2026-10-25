@@ -577,13 +577,13 @@ namespace Game.Runtime
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             float now)
         {
-            bool forcePublish = _forcePublishNextUpdate;
-            if (!forcePublish && _configuredReadModelsPublished && now < _nextPublishAt)
+            var publishDecision = Game.Simulation.BuildingReadModelPublishCadenceKernel.Begin(
+                now, PublishIntervalSeconds, _configuredReadModelsPublished,
+                ref _forcePublishNextUpdate, ref _nextPublishAt);
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Skip)
                 return;
 
-            _forcePublishNextUpdate = false;
-            _nextPublishAt = now + PublishIntervalSeconds;
-            if (!_configuredReadModelsPublished)
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Initial)
             {
                 PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
                 PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
@@ -607,7 +607,7 @@ namespace Game.Runtime
                 return;
             }
 
-            if (forcePublish)
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Forced)
             {
                 PublishAllDynamicReadModels(
                     definitionSystem,
@@ -671,7 +671,7 @@ namespace Game.Runtime
                         _lastPublishedFactionSummarySignature = factionSummarySignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.OwnedBuildingSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 case PublishPhase.OwnedBuildingSummaries:
                     int ownedBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
@@ -681,7 +681,7 @@ namespace Game.Runtime
                         _lastPublishedOwnedBuildingSummarySignature = ownedBuildingSignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.UnitProductionSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 case PublishPhase.UnitProductionSummaries:
                     int unitProductionSummarySignature = ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
@@ -691,7 +691,7 @@ namespace Game.Runtime
                         _lastPublishedUnitProductionSummarySignature = unitProductionSummarySignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.BuildingSetReadModels;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 default:
                     int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
@@ -702,7 +702,7 @@ namespace Game.Runtime
                         _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.FactionSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
             }
         }

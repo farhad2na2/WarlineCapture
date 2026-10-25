@@ -15,6 +15,29 @@ namespace Game.Editor
 {
     public static partial class SkirmishGroundSourceFitSurvey
     {
+        public static Dictionary<SkirmishRoleKind,float> CreateRefinementAircraftEngineeringTargets(
+            IEnumerable<SkirmishMissionLogicalAuthoringInputs> inputs,EntityManager em,out JArray targetFacts)
+        {
+            var targets=new Dictionary<SkirmishRoleKind,float>();targetFacts=new JArray();
+            foreach(var role in inputs.SelectMany(i=>i.RequiredFramingRoles).Distinct().Where(r=>SkirmishRoleIds.Category(r)==SkirmishPopulationCategory.Air))
+            {
+                var prefab=FindNativePrefab(em,SkirmishRoleCatalogConfig.RuntimePrefabKey(role));
+                Require(prefab!=Entity.Null&&em.HasComponent<UnitSelectionHitbox>(prefab),"Actual native role body bounds required for authored aircraft target: "+role);
+                var hitbox=em.GetComponentData<UnitSelectionHitbox>(prefab);
+                Require(math.all(math.isfinite(hitbox.Extents))&&math.all(hitbox.Extents>0),"Finite actual body extents required");
+                // A role-specific initial engineering lower bound derived from its
+                // actual body at the authored far lens. Swept rotor/near-clip and
+                // comfortable native imagery remain independent required gates.
+                float projectedRadius=hitbox.Extents.y*Mathf.Cos(50*Mathf.Deg2Rad)+math.max(hitbox.Extents.x,hitbox.Extents.z)*Mathf.Sin(50*Mathf.Deg2Rad);
+                float minimum=projectedRadius/(300*Mathf.Tan(30*Mathf.Deg2Rad));
+                Require(float.IsFinite(minimum)&&minimum>0&&minimum<.45f,"Actual role bounds cannot support proposed aircraft engineering lens");
+                targets.Add(role,minimum);targetFacts.Add(new JObject{["role"]=role.ToString(),["nativePrefabIndex"]=prefab.Index,["nativePrefabVersion"]=prefab.Version,
+                    ["bodyExtents"]=new JArray(hitbox.Extents.x,hitbox.Extents.y,hitbox.Extents.z),["minimumViewportHeightEngineering"]=minimum,
+                    ["scope"]="ActualBodyProjectionAtPitch50Fov60Distance300_NotRotorOrComfortAcceptance"});
+            }
+            return targets;
+        }
+
         static void FinalizeRefinementAuthoring(GroundObjective30CandidateOwner owner,EntityManager em,GridConfig grid,
             MapSurfaceComponent surface,JObject output,string artifactPrefix)
         {
@@ -42,23 +65,7 @@ namespace Game.Editor
                     new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out var actual,out var reasons),string.Join(";",reasons));
                 inputs.Add(actual);
             }
-            var targets=new Dictionary<SkirmishRoleKind,float>();var targetFacts=new JArray();
-            foreach(var role in inputs.SelectMany(i=>i.RequiredFramingRoles).Distinct().Where(r=>SkirmishRoleIds.Category(r)==SkirmishPopulationCategory.Air))
-            {
-                var prefab=FindNativePrefab(em,SkirmishRoleCatalogConfig.RuntimePrefabKey(role));
-                Require(prefab!=Entity.Null&&em.HasComponent<UnitSelectionHitbox>(prefab),"Actual native role body bounds required for authored aircraft target: "+role);
-                var hitbox=em.GetComponentData<UnitSelectionHitbox>(prefab);
-                Require(math.all(math.isfinite(hitbox.Extents))&&math.all(hitbox.Extents>0),"Finite actual body extents required");
-                // A role-specific initial engineering lower bound derived from its
-                // actual body at the authored far lens. Swept rotor/near-clip and
-                // comfortable native imagery remain independent required gates.
-                float projectedRadius=hitbox.Extents.y*Mathf.Cos(50*Mathf.Deg2Rad)+math.max(hitbox.Extents.x,hitbox.Extents.z)*Mathf.Sin(50*Mathf.Deg2Rad);
-                float minimum=projectedRadius/(300*Mathf.Tan(30*Mathf.Deg2Rad));
-                Require(float.IsFinite(minimum)&&minimum>0&&minimum<.45f,"Actual role bounds cannot support proposed aircraft engineering lens");
-                targets.Add(role,minimum);targetFacts.Add(new JObject{["role"]=role.ToString(),["nativePrefabIndex"]=prefab.Index,["nativePrefabVersion"]=prefab.Version,
-                    ["bodyExtents"]=new JArray(hitbox.Extents.x,hitbox.Extents.y,hitbox.Extents.z),["minimumViewportHeightEngineering"]=minimum,
-                    ["scope"]="ActualBodyProjectionAtPitch50Fov60Distance300_NotRotorOrComfortAcceptance"});
-            }
+            var targets=CreateRefinementAircraftEngineeringTargets(inputs,em,out var targetFacts);
             output["aircraftEngineeringTargetFacts"]=targetFacts;
             Require(owner.AreaDraft!=null||definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.BaseAssault,"Only BA may omit typed areas");
             var boundAreas=inputs.Select(actual=>owner.AreaDraft==null?null:BindRefinementAreaGeometry(owner.AreaDraft,actual)).ToArray();

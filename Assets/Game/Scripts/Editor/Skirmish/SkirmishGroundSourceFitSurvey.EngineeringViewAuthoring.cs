@@ -14,25 +14,32 @@ namespace Game.Editor
     {
         public static bool TryAttachRefinementLogicalBinding(SkirmishScenarioDefinitionConfig definition,
             SkirmishMissionLogicalVariant[] variants,IReadOnlyList<SkirmishSetupMatrixRow> matrix,
-            out SkirmishMissionLogicalBindingConfig binding,out string error)
+            out SkirmishMissionLogicalBindingConfig binding,out string error,int seed=1)
         {
             binding=null;error="Exact disposable definition and all three measured logical variants required";
             if(definition==null||definition.ObjectiveConfig==null||definition.CampaignMap==null||definition.CampaignMap.SourceSceneReference==null||definition.MapLayout==null||variants==null||
-                variants.Length!=3||variants.Any(v=>v==null)||!variants.Select(v=>v.Size).OrderBy(v=>(byte)v).SequenceEqual(
-                    new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}.OrderBy(v=>(byte)v)))return false;
+                variants.Any(v=>v==null))return false;
+            bool three=variants.Length==3&&variants.Select(v=>v.Size).OrderBy(v=>(byte)v).SequenceEqual(
+                new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}.OrderBy(v=>(byte)v));
+            var required=(from size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}
+                from difficulty in new[]{SkirmishDifficultyId.Recruit,SkirmishDifficultyId.Regular,SkirmishDifficultyId.Veteran,SkirmishDifficultyId.Commander}
+                select ((byte)size<<8)|(byte)difficulty).OrderBy(x=>x).ToArray();
+            bool twelve=variants.Length==12&&variants.Select(v=>((byte)v.Size<<8)|(byte)v.Difficulty).OrderBy(x=>x).SequenceEqual(required);
+            if(!three&&!twelve)return false;
             var source=definition.CampaignMap;var prior=definition.MissionLogicalBinding;
             var candidate=ScriptableObject.CreateInstance<SkirmishMissionLogicalBindingConfig>();
             candidate.CatalogId=definition.CatalogId;candidate.DefinitionId=definition.DefinitionId;candidate.DefinitionVersion=definition.ContentVersion;
             candidate.ObjectiveKind=definition.ObjectiveConfig.Kind;candidate.SourceOperationMapId=source.OperationMapId;
             candidate.SourceSceneGuid=source.SourceSceneReference.AssetGUID;candidate.SourceContentHash=source.ContentHash;
-            candidate.SourceSemanticFingerprint=SkirmishMissionLogicalBindingCompiler.SourceFingerprint(source);
+            candidate.ValueFormat=definition.MapLayout.BindingValueFormat;
+            candidate.SourceSemanticFingerprint=SkirmishMissionLogicalBindingCompiler.SourceFingerprint(source,candidate.ValueFormat);
             candidate.LayoutId=definition.MapLayout.LayoutId;
             candidate.ReviewedLayoutSemanticFingerprint=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout);
             candidate.Variants=variants;definition.BindMissionLogicalBinding(candidate);
             try
             {
                 foreach(var variant in variants)
-                    if(!SkirmishSetupCompiler.TryCompile(definition,variant.Difficulty,variant.Size,1,
+                    if(!SkirmishSetupCompiler.TryCompile(definition,variant.Difficulty,variant.Size,seed,
                         new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out _,out var reasons))
                     {error=string.Join(";",reasons);return false;}
                 binding=candidate;error=null;return true;

@@ -7371,6 +7371,22 @@
       "role": "engine_boundary",
       "contains_original_gameplay": false,
       "scope": "Private bounded fresh-logical Entity+Version directory of same authoritative row dictionaries; exact generic/default fallback, no component presence/value or query-state cache."
+    },
+    {
+      "id": "Shared_GroundMissionContext.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/GroundMissionContext.cs",
+      "require_declarations": [
+        "public readonly struct GroundMissionContext"
+      ]
+    },
+    {
+      "id": "Shared_AriaGroundBaseAssaultPolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/AriaGroundBaseAssaultPolicy.cs",
+      "require_declarations": [
+        "public static class AriaGroundBaseAssaultPolicy"
+      ]
     }
   ],
   "excluded_nonruntime_sources": [

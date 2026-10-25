@@ -9,11 +9,15 @@ def va(t,x=0,g=4,req=False):
  c={'Game.Components.UnitGrid':{'Cell':{'x':0,'y':0}},'Unity.Transforms.LocalTransform':{'Position':{'x':x,'z':0}}}
  if req:c['Game.Components.UnitPathRequest']={'Goal':{'x':g,'y':0}}
  return {'world_id':'w','simulation_seconds':t,'actors':[{'entity':'e','path_state':None if req else {'range_length':2,'next_cell':{'x':0,'y':0},'final_cell':{'x':g,'y':0}},'components':c}]}
+def reservation_row(receipts,owners):
+ return {'world_id':'w','simulation_seconds':0,'actors':[{'entity':'e'+str(i),'components':{'Game.Components.SkirmishAttemptOwnedComponent':x,'Game.Components.UnitGrid':{'Cell':{'x':0,'y':0}},'Unity.Transforms.LocalTransform':{'Position':{'x':0,'z':0}}}} for i,x in enumerate(owners)],'reservations':receipts,'session_outcome_facts':{'Game.Components.SkirmishExpandedSessionComponent':{'SessionId':'s'}}}
+def receipt(rid=7,faction=2,phase=3,member=4,delivered=4,remaining=4):return {'ReservationId':rid,'FactionId':faction,'Phase':phase,'MemberCount':member,'DeliveredMembers':delivered,'RemainingMembers':remaining}
+def owner(rid=7,faction=2,session='s',released=0,structure=0):return {'ReservationId':rid,'FactionId':faction,'SessionId':session,'CapacityReleased':released,'IsStructure':structure}
 class T(unittest.TestCase):
  def go(self,a,v,extra=()):
   with tempfile.TemporaryDirectory() as d:
    p={k:os.path.join(d,k) for k in 'avrq o'.replace(' ','')};write(p['a'],a);write(p['v'],v)
-   for k,x in [('r',{'status':'S'}),('q',{})]:
+   for k,x in [('r',{'status':'S'}),('q',{'input_and_runtime_pins':{'C:\\repo\\Assets\\Game\\Scripts\\Skirmish\\Contracts\\SkirmishProductionContracts.cs':'5f8a981caa9873d573697ad035196a33541af39afa3c04f7af01d2ad5e88f73d'}})]:
     with open(p[k],'w') as f:json.dump(x,f)
    z=subprocess.run([sys.executable,CLI,'--aria',p['a'],'--validator',p['v'],'--result',p['r'],'--receipt',p['q'],'--out',p['o'],*extra]);
    with open(p['o']) as f:return z.returncode,json.load(f)
@@ -70,4 +74,40 @@ class T(unittest.TestCase):
    p=os.path.join(d,'evidence');data=b'preserve exact bytes';Path(p).write_bytes(data)
    z=subprocess.run([sys.executable,CLI,'--aria',p,'--validator',p,'--result',p,'--out',p],capture_output=True)
    self.assertEqual(2,z.returncode);self.assertEqual(data,Path(p).read_bytes())
+ def test_reservation_upper_bound_cases(self):
+  row=reservation_row([receipt()],[owner() for _ in range(4)])
+  rc,o=self.go([ar(0)],[row]);self.assertEqual(0,rc);self.assertEqual('Passed',o['checks']['reservation_owner_upper_bounds']['status'])
+  rc,o=self.go([ar(0)],[reservation_row([receipt()],[owner() for _ in range(5)])]);self.assertEqual(1,rc)
+  rc,o=self.go([ar(0)],[reservation_row([receipt()],[owner(released=1),owner(structure=1),owner()])]);self.assertEqual(0,rc)
+  for bad in (owner(faction=1),owner(session='other')):
+   rc,o=self.go([ar(0)],[reservation_row([receipt()],[bad])]);self.assertEqual(1,rc)
+  rc,o=self.go([ar(0)],[reservation_row([receipt(),receipt()],[owner()])]);self.assertEqual(1,rc)
+  rc,o=self.go([ar(0)],[reservation_row([receipt(faction=2)],[owner(faction=2) for _ in range(4)])]);self.assertEqual(0,rc)
+  rc,o=self.go([ar(0)],[reservation_row([receipt(phase=4)],[owner()])]);self.assertEqual('Passed',o['checks']['reservation_owner_upper_bounds']['status'])
+  rc,o=self.go([ar(0)],[va(0)]);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+ def test_reservation_schema_unsupported_and_malformed_boundaries(self):
+  row=reservation_row([receipt(phase=9)],[owner()]);rc,o=self.go([ar(0)],[row])
+  self.assertEqual(0,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+  row=reservation_row([receipt()],[owner()]);row['session_outcome_facts']['Game.Components.SkirmishExpandedSessionComponent']=[];rc,o=self.go([ar(0)],[row])
+  self.assertEqual(2,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+  row=reservation_row([receipt()],[owner()]);row['reservations'][0]['DeliveredMembers']='four';rc,o=self.go([ar(0)],[row])
+  self.assertEqual(2,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+  row=reservation_row([receipt() for _ in range(10001)],[owner()]);rc,o=self.go([ar(0)],[row])
+  self.assertEqual(2,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+ def test_owned_component_schema_never_silently_becomes_opening(self):
+  for value in ([],{'ReservationId':'7'},{'FactionId':2,'SessionId':'s','CapacityReleased':0,'IsStructure':0},{'ReservationId':-1,'FactionId':2,'SessionId':'s','CapacityReleased':0,'IsStructure':0}):
+   row=reservation_row([receipt()],[owner()]);row['actors'][0]['components']['Game.Components.SkirmishAttemptOwnedComponent']=value;rc,o=self.go([ar(0)],[row])
+   self.assertEqual(2,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+  row=reservation_row([receipt()],[owner()]);row['actors'][0]['components'].pop('Game.Components.SkirmishAttemptOwnedComponent');rc,o=self.go([ar(0)],[row])
+  self.assertEqual(0,rc);self.assertEqual('Unsupported',o['checks']['reservation_owner_upper_bounds']['status'])
+ def test_phase_pin_receipt_gate(self):
+  row=reservation_row([receipt()],[owner()])
+  for pin in ({}, {'input_and_runtime_pins':{'Assets/Game/Scripts/Skirmish/Contracts/SkirmishProductionContracts.cs':'bad'}}, {'source_and_reference_pins':{'Assets/Game/Scripts/Skirmish/Contracts/SkirmishProductionContracts.cs':'5f8a981caa9873d573697ad035196a33541af39afa3c04f7af01d2ad5e88f73d'},'input_and_runtime_pins':{'x/Assets/Game/Scripts/Skirmish/Contracts/SkirmishProductionContracts.cs':'5f8a981caa9873d573697ad035196a33541af39afa3c04f7af01d2ad5e88f73d'}}, {'input_and_runtime_pins':{'notAssets/Game/Scripts/Skirmish/Contracts/SkirmishProductionContracts.cs':'5f8a981caa9873d573697ad035196a33541af39afa3c04f7af01d2ad5e88f73d'}}):
+   with tempfile.TemporaryDirectory() as d:
+    a,v,r,q,o=[os.path.join(d,x) for x in ('a','v','r','q','o')];write(a,[ar(0)]);write(v,[row])
+    with open(r,'w') as f:json.dump({'status':'S'},f)
+    with open(q,'w') as f:json.dump(pin,f)
+    rc=subprocess.run([sys.executable,CLI,'--aria',a,'--validator',v,'--result',r,'--receipt',q,'--out',o]).returncode
+    with open(o) as f:out=json.load(f)
+    self.assertEqual(0,rc);self.assertEqual('Unsupported',out['checks']['reservation_owner_upper_bounds']['status'])
 if __name__=='__main__':unittest.main()

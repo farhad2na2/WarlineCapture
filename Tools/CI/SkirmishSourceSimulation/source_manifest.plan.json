@@ -7347,6 +7347,22 @@
       ],
       "generator_output": "SourceAssistantShortConstructorGuidance.cs",
       "output": "SourceAssistantShortConstructorGuidance.cs"
+    },
+    {
+      "id": "NavigationFacts_Format.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNavigationFacts.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Finite lossless authored navigation input/cache decoder; original source materializer remains separate."
+    },
+    {
+      "id": "NavigationFacts_Preparation.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNavigationFactsTool.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Explicit data-only CLI preparation using current original decoder; no runtime entities or grid decisions cached."
     }
   ],
   "excluded_nonruntime_sources": [

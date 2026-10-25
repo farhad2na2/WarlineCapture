@@ -54,3 +54,14 @@ python3 Tools/CI/skirmish_trace_summary.py \
 The compact report lists actual executed command acceptance/reasons and recent commands, repeated consecutive actions, stationary actors with a different pending path/request goal, and input hashes/errors. Repeat thresholds default to three executed actions within five seconds; `--repeat` and `--repeat-window` can change those diagnostic thresholds. Non-executed waits do not count as commands. Unknown receipt acceptance stays unknown.
 
 `analyzer_success` means the input analysis completed, separately from `source_result` and the mission outcome. Warnings are observations to investigate; they do not prove a gameplay bug or full conservation, and they do not establish native acceptance. The analyzer never changes gameplay clocks or commands and refuses to overwrite existing output/evidence. Missing/invalid traces produce explicit analysis errors. `--receipt` is optional for older source attempts, but a missing validator trace cannot establish stationary-actor analysis.
+
+
+### Reservation upper-bound gate
+
+`checks.reservation_owner_upper_bounds` is an upper-bound-only diagnostic: it does not prove accepted-unit counts or full conservation. It can be `Passed` only when the optional run receipt contains exactly one normalized path-suffix pin for `SkirmishProductionContracts.cs` with the expected source hash. A missing, changed, or conflicting pin makes this check `Unsupported`, not a gameplay failure. Process exit `0` is completed analysis without a proven check failure, `1` is a proven reservation upper-bound failure, and `2` is malformed or missing input.
+
+## Faster local builds and navigation initialization
+
+Build input pins are captured as a batch. Each input is still hashed from its bytes; conflicting epochs and changes during capture are rejected. Complete input verification remains before compilation, after compilation and around execution. A local 525-source build comparison measured 50.9 seconds before batching and 5.0 seconds afterward; these are observed build times, not a full-mission speed claim.
+
+The optional [authored navigation facts cache](NAVIGATION_FACTS.md) avoids repeatedly decoding the large baked navigation JSON. Its preparation command emits a separate bundle, which can be passed to the ordinary runner. Only the eight admitted authored component types are cached; world entities, commands, resources, production and gameplay state are freshly created. Source, type-schema and raw-input changes invalidate the cache. The raw input path remains supported. Cached startup and bounded prefixes do not establish a mission outcome.

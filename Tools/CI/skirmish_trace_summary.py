@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Passive, bounded JSONL diagnostic; it never changes simulation inputs or clocks."""
 import argparse, hashlib, json, math, os, sys
-from collections import deque
+from collections import Counter,deque
 MAX_LINE=8*1024*1024; MAX_FILE=8*1024*1024; MAX_ROWS=250000; MAX_ERRORS=50; MAX_ACTORS=10000; MAX_KEY=256; MAX_KEYS=1024; MAX_WARNINGS=50; LAST=12
 STATIONARY_SECONDS=10.; STATIONARY_SNAPSHOTS=3
 class DuplicateKey(ValueError): pass
@@ -125,9 +125,93 @@ def position(comp,no,o):
  xy=p.get('x'),p.get('z')
  if not all(finite(x) for x in xy):err(o,'validator line %d position invalid'%no);return None
  return xy
+ACTIVE_RESERVATION_PHASES={1:'Reserved',2:'Producing',3:'Live'}
+PHASE_NAMES={1:'Reserved',2:'Producing',3:'Live',4:'Released',5:'Cancelled',6:'Lost'}
+PHASE_PIN_SUFFIX='assets/game/scripts/skirmish/contracts/skirmishproductioncontracts.cs'
+PHASE_PIN_SHA256='5f8a981caa9873d573697ad035196a33541af39afa3c04f7af01d2ad5e88f73d'
+def phase_pin_check(check,receipt):
+ pin=check['phase_mapping_pin'];pin['expected_sha256']=PHASE_PIN_SHA256
+ if not isinstance(receipt,dict):pin['status']='Unsupported';pin['reason']='missing receipt';return
+ maps=[]
+ for name in ('source_and_reference_pins','input_and_runtime_pins'):
+  value=receipt.get(name)
+  if value is not None:
+   if not isinstance(value,dict):pin['status']='Unsupported';pin['reason']='invalid '+name;return
+   maps.append((name,value))
+ matches=[]
+ for name,values in maps:
+  for path,sha in values.items():
+   if isinstance(path,str) and (path.replace('\\','/').lower()==PHASE_PIN_SUFFIX or path.replace('\\','/').lower().endswith('/'+PHASE_PIN_SUFFIX)):matches.append((name,path,sha))
+ if len(matches)!=1:pin['status']='Unsupported';pin['reason']='missing or conflicting phase source pin';pin['matches']=len(matches);return
+ name,path,sha=matches[0];pin['container']=name;pin['path']=path;pin['observed_sha256']=sha
+ if not isinstance(sha,str) or sha.lower()!=PHASE_PIN_SHA256:pin['status']='Unsupported';pin['reason']='phase source hash differs';return
+ pin['status']='Passed';pin['reason']='unique expected source pin'
+def phase_value(value,no,o):
+ if integer(value):return value
+ if isinstance(value,dict) and integer(value.get('value')) and isinstance(value.get('name'),str) and PHASE_NAMES.get(value['value'])==value['name']:return value['value']
+ err(o,'validator line %d reservation phase invalid'%no);return None
+def reservation_check(o,row,actors,no):
+ check=o['checks']['reservation_owner_upper_bounds'];facts=row.get('session_outcome_facts')
+ if facts is None:check['unsupported_snapshots']+=1;return
+ if not isinstance(facts,dict):err(o,'validator line %d session facts not object'%no);check['unsupported_snapshots']+=1;return
+ expanded=facts.get('Game.Components.SkirmishExpandedSessionComponent')
+ if expanded is None:check['unsupported_snapshots']+=1;return
+ if not isinstance(expanded,dict) or not isinstance(expanded.get('SessionId'),str) or not expanded['SessionId'] or len(expanded['SessionId'])>MAX_KEY:
+  err(o,'validator line %d expanded-session facts invalid'%no);check['unsupported_snapshots']+=1;return
+ session=expanded['SessionId'];receipts=row.get('reservations')
+ if receipts is None:check['unsupported_snapshots']+=1;return
+ if not isinstance(receipts,list):err(o,'validator line %d reservations not list'%no);check['unsupported_snapshots']+=1;return
+ if len(receipts)>MAX_ACTORS:err(o,'validator line %d reservation cap exceeded'%no);check['unsupported_snapshots']+=1;return
+ check['input_snapshots']+=1;by_id={};active=[];bad_receipt=False
+ for receipt in receipts:
+  if not isinstance(receipt,dict):err(o,'validator line %d reservation not object'%no);bad_receipt=True;continue
+  rid=receipt.get('ReservationId');faction=receipt.get('FactionId');phase=phase_value(receipt.get('Phase'),no,o)
+  values=[receipt.get(k) for k in ('MemberCount','DeliveredMembers','RemainingMembers')]
+  if not integer(rid) or rid<=0 or not integer(faction) or phase is None or not all(integer(v) for v in values):err(o,'validator line %d reservation identity/count invalid'%no);bad_receipt=True;continue
+  if rid in by_id:
+   check['duplicate_receipt_ids']+=1;check['status']='Failed'
+   if len(check['violations'])<MAX_WARNINGS:check['violations'].append({'line':no,'kind':'duplicate_receipt_id','reservation_id':rid})
+   continue
+  by_id[rid]=receipt
+  if phase in ACTIVE_RESERVATION_PHASES:active.append(receipt)
+  elif phase in (4,5,6):check['skipped_closed_receipts']+=1
+  else:check['unsupported_snapshots']+=1
+ if bad_receipt:check['unsupported_snapshots']+=1;return
+ owners=Counter();bad_owner=False;missing_owner=False
+ for actor in actors:
+  if not isinstance(actor,dict):continue
+  comp=actor.get('components')
+  if not isinstance(comp,dict):continue
+  owned=comp.get('Game.Components.SkirmishAttemptOwnedComponent')
+  if owned is None:missing_owner=True;continue
+  if not isinstance(owned,dict):err(o,'validator line %d owned component not object'%no);bad_owner=True;continue
+  rid=owned.get('ReservationId')
+  if not integer(rid) or rid<0:err(o,'validator line %d owned ReservationId invalid'%no);bad_owner=True;continue
+  if rid==0:continue
+  structure,released=owned.get('IsStructure'),owned.get('CapacityReleased')
+  faction,owner_session=owned.get('FactionId'),owned.get('SessionId')
+  if not integer(structure) or not integer(released) or not integer(faction) or not isinstance(owner_session,str) or not owner_session or len(owner_session)>MAX_KEY:err(o,'validator line %d owned identity/release invalid'%no);continue
+  if structure!=0 or released!=0:continue
+  owners[(owner_session,faction,rid)]+=1
+ if bad_owner:check['malformed_owned_actors']+=1;check['unsupported_snapshots']+=1;return
+ if missing_owner:check['missing_owned_actors']+=1;check['unsupported_snapshots']+=1;return
+ for (owner_session,faction,rid),count in owners.items():
+  receipt=by_id.get(rid)
+  if receipt is None or owner_session!=session or faction!=receipt.get('FactionId'):
+   check['unknown_active_owners']+=1;check['status']='Failed'
+   if len(check['violations'])<MAX_WARNINGS:check['violations'].append({'line':no,'kind':'unknown_active_owner','reservation_id':rid,'faction_id':faction,'owner_count':count})
+   continue
+ for receipt in active:
+  member,delivered,remaining=[receipt[k] for k in ('MemberCount','DeliveredMembers','RemainingMembers')];rid=receipt['ReservationId'];faction=receipt['FactionId']
+  count=owners[(session,faction,rid)]
+  check['checked_receipts']+=1
+  if remaining<0 or delivered<0 or member<0 or remaining>member or delivered>member or count>remaining or count>delivered:
+   check['status']='Failed'
+   if len(check['violations'])<MAX_WARNINGS:check['violations'].append({'line':no,'reservation_id':rid,'faction_id':faction,'member_count':member,'delivered_members':delivered,'remaining_members':remaining,'active_unreleased_nonstructure_owners':count})
 def analyze(a):
- o={'schema_version':3,'kind':'SkirmishPassiveTraceSummary','analyzer_success':False,'source_result':None,'source_receipt':None,'inputs':{},'input_errors':[],'commands':{'executed':0,'accepted':0,'rejected':0,'unknown_acceptance':0,'reasons':{},'source_apis':{},'last':[]},'warnings':{'repeated_consecutive_executed_actions':[],'stationary_with_pending_movement':[],'note':'Observational only; warnings are not automatic gameplay-failure verdicts.'},'scope':{'passive':True,'does_not_infer':['accepted unit counts','full conservation proof','RemainingMembers as undelivered']}}
+ o={'schema_version':4,'kind':'SkirmishPassiveTraceSummary','analyzer_success':False,'source_result':None,'source_receipt':None,'inputs':{},'input_errors':[],'commands':{'executed':0,'accepted':0,'rejected':0,'unknown_acceptance':0,'reasons':{},'source_apis':{},'last':[]},'checks':{'reservation_owner_upper_bounds':{'status':'Unsupported','input_snapshots':0,'unsupported_snapshots':0,'checked_receipts':0,'skipped_closed_receipts':0,'duplicate_receipt_ids':0,'unknown_active_owners':0,'malformed_owned_actors':0,'missing_owned_actors':0,'phase_mapping_pin':{'status':'Unsupported','expected_sha256':PHASE_PIN_SHA256,'observed_sha256':None,'container':None,'path':None,'reason':'not checked'},'violations':[],'limitations':['Upper-bound only; does not prove full conservation, accepted counts, or treat RemainingMembers as undelivered. Dead actors count until CapacityReleased=1. Closed Cancelled/Lost/Released receipts are skipped. Phase mapping is only covered while the optional run receipt has exactly one matching SkirmishProductionContracts.cs pin with the expected hash.']}},'warnings':{'repeated_consecutive_executed_actions':[],'stationary_with_pending_movement':[],'note':'Observational only; warnings are not automatic gameplay-failure verdicts.'},'scope':{'passive':True,'does_not_infer':['accepted unit counts','full conservation proof','RemainingMembers as undelivered']}}
  result=stable_json(a.result,'result',o);receipt=stable_json(a.receipt,'run_receipt',o,True)
+ phase_pin_check(o['checks']['reservation_owner_upper_bounds'],receipt)
  if result:o['source_result']={k:result.get(k) for k in ('status','source_outcome','tick','simulation_seconds')}
  if receipt:o['source_receipt']={k:receipt.get(k) for k in ('schema_version','kind','mission','seed','process_exit','timed_out','wall_seconds')}
  seen=set();last=None;streak=None;aria_rows=0;c=o['commands']
@@ -175,6 +259,7 @@ def analyze(a):
   last=t;actors=row.get('actors')
   if not isinstance(actors,list):err(o,'validator line %d actors not list'%no);continue
   if len(actors)>MAX_ACTORS:err(o,'validator line %d actor cap exceeded'%no);actors=actors[:MAX_ACTORS]
+  reservation_check(o,row,actors,no)
   actor_ids=set()
   for actor in actors:
    if not isinstance(actor,dict):err(o,'validator line %d actor not object'%no);continue
@@ -197,6 +282,9 @@ def analyze(a):
    if entity not in active:del tracks[entity]
  if not validator_rows:err(o,'validator_state empty')
  if len(seen)>1:err(o,'mixed world IDs (%d): %s'%(len(seen),sorted(seen)[:8]))
+ check=o['checks']['reservation_owner_upper_bounds']
+ if check['phase_mapping_pin']['status']!='Passed':check['status']='Unsupported'
+ elif check['status']!='Failed':check['status']='Passed' if check['input_snapshots'] and not check['unsupported_snapshots'] and not o['input_errors'] else 'Unsupported'
  o['analyzer_success']=not o['input_errors'];return o
 def main():
  p=argparse.ArgumentParser();p.add_argument('--aria',required=True);p.add_argument('--validator',required=True);p.add_argument('--result',required=True);p.add_argument('--receipt');p.add_argument('--out',required=True);p.add_argument('--repeat',type=int,default=3);p.add_argument('--repeat-window',type=float,default=5.);a=p.parse_args()
@@ -204,5 +292,5 @@ def main():
  if os.path.exists(a.out):p.error('fresh output path required; input/evidence files are never overwritten')
  o=analyze(a)
  with open(a.out,'x') as f:json.dump(o,f,indent=2,sort_keys=True,allow_nan=False);f.write('\n')
- return 0 if o['analyzer_success'] else 2
+ return 2 if not o['analyzer_success'] else (1 if o['checks']['reservation_owner_upper_bounds']['status']=='Failed' else 0)
 if __name__=='__main__':sys.exit(main())

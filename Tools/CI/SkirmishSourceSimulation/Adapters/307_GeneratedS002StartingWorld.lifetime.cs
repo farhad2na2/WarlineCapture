@@ -7,7 +7,7 @@ namespace Game.Runtime{
  internal void ConstructSourceStartingWorld(JObject request){
  if(Entities.BankBound||Session!=Entity.Null||Buildings.Count!=0)throw new InvalidOperationException("Fresh actual constructors bind once");
  GeneratedFreshGridStorage.Initialize(Entities,GridEntity);
- var nav=(JObject)request["navigation_reference"];var navBytes=Descriptor(nav,128*1024*1024);AuthoredNavigationCount=GeneratedAuthoredNavigationImporter.Import(Entities,Parse(navBytes),Path.GetDirectoryName((string)nav["path"]));
+ var nav=(JObject)request["navigation_reference"];AuthoredNavigationCount=SourceNavigationFacts.Import(Entities,nav);
  Session=GeneratedS002SessionConstruction.Create(Entities,Setup,"generated-"+Setup.CatalogId+"-"+Setup.Seed);
  var reference=(JObject)request["reference_templates"];var referenceDomain=GeneratedReferenceTemplateView.Read(reference,out string referenceBinaryDirectory);
  var imported=GeneratedReferenceTemplateImporter.Import(Entities,referenceDomain,referenceBinaryDirectory,Setup.Forces.Select(x=>x.RuntimePrefabKey));

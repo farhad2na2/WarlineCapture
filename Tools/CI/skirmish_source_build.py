@@ -1,6 +1,6 @@
 """One-entry source-only S002 build/run plumbing. Never launches Unity or a player."""
 from __future__ import annotations
-import hashlib,json,os,platform,re,shutil,subprocess,sys,time,importlib.util,math
+import hashlib,json,os,platform,re,shutil,subprocess,sys,time,importlib.util,math,types
 from pathlib import Path
 from skirmish_source_manifest import resolve_manifest,need,sha
 sys.dont_write_bytecode=True
@@ -16,6 +16,13 @@ def merge_pins(pins,other):
   need(key not in pins or pins[key]==expected,'Conflicting source/runtime epoch: '+key)
   need(sha(Path(key).read_bytes())==expected,'Input changed before merge: '+key)
   pins[key]=expected
+def merge_file_pins(pins,paths):
+ added={}
+ for path in paths:
+  entry=pin(path);key=entry['path'];expected=entry['sha256']
+  need(key not in added or added[key]==expected,'Conflicting captured source/runtime epoch: '+key)
+  added[key]=expected
+ merge_pins(pins,added)
 def read_json_pinned(path):
  p=Path(path).resolve(strict=True);raw=p.read_bytes();return json.loads(raw),{'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
 def write(path,value):
@@ -31,14 +38,29 @@ def runtime_paths(repo):
  core=engine/'UnityEngine.CoreModule.dll'
  for p in refs+[core,mono,dot,csc]:need(p.is_file(),'Required installed build/runtime file missing: '+str(p))
  return {'contents':contents,'script':script,'engine':engine,'mono':mono,'dotnet':dot,'csc':csc,'refs':refs,'core':core,'newtonsoft':newtons[0]}
+def _generate_navigation_identity(tool,inputs,output,pins):
+ # Execute exactly the source bytes hashed/pinned here; never import cached .pyc.
+ tool=Path(tool).resolve(strict=True);raw=tool.read_bytes();digest=sha(raw)
+ merge_pins(pins,{str(tool):digest});need(tool.read_bytes()==raw,'Identity generator changed before execution')
+ module=types.ModuleType('current_navigation_facts_identity');module.__file__=str(tool)
+ exec(compile(raw,str(tool),'exec'),module.__dict__)
+ need(tool.read_bytes()==raw,'Identity generator changed during execution')
+ result=module.generate(inputs,output)
+ need(tool.read_bytes()==raw,'Identity generator changed during generation');verify(pins)
+ return result
+
 def build(repo,package,manifest,output,mission='S002',seed=104731):
  repo=Path(repo).resolve(strict=True);package=Path(package).resolve(strict=True);out=Path(output).absolute();need(not out.exists(),'Fresh isolated build output required');out.mkdir(parents=True)
  result=resolve_manifest(repo,package,manifest,out/'source',mission,seed)
  need(not result['unresolved'],'Unmaterialized source recipes: '+', '.join(x['id']for x in result['unresolved']))
  tools=runtime_paths(repo);placement_root=package/'Tools/CI/SkirmishSourceSimulation/Placement';sys.path.insert(0,str(placement_root));spec=importlib.util.spec_from_file_location('source_placement_build',placement_root/'build_source_placement_domain.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);placement=module.build(repo,tools['engine'],out/'placement')
  pins=dict(result['pins']);verify(pins);merge_pins(pins,{x['path']:x['sha256']for x in result['resolved']});merge_pins(pins,placement['source_and_reference_pins']);code=out/'SourceSimulation.exe';sources=[Path(x['path'])for x in result['resolved']]
- for p in sources+[tools['mono'],tools['dotnet'],tools['csc'],tools['core']]+tools['refs']+[Path(placement['dll']),Path(__file__),repo/'ProjectSettings/ProjectVersion.txt',tools['script']/'MonoBleedingEdge/etc/mono/config',tools['contents']/'Frameworks/libMonoPosixHelper.dylib']:
-  entry=pin(p);merge_pins(pins,{entry['path']:entry['sha256']})
+ identity_tool=package/'Tools/CI/generate_navigation_facts_identity.py';identity_output=out/'source/generated/SourceNavigationFactsIdentity.cs';identity_inputs=out/'navigation-facts-sources.rsp'
+ identity_inputs.write_text('\n'.join(json.dumps(str(x))for x in sources)+'\n')
+ _generate_navigation_identity(identity_tool,identity_inputs,identity_output,pins);sources.append(identity_output)
+ for identity_input in [identity_tool,identity_inputs,identity_output,identity_output.with_suffix('.json')]:
+  identity_pin=pin(identity_input);merge_pins(pins,{identity_pin['path']:identity_pin['sha256']})
+ merge_file_pins(pins,sources+[tools['mono'],tools['dotnet'],tools['csc'],tools['core']]+tools['refs']+[Path(placement['dll']),Path(__file__),repo/'ProjectSettings/ProjectVersion.txt',tools['script']/'MonoBleedingEdge/etc/mono/config',tools['contents']/'Frameworks/libMonoPosixHelper.dylib'])
  data,manifest_pin=read_json_pinned(manifest);merge_pins(pins,{manifest_pin['path']:manifest_pin['sha256']});defines=data.get('compiler_defines',[]);need(all(re.fullmatch(r'[A-Za-z_]\w*',x)and not x.startswith('UNITY_EDITOR')for x in defines),'Explicit non-Editor compiler profile required')
  args=['-nologo','-unsafe+','-nostdlib+','-langversion:latest','-target:exe','-main:SourceSimulationProgram','-out:'+str(code)]+(['-define:'+','.join(defines)]if defines else[])+['-r:'+str(p)for p in tools['refs']]+['-r:ActualCore='+str(tools['core']),'-r:'+placement['dll']]+[str(p)for p in sources]
  rsp=out/'compile.rsp';rsp.write_text('\n'.join(json.dumps(x)for x in args)+'\n');verify(pins);start=time.monotonic();r=subprocess.run([str(tools['dotnet']),str(tools['csc']),'@'+str(rsp)],capture_output=True,text=True,timeout=120);(out/'compile.log').write_text(r.stdout+r.stderr);verify(pins)

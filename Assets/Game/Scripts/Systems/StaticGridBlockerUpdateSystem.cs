@@ -68,9 +68,15 @@ namespace Game.Runtime
             // Scan the same existing/removal domains, without sorting or filtering foreign inputs.
             foreach (var prev in SystemAPI.Query<RefRO<StaticBlockerPrevBounds>>()
                          .WithAll<StaticGridBlocker, UnitGrid, GridBlockerSize>())
-                if (!StaticBlockerKernel.SameOwner(Identity(prev.ValueRO.AppliedGrid,prev.ValueRO.StorageEpoch),Identity(gridEntity,owner.StorageEpoch))) rebuild = true;
+            {
+                var previous = prev.ValueRO;
+                if (!StaticBlockerKernel.SameOwner(Identity(previous.AppliedGrid,previous.StorageEpoch),Identity(gridEntity,owner.StorageEpoch))) rebuild = true;
+            }
             foreach (var prev in SystemAPI.Query<RefRO<StaticBlockerPrevBounds>>().WithNone<StaticGridBlocker>())
-                if (!StaticBlockerKernel.SameOwner(Identity(prev.ValueRO.AppliedGrid,prev.ValueRO.StorageEpoch),Identity(gridEntity,owner.StorageEpoch))) rebuild = true;
+            {
+                var previous = prev.ValueRO;
+                if (!StaticBlockerKernel.SameOwner(Identity(previous.AppliedGrid,previous.StorageEpoch),Identity(gridEntity,owner.StorageEpoch))) rebuild = true;
+            }
             if (rebuild)
             {
                 StaticBlockerKernel.Invalidate(ref epoch);WriteEpoch(ref owner,epoch);
@@ -104,7 +110,8 @@ namespace Game.Runtime
                 // Their authoritative foundation origin is stored separately.
                 int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
                     ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
-                var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,size.ValueRO.Size.x,size.ValueRO.Size.y);
+                var blockerSize = size.ValueRO.Size;
+                var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,blockerSize.x,blockerSize.y);
                 byte faction=GetFriendlyPassFactionId(friendlyPassLookup,entity);
                 bool hasOpening=openingLookup.HasComponent(entity);var opening=hasOpening?openingLookup[entity]:default;
                 var result=StaticBlockerKernel.ApplyNew(kernelGrid,ref storage,rect,faction,hasOpening,opening.ToKernel(),identity,out var history);
@@ -119,7 +126,8 @@ namespace Game.Runtime
             {
                 int2 origin = authoredBuildingLookup.HasComponent(entity) && buildingInfoLookup.HasComponent(entity)
                     ? buildingInfoLookup[entity].OriginCell : unitGrid.ValueRO.Cell;
-                var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,size.ValueRO.Size.x,size.ValueRO.Size.y);
+                var blockerSize = size.ValueRO.Size;
+                var rect=StaticBlockerKernel.Bounds(origin.x,origin.y,blockerSize.x,blockerSize.y);
                 byte faction=GetFriendlyPassFactionId(friendlyPassLookup,entity);
                 bool hasOpening=openingLookup.HasComponent(entity),hadOpening=prevOpeningLookup.HasComponent(entity);
                 var opening=hasOpening?openingLookup[entity]:default;var oldOpening=hadOpening?prevOpeningLookup[entity].Value:default;

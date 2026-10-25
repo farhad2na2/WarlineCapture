@@ -61,16 +61,17 @@ namespace Game.Runtime
         internal static GeneratedUnitProductionMetadata Load(string path, string sha,
             uint setupHash, int seed, string repoRoot,
             IDictionary<string, SourceUnitPrefab> canonicalAssets,
-            IDictionary<string, Entity> actualTemplates, IDictionary<string,JObject> canonicalIdentities)
+            IDictionary<string, Entity> actualTemplates, IDictionary<string,JObject> canonicalIdentities, SourceMetadataCompatibility compatibility=null)
         {
             if (canonicalAssets == null || canonicalIdentities == null || actualTemplates == null || string.IsNullOrEmpty(repoRoot))
                 throw new ArgumentException("Canonical source identities/templates and source root required");
             byte[] bytes = AutonomousWorld.PinnedFile(path, sha, 2 * 1024 * 1024);
             JObject root = JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes),
                 new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
+            if(compatibility!=null){compatibility.RequireTarget(setupHash,seed);compatibility.RequireUnits(sha,root);}
             if ((int?)root["schema_version"] != 1 || (string)root["kind"] != "AuthoredSkirmishUnitProductionMetadata" ||
                 (string)root["authority"] != "OriginalConfiguredAuthoringFactories_NotMissionState" ||
-                (uint?)root["setup_hash"] != setupHash || (int?)root["seed"] != seed ||
+                (compatibility==null&&((uint?)root["setup_hash"] != setupHash || (int?)root["seed"] != seed)) ||
                 (root["unsupported_values"] as JArray)?.Count != 0 ||
                 (bool?)root["baked_actor_footprint_substituted"] != false ||
                 (bool?)root["runtime_camera_basis_exported"] != false)

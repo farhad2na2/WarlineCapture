@@ -31,7 +31,8 @@ def main():
   if a.command=='author':
    if not a.authoring_input:p.error('author requires --authoring-input')
    result=owned.require('skirmish_source_authoring').author(a.repo,package,manifest,a.output,a.mission,a.seed,a.authoring_input,a.build_receipt,a.data_repo,a.timeout);print(json.dumps({k:result[k]for k in ['status','authoring_mission','authoring_seed','process_exit','world_allocated','validation_passed','source_fit_verified']}));return 0 if result['status']=='DraftInspected'else 1
-  if a.mission!='S002'or a.seed!=104731:raise UnsupportedSourceShape('Supported source profile is S002/104731 only')
+  require_profile=owned.require("skirmish_source_profiles").require_profile
+  require_profile(a.mission,a.seed)
   if a.command=='resolve':
    result=resolve_manifest(a.repo,package,manifest,a.output,a.mission,a.seed);print(json.dumps({k:result[k]for k in ['status','native_direct_count','fresh_extracted_count','adapter_count','external_temp_source_dependencies']}));
    if result['unresolved']:print('Unsupported source recipes: '+', '.join(x['id']for x in result['unresolved'][:8])+f" …({len(result['unresolved'])} total)",file=sys.stderr);return 2

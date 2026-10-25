@@ -101,7 +101,7 @@ def load_cli(root):
         if _epoch.cli_root is not None and _epoch.cli_root != root:
             _epoch.fail('Owned CLI root changed within this process')
         _epoch.cli_root = root
-        for name in ['skirmish_source_syntax', 'skirmish_production_worker', 'skirmish_causal_worker',
+        for name in ['skirmish_source_profiles', 'skirmish_source_syntax', 'skirmish_production_worker', 'skirmish_causal_worker',
                      'skirmish_source_manifest', 'skirmish_source_build', 'skirmish_source_authoring',
                      'build_skirmish_authoring_batches', 'skirmish_offline_sim',
                      'skirmish_offline_sim_cases', 'skirmish_source_smoke']:

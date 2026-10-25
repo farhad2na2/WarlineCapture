@@ -8513,6 +8513,14 @@
       ],
       "generator_output": "SourceSelectedMapCatalogEntries.cs",
       "output": "SourceSelectedMapCatalogEntries.cs"
+    },
+    {
+      "id": "SourceMetadataCompatibility.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceMetadataCompatibility.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Immutable native metadata compatibility for two qualified original S002 compiler contexts; preserves provenance and exact source/prefab/provider/recipe checks. No seed or world admission."
     }
   ],
   "excluded_nonruntime_sources": [

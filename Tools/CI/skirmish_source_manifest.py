@@ -84,7 +84,8 @@ def select(text,spec,method_span):
     return value
 def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=104731):
     repo=Path(repo).resolve(strict=True);package=Path(package).resolve(strict=True)
-    need(mission=="S002"and seed==104731,"Unsupported mission/seed; admitted source profile is S002/104731")
+    profiles=owned.require("skirmish_source_profiles");require_profile=profiles.require_profile;generate_guard=profiles.generate_guard
+    profile_pins=require_profile(mission,seed)
     # Reuse repository primitives; importing has no build/run effects.
     sys.path.insert(0,str(repo/"Tools/CI"))
     causal=owned.require("skirmish_causal_worker")
@@ -97,7 +98,7 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
     output=Path(output).absolute();generated_root=(output/"generated").resolve()
     entries=data.get("sources");need(isinstance(entries,list)and 0<len(entries)<=2048,"Finite source list required")
     pins={str(Path(manifest_path).resolve()):sha(raw_manifest),str(Path(__file__).resolve()):MODULE_SOURCE_SHA}
-    pins.update(owned.pins())
+    pins.update(owned.pins());pins.update(profile_pins)
     for helper in [repo/"Tools/CI/skirmish_causal_worker.py",Path(aria.__file__).resolve()]:
         key=str(helper);digest=sha(helper.read_bytes())
         need(key not in pins or pins[key]==digest,"Conflicting executed helper epoch: "+key)
@@ -190,6 +191,8 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
         for detail in item.get("proof",[]):
             for required in detail.get("generation_proof",{}).get("required_current_links",[]):
                 need(str((Path(required)if Path(required).is_absolute()else repo/Path(required)).resolve())in direct_paths,"Missing coherent current source companion: "+required)
+    guard,guard_pins=generate_guard();pins.update(guard_pins)
+    emissions.append(("SourceAdmittedProfiles.cs",guard));resolved.append({"id":"central_admitted_profiles","kind":"finite_adapter","generated":"SourceAdmittedProfiles.cs","sha256":sha(guard.encode()),"proof":[],"origin":"strict_profile_json"})
     # No source writes until all entries and shapes were checked.
     for path,expected in owned.pins().items():
         need(path not in pins or pins[path]==expected,"Conflicting executed owned-source epoch: "+path)

@@ -20,7 +20,7 @@ namespace Game.Runtime
                 .ToDictionary(pair => pair.Key, pair => pair.Value.Template, StringComparer.Ordinal);
             ActualUnitMetadata = GeneratedUnitProductionMetadata.Load(
                 path, sha256, Setup.SetupHash, Setup.Seed, repositoryRoot,
-                SourceDefinitions.Assets, templates, SourceDefinitions.AssetIdentities);
+                SourceDefinitions.Assets, templates, SourceDefinitions.AssetIdentities,MetadataCompatibility);
 
             return new JObject
             {

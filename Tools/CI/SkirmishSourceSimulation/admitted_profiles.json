@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "numeric_runtime": "InstalledMono",
+  "profiles": [
+    {
+      "mission_id": "S002",
+      "difficulty_id": 2,
+      "size_id": 1,
+      "seeds": [
+        104731,
+        1
+      ]
+    }
+  ]
+}

@@ -26,3 +26,6 @@ python3 Tools/CI/run_skirmish_source_tests.py --repo /absolute/source-repository
 Tests use TEMP protocol/source fixtures, not synthetic gameplay outcomes. Native
 source gameplay, normal input/device acceptance and standalone runtime behavior
 remain separate from Python helper loading fidelity.
+
+
+The finite admission helper `skirmish_source_profiles` is loaded first through the same exact-byte owned epoch. Its strict `admitted_profiles.json` bytes are captured during that execution and checked before and after C# guard generation. Helper collisions/drift, JSON drift before/during generation, and conflicting JSON pins are regression-tested in `Tools/CI/tests/test_skirmish_source_profiles.py`.

@@ -1,6 +1,6 @@
 # Current-source Skirmish simulation
 
-This CLI hosts the current shared/native S002 gameplay policies over explicit finite engine/data adapters. It does not launch Unity or build a player. The initial supported profile is S002, seed 104731, fresh config-initialized ground BaseAssault, with the qualified installed macOS Mono numeric lane (`--optimize=-float32`). Other missions/seeds and consumed unsupported domains fail explicitly.
+This CLI hosts the current shared/native S002 gameplay policies over explicit finite engine/data adapters. It does not launch Unity or build a player. The supported execution profiles are S002, seeds 104731 and 1, Standard/Regular, fresh config-initialized ground BaseAssault, with the qualified installed macOS Mono numeric lane (`--optimize=-float32`). Other mission/selection/seed profiles and consumed unsupported domains fail explicitly.
 
 The source manifest links current repository and embedded/package sources directly. Original methods/types in adapter closures regenerate from current native source by explicit member and structural bindings. Original native whole-file hashes are receipts, not routine-edit admission locks. Unsupported method/API shapes fail before emitting a qualified build. Five relevant authoring/getter/factory source guards remain operational baked-metadata cache checks: edits there may require metadata regeneration. Ordinary shared gameplay changes compile directly; this is not a claim that every source edit universally avoids data refresh. Owned engine/data/host adapter role labels are declarations and review scope; they are not standalone proof of policy equivalence.
 
@@ -102,7 +102,7 @@ The initial supported authoring input is an **unmeasured S026/104755 draft**.
 original reasons were recorded. It explicitly means `validation_passed=false`,
 `source_fit_verified=false` and `world_allocated=false`; it does not accept the
 mission, modify the catalog, publish an asset or enable autonomous S026 execution.
-The existing S002/104731 resolve/build/run admission is unchanged.
+S002 resolve/build/run supports only the finite selections in admitted_profiles.json; S026 author diagnostics do not grant runtime admission.
 
 Input schema 1 has exact fields `schema_version`, `kind`
 (`SkirmishMissionAuthoringDraft`), `catalog_id`, `seed`, `size`, `difficulty`,
@@ -253,3 +253,30 @@ First use still requires qualified baked/native inputs. The rotation reference m
 Actual startup order is road synchronization, selected-source validation, original initial facility/bank/actor and owner registration, configured metadata binding without publication, selected metadata-root creation, then the original first publication and three bootstrap owner steps before ARIA initialization. The numeric facility roots remain sourced from the original PositionBuildingObject/prefab TRS path; the metadata root does not fabricate a physical scene frame. Startup evidence records root identity/generation, actual readiness flags, every publication buffer count and ordered spawn-point float bits.
 
 The current-source regression used S002/104731 Standard/Regular with normal preflight, autonomous ARIA, original clocks and actual command results. It observed original Victory/MainBaseDestroyed at tick 12267. This is source-world coverage, not rendered normal-input/device acceptance, S026 readiness or a 10x speed claim. Metadata publication keeps PhysicalSourceValidated unset. Existing-root reuse, positive unbound runtime runway/overlay geometry, owned boarding/deploy/disembark and active scan remain explicit unsupported frontiers. Original no-runway branches execute normally. Return command mechanics are qualified separately; no Return command is injected into the regression.
+
+
+## Finite seed1 metadata compatibility
+
+`admitted_profiles.json` is the single strict schema for S002 Regular difficulty 2 / Standard size 1, seeds 104731 and 1. The owned Python loader admits `skirmish_source_profiles.py` before callers, binds the JSON bytes, and generates the finite `SourceAdmittedProfiles` C# guard. Unknown schema versions, keys, runtime labels, selections and seeds fail closed. Each build receipt and data bundle must match the requested mission/seed; normal startup checks initialization selection before allocating its World.
+
+For seed1, prepare a new initialization from the same authored graph/static map descriptors, set selection.seed to 1, and include this exact immutable qualification descriptor:
+
+```json
+"metadata_compatibility": {
+  "path": "<qualified-native-output>/data/two-seed-metadata.json",
+  "sha256": "d9b2dbfc12a8cfd12e385a3b3fa9266fd96a3d05939bc244992fafc6e21e1e54"
+}
+```
+
+The qualified native wrapper capture independently compiled seed 104731/setup 3657809016 and seed 1/setup 3589425631 and observed equal building/unit/configured-provider metadata. `SourceMetadataCompatibility` checks its exact capture hash, reached factory source and script-meta pins, six owner assemblies and metas, conservative native asset closure, provider ordering, recipes and actual target setup. The historical metadata keeps captured seed 104731 provenance. Only immutable authoring metadata crosses contexts; current original compiler/placement/owners create seed 1 positions, banks, entities and runtime state afresh. Omitting the compatibility descriptor retains the default strict same-context reader behavior; the descriptor cannot admit another seed, target setup or map.
+
+Pin the new initialization into a data bundle with mission S002 and seed 1. Use a new seed 1 build receipt, then the ordinary command (no forced terminal):
+
+```sh
+python3 -B Tools/CI/run_skirmish_source_simulation.py run \
+  --repo <repository> --package-root <package> --mission S002 --seed 1 \
+  --build-receipt <seed1-build>/build.json --data-bundle <seed1-bundle.json> \
+  --output <fresh-output> --timeout 600
+```
+
+Add `--max-ticks 5` only for an explicit diagnostic prefix. Ordinary full runs retain required preflight, autonomous ARIA, measured path budgets and original clocks. The qualified seed 1 source run observed original Victory/MainBaseDestroyed at tick 12572, setup 3589425631, with 4 deliveries. Source outcomes remain separate from native normal-input/UI/result-save/return and real player/device acceptance. Reusable profile regressions and the noWorld metadata reader fixture are documented in `Tests/README.md`.

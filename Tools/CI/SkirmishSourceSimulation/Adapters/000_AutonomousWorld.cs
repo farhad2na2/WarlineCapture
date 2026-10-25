@@ -30,6 +30,7 @@ namespace Game.Runtime
         internal Entity Boundary { get; private set; }
         internal SkirmishScenarioDefinitionConfig ActualDefinition { get; private set; }
         internal SkirmishResolvedSetup Setup { get; private set; }
+        internal SourceMetadataCompatibility MetadataCompatibility { get; private set; }
         internal SkirmishBattleCatalogConfig ActualCanonicalCatalog { get; private set; }
         internal System.Collections.Generic.IReadOnlyList<SkirmishSetupMatrixRow> ActualCompileMatrix { get; private set; }
         internal SkirmishContentManifest ActualCompileManifest { get; private set; }
@@ -70,7 +71,7 @@ namespace Game.Runtime
             var value = token as JObject ?? throw new ArgumentException("Pinned source descriptor required");
             return PinnedFile((string)value["path"], (string)value["sha256"], maximum);
         }
-        internal void Initialize(string path, string sha256, float fixedDeltaTime)
+        internal void Initialize(string path, string sha256, float fixedDeltaTime, string metadataSourceRepo=null, string metadataDataRepo=null)
         {
             if (disposed || initializationAttempted) throw new InvalidOperationException("Initialize a fresh generated world exactly once");
             initializationAttempted = true;
@@ -125,6 +126,7 @@ namespace Game.Runtime
             Army = definition.ArmyProfileConfig;
             if(!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId,out int actualScenarioIndex))throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;
+            MetadataCompatibility=SourceMetadataCompatibility.Load(request,Setup,metadataSourceRepo,metadataDataRepo);
             RetainSelectedOperationMapInputs(request, graph, assets);
             InitializationStage = "ConstructingBakedCampaignMap";
             Entities.LogicalAllocatorAdmitted = true;

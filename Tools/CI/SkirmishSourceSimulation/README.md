@@ -36,3 +36,21 @@ The logical ARIA contact/receipt controller is an explicit data-mode transport o
 ## Current candidate status
 
 Do not treat this README or `resolve` as qualification. The staged package is runnable only after its manifest has zero unresolved entries, its actual entry compiles, and its run receipt records the appropriate result. Historical Victory evidence remains a separate pinned reference. The recorded source linearization satisfies admitted source edges; it is not a claim that native Unity observed the same total order.
+
+
+## Passive failure diagnostics
+
+After a run, summarize the existing traces without launching the simulator:
+
+```sh
+python3 Tools/CI/skirmish_trace_summary.py \
+  --aria /absolute/run/aria-trace.jsonl \
+  --validator /absolute/run/validator-state.jsonl \
+  --result /absolute/run/result.json \
+  --receipt /absolute/run/run-receipt.json \
+  --out /absolute/new/trace-summary.json
+```
+
+The compact report lists actual executed command acceptance/reasons and recent commands, repeated consecutive actions, stationary actors with a different pending path/request goal, and input hashes/errors. Repeat thresholds default to three executed actions within five seconds; `--repeat` and `--repeat-window` can change those diagnostic thresholds. Non-executed waits do not count as commands. Unknown receipt acceptance stays unknown.
+
+`analyzer_success` means the input analysis completed, separately from `source_result` and the mission outcome. Warnings are observations to investigate; they do not prove a gameplay bug or full conservation, and they do not establish native acceptance. The analyzer never changes gameplay clocks or commands and refuses to overwrite existing output/evidence. Missing/invalid traces produce explicit analysis errors. `--receipt` is optional for older source attempts, but a missing validator trace cannot establish stationary-actor analysis.

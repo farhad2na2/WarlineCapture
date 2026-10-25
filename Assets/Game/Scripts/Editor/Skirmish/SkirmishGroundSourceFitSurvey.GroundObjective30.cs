@@ -300,6 +300,8 @@ namespace Game.Editor
                 try
                 {
                     for(int i=0;i<walkable.Length;i++)if(walkable[i].Value==0)blocked.Set(i,true);
+                    var sourceBlocked=blocked;
+                    InitialUnitsSpawnSystem.ReserveStaticBlockerFootprints(em,ref sourceBlocked,grid);
                     Ground30OccupyFacilities(acceptedFacilities,grid,occupied);
                     var random=new Unity.Mathematics.Random(1);int forceIndex=0;
                     foreach(var force in budget.Forces)

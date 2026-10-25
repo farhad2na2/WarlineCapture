@@ -1736,23 +1736,27 @@ namespace Game.Runtime
             return false;
         }
 
-        private static void ReserveStaticBlockerFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)
+        internal static void ReserveStaticBlockerFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)
         {
             using var blockerQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<StaticGridBlocker>(),
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<GridBlockerSize>());
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
             ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
             ComponentTypeHandle<GridBlockerSize> blockerSizeType = em.GetComponentTypeHandle<GridBlockerSize>(true);
             using NativeArray<ArchetypeChunk> chunks = blockerQuery.ToArchetypeChunkArray(Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
                 ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
                 NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
                 NativeArray<GridBlockerSize> blockerSizes = chunk.GetNativeArray(ref blockerSizeType);
                 for (int i = 0; i < unitGrids.Length; i++)
                 {
-                    int2 origin = unitGrids[i].Cell;
+                    Entity entity = entities[i];
+                    int2 origin = em.HasComponent<OperationMapBuildingComponent>(entity) && em.HasComponent<RuntimeBuildingCombatInfo>(entity)
+                        ? em.GetComponentData<RuntimeBuildingCombatInfo>(entity).OriginCell : unitGrids[i].Cell;
                     int2 size = blockerSizes[i].Size;
                     for (int y = origin.y; y < origin.y + size.y; y++)
                     {

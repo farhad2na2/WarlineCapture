@@ -472,16 +472,19 @@ namespace Game.UI.Runtime
             view.AdvancePreferred = close < 4;
             if (watchScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex)
             {
-                var forward = objective - watchSkirmish.PlayerBaseObjectivePosition; forward.y = 0; forward.Normalize();
-                var side = new Vector3(-forward.z, 0, forward.x);
-                var flank = objective - forward * 50 + side * 70;
-                int arrived = 0;
+                var sourcePlayerPositions = new System.Collections.Generic.List<Game.Simulation.AriaGroundPosition>();
                 foreach (var ally in watchMap.PresentedContacts)
-                    if (ally.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Player &&
-                        (ally.Model.Position - flank).sqrMagnitude < 35 * 35) arrived++;
-                if (arrived >= 4) watchFlankReached = true;
-                var goal = watchFlankReached ? objective + side * 20 : flank;
-                view.AdvancePreferred = !view.AssaultAtBase;
+                    if (ally.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Player)
+                    {
+                        var p = ally.Model.Position;
+                        sourcePlayerPositions.Add(new Game.Simulation.AriaGroundPosition(p.x, p.y, p.z));
+                    }
+                var cityHome = watchSkirmish.PlayerBaseObjectivePosition;
+                var city = Game.Simulation.AriaGroundApproachPolicy.City(objectivePoint,
+                    new Game.Simulation.AriaGroundPosition(cityHome.x, cityHome.y, cityHome.z),
+                    sourcePlayerPositions, view.AssaultAtBase, ref watchFlankReached);
+                var goal = new Vector3(city.Goal.X, city.Goal.Y, city.Goal.Z);
+                view.AdvancePreferred = city.AdvancePreferred;
                 // The labelled base control provides an exact, visible camera action
                 // for the final approach; reserve map navigation for the remote flank.
                 if (watchFlankReached) view.FocusAdvance = view.FocusEnemy;

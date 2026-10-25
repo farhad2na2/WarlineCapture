@@ -7,6 +7,11 @@ public readonly struct AriaAssaultDistances {
  public readonly bool DistanceVisible,AssaultAtBase;
  public AriaAssaultDistances(AriaGroundPosition nearest,float squared,int close,int assault,int required){Nearest=nearest;SquaredDistance=squared;Close=close;Assault=assault;DistanceVisible=squared<float.MaxValue;Distance=DistanceVisible?(float)Math.Sqrt(squared):0f;AssaultAtBase=assault>=required;}
 }
+public enum AriaGroundApproachKind : byte { Ordinary, CityCrossroads, IndustrialBasin }
+public readonly struct AriaCityGroundApproach {
+ public readonly AriaGroundPosition Flank,Goal;public readonly int Arrived;public readonly bool AdvancePreferred,FocusEnemy;
+ public AriaCityGroundApproach(AriaGroundPosition flank,AriaGroundPosition goal,int arrived,bool advancePreferred,bool focusEnemy){Flank=flank;Goal=goal;Arrived=arrived;AdvancePreferred=advancePreferred;FocusEnemy=focusEnemy;}
+}
 public static class AriaGroundApproachPolicy {
  public static float SquaredDistance(AriaGroundPosition a,AriaGroundPosition b)=>Squared(Difference(a,b));
  public static AriaAssaultDistances Observe(AriaGroundPosition objective,IReadOnlyList<AriaGroundPosition> publicPlayers,float enemyDisplayedHealth,int selectedCount){
@@ -19,6 +24,16 @@ public static class AriaGroundApproachPolicy {
   var nearest=distances.SquaredDistance==float.MaxValue?playerObjective:distances.Nearest;
   var delta=Difference(nearest,objective);delta=new AriaGroundPosition(delta.X,0,delta.Z);
   var normalized=Normalize(delta);float standoff=industrialBasin?30f:25f;return Sum(objective,Scale(normalized,standoff));
+ }
+ public static AriaCityGroundApproach City(AriaGroundPosition objective,AriaGroundPosition playerObjective,IReadOnlyList<AriaGroundPosition> sourcePlayerPositions,bool assaultAtBase,ref bool flankReached){
+  if(sourcePlayerPositions==null)throw new ArgumentNullException(nameof(sourcePlayerPositions));
+  var forward=Difference(objective,playerObjective);forward=new AriaGroundPosition(forward.X,0,forward.Z);forward=Normalize(forward);
+  var side=new AriaGroundPosition(-forward.Z,0,forward.X);
+  var flank=Sum(Difference(objective,Scale(forward,50f)),Scale(side,70f));int arrived=0;
+  for(int i=0;i<sourcePlayerPositions.Count;i++)if(Squared(Difference(sourcePlayerPositions[i],flank))<35*35)arrived++;
+  if(arrived>=4)flankReached=true;
+  var goal=flankReached?Sum(objective,Scale(side,20f)):flank;
+  return new AriaCityGroundApproach(flank,goal,arrived,!assaultAtBase,flankReached);
  }
  // Preserve the original Vector3 operator/field boundaries: scalar fusion can
  // retain wider intermediates on the admitted Mono -float32 lane.

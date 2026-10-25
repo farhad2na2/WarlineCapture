@@ -67,3 +67,20 @@ Build input pins are captured as a batch. Each input is still hashed from its by
 The optional [authored navigation facts cache](NAVIGATION_FACTS.md) avoids repeatedly decoding the large baked navigation JSON. Its preparation command emits a separate bundle, which can be passed to the ordinary runner. Only the eight admitted authored component types are cached; world entities, commands, resources, production and gameplay state are freshly created. Source, type-schema and raw-input changes invalidate the cache. The raw input path remains supported. Cached startup and bounded prefixes do not establish a mission outcome.
 
 Owned Python helper byte fidelity and the qualified protocol test entry are documented in [OWNED_PYTHON_SOURCES.md](OWNED_PYTHON_SOURCES.md). Existing passive diagnostics and native acceptance scopes above are unchanged.
+
+
+## Focused native prefab reference data
+
+A newly consumed prefab may need its imported model bounds captured once. The existing reference exporter accepts an explicit actual catalog, seed and comma-separated configured building keys; omitting these arguments retains the S002/104731 eight-building selection. Geometry is optional and records the original runtime definition, original `BuildingModelBounds` result, renderer mesh bounds and root-relative transforms. It does not initialize a mission or build a player.
+
+On macOS use the required GUI-licensing wrapper with Unity Hub open:
+
+```sh
+rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 600 --log /absolute/new/export.log -- \
+  -quit -executeMethod Game.Editor.SkirmishBakedActorSnapshotExporter.RunBuildingReferenceData \
+  -skirmishBuildingReferenceData /absolute/new/export \
+  -skirmishBuildingReferenceCatalog S005 -skirmishBuildingReferenceSeed 104734 \
+  -skirmishBuildingReferenceKeys Building_Helipad -skirmishBuildingReferenceGeometry
+```
+
+Require exit zero and `[SkirmishAuthoredBuildingDefinitions] result=Passed` with the expected count and zero unsupported values. Recheck the emitted source pins. Configured footprint and evaluated/final footprint are separate fields. Metadata is captured in the selected native catalog's recipe context: rebuild production recipes for the actual target mission; do not copy S005 recipes into S026. Mission placement, runtime outcome and native acceptance remain separate checks.

@@ -28,6 +28,14 @@ namespace Game.Editor
             var args = Environment.GetCommandLineArgs(); int at = Array.IndexOf(args, "-skirmishBuildingReferenceData");
             if (at < 0 || at + 1 >= args.Length) throw new ArgumentException("Explicit new output directory required");
             string output = SkirmishOfflineDataExporter.ValidateOutputDirectory(args[at + 1]);
+            string catalogId = BuildingReferenceArgument(args, "-skirmishBuildingReferenceCatalog", "S002");
+            string seedText = BuildingReferenceArgument(args, "-skirmishBuildingReferenceSeed", "104731");
+            if (!int.TryParse(seedText, out int seed)) throw new ArgumentException("Explicit integer source seed required");
+            string keyText = BuildingReferenceArgument(args, "-skirmishBuildingReferenceKeys", null);
+            string[] keys = keyText == null ? StartingBuildingKeys : keyText.Split(',').Select(k => k.Trim()).ToArray();
+            if (keys.Length < 1 || keys.Length > 32 || keys.Any(k => string.IsNullOrEmpty(k) || k.Length > 128) || keys.Distinct(StringComparer.Ordinal).Count() != keys.Length)
+                throw new ArgumentException("Unique bounded configured building keys required");
+            bool captureGeometry = Array.IndexOf(args, "-skirmishBuildingReferenceGeometry") >= 0;
             // TryQueueExpanded in SkirmishLaunchProjection loads the shared MAP
             // preset (index0), even when the S002 scenario selection is index4.
             var preset = SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseScenarioIndex);
@@ -41,16 +49,16 @@ namespace Game.Editor
             string unitCatalog = AssetDatabase.GetAssetPath(sceneConfig.UnitPrefabRegistryConfig);
             if (string.IsNullOrEmpty(unitCatalog)) throw new InvalidOperationException("Actual S002 unit registry source missing");
             var expansion = SkirmishExpansionCatalogConfig.Load();
-            var definitionSource = expansion?.Definitions.FirstOrDefault(d => d != null && d.CatalogId == "S002");
+            var definitionSource = expansion?.Definitions.FirstOrDefault(d => d != null && d.CatalogId == catalogId);
             if (definitionSource == null) throw new InvalidOperationException("Actual S002 scenario definition missing");
             if (!SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string matrixError)) throw new InvalidOperationException(matrixError);
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = definitionSource.RequiredFeatureIds ?? Array.Empty<string>() };
-            if (!SkirmishSetupCompiler.TryCompile(definitionSource, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, 104731,
+            if (!SkirmishSetupCompiler.TryCompile(definitionSource, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, seed,
                 manifest, matrix, out var setup, out var reasons)) throw new InvalidOperationException("Original S002 compiler rejected source: " + string.Join(";", reasons));
             // The actual native composition merges baseline+scene source prefabs and
             // compiles mission recipes. Export that overlay, not either input alone.
             using var production = SkirmishProductionCatalog.Create(setup, preset.buildingPlacement, sceneConfig);
-            var pins = SourcePins(buildingCatalog, sceneCatalog, unitCatalog, AssetDatabase.GetAssetPath(expansion));
+            var pins = SourcePins(buildingCatalog, sceneCatalog, unitCatalog, AssetDatabase.GetAssetPath(expansion), AssetDatabase.GetAssetPath(definitionSource), "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.ReferenceGeometry.cs");
             var originalDefault = World.DefaultGameObjectInjectionWorld;
             var buildings = new List<GameObject>(production.Config.Spawnables);
             var units = new List<GameObject>(production.Config.UnitPrefabRegistryConfig.UnitSpawnPrefabs);
@@ -71,7 +79,7 @@ namespace Game.Editor
             {
                 var runway = world.GetOrCreateSystemManaged(LoadedType("Game.Runtime.BuildingRunwaySystem"));
                 var create = helperType.GetMethod("CreateRuntimeBuildingDefinition");
-                foreach (string key in StartingBuildingKeys)
+                foreach (string key in keys)
                 {
                     var resolveArgs = new object[] { key, null };
                     if (!(bool)helperType.GetMethod("TryResolveConfiguredSpawnablePrefab").Invoke(helper, resolveArgs))
@@ -84,8 +92,10 @@ namespace Game.Editor
                     var fields = new JObject();
                     foreach (var field in definition.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic))
                         fields[field.Name] = CaptureDefinitionValue(field.GetValue(definition), key + "/" + field.Name, missing, 0);
-                    rows.Add(new JObject { ["key"] = key, ["prefab"] = SourceAsset(prefab), ["definition_type"] = definition.GetType().FullName,
-                        ["factory"] = "BuildingDefinitionPrefabSystemHelper.CreateRuntimeBuildingDefinition", ["fields"] = fields });
+                    var row = new JObject { ["key"] = key, ["prefab"] = SourceAsset(prefab), ["definition_type"] = definition.GetType().FullName,
+                        ["factory"] = "BuildingDefinitionPrefabSystemHelper.CreateRuntimeBuildingDefinition", ["fields"] = fields };
+                    if (captureGeometry) row["evaluated_geometry"] = CaptureBuildingReferenceGeometry(prefab, sourceAuthoring);
+                    rows.Add(row);
                 }
             }
             if (!ReferenceEquals(originalDefault, World.DefaultGameObjectInjectionWorld)) throw new InvalidOperationException("Default World changed");
@@ -94,7 +104,7 @@ namespace Game.Editor
             var report = new JObject { ["schema_version"] = 1, ["kind"] = "AuthoredSkirmishBuildingDefinitions",
                 ["authority"] = "OriginalConfiguredPrefabMetadataFactory_NotMissionState", ["definitions"] = rows,
                 ["building_catalog"] = buildingCatalog, ["scene_catalog"] = sceneCatalog, ["unit_catalog"] = unitCatalog,
-                ["setup_hash"] = setup.SetupHash, ["seed"] = setup.Seed,
+                ["setup_hash"] = setup.SetupHash, ["seed"] = setup.Seed, ["catalog_id"] = catalogId, ["requested_keys"] = JArray.FromObject(keys),
                 ["source_pins"] = JObject.FromObject(pins), ["unsupported_values"] = missing,
                 ["full_mission_initialized"] = false, ["native_visual_readiness"] = false };
             Directory.CreateDirectory(output);

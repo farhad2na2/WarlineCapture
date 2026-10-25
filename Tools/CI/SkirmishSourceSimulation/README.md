@@ -84,3 +84,42 @@ rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 600 --log /absolute/new/expor
 ```
 
 Require exit zero and `[SkirmishAuthoredBuildingDefinitions] result=Passed` with the expected count and zero unsupported values. Recheck the emitted source pins. Configured footprint and evaluated/final footprint are separate fields. Metadata is captured in the selected native catalog's recipe context: rebuild production recipes for the actual target mission; do not copy S005 recipes into S026. Mission placement, runtime outcome and native acceptance remain separate checks.
+
+## Inspect a new mission data draft
+
+`author` uses the current native `Configure`, `TryCompile` and public
+`TryCaptureMissionLogicalAuthoringInputs` APIs before allocating any simulation world:
+
+```sh
+python3 Tools/CI/run_skirmish_source_simulation.py author \
+  --repo /path/to/source-repo --data-repo /path/to/asset-repo \
+  --output /path/to/fresh-output --mission S026 --seed 104755 \
+  --authoring-input /path/to/s026-authoring-input.json
+```
+
+The initial supported authoring input is an **unmeasured S026/104755 draft**.
+`DraftInspected` with exit 0 means the native compiler rejected the draft and its
+original reasons were recorded. It explicitly means `validation_passed=false`,
+`source_fit_verified=false` and `world_allocated=false`; it does not accept the
+mission, modify the catalog, publish an asset or enable autonomous S026 execution.
+The existing S002/104731 resolve/build/run admission is unchanged.
+
+Input schema 1 has exact fields `schema_version`, `kind`
+(`SkirmishMissionAuthoringDraft`), `catalog_id`, `seed`, `size`, `difficulty`,
+`graph`, `profiles`, `campaign_source_path`, `layout`, `setup_matrix`, and optional
+`binding`. Each file descriptor contains exactly `path` and `sha256`. The graph is
+the existing pinned source-config graph. `profiles` maps exactly `objective`,
+`army`, `start`, `economy`, `upgrades`, `intel`, `roles` to real asset paths in that
+graph. `layout` is the finite native config field object with explicit
+`bindingValueFormat=2`; measured deployments and bind-all remain false. Unknown
+fields, duplicate fields, trailing JSON, changed pins and unsupported profiles or
+formats reject. Positive source-fit input is explicitly unsupported until complete
+hash-bound fixed-budget placement, service/egress, route and packing facts exist.
+
+The receipt distinguishes the S002 finite **tool compilation profile** from the
+actual S026 authoring identity; compiling that closure does not initialize an S002
+world. Source code comes only from `--repo`; assets come from `--data-repo`.
+The original compiler reasons, current input hashes and actual loaded-runtime
+manifests are retained. An optional `--build-receipt` reuses a checked build from
+the exact same source root. This command does not bypass baked-data metadata
+cache guards or provide native UI, renderer, device or player readiness evidence.

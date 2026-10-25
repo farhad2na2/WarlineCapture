@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resolve/build/run the shared current-source simulation (currently S002/104731)."""
+"""Resolve/build/run S002/104731; author inspects S026/104755 drafts without allocating a world or granting source-fit/mission acceptance."""
 from __future__ import annotations
 import argparse,json,sys
 from pathlib import Path
@@ -22,9 +22,12 @@ owned=_bootstrap_owned_source()
 from skirmish_source_manifest import resolve_manifest,UnsupportedSourceShape
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float,default=1800);a=p.parse_args()
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run','author']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--authoring-input',help='Hash-bound new data draft; DraftInspected is not mission validation, source-fit or world execution');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float,default=1800);a=p.parse_args()
  package=Path(a.package_root).resolve();manifest=Path(a.manifest)if a.manifest else package/'Tools/CI/SkirmishSourceSimulation/source_manifest.plan.json'
  try:
+  if a.command=='author':
+   if not a.authoring_input:p.error('author requires --authoring-input')
+   result=owned.require('skirmish_source_authoring').author(a.repo,package,manifest,a.output,a.mission,a.seed,a.authoring_input,a.build_receipt,a.data_repo,a.timeout);print(json.dumps({k:result[k]for k in ['status','authoring_mission','authoring_seed','process_exit','world_allocated','validation_passed','source_fit_verified']}));return 0 if result['status']=='DraftInspected'else 1
   if a.mission!='S002'or a.seed!=104731:raise UnsupportedSourceShape('Supported source profile is S002/104731 only')
   if a.command=='resolve':
    result=resolve_manifest(a.repo,package,manifest,a.output,a.mission,a.seed);print(json.dumps({k:result[k]for k in ['status','native_direct_count','fresh_extracted_count','adapter_count','external_temp_source_dependencies']}));

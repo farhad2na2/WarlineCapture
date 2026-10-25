@@ -7675,6 +7675,14 @@
       "id": "ground-return-UnitReturnToBaseCommandService.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Systems/UnitReturnToBaseCommandService.cs"
+    },
+    {
+      "id": "SourceMissionAuthoringTool.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceMissionAuthoringTool.cs",
+      "contains_original_gameplay": false,
+      "scope": "Data-only native Configure/TryCompile/TryCapture invocation before world allocation; no new gameplay/serializer or mission runtime admission.",
+      "role": "host_glue"
     }
   ],
   "excluded_nonruntime_sources": [

@@ -244,6 +244,11 @@ namespace Game.Runtime
             private struct NativeContext:ITargetAcquisitionContext
             {
                 public AcquireTargetsJob Job;public Entity Source;
+                // This context is local to one Execute. ReadOnly policy inputs cannot change
+                // during that job; only the source presence/mask is reused, never target facts.
+                private bool sourcePolicyCaptured,cachedSourceHasPolicy;
+                private Entity sourcePolicyOwner;
+                private byte cachedSourceAllowedTargets;
                 private NativeParallelMultiHashMapIterator<int> iterator;
                 public bool SourceHasAttackMove()=>Job.AttackMoveLookup.HasComponent(Source);
                 public bool SourceHasManualMove()=>Job.ManualMoveLookup.HasComponent(Source);
@@ -279,9 +284,24 @@ namespace Game.Runtime
                 public TargetPolicyFacts PolicyFacts(TargetIdentity source,TargetIdentity target)
                 {
                     Entity s=EntityOf(source),t=EntityOf(target);
-                    bool hasSource=Job.TargetPolicyLookup.HasComponent(s),hasTarget=Job.TargetPolicyLookup.HasComponent(t);
-                    var sourcePolicy=hasSource?Job.TargetPolicyLookup[s]:default;
-                    var facts=new TargetPolicyFacts{HasSourcePolicy=hasSource,HasTargetPolicy=hasTarget,SourceAllowedTargets=(byte)sourcePolicy.AllowedTargets};
+                    bool hasSource,hasTarget;byte sourceAllowedTargets;
+                    if(sourcePolicyCaptured&&sourcePolicyOwner==s)
+                    {
+                        hasSource=cachedSourceHasPolicy;
+                        hasTarget=Job.TargetPolicyLookup.HasComponent(t);
+                        sourceAllowedTargets=cachedSourceAllowedTargets;
+                    }
+                    else
+                    {
+                        // Preserve the first-call source/target presence then source-read order.
+                        hasSource=Job.TargetPolicyLookup.HasComponent(s);
+                        hasTarget=Job.TargetPolicyLookup.HasComponent(t);
+                        var sourcePolicy=hasSource?Job.TargetPolicyLookup[s]:default;
+                        sourceAllowedTargets=(byte)sourcePolicy.AllowedTargets;
+                        sourcePolicyCaptured=true;sourcePolicyOwner=s;
+                        cachedSourceHasPolicy=hasSource;cachedSourceAllowedTargets=sourceAllowedTargets;
+                    }
+                    var facts=new TargetPolicyFacts{HasSourcePolicy=hasSource,HasTargetPolicy=hasTarget,SourceAllowedTargets=sourceAllowedTargets};
                     if(hasTarget){var policy=Job.TargetPolicyLookup[t];facts.TargetDomain=(byte)policy.Domain;facts.TargetVisible=policy.Visible;}
                     else
                     {

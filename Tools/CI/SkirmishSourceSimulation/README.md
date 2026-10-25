@@ -123,3 +123,23 @@ The original compiler reasons, current input hashes and actual loaded-runtime
 manifests are retained. An optional `--build-receipt` reuses a checked build from
 the exact same source root. This command does not bypass baked-data metadata
 cache guards or provide native UI, renderer, device or player readiness evidence.
+
+## Capture the existing map metadata reference
+
+The approved DenseCity source has a focused one-time native reference probe. It
+calls the original complete map metadata factory and records raw float bits for
+its eight anchors and one camera, including exact Euler/quaternion pairs. It
+captures source-asset data only; no mission, World or native root state is sampled.
+
+```sh
+WARLINE_OPMAP_METADATA_REFERENCE_OUTPUT=/private/tmp/fresh-map-reference/metadata-reference.json \
+  Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/fresh-map-reference.log -- \
+  -quit -executeMethod Game.Tests.Editor.OperationMapMetadataReferenceProbe.Run
+```
+
+Keep Hub open and require wrapper exit zero, the exact
+`[OperationMapMetadataReference] result=Passed rotations=9 anchors=8 cameras=1`
+marker, and the fresh output. Reverify recorded asset/source, assembly, method IL
+and Editor identity pins. The probe rejects a changed coded source asset; it is
+not a general quaternion implementation or mission-readiness certificate. Reuse
+these reference values only within their source/producer read domain.

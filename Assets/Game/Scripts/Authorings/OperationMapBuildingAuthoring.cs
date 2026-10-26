@@ -235,7 +235,7 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 3)]
+        [BakingVersion("WarlineCapture", 4)]
         private sealed partial class OperationMapBuildingBaker : Baker<OperationMapBuildingAuthoring>
         {
             public override void Bake(OperationMapBuildingAuthoring authoring)

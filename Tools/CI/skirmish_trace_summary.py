@@ -31,6 +31,13 @@ def capped(o,group,key):
 def warning(o,kind,item):
  if len(o['warnings'][kind])<MAX_WARNINGS:o['warnings'][kind].append(item)
  else:err(o,'%s warning cap exceeded'%kind)
+def closed_inspection_pan(row):
+ """Reported map-control contract only; this does not infer target visibility."""
+ view=row.get('observation')
+ if not isinstance(view,dict) or view.get('InspectionOpen') is not False:return False
+ target=view.get('FocusAdvance')
+ return (isinstance(target,dict) and target.get('Admitted') is True and
+         integer(target.get('Id')) and target['Id']==-20011)
 def stable_json(path,name,o,optional=False):
  if optional and not path:return None
  try:
@@ -281,7 +288,8 @@ def analyze(a):
  if result:o['source_result']={k:result.get(k) for k in ('status','source_outcome','tick','simulation_seconds')}
  if receipt:o['source_receipt']={k:receipt.get(k) for k in ('schema_version','kind','mission','seed','process_exit','timed_out','wall_seconds')}
  if getattr(a,'process_log',None):performance_summary(a.process_log,result,o)
- seen=set();last=None;streak=None;aria_rows=0;c=o['commands']
+ o['warnings']['closed_inspection_pan']=[]
+ seen=set();last=None;streak=None;modal_streak=None;aria_rows=0;c=o['commands']
  for no,row in stream(a.aria,'aria_trace',o):
   aria_rows+=1
   if not isinstance(row,dict):err(o,'aria line %d not object'%no);continue
@@ -291,6 +299,15 @@ def analyze(a):
   if not finite(t):err(o,'aria line %d nonfinite/missing time'%no);continue
   if last is not None and t<last:err(o,'aria clock decreases at line %d'%no)
   last=t
+  # Catch the capability mismatch even before a control executes. Aggregate a
+  # sustained bad state rather than exhausting the warning cap on every frame.
+  if closed_inspection_pan(row):
+   if modal_streak is None:
+    modal_streak={'first_line':no,'last_line':no,'start_seconds':t,'end_seconds':t,'observations':1,'target_id':-20011,'inspection_open':False,'note':'Open-map pan advertised while inspection is closed; check the open/focus/close adapter contract. This is not a troop-order or visibility verdict.'}
+    warning(o,'closed_inspection_pan',modal_streak)
+   else:
+    modal_streak['last_line']=no;modal_streak['end_seconds']=t;modal_streak['observations']+=1
+  else:modal_streak=None
   if not isinstance(row.get('executed'),bool):err(o,'aria line %d executed not bool'%no);continue
   if not row['executed']:continue
   action=row.get('action') or row.get('intent');target=row.get('target_id',r.get('control_id'));api=r.get('source_api')

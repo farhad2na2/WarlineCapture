@@ -26,6 +26,24 @@ class T(unittest.TestCase):
   self.assertEqual(0,rc);self.assertEqual(1,len(o['warnings']['repeated_consecutive_executed_actions']))
   rc,o=self.go([ar(0),ar(4),ar(8)],[va(0)])
   self.assertFalse(o['warnings']['repeated_consecutive_executed_actions'])
+ def test_closed_map_pan_is_detected_before_dispatch(self):
+  # Reduced actual S050 R4 row4548: armed, no visible target, closed scope,
+  # but an admitted open-map pan. No executed/accepted command is implied.
+  row=ar(75.8,exe=False);row['observation']={'AttackMode':True,'InspectionOpen':False,'FocusAdvance':{'Action':2,'Id':-20011,'Admitted':True}}
+  rc,o=self.go([row],[va(0)])
+  self.assertEqual(0,rc);self.assertEqual(0,o['commands']['executed'])
+  w=o['warnings']['closed_inspection_pan'];self.assertEqual(1,len(w));self.assertEqual(1,w[0]['observations']);self.assertEqual(75.8,w[0]['start_seconds'])
+ def test_map_control_lifecycle_and_unsupported_observations_do_not_warn(self):
+  rows=[]
+  for view in [None,[],{}, {'InspectionOpen':True,'FocusAdvance':{'Id':-20011,'Admitted':True}}, {'InspectionOpen':False,'FocusAdvance':{'Id':-20010,'Admitted':True}}, {'InspectionOpen':False,'FocusAdvance':{'Id':-20011,'Admitted':False}}, {'InspectionOpen':0,'FocusAdvance':{'Id':-20011,'Admitted':True}}, {'InspectionOpen':False,'FocusAdvance':{'Id':'-20011','Admitted':True}}]:
+   row=ar(len(rows),exe=False);row['observation']=view;rows.append(row)
+  rc,o=self.go(rows,[va(0)]);self.assertEqual(0,rc);self.assertFalse(o['warnings']['closed_inspection_pan'])
+ def test_sustained_map_mismatch_is_bounded_and_recovery_splits_episodes(self):
+  rows=[]
+  for i in range(1002):
+   row=ar(i,exe=False);row['observation']={'InspectionOpen':i==1000,'FocusAdvance':{'Id':-20011,'Admitted':True}};rows.append(row)
+  rc,o=self.go(rows,[va(0)]);self.assertEqual(0,rc)
+  w=o['warnings']['closed_inspection_pan'];self.assertEqual([1000,1],[x['observations'] for x in w]);self.assertEqual(999,w[0]['end_seconds']);self.assertEqual(1001,w[1]['start_seconds'])
  def test_path_final_and_request_stationary(self):
   rc,o=self.go([ar(0)],[va(0),va(6),va(12)])
   self.assertEqual(1,len(o['warnings']['stationary_with_pending_movement']))

@@ -707,7 +707,7 @@ namespace Game.Runtime
                 : "none";
         }
 
-        private static void CollectSelectedMoveEntities(
+        internal static void CollectSelectedMoveEntities(
             EntityManager em,
             EntityQuery selectedMoveQuery,
             EntityTypeHandle entityType,

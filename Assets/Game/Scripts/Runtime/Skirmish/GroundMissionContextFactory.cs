@@ -45,14 +45,7 @@ namespace Game.Runtime
             if (SkirmishMissionDispatch.TryGetLegacyIndex(setup.CatalogId, out int original) &&
                 (playableScenarioIndex != original || sourcePresetLoadIndex != original))
             { error = "Original coded mission dispatch and source preset selection required."; return false; }
-            AriaGroundApproachKind approach;
-            switch (selected.MapId)
-            {
-                case "DB": approach = AriaGroundApproachKind.Ordinary; break;
-                case "CC": approach = AriaGroundApproachKind.CityCrossroads; break;
-                case "IB": approach = AriaGroundApproachKind.IndustrialBasin; break;
-                default: error = "Canonical map approach is outside the current shared ground context."; return false;
-            }
+            if(!TryResolveApproachKind(selected.MapId,definition,setup,out var approach,out error))return false;
             // Re-run the original compiler: a caller-supplied hash alone is not compilation evidence.
             if (!SkirmishSetupCompiler.TryCompile(definition, setup.DifficultyId, setup.SizeId, setup.Seed,
                 manifest, matrix, out var compiled, out var reasons))
@@ -64,10 +57,18 @@ namespace Game.Runtime
             context = new GroundMissionContext(setup.CatalogId, setup.DefinitionId, setup.ContentVersion,
                 setup.SetupHash, session.SessionId.ToString(), playableScenarioIndex, setup.ObjectiveKind,
                 setup.ArmyProfileId, setup.StartPackageId, setup.Readiness, approach,
-                "canonical:" + selected.MapId + ";source-preset:" + presetResource,
+                "canonical:" + selected.MapId + ";source-preset:" + presetResource + (approach==AriaGroundApproachKind.AuthoredLogicalGround?";source:"+setup.OperationMapId+";logical-binding:"+setup.MissionLogicalBindingFingerprint:string.Empty),
                 selected.MapId, sourcePresetLoadIndex, presetIndex, presetResource, AriaS002Scope.LogicalPublicData);
             error = null;
             return true;
+        }
+
+        public static bool TryResolveApproachKind(string canonicalMapId,SkirmishScenarioDefinitionConfig definition,SkirmishResolvedSetup setup,out AriaGroundApproachKind approach,out string error)
+        {
+            error=null;approach=default;
+            switch(canonicalMapId){case "DB":approach=AriaGroundApproachKind.Ordinary;return true;case "CC":approach=AriaGroundApproachKind.CityCrossroads;return true;case "IB":approach=AriaGroundApproachKind.IndustrialBasin;return true;}
+            if(string.IsNullOrEmpty(canonicalMapId)||definition==null||setup==null||definition.CampaignMap==null||definition.MissionLogicalBinding==null||setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||setup.ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||setup.StartPackageId!=SkirmishStartPackageId.EstablishedBase||string.IsNullOrEmpty(setup.LayoutBindingFingerprint)||string.IsNullOrEmpty(setup.MissionLogicalBindingFingerprint)||definition.CatalogId!=setup.CatalogId||definition.DefinitionId!=setup.DefinitionId||definition.ContentVersion!=setup.ContentVersion||definition.OperationMapId!=setup.OperationMapId){error="Canonical map approach requires actual source-bound logical ground configuration.";return false;}
+            approach=AriaGroundApproachKind.AuthoredLogicalGround;return true;
         }
 
         public static bool MatchesLogicalSession(in GroundMissionContext context, SkirmishResolvedSetup setup,

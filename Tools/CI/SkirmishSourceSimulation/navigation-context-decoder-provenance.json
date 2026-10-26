@@ -1,0 +1,8 @@
+{
+  "original_file": "/private/tmp/skirmish-s050-normal-package-20261026-r2/package/Tools/CI/SkirmishSourceSimulation/Adapters/299_GeneratedAuthoredNavigationImporter.cs",
+  "original_sha256": "58ab04bdf71ca5375a42bc7b2095346c577e003b9751e1dd53b89bffe08b5be7",
+  "decoder_body_sha256": "2c2e17e3edf6fdfb9c2e278842e141cd1d4cffbc7c1b44be67e7e2b0d7f875f7",
+  "variant_file": "/private/tmp/skirmish-s050-normal-package-20261026-r2/package/Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/299_GeneratedAuthoredNavigationImporter.cs",
+  "decoder_body_literal_preserved": true,
+  "new_scope": "New explicit compiler/native source context validates before SAME native scalar decoder; no coordinate changes, dropped rows or range clipping"
+}

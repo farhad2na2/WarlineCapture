@@ -1,9 +1,12 @@
 {
   "schema_version": 1,
   "profile": {
-    "mission": "S026",
-    "seed": 104755,
-    "numeric_runtime": "InstalledMono"
+    "runtime_backend": "TypedGroundS026V1",
+    "numeric_runtime": "InstalledMono",
+    "qualification_lineage": {
+      "mission": "S026",
+      "seed": 104755
+    }
   },
   "compiler_defines": [],
   "sources": [
@@ -401,7 +404,7 @@
     {
       "id": "498_SourceS002NumericCameraSnapshot.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/498_SourceS002NumericCameraSnapshot.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/498_SourceS002NumericCameraSnapshot.cs",
       "role": "engine_boundary",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned engine_boundary; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -422,7 +425,7 @@
     {
       "id": "299_GeneratedAuthoredNavigationImporter.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/299_GeneratedAuthoredNavigationImporter.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/299_GeneratedAuthoredNavigationImporter.cs",
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned data_decoder; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -1859,7 +1862,7 @@
     {
       "id": "497_SourceS002CameraMotionAdmission.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/497_SourceS002CameraMotionAdmission.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/497_SourceS002CameraMotionAdmission.cs",
       "role": "engine_boundary",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned engine_boundary; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -2019,7 +2022,7 @@
     {
       "id": "SourceTypedFreshBuildingLifetime.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceTypedFreshBuildingLifetime.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceTypedFreshBuildingLifetime.cs",
       "contains_original_gameplay": false,
       "role": "host_glue",
       "scope": "Checked actual typed fresh bank/session/metadata/logical/actor constructor boundary for original building lifetime. Existing S2 route and complete lifecycle policy unchanged."
@@ -2027,7 +2030,7 @@
     {
       "id": "051_SourceConfigMaterializer.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/051_SourceConfigMaterializer.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/051_SourceConfigMaterializer.cs",
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "manual_scope": "Typed materialization of authored config graph objects",
@@ -2239,7 +2242,7 @@
     {
       "id": "526_ActualAutonomousIntegration.terminal.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceSimulationProgram.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceSimulationProgram.cs",
       "role": "entrypoint",
       "contains_original_gameplay": false,
       "scope": "CLI-only orchestrator; original successful terminal loop unchanged. Inputs/output paths now explicit hashed request fields. Actual loaded-runtime manifests before-world and after-outcome. No world-state or decision injection."
@@ -2910,7 +2913,7 @@
     {
       "id": "SourceGroundMissionFamily.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceGroundMissionFamily.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceGroundMissionFamily.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Private compiled source family identity/context boundaries; public SourceAdmittedProfiles unchanged."
@@ -3869,7 +3872,7 @@
     {
       "id": "307_GeneratedS002StartingWorld.lifetime.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/307_GeneratedS002StartingWorld.lifetime.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/307_GeneratedS002StartingWorld.lifetime.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit same-world composition, source-owner scheduling/calls, data binding or validator observation; reviewed host adapter declaration, not a semantic policy-equivalence proof. Original owner policies remain linked/extracted separately."
@@ -4122,7 +4125,7 @@
     {
       "id": "473_GeneratedS002CatalogAvailabilityBinding.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/473_GeneratedS002CatalogAvailabilityBinding.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/473_GeneratedS002CatalogAvailabilityBinding.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned host_glue; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -4285,7 +4288,7 @@
     {
       "id": "SourceOperationMapRotationReference.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceOperationMapRotationReference.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceOperationMapRotationReference.cs",
       "contains_original_gameplay": false,
       "role": "host_glue",
       "scope": "Exact four-input raw-bit native 6000.5.8f1 asset-data rotation reference. No Euler implementation/fallback; current conversion-member drift and unknown inputs reject. Does not admit native root/world readiness."
@@ -4359,7 +4362,7 @@
     {
       "id": "SourceNativeMissionLogicalBindingReference.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNativeMissionLogicalBindingReference.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceNativeMissionLogicalBindingReference.cs",
       "contains_original_gameplay": false,
       "scope": "Exact qualified native raw-bit logical config reconstruction into original typed constructors; original compiler/fingerprint verification. No actor policy.",
       "role": "host_glue"
@@ -5167,7 +5170,7 @@
     {
       "id": "413_GeneratedUnitProductionMetadata.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/413_GeneratedUnitProductionMetadata.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/413_GeneratedUnitProductionMetadata.cs",
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned data_decoder; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -5836,7 +5839,7 @@
     {
       "id": "527_GeneratedS002DropClearance.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/527_GeneratedS002DropClearance.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/527_GeneratedS002DropClearance.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit same-world composition, source-owner scheduling/calls, data binding or validator observation; reviewed host adapter declaration, not a semantic policy-equivalence proof. Original owner policies remain linked/extracted separately."
@@ -6052,7 +6055,7 @@
     {
       "id": "ground-ConfiguredBuildingMetadata.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/GeneratedConfiguredBuildingMetadata.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/GeneratedConfiguredBuildingMetadata.cs",
       "contains_original_gameplay": false,
       "role": "data_decoder",
       "scope": "Owned exact selected-prefab/authoring data binder; native selection/publication are current-generated. Same definitions/provider/registry; no policy or geometry defaults."
@@ -7160,7 +7163,7 @@
     {
       "id": "495_SourceS002NumericCameraProvider.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/495_SourceS002NumericCameraProvider.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/495_SourceS002NumericCameraProvider.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned host_glue; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -7232,7 +7235,7 @@
     {
       "id": "300_GeneratedBuildingDefinitions.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/300_GeneratedBuildingDefinitions.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/300_GeneratedBuildingDefinitions.cs",
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned data_decoder; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
@@ -9183,7 +9186,7 @@
     {
       "id": "SourceNumericCameraEngineAdapterContract.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceNumericCameraEngineAdapterContract.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceNumericCameraEngineAdapterContract.cs",
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit schema/hash-bound finite engine ray adapter domains; no policy thresholds, runtime state or public mission admission."
@@ -9253,7 +9256,7 @@
     {
       "id": "SourceMetadataCompatibility.cs",
       "kind": "finite_adapter",
-      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceMetadataCompatibility.cs",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/SourceMetadataCompatibility.cs",
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Immutable native metadata compatibility for two qualified original S002 compiler contexts; preserves provenance and exact source/prefab/provider/recipe checks. No seed or world admission."
@@ -9414,6 +9417,80 @@
       "require_declarations": [
         "public static class BuildingRegistrationKernel"
       ]
+    },
+    {
+      "id": "shared_SkirmishStructureInstanceBinding.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStructureInstanceBinding.cs"
+    },
+    {
+      "id": "SourceMetadataCompatibility.Derived.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceMetadataCompatibility.Derived.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Strict original-compiler context/native-factory provenance or declared config binding; no world/scheduler/gameplay replacement."
+    },
+    {
+      "id": "SourceDeclaredMissionConfiguration.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceDeclaredMissionConfiguration.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Strict original-compiler context/native-factory provenance or declared config binding; no world/scheduler/gameplay replacement."
+    },
+    {
+      "id": "SourceDeclaredMissionLogicalBindingReference.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceDeclaredMissionLogicalBindingReference.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Strict original-compiler context/native-factory provenance or declared config binding; no world/scheduler/gameplay replacement."
+    },
+    {
+      "id": "SourceDeclaredEngineeringCameraProfile.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceDeclaredEngineeringCameraProfile.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false
+    },
+    {
+      "id": "SourceCapturedFixedMapInputs.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceCapturedFixedMapInputs.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false
+    },
+    {
+      "id": "SourceDeclaredRuntimeInputs.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceDeclaredRuntimeInputs.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false
+    },
+    {
+      "id": "current_selected_approach_contract",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicSelectedApproach.cs",
+      "require_declarations": [
+        "public struct SkirmishPublicSelectedApproach"
+      ]
+    },
+    {
+      "id": "current_selected_approach_owner",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicSelectedApproachProjection.cs",
+      "require_declarations": [
+        "public static class SkirmishPublicSelectedApproachProjection"
+      ]
+    },
+    {
+      "id": "SourceConfigurationQualification.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceConfigurationQualification.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Explicit runtime experimental configuration/factory qualification; no mission-ID branches or world orchestration."
     }
   ],
   "runtime_backend": "TypedGroundS026V1",

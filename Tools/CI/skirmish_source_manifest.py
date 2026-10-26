@@ -92,7 +92,7 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
     aria=owned.require("skirmish_source_syntax")
     raw_manifest=Path(manifest_path).read_bytes()
     data=json.loads(raw_manifest,object_pairs_hook=aria.no_duplicates)
-    need(data.get("schema_version")==1 and data.get("profile")==({"mission":"S026","seed":104755,"numeric_runtime":"InstalledMono"}if mission=="S026"else{"mission":"S002","seed":104731,"numeric_runtime":"InstalledMono"}),
+    need(data.get("schema_version")==1 and data.get("profile")==({"runtime_backend":"TypedGroundS026V1","numeric_runtime":"InstalledMono","qualification_lineage":{"mission":"S026","seed":104755}}if profiles.runtime_backend(mission)=="TypedGroundS026V1"else{"mission":"S002","seed":104731,"numeric_runtime":"InstalledMono"}),
          "Unsupported source manifest profile")
     need(isinstance(data.get("compiler_defines",[]),list)and"UNITY_EDITOR"not in data.get("compiler_defines",[]),"Editor source profile is not admitted")
     output=Path(output).absolute();generated_root=(output/"generated").resolve()
@@ -193,7 +193,7 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
                 need(str((Path(required)if Path(required).is_absolute()else repo/Path(required)).resolve())in direct_paths,"Missing coherent current source companion: "+required)
     guard,guard_pins=generate_guard(mission);pins.update(guard_pins)
     emissions.append(("SourceAdmittedProfiles.cs",guard));resolved.append({"id":"central_admitted_profiles","kind":"finite_adapter","generated":"SourceAdmittedProfiles.cs","sha256":sha(guard.encode()),"proof":[],"origin":"strict_profile_json"})
-    if mission=="S026":
+    if profiles.runtime_backend(mission)=="TypedGroundS026V1":
         template=relative(package,"Tools/CI/SkirmishSourceSimulation/Templates/S026/SourceTransformConsumedReadset.cs.template");body=read(template,pins)
         source_pins={str(output/"generated"/x["generated"])if "generated"in x else x["path"]:x["sha256"] for x in resolved}
         readset=json.dumps({"schema_version":1,"kind":"ExactConsumedTransformVersionReadset","scope":"Finite S026 current compiled owner readset, single61 and no consumed transform changed-filter reads; unsupported domains remain guarded", "source_pins":source_pins},indent=2)+"\n"
@@ -210,11 +210,11 @@ def resolve_manifest(repo,package,manifest_path,output,mission="S002",seed=10473
     for name,text in emissions:
         p=output/"generated"/name;p.parent.mkdir(parents=True,exist_ok=True)
         with p.open("w",encoding="utf-8",newline="\n")as stream:stream.write(text)
-    if mission=="S026":(output/"compiled-transform-readset.json").write_text(readset)
+    if profiles.runtime_backend(mission)=="TypedGroundS026V1":(output/"compiled-transform-readset.json").write_text(readset)
     for item in resolved:
         if "generated"in item:item["path"]=str(output/"generated"/item["generated"])
     receipt={"schema_version":1,"kind":"SkirmishSourceResolution","status":"NeedsExplicitRecipes"if pending else"Resolved",
-             "profile":data["profile"],"runtime_backend":"TypedGroundS026V1"if mission=="S026"else"LegacyGroundS002V1","resolved":resolved,"unresolved":pending,"pins":pins,
+             "profile":data["profile"],"runtime_backend":profiles.runtime_backend(mission),"resolved":resolved,"unresolved":pending,"pins":pins,
              "native_direct_count":sum(x["kind"]=="native_direct"for x in resolved),
              "fresh_extracted_count":sum(x["kind"]=="current_original"for x in resolved),
              "adapter_count":sum(x["kind"]=="finite_adapter"for x in resolved),

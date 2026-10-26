@@ -196,6 +196,22 @@ namespace Game.Runtime
             RefreshContactLedger(em, session, state.SessionId, contacts, now, fog.LastSeenExpireSeconds);
         }
 
+        // Own-unit acquisition metric only. This does not establish visible contact.
+        public static float ReadOwnAcquisitionRadius(EntityManager em, Entity entity, float cellSize)
+        {
+            float radius = 0;
+            if (em.HasComponent<UnitCombat>(entity))
+                {
+                radius = math.max(0, em.GetComponentData<UnitCombat>(entity).AggroRangeCells) * cellSize;
+                if (cellSize > 0 && em.HasComponent<UnitAttack>(entity))
+                {
+                    float range = math.max(0, em.GetComponentData<UnitAttack>(entity).Range);
+                    radius = math.max(radius, math.ceil(range / cellSize) * cellSize);
+                }
+            }
+            return radius;
+        }
+
         private static bool TrySampleObserver(EntityManager em, ContactSample contact,
             SkirmishAttemptOwnedComponent owned, float cellSize, float now, out ObserverSample observer)
         {
@@ -208,15 +224,7 @@ namespace Game.Runtime
                 Cell = contact.Cell, Position = contact.Position };
             // Reuse native acquisition/detector radii. No new vision radius,
             // stat boost, or invented terrain LOS is introduced here.
-            if (em.HasComponent<UnitCombat>(entity))
-                {
-                observer.AcquisitionRadius = math.max(0, em.GetComponentData<UnitCombat>(entity).AggroRangeCells) * cellSize;
-                if (cellSize > 0 && em.HasComponent<UnitAttack>(entity))
-                {
-                    float range = math.max(0, em.GetComponentData<UnitAttack>(entity).Range);
-                    observer.AcquisitionRadius = math.max(observer.AcquisitionRadius, math.ceil(range / cellSize) * cellSize);
-                }
-            }
+            observer.AcquisitionRadius = ReadOwnAcquisitionRadius(em, entity, cellSize);
             if (em.HasComponent<ThreatDetector>(entity))
             {
                 var detector = em.GetComponentData<ThreatDetector>(entity);

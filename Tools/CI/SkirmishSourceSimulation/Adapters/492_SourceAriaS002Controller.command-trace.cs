@@ -17,6 +17,7 @@ internal sealed class SourceAriaS002Controller {
   if(!em.HasComponent<SkirmishBaseAssaultFactComponent>(session)||!em.HasComponent<SkirmishMatchState>(session)||!em.HasComponent<SkirmishCapacityComponent>(session)||!em.HasComponent<SkirmishObjectiveClockComponent>(session))throw new NotSupportedException("Genuine source objective/public capacity/clock projection required before ARIA");
  }
  static AriaS002ActionTarget Cap(AriaS002Action action,int id,bool admitted,int slot=-1)=>new AriaS002ActionTarget{Action=action,Id=id,Admitted=admitted,Slot=slot};
+ internal static AriaS002ActionTarget AdvanceMapControl(bool inspectionOpen,bool objectiveAlive)=>inspectionOpen?Cap(AriaS002Action.InspectObjective,-20011,objectiveAlive):Cap(AriaS002Action.OpenInspection,-20010,objectiveAlive);
  bool Recruit(SkirmishRoleKind role,bool sourceAffordability){if(!sourceAffordability)return false;return paid.Read(role).CanRequest;}
  AriaS002Observation Read(int frame,float time){
   Scope();current=PublicCommandCatalog.Read(em,session,army);var v=current.PublicView;var p=current.Page;if(v.AirProfile||current.CombinedArmsField||!v.ReadinessEligible||!p.Expanded||!p.BaseAssault)throw new NotSupportedException("Complete actual ground BaseAssault public page required");
@@ -41,7 +42,7 @@ internal sealed class SourceAriaS002Controller {
    ExpandedGroup0=p.Group0,ExpandedGroup1=p.Group1,ExpandedGroup2=p.Group2,ExpandedGroup3=p.Group3,ExpandedGroup4=p.Group4,SelectedCount=selectedMembers,PrecisionAttack=commandReceipt,
    AssaultAtBase=distances.AssaultAtBase,AssaultDistanceKnown=bases.EnemyObjectiveAlive&&distances.DistanceVisible,NearestFriendlyObjectiveDistance=distances.Distance,
    PublicSnapshot=new AriaS002PublicSnapshot{Identity=snapshot.Identity,MarkerRevision=snapshot.Generation,MarkerFrame=snapshot.Frame,MarkerTime=snapshot.AriaTime,ObjectiveHudIdentity=objectiveIdentity,ObjectiveWorld=bases.EnemyPosition,OwnedIdentity=true,InspectionScopeOpen=inspectionOpen,Complete=true,SourceScopeAdmitted=bases.EnemyObjectiveAlive,OpenMap=Cap(AriaS002Action.OpenInspection,-20010,!inspectionOpen&&bases.EnemyObjectiveAlive)},
-   FocusPlayer=Cap(AriaS002Action.InspectHome,90001,bases.PlayerPositionKnown),FocusEnemy=Cap(AriaS002Action.InspectObjective,90002,bases.EnemyObjectiveAlive),FocusAdvance=Cap(AriaS002Action.InspectObjective,-20011,bases.EnemyObjectiveAlive),
+   FocusPlayer=Cap(AriaS002Action.InspectHome,90001,bases.PlayerPositionKnown),FocusEnemy=Cap(AriaS002Action.InspectObjective,90002,bases.EnemyObjectiveAlive),FocusAdvance=AdvanceMapControl(inspectionOpen,bases.EnemyObjectiveAlive&&terrain.HasValue),
    CloseMap=Cap(AriaS002Action.CloseInspection,90003,inspectionOpen),Select=Cap(AriaS002Action.SelectMode,90004,true),
    PreviousSquadPage=Cap(AriaS002Action.PreviousPage,90005,p.PreviousPage),NextSquadPage=Cap(AriaS002Action.NextPage,90006,p.NextPage),SelectedSquadToToggle=Cap(AriaS002Action.ToggleSelected,90007,toggleGroup!=0),
    Attack=Cap(AriaS002Action.ArmAttack,90008,current.HasSelectedLivingPlayerMember),Hold=Cap(AriaS002Action.Hold,90009,current.HasSelectedLivingPlayerMember),
@@ -50,6 +51,10 @@ internal sealed class SourceAriaS002Controller {
    Recruit=Cap(AriaS002Action.RecruitRifle,90013,Recruit(SkirmishRoleKind.Rifle,v.CanAffordRifle)),RecruitAntiAir=Cap(AriaS002Action.RecruitAntiAir,90014,Recruit(SkirmishRoleKind.AntiAir,v.CanAffordAntiAir)),
    RecruitRocketeer=Cap(AriaS002Action.RecruitRocketeer,90015,Recruit(SkirmishRoleKind.Rocketeer,v.CanAffordRocketeer))
   };
+  if(groundContext.ApproachKind==AriaGroundApproachKind.AuthoredLogicalGround){
+   var own=approach.LastSelectedOwnProjection;facts.SelectedOwnApproach=own;
+   facts.AssaultAtBase=AriaGroundApproachPolicy.SelectedObjectiveContactReach(own);
+  }
   // Logical profile has no catalog popup or placement/camera UI. Those capabilities are absent;
   // native observations continue to use their real presentation owners. No rendered flags are set.
   facts.Squad0=Cap(AriaS002Action.SelectSquad,90100,p.Group0!=0,0);facts.Squad1=Cap(AriaS002Action.SelectSquad,90101,p.Group1!=0,1);facts.Squad2=Cap(AriaS002Action.SelectSquad,90102,p.Group2!=0,2);facts.Squad3=Cap(AriaS002Action.SelectSquad,90103,p.Group3!=0,3);facts.Squad4=Cap(AriaS002Action.SelectSquad,90104,p.Group4!=0,4);
@@ -66,7 +71,8 @@ internal sealed class SourceAriaS002Controller {
     if(numericCamera==null||!numericCamera.SnapshotAvailable)throw new NotSupportedException("Actual admitted numeric camera required for source public inspection effect");
     var publicPoint=d.Action==AriaS002Action.InspectHome?publicFacts.PlayerPosition:publicFacts.EnemyPosition;
     if(d.Action==AriaS002Action.InspectHome?!publicFacts.PlayerPositionKnown:!publicFacts.EnemyObjectiveAlive)throw new InvalidOperationException("Source public objective camera target expired");
-    numericCamera.InspectPublicObjective(new float3(publicPoint.X,publicPoint.Y,publicPoint.Z));
+    if(d.TargetId==-20011){if(!inspectionOpen||!terrain.HasValue)throw new InvalidOperationException("Actual open-map approach planning goal expired");numericCamera.InspectPublicObjective(terrain.Value.Position);}
+    else numericCamera.InspectPublicObjective(new float3(publicPoint.X,publicPoint.Y,publicPoint.Z));
     return new JObject{["inspection_completed"]=true,["camera_request"]="OriginalPublicObjectivePositionOnlySmoothFocus",["camera_smooth_seconds"]=.35f,["troop_order"]=false,["source_api"]="actual public objective/contact snapshot"};
    case AriaS002Action.InspectCohort:throw new NotSupportedException("Original cohort focus target/camera request data not admitted");
    case AriaS002Action.OpenInspection:numericCamera?.ObserveLogicalCameraAction("OpenMap");contacts.ReadSnapshot();inspectionOpen=true;return new JObject{["inspection_completed"]=true,["troop_order"]=false,["data_scope_open"]=true};

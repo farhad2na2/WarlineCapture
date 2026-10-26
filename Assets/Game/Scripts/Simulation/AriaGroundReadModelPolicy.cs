@@ -7,7 +7,7 @@ public readonly struct AriaAssaultDistances {
  public readonly bool DistanceVisible,AssaultAtBase;
  public AriaAssaultDistances(AriaGroundPosition nearest,float squared,int close,int assault,int required){Nearest=nearest;SquaredDistance=squared;Close=close;Assault=assault;DistanceVisible=squared<float.MaxValue;Distance=DistanceVisible?(float)Math.Sqrt(squared):0f;AssaultAtBase=assault>=required;}
 }
-public enum AriaGroundApproachKind : byte { Ordinary, CityCrossroads, IndustrialBasin }
+public enum AriaGroundApproachKind : byte { Ordinary, CityCrossroads, IndustrialBasin, AuthoredLogicalGround }
 public readonly struct AriaCityGroundApproach {
  public readonly AriaGroundPosition Flank,Goal;public readonly int Arrived;public readonly bool AdvancePreferred,FocusEnemy;
  public AriaCityGroundApproach(AriaGroundPosition flank,AriaGroundPosition goal,int arrived,bool advancePreferred,bool focusEnemy){Flank=flank;Goal=goal;Arrived=arrived;AdvancePreferred=advancePreferred;FocusEnemy=focusEnemy;}
@@ -18,6 +18,42 @@ public static class AriaGroundApproachPolicy {
   if(publicPlayers==null)throw new ArgumentNullException(nameof(publicPlayers));var nearest=objective;float distance=float.MaxValue;int close=0,assault=0;
   for(int i=0;i<publicPlayers.Count;i++){var p=publicPlayers[i];float d=Squared(Difference(p,objective));if(d<45*45)close++;if(d<50*50)assault++;if(d<distance){distance=d;nearest=p;}}
   int required=enemyDisplayedHealth>0&&enemyDisplayedHealth<=400?1:Math.Max(4,Math.Min(8,selectedCount));return new AriaAssaultDistances(nearest,distance,close,assault,required);
+ }
+ // Own acquisition reach is planning evidence, never contact visibility or objective completion.
+ public static Game.Skirmish.Contracts.SkirmishPublicSelectedApproach ObserveSelectedOwnForce(
+  AriaGroundPosition publicObjective, IReadOnlyList<Game.Skirmish.Contracts.SkirmishPublicApproachMember> members){
+  var result=new Game.Skirmish.Contracts.SkirmishPublicSelectedApproach();
+  if(members==null||members.Count==0){result.UnavailableReason="No selected living own move force.";return result;}
+  if(!Finite(publicObjective.X)||!Finite(publicObjective.Y)||!Finite(publicObjective.Z))throw new ArgumentException("Finite public objective required.");
+  for(int i=0;i<members.Count;i++){
+   var member=members[i];
+   if(!Finite(member.X)||!Finite(member.Y)||!Finite(member.Z)||!Finite(member.AcquisitionRadius)||member.AcquisitionRadius<0)throw new ArgumentException("Finite own position and nonnegative original observer metric required.");
+   if(member.StructureCapable)result.StructureCapableCount++;
+  }
+  result.ContextKnown=true;result.SelectedCount=members.Count;
+  for(int i=0;i<members.Count;i++){
+   var member=members[i];
+   if(result.StructureCapableCount>0&&!member.StructureCapable)continue;
+   result.RelevantCount++;
+   float x=member.X-publicObjective.X,z=member.Z-publicObjective.Z;
+   float distanceSquared=x*x+z*z,radiusSquared=member.AcquisitionRadius*member.AcquisitionRadius;
+   if(!Finite(distanceSquared)||!Finite(radiusSquared))throw new ArgumentException("Own planning metric outside finite squared-coordinate domain.");
+   if(member.AcquisitionRadius>0&&distanceSquared<=radiusSquared)result.InOwnAcquisitionRangeCount++;
+  }
+  // No visible/contact/arrived flag is emitted from this count.
+  return result;
+ }
+ static bool Finite(float value)=>!float.IsNaN(value)&&!float.IsInfinity(value);
+ // Geographic camera-planning fact only. It neither stamps an accepted order
+ // nor completes a selected group/mission. Unseen or incapable cohorts never satisfy it.
+ public static bool SelectedObjectiveContactReach(in Game.Skirmish.Contracts.SkirmishPublicSelectedApproach projection)=>
+  projection.Required&&projection.ContextKnown&&projection.PublicObjectiveContactVisible&&projection.StructureCapableCount>0&&
+  projection.RelevantCount==projection.StructureCapableCount&&projection.InOwnAcquisitionRangeCount==projection.RelevantCount;
+ public static bool TrySelectedOwnApproach(in Game.Skirmish.Contracts.SkirmishPublicSelectedApproach projection,out AriaGroundPosition goal){
+  goal=default;
+  if(!projection.Required||!projection.ContextKnown||!projection.LegalGoalAvailable||!projection.LegalGoalWithinOwnAcquisitionRange)return false;
+  if(!Finite(projection.GoalX)||!Finite(projection.GoalY)||!Finite(projection.GoalZ))throw new ArgumentException("Finite original legal planning goal required.");
+  goal=new AriaGroundPosition(projection.GoalX,projection.GoalY,projection.GoalZ);return true;
  }
  public static bool AdvancePreferred(bool industrialBasin,in AriaAssaultDistances distances)=>industrialBasin?!distances.AssaultAtBase&&distances.Close<8:distances.Close<4;
  public static AriaGroundPosition Approach(bool industrialBasin,AriaGroundPosition objective,AriaGroundPosition playerObjective,in AriaAssaultDistances distances){

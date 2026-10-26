@@ -517,6 +517,23 @@ namespace Game.UI.Runtime
                 }
                 return;
             }
+            var selectedOwn = watchSkirmish.SelectedApproach;
+            if (selectedOwn.Required)
+            {
+                // Unavailable authored data never falls back to a global friendly quorum.
+                view.AdvanceGround = default;
+                view.FocusAdvance = default;
+                view.AssaultAtBase = Game.Simulation.AriaGroundApproachPolicy.SelectedObjectiveContactReach(selectedOwn);
+                view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.TrySelectedOwnApproach(selectedOwn, out var ownGoal);
+                if (!view.AdvancePreferred) return;
+                var ownGround = new Vector3(ownGoal.X, ownGoal.Y, ownGoal.Z);
+                if (view.MapOpen) { ObserveAdvanceMapFocus(ownGround, ref view); return; }
+                var ownScreen = Camera.main.WorldToScreenPoint(ownGround);
+                view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = ownScreen,
+                    Available = ownScreen.z > 0 && Screen.safeArea.Contains(ownScreen) && WatchTargetIsReachable(ownScreen, -20006, true) };
+                if (!view.AdvanceGround.Available) ObserveAdvanceMapFocus(ownGround, ref view);
+                return;
+            }
             bool industrialBasin = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
             view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.AdvancePreferred(industrialBasin, distances);
             if (!view.AdvancePreferred) return;

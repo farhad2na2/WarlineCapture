@@ -29,6 +29,23 @@ def same_descriptor(actual, expected):
     return type(actual)is dict and actual.get('path')==expected['path'] and actual.get('sha256')==expected['sha256'] and ('bytes'not in actual or (type(actual['bytes'])is int and actual['bytes']==Path(expected['path']).stat().st_size))
 def verify(pins):
     for path,digest in pins.items(): require(sha(path)==digest, 'Pinned input changed: '+path)
+def is_external_build(data):
+    mode=data.get('runtime_configuration_mode');backend=data.get('runtime_backend')
+    require(mode in (None,'LegacyBoundProfilesV1','ExternalQualifiedGroundV1'),'Unsupported checked build configuration mode')
+    require(mode!='ExternalQualifiedGroundV1' or backend=='TypedGroundS026V1','Generic build requires supported typed backend')
+    return mode=='ExternalQualifiedGroundV1' and backend=='TypedGroundS026V1'
+def require_build_target(data, mission, seed, expected_backend):
+    generic=is_external_build(data)
+    require(data.get('runtime_backend')==expected_backend,'Bundle/build runtime backend mismatch')
+    if not generic:require(data.get('mission')==mission and type(data.get('seed'))is int and data['seed']==seed,'Job/input identity mismatch')
+    return generic
+
+def checked_build_identity(data, job, repo, bundle):
+    require(data.get('kind')=='SkirmishSourceSimulationBuild' and data.get('status')=='Passed' and type(data.get('compile_exit'))is int and data['compile_exit']==0 and data.get('repository_root')==str(repo),'Checked matching current-root build required')
+    require_build_target(data,job['mission'],job['seed'],bundle.get('runtime_backend','LegacyGroundS002V1'))
+    require(type(data.get('source_and_reference_pins'))is dict,'Actual checked build pins required');verify(data['source_and_reference_pins'])
+    exe=data.get('executable');require(type(exe)is dict and type(exe.get('path'))is str and type(exe.get('sha256'))is str and sha(exe['path'])==exe['sha256'],'Built image changed')
+
 def load_jobs(path, repo):
     raw=read_json(path);object_keys(raw,{'schema_version','jobs'})
     require(type(raw['schema_version']) is int and raw['schema_version']==1 and type(raw['jobs']) is list and 0<len(raw['jobs'])<=360, 'schema1 with 1..360 explicit jobs required')
@@ -42,8 +59,10 @@ def load_jobs(path, repo):
         for key in ['data_bundle','build_receipt']:
             if key not in job: continue
             job[key]=descriptor(job[key],path.parent);pins[job[key]['path']]=job[key]['sha256']
-            data=read_json(job[key]['path']);require(type(data)is dict,'Input JSON object required');require(data.get('mission')==job['mission'] and type(data.get('seed')) is int and data['seed']==job['seed'],'Job/input identity mismatch')
-            if key=='build_receipt':require(data.get('kind')=='SkirmishSourceSimulationBuild' and data.get('status')=='Passed' and type(data.get('compile_exit'))is int and data['compile_exit']==0 and data.get('repository_root')==str(repo),'Checked matching current-root build required')
+            data=read_json(job[key]['path']);require(type(data)is dict,'Input JSON object required')
+            if key=='data_bundle':
+                require(data.get('mission')==job['mission'] and type(data.get('seed'))is int and data['seed']==job['seed'],'Job/input identity mismatch');bundle=data
+            else:checked_build_identity(data,job,repo,bundle)
         jobs.append(job)
     return jobs,pins
 
@@ -123,7 +142,7 @@ def execute(jobs_file, output, repo, package, data_repo, run_process=launch):
             record['receipt_backend_fields']={k:v for k,v in receipt.items()if 'backend'in k}
             actual_build=receipt.get('build_receipt');require(type(actual_build)is dict and type(actual_build.get('path'))is str and type(actual_build.get('sha256'))is str,'Normal receipt must identify checked build')
             build_path=Path(actual_build['path']).resolve(strict=True);require(sha(build_path)==actual_build['sha256'],'Reported build receipt digest mismatch')
-            build=read_json(build_path);require(type(build)is dict and build.get('kind')=='SkirmishSourceSimulationBuild'and build.get('status')=='Passed'and type(build.get('compile_exit'))is int and build['compile_exit']==0 and build.get('mission')==job['mission']and type(build.get('seed'))is int and build['seed']==job['seed']and build.get('repository_root')==str(repo),'Reported build identity/root mismatch')
+            build=read_json(build_path);require(type(build)is dict,'Reported build object required');checked_build_identity(build,job,repo,read_json(job['data_bundle']['path']))
             record['reported_build_receipt']=actual_build;record['build_backend_fields']={k:v for k,v in build.items()if 'backend'in k}
         except (ValueError,TypeError,KeyError,OSError,json.JSONDecodeError) as error:record['receipt_error']=str(error);receipt=None
         record.update(classify(job,process,receipt))

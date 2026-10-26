@@ -1,3 +1,4 @@
+using Game.Skirmish.Contracts;
 using System;
 using UnityEngine;
 
@@ -76,6 +77,24 @@ namespace Game.Configs
     /// definition's authored deployment anchors and saves them here; runtime never
     /// reapplies the raw envelope coordinates to the world.
     /// </summary>
+    // Authored logical coordinates for one configuration; never a physical/live-fit certificate.
+    [Serializable] public sealed class SkirmishDeclaredLayoutConfiguration
+    {
+        public SkirmishSizeId SizeId;
+        public SkirmishDifficultyId DifficultyId;
+        public Vector2 PlayerDeployment, EnemyDeployment;
+    }
+
+    [Serializable] public struct SkirmishStructureInstancePadBinding
+    {
+        public SkirmishSizeId SizeId;
+        public SkirmishDifficultyId DifficultyId;
+        public byte FactionId;
+        public string StructureId;
+        public int InstanceOrdinal;
+        public string AnchorId, PadId;
+    }
+
     [Serializable]
     public struct SkirmishLayoutWorldBindingConfig
     {
@@ -106,6 +125,23 @@ namespace Game.Configs
     [CreateAssetMenu(menuName = "Game/SkirmishExpansion/Map Layout")]
     public sealed class SkirmishMapLayoutConfig : ScriptableObject
     {
+        // Empty serialized array is absence on both native and source readers.
+        // Exactly one declared context is supported; malformed presence never falls back.
+        [SerializeField] private SkirmishDeclaredLayoutConfiguration[] declaredConfigurations = Array.Empty<SkirmishDeclaredLayoutConfiguration>();
+        public SkirmishDeclaredLayoutConfiguration DeclaredConfiguration
+        {
+            get
+            {
+                if (declaredConfigurations == null || declaredConfigurations.Length == 0) return null;
+                if (declaredConfigurations.Length != 1 || declaredConfigurations[0] == null)
+                    throw new InvalidOperationException("Exactly one nonnull declared layout configuration required");
+                var row=declaredConfigurations[0];
+                return new SkirmishDeclaredLayoutConfiguration {SizeId=row.SizeId,DifficultyId=row.DifficultyId,PlayerDeployment=row.PlayerDeployment,EnemyDeployment=row.EnemyDeployment};
+            }
+        }
+        [SerializeField] private SkirmishStructureInstancePadBinding[] structureInstancePads = Array.Empty<SkirmishStructureInstancePadBinding>();
+        public SkirmishStructureInstancePadBinding[] StructureInstancePads => structureInstancePads==null?Array.Empty<SkirmishStructureInstancePadBinding>():(SkirmishStructureInstancePadBinding[])structureInstancePads.Clone();
+        public void BindStructureInstancePads(SkirmishStructureInstancePadBinding[] values) => structureInstancePads=values==null?Array.Empty<SkirmishStructureInstancePadBinding>():(SkirmishStructureInstancePadBinding[])values.Clone();
         public const float DesertBaseWidthMetres = 600f;
         public const float DesertBaseDepthMetres = 420f;
         // The compatibility Desert Base map occupies X 0..2048, Z 0..1024.

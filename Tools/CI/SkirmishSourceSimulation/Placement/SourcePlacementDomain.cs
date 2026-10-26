@@ -11,7 +11,7 @@ namespace Game.Runtime
 {
     // One source environment, read once at startup. No entity allocator/bank/parser
     // replacement: the existing packed geometry owner remains the packed owner.
-    public sealed class SourcePlacementDomain
+    public sealed partial class SourcePlacementDomain
     {
         internal struct Bounds { internal float3 Center, Extents; }
         readonly SourcePackedCampaignGeometry packed;
@@ -126,7 +126,7 @@ namespace Game.Runtime
         {
             if(!skirmishMatchPresent)return null;
             if(water==null)throw new InvalidOperationException("Actual complete source water query has not been admitted; missing geometry never defaults to empty");
-            if(width!=2048||height!=1024||cellSize!=1||originX!=0||originY!=0||originZ!=0)throw new NotSupportedException("First qualified source water grid is exact2048x1024/cell1/origin0");
+            if(capturedBuildings!=null)RequireCapturedFrame(width,height,cellSize,originX,originY,originZ);else if(width!=2048||height!=1024||cellSize!=1||originX!=0||originY!=0||originZ!=0)throw new NotSupportedException("First qualified source water grid is exact2048x1024/cell1/origin0");
             return SharedWaterGeometryKernel.BuildMask(true,water,width,height,cellSize,new float3(originX,originY,originZ));
         }
         internal static long AdmitAdditionalBounds(Bounds[] values,GridConfig grid)
@@ -145,6 +145,7 @@ namespace Game.Runtime
         }
         internal Masks Build(GridConfig grid)
         {
+            if(capturedBuildings!=null){RequireCapturedFrame(grid.Width,grid.Height,grid.CellSize,grid.Origin.x,grid.Origin.y,grid.Origin.z);return new Masks((bool[])capturedBuildings.Clone(),(bool[])capturedSidewalks.Clone(),capturedBuildings.Count(v=>v),0,0,0);}
             if(grid.Width!=2048||grid.Height!=1024||grid.CellSize!=1||math.any(grid.Origin!=float3.zero))throw new NotSupportedException("First qualified source grid is exact2048x1024/cell1/origin0");
             long work=AdmitAdditionalBounds(additional,grid);
             var originalPacked=packed.BuildAuthoredMask(grid);

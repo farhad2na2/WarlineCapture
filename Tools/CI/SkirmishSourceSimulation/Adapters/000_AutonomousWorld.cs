@@ -126,6 +126,7 @@ namespace Game.Runtime
             var matrixBytes = Descriptor(request["setup_matrix"], 4 * 1024 * 1024);
             UnityEngine.Resources.BindSourceResources(new Dictionary<string, object>
             {
+                [SkirmishBattleCatalogConfig.ResourceName] = canonicalCatalog,
                 [SkirmishExpansionCatalogConfig.ResourceName] = catalog,
                 [SkirmishSetupMatrixTable.PackagedResourceName] = new UnityEngine.TextAsset(System.Text.Encoding.UTF8.GetString(matrixBytes))
             });

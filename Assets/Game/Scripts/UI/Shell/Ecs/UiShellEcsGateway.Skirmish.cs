@@ -194,6 +194,10 @@ namespace Game.UI.Shell.Ecs
                         : GameText.Get(setup.TitleKey, setup.CatalogId);
                     var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
                         SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
+                    var publicObjectives = SkirmishPublicObjectiveProjection.Read(em, session);
+                    if (publicObjectives.EnemyObjectiveAlive)
+                        model.SelectedApproach = SkirmishPublicSelectedApproachProjection.Read(em, session,
+                            new Unity.Mathematics.float3(publicObjectives.EnemyPosition.X, publicObjectives.EnemyPosition.Y, publicObjectives.EnemyPosition.Z));
                     model.OwnMaterials = publicView.OwnMaterials;
                     model.CanAffordRifle = publicView.CanAffordRifle;
                     model.CombinedArmsField = setup.ArmyProfileId == Game.Skirmish.Contracts.SkirmishArmyProfileId.CombinedArms &&

@@ -29,7 +29,7 @@ public readonly struct GroundMissionContext {
   if(!new SkirmishCatalogId(CatalogId).IsValid||DefinitionId!=SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(CatalogId)).Value||ContentVersion<=0||string.IsNullOrEmpty(SessionId)||string.IsNullOrEmpty(SourceApproachIdentity)||PlayableScenarioIndex< -1)
    throw new ArgumentException("Concrete compiled mission identity data required");
   if(ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||StartPackageId!=SkirmishStartPackageId.EstablishedBase||Readiness!=SkirmishReadinessStage.Established||
-   (ApproachKind!=AriaGroundApproachKind.Ordinary&&ApproachKind!=AriaGroundApproachKind.CityCrossroads&&ApproachKind!=AriaGroundApproachKind.IndustrialBasin)||view.SourceScenarioIndex!=PlayableScenarioIndex||!view.ExpandedSession||!view.ExpandedBaseAssault||view.AirProfile||view.CombinedArmsField)
+   (ApproachKind!=AriaGroundApproachKind.Ordinary&&ApproachKind!=AriaGroundApproachKind.CityCrossroads&&ApproachKind!=AriaGroundApproachKind.IndustrialBasin&&ApproachKind!=AriaGroundApproachKind.AuthoredLogicalGround)||view.SourceScenarioIndex!=PlayableScenarioIndex||!view.ExpandedSession||!view.ExpandedBaseAssault||view.AirProfile||view.CombinedArmsField)
    throw new NotSupportedException("Matching Ground/Established/BaseAssault source observation required");
  }
 }

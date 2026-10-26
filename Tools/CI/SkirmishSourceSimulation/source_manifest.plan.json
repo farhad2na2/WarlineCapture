@@ -8747,6 +8747,27 @@
       "require_declarations": [
         "public static class SkirmishAcceptedArmyOrders"
       ]
+    },
+    {
+      "id": "shared_SkirmishStructureInstanceBinding.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/Skirmish/SkirmishStructureInstanceBinding.cs"
+    },
+    {
+      "id": "current_selected_approach_contract",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicSelectedApproach.cs",
+      "require_declarations": [
+        "public struct SkirmishPublicSelectedApproach"
+      ]
+    },
+    {
+      "id": "current_selected_approach_owner",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicSelectedApproachProjection.cs",
+      "require_declarations": [
+        "public static class SkirmishPublicSelectedApproachProjection"
+      ]
     }
   ],
   "excluded_nonruntime_sources": [

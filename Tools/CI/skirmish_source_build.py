@@ -66,8 +66,8 @@ def build(repo,package,manifest,output,mission='S002',seed=104731):
  data,manifest_pin=read_json_pinned(manifest);merge_pins(pins,{manifest_pin['path']:manifest_pin['sha256']});defines=data.get('compiler_defines',[]);need(all(re.fullmatch(r'[A-Za-z_]\w*',x)and not x.startswith('UNITY_EDITOR')for x in defines),'Explicit non-Editor compiler profile required')
  args=['-nologo','-unsafe+','-nostdlib+','-langversion:latest','-target:exe','-main:SourceSimulationProgram','-out:'+str(code)]+(['-define:'+','.join(defines)]if defines else[])+['-r:'+str(p)for p in tools['refs']]+['-r:ActualCore='+str(tools['core']),'-r:'+placement['dll']]+[str(p)for p in sources]
  rsp=out/'compile.rsp';rsp.write_text('\n'.join(json.dumps(x)for x in args)+'\n');verify(pins);start=time.monotonic();r=subprocess.run([str(tools['dotnet']),str(tools['csc']),'@'+str(rsp)],capture_output=True,text=True,timeout=120);(out/'compile.log').write_text(r.stdout+r.stderr);verify(pins)
- receipt={'runtime_backend':result['runtime_backend'],'schema_version':1,'kind':'SkirmishSourceSimulationBuild','mission':mission,'seed':seed,'repository_root':str(repo),'status':'Passed'if r.returncode==0 else'Failed','compile_exit':r.returncode,'compile_wall_seconds':time.monotonic()-start,'source_count':len(sources),'source_and_reference_pins':pins,'source_manifest':manifest_pin,'source_resolution':str(out/'source/resolution.json'),'placement_build':str(out/'placement/build.json'),'compiler_response':pin(rsp),'runtime_selection':{k:str(tools[k])for k in ['contents','script','engine','mono','newtonsoft']},'numeric_runtime':'InstalledMono --optimize=-float32','native_or_player_launched':False,'scope':'Current source plus explicit finite engine/data adapters. No native UI/render, seed-only determinism or mission outcome claim from compilation.'}
- if mission=='S026':
+ receipt={'runtime_configuration_mode':owned.require('skirmish_source_profiles').runtime_configuration_mode(mission),'runtime_backend':result['runtime_backend'],'schema_version':1,'kind':'SkirmishSourceSimulationBuild','mission':mission,'seed':seed,'repository_root':str(repo),'status':'Passed'if r.returncode==0 else'Failed','compile_exit':r.returncode,'compile_wall_seconds':time.monotonic()-start,'source_count':len(sources),'source_and_reference_pins':pins,'source_manifest':manifest_pin,'source_resolution':str(out/'source/resolution.json'),'placement_build':str(out/'placement/build.json'),'compiler_response':pin(rsp),'runtime_selection':{k:str(tools[k])for k in ['contents','script','engine','mono','newtonsoft']},'numeric_runtime':'InstalledMono --optimize=-float32','native_or_player_launched':False,'scope':'Current source plus explicit finite engine/data adapters. No native UI/render, seed-only determinism or mission outcome claim from compilation.'}
+ if owned.require('skirmish_source_profiles').runtime_backend(mission)=='TypedGroundS026V1':
   readset=out/'source/compiled-transform-readset.json';sidecar=Path(str(code)+'.transform-readset.json');sidecar.write_bytes(readset.read_bytes());receipt['transform_readset']=pin(sidecar);merge_file_pins(pins,[readset,sidecar])
  if r.returncode==0:receipt['executable']=pin(code)
  write(out/'build.json',receipt);need(r.returncode==0,'Current source compilation failed; see '+str(out/'compile.log'));return receipt
@@ -94,7 +94,7 @@ def metadata_origin_pins(initial,repo,receipt):
  native_pins=native['source_pins']
  for name,expected in declared.items():
   f=Path(name);need(f.is_absolute()and f.is_file()and not f.is_symlink(),'Regular native origin input required');canonical=f.resolve(strict=True);matches=[str(canonical.relative_to(root))for root in roots if canonical.is_relative_to(root)];need(matches and all(native_pins.get(rel)==expected for rel in matches),'Origin file differs from captured native pin');entry=pin(f);need(entry['sha256']==expected,'Native origin input changed');pins[entry['path']]=expected
- reader_paths=[name for name in receipt['source_and_reference_pins']if name.endswith('/Adapters/SourceMetadataCompatibility.cs')];need(len(reader_paths)==1,'One actual compiled metadata reader required');text=Path(reader_paths[0]).read_text()
+ response=receipt['compiler_response'];response_path=Path(response['path']);need(pin(response_path)['sha256']==response['sha256'],'Actual compiler response changed');arguments=[json.loads(line)for line in response_path.read_text().splitlines()if line.strip()];reader_paths=[name for name in arguments if isinstance(name,str)and Path(name).is_absolute()and Path(name).name=='SourceMetadataCompatibility.cs'];need(len(reader_paths)==1,'One actual compiled metadata reader required');reader=pin(Path(reader_paths[0]));need(receipt['source_and_reference_pins'].get(reader['path'])==reader['sha256'],'Compiled metadata reader receipt pin differs');pins[reader['path']]=reader['sha256'];pins[str(response_path)]=response['sha256'];text=Path(reader_paths[0]).read_text()
  def literals(name):
   matches=re.findall(r'\b'+name+r'\s*=\s*\{([^}]+)\}',text);need(len(matches)==1,'One literal metadata dependency list required');body=matches[0];values=re.findall(r'"([^"\n]+)"',body);need(not re.sub(r'"[^"\n]+"|[\s,]','',body),'Only literal dependency paths admitted');return values
  factories=literals('FactorySources');owners=literals('OwnerDefinitions');need(len(factories)==27 and len(owners)==6,'Exact current metadata consumer domain required')
@@ -117,7 +117,7 @@ def metadata_origin_pins(initial,repo,receipt):
  return pins
 
 def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
- if inputs['mission']!='S026':return {}
+ if owned.require('skirmish_source_profiles').runtime_backend(inputs['mission'])!='TypedGroundS026V1':return {}
  pins={}
  def descriptor(row,maximum=256*1024*1024):
   need(isinstance(row,dict)and isinstance(row.get('path'),str)and isinstance(row.get('sha256'),str),'Required S026 input descriptor')
@@ -130,8 +130,29 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  for root,rows in [(data_repo,runtime['data_files']),(repo,runtime['source_files'])]:
   for rel,digest in rows.items():descriptor({'path':str(root/rel),'sha256':digest},4*1024*1024)
  for key in ['source_config_graph','setup_matrix','canonical_battle_catalog','selected_operation_map','building_definitions','building_placement_config','reference_templates','navigation_reference','resource_preset','unit_production_metadata','building_request_metadata','metadata_compatibility','engineering_camera_profile','camera_engine_adapter','operation_map_rotation_reference','mission_logical_binding','death_mechanical_inputs','command_text_data']:descriptor(initial[key])
+ if initial.get('metadata_compiler_context')is not None:
+  descriptor(initial['metadata_compiler_context']);descriptor(initial['configuration_qualification'])
+  need(initial['configuration_qualification']==owned.require('skirmish_source_profiles').configuration_qualification(),'Explicit active configuration qualification differs')
+  qualification,_=read_json_pinned(initial['configuration_qualification']['path']);need(qualification.get('compiler_context')==initial['metadata_compiler_context'],'Qualified compiler descriptor differs')
+ rotation,_=read_json_pinned(initial['operation_map_rotation_reference']['path'])
+ if rotation.get('kind')=='SourceQualifiedOperationMapRotationReferenceSet':
+  descriptor(rotation['base_reference']);descriptor(rotation['supplementary_reference'])
  for key in ['definition','grid_config','surface_data']:descriptor(initial['static_map'][key])
- for key in ['packed','water_reference','geometry_reference']:descriptor(initial['placement_domain'][key])
+ if initial.get('metadata_compiler_context')is not None:
+  descriptor(initial['placement_domain']['original_owner_masks'])
+  fixed,_=read_json_pinned(initial['navigation_reference']['path']);need(fixed.get('kind')=='OriginalCapturedFixedMapCompilerContext'and fixed.get('metadata_compiler_context')==initial['metadata_compiler_context']and fixed.get('configuration_qualification')==initial['configuration_qualification'],'Explicit same compiler/fixed-map data binding required');native_path=descriptor(fixed['native_readback']);native,_=read_json_pinned(native_path);need(native.get('result')=='Collected'and native.get('worldDisposed')is True,'Actual disposed native source read required')
+  masks,_=read_json_pinned(initial['placement_domain']['original_owner_masks']['path'])
+  capture=initial['placement_domain']['captured_asset_origin'];need(set(capture)=={'source_root','source_definition_path','source_definition_sha256'}and capture['source_definition_sha256']==initial['static_map']['definition']['sha256'],'Explicit captured asset origin identity required');capture_root=Path(capture['source_root']);need(capture_root.is_absolute()and capture_root.is_dir()and all(not p.is_symlink()for p in[capture_root,*capture_root.parents]),'Canonical captured asset source root required')
+  for root in [native,masks]:
+   for path,digest in root['readPins'].items():
+    if path.startswith('Assets/'):
+     relative=Path(path);need(all(part not in {'','..','.'}for part in relative.parts),'Canonical captured asset relative path required');path=str(capture_root/relative)
+    elif path.startswith('Packages/'):
+     locator=root['packageAssetLocators'][path];need(locator['logicalPath']==path and locator['sha256']==digest,'Registered package locator differs');path=locator['resolvedPhysicalPath']
+    if any(segment in path for segment in ['/Assets/','/Packages/','/Library/PackageCache/'])and not path.endswith(('.cs','.cs.meta','.asmdef','.asmdef.meta','.dll','.pdb')):descriptor({'path':path,'sha256':digest},512*1024*1024)
+  camera,_=read_json_pinned(initial['engineering_camera_profile']['path']);descriptor(camera['native_function_profile'])
+ else:
+  for key in ['packed','water_reference','geometry_reference']:descriptor(initial['placement_domain'][key])
  descriptor(initial['typed_mission_configuration']['layout'])
  graph,_=read_json_pinned(initial['source_config_graph']['path'])
  for f,digest in graph['source_pins'].items():descriptor({'path':f,'sha256':digest},4*1024*1024)
@@ -146,15 +167,18 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
 
 def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=None,prepare_only=False):
  repo=Path(repo).resolve(strict=True);data_repo=Path(data_repo).resolve(strict=True)if data_repo is not None else repo;out=Path(output).absolute();need(math.isfinite(timeout)and timeout>0,'Finite positive owned-process timeout required');need(not out.exists(),'Fresh isolated run output required');out.mkdir(parents=True);receipt,build_pin=read_json_pinned(build_receipt);inputs,bundle_pin=read_json_pinned(bundle);need(receipt.get('status')=='Passed','Qualified supported build required');need(str(repo)==receipt.get('repository_root'),'Run repository differs from built source root');verify(receipt['source_and_reference_pins']);exe=receipt['executable'];need(sha(Path(exe['path']).read_bytes())==exe['sha256'],'Built image changed')
- require_profile(receipt.get('mission'),receipt.get('seed'));tools={k:Path(v).resolve(strict=True)for k,v in receipt['runtime_selection'].items()};need(set(tools)=={'contents','script','engine','mono','newtonsoft'},'Build-recorded runtime paths required');need(str(tools['mono'])in receipt['source_and_reference_pins']and str(tools['newtonsoft'])in receipt['source_and_reference_pins'],'Unbound runtime selection');config,extra=prepare_mono_config(tools,out);need(inputs.get('schema_version')==1 and inputs.get('mission')==receipt.get('mission')and inputs.get('seed')==receipt.get('seed'),f"Explicit matching {receipt.get('mission')}/{receipt.get('seed')} data bundle required")
- initial,initial_pin=read_json_pinned(inputs['initialization']['path']);need(initial_pin['sha256']==inputs['initialization']['sha256'],'Initialization pin mismatch');selection=initial['selection'];need(initial.get('mission_id')==inputs['mission']and selection.get('seed')==inputs['seed'],'Initialization identity mismatch');require_profile(initial['mission_id'],selection['seed'],selection['difficulty_id'],selection['size_id'])
- expected_backend='TypedGroundS026V1'if inputs['mission']=='S026'else'LegacyGroundS002V1'
- need(receipt.get('runtime_backend')==expected_backend and inputs.get('runtime_backend', 'LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
+ generic_host=owned.require('run_skirmish_source_batch').is_external_build(receipt)
+ if not generic_host:require_profile(receipt.get('mission'),receipt.get('seed'))
+ tools={k:Path(v).resolve(strict=True)for k,v in receipt['runtime_selection'].items()};need(set(tools)=={'contents','script','engine','mono','newtonsoft'},'Build-recorded runtime paths required');need(str(tools['mono'])in receipt['source_and_reference_pins']and str(tools['newtonsoft'])in receipt['source_and_reference_pins'],'Unbound runtime selection');config,extra=prepare_mono_config(tools,out);need(inputs.get('schema_version')==1 and (generic_host or(inputs.get('mission')==receipt.get('mission')and inputs.get('seed')==receipt.get('seed'))),f"Explicit matching {receipt.get('mission')}/{receipt.get('seed')} data bundle required")
+ initial,initial_pin=read_json_pinned(inputs['initialization']['path']);need(initial_pin['sha256']==inputs['initialization']['sha256'],'Initialization pin mismatch');selection=initial['selection'];owned.require('skirmish_source_profiles').require_initial_qualification_pair(initial);need(initial.get('mission_id')==inputs['mission']and selection.get('seed')==inputs['seed'],'Initialization identity mismatch');require_profile(initial['mission_id'],selection['seed'],selection['difficulty_id'],selection['size_id'])
+ expected_backend=owned.require('skirmish_source_profiles').runtime_backend(inputs['mission'])
+ owned.require('run_skirmish_source_batch').require_build_target(receipt,inputs['mission'],inputs['seed'],expected_backend)
+ need(inputs.get('runtime_backend', 'LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
  origin_pins=metadata_origin_pins(initial,repo,receipt)
  merge_pins(origin_pins,runtime_input_pins(initial,inputs,repo,receipt,data_repo))
  request={'runtime_backend':expected_backend,'schema_version':1,'kind':'SkirmishSourceSimulationRun','mission':inputs['mission'],'seed':inputs['seed'],'repository_root':str(data_repo),'source_repository_root':str(repo),'output_directory':str(out),'runtime_config':pin(config)}
- request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if inputs['mission']=='S026'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
- if inputs['mission']=='S026':need(initial.get('engineering_camera_profile')==request['camera_profile'],'S026 current engineering camera descriptor differs')
+ request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if expected_backend=='TypedGroundS026V1'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
+ if expected_backend=='TypedGroundS026V1':need(initial.get('engineering_camera_profile')==request['camera_profile'],'S026 current engineering camera descriptor differs')
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
   row=inputs[key];p=Path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks

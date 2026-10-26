@@ -40,7 +40,12 @@ def _command(command,out,timeout,env=None):
  b.write(out/'process.json',result);return result
 
 def _checked_source_build(ctx):
- receipt,pin=_json(ctx['build_receipt']);b.need(receipt.get('status')=='Passed'and receipt.get('mission')==(ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002')and receipt.get('seed')==(ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731),'Passed current finite source build required')
+ receipt,pin=_json(ctx['build_receipt']);b.need(receipt.get('kind')=='SkirmishSourceSimulationBuild'and receipt.get('status')=='Passed'and type(receipt.get('compile_exit'))is int and receipt['compile_exit']==0,'Passed current finite source build required')
+ target_mission=ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002';target_seed=ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731
+ expected_backend=owned.require('skirmish_source_profiles').runtime_backend(target_mission)
+ owned.require('run_skirmish_source_batch').require_build_target(receipt,target_mission,target_seed,expected_backend)
+ if ctx['bundle']is not None:
+  bundle,_=_json(ctx['bundle']);b.need(bundle.get('schema_version')==1 and bundle.get('mission')==ctx['mission']and type(bundle.get('seed'))is int and bundle['seed']==ctx['seed'],'Actual smoke bundle tuple required');b.need(bundle.get('runtime_backend','LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
  b.need(receipt.get('repository_root')==str(ctx['repo']),'Smoke source root differs from build')
  b.verify(receipt['source_and_reference_pins']);b.need(b.pin(ctx['manifest'])['sha256']==receipt['source_manifest']['sha256'],'Current source manifest differs; rebuild')
  resolution,_=_json(receipt['source_resolution']);b.need(any(row.get('id')=='SourceSmokeTool.cs'for row in resolution['resolved']),'Build lacks current preworld smoke entry; rebuild')
@@ -80,11 +85,15 @@ def _source_build(ctx):
  evidence=_checked_source_build(ctx);return 'Passed','build','Checked source build reused by native diagnostics and startup/full worker.',evidence
 
 def _native_data(ctx):
- if ctx['mission']=='S026'and ctx['bundle']is not None:
+ if owned.require('skirmish_source_profiles').runtime_backend(ctx['mission'])=='TypedGroundS026V1'and ctx['bundle']is not None:
   out=ctx['out']/'native-runtime-data';prepared=b.run(ctx['repo'],ctx['build_receipt'],ctx['bundle'],out,None,ctx['remaining'](),ctx['data_repo'],True);receipt=ctx['build'];tools={k:Path(v)for k,v in receipt['runtime_selection'].items()};request=out/'run-request.json';pins,_=_json(out/'input-pins.json');b.verify(pins)
   env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(ctx['repo']/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)])
   command=[tools['mono'],'--config',out/'mono-config.xml','--optimize=-float32',receipt['executable']['path'],'--source-run-preflight',request]
-  invocation=_command(command,out/'invocation',ctx['remaining'](),env);b.verify(pins);b.need(not invocation['timed_out']and invocation['process_exit']==0,'S026 original compiler/metadata preflight failed; see native-runtime-data/invocation/process.log');log=(out/'invocation/process.log').read_text();marker='[SourceRunPreflight] ';lines=[x[len(marker):]for x in log.splitlines()if x.startswith(marker)];b.need(len(lines)==1,'One exact source preflight receipt required');raw=json.loads(lines[0]);b.need(raw.get('status')=='Passed'and raw.get('world_allocated')is False and raw.get('entity_ids_allocated')==0,'NoWorld preflight contract differs');ctx['native_data']=raw;return 'Passed','native_data','Actual shared initialization compiler and production dual-origin metadata reader; no World/IDs.',raw
+  invocation=_command(command,out/'invocation',ctx['remaining'](),env);b.verify(pins);b.need(not invocation['timed_out']and invocation['process_exit']==0,'S026 original compiler/metadata preflight failed; see native-runtime-data/invocation/process.log');log=(out/'invocation/process.log').read_text();marker='[SourceRunPreflight] ';lines=[x[len(marker):]for x in log.splitlines()if x.startswith(marker)];b.need(len(lines)==1,'One exact source preflight receipt required');raw=json.loads(lines[0]);b.need(raw.get('status')=='Passed'and raw.get('world_allocated')is False and raw.get('entity_ids_allocated')==0,'NoWorld preflight contract differs');initial,_=_json(ctx['bundle_value']['initialization']['path'])
+  if initial.get('metadata_compiler_context')is not None:
+   compiler_context,_=_json(initial['metadata_compiler_context']['path']);target=compiler_context['target_context']
+   raw['configuration_qualification_scope']={'selected_context':{key:target[key]for key in ['catalog_id','size','difficulty','seed','setup_hash']},'selected_original_compiler_result':'Passed'if raw.get('status')=='Passed'else raw.get('status'),'unselected_binding_contexts':[{'size':size,'difficulty':target['difficulty'],'qualification':'ExplicitUnsupported','execution':'NotRun'}for size in ['Standard','War','LargeWar']if size!=target['size']],'canonical_all_size_budget_diagnostics':'Separate unchanged catalog_matrix_csv diagnostics; not normal binding compilation or source-fit','mission_ready':False}
+  ctx['native_data']=raw;return 'Passed','native_data','Actual shared initialization compiler and production dual-origin metadata reader; no World/IDs.',raw
  if ctx['mission']=='S026':
   author=owned.require('skirmish_source_authoring').author(ctx['repo'],ctx['package'],ctx['manifest'],ctx['out']/'native-author',ctx['mission'],ctx['seed'],ctx['authoring_input'],ctx['build_receipt'],ctx['data_repo'],ctx['remaining']())
   if author.get('status')not in{'DraftInspected','ConfigurationCompiled'}:return 'Failed','authoring','Current native author invocation failed.',author

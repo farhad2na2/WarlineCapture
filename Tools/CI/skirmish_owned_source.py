@@ -104,7 +104,7 @@ def load_cli(root):
         for name in ['skirmish_source_profiles', 'skirmish_source_syntax', 'skirmish_production_worker', 'skirmish_causal_worker',
                      'skirmish_source_manifest', 'skirmish_source_build', 'skirmish_source_authoring',
                      'build_skirmish_authoring_batches', 'skirmish_offline_sim',
-                     'skirmish_offline_sim_cases', 'skirmish_source_smoke']:
+                     'skirmish_offline_sim_cases', 'skirmish_source_smoke', 'run_skirmish_source_batch']:
             _epoch.load(name, root / (name + '.py'))
         return _epoch.verify()
     except BaseException:

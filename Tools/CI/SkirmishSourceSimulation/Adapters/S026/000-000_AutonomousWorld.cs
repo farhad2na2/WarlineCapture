@@ -91,8 +91,10 @@ namespace Game.Runtime
             if (canonicalNodes.Length != 1) throw new InvalidOperationException("Unique actual canonical catalog graph node required");
             var canonicalCatalog = assets.ByPath<SkirmishBattleCatalogConfig>((string)canonicalNodes[0]["source_path"]);
             SkirmishScenarioDefinitionConfig definition;JObject nativeLogicalBinding=null;
-            bool sourceOnlyS026 = (string)request["mission_id"] == "S026";
-            if (sourceOnlyS026) {
+            bool declaredContext=request["metadata_compiler_context"]!=null;
+            bool sourceOnlyS026 = (string)request["mission_id"] == "S026"||declaredContext;
+            if(declaredContext){definition=SourceDeclaredMissionConfiguration.Configure(request,assets);SourceDeclaredMissionConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog,definition.CatalogId);}
+            else if (sourceOnlyS026) {
                 var typed = request["typed_mission_configuration"] as JObject;
                 string[] fields = { "profiles", "campaign_source_path", "layout" };
                 if (typed == null || typed.Properties().Count() != fields.Length || typed.Properties().Any(p => !fields.Contains(p.Name)) ||
@@ -114,6 +116,7 @@ namespace Game.Runtime
             var matrixBytes = Descriptor(request["setup_matrix"], 4 * 1024 * 1024);
             UnityEngine.Resources.BindSourceResources(new Dictionary<string, object>
             {
+                [SkirmishBattleCatalogConfig.ResourceName] = canonicalCatalog,
                 [SkirmishExpansionCatalogConfig.ResourceName] = catalog,
                 [SkirmishSetupMatrixTable.PackagedResourceName] = new UnityEngine.TextAsset(System.Text.Encoding.UTF8.GetString(matrixBytes))
             });
@@ -124,7 +127,7 @@ namespace Game.Runtime
             if (!SkirmishSetupCompiler.TryCompile(definition, (SkirmishDifficultyId)(int)selection["difficulty_id"],
                 (SkirmishSizeId)(int)selection["size_id"], (int)selection["seed"], manifest, matrix, out var setup, out var reasons))
                 throw new InvalidOperationException("Original setup compiler rejected authored input: " + string.Join(";", reasons));
-            if(nativeLogicalBinding!=null)SourceNativeMissionLogicalBindingReference.RequireCompiled(nativeLogicalBinding,definition,setup);
+            if(declaredContext)SourceDeclaredMissionLogicalBindingReference.RequireCompiled(request["mission_logical_binding"]as JObject,definition,setup,request);else if(nativeLogicalBinding!=null)SourceNativeMissionLogicalBindingReference.RequireCompiled(nativeLogicalBinding,definition,setup);
             return (graph,assets,canonicalCatalog,definition,catalog,matrix,manifest,setup,sourceOnlyS026,selection);
         }
         internal void Initialize(string path, string sha256, float fixedDeltaTime, string metadataSourceRepo=null, string metadataDataRepo=null)
@@ -160,7 +163,7 @@ namespace Game.Runtime
             ActualCompileManifest = manifest;
             Army = definition.ArmyProfileConfig;
             int actualScenarioIndex;
-            if (sourceOnlyS026) actualScenarioIndex = SourceS026TypedConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog);
+            if (sourceOnlyS026) actualScenarioIndex = request["metadata_compiler_context"]!=null?SourceDeclaredMissionConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog,Setup.CatalogId):SourceS026TypedConfiguration.RequireHonestSourceOnlyCatalog(canonicalCatalog);
             else if (!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId, out actualScenarioIndex)) throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;
             MetadataCompatibility=SourceMetadataCompatibility.Load(request,Setup,metadataSourceRepo,metadataDataRepo);
@@ -173,8 +176,7 @@ namespace Game.Runtime
             InitializationStage = "ConstructingBakedCampaignMap";
             Entities.LogicalAllocatorAdmitted = true;
             Entities.AllocateLogicalIdentity = () => new Entity { Index = checked(nextIdentity++), Version = 1 };
-            var surfaceData=assets.ByPath<MapSurfaceDataAsset>("Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset");
-            var gridData=assets.ByPath<GridAuthoringSceneConfigAsset>("Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset");
+            SourceDeclaredRuntimeInputs.ResolveMapAssets(request,graph,assets,ActualDefinition,out var surfaceData,out var gridData);
             if(!surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent,out var surfaceBlob))throw new InvalidOperationException("Original baked surface decoder rejected actual source payload");
             ref MapSurfaceBlob surface=ref surfaceBlob.Value;
             if(surface.Dimensions.x!=gridData.Width||surface.Dimensions.y!=gridData.Height||surface.CellSize!=gridData.CellSize)throw new InvalidOperationException("Actual baked grid/surface source domains differ");

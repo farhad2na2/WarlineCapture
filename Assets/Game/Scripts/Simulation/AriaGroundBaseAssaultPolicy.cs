@@ -136,6 +136,23 @@ private static void StepCore(in AriaS002Observation view,ref AriaS002PlanState p
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitLogisticsTruck){plan.Intent=AriaS002Intent.Recruit;Target(view.RecruitLogisticsTruck,false,ref output);return;}
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaS002Intent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
+            // Replace a completely lost ground structure force before a page sweep
+            // can consume every decision. Offered controls remain the authority.
+            if (!view.AirProfile && !view.CombinedArmsField && view.EnemyDesignatedAlive &&
+                view.OwnStructureAttackUnits == 0 && !view.InspectionOpen && !view.CatalogOpen && !view.AttackMode)
+            {
+                if (view.RocketeerRecruitPending)
+                {
+                    plan.Intent = AriaS002Intent.ObserveBattle;
+                    return;
+                }
+                if (view.CanAffordRocketeer && view.RecruitRocketeer.Admitted)
+                {
+                    plan.Intent = AriaS002Intent.Recruit;
+                    Target(view.RecruitRocketeer, false, ref output);
+                    return;
+                }
+            }
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)

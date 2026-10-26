@@ -36,6 +36,7 @@ public struct AriaS002PublicSnapshot {
             float.IsFinite(now) && now >= MarkerTime && now - MarkerTime <= 1f;
     }
 public struct AriaS002Observation {
+public Game.Skirmish.Contracts.SkirmishPublicSelectedApproach SelectedOwnApproach;
 public AriaS002Scope Scope;public int SourceScenarioIndex;
 public bool Active;
 public bool Finished;

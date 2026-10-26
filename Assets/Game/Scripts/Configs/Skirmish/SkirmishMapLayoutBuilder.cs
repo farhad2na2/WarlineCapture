@@ -179,7 +179,7 @@ namespace Game.Configs
 
         public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup, SkirmishMapLayoutConfig layout = null)
         {
-            return setup != null &&
+            return setup != null && layout?.DeclaredConfiguration == null &&
                    new SkirmishCatalogId(setup.CatalogId).IsValid &&
                    setup.OperationMapId == DesertBaseMapId &&
                    setup.LayoutId == DesertBaseLayoutId &&
@@ -305,6 +305,7 @@ namespace Game.Configs
                     setup.Structures[i] = structure;
                 }
             }
+            SkirmishStructureInstanceBinding.TryApply(layout, setup, reasons);
         }
 
         /// <summary>

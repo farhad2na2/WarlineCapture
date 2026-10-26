@@ -358,6 +358,32 @@ namespace Game.Runtime
             return slotAnchor;
         }
 
+        // Read-only planning wrapper. Reservations are caller-local; a fallback
+        // slotAnchor from FindManualMoveGoal is not silently certified legal.
+        public bool TryPlanManualMoveGoal(
+            EntityManager entityManager, in GridConfig grid,
+            in NativeArray<GridWalkable> walkable, in NativeBitArray blocked,
+            in NativeArray<byte> friendlyPassFactionIds, in NativeBitArray occupied,
+            HashSet<int> reservedGoalCells, HashSet<int> selectedCurrentCells,
+            Entity entity, int2 desiredGoal, int slotIndex,
+            MapSurfacePathfindingSnapshot.Context surfaceContext, out int2 goal)
+        {
+            var priorReservations = new HashSet<int>(reservedGoalCells);
+            goal = FindManualMoveGoal(entityManager, grid, walkable, blocked,
+                friendlyPassFactionIds, occupied, reservedGoalCells, selectedCurrentCells,
+                entity, desiredGoal, slotIndex, surfaceContext);
+            int2 footprintSize = entityManager.HasComponent<UnitFootprint>(entity)
+                ? entityManager.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+            UnitMovementBehavior movementBehavior = entityManager.HasComponent<UnitMovementBehavior>(entity)
+                ? entityManager.GetComponentData<UnitMovementBehavior>(entity) : default;
+            bool isVehicle = UnitVehicleMovementUtility.IsVehicle(new UnitFootprint { Size = footprintSize }, movementBehavior);
+            byte factionId = entityManager.HasComponent<Faction>(entity) ? entityManager.GetComponentData<Faction>(entity).Id : (byte)0;
+            int goalPadding = isVehicle ? ManualMoveGoalPaddingVehicle : ManualMoveGoalPaddingInfantry;
+            return CanReserveManualMoveGoal(grid, walkable, blocked, friendlyPassFactionIds,
+                occupied, priorReservations, selectedCurrentCells, goal, footprintSize,
+                goalPadding, factionId, surfaceContext, isVehicle);
+        }
+
         public int2 GetManualMoveFormationOffset(int slotIndex, int2 footprintSize, int padding)
         {
             if (slotIndex <= 0)

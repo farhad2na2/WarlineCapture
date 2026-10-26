@@ -3,6 +3,7 @@ namespace Game.UI.Contracts
     public enum UiSkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart, SaveExit }
     public struct UiSkirmishModel
     {
+        public Game.Skirmish.Contracts.SkirmishPublicSelectedApproach SelectedApproach;
         public bool Finished, Paused, StartupFailed;
         public bool CanSaveMatch, SaveFailed;
         public string Infantry;

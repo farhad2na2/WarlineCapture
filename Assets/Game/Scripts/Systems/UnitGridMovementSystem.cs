@@ -15,6 +15,7 @@ namespace Game.Runtime
     [WithNone(
         typeof(EngageTarget),
         typeof(UnitDeathAnimationComponent),
+        typeof(VehicleWreckComponent),
         typeof(UnitAirMovement),
         typeof(CampaignMissionStationaryUnitTag))]
     public partial struct UnitGridMoveJob : IJobEntity
@@ -657,7 +658,7 @@ namespace Game.Runtime
     }
 
     [BurstCompile]
-    [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
+    [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(VehicleWreckComponent), typeof(UnitAirMovement))]
     public partial struct UnitPathFollowCleanupJob : IJobEntity
     {
 #if UNITY_EDITOR

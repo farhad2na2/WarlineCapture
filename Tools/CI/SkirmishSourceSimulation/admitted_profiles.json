@@ -10,6 +10,30 @@
         104731,
         1
       ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 1,
+      "seeds": [
+        104755
+      ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 2,
+      "seeds": [
+        104755
+      ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 3,
+      "seeds": [
+        104755
+      ]
     }
   ]
 }

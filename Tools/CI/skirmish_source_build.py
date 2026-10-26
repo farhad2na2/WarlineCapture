@@ -66,7 +66,9 @@ def build(repo,package,manifest,output,mission='S002',seed=104731):
  data,manifest_pin=read_json_pinned(manifest);merge_pins(pins,{manifest_pin['path']:manifest_pin['sha256']});defines=data.get('compiler_defines',[]);need(all(re.fullmatch(r'[A-Za-z_]\w*',x)and not x.startswith('UNITY_EDITOR')for x in defines),'Explicit non-Editor compiler profile required')
  args=['-nologo','-unsafe+','-nostdlib+','-langversion:latest','-target:exe','-main:SourceSimulationProgram','-out:'+str(code)]+(['-define:'+','.join(defines)]if defines else[])+['-r:'+str(p)for p in tools['refs']]+['-r:ActualCore='+str(tools['core']),'-r:'+placement['dll']]+[str(p)for p in sources]
  rsp=out/'compile.rsp';rsp.write_text('\n'.join(json.dumps(x)for x in args)+'\n');verify(pins);start=time.monotonic();r=subprocess.run([str(tools['dotnet']),str(tools['csc']),'@'+str(rsp)],capture_output=True,text=True,timeout=120);(out/'compile.log').write_text(r.stdout+r.stderr);verify(pins)
- receipt={'schema_version':1,'kind':'SkirmishSourceSimulationBuild','mission':mission,'seed':seed,'repository_root':str(repo),'status':'Passed'if r.returncode==0 else'Failed','compile_exit':r.returncode,'compile_wall_seconds':time.monotonic()-start,'source_count':len(sources),'source_and_reference_pins':pins,'source_manifest':manifest_pin,'source_resolution':str(out/'source/resolution.json'),'placement_build':str(out/'placement/build.json'),'compiler_response':pin(rsp),'runtime_selection':{k:str(tools[k])for k in ['contents','script','engine','mono','newtonsoft']},'numeric_runtime':'InstalledMono --optimize=-float32','native_or_player_launched':False,'scope':'Current source plus explicit finite engine/data adapters. No native UI/render, seed-only determinism or mission outcome claim from compilation.'}
+ receipt={'runtime_backend':result['runtime_backend'],'schema_version':1,'kind':'SkirmishSourceSimulationBuild','mission':mission,'seed':seed,'repository_root':str(repo),'status':'Passed'if r.returncode==0 else'Failed','compile_exit':r.returncode,'compile_wall_seconds':time.monotonic()-start,'source_count':len(sources),'source_and_reference_pins':pins,'source_manifest':manifest_pin,'source_resolution':str(out/'source/resolution.json'),'placement_build':str(out/'placement/build.json'),'compiler_response':pin(rsp),'runtime_selection':{k:str(tools[k])for k in ['contents','script','engine','mono','newtonsoft']},'numeric_runtime':'InstalledMono --optimize=-float32','native_or_player_launched':False,'scope':'Current source plus explicit finite engine/data adapters. No native UI/render, seed-only determinism or mission outcome claim from compilation.'}
+ if mission=='S026':
+  readset=out/'source/compiled-transform-readset.json';sidecar=Path(str(code)+'.transform-readset.json');sidecar.write_bytes(readset.read_bytes());receipt['transform_readset']=pin(sidecar);merge_file_pins(pins,[readset,sidecar])
  if r.returncode==0:receipt['executable']=pin(code)
  write(out/'build.json',receipt);need(r.returncode==0,'Current source compilation failed; see '+str(out/'compile.log'));return receipt
 
@@ -114,17 +116,51 @@ def metadata_origin_pins(initial,repo,receipt):
  need(declared==expected_origin,'Native origin consumed closure mismatch')
  return pins
 
-def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=None):
+def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
+ if inputs['mission']!='S026':return {}
+ pins={}
+ def descriptor(row,maximum=256*1024*1024):
+  need(isinstance(row,dict)and isinstance(row.get('path'),str)and isinstance(row.get('sha256'),str),'Required S026 input descriptor')
+  f=Path(row['path']);need(f.is_absolute()and f.is_file()and f.stat().st_size<=maximum,'Bounded absolute S026 input required');entry=pin(f);need(entry['sha256']==row['sha256'],'S026 input changed: '+str(f));pins[entry['path']]=entry['sha256'];return f
+ runtime=inputs.get('runtime_data_inputs');need(isinstance(runtime,dict)and set(runtime)=={'schema_version','kind','data_root','data_files','source_files'}and type(runtime['schema_version'])is int and runtime['schema_version']==1 and runtime['kind']=='CurrentRoadSceneRuntimeInputs','Exact current road input contract required')
+ need(Path(runtime['data_root']).is_absolute()and Path(runtime['data_root']).resolve(strict=True)==data_repo,'Road data root differs from actual selected runtime root')
+ datafiles={'Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset','Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset.meta','Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset','Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset.meta'}
+ sourcefiles={'Assets/Game/Scripts/Configs/Scene/RoadBuildSystemSceneConfigAsset.cs.meta','Assets/Game/Scripts/Configs/Scene/RuntimeCitySpawnerSystemSceneConfigAsset.cs.meta'}
+ need(set(runtime['data_files'])==datafiles and set(runtime['source_files'])==sourcefiles,'Exact road runtime/current-source closure required')
+ for root,rows in [(data_repo,runtime['data_files']),(repo,runtime['source_files'])]:
+  for rel,digest in rows.items():descriptor({'path':str(root/rel),'sha256':digest},4*1024*1024)
+ for key in ['source_config_graph','setup_matrix','canonical_battle_catalog','selected_operation_map','building_definitions','building_placement_config','reference_templates','navigation_reference','resource_preset','unit_production_metadata','building_request_metadata','metadata_compatibility','engineering_camera_profile','camera_engine_adapter','operation_map_rotation_reference','mission_logical_binding','death_mechanical_inputs','command_text_data']:descriptor(initial[key])
+ for key in ['definition','grid_config','surface_data']:descriptor(initial['static_map'][key])
+ for key in ['packed','water_reference','geometry_reference']:descriptor(initial['placement_domain'][key])
+ descriptor(initial['typed_mission_configuration']['layout'])
+ graph,_=read_json_pinned(initial['source_config_graph']['path'])
+ for f,digest in graph['source_pins'].items():descriptor({'path':f,'sha256':digest},4*1024*1024)
+ row=initial['reference_templates']
+ for stem in ['source_reference','projection_manifest']:descriptor({'path':row[stem+'_path'],'sha256':row[stem+'_sha256']})
+ need(initial['unit_production_metadata']==inputs['unit_metadata'],'S026 unit metadata descriptor differs')
+ text,_=read_json_pinned(initial['command_text_data']['path']);source=inputs['command_text_sources'];need(set(source)=={'captured_root','current_root','input_pins','artifact_sha256'}and source['artifact_sha256']==initial['command_text_data']['sha256'],'Exact original text source manifest required')
+ captured=Path(source['captured_root']);current=Path(source['current_root']);need(captured.is_absolute()and current.is_absolute()and current.is_dir(),'Explicit text source roots required')
+ expected={str(current/Path(name).relative_to(captured)):digest for name,digest in text['source_pins'].items()};need(source['input_pins']==expected,'Original text source closure differs')
+ for f,digest in expected.items():descriptor({'path':f,'sha256':digest})
+ return pins
+
+def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=None,prepare_only=False):
  repo=Path(repo).resolve(strict=True);data_repo=Path(data_repo).resolve(strict=True)if data_repo is not None else repo;out=Path(output).absolute();need(math.isfinite(timeout)and timeout>0,'Finite positive owned-process timeout required');need(not out.exists(),'Fresh isolated run output required');out.mkdir(parents=True);receipt,build_pin=read_json_pinned(build_receipt);inputs,bundle_pin=read_json_pinned(bundle);need(receipt.get('status')=='Passed','Qualified supported build required');need(str(repo)==receipt.get('repository_root'),'Run repository differs from built source root');verify(receipt['source_and_reference_pins']);exe=receipt['executable'];need(sha(Path(exe['path']).read_bytes())==exe['sha256'],'Built image changed')
  require_profile(receipt.get('mission'),receipt.get('seed'));tools={k:Path(v).resolve(strict=True)for k,v in receipt['runtime_selection'].items()};need(set(tools)=={'contents','script','engine','mono','newtonsoft'},'Build-recorded runtime paths required');need(str(tools['mono'])in receipt['source_and_reference_pins']and str(tools['newtonsoft'])in receipt['source_and_reference_pins'],'Unbound runtime selection');config,extra=prepare_mono_config(tools,out);need(inputs.get('schema_version')==1 and inputs.get('mission')==receipt.get('mission')and inputs.get('seed')==receipt.get('seed'),f"Explicit matching {receipt.get('mission')}/{receipt.get('seed')} data bundle required")
  initial,initial_pin=read_json_pinned(inputs['initialization']['path']);need(initial_pin['sha256']==inputs['initialization']['sha256'],'Initialization pin mismatch');selection=initial['selection'];need(initial.get('mission_id')==inputs['mission']and selection.get('seed')==inputs['seed'],'Initialization identity mismatch');require_profile(initial['mission_id'],selection['seed'],selection['difficulty_id'],selection['size_id'])
+ expected_backend='TypedGroundS026V1'if inputs['mission']=='S026'else'LegacyGroundS002V1'
+ need(receipt.get('runtime_backend')==expected_backend and inputs.get('runtime_backend', 'LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
  origin_pins=metadata_origin_pins(initial,repo,receipt)
- request={'schema_version':1,'kind':'SkirmishSourceSimulationRun','mission':inputs['mission'],'seed':inputs['seed'],'repository_root':str(data_repo),'source_repository_root':str(repo),'output_directory':str(out),'runtime_config':pin(config)}
- request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
+ merge_pins(origin_pins,runtime_input_pins(initial,inputs,repo,receipt,data_repo))
+ request={'runtime_backend':expected_backend,'schema_version':1,'kind':'SkirmishSourceSimulationRun','mission':inputs['mission'],'seed':inputs['seed'],'repository_root':str(data_repo),'source_repository_root':str(repo),'output_directory':str(out),'runtime_config':pin(config)}
+ request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if inputs['mission']=='S026'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
+ if inputs['mission']=='S026':need(initial.get('engineering_camera_profile')==request['camera_profile'],'S026 current engineering camera descriptor differs')
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
   row=inputs[key];p=Path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks
  write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,origin_pins);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
+ if prepare_only:
+  write(out/'input-pins.json',pins);prepared={'status':'PreparedOnly','world_allocated':False,'run_request':pin(out/'run-request.json'),'input_pins':pin(out/'input-pins.json'),'runtime_backend':expected_backend,'build_receipt':build_pin,'data_bundle':bundle_pin};write(out/'prepared-run.json',prepared);return prepared
  start=time.monotonic();returncode=None;timed_out=False
  with (out/'process.log').open('w')as log:
   process=subprocess.Popen([str(tools['mono']),'--config',str(config),'--optimize=-float32',exe['path'],str(out/'run-request.json')],env=env,stdout=log,stderr=subprocess.STDOUT)
@@ -141,4 +177,9 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  result['repository_data_scope']='CURRENT_REPOSITORY_ASSET_SNAPSHOT_PREWORLD_AND_POSTRUN; not historical asset equality'
  result['runtime_identity_scope']='Common before/after loaded files and MVIDs unchanged; late-only modules listed with post-load hashes, not pre-load equality'
  result.update(full_outcome_observed=result['status']=='SourceOutcomeObserved',expected_outcome='Victory',validation_passed=result['status']=='SourceOutcomeObserved'and raw.get('source_outcome')=='Victory',diagnostic_prefix_completed=result['status']=='BoundedPrefix',native_acceptance=False)
+ missing_manifests=[name for name in ['runtime-before-world.json','runtime-after-outcome.json']if not(out/name).is_file()]
+ if missing_manifests:
+  result.update(status='Failed',full_outcome_observed=False,validation_passed=False,diagnostic_prefix_completed=False)
+  result['runtime_manifest_failure']={'reason':'Actual loaded-runtime manifests missing','missing_files':missing_manifests}
+  write(out/'run-receipt.json',result)
  need((out/'runtime-before-world.json').is_file()and(out/'runtime-after-outcome.json').is_file(),'Actual loaded-runtime manifests missing');write(out/'run-receipt.json',result);return result

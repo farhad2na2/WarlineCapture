@@ -22,8 +22,8 @@ owned=_bootstrap_owned_source()
 from skirmish_source_manifest import resolve_manifest,UnsupportedSourceShape
 
 def main():
- p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run','author','smoke']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--objective-build',help='Existing checked .NET8 objective build directory for smoke reuse');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--authoring-input',help='Hash-bound typed config diagnostics; ConfigurationCompiled/DraftInspected do not certify source-fit or mission readiness');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float);a=p.parse_args();a.timeout=a.timeout if a.timeout is not None else(120 if a.command in {'smoke','author'}else 1800)
- package=Path(a.package_root).resolve();manifest=Path(a.manifest)if a.manifest else package/'Tools/CI/SkirmishSourceSimulation/source_manifest.plan.json'
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['resolve','build','run','author','smoke']);p.add_argument('--repo',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--package-root',default=str(Path(__file__).resolve().parents[2]));p.add_argument('--manifest');p.add_argument('--output',required=True);p.add_argument('--mission',required=True);p.add_argument('--seed',type=int,default=104731);p.add_argument('--build-receipt');p.add_argument('--objective-build',help='Existing checked .NET8 objective build directory for smoke reuse');p.add_argument('--data-repo');p.add_argument('--data-bundle');p.add_argument('--authoring-input',help='Hash-bound typed config diagnostics; ConfigurationCompiled/DraftInspected do not certify source-fit or mission readiness');p.add_argument('--prepare-only',action='store_true',help='Resolve/hash/prepare ordinary run inputs without allocating World or launching worker');p.add_argument('--max-ticks',type=int);p.add_argument('--timeout',type=float);a=p.parse_args();a.timeout=a.timeout if a.timeout is not None else(120 if a.command in {'smoke','author'}else 1800)
+ package=Path(a.package_root).resolve();manifest=Path(a.manifest)if a.manifest else package/('Tools/CI/SkirmishSourceSimulation/source_manifest.s026.plan.json'if a.mission=='S026'and(a.command in {'resolve','build','run'}or a.command=='smoke'and a.data_bundle is not None)else'Tools/CI/SkirmishSourceSimulation/source_manifest.plan.json')
  try:
   if a.command=='smoke':
    result=owned.require('skirmish_source_smoke').smoke(a.repo,package,manifest,a.output,a.mission,a.seed,a.data_bundle,a.authoring_input,a.build_receipt,a.objective_build,a.data_repo,a.timeout)
@@ -43,12 +43,12 @@ def main():
    from skirmish_source_build import run,build
    if not a.data_bundle:p.error('run requires --data-bundle')
    run_output=a.output
-   if not a.build_receipt and a.max_ticks is not None:
+   if not a.build_receipt and(a.max_ticks is not None or a.prepare_only):
     root=Path(a.output).absolute()
     if root.exists():raise UnsupportedSourceShape('Fresh isolated one-command output required')
     root.mkdir(parents=True);build(a.repo,package,manifest,root/'build',a.mission,a.seed);a.build_receipt=str(root/'build/build.json');run_output=str(root/'run')
    preflight=None;preflight_path=None;began=time.monotonic()
-   if a.max_ticks is None:
+   if a.max_ticks is None and not a.prepare_only:
     if not a.build_receipt:
      root=Path(a.output).absolute()
      if root.exists():raise UnsupportedSourceShape('Fresh isolated one-command output required')
@@ -60,10 +60,11 @@ def main():
     a.build_receipt=preflight['build_receipt']
    remaining=a.timeout-(time.monotonic()-began)
    if remaining<=0:raise UnsupportedSourceShape('Smoke/fullrun wall budget exhausted before worker')
-   result=run(a.repo,a.build_receipt,a.data_bundle,run_output,a.max_ticks,remaining,a.data_repo)
+   result=run(a.repo,a.build_receipt,a.data_bundle,run_output,a.max_ticks,remaining,a.data_repo,a.prepare_only)
+   if a.prepare_only:print(json.dumps(result));return 0
    if preflight is not None:
     from skirmish_source_build import write,pin
-    marker='[ActualS002AutonomousStart]'
+    marker='[Actual'+a.mission+'AutonomousStart]'
     worker_log=Path(run_output)/'process.log';startup_seen=worker_log.is_file()and marker in worker_log.read_text(errors='replace')
     preflight['full_worker_startup']={'status':'ObservedInFullRun'if startup_seen else'Failed','field':'startup','source_process_exit':result['process_exit'],'source_status':result['status'],'extra_world_initialized':False}
     if not startup_seen:preflight['status']='Failed';preflight['exit_code']=1

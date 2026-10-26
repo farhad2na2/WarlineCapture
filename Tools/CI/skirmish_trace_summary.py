@@ -208,12 +208,79 @@ def reservation_check(o,row,actors,no):
   if remaining<0 or delivered<0 or member<0 or remaining>member or delivered>member or count>remaining or count>delivered:
    check['status']='Failed'
    if len(check['violations'])<MAX_WARNINGS:check['violations'].append({'line':no,'reservation_id':rid,'faction_id':faction,'member_count':member,'delivered_members':delivered,'remaining_members':remaining,'active_unreleased_nonstructure_owners':count})
+def performance_summary(path,result,o):
+ """Passive timings only; no allocations, causal speedup, or native-game inference."""
+ summary={'status':'Unsupported','rows':0,'invalid_rows':0,'seconds':{},'advance_percent':{},'requests':0,
+          'first_frame':None,'last_frame':None,'owner_seconds':{},'aria_seconds':{},
+          'limitations':['Single-run observations, not a matched performance comparison.',
+          'Scheduler subphase times are not the entire path owner time.',
+          'Copy time is not allocation volume; no native-game speedup is inferred.']}
+ o['performance']=summary
+ if not isinstance(result,dict):err(o,'performance requires a readable result');return
+ advance=result.get('advance_wall_seconds')
+ if not finite(advance) or advance<=0:err(o,'performance advance_wall_seconds must be finite and positive');return
+ summary['advance_wall_seconds']=advance
+ for key,outkey in [('cumulative_owner_wall_seconds','owner_seconds'),('cumulative_aria_wall_seconds','aria_seconds')]:
+  values=result.get(key)
+  if not isinstance(values,dict) or len(values)>MAX_KEYS:err(o,'performance missing/oversized '+key);continue
+  for name,value in values.items():
+   if not isinstance(name,str) or len(name)>MAX_KEY or not finite(value) or value<0:err(o,'performance invalid '+key);continue
+   summary[outkey][name]=value
+ timing_keys=('total','scratch','live_snapshot','request_collect','goal_assign','grid_snapshot','owned_job')
+ sums={k:0. for k in timing_keys};negative={k:0 for k in timing_keys};prefix=b'[PathPhaseProfile] ';h=hashlib.sha256();n=0;lines=0;previous=None
+ try:
+  before=os.stat(path)
+  with open(path,'rb') as f:
+   while True:
+    raw=f.readline(MAX_LINE+1)
+    if not raw:break
+    n+=len(raw);lines+=1;h.update(raw)
+    if n>256*1024*1024 or lines>MAX_ROWS:raise ValueError('bounded process log limit exceeded')
+    if len(raw)>MAX_LINE:raise ValueError('process log line exceeds limit')
+    if not raw.startswith(prefix):continue
+    try:
+     row=load(raw[len(prefix):])
+     if not isinstance(row,dict) or set(row)!=set(timing_keys)|{'frame','requests'}:raise ValueError('unsupported profile row fields')
+     frame=row['frame'];requests=row['requests']
+     if not integer(frame) or frame<0 or (previous is not None and frame<=previous):raise ValueError('frame must strictly increase')
+     if not integer(requests) or requests<0:raise ValueError('requests must be nonnegative integer')
+     for k in timing_keys:
+      if not finite(row[k]) or not finite(sums[k]+row[k]):raise ValueError('invalid/overflow timing '+k)
+     if summary['rows']==0:summary['first_frame']=frame
+     summary['last_frame']=frame;previous=frame;summary['rows']+=1;summary['requests']+=requests
+     for k in timing_keys:
+      sums[k]+=row[k]
+      if row[k]<0:negative[k]+=1
+    except (ValueError,UnicodeDecodeError,RecursionError) as x:
+     summary['invalid_rows']+=1;err(o,'path profile line %d: %s'%(lines,x))
+  after=os.stat(path)
+  stable=(before.st_dev,before.st_ino,before.st_size,before.st_mtime_ns)==(after.st_dev,after.st_ino,after.st_size,after.st_mtime_ns)
+  o['inputs']['process_log']={'path':os.path.abspath(path),'sha256':h.hexdigest(),'bytes':n,'stable':stable,'lines_read':lines}
+  if not stable:raise ValueError('process log changed while read')
+ except (OSError,ValueError) as x:err(o,'process_log malformed/unavailable: %s'%x)
+ if not summary['rows']:err(o,'process log has no supported PathPhaseProfile rows')
+ tick=result.get('tick')
+ if not integer(tick) or (summary['last_frame'] is not None and summary['last_frame']>tick):err(o,'path profile frame exceeds/misses result tick')
+ summary['raw_signed_seconds']=sums
+ summary['unsupported_timing_fields']={k:{'negative_rows':n,'reason':'Negative measured delta; no clamping or duration claim'} for k,n in negative.items() if n}
+ summary['seconds']={k:v for k,v in sums.items() if not negative[k]}
+ summary['advance_percent']={}
+ for k,v in summary['seconds'].items():
+  percent=(v/advance)*100
+  if not finite(percent):err(o,'performance percentage overflow '+k);continue
+  summary['advance_percent'][k]=percent
+ summary['owner_ranking']=sorted(summary['owner_seconds'],key=summary['owner_seconds'].get,reverse=True)
+ if o['input_errors']:
+  summary['seconds']={};summary['advance_percent']={}
+ else:summary['status']='ObservedPartial' if any(negative.values()) else 'Observed'
+
 def analyze(a):
  o={'schema_version':4,'kind':'SkirmishPassiveTraceSummary','analyzer_success':False,'source_result':None,'source_receipt':None,'inputs':{},'input_errors':[],'commands':{'executed':0,'accepted':0,'rejected':0,'unknown_acceptance':0,'reasons':{},'source_apis':{},'last':[]},'checks':{'reservation_owner_upper_bounds':{'status':'Unsupported','input_snapshots':0,'unsupported_snapshots':0,'checked_receipts':0,'skipped_closed_receipts':0,'duplicate_receipt_ids':0,'unknown_active_owners':0,'malformed_owned_actors':0,'missing_owned_actors':0,'phase_mapping_pin':{'status':'Unsupported','expected_sha256':PHASE_PIN_SHA256,'observed_sha256':None,'container':None,'path':None,'reason':'not checked'},'violations':[],'limitations':['Upper-bound only; does not prove full conservation, accepted counts, or treat RemainingMembers as undelivered. Dead actors count until CapacityReleased=1. Closed Cancelled/Lost/Released receipts are skipped. Phase mapping is only covered while the optional run receipt has exactly one matching SkirmishProductionContracts.cs pin with the expected hash.']}},'warnings':{'repeated_consecutive_executed_actions':[],'stationary_with_pending_movement':[],'note':'Observational only; warnings are not automatic gameplay-failure verdicts.'},'scope':{'passive':True,'does_not_infer':['accepted unit counts','full conservation proof','RemainingMembers as undelivered']}}
  result=stable_json(a.result,'result',o);receipt=stable_json(a.receipt,'run_receipt',o,True)
  phase_pin_check(o['checks']['reservation_owner_upper_bounds'],receipt)
  if result:o['source_result']={k:result.get(k) for k in ('status','source_outcome','tick','simulation_seconds')}
  if receipt:o['source_receipt']={k:receipt.get(k) for k in ('schema_version','kind','mission','seed','process_exit','timed_out','wall_seconds')}
+ if getattr(a,'process_log',None):performance_summary(a.process_log,result,o)
  seen=set();last=None;streak=None;aria_rows=0;c=o['commands']
  for no,row in stream(a.aria,'aria_trace',o):
   aria_rows+=1
@@ -287,7 +354,7 @@ def analyze(a):
  elif check['status']!='Failed':check['status']='Passed' if check['input_snapshots'] and not check['unsupported_snapshots'] and not o['input_errors'] else 'Unsupported'
  o['analyzer_success']=not o['input_errors'];return o
 def main():
- p=argparse.ArgumentParser();p.add_argument('--aria',required=True);p.add_argument('--validator',required=True);p.add_argument('--result',required=True);p.add_argument('--receipt');p.add_argument('--out',required=True);p.add_argument('--repeat',type=int,default=3);p.add_argument('--repeat-window',type=float,default=5.);a=p.parse_args()
+ p=argparse.ArgumentParser();p.add_argument('--aria',required=True);p.add_argument('--validator',required=True);p.add_argument('--result',required=True);p.add_argument('--receipt');p.add_argument('--process-log',help='Optional retained console log for passive PathPhaseProfile timings');p.add_argument('--out',required=True);p.add_argument('--repeat',type=int,default=3);p.add_argument('--repeat-window',type=float,default=5.);a=p.parse_args()
  if not 2<=a.repeat<=MAX_ROWS or not finite(a.repeat_window) or a.repeat_window<=0:p.error('bounded repeat >=2 and finite positive repeat-window required')
  if os.path.exists(a.out):p.error('fresh output path required; input/evidence files are never overwritten')
  o=analyze(a)

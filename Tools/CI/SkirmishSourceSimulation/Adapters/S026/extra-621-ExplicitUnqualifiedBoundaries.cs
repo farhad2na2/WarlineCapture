@@ -1,0 +1,1 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime{public static partial class CampaignSplitFrontLauncherSafety{public static bool TryIssueAttack(EntityManager em,Entity launcher,Entity target){if(!em.HasComponent<SplitFrontLauncherCommandState>(launcher))return true;throw new System.NotSupportedException("Active Campaign attack continuation is not qualified");}}}

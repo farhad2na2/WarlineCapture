@@ -1,0 +1,1 @@
+using System;namespace Game.Runtime{internal sealed class SourceTransformPhaseClock{long previous=-1;internal void Enter(long frame){if(frame<0||frame<=previous||(previous>=0&&frame!=previous+1))throw new NotSupportedException("Exactly one native61 transform phase in consecutive source frames required");previous=frame;}}}

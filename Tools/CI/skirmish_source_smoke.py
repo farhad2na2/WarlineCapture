@@ -40,7 +40,7 @@ def _command(command,out,timeout,env=None):
  b.write(out/'process.json',result);return result
 
 def _checked_source_build(ctx):
- receipt,pin=_json(ctx['build_receipt']);b.need(receipt.get('status')=='Passed'and receipt.get('mission')=='S002'and receipt.get('seed')==(ctx['seed']if ctx['mission']=='S002'else 104731),'Passed current finite source build required')
+ receipt,pin=_json(ctx['build_receipt']);b.need(receipt.get('status')=='Passed'and receipt.get('mission')==(ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002')and receipt.get('seed')==(ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731),'Passed current finite source build required')
  b.need(receipt.get('repository_root')==str(ctx['repo']),'Smoke source root differs from build')
  b.verify(receipt['source_and_reference_pins']);b.need(b.pin(ctx['manifest'])['sha256']==receipt['source_manifest']['sha256'],'Current source manifest differs; rebuild')
  resolution,_=_json(receipt['source_resolution']);b.need(any(row.get('id')=='SourceSmokeTool.cs'for row in resolution['resolved']),'Build lacks current preworld smoke entry; rebuild')
@@ -50,22 +50,22 @@ def _profile(ctx):
  if(ctx['mission'],ctx['seed'])!=('S026',104755):
   try:require_profile(ctx['mission'],ctx['seed'])
   except ValueError as error:return 'Unsupported','profile',str(error),None
- return 'Passed','profile','Actual requested mission/seed selected; build profile remains separately labelled S002.',None
+ return 'Passed','profile','Actual requested mission/seed selected; build profile is checked separately and runtime backend must agree.',None
 
 def _inputs(ctx):
- if ctx['mission']=='S026':
+ if ctx['mission']=='S026'and ctx['bundle']is None:
   b.need(ctx['authoring_input']is not None,'S026 smoke requires --authoring-input')
   draft,pin=_json(ctx['authoring_input']);b.need(draft.get('catalog_id')=='S026'and draft.get('seed')==104755,'Wrong actual authoring identity');ctx['pins'][pin['path']]=pin['sha256'];return 'Passed','authoring_input','Pinned actual authoring draft; native rejection remains authoritative.',pin
- b.need(ctx['bundle']is not None,'S002 smoke requires --data-bundle');bundle,pin=_json(ctx['bundle']);b.need(bundle.get('schema_version')==1 and bundle.get('mission')=='S002'and bundle.get('seed')==ctx['seed'],f"Actual {ctx['mission']}/{ctx['seed']} bundle required");ctx['pins'][pin['path']]=pin['sha256'];ctx['bundle_value']=bundle
+ b.need(ctx['bundle']is not None,'S002 smoke requires --data-bundle');bundle,pin=_json(ctx['bundle']);b.need(bundle.get('schema_version')==1 and bundle.get('mission')==ctx['mission']and bundle.get('seed')==ctx['seed'],f"Actual {ctx['mission']}/{ctx['seed']} bundle required");ctx['pins'][pin['path']]=pin['sha256'];ctx['bundle_value']=bundle
  for name in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
   row=_descriptor(bundle[name]);ctx['pins'][row['path']]=row['sha256']
- initial,_=_json(bundle['initialization']['path']);require_profile(initial['mission_id'],initial['selection']['seed'],initial['selection']['difficulty_id'],initial['selection']['size_id']);b.need(initial.get('mission_id')=='S002'and initial.get('selection',{}).get('seed')==ctx['seed'],'Actual initialization mission/seed mismatch')
+ initial,_=_json(bundle['initialization']['path']);require_profile(initial['mission_id'],initial['selection']['seed'],initial['selection']['difficulty_id'],initial['selection']['size_id']);b.need(initial.get('mission_id')==ctx['mission']and initial.get('selection',{}).get('seed')==ctx['seed'],'Actual initialization mission/seed mismatch')
  for name in ['source_config_graph','setup_matrix']:
   row=_descriptor(initial[name]);ctx['pins'][row['path']]=row['sha256']
  graph,_=_json(initial['source_config_graph']['path'])
  for path,digest in graph['source_pins'].items():
   row=_descriptor({'path':path,'sha256':digest});ctx['pins'][row['path']]=row['sha256']
- return 'Passed','data_bundle','Declared bundle, initialization, graph/matrix and actual asset pins are stable.',{'data_bundle':pin,'mission':'S002','seed':ctx['seed']}
+ return 'Passed','data_bundle','Declared bundle, initialization, graph/matrix and actual asset pins are stable.',{'data_bundle':pin,'mission':ctx['mission'],'seed':ctx['seed']}
 
 def _catalog_cases(ctx):
  module=owned.require('skirmish_offline_sim_cases');suite,manifest=module.generate(ctx['data_repo']);out=ctx['out']/'objective-cases';out.mkdir();b.write(out/'cases.json',suite);b.write(out/'manifest.json',manifest);ctx['cases']=out/'cases.json'
@@ -75,11 +75,16 @@ def _catalog_cases(ctx):
 
 def _source_build(ctx):
  if ctx['build_receipt']is None:
-  command=[sys.executable,'-B',ctx['package']/'Tools/CI/run_skirmish_source_simulation.py','build','--repo',ctx['repo'],'--package-root',ctx['package'],'--manifest',ctx['manifest'],'--mission','S002','--seed',str(ctx['seed']if ctx['mission']=='S002'else 104731),'--output',ctx['out']/'source-build']
+  command=[sys.executable,'-B',ctx['package']/'Tools/CI/run_skirmish_source_simulation.py','build','--repo',ctx['repo'],'--package-root',ctx['package'],'--manifest',ctx['manifest'],'--mission',ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002','--seed',str(ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731),'--output',ctx['out']/'source-build']
   result=_command(command,ctx['out']/'source-build-process',ctx['remaining']());b.need(not result['timed_out']and result['process_exit']==0,'Source build failed/timedout; see source-build-process/process.log');ctx['build_receipt']=ctx['out']/'source-build/build.json'
  evidence=_checked_source_build(ctx);return 'Passed','build','Checked source build reused by native diagnostics and startup/full worker.',evidence
 
 def _native_data(ctx):
+ if ctx['mission']=='S026'and ctx['bundle']is not None:
+  out=ctx['out']/'native-runtime-data';prepared=b.run(ctx['repo'],ctx['build_receipt'],ctx['bundle'],out,None,ctx['remaining'](),ctx['data_repo'],True);receipt=ctx['build'];tools={k:Path(v)for k,v in receipt['runtime_selection'].items()};request=out/'run-request.json';pins,_=_json(out/'input-pins.json');b.verify(pins)
+  env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(ctx['repo']/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)])
+  command=[tools['mono'],'--config',out/'mono-config.xml','--optimize=-float32',receipt['executable']['path'],'--source-run-preflight',request]
+  invocation=_command(command,out/'invocation',ctx['remaining'](),env);b.verify(pins);b.need(not invocation['timed_out']and invocation['process_exit']==0,'S026 original compiler/metadata preflight failed; see native-runtime-data/invocation/process.log');log=(out/'invocation/process.log').read_text();marker='[SourceRunPreflight] ';lines=[x[len(marker):]for x in log.splitlines()if x.startswith(marker)];b.need(len(lines)==1,'One exact source preflight receipt required');raw=json.loads(lines[0]);b.need(raw.get('status')=='Passed'and raw.get('world_allocated')is False and raw.get('entity_ids_allocated')==0,'NoWorld preflight contract differs');ctx['native_data']=raw;return 'Passed','native_data','Actual shared initialization compiler and production dual-origin metadata reader; no World/IDs.',raw
  if ctx['mission']=='S026':
   author=owned.require('skirmish_source_authoring').author(ctx['repo'],ctx['package'],ctx['manifest'],ctx['out']/'native-author',ctx['mission'],ctx['seed'],ctx['authoring_input'],ctx['build_receipt'],ctx['data_repo'],ctx['remaining']())
   if author.get('status')not in{'DraftInspected','ConfigurationCompiled'}:return 'Failed','authoring','Current native author invocation failed.',author
@@ -105,7 +110,6 @@ def _objective_rules(ctx):
 
 def _startup(ctx):
  if not ctx['startup']:return 'DeferredToFullRun','startup','Actual full worker startup is the check; no duplicate world initialization.',None
- if ctx['mission']!='S002':return 'Blocked','startup','S026 runtime admission remains gated by genuine compile/source-fit/owners.',None
  result=b.run(ctx['repo'],ctx['build_receipt'],ctx['bundle'],ctx['out']/'startup',5,ctx['remaining'](),ctx['data_repo']);ctx['startup_result']=result
  return ('Passed'if result.get('diagnostic_prefix_completed')and result.get('process_exit')==0 else'Failed'),'startup','Ordinary five-tick source startup; actual failures propagate.',{k:result.get(k)for k in ['status','process_exit','timed_out','wall_seconds','validation_passed','full_outcome_observed','diagnostic_prefix_completed','source_result']}
 
@@ -130,7 +134,7 @@ def smoke(repo,package,manifest,output,mission,seed,bundle=None,authoring_input=
  except Exception as error:records.append({'id':'postrun_input_epoch','status':'Failed','field':'input_pins','reason':str(error),'wall_seconds':0,'evidence':None})
  if time.monotonic()>deadline:records.append({'id':'wall_budget','status':'Blocked','field':'timeout','reason':'Overall smoke wall budget exceeded; no further dependent stage was launched.','wall_seconds':0,'evidence':None})
  failed=any(x['status']=='Failed'for x in records);blocked=any(x['status']in{'Blocked','Unsupported','Skipped'}for x in records);status='Failed'if failed else'Blocked'if blocked else'SmokePassed'if startup else'PreflightPassed';exit_code=1 if failed else 2 if blocked else 0
- result={'schema_version':1,'kind':'SkirmishSourceSmokeReport','status':status,'exit_code':exit_code,'mission':mission,'seed':seed,'source_repository_root':str(ctx['repo']),'data_repository_root':str(ctx['data_repo']),'compilation_profile':{'mission':'S002','seed':ctx['seed']if mission=='S002'else 104731,'scope':'Tool closure only, separate from actual authoring identity'},'stages':records,'unimplemented_coverage':PENDING_COVERAGE,'build_receipt':str(ctx['build_receipt'])if ctx['build_receipt']else None,'objective_build':str(ctx['objective_build'])if ctx['objective_build']else None,'checked_build_reused':build_receipt is not None,'wall_seconds':time.monotonic()-start,'wall_timeout_seconds':timeout,'input_pins':ctx['pins'],'validation_passed':False,'mission_ready':False,'source_fit_verified':False,'full_outcome_observed':False,'native_acceptance':False,'scope':'Only declared required smoke stages; synthetic objective facts are not real battle evidence. Unsupported future coverage is explicit.','repro':['python3','-B',str(ctx['package']/'Tools/CI/run_skirmish_source_simulation.py'),'smoke','--repo',str(ctx['repo']),'--data-repo',str(ctx['data_repo']),'--mission',mission,'--seed',str(seed),'--output','<fresh-output>']}
+ result={'schema_version':1,'kind':'SkirmishSourceSmokeReport','status':status,'exit_code':exit_code,'mission':mission,'seed':seed,'source_repository_root':str(ctx['repo']),'data_repository_root':str(ctx['data_repo']),'compilation_profile':{'mission':(ctx.get('build')or{}).get('mission','S002'),'seed':(ctx.get('build')or{}).get('seed',ctx['seed']if mission=='S002'else 104731),'scope':'Tool closure only, separate from actual authoring identity'},'stages':records,'unimplemented_coverage':PENDING_COVERAGE,'build_receipt':str(ctx['build_receipt'])if ctx['build_receipt']else None,'objective_build':str(ctx['objective_build'])if ctx['objective_build']else None,'checked_build_reused':build_receipt is not None,'wall_seconds':time.monotonic()-start,'wall_timeout_seconds':timeout,'input_pins':ctx['pins'],'validation_passed':False,'mission_ready':False,'source_fit_verified':False,'full_outcome_observed':False,'native_acceptance':False,'scope':'Only declared required smoke stages; synthetic objective facts are not real battle evidence. Unsupported future coverage is explicit.','repro':['python3','-B',str(ctx['package']/'Tools/CI/run_skirmish_source_simulation.py'),'smoke','--repo',str(ctx['repo']),'--data-repo',str(ctx['data_repo']),'--mission',mission,'--seed',str(seed),'--output','<fresh-output>']}
  for name,value in [('data-bundle',bundle),('authoring-input',authoring_input),('build-receipt',ctx['build_receipt']),('objective-build',ctx['objective_build'])]:
   if value is not None:result['repro']+=['--'+name,str(value)]
  result['repro']+=['--timeout',str(timeout)]

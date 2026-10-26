@@ -19,15 +19,20 @@ internal sealed partial class SourceS002NumericCameraProvider{
   // Quaternion.Euler(pitch,yaw,0). PoseMath is the already-qualified same numeric lane.
   rotation=PoseMath.Euler(new float3(profile.Pitch,profile.Yaw,0));PoseMath.Unit(rotation);
  }
- internal static SourceS002NumericCameraProvider CreateGenerated(SkirmishResolvedSetup setup,SkirmishScenarioDefinitionConfig actualDefinition,GridConfig actualGrid,string initializationPath,string initializationSha,string repositoryRoot){
-  PoseMath.Ready();
-  if(setup==null||actualDefinition==null||(setup.CatalogId!="S002"&&setup.CatalogId!="S026")||!setup.MeasuredLayoutBound||actualGrid.Width<1||actualGrid.Height<1||!math.isfinite(actualGrid.CellSize)||actualGrid.CellSize<=0||!math.all(math.isfinite(actualGrid.Origin)))throw new NotSupportedException("Actual compiled measured source/grid constructor identity required");
-  var request=Json(AutonomousWorld.PinnedFile(initializationPath,initializationSha,2*1024*1024));
+ internal static void VerifyGeneratedDefinitionSource(JObject request,string repositoryRoot){var identity=ReadDefinitionSourceIdentity(request,repositoryRoot);VerifyGraphPin(identity.pins,identity.path);}
+ static (JObject pins,string path,string sha) ReadDefinitionSourceIdentity(JObject request,string repositoryRoot){
   var graphRef=request["source_config_graph"] as JObject??throw new InvalidDataException("Source graph descriptor missing");
   string graphPath=(string)graphRef["path"],graphSha=(string)graphRef["sha256"];
   var graph=Json(AutonomousWorld.PinnedFile(graphPath,graphSha,4*1024*1024));
   var pins=graph["source_pins"] as JObject??throw new InvalidDataException("Source graph pins missing");
   string definitionPath=Path.GetFullPath(Path.Combine(repositoryRoot,(string)graph["definition_path"]));
+  return(pins,definitionPath,graphSha);
+ }
+ internal static SourceS002NumericCameraProvider CreateGenerated(SkirmishResolvedSetup setup,SkirmishScenarioDefinitionConfig actualDefinition,GridConfig actualGrid,string initializationPath,string initializationSha,string repositoryRoot){
+  PoseMath.Ready();
+  if(setup==null||actualDefinition==null||(setup.CatalogId!="S002"&&setup.CatalogId!="S026")||!setup.MeasuredLayoutBound||actualGrid.Width<1||actualGrid.Height<1||!math.isfinite(actualGrid.CellSize)||actualGrid.CellSize<=0||!math.all(math.isfinite(actualGrid.Origin)))throw new NotSupportedException("Actual compiled measured source/grid constructor identity required");
+  var request=Json(AutonomousWorld.PinnedFile(initializationPath,initializationSha,2*1024*1024));
+  var (pins,definitionPath,graphSha)=ReadDefinitionSourceIdentity(request,repositoryRoot);
   if(setup.CatalogId=="S002")VerifyGraphPin(pins,definitionPath);else SourceS026TypedConfiguration.RequireFrozenMeasuredLayout(actualDefinition.MapLayout);
   var mapRef=request["static_map"]?["definition"] as JObject??throw new InvalidDataException("Actual source map descriptor missing");
   string mapPath=(string)mapRef["path"],mapSha=(string)mapRef["sha256"];

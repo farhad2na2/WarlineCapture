@@ -10,6 +10,10 @@ internal static void StepLegacyS002Observation(in AriaS002Observation view,ref A
 private static void StepCore(in AriaS002Observation view,ref AriaS002PlanState plan,ref AriaS002ContactState touch,out AriaS002Decision output){
  output=new AriaS002Decision {Kind=view.Finished?AriaS002DecisionKind.Finished:AriaS002DecisionKind.Waiting,Time=view.Time,Frame=view.Frame,GoalId=10000+plan.Cycle*10+plan.Slot};
  if(!view.Finished&&touch.Phase is AriaS002ContactPhase.Blocked or AriaS002ContactPhase.Starting){output.Intent=plan.Intent;return;}
+ if(view.CurrentAssaultGoal.Known&&!view.CurrentAssaultGoal.Equals(plan.ObservedAssaultGoal)&&touch.Phase!=AriaS002ContactPhase.Touching){
+  plan.PagedToAssault=0;plan.AssaultSelecting=0;plan.AssaultIssued=0;plan.StructureOrdered=0;plan.AssaultPageSeen=0;plan.PagesOrdered=0;
+  plan.ObservedAssaultGoal=view.CurrentAssaultGoal;
+ }
  if(view.ExpandedRosterRevision!=0&&touch.Phase!=AriaS002ContactPhase.Touching){
   if(plan.SweepRosterRevision!=0&&plan.SweepRosterRevision!=view.ExpandedRosterRevision){plan.PagedToAssault=0;plan.AssaultSelecting=0;plan.AssaultIssued=0;plan.StructureOrdered=0;plan.AssaultPageSeen=0;plan.PagesOrdered=0;}
   plan.SweepRosterRevision=view.ExpandedRosterRevision;

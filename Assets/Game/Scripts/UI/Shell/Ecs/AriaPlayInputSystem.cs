@@ -14,6 +14,23 @@ namespace Game.UI.Shell.Ecs
     public partial class AriaPlayInputSystem : SystemBase
     {
         private AriaTouchInputUiSystemHelper touch;
+        private Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoal gestureGoal;
+        private string goalSession; private ulong goalWorld;
+        private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
+        private void CaptureGoal(int targetId)
+        {
+            gestureGoal=default;
+            using var query=EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(),ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if(query.CalculateEntityCount()!=1)return;
+            var view=query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            var plan=query.GetSingleton<AriaSkirmishPlanComponent>();
+            // Native ground advance and home-threat controls share -20006.
+            // Bind the original decision intent, never the control ID alone.
+            if(plan.Intent==AriaSkirmishIntent.DefendBase||plan.HomeDefenseStage!=0)return;
+            if(view.AdvanceGround.Available&&targetId==view.AdvanceGround.Id)gestureGoal=view.AdvanceOrderGoal;
+            else if(view.EnemyBase.Available&&targetId==view.EnemyBase.Id)gestureGoal=view.VisibleObjectiveOrderGoal;
+            if(gestureGoal.Known){goalSession=gestureGoal.SessionId;goalWorld=gestureGoal.WorldSequenceNumber;}
+        }
         private EntityQuery missionQuery, skirmishQuery, operationsQuery;
         protected override void OnCreate()
         {
@@ -26,12 +43,12 @@ namespace Game.UI.Shell.Ecs
         protected override void OnDestroy()
         {
             AriaTouchInputUiSystemHelper.Evidence -= ObserveTouchEvidence;
-            touch?.Dispose();
+            touch?.Dispose();ClearGoalContext();
         }
         private void ObserveTouchEvidence(AriaTouchInputUiSystemHelper source, string kind, Vector2 position)
         {
             if (ReferenceEquals(source, touch) && kind == "Ended")
-                AriaCommandEvidence.ObserveRelease(UnityEngine.Time.frameCount, position);
+                { AriaCommandEvidence.ObserveRelease(UnityEngine.Time.frameCount, position,gestureGoal);gestureGoal=default; }
         }
         public int ExplicitStops { get; private set; }
         public int MeasuredHumanInterventions => touch == null || touch.StartedRuns == 0 ? -1 :
@@ -45,7 +62,7 @@ namespace Game.UI.Shell.Ecs
             bool finished = skirmishQuery.CalculateEntityCount() == 1 &&
                 skirmishQuery.GetSingleton<SkirmishMatchState>().Phase == SkirmishPhase.Finished;
             if (touch != null && touch.IsRunning && !finished) ExplicitStops++;
-            touch?.Stop();
+            touch?.Stop();ClearGoalContext();
         }
 
         // A completed campaign component can remain when the player starts Skirmish.
@@ -71,7 +88,7 @@ namespace Game.UI.Shell.Ecs
                 found = true;
                 ref var current = ref session.ValueRW;
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
-                { if (touch.IsRunning) touch.Stop(); current.Pressed = 0; continue; }
+                { if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
                 if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match ||
                     (!Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation) || UnityEngine.Time.timeScale <= 0 ||
                     (current.Phase != AriaPlayPhase.Starting && UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5) ||
@@ -80,7 +97,7 @@ namespace Game.UI.Shell.Ecs
                     Debug.LogWarning("[AriaInputLifecycleStop] ended=" + ended + " route=" + shell.ValueRO.ActiveRoute +
                         " timeScale=" + UnityEngine.Time.timeScale + " kind=" + observation.ValueRO.Kind +
                         " observationFrame=" + observation.ValueRO.Frame + " frame=" + UnityEngine.Time.frameCount);
-                    touch.Stop(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0;
+                    touch.Stop();ClearGoalContext(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0;
                     current.StopReason = (byte)(ended ? 5 :
                         !Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation ? 2 :
                         UnityEngine.Time.timeScale <= 0 ? 3 : shell.ValueRO.ActiveRoute != UIRoute.Match ? 1 : 4);
@@ -99,13 +116,14 @@ namespace Game.UI.Shell.Ecs
                     else if (UnityEngine.Time.unscaledTime - current.DueAt > 3) current.Phase = AriaPlayPhase.Blocked;
                     continue;
                 }
-                if (!touch.IsRunning) { current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0; current.StopReason = touch.LastInterruption != 0 ? touch.LastInterruption : (byte)6; continue; }
+                if (!touch.IsRunning) { ClearGoalContext(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0; current.StopReason = touch.LastInterruption != 0 ? touch.LastInterruption : (byte)6; continue; }
                 if (current.GestureRequested != 0)
                 {
                     current.GestureRequested = 0;
+                    CaptureGoal(current.TargetId);
                     if (!touch.TryGesture(current.Target, current.Drag != 0 ? current.DragEnd : current.Target,
                         current.Drag != 0 ? .5f : hasSkirmish ? .15f : .08f, current.Drag != 0 ? .9f : 0, UnityEngine.Time.unscaledTime))
-                    { touch.Stop(); current.Phase = AriaPlayPhase.Blocked; continue; }
+                    { touch.Stop();ClearGoalContext(); current.Phase = AriaPlayPhase.Blocked; continue; }
                 }
                 touch.Tick(UnityEngine.Time.unscaledTime);
                 current.Contact = touch.ContactPosition;
@@ -120,7 +138,7 @@ namespace Game.UI.Shell.Ecs
                     current.DueAt = UnityEngine.Time.unscaledTime + (hasSkirmish ? .65f : 1.5f);
                 }
             }
-            if (!found && touch.IsRunning) touch.Stop();
+            if (!found && touch.IsRunning) {touch.Stop();ClearGoalContext();}
         }
     }
 }

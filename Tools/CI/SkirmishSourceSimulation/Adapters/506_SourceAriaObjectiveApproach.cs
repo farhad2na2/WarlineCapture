@@ -1,8 +1,10 @@
+using Game.Skirmish.Contracts;
 using System;using Game.Components;using Game.Configs;using Game.Simulation;using Unity.Entities;using Unity.Mathematics;
 namespace Game.Runtime {
 internal sealed class SourceAriaObjectiveApproach {
  readonly EntityManager em;readonly Entity session;readonly SourcePublicPlayerContactOwner contacts;readonly GroundMissionContext context;readonly AriaGroundApproachKind approachKind;bool cityFlankReached;
  internal SourceAriaObjectiveApproach(EntityManager em,Entity session,SourcePublicPlayerContactOwner contacts,GroundMissionContext context){SourceGroundMissionFamily.RequireLogicalContext(context,SourceGroundMissionFamily.RequireSession(em,session),em.GetComponentData<SkirmishExpandedSessionComponent>(session),em.GetComponentData<SkirmishMatchState>(session).ScenarioIndex);this.context=context;approachKind=context.ApproachKind;this.em=em??throw new ArgumentNullException(nameof(em));this.session=session;this.contacts=contacts??throw new ArgumentNullException(nameof(contacts));}
+ internal SkirmishPublicArmyOrderGoalKind PublicGoalKind=>approachKind==AriaGroundApproachKind.CityCrossroads?(cityFlankReached?SkirmishPublicArmyOrderGoalKind.CityFinal:SkirmishPublicArmyOrderGoalKind.CityFlank):SkirmishPublicArmyOrderGoalKind.Approach;
  internal void OnAriaInactive(){cityFlankReached=false;}
  internal SourceAriaPublicApproach? Read(){
   var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);SourceGroundMissionFamily.RequireSession(em,session);

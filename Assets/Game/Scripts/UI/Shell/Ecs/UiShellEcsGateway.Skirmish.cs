@@ -239,8 +239,8 @@ namespace Game.UI.Shell.Ecs
             em=default;entity=Entity.Null;match=default;
             var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return false;
             em=world.EntityManager;using var query=em.CreateEntityQuery(typeof(SkirmishMatchState));
-            if(query.CalculateEntityCount()!=1)return false;
-            entity=query.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(entity);return true;
+            if(query.CalculateEntityCount()!=1){SkirmishAcceptedArmyOrders.ObserveCurrentSession(em,Entity.Null);return false;}
+            entity=query.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(entity);SkirmishAcceptedArmyOrders.ObserveCurrentSession(em,entity);return true;
         }
         private static int VisibleBaseHealth(EntityManager em, Entity entity) =>
             em.Exists(entity) && em.HasComponent<UnitHealth>(entity)

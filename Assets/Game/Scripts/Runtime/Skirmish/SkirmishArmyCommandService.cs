@@ -42,6 +42,7 @@ namespace Game.Runtime
                     if (groups[i].GroupId == groupId && groups[i].FactionId == owner.FactionId)
                     {
                         var group = groups[i]; group.LastOrder = SkirmishGroupOrderKind.Attack; groups[i] = group;
+                        RecordAcceptedMember(em,session,unit,SkirmishGroupOrderKind.Attack,em.GetComponentData<LocalTransform>(target).Position,target);
                         break;
                     }
                 return true;
@@ -193,7 +194,7 @@ namespace Game.Runtime
                                          em.HasComponent<LocalTransform>(target)
                     ? em.GetComponentData<LocalTransform>(target).Position
                     : destination;
-                if (ApplyOrder(em, unit, order, unitDestination, target)) issued++;
+                if (ApplyOrder(em, unit, order, unitDestination, target)){issued++;RecordAcceptedMember(em,session,unit,order,unitDestination,target);}
                 else excluded++;
             }
 
@@ -259,7 +260,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (ApplyOrder(em, unit, order, destination, target)) issued++;
+                if (ApplyOrder(em, unit, order, destination, target)){issued++;RecordAcceptedMember(em,session,unit,order,destination,target);}
                 else excluded++;
             }
 
@@ -342,6 +343,15 @@ namespace Game.Runtime
             intent.Engaged = engaged;
             em.SetComponentData(unit, intent);
             return true;
+        }
+
+        private static void RecordAcceptedMember(EntityManager em,Entity session,Entity unit,SkirmishGroupOrderKind order,float3 actualPosition,Entity actualTarget)
+        {
+            if(!em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit))return;
+            var group=em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId;
+            SkirmishAcceptedArmyOrders.RecordAccepted(em,session,group,
+                order==SkirmishGroupOrderKind.Attack?SkirmishAcceptedArmyOrderArgumentKind.Entity:SkirmishAcceptedArmyOrderArgumentKind.None,
+                default,actualPosition,actualTarget);
         }
 
         private static void StampGroups(EntityManager em, Entity session, SkirmishGroupOrderKind order)

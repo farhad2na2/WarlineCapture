@@ -5,7 +5,7 @@ internal sealed class SourceAriaS002Controller {
  readonly EntityManager em;readonly Entity session;readonly SkirmishArmyProfileConfig army;readonly string worldId;readonly SourceCommandDispatch commands;readonly SourcePublicPlayerContactOwner contacts;readonly SourceAriaObjectiveApproach approach;readonly SourceAriaRecruitmentBoundary paid;readonly SourceS002NumericCameraProvider numericCamera;
  readonly GroundMissionContext groundContext;
  AriaS002PlanState plan;AriaS002ContactState contact;AriaS002CommandReceipt commandReceipt;Entity lastObjective;int objectiveIdentity,commandSequence;long lastTick=-1;float lastTime=float.NegativeInfinity;bool busy,stopped,inspectionOpen,selectionMode,attackMode;
- PublicCommandCatalog.View current;Entity objectiveTarget;SourceAriaHomeThreat? homeThreat;SourceAriaPublicApproach? terrain;uint toggleGroup;int lastCommandFrame;uint lastCommandGroup;Entity lastCommandTarget;string lastCommandId;
+ PublicCommandCatalog.View current;Entity objectiveTarget;SourceAriaHomeThreat? homeThreat;SourceAriaPublicApproach? terrain;SkirmishPublicArmyOrderGoal terrainGoal,visibleGoal;uint toggleGroup;int lastCommandFrame;uint lastCommandGroup;Entity lastCommandTarget;string lastCommandId;
  internal SourceAriaS002Controller(EntityManager em,Entity session,SkirmishArmyProfileConfig army,string worldId,SourceAriaRecruitmentBoundary paid,int sourceScenarioIndex,GroundMissionContext groundContext,SourceS002NumericCameraProvider numericCamera=null){
   this.em=em??throw new ArgumentNullException(nameof(em));this.session=session;this.army=army??throw new ArgumentNullException(nameof(army));this.worldId=worldId??throw new ArgumentNullException(nameof(worldId));this.numericCamera=numericCamera;this.paid=paid??throw new NotSupportedException("Complete real source paid catalog/availability context required before full strategy starts");
   if(!ReferenceEquals(paid.WorldIdentity,em)||paid.SessionIdentity!=session||sourceScenarioIndex!=groundContext.SourcePresetLoadIndex||!em.BankBound)throw new NotSupportedException("Same actual source world/session/canonical bank/paid context required");
@@ -25,6 +25,9 @@ internal sealed class SourceAriaS002Controller {
   contacts.UpdateAfterFog(frame,time);var snapshot=contacts.ReadSnapshot();var match=em.GetComponentData<SkirmishMatchState>(session);if(match.EnemyMainBase!=lastObjective){lastObjective=match.EnemyMainBase;objectiveIdentity=checked(objectiveIdentity+1);}
   objectiveTarget=Entity.Null;foreach(var t in current.Targets)if(t.Entity==match.EnemyMainBase){if(!t.PublicKnowledge.HasValue||t.PublicKnowledge.Value.Sight!=SkirmishContactSight.Visible)throw new NotSupportedException("Genuine current visible objective knowledge required");objectiveTarget=t.Entity;break;}
   homeThreat=v.Finished?null:SourceAriaPublicHomeThreat.Read(em,session,current);terrain=bases.EnemyObjectiveAlive?approach.Read():null;
+  terrainGoal=SkirmishAcceptedArmyOrders.PublicGoal(em,session,approach.PublicGoalKind,objectiveIdentity,bases.EnemyPosition.X,bases.EnemyPosition.Z);
+  visibleGoal=SkirmishAcceptedArmyOrders.PublicGoal(em,session,SkirmishPublicArmyOrderGoalKind.VisibleObjective,objectiveIdentity,bases.EnemyPosition.X,bases.EnemyPosition.Z);
+  int acceptedGoalMask=SkirmishAcceptedArmyOrders.ReadMask(em,session,terrainGoal,p.AttackOrderMask,p.Group0,p.Group1,p.Group2,p.Group3,p.Group4);
   int selectedMembers=0;toggleGroup=0;foreach(var g in current.Groups)if(g.Selected!=0){if(toggleGroup==0)toggleGroup=g.GroupId;selectedMembers=checked(selectedMembers+g.AliveCount);}
   var distances=AriaGroundApproachPolicy.Observe(bases.EnemyPosition,snapshot.Players,current.EnemyBaseHealth.DisplayedCurrent,selectedMembers);
   var facts=new AriaS002Observation{Scope=AriaS002Scope.LogicalPublicData,SourceScenarioIndex=groundContext.PlayableScenarioIndex,Active=current.Active,Finished=v.Finished,ExpandedSession=true,ExpandedBaseAssault=p.BaseAssault,Frame=frame,Time=time,
@@ -34,7 +37,7 @@ internal sealed class SourceAriaS002Controller {
    RifleRecruitPending=v.RifleRecruitPending,RocketeerRecruitPending=v.RocketeerRecruitPending,CanAffordRifle=v.CanAffordRifle,CanAffordRocketeer=v.CanAffordRocketeer,CanAffordAntiAir=v.CanAffordAntiAir,AntiAirCommitted=v.AntiAirCommitted,VisibleHostileAir=v.VisibleHostileAir,OwnStructureAttackUnits=v.OwnStructureAttackUnits,
    CanUpgradeReadiness=SourceS002ReadinessGateway.Read(em,session,out var sourceReadiness)&&sourceReadiness.CanUpgrade,CanBuildAirPad=v.CanBuildAirPad,AirRecruitPending=v.AirRecruitPending,PublicHomeThreat=homeThreat.HasValue,SelectionVisible=current.HasSelectedLivingPlayerMember,SelectionMode=selectionMode,AttackMode=attackMode,InspectionOpen=inspectionOpen,
    ExpandedPageIndex=p.PageIndex,ExpandedPageCount=p.PageCount,ExpandedTotalGroups=p.TotalGroups,ExpandedSelectedGroups=p.SelectedGroups,ExpandedSelectedOffPage=p.SelectedOffPage,ExpandedRosterRevision=p.RosterRevision,
-   ExpandedAssaultMask=p.AssaultMask,ExpandedSelectedMask=p.SelectedMask,ExpandedStructureMask=p.StructureMask,ExpandedAttackOrderMask=p.AttackOrderMask,ExpandedAirMask=p.AirMask,ExpandedCanPreviousPage=p.PreviousPage,ExpandedCanNextPage=p.NextPage,
+   ExpandedAssaultMask=p.AssaultMask,ExpandedSelectedMask=p.SelectedMask,ExpandedStructureMask=p.StructureMask,ExpandedAttackOrderMask=acceptedGoalMask,CurrentAssaultGoal=terrainGoal,ExpandedAirMask=p.AirMask,ExpandedCanPreviousPage=p.PreviousPage,ExpandedCanNextPage=p.NextPage,
    ExpandedGroup0=p.Group0,ExpandedGroup1=p.Group1,ExpandedGroup2=p.Group2,ExpandedGroup3=p.Group3,ExpandedGroup4=p.Group4,SelectedCount=selectedMembers,PrecisionAttack=commandReceipt,
    AssaultAtBase=distances.AssaultAtBase,AssaultDistanceKnown=bases.EnemyObjectiveAlive&&distances.DistanceVisible,NearestFriendlyObjectiveDistance=distances.Distance,
    PublicSnapshot=new AriaS002PublicSnapshot{Identity=snapshot.Identity,MarkerRevision=snapshot.Generation,MarkerFrame=snapshot.Frame,MarkerTime=snapshot.AriaTime,ObjectiveHudIdentity=objectiveIdentity,ObjectiveWorld=bases.EnemyPosition,OwnedIdentity=true,InspectionScopeOpen=inspectionOpen,Complete=true,SourceScopeAdmitted=bases.EnemyObjectiveAlive,OpenMap=Cap(AriaS002Action.OpenInspection,-20010,!inspectionOpen&&bases.EnemyObjectiveAlive)},
@@ -75,11 +78,12 @@ internal sealed class SourceAriaS002Controller {
    case AriaS002Action.ToggleSelected:if(toggleGroup==0)throw new InvalidOperationException("Source selected group expired");return Dispatch(tick,"presented/toggle/"+toggleGroup);
    case AriaS002Action.Hold:return Dispatch(tick,"presented/hold");
    case AriaS002Action.ArmAttack:attackMode=true;return new JObject{["logical_attack_mode"]=true,["troop_order"]=false};
-   case AriaS002Action.AttackVisibleObjective:
+   case AriaS002Action.AttackVisibleObjective:{
     if(!attackMode||!current.HasSelectedLivingPlayerMember)throw new InvalidOperationException("Source attack mode/selection changed");
     Entity target=d.TargetId==-20001?objectiveTarget:homeThreat?.Entity??Entity.Null;if(target==Entity.Null)throw new InvalidOperationException("Actual source visible target expired");
     uint group=current.Page.SelectedGroups==1&&current.Page.SelectedOffPage==0?SelectedGroup():0;
     int expectedMembers=plan.PrecisionStage==4?ValidatePrecisionGroup(group):0;
+    using var entityGoalScope=AriaCommandEvidence.EnterLogicalGoal("aria-s002-"+checked(commandSequence+1),d.TargetId==-20001?visibleGoal:default);
     receipt=Dispatch(tick,"army/attack/"+target.Index+":"+target.Version);attackMode=false;
     if(d.TargetId==-20001){var actual=receipt["source_result"]as JObject;int issued=actual?["IssuedCount"]?.Value<int>()??0,excluded=actual?["ExcludedCount"]?.Value<int>()??0;
      if(plan.PrecisionStage==4&&issued+excluded!=expectedMembers)throw new InvalidOperationException("Actual source member result differs from admitted selection");
@@ -87,12 +91,14 @@ internal sealed class SourceAriaS002Controller {
      lastCommandId=receipt["command_request_id"].Value<string>();lastCommandFrame=frame;lastCommandGroup=group;lastCommandTarget=target;
      commandReceipt=new AriaS002CommandReceipt{Scope=AriaS002Scope.LogicalPublicData,ResultKnown=true,Revision=checked(commandReceipt.Revision+1),GroupId=group,Frame=frame,RequestId=commandSequence,PublicTargetId=-20001,AcceptedMembers=issued,SourceMembers=checked(issued+excluded),
       ScopeReleaseVerified=receipt["world_id"].Value<string>()==worldId&&receipt["tick"].Value<long>()==tick&&lastCommandId=="aria-s002-"+commandSequence&&lastCommandGroup!=0&&lastCommandTarget==objectiveTarget&&lastCommandFrame==frame};
-    }return receipt;
-   case AriaS002Action.AttackPublicTerrain:
+    }return receipt;}
+   case AriaS002Action.AttackPublicTerrain:{
     if(!attackMode||!current.HasSelectedLivingPlayerMember)throw new InvalidOperationException("Source attack mode/selection changed");SourceAriaPublicApproach a;
     if(d.TargetId==90011&&homeThreat.HasValue){using var grids=em.CreateEntityQuery(typeof(GridConfig));if(grids.CalculateEntityCount()!=1)throw new NotSupportedException("Actual unique source grid required");var grid=grids.GetSingleton<GridConfig>();var p=homeThreat.Value.PublicPosition;a=new SourceAriaPublicApproach(GridUtils.WorldToCell(grid,p),p);}
     else a=terrain??throw new InvalidOperationException("Actual public approach expired");
+    using var terrainGoalScope=AriaCommandEvidence.EnterLogicalGoal("logical-terrain:"+worldId+":"+frame+":"+d.TargetId,d.TargetId==90010?terrainGoal:default);
     var selectedBefore=SourceMissionValidatorSnapshot.SelectedForIssueSelected(em);var result=AttackMoveSystem.IssueSelected(em,a.Cell,a.Position,frame);var selectedAfter=SourceMissionValidatorSnapshot.SelectedForIssueSelected(em);attackMode=false;return new JObject{["validator_only_dispatch"]=new JObject{["feeds_aria"]=false,["decision_action"]=d.Action.ToString(),["public_control_target_id"]=d.TargetId,["resolved_target_domain"]=d.TargetId==90011&&homeThreat.HasValue?"PublicHomeThreat":"PublicObjectiveApproach",["argument_cell"]=new JObject{["x"]=a.Cell.x,["y"]=a.Cell.y},["argument_position"]=new JObject{["x"]=a.Position.x,["y"]=a.Position.y,["z"]=a.Position.z},["argument_frame"]=frame,["selected_query_before"]=selectedBefore,["selected_query_after"]=selectedAfter,["accepted_member_count_available"]=false,["count_scope"]="Actual API returns TacticalCommandResult without member count; selected snapshots are not accepted-count inference"},["accepted"]=result.Accepted,["source_reason"]=result.ReasonCode.ToString(),["source_api"]="AttackMoveSystem.IssueSelected",["source_result"]=JObject.FromObject(result),["troop_order"]=true};
+   }
    case AriaS002Action.RecruitRifle:case AriaS002Action.RecruitAntiAir:case AriaS002Action.RecruitRocketeer:case AriaS002Action.RecruitLogisticsTruck:case AriaS002Action.RecruitTanker:
     var role=d.Action==AriaS002Action.RecruitRifle?SkirmishRoleKind.Rifle:d.Action==AriaS002Action.RecruitAntiAir?SkirmishRoleKind.AntiAir:d.Action==AriaS002Action.RecruitRocketeer?SkirmishRoleKind.Rocketeer:d.Action==AriaS002Action.RecruitLogisticsTruck?SkirmishRoleKind.LogisticsTruck:SkirmishRoleKind.Tanker;
     var paidResult=paid.Request(role,productionTime);return new JObject{["accepted"]=paidResult.Accepted,["source_reason"]=paidResult.SourceReason,["source_receipt_id"]=paidResult.ReceiptId,["delivery_complete"]=false,["source_api"]="SourceCampPrimaryContact -> SAME SourceProductionDeliveryOwner.TryQueue"};

@@ -73,16 +73,58 @@ def build(repo,package,manifest,output,mission='S002',seed=104731):
 def prepare_mono_config(tools,out):
  installed=tools['script']/'MonoBleedingEdge/etc/mono/config';raw=installed.read_bytes();text=raw.decode('utf-8');helper=tools['contents']/'Frameworks/libMonoPosixHelper.dylib';need(helper.is_file(),'Actual installed MonoPosixHelper required')
  text=text.replace('target="libMonoPosixHelper.dylib"','target="'+str(helper)+'"');text=text.replace('target="MonoPosixHelper"','target="'+str(helper)+'"');path=out/'mono-config.xml';path.write_text(text);return path,{str(installed):sha(raw),str(helper):sha(helper.read_bytes())}
+def metadata_origin_pins(initial,repo,receipt):
+ descriptor=initial.get('metadata_source_origin')
+ if descriptor is None:return {}
+ def exact_descriptor(value,maximum=1024*1024):
+  need(isinstance(value,dict)and set(value)=={'path','sha256'}and all(isinstance(value[k],str)for k in value),'Exact native origin descriptor required')
+  path=Path(value['path']);need(path.is_absolute()and path.is_file()and not path.is_symlink(),'Regular absolute origin descriptor required')
+  need(0<path.stat().st_size<=maximum,'Bounded origin descriptor required');return path
+ path=exact_descriptor(descriptor);origin_pin=pin(path);origin=json.loads(path.read_bytes(),object_pairs_hook=owned.require('skirmish_source_syntax').no_duplicates);need(origin_pin['sha256']==descriptor['sha256'],'Metadata origin descriptor changed')
+ need(set(origin)=={'schema_version','kind','native_metadata','source_root','data_root','input_pins'}and type(origin['schema_version'])is int and origin['schema_version']==1 and origin['kind']=='QualifiedNativeMetadataOrigin','Exact native metadata origin schema required')
+ need(origin['native_metadata']==initial.get('metadata_compatibility'),'Native origin artifact binding differs')
+ native_path=exact_descriptor(origin['native_metadata'],64*1024*1024);native,native_pin=read_json_pinned(native_path);need(native_pin['sha256']==origin['native_metadata']['sha256'],'Native origin artifact changed')
+ roots=[]
+ for name in ['source_root','data_root']:
+  root=Path(origin[name]);need(root.is_absolute()and root.is_dir(),'Explicit native origin root required')
+  need(all(not x.is_symlink()for x in [root,*root.parents]),'Symlink origin root forbidden');roots.append(root.resolve(strict=True))
+ pins={origin_pin['path']:origin_pin['sha256'],native_pin['path']:native_pin['sha256']};declared=origin['input_pins'];need(isinstance(declared,dict)and 68<=len(declared)<=8192,'Bounded origin file closure required')
+ native_pins=native['source_pins']
+ for name,expected in declared.items():
+  f=Path(name);need(f.is_absolute()and f.is_file()and not f.is_symlink(),'Regular native origin input required');canonical=f.resolve(strict=True);matches=[str(canonical.relative_to(root))for root in roots if canonical.is_relative_to(root)];need(matches and all(native_pins.get(rel)==expected for rel in matches),'Origin file differs from captured native pin');entry=pin(f);need(entry['sha256']==expected,'Native origin input changed');pins[entry['path']]=expected
+ reader_paths=[name for name in receipt['source_and_reference_pins']if name.endswith('/Adapters/SourceMetadataCompatibility.cs')];need(len(reader_paths)==1,'One actual compiled metadata reader required');text=Path(reader_paths[0]).read_text()
+ def literals(name):
+  matches=re.findall(r'\b'+name+r'\s*=\s*\{([^}]+)\}',text);need(len(matches)==1,'One literal metadata dependency list required');body=matches[0];values=re.findall(r'"([^"\n]+)"',body);need(not re.sub(r'"[^"\n]+"|[\s,]','',body),'Only literal dependency paths admitted');return values
+ factories=literals('FactorySources');owners=literals('OwnerDefinitions');need(len(factories)==27 and len(owners)==6,'Exact current metadata consumer domain required')
+ expected_origin={}
+ def consume(root,rel,expected):
+  f=root/rel;entry=pin(f);need(entry['sha256']==expected,'Metadata dependency changed: '+str(f));pins[entry['path']]=expected
+ for suffix in factories+owners:
+  rel='Assets/Game/Scripts/'+suffix
+  for item in [rel,rel+'.meta']:
+   expected=native_pins[item];expected_origin[str(roots[0]/item)]=expected
+   current_expected=expected
+   if item=='Assets/Game/Scripts/Composition/Game.Composition.asmdef':
+    current=pin(repo/item)['sha256'];need(current==expected or(current=='8f41d8cd74821639e2628fb77ad32fdd89db88111af3af800ebb16d109753cfe'and expected=='b6db33e0e266aea3c4f63a70677b92a70188f101ad149b91560f897e466d3c6b'),'Unqualified current Composition packaging definition');current_expected=current
+   consume(repo,item,current_expected)
+ for rel in ['Packages/manifest.json','Packages/packages-lock.json']:
+  expected_origin[str(roots[0]/rel)]=native_pins[rel];consume(repo,rel,native_pins[rel])
+ for rel,expected in native_pins.items():
+  if rel.startswith('Assets/')and not rel.startswith('Assets/Game/Scripts/')and not rel.endswith(('.cs','.cs.meta')):expected_origin[str(roots[1]/rel)]=expected
+ need(declared==expected_origin,'Native origin consumed closure mismatch')
+ return pins
+
 def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=None):
  repo=Path(repo).resolve(strict=True);data_repo=Path(data_repo).resolve(strict=True)if data_repo is not None else repo;out=Path(output).absolute();need(math.isfinite(timeout)and timeout>0,'Finite positive owned-process timeout required');need(not out.exists(),'Fresh isolated run output required');out.mkdir(parents=True);receipt,build_pin=read_json_pinned(build_receipt);inputs,bundle_pin=read_json_pinned(bundle);need(receipt.get('status')=='Passed','Qualified supported build required');need(str(repo)==receipt.get('repository_root'),'Run repository differs from built source root');verify(receipt['source_and_reference_pins']);exe=receipt['executable'];need(sha(Path(exe['path']).read_bytes())==exe['sha256'],'Built image changed')
  require_profile(receipt.get('mission'),receipt.get('seed'));tools={k:Path(v).resolve(strict=True)for k,v in receipt['runtime_selection'].items()};need(set(tools)=={'contents','script','engine','mono','newtonsoft'},'Build-recorded runtime paths required');need(str(tools['mono'])in receipt['source_and_reference_pins']and str(tools['newtonsoft'])in receipt['source_and_reference_pins'],'Unbound runtime selection');config,extra=prepare_mono_config(tools,out);need(inputs.get('schema_version')==1 and inputs.get('mission')==receipt.get('mission')and inputs.get('seed')==receipt.get('seed'),f"Explicit matching {receipt.get('mission')}/{receipt.get('seed')} data bundle required")
  initial,initial_pin=read_json_pinned(inputs['initialization']['path']);need(initial_pin['sha256']==inputs['initialization']['sha256'],'Initialization pin mismatch');selection=initial['selection'];need(initial.get('mission_id')==inputs['mission']and selection.get('seed')==inputs['seed'],'Initialization identity mismatch');require_profile(initial['mission_id'],selection['seed'],selection['difficulty_id'],selection['size_id'])
+ origin_pins=metadata_origin_pins(initial,repo,receipt)
  request={'schema_version':1,'kind':'SkirmishSourceSimulationRun','mission':inputs['mission'],'seed':inputs['seed'],'repository_root':str(data_repo),'source_repository_root':str(repo),'output_directory':str(out),'runtime_config':pin(config)}
  request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
   row=inputs[key];p=Path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks
- write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
+ write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,origin_pins);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
  start=time.monotonic();returncode=None;timed_out=False
  with (out/'process.log').open('w')as log:
   process=subprocess.Popen([str(tools['mono']),'--config',str(config),'--optimize=-float32',exe['path'],str(out/'run-request.json')],env=env,stdout=log,stderr=subprocess.STDOUT)

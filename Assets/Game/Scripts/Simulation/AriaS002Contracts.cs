@@ -1,3 +1,4 @@
+using Game.Skirmish.Contracts;
 using System;
 namespace Game.Simulation {
 public enum AriaS002Scope:byte {None,NativeRendered,LogicalPublicData}
@@ -152,6 +153,7 @@ public int ExpandedAssaultMask;
 public int ExpandedSelectedMask;
 public int ExpandedStructureMask;
 public int ExpandedAttackOrderMask;
+public SkirmishPublicArmyOrderGoal CurrentAssaultGoal;
 public bool ExpandedBaseAssault;
 public uint ExpandedGroup0;
 public uint ExpandedGroup1;
@@ -215,6 +217,7 @@ public byte ExpandedRetries;
 public byte PagedToAssault;
 public byte AssaultSelecting;
 public byte AssaultIssued;
+public SkirmishPublicArmyOrderGoal ObservedAssaultGoal;
 public byte StructureOrdered;
 public AriaS002GroupHistory PrecisionAcceptedGroups;
 public AriaS002GroupHistory PrecisionExhaustedGroups;

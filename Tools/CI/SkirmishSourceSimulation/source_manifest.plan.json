@@ -8731,6 +8731,22 @@
       "contains_original_gameplay": false,
       "role": "host_glue",
       "scope": "Finite reviewed native artifact/logical pair lookup; old epochs only until genuine new qualification seal."
+    },
+    {
+      "id": "543_SkirmishPublicArmyOrderGoal.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPublicArmyOrderGoal.cs",
+      "require_declarations": [
+        "public readonly struct SkirmishPublicArmyOrderGoal"
+      ]
+    },
+    {
+      "id": "544_SkirmishAcceptedArmyOrderIntent.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAcceptedArmyOrderIntent.cs",
+      "require_declarations": [
+        "public static class SkirmishAcceptedArmyOrders"
+      ]
     }
   ],
   "excluded_nonruntime_sources": [

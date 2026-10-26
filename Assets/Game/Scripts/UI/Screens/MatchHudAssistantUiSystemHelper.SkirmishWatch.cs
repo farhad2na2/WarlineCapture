@@ -268,6 +268,7 @@ namespace Game.UI.Runtime
             ObserveMapThreat(ref view);
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
+            ObserveAcceptedAssaultGoal(ref view);
             ObserveGroupRectangle(ref view);
             ObservePublicObjective(ref view);
             ObservePublicScan(ref view);
@@ -444,6 +445,20 @@ namespace Game.UI.Runtime
                     watchHits[0].gameObject.GetComponentInParent<MatchHudMinimapView>() == watchMap;
                 view.AssaultMap.OpenMap = new AriaTouchTarget { Id = -20010, Position = point, Available = reachable };
             }
+        }
+
+        private void ObserveAcceptedAssaultGoal(ref AriaSkirmishObservation view)
+        {
+            view.ExpandedAttackOrderMask=0;
+            if(watchSkirmish==null||!watchSkirmish.EnemyBaseObjectiveAlive)return;
+            int identity=watchSkirmish.GetEntityId().GetHashCode();var p=watchSkirmish.EnemyBaseObjectivePosition;
+            var kind=watchScenarioIndex==SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                ?(watchFlankReached?Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.CityFinal:Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.CityFlank)
+                :Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.Approach;
+            if(!UiShellRuntimeGateway.TryReadAcceptedAssaultGoal(kind,identity,p.x,p.z,out view.AdvanceOrderGoal,out int advanceMask))return;
+            if(!UiShellRuntimeGateway.TryReadAcceptedAssaultGoal(Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.VisibleObjective,identity,p.x,p.z,out view.VisibleObjectiveOrderGoal,out int visibleMask))return;
+            view.CurrentAssaultGoal=view.AdvanceOrderGoal;
+            view.ExpandedAttackOrderMask=advanceMask;
         }
 
         private void ObserveAdvanceGround(ref AriaSkirmishObservation view)

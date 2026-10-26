@@ -1,3 +1,4 @@
+using Game.Skirmish.Contracts;
 using UnityEngine;
 namespace Game.UI.Contracts
 {
@@ -85,6 +86,7 @@ namespace Game.UI.Contracts
         public int ExpandedSelectedMask;
         public int ExpandedStructureMask;
         public int ExpandedAttackOrderMask;
+public SkirmishPublicArmyOrderGoal CurrentAssaultGoal, AdvanceOrderGoal, VisibleObjectiveOrderGoal;
         public bool ExpandedBaseAssault;
         public uint ExpandedGroup0, ExpandedGroup1, ExpandedGroup2, ExpandedGroup3, ExpandedGroup4;
         public UiExpandedPrecisionAttackResult PrecisionAttack;

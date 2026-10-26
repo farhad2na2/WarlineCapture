@@ -30,6 +30,7 @@ namespace Game.Runtime
   internal IEnumerable<string> RequiredUnitKeys=>((JArray)metadata["units"]).Select(r=>(string)r["prefab"]["key"]);
   internal int UnitCount=>((JArray)metadata["units"]).Count;
   readonly Dictionary<string,string> pins=new Dictionary<string,string>(StringComparer.Ordinal);
+  readonly Dictionary<string,string> originPins=new Dictionary<string,string>(StringComparer.Ordinal);
   internal readonly int TargetSeed;
   internal readonly uint TargetSetupHash;
   static readonly string[] FactorySources={
@@ -51,7 +52,16 @@ namespace Game.Runtime
   static JObject Read(JToken descriptor,string required,long bound){var d=descriptor as JObject??throw new InvalidDataException("Explicit metadata reference descriptor required");if(d.Properties().Count()!=2||d["path"]==null||(string)d["sha256"]!=required)throw new InvalidDataException("Unqualified metadata reference identity");return Parse(AutonomousWorld.PinnedFile((string)d["path"],required,bound));}
   internal static SourceMetadataCompatibility Load(JObject request,SkirmishResolvedSetup setup,string sourceRepo,string dataRepo)
   {
-   if(request["metadata_compatibility"]==null)return null;
+   if(request["metadata_compatibility"]==null){if(request["metadata_source_origin"]!=null)throw new InvalidDataException("Origin requires native metadata authority");return null;}
+   string currentSourceRepo=sourceRepo;JObject origin=null;string originPath=null,originSha=null;
+   if(request["metadata_source_origin"]!=null){
+    var descriptor=request["metadata_source_origin"]as JObject;
+    if(descriptor==null||descriptor.Properties().Count()!=2||descriptor["path"]?.Type!=JTokenType.String||descriptor["sha256"]?.Type!=JTokenType.String)throw new InvalidDataException("Exact metadata origin descriptor required");
+    originPath=(string)descriptor["path"];originSha=(string)descriptor["sha256"];origin=Parse(AutonomousWorld.PinnedFile(originPath,originSha,1024*1024));
+    string[] fields={"schema_version","kind","native_metadata","source_root","data_root","input_pins"};
+    if(origin.Properties().Count()!=fields.Length||origin.Properties().Any(x=>!fields.Contains(x.Name))||origin["schema_version"]?.Type!=JTokenType.Integer||(int?)origin["schema_version"]!=1||(string)origin["kind"]!="QualifiedNativeMetadataOrigin"||!(origin["input_pins"]is JObject)||!JToken.DeepEquals(origin["native_metadata"],request["metadata_compatibility"]))throw new InvalidDataException("Bounded native metadata origin schema/artifact mismatch");
+    sourceRepo=RequireOriginRoot(origin["source_root"]);dataRepo=RequireOriginRoot(origin["data_root"]);
+   }
    if(string.IsNullOrEmpty(sourceRepo)||string.IsNullOrEmpty(dataRepo)||setup==null||(setup.CatalogId!="S002"&&setup.CatalogId!="S026")||setup.SetupHash!=SkirmishSetupCompiler.ComputeHash(setup,setup.Seed))throw new InvalidDataException("Actual compiled context and explicit metadata roots required");
    bool qualified=setup.CatalogId=="S026",logicalBound=qualified&&request["mission_logical_binding"]!=null;var epoch=SourceNativeMetadataEpoch.Require((string)request["metadata_compatibility"]?["sha256"],setup.CatalogId,logicalBound);string nativeSha=epoch.MetadataSha;
    var native=Read(request["metadata_compatibility"],nativeSha,64*1024*1024);var contexts=native["contexts"]as JArray??throw new InvalidDataException("Native contexts missing");
@@ -78,9 +88,25 @@ namespace Game.Runtime
    foreach(string rel in new[]{"Packages/manifest.json","Packages/packages-lock.json"})result.Admit(sourceRepo,rel,(string)nativePins[rel]);
    var definitions=Read(request["building_definitions"],result.definitionsArtifactSha,4*1024*1024);result.RequireDefinitions(result.definitionsArtifactSha,definitions);
    result.RequireUnits(result.unitsArtifactSha,Read(request["unit_production_metadata"],result.unitsArtifactSha,2*1024*1024));result.RequireConfigured(definitions,Read(request["building_request_metadata"],qualified?(string)request["building_request_metadata"]["sha256"]:ConfiguredSha,4*1024*1024));
+   if(origin!=null){
+    foreach(string suffix in FactorySources){string rel="Assets/Game/Scripts/"+suffix;result.Admit(currentSourceRepo,rel,(string)nativePins[rel],false);result.Admit(currentSourceRepo,rel+".meta",(string)nativePins[rel+".meta"],false);}
+    foreach(string suffix in OwnerDefinitions){string rel="Assets/Game/Scripts/"+suffix;
+     if(suffix!="Composition/Game.Composition.asmdef")result.Admit(currentSourceRepo,rel,(string)nativePins[rel],false);
+     else {string current=FileHash(Path.Combine(currentSourceRepo,rel)),captured=(string)nativePins[rel];
+      if(current!=captured&&!(current=="8f41d8cd74821639e2628fb77ad32fdd89db88111af3af800ebb16d109753cfe"&&captured=="b6db33e0e266aea3c4f63a70677b92a70188f101ad149b91560f897e466d3c6b"))throw new InvalidDataException("Unqualified current Composition packaging definition");
+      result.Admit(currentSourceRepo,rel,current,false);}
+     result.Admit(currentSourceRepo,rel+".meta",(string)nativePins[rel+".meta"],false);
+    }
+    foreach(string rel in new[]{"Packages/manifest.json","Packages/packages-lock.json"})result.Admit(currentSourceRepo,rel,(string)nativePins[rel],false);
+    var declared=(JObject)origin["input_pins"];
+    if(declared.Count!=result.originPins.Count||declared.Properties().Any(x=>x.Value.Type!=JTokenType.String||!result.originPins.TryGetValue(x.Name,out var expected)||(string)x.Value!=expected))throw new InvalidDataException("Metadata origin consumed-file coverage mismatch");
+    result.pins[originPath]=originSha;
+   }
    result.RequireSelection(setup);result.VerifyUnchanged();return result;
   }
-  void Admit(string repo,string relative,string expected){if(expected==null||expected.Length!=64||relative.Split('/').Any(x=>x==".."||x=="."||x==""))throw new InvalidDataException("Canonical metadata dependency required: "+relative);string path=Path.GetFullPath(Path.Combine(repo,relative));if(!path.StartsWith(Path.GetFullPath(repo)+Path.DirectorySeparatorChar,StringComparison.Ordinal))throw new InvalidDataException("Metadata dependency escaped root");if(pins.TryGetValue(path,out var old)&&old!=expected)throw new InvalidDataException("Conflicting metadata epoch");pins[path]=expected;RequireFile(path,expected);}
+  static string RequireOriginRoot(JToken token){if(token?.Type!=JTokenType.String||!Path.IsPathRooted((string)token))throw new InvalidDataException("Absolute metadata origin root required");var dir=new DirectoryInfo(Path.GetFullPath((string)token));if(!dir.Exists)throw new InvalidDataException("Existing metadata origin root required");for(var d=dir;d!=null;d=d.Parent)if((d.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Symlink metadata origin root forbidden");return dir.FullName;}
+  static string FileHash(string path){using(var stream=File.OpenRead(path))using(var hash=SHA256.Create())return BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}
+  void Admit(string repo,string relative,string expected,bool capturedOrigin=true){if(expected==null||expected.Length!=64||relative.Split('/').Any(x=>x==".."||x=="."||x==""))throw new InvalidDataException("Canonical metadata dependency required: "+relative);string path=Path.GetFullPath(Path.Combine(repo,relative));if(!path.StartsWith(Path.GetFullPath(repo)+Path.DirectorySeparatorChar,StringComparison.Ordinal))throw new InvalidDataException("Metadata dependency escaped root");if(pins.TryGetValue(path,out var old)&&old!=expected)throw new InvalidDataException("Conflicting metadata epoch");pins[path]=expected;if(capturedOrigin)originPins[path]=expected;RequireFile(path,expected);}
   static void RequireFile(string path,string expected){var f=new FileInfo(path);if(!f.Exists||(f.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Regular metadata dependency required: "+path);using(var stream=File.OpenRead(path))using(var hash=SHA256.Create())if(BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","").ToLowerInvariant()!=expected)throw new InvalidDataException("Metadata dependency changed: "+path);}
   internal void RequireTarget(uint setupHash,int? seed=null){if(setupHash!=TargetSetupHash||(seed.HasValue&&seed.Value!=TargetSeed))throw new InvalidDataException("Compatibility binding differs from actual reader target setup/seed");}
   internal void RequireConfigured(JObject reference,JObject root,uint setupHash,int seed){RequireTarget(setupHash,seed);RequireConfigured(reference,root);}

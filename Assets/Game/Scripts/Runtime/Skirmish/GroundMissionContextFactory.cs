@@ -26,9 +26,8 @@ namespace Game.Runtime
                 setup.LayoutId != definition.MapLayoutId || !SessionMatchesSetup(setup, session)) return false;
             if (setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault ||
                 setup.ArmyProfileId != SkirmishArmyProfileId.GroundManeuver ||
-                setup.StartPackageId != SkirmishStartPackageId.EstablishedBase ||
-                setup.Readiness != SkirmishReadinessStage.Established)
-            { error = "Ground/Established/BaseAssault compiled family required."; return false; }
+                !GroundMissionContext.SupportsOriginalGroundStart(setup.StartPackageId,setup.Readiness))
+            { error = "Ground/Field-or-Established/BaseAssault compiled family required."; return false; }
             int matches = 0, indexMatches = 0;
             SkirmishBattleCatalogEntry selected = default;
             foreach (var row in catalog.Entries)
@@ -36,7 +35,7 @@ namespace Game.Runtime
                 if (row.ScenarioId == setup.CatalogId) { selected = row; matches++; }
                 if (row.IsPlayable && row.PlayableScenarioIndex == playableScenarioIndex) indexMatches++;
             }
-            if (matches != 1 || selected.ObjectiveId != "BA" || selected.ArmyProfile != "G" || selected.StartProfile != "E" ||
+            if (matches != 1 || selected.ObjectiveId != "BA" || selected.ArmyProfile != "G" || selected.StartProfile != SkirmishIdParsing.ToCode(setup.StartPackageId) ||
                 selected.PlayableScenarioIndex != playableScenarioIndex ||
                 playableScenarioIndex >= 0 && (!selected.IsPlayable || indexMatches != 1) ||
                 !string.IsNullOrEmpty(selected.DefinitionId) && selected.DefinitionId != setup.DefinitionId ||
@@ -67,7 +66,7 @@ namespace Game.Runtime
         {
             error=null;approach=default;
             switch(canonicalMapId){case "DB":approach=AriaGroundApproachKind.Ordinary;return true;case "CC":approach=AriaGroundApproachKind.CityCrossroads;return true;case "IB":approach=AriaGroundApproachKind.IndustrialBasin;return true;}
-            if(string.IsNullOrEmpty(canonicalMapId)||definition==null||setup==null||definition.CampaignMap==null||definition.MissionLogicalBinding==null||setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||setup.ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||setup.StartPackageId!=SkirmishStartPackageId.EstablishedBase||string.IsNullOrEmpty(setup.LayoutBindingFingerprint)||string.IsNullOrEmpty(setup.MissionLogicalBindingFingerprint)||definition.CatalogId!=setup.CatalogId||definition.DefinitionId!=setup.DefinitionId||definition.ContentVersion!=setup.ContentVersion||definition.OperationMapId!=setup.OperationMapId){error="Canonical map approach requires actual source-bound logical ground configuration.";return false;}
+            if(string.IsNullOrEmpty(canonicalMapId)||definition==null||setup==null||definition.CampaignMap==null||definition.MissionLogicalBinding==null||setup.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||setup.ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||!GroundMissionContext.SupportsOriginalGroundStart(setup.StartPackageId,setup.Readiness)||string.IsNullOrEmpty(setup.LayoutBindingFingerprint)||string.IsNullOrEmpty(setup.MissionLogicalBindingFingerprint)||definition.CatalogId!=setup.CatalogId||definition.DefinitionId!=setup.DefinitionId||definition.ContentVersion!=setup.ContentVersion||definition.OperationMapId!=setup.OperationMapId){error="Canonical map approach requires actual source-bound logical ground configuration.";return false;}
             approach=AriaGroundApproachKind.AuthoredLogicalGround;return true;
         }
 

@@ -23,14 +23,17 @@ public readonly struct GroundMissionContext {
   :this(catalogId,definitionId,contentVersion,setupHash,sessionId,playableScenarioIndex,objectiveKind,armyProfileId,startPackageId,readiness,approachKind,sourceApproachIdentity){
   CanonicalMapId=canonicalMapId;SourcePresetLoadIndex=sourcePresetLoadIndex;SourcePresetIndex=sourcePresetIndex;SourcePresetResourceName=sourcePresetResourceName;ObservationScope=observationScope;
  }
+ public static bool SupportsOriginalGroundStart(SkirmishStartPackageId start,SkirmishReadinessStage readiness)=>
+  (start==SkirmishStartPackageId.FieldBase&&readiness==SkirmishReadinessStage.Field)||
+  (start==SkirmishStartPackageId.EstablishedBase&&readiness==SkirmishReadinessStage.Established);
  internal void RequireCompatibleObservation(in AriaS002Observation view){
   if(ObservationScope!=default&&view.Scope!=ObservationScope)throw new NotSupportedException("Compiled context observation transport differs");
   if(view.Scope!=AriaS002Scope.NativeRendered&&view.Scope!=AriaS002Scope.LogicalPublicData)throw new ArgumentException("Explicit source observation scope required");
   if(!new SkirmishCatalogId(CatalogId).IsValid||DefinitionId!=SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(CatalogId)).Value||ContentVersion<=0||string.IsNullOrEmpty(SessionId)||string.IsNullOrEmpty(SourceApproachIdentity)||PlayableScenarioIndex< -1)
    throw new ArgumentException("Concrete compiled mission identity data required");
-  if(ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||StartPackageId!=SkirmishStartPackageId.EstablishedBase||Readiness!=SkirmishReadinessStage.Established||
+  if(ObjectiveKind!=SkirmishObjectiveKind.BaseAssault||ArmyProfileId!=SkirmishArmyProfileId.GroundManeuver||!SupportsOriginalGroundStart(StartPackageId,Readiness)||
    (ApproachKind!=AriaGroundApproachKind.Ordinary&&ApproachKind!=AriaGroundApproachKind.CityCrossroads&&ApproachKind!=AriaGroundApproachKind.IndustrialBasin&&ApproachKind!=AriaGroundApproachKind.AuthoredLogicalGround)||view.SourceScenarioIndex!=PlayableScenarioIndex||!view.ExpandedSession||!view.ExpandedBaseAssault||view.AirProfile||view.CombinedArmsField)
-   throw new NotSupportedException("Matching Ground/Established/BaseAssault source observation required");
+   throw new NotSupportedException("Matching Ground/Field-or-Established/BaseAssault source observation required");
  }
 }
 }

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "catalog_id": "S097",
+  "canonical_map_id": "AP",
+  "objective_id": "BA",
+  "army_profile": "G",
+  "start_profile": "F",
+  "seed": 104826,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "original_compiled_setup_hash": 1769177543,
+  "original_compiled_requirements": {
+    "start_profile": "FieldBase",
+    "readiness": "Field",
+    "deadline_seconds": 1080,
+    "materials_each": 450,
+    "oil_each": 120,
+    "usable_fuel_each": 350,
+    "player_combat": 14,
+    "enemy_combat": 14,
+    "player_support": 2,
+    "enemy_support": 2,
+    "player_structures": 7,
+    "enemy_structures": 7
+  },
+  "campaign_source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+  "factory_projection_version": 2,
+  "input_semantics": "Original14compiledpreferredanchors/rawdeclaredbinding+ownlogicalFieldlayout; notforcedacceptedrectangles/fullfit",
+  "external_inputs": "PinactualCityEdgephysicalea395, originalS026nativeorigin/factorymetadata/16templates, separateServiceOnlyAAfacts, originalRefinerynumericfunctione8ef withprovenance; no captures bundled",
+  "actual_normal_outcome": "NaturalDefeat observed18473/307.816683sim; expectedVictoryvalidationfalse. No rerun/Victorytransfer/native-player-readiness claim",
+  "source_fit_certified": false,
+  "mission_ready": false
+}

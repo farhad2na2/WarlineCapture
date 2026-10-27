@@ -19,8 +19,14 @@ internal sealed class SourceAriaS002Controller {
  static AriaS002ActionTarget Cap(AriaS002Action action,int id,bool admitted,int slot=-1)=>new AriaS002ActionTarget{Action=action,Id=id,Admitted=admitted,Slot=slot};
  internal static AriaS002ActionTarget AdvanceMapControl(bool inspectionOpen,bool objectiveAlive)=>inspectionOpen?Cap(AriaS002Action.InspectObjective,-20011,objectiveAlive):Cap(AriaS002Action.OpenInspection,-20010,objectiveAlive);
  bool Recruit(SkirmishRoleKind role,bool sourceAffordability){if(!sourceAffordability)return false;return paid.Read(role).CanRequest;}
+ // Field readiness is a truthful capability value, not a completeness failure.
+ // Scope has already validated the concrete original start/readiness/session pair.
+ internal static void RequireGroundPublicPage(in GroundMissionContext context,in SkirmishAriaPublicView view,bool combinedArmsField,in Game.UI.Contracts.UiExpandedSquadPage page){
+  bool originalField=context.StartPackageId==SkirmishStartPackageId.FieldBase&&context.Readiness==SkirmishReadinessStage.Field;
+  if(view.AirProfile||combinedArmsField||(!view.ReadinessEligible&&!originalField)||!page.Expanded||!page.BaseAssault)throw new NotSupportedException("Complete actual ground BaseAssault public page required: airProfile="+view.AirProfile+", combinedArmsField="+combinedArmsField+", readinessEligible="+view.ReadinessEligible+", expanded="+page.Expanded+", baseAssault="+page.BaseAssault+", startPackage="+context.StartPackageId+", readiness="+context.Readiness+", originalField="+originalField);
+ }
  AriaS002Observation Read(int frame,float time){
-  Scope();current=PublicCommandCatalog.Read(em,session,army);var v=current.PublicView;var p=current.Page;if(v.AirProfile||current.CombinedArmsField||!v.ReadinessEligible||!p.Expanded||!p.BaseAssault)throw new NotSupportedException("Complete actual ground BaseAssault public page required");
+  Scope();current=PublicCommandCatalog.Read(em,session,army);var v=current.PublicView;var p=current.Page;RequireGroundPublicPage(groundContext,v,current.CombinedArmsField,p);
   if(!current.Active&&!v.Finished)throw new NotSupportedException("Inactive actual source session");
   var bases=SkirmishPublicObjectiveProjection.Read(em,session);if(!v.Finished&&!bases.PlayerPositionKnown)throw new NotSupportedException("Original objective/HUD publication must precede ARIA");
   contacts.UpdateAfterFog(frame,time);var snapshot=contacts.ReadSnapshot();var match=em.GetComponentData<SkirmishMatchState>(session);if(match.EnemyMainBase!=lastObjective){lastObjective=match.EnemyMainBase;objectiveIdentity=checked(objectiveIdentity+1);}

@@ -1,8 +1,8 @@
 """Portable version of the qualified nine declared-authoring root checks; no C# or World."""
 from pathlib import Path
-import argparse,hashlib,json,runpy,sys,tempfile
+import argparse,hashlib,json,runpy,sys,tempfile,copy
 sys.dont_write_bytecode=True
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--ci-root',type=Path,default=Path(__file__).resolve().parents[1]);p.add_argument('--output',type=Path,required=True);p.add_argument('--request',type=Path,action='append',default=[]);p.add_argument('--source-repo',type=Path);p.add_argument('--data-repo',type=Path);args=p.parse_args()
+p=argparse.ArgumentParser(description=__doc__);p.add_argument('--ci-root',type=Path,default=Path(__file__).resolve().parents[1]);p.add_argument('--output',type=Path,required=True);p.add_argument('--request',type=Path,action='append',default=[]);p.add_argument('--source-repo',type=Path);p.add_argument('--data-repo',type=Path);p.add_argument('--check-projection-versions',action='store_true');args=p.parse_args()
 if args.request and (args.source_repo is None or args.data_repo is None):p.error('Graph requests require explicit --source-repo and --data-repo')
 ci=args.ci_root.resolve(strict=True);sys.path.insert(0,str(ci));runpy.run_path(str(ci/'run_skirmish_source_simulation.py'),run_name='qualified_test_bootstrap');import skirmish_source_authoring as a
 checks=[];h=lambda p:hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -32,6 +32,16 @@ for path in args.request:
  for file,digest in graph['source_pins'].items():a.declared_graph_pin(file,digest,args.source_repo.resolve(strict=True),args.data_repo.resolve(strict=True),roots)
  actual.append({'catalog_id':request['catalog_id'],'request_sha256':h(path),'actual_graph_pins_verified':len(graph['source_pins'])})
 assert len(checks)==9
+if args.check_projection_versions:
+ if not args.request:p.error('Version checks require an explicit actual --request')
+ request_path=args.request[0].resolve(strict=True);base_request=json.loads(request_path.read_text());request_pin={'path':str(request_path),'sha256':h(request_path)}
+ with tempfile.TemporaryDirectory(prefix='declared-version-negatives-') as t:
+  fresh=Path(t).resolve()
+  for index,value in enumerate([0,3,-1,True,False,'2',2.0,None]):
+   bad=copy.deepcopy(base_request);bad['factory_projection_version']=value;folder=fresh/('invalid-version-'+str(index));reject(lambda bad=bad,folder=folder:a.author_declared(args.source_repo,ci.parents[1],ci/'SkirmishSourceSimulation/source_manifest.s026.plan.json',folder,bad['catalog_id'],bad['seed'],bad,request_pin,data_repo=args.data_repo),'invalid_projection_version_'+str(index),'Explicit supported factory projection version required');assert not folder.exists()
+  bad=copy.deepcopy(base_request);bad['unknown_projection_field']=2;folder=fresh/'unknown-field';reject(lambda:a.author_declared(args.source_repo,ci.parents[1],ci/'SkirmishSourceSimulation/source_manifest.s026.plan.json',folder,bad['catalog_id'],bad['seed'],bad,request_pin,data_repo=args.data_repo),'unknown_projection_field','Exact declared source compiler input required');assert not folder.exists()
+ assert len(checks)==18
+
 report={'result':'Passed','checks':checks,'actual_graphs':actual,'world':False,'scope':'Root/hash checks only; original C# still validates complete native provenance/factory inputs.'}
 with args.output.open('x') as f:f.write(json.dumps(report,indent=2)+'\n')
-print('[DeclaredOriginRootControls] result=Passed checks=9 sources='+str(len(actual))+' world=False')
+print('[DeclaredOriginRootControls] result=Passed checks='+str(len(checks))+' sources='+str(len(actual))+' world=False')

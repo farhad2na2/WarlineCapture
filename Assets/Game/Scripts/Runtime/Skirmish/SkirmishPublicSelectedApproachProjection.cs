@@ -71,7 +71,7 @@ namespace Game.Runtime
                 !launch.MatchesIdentity(setup, state) || launch.Definition?.CampaignMap == null ||
                 setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault ||
                 setup.ArmyProfileId != SkirmishArmyProfileId.GroundManeuver ||
-                setup.StartPackageId != SkirmishStartPackageId.EstablishedBase ||
+                !GroundMissionContext.SupportsOriginalGroundStart(setup.StartPackageId, setup.Readiness) ||
                 !SkirmishMissionLogicalBindingProvider.TryRead(em, session, out _))
                 return Unavailable("Authored source-bound ground session identity unavailable or changed.");
             using var grids = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable),

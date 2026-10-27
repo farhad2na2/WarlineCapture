@@ -41,7 +41,9 @@ def project_declared(compiler_result,physical,graph,layout,current_assets,functi
   if not 0<len(raw)<=bound or hashlib.sha256(raw).hexdigest()!=d['sha256']:raise ValueError('Pinned input differs: '+str(p))
   return json.loads(raw)if decode else raw
  observed=pinned(compiler_result,32*1024*1024);actual=observed['actual_original_compiler'];c=actual['actual_derived_factory_context']
- if not actual['original_complete_compiler_passed']or not actual['actual_binding_roundtrip_same_setup_and20anchors']or not isinstance(c,dict):raise ValueError('Actual original compiler/roundtrip/context required')
+ roundtrip=actual.get('actual_binding_roundtrip_same_setup_and_compiled_anchors',actual.get('actual_binding_roundtrip_same_setup_and20anchors'));compiled=actual.get('compiled_structures')
+ if actual['original_complete_compiler_passed']is not True or roundtrip is not True or not isinstance(compiled,list)or not compiled or not isinstance(c,dict):raise ValueError('Actual original compiler/roundtrip/compiled structures/context required')
+ if 'actual_binding_roundtrip_same_setup_and_compiled_anchors'in actual and 'actual_binding_roundtrip_same_setup_and20anchors'in actual and actual['actual_binding_roundtrip_same_setup_and20anchors']is not True:raise ValueError('Conflicting original compiler roundtrip declarations')
  target=c['target_context'];portable=actual['actual_portable_binding_fields']
  if len(portable['Variants'])!=1:raise ValueError('One actual selected compiler variant required')
  native_ref=c['native_factory_reference'];n=pinned(native_ref,64*1024*1024)

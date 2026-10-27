@@ -152,3 +152,46 @@ python3 -B Tools/CI/tests/run_declared_compiler_export_comparison.py \
 The case document has `schema_version: 1` and a `cases` array. Each row supplies `catalog_id`, `seed`, `request` (`path`, `sha256`), `expected_actual_setup`, and `original_qualified_comparison_result` (`path`, `sha256`). Requests use the existing declared compiler draft schema. The check invokes the public `author` command, compares original setup/structures/portable fields and all six native factory sections, verifies loaded runtime identity and consumed pins, and stops at the first failure. It does not create a World or supply missing external captures.
 
 The owned S074/S098 JSON files contain logical source inputs in existing layout and binding formats. Their source-only and readiness flags remain unchanged; successful export does not promote those inputs to native mission readiness.
+
+
+## Explicit factory projection version 2 (Field authoring)
+
+The existing `SkirmishDeclaredCompilerExportDraft` accepts an optional integer `factory_projection_version`. Omission and explicit `1` retain the strict version-1 factory projection. Explicit `2` selects the same original compiler and the versioned keyed-coverage projection; it does not select a mission by catalog ID. Boolean, null, floating-point, string and unknown versions are rejected.
+
+```json
+{
+  "schema_version": 1,
+  "kind": "SkirmishDeclaredCompilerExportDraft",
+  "catalog_id": "S097",
+  "seed": 104826,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "factory_projection_version": 2
+}
+```
+
+This fragment supplements the existing required pinned graph, profiles, Campaign source, layout, binding-field, setup-matrix and native-origin descriptors. Use the original public `author` invocation above. The Python Draft owner forwards the explicit version unchanged; the C# author owner forwards it to the original compiler/export owner. The five-argument export API remains version 1; the versioned overload performs version 2. No private fixture executable or context-root string replacement is part of this workflow.
+
+The S097 Field input is an original 14-structure configuration: seven structures and 14 combat plus two support units per faction, with original resources 450/120/350 and deadline 1080. These are mission-owned catalog/compiler values, not runtime policy overrides. Its generic `actual_binding_roundtrip_same_setup_and_compiled_anchors` result refers to all 14 actual compiled preferred anchors. The historical `...same_setup_and20anchors` alias is emitted only for an actual 20-anchor configuration. S074 default-v1 and S098 explicit-v1 retain their original 20-anchor results.
+
+Version 2 preserves exact native model facts and the original selector's keyed coverage. It permits only the original selected building order/index projection, retains the other five native sections, and records the versioned claim instead of claiming that all six sections are unchanged. It keeps original army/role facts, source pins, current factory source checks, context identity, and honest false readiness/native-fit flags. The original C# loader recomputes the contract.
+
+Native factory metadata/origin, configuration graphs, source/grid/surface files, physical read-domain capture and exact numeric-function references remain external pinned prerequisites. CityEdge physical arrays are not rewritten or borrowed from another map. Reused numeric-function facts retain the original capture's provenance. Supply absolute descriptors and digests; no captured blobs or machine-specific temporary directory is bundled. A new context must be genuinely produced for the actual source repository.
+
+The portable comparison wrapper takes the same `schema_version:1` cases file. Each case supplies a pinned request and an independent pinned original result. It derives the requested projection version from that request, compares actual 20/20/14 anchor sets and portable fields, and requires six unchanged native sections for v1 or five for v2. It never reconstructs an expected context or rebases its source root.
+
+```sh
+python3 Tools/CI/tests/run_declared_compiler_export_comparison.py \
+  --source-repo "$SOURCE_REPO" --package-root "$SOURCE_PACKAGE" \
+  --data-repo "$ASSET_REPO" --build-receipt "$TYPED_BUILD_RECEIPT" \
+  --cases "$PINNED_EXTERNAL_CASES" --output "$FRESH_COMPARISON_OUTPUT"
+
+python3 Tools/CI/tests/run_declared_compiler_origin_checks.py \
+  --ci-root "$SOURCE_PACKAGE/Tools/CI" --source-repo "$SOURCE_REPO" \
+  --data-repo "$ASSET_REPO" --request "$PINNED_FIELD_DRAFT" \
+  --check-projection-versions --output "$FRESH_PROTOCOL_RESULT"
+```
+
+The second command retains the nine original root/hash checks and adds nine actual Draft-owner invalid-version/unknown-field rejects. Without the new option, the old nine-check behavior remains available. Tests create only finite isolated data and do not launch C# or a World.
+
+S097's retained normal full run ended in **natural Defeat** at tick 18473 (307.816683 simulation seconds), with no worker exception or timeout. The worker exited 0 and observed the full outcome; the CLI exited 1 because expected-Victory validation failed. Authoring compatibility and successful source commands do not convert that result into Victory, native acceptance or mission readiness. Preserve the failed and select-only prefixes, the later healthy approach/order prefix, and the actual full result separately. No new full rerun or gameplay tuning is implied by this authoring work.

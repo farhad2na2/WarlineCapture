@@ -8,7 +8,9 @@
       "seed": 104755
     }
   },
-  "compiler_defines": [],
+  "compiler_defines": [
+    "WARLINE_SOURCE_PATH_JOB_SCHEDULING"
+  ],
   "sources": [
     {
       "id": "287_Current_AdditionalVisualDtos.cs",

@@ -71,11 +71,25 @@ public static EntityQueryBuilder QueryBuilder()=>new EntityQueryBuilder(Allocato
 
 }
 namespace Unity.Jobs {
- public interface IJobParallelFor{}public struct JobHandle{public bool IsCompleted=>true;public void Complete(){}public static JobHandle CombineDependencies(JobHandle a,JobHandle b)=>default;public static JobHandle CombineDependencies(JobHandle a,JobHandle b,JobHandle c)=>default;}
- public static class OwnedJobBackend{public static JobHandle Schedule<T>(this T job,JobHandle dependency)where T:struct,IJobEntity=>ScheduleParallel(job,dependency);public static JobHandle Schedule<T>(this T job,int count,int batch,JobHandle dependency=default)where T:struct,IJobParallelFor{dependency.Complete();if(count<0||count>65536||batch<1)throw new NotSupportedException("Original parallel-plan work bound");object boxed=job;var method=typeof(T).GetMethod("Execute");for(int i=0;i<count;i++)method.Invoke(boxed,new object[]{i});return default;}public static JobHandle ScheduleParallel<T>(this T job,JobHandle dependency)where T:struct,IJobEntity{dependency.Complete();Game.Runtime.OwnedEntityJobBackend.Execute(job,SystemAPI.Manager);return default;}
+ public interface IJobParallelFor{}public struct JobHandle{
+ internal sealed class SelectedPathState{
+ readonly System.Threading.Tasks.Task task;readonly JobHandle left,right;readonly bool combined;
+ internal SelectedPathState(Action body){task=System.Threading.Tasks.Task.Run(body);}
+ internal SelectedPathState(JobHandle a,JobHandle b){combined=true;left=a;right=b;}
+ internal bool IsCompleted=>combined?left.IsCompleted&&right.IsCompleted:task.IsCompleted;
+ internal void Complete(){if(!combined){task.GetAwaiter().GetResult();return;}Exception first=null;try{left.Complete();}catch(Exception e){first=e;}try{right.Complete();}catch(Exception e){OwnedJobBackend.PreserveCleanupFailure(ref first,e);}if(first!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(first).Throw();}
+ }
+ readonly SelectedPathState state;internal JobHandle(SelectedPathState value){state=value;}public bool IsCompleted=>state==null||state.IsCompleted;public void Complete(){state?.Complete();}
+ public static JobHandle CombineDependencies(JobHandle a,JobHandle b)=>new JobHandle(new SelectedPathState(a,b));public static JobHandle CombineDependencies(JobHandle a,JobHandle b,JobHandle c)=>CombineDependencies(CombineDependencies(a,b),c);
+}
+ public static class OwnedJobBackend{
+ internal static readonly Exception[] SecondaryCleanupFailures=new Exception[32];internal static int SecondaryCleanupFailureCount;internal static bool SecondaryCleanupRecordingFailed;
+ internal static void PreserveCleanupFailure(ref Exception first,Exception next){if(first==null){first=next;return;}try{int slot=System.Threading.Interlocked.Increment(ref SecondaryCleanupFailureCount)-1;if((uint)slot<32)SecondaryCleanupFailures[slot]=next;}catch{SecondaryCleanupRecordingFailed=true;}}
+ internal static JobHandle StartSelectedPath(Action body,JobHandle dependency){return new JobHandle(new JobHandle.SelectedPathState(()=>{dependency.Complete();body();}));}
+public static JobHandle Schedule<T>(this T job,JobHandle dependency)where T:struct,IJobEntity=>ScheduleParallel(job,dependency);public static JobHandle Schedule<T>(this T job,int count,int batch,JobHandle dependency=default)where T:struct,IJobParallelFor{dependency.Complete();if(count<0||count>65536||batch<1)throw new NotSupportedException("Original parallel-plan work bound");object boxed=job;var method=typeof(T).GetMethod("Execute");for(int i=0;i<count;i++)method.Invoke(boxed,new object[]{i});return default;}public static JobHandle ScheduleParallel<T>(this T job,JobHandle dependency)where T:struct,IJobEntity{dependency.Complete();Game.Runtime.OwnedEntityJobBackend.Execute(job,SystemAPI.Manager);return default;}
   // Source IJobFor.Schedule is sequential (the original job shares one scratch workspace).
-  // Execution completes here; original path owner retains result and applies on its NEXT update.
-  public static JobHandle Schedule<T>(this T job,int count,JobHandle dependency)where T:struct,IJobFor{dependency.Complete();if(count<0||count>32)throw new NotSupportedException("Owned original path batch bound");var m=typeof(T).GetMethod("Execute",new[]{typeof(int)})??throw new NotSupportedException("Source Execute missing");object boxed=job;for(int i=0;i<count;i++)m.Invoke(boxed,new object[]{i});return default;}
+  // One deferred sequential batch; original owner polls completion and applies on its main-thread update.
+  public static JobHandle Schedule<T>(this T job,int count,JobHandle dependency)where T:struct,IJobFor{if(typeof(T)!=typeof(Game.Runtime.PathfindBatchJob)){dependency.Complete();if(count<0||count>32)throw new NotSupportedException("Owned original path batch bound");var originalMethod=typeof(T).GetMethod("Execute",new[]{typeof(int)})??throw new NotSupportedException("Source Execute missing");object originalBox=job;for(int i=0;i<count;i++)originalMethod.Invoke(originalBox,new object[]{i});return default;}if(count<0||count>32)throw new NotSupportedException("Owned original path batch bound");var m=typeof(T).GetMethod("Execute",new[]{typeof(int)})??throw new NotSupportedException("Source Execute missing");object boxed=job;return StartSelectedPath(()=>{for(int i=0;i<count;i++)m.Invoke(boxed,new object[]{i});},dependency);}
  }
 }
 namespace Unity.Collections{

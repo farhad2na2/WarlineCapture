@@ -51,18 +51,19 @@ def load_jobs(path, repo):
     require(type(raw['schema_version']) is int and raw['schema_version']==1 and type(raw['jobs']) is list and 0<len(raw['jobs'])<=360, 'schema1 with 1..360 explicit jobs required')
     jobs=[];ids=set();pins={str(path):sha(path)}
     for rawjob in raw['jobs']:
-        object_keys(rawjob,{'id','mission','seed','data_bundle','timeout'}, {'build_receipt','max_ticks'})
+        object_keys(rawjob,{'id','mission','seed','data_bundle','timeout'}, {'build_receipt','max_ticks','configuration_qualification'})
         job=dict(rawjob);name=job['id'];require(type(name) is str and re.fullmatch('[A-Za-z0-9][A-Za-z0-9_-]{0,63}',name) and name.casefold() not in ids,'Duplicate/unsafe job ID');ids.add(name.casefold())
         require(type(job['mission']) is str and re.fullmatch('[A-Z][0-9]{3}',job['mission']) and type(job['seed']) is int,'Explicit mission/string and integer seed required')
         require(type(job['timeout']) in (int,float) and math.isfinite(job['timeout']) and job['timeout']>0,'Finite positive timeout required')
         if 'max_ticks' in job: require(type(job['max_ticks']) is int and job['max_ticks']>0,'Positive integer diagnostic max_ticks required')
-        for key in ['data_bundle','build_receipt']:
+        for key in ['data_bundle','build_receipt','configuration_qualification']:
             if key not in job: continue
             job[key]=descriptor(job[key],path.parent);pins[job[key]['path']]=job[key]['sha256']
             data=read_json(job[key]['path']);require(type(data)is dict,'Input JSON object required')
             if key=='data_bundle':
                 require(data.get('mission')==job['mission'] and type(data.get('seed'))is int and data['seed']==job['seed'],'Job/input identity mismatch');bundle=data
-            else:checked_build_identity(data,job,repo,bundle)
+            elif key=='build_receipt':checked_build_identity(data,job,repo,bundle)
+            # Qualification descriptor is pinned here; the unchanged normal CLI owns its schema/target/source validation.
         jobs.append(job)
     return jobs,pins
 
@@ -115,7 +116,7 @@ def classify(job, process, receipt):
             return {'execution_complete':True,'mission_victory':won,'validation_passed':won,'status':status,'mission_outcome':outcome,'reason':'ActualNormalSourceTerminal'}
     return dict(failed,status=status if status in ('Unknown','Unsupported')else 'Failed',reason='FailedUnsupportedOrContradictoryReceipt')
 
-def execute(jobs_file, output, repo, package, data_repo, run_process=launch):
+def execute(jobs_file, output, repo, package, data_repo, run_process=launch, stop_on_failure=False):
     jobs_file=Path(jobs_file).resolve(strict=True);repo=Path(repo).resolve(strict=True);package=Path(package).resolve(strict=True);data_repo=Path(data_repo).resolve(strict=True);output=Path(output).absolute()
     require(not output.exists() and not output.is_symlink(),'Fresh batch output required; no overwrite/resume')
     cli=package/'Tools/CI/run_skirmish_source_simulation.py';require(cli.is_file(),'Normal CLI entry required')
@@ -126,7 +127,8 @@ def execute(jobs_file, output, repo, package, data_repo, run_process=launch):
         container=output/job['id'];container.mkdir();cli_output=container/'cli';argv=[sys.executable,'-B',str(cli),'run','--repo',str(repo),'--package-root',str(package),'--data-repo',str(data_repo),'--mission',job['mission'],'--seed',str(job['seed']),'--data-bundle',job['data_bundle']['path'],'--output',str(cli_output),'--timeout',str(job['timeout'])]
         if 'build_receipt' in job:argv+=['--build-receipt',job['build_receipt']['path']]
         if 'max_ticks' in job:argv+=['--max-ticks',str(job['max_ticks'])]
-        record={'id':job['id'],'mission':job['mission'],'seed':job['seed'],'job':job,'argv':argv,'cwd':str(Path.cwd()),'normal_cli_pin':{'path':str(cli),'sha256':pins[str(cli)]},'inputs':{k:job[k]for k in ('data_bundle','build_receipt')if k in job},'log':str(container/'cli-process.log')}
+        if 'configuration_qualification' in job:argv+=['--configuration-qualification',job['configuration_qualification']['path']]
+        record={'id':job['id'],'mission':job['mission'],'seed':job['seed'],'job':job,'argv':argv,'cwd':str(Path.cwd()),'normal_cli_pin':{'path':str(cli),'sha256':pins[str(cli)]},'inputs':{k:job[k]for k in ('data_bundle','build_receipt','configuration_qualification')if k in job},'log':str(container/'cli-process.log')}
         write(container/'reproduce.json',record)
         try:
             verify(pins)
@@ -149,12 +151,14 @@ def execute(jobs_file, output, repo, package, data_repo, run_process=launch):
         try:verify(pins)
         except (ValueError,OSError)as error:record.update(execution_complete=False,mission_victory=None,validation_passed=False,status='InputDrift',reason=str(error))
         write(container/'job-receipt.json',record);summary['jobs'].append(record);write(output/'batch-receipt.json',summary)
+        if stop_on_failure and not record['execution_complete']:break
     summary['all_jobs_execution_complete']=all(x['execution_complete']for x in summary['jobs']);summary['all_missions_victorious']=all(x['mission_victory']is True for x in summary['jobs']);summary['status']='Completed'if summary['all_jobs_execution_complete']else'Incomplete';summary['counts']={name:sum(x['status']==name for x in summary['jobs'])for name in sorted({x['status']for x in summary['jobs']})};write(output/'batch-receipt.json',summary);return summary
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     for name in ['jobs','output','repo','package-root','data-repo']:p.add_argument('--'+name,required=True)
+    p.add_argument('--stop-on-failure',action='store_true',help='Stop after first incomplete/failed ordinary job; legacy default continues')
     a=p.parse_args()
-    try:r=execute(a.jobs,a.output,a.repo,a.package_root,a.data_repo);print(json.dumps({k:r[k]for k in ['status','counts','all_jobs_execution_complete','all_missions_victorious']}));return 0 if r['all_jobs_execution_complete']else 1
+    try:r=execute(a.jobs,a.output,a.repo,a.package_root,a.data_repo,stop_on_failure=a.stop_on_failure);print(json.dumps({k:r[k]for k in ['status','counts','all_jobs_execution_complete','all_missions_victorious']}));return 0 if r['all_jobs_execution_complete']else 1
     except (ValueError,OSError,json.JSONDecodeError)as error:print('Batch input rejected: '+str(error),file=sys.stderr);return 2
 if __name__=='__main__':raise SystemExit(main())

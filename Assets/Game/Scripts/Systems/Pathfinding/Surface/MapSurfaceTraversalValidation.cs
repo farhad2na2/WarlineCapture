@@ -27,8 +27,24 @@ namespace Game.Runtime.Pathfinding
             if (maxSlopeDegrees <= 0f)
                 return false;
 
+            bool compactSingleLayer = MapSurfaceBlobAccess.IsCompactSingleLayer(ref blob);
             for (int i = 0; i < range.SurfaceCount; i++)
             {
+                int surfaceIndex = range.FirstSurfaceIndex + i;
+                if (compactSingleLayer &&
+                    (uint)surfaceIndex < (uint)blob.CompactSamples.Length &&
+                    blob.Dimensions.x > 0)
+                {
+                    MapSurfaceCompactSample compact = blob.CompactSamples[surfaceIndex];
+                    if (TryResolveBeforeSlope(compact.MovementMask, compact.SurfaceType, compact.Flags,
+                        movementMask, out bool canTraverse))
+                    {
+                        if (canTraverse)
+                            return true;
+                        continue;
+                    }
+                }
+
                 if (MapSurfaceBlobAccess.TryGetSurface(ref blob, range, i, out MapSurfaceSample sample) &&
                     CanTraverseSample(sample, movementMask, maxSlopeDegrees))
                 {
@@ -90,17 +106,37 @@ namespace Game.Runtime.Pathfinding
 
         private static bool CanTraverseSample(MapSurfaceSample sample, MapSurfaceMovementMask movementMask, float maxSlopeDegrees)
         {
-            if ((sample.MovementMask & movementMask) == 0 ||
-                sample.SurfaceType == MapSurfaceType.Blocked ||
-                (sample.Flags & MapSurfaceFlags.Reserved) != 0)
+            if (TryResolveBeforeSlope(sample.MovementMask, sample.SurfaceType, sample.Flags,
+                movementMask, out bool canTraverse))
             {
-                return false;
+                return canTraverse;
             }
 
-            if (IsRoadLikeSurface(sample.SurfaceType, sample.Flags))
-                return true;
-
             return math.max(0f, sample.SlopeDegrees) <= maxSlopeDegrees;
+        }
+
+        private static bool TryResolveBeforeSlope(
+            MapSurfaceMovementMask sampleMovementMask,
+            MapSurfaceType surfaceType,
+            MapSurfaceFlags flags,
+            MapSurfaceMovementMask movementMask,
+            out bool canTraverse)
+        {
+            canTraverse = false;
+            if ((sampleMovementMask & movementMask) == 0 ||
+                surfaceType == MapSurfaceType.Blocked ||
+                (flags & MapSurfaceFlags.Reserved) != 0)
+            {
+                return true;
+            }
+
+            if (IsRoadLikeSurface(surfaceType, flags))
+            {
+                canTraverse = true;
+                return true;
+            }
+
+            return false;
         }
 
         private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags)

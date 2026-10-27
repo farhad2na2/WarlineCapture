@@ -291,6 +291,26 @@ namespace Game.Runtime
             if (!hasPendingPathJob)
                 return;
 
+#if WARLINE_SOURCE_PATH_JOB_SCHEDULING
+            System.Exception firstCleanupError=null;
+            try{pendingPathHandle.Complete();}catch(System.Exception error){firstCleanupError=error;}
+            try{
+            state.Dependency = default;
+            DisposeCompleted(
+                ref liveUnitSnapshot,
+                ref pendingPathStream,
+                ref hasPendingPathJob,
+                ref pendingRequestCount,
+                ref pendingRequestBudget,
+                ref pendingLiveUnitCount,
+                ref pendingGridWidth,
+                ref pendingGridHeight,
+                ref pendingScheduleFrame,
+                ref pendingScheduleTime,
+                ref budget);
+            }catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            if(firstCleanupError!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(firstCleanupError).Throw();
+#else
             pendingPathHandle.Complete();
             state.Dependency = default;
             DisposeCompleted(
@@ -305,6 +325,7 @@ namespace Game.Runtime
                 ref pendingScheduleFrame,
                 ref pendingScheduleTime,
                 ref budget);
+#endif
         }
 
         private void LogValidationStuck(

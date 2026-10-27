@@ -1,5 +1,5 @@
 """Controlled subprocess protocol fixtures ONLY; no mission validation or World."""
-import importlib.util,json,tempfile,hashlib,copy,subprocess,signal
+import importlib.util,json,tempfile,hashlib,copy,subprocess,signal,inspect
 from pathlib import Path
 from unittest.mock import patch
 ROOT=Path(__file__).parent
@@ -16,11 +16,14 @@ def base_receipt(job,outcome='Victory'):
     return {'schema_version':1,'kind':'SkirmishSourceSimulationRunReceipt','mission':job['mission'],'seed':job['seed'],'process_exit':0,'timed_out':False,'status':'SourceOutcomeObserved','source_result':{'status':'SourceTerminal','source_outcome':outcome},'full_outcome_observed':True,'diagnostic_prefix_completed':False,'validation_passed':won,'controlled_test_fixture':True}
 with tempfile.TemporaryDirectory(prefix='controlled-batch-test-')as temp:
     root=Path(temp).resolve();repo=root/'explicit-repo';repo.mkdir();cli=repo/'Tools/CI/run_skirmish_source_simulation.py';cli.parent.mkdir(parents=True);cli.write_text('# CONTROLLED TEST FIXTURE - never launched\n');data=root/'explicit-data';data.mkdir();jobs=[]
+    controlled_image=root/'controlled-image.exe';controlled_image.write_bytes(b'CONTROLLED PROTOCOL IMAGE BYTES - NEVER EXECUTED\n')
+    def controlled_build(mission,seed,backend):
+        return {'schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','compile_exit':0,'mission':mission,'seed':seed,'repository_root':str(repo),'runtime_backend':backend,'runtime_configuration_mode':'LegacyBoundProfilesV1','source_runtime_backend':'CONTROLLED_TEST_BACKEND','controlled_protocol_fixture':True,'source_and_reference_pins':{str(cli):pin(cli)['sha256'],str(controlled_image):pin(controlled_image)['sha256']},'executable':pin(controlled_image)}
     for name,mission,seed in [('victory','S002',104731),('defeat','S002',1),('prefix','S026',104755),('unknown','S999',999)]:
-        bundle=dump(root/(name+'-bundle.json'),{'mission':mission,'seed':seed});job={'id':name,'mission':mission,'seed':seed,'data_bundle':pin(bundle),'timeout':3}
+        bundle=dump(root/(name+'-bundle.json'),{'mission':mission,'seed':seed,'runtime_backend':'TypedGroundS026V1'if mission=='S026'else'LegacyGroundS002V1','controlled_protocol_fixture':True});job={'id':name,'mission':mission,'seed':seed,'data_bundle':pin(bundle),'timeout':3}
         if name=='prefix':job['max_ticks']=5
         jobs.append(job)
-    build=dump(root/'build.json',{'schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','compile_exit':0,'mission':'S002','seed':104731,'repository_root':str(repo),'source_runtime_backend':'CONTROLLED_TEST_BACKEND'});jobs[0]['build_receipt']=pin(build)
+    build=dump(root/'build.json',controlled_build('S002',104731,'LegacyGroundS002V1'));jobs[0]['build_receipt']=pin(build)
     manifest=dump(root/'jobs.json',{'schema_version':1,'jobs':jobs});calls=[];active=0
     def seam(argv,log,timeout):
         global active
@@ -33,13 +36,13 @@ with tempfile.TemporaryDirectory(prefix='controlled-batch-test-')as temp:
         r=base_receipt(job,'Defeat'if name=='defeat'else'Victory');r.update(source_repository_root=str(repo),data_repository_root=str(data),data_bundle=dict(job['data_bundle'],bytes=Path(job['data_bundle']['path']).stat().st_size),source_runtime_backend='CONTROLLED_TEST_BACKEND')
         if 'build_receipt'in job:r['build_receipt']=dict(job['build_receipt'],bytes=build.stat().st_size)
         else:
-            generated=dump(dest/'controlled-build.json',{'kind':'SkirmishSourceSimulationBuild','status':'Passed','compile_exit':0,'mission':job['mission'],'seed':job['seed'],'repository_root':str(repo),'source_runtime_backend':'CONTROLLED_TEST_BACKEND'});r['build_receipt']=pin(generated)
+            generated=dump(dest/'controlled-build.json',controlled_build(job['mission'],job['seed'],json.loads(Path(job['data_bundle']['path']).read_text()).get('runtime_backend','LegacyGroundS002V1')));r['build_receipt']=pin(generated)
         if name=='prefix':r.update(status='BoundedPrefix',source_result={'status':'BoundedPrefix','source_outcome':'None'},full_outcome_observed=False,diagnostic_prefix_completed=True,validation_passed=False)
         dump(dest/'run-receipt.json',r);active-=1;return {'cli_exit':1 if name=='defeat'else 0,'outer_timeout':False}
     result=m.execute(manifest,root/'batch',repo,repo,data,seam)
     ok('one-at-a-time identity/root/descriptor/optionalflag propagation',calls==['victory','defeat','prefix','unknown']and active==0)
     ok('mixed aggregate incomplete without invented unsupported success',result['status']=='Incomplete'and not result['all_jobs_execution_complete'])
-    a,b,c,d=result['jobs'];ok('actual receipt status/backend recorded',a['status']=='SourceOutcomeObserved'and a['receipt_backend_fields']=={'source_runtime_backend':'CONTROLLED_TEST_BACKEND'})
+    a,b,c,d=result['jobs'];ok('actual receipt status/backend recorded',a['status']=='SourceOutcomeObserved'and a['receipt_backend_fields']=={'source_runtime_backend':'CONTROLLED_TEST_BACKEND'}and a['build_backend_fields']['runtime_backend']=='LegacyGroundS002V1'and a['build_backend_fields']['source_runtime_backend']=='CONTROLLED_TEST_BACKEND')
     ok('victory complete/validation distinct',a['execution_complete']and a['mission_victory']and a['validation_passed'])
     ok('defeat retains CLI1 but executioncomplete notVictory',b['execution_complete']and b['process']['cli_exit']==1 and b['mission_victory']is False and b['validation_passed']is False)
     ok('prefix remains diagnostic/nonVictory',c['execution_complete']and c['status']=='BoundedPrefix'and not c['mission_victory'])
@@ -96,6 +99,23 @@ with tempfile.TemporaryDirectory(prefix='controlled-batch-test-')as temp:
         def bad_build(argv,log,timeout):
             r=seam(argv,log,timeout);file=Path(flag(argv,'--output'))/'run/run-receipt.json';receipt=json.loads(file.read_text());generated=Path(receipt['build_receipt']['path']);text=generated.read_text();generated.write_text(text[:-1]+extra_json+'}');receipt['build_receipt']=pin(generated);dump(file,receipt);return r
         f=dump(root/(name+'-manifest.json'),{'schema_version':1,'jobs':[jobs[1]]});r=m.execute(f,root/(name+'-output'),repo,repo,data,bad_build);ok(name+' uncredited',not r['all_jobs_execution_complete']and bool(r['jobs'][0].get('receipt_error')))
+    # Optional qualification is a pinned descriptor; only the normal CLI admits it.
+    qfile=dump(root/'controlled-qualification.json',{'kind':'CONTROLLED_PROTOCOL_QUALIFICATION_ONLY','schema_version':1})
+    qjobs=copy.deepcopy(jobs[:2]);qjobs[0]['configuration_qualification']=pin(qfile)
+    qmanifest=dump(root/'qualified-jobs.json',{'schema_version':1,'jobs':qjobs})
+    loaded,qpins=m.load_jobs(qmanifest,repo)
+    ok('optional qualification descriptor pinned without admission claim',loaded[0]['configuration_qualification']==pin(qfile)and str(qfile)in qpins)
+    omitted=dump(root/'qualification-omitted.json',{'schema_version':1,'jobs':[jobs[0]]});loaded,_=m.load_jobs(omitted,repo)
+    ok('omitted qualification and legacy continuation defaults preserved','configuration_qualification'not in loaded[0]and inspect.signature(m.execute).parameters['stop_on_failure'].default is False)
+    for name,value in [('missing-sha',{'path':str(qfile)}),('null',None),('unknown-key',dict(pin(qfile),alias=True)),('hash-drift',dict(pin(qfile),sha256='0'*64))]:
+        qcopy=copy.deepcopy(qjobs);qcopy[0]['configuration_qualification']=value;f=dump(root/('qualification-'+name+'.json'),{'schema_version':1,'jobs':qcopy});rejected('qualification '+name+' rejected before dispatch',lambda:m.load_jobs(f,repo))
+    qcopy=copy.deepcopy(qjobs);qcopy[0]['unsupported_alias']=True;f=dump(root/'qualification-unknown-job.json',{'schema_version':1,'jobs':qcopy});rejected('qualification does not relax unknown job keys',lambda:m.load_jobs(f,repo))
+    for stop,want in [(True,1),(False,2)]:
+        protocol_calls=[]
+        def no_worker(argv,log,timeout):
+            protocol_calls.append(argv);return {'cli_exit':2,'outer_timeout':False,'owned_descendants_survived_cli':False,'scope':'CONTROLLED FAILED PROTOCOL CALLBACK; no CLI/worker/World'}
+        qresult=m.execute(qmanifest,root/('qualified-stop-'+str(stop)),repo,repo,data,no_worker,stop_on_failure=stop)
+        ok('explicit stop '+str(stop)+' preserves normal argv and failed receipt',len(protocol_calls)==want and flag(protocol_calls[0],'--configuration-qualification')==str(qfile)and qresult['jobs'][0]['inputs']['configuration_qualification']==pin(qfile)and not qresult['all_jobs_execution_complete']and all(not x['execution_complete']and x['status']=='AdmissionRejected'for x in qresult['jobs']))
     # Hash drift after launch must defeat an otherwise valid controlled receipt.
     def drift(argv,log,timeout):
         r=seam(argv,log,timeout);cli.write_text('# MUTATED CONTROLLED FIXTURE\n');return r

@@ -214,6 +214,6 @@ namespace Game.Runtime
                 ["computed_setup"] = Setup == null ? null : new JObject { ["catalog_id"] = Setup.CatalogId, ["setup_hash"] = Setup.SetupHash, ["force_actors"] = Setup.Forces.Sum(force => force.Quantity), ["structure_bindings"] = Setup.Structures.Length }
             };
         }
-        public void Dispose() { DisposeActualOperationMapPublication(); initialRoads?.Dispose(); disposed = true; }
+        public void Dispose() { if(disposed)return;Exception first=null;try{ground?.Dispose();}catch(Exception error){first=error;}finally{try{DisposeActualOperationMapPublication();}catch(Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref first,error);}finally{try{initialRoads?.Dispose();}catch(Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref first,error);}finally{disposed=true;}}}if(first!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(first).Throw(); }
     }
 }

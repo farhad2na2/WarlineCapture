@@ -97,9 +97,15 @@ namespace Game.Runtime
                 bool manual = ManualMoves[index] != 0, cheap = CheapSegmentModes[index] != 0;
                 bool hasModes = CheapSegmentModes.IsCreated;
                 byte mode = hasModes ? CheapSegmentModes[index] : (byte)0;
+                // Fixed 256-entry request-local table; no pointer or result survives Execute.
+                SurfaceQueryCacheEntry* surfaceCache = stackalloc SurfaceQueryCacheEntry[SurfaceQueryCacheCapacity];
+                for (int cacheIndex = 0; cacheIndex < SurfaceQueryCacheCapacity; cacheIndex++)
+                    surfaceCache[cacheIndex] = default;
+
                 var context = new NativeSearchContext
                 {
-                    Job = this, Writer = writer, MovingEntity = Entities[index], IgnoredEntity = IgnoredOccupancyEntities[index],
+                    Job = this, Writer = writer, SurfaceCache = surfaceCache,
+                    MovingEntity = Entities[index], IgnoredEntity = IgnoredOccupancyEntities[index],
                     IgnoredCell = IgnoredOccupancyCells[index], IgnoredSize = IgnoredOccupancySizes[index],
                     FootprintSize = footprint.Size, IsVehicle = vehicle, ManualMove = manual, FactionId = Factions[index]
                 };
@@ -133,17 +139,62 @@ namespace Game.Runtime
             }
         }
 
+        private const int SurfaceQueryCacheCapacity = 256;
+
+        private struct SurfaceQueryCacheEntry
+        {
+            public int CellX, CellZ;
+            public byte Flags;
+        }
+
         private unsafe struct NativeSearchContext : IPathSearchContext
         {
             public PathfindBatchJob Job;
             public NativeStream.Writer* Writer;
+            public SurfaceQueryCacheEntry* SurfaceCache;
             public Entity MovingEntity, IgnoredEntity;
             public int2 IgnoredCell, IgnoredSize, FootprintSize;
             public bool IsVehicle, ManualMove;
             public byte FactionId;
             public bool IsWalkable(int index) => Job.Walkable[index].Value != 0;
-            public bool IsSurfaceCellPathable(int x, int z) => Job.IsSurfaceCellPathable(new int2(x, z), IsVehicle);
-            public bool IsSurfaceFootprintPathable(int x, int z) => Job.IsSurfaceFootprintPathable(new int2(x, z), FootprintSize, IsVehicle);
+            public bool IsSurfaceCellPathable(int x, int z) => IsSurfacePathable(x, z, false);
+            public bool IsSurfaceFootprintPathable(int x, int z) => IsSurfacePathable(x, z, true);
+
+            private bool IsSurfacePathable(int x, int z, bool footprint)
+            {
+                long cellCount = (long)Job.Grid.Width * Job.Grid.Height;
+                if (SurfaceCache == null || Job.Grid.Width <= 0 || Job.Grid.Height <= 0 ||
+                    cellCount > int.MaxValue || cellCount != Job.GridSize ||
+                    (uint)x >= (uint)Job.Grid.Width || (uint)z >= (uint)Job.Grid.Height)
+                {
+                    return ComputeSurfacePathable(x, z, footprint);
+                }
+
+                int cellIndex = x + z * Job.Grid.Width;
+                int slot = (int)(unchecked((uint)cellIndex * 2654435761u) >> 24);
+                ref SurfaceQueryCacheEntry entry = ref SurfaceCache[slot];
+                byte ready = footprint ? (byte)4 : (byte)1;
+                byte result = footprint ? (byte)8 : (byte)2;
+                if (entry.CellX == x && entry.CellZ == z && (entry.Flags & ready) != 0)
+                    return (entry.Flags & result) != 0;
+
+                bool pathable = ComputeSurfacePathable(x, z, footprint);
+                if (entry.CellX != x || entry.CellZ != z)
+                {
+                    entry.CellX = x;
+                    entry.CellZ = z;
+                    entry.Flags = 0;
+                }
+                entry.Flags = (byte)((entry.Flags & ~result) | ready | (pathable ? result : 0));
+                return pathable;
+            }
+
+            private bool ComputeSurfacePathable(int x, int z, bool footprint)
+            {
+                return footprint
+                    ? Job.IsSurfaceFootprintPathable(new int2(x, z), FootprintSize, IsVehicle)
+                    : Job.IsSurfaceCellPathable(new int2(x, z), IsVehicle);
+            }
             public bool CanPlace(int x, int z, int cx, int cz) => UnitPathPlacementValidation.CanPlaceForPathing(
                 Job.Grid, Job.Walkable, Job.DynamicBlocked, Job.FriendlyPassFactionIds, Job.Occupied,
                 Job.LiveUnitEntities, Job.LiveUnitGrids, Job.LiveUnitFootprints, Job.LiveUnitManualGroupMembers,

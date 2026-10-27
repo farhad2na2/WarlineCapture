@@ -76,12 +76,23 @@ namespace Game.Runtime
 
         public void OnDestroy(ref SystemState state)
         {
+#if WARLINE_SOURCE_PATH_JOB_SCHEDULING
+            System.Exception firstCleanupError=null;
+            try{DisposePendingPathJob(ref state);}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            try{_scratchWorkspace.Dispose();}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            try{_gridSnapshot.Dispose();}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            try{_reservedGoals.Dispose();}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            try{_coarseWorkspace.Dispose();}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            try{_requestBuffers.Dispose();}catch(System.Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref firstCleanupError,error);}
+            if(firstCleanupError!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(firstCleanupError).Throw();
+#else
             DisposePendingPathJob(ref state);
             _scratchWorkspace.Dispose();
             _gridSnapshot.Dispose();
             _reservedGoals.Dispose();
             _coarseWorkspace.Dispose();
             _requestBuffers.Dispose();
+#endif
         }
 
         public void OnUpdate(ref SystemState state)

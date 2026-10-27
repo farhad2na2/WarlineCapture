@@ -276,7 +276,8 @@ namespace Game.Runtime
             {
                 if (skipIssue[i])
                 {
-                    if (acceptedUnits.IsCreated) { acceptedUnits.Add(entities[i]); issuedMoveOrder = true; }
+                    issuedMoveOrder = true;
+                    if (acceptedUnits.IsCreated) acceptedUnits.Add(entities[i]);
                     if(publicAcceptedUnits.IsCreated){publicAcceptedUnits.Add(entities[i]);publicAcceptedGoals.Add(issuedGoals[i]);}
                     continue;
                 }

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "scope": "MissionOwnedDeclaredOriginalFields_SourceOnly_PendingPublicExporter",
+  "target": {
+    "catalog_id": "S098",
+    "canonical_map_code": "AP",
+    "objective_code": "BA",
+    "army_code": "G",
+    "start_code": "E",
+    "size_id": 1,
+    "difficulty_id": 2,
+    "seed": 104827
+  },
+  "original_compiled_setup_hash_evidence": 2866543351,
+  "profiles": {
+    "objective": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset",
+    "army": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+    "start": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+    "economy": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+    "upgrades": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset",
+    "intel": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+    "roles": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset"
+  },
+  "existing_campaign_source": {
+    "operation_map_id": "opmap.skirmish.cityedgeairfield_prepared",
+    "source_content_hash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+    "assets": {
+      "definition": {
+        "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+        "sha256": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d"
+      },
+      "grid": {
+        "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset",
+        "sha256": "b95af246c0a2cfb8727188710c067130a88788f10ebca64d8a6fe2f3d6817dee"
+      },
+      "surface": {
+        "source_path": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset",
+        "sha256": "88dea13427cae71c7eb0ae70abfeba10e0eab6a83f874ec91518d36f5d2450d7"
+      }
+    }
+  },
+  "external_inputs_required": {
+    "physical_readback": {
+      "sha256": "ea39549b1db4c0e1c2661a43825e74a48758e965bfb844c417be6b29acb6fef0",
+      "role": "ActualOriginalCampaignPhysicalReadDomain_ExternalPathSuppliedByCaller"
+    },
+    "native_factory_origin": {
+      "sha256": "15364a49f5859ed8108047ccc10fb207786d75a0876799bdcc603812379cd2a3",
+      "role": "QualifiedOriginalNativeFactoryOrigin_ExternalPathSuppliedByCaller"
+    },
+    "rotation_function_facts": {
+      "role": "QualifiedOriginalNativeRotationFunctionReferenceSet_KeepOriginalCaptureProvenance_ExternalPathSuppliedByCaller"
+    }
+  },
+  "compiled_anchors_are_preferred_points": true,
+  "headless_fallback_rectangles_included": false,
+  "source_fit_certified": false,
+  "mission_ready": false,
+  "native_camera_context_qualified": false,
+  "active_mission_water_qualified": false,
+  "public_exporter_ready": false
+}

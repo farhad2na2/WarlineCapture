@@ -9,7 +9,8 @@
     }
   },
   "compiler_defines": [
-    "WARLINE_SOURCE_PATH_JOB_SCHEDULING"
+    "WARLINE_SOURCE_PATH_JOB_SCHEDULING",
+    "WARLINE_SOURCE_DECLARED_COMPILER_EXPORT"
   ],
   "sources": [
     {
@@ -9493,6 +9494,14 @@
       "role": "data_decoder",
       "contains_original_gameplay": false,
       "scope": "Explicit runtime experimental configuration/factory qualification; no mission-ID branches or world orchestration."
+    },
+    {
+      "id": "SourceMetadataCompatibility.DeclaredExport.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceMetadataCompatibility.DeclaredExport.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "DATA-only originalcompiler/context export through existing author owner; sameoriginalnativefactoryguards/noWorld."
     }
   ],
   "runtime_backend": "TypedGroundS026V1",

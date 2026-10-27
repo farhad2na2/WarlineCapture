@@ -1,0 +1,459 @@
+{
+  "CatalogId": "S074",
+  "ContentVersion": 1,
+  "DefinitionId": "skirmish.s074",
+  "DefinitionVersion": 2,
+  "LayoutId": "layout.skirmish.s074.instance-preferences.draft",
+  "ObjectiveKind": 1,
+  "ReviewedLayoutSemanticFingerprint": "5ff746970749f103538e6496cac5bd27876bac1e5aed0f2f4e30d4aba919dd4c",
+  "SchemaVersion": 1,
+  "SourceContentHash": "2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778",
+  "SourceOperationMapId": "opmap.skirmish.refinerydistrict_prepared",
+  "SourceSceneGuid": "2f9acf3e55e194fb8941de959613dd4f",
+  "SourceSemanticFingerprint": "ba24db7991d038f3a4e50e83f986ae0a945c53c6f2a27e6f0aee44c4dea7d602",
+  "ValueFormat": 2,
+  "Variants": [
+    {
+      "Areas": null,
+      "Difficulty": 2,
+      "Framing": [
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3cf5c28f"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 1,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3cf5c28f"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 2,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3cf5c28f"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 3,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3cf5c28f"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 4,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3cf5c28f"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 5,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 6,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 7,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 8,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 9,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 10,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 12,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 13,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41a013f0"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3ee66666"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3d5fac43"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 14,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 127
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "414d3b8d"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3ee66666"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3ccce735"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 17,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 127
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 21,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        },
+        {
+          "Evidence": 15,
+          "MaximumSubjectElevation": {
+            "float_bits": "41100000"
+          },
+          "MaximumViewportDimension": {
+            "float_bits": "3f4ccccd"
+          },
+          "MinimumSubjectElevation": {
+            "float_bits": "00000000"
+          },
+          "MinimumViewportHeight": {
+            "float_bits": "3c23d70a"
+          },
+          "ObserveEnemy": true,
+          "ObservePlayer": true,
+          "Role": 22,
+          "SafeEdgeFraction": {
+            "float_bits": "3ca3d70a"
+          },
+          "Stages": 71
+        }
+      ],
+      "OpeningFocusRole": 1,
+      "OpeningFocusSmoothSeconds": {
+        "float_bits": "40100000"
+      },
+      "OpeningFocusStableActorId": "role.rifle.1.0.0",
+      "ReviewedAreaLogicalFingerprint": null,
+      "ReviewedGeometryFingerprint": null,
+      "ReviewedViewFingerprint": "21e01be9df0d436c6f79842e1201bc1eb173cf45cfbf876ef8e286b6d7bab01a",
+      "Size": 1,
+      "SourceMaximumElevation": {
+        "float_bits": "41100000"
+      },
+      "SourceMinimumElevation": {
+        "float_bits": "00000000"
+      },
+      "View": {
+        "ActiveMapContentHash": null,
+        "ActiveMapSourceIdentityHash": null,
+        "ActiveOperationMapId": null,
+        "AircraftFieldOfView": {
+          "float_bits": "42700000"
+        },
+        "AircraftMaximumDistance": {
+          "float_bits": "43960000"
+        },
+        "AircraftMinimumDistance": {
+          "float_bits": "3f800000"
+        },
+        "AircraftPitch": {
+          "float_bits": "42480000"
+        },
+        "AircraftYaw": {
+          "float_bits": "00000000"
+        },
+        "AuthoredGenericBaseAssault": true,
+        "AuthoredNonBaseAssault": false,
+        "BuildFieldOfView": {
+          "float_bits": "42480000"
+        },
+        "BuildHeight": {
+          "float_bits": "41a00000"
+        },
+        "CampaignSourceContentHash": "2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778",
+        "CatalogId": "S074",
+        "ContentVersion": 1,
+        "DefinitionId": "skirmish.s074",
+        "DefinitionVersion": 2,
+        "GroundReferenceY": {
+          "float_bits": "00000000"
+        },
+        "InfantryMinimumViewportHeight": {
+          "float_bits": "3cf5c28f"
+        },
+        "LayoutContentHash": "unqualified.logical.instance-preferences",
+        "MaxHeight": {
+          "float_bits": "41a00000"
+        },
+        "MaximumGroundCenterSlantDistance": {
+          "float_bits": "42000000"
+        },
+        "MinHeight": {
+          "float_bits": "41400000"
+        },
+        "NormalFieldOfView": {
+          "float_bits": "42380000"
+        },
+        "NormalHeight": {
+          "float_bits": "41900000"
+        },
+        "ObjectiveKind": 1,
+        "OpeningFocusPolicy": 0,
+        "OpeningFocusStableActorId": null,
+        "Pitch": {
+          "float_bits": "42820000"
+        },
+        "PlaneMaximumViewportDimension": {
+          "float_bits": "3ee66666"
+        },
+        "SchemaVersion": 1,
+        "UseSeparateAircraftYaw": false,
+        "Yaw": {
+          "float_bits": "420c0000"
+        }
+      }
+    }
+  ]
+}

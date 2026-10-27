@@ -1,0 +1,887 @@
+{
+  "layoutId": "layout.skirmish.s074.instance-preferences.draft",
+  "operationMapId": "opmap.skirmish.refinerydistrict_prepared",
+  "contentVersion": 2,
+  "contentHash": "unqualified.logical.instance-preferences",
+  "worldWidthMetres": 464,
+  "worldDepthMetres": 99.0,
+  "originX": 413,
+  "originZ": 320.0,
+  "cellSize": 1.0,
+  "anchors": [
+    {
+      "AnchorId": "anchor.s074.instance.0",
+      "RoleId": "base.player",
+      "NormalizedU": 0.09267241379310345,
+      "NormalizedV": 0.7424242424242424,
+      "WorldX": 456.0,
+      "WorldZ": 393.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.1",
+      "RoleId": "base.enemy",
+      "NormalizedU": 0.8857758620689655,
+      "NormalizedV": 0.3787878787878788,
+      "WorldX": 824.0,
+      "WorldZ": 357.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.2",
+      "RoleId": "staging.player",
+      "NormalizedU": 0.12284482758620689,
+      "NormalizedV": 0.3383838383838384,
+      "WorldX": 470.0,
+      "WorldZ": 353.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.3",
+      "RoleId": "staging.enemy",
+      "NormalizedU": 0.7887931034482759,
+      "NormalizedV": 0.7424242424242424,
+      "WorldX": 779.0,
+      "WorldZ": 393.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.4",
+      "RoleId": "instance.building.oil_pump.player",
+      "NormalizedU": 0.1540948275862069,
+      "NormalizedV": 0.42424242424242425,
+      "WorldX": 484.5,
+      "WorldZ": 362.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.5",
+      "RoleId": "instance.building.oil_pump.enemy",
+      "NormalizedU": 0.8696120689655172,
+      "NormalizedV": 0.7272727272727273,
+      "WorldX": 816.5,
+      "WorldZ": 392.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.6",
+      "RoleId": "economy.player",
+      "NormalizedU": 0.18211206896551724,
+      "NormalizedV": 0.7424242424242424,
+      "WorldX": 497.5,
+      "WorldZ": 393.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.7",
+      "RoleId": "economy.enemy",
+      "NormalizedU": 0.9730603448275862,
+      "NormalizedV": 0.12626262626262627,
+      "WorldX": 864.5,
+      "WorldZ": 332.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.8",
+      "RoleId": "instance.building.fuel_bladder.player",
+      "NormalizedU": 0.15301724137931033,
+      "NormalizedV": 0.35353535353535354,
+      "WorldX": 484.0,
+      "WorldZ": 355.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.9",
+      "RoleId": "instance.building.fuel_bladder.enemy",
+      "NormalizedU": 0.959051724137931,
+      "NormalizedV": 0.8787878787878788,
+      "WorldX": 858.0,
+      "WorldZ": 407.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.10",
+      "RoleId": "instance.building.fabrication_depot.player",
+      "NormalizedU": 0.22952586206896552,
+      "NormalizedV": 0.696969696969697,
+      "WorldX": 519.5,
+      "WorldZ": 389.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.11",
+      "RoleId": "instance.building.fabrication_depot.enemy",
+      "NormalizedU": 0.7726293103448276,
+      "NormalizedV": 0.12121212121212122,
+      "WorldX": 771.5,
+      "WorldZ": 332.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.12",
+      "RoleId": "service.player",
+      "NormalizedU": 0.17349137931034483,
+      "NormalizedV": 0.6363636363636364,
+      "WorldX": 493.5,
+      "WorldZ": 383.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.13",
+      "RoleId": "service.enemy",
+      "NormalizedU": 0.9428879310344828,
+      "NormalizedV": 0.48484848484848486,
+      "WorldX": 850.5,
+      "WorldZ": 368.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.14",
+      "RoleId": "instance.building.watchtower.approach.player",
+      "NormalizedU": 0.16702586206896552,
+      "NormalizedV": 0.6464646464646465,
+      "WorldX": 490.5,
+      "WorldZ": 384.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.15",
+      "RoleId": "instance.building.watchtower.approach.enemy",
+      "NormalizedU": 0.9493534482758621,
+      "NormalizedV": 0.48484848484848486,
+      "WorldX": 853.5,
+      "WorldZ": 368.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.16",
+      "RoleId": "instance.building.satellite_dish.player",
+      "NormalizedU": 0.13577586206896552,
+      "NormalizedV": 0.6666666666666666,
+      "WorldX": 476.0,
+      "WorldZ": 386.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.17",
+      "RoleId": "instance.building.satellite_dish.enemy",
+      "NormalizedU": 0.9267241379310345,
+      "NormalizedV": 0.3939393939393939,
+      "WorldX": 843.0,
+      "WorldZ": 359.0
+    },
+    {
+      "AnchorId": "anchor.s074.instance.18",
+      "RoleId": "air.player",
+      "NormalizedU": 0.017241379310344827,
+      "NormalizedV": 0.6919191919191919,
+      "WorldX": 421.0,
+      "WorldZ": 388.5
+    },
+    {
+      "AnchorId": "anchor.s074.instance.19",
+      "RoleId": "air.enemy",
+      "NormalizedU": 0.7672413793103449,
+      "NormalizedV": 0.3888888888888889,
+      "WorldX": 769.0,
+      "WorldZ": 358.5
+    },
+    {
+      "AnchorId": "anchor.s074.infantry.player",
+      "RoleId": "infantry.player",
+      "NormalizedU": 0.0625,
+      "NormalizedV": 0.12626262626262627,
+      "WorldX": 442.0,
+      "WorldZ": 332.5
+    },
+    {
+      "AnchorId": "anchor.s074.infantry.enemy",
+      "RoleId": "infantry.enemy",
+      "NormalizedU": 0.822198275862069,
+      "NormalizedV": 0.12626262626262627,
+      "WorldX": 794.5,
+      "WorldZ": 332.5
+    },
+    {
+      "AnchorId": "anchor.s074.vehicle.player",
+      "RoleId": "vehicle.player",
+      "NormalizedU": 0.1584051724137931,
+      "NormalizedV": 0.16666666666666666,
+      "WorldX": 486.5,
+      "WorldZ": 336.5
+    },
+    {
+      "AnchorId": "anchor.s074.vehicle.enemy",
+      "RoleId": "vehicle.enemy",
+      "NormalizedU": 0.915948275862069,
+      "NormalizedV": 0.16161616161616163,
+      "WorldX": 838.0,
+      "WorldZ": 336.0
+    },
+    {
+      "AnchorId": "anchor.s074.rally.player",
+      "RoleId": "rally.player",
+      "NormalizedU": 0.17025862068965517,
+      "NormalizedV": 0.48484848484848486,
+      "WorldX": 492.0,
+      "WorldZ": 368.0
+    },
+    {
+      "AnchorId": "anchor.s074.rally.enemy",
+      "RoleId": "rally.enemy",
+      "NormalizedU": 0.9288793103448276,
+      "NormalizedV": 0.48484848484848486,
+      "WorldX": 844.0,
+      "WorldZ": 368.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.0.0",
+      "RoleId": "approach.0.0",
+      "NormalizedU": 0.17456896551724138,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 494.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.0.1",
+      "RoleId": "approach.0.1",
+      "NormalizedU": 0.22629310344827586,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 518.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.0.2",
+      "RoleId": "approach.0.2",
+      "NormalizedU": 0.7521551724137931,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 762.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.0.3",
+      "RoleId": "approach.0.3",
+      "NormalizedU": 0.8038793103448276,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 786.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.1.0",
+      "RoleId": "approach.1.0",
+      "NormalizedU": 0.17456896551724138,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 494.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.1.1",
+      "RoleId": "approach.1.1",
+      "NormalizedU": 0.22629310344827586,
+      "NormalizedV": 0.6464646464646465,
+      "WorldX": 518.0,
+      "WorldZ": 384.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.1.2",
+      "RoleId": "approach.1.2",
+      "NormalizedU": 0.7521551724137931,
+      "NormalizedV": 0.6464646464646465,
+      "WorldX": 762.0,
+      "WorldZ": 384.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.1.3",
+      "RoleId": "approach.1.3",
+      "NormalizedU": 0.8038793103448276,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 786.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.2.0",
+      "RoleId": "approach.2.0",
+      "NormalizedU": 0.17456896551724138,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 494.0,
+      "WorldZ": 356.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.2.1",
+      "RoleId": "approach.2.1",
+      "NormalizedU": 0.22629310344827586,
+      "NormalizedV": 0.08080808080808081,
+      "WorldX": 518.0,
+      "WorldZ": 328.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.2.2",
+      "RoleId": "approach.2.2",
+      "NormalizedU": 0.7521551724137931,
+      "NormalizedV": 0.08080808080808081,
+      "WorldX": 762.0,
+      "WorldZ": 328.0
+    },
+    {
+      "AnchorId": "anchor.s074.approach.2.3",
+      "RoleId": "approach.2.3",
+      "NormalizedU": 0.8038793103448276,
+      "NormalizedV": 0.36363636363636365,
+      "WorldX": 786.0,
+      "WorldZ": 356.0
+    }
+  ],
+  "routes": [
+    {
+      "RouteId": "route.s074.logical.0",
+      "WaypointAnchorIds": [
+        "anchor.s074.approach.0.0",
+        "anchor.s074.approach.0.1",
+        "anchor.s074.approach.0.2",
+        "anchor.s074.approach.0.3"
+      ],
+      "Kind": 1,
+      "LengthMetres": 292.0,
+      "WidthMetres": 8,
+      "InfantryTransitSeconds": 73.0,
+      "GroundTransitSeconds": 36.5,
+      "AirTransitSeconds": 0,
+      "InfantryFirstContactSeconds": 36.5,
+      "GroundFirstContactSeconds": 18.25,
+      "ProvisionalTimes": true,
+      "AllowsVehicles": true,
+      "AllowsAircraft": false
+    },
+    {
+      "RouteId": "route.s074.logical.1",
+      "WaypointAnchorIds": [
+        "anchor.s074.approach.1.0",
+        "anchor.s074.approach.1.1",
+        "anchor.s074.approach.1.2",
+        "anchor.s074.approach.1.3"
+      ],
+      "Kind": 2,
+      "LengthMetres": 317.75635565834307,
+      "WidthMetres": 8,
+      "InfantryTransitSeconds": 79.43908891458577,
+      "GroundTransitSeconds": 39.71954445729288,
+      "AirTransitSeconds": 0,
+      "InfantryFirstContactSeconds": 39.71954445729288,
+      "GroundFirstContactSeconds": 19.85977222864644,
+      "ProvisionalTimes": true,
+      "AllowsVehicles": true,
+      "AllowsAircraft": false
+    },
+    {
+      "RouteId": "route.s074.logical.2",
+      "WaypointAnchorIds": [
+        "anchor.s074.approach.2.0",
+        "anchor.s074.approach.2.1",
+        "anchor.s074.approach.2.2",
+        "anchor.s074.approach.2.3"
+      ],
+      "Kind": 3,
+      "LengthMetres": 317.75635565834307,
+      "WidthMetres": 8,
+      "InfantryTransitSeconds": 79.43908891458577,
+      "GroundTransitSeconds": 39.71954445729288,
+      "AirTransitSeconds": 0,
+      "InfantryFirstContactSeconds": 39.71954445729288,
+      "GroundFirstContactSeconds": 19.85977222864644,
+      "ProvisionalTimes": true,
+      "AllowsVehicles": true,
+      "AllowsAircraft": false
+    }
+  ],
+  "pads": [
+    {
+      "PadId": "pad.s074.instance.0",
+      "AnchorId": "anchor.s074.instance.0",
+      "RoleId": "base.player",
+      "Kind": 1,
+      "CenterX": 456.0,
+      "CenterZ": 393.5,
+      "WidthMetres": 28,
+      "DepthMetres": 15,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.1",
+      "AnchorId": "anchor.s074.instance.1",
+      "RoleId": "base.enemy",
+      "Kind": 1,
+      "CenterX": 824.0,
+      "CenterZ": 357.5,
+      "WidthMetres": 28,
+      "DepthMetres": 15,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.2",
+      "AnchorId": "anchor.s074.instance.2",
+      "RoleId": "staging.player",
+      "Kind": 2,
+      "CenterX": 470.0,
+      "CenterZ": 353.5,
+      "WidthMetres": 14,
+      "DepthMetres": 7,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.3",
+      "AnchorId": "anchor.s074.instance.3",
+      "RoleId": "staging.enemy",
+      "Kind": 2,
+      "CenterX": 779.0,
+      "CenterZ": 393.5,
+      "WidthMetres": 14,
+      "DepthMetres": 7,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.4",
+      "AnchorId": "anchor.s074.instance.4",
+      "RoleId": "instance.building.oil_pump.player",
+      "Kind": 7,
+      "CenterX": 484.5,
+      "CenterZ": 362.0,
+      "WidthMetres": 15,
+      "DepthMetres": 4,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.5",
+      "AnchorId": "anchor.s074.instance.5",
+      "RoleId": "instance.building.oil_pump.enemy",
+      "Kind": 7,
+      "CenterX": 816.5,
+      "CenterZ": 392.0,
+      "WidthMetres": 15,
+      "DepthMetres": 4,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.6",
+      "AnchorId": "anchor.s074.instance.6",
+      "RoleId": "economy.player",
+      "Kind": 7,
+      "CenterX": 497.5,
+      "CenterZ": 393.5,
+      "WidthMetres": 25,
+      "DepthMetres": 15,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.7",
+      "AnchorId": "anchor.s074.instance.7",
+      "RoleId": "economy.enemy",
+      "Kind": 7,
+      "CenterX": 864.5,
+      "CenterZ": 332.5,
+      "WidthMetres": 25,
+      "DepthMetres": 15,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.8",
+      "AnchorId": "anchor.s074.instance.8",
+      "RoleId": "instance.building.fuel_bladder.player",
+      "Kind": 7,
+      "CenterX": 484.0,
+      "CenterZ": 355.0,
+      "WidthMetres": 14,
+      "DepthMetres": 10,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.9",
+      "AnchorId": "anchor.s074.instance.9",
+      "RoleId": "instance.building.fuel_bladder.enemy",
+      "Kind": 7,
+      "CenterX": 858.0,
+      "CenterZ": 407.0,
+      "WidthMetres": 14,
+      "DepthMetres": 10,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.10",
+      "AnchorId": "anchor.s074.instance.10",
+      "RoleId": "instance.building.fabrication_depot.player",
+      "Kind": 7,
+      "CenterX": 519.5,
+      "CenterZ": 389.0,
+      "WidthMetres": 19,
+      "DepthMetres": 16,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.11",
+      "AnchorId": "anchor.s074.instance.11",
+      "RoleId": "instance.building.fabrication_depot.enemy",
+      "Kind": 7,
+      "CenterX": 771.5,
+      "CenterZ": 332.0,
+      "WidthMetres": 19,
+      "DepthMetres": 16,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.12",
+      "AnchorId": "anchor.s074.instance.12",
+      "RoleId": "service.player",
+      "Kind": 8,
+      "CenterX": 493.5,
+      "CenterZ": 383.0,
+      "WidthMetres": 3,
+      "DepthMetres": 4,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.13",
+      "AnchorId": "anchor.s074.instance.13",
+      "RoleId": "service.enemy",
+      "Kind": 8,
+      "CenterX": 850.5,
+      "CenterZ": 368.0,
+      "WidthMetres": 3,
+      "DepthMetres": 4,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.14",
+      "AnchorId": "anchor.s074.instance.14",
+      "RoleId": "instance.building.watchtower.approach.player",
+      "Kind": 8,
+      "CenterX": 490.5,
+      "CenterZ": 384.0,
+      "WidthMetres": 3,
+      "DepthMetres": 4,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.15",
+      "AnchorId": "anchor.s074.instance.15",
+      "RoleId": "instance.building.watchtower.approach.enemy",
+      "Kind": 8,
+      "CenterX": 853.5,
+      "CenterZ": 368.0,
+      "WidthMetres": 3,
+      "DepthMetres": 4,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.16",
+      "AnchorId": "anchor.s074.instance.16",
+      "RoleId": "instance.building.satellite_dish.player",
+      "Kind": 8,
+      "CenterX": 476.0,
+      "CenterZ": 386.0,
+      "WidthMetres": 10,
+      "DepthMetres": 10,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.17",
+      "AnchorId": "anchor.s074.instance.17",
+      "RoleId": "instance.building.satellite_dish.enemy",
+      "Kind": 8,
+      "CenterX": 843.0,
+      "CenterZ": 359.0,
+      "WidthMetres": 10,
+      "DepthMetres": 10,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.instance.18",
+      "AnchorId": "anchor.s074.instance.18",
+      "RoleId": "air.player",
+      "Kind": 6,
+      "CenterX": 421.0,
+      "CenterZ": 388.5,
+      "WidthMetres": 16,
+      "DepthMetres": 15,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.instance.19",
+      "AnchorId": "anchor.s074.instance.19",
+      "RoleId": "air.enemy",
+      "Kind": 6,
+      "CenterX": 769.0,
+      "CenterZ": 358.5,
+      "WidthMetres": 16,
+      "DepthMetres": 15,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.infantry.player",
+      "AnchorId": "anchor.s074.infantry.player",
+      "RoleId": "infantry.player",
+      "Kind": 3,
+      "CenterX": 442.0,
+      "CenterZ": 332.5,
+      "WidthMetres": 24.0,
+      "DepthMetres": 25.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.infantry.enemy",
+      "AnchorId": "anchor.s074.infantry.enemy",
+      "RoleId": "infantry.enemy",
+      "Kind": 3,
+      "CenterX": 794.5,
+      "CenterZ": 332.5,
+      "WidthMetres": 25.0,
+      "DepthMetres": 25.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.vehicle.player",
+      "AnchorId": "anchor.s074.vehicle.player",
+      "RoleId": "vehicle.player",
+      "Kind": 4,
+      "CenterX": 486.5,
+      "CenterZ": 336.5,
+      "WidthMetres": 27.0,
+      "DepthMetres": 27.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.vehicle.enemy",
+      "AnchorId": "anchor.s074.vehicle.enemy",
+      "RoleId": "vehicle.enemy",
+      "Kind": 4,
+      "CenterX": 838.0,
+      "CenterZ": 336.0,
+      "WidthMetres": 22.0,
+      "DepthMetres": 26.0,
+      "FactionId": 2
+    },
+    {
+      "PadId": "pad.s074.rally.player",
+      "AnchorId": "anchor.s074.rally.player",
+      "RoleId": "rally.player",
+      "Kind": 5,
+      "CenterX": 492.0,
+      "CenterZ": 368.0,
+      "WidthMetres": 10.0,
+      "DepthMetres": 8.0,
+      "FactionId": 1
+    },
+    {
+      "PadId": "pad.s074.rally.enemy",
+      "AnchorId": "anchor.s074.rally.enemy",
+      "RoleId": "rally.enemy",
+      "Kind": 5,
+      "CenterX": 844.0,
+      "CenterZ": 368.0,
+      "WidthMetres": 10.0,
+      "DepthMetres": 8.0,
+      "FactionId": 2
+    }
+  ],
+  "worldBinding": {
+    "OriginX": 413,
+    "OriginZ": 369.5,
+    "ForwardX": 1.0,
+    "ForwardZ": 0.0,
+    "AcrossX": 0.0,
+    "AcrossZ": 1.0,
+    "ForwardMetres": 464,
+    "AcrossMetres": 99.0,
+    "PlayerAnchorId": "anchor.s074.instance.0",
+    "EnemyAnchorId": "anchor.s074.instance.1",
+    "SourceHash": "2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778",
+    "HasMeasuredDeployments": false,
+    "PlayerDeployment": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "EnemyDeployment": {
+      "x": 0.0,
+      "y": 0.0
+    },
+    "BindAllConfigurations": false
+  },
+  "bindingValueFormat": 2,
+  "structureInstancePads": [
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.barracks",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.0",
+      "PadId": "pad.s074.instance.0"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.barracks",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.1",
+      "PadId": "pad.s074.instance.1"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.ground_staging",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.2",
+      "PadId": "pad.s074.instance.2"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.ground_staging",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.3",
+      "PadId": "pad.s074.instance.3"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.oil_pump",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.4",
+      "PadId": "pad.s074.instance.4"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.oil_pump",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.5",
+      "PadId": "pad.s074.instance.5"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.refinery",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.6",
+      "PadId": "pad.s074.instance.6"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.refinery",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.7",
+      "PadId": "pad.s074.instance.7"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.fuel_bladder",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.8",
+      "PadId": "pad.s074.instance.8"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.fuel_bladder",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.9",
+      "PadId": "pad.s074.instance.9"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.fabrication_depot",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.10",
+      "PadId": "pad.s074.instance.10"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.fabrication_depot",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.11",
+      "PadId": "pad.s074.instance.11"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.watchtower",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.12",
+      "PadId": "pad.s074.instance.12"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.watchtower",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.13",
+      "PadId": "pad.s074.instance.13"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.watchtower.approach",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.14",
+      "PadId": "pad.s074.instance.14"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.watchtower.approach",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.15",
+      "PadId": "pad.s074.instance.15"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.satellite_dish",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.16",
+      "PadId": "pad.s074.instance.16"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.satellite_dish",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.17",
+      "PadId": "pad.s074.instance.17"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 1,
+      "StructureId": "building.helipad",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.18",
+      "PadId": "pad.s074.instance.18"
+    },
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "FactionId": 2,
+      "StructureId": "building.helipad",
+      "InstanceOrdinal": 0,
+      "AnchorId": "anchor.s074.instance.19",
+      "PadId": "pad.s074.instance.19"
+    }
+  ],
+  "declaredConfigurations": [
+    {
+      "SizeId": 1,
+      "DifficultyId": 2,
+      "PlayerDeployment": {
+        "x": 456.0,
+        "y": 393.5
+      },
+      "EnemyDeployment": {
+        "x": 824.0,
+        "y": 357.5
+      }
+    }
+  ]
+}

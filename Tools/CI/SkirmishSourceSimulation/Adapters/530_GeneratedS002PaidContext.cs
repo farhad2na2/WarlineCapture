@@ -19,6 +19,8 @@ namespace Game.Runtime {
    var dispatcher=availability.CreateFactionRequestDispatcher(Boundary,ActualDeliveryOwner,ReadActualConfiguredEntry,(f,id)=>productionReadModel.CountPendingProductionsForFaction(productionReadContext,f,id),(f,id)=>productionReadModel.CountRuntimeProducedUnitsForFaction(productionReadContext,f,id),true);
    var paid=new SourceAriaPaidRecruitment(Entities,Session,availability,catalog.Rows,ActualDeliveryOwner,()=>SourceS002CatalogPublicFacts.Read(Entities,Session));
    ActualCatalog=catalog;ActualAvailability=availability;ActualFactionDispatcher=dispatcher;ActualAriaPaid=paid;
+   // Diagnostic namespace/tick are actual existing values; no additional clock or gameplay write.
+   ActualDeliveryOwner.DiagnosticSession=Session;ActualDeliveryOwner.DiagnosticWorldId=WorldId;ActualDeliveryOwner.DiagnosticTick=()=>Tick;
    StartingPipeline.BindSourceReadModels(ActualUnitMetadata.Ordered.Count,ReadActualConfiguredEntry,availability.SameReadModelCostOwner,(building,local)=>{var point=ActualProductionWorld.ProducerPoint(building,new Unity.Mathematics.float3(local.x,local.y,local.z));return new Vector3(point.x,point.y,point.z);});
    InitializeActualSelectedOperationMapPublication();
   }

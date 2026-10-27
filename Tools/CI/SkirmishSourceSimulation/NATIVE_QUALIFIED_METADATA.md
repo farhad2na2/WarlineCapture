@@ -30,3 +30,79 @@ Use explicit caller-supplied path/hash descriptors for the exact qualified artif
 Production metadata checks include 68 factory/source/meta/owner-asmdef/package pins and conservative asset closures of 2010 S002 or 2014 logical S026 files, plus the actual referenced artifacts. The package manifest and lock must match the selected native epoch. An old package-epoch reference on a current source root rejects; no expected hash is waived. Full producer-source provenance and captured assembly headers remain in native artifacts. Historical `source_assemblies` DLL records are provenance; they are not invented live dependencies by recursively interpreting arbitrary JSON. Actual compiled runtime references and the production reader's consumed closure are pinned separately.
 
 Compilation, immutable fact parity and no-World metadata/camera checks do not admit a mission. Public profiles remain S002 Regular/Standard seeds104731 and1; S026 stays Planned/-1. Original engagement, home attack, expanded movement, transform and missile/runtime boundaries retain their separate readiness gates. No actor placements, runtime state, random state, budgets, clocks or outcomes are transferred by metadata projection.
+
+
+## Declared compiler inputs on a captured Campaign source
+
+`Recipes/project_native_qualified_metadata.py` also exposes
+`project_declared(...)`. The existing `project(...)` function and its native
+projection CLI are unchanged. The optional function accepts one actual selected
+compiler variant and writes the existing declared initialization/data schemas;
+it does not initialize a World or grant runtime/native/player readiness.
+
+This is **runtime admission and pinned-artifact projection only**, not a
+self-contained mission configuration or genuine-context compiler. The public
+recipe does not currently generate
+`actual_original_compiler.actual_derived_factory_context`; a qualified external
+original-compiler/context exporter must supply that pinned result. The previously
+qualified exporter used private glue and is not silently included in this payload.
+A public data-only original-compiler-to-context export seam and mission-owned
+S074/S098 logical configuration inputs are separate pending deliveries.
+
+Pass an actual original-compiler result with its genuine derived factory context,
+not a rewritten target header. If the source repository changes, regenerate that
+context through the original producer against the actual repository. The native
+factory artifact, physical readback, full source graph/layout and numeric function
+reference set remain independently pinned external inputs. Captures are not
+bundled by this recipe, and numeric-function evidence keeps its original capture
+provenance when reused by another source with the same exact input keys.
+
+The request is a JSON object matching the function's keyword parameters:
+
+- `compiler_result`, `physical`, `graph`, `layout`, `function_set`,
+  `camera_function_profile`, `initialization_template`, `bundle_template`:
+  exact `{"path": absolute_path, "sha256": digest}` descriptors.
+- `current_assets`: `definition`, `grid`, `surface` descriptors, each with the
+  current repository-relative `source_path` in addition to `path` and `sha256`.
+- `bridge_path`: the current `Adapters/SourceMetadataCompatibility.cs` source,
+  whose existing `FactorySources` roster owns the configured metadata pin subset.
+- `output`: a fresh directory. Keep the shared templates' immutable native/input
+  descriptors; the actual compiler supplies target, binding, layout and view.
+
+Run an external request without modifying the legacy CLI:
+
+```sh
+python3 -B - Tools/CI/SkirmishSourceSimulation/Recipes/project_native_qualified_metadata.py /absolute/request.json <<'PYCODE'
+import importlib.util, json, sys
+spec = importlib.util.spec_from_file_location('metadata_projection', sys.argv[1])
+module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.project_declared(**json.load(open(sys.argv[2])))
+PYCODE
+```
+
+The original schemas retain separate binding `ContentVersion` and definition
+`DefinitionVersion` domains. The native-origin projection includes its original
+six identity fields plus artifact kind and digest. Negative native provider
+indices project to JSON null. Configured metadata uses only the original factory
+owner roster; the complete native closure remains in its context/definition/unit
+provenance. Navigation uses the actual row list, and drop completeness uses the
+actual `dropClearanceBounds.bounds` array. Source/frame/array/function semantics
+remain the original runtime validators' responsibility.
+
+Compiled structure anchors are preferred points. A successful headless joint
+search may use legal fallback rectangles; do not rewrite those as compiled
+anchors or infer typed-pad, route, active-water, native camera, or player acceptance.
+Run the ordinary collector and normal CLI guards before normal World/ARIA checks.
+
+Run the focused Python pin/header controls through the existing exact-byte
+bootstrap (the schema-2 reference set is supplied externally):
+
+```sh
+python3 -B Tools/CI/tests/run_declared_admission_protocols.py --ci-root Tools/CI --mode header
+python3 -B Tools/CI/tests/run_declared_admission_protocols.py --ci-root Tools/CI --mode rotation --reference-set /absolute/qualified-reference-set.json
+```
+
+These are protocol/data checks only. Native data capture, original compiler
+roundtrip, headless placement, normal bounded runs, natural full outcomes and
+native/player acceptance remain separate evidence.

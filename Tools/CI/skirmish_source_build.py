@@ -136,6 +136,24 @@ def derived_projection_header_pins(initial):
   need(type(origin.get('artifact_sha256'))is str and re.fullmatch(r'[0-9a-f]{64}',origin['artifact_sha256'])is not None,location+'.artifact_sha256: required lowercase SHA256 in supplied derived projection')
  return pins
 
+def collect_rotation_reference_pins(rotation,descriptor):
+ if rotation.get('kind')!='SourceQualifiedOperationMapRotationReferenceSet':return
+ version=rotation.get('schema_version')
+ need(type(version)is int and version in(1,2),'Supported explicit rotation reference-set schema required')
+ if version==1:
+  descriptor(rotation['base_reference']);descriptor(rotation['supplementary_reference']);return
+ need(set(rotation)=={'schema_version','kind','scope','base_reference','captured_asset_root','supplementary_references'}and rotation['scope']=='QualifiedNativeFunctionFacts_NotNativeMissionOrRootState','Exact version2 rotation reference-set fields required')
+ root=rotation['captured_asset_root'];need(isinstance(root,str)and Path(root).is_absolute()and Path(root).is_dir(),'Explicit captured rotation asset root required')
+ descriptor(rotation['base_reference']);rows=rotation['supplementary_references'];need(isinstance(rows,list)and 0<len(rows)<=8,'Finite native rotation supplements required')
+ def exact(row):
+  need(isinstance(row,dict)and set(row)=={'path','sha256'}and isinstance(row['path'],str)and isinstance(row['sha256'],str),'Exact native rotation descriptor required')
+  return descriptor(row)
+ for row in rows:
+  need(isinstance(row,dict)and set(row)=={'reference','capture_input','function_contract'},'Exact native rotation supplement fields required')
+  native=exact(row['reference']);capture=exact(row['capture_input']);contract=exact(row['function_contract']);qualified,_=read_json_pinned(contract)
+  need(qualified.get('kind')=='QualifiedOriginalNativeRotationFunctionContract'and qualified.get('native_reference')==row['reference']and qualified.get('capture_input')==row['capture_input'],'Native rotation function contract descriptor differs')
+  # All three independent native/input/qualification files are pinned. Existing C# owner validates their complete fields, function source, native owners and raw domains.
+
 def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  if owned.require('skirmish_source_profiles').runtime_backend(inputs['mission'])!='TypedGroundS026V1':return {}
  pins={}
@@ -155,8 +173,7 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
   need(initial['configuration_qualification']==owned.require('skirmish_source_profiles').configuration_qualification(),'Explicit active configuration qualification differs')
   qualification,_=read_json_pinned(initial['configuration_qualification']['path']);need(qualification.get('compiler_context')==initial['metadata_compiler_context'],'Qualified compiler descriptor differs')
  rotation,_=read_json_pinned(initial['operation_map_rotation_reference']['path'])
- if rotation.get('kind')=='SourceQualifiedOperationMapRotationReferenceSet':
-  descriptor(rotation['base_reference']);descriptor(rotation['supplementary_reference'])
+ collect_rotation_reference_pins(rotation,descriptor)
  for key in ['definition','grid_config','surface_data']:descriptor(initial['static_map'][key])
  if initial.get('metadata_compiler_context')is not None:
   descriptor(initial['placement_domain']['original_owner_masks'])

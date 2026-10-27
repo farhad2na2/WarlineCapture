@@ -116,6 +116,26 @@ def metadata_origin_pins(initial,repo,receipt):
  need(declared==expected_origin,'Native origin consumed closure mismatch')
  return pins
 
+def derived_projection_header_pins(initial):
+ # Shape-only fast failure for supplied supported headers. C# owns provenance equality,
+ # the native epoch and every factory/semantic/hash qualification.
+ if initial.get('metadata_compiler_context')is None:return {}
+ kinds={'building_definitions':'CompilerContextDerivedSkirmishBuildingDefinitions',
+        'unit_production_metadata':'CompilerContextDerivedSkirmishUnitProductionMetadata',
+        'building_request_metadata':'CompilerContextDerivedConfiguredBuildingMetadata'}
+ pins={}
+ for name,kind in kinds.items():
+  if name not in initial:continue
+  row=initial[name];header,pin=read_json_pinned(row['path'])
+  need(pin['sha256']==row['sha256'],'Input changed: initialization.'+name)
+  pins[pin['path']]=pin['sha256']
+  if not isinstance(header,dict)or type(header.get('schema_version'))is not int or header['schema_version']!=3 or header.get('kind')!=kind or header.get('authority')!='OriginalCompilerContext_ImmutableNativeFactoryFacts_NotNativeS050':continue
+  location='$.'+name+'.native_origin';origin=header.get('native_origin')
+  need(isinstance(origin,dict),location+': required object in supplied derived projection')
+  need(type(origin.get('kind'))is str and bool(origin['kind'].strip()),location+'.kind: required nonempty string in supplied derived projection')
+  need(type(origin.get('artifact_sha256'))is str and re.fullmatch(r'[0-9a-f]{64}',origin['artifact_sha256'])is not None,location+'.artifact_sha256: required lowercase SHA256 in supplied derived projection')
+ return pins
+
 def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  if owned.require('skirmish_source_profiles').runtime_backend(inputs['mission'])!='TypedGroundS026V1':return {}
  pins={}
@@ -174,7 +194,8 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  expected_backend=owned.require('skirmish_source_profiles').runtime_backend(inputs['mission'])
  owned.require('run_skirmish_source_batch').require_build_target(receipt,inputs['mission'],inputs['seed'],expected_backend)
  need(inputs.get('runtime_backend', 'LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
- origin_pins=metadata_origin_pins(initial,repo,receipt)
+ origin_pins=derived_projection_header_pins(initial)
+ merge_pins(origin_pins,metadata_origin_pins(initial,repo,receipt))
  merge_pins(origin_pins,runtime_input_pins(initial,inputs,repo,receipt,data_repo))
  request={'runtime_backend':expected_backend,'schema_version':1,'kind':'SkirmishSourceSimulationRun','mission':inputs['mission'],'seed':inputs['seed'],'repository_root':str(data_repo),'source_repository_root':str(repo),'output_directory':str(out),'runtime_config':pin(config)}
  request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if expected_backend=='TypedGroundS026V1'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')

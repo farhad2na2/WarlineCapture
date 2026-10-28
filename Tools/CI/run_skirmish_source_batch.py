@@ -51,8 +51,13 @@ def load_jobs(path, repo):
     require(type(raw['schema_version']) is int and raw['schema_version']==1 and type(raw['jobs']) is list and 0<len(raw['jobs'])<=360, 'schema1 with 1..360 explicit jobs required')
     jobs=[];ids=set();pins={str(path):sha(path)}
     for rawjob in raw['jobs']:
-        object_keys(rawjob,{'id','mission','seed','data_bundle','timeout'}, {'build_receipt','max_ticks','configuration_qualification'})
-        job=dict(rawjob);name=job['id'];require(type(name) is str and re.fullmatch('[A-Za-z0-9][A-Za-z0-9_-]{0,63}',name) and name.casefold() not in ids,'Duplicate/unsafe job ID');ids.add(name.casefold())
+        object_keys(rawjob,{'id','mission','seed','data_bundle','timeout'}, {'build_receipt','max_ticks','configuration_qualification','source_repo','package_root','data_repo'})
+        job=dict(rawjob)
+        for root_key in ('source_repo','package_root','data_repo'):
+            if root_key in job:
+                require(type(job[root_key]) is str and Path(job[root_key]).is_absolute(), 'Absolute job root required')
+                root=Path(job[root_key]).resolve(strict=True);require(root.is_dir(), 'Job root directory required');job[root_key]=str(root)
+        name=job['id'];require(type(name) is str and re.fullmatch('[A-Za-z0-9][A-Za-z0-9_-]{0,63}',name) and name.casefold() not in ids,'Duplicate/unsafe job ID');ids.add(name.casefold())
         require(type(job['mission']) is str and re.fullmatch('[A-Z][0-9]{3}',job['mission']) and type(job['seed']) is int,'Explicit mission/string and integer seed required')
         require(type(job['timeout']) in (int,float) and math.isfinite(job['timeout']) and job['timeout']>0,'Finite positive timeout required')
         if 'max_ticks' in job: require(type(job['max_ticks']) is int and job['max_ticks']>0,'Positive integer diagnostic max_ticks required')
@@ -62,7 +67,7 @@ def load_jobs(path, repo):
             data=read_json(job[key]['path']);require(type(data)is dict,'Input JSON object required')
             if key=='data_bundle':
                 require(data.get('mission')==job['mission'] and type(data.get('seed'))is int and data['seed']==job['seed'],'Job/input identity mismatch');bundle=data
-            elif key=='build_receipt':checked_build_identity(data,job,repo,bundle)
+            elif key=='build_receipt':checked_build_identity(data,job,Path(job.get('source_repo',repo)),bundle)
             # Qualification descriptor is pinned here; the unchanged normal CLI owns its schema/target/source validation.
         jobs.append(job)
     return jobs,pins
@@ -120,10 +125,15 @@ def execute(jobs_file, output, repo, package, data_repo, run_process=launch, sto
     jobs_file=Path(jobs_file).resolve(strict=True);repo=Path(repo).resolve(strict=True);package=Path(package).resolve(strict=True);data_repo=Path(data_repo).resolve(strict=True);output=Path(output).absolute()
     require(not output.exists() and not output.is_symlink(),'Fresh batch output required; no overwrite/resume')
     cli=package/'Tools/CI/run_skirmish_source_simulation.py';require(cli.is_file(),'Normal CLI entry required')
-    jobs,pins=load_jobs(jobs_file,repo);pins[str(cli)]=sha(cli);verify(pins);output.mkdir(parents=True);write(output/'input-pins.json',pins)
+    jobs,pins=load_jobs(jobs_file,repo);pins[str(cli)]=sha(cli)
+    for job in jobs:
+        job_cli=Path(job.get('package_root',package))/'Tools/CI/run_skirmish_source_simulation.py';require(job_cli.is_file(),'Normal job CLI entry required');pins[str(job_cli)]=sha(job_cli)
+    verify(pins);output.mkdir(parents=True);write(output/'input-pins.json',pins)
     summary={'kind':'SequentialNormalSkirmishSourceBatch','schema_version':1,'status':'Running','jobs':[],'parallel':False,'native_or_player_acceptance':False}
     write(output/'batch-receipt.json',summary)
+    default_repo,default_package,default_data_repo=repo,package,data_repo
     for job in jobs:
+        repo=Path(job.get('source_repo',default_repo));package=Path(job.get('package_root',default_package));data_repo=Path(job.get('data_repo',default_data_repo));cli=package/'Tools/CI/run_skirmish_source_simulation.py'
         container=output/job['id'];container.mkdir();cli_output=container/'cli';argv=[sys.executable,'-B',str(cli),'run','--repo',str(repo),'--package-root',str(package),'--data-repo',str(data_repo),'--mission',job['mission'],'--seed',str(job['seed']),'--data-bundle',job['data_bundle']['path'],'--output',str(cli_output),'--timeout',str(job['timeout'])]
         if 'build_receipt' in job:argv+=['--build-receipt',job['build_receipt']['path']]
         if 'max_ticks' in job:argv+=['--max-ticks',str(job['max_ticks'])]

@@ -60,6 +60,7 @@ replace('MoveNewestToCell','  void MoveNewestToCell(Entity e,int2 c){if(e==Entit
 t=get(managed,'PublishManagedDeliveryReadModel',1);b=body(t);a=b.index('            if (tryGetEntityManager');b=b[a:];b=b.replace('tryGetEntityManager == null || tryGetBoundary == null ||','').replace('!tryGetEntityManager(out EntityManager entityManager)','!SourceManager(out EntityManager entityManager)').replace('!tryGetBoundary(entityManager, out Entity boundary)','!owner.World.BoundaryRead(out Entity boundary)');extra.append('bool SourceManager(out EntityManager e){e=owner.World.Em;return e!=null;}\nvoid SourcePublishCount(int activeCount){'+b+'}')
 replace('PublishDeliveryCount','  void PublishDeliveryCount(){SourcePublishCount(active.Count);}')
 exec(helper['complete_heli_fragment.py'],globals())
+exec(helper['prepare_airself.py'],globals())
 # Native named constants used by emitted methods are linked from current source, never copied numeric rules.
 constants=[]
 for src in [native,managed]:

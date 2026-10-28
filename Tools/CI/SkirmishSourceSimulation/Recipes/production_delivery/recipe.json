@@ -20,6 +20,7 @@
     "helpers/partial_generate.py",
     "helpers/prepare_ground.py",
     "helpers/prepare_heli.py",
+    "helpers/prepare_airself.py",
     "helpers/prepare_queue.py",
     "helpers/queue-bridge.cs.template",
     "helpers/source_extract.py"

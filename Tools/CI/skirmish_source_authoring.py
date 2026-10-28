@@ -58,8 +58,10 @@ def author_declared(repo,package,manifest,output,mission,seed,draft,draft_pin,bu
  for key in ['graph','layout','binding_fields','setup_matrix','metadata_source_origin']:
   row=draft[key];b.need(isinstance(row,dict)and set(row)=={'path','sha256'},'Exact declared descriptor '+key);value,pin=read_author_json(row['path'])if key!='setup_matrix'else(None,b.pin(row['path']));b.need(pin['sha256']==row['sha256'],'Declared source descriptor changed: '+key);b.merge_pins(pins,{pin['path']:pin['sha256']});request[key]={'path':pin['path'],'sha256':pin['sha256']}
   if key=='graph':
+   graph_pins={}
    for path,digest in value['source_pins'].items():
-    graph_pin=declared_graph_pin(path,digest,repo,data_repo,origin_roots);b.merge_pins(pins,{graph_pin['path']:graph_pin['sha256']})
+    graph_pin=declared_graph_pin(path,digest,repo,data_repo,origin_roots);b.need(graph_pin['path'] not in graph_pins or graph_pins[graph_pin['path']]==graph_pin['sha256'],'Conflicting declared graph pin');graph_pins[graph_pin['path']]=graph_pin['sha256']
+   b.merge_pins(pins,graph_pins)
  tools={k:Path(v).resolve(strict=True)for k,v in receipt['runtime_selection'].items()};b.need(set(tools)=={'contents','script','engine','mono','newtonsoft'},'Recorded runtime selection required');b.need(str(tools['mono'])in pins and str(tools['newtonsoft'])in pins,'Unpinned original runtime');config,extra=b.prepare_mono_config(tools,out);b.merge_pins(pins,extra);runtime=b.pin(config);request['runtime_config']={'path':runtime['path'],'sha256':runtime['sha256']};request_path=out/'authoring-request.json';b.write(request_path,request);rp=b.pin(request_path);b.merge_pins(pins,{rp['path']:rp['sha256']});exe=receipt['executable'];b.merge_pins(pins,{exe['path']:exe['sha256']});b.verify(pins);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);start=time.monotonic();timed=False
  try:
   with(out/'process.log').open('w')as log:

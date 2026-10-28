@@ -91,7 +91,11 @@ def metadata_origin_pins(initial,repo,receipt):
   root=Path(origin[name]);need(root.is_absolute()and root.is_dir(),'Explicit native origin root required')
   need(all(not x.is_symlink()for x in [root,*root.parents]),'Symlink origin root forbidden');roots.append(root.resolve(strict=True))
  pins={origin_pin['path']:origin_pin['sha256'],native_pin['path']:native_pin['sha256']};declared=origin['input_pins'];need(isinstance(declared,dict)and 68<=len(declared)<=8192,'Bounded origin file closure required')
- native_pins=native['source_pins']
+ if native.get('kind')=='OriginalS049DirectNativeFactoryContext':
+  profiles=owned.require('skirmish_source_profiles');profiles._direct_s049_target(native)
+  projection_path=exact_descriptor(native['metadata_projection'],4*1024*1024);projection,projection_pin=read_json_pinned(projection_path)
+  need(projection_pin['sha256']==native['metadata_projection']['sha256'],'S049 origin projection changed');pins[projection_pin['path']]=projection_pin['sha256'];native_pins=projection['source_pins']
+ else:native_pins=native['source_pins']
  for name,expected in declared.items():
   f=Path(name);need(f.is_absolute()and f.is_file()and not f.is_symlink(),'Regular native origin input required');canonical=f.resolve(strict=True);matches=[str(canonical.relative_to(root))for root in roots if canonical.is_relative_to(root)];need(matches and all(native_pins.get(rel)==expected for rel in matches),'Origin file differs from captured native pin');entry=pin(f);need(entry['sha256']==expected,'Native origin input changed');pins[entry['path']]=expected
  response=receipt['compiler_response'];response_path=Path(response['path']);need(pin(response_path)['sha256']==response['sha256'],'Actual compiler response changed');arguments=[json.loads(line)for line in response_path.read_text().splitlines()if line.strip()];reader_paths=[name for name in arguments if isinstance(name,str)and Path(name).is_absolute()and Path(name).name=='SourceMetadataCompatibility.cs'];need(len(reader_paths)==1,'One actual compiled metadata reader required');reader=pin(Path(reader_paths[0]));need(receipt['source_and_reference_pins'].get(reader['path'])==reader['sha256'],'Compiled metadata reader receipt pin differs');pins[reader['path']]=reader['sha256'];pins[str(response_path)]=response['sha256'];text=Path(reader_paths[0]).read_text()

@@ -59,7 +59,7 @@ namespace Game.Runtime
   static string ResolveMappedRoot(string historical)=>AutonomousWorld.ResolvePinnedPath(historical);
   internal static SourceMetadataCompatibility Load(JObject request,SkirmishResolvedSetup setup,string sourceRepo,string dataRepo)
   {
-   if(setup?.CatalogId=="S049")return LoadS049Direct(request,setup,sourceRepo,dataRepo);
+   if(setup?.CatalogId=="S049"&&(string)SourceDeclaredMissionConfiguration.Context(request)["kind"]=="OriginalS049DirectNativeFactoryContext")return LoadS049Direct(request,setup,sourceRepo,dataRepo);
    if(request["metadata_compiler_context"]!=null)return LoadDerived(request,setup,sourceRepo,dataRepo);
    if(request["metadata_compatibility"]==null){if(request["metadata_source_origin"]!=null)throw new InvalidDataException("Origin requires native metadata authority");return null;}
    string currentSourceRepo=sourceRepo;JObject origin=null;string originPath=null,originSha=null;

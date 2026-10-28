@@ -92,8 +92,10 @@ namespace Game.Runtime
             foreach (string rel in metadataSources)
             {
                 string expected = (string)sourcePins[rel];
-                if (expected == null || AutonomousWorld.Hash(File.ReadAllBytes(Path.Combine(repoRoot, rel))) != expected)
-                    throw new InvalidDataException("Relevant metadata getter/factory source changed: " + rel);
+                if (expected == null) throw new InvalidDataException("Relevant metadata getter/factory source changed: " + rel);
+                string sourceFile = Path.Combine(repoRoot, rel);
+                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_PINNED_ROOT_ORIGINAL")) || !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_PINNED_ROOT_LOCAL"))) AutonomousWorld.VerifyPinnedFile(sourceFile, expected, 64L*1024*1024);
+                else if (AutonomousWorld.Hash(File.ReadAllBytes(sourceFile)) != expected) throw new InvalidDataException("Relevant metadata getter/factory source changed: " + rel);
                 readIdentity.Add(rel, expected);
             }
             var stagedAssets = new Dictionary<string, SourceUnitPrefab>(canonicalAssets, StringComparer.Ordinal);

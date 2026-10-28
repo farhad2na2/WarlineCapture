@@ -15,7 +15,7 @@ namespace Game.Runtime
         {
             string path = (string)descriptor["path"], sha = (string)descriptor["sha256"];
             JObject domain = Parse(AutonomousWorld.PinnedFile(path, sha, 32 * 1024 * 1024));
-            binaryDirectory = Path.GetDirectoryName(path);
+            binaryDirectory = Path.GetDirectoryName(AutonomousWorld.ResolvePinnedPath(path));
             bool focused=(string)domain["kind"]=="AuthoredSkirmishPrefabReferenceData";
             if(focused&&descriptor["source_reference_path"]==null)throw new InvalidDataException("Exact focused prefab consumer projection/provenance required; full native replay remains unqualified");
             if (descriptor["source_reference_path"] == null) return domain;
@@ -23,11 +23,12 @@ namespace Game.Runtime
             string source = (string)descriptor["source_reference_path"];
             string sourceSha = (string)descriptor["source_reference_sha256"];
             if(sourceSha==QualifiedFocusedPrefabSha&&!focused)throw new InvalidDataException("Focused diagnostic namespace cannot be relabelled as another template schema");
-            var info = new FileInfo(source);
+            string sourcePhysical = AutonomousWorld.ResolvePinnedPath(source);
+            var info = new FileInfo(sourcePhysical);
             if (!Path.IsPathRooted(source) || !info.Exists || info.Length < 1 || info.Length > 128 * 1024 * 1024 ||
                 (info.Attributes & FileAttributes.ReparsePoint) != 0)
                 throw new InvalidDataException("Bounded regular original asset reference required");
-            using (var stream = File.OpenRead(source))
+            using (var stream = File.OpenRead(sourcePhysical))
             using (var hasher = SHA256.Create())
                 if (BitConverter.ToString(hasher.ComputeHash(stream)).Replace("-", "").ToLowerInvariant() != sourceSha)
                     throw new InvalidDataException("Original asset reference changed beneath projection");
@@ -35,7 +36,7 @@ namespace Game.Runtime
             JObject manifest = Parse(AutonomousWorld.PinnedFile((string)descriptor["projection_manifest_path"],
                 (string)descriptor["projection_manifest_sha256"], 1024 * 1024));
             string[] selected = focused?new[]{"schema_version","kind","authority","source_scenes","unity_version","template_namespace_id","requested_prefab_keys","requested_prefab_keys_sha256","opening_prefabs","entities","unsupported_values","replay_ready","fresh_world_allocator_exported","full_mission_initialized","native_visual_readiness","geometry_exported","consumer_rule"}:new[]{"schema_version","kind","authority","opening_prefabs","entities"};
-            if(focused){if(sourceSha!=QualifiedFocusedPrefabSha&&sourceSha!="83aec3d79c2ac069527c438be1056df9639e40f325b4a3a3c479e090996dd70f")throw new InvalidDataException("Unqualified focused native source identity");var original=Parse(File.ReadAllBytes(source));foreach(string name in selected)if(!JToken.DeepEquals(domain[name],original[name]))throw new InvalidDataException("Focused projection changed native field/namespace: "+name);if((bool?)domain["replay_ready"]!=false||(bool?)domain["full_mission_initialized"]!=false||(bool?)domain["geometry_exported"]!=false)throw new InvalidDataException("Focused diagnostic native scope must remain explicit");}
+            if(focused){if(sourceSha!=QualifiedFocusedPrefabSha&&sourceSha!="83aec3d79c2ac069527c438be1056df9639e40f325b4a3a3c479e090996dd70f")throw new InvalidDataException("Unqualified focused native source identity");var original=Parse(File.ReadAllBytes(sourcePhysical));foreach(string name in selected)if(!JToken.DeepEquals(domain[name],original[name]))throw new InvalidDataException("Focused projection changed native field/namespace: "+name);if((bool?)domain["replay_ready"]!=false||(bool?)domain["full_mission_initialized"]!=false||(bool?)domain["geometry_exported"]!=false)throw new InvalidDataException("Focused diagnostic native scope must remain explicit");}
             if ((int?)manifest["schema_version"] != 1 ||
                 (string)manifest["kind"] != "PinnedExactTemplateDomainProjection" ||
                 (string)manifest["source_path"] != source || (string)manifest["source_sha256"] != sourceSha ||

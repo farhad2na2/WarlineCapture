@@ -51,13 +51,49 @@ namespace Game.Runtime
             using var sha = SHA256.Create();
             return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
         }
-        internal static byte[] PinnedFile(string path, string expected, long maximum)
+        internal static string ResolvePinnedPath(string path)
         {
             if (!Path.IsPathRooted(path)) throw new ArgumentException("Absolute pinned source path required");
-            var info = new FileInfo(path);
+            string openedPath = path;
+            string historicalRoot = Environment.GetEnvironmentVariable("WARLINE_PINNED_ROOT_ORIGINAL");
+            string localRoot = Environment.GetEnvironmentVariable("WARLINE_PINNED_ROOT_LOCAL");
+            if (!string.IsNullOrEmpty(historicalRoot) || !string.IsNullOrEmpty(localRoot))
+            {
+                if (string.IsNullOrEmpty(historicalRoot) || string.IsNullOrEmpty(localRoot) || !Path.IsPathRooted(historicalRoot) || !Path.IsPathRooted(localRoot) || Path.GetFullPath(historicalRoot) != historicalRoot || Path.GetFullPath(localRoot) != localRoot)
+                    throw new NotSupportedException("Exact absolute relocation roots required");
+                string prefix = historicalRoot.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+                if (path == historicalRoot || path.StartsWith(prefix, StringComparison.Ordinal))
+                {
+                    if (Path.GetFullPath(path) != path) throw new NotSupportedException("Canonical historical source input required");
+                    openedPath = path == historicalRoot ? localRoot : Path.Combine(localRoot, path.Substring(prefix.Length));
+                    if (openedPath != localRoot && !openedPath.StartsWith(localRoot.TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar, StringComparison.Ordinal)) throw new NotSupportedException("Relocated source input escaped root");
+                    for (string at = openedPath; !string.IsNullOrEmpty(at); at = Path.GetDirectoryName(at))
+                    {
+                        if ((File.GetAttributes(at) & FileAttributes.ReparsePoint) != 0) throw new NotSupportedException("Symlink in relocated source input");
+                        string parent = Path.GetDirectoryName(at); if (parent == at) break;
+                    }
+                }
+            }
+            return openedPath;
+        }
+        internal static void VerifyPinnedFile(string path, string expected, long maximum)
+        {
+            string openedPath = ResolvePinnedPath(path);
+            var info = new FileInfo(openedPath);
+            if (!info.Exists || info.Length < 1 || info.Length > maximum || (info.Attributes & FileAttributes.ReparsePoint) != 0) throw new NotSupportedException("Bounded regular source input required");
+            using var stream = File.OpenRead(openedPath);
+            if (stream.Length != info.Length || stream.Length > maximum) throw new InvalidOperationException("Source input size changed: " + path);
+            using var sha = SHA256.Create();
+            string actual = BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
+            if (stream.Length != info.Length || actual != expected) throw new InvalidOperationException("Source input hash changed: " + path);
+        }
+        internal static byte[] PinnedFile(string path, string expected, long maximum)
+        {
+            string openedPath = ResolvePinnedPath(path);
+            var info = new FileInfo(openedPath);
             if (!info.Exists || info.Length < 1 || info.Length > maximum || (info.Attributes & FileAttributes.ReparsePoint) != 0)
                 throw new NotSupportedException("Bounded regular source input required");
-            byte[] bytes = File.ReadAllBytes(path);
+            byte[] bytes = File.ReadAllBytes(openedPath);
             if (bytes.LongLength != info.Length || Hash(bytes) != expected) throw new InvalidOperationException("Source input hash changed: " + path);
             return bytes;
         }

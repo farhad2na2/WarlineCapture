@@ -22,7 +22,7 @@ def verify(pins):
 
 class SmokeControls(unittest.TestCase):
  def setUp(self):
-  self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.manifest=self.root/'manifest.json';self.manifest.write_text('{}');self.b=types.SimpleNamespace(need=need,pin=pin,sha=lambda raw:hashlib.sha256(raw).hexdigest(),write=write,verify=verify);self.owned=types.SimpleNamespace(pins=lambda:{},require=lambda name:types.SimpleNamespace(no_duplicates=duplicates));self.module=types.ModuleType('smoke_control_module')
+  self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.manifest=self.root/'manifest.json';self.manifest.write_text('{}');self.b=types.SimpleNamespace(need=need,pin=pin,sha=lambda raw:hashlib.sha256(raw).hexdigest(),write=write,verify=verify);self.owned=types.SimpleNamespace(pins=lambda:{},require=lambda name:types.SimpleNamespace(no_duplicates=duplicates,relocated_path=Path));self.module=types.ModuleType('smoke_control_module')
   with mock.patch.dict(sys.modules,{'skirmish_owned_source':self.owned,'skirmish_source_build':self.b}):exec(compile((ROOT/'skirmish_source_smoke.py').read_bytes(),str(ROOT/'skirmish_source_smoke.py'),'exec'),self.module.__dict__)
  def tearDown(self):self.temp.cleanup()
  def run_smoke(self,stages,startup=True,timeout=1):

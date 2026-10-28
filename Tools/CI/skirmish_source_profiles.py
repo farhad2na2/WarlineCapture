@@ -1,5 +1,5 @@
 """Finite source execution admission; never changes catalog playability."""
-import json,hashlib,re,stat
+import json,hashlib,re,stat,os
 import skirmish_owned_source as owned
 from pathlib import Path
 PATH=Path(__file__).resolve().parent/'SkirmishSourceSimulation/admitted_profiles.json'
@@ -13,6 +13,24 @@ def _pairs(rows):
   d[k]=v
  return d
 def _nonfinite(value):raise ValueError('Non-finite configuration JSON constant: '+value)
+def relocated_root(original):
+ source=os.environ.get("WARLINE_PINNED_ROOT_ORIGINAL"); target=os.environ.get("WARLINE_PINNED_ROOT_LOCAL")
+ if not source and not target:return original
+ if not source or not target or not Path(source).is_absolute() or not Path(target).is_absolute() or os.path.normpath(source)!=source or os.path.normpath(target)!=target:raise ValueError("Exact absolute relocation roots required")
+ local=Path(target)
+ if not local.is_dir() or any(p.is_symlink() for p in [local,*local.parents]):raise ValueError("Confined real relocation root required")
+ return local if original==Path(source) else original
+def relocated_path(original):
+ original=Path(original);source=os.environ.get("WARLINE_PINNED_ROOT_ORIGINAL");target=os.environ.get("WARLINE_PINNED_ROOT_LOCAL")
+ if not source and not target:return original
+ local=relocated_root(Path(source) if source else Path("."))
+ source=Path(source)
+ if not original.is_absolute() or not original.is_relative_to(source):return original
+ rel=original.relative_to(source)
+ if not rel.parts or any(v in ("", ".", "..") for v in rel.parts):raise ValueError("Canonical relocated input required")
+ mapped=local/rel
+ if any(p.is_symlink() for p in [mapped,*mapped.parents]):raise ValueError("Symlink in relocated input")
+ return mapped
 def _check_s049_source_pin(root,rel,digest):
  f=root/rel
  if Path(rel).is_absolute() or '..' in Path(rel).parts or '.' in Path(rel).parts:raise ValueError('S049 factory/provider path invalid: '+rel)
@@ -23,7 +41,7 @@ def _direct_s049_target(c):
  if type(c)is not dict or set(c)!=fields or c['schema_version']!=1 or c['kind']!='OriginalS049DirectNativeFactoryContext' or c['authority']!='OriginalCompilerAndNativeFactoryFacts_SourceOnly' or any(c[k] is not False for k in ('world_allocated','source_fit_certified','mission_ready','runtime_loader_admitted')):raise ValueError('Exact direct S049 context required')
  def read(d,expected,limit):
   if type(d)is not dict or set(d)!={'path','sha256'} or d['sha256']!=expected or not Path(d['path']).is_absolute():raise ValueError('Exact S049 evidence descriptor required')
-  f=Path(d['path']);info=f.lstat()
+  f=relocated_path(d['path']);info=f.lstat()
   if not stat.S_ISREG(info.st_mode) or any(p.is_symlink() for p in [f,*f.parents]) or not 0<info.st_size<=limit:raise ValueError('Bounded regular S049 evidence required')
   raw=f.read_bytes()
   if hashlib.sha256(raw).hexdigest()!=expected:raise ValueError('S049 evidence changed')
@@ -31,13 +49,13 @@ def _direct_s049_target(c):
  evidence=read(c['compiler_evidence'],'d22dfae0c0280acd62fa0019b850c43f121696a6e63c8eaaabf738cd81eb76e9',64*1024*1024);projection=read(c['metadata_projection'],'fcd010234036b3334f4324e60a5a4d490daefe2d415752930f63c3f727fab16a',4*1024*1024);read(c['source_graph'],c['source_graph'].get('sha256') if isinstance(c['source_graph'],dict) and c['source_graph'].get('sha256') in {'07dfc3ca2556190d46dec8693e73e30afa7c4daae678a61a6c2158e65e214d46','26ede0965d504ce712ef15ceb8e10d5ba505adf75c58af4779dcc7955feff843','a643f41cfaf68ba267dd321915bc1040cbe89de55c8b64851f1811357d66ccfc'} else '',16*1024*1024)
  target=c['target_context'];measurement=evidence['missions'][0]['measurement'];native=projection['context']
  if evidence['catalogId']!='S049' or evidence['result']!='CollectedUnqualified' or evidence['cleanupVerified'] is not True or target!=measurement['s049CompilerTarget'] or (target['catalog_id'],target['size'],target['difficulty'],target['seed'],target['setup_hash'])!=('S049','Standard','Regular',104734,971644661) or projection['kind']!='NativeS049DirectMetadataProjection' or projection['native_artifact_sha256']!='8835633ec0589b8cdb2d9cf4f6b0184530a1fbd21a10e8b48415c0c4ee14fead' or projection['runtime_admission'] is not False or projection['mission_ready'] is not False or projection['native_launch_provider_selected'] is not False or any(native[k]!=target[k] for k in ('catalog_id','size','difficulty','seed','setup_hash')):raise ValueError('S049 native and compiler identity differs')
- root=Path(c['source_root']);
+ root=relocated_root(Path(c['source_root']));
  if not root.is_absolute() or not root.is_dir() or any(p.is_symlink() for p in [root,*root.parents]):raise ValueError('Exact S049 source root required')
  for rel,digest in projection['source_pins'].items():_check_s049_source_pin(root,rel,digest)
  if set(c['authoring_sources'])!=set(projection['authoring_source_pins']):raise ValueError('Exact S049 authoring source coverage required')
  for rel,d in c['authoring_sources'].items():
   if type(d)is not dict or set(d)!={'path','sha256'} or d['sha256']!=projection['authoring_source_pins'][rel] or not Path(d['path']).is_absolute() or '..' in Path(d['path']).parts:raise ValueError('S049 captured authoring descriptor invalid')
-  f=Path(d['path']);info=f.lstat()
+  f=relocated_path(d['path']);info=f.lstat()
   if not stat.S_ISREG(info.st_mode) or any(p.is_symlink() for p in [f,*f.parents]) or not 0<info.st_size<=4*1024*1024 or hashlib.sha256(f.read_bytes()).hexdigest()!=d['sha256']:raise ValueError('S049 captured authoring source changed')
  return target
 def _validated_context_target(context):

@@ -8,9 +8,9 @@ from skirmish_source_profiles import require_profile # admitted first by owned.l
 sys.dont_write_bytecode=True
 
 def pin(path):
- p=Path(path).resolve(strict=True);raw=p.read_bytes();return {'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
+ p=owned.require('skirmish_source_profiles').relocated_path(path).resolve(strict=True);raw=p.read_bytes();return {'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
 def verify(pins):
- for name,expected in pins.items():need(sha(Path(name).read_bytes())==expected,'Input changed: '+name)
+ for name,expected in pins.items():need(sha(owned.require('skirmish_source_profiles').relocated_path(name).read_bytes())==expected,'Input changed: '+name)
 def merge_pins(pins,other):
  verify(pins)
  for name,expected in other.items():
@@ -26,7 +26,7 @@ def merge_file_pins(pins,paths):
   added[key]=expected
  merge_pins(pins,added)
 def read_json_pinned(path):
- p=Path(path).resolve(strict=True);raw=p.read_bytes();return json.loads(raw),{'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
+ p=owned.require('skirmish_source_profiles').relocated_path(path).resolve(strict=True);raw=p.read_bytes();return json.loads(raw),{'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
 def write(path,value):
  p=Path(path);temporary=p.with_name(p.name+'.tmp');temporary.write_text(json.dumps(value,indent=2)+'\n');os.replace(temporary,p)
 def runtime_paths(repo):
@@ -169,9 +169,9 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  pins={}
  def descriptor(row,maximum=256*1024*1024):
   need(isinstance(row,dict)and isinstance(row.get('path'),str)and isinstance(row.get('sha256'),str),'Required S026 input descriptor')
-  f=Path(row['path']);need(f.is_absolute()and f.is_file()and f.stat().st_size<=maximum,'Bounded absolute S026 input required');entry=pin(f);need(entry['sha256']==row['sha256'],'S026 input changed: '+str(f));pins[entry['path']]=entry['sha256'];return f
+  f=owned.require('skirmish_source_profiles').relocated_path(row['path']);need(f.is_absolute()and f.is_file()and f.stat().st_size<=maximum,'Bounded absolute S026 input required');entry=pin(f);need(entry['sha256']==row['sha256'],'S026 input changed: '+str(f));pins[entry['path']]=entry['sha256'];return f
  runtime=inputs.get('runtime_data_inputs');need(isinstance(runtime,dict)and set(runtime)=={'schema_version','kind','data_root','data_files','source_files'}and type(runtime['schema_version'])is int and runtime['schema_version']==1 and runtime['kind']=='CurrentRoadSceneRuntimeInputs','Exact current road input contract required')
- need(Path(runtime['data_root']).is_absolute()and Path(runtime['data_root']).resolve(strict=True)==data_repo,'Road data root differs from actual selected runtime root')
+ need(Path(runtime['data_root']).is_absolute()and owned.require('skirmish_source_profiles').relocated_root(Path(runtime['data_root'])).resolve(strict=True)==data_repo,'Road data root differs from actual selected runtime root')
  datafiles={'Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset','Assets/Game/Configs/Scene/Game_RoadBuild_Config.asset.meta','Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset','Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset.meta'}
  sourcefiles={'Assets/Game/Scripts/Configs/Scene/RoadBuildSystemSceneConfigAsset.cs.meta','Assets/Game/Scripts/Configs/Scene/RuntimeCitySpawnerSystemSceneConfigAsset.cs.meta'}
  need(set(runtime['data_files'])==datafiles and set(runtime['source_files'])==sourcefiles,'Exact road runtime/current-source closure required')
@@ -237,7 +237,7 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if expected_backend=='TypedGroundS026V1'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
  if expected_backend=='TypedGroundS026V1':need(initial.get('engineering_camera_profile')==request['camera_profile'],'S026 current engineering camera descriptor differs')
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
-  row=inputs[key];p=Path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
+  row=inputs[key];p=owned.require('skirmish_source_profiles').relocated_path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks
  write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,origin_pins);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
  if prepare_only:

@@ -11,7 +11,7 @@ PENDING_COVERAGE=[
  {"id":"full_gameplay_and_player_acceptance","status":"NotChecked","reason":"Smoke does not establish autonomous outcome, nativeUI/render/result/return or player acceptance."}]
 
 def _json(path,maximum=16*1024*1024):
- p=Path(path).resolve(strict=True)
+ p=owned.require('skirmish_source_profiles').relocated_path(path).resolve(strict=True)
  with p.open('rb')as stream:raw=stream.read(maximum+1)
  b.need(len(raw)<=maximum,'Bounded smoke JSON required: '+str(p))
  value=json.loads(raw,object_pairs_hook=owned.require('skirmish_source_syntax').no_duplicates,parse_constant=lambda value:(_ for _ in()).throw(ValueError('Nonfinite JSON: '+value)))
@@ -19,7 +19,7 @@ def _json(path,maximum=16*1024*1024):
 
 def _descriptor(row,maximum=256*1024*1024):
  b.need(isinstance(row,dict)and set(row)in[{'path','sha256'},{'path','sha256','bytes'}],'Exact smoke path/sha descriptor required')
- b.need(Path(row['path']).is_absolute(),'Absolute smoke descriptor path required');path=Path(row['path']).resolve(strict=True)
+ b.need(Path(row['path']).is_absolute(),'Absolute smoke descriptor path required');path=owned.require('skirmish_source_profiles').relocated_path(row['path']).resolve(strict=True)
  b.need(path.stat().st_size<=maximum,'Smoke input exceeds bound: '+str(path))
  pin=b.pin(path);b.need(pin['sha256']==row['sha256'],'Input changed: '+str(path));b.need('bytes'not in row or type(row['bytes'])is int and row['bytes']==pin['bytes'],'Descriptor byte count changed: '+str(path));return pin
 

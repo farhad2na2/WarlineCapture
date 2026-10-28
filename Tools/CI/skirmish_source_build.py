@@ -258,6 +258,10 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  result['repository_data_scope']='CURRENT_REPOSITORY_ASSET_SNAPSHOT_PREWORLD_AND_POSTRUN; not historical asset equality'
  result['runtime_identity_scope']='Common before/after loaded files and MVIDs unchanged; late-only modules listed with post-load hashes, not pre-load equality'
  result.update(full_outcome_observed=result['status']=='SourceOutcomeObserved',expected_outcome='Victory',validation_passed=result['status']=='SourceOutcomeObserved'and raw.get('source_outcome')=='Victory',diagnostic_prefix_completed=result['status']=='BoundedPrefix',native_acceptance=False)
+ diagnostic=inputs['mission']=='S049' and any(os.environ.get(k)=='1' for k in ('WARLINE_S049_PHYSICAL_WATER_DIAGNOSTIC','WARLINE_S049_CAMERA_DIAGNOSTIC'))
+ if diagnostic:
+  result.update(validation_passed=False,diagnostic_only=True,camera_qualified=False,active_mission_water_qualified=False,source_fit_certified=False)
+  result['scope']='Unqualified S049 logical diagnostic outcome; not validation or native mission acceptance.'
  missing_manifests=[name for name in ['runtime-before-world.json','runtime-after-outcome.json']if not(out/name).is_file()]
  if missing_manifests:
   result.update(status='Failed',full_outcome_observed=False,validation_passed=False,diagnostic_prefix_completed=False)

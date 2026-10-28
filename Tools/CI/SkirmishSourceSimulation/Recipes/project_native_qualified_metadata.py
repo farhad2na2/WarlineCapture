@@ -3,9 +3,44 @@ import argparse,copy,hashlib,json,re
 from pathlib import Path
 NATIVE_SHA='06ff2cf07f069988a04f9e1740cbc9d29461207014b566fe3f2845c205e7be17'
 QUALIFIED={NATIVE_SHA:('NativeS026MetadataQualification',None),'6a55787a770c82623030907518e87343fad72b5c35d91ae293a5199128ba986a':('NativeS026LogicalBoundMetadataQualification','a6f7e1040b97c5daf76f86a9a81fcb48101863698c5f1593a2f6b00d1e70bf18'),'da1383237b7ec9bb0607596be496edc40d6a1cd9c15c12901d7dbee9731b5f37':('NativeS026LogicalBoundMetadataQualification','d0604a13ee34f00c19beb4b03be02850d5aa765592e4e33c0be3688dacd60443')}
+S049_DIRECT_SHA='8835633ec0589b8cdb2d9cf4f6b0184530a1fbd21a10e8b48415c0c4ee14fead'
+def project_s049(native_path,bridge_path,output,raw):
+ n=json.loads(raw); rows=n.get('missions',[])
+ if n.get('catalogId')!='S049' or n.get('result')!='CollectedUnqualified' or n.get('cleanupVerified') is not True or len(rows)!=1 or rows[0].get('catalogId')!='S049':raise ValueError('Exact cleaned-up S049 native report required')
+ m=rows[0]['measurement']; cap=m['s049NativeMetadataContext']; c=cap['context']; pins=cap['source_pins']
+ if cap.get('kind')!='NativeS049DirectMetadataContext' or cap.get('same_capture_pins_rechecked') is not True or any(cap.get(k) is not False for k in ('mission_initialized','runtime_state_transferred','native_launch_provider_selected')) or (c['catalog_id'],c['size'],c['difficulty'],c['seed'],c['setup_hash'])!=('S049','Standard','Regular',104734,971644661) or c.get('wrong_context_hash_rejected') is not True or c.get('wrong_target_seed_rejected') is not True:raise ValueError('Exact S049 factory context and scope required')
+ if m.get('normalThreeSizeCompilerPassed') is not True or m.get('proposedLayoutSemanticSha256')!='9e94e1a6be531a77829fa04e8672b660c3a31e7f479a51653f1c89c92a9649cb' or len(m.get('portableBinding',{}).get('fields',{}).get('Variants',[]))!=3:raise ValueError('Exact S049 V2 compiler and portable binding required')
+ bridge_raw=Path(bridge_path).read_bytes();body=re.search(r'FactorySources=\{(.*?)\};',bridge_raw.decode(),re.S).group(1);rels=['Assets/Game/Scripts/'+x for x in re.findall(r'"([^"]+)"',body)];project_root=native_path.parents[3]
+ def collect_assets(x):
+  if isinstance(x,dict):
+   if x.get('codec')=='source-asset-reference-v1' and isinstance(x.get('path'),str):yield x['path']
+   for v in x.values():yield from collect_assets(v)
+  elif isinstance(x,list):
+   for v in x:yield from collect_assets(v)
+ owner_body=re.search(r'OwnerDefinitions=\{(.*?)\};',bridge_raw.decode(),re.S).group(1);owners=['Assets/Game/Scripts/'+x for x in re.findall(r'"([^"]+)"',owner_body)];asset_paths=set(collect_assets(c['metadata']));required={p for rel in rels+owners for p in (rel,rel+'.meta')}|{p for rel in asset_paths for p in (rel,rel+'.meta')}|{'Packages/manifest.json','Packages/packages-lock.json'}
+ if not asset_paths or any(path not in pins or not (project_root/path).is_file() or hashlib.sha256((project_root/path).read_bytes()).hexdigest()!=pins[path] for path in required):raise ValueError('S049 native factory/provider pinned dependency mismatch')
+ # Candidate-only authoring files are retained separately after the project was restored.
+ saved=Path(__file__).resolve().parents[4]/'Logs/private-candidates/s049-bundle-reconstruction-20261028-r1'
+ variants={'Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundSourceFitSurvey.RefinementOutput.cs':'RefinementOutput.v2-pinned-metadata-candidate.cs.txt','Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S026LogicalBinding.cs':'S026LogicalBinding.s049-pinned-candidate.cs.txt','Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.TwoSeedMetadata.cs':'TwoSeedMetadata.s049-pinned-candidate.cs.txt'}
+ if any(hashlib.sha256((saved/name).read_bytes()).hexdigest()!=pins.get(path) for path,name in variants.items()):raise ValueError('S049 captured authoring source mismatch')
+ out=Path(output).absolute()
+ if out.exists():raise ValueError('Fresh isolated projection directory required')
+ out.mkdir(parents=True); payload={'kind':'NativeS049DirectMetadataProjection','authority':'OriginalNativeMetadataFactories_NotMissionState','native_artifact_sha256':S049_DIRECT_SHA,'context':c,'source_pins':{p:pins[p] for p in sorted(required)},'authoring_source_pins':{p:pins[p] for p in variants},'runtime_admission':False,'mission_ready':False,'native_launch_provider_selected':False}
+ (out/'s049-direct-metadata.json').write_text(json.dumps(payload,indent=2)+'\n')
+ def write(name,value):
+  f=out/name;f.write_text(json.dumps(value,indent=2)+'\n');return {'path':str(f),'sha256':hashlib.sha256(f.read_bytes()).hexdigest()}
+ origin={k:copy.deepcopy(c[k]) for k in ['catalog_id','size','difficulty','seed','setup_hash','metadata_key_sha256']};origin.update(kind='NativeS049DirectMetadataContext',artifact_sha256=S049_DIRECT_SHA)
+ common={'schema_version':2,'authority':'OriginalNativeMetadataFactories_NotMissionState','catalog_id':c['catalog_id'],'setup_hash':c['setup_hash'],'seed':c['seed'],'native_origin':origin,'unsupported_values':[],'full_mission_initialized':False,'native_visual_readiness':False}
+ meta=c['metadata'];d=copy.deepcopy(common);d.update(kind='NativeQualifiedSkirmishBuildingDefinitions',definitions=[{'key':r['prefab']['key'],'prefab':r['prefab'],'fields':r['fields']} for r in meta['buildings']],source_pins=pins);dd=write('building-definitions.json',d)
+ u=copy.deepcopy(common);u.update(kind='NativeQualifiedSkirmishUnitProductionMetadata',baked_actor_footprint_substituted=False,runtime_camera_basis_exported=False,source_pins=pins,transports=meta['transports'],units=[dict(copy.deepcopy(r),key=r['prefab']['key']) for r in meta['units']],ui_catalog_runtime_policy_sampled=False);ud=write('unit-production-metadata.json',u)
+ configured=copy.deepcopy(common);configured.update(kind='NativeQualifiedConfiguredBuildingMetadata',reference=dd,source_pins={k:pins[k] for rel in rels for k in (rel,rel+'.meta')},rows=[{'definition_index':r['index'],'key':r['prefab']['key'],'prefab':r['prefab'],'display_name':r['configured_entry']['fields']['DisplayName']['value'],'can_request':r['configured_entry']['fields']['CanRequest']['value'],'construction_catalog_index':None if r['construction_index']<0 else r['construction_index'],'scene_catalog_index':None if r['scene_index']<0 else r['scene_index']} for r in meta['buildings']]);sd=write('configured-metadata.json',configured)
+ write('projection-index.json',{'kind':'NativeS049DirectImmutableMetadataProjectionIndex','native_artifact_sha256':S049_DIRECT_SHA,'building_definitions':dd,'unit_production_metadata':ud,'building_request_metadata':sd,'runtime_admission':False,'native_launch_provider_selected':False})
+ if native_path.read_bytes()!=raw or Path(bridge_path).read_bytes()!=bridge_raw:raise ValueError('Input changed during S049 projection')
+ return {'contexts':[{'selection':{'catalog_id':'S049','size':'Standard','difficulty':'Regular','seed':104734,'setup_hash':971644661}}],'runtime_admission':False}
 def project(native_path,bridge_path,output):
  native_path=Path(native_path).resolve(strict=True);raw=native_path.read_bytes()
  native_sha=hashlib.sha256(raw).hexdigest()
+ if native_sha==S049_DIRECT_SHA:return project_s049(native_path,bridge_path,output,raw)
  if native_sha not in QUALIFIED:raise ValueError('Exact passed native artifact required')
  expected_kind,expected_logical=QUALIFIED[native_sha]
  n=json.loads(raw)

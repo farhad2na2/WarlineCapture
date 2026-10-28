@@ -8115,6 +8115,11 @@
       "path": "Assets/Game/Scripts/Systems/Pathfinding/PathUnitCoverageKernel.cs"
     },
     {
+      "id": "initial-units-spawn-components_S049.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/InitialUnitsSpawnComponents.cs"
+    },
+    {
       "id": "337_RuntimeSpawnOwnerContext.cs",
       "kind": "finite_adapter",
       "path": "Tools/CI/SkirmishSourceSimulation/Adapters/337_RuntimeSpawnOwnerContext.cs",

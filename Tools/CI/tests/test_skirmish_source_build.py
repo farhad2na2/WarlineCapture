@@ -52,7 +52,7 @@ class SourceBuildProtocolTests(unittest.TestCase):
         self.placement=self.base/'build/placement/build.json';self.placement.parent.mkdir();self.placement.write_text('{}')
         self.source=self.base/'CurrentPolicy.cs';self.source.write_text('class CurrentPolicy {}')
         self.pins={str(p.resolve()):m.sha(p.read_bytes())for p in [self.mono,self.newton,self.source]}
-        self.receipt={'schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','mission':'S002','seed':104731,'repository_root':str(self.repo),'source_and_reference_pins':dict(self.pins),'executable':m.pin(self.exe),'placement_build':str(self.placement),'runtime_selection':{k:str(v)for k,v in {'contents':self.contents,'script':self.script,'engine':self.engine,'mono':self.mono,'newtonsoft':self.newton}.items()}}
+        self.receipt={'runtime_backend':'LegacyGroundS002V1','schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','mission':'S002','seed':104731,'repository_root':str(self.repo),'source_and_reference_pins':dict(self.pins),'executable':m.pin(self.exe),'placement_build':str(self.placement),'runtime_selection':{k:str(v)for k,v in {'contents':self.contents,'script':self.script,'engine':self.engine,'mono':self.mono,'newtonsoft':self.newton}.items()}}
         self.build=self.base/'build.json';self.save_build()
         self.inputs={'schema_version':1,'mission':'S002','seed':104731}
         for name in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:

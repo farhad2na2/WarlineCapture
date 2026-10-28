@@ -25,13 +25,14 @@ internal sealed partial class SourceS002NumericCameraProvider{
   string graphPath=(string)graphRef["path"],graphSha=(string)graphRef["sha256"];
   var graph=Json(AutonomousWorld.PinnedFile(graphPath,graphSha,request["metadata_compiler_context"]!=null?16*1024*1024:4*1024*1024));
   var pins=graph["source_pins"] as JObject??throw new InvalidDataException("Source graph pins missing");
-  string definitionPath=Path.GetFullPath(Path.Combine(repositoryRoot,(string)graph["definition_path"]));
+  string definitionPath=request["metadata_compiler_context"]!=null?null:Path.GetFullPath(Path.Combine(repositoryRoot,(string)graph["definition_path"]));
   return(pins,definitionPath,graphSha);
  }
  internal static SourceS002NumericCameraProvider CreateGenerated(SkirmishResolvedSetup setup,SkirmishScenarioDefinitionConfig actualDefinition,GridConfig actualGrid,string initializationPath,string initializationSha,string repositoryRoot){
   PoseMath.Ready();
-  if(setup==null||actualDefinition==null||(setup.CatalogId!="S002"&&setup.CatalogId!="S026"&&actualDefinition.MapLayout?.DeclaredConfiguration==null)||!setup.MeasuredLayoutBound||actualGrid.Width<1||actualGrid.Height<1||!math.isfinite(actualGrid.CellSize)||actualGrid.CellSize<=0||!math.all(math.isfinite(actualGrid.Origin)))throw new NotSupportedException("Actual compiled measured source/grid constructor identity required");
+  if(setup==null||actualDefinition==null||(setup.CatalogId!="S002"&&setup.CatalogId!="S026"&&actualDefinition.MapLayout?.DeclaredConfiguration==null&&!(setup.CatalogId=="S049"&&actualDefinition.MapLayout!=null&&actualDefinition.MapLayout.WorldBinding.HasMeasuredDeployments&&actualDefinition.MapLayout.WorldBinding.BindAllConfigurations))||!setup.MeasuredLayoutBound||actualGrid.Width<1||actualGrid.Height<1||!math.isfinite(actualGrid.CellSize)||actualGrid.CellSize<=0||!math.all(math.isfinite(actualGrid.Origin)))throw new NotSupportedException("Actual compiled measured source/grid constructor identity required");
   var request=Json(AutonomousWorld.PinnedFile(initializationPath,initializationSha,2*1024*1024));
+  if(setup.CatalogId=="S049"&&!SourceDeclaredMissionConfiguration.RequireLayoutSelection(actualDefinition.MapLayout,SourceConfigurationQualification.Context(request)))throw new InvalidDataException("Exact S049 all-configuration camera layout required");
   var (pins,definitionPath,graphSha)=ReadDefinitionSourceIdentity(request,repositoryRoot);
   if(setup.CatalogId=="S002")VerifyGraphPin(pins,definitionPath);else if(request["metadata_compiler_context"]==null)SourceS026TypedConfiguration.RequireFrozenMeasuredLayout(actualDefinition.MapLayout);
   var mapRef=request["static_map"]?["definition"] as JObject??throw new InvalidDataException("Actual source map descriptor missing");

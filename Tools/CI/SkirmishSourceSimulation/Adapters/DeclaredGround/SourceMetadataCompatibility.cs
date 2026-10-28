@@ -26,7 +26,7 @@ namespace Game.Runtime
   string definitionsArtifactSha,unitsArtifactSha;
   internal readonly string TargetCatalogId;
   string derivedContextSha; JObject derivedContextDescriptor;
-  internal bool NativeQualified=>TargetCatalogId=="S026";
+  internal bool NativeQualified=>TargetCatalogId=="S026"||TargetCatalogId=="S049";
   internal bool FactoryDomainQualified=>derivedContextSha!=null||NativeQualified;
   internal bool DerivedCompilerContext=>derivedContextSha!=null;
   internal int ProjectionSchemaVersion=>derivedContextSha!=null?3:NativeQualified?2:1;
@@ -58,6 +58,7 @@ namespace Game.Runtime
   static JObject Read(JToken descriptor,string required,long bound){var d=descriptor as JObject??throw new InvalidDataException("Explicit metadata reference descriptor required");if(d.Properties().Count()!=2||d["path"]==null||(string)d["sha256"]!=required)throw new InvalidDataException("Unqualified metadata reference identity");return Parse(AutonomousWorld.PinnedFile((string)d["path"],required,bound));}
   internal static SourceMetadataCompatibility Load(JObject request,SkirmishResolvedSetup setup,string sourceRepo,string dataRepo)
   {
+   if(setup?.CatalogId=="S049")return LoadS049Direct(request,setup,sourceRepo,dataRepo);
    if(request["metadata_compiler_context"]!=null)return LoadDerived(request,setup,sourceRepo,dataRepo);
    if(request["metadata_compatibility"]==null){if(request["metadata_source_origin"]!=null)throw new InvalidDataException("Origin requires native metadata authority");return null;}
    string currentSourceRepo=sourceRepo;JObject origin=null;string originPath=null,originSha=null;
@@ -110,6 +111,13 @@ namespace Game.Runtime
     result.pins[originPath]=originSha;
    }
    result.RequireSelection(setup);result.VerifyUnchanged();return result;
+  }
+  static SourceMetadataCompatibility LoadS049Direct(JObject request,SkirmishResolvedSetup setup,string sourceRepo,string dataRepo){
+   var context=SourceConfigurationQualification.Context(request);if((string)context["kind"]!="OriginalS049DirectNativeFactoryContext"||!JToken.DeepEquals(context["metadata_projection"],request["metadata_compatibility"])||setup.Seed!=104734||setup.SizeId!=SkirmishSizeId.Standard||setup.DifficultyId!=SkirmishDifficultyId.Regular||setup.SetupHash!=971644661u||setup.SetupHash!=SkirmishSetupCompiler.ComputeHash(setup,setup.Seed))throw new InvalidDataException("Exact S049 compiled direct metadata context required");
+   const string projectionSha="fcd010234036b3334f4324e60a5a4d490daefe2d415752930f63c3f727fab16a",captureSha="8835633ec0589b8cdb2d9cf4f6b0184530a1fbd21a10e8b48415c0c4ee14fead";var p=Read(request["metadata_compatibility"],projectionSha,4*1024*1024);var target=(JObject)p["context"];var result=new SourceMetadataCompatibility((JObject)target["metadata"],setup,captureSha,target);result.nativeReferenceKind="NativeS049DirectMetadataContext";result.definitionsArtifactSha="8da5a2cce077cf6c95e85b7060d0dba3a7bbc362e083282eea3844557edddca9";result.unitsArtifactSha="2c197ed674c9a69be8e7df7b687b4cba7e876354a774eea3da5ddbdde87e8309";result.RequireSetup(setup);
+   if(string.IsNullOrEmpty(sourceRepo)||string.IsNullOrEmpty(dataRepo)||Path.GetFullPath(dataRepo)!=Path.GetFullPath((string)context["source_root"]))throw new InvalidDataException("Exact S049 source/data roots required");var pins=(JObject)p["source_pins"];foreach(var pin in pins.Properties()){string rel=pin.Name;string root=rel.StartsWith("Assets/Game/Scripts/",StringComparison.Ordinal)||rel.StartsWith("Packages/",StringComparison.Ordinal)?sourceRepo:dataRepo;result.Admit(root,rel,(string)pin.Value);}
+   foreach(var name in new[]{"metadata_compatibility","building_definitions","unit_production_metadata","building_request_metadata"}){var d=request[name]as JObject;if(d==null||d.Count!=2||d["path"]?.Type!=JTokenType.String||d["sha256"]?.Type!=JTokenType.String)throw new InvalidDataException("Exact S049 metadata artifact required: "+name);string path=Path.GetFullPath((string)d["path"]),sha=(string)d["sha256"];RequireFile(path,sha);result.pins[path]=sha;}
+   var definitions=Read(request["building_definitions"],result.definitionsArtifactSha,4*1024*1024);result.RequireDefinitions(result.definitionsArtifactSha,definitions);result.RequireUnits(result.unitsArtifactSha,Read(request["unit_production_metadata"],result.unitsArtifactSha,4*1024*1024));result.RequireConfigured(definitions,Read(request["building_request_metadata"],"b5f9913aa4d1a35e5413f782780e59e4832c5918a5faceb87b4a7f3cc8534f2f",4*1024*1024));result.RequireSelection(setup);result.VerifyUnchanged();return result;
   }
   static string RequireOriginRoot(JToken token){if(token?.Type!=JTokenType.String||!Path.IsPathRooted((string)token))throw new InvalidDataException("Absolute metadata origin root required");var dir=new DirectoryInfo(Path.GetFullPath((string)token));if(!dir.Exists)throw new InvalidDataException("Existing metadata origin root required");for(var d=dir;d!=null;d=d.Parent)if((d.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Symlink metadata origin root forbidden");return dir.FullName;}
   static string FileHash(string path){using(var stream=File.OpenRead(path))using(var hash=SHA256.Create())return BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","").ToLowerInvariant();}

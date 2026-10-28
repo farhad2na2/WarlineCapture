@@ -16,10 +16,13 @@ owned='''
 '''
 out=[prefix,owned]
 rectSource=source['Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs'];rect=get(rectSource,'ReserveCellRect');rectBody=body(rect);out.append('internal void ReserveRect(ref NativeBitArray reserved,int minX,int minY,int maxX,int maxY){var grid=Grid;'+rectBody+'}\n')
+for n in ['RuntimeBuildingMatchesId','RuntimeDefinitionMatchesId']:
+ t=get(defs,n).replace('BuildingDefinition definition','RuntimeDefinition definition').replace('RuntimeDefinitionMatchesId(', 'SourceRuntimeDefinitionMatchesId(').replace('RuntimeBuildingMatchesId(', 'SourceRuntimeBuildingMatchesId(').replace('NormalizeSpawnableKey(', 'SpawnableKeyText.Normalize(')
+ out.append(t+'\n')
 for n in ['TryGetProductionSourceKey','GetProductionPrefab','GetSpawnableLookupKey']:
  t=get(defs,n).replace('BuildingDefinition definition','RuntimeDefinition definition').replace('GameObject','SourceUnitPrefab').replace('public static','private static',1).replace('NormalizeSpawnableKey(', 'SpawnableKeyText.Normalize(');out.append(t+'\n')
 t=project(get(spawn,'TryResolveSpawnPlacement'))
-for name,label in [('TryResolveHelicopterSpawnForFaction','faction helicopter helipad resolver'),('TryResolveProductionSlotAtCell','override aircraft slot resolver'),('SkirmishPopulationPolicy.ReserveDisconnectedSpawnCells','disconnected ground-infantry spawn predecessor')]:
+for name,label in [('SkirmishPopulationPolicy.ReserveDisconnectedSpawnCells','disconnected ground-infantry spawn predecessor')]:
  match=re.search(r'\b'+name+r'\s*\(',t)
  if match:
   a=t.index('(',match.start());d=1;i=a+1
@@ -30,6 +33,10 @@ for name,label in [('TryResolveHelicopterSpawnForFaction','faction helicopter he
   t=t[:match.start()]+'UnsupportedBranch("'+label+'")'+t[i:]
 t=t.replace('(float3)building.Instance.transform.TransformPoint(productionSpawnLocalPosition)','ProducerPoint(building,new float3(productionSpawnLocalPosition.x,productionSpawnLocalPosition.y,productionSpawnLocalPosition.z))')
 out.append(t+'\n')
+# Source read-model helipad selection; callers must retain the original managed fallback.
+for n in ['TryResolveAvailableFactionHelipadSpawn','TryResolveHelicopterSpawnForFaction','TryResolveProductionSlotAtCell','TryResolveProductionSlotAtCellFromReadModel','TryGetFactionRuntimeBuildingCenter','TryResolveHelicopterSpawnForFactionFromReadModel','TryGetRuntimeBuildingSourcePositionFromReadModel','IsOwnedRuntimeBuildingForFaction','IsProductionSlotOccupied','IsProductionSlotOccupiedByReadModel','FootprintsOverlap','IsProducedUnitAlive']:
+ t=project(get(spawn,n)).replace('private static ','private ',1).replace('context.RuntimeBuildings','Buildings').replace('NormalizeSpawnableKey(', 'SpawnableKeyText.Normalize(');t=t.replace('hasSourcePosition ? sourceBuilding.Instance.transform.position : Vector3.zero','hasSourcePosition ? (Vector3)ProducerPoint(sourceBuilding,float3.zero) : Vector3.zero');t=t.replace('building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i])','ProducerPoint(building,new float3(building.ProductionSpawnLocalPositions[i].x,building.ProductionSpawnLocalPositions[i].y,building.ProductionSpawnLocalPositions[i].z))')
+ out.append(t+'\n')
 for n in ['TryGetLegacyProductionSpawnLocalPosition','ReserveRecentSpawnBuffers','ReserveRecentSpawnBuffer','AddRecentSpawnReservation','OverlapsRecentSpawnReservation','TryGetRecentSpawnReservationBuffer','CleanupBoundaryRecentSpawnReservations','TryFindStrictSpawnCell','TryFindStrictSpawnCellAdjacentToBuilding','TryReserveSpawnCandidate','OverlapsExistingUnitFootprint','ReserveDynamicOccupancy','ReserveBuildingBuffer','IsHelicopterSourceKey']:
  t=project(get(spawn,n)).replace('UnityEngine.Time.time','Now').replace('NormalizeSpawnableKey(', 'SpawnableKeyText.Normalize(')
  if n=='OverlapsExistingUnitFootprint':t=t.replace('context.LiveUnitFootprintQuery','SourceLiveFootprintQuery()')

@@ -830,7 +830,26 @@ private static void StepCore(in AriaS002Observation view,ref AriaS002PlanState p
             output.ScrollDistanceViewports = target.ScrollDistanceViewports;
         }static bool OpeningDefense(in AriaS002Observation v,ref AriaS002PlanState p,ref AriaS002ContactState t,ref AriaS002Decision o)=>throw new NotSupportedException("Active air-opening construction not admitted");
 static void StepHomePadPlacement(in AriaS002Observation v,ref AriaS002PlanState p,ref AriaS002ContactState t,ref AriaS002Decision o)=>throw new NotSupportedException("Active air-pad placement not admitted");
-static bool StepAircraftCycle(in AriaS002Observation v,ref AriaS002PlanState p,ref AriaS002ContactState t,ref AriaS002Decision o){if(!v.AirProfile||p.AirCycleCount!=0)return false;throw new NotSupportedException("Active aircraft service not admitted");}
+static bool StepAircraftCycle(in AriaS002Observation v,ref AriaS002PlanState p,ref AriaS002ContactState t,ref AriaS002Decision o){
+ var v0=new Game.Simulation.AriaAircraftCycleView{AirProfile=v.AirProfile,PadPresent=v.PadPresent,DrawerOpen=v.CatalogOpen,SelectedAircraft=v.SelectedAircraft,
+ CloseDrawerAvailable=v.CloseDrawer.Admitted,ToggleAvailable=v.SelectedSquadToToggle.Admitted,NextPageAvailable=v.NextSquadPage.Admitted,OpenActionsAvailable=v.OpenAircraftActions.Admitted,ReturnAvailable=v.ReturnAircraft.Admitted,
+ Active=v.OwnAttackAirActive,Live=v.OwnAttackAirLive,Landed=v.OwnAttackAirLanded,Fuel=v.OwnAirFuel,SelectedGroups=v.ExpandedSelectedGroups,AirMask=v.ExpandedAirMask,Actions=t.Actions,Time=v.Time};
+ for(int i=0;i<5;i++)if(v.Squad(i).Admitted)v0.AvailableSquadMask|=1<<i;
+ var s=new Game.Simulation.AriaAircraftCycleState{Stage=p.AirCycleStage,Action=p.AirCycleAction,Count=p.AirCycleCount,AssaultIssued=p.AssaultIssued,PagesOrdered=p.PagesOrdered,StructureOrdered=p.StructureOrdered,SortieObservedAt=p.AirSortieObservedAt,Deadline=p.AirCycleDeadline,ServiceReadyAt=p.AirServiceReadyAt,ObserveUntil=p.ObserveUntil};
+ bool handled=Game.Simulation.AriaAircraftCyclePolicy.Step(v0,ref s,out var d);
+ p.AirCycleStage=s.Stage;p.AirCycleAction=s.Action;p.AirCycleCount=s.Count;p.AssaultIssued=(byte)s.AssaultIssued;p.PagesOrdered=s.PagesOrdered;p.StructureOrdered=(byte)s.StructureOrdered;p.AirSortieObservedAt=s.SortieObservedAt;p.AirCycleDeadline=s.Deadline;p.AirServiceReadyAt=s.ServiceReadyAt;p.ObserveUntil=s.ObserveUntil;
+ if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ReturnAircraft)p.Intent=AriaS002Intent.ReturnAircraft;
+ else if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ServiceAircraft)p.Intent=AriaS002Intent.ServiceAircraft;
+ switch(d.Action){
+ case Game.Simulation.AriaAircraftCycleAction.Waiting:o.Kind=AriaS002DecisionKind.Waiting;break;
+ case Game.Simulation.AriaAircraftCycleAction.CloseDrawer:Target(v.CloseDrawer,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ToggleSelected:Target(v.SelectedSquadToToggle,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.SelectSlot:Target(v.Squad(d.Slot),false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.NextPage:Target(v.NextSquadPage,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.OpenActions:Target(v.OpenAircraftActions,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ReturnAircraft:Target(v.ReturnAircraft,false,ref o);break;
+ }return handled;
+}
 
 }
 }

@@ -4300,6 +4300,11 @@
       "output": "336_RuntimeSpawnRequestProcessor.source.cs"
     },
     {
+      "id": "initial-units-spawn-components_S049.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/InitialUnitsSpawnComponents.cs"
+    },
+    {
       "id": "337_RuntimeSpawnOwnerContext.cs",
       "kind": "finite_adapter",
       "path": "Tools/CI/SkirmishSourceSimulation/Adapters/337_RuntimeSpawnOwnerContext.cs",
@@ -7363,6 +7368,14 @@
       "path": "Assets/Game/Scripts/Simulation/GroundMissionContext.cs",
       "require_declarations": [
         "public readonly struct GroundMissionContext"
+      ]
+    },
+    {
+      "id": "Shared_AriaAircraftCyclePolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/AriaAircraftCyclePolicy.cs",
+      "require_declarations": [
+        "public static class AriaAircraftCyclePolicy"
       ]
     },
     {

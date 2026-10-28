@@ -6982,6 +6982,14 @@
       ]
     },
     {
+      "id": "Shared_AriaAircraftCyclePolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/AriaAircraftCyclePolicy.cs",
+      "require_declarations": [
+        "public static class AriaAircraftCyclePolicy"
+      ]
+    },
+    {
       "id": "Shared_AriaGroundBaseAssaultPolicy.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Simulation/AriaGroundBaseAssaultPolicy.cs",

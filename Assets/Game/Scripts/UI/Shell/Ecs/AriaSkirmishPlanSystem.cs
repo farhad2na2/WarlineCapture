@@ -1142,89 +1142,26 @@ namespace Game.UI.Shell.Ecs
             return handled;
         }
 
-        private static bool StepAircraftCycle(in AriaSkirmishObservation view,
-            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
-            ref AriaPlayObservationComponent output)
-        {
-            if (!view.AirProfile || plan.AirCycleCount != 0) return false;
-            if (plan.AirCycleStage == 0)
-            {
-                if (view.OwnAttackAirActive == 0 || plan.AssaultIssued == 0)
-                { plan.AirSortieObservedAt = 0; return false; }
-                if (plan.AirSortieObservedAt == 0) plan.AirSortieObservedAt = view.Time;
-                if (view.Time - plan.AirSortieObservedAt < 45f) return false;
-                plan.AirCycleStage = 1;
-                plan.AirCycleDeadline = view.Time + 120f;
-            }
-            if (view.OwnAttackAirLive == 0 || !view.PadPresent || view.Time >= plan.AirCycleDeadline)
-            {
-                plan.AirCycleStage = 0;
-                plan.AirCycleCount = 2; // Bounded recovery; normal assault remains available.
-                return false;
-            }
-            if (plan.AirCycleStage == 1)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
-                if (view.SelectedAircraft && view.ExpandedSelectedGroups <= 1) { plan.AirCycleStage = 2; }
-                else
-                {
-                    if (TryDeselectSquads(view, ref output)) return true;
-                    for (int slot = 0; slot < 5; slot++)
-                        if ((view.ExpandedAirMask & (1 << slot)) != 0 && view.Squad(slot).Available)
-                        { Target(view.Squad(slot), false, ref output); return true; }
-                    if (TryDeselectSquads(view, ref output)) return true;
-                    if (view.NextSquadPage.Available)
-                        Target(view.NextSquadPage, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-            }
-            if (plan.AirCycleStage == 2)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (!view.SelectedAircraft) { plan.AirCycleStage = 1; return true; }
-                if (!view.ReturnAircraft.Available)
-                {
-                    if (view.OpenAircraftActions.Available) Target(view.OpenAircraftActions, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-                plan.AirCycleAction = touch.Actions;
-                plan.AirCycleStage = 3;
-                Target(view.ReturnAircraft, false, ref output);
-                return true;
-            }
-            if (plan.AirCycleStage == 3)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (touch.Actions <= plan.AirCycleAction)
-                {
-                    if (view.ReturnAircraft.Available) Target(view.ReturnAircraft, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-                if (view.OwnAttackAirActive == 0 && view.OwnAttackAirLanded > 0)
-                {
-                    plan.AirCycleStage = 4;
-                    plan.AirServiceReadyAt = view.Time + 5f;
-                }
-                else { output.Kind = AriaPlayObservationKind.Waiting; return true; }
-            }
-            plan.Intent = AriaSkirmishIntent.ServiceAircraft;
-            if (view.Time < plan.AirServiceReadyAt || view.OwnAirFuel <= 0)
-            { output.Kind = AriaPlayObservationKind.Waiting; return true; }
-            // The landed aircraft is serviced by shared home/fuel owners. Allow
-            // the visible squad-card attack sequence to issue a second sortie.
-            plan.AirCycleStage = 0;
-            plan.AirCycleCount = 1;
-            plan.AssaultIssued = 0;
-            plan.PagesOrdered = 0;
-            plan.StructureOrdered = 0;
-            plan.ObserveUntil = view.Time + 1f;
-            output.Kind = AriaPlayObservationKind.Waiting;
-            return true;
-        }
+static bool StepAircraftCycle(in AriaSkirmishObservation v,ref AriaSkirmishPlanComponent p,ref AriaPlaySessionComponent t,ref AriaPlayObservationComponent o){
+ var v0=new Game.Simulation.AriaAircraftCycleView{AirProfile=v.AirProfile,PadPresent=v.PadPresent,DrawerOpen=v.DrawerOpen,SelectedAircraft=v.SelectedAircraft,
+ CloseDrawerAvailable=v.CloseDrawer.Available,ToggleAvailable=v.SelectedSquadToToggle.Available,NextPageAvailable=v.NextSquadPage.Available,OpenActionsAvailable=v.OpenAircraftActions.Available,ReturnAvailable=v.ReturnAircraft.Available,
+ Active=v.OwnAttackAirActive,Live=v.OwnAttackAirLive,Landed=v.OwnAttackAirLanded,Fuel=v.OwnAirFuel,SelectedGroups=v.ExpandedSelectedGroups,AirMask=v.ExpandedAirMask,Actions=t.Actions,Time=v.Time};
+ for(int i=0;i<5;i++)if(v.Squad(i).Available)v0.AvailableSquadMask|=1<<i;
+ var s=new Game.Simulation.AriaAircraftCycleState{Stage=p.AirCycleStage,Action=p.AirCycleAction,Count=p.AirCycleCount,AssaultIssued=p.AssaultIssued,PagesOrdered=p.PagesOrdered,StructureOrdered=p.StructureOrdered,SortieObservedAt=p.AirSortieObservedAt,Deadline=p.AirCycleDeadline,ServiceReadyAt=p.AirServiceReadyAt,ObserveUntil=p.ObserveUntil};
+ bool handled=Game.Simulation.AriaAircraftCyclePolicy.Step(v0,ref s,out var d);
+ p.AirCycleStage=s.Stage;p.AirCycleAction=s.Action;p.AirCycleCount=s.Count;p.AssaultIssued=(byte)s.AssaultIssued;p.PagesOrdered=s.PagesOrdered;p.StructureOrdered=(byte)s.StructureOrdered;p.AirSortieObservedAt=s.SortieObservedAt;p.AirCycleDeadline=s.Deadline;p.AirServiceReadyAt=s.ServiceReadyAt;p.ObserveUntil=s.ObserveUntil;
+ if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ReturnAircraft)p.Intent=AriaSkirmishIntent.ReturnAircraft;
+ else if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ServiceAircraft)p.Intent=AriaSkirmishIntent.ServiceAircraft;
+ switch(d.Action){
+ case Game.Simulation.AriaAircraftCycleAction.Waiting:o.Kind=AriaPlayObservationKind.Waiting;break;
+ case Game.Simulation.AriaAircraftCycleAction.CloseDrawer:Target(v.CloseDrawer,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ToggleSelected:Target(v.SelectedSquadToToggle,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.SelectSlot:Target(v.Squad(d.Slot),false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.NextPage:Target(v.NextSquadPage,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.OpenActions:Target(v.OpenAircraftActions,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ReturnAircraft:Target(v.ReturnAircraft,false,ref o);break;
+ }return handled;
+}
 
         private static bool SelectionCanDamageDesignatedBase(
             in AriaSkirmishObservation view,

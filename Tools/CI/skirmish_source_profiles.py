@@ -13,24 +13,40 @@ def _pairs(rows):
   d[k]=v
  return d
 def _nonfinite(value):raise ValueError('Non-finite configuration JSON constant: '+value)
+def relocation_pairs():
+ source=os.environ.get("WARLINE_PINNED_ROOT_ORIGINAL");target=os.environ.get("WARLINE_PINNED_ROOT_LOCAL");multi=os.environ.get("WARLINE_PINNED_ROOT_MAP")
+ if multi and (source or target):raise ValueError("Choose one relocation format")
+ if multi:
+  if len(multi)>16384:raise ValueError("Bounded relocation mapping required")
+  pairs=json.loads(multi,object_pairs_hook=_pairs,parse_constant=_nonfinite)
+  if not isinstance(pairs,list) or not 0<len(pairs)<=16 or any(type(x)is not dict or set(x)!={"original","local"} for x in pairs):raise ValueError("Exact bounded relocation mapping required")
+ elif source or target:pairs=[{"original":source,"local":target}]
+ else:return []
+ result=[]
+ for row in pairs:
+  a,b=row["original"],row["local"]
+  if not isinstance(a,str) or not isinstance(b,str) or not Path(a).is_absolute() or not Path(b).is_absolute() or os.path.normpath(a)!=a or os.path.normpath(b)!=b or a=="/" or b=="/":raise ValueError("Exact absolute relocation roots required")
+  x,y=Path(a),Path(b)
+  if not y.is_dir() or any(p.is_symlink() for p in [y,*y.parents]):raise ValueError("Confined real relocation root required")
+  def overlap(a,b):return a==b or a.is_relative_to(b) or b.is_relative_to(a)
+  if overlap(x,y) or any(overlap(x,u) or overlap(y,v) or overlap(x,v) or overlap(y,u) for u,v in result):raise ValueError("Overlapping relocation roots")
+  result.append((x,y))
+ return result
 def relocated_root(original):
- source=os.environ.get("WARLINE_PINNED_ROOT_ORIGINAL"); target=os.environ.get("WARLINE_PINNED_ROOT_LOCAL")
- if not source and not target:return original
- if not source or not target or not Path(source).is_absolute() or not Path(target).is_absolute() or os.path.normpath(source)!=source or os.path.normpath(target)!=target:raise ValueError("Exact absolute relocation roots required")
- local=Path(target)
- if not local.is_dir() or any(p.is_symlink() for p in [local,*local.parents]):raise ValueError("Confined real relocation root required")
- return local if original==Path(source) else original
+ original=Path(original)
+ for source,local in relocation_pairs():
+  if original==source:return local
+ return original
 def relocated_path(original):
- original=Path(original);source=os.environ.get("WARLINE_PINNED_ROOT_ORIGINAL");target=os.environ.get("WARLINE_PINNED_ROOT_LOCAL")
- if not source and not target:return original
- local=relocated_root(Path(source) if source else Path("."))
- source=Path(source)
- if not original.is_absolute() or not original.is_relative_to(source):return original
- rel=original.relative_to(source)
- if not rel.parts or any(v in ("", ".", "..") for v in rel.parts):raise ValueError("Canonical relocated input required")
- mapped=local/rel
- if any(p.is_symlink() for p in [mapped,*mapped.parents]):raise ValueError("Symlink in relocated input")
- return mapped
+ original=Path(original)
+ for source,local in relocation_pairs():
+  if not original.is_absolute() or not original.is_relative_to(source):continue
+  rel=original.relative_to(source)
+  if any(v in ("", ".", "..") for v in rel.parts):raise ValueError("Canonical relocated input required")
+  mapped=local/rel
+  if any(p.is_symlink() for p in [mapped,*mapped.parents]):raise ValueError("Symlink in relocated input")
+  return mapped
+ return original
 def _check_s049_source_pin(root,rel,digest):
  f=root/rel
  if Path(rel).is_absolute() or '..' in Path(rel).parts or '.' in Path(rel).parts:raise ValueError('S049 factory/provider path invalid: '+rel)
@@ -77,13 +93,13 @@ def bind_configuration_qualification(path):
  f=Path(path)
  def read(d,limit):
   if type(d)is not dict or set(d)!={'path','sha256'}or type(d['path'])is not str or not Path(d['path']).is_absolute()or type(d['sha256'])is not str or not re.fullmatch('[0-9a-f]{64}',d['sha256']):raise ValueError('Exact absolute qualification descriptor required')
-  q=Path(d['path']);info=q.lstat()
+  q=relocated_path(d['path']);info=q.lstat()
   if not stat.S_ISREG(info.st_mode)or any(x.is_symlink()for x in[q,*q.parents])or not 0<info.st_size<=limit:raise ValueError('Bounded canonical qualification file required')
   raw=q.read_bytes()
   if hashlib.sha256(raw).hexdigest()!=d['sha256']:raise ValueError('Qualification input changed')
   return json.loads(raw,object_pairs_hook=_pairs,parse_constant=_nonfinite)
  if not f.is_absolute():raise ValueError('Absolute qualification path required')
- descriptor={'path':str(f),'sha256':hashlib.sha256(f.read_bytes()).hexdigest()};q=read(descriptor,1024*1024)
+ descriptor={'path':str(f),'sha256':hashlib.sha256(relocated_path(f).read_bytes()).hexdigest()};q=read(descriptor,1024*1024)
  fields={'schema_version','kind','runtime_backend','compiler_context','scope','native_context_qualified','mission_ready'}
  if type(q)is not dict or set(q)!=fields or type(q['schema_version'])is not int or q['schema_version']!=1 or q['kind']!='ExperimentalGroundConfigurationQualification'or q['runtime_backend']!='TypedGroundS026V1'or q['scope']!='OriginalCompilerAndQualifiedFactoryInputs_SourceOnly'or q['native_context_qualified']is not False or q['mission_ready']is not False:raise ValueError('Exact experimental source qualification required')
  context=read(q['compiler_context'],4*1024*1024);t=_validated_context_target(context)
@@ -115,7 +131,7 @@ def load_profiles():
    if r['runtime_backend']!='TypedGroundS026V1' or type(r['mission_id'])is not str or not re.fullmatch(r'S[0-9]{3}',r['mission_id']):raise ValueError('Unsupported existing source family')
    descriptor=r['compiler_context']
    if type(descriptor)is not dict or set(descriptor)!={'path','sha256'} or type(descriptor['path'])is not str or not Path(descriptor['path']).is_absolute() or type(descriptor['sha256'])is not str or not re.fullmatch('[0-9a-f]{64}',descriptor['sha256']):raise ValueError('Exact reviewed compiler-context descriptor required')
-   path=Path(descriptor['path']);info=path.lstat()
+   path=relocated_path(descriptor['path']);info=path.lstat()
    if not stat.S_ISREG(info.st_mode)or not 0<info.st_size<=4*1024*1024:raise ValueError('Bounded regular compiler context required')
    raw_context=path.read_bytes()
    if hashlib.sha256(raw_context).hexdigest()!=descriptor['sha256']:raise ValueError('Compiler context changed')

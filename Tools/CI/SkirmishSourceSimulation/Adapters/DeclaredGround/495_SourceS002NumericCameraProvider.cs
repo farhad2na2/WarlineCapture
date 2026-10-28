@@ -14,7 +14,7 @@ internal sealed partial class SourceS002NumericCameraProvider{
  internal quaternion Rotation{get{Ready();return rotation;}}
  internal bool SnapshotAvailable=>poseEnabled&&nativeValuesAdmitted&&motionValuesAdmitted&&!poisoned;
  private SourceS002NumericCameraProvider(SkirmishResolvedSetup setup,GridConfig grid,SkirmishMissionViewProfile profile,string path,string profileSha,string mapSha,string graphSha,SourceNumericCameraEngineAdapterContract adapter){engineAdapter=adapter??throw new ArgumentNullException(nameof(adapter));if(adapter.ProfileSha!=profileSha)throw new InvalidDataException("Engine adapter/profile differs");
-  catalogId=setup.CatalogId;this.profile=profile;profilePath=path;ProfileSha256=profileSha;SourceMapSha256=mapSha;ConfigGraphSha256=graphSha;OperationMapId=setup.OperationMapId;LayoutId=setup.LayoutId;CompiledContentHash=setup.ContentHash;SetupHash=setup.SetupHash;GridWidth=grid.Width;GridHeight=grid.Height;CellSize=grid.CellSize;Origin=grid.Origin;var f=new FileInfo(path);profileLength=f.Length;profileWriteTicks=f.LastWriteTimeUtc.Ticks;
+  catalogId=setup.CatalogId;this.profile=profile;profilePath=path;ProfileSha256=profileSha;SourceMapSha256=mapSha;ConfigGraphSha256=graphSha;OperationMapId=setup.OperationMapId;LayoutId=setup.LayoutId;CompiledContentHash=setup.ContentHash;SetupHash=setup.SetupHash;GridWidth=grid.Width;GridHeight=grid.Height;CellSize=grid.CellSize;Origin=grid.Origin;var f=new FileInfo(AutonomousWorld.ResolvePinnedPath(path));profileLength=f.Length;profileWriteTicks=f.LastWriteTimeUtc.Ticks;
   // Original Play transition queues normal perspective, whose terminal writer uses
   // Quaternion.Euler(pitch,yaw,0). PoseMath is the already-qualified same numeric lane.
   rotation=PoseMath.Euler(new float3(profile.Pitch,profile.Yaw,0));PoseMath.Unit(rotation);
@@ -68,7 +68,7 @@ internal sealed partial class SourceS002NumericCameraProvider{
  }
  internal void AdvanceSourceUnscaledTime(float now){
   Ready();if(!math.isfinite(now)||(hasTime&&now<lastTime)){poisoned=true;throw new NotSupportedException("Monotonic actual source unscaled camera time required");}lastTime=now;hasTime=true;
-  if(now<nextCheck)return;nextCheck=now+.25f;var f=new FileInfo(profilePath);
+  if(now<nextCheck)return;nextCheck=now+.25f;var f=new FileInfo(AutonomousWorld.ResolvePinnedPath(profilePath));
   if(!f.Exists||f.Length!=profileLength||f.LastWriteTimeUtc.Ticks!=profileWriteTicks){poisoned=true;throw new InvalidDataException("Mission camera source profile changed during generated session");}
  }
  internal void ObserveLogicalCameraAction(string action){

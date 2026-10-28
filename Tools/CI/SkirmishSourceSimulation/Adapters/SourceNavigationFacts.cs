@@ -32,6 +32,7 @@ namespace Game.Runtime
 
         internal static string StreamSha(string path)
         {
+            path = AutonomousWorld.ResolvePinnedPath(path);
             Need(Path.IsPathRooted(path), "Absolute authored source path required");
             var file = new FileInfo(path);
             Need(file.Exists && file.Length > 0 && file.Length <= 128 * 1024 * 1024 &&

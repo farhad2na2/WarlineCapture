@@ -14,7 +14,7 @@ def verify(pins):
 def merge_pins(pins,other):
  verify(pins)
  for name,expected in other.items():
-  key=str(Path(name).resolve(strict=True))
+  key=str(owned.require('skirmish_source_profiles').relocated_path(name).resolve(strict=True))
   need(key not in pins or pins[key]==expected,'Conflicting source/runtime epoch: '+key)
   need(sha(Path(key).read_bytes())==expected,'Input changed before merge: '+key)
   pins[key]=expected
@@ -189,7 +189,7 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
   descriptor(initial['placement_domain']['original_owner_masks'])
   fixed,_=read_json_pinned(initial['navigation_reference']['path']);need(fixed.get('kind')=='OriginalCapturedFixedMapCompilerContext'and fixed.get('metadata_compiler_context')==initial['metadata_compiler_context']and fixed.get('configuration_qualification')==initial['configuration_qualification'],'Explicit same compiler/fixed-map data binding required');native_path=descriptor(fixed['native_readback']);native,_=read_json_pinned(native_path);need(native.get('result')=='Collected'and native.get('worldDisposed')is True,'Actual disposed native source read required')
   masks,_=read_json_pinned(initial['placement_domain']['original_owner_masks']['path'])
-  capture=initial['placement_domain']['captured_asset_origin'];need(set(capture)=={'source_root','source_definition_path','source_definition_sha256'}and capture['source_definition_sha256']==initial['static_map']['definition']['sha256'],'Explicit captured asset origin identity required');capture_root=Path(capture['source_root']);need(capture_root.is_absolute()and capture_root.is_dir()and all(not p.is_symlink()for p in[capture_root,*capture_root.parents]),'Canonical captured asset source root required')
+  capture=initial['placement_domain']['captured_asset_origin'];need(set(capture)=={'source_root','source_definition_path','source_definition_sha256'}and capture['source_definition_sha256']==initial['static_map']['definition']['sha256'],'Explicit captured asset origin identity required');capture_root=owned.require('skirmish_source_profiles').relocated_root(Path(capture['source_root']));need(capture_root.is_absolute()and capture_root.is_dir()and all(not p.is_symlink()for p in[capture_root,*capture_root.parents]),'Canonical captured asset source root required')
   for root in [native,masks]:
    historical=Path(root['capturedProjectRoot']);relocating=capture_root!=historical
    for path,digest in root['readPins'].items():
@@ -237,7 +237,7 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  request['mission_scene']=pin(data_repo/'Assets/Game/Scenes/Match.unity');request['camera_profile']=inputs['camera_profile']if expected_backend=='TypedGroundS026V1'else pin(data_repo/'Assets/Game/Resources/SkirmishMissionViewProfile_S002.asset')
  if expected_backend=='TypedGroundS026V1':need(initial.get('engineering_camera_profile')==request['camera_profile'],'S026 current engineering camera descriptor differs')
  for key in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
-  row=inputs[key];p=owned.require('skirmish_source_profiles').relocated_path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':str(p),'sha256':row['sha256']}
+  row=inputs[key];p=owned.require('skirmish_source_profiles').relocated_path(row['path']).resolve(strict=True);need(sha(p.read_bytes())==row['sha256'],'Bundle input changed: '+key);request[key]={'path':row['path'] if owned.require('skirmish_source_profiles').relocation_pairs() else str(p),'sha256':row['sha256']}
  if max_ticks is not None:need(0<max_ticks<=72000,'Bounded max_ticks required');request['max_ticks']=max_ticks
  write(out/'run-request.json',request);env=os.environ.copy();env['MONO_PATH']=os.pathsep.join([str(repo/'Library/ScriptAssemblies'),str(tools['engine']),str(tools['newtonsoft'].parent),str(Path(receipt['placement_build']).parent)]);pins=dict(receipt['source_and_reference_pins']);merge_pins(pins,owned.pins());merge_pins(pins,extra);merge_pins(pins,origin_pins);merge_pins(pins,{build_pin['path']:build_pin['sha256'],bundle_pin['path']:bundle_pin['sha256'],exe['path']:exe['sha256']});merge_pins(pins,{v['path']:v['sha256']for k,v in request.items()if isinstance(v,dict)and'path'in v});verify(pins)
  if prepare_only:

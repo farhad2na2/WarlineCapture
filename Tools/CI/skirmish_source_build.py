@@ -10,14 +10,18 @@ sys.dont_write_bytecode=True
 def pin(path):
  p=owned.require('skirmish_source_profiles').relocated_path(path).resolve(strict=True);raw=p.read_bytes();return {'path':str(p),'sha256':sha(raw),'bytes':len(raw)}
 def verify(pins):
- for name,expected in pins.items():need(sha(owned.require('skirmish_source_profiles').relocated_path(name).read_bytes())==expected,'Input changed: '+name)
+ profiles=owned.require('skirmish_source_profiles')
+ for name,expected in pins.items():need(sha(profiles.relocated_path(name).read_bytes())==expected,'Input changed: '+name)
+ owned.require('skirmish_source_profiles')
 def merge_pins(pins,other):
  verify(pins)
+ profiles=owned.require('skirmish_source_profiles')
  for name,expected in other.items():
-  key=str(owned.require('skirmish_source_profiles').relocated_path(name).resolve(strict=True))
+  key=str(profiles.relocated_path(name).resolve(strict=True))
   need(key not in pins or pins[key]==expected,'Conflicting source/runtime epoch: '+key)
   need(sha(Path(key).read_bytes())==expected,'Input changed before merge: '+key)
   pins[key]=expected
+ owned.require('skirmish_source_profiles')
 def merge_file_pins(pins,paths):
  added={}
  for path in paths:

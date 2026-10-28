@@ -139,15 +139,25 @@ def derived_projection_header_pins(initial):
 def collect_rotation_reference_pins(rotation,descriptor):
  if rotation.get('kind')!='SourceQualifiedOperationMapRotationReferenceSet':return
  version=rotation.get('schema_version')
- need(type(version)is int and version in(1,2),'Supported explicit rotation reference-set schema required')
+ need(type(version)is int and version in(1,2,3),'Supported explicit rotation reference-set schema required')
  if version==1:
   descriptor(rotation['base_reference']);descriptor(rotation['supplementary_reference']);return
- need(set(rotation)=={'schema_version','kind','scope','base_reference','captured_asset_root','supplementary_references'}and rotation['scope']=='QualifiedNativeFunctionFacts_NotNativeMissionOrRootState','Exact version2 rotation reference-set fields required')
- root=rotation['captured_asset_root'];need(isinstance(root,str)and Path(root).is_absolute()and Path(root).is_dir(),'Explicit captured rotation asset root required')
- descriptor(rotation['base_reference']);rows=rotation['supplementary_references'];need(isinstance(rows,list)and 0<len(rows)<=8,'Finite native rotation supplements required')
+ need(set(rotation)==({'schema_version','kind','scope','base_reference','captured_asset_root','supplementary_references'} | ({'relocation_root','relocations'} if version==3 else set()))and rotation['scope']=='QualifiedNativeFunctionFacts_NotNativeMissionOrRootState','Exact versioned rotation reference-set fields required')
+ relocated={}
+ if version==3:
+  rr=Path(rotation['relocation_root']);need(rr.is_absolute()and rr.is_dir()and not any(x.is_symlink() for x in [rr,*rr.parents]),'Canonical rotation relocation root required')
+  entries=rotation['relocations'];need(isinstance(entries,list)and 0<len(entries)<=32,'Bounded rotation relocations required')
+  for e in entries:
+   need(isinstance(e,dict)and set(e)=={'historical_path','relative_path','sha256'}and isinstance(e['historical_path'],str)and Path(e['historical_path']).is_absolute()and isinstance(e['relative_path'],str)and Path(e['relative_path']).name==e['relative_path']and e['relative_path'] not in ('','.','..')and isinstance(e['sha256'],str),'Exact canonical rotation relocation required')
+   need(e['historical_path'] not in relocated,'Duplicate historical rotation path');target=rr/e['relative_path'];need(target.is_file()and not target.is_symlink()and target.resolve(strict=True).parent==rr.resolve(strict=True),'Bounded regular relocated rotation file required');relocated[e['historical_path']]={'path':str(target),'sha256':e['sha256']}
+ def opened(row):
+  if version!=3:return descriptor(row)
+  need(row['path'] in relocated and relocated[row['path']]['sha256']==row['sha256'],'Missing or changed rotation relocation');return descriptor(relocated[row['path']])
+ root=rotation['captured_asset_root'];need(isinstance(root,str)and Path(root).is_absolute()and Path(root).is_dir() and (version!=3 or not any(x.is_symlink() for x in [Path(root),*Path(root).parents])),'Explicit captured rotation asset root required')
+ opened(rotation['base_reference']);rows=rotation['supplementary_references'];need(isinstance(rows,list)and 0<len(rows)<=8,'Finite native rotation supplements required')
  def exact(row):
   need(isinstance(row,dict)and set(row)=={'path','sha256'}and isinstance(row['path'],str)and isinstance(row['sha256'],str),'Exact native rotation descriptor required')
-  return descriptor(row)
+  return opened(row)
  for row in rows:
   need(isinstance(row,dict)and set(row)=={'reference','capture_input','function_contract'},'Exact native rotation supplement fields required')
   native=exact(row['reference']);capture=exact(row['capture_input']);contract=exact(row['function_contract']);qualified,_=read_json_pinned(contract)
@@ -181,12 +191,21 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
   masks,_=read_json_pinned(initial['placement_domain']['original_owner_masks']['path'])
   capture=initial['placement_domain']['captured_asset_origin'];need(set(capture)=={'source_root','source_definition_path','source_definition_sha256'}and capture['source_definition_sha256']==initial['static_map']['definition']['sha256'],'Explicit captured asset origin identity required');capture_root=Path(capture['source_root']);need(capture_root.is_absolute()and capture_root.is_dir()and all(not p.is_symlink()for p in[capture_root,*capture_root.parents]),'Canonical captured asset source root required')
   for root in [native,masks]:
+   historical=Path(root['capturedProjectRoot']);relocating=capture_root!=historical
    for path,digest in root['readPins'].items():
+    captured_relative=path.startswith('Assets/') or path.startswith('Packages/')
     if path.startswith('Assets/'):
-     relative=Path(path);need(all(part not in {'','..','.'}for part in relative.parts),'Canonical captured asset relative path required');path=str(capture_root/relative)
+     relative=Path(path);need(all(part not in {'','..','.'}for part in (path.split('/') if relocating else relative.parts)) and (not relocating or '\\' not in path),'Canonical captured asset relative path required');path=str(capture_root/relative)
     elif path.startswith('Packages/'):
+     if relocating:raise ValueError('Relocated relative package inputs are not supported')
      locator=root['packageAssetLocators'][path];need(locator['logicalPath']==path and locator['sha256']==digest,'Registered package locator differs');path=locator['resolvedPhysicalPath']
-    if any(segment in path for segment in ['/Assets/','/Packages/','/Library/PackageCache/'])and not path.endswith(('.cs','.cs.meta','.asmdef','.asmdef.meta','.dll','.pdb')):descriptor({'path':path,'sha256':digest},512*1024*1024)
+    candidate=Path(path)
+    if relocating and candidate.is_absolute() and candidate.is_relative_to(historical):
+     relative=candidate.relative_to(historical);need(all(part not in {'','..','.'} for part in relative.parts),'Canonical relocated captured path required');path=str(capture_root/relative)
+    if (relocating and captured_relative) or (any(segment in path for segment in ['/Assets/','/Packages/','/Library/PackageCache/'])and not path.endswith(('.cs','.cs.meta','.asmdef','.asmdef.meta','.dll','.pdb'))):
+     if relocating and path.startswith(str(capture_root)+"/"):
+      mapped=Path(path);need(mapped.resolve(strict=True).is_relative_to(capture_root),'Relocated captured input escaped root');need(not any(x.is_symlink() for x in [mapped,*mapped.parents] if x!=capture_root.parent),'Symlink in relocated captured input')
+     descriptor({'path':path,'sha256':digest},512*1024*1024)
   camera,_=read_json_pinned(initial['engineering_camera_profile']['path']);descriptor(camera['native_function_profile'])
  else:
   for key in ['packed','water_reference','geometry_reference']:descriptor(initial['placement_domain'][key])

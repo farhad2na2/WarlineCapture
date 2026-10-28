@@ -28,7 +28,7 @@ def project(native_path,bridge_path,output):
  return result
 
 
-def project_declared(compiler_result,physical,graph,layout,current_assets,function_set,camera_function_profile,initialization_template,bundle_template,bridge_path,output):
+def project_declared(compiler_result,physical,graph,layout,current_assets,function_set,camera_function_profile,initialization_template,bundle_template,bridge_path,output,captured_root_override=None):
  """Project ACTUAL original compiler output into existing declared schemas; no World/admission.
 
  Inputs are explicit pinned descriptors. Shared templates supply immutable native/input
@@ -76,7 +76,11 @@ def project_declared(compiler_result,physical,graph,layout,current_assets,functi
  fd=write('fixed-map-context.json',{'schema_version':1,'kind':'OriginalCapturedFixedMapCompilerContext','metadata_compiler_context':cd,'configuration_qualification':qd,'target_context':target,'native_readback':physical,'native_mission_context_qualified':False,'runtime_admitted':False,'capture_contract':contract})
  plain=lambda k:{x:current_assets[k][x]for x in ['path','sha256']}
  init.update(mission_id=target['catalog_id'],source_config_graph=graph,selection={'difficulty_id':portable['Variants'][0]['Difficulty'],'size_id':portable['Variants'][0]['Size'],'seed':target['seed']},static_map={'operation_map_id':target['operation_map_id'],'definition':plain('definition'),'grid_config':plain('grid'),'surface_data':plain('surface')},building_definitions=dd,building_request_metadata=sd,unit_production_metadata=ud,navigation_reference=fd,selected_operation_map=plain('definition'),mission_logical_binding=bd,metadata_compiler_context=cd,engineering_camera_profile=pd,configuration_qualification=qd,operation_map_rotation_reference=function_set,source_changes=[])
- init['placement_domain']={'original_owner_masks':physical,'captured_asset_origin':{'source_root':raw['capturedProjectRoot'],'source_definition_path':current_assets['definition']['source_path'],'source_definition_sha256':raw['sourceSha256']}};init['typed_mission_configuration']=dict(init['typed_mission_configuration'],campaign_source_path=current_assets['definition']['source_path'],layout=ld);ide=write('initialization.json',init)
+ if captured_root_override is not None:
+  capture_root=Path(captured_root_override);need_root=capture_root.is_absolute() and capture_root.is_dir() and not any(x.is_symlink() for x in [capture_root,*capture_root.parents]);
+  if not need_root:raise ValueError('Canonical non-symlink captured root required')
+  captured_root_override=str(capture_root.resolve(strict=True))
+ init['placement_domain']={'original_owner_masks':physical,'captured_asset_origin':{'source_root':captured_root_override if captured_root_override is not None else raw['capturedProjectRoot'],'source_definition_path':current_assets['definition']['source_path'],'source_definition_sha256':raw['sourceSha256']}};init['typed_mission_configuration']=dict(init['typed_mission_configuration'],campaign_source_path=current_assets['definition']['source_path'],layout=ld);ide=write('initialization.json',init)
  bundle.update(mission=target['catalog_id'],seed=target['seed'],initialization=ide,unit_metadata=ud,static_clearance=fd,camera_profile=pd,scope='ActualOriginalCompilerContextAndImmutableNativeFacts_PhysicalSourceOnly_NotNativeMissionAcceptance');write('data-bundle.json',bundle)
  result={'kind':'DeclaredOriginalCompilerInputProjection','target_context':target,'actual_compiler_result':compiler_result,'native_factory_reference':native_ref,'physical_capture':physical,'rotation_function_set':function_set,'context_root':c['current_factory_source_root'],'source_fit_certified':False,'mission_ready':False,'runtime_admission':False,'world_allocated':False};write('projection-index.json',result);return result
 

@@ -42,7 +42,7 @@ namespace Game.Runtime
                 (string)manifest["source_path"] != source || (string)manifest["source_sha256"] != sourceSha ||
                 (long?)manifest["source_bytes"] != info.Length ||
                 (string)manifest["slice_path"] != path || (string)manifest["slice_sha256"] != sha ||
-                (long?)manifest["slice_bytes"] != new FileInfo(path).Length ||
+                (long?)manifest["slice_bytes"] != new FileInfo(AutonomousWorld.ResolvePinnedPath(path)).Length ||
                 !((JArray)manifest["selected_fields"]).Values<string>().SequenceEqual(selected) ||
                 (int?)manifest["root_count"] != ((JObject)domain["opening_prefabs"]).Count ||
                 (int?)manifest["entity_count"] != ((JArray)domain["entities"]).Count ||

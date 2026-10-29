@@ -52,7 +52,7 @@ class SourceBuildProtocolTests(unittest.TestCase):
         self.placement=self.base/'build/placement/build.json';self.placement.parent.mkdir();self.placement.write_text('{}')
         self.source=self.base/'CurrentPolicy.cs';self.source.write_text('class CurrentPolicy {}')
         self.pins={str(p.resolve()):m.sha(p.read_bytes())for p in [self.mono,self.newton,self.source]}
-        self.receipt={'schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','mission':'S002','seed':104731,'repository_root':str(self.repo),'source_and_reference_pins':dict(self.pins),'executable':m.pin(self.exe),'placement_build':str(self.placement),'runtime_selection':{k:str(v)for k,v in {'contents':self.contents,'script':self.script,'engine':self.engine,'mono':self.mono,'newtonsoft':self.newton}.items()}}
+        self.receipt={'runtime_backend':'LegacyGroundS002V1','schema_version':1,'kind':'SkirmishSourceSimulationBuild','status':'Passed','mission':'S002','seed':104731,'repository_root':str(self.repo),'source_and_reference_pins':dict(self.pins),'executable':m.pin(self.exe),'placement_build':str(self.placement),'runtime_selection':{k:str(v)for k,v in {'contents':self.contents,'script':self.script,'engine':self.engine,'mono':self.mono,'newtonsoft':self.newton}.items()}}
         self.build=self.base/'build.json';self.save_build()
         self.inputs={'schema_version':1,'mission':'S002','seed':104731}
         for name in ['initialization','unit_metadata','static_clearance','camera_values','camera_motion']:
@@ -141,4 +141,24 @@ class SourceBuildProtocolTests(unittest.TestCase):
         factory.assert_not_called()
     def test_loaded_runtime_manifest_absence_fails_closed(self):
         with self.assertRaisesRegex(UnsupportedSourceShape,'Actual loaded-runtime manifests missing'):self.invoke({'status':'SourceTerminal','source_outcome':'Victory'},manifests=False)
+class S002DiagnosticReceiptClassificationTests(unittest.TestCase):
+    def setUp(self):
+        self.initial={'mission_id':'S002','placement_domain':{'s002_original_owner_diagnostic':{}}}
+    def test_bounded_prefix_is_nonvalidating_and_successful_cli(self):
+        receipt={'status':'BoundedPrefix','validation_passed':False,'full_outcome_observed':False,'diagnostic_prefix_completed':True,'source_result':{'status':'BoundedPrefix'}}
+        result=m.classify_s002_source_diagnostic(self.initial,receipt)
+        self.assertEqual(result['status'],'BoundedPrefix');self.assertTrue(result['diagnostic_only']);self.assertFalse(result['validation_passed'])
+        self.assertTrue(result['validation_passed'] or result['diagnostic_prefix_completed'])
+        for key in ('camera_qualified','active_mission_water_qualified','runtime_presentation_qualified','source_fit_certified','native_acceptance','mission_ready'):self.assertIs(result[key],False)
+    def test_failed_or_missing_result_stays_failed(self):
+        for source in (None,{'status':'Failed'}):
+            with self.subTest(source=source):
+                receipt={'status':'Failed','validation_passed':False,'full_outcome_observed':False,'diagnostic_prefix_completed':False,'source_result':source}
+                result=m.classify_s002_source_diagnostic(self.initial,receipt)
+                self.assertEqual(result['status'],'Failed');self.assertFalse(result['validation_passed'] or result['diagnostic_prefix_completed']);self.assertIs(result['source_result'],source)
+    def test_legacy_full_outcome_is_unchanged(self):
+        receipt={'status':'SourceOutcomeObserved','validation_passed':True,'full_outcome_observed':True,'diagnostic_prefix_completed':False,'source_result':{'status':'SourceTerminal','source_outcome':'Victory'}}
+        initial={'mission_id':'S002','placement_domain':{'packed':{'sha256':'fixture'}}};before=json.dumps(receipt,sort_keys=True)
+        self.assertEqual(json.dumps(m.classify_s002_source_diagnostic(initial,receipt),sort_keys=True),before)
+
 if __name__=='__main__':unittest.main()

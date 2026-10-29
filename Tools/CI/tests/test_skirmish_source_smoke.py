@@ -22,7 +22,7 @@ def verify(pins):
 
 class SmokeControls(unittest.TestCase):
  def setUp(self):
-  self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.manifest=self.root/'manifest.json';self.manifest.write_text('{}');self.b=types.SimpleNamespace(need=need,pin=pin,sha=lambda raw:hashlib.sha256(raw).hexdigest(),write=write,verify=verify);self.owned=types.SimpleNamespace(pins=lambda:{},require=lambda name:types.SimpleNamespace(no_duplicates=duplicates));self.module=types.ModuleType('smoke_control_module')
+  self.temp=tempfile.TemporaryDirectory();self.root=Path(self.temp.name);self.manifest=self.root/'manifest.json';self.manifest.write_text('{}');self.b=types.SimpleNamespace(need=need,pin=pin,sha=lambda raw:hashlib.sha256(raw).hexdigest(),write=write,verify=verify);self.owned=types.SimpleNamespace(pins=lambda:{},require=lambda name:types.SimpleNamespace(no_duplicates=duplicates,derived=lambda:None));self.module=types.ModuleType('smoke_control_module')
   with mock.patch.dict(sys.modules,{'skirmish_owned_source':self.owned,'skirmish_source_build':self.b}):exec(compile((ROOT/'skirmish_source_smoke.py').read_bytes(),str(ROOT/'skirmish_source_smoke.py'),'exec'),self.module.__dict__)
  def tearDown(self):self.temp.cleanup()
  def run_smoke(self,stages,startup=True,timeout=1):
@@ -34,6 +34,14 @@ class SmokeControls(unittest.TestCase):
   stages={name:deps for name,fn,deps in self.module.STAGES};self.assertIn('objective_rules',stages['startup'])
  def test_source_build_waits_for_cheap_catalog_matrix(self):
   stages={name:deps for name,fn,deps in self.module.STAGES};self.assertIn('catalog_matrix_csv',stages['source_build'])
+ def test_derived_seed_forwarded_only_for_matching_build(self):
+  descriptor=self.root/'qualification.json';descriptor.write_text('actual descriptor');d=pin(descriptor);bound=({'seed':87322},{'path':d['path'],'sha256':d['sha256']});self.owned.require=lambda name:types.SimpleNamespace(derived=lambda:bound)
+  seen=[];self.module._command=lambda command,*args:seen.append(command) or {'timed_out':False,'process_exit':0};self.module._checked_source_build=lambda ctx:{'checked':True}
+  ctx={'build_receipt':None,'mission':'S002','seed':87322,'bundle':'bundle','package':self.root,'repo':self.root,'manifest':self.manifest,'out':self.root,'remaining':lambda:1,'pins':{}}
+  self.module._source_build(ctx);self.assertEqual(seen[0][-2:],['--s002-derived-seed',d['path']]);self.assertEqual(ctx['pins'][d['path']],d['sha256'])
+  ctx['build_receipt']=None;ctx['seed']=87323
+  with self.assertRaises(ValueError):self.module._source_build(ctx)
+  self.assertEqual(len(seen),1)
  def test_pass_is_only_smoke(self):
   r=self.run_smoke([('one',self.passed,())]);self.assertEqual((r['status'],r['exit_code']),('SmokePassed',0));self.assertFalse(r['validation_passed']);self.assertFalse(r['mission_ready']);self.assertFalse(r['full_outcome_observed']);self.assertTrue(r['unimplemented_coverage'])
  def test_fullpreflight_does_not_initialize_startup(self):
@@ -97,7 +105,7 @@ class EntryHookControls(unittest.TestCase):
    self.calls.append(('smoke',args,kwargs));out=Path(args[3]);out.mkdir(parents=True);result={'status':'PreflightPassed','exit_code':0,'validation_passed':False,'build_receipt':args[8]or'preflight-checked-build'};write(out/'smoke-report.json',result);return result
   def fake_run(*args):
    self.calls.append(('run',args,{}));out=Path(args[3]);out.mkdir();(out/'process.log').write_text('[ActualS002AutonomousStart]');return {'status':'SourceOutcomeObserved','process_exit':0,'timed_out':False,'wall_seconds':1,'validation_passed':True,'full_outcome_observed':True,'diagnostic_prefix_completed':False}
-  self.fake_smoke=fake_smoke;self.b=types.SimpleNamespace(run=fake_run,build=lambda *a:self.fail('duplicate build'),write=write,pin=pin);owned=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,smoke=self.fake_smoke));tree=ast.parse((ROOT/'run_skirmish_source_simulation.py').read_text());main=next(x for x in tree.body if isinstance(x,ast.FunctionDef)and x.name=='main');module=ast.Module(body=[main],type_ignores=[]);self.ns={'argparse':__import__('argparse'),'json':json,'sys':sys,'Path':Path,'time':time,'owned':owned,'UnsupportedSourceShape':ValueError,'__doc__':'control','__file__':str(ROOT/'run_skirmish_source_simulation.py')};exec(compile(module,'entry-main','exec'),self.ns)
+  self.fake_smoke=fake_smoke;self.b=types.SimpleNamespace(run=fake_run,build=lambda *a:self.fail('duplicate build'),write=write,pin=pin);owned=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,runtime_backend=lambda mission:'LegacyGroundS002V1',smoke=self.fake_smoke));tree=ast.parse((ROOT/'run_skirmish_source_simulation.py').read_text());main=next(x for x in tree.body if isinstance(x,ast.FunctionDef)and x.name=='main');module=ast.Module(body=[main],type_ignores=[]);self.ns={'argparse':__import__('argparse'),'json':json,'sys':sys,'Path':Path,'time':time,'owned':owned,'UnsupportedSourceShape':ValueError,'__doc__':'control','__file__':str(ROOT/'run_skirmish_source_simulation.py')};exec(compile(module,'entry-main','exec'),self.ns)
  def tearDown(self):self.temp.cleanup()
  def invoke(self,extra,checked=True):
   args=['cli','run','--mission','S002','--repo',str(self.root),'--package-root',str(self.root),'--output',str(self.root/'run'),'--build-receipt','b','--data-bundle','d']+extra
@@ -108,10 +116,10 @@ class EntryHookControls(unittest.TestCase):
  def test_unbuilt_fullrun_reuses_preflight_created_build(self):
   self.assertEqual(self.invoke([],checked=False),0);self.assertIsNone(self.calls[0][1][8]);self.assertEqual(self.calls[1][1][1],'preflight-checked-build')
  def test_unbuilt_fullrun_bad_csv_never_builds_or_runs(self):
-  self.ns['owned']=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,smoke=lambda *a,**k:{'status':'Failed','exit_code':1,'stages':[{'id':'catalog_matrix_csv','status':'Failed'},{'id':'source_build','status':'Skipped'}]}));self.assertEqual(self.invoke([],checked=False),1);self.assertFalse(self.calls)
+  self.ns['owned']=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,runtime_backend=lambda mission:'LegacyGroundS002V1',smoke=lambda *a,**k:{'status':'Failed','exit_code':1,'stages':[{'id':'catalog_matrix_csv','status':'Failed'},{'id':'source_build','status':'Skipped'}]}));self.assertEqual(self.invoke([],checked=False),1);self.assertFalse(self.calls)
  def test_explicit_diagnostic_does_not_recurse(self):
   self.assertEqual(self.invoke(['--max-ticks','5']),0);self.assertEqual([x[0]for x in self.calls],['run']);self.assertEqual(self.calls[0][1][4],5)
  def test_failed_preflight_blocks_fullworker(self):
-  self.ns['owned']=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,smoke=lambda *a,**k:{'status':'Blocked','exit_code':2}));self.assertEqual(self.invoke([]),2);self.assertFalse(self.calls)
+  self.ns['owned']=types.SimpleNamespace(require=lambda name:types.SimpleNamespace(require_profile=self.qualified_profile,runtime_backend=lambda mission:'LegacyGroundS002V1',smoke=lambda *a,**k:{'status':'Blocked','exit_code':2}));self.assertEqual(self.invoke([]),2);self.assertFalse(self.calls)
 
 if __name__=='__main__':unittest.main()

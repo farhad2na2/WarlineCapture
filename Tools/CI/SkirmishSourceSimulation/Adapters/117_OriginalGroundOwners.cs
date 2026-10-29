@@ -27,12 +27,6 @@ namespace Game.Runtime{
   internal void MovementPhase(){Alive();movementState.Begin();if(movementState.Enabled&&movementState.RequiredQueriesPresent)movement.OnUpdate(ref movementState);movementState.End();}
   internal void EndSimulationPhase(){Alive();end.Playback(em);}
   internal bool HasPendingPath=>em.CreateEntityQuery(typeof(UnitPathfindingPendingStateComponent)).GetSingleton<UnitPathfindingPendingStateComponent>().HasPendingPathJob!=0;
-  
-#if WARLINE_SOURCE_PATH_JOB_SCHEDULING
-public void Dispose(){if(disposed)return;Exception first=null;try{pathState.Begin();path.OnDestroy(ref pathState);}catch(Exception error){first=error;}finally{try{occupancyState.Begin();occupancy.OnDestroy(ref occupancyState);}catch(Exception error){Unity.Jobs.OwnedJobBackend.PreserveCleanupFailure(ref first,error);}finally{disposed=true;}}if(first!=null)System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(first).Throw();}
-#else
-public void Dispose(){if(disposed)return;pathState.Begin();path.OnDestroy(ref pathState);occupancyState.Begin();occupancy.OnDestroy(ref occupancyState);disposed=true;}
-#endif
-
+  public void Dispose(){if(disposed)return;pathState.Begin();path.OnDestroy(ref pathState);occupancyState.Begin();occupancy.OnDestroy(ref occupancyState);disposed=true;}
  }
 }

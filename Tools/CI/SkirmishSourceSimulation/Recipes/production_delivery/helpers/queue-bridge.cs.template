@@ -5,79 +5,15 @@ namespace Game.Runtime {
   internal readonly SourceUnitPrefab Unit;internal readonly int ProductionIndex,Quantity;internal readonly BuildingProductionQueueCompositionSystemHelper.UnitProductionMetadata Metadata;
   internal SourceProductionDeliveryRecipe(int index,SourceUnitPrefab unit,int quantity,BuildingProductionQueueCompositionSystemHelper.UnitProductionMetadata metadata){if(index<0||unit==null||quantity<1)throw new ArgumentException("Actual source recipe identity/quantity required");ProductionIndex=index;Unit=unit;Quantity=quantity;Metadata=metadata;}
  }
- // Diagnostic value copies only. These records never enter availability, ARIA or payment decisions.
- internal sealed class SourceMaterialBankDiagnostic {
-  internal Entity Bank; internal byte Faction; internal FactionTacticalMaterialsComponent Materials;
- }
- internal sealed class SourceMaterialsDiagnostic {
-  internal string Status,Reason; internal SourceMaterialBankDiagnostic[] Banks=Array.Empty<SourceMaterialBankDiagnostic>();
- }
- internal sealed class SourceQueueDiagnostic {
-  internal int Sequence,ProducerId,ProductionIndex; internal long? Tick; internal string WorldId,QueueKind,ResultReason,ExceptionType,UnitKey,ReservationReadStatus;
-  internal float OriginalQueueTimeArgument; internal bool Returned,Accepted,FactionKnown,RecipeKnown,HasReservation;
-  internal byte Faction; internal int DeclaredRecipeQuantity; internal int? DeclaredMetadataPrice,DeclaredMetadataCreditsCost;
-  internal Entity ReceiptOwner; internal uint ReceiptId; internal string ReceiptAttempt;
-  internal SkirmishProductionReservation Reservation; internal SourceMaterialsDiagnostic Before,After;
- }
  internal sealed class SourceProductionDeliveryOwner {
-  internal Entity DiagnosticSession; internal string DiagnosticWorldId; internal Func<long> DiagnosticTick;
-  internal readonly List<SourceQueueDiagnostic> QueueDiagnostics=new List<SourceQueueDiagnostic>();
-  internal int QueueDiagnosticFaults,QueueDiagnosticFailureFlags;
-  // Nonallocating managed fault latch:1=binding,2=pre,4=post,8=capacity,16=bankread.
-  void InvalidateQueueDiagnostic(int flag){QueueDiagnosticFailureFlags|=flag;if(QueueDiagnosticFaults<int.MaxValue)QueueDiagnosticFaults++;}
-  const int QueueDiagnosticCapacity=8192;
-  internal static SourceMaterialsDiagnostic CaptureMaterialsDiagnostic(EntityManager em,Entity session){
-   try {
-    if(!em.Exists(session)||!em.HasComponent<SkirmishSharedMaterialsInitialized>(session))return new SourceMaterialsDiagnostic{Status="Unsupported",Reason="Shared faction materials authority absent; no stock/zero substitution"};
-    uint version=em.ChangeVersion;long structural=em.StructuralVersion;
-    using var query=em.CreateEntityQuery(typeof(FactionEconomy),typeof(FactionTacticalMaterialsComponent));
-    using var entities=query.ToEntityArray(Allocator.Temp);if(entities.Length>16)return new SourceMaterialsDiagnostic{Status="Unsupported",Reason="Faction bank domain exceeds diagnostic bound"};
-    var rows=new List<SourceMaterialBankDiagnostic>();var factions=new HashSet<byte>();
-    foreach(var bank in entities){var economy=em.GetComponentData<FactionEconomy>(bank);var materials=em.GetComponentData<FactionTacticalMaterialsComponent>(bank);
-     if(materials.FactionId!=economy.FactionId||!factions.Add(economy.FactionId))return new SourceMaterialsDiagnostic{Status="Unsupported",Reason="Ambiguous or mismatched actual faction materials bank"};
-     rows.Add(new SourceMaterialBankDiagnostic{Bank=bank,Faction=economy.FactionId,Materials=materials});}
-    if(em.ChangeVersion!=version||em.StructuralVersion!=structural)return new SourceMaterialsDiagnostic{Status="Invalid",Reason="Diagnostic bank read changed source versions"};
-    return new SourceMaterialsDiagnostic{Status="CapturedRawSharedBanks",Banks=rows.ToArray()};
-   }catch(Exception){return null;} // Best effort, including managed OOM; no allocation in catch.
-  }
-  SourceQueueDiagnostic BeginQueueDiagnostic(int producerId,int productionIndex,float now,bool playerCatalogLimit){
-   try {
-    if(QueueDiagnosticFailureFlags!=0)return null;
-    if(DiagnosticTick==null||string.IsNullOrEmpty(DiagnosticWorldId)||DiagnosticSession==Entity.Null||!World.Em.Exists(DiagnosticSession)||!World.Em.HasComponent<SkirmishExpandedSessionComponent>(DiagnosticSession)||World.Em.GetComponentData<SkirmishExpandedSessionComponent>(DiagnosticSession).SessionId.IsEmpty){InvalidateQueueDiagnostic(1);return null;}
-    long actualTick=DiagnosticTick();if(actualTick<0){InvalidateQueueDiagnostic(1);return null;}
-    if(QueueDiagnostics.Count>=QueueDiagnosticCapacity){InvalidateQueueDiagnostic(8);return null;}
-    var row=new SourceQueueDiagnostic{Sequence=QueueDiagnostics.Count+1,ProducerId=producerId,ProductionIndex=productionIndex,OriginalQueueTimeArgument=now,Tick=actualTick,WorldId=DiagnosticWorldId,QueueKind=playerCatalogLimit?"PlayerCatalog":"FactionRequest",Before=CaptureMaterialsDiagnostic(World.Em,DiagnosticSession)};
-    if(row.Before==null){InvalidateQueueDiagnostic(16);return null;}
-    if(World.Buildings.TryGetValue(producerId,out var building)&&building!=null){row.FactionKnown=building.HasOwnerFaction;row.Faction=building.OwnerFactionId;}
-    if(Recipes.TryGetValue(producerId,out var recipes)){int matches=0;foreach(var recipe in recipes)if(recipe.ProductionIndex==productionIndex){matches++;row.UnitKey=recipe.Unit?.name;row.DeclaredRecipeQuantity=recipe.Quantity;}row.RecipeKnown=matches==1;}
-    return row;
-   }catch(Exception){InvalidateQueueDiagnostic(2);return null;}
-  }
-  void EndQueueDiagnostic(SourceQueueDiagnostic row,bool returned,bool accepted,SourcePendingProduction pending,Exception originalError){
-   if(row==null)return;
-   try {
-    row.Returned=returned;row.Accepted=accepted;row.ResultReason=returned?(accepted?"OriginalQueueReturnedTrue":"OriginalQueueReturnedFalse"):"OriginalQueueThrew";row.ExceptionType=originalError?.GetType().FullName;
-    row.After=CaptureMaterialsDiagnostic(World.Em,DiagnosticSession);if(row.After==null){InvalidateQueueDiagnostic(16);return;}
-    if(pending!=null){row.ReceiptOwner=pending.ReceiptOwner;row.ReceiptId=pending.ReceiptId;row.ReceiptAttempt=pending.ReceiptAttempt.ToString();
-     row.ReservationReadStatus="Missing";if(row.ReceiptId!=0&&World.Em.Exists(row.ReceiptOwner)&&World.Em.HasBuffer<SkirmishProductionReservation>(row.ReceiptOwner)){int matches=0;foreach(var reservation in World.Em.GetBuffer<SkirmishProductionReservation>(row.ReceiptOwner,true))if(reservation.ReservationId==row.ReceiptId){matches++;row.Reservation=reservation;}row.HasReservation=matches==1;row.ReservationReadStatus=matches==1?"UniqueActualReceipt":matches>1?"UnsupportedAmbiguousReceipt":"Missing";}}
-    QueueDiagnostics.Add(row);
-   }catch(Exception){InvalidateQueueDiagnostic(4);}
-  }
-  bool ObserveQueue(int producerId,int productionIndex,float now,bool playerCatalogLimit,out SourcePendingProduction pending){
-   pending=null;var row=BeginQueueDiagnostic(producerId,productionIndex,now,playerCatalogLimit);bool accepted;
-   try{accepted=TryQueueCore(producerId,productionIndex,now,playerCatalogLimit,out pending);}
-   catch(Exception originalError){EndQueueDiagnostic(row,false,false,pending,originalError);throw;}
-   EndQueueDiagnostic(row,true,accepted,pending,null);return accepted;
-  }
-
   internal readonly SourceProductionGroundWorld World;internal readonly BuildingProductionQueueCompositionSystemHelper Production;internal readonly BuildingProductionQueueCompositionSystemHelper.QueueContext QueueContext;internal readonly IReadOnlyDictionary<int,SourceProductionDeliveryRecipe[]> Recipes;internal readonly int MaxQueued;internal uint RandomState;internal bool Poisoned;internal int DeliveredMembers;
   internal SourceHelicopterDelivery Helicopters;
   internal SourceProductionDeliveryOwner(SourceProductionGroundWorld world,BuildingProductionQueueCompositionSystemHelper production,BuildingProductionQueueCompositionSystemHelper.QueueContext context,IReadOnlyDictionary<int,SourceProductionDeliveryRecipe[]> recipes,int maxQueued,uint sourceConstructorRandomState){World=world??throw new ArgumentNullException();Production=production??throw new ArgumentNullException();QueueContext=context;Recipes=recipes??throw new ArgumentNullException();MaxQueued=math.max(0,maxQueued);if(sourceConstructorRandomState==0)throw new ArgumentException("Source nonzero constructor spawn RNG required");RandomState=sourceConstructorRandomState;foreach(var pair in World.Buildings){var b=pair.Value;if(b!=null&&!b.InitialProducerCollectionsKnown)throw new NotSupportedException("Unknown initial producer collections");}}
   bool Friendly(RuntimeBuildingEntity b)=>b!=null&&!b.IsDestroyed&&!b.IsCityGenerated&&(!b.HasOwnerFaction||b.OwnerFactionId==FactionIdentity.NeutralFactionId||b.OwnerFactionId==FactionIdentity.PlayerFactionId);
-  internal bool TryQueue(int producerId,int productionIndex,float now,out SourcePendingProduction pending)=>ObserveQueue(producerId,productionIndex,now,true,out pending);
+  internal bool TryQueue(int producerId,int productionIndex,float now,out SourcePendingProduction pending)=>TryQueueCore(producerId,productionIndex,now,true,out pending);
   // Native faction requests have no player catalog global-queue guard. All
   // actual stocks/population/slot/payment/delivery checks stay in this owner.
-  internal bool TryQueueFactionRequest(int producerId,int productionIndex,float now,out SourcePendingProduction pending)=>ObserveQueue(producerId,productionIndex,now,false,out pending);
+  internal bool TryQueueFactionRequest(int producerId,int productionIndex,float now,out SourcePendingProduction pending)=>TryQueueCore(producerId,productionIndex,now,false,out pending);
   bool TryQueueCore(int producerId,int productionIndex,float now,bool playerCatalogLimit,out SourcePendingProduction pending){pending=null;if(Poisoned)throw new InvalidOperationException("Delivery owner poisoned");if(!math.isfinite(now))throw new ArgumentException("Finite source clock required");if(!World.Buildings.TryGetValue(producerId,out var building)||building==null||!Recipes.TryGetValue(producerId,out var recipes))return false;SourceProductionDeliveryRecipe recipe=null;foreach(var r in recipes)if(r.ProductionIndex==productionIndex){if(recipe!=null)throw new InvalidOperationException("Duplicate source production index");recipe=r;}if(recipe==null)return false;ValidateRecipe(building,recipe);if(playerCatalogLimit&&MaxQueued>0){int count=0;foreach(var p in World.Buildings)if(Friendly(p.Value))count+=p.Value.PendingProductions?.Count??0;if(count>=MaxQueued)return false;}
    var settings=Production.ResolveProductionTransportSettings(recipe.Unit,QueueContext.UnitSpawnPrefabs,QueueContext.UnitSpawnPrefabsByKey,QueueContext.TryGetPrefabLocalBounds);
    if(settings.TransportPrefab!=null&&(settings.Mode!=BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter||Helicopters==null||!Helicopters.Admits(settings.TransportPrefab)))throw new NotSupportedException("Source transport mode/geometry not admitted; no payment performed");

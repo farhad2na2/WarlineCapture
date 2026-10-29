@@ -62,7 +62,8 @@ internal sealed partial class SourceS002NumericCameraProvider{
   // This deliberately does not call native MatchesSource/TryResolve and fabricates no
   // ActiveOperationMap generation, metadata blob or PhysicalSourceValidated marker.
   if(!profile.MatchesActiveMap(setup,actualDefinition,Need(map,"operationMapId"),Need(map,"contentHash"),Need(map,"sourceIdentityHash")))throw new NotSupportedException("Original mission view identity policy rejected generated source identity");
-  return new SourceS002NumericCameraProvider(setup,actualGrid,profile,p,profileSha,mapSha,graphSha,SourceNumericCameraEngineAdapterContract.Legacy(profileSha));
+  var adapter=setup.CatalogId=="S002"&&((string)request["source_epoch"]??"").StartsWith("S002-current-native-v1:",StringComparison.Ordinal)?SourceNumericCameraEngineAdapterContract.CurrentS002(profileSha,repositoryRoot):SourceNumericCameraEngineAdapterContract.Legacy(profileSha);
+  return new SourceS002NumericCameraProvider(setup,actualGrid,profile,p,profileSha,mapSha,graphSha,adapter);
  }
  internal void AdvanceSourceUnscaledTime(float now){
   Ready();if(!math.isfinite(now)||(hasTime&&now<lastTime)){poisoned=true;throw new NotSupportedException("Monotonic actual source unscaled camera time required");}lastTime=now;hasTime=true;

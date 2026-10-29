@@ -12,13 +12,13 @@ namespace Game.Runtime {
    if(!ReferenceEquals(delivery.World.Em,em)||!availability.AriaSameWorld(em,session,delivery.World.Buildings))throw new InvalidOperationException("Same source EM/session/live producer registry required");
   }
   SourceAriaRecruitmentOffer ReadOffer(SkirmishRoleKind role){
-   var facts=sourceFacts();var catalog=em.GetComponentObject<SkirmishProductionCatalogRecord>(session).Catalog;BuildDrawerCatalogItem chosen=default;bool present=false;SourceCatalogRows.ObservedCategory chosenCategory=null;
-   foreach(var category in new[]{BuildDrawerCategory.Vehicles,BuildDrawerCategory.Aircrafts,BuildDrawerCategory.Soldiers}){var observed=rows.ReadObserved(category,facts);foreach(var row in observed.Items){
+   var facts=sourceFacts();var catalog=em.GetComponentObject<SkirmishProductionCatalogRecord>(session).Catalog;BuildDrawerCatalogItem chosen=default;bool present=false;
+   foreach(var category in new[]{BuildDrawerCategory.Vehicles,BuildDrawerCategory.Aircrafts,BuildDrawerCategory.Soldiers})foreach(var row in rows.Read(category,facts)){
     if(row.Prefab==null||!catalog.TryRole(row.Prefab.name,out var overlay)||overlay.RoleKind!=role)continue;
-    if(present)throw new NotSupportedException("Ambiguous source role catalog identity");chosen=row;present=true;chosenCategory=observed;
-   }}
+    if(present)throw new NotSupportedException("Ambiguous source role catalog identity");chosen=row;present=true;
+   }
    if(!present)return new SourceAriaRecruitmentOffer(false,false,"ActualSourceCatalogRoleAbsent",default,facts);
-   var result=availability.Read(chosen,facts,true,true,chosenCategory);return new SourceAriaRecruitmentOffer(true,result.PrimaryInteractable,result.Failure.ToString(),chosen,facts);
+   var result=availability.Read(chosen,facts,true,true);return new SourceAriaRecruitmentOffer(true,result.PrimaryInteractable,result.Failure.ToString(),chosen,facts);
   }
   internal override SourceAriaRecruitmentSurface Read(SkirmishRoleKind role){var offer=ReadOffer(role);return new SourceAriaRecruitmentSurface(offer.Present,offer.CanRequest,offer.Reason);}
   internal override SourceAriaRecruitmentReceipt Request(SkirmishRoleKind role,float actualProductionSourceTime){

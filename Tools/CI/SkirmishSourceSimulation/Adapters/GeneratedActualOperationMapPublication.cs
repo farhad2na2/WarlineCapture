@@ -17,21 +17,21 @@ namespace Game.Runtime{
 
   SourceSelectedOperationMap.Selection selectedSourceOperationMap;
   JObject selectedSourcePhysicalMap;
-  string selectedSourceRotationPath, selectedSourceRotationSha;
+  string selectedSourceRotationPath, selectedSourceRotationSha, selectedSourceRotationRoot;
   string sourceBuildingRequestMetadataPath,sourceBuildingRequestMetadataSha;
   internal void BindSourceConfiguredBuildingMetadata(string sourceRepo,string dataRepo){if(sourceBuildingRequestMetadataPath==null)throw new InvalidOperationException("Validated actual configured-building metadata is required");BindActualBuildingRequestMetadata(sourceBuildingRequestMetadataPath,sourceBuildingRequestMetadataSha,sourceRepo,dataRepo,false);RecordPublicationStartup("configured_metadata_bound_without_publication");}
-  internal static SourceSelectedOperationMap.Selection PreflightSelectedOperationMapInputs(JObject request,JObject graph,SourceConfigMaterializer assets,SkirmishScenarioDefinitionConfig definition,SkirmishResolvedSetup setup){
+  internal static SourceSelectedOperationMap.Selection PreflightSelectedOperationMapInputs(JObject request,JObject graph,SourceConfigMaterializer assets,SkirmishScenarioDefinitionConfig definition,SkirmishResolvedSetup setup,string sourceRoot=null){
    var selection=SourceSelectedOperationMap.Resolve(request,graph,assets,definition,setup,(token,limit)=>Descriptor(token,limit));
    var reference=request["operation_map_rotation_reference"]as JObject;
    if(reference==null||reference.Properties().Count()!=2||reference["path"]==null||reference["sha256"]==null)throw new ArgumentException("Exact native rotation-reference path/sha descriptor required");
-   Descriptor(reference,4*1024*1024);SourceOperationMapRotationReference.LoadPinned((string)reference["path"],(string)reference["sha256"]);
+   Descriptor(reference,4*1024*1024);SourceOperationMapRotationReference.LoadPinned((string)reference["path"],(string)reference["sha256"],setup.CatalogId=="S002"?sourceRoot:null);
    var buildings=request["building_request_metadata"]as JObject;
    if(buildings==null||buildings.Properties().Count()!=2||buildings["path"]?.Type!=JTokenType.String||buildings["sha256"]?.Type!=JTokenType.String)throw new ArgumentException("Exact configured-building metadata path/sha descriptor required");
    Descriptor(buildings,4*1024*1024);return selection;
   }
-  void RetainSelectedOperationMapInputs(JObject request, JObject graph, SourceConfigMaterializer assets){
-   selectedSourceOperationMap=PreflightSelectedOperationMapInputs(request,graph,assets,ActualDefinition,Setup);RecordPublicationStartup("selected_source_validated");
-   selectedSourceRotationPath=(string)request["operation_map_rotation_reference"]["path"];selectedSourceRotationSha=(string)request["operation_map_rotation_reference"]["sha256"];
+  void RetainSelectedOperationMapInputs(JObject request, JObject graph, SourceConfigMaterializer assets,string sourceRoot=null){
+   selectedSourceOperationMap=PreflightSelectedOperationMapInputs(request,graph,assets,ActualDefinition,Setup,sourceRoot);RecordPublicationStartup("selected_source_validated");
+   selectedSourceRotationRoot=Setup.CatalogId=="S002"?sourceRoot:null;selectedSourceRotationPath=(string)request["operation_map_rotation_reference"]["path"];selectedSourceRotationSha=(string)request["operation_map_rotation_reference"]["sha256"];
    selectedSourcePhysicalMap=(JObject)((JObject)request["static_map"]).DeepClone();
    sourceBuildingRequestMetadataPath=(string)request["building_request_metadata"]["path"];sourceBuildingRequestMetadataSha=(string)request["building_request_metadata"]["sha256"];
   }
@@ -43,7 +43,7 @@ namespace Game.Runtime{
    var grid=Entities.GetComponentData<GridConfig>(GridEntity);var sourceGrid=definition.GridMetadata;
    if(grid.Width!=sourceGrid.Dimensions.x||grid.Height!=sourceGrid.Dimensions.y||grid.CellSize!=sourceGrid.CellSize||grid.Origin.x!=sourceGrid.Origin.x||grid.Origin.y!=sourceGrid.Origin.y||grid.Origin.z!=sourceGrid.Origin.z||(string)selectedSourcePhysicalMap["grid_config"]?["sha256"]!=sourceGrid.ContentHash||(string)selectedSourcePhysicalMap["surface_data"]?["sha256"]!=definition.SurfaceMetadata.ContentHash)throw new NotSupportedException("Actual owned grid/surface source differs from selected metadata");
    using(var roots=Entities.CreateEntityQuery(typeof(OperationMapRootComponent)))if(!roots.IsEmptyIgnoreFilter)throw new NotSupportedException("Fresh initial-root profile cannot adopt/reuse an existing root");
-   var rotation=SourceOperationMapRotationReference.LoadPinned(selectedSourceRotationPath,selectedSourceRotationSha);
+   var rotation=SourceOperationMapRotationReference.LoadPinned(selectedSourceRotationPath,selectedSourceRotationSha,selectedSourceRotationRoot);
    var owner=new OperationMapRuntimeBootstrapSceneSystemHelper(Entities,rotation);
    SourceOperationMapInitialReadiness.ResolveInitialOperationMapReadiness(false,out var ready,out var required);
    try{if(!owner.TryPublish(definition,new FixedString64Bytes(selectedSourceOperationMap.ScenarioId),new FixedString64Bytes(selectedSourceOperationMap.MissionId),1,ready,required,out var root,out string error))throw new InvalidOperationException(error);actualOperationMapOwner=owner;RecordPublicationStartup("selected_metadata_root_published");}catch{owner.Dispose();throw;}

@@ -22,10 +22,7 @@ class AuthorInputTests(unittest.TestCase):
  def test_size_bound_rejects(self):
   p=self.root/'large.json';p.write_bytes(b' '*(16*1024*1024+1))
   with self.assertRaisesRegex(Exception,'Bounded authoring JSON'):a.read_author_json(p)
- def call(self,mission='S026',seed=104755,timeout=30):
-  # Dispatch reads a valid draft before the unchanged legacy identity/timeout guards.
-  draft=self.root/'unused.json';draft.write_text('{}')
-  return a.author(self.root,self.root,None,self.root/'output',mission,seed,draft,timeout=timeout)
+ def call(self,mission='S026',seed=104755,timeout=30):return a.author(self.root,self.root,None,self.root/'output',mission,seed,self.root/'unused.json',timeout=timeout)
  def test_wrong_entry_identity_precedes_build_or_output(self):
   for mission,seed in [('S002',104755),('S026',104731)]:
    with self.subTest(mission=mission,seed=seed),self.assertRaisesRegex(Exception,'Current data authoring scope'):self.call(mission,seed)

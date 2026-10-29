@@ -149,7 +149,7 @@ namespace Game.Runtime
             else if (!SkirmishMissionDispatch.TryGetLegacyIndex(definition.CatalogId, out actualScenarioIndex)) throw new InvalidOperationException("Source catalog dispatch index missing");
             ActualDefinitionScenarioIndex = actualScenarioIndex;
             MetadataCompatibility=SourceMetadataCompatibility.Load(request,Setup,metadataSourceRepo,metadataDataRepo);
-            RetainSelectedOperationMapInputs(request, graph, assets);
+            RetainSelectedOperationMapInputs(request, graph, assets, metadataSourceRepo);
             freshStorageAuthority=FreshSourceStorageLifetimeAuthority.FromValidatedSource(request,inputHash,sourceInitializationBytes,ActualDefinition,Setup,ActualCompileManifest,ActualCompileMatrix);
             InitializationStage = "ConstructingBakedCampaignMap";
             Entities.LogicalAllocatorAdmitted = true;

@@ -3,12 +3,12 @@ using System;using Game.Components;using Game.Configs;using Game.Simulation;usin
 namespace Game.Runtime {
 internal sealed class SourceAriaObjectiveApproach {
  readonly EntityManager em;readonly Entity session;readonly SourcePublicPlayerContactOwner contacts;readonly GroundMissionContext context;readonly AriaGroundApproachKind approachKind;bool cityFlankReached;
- internal SourceAriaObjectiveApproach(EntityManager em,Entity session,SourcePublicPlayerContactOwner contacts,GroundMissionContext context){SourceGroundMissionFamily.RequireLogicalContext(context,SourceGroundMissionFamily.RequireSession(em,session),em.GetComponentData<SkirmishExpandedSessionComponent>(session),em.GetComponentData<SkirmishMatchState>(session).ScenarioIndex);this.context=context;approachKind=context.ApproachKind;this.em=em??throw new ArgumentNullException(nameof(em));this.session=session;this.contacts=contacts??throw new ArgumentNullException(nameof(contacts));}
+ internal SourceAriaObjectiveApproach(EntityManager em,Entity session,SourcePublicPlayerContactOwner contacts,GroundMissionContext context){SourceGroundMissionFamily.RequireLogicalContext(context,SourceGroundMissionFamily.RequireSession(em,session,context.CatalogId=="S003"),em.GetComponentData<SkirmishExpandedSessionComponent>(session),em.GetComponentData<SkirmishMatchState>(session).ScenarioIndex);this.context=context;approachKind=context.ApproachKind;this.em=em??throw new ArgumentNullException(nameof(em));this.session=session;this.contacts=contacts??throw new ArgumentNullException(nameof(contacts));}
  internal SkirmishPublicArmyOrderGoalKind PublicGoalKind=>approachKind==AriaGroundApproachKind.CityCrossroads?(cityFlankReached?SkirmishPublicArmyOrderGoalKind.CityFinal:SkirmishPublicArmyOrderGoalKind.CityFlank):SkirmishPublicArmyOrderGoalKind.Approach;
  internal void OnAriaInactive(){cityFlankReached=false;}
  internal SkirmishPublicSelectedApproach LastSelectedOwnProjection {get;private set;}
  internal SourceAriaPublicApproach? Read(){
-  var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);SourceGroundMissionFamily.RequireSession(em,session);
+  var s=em.GetComponentData<SkirmishExpandedSessionComponent>(session);SourceGroundMissionFamily.RequireSession(em,session,context.CatalogId=="S003");
   var match=em.GetComponentData<SkirmishMatchState>(session);if(match.ScenarioIndex!=context.PlayableScenarioIndex)throw new NotSupportedException("Actual compiled playable identity required");
   var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;if(!GroundMissionContextFactory.MatchesLogicalSession(context,setup,s,match.ScenarioIndex))throw new NotSupportedException("Actual compiled source approach context changed");
   var facts=SkirmishPublicObjectiveProjection.Read(em,match);if(!facts.EnemyObjectiveAlive)return null;if(!facts.PlayerPositionKnown)throw new NotSupportedException("Actual public player objective position required");

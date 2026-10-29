@@ -31,6 +31,7 @@ namespace Unity.Entities{
   readonly Dictionary<Entity,Dictionary<string,JObject>> initialNativeFacts=new Dictionary<Entity,Dictionary<string,JObject>>();
   internal void PreserveInitialNativeFact(Entity entity,string type,JObject record){if(!Exists(entity)||record==null)throw new InvalidOperationException();if(!initialNativeFacts.TryGetValue(entity,out var row)){row=new Dictionary<string,JObject>(StringComparer.Ordinal);initialNativeFacts.Add(entity,row);}row.Add(type,(JObject)record.DeepClone());}
   internal bool HasInitialNativeFact(Entity entity,string type)=>initialNativeFacts.TryGetValue(entity,out var row)&&row.ContainsKey(type);
+  internal void RemoveInitialNativeFactNamed(Entity entity,string name){if(initialNativeFacts.TryGetValue(entity,out var row))row.Remove(name);}
   internal void RemoveInitialNativeFact(Entity entity,Type type){if(initialNativeFacts.TryGetValue(entity,out var row))row.Remove(type.FullName);}
   internal void SeedInitialVersions(uint version,IEnumerable<(Entity Entity,Type Type,uint Version)> captured){if(initialVersionSeeded)throw new InvalidOperationException("Initial version seed once");writes.Clear();changeVersion=version;foreach(var item in captured){if(!writes.TryGetValue(item.Entity,out var row)){row=new Dictionary<Type,uint>();writes.Add(item.Entity,row);}row.Add(item.Type,item.Version);}initialVersionSeeded=true;}
   bool initialVersionSeeded;

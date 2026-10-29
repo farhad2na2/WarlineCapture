@@ -32,13 +32,13 @@ namespace Game.Runtime
         internal readonly IReadOnlyDictionary<SourceUnitPrefab, JObject> TransportStaticData;
         internal readonly IReadOnlyDictionary<string, string> MetadataReadIdentity;
         internal readonly string ArtifactSha256;
-        internal readonly bool NativeQualified;
+        internal readonly bool FactoryDomainQualified;
         private readonly Dictionary<SourceUnitPrefab, Row> byPrefab;
         private GeneratedUnitProductionMetadata(List<Row> rows, Dictionary<SourceUnitPrefab, JObject> transports,
-            Dictionary<string, string> readIdentity, string sha, bool nativeQualified)
+            Dictionary<string, string> readIdentity, string sha, bool factoryDomainQualified)
         {
             Ordered = rows.AsReadOnly(); TransportStaticData = transports;
-            MetadataReadIdentity = readIdentity; ArtifactSha256 = sha; NativeQualified=nativeQualified;
+            MetadataReadIdentity = readIdentity; ArtifactSha256 = sha; FactoryDomainQualified=factoryDomainQualified;
             byPrefab = rows.ToDictionary(row => row.Prefab);
         }
 
@@ -70,8 +70,8 @@ namespace Game.Runtime
             JObject root = JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes),
                 new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
             if(compatibility!=null){compatibility.RequireTarget(setupHash,seed);compatibility.RequireUnits(sha,root);}
-            if ((int?)root["schema_version"] != (compatibility?.NativeQualified==true?2:1) || (string)root["kind"] != (compatibility?.NativeQualified==true?"NativeQualifiedSkirmishUnitProductionMetadata":"AuthoredSkirmishUnitProductionMetadata") ||
-                (string)root["authority"] != (compatibility?.NativeQualified==true?"OriginalNativeMetadataFactories_NotMissionState":"OriginalConfiguredAuthoringFactories_NotMissionState") ||
+            if ((int?)root["schema_version"] != (compatibility?.FactoryDomainQualified==true?2:1) || (string)root["kind"] != (compatibility?.FactoryDomainQualified==true?"NativeQualifiedSkirmishUnitProductionMetadata":"AuthoredSkirmishUnitProductionMetadata") ||
+                (string)root["authority"] != (compatibility?.FactoryDomainQualified==true?"OriginalNativeMetadataFactories_NotMissionState":"OriginalConfiguredAuthoringFactories_NotMissionState") ||
                 (compatibility==null&&((uint?)root["setup_hash"] != setupHash || (int?)root["seed"] != seed)) ||
                 (root["unsupported_values"] as JArray)?.Count != 0 ||
                 (bool?)root["baked_actor_footprint_substituted"] != false ||
@@ -102,7 +102,7 @@ namespace Game.Runtime
             var codec = new ExactInitialValueCodec(Path.GetDirectoryName(path), new JObject());
             JArray units = root["units"] as JArray;
             JArray transportRows = root["transports"] as JArray;
-            if (units == null || units.Count != (compatibility?.NativeQualified==true?compatibility.UnitCount:12) || transportRows == null || transportRows.Count > 16)
+            if (units == null || units.Count != (compatibility?.FactoryDomainQualified==true?compatibility.UnitCount:12) || transportRows == null || transportRows.Count > 16)
                 throw new InvalidDataException("Bounded complete original configured unit order required");
             var rows = new List<Row>();
             foreach (JObject unit in units)
@@ -162,7 +162,7 @@ namespace Game.Runtime
             foreach (var pair in stagedAssets)
                 if (!canonicalAssets.ContainsKey(pair.Key)) canonicalAssets.Add(pair.Key, pair.Value);
             foreach(var pair in assetIdentities)if(!canonicalIdentities.ContainsKey(pair.Key))canonicalIdentities.Add(pair.Key,(JObject)pair.Value.DeepClone());
-            return new GeneratedUnitProductionMetadata(rows, transports, readIdentity, sha, compatibility?.NativeQualified==true);
+            return new GeneratedUnitProductionMetadata(rows, transports, readIdentity, sha, compatibility?.FactoryDomainQualified==true);
         }
 
         private static JObject Fields(JToken envelope, string typeName, Type type)

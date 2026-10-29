@@ -43,7 +43,7 @@ def _checked_source_build(ctx):
  receipt,pin=_json(ctx['build_receipt']);b.need(receipt.get('kind')=='SkirmishSourceSimulationBuild'and receipt.get('status')=='Passed'and type(receipt.get('compile_exit'))is int and receipt['compile_exit']==0,'Passed current finite source build required')
  target_mission=ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002';target_seed=ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731
  expected_backend=owned.require('skirmish_source_profiles').runtime_backend(target_mission)
- owned.require('run_skirmish_source_batch').require_build_target(receipt,target_mission,target_seed,expected_backend)
+ owned.require('run_skirmish_source_batch').require_build_target(receipt,target_mission,target_seed,expected_backend,owned.require('skirmish_source_profiles').derived())
  if ctx['bundle']is not None:
   bundle,_=_json(ctx['bundle']);b.need(bundle.get('schema_version')==1 and bundle.get('mission')==ctx['mission']and type(bundle.get('seed'))is int and bundle['seed']==ctx['seed'],'Actual smoke bundle tuple required');b.need(bundle.get('runtime_backend','LegacyGroundS002V1')==expected_backend,'Bundle/build runtime backend mismatch')
  b.need(receipt.get('repository_root')==str(ctx['repo']),'Smoke source root differs from build')
@@ -81,6 +81,11 @@ def _catalog_cases(ctx):
 def _source_build(ctx):
  if ctx['build_receipt']is None:
   command=[sys.executable,'-B',ctx['package']/'Tools/CI/run_skirmish_source_simulation.py','build','--repo',ctx['repo'],'--package-root',ctx['package'],'--manifest',ctx['manifest'],'--mission',ctx['mission']if ctx['mission']=='S002'or ctx['bundle']is not None else'S002','--seed',str(ctx['seed']if ctx['mission']=='S002'or ctx['bundle']is not None else 104731),'--output',ctx['out']/'source-build']
+  bound=owned.require('skirmish_source_profiles').derived()
+  if bound is not None:
+   b.need(ctx['mission']=='S002' and ctx['seed']==bound[0]['seed'],'Derived seed must match smoke build target')
+   command+=['--s002-derived-seed',bound[1]['path']]
+   ctx['pins'][bound[1]['path']]=bound[1]['sha256']
   result=_command(command,ctx['out']/'source-build-process',ctx['remaining']());b.need(not result['timed_out']and result['process_exit']==0,'Source build failed/timedout; see source-build-process/process.log');ctx['build_receipt']=ctx['out']/'source-build/build.json'
  evidence=_checked_source_build(ctx);return 'Passed','build','Checked source build reused by native diagnostics and startup/full worker.',evidence
 
@@ -146,6 +151,8 @@ def smoke(repo,package,manifest,output,mission,seed,bundle=None,authoring_input=
  result={'schema_version':1,'kind':'SkirmishSourceSmokeReport','status':status,'exit_code':exit_code,'mission':mission,'seed':seed,'source_repository_root':str(ctx['repo']),'data_repository_root':str(ctx['data_repo']),'compilation_profile':{'mission':(ctx.get('build')or{}).get('mission','S002'),'seed':(ctx.get('build')or{}).get('seed',ctx['seed']if mission=='S002'else 104731),'scope':'Tool closure only, separate from actual authoring identity'},'stages':records,'unimplemented_coverage':PENDING_COVERAGE,'build_receipt':str(ctx['build_receipt'])if ctx['build_receipt']else None,'objective_build':str(ctx['objective_build'])if ctx['objective_build']else None,'checked_build_reused':build_receipt is not None,'wall_seconds':time.monotonic()-start,'wall_timeout_seconds':timeout,'input_pins':ctx['pins'],'validation_passed':False,'mission_ready':False,'source_fit_verified':False,'full_outcome_observed':False,'native_acceptance':False,'scope':'Only declared required smoke stages; synthetic objective facts are not real battle evidence. Unsupported future coverage is explicit.','repro':['python3','-B',str(ctx['package']/'Tools/CI/run_skirmish_source_simulation.py'),'smoke','--repo',str(ctx['repo']),'--data-repo',str(ctx['data_repo']),'--mission',mission,'--seed',str(seed),'--output','<fresh-output>']}
  for name,value in [('data-bundle',bundle),('authoring-input',authoring_input),('build-receipt',ctx['build_receipt']),('objective-build',ctx['objective_build'])]:
   if value is not None:result['repro']+=['--'+name,str(value)]
+ bound=owned.require('skirmish_source_profiles').derived()
+ if bound is not None:result['repro']+=['--s002-derived-seed',bound[1]['path']]
  result['repro']+=['--timeout',str(timeout)]
  for row in records:row['repro']=result['repro']
  b.write(out/'smoke-report.json',result);return result

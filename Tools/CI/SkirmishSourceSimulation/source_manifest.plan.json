@@ -5,7 +5,9 @@
     "seed": 104731,
     "numeric_runtime": "InstalledMono"
   },
-  "compiler_defines": [],
+  "compiler_defines": [
+    "WARLINE_SOURCE_GRID_WITNESS"
+  ],
   "sources": [
     {
       "id": "000_AutonomousWorld.cs",
@@ -4298,6 +4300,16 @@
       ],
       "generator_output": "RuntimeSpawnRequestProcessor.source.cs",
       "output": "336_RuntimeSpawnRequestProcessor.source.cs"
+    },
+    {
+      "id": "337_InitialUnitsSpawnComponents.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/InitialUnitsSpawnComponents.cs",
+      "require_declarations": [
+        "public struct InitialUnitsSpawnConfig",
+        "public struct InitialUnitsFactionSpawnEntry",
+        "public struct InitialUnitsFactionBuildingSpawnEntry"
+      ]
     },
     {
       "id": "337_RuntimeSpawnOwnerContext.cs",

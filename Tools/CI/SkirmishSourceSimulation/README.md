@@ -285,3 +285,13 @@ python3 -B Tools/CI/run_skirmish_source_simulation.py run \
 ```
 
 Add `--max-ticks 5` only for an explicit diagnostic prefix. Ordinary full runs retain required preflight, autonomous ARIA, measured path budgets and original clocks. The qualified seed 1 source run observed original Victory/MainBaseDestroyed at tick 12572, setup 3589425631, with 4 deliveries. Source outcomes remain separate from native normal-input/UI/result-save/return and real player/device acceptance. Reusable profile regressions and the noWorld metadata reader fixture are documented in `Tests/README.md`.
+
+## Pinned-file owner controls
+
+After a fresh successful S002 or S026 source build, run the checked-in controls against that build and a fresh output directory:
+
+```sh
+rtk proxy python3 Tools/CI/run_skirmish_pinned_file_controls.py --build /absolute/build --output /absolute/new/controls
+```
+
+The runner checks source and compiler-response pins, isolates inherited relocation environment variables, compiles the control against the selected backend and retains compiler and execution logs. The controls exercise direct hash/size checks, drift and each backend's relocation behavior. They do not allocate a mission World or establish mission readiness.

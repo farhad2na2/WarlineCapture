@@ -10,7 +10,8 @@
   },
   "compiler_defines": [
     "WARLINE_SOURCE_PATH_JOB_SCHEDULING",
-    "WARLINE_SOURCE_DECLARED_COMPILER_EXPORT"
+    "WARLINE_SOURCE_DECLARED_COMPILER_EXPORT",
+    "WARLINE_SOURCE_RELOCATABLE_PINNED_INPUTS"
   ],
   "sources": [
     {
@@ -9041,6 +9042,14 @@
       "role": "host_glue",
       "contains_original_gameplay": false,
       "scope": "Explicit package-owned host_glue; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
+    },
+    {
+      "id": "SourcePinnedFileOwner.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourcePinnedFileOwner.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Shared exact existing hash-checked, bounded pinned input and authorized relocation owner for both runtimes."
     },
     {
       "id": "S026_transport-UnitTransportDeployOrderSystem.cs",

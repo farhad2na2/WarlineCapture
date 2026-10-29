@@ -51,16 +51,6 @@ namespace Game.Runtime
             using var sha = SHA256.Create();
             return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
         }
-        internal static byte[] PinnedFile(string path, string expected, long maximum)
-        {
-            if (!Path.IsPathRooted(path)) throw new ArgumentException("Absolute pinned source path required");
-            var info = new FileInfo(path);
-            if (!info.Exists || info.Length < 1 || info.Length > maximum || (info.Attributes & FileAttributes.ReparsePoint) != 0)
-                throw new NotSupportedException("Bounded regular source input required");
-            byte[] bytes = File.ReadAllBytes(path);
-            if (bytes.LongLength != info.Length || Hash(bytes) != expected) throw new InvalidOperationException("Source input hash changed: " + path);
-            return bytes;
-        }
         private static JObject Parse(byte[] bytes)
         {
             return JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes), new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });

@@ -5,6 +5,7 @@ internal sealed class SourceNativeMetadataEpoch {
  internal readonly string MetadataSha,LogicalSha,CatalogId;
  SourceNativeMetadataEpoch(string catalog,string metadata,string logical){CatalogId=catalog;MetadataSha=metadata;LogicalSha=logical;}
  static readonly SourceNativeMetadataEpoch[] Rows={
+  new SourceNativeMetadataEpoch("S026","49824979d1dca97256b42c1f59e9f3cd8fb8311a003cbd36b91c115a4feeab9a","50b57626d7920079d6ddba431dab3bf923fe4d844ea1990b86346f7c7b8eb5bd"),
   new SourceNativeMetadataEpoch("S002","d2c9714d8f8a49cab62de59fe57dceff9cf6ab24b7d176608850a2bfcfd20383",null),
   new SourceNativeMetadataEpoch("S002","d9b2dbfc12a8cfd12e385a3b3fa9266fd96a3d05939bc244992fafc6e21e1e54",null),
   new SourceNativeMetadataEpoch("S026","06ff2cf07f069988a04f9e1740cbc9d29461207014b566fe3f2845c205e7be17",null),

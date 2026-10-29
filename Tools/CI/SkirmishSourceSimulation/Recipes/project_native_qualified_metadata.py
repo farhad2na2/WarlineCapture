@@ -2,7 +2,7 @@
 import argparse,copy,hashlib,json,re
 from pathlib import Path
 NATIVE_SHA='06ff2cf07f069988a04f9e1740cbc9d29461207014b566fe3f2845c205e7be17'
-QUALIFIED={NATIVE_SHA:('NativeS026MetadataQualification',None),'6a55787a770c82623030907518e87343fad72b5c35d91ae293a5199128ba986a':('NativeS026LogicalBoundMetadataQualification','a6f7e1040b97c5daf76f86a9a81fcb48101863698c5f1593a2f6b00d1e70bf18'),'da1383237b7ec9bb0607596be496edc40d6a1cd9c15c12901d7dbee9731b5f37':('NativeS026LogicalBoundMetadataQualification','d0604a13ee34f00c19beb4b03be02850d5aa765592e4e33c0be3688dacd60443')}
+QUALIFIED={'49824979d1dca97256b42c1f59e9f3cd8fb8311a003cbd36b91c115a4feeab9a':('NativeS026LogicalBoundMetadataQualification','50b57626d7920079d6ddba431dab3bf923fe4d844ea1990b86346f7c7b8eb5bd'),NATIVE_SHA:('NativeS026MetadataQualification',None),'6a55787a770c82623030907518e87343fad72b5c35d91ae293a5199128ba986a':('NativeS026LogicalBoundMetadataQualification','a6f7e1040b97c5daf76f86a9a81fcb48101863698c5f1593a2f6b00d1e70bf18'),'da1383237b7ec9bb0607596be496edc40d6a1cd9c15c12901d7dbee9731b5f37':('NativeS026LogicalBoundMetadataQualification','d0604a13ee34f00c19beb4b03be02850d5aa765592e4e33c0be3688dacd60443')}
 def project(native_path,bridge_path,output):
  native_path=Path(native_path).resolve(strict=True);raw=native_path.read_bytes()
  native_sha=hashlib.sha256(raw).hexdigest()

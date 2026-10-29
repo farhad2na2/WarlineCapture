@@ -133,7 +133,40 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  for key in ['source_config_graph','setup_matrix','canonical_battle_catalog','selected_operation_map','building_definitions','building_placement_config','reference_templates','navigation_reference','resource_preset','unit_production_metadata','building_request_metadata','metadata_compatibility','engineering_camera_profile','camera_engine_adapter','operation_map_rotation_reference','mission_logical_binding','death_mechanical_inputs','command_text_data']:
   if inputs['mission']=='S003' and key in ('camera_engine_adapter','mission_logical_binding') and key not in initial:continue
   descriptor(initial[key])
- if initial.get('metadata_compiler_context')is not None:
+ diagnostic=initial.get('placement_domain',{}).get('s026_inactive_diagnostic')
+ if diagnostic is not None:
+  need(inputs['mission']=='S026' and set(diagnostic)=={'path','sha256','source_root','external_inputs'} and diagnostic['sha256']=='fa0d0dedd774ba7648ee2cedaa872f506339878bff45429abadf9585157e2710' and initial['navigation_reference']=={k:diagnostic[k] for k in ('path','sha256')} and inputs['static_clearance']==initial['navigation_reference'],'Exact S026 inactive capture identity required')
+  physical,_=read_json_pinned(descriptor(diagnostic));need(physical.get('worldDisposed')is True and physical.get('sourceFitCertified')is False and physical.get('missionReady')is False and physical.get('missionInitialized')is False and physical.get('sourceSha256')=='68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8' and physical.get('headlessPlacementInputs',{}).get('waterPolicyScope')=='OriginalInactiveStreamingFixture_NullNoOpFalse_NotPhysicalWaterClear','Exact inactive source authority required')
+  origin=Path(diagnostic['source_root']);need(origin.is_absolute() and origin.is_dir() and all(not p.is_symlink() for p in [origin,*origin.parents]),'Canonical captured source root required')
+  ext=diagnostic['external_inputs'];root=physical['capturedProjectRoot'];expected={name:digest for name,digest in physical['readPins'].items() if Path(name).is_absolute() and not name.startswith(root+'/')};need(isinstance(ext,dict) and set(ext)==set(expected) and len(ext)==4,'Exact external capture authority closure required')
+  for name,digest in expected.items():need(ext[name].get('sha256')==digest,'External capture pin differs');descriptor(ext[name],512*1024*1024)
+  def project_pin(root_path,relative,digest):
+   rel=Path(relative);need(not rel.is_absolute() and rel.parts and rel.parts[0] in ('Assets','Packages','ProjectSettings','Library') and all(x not in ('.','..') for x in rel.parts),'Canonical captured source-relative path required')
+   path=root_path/rel;need(all(not q.is_symlink() for q in [path,*path.parents] if q!=root_path.parent),'Captured source symlink forbidden');descriptor({'path':str(path),'sha256':digest},512*1024*1024)
+  for name,digest in physical['readPins'].items():
+   if Path(name).is_absolute():
+    if not name.startswith(root+'/'):continue
+    relative=name[len(root)+1:]
+   else:relative=name
+   if relative.startswith('Library/ScriptAssemblies/') and relative.endswith('.dll'):continue # Historical captured producers, not live runtime inputs.
+   project_pin(origin,relative,digest)
+  def captured_source_pins(path,root_path):
+   artifact,_=read_json_pinned(path);capture_pins=artifact.get('source_pins');need(isinstance(capture_pins,dict) and len(capture_pins)>=7755,'Complete native source pin set required');external=0;producer=None
+   for name,digest in capture_pins.items():
+    if Path(name).is_absolute():
+     marker=next((x for x in ('/Assets/','/Packages/','/Library/PackageCache/') if x in name),None)
+     if marker is None:
+      need(name.endswith('/s026-unit-keys.json') and digest=='2e207fab1547fd55d56ddbb9919c73da4c942ccf2b85dd6d8619a5cf6bc481f7','Unexpected external prefab key origin');external+=1;continue
+     at=name.index(marker);prefix=name[:at];need(producer is None or producer==prefix,'Capture project origin differs');producer=prefix;relative=name[at+1:]
+    else:relative=name
+    project_pin(root_path,relative,digest)
+   need(external==1 and producer is not None,'Exact captured key/project origin required')
+  captured_source_pins(initial['reference_templates']['path'],origin)
+  captured_source_pins(initial['death_mechanical_inputs']['native_path'],Path(initial['death_mechanical_inputs']['capture_root']))
+
+  reference=initial['reference_templates'];need(set(reference)=={'path','sha256'} and reference['sha256']=='3aa03b05a979e5c78bd51c01dc2b17f9bf8fff41d79828035a4d3eae3a580519','Exact diagnostic prefab capture required')
+  death=initial['death_mechanical_inputs'];need(set(death)=={'path','sha256','native_path','native_sha256','capture_root'} and death['sha256']=='b8dfa566c3ca35a809abf9e716142bc78902128a5b3ca06c3f6440f129e95e98' and death['native_sha256']=='8a8a5bafd860d512b77500205b987233555209d35c5465a72f2a176ae3feb9ec','Exact diagnostic death capture required');descriptor({'path':death['native_path'],'sha256':death['native_sha256']})
+ elif initial.get('metadata_compiler_context')is not None:
   descriptor(initial['metadata_compiler_context']);descriptor(initial['configuration_qualification'])
   need(initial['configuration_qualification']==owned.require('skirmish_source_profiles').configuration_qualification(),'Explicit active configuration qualification differs')
   qualification,_=read_json_pinned(initial['configuration_qualification']['path']);need(qualification.get('compiler_context')==initial['metadata_compiler_context'],'Qualified compiler descriptor differs')
@@ -159,6 +192,8 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
      locator=root['packageAssetLocators'][path];need(locator['logicalPath']==path and locator['sha256']==digest,'Registered package locator differs');path=locator['resolvedPhysicalPath']
     if any(segment in path for segment in ['/Assets/','/Packages/','/Library/PackageCache/'])and not path.endswith(('.cs','.cs.meta','.asmdef','.asmdef.meta','.dll','.pdb')):descriptor({'path':path,'sha256':digest},512*1024*1024)
   camera,_=read_json_pinned(initial['engineering_camera_profile']['path']);descriptor(camera['native_function_profile'])
+ elif diagnostic is not None:
+  pass # Exact source-only S026 capture validated above; active water remains unqualified.
  else:
   for key in ['packed','water_reference','geometry_reference']:descriptor(initial['placement_domain'][key])
  if inputs['mission']!='S003':descriptor(initial['typed_mission_configuration']['layout'])
@@ -166,7 +201,8 @@ def runtime_input_pins(initial,inputs,repo,receipt,data_repo):
  if inputs['mission']=='S003':need(graph.get('authority')=='AuthoredConfigAssets' and graph.get('world_initialized') is False and graph.get('native_world_state_used') is False and isinstance(graph.get('source_pins'),dict) and graph['source_pins'],'Exact S003 authored config graph required')
  for f,digest in graph['source_pins'].items():descriptor({'path':f,'sha256':digest},4*1024*1024)
  row=initial['reference_templates']
- for stem in ['source_reference','projection_manifest']:descriptor({'path':row[stem+'_path'],'sha256':row[stem+'_sha256']})
+ if diagnostic is None:
+  for stem in ['source_reference','projection_manifest']:descriptor({'path':row[stem+'_path'],'sha256':row[stem+'_sha256']})
  need(initial['unit_production_metadata']==inputs['unit_metadata'],'S026 unit metadata descriptor differs')
  text,_=read_json_pinned(initial['command_text_data']['path']);source=inputs['command_text_sources'];need(set(source)=={'captured_root','current_root','input_pins','artifact_sha256'}and source['artifact_sha256']==initial['command_text_data']['sha256'],'Exact original text source manifest required')
  captured=Path(source['captured_root']);current=Path(source['current_root']);need(captured.is_absolute()and current.is_absolute()and current.is_dir(),'Explicit text source roots required')
@@ -189,6 +225,14 @@ def classify_s002_source_diagnostic(initial,result):
  result['mission_ready']=False
  if result.get('status')=='SourceOutcomeObserved':result['status']='DiagnosticSourceOutcomeObserved'
  result['scope']='Source-only S002 original-owner diagnostic outcome; active water/presentation, source fit, native input and player acceptance remain unqualified.'
+ return result
+
+def classify_s026_inactive_diagnostic(initial,result):
+ placement=initial.get('placement_domain') if isinstance(initial,dict) else None
+ if initial.get('mission_id')!='S026' or not isinstance(placement,dict) or 's026_inactive_diagnostic' not in placement:return result
+ result.update(diagnostic_only=True,validation_passed=False,active_mission_water_qualified=False,source_fit_certified=False,native_acceptance=False,mission_ready=False)
+ if result.get('status')=='SourceOutcomeObserved':result['status']='DiagnosticSourceOutcomeObserved'
+ result['scope']='S026 source-only inactive-water diagnostic; active water, source fit, native input and player acceptance remain unqualified.'
  return result
 
 def classify_s003_source_diagnostic(initial,result):
@@ -242,6 +286,7 @@ def run(repo,build_receipt,bundle,output,max_ticks=None,timeout=1800,data_repo=N
  result.update(full_outcome_observed=result['status']=='SourceOutcomeObserved',expected_outcome='Victory',validation_passed=result['status']=='SourceOutcomeObserved'and raw.get('source_outcome')=='Victory',diagnostic_prefix_completed=result['status']=='BoundedPrefix',native_acceptance=False)
  classify_s002_source_diagnostic(initial,result)
  classify_s003_source_diagnostic(initial,result)
+ classify_s026_inactive_diagnostic(initial,result)
  if bound is not None:result=owned.require('s002_derived_bootstrap').classify(result)
  missing_manifests=[name for name in ['runtime-before-world.json','runtime-after-outcome.json']if not(out/name).is_file()]
  if missing_manifests:

@@ -19,17 +19,18 @@ namespace Game.Runtime
         internal GeneratedStartingBuildingPlacement(EntityManager em, Entity gridEntity,
             bool[] authoredBuildings, bool[] authoredRoads, bool[] sidewalks, bool[] water,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> liveBuildings,
-            Func<int, int, int, int, bool> runtimeBlockerCell)
+            Func<int, int, int, int, bool> runtimeBlockerCell, bool inactiveWaterDiagnostic = false)
         {
             this.em = em ?? throw new ArgumentNullException(nameof(em)); this.gridEntity = gridEntity;
             grid = em.GetComponentData<GridConfig>(gridEntity);
             int count = checked(grid.Width * grid.Height);
             if (count < 1 || count > 4194304 || liveBuildings == null || runtimeBlockerCell == null)
                 throw new NotSupportedException("Complete generated placement context required");
-            foreach (var mask in new[] { authoredBuildings, authoredRoads, sidewalks, water })
+            if(inactiveWaterDiagnostic ? water != null : water == null || water.Length != count) throw new NotSupportedException("Exact water scope required");
+            foreach (var mask in new[] { authoredBuildings, authoredRoads, sidewalks })
                 if (mask == null || mask.Length != count) throw new NotSupportedException("Complete Campaign geometry masks required");
             this.authoredBuildings = (bool[])authoredBuildings.Clone(); this.authoredRoads = (bool[])authoredRoads.Clone();
-            this.sidewalks = (bool[])sidewalks.Clone(); this.water = (bool[])water.Clone();
+            this.sidewalks = (bool[])sidewalks.Clone(); this.water = water == null ? null : (bool[])water.Clone();
             buildings = liveBuildings; this.runtimeBlockerCell = runtimeBlockerCell;
         }
         internal BuildingRuntimeSpawnCompositionSystemHelper.Context CreateContext(GeneratedConfiguredDefinitionSource definitions, GeneratedBuildingRegistration registration) => new BuildingRuntimeSpawnCompositionSystemHelper.Context {
@@ -61,7 +62,7 @@ namespace Game.Runtime
                 for (int x = origin.x; x < origin.x + footprint.x; x++)
                 {
                     int index = y * layout.Width + x;
-                    if (authoredBuildings[index] || authoredRoads[index] || sidewalks[index] || water[index]) return false;
+                    if (authoredBuildings[index] || authoredRoads[index] || sidewalks[index] || (water != null && water[index])) return false;
                 }
             return BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(new RectInt(origin, footprint), layout,
                 roads, blockers, false, null, 0, 0, runtimeBlockerCell, null, OverlapsRuntime);

@@ -28,10 +28,12 @@ namespace Game.Configs
   static float Float(int bits)=>BitConverter.ToSingle(BitConverter.GetBytes(bits),0);
   static int Bits(float value)=>BitConverter.ToInt32(BitConverter.GetBytes(value),0);
   public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256,string sourceRoot){if(sourceRoot!=null)throw new NotSupportedException("Declared-ground rotation does not admit an S002 source root");return LoadPinned(path,referenceSha256);}
-  public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256)
+  public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256)=>LoadCore(path,referenceSha256,false);
+  public static SourceOperationMapRotationReference LoadS026Diagnostic(string path,string referenceSha256)=>LoadCore(path,referenceSha256,true);
+  static SourceOperationMapRotationReference LoadCore(string path,string referenceSha256,bool diagnostic)
   {
-   if(referenceSha256!=QualifiedReferenceSha256)return LoadReferenceSet(path,referenceSha256);
-   Require(referenceSha256==QualifiedReferenceSha256,"qualified native capture identity");
+   if(!diagnostic&&referenceSha256!=QualifiedReferenceSha256)return LoadReferenceSet(path,referenceSha256);
+   Require(diagnostic?referenceSha256=="6a7944085f1455061894fc369b5183127add592799e9964913125c22f3e8d302":referenceSha256==QualifiedReferenceSha256,"qualified native capture identity");
    Require(Path.IsPathRooted(path),"absolute reference path");var info=new FileInfo(path);Require(info.Exists&&info.Length<=1048576,"bounded reference file");byte[] bytes=File.ReadAllBytes(path);Require(bytes.Length<=1048576,"bounded bytes after read");Require(Sha(bytes)==referenceSha256,"reference bytes SHA256");
    using(var text=new StringReader(new UTF8Encoding(false,true).GetString(bytes)))using(var reader=new JsonTextReader(text){DateParseHandling=DateParseHandling.None,MaxDepth=32}){
     var root=JObject.Load(reader,new JsonLoadSettings{DuplicatePropertyNameHandling=DuplicatePropertyNameHandling.Error});Require(!reader.Read(),"trailing JSON data");

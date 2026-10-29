@@ -115,6 +115,7 @@ namespace Game.Runtime
             var spatial = new SourceProductionGroundWorld(Entities, GridEntity, Boundary, Buildings, roots);
             var owner = new SourceProductionDeliveryOwner(spatial, production, context, ownerRecipes,
                 actualGlobalQueueLimit, actualConstructorRandomState);
+            if (S026InactiveWaterDiagnostic) { owner.DiagnosticSession = Session; owner.DiagnosticWorldId = WorldId; owner.DiagnosticTick = () => Tick; }
             // Numeric wrapper root data from the original PositionBuildingObject policy;
             // no visual object/readiness or renderer hierarchy is claimed.
             foreach (var pair in Buildings) pair.Value.Instance = instances[pair.Key];

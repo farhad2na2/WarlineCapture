@@ -52,6 +52,26 @@ namespace Game.Runtime
             return domain;
         }
 
+        // Separate S026 diagnostic: the native capture retains its failed exporter status.
+        internal static JObject ReadS026Diagnostic(JObject descriptor, string captureRoot, out string binaryDirectory)
+        {
+            const string sha = "3aa03b05a979e5c78bd51c01dc2b17f9bf8fff41d79828035a4d3eae3a580519";
+            if (descriptor == null || descriptor.Count != 2 || descriptor.Properties().Any(p => (p.Name != "path" && p.Name != "sha256") || p.Value.Type != JTokenType.String) || (string)descriptor["sha256"] != sha || !Path.IsPathRooted(captureRoot)) throw new InvalidDataException("Exact S026 diagnostic prefab descriptor required");
+            string root = Path.GetFullPath(captureRoot).TrimEnd(Path.DirectorySeparatorChar), path=(string)descriptor["path"];
+            var domain=Parse(AutonomousWorld.PinnedFile(path,sha,32*1024*1024));
+            if ((string)domain["kind"] != "AuthoredSkirmishPrefabReferenceData" || (string)domain["authority"] != "ActualSourceAssetsAndNativeBakers_NotMissionState" || (bool?)domain["replay_ready"] != false || (bool?)domain["full_mission_initialized"] != false || (bool?)domain["native_visual_readiness"] != false || (bool?)domain["geometry_exported"] != false || (string)domain["requested_prefab_keys_sha256"] != "2e207fab1547fd55d56ddbb9919c73da4c942ccf2b85dd6d8619a5cf6bc481f7") throw new InvalidDataException("S026 diagnostic prefab scope changed");
+            var pins=domain["source_pins"] as JObject;if(pins==null||pins.Count!=7755)throw new InvalidDataException("Complete prefab source pins required");
+            VerifyS026RelativePins(pins,root);
+            binaryDirectory=Path.GetDirectoryName(path);return domain;
+        }
+
+        // Native JSON is immutable; project-local paths are resolved against an explicit relocated capture root.
+        internal static void VerifyS026RelativePins(JObject pins,string root){
+            if(!Path.IsPathRooted(root)||!Directory.Exists(root))throw new InvalidDataException("Explicit captured project root required");root=Path.GetFullPath(root).TrimEnd(Path.DirectorySeparatorChar);for(var parent=new DirectoryInfo(root);parent!=null;parent=parent.Parent)if((parent.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Captured project root symlink forbidden");
+            int external=0;string producerRoot=null;foreach(var pin in pins.Properties()){if(pin.Value.Type!=JTokenType.String)throw new InvalidDataException("Source pin digest required");string rel=pin.Name;if(Path.IsPathRooted(rel)){string[] domains={"/Assets/","/Packages/","/Library/PackageCache/"};string marker=domains.FirstOrDefault(x=>rel.Contains(x));if(marker==null){if(!rel.EndsWith("/s026-unit-keys.json",StringComparison.Ordinal)||(string)pin.Value!="2e207fab1547fd55d56ddbb9919c73da4c942ccf2b85dd6d8619a5cf6bc481f7"||++external!=1)throw new InvalidDataException("Unexpected external source pin");continue;}int at=rel.IndexOf(marker,StringComparison.Ordinal);string captured=rel.Substring(0,at);if(producerRoot==null)producerRoot=captured;else if(producerRoot!=captured)throw new InvalidDataException("Inconsistent captured project origin");rel=rel.Substring(at+1);}
+                if(!(rel.StartsWith("Assets/",StringComparison.Ordinal)||rel.StartsWith("Packages/",StringComparison.Ordinal)||rel.StartsWith("Library/PackageCache/",StringComparison.Ordinal)||rel.StartsWith("ProjectSettings/",StringComparison.Ordinal))||rel.Contains("\\")||rel.Split('/').Any(x=>x==""||x=="."||x==".."))throw new InvalidDataException("Invalid relative source pin");string file=Path.GetFullPath(Path.Combine(root,rel));if(!file.StartsWith(root+Path.DirectorySeparatorChar,StringComparison.Ordinal))throw new InvalidDataException("Source pin escaped project root");var info=new FileInfo(file);if(!info.Exists||(info.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Source pin missing");for(var parent=info.Directory;parent!=null&&parent.FullName.Length>=root.Length;parent=parent.Parent)if((parent.Attributes&FileAttributes.ReparsePoint)!=0)throw new InvalidDataException("Source pin path symlink forbidden");using(var stream=File.OpenRead(file))using(var hash=SHA256.Create())if(BitConverter.ToString(hash.ComputeHash(stream)).Replace("-","").ToLowerInvariant()!=(string)pin.Value)throw new InvalidDataException("Captured source pin changed: "+rel);
+            }if(external!=1||producerRoot==null)throw new InvalidDataException("Captured project origin or key identity missing");
+        }
         private static JObject Parse(byte[] bytes) => JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes),
             new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
     }

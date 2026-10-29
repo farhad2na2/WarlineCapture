@@ -27,6 +27,7 @@ namespace Game.Configs
   static string Key(int[] v)=>string.Join(",",v.Select(x=>x.ToString(System.Globalization.CultureInfo.InvariantCulture)));
   static float Float(int bits)=>BitConverter.ToSingle(BitConverter.GetBytes(bits),0);
   static int Bits(float value)=>BitConverter.ToInt32(BitConverter.GetBytes(value),0);
+  public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256,string sourceRoot){if(sourceRoot!=null)throw new NotSupportedException("Declared-ground rotation does not admit an S002 source root");return LoadPinned(path,referenceSha256);}
   public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256)
   {
    if(referenceSha256!=QualifiedReferenceSha256)return LoadReferenceSet(path,referenceSha256);

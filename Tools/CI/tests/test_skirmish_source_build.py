@@ -11,6 +11,18 @@ sys.path.insert(0,str(CI))
 import skirmish_source_build as m
 from skirmish_source_manifest import UnsupportedSourceShape
 
+class S049DiagnosticReceiptControls(unittest.TestCase):
+    def test_each_flag_and_combination_fail_closed(self):
+        camera='WARLINE_S049_CAMERA_DIAGNOSTIC'; water='WARLINE_S049_PHYSICAL_WATER_DIAGNOSTIC'
+        for env in ({camera:'1'},{water:'1'},{camera:'1',water:'1'}):
+            with self.subTest(env=env):
+                result=m.classify_s049_source_diagnostic('S049',{'status':'SourceOutcomeObserved','validation_passed':True},env)
+                self.assertFalse(result['validation_passed']);self.assertEqual(result['status'],'DiagnosticSourceOutcomeObserved')
+                for key in ('camera_qualified','active_mission_water_qualified','source_fit_certified','native_acceptance','mission_ready'):self.assertFalse(result[key])
+    def test_ordinary_or_other_mission_unchanged(self):
+        for mission,env in (('S049',{}),('S026',{'WARLINE_S049_CAMERA_DIAGNOSTIC':'1'}),('S049',{'WARLINE_S049_CAMERA_DIAGNOSTIC':'0'})):
+            result={'status':'SourceOutcomeObserved','validation_passed':True};self.assertIs(m.classify_s049_source_diagnostic(mission,result,env),result);self.assertTrue(result['validation_passed']);self.assertEqual(result['status'],'SourceOutcomeObserved')
+
 class ProtocolProcess:
     """Explicit fake child lifecycle; status artifacts are protocol fixtures only."""
     def __init__(self,command,*,env,stdout,stderr,source_result,returncode=0,timeout=False,kill_required=False,manifests=True,on_exit=None):

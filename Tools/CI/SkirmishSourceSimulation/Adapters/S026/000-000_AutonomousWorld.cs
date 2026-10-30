@@ -169,7 +169,7 @@ namespace Game.Runtime
             MetadataCompatibility=SourceMetadataCompatibility.Load(request,Setup,metadataSourceRepo,metadataDataRepo);
             RetainSelectedOperationMapInputs(request, graph, assets);
             freshStorageAuthority=FreshSourceStorageLifetimeAuthority.FromValidatedSource(request,inputHash,sourceInitializationBytes,ActualDefinition,Setup,ActualCompileManifest,ActualCompileMatrix);
-            if(request["placement_domain"]?["s026_inactive_diagnostic"]==null)Game.Configs.SourceEnglishCommandText.Bind(Descriptor(request["command_text_data"],4*1024*1024));else Game.Configs.SourceEnglishCommandText.BindS026Diagnostic(Descriptor(request["command_text_data"],4*1024*1024),metadataDataRepo);
+            if(request["placement_domain"]?["s026_inactive_diagnostic"]!=null||(Setup.CatalogId=="S049"&&(string)SourceConfigurationQualification.Context(request)["kind"]=="OriginalS049DirectNativeFactoryContext"))Game.Configs.SourceEnglishCommandText.BindS026Diagnostic(Descriptor(request["command_text_data"],4*1024*1024),metadataDataRepo);else Game.Configs.SourceEnglishCommandText.Bind(Descriptor(request["command_text_data"],4*1024*1024));
             var deathInputs=request["placement_domain"]?["s026_inactive_diagnostic"]==null?SourceNativeDeathReadModel.LoadAtBoundary(Descriptor(request["death_mechanical_inputs"],1024*1024)):SourceNativeDeathReadModel.LoadS026Diagnostic(request["death_mechanical_inputs"] as JObject);
             SourceNativeDeathBinding.BindAtBoundary(Entities,deathInputs);
             sourceQualifiedPrefabKeys=deathInputs.QualifiedPrefabKeys;

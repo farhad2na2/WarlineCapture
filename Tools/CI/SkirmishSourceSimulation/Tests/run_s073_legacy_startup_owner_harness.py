@@ -18,19 +18,22 @@ def require(ok, message):
         raise RuntimeError(message)
 
 
-def run(build_path, output_path, snapshot_path, snapshot_sha, config_path, config_sha, source_repo):
+def run(build_path, output_path, snapshot_path, snapshot_sha, identity_path, identity_sha,
+        config_path, config_sha, source_repo, source_asset_repo):
     build_path = Path(build_path).resolve(strict=True)
     output = Path(output_path).absolute()
     snapshot = Path(snapshot_path).resolve(strict=True)
+    identity = Path(identity_path).resolve(strict=True)
     config = Path(config_path).resolve(strict=True)
     repo = Path(source_repo).resolve(strict=True)
+    source_assets = Path(source_asset_repo).resolve(strict=True)
     require(not output.exists(), "Fresh T: output directory required")
     output.mkdir(parents=True)
     build = json.loads(build_path.read_text())
     require(build.get("kind") == "SkirmishSourceSimulationBuild" and build.get("status") == "Passed",
             "Passing Roslyn source build required")
-    require(sha(snapshot) == snapshot_sha and sha(config) == config_sha,
-            "Pinned S073 prefab/config inputs changed")
+    require(sha(snapshot) == snapshot_sha and sha(identity) == identity_sha and sha(config) == config_sha,
+            "Pinned S073 prefab/source-identity/config inputs changed")
     pins = build["source_and_reference_pins"]
     for path, expected in pins.items():
         require(sha(path) == expected, "Checked source build pin changed: " + path)
@@ -69,7 +72,7 @@ def run(build_path, output_path, snapshot_path, snapshot_sha, config_path, confi
             str(runtime["newtonsoft"].parent), str(Path(build["placement_build"]).parent)
         ])
         try:
-            run_result = subprocess.run([str(runtime["mono"]), str(exe), str(snapshot), str(config), str(repo)],
+            run_result = subprocess.run([str(runtime["mono"]), str(exe), str(snapshot), str(identity), str(config), str(repo), str(source_assets)],
                                         env=env, capture_output=True, text=True, timeout=60)
             (output / "run.log").write_text(run_result.stdout + run_result.stderr)
         except subprocess.TimeoutExpired as error:
@@ -83,7 +86,8 @@ def run(build_path, output_path, snapshot_path, snapshot_sha, config_path, confi
 
     for path, expected in pins.items():
         require(sha(path) == expected, "Source/build input changed during harness run: " + path)
-    require(sha(harness) == harness_sha and sha(snapshot) == snapshot_sha and sha(config) == config_sha,
+    require(sha(harness) == harness_sha and sha(snapshot) == snapshot_sha and
+            sha(identity) == identity_sha and sha(config) == config_sha,
             "Harness or S073 input changed during run")
     passed = compile_result.returncode == 0 and not timed_out and run_result is not None and \
         run_result.returncode == 0 and "[S073LegacyStartupOwnerHarness] result=Passed" in run_result.stdout
@@ -100,8 +104,10 @@ def run(build_path, output_path, snapshot_path, snapshot_sha, config_path, confi
         "harness_source": str(harness),
         "harness_source_sha256": harness_sha,
         "prefab_capture": {"path": str(snapshot), "sha256": snapshot_sha},
+        "source_identity_readback": {"path": str(identity), "sha256": identity_sha},
         "legacy_config": {"path": str(config), "sha256": config_sha},
         "source_repo": str(repo),
+        "source_asset_repo": str(source_assets),
         "unity_launched": False,
         "mission_world_allocated": False,
         "initial_facilities_placed": False,
@@ -114,6 +120,6 @@ def run(build_path, output_path, snapshot_path, snapshot_sha, config_path, confi
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 8:
-        raise SystemExit("usage: run_s073_legacy_initial_owner_harness.py <build.json> <fresh-output> <prefabs.json> <prefab-sha256> <legacy-config.json> <config-sha256> <source-repository>")
+    if len(sys.argv) != 11:
+        raise SystemExit("usage: run_s073_legacy_initial_owner_harness.py <build.json> <fresh-output> <prefabs.json> <prefab-sha256> <source-identities.json> <identity-sha256> <legacy-config.json> <config-sha256> <source-repository> <current-prefab-source-repository>")
     raise SystemExit(run(*sys.argv[1:]))

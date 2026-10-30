@@ -4500,6 +4500,14 @@
       ]
     },
     {
+      "id": "632_RuntimeGridBlockerPlacementKernel.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/RuntimeGridBlockerPlacementKernel.cs",
+      "require_declarations": [
+        "public static class RuntimeGridBlockerPlacementKernel"
+      ]
+    },
+    {
       "id": "353_BuildingRuntimeDataRegistrationSystemHelper.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Systems/BuildingRuntimeDataRegistrationSystemHelper.cs",

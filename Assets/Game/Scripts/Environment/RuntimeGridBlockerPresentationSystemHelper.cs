@@ -5,20 +5,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
+using Game.Simulation;
 
 namespace Game.Runtime
 {
     public sealed class RuntimeGridBlockerPresentationSystemHelper : IRuntimeGridBlockerCellLookup
     {
-        private enum BlockerPrefabKind
-        {
-            Other,
-            Tree,
-            Rock,
-            Bush,
-            Grass
-        }
-
         private sealed class RuntimeBlockerRecord
         {
             public int Id;
@@ -702,17 +694,7 @@ namespace Game.Runtime
 
         private static BlockerPrefabKind ClassifyPrefabKind(string prefabName)
         {
-            string name = prefabName.ToLowerInvariant();
-            if (name.Contains("tree") || name.Contains("palm"))
-                return BlockerPrefabKind.Tree;
-            if (name.Contains("rock") || name.Contains("stone") || name.Contains("boulder"))
-                return BlockerPrefabKind.Rock;
-            if (name.Contains("bush") || name.Contains("shrub"))
-                return BlockerPrefabKind.Bush;
-            if (name.Contains("grass") || name.Contains("plant") || name.Contains("fern"))
-                return BlockerPrefabKind.Grass;
-
-            return BlockerPrefabKind.Other;
+            return RuntimeGridBlockerPlacementKernel.ClassifyPrefabKind(prefabName);
         }
 
         private GameObject ChooseBlockerPrefab(ref Unity.Mathematics.Random rng, int spawnedTreeCount, int targetTreeCount)
@@ -819,13 +801,10 @@ namespace Game.Runtime
 
         private static Vector2Int ComputeFootprintCells(PrefabPlacementMetadata metadata, float cellSize)
         {
-            if (metadata.BlocksOnlyCenterCell)
-                return Vector2Int.one;
-            if (!metadata.HasBounds || cellSize <= 0f)
-                return Vector2Int.one;
-
-            int width = Mathf.Max(1, Mathf.CeilToInt(metadata.LocalBounds.size.x / cellSize));
-            int depth = Mathf.Max(1, Mathf.CeilToInt(metadata.LocalBounds.size.z / cellSize));
+            RuntimeGridBlockerPlacementKernel.ComputeFootprintCells(
+                metadata.BlocksOnlyCenterCell, metadata.HasBounds,
+                metadata.LocalBounds.size.x, metadata.LocalBounds.size.z, cellSize,
+                out int width, out int depth);
             return new Vector2Int(width, depth);
         }
 

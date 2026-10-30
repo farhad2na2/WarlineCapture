@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Game.Runtime;
+using Game.Simulation;
 using Newtonsoft.Json.Linq;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -14,8 +15,8 @@ internal static class S073MapPlacementFootprintSmoke
         JObject result;
         try
         {
-            if (args.Length != 3)
-                throw new ArgumentException("Expected capture path, SHA256, and source repository root");
+            if (args.Length != 6)
+                throw new ArgumentException("Expected map capture/path pin, source root, blocker metadata/path pin, and pinned grid cell size");
 
             string capturePath = Path.GetFullPath(args[0]);
             var definitions = GeneratedBuildingDefinitions.LoadS073MapPlacements(
@@ -71,6 +72,50 @@ internal static class S073MapPlacementFootprintSmoke
             Require(wallFootprints.TryGetValue("1x12:vertical", out int verticalFence) && verticalFence == 17,
                 "Vertical fences must use the original bounds-derived footprint");
 
+            string blockerMetadataPath = Path.GetFullPath(args[3]);
+            if (Sha(blockerMetadataPath) != args[4])
+                throw new InvalidDataException("Pinned S073 runtime blocker metadata changed");
+            JObject blockerMetadata = JObject.Parse(File.ReadAllText(blockerMetadataPath));
+            var blockerConfig = blockerMetadata["config"] as JObject;
+            var prefabs = blockerMetadata["prefabs"] as JArray;
+            if ((string)blockerMetadata["kind"] != "S073OriginalRuntimeBlockerPrefabMetadata" ||
+                (string)blockerMetadata["authority"] != "MatchSceneConfig_OriginalRuntimeGridBlockerPresentationSystemHelper.BuildMetadata" ||
+                (int?)blockerConfig?["blocker_count"] != 1 || (int?)blockerConfig?["random_seed"] != 24680 ||
+                (int?)blockerConfig?["prefab_count"] != 63 || prefabs?.Count != 63 ||
+                (bool?)blockerMetadata["random_placement_executed"] != false ||
+                (bool?)blockerMetadata["blocker_spawned"] != false)
+                throw new InvalidDataException("Exact S073 blocker source metadata/config required; no placement instance is implied");
+            var prefabNames = new HashSet<string>(StringComparer.Ordinal);
+            var blockerFootprints = new JArray();
+            int centerOnlyCount = 0;
+            float gridCellSize = float.Parse(args[5], CultureInfo.InvariantCulture);
+            if (!(gridCellSize > 0f) || float.IsNaN(gridCellSize) || float.IsInfinity(gridCellSize))
+                throw new InvalidDataException("Actual finite S073 grid cell size required");
+            foreach (JObject prefab in prefabs)
+            {
+                string name = (string)prefab["name"];
+                if (string.IsNullOrWhiteSpace(name) || !prefabNames.Add(name))
+                    throw new InvalidDataException("Unique exact blocker prefab name required");
+                string kind = RuntimeGridBlockerPlacementKernel.ClassifyPrefabKind(name).ToString();
+                if (kind != (string)prefab["kind"])
+                    throw new InvalidDataException("Shared blocker classification differs from captured source metadata: " + name);
+                bool centerOnly = (bool?)prefab["blocks_only_center_cell"] == true;
+                if (centerOnly) centerOnlyCount++;
+                JArray size = prefab["local_bounds_size"] as JArray;
+                if (size?.Count != 3 || (bool?)prefab["has_bounds"] != true)
+                    throw new InvalidDataException("Exact blocker prefab bounds required: " + name);
+                RuntimeGridBlockerPlacementKernel.ComputeFootprintCells(
+                    centerOnly, true, (float)size[0], (float)size[2], gridCellSize,
+                    out int footprintWidth, out int footprintDepth);
+                if (footprintWidth < 1 || footprintDepth < 1 ||
+                    centerOnly && (footprintWidth != 1 || footprintDepth != 1))
+                    throw new InvalidDataException("Shared blocker footprint is invalid: " + name);
+                blockerFootprints.Add(new JObject { ["name"] = name, ["kind"] = kind,
+                    ["width"] = footprintWidth, ["depth"] = footprintDepth, ["center_only"] = centerOnly });
+            }
+            Require(prefabNames.Count == 63 && centerOnlyCount > 0,
+                "Complete shared blocker prefab metadata domain required");
+
             result = new JObject
             {
                 ["kind"] = "S073MapPlacementFootprintSmoke",
@@ -79,6 +124,11 @@ internal static class S073MapPlacementFootprintSmoke
                 ["placement_rows"] = rows.Count,
                 ["wall_rows"] = wallRows,
                 ["rotated_rows"] = rotatedRows,
+                ["blocker_prefabs"] = prefabs.Count,
+                ["center_only_blockers"] = centerOnlyCount,
+                ["blocker_random_placement_executed"] = false,
+                ["blocker_footprints"] = blockerFootprints,
+                ["grid_cell_size"] = gridCellSize,
                 ["wall_footprints"] = JObject.FromObject(wallFootprints),
                 ["world_allocated"] = false,
                 ["actors_registered"] = false,
@@ -105,5 +155,11 @@ internal static class S073MapPlacementFootprintSmoke
     private static void Require(bool condition, string message)
     {
         if (!condition) throw new InvalidDataException(message);
+    }
+
+    private static string Sha(string path)
+    {
+        using (var sha = System.Security.Cryptography.SHA256.Create())
+            return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
     }
 }

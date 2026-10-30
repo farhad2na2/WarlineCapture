@@ -8798,6 +8798,39 @@
       ]
     },
     {
+      "id": "Shared_OperationMapGridSourceRecord.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/OperationMapGridSourceRecord.cs"
+    },
+    {
+      "id": "Shared_AriaAircraftCyclePolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/AriaAircraftCyclePolicy.cs",
+      "require_declarations": [
+        "public static class AriaAircraftCyclePolicy"
+      ]
+    },
+    {
+      "id": "Shared_BuildingPlacementInitialPreviewState.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInitialPreviewState.cs"
+    },
+    {
+      "id": "Shared_AttackMovePlanning.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/AttackMovePlanning.cs"
+    },
+    {
+      "id": "Shared_GridWalkableSourceWitness.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/GridWalkableSourceWitness.cs"
+    },
+    {
+      "id": "Shared_OperationMapGridSourceRecordWriter.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Configs/OperationMapGridSourceRecordWriter.cs"
+    },
+    {
       "id": "Shared_UnitPrefabRegistryComponents",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Components/UnitPrefabRegistryComponents.cs",

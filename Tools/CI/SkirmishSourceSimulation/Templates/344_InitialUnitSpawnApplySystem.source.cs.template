@@ -1,0 +1,15 @@
+using Game.Components;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+
+namespace Game.Runtime
+{
+    // Exact original initial-unit materializer. The CLI invokes this owner directly
+    // on the same manager after the original placement owner selects a legal cell.
+    public partial struct InitialUnitSpawnApplySystem
+    {
+        /*SOURCE:instantiate*/
+        /*SOURCE:set_or_add*/
+    }
+}

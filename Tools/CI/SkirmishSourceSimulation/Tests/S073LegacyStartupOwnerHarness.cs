@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -6,7 +7,9 @@ using Game.Components;
 using Game.Runtime;
 using Game.Simulation;
 using Newtonsoft.Json.Linq;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 
 internal static class S073LegacyStartupOwnerHarness
 {
@@ -101,6 +104,49 @@ internal static class S073LegacyStartupOwnerHarness
         }
     }
 
+    static int ExerciseOriginalUnitApplyOwner(EntityManager em, IDictionary<string, Entity> prefabs)
+    {
+        var owner = new InitialUnitSpawnApplySystem();
+        var expected = new Dictionary<int, string>();
+        using (var ecb = new EntityCommandBuffer(Allocator.Temp))
+        {
+            int ordinal = 0;
+            foreach (var pair in prefabs.OrderBy(pair => pair.Key, StringComparer.Ordinal))
+            {
+                owner.InstantiateAndConfigureSpawnedUnit(
+                    em, ecb, pair.Value, true, 1,
+                    new int2(ordinal, 0), new float3(ordinal, 0, ordinal));
+                expected.Add(ordinal++, pair.Key);
+            }
+            ecb.Playback(em);
+        }
+
+        using (var query = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(),
+                   ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+                   ComponentType.ReadOnly<UnitMoveVisualComponent>(), ComponentType.ReadOnly<UnitRespawnPrefab>()))
+        {
+            var matched = new HashSet<int>();
+            using (var entities = query.ToEntityArray(Allocator.Temp))
+            {
+                foreach (var entity in entities)
+                {
+                    var cell = em.GetComponentData<UnitGrid>(entity).Cell;
+                    if (cell.y != 0 || !expected.ContainsKey(cell.x)) continue;
+                    Need(matched.Add(cell.x), "Original initial-unit apply owner duplicated a synthetic test cell");
+                    Need(em.GetComponentData<Faction>(entity).Id == 1 &&
+                         em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString() == expected[cell.x],
+                         "Original initial-unit apply owner changed faction/source identity");
+                    Need(em.GetComponentData<UnitMoveVisualComponent>(entity).IsMoving == 0,
+                         "Original initial-unit apply owner changed initial move-visual state");
+                    Need(em.GetComponentData<UnitRespawnPrefab>(entity).Prefab == Entity.Null,
+                         "Original initial-unit apply owner changed initial respawn prefab state");
+                }
+            }
+            Need(matched.Count == expected.Count, "Original initial-unit apply owner did not materialize every test template");
+        }
+        return expected.Count;
+    }
+
     static void Main(string[] args)
     {
         Need(args.Length == 5, "prefab capture, source identity readback, external S073 config, source repository, and current prefab asset repository required");
@@ -126,6 +172,8 @@ internal static class S073LegacyStartupOwnerHarness
         var imported = GeneratedReferenceTemplateImporter.Import(em, snapshot, Path.GetDirectoryName(args[0]), keys);
         Need(imported.Prefabs.Count == 4 && imported.ImportedEntities == 140 && imported.ImportedComponents == 862 &&
              imported.OmittedPresentationComponents == 4, "Actual pinned S073 prefab closure import changed");
+        int materializedPrefabControls = ExerciseOriginalUnitApplyOwner(em, imported.Prefabs);
+        Need(materializedPrefabControls == 4, "Original unit apply owner source-root control count changed");
 
         var initialized = new CustomGameStartupSystemHelper(em).InitializeFromLegacyData(data, imported.Prefabs);
         Need(initialized.Initialized && initialized.FactionCount == 2 && initialized.UnitRosterCount == 3 &&
@@ -185,6 +233,6 @@ internal static class S073LegacyStartupOwnerHarness
             row++;
         }
         Need(row == 10, "S073 request result accounting changed");
-        Console.WriteLine("[S073LegacyStartupOwnerHarness] result=Passed actualStartupOwner=1 importedPrefabRoots=4 importedEntities=140 sourceRows=10 acceptedByOriginalGate=10 factions=2 unitsEach=12 world=0 placedBuildings=0 fullMission=0 readiness=0");
+        Console.WriteLine("[S073LegacyStartupOwnerHarness] result=Passed actualStartupOwner=1 originalApplyOwnerPrefabControls=" + materializedPrefabControls + " syntheticTestPosition=1 importedPrefabRoots=4 importedEntities=140 sourceRows=10 acceptedByOriginalGate=10 factions=2 unitsEach=12 world=0 placedBuildings=0 fullMission=0 readiness=0");
     }
 }

@@ -8977,6 +8977,32 @@
       "require_declarations": [
         "public sealed class LegacyInitialSpawnData"
       ]
+    },
+    {
+      "id": "S073_InitialUnitSpawnApplySystem.source.cs",
+      "kind": "current_original",
+      "template": "Tools/CI/SkirmishSourceSimulation/Templates/344_InitialUnitSpawnApplySystem.source.cs.template",
+      "members": [
+        {
+          "id": "instantiate",
+          "path": "Assets/Game/Scripts/Systems/InitialUnitSpawnApplySystem.cs",
+          "signature": "public Entity InstantiateAndConfigureSpawnedUnit("
+        },
+        {
+          "id": "set_or_add",
+          "path": "Assets/Game/Scripts/Systems/InitialUnitSpawnApplySystem.cs",
+          "signature": "private static void SetOrAddComponent<T>(",
+          "bindings": [
+            {
+              "from": "where T : unmanaged, IComponentData",
+              "to": "where T : struct, IComponentData",
+              "count": 1
+            }
+          ]
+        }
+      ],
+      "output": "S073_InitialUnitSpawnApplySystem.source.cs",
+      "scope": "Exact current original initial-unit entity materializer. The unmanaged-to-struct projection is confined to the managed CLI ECS shim; Unity production source remains unchanged."
     }
   ],
   "excluded_nonruntime_sources": [

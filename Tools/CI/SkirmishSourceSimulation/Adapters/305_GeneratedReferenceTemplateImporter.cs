@@ -47,7 +47,7 @@ namespace Game.Runtime
                     var value=property.Value as JObject;Need(value!=null&&(bool?)value["present"]==true&&value["buffer"]?.Type==JTokenType.Boolean&&value["value"]!=null,"Exact present component record required");
                     if(PresentationOnly.Contains(property.Name)){omitted++;continue;}
                     Type type=assembly.GetType(property.Name,false,false);
-                    Need(type!=null&&type.IsValueType&&(type.Namespace=="Game.Components"||type.Namespace=="Unity.Transforms"||type==typeof(Prefab)||type==typeof(LinkedEntityGroup)||type.FullName=="Unity.Entities.Simulate"),"Unsupported compiled template type: "+property.Name);
+                    Need(type!=null&&type.IsValueType&&(type.Namespace=="Game.Components"||type.Namespace=="Unity.Transforms"||type==typeof(Prefab)||type==typeof(Disabled)||type==typeof(LinkedEntityGroup)||type.FullName=="Unity.Entities.Simulate"),"Unsupported compiled template type: "+property.Name);
                     bool buffer=(bool)value["buffer"];Need(buffer?typeof(IBufferElementData).IsAssignableFrom(type):typeof(IComponentData).IsAssignableFrom(type),"Component/buffer source kind mismatch: "+property.Name);
                     bool? enabled=value["enabled"]?.Type==JTokenType.Null?null:(bool?)value["enabled"];
                     Need(enabled.HasValue==typeof(IEnableableComponent).IsAssignableFrom(type),"Exact enableable component facts required");
@@ -96,7 +96,9 @@ namespace Game.Runtime
                         if(cell.Enabled.HasValue)typeof(EntityManager).GetMethod("SetComponentEnabled").MakeGenericMethod(cell.Type).Invoke(em,new object[]{owner,cell.Enabled.Value});
                         result.ImportedComponents++;
                     }
-                    if(!row.Enabled)em.AddComponentData(owner,new Disabled());result.ImportedEntities++;
+                    // Some authored templates already carry the Disabled tag as well as
+                    // the source entity-enabled flag. Preserve that tag exactly once.
+                    if(!row.Enabled&&!em.HasComponent<Disabled>(owner))em.AddComponentData(owner,new Disabled());result.ImportedEntities++;
                 }
                 foreach(var root in roots.Properties()){Entity entity=result.SourceToLogical[ExactInitialValueCodec.EntityId((string)root.Value)];result.Prefabs.Add(root.Name,entity);em.SetName(entity,root.Name);}
                 return result;

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
@@ -16,6 +17,95 @@ namespace Game.Runtime
         public delegate void ObjectAction(UnityEngine.Object target);
         public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);
         public delegate bool TryGetUnitDefinitionMetadataDelegate(GameObject prefab, out UnitDefinitionMetadata metadata);
+
+        // Shared request projection used by the original legacy spawner and
+        // headless source hosts. Placement and registration remain owned by the
+        // existing BuildingRuntimeSpawn pipeline.
+        internal static BuildingRuntimeSpawnRequest CreateConfiguredInitialBuildingRequest(
+            int requestId,
+            Entity configEntity,
+            byte factionId,
+            string buildingId,
+            int2 origin,
+            bool exactSkirmishSite)
+        {
+            if (requestId <= 0) throw new System.ArgumentOutOfRangeException(nameof(requestId));
+            if (configEntity == Entity.Null) throw new System.ArgumentException("Legacy spawn plan entity required", nameof(configEntity));
+            if (string.IsNullOrWhiteSpace(buildingId)) throw new System.ArgumentException("Configured building key required", nameof(buildingId));
+
+            return new BuildingRuntimeSpawnRequest
+            {
+                RequestId = requestId,
+                RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
+                FactionId = factionId,
+                HasOwnerFaction = 1,
+                BuildingId = new FixedString128Bytes(NormalizeSpawnableKey(buildingId)),
+                PreferredOrigin = origin,
+                EndOrigin = default,
+                RotateVertical = 0,
+                RequirePreferredOrigin = exactSkirmishSite ? (byte)1 : (byte)0,
+                AllowExistingWallOverlap = 0,
+                Status = BuildingRuntimeSpawnRequest.Pending,
+                PlanEntity = configEntity,
+                EntryIndex = 0
+            };
+        }
+
+        // Shared policy for projecting legacy InitialUnits building rows into the
+        // existing runtime spawn request buffer. The caller supplies the match
+        // exact-site state and owns any warning/log writer.
+        internal static bool EnqueueConfiguredInitialBuildingRequests(
+            EntityManager em,
+            Entity boundaryEntity,
+            Entity configEntity,
+            NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+            bool exactSkirmishSite,
+            System.Action<string> warnMissingFaction,
+            out int requestCount)
+        {
+            requestCount = 0;
+            if (boundaryEntity == Entity.Null)
+                return false;
+
+            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns =
+                em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+            for (int buildingIndex = 0; buildingIndex < buildingSpawns.Length; buildingIndex++)
+            {
+                InitialUnitsFactionBuildingSpawnEntry building = buildingSpawns[buildingIndex];
+                string buildingId = building.PrefabLookupKey.ToString();
+                if (string.IsNullOrWhiteSpace(buildingId))
+                    continue;
+
+                int2 factionSpawnCell = default;
+                bool foundFaction = false;
+                for (int factionIndex = 0; factionIndex < factionSpawns.Length; factionIndex++)
+                {
+                    if (factionSpawns[factionIndex].FactionId != building.FactionId)
+                        continue;
+                    factionSpawnCell = factionSpawns[factionIndex].SpawnCell;
+                    foundFaction = true;
+                    break;
+                }
+                if (!foundFaction)
+                {
+                    warnMissingFaction?.Invoke($"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} buildingId={buildingId}");
+                    continue;
+                }
+
+                requests.Add(CreateConfiguredInitialBuildingRequest(
+                    requests.Length + 1,
+                    configEntity,
+                    building.FactionId,
+                    buildingId,
+                    factionSpawnCell + building.OriginOffset,
+                    exactSkirmishSite));
+                requestCount++;
+            }
+
+            return true;
+        }
 
         public struct BuildingDefinitionMetadata
         {

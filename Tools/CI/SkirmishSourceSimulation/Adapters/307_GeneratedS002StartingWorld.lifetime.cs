@@ -1,6 +1,7 @@
 using System;using System.IO;using System.Linq;using System.Collections.Generic;using Newtonsoft.Json.Linq;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;
 namespace Game.Runtime{
  internal sealed partial class AutonomousWorld{
+ internal bool S026InactiveWaterDiagnostic; // Present for shared adapter shape only; S002 never enables S026 diagnostics.
  private byte[] sourceInitializationBytes;private FreshSourceStorageLifetimeAuthority freshStorageAuthority;
  private float generatedBuildPlane;internal int AuthoredNavigationCount;internal CanonicalStorageBank StorageBank;internal readonly List<Entity> OpeningActors=new List<Entity>();internal GeneratedStartingBuildingPipeline StartingPipeline;internal GeneratedBuildingDefinitions SourceDefinitions;
  private StaticGridBlockerUpdateSystem staticBlockers;private SystemState staticBlockerState;private DynamicBlockerInitSystem storageOwner;private SystemState storageState;private RuntimeGridDeduplicationSystem dedup;private SystemState dedupState;

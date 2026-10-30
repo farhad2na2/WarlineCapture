@@ -27,6 +27,8 @@ namespace Game.Configs
   static string Key(int[] v)=>string.Join(",",v.Select(x=>x.ToString(System.Globalization.CultureInfo.InvariantCulture)));
   static float Float(int bits)=>BitConverter.ToSingle(BitConverter.GetBytes(bits),0);
   static int Bits(float value)=>BitConverter.ToInt32(BitConverter.GetBytes(value),0);
+  // Keep the shared publication adapter compilable in the legacy S002 profile while failing closed if an S026-only reference is routed here.
+  public static SourceOperationMapRotationReference LoadS026Diagnostic(string path,string referenceSha256) => throw new NotSupportedException("S026 inactive-water diagnostics require the declared-ground profile");
   public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256) => LoadPinned(path,referenceSha256,null);
   public static SourceOperationMapRotationReference LoadPinned(string path,string referenceSha256,string sourceRoot)
   {

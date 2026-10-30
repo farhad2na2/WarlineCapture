@@ -1,4 +1,26 @@
+using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+using Game.Components;
+
 namespace Game.Runtime {internal static partial class BuildingDefinitionPrefabSystemHelper {
         public static string NormalizeSpawnableKey(string value)
         {/*SOURCE:body_0*/}
+        internal static Game.Components.BuildingRuntimeSpawnRequest CreateConfiguredInitialBuildingRequest(
+            int requestId,
+            Unity.Entities.Entity configEntity,
+            byte factionId,
+            string buildingId,
+            Unity.Mathematics.int2 origin,
+            bool exactSkirmishSite)
+        {/*SOURCE:body_1*/}
+        internal static bool EnqueueConfiguredInitialBuildingRequests(
+            EntityManager em,
+            Entity boundaryEntity,
+            Entity configEntity,
+            NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+            bool exactSkirmishSite,
+            System.Action<string> warnMissingFaction,
+            out int requestCount)
+        {/*SOURCE:body_2*/}
 }}

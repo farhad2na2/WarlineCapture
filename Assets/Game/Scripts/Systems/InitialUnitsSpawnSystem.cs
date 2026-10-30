@@ -1159,63 +1159,19 @@ namespace Game.Runtime
             if (boundaryEntity == Entity.Null)
                 return false;
 
-            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawnsBuffer =
-                em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
-            for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
-            {
-                InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
-                string buildingId = building.PrefabLookupKey.ToString();
-                if (string.IsNullOrWhiteSpace(buildingId))
-                    continue;
-
-                if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell))
-                {
-                    diagnosticLogWriter.EnqueueWarning(em, $"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} buildingId={buildingId}");
-                    continue;
-                }
-
-                int2 origin = factionSpawnCell + building.OriginOffset;
-                EnqueueConfiguredInitialBuildingSpawnRequest(
-                    em,
-                    boundaryEntity,
-                    configEntity,
-                    building.FactionId,
-                    buildingId,
-                    origin);
-                requestCount++;
-            }
-
-            return true;
-        }
-
-        private static void EnqueueConfiguredInitialBuildingSpawnRequest(
-            EntityManager em,
-            Entity boundaryEntity,
-            Entity configEntity,
-            byte factionId,
-            string buildingId,
-            int2 origin)
-        {
             using var skirmishQuery = em.CreateEntityQuery(typeof(SkirmishMatchState));
             bool exactSkirmishSite = !skirmishQuery.IsEmptyIgnoreFilter;
-            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
-                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
-            requests.Add(new BuildingRuntimeSpawnRequest
-            {
-                RequestId = requests.Length + 1,
-                RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
-                FactionId = factionId,
-                HasOwnerFaction = 1,
-                BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
-                PreferredOrigin = origin,
-                EndOrigin = default,
-                RotateVertical = 0,
-                RequirePreferredOrigin = exactSkirmishSite ? (byte)1 : (byte)0,
-                AllowExistingWallOverlap = 0,
-                Status = BuildingRuntimeSpawnRequest.Pending,
-                PlanEntity = configEntity,
-                EntryIndex = 0
-            });
+            InitialSpawnDiagnosticLogWriter writer = diagnosticLogWriter;
+            bool result = BuildingDefinitionPrefabSystemHelper.EnqueueConfiguredInitialBuildingRequests(
+                em,
+                boundaryEntity,
+                configEntity,
+                factionSpawns,
+                exactSkirmishSite,
+                message => writer.EnqueueWarning(em, message),
+                out requestCount);
+            diagnosticLogWriter = writer;
+            return result;
         }
 
         internal static bool EnqueueInitialFactionBaseRequests(

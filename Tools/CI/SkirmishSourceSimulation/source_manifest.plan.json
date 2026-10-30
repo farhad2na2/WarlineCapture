@@ -2575,6 +2575,22 @@
           "body_only": true,
           "shipping": true,
           "binding_scope": "Exact body tokens unchanged; wrapper signature/namespace are explicit adapter type contract."
+        },
+        {
+          "id": "body_1",
+          "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+          "signature": "internal static BuildingRuntimeSpawnRequest CreateConfiguredInitialBuildingRequest(",
+          "body_only": true,
+          "shipping": true,
+          "binding_scope": "Exact current original request projection body; fully qualified generated wrapper signature preserves Game.Runtime to Game.Components assembly direction."
+        },
+        {
+          "id": "body_2",
+          "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+          "signature": "internal static bool EnqueueConfiguredInitialBuildingRequests(",
+          "body_only": true,
+          "shipping": true,
+          "binding_scope": "Exact current original legacy enqueue policy shared by InitialUnitsSpawnSystem and the CLI host."
         }
       ],
       "output": "221_BuildingDefinitionPrefabSystemHelper.keys.cs",
@@ -8779,6 +8795,187 @@
       "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishPublicSelectedApproachProjection.cs",
       "require_declarations": [
         "public static class SkirmishPublicSelectedApproachProjection"
+      ]
+    },
+    {
+      "id": "Shared_UnitPrefabRegistryComponents",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/UnitPrefabRegistryComponents.cs",
+      "require_declarations": [
+        "public struct UnitPrefabRegistryEntry : IBufferElementData"
+      ]
+    },
+    {
+      "id": "Shared_CustomGameStartupLegacyData",
+      "kind": "current_original",
+      "template": "Tools/CI/SkirmishSourceSimulation/Templates/S073_CustomGameStartupSystemHelper.LegacyData.cs.template",
+      "members": [
+        {
+          "id": "result",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "public readonly struct Result",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "constructor",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "public CustomGameStartupSystemHelper(EntityManager entityManager)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "initialize_legacy_data",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "public Result InitializeFromLegacyData(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "initialize_legacy_data_core",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private Result InitializeLegacyDataCore(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "validate_legacy_data",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static Dictionary<string, Entity> ValidateLegacyInitialSpawnData(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "is_finite",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static bool IsFinite(float value)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "add_legacy_unit_spawn",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void AddLegacyDataUnitSpawn(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "get_or_create_startup",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static Entity GetOrCreateStartupEntity(EntityManager em)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "get_or_create_legacy_startup",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static Entity GetOrCreateLegacyStartupEntity(EntityManager em)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "remove_duplicate_startup",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void RemoveDuplicateCustomInitialSpawnConfigs(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "remove_initial_spawn_components",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void RemoveInitialSpawnComponents(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "reset_initial_spawn_lifecycle",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void ResetInitialSpawnLifecycle(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "remove_runtime_spawn_requests",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void RemoveRuntimeSpawnRequestsForPlan(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "remove_component_if_present",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void RemoveComponentIfPresent<T>(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "set_legacy_initial_units_config",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void SetInitialUnitsConfig(EntityManager em, Entity entity, LegacyInitialSpawnData config)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "log_missing_prefab_resolution",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void LogMissingConvertedPrefabResolutionIfNeeded(",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "try_get_first_entity",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static bool TryGetFirstEntity(EntityQuery query, EntityManager em, out Entity entity)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "collect_entities",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static void CollectEntities(EntityQuery query, EntityManager em, List<Entity> results)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "to_fixed_64",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static FixedString64Bytes ToFixed64(string value)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        },
+        {
+          "id": "to_fixed_128",
+          "path": "Assets/Game/Scripts/Systems/CustomGameStartupSystemHelper.cs",
+          "signature": "private static FixedString128Bytes ToFixed128(string value)",
+          "shipping": true,
+          "binding_scope": "Exact current legacy data-only startup owner member; authoring-only config paths remain outside this selected projection."
+        }
+      ],
+      "output": "S073_CustomGameStartupSystemHelper.LegacyData.cs",
+      "scope": "Exact selected original CustomGameStartupSystemHelper legacy-data path. The full ScriptableObject authoring workflows are intentionally not selected; all included member bodies are extracted and source-pinned from the current owner."
+    },
+    {
+      "id": "SourceS073LegacyHostHandoff.cs",
+      "kind": "native_direct",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs",
+      "require_declarations": [
+        "internal static class SourceS073LegacySpawnRequestAdapter"
+      ]
+    },
+    {
+      "id": "Shared_CustomGameStartupComponents",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Components/CustomGameStartupComponents.cs",
+      "require_declarations": [
+        "public struct CustomGameStartupStateComponent : IComponentData"
+      ]
+    },
+    {
+      "id": "Shared_LegacyInitialSpawnData",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/LegacyInitialSpawnData.cs",
+      "require_declarations": [
+        "public sealed class LegacyInitialSpawnData"
       ]
     }
   ],

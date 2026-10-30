@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
+using Game.Simulation;
 
 namespace Game.Runtime
 {
@@ -123,9 +124,35 @@ namespace Game.Runtime
             RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
             Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, initialUnitsConfig, unitPrefabRegistryConfig, entity);
 
+            return InitializeLegacyDataCore(ProjectLegacyInitialSpawnData(initialUnitsConfig, unitPrefabRegistryConfig),
+                convertedPrefabLookup, entity, false);
+        }
+
+        // CLI and other data-only callers use the same legacy startup owner as the
+        // authored ScriptableObject path. The supplied entities must be the exact
+        // imported baked unit prefab roots named by the source data.
+        public Result InitializeFromLegacyData(
+            LegacyInitialSpawnData data,
+            IReadOnlyDictionary<string, Entity> sourcePrefabEntities)
+        {
+            EntityManager em = _entityManager;
+            Dictionary<string, Entity> prefabLookup = ValidateLegacyInitialSpawnData(data, sourcePrefabEntities, em);
+            Entity entity = GetOrCreateLegacyStartupEntity(em);
+            RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
+            return InitializeLegacyDataCore(data, prefabLookup, entity, true);
+        }
+
+        private Result InitializeLegacyDataCore(
+            LegacyInitialSpawnData config,
+            IReadOnlyDictionary<string, Entity> convertedPrefabLookup,
+            Entity entity,
+            bool strictPrefabResolution)
+        {
+            EntityManager em = _entityManager;
+
             ResetInitialSpawnLifecycle(em, entity);
             RemoveRuntimeSpawnRequestsForPlan(em, entity);
-            SetInitialUnitsConfig(em, entity, initialUnitsConfig);
+            SetInitialUnitsConfig(em, entity, config);
             if (em.HasComponent<UnitPrefabRegistryTag>(entity))
                 em.RemoveComponent<UnitPrefabRegistryTag>(entity);
             EnsureBuffer<UnitPrefabRegistryEntry>(em, entity);
@@ -154,8 +181,90 @@ namespace Game.Runtime
             unitSources.Clear();
             visualEntries.Clear();
 
-            FillLegacyUnitRegistry(em, unitPrefabRegistryConfig, convertedPrefabLookup, legacyRegistry, unitSources, visualEntries, out int missingVisualReferences);
-            FillLegacyFactionBuffers(em, initialUnitsConfig, convertedPrefabLookup, factionSpawns, initialUnits, initialBuildings, sourceUnitSpawns);
+            int missingVisualReferences = math.max(0, config.MissingVisualReferenceCount);
+            string[] registryKeys = config.UnitPrefabRegistryKeys ?? System.Array.Empty<string>();
+            LegacyInitialVisualData[] visuals = config.VisualRegistry ?? System.Array.Empty<LegacyInitialVisualData>();
+            for (int i = 0; i < registryKeys.Length; i++)
+            {
+                string sourceKey = registryKeys[i];
+                if (string.IsNullOrWhiteSpace(sourceKey))
+                {
+                    missingVisualReferences++;
+                    continue;
+                }
+
+                bool found = convertedPrefabLookup.TryGetValue(sourceKey, out Entity prefabEntity) &&
+                    prefabEntity != Entity.Null && em.Exists(prefabEntity);
+                if (!found && strictPrefabResolution)
+                    throw new System.InvalidOperationException("Exact legacy registry prefab root missing: " + sourceKey);
+                legacyRegistry.Add(new UnitPrefabRegistryEntry { Prefab = found ? prefabEntity : Entity.Null });
+                unitSources.Add(new CustomGameUnitSourceRegistryEntry
+                {
+                    SourceKey = ToFixed64(sourceKey),
+                    DisplayName = ToFixed64(sourceKey),
+                    LegacyUnitPrefab = found ? prefabEntity : Entity.Null,
+                    VisualPrefab = Entity.Null
+                });
+
+                LegacyInitialVisualData atlas = i < visuals.Length && visuals[i] != null &&
+                    string.Equals(visuals[i].SourceKey, sourceKey, System.StringComparison.Ordinal)
+                    ? visuals[i] : null;
+                if (atlas == null || !atlas.HasAtlas)
+                    missingVisualReferences++;
+                visualEntries.Add(new CustomGameVisualRegistryEntry
+                {
+                    SourceKey = ToFixed64(sourceKey),
+                    VisualPrefab = Entity.Null,
+                    DirectionCount = atlas != null ? math.max(1, atlas.DirectionCount) : 8,
+                    Columns = atlas != null ? math.max(1, atlas.Columns) : 4,
+                    Rows = atlas != null ? math.max(1, atlas.Rows) : 2,
+                    WorldSize = atlas != null ? new float2(atlas.WorldSizeX, atlas.WorldSizeY) : new float2(1f, 1.8f)
+                });
+            }
+
+            LegacyInitialFactionData[] factions = config.Factions ?? System.Array.Empty<LegacyInitialFactionData>();
+            for (int factionIndex = 0; factionIndex < factions.Length; factionIndex++)
+            {
+                LegacyInitialFactionData faction = factions[factionIndex];
+                if (faction == null) continue;
+                byte factionId = (byte)math.clamp(faction.FactionId, 0, 255);
+                factionSpawns.Add(new InitialUnitsFactionSpawnEntry
+                {
+                    FactionId = factionId,
+                    SpawnCell = new int2(faction.SpawnX, faction.SpawnY)
+                });
+
+                string firstUnitKey = null;
+                int configuredUnitCount = 0;
+                LegacyInitialUnitData[] units = faction.Units ?? System.Array.Empty<LegacyInitialUnitData>();
+                for (int unitIndex = 0; unitIndex < units.Length; unitIndex++)
+                {
+                    LegacyInitialUnitData unit = units[unitIndex];
+                    if (unit == null || string.IsNullOrWhiteSpace(unit.SourceKey) || unit.Count <= 0) continue;
+                    firstUnitKey ??= unit.SourceKey;
+                    configuredUnitCount += math.max(0, unit.Count);
+                    AddLegacyDataUnitSpawn(em, convertedPrefabLookup, initialUnits, sourceUnitSpawns,
+                        factionId, unit.SourceKey, unit.Count, unit.OffsetX, unit.OffsetY, strictPrefabResolution);
+                }
+
+                if (config.CreateFactionBases && firstUnitKey != null && configuredUnitCount < config.BaseMinimumUnitsPerFaction)
+                    AddLegacyDataUnitSpawn(em, convertedPrefabLookup, initialUnits, sourceUnitSpawns,
+                        factionId, firstUnitKey, config.BaseMinimumUnitsPerFaction - configuredUnitCount, 0, 0, strictPrefabResolution);
+
+                LegacyInitialBuildingData[] buildings = faction.Buildings ?? System.Array.Empty<LegacyInitialBuildingData>();
+                for (int buildingIndex = 0; buildingIndex < buildings.Length; buildingIndex++)
+                {
+                    LegacyInitialBuildingData building = buildings[buildingIndex];
+                    if (building == null || string.IsNullOrWhiteSpace(building.LookupKey)) continue;
+                    initialBuildings.Add(new InitialUnitsFactionBuildingSpawnEntry
+                    {
+                        FactionId = factionId,
+                        Prefab = Entity.Null,
+                        PrefabLookupKey = ToFixed128(building.LookupKey),
+                        OriginOffset = new int2(building.OriginOffsetX, building.OriginOffsetY)
+                    });
+                }
+            }
             LogMissingConvertedPrefabResolutionIfNeeded(em, initialUnits, sourceUnitSpawns, legacyRegistry);
 
             int factionCount = factionSpawns.Length;
@@ -186,6 +295,207 @@ namespace Game.Runtime
                 unitRegistryCount,
                 visualCount,
                 missingVisualReferences);
+        }
+
+        private static LegacyInitialSpawnData ProjectLegacyInitialSpawnData(
+            InitialUnitsSpawnerAuthoringConfig initialUnitsConfig,
+            UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig)
+        {
+            LegacyInitialSpawnData data = new()
+            {
+                BlockerCount = initialUnitsConfig != null ? initialUnitsConfig.BlockerCount : 0,
+                SpawnRadiusCells = initialUnitsConfig != null ? math.max(0, initialUnitsConfig.SpawnRadiusCells) : 0,
+                RespawnDelaySeconds = initialUnitsConfig != null ? math.max(0.01f, initialUnitsConfig.RespawnDelaySeconds) : 0.01f,
+                RandomSeed = initialUnitsConfig != null ? math.max(1u, initialUnitsConfig.RandomSeed) : 1u,
+                InitialDollars = initialUnitsConfig != null ? initialUnitsConfig.InitialDollars : 0,
+                InitialMaterials = initialUnitsConfig != null ? initialUnitsConfig.InitialMaterials : 0,
+                MaterialsCapacity = initialUnitsConfig != null ? initialUnitsConfig.MaterialsCapacity : 0,
+                InitialAiMaterials = initialUnitsConfig != null ? initialUnitsConfig.InitialAiMaterials : 0,
+                AiMaterialsCapacity = initialUnitsConfig != null ? initialUnitsConfig.AiMaterialsCapacity : 0,
+                InitialOil = initialUnitsConfig != null ? initialUnitsConfig.InitialOil : 0,
+                InitialFuel = initialUnitsConfig != null ? initialUnitsConfig.InitialFuel : 0,
+                CreateFactionBases = initialUnitsConfig != null && initialUnitsConfig.CreateFactionBases,
+                BaseWallPrefabKey = GetBuildingLookupKey(initialUnitsConfig != null ? initialUnitsConfig.BaseWallPrefab : null, "Wall_Dirt_Straight"),
+                BaseGatePrefabKey = GetBuildingLookupKey(initialUnitsConfig != null ? initialUnitsConfig.BaseGatePrefab : null, "Building_Road_Barrier"),
+                BaseCoreBuildingPrefabKey = GetBuildingLookupKey(initialUnitsConfig != null ? initialUnitsConfig.BaseCoreBuildingPrefab : null, "Building_Ammunition_Depot"),
+                BaseHalfWidthCells = initialUnitsConfig != null ? math.max(1, initialUnitsConfig.BaseHalfWidthCells) : 1,
+                BaseHalfHeightCells = initialUnitsConfig != null ? math.max(1, initialUnitsConfig.BaseHalfHeightCells) : 1,
+                BaseMinimumUnitsPerFaction = initialUnitsConfig != null ? math.max(0, initialUnitsConfig.BaseMinimumUnitsPerFaction) : 0,
+                EnableBlockerChurn = initialUnitsConfig != null && initialUnitsConfig.EnableBlockerChurn,
+                ChurnIntervalSeconds = initialUnitsConfig != null ? math.max(0.01f, initialUnitsConfig.ChurnIntervalSeconds) : 0.01f,
+                AddRemovePerInterval = initialUnitsConfig != null ? math.max(0, initialUnitsConfig.AddRemovePerInterval) : 0
+            };
+
+            List<LegacyInitialFactionData> factions = new();
+            if (initialUnitsConfig != null && initialUnitsConfig.Factions != null)
+                for (int factionIndex = 0; factionIndex < initialUnitsConfig.Factions.Count; factionIndex++)
+                {
+                    InitialUnitsSpawnerAuthoringConfig.FactionEntry source = initialUnitsConfig.Factions[factionIndex];
+                    if (source == null) continue;
+                    List<LegacyInitialUnitData> units = new();
+                    if (source.Units != null)
+                        for (int i = 0; i < source.Units.Count; i++)
+                        {
+                            InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = source.Units[i];
+                            if (unit == null || unit.Prefab == null || unit.Count <= 0) continue;
+                            units.Add(new LegacyInitialUnitData
+                            {
+                                SourceKey = GetPrefabName(unit.Prefab), Count = unit.Count,
+                                OffsetX = unit.SpawnOffset.x, OffsetY = unit.SpawnOffset.y
+                            });
+                        }
+                    List<LegacyInitialBuildingData> buildings = new();
+                    if (source.Buildings != null)
+                        for (int i = 0; i < source.Buildings.Count; i++)
+                        {
+                            InitialUnitsSpawnerAuthoringConfig.FactionBuildingEntry building = source.Buildings[i];
+                            if (building == null || building.Prefab == null) continue;
+                            buildings.Add(new LegacyInitialBuildingData
+                            {
+                                LookupKey = GetBuildingLookupKey(building.Prefab),
+                                OriginOffsetX = building.OriginOffset.x, OriginOffsetY = building.OriginOffset.y
+                            });
+                        }
+                    factions.Add(new LegacyInitialFactionData
+                    {
+                        FactionId = source.FactionId, SpawnX = source.SpawnCell.x, SpawnY = source.SpawnCell.y,
+                        Units = units.ToArray(), Buildings = buildings.ToArray()
+                    });
+                }
+            data.Factions = factions.ToArray();
+
+            List<string> registry = new();
+            List<LegacyInitialVisualData> visuals = new();
+            int missingVisualReferenceCount = 0;
+            if (unitPrefabRegistryConfig != null && unitPrefabRegistryConfig.UnitSpawnPrefabs != null)
+                for (int i = 0; i < unitPrefabRegistryConfig.UnitSpawnPrefabs.Count; i++)
+                {
+                    GameObject prefab = unitPrefabRegistryConfig.UnitSpawnPrefabs[i];
+                    string key = GetPrefabName(prefab);
+                    if (string.IsNullOrWhiteSpace(key))
+                    {
+                        missingVisualReferenceCount++;
+                        continue;
+                    }
+                    registry.Add(key);
+                    UnitImpostorAtlasEntry atlas = FindAtlasEntry(unitPrefabRegistryConfig, prefab);
+                    visuals.Add(new LegacyInitialVisualData
+                    {
+                        SourceKey = key, HasAtlas = atlas != null && atlas.Atlas != null,
+                        DirectionCount = atlas != null ? atlas.DirectionCount : 8,
+                        Columns = atlas != null ? atlas.Columns : 4,
+                        Rows = atlas != null ? atlas.Rows : 2,
+                        WorldSizeX = atlas != null ? atlas.Size.x : 1f,
+                        WorldSizeY = atlas != null ? atlas.Size.y : 1.8f
+                    });
+                }
+            data.UnitPrefabRegistryKeys = registry.ToArray();
+            data.VisualRegistry = visuals.ToArray();
+            data.MissingVisualReferenceCount = missingVisualReferenceCount;
+            return data;
+        }
+
+        private static Dictionary<string, Entity> ValidateLegacyInitialSpawnData(
+            LegacyInitialSpawnData data,
+            IReadOnlyDictionary<string, Entity> sourcePrefabEntities,
+            EntityManager em)
+        {
+            if (data == null) throw new System.ArgumentNullException(nameof(data));
+            if (sourcePrefabEntities == null) throw new System.ArgumentNullException(nameof(sourcePrefabEntities));
+            if (em == default) throw new System.InvalidOperationException("Live source EntityManager required");
+            if (data.UnitPrefabRegistryKeys == null || data.Factions == null || data.VisualRegistry == null ||
+                data.UnitPrefabRegistryKeys.Length > 256 || data.Factions.Length > 256 ||
+                data.VisualRegistry.Length != data.UnitPrefabRegistryKeys.Length || data.MissingVisualReferenceCount < 0 ||
+                !IsFinite(data.RespawnDelaySeconds) || !IsFinite(data.ChurnIntervalSeconds))
+                throw new System.InvalidOperationException("Complete bounded legacy startup data required");
+            ToFixed128(data.BaseWallPrefabKey ?? "Wall_Dirt_Straight");
+            ToFixed128(data.BaseGatePrefabKey ?? "Building_Road_Barrier");
+            ToFixed128(data.BaseCoreBuildingPrefabKey ?? "Building_Ammunition_Depot");
+
+            Dictionary<string, Entity> exact = new(System.StringComparer.Ordinal);
+            foreach (KeyValuePair<string, Entity> pair in sourcePrefabEntities)
+                if (string.IsNullOrWhiteSpace(pair.Key) || !exact.TryAdd(pair.Key, pair.Value))
+                    throw new System.InvalidOperationException("Unique exact source prefab identity map required");
+
+            HashSet<string> required = new(System.StringComparer.Ordinal);
+            for (int i = 0; i < data.UnitPrefabRegistryKeys.Length; i++)
+            {
+                string key = data.UnitPrefabRegistryKeys[i];
+                if (string.IsNullOrWhiteSpace(key) || key.Length > 64 || data.VisualRegistry[i] == null ||
+                    !string.Equals(data.VisualRegistry[i].SourceKey, key, System.StringComparison.Ordinal))
+                    throw new System.InvalidOperationException("Exact ordered original unit registry/visual keys required");
+                if (!IsFinite(data.VisualRegistry[i].WorldSizeX) || !IsFinite(data.VisualRegistry[i].WorldSizeY))
+                    throw new System.InvalidOperationException("Finite legacy visual metadata required");
+                ToFixed64(key);
+                required.Add(key);
+            }
+            int rows = data.UnitPrefabRegistryKeys.Length;
+            foreach (LegacyInitialFactionData faction in data.Factions)
+            {
+                if (faction == null) throw new System.InvalidOperationException("Null legacy faction row unsupported");
+                LegacyInitialUnitData[] units = faction.Units ?? System.Array.Empty<LegacyInitialUnitData>();
+                LegacyInitialBuildingData[] buildings = faction.Buildings ?? System.Array.Empty<LegacyInitialBuildingData>();
+                if (units.Length > 4096 || buildings.Length > 4096 || rows + units.Length + buildings.Length > 4096)
+                    throw new System.InvalidOperationException("Bounded legacy faction spawn rows required");
+                rows += units.Length + buildings.Length;
+                foreach (LegacyInitialUnitData unit in units)
+                {
+                    if (unit == null || unit.Count <= 0 || string.IsNullOrWhiteSpace(unit.SourceKey) || unit.SourceKey.Length > 64)
+                        throw new System.InvalidOperationException("Exact positive legacy initial unit row required");
+                    ToFixed64(unit.SourceKey);
+                    required.Add(unit.SourceKey);
+                }
+                foreach (LegacyInitialBuildingData building in buildings)
+                {
+                    if (building == null || string.IsNullOrWhiteSpace(building.LookupKey) || building.LookupKey.Length > 128)
+                        throw new System.InvalidOperationException("Exact legacy building lookup key required");
+                    ToFixed128(building.LookupKey);
+                }
+            }
+            if (exact.Count != required.Count)
+                throw new System.InvalidOperationException("Source prefab map must match the exact required legacy unit domain");
+            foreach (string key in required)
+            {
+                if (!exact.TryGetValue(key, out Entity prefab) || prefab == Entity.Null || !em.Exists(prefab) ||
+                    !em.HasComponent<Prefab>(prefab) || !em.HasComponent<UnitSourcePrefabKey>(prefab) ||
+                    !string.Equals(em.GetComponentData<UnitSourcePrefabKey>(prefab).Value.ToString(), key, System.StringComparison.Ordinal))
+                    throw new System.InvalidOperationException("Actual baked source prefab root/key mismatch: " + key);
+            }
+            return exact;
+        }
+
+        private static bool IsFinite(float value)
+        {
+            return !float.IsNaN(value) && !float.IsInfinity(value);
+        }
+
+        private static void AddLegacyDataUnitSpawn(
+            EntityManager em,
+            IReadOnlyDictionary<string, Entity> prefabLookup,
+            DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> initialUnits,
+            DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> sourceUnitSpawns,
+            byte factionId,
+            string sourceKey,
+            int count,
+            int offsetX,
+            int offsetY,
+            bool strictPrefabResolution)
+        {
+            if (string.IsNullOrWhiteSpace(sourceKey)) return;
+            bool found = prefabLookup.TryGetValue(sourceKey, out Entity prefabEntity) &&
+                prefabEntity != Entity.Null && em.Exists(prefabEntity);
+            if (!found && strictPrefabResolution)
+                throw new System.InvalidOperationException("Exact legacy initial unit prefab root missing: " + sourceKey);
+            initialUnits.Add(new InitialUnitsFactionUnitSpawnEntry
+            {
+                FactionId = factionId, Prefab = found ? prefabEntity : Entity.Null,
+                Count = math.max(0, count), SpawnOffset = new int2(offsetX, offsetY)
+            });
+            sourceUnitSpawns.Add(new CustomGameFactionUnitSourceSpawnEntry
+            {
+                FactionId = factionId, SourceKey = ToFixed64(sourceKey),
+                Count = math.max(0, count), SpawnOffset = new int2(offsetX, offsetY)
+            });
         }
 
         private static Entity GetOrCreateStartupEntity(EntityManager em)
@@ -412,6 +722,54 @@ namespace Game.Runtime
                 em.SetComponentData(entity, churnState);
             else
                 em.AddComponentData(entity, churnState);
+        }
+
+        private static void SetInitialUnitsConfig(EntityManager em, Entity entity, LegacyInitialSpawnData config)
+        {
+            InitialUnitsSpawnConfig initialConfig = new()
+            {
+                BlockerPrefab = Entity.Null,
+                UnitSelectionMarkerPrefab = Entity.Null,
+                UnitHealthBarPrefab = Entity.Null,
+                BlockerCount = config.BlockerCount,
+                SpawnRadiusCells = math.max(0, config.SpawnRadiusCells),
+                RespawnDelaySeconds = math.max(0.01f, config.RespawnDelaySeconds),
+                RandomSeed = math.max(1u, config.RandomSeed),
+                InitialDollars = math.max(0, config.InitialDollars),
+                InitialMaterials = math.max(0, config.InitialMaterials),
+                MaterialsCapacity = math.max(0, config.MaterialsCapacity),
+                InitialAiMaterials = math.max(0, config.InitialAiMaterials),
+                AiMaterialsCapacity = math.max(0, config.AiMaterialsCapacity),
+                InitialOil = math.max(0, config.InitialOil),
+                InitialFuel = math.max(0, config.InitialFuel),
+                CreateFactionBases = config.CreateFactionBases ? (byte)1 : (byte)0,
+                BaseWallPrefabLookupKey = ToFixed128(config.BaseWallPrefabKey ?? "Wall_Dirt_Straight"),
+                BaseGatePrefabLookupKey = ToFixed128(config.BaseGatePrefabKey ?? "Building_Road_Barrier"),
+                BaseCoreBuildingPrefabLookupKey = ToFixed128(config.BaseCoreBuildingPrefabKey ?? "Building_Ammunition_Depot"),
+                BaseHalfWidthCells = math.max(1, config.BaseHalfWidthCells),
+                BaseHalfHeightCells = math.max(1, config.BaseHalfHeightCells),
+                BaseMinimumUnitsPerFaction = math.max(0, config.BaseMinimumUnitsPerFaction)
+            };
+            if (em.HasComponent<InitialUnitsSpawnConfig>(entity)) em.SetComponentData(entity, initialConfig);
+            else em.AddComponentData(entity, initialConfig);
+
+            InitialUnitsBlockerChurnConfig churnConfig = new()
+            {
+                Enabled = config.EnableBlockerChurn,
+                IntervalSeconds = math.max(0.01f, config.ChurnIntervalSeconds),
+                AddRemovePerInterval = math.max(0, config.AddRemovePerInterval)
+            };
+            if (em.HasComponent<InitialUnitsBlockerChurnConfig>(entity)) em.SetComponentData(entity, churnConfig);
+            else em.AddComponentData(entity, churnConfig);
+
+            InitialUnitsBlockerChurnComponent churnState = new()
+            {
+                Timer = 0f,
+                RandomState = initialConfig.RandomSeed,
+                BlockerPrefab = Entity.Null
+            };
+            if (em.HasComponent<InitialUnitsBlockerChurnComponent>(entity)) em.SetComponentData(entity, churnState);
+            else em.AddComponentData(entity, churnState);
         }
 
         private static void FillFactionBuffers(

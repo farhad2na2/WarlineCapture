@@ -1,0 +1,53 @@
+extern alias ActualCore;
+using System.Collections.Generic;
+using Game.Components;
+using Game.Simulation;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Debug = ActualCore::UnityEngine.Debug;
+
+namespace Game.Runtime
+{
+    public sealed class CustomGameStartupSystemHelper
+    {
+        private readonly EntityManager _entityManager;
+
+        /*SOURCE:result*/
+        /*SOURCE:constructor*/
+        /*SOURCE:initialize_legacy_data*/
+        /*SOURCE:initialize_legacy_data_core*/
+        /*SOURCE:validate_legacy_data*/
+        /*SOURCE:is_finite*/
+        /*SOURCE:add_legacy_unit_spawn*/
+        /*SOURCE:get_or_create_startup*/
+        /*SOURCE:get_or_create_legacy_startup*/
+        /*SOURCE:remove_duplicate_startup*/
+        /*SOURCE:remove_initial_spawn_components*/
+        /*SOURCE:reset_initial_spawn_lifecycle*/
+        /*SOURCE:remove_runtime_spawn_requests*/
+        /*SOURCE:remove_component_if_present*/
+        /*SOURCE:set_legacy_initial_units_config*/
+        /*SOURCE:log_missing_prefab_resolution*/
+        /*SOURCE:try_get_first_entity*/
+        /*SOURCE:collect_entities*/
+        /*SOURCE:to_fixed_64*/
+        /*SOURCE:to_fixed_128*/
+
+        // The CLI EntityManager uses managed FixedString stand-ins; these bounds
+        // are compile-time-only in Unity and do not change the owner operations.
+        private static void EnsureBuffer<T>(EntityManager em, Entity entity)
+            where T : IBufferElementData
+        {
+            if (!em.HasBuffer<T>(entity))
+                em.AddBuffer<T>(entity);
+        }
+
+        private static void EnsureComponent<T>(EntityManager em, Entity entity)
+            where T : IComponentData
+        {
+            if (!em.HasComponent<T>(entity))
+                em.AddComponent<T>(entity);
+        }
+    }
+}

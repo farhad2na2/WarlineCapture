@@ -67,13 +67,14 @@ namespace Game.Runtime
             if (definition == null)
                 return Vector2Int.one;
 
-            if (!rotateVertical)
-                return definition.FootprintCells;
-
-            if (BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition))
-                return BuildingPlacementCommitCompositionSystemHelper.GetWallSegmentFootprint(definition, true);
-
-            return new Vector2Int(definition.FootprintCells.y, definition.FootprintCells.x);
+            int2 footprint = MapBuildingPlacementOriginKernel.ResolvePlacementFootprint(
+                definition.FootprintCells.x,
+                definition.FootprintCells.y,
+                BuildingBarrierUtilitySystemHelper.IsLinearWallDefinition(definition),
+                definition.LocalBounds.size.x,
+                definition.LocalBounds.size.z,
+                rotateVertical);
+            return new Vector2Int(footprint.x, footprint.y);
         }
 
         public Vector3 ResolvePlacementFocusWorldPosition(

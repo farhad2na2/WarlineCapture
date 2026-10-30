@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 
@@ -159,15 +160,11 @@ namespace Game.Runtime
             if (definition == null)
                 return Vector2Int.one;
 
-            int lengthCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(
-                Mathf.Abs(definition.LocalBounds.size.x),
-                Mathf.Abs(definition.LocalBounds.size.z))));
-            int thicknessCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Min(
-                Mathf.Abs(definition.LocalBounds.size.x),
-                Mathf.Abs(definition.LocalBounds.size.z))));
-
-            Vector2Int footprint = new(lengthCells, thicknessCells);
-            return vertical ? new Vector2Int(footprint.y, footprint.x) : footprint;
+            int2 footprint = MapBuildingPlacementOriginKernel.WallSegmentFootprint(
+                definition.LocalBounds.size.x,
+                definition.LocalBounds.size.z,
+                vertical);
+            return new Vector2Int(footprint.x, footprint.y);
         }
 
         public static Quaternion ResolvePlacementWorldRotation(BuildingDefinition definition, bool rotateVertical)

@@ -18,7 +18,7 @@ namespace Game.Editor {
   static JObject CaptureBuildingReferenceGeometry(GameObject prefab,Component authoring) {
    bool measured=BuildingModelBounds.TryMeasure(prefab,out Bounds bounds);
    Vector2Int cells=measured?BuildingModelBounds.EnclosingCells(bounds):default;
-   object configured=authoring.GetType().GetProperty("ConfiguredFootprintCells",BindingFlags.Public|BindingFlags.Instance)?.GetValue(authoring);
+   object configured=authoring==null?null:authoring.GetType().GetProperty("ConfiguredFootprintCells",BindingFlags.Public|BindingFlags.Instance)?.GetValue(authoring);
    var renderers=new JArray();
    foreach(var renderer in prefab.GetComponentsInChildren<Renderer>(true)) {
     Mesh mesh=null;Bounds local=default;

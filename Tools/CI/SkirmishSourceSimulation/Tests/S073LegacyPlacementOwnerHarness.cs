@@ -54,6 +54,10 @@ internal static class S073LegacyPlacementOwnerHarness
         SetField(source, "sourceIdentityHash", Root("sourceIdentityHash"));
         SetField(source, "sourceBinding", new OperationMapSourceBindingConfig(
             Nested("sourceBinding", "sourceOperationMapId"), Nested("sourceBinding", "sourceIdentityHash"), Nested("sourceBinding", "sourceContentHash")));
+        SetField(source, "bounds", new OperationMapBoundsConfig(
+            Origin(Nested("bounds", "worldMin")), Origin(Nested("bounds", "worldMax")),
+            Origin(Nested("bounds", "playableMin")), Origin(Nested("bounds", "playableMax")),
+            Origin(Nested("bounds", "cameraMin")), Origin(Nested("bounds", "cameraMax"))));
         SetField(source, "gridMetadata", new OperationMapGridMetadataConfig(
             Nested("gridMetadata", "assetGuid"), Nested("gridMetadata", "contentHash"), Origin(Nested("gridMetadata", "origin")),
             Dimensions(Nested("gridMetadata", "dimensions")), float.Parse(Nested("gridMetadata", "cellSize"), CultureInfo.InvariantCulture), 0));
@@ -107,6 +111,33 @@ internal static class S073LegacyPlacementOwnerHarness
              "Exact S073 initial prefab identity readback lineage required");
         OperationMapDefinition selected = ReadSelectedMap(mapPath);
         SourceS073LegacySpawnRequestAdapter.RequireSharedPlacementSource(selected);
+
+        // Reject source-bound placement candidates that fit the grid but cross the
+        // selected logical map's authored playable rectangle. Do this before the
+        // expensive Campaign surface/materialization path so failed candidates are cheap.
+        string placementConfigPath = Path.GetFullPath(args[23]);
+        var placementConfig = JObject.Parse(File.ReadAllText(placementConfigPath));
+        Need(Sha(placementConfigPath) == args[24] && (int?)placementConfig["schema_version"] == 1 &&
+             (string)placementConfig["kind"] == "S073LegacyBuildingOriginsCandidateV1" &&
+             (string)placementConfig["operation_map_id"] == selected.OperationMapId &&
+             (string)placementConfig["campaign_source"] == selected.SourceBinding.SourceOperationMapId,
+             "Exact external S073 placement candidate required before source-fit validation");
+        var playableMin = selected.Bounds.PlayableMin;
+        var playableMax = selected.Bounds.PlayableMax;
+        var candidateRows = placementConfig["overrides"] as JArray;
+        Need(candidateRows != null && candidateRows.Count == 10, "Complete S073 placement candidates required");
+        foreach (var row in candidateRows)
+        {
+            var origin = row["candidate_origin"] as JArray;
+            var footprint = row["footprint"] as JArray;
+            Need(origin?.Count == 2 && footprint?.Count == 2, "Exact S073 candidate origin and footprint required");
+            float minX = selected.GridMetadata.Origin.x + (int)origin[0] * selected.GridMetadata.CellSize;
+            float minZ = selected.GridMetadata.Origin.z + (int)origin[1] * selected.GridMetadata.CellSize;
+            float maxX = minX + (int)footprint[0] * selected.GridMetadata.CellSize;
+            float maxZ = minZ + (int)footprint[1] * selected.GridMetadata.CellSize;
+            Need(minX >= playableMin.x && minZ >= playableMin.z && maxX <= playableMax.x && maxZ <= playableMax.z,
+                 "S073 initial building footprint crosses the authored playable bounds: " + (string)row["building_id"]);
+        }
 
         var materializer = new SourceConfigMaterializer(graph);
         const string gridPath = "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
@@ -186,8 +217,6 @@ internal static class S073LegacyPlacementOwnerHarness
         for (int i = 0; i < factionSpawns.Length; i++) factionSpawnById.Add(factionSpawns[i].FactionId, factionSpawns[i].SpawnCell);
         var initialBuildings = em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(plan);
         var placementCandidates = new JArray();
-        string placementConfigPath = Path.GetFullPath(args[23]);
-        var placementConfig = JObject.Parse(File.ReadAllText(placementConfigPath));
         Need(Sha(placementConfigPath) == args[24] && (int?)placementConfig["schema_version"] == 1 &&
              (string)placementConfig["kind"] == "S073LegacyBuildingOriginsCandidateV1" &&
              (string)placementConfig["authority"] == "DerivedByOriginalBuildingPlacementOwner_ValidationCandidateOnly" &&

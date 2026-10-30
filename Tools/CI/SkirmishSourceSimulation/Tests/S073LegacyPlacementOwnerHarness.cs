@@ -117,8 +117,13 @@ internal static class S073LegacyPlacementOwnerHarness
         // expensive Campaign surface/materialization path so failed candidates are cheap.
         string placementConfigPath = Path.GetFullPath(args[23]);
         var placementConfig = JObject.Parse(File.ReadAllText(placementConfigPath));
-        Need(Sha(placementConfigPath) == args[24] && (int?)placementConfig["schema_version"] == 1 &&
+        bool prefixReplayConfig = (int?)placementConfig["schema_version"] == 2 &&
+             (string)placementConfig["kind"] == "S073LegacyBuildingOriginsCandidateV2" &&
+             (string)placementConfig["authority"] == "DerivedByOriginalPlacementOwnerPrefix_RingOrderReplay_ValidationCandidateOnly";
+        bool originalSearchConfig = (int?)placementConfig["schema_version"] == 1 &&
              (string)placementConfig["kind"] == "S073LegacyBuildingOriginsCandidateV1" &&
+             (string)placementConfig["authority"] == "DerivedByOriginalBuildingPlacementOwner_ValidationCandidateOnly";
+        Need(Sha(placementConfigPath) == args[24] && (prefixReplayConfig || originalSearchConfig) &&
              (string)placementConfig["operation_map_id"] == selected.OperationMapId &&
              (string)placementConfig["campaign_source"] == selected.SourceBinding.SourceOperationMapId,
              "Exact external S073 placement candidate required before source-fit validation");
@@ -217,9 +222,7 @@ internal static class S073LegacyPlacementOwnerHarness
         for (int i = 0; i < factionSpawns.Length; i++) factionSpawnById.Add(factionSpawns[i].FactionId, factionSpawns[i].SpawnCell);
         var initialBuildings = em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(plan);
         var placementCandidates = new JArray();
-        Need(Sha(placementConfigPath) == args[24] && (int?)placementConfig["schema_version"] == 1 &&
-             (string)placementConfig["kind"] == "S073LegacyBuildingOriginsCandidateV1" &&
-             (string)placementConfig["authority"] == "DerivedByOriginalBuildingPlacementOwner_ValidationCandidateOnly" &&
+        Need(Sha(placementConfigPath) == args[24] && (prefixReplayConfig || originalSearchConfig) &&
              (string)placementConfig["mission_id"] == "S073" &&
              (string)placementConfig["operation_map_id"] == selected.OperationMapId &&
              (string)placementConfig["campaign_source"] == selected.SourceBinding.SourceOperationMapId &&
@@ -236,7 +239,7 @@ internal static class S073LegacyPlacementOwnerHarness
         var overrides = placementConfig["overrides"] as JArray;
         Need(overrides != null && overrides.Count == initialBuildings.Length && initialBuildings.Length == 10,
              "Complete ordered S073 external origin override rows required");
-        bool everyCandidateFound = true;
+        int originalOwnerSearchRows = 0, originalPrefixReplayRows = 0;
         for (int i = 0; i < initialBuildings.Length; i++)
         {
             var entry = initialBuildings[i];
@@ -249,25 +252,38 @@ internal static class S073LegacyPlacementOwnerHarness
             var original = sourceOverride?["original_origin"] as JArray;
             var candidate = sourceOverride?["candidate_origin"] as JArray;
             var footprint = sourceOverride?["footprint"] as JArray;
+            string searchPolicy = (string)sourceOverride?["search_policy"];
+            bool originalOwnerSearch = searchPolicy == "BuildingRuntimeSpawnCompositionSystemHelper.TryFindValidInitialBuildingOrigin";
+            bool originalPrefixReplay = searchPolicy == "BuildingRuntimeSpawnCompositionSystemHelper.TryFindValidInitialBuildingOrigin_RingOrderReplay";
+            bool searchEvidenceValid = originalOwnerSearch && (bool?)sourceOverride["original_owner_search_found"] == true ||
+                originalPrefixReplay && prefixReplayConfig && i == 8 &&
+                (bool?)sourceOverride["original_owner_search_found"] == false &&
+                (bool?)sourceOverride["original_owner_prefix_replay_found"] == true &&
+                (bool?)sourceOverride["runtime_owner_acceptance_pending"] == true;
             Need(sourceOverride != null && (int?)sourceOverride["request_index"] == i &&
                  (int?)sourceOverride["faction_id"] == entry.FactionId &&
                  (string)sourceOverride["building_id"] == key &&
-                 (string)sourceOverride["search_policy"] == "BuildingRuntimeSpawnCompositionSystemHelper.TryFindValidInitialBuildingOrigin" &&
-                 (bool?)sourceOverride["original_owner_search_found"] == true &&
+                 searchEvidenceValid &&
                  original?.Count == 2 && (int?)original[0] == originalOrigin.x && (int?)original[1] == originalOrigin.y &&
                  candidate?.Count == 2 && footprint?.Count == 2 &&
                  (int?)footprint[0] == definition.FootprintCells.x && (int?)footprint[1] == definition.FootprintCells.y,
                  "External S073 origin row differs from current legacy plan or source definition");
+            if (originalOwnerSearch) originalOwnerSearchRows++;
+            if (originalPrefixReplay) originalPrefixReplayRows++;
             var candidateOrigin = new Vector2Int((int)candidate[0], (int)candidate[1]);
             placementCandidates.Add(new JObject { ["request_index"] = i, ["faction_id"] = entry.FactionId,
                 ["building_id"] = key, ["original_origin"] = new JArray(originalOrigin.x, originalOrigin.y),
                 ["footprint"] = new JArray(definition.FootprintCells.x, definition.FootprintCells.y),
-                ["original_owner_search_found"] = true,
+                ["original_owner_search_found"] = originalOwnerSearch,
+                ["original_owner_prefix_replay_found"] = originalPrefixReplay,
                 ["candidate_origin"] = new JArray(candidateOrigin.x, candidateOrigin.y),
                 ["source_config_sha256"] = args[24] });
             entry.OriginOffset = new int2(candidateOrigin.x - factionSpawn.x, candidateOrigin.y - factionSpawn.y);
             initialBuildings[i] = entry;
         }
+        Need(originalOwnerSearchRows == (prefixReplayConfig ? 9 : 10) &&
+             originalPrefixReplayRows == (prefixReplayConfig ? 1 : 0),
+             "S073 candidate must preserve nine original owner results and at most one explicit refinery prefix replay");
         int queued = SourceS073LegacySpawnRequestAdapter.Queue(em, plan, boundary, true);
         Need(queued == 10 && requests.Length == 10, "Actual S073 source rows were not queued");
         string constructionPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset");
@@ -308,7 +324,12 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["derived_from_legacy_sha256"] = args[7],
                 ["derived_from_placement_receipt_sha256"] = (string)placementConfig["derived_from_placement_receipt_sha256"],
                 ["loaded_as_external_config"] = true,
-                ["all_candidate_origins_found"] = everyCandidateFound, ["persisted_to_project"] = false,
+                ["all_candidate_origins_found"] = originalOwnerSearchRows == initialBuildings.Length,
+                ["all_candidate_origins_resolved"] = originalOwnerSearchRows + originalPrefixReplayRows == initialBuildings.Length,
+                ["original_owner_search_rows"] = originalOwnerSearchRows,
+                ["original_owner_prefix_replay_rows"] = originalPrefixReplayRows,
+                ["runtime_owner_acceptance_pending"] = !allSucceeded,
+                ["persisted_to_project"] = false,
                 ["overrides"] = placementCandidates, ["changes_campaign_geometry"] = false,
                 ["changes_shared_spawn_rule"] = false, ["changes_resources_or_budgets"] = false },
             ["grid"] = new JObject { ["width"] = grid.Width, ["height"] = grid.Height, ["origin"] = new JArray(grid.Origin.x, grid.Origin.y, grid.Origin.z), ["cell_size"] = grid.CellSize },

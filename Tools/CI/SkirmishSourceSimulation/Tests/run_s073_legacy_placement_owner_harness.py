@@ -1,0 +1,219 @@
+#!/usr/bin/env python3
+"""Compile and run the real S073 legacy initial-building pipeline with pinned Campaign inputs."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import time
+
+
+EXPECTED = {
+    "initial_template": "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+    "production_template": "97a1ffe028eccf10b7486f6ba0694cfedda3b463b99e784f0a5325ae31e4e594",
+    "identity": "d06c52158242ed371d18588db60c469dea2674007e24e830a625ff84901e265e",
+    "legacy": "1565010ac85b7c07ea1892befaa44cde3fd68c5f6e91913e86d967d1596dcb83",
+    "definitions": "4823b2bae00e0e153e6f21e0a84ddc71e2cc3bc22ad9181541489b2d8a39ac31",
+    "initialization": "989bdfcb3e94d64a94940fac14a5772560e38acdadbef7b33cadabdae7ff3f21",
+    "graph": "64d01052bdefe3bb68350cb781b19a3f3a71f68d1e681d8abb3ac83df655a039",
+    "physical": "8407889e4aff5c1f731c429fbae0063c5b6d99e1f7f51ab5c5c5bb0be29fa0b8",
+    "water": "acb0711c4e7046b70a696ee8fa935eef8a88c00d4dc23929ccb2b7812fcc15f5",
+    "startup": "ceed295e16b473fbcba7444c6daa6347b5940c39dd6e80496321cb479c554c03",
+    "map": "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a",
+    "grid": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
+    "surface": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+}
+GRID_GUID = "b201000000000000000000000000000b"
+SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
+ASSETS = {
+    GRID_GUID: ("GridAuthoringSceneConfigAsset", "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset", EXPECTED["grid"]),
+    SURFACE_GUID: ("MapSurfaceDataAsset", "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", EXPECTED["surface"]),
+}
+
+
+def sha(path):
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def require(condition, message):
+    if not condition:
+        raise RuntimeError(message)
+
+
+def prepare_map_graph(source_graph_path, source_root, output_path):
+    raw = json.loads(Path(source_graph_path).read_text())
+    require(raw.get("schema_version") == 1 and raw.get("authority") == "AuthoredConfigAssets",
+            "Exact authored config graph required")
+    selected = []
+    pins = {}
+    for guid, (source_type, relative, expected_sha) in ASSETS.items():
+        matches = [row for row in raw.get("nodes", []) if row.get("asset_guid") == guid]
+        require(len(matches) == 1, "Unique graph node required for " + relative)
+        node = matches[0]
+        asset = Path(source_root) / relative
+        meta = Path(str(asset) + ".meta")
+        require(node.get("source_type") == source_type and node.get("source_path") == relative and
+                node.get("source_sha256") == expected_sha and sha(asset) == expected_sha,
+                "Selected Campaign asset data changed: " + relative)
+        meta_text = meta.read_text()
+        meta_guid = re.findall(r"(?m)^guid: ([0-9a-f]{32})$", meta_text)
+        require(meta_guid == [guid], "Selected asset GUID changed: " + relative)
+        pins[str(asset)] = expected_sha
+        pins[str(meta)] = sha(meta)
+        selected.append(node)
+    def has_asset_reference(value):
+        if isinstance(value, dict):
+            if "fileID" in value and "guid" in value:
+                return True
+            return any(has_asset_reference(v) for v in value.values())
+        if isinstance(value, list):
+            return any(has_asset_reference(v) for v in value)
+        return False
+    require(not any(has_asset_reference(row.get("fields", {})) for row in selected),
+            "Map-only graph closure unexpectedly references an omitted asset")
+    compact = {"schema_version": 1, "authority": "AuthoredConfigAssets",
+               "source_pins": pins, "nodes": selected,
+               "derived_scope": "Selected S073-bound Campaign grid and surface nodes from the pinned original graph"}
+    Path(output_path).write_text(json.dumps(compact, separators=(",", ":")) + "\n")
+    return sha(output_path)
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--build", required=True)
+    parser.add_argument("--source-root", required=True)
+    parser.add_argument("--initial-template", required=True)
+    parser.add_argument("--production-template", required=True)
+    parser.add_argument("--identity", required=True)
+    parser.add_argument("--legacy-config", required=True)
+    parser.add_argument("--building-definitions", required=True)
+    parser.add_argument("--initialization", required=True)
+    parser.add_argument("--physical", required=True)
+    parser.add_argument("--water", required=True)
+    parser.add_argument("--startup", required=True)
+    parser.add_argument("--placement-config", required=True)
+    parser.add_argument("--output", required=True)
+    args = parser.parse_args()
+    started = time.monotonic()
+    build_path = Path(args.build).resolve(strict=True)
+    source_root = Path(args.source_root).resolve(strict=True)
+    initial_template = Path(args.initial_template).resolve(strict=True)
+    production_template = Path(args.production_template).resolve(strict=True)
+    identity = Path(args.identity).resolve(strict=True)
+    legacy = Path(args.legacy_config).resolve(strict=True)
+    definitions = Path(args.building_definitions).resolve(strict=True)
+    initialization = Path(args.initialization).resolve(strict=True)
+    physical = Path(args.physical).resolve(strict=True)
+    water = Path(args.water).resolve(strict=True)
+    startup = Path(args.startup).resolve(strict=True)
+    placement_config = Path(args.placement_config).resolve(strict=True)
+    placement_config_sha = sha(placement_config)
+    output = Path(args.output).absolute()
+    require(not output.exists(), "Fresh T-drive test output required")
+    output.mkdir(parents=True)
+    build = json.loads(build_path.read_text())
+    require(build.get("kind") == "SkirmishSourceSimulationBuild" and build.get("status") == "Passed" and
+            build.get("compile_exit") == 0, "Passing pinned Roslyn source build required")
+    for path, expected in build["source_and_reference_pins"].items():
+        require(sha(path) == expected, "Current source build input changed: " + path)
+    paths = {"initial_template": initial_template, "production_template": production_template, "identity": identity,
+             "legacy": legacy, "definitions": definitions, "initialization": initialization,
+             "physical": physical, "water": water, "startup": startup}
+    for key, path in paths.items():
+        require(sha(path) == EXPECTED[key], "Retained S073 source input changed: " + key)
+    initialization_data = json.loads(initialization.read_text())
+    graph_descriptor = initialization_data["source_config_graph"]
+    source_graph = Path(graph_descriptor["path"]).resolve(strict=True)
+    require(graph_descriptor["sha256"] == EXPECTED["graph"] and sha(source_graph) == EXPECTED["graph"],
+            "Retained shared Campaign asset graph changed")
+    compact_graph = output / "s073-campaign-grid-surface-graph.json"
+    compact_graph_sha = prepare_map_graph(source_graph, source_root, compact_graph)
+    map_path = source_root / "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset"
+    require(sha(map_path) == EXPECTED["map"], "Current S073 logical Campaign binding changed")
+    harness = Path(build["repository_root"]) / "Tools/CI/SkirmishSourceSimulation/Tests/S073LegacyPlacementOwnerHarness.cs"
+    harness_sha = sha(harness)
+    response = build["compiler_response"]
+    rsp_path = Path(response["path"]).resolve(strict=True)
+    require(sha(rsp_path) == response["sha256"], "Pinned source compile response changed")
+    compiler_args = [json.loads(line) for line in rsp_path.read_text().splitlines() if line.strip()]
+    entry = [i for i, value in enumerate(compiler_args) if value == "-main:SourceSimulationProgram"]
+    output_arg = [i for i, value in enumerate(compiler_args) if value.startswith("-out:")]
+    require(len(entry) == 1 and len(output_arg) == 1, "Checked CLI source entry required")
+    executable = output / "S073LegacyPlacementOwnerHarness.exe"
+    compiler_args[entry[0]] = "-main:S073LegacyPlacementOwnerHarness"
+    compiler_args[output_arg[0]] = "-out:" + str(executable)
+    compiler_args.append(str(harness))
+    test_rsp = output / "harness.rsp"
+    test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))
+    tools = {Path(path).name: Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]}
+    dotnet, csc = tools.get("dotnet"), tools.get("csc.dll")
+    require(dotnet and csc, "Pinned .NET/Roslyn tools required")
+    compile_result = subprocess.run([str(dotnet), str(csc), "@" + str(test_rsp)], capture_output=True, text=True, timeout=120)
+    (output / "compile.log").write_text(compile_result.stdout + compile_result.stderr)
+    run_result = None
+    timed_out = False
+    if compile_result.returncode == 0:
+        runtime = {key: Path(value).resolve(strict=True) for key, value in build["runtime_selection"].items()}
+        env = dict(__import__("os").environ)
+        env["MONO_PATH"] = __import__("os").pathsep.join([str(source_root / "Library/ScriptAssemblies"), str(runtime["engine"]), str(runtime["newtonsoft"].parent), str(Path(build["placement_build"]).parent)])
+        env["WARLINE_PLACEMENT_DIAGNOSTIC_TIMING"] = "1"
+        env["WARLINE_S073_SOURCE_ROOT"] = str(source_root)
+        installed_config = runtime["script"] / "MonoBleedingEdge/etc/mono/config"
+        mono_helper = runtime["contents"] / "Frameworks/libMonoPosixHelper.dylib"
+        require(installed_config.is_file() and mono_helper.is_file(), "Pinned Mono config and Posix helper required")
+        config_text = installed_config.read_text()
+        config_text = config_text.replace('target="libMonoPosixHelper.dylib"', 'target="' + str(mono_helper) + '"')
+        config_text = config_text.replace('target="MonoPosixHelper"', 'target="' + str(mono_helper) + '"')
+        mono_config = output / "mono-config.xml"
+        mono_config.write_text(config_text)
+        scene_path = source_root / "Assets/Game/Scenes/Match.unity"
+        map_source = source_root / "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset"
+        args_run = [str(initial_template), EXPECTED["initial_template"], str(production_template), EXPECTED["production_template"],
+                    str(identity), EXPECTED["identity"], str(legacy), EXPECTED["legacy"], str(definitions), EXPECTED["definitions"],
+                    str(source_root), str(compact_graph), compact_graph_sha, str(initialization), EXPECTED["initialization"],
+                    str(physical), EXPECTED["physical"], str(water), EXPECTED["water"], str(startup), EXPECTED["startup"],
+                    EXPECTED["map"], str(output / "initial-roads"), str(placement_config), placement_config_sha]
+        try:
+            run_result = subprocess.run([str(runtime["mono"]), "--config", str(mono_config), "--optimize=-float32", str(executable), *args_run], env=env, capture_output=True,
+                                        text=True, timeout=300)
+            (output / "run.log").write_text(run_result.stdout + run_result.stderr)
+        except subprocess.TimeoutExpired as error:
+            timed_out = True
+            stdout, stderr = error.stdout or "", error.stderr or ""
+            if isinstance(stdout, bytes): stdout = stdout.decode("utf-8", errors="replace")
+            if isinstance(stderr, bytes): stderr = stderr.decode("utf-8", errors="replace")
+            (output / "run.log").write_text(stdout + stderr)
+    for path, expected in build["source_and_reference_pins"].items():
+        require(sha(path) == expected, "Source build pin changed during test: " + path)
+    for key, path in paths.items():
+        require(sha(path) == EXPECTED[key], "S073 source input changed during test: " + key)
+    require(sha(placement_config) == placement_config_sha, "External S073 placement config changed during test")
+    require(sha(harness) == harness_sha and sha(compact_graph) == compact_graph_sha and
+            sha(map_path) == EXPECTED["map"], "Harness or derived/current map source changed")
+    marker = "[S073LegacyPlacementOwnerHarness] "
+    stdout = "" if run_result is None else run_result.stdout
+    payload = None
+    if marker in stdout:
+        payload = json.loads(stdout[stdout.rfind(marker) + len(marker):].strip().splitlines()[0])
+    passed = compile_result.returncode == 0 and not timed_out and run_result is not None and run_result.returncode == 0 and payload and payload.get("status") == "Passed"
+    result = {"kind": "S073LegacyPlacementOwnerHarnessRun", "status": "Passed" if passed else "Failed",
+              "failure": "bounded Mono timeout" if timed_out else None, "wall_seconds": time.monotonic() - started,
+              "build_receipt": str(build_path), "build_receipt_sha256": sha(build_path),
+              "placement_config": {"path": str(placement_config), "sha256": placement_config_sha},
+              "harness": {"path": str(harness), "sha256": harness_sha}, "compact_campaign_graph": {"path": str(compact_graph), "sha256": compact_graph_sha,
+              "derived_from": str(source_graph), "source_graph_sha256": EXPECTED["graph"], "selected_nodes": 2},
+              "run_exit": None if run_result is None else run_result.returncode, "compile_exit": compile_result.returncode,
+              "result": payload, "source_log": str(output / "run.log"), "unity_launched": False,
+              "full_mission": False, "autonomous_aria": False, "mission_outcome": False, "mission_ready": False}
+    (output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result, separators=(",", ":")))
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

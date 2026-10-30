@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Game.Components;
 
@@ -163,7 +165,14 @@ internal void TransportBoardingPhase()=>transportBoarding.Run();
 internal void TransportDiagnosticPhase()=>transportDiagnostic.Run();
 internal void TransportAttackPhase()=>transportAttack.Run();
 internal void RopeDropPhase()=>ropeDrop.Run();
-internal void DeathPhase(){SourceNativeDeathBinding.ValidateActualUnits(manager);death.Run();}
+internal sealed class DeathEvent { internal string World, Stable, Session, Marker; internal long Tick; internal Entity Actor; internal byte Faction; internal uint Reservation; }
+internal readonly List<DeathEvent> DeathEvents=new List<DeathEvent>(); internal readonly HashSet<Entity> DeathActors=new HashSet<Entity>(); internal int DeathLedgerFaults;
+internal void DeathPhase(string worldId,long tick){
+ List<Entity> candidates=null;
+ try {if(DeathLedgerFaults==0){if(string.IsNullOrEmpty(worldId)||tick<0)throw new InvalidOperationException("Death ledger identity missing");candidates=new List<Entity>();using var q=manager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),typeof(UnitHealth),typeof(UnitAnimationSettings));using var all=q.ToEntityArray(Allocator.Temp);if(all.Length>4096)throw new InvalidOperationException("Death observation bound exceeded");foreach(var e in all)if(manager.GetComponentData<UnitHealth>(e).Current<=0&&!manager.HasComponent<StaticGridBlocker>(e)&&!manager.HasComponent<UnitDeathAnimationComponent>(e)&&!manager.HasComponent<VehicleWreckComponent>(e))candidates.Add(e);}}catch(Exception){DeathLedgerFaults++;candidates=null;}
+ SourceNativeDeathBinding.ValidateActualUnits(manager);death.Run();
+ try{if(candidates==null)return;foreach(var e in candidates){if(!manager.Exists(e)||!manager.HasComponent<SkirmishAttemptOwnedComponent>(e))throw new InvalidOperationException("Death candidate disappeared during owner");bool animation=manager.HasComponent<UnitDeathAnimationComponent>(e),wreck=manager.HasComponent<VehicleWreckComponent>(e);if(!animation&&!wreck)continue;if(animation&&wreck||DeathEvents.Count>=8192||!DeathActors.Add(e))throw new InvalidOperationException("Death ledger ambiguous, duplicate or full");var owned=manager.GetComponentData<SkirmishAttemptOwnedComponent>(e);if(owned.SessionId.IsEmpty||owned.StableObjectId.IsEmpty)throw new InvalidOperationException("Death identity missing");DeathEvents.Add(new DeathEvent{World=worldId,Tick=tick,Actor=e,Stable=owned.StableObjectId.ToString(),Session=owned.SessionId.ToString(),Faction=owned.FactionId,Reservation=owned.ReservationId,Marker=wreck?"VehicleWreck":"DeathAnimation"});}}catch(Exception){DeathLedgerFaults++;}
+}
         internal void DefensePhase() => defense.Run();
         public void Dispose()
         {

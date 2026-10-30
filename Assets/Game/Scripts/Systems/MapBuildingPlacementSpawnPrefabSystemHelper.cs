@@ -799,11 +799,7 @@ namespace Game.Runtime
 
         private static int2 CenterCellToOrigin(int2 centerCell, Vector2Int footprint, GridConfig grid)
         {
-            int originX = centerCell.x - Mathf.Max(0, footprint.x - 1) / 2;
-            int originY = centerCell.y - Mathf.Max(0, footprint.y - 1) / 2;
-            return new int2(
-                Mathf.Clamp(originX, 0, Mathf.Max(0, grid.Width - footprint.x)),
-                Mathf.Clamp(originY, 0, Mathf.Max(0, grid.Height - footprint.y)));
+            return MapBuildingPlacementOriginKernel.CenterCellToOrigin(centerCell, footprint, grid);
         }
 
         private static void WarnOnce(ref bool flag, Context context, string message)

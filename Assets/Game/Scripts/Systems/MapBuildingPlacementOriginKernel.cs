@@ -1,0 +1,20 @@
+using Game.Components;
+using Unity.Mathematics;
+using UnityEngine;
+
+namespace Game.Runtime
+{
+    // Shared cell-origin policy for legacy authored map placements. Hosts pass
+    // source-derived grid and footprint data; they do not reimplement centering.
+    internal static class MapBuildingPlacementOriginKernel
+    {
+        internal static int2 CenterCellToOrigin(int2 centerCell, Vector2Int footprint, GridConfig grid)
+        {
+            int originX = centerCell.x - Mathf.Max(0, footprint.x - 1) / 2;
+            int originY = centerCell.y - Mathf.Max(0, footprint.y - 1) / 2;
+            return new int2(
+                Mathf.Clamp(originX, 0, Mathf.Max(0, grid.Width - footprint.x)),
+                Mathf.Clamp(originY, 0, Mathf.Max(0, grid.Height - footprint.y)));
+        }
+    }
+}

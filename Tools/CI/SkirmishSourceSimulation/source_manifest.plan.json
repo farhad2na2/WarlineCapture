@@ -4492,6 +4492,14 @@
       ]
     },
     {
+      "id": "631_MapBuildingPlacementOriginKernel.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs",
+      "require_declarations": [
+        "internal static class MapBuildingPlacementOriginKernel"
+      ]
+    },
+    {
       "id": "353_BuildingRuntimeDataRegistrationSystemHelper.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Systems/BuildingRuntimeDataRegistrationSystemHelper.cs",

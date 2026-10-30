@@ -58,7 +58,7 @@ internal static class S073ProductionTemplateImporterHarness
 
     public static int Main(string[] args)
     {
-        Need(args.Length == 2, "Expected captured native template path and SHA256");
+        Need(args.Length == 7, "Expected captured templates/hash, external S073 legacy config/hash, authored legacy definitions/hash, and current source root");
         string path = Path.GetFullPath(args[0]);
         Need(File.Exists(path) && Sha256(path) == args[1], "Exact immutable focused capture required");
         JObject source = JObject.Parse(File.ReadAllText(path));
@@ -105,7 +105,30 @@ internal static class S073ProductionTemplateImporterHarness
              "Only actual missile VFX references may be omitted; gameplay launcher components must remain");
         RequireRejected(source, Path.GetDirectoryName(path));
 
-        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 requiredS073RecipeRoots=12 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 missionWorld=0 fullMission=0 nativeReadiness=0");
+        string legacyConfigPath = Path.GetFullPath(args[2]);
+        Need(Sha256(legacyConfigPath) == args[3], "Exact external S073 legacy initialization config required");
+        JObject legacyConfig = JObject.Parse(File.ReadAllText(legacyConfigPath));
+        string definitionPath = Path.GetFullPath(args[4]);
+        Need(Sha256(definitionPath) == args[5], "Exact original-source S073 building definitions required");
+        var definitions = GeneratedBuildingDefinitions.LoadS073Legacy(
+            definitionPath, args[5], imported.Prefabs, legacyConfig, Path.GetFullPath(args[6]));
+        Need(definitions.Definitions.Count == 6 && definitions.Definitions.Select(d => d.Prefab.name)
+                 .Distinct(StringComparer.Ordinal).Count() == 6,
+             "Exact six original S073 building definitions required");
+        var barrack = definitions.Definitions.Single(d => d.Prefab.name == "Building_Barrack");
+        Need(barrack.FootprintCells.x == 28 && barrack.FootprintCells.y == 15 && barrack.ProductionSlots.Count == 1 &&
+             barrack.ProductionSlots[0].SpawnUnitPrefab.name == "Unit_Chr_Soldier_Male_02_Alt_04" &&
+             barrack.ProductionSlots[0].Quantity == 4 && barrack.SecondarySpawnUnitPrefab == null &&
+             barrack.TertiarySpawnUnitPrefab == null && barrack.QuaternarySpawnUnitPrefab == null,
+             "S073 original Barrack recipe/domain changed");
+        var fuel = definitions.Definitions.Single(d => d.Prefab.name == "Building_Fuel_Bladder");
+        Need(fuel.FootprintCells.x == 14 && fuel.FootprintCells.y == 10 && fuel.ProductionSlots.Count == 11 &&
+             fuel.ProductionSlots.All(slot => slot.Quantity == 1 && imported.Prefabs.ContainsKey(slot.SpawnUnitPrefab.name)),
+             "S073 original Fuel Bladder recipe/domain changed");
+        foreach (var definition in definitions.Definitions.Where(d => d.Prefab.name != "Building_Barrack" && d.Prefab.name != "Building_Fuel_Bladder"))
+            Need(definition.ProductionSlots.Count == 0, "S073 non-producer acquired runtime-overlay recipes");
+
+        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 requiredS073RecipeRoots=12 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 legacyDefinitions=6 barrackSlots=1 fuelBladderSlots=11 missionWorld=0 placedBuildings=0 fullMission=0 nativeReadiness=0");
         return 0;
     }
 }

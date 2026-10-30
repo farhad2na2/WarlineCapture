@@ -1,0 +1,7 @@
+using System;using System.Security.Cryptography;using Unity.Collections;using Unity.Entities;
+namespace Game.Components {
+public struct GridWalkableSourceWitness:IComponentData {public FixedString64Bytes AssetGuid;public FixedString128Bytes AssetHash,WalkableHash;public int Generation;public ulong WorldSequence;
+ public static FixedString128Bytes Digest(DynamicBuffer<GridWalkable> cells){var bytes=new byte[8192];using var sha=SHA256.Create();int offset=0;while(offset<cells.Length){int count=Math.Min(bytes.Length,cells.Length-offset);for(int i=0;i<count;i++)bytes[i]=cells[offset+i].Value;sha.TransformBlock(bytes,0,count,bytes,0);offset+=count;}sha.TransformFinalBlock(bytes,0,0);return new FixedString128Bytes(BitConverter.ToString(sha.Hash).Replace("-","").ToLowerInvariant());}
+ public static GridWalkableSourceWitness Capture(string guid,string hash,DynamicBuffer<GridWalkable> cells){if(string.IsNullOrEmpty(guid)||string.IsNullOrEmpty(hash))throw new InvalidOperationException("Actual authored grid identity required");return new GridWalkableSourceWitness{AssetGuid=new FixedString64Bytes(guid),AssetHash=new FixedString128Bytes(hash),WalkableHash=Digest(cells)};}
+ public bool Matches(OperationMapGridSourceRecord source,DynamicBuffer<GridWalkable> cells)=>AssetGuid.Equals(source.GridGuid)&&AssetHash.Equals(source.GridHash)&&Generation==source.Generation&&WorldSequence!=0&&WorldSequence==source.WorldSequence&&WalkableHash.Equals(Digest(cells));
+}}

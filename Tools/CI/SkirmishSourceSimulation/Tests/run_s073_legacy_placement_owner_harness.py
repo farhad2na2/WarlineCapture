@@ -56,6 +56,22 @@ def require(condition, message):
         raise RuntimeError(message)
 
 
+def pin_input_files(named_paths):
+    return {key: {"path": str(Path(path).resolve(strict=True)), "sha256": sha(path)}
+            for key, path in named_paths.items()}
+
+
+def input_pins_replayable(input_pins):
+    for value in input_pins.values():
+        path = Path(value["path"])
+        try:
+            if not path.is_file() or sha(path) != value["sha256"]:
+                return False
+        except OSError:
+            return False
+    return True
+
+
 def prepare_map_graph(source_graph_path, source_root, output_path):
     raw = json.loads(Path(source_graph_path).read_text())
     require(raw.get("schema_version") == 1 and raw.get("authority") == "AuthoredConfigAssets",
@@ -267,6 +283,20 @@ def main():
     if marker in stdout:
         payload = json.loads(stdout[stdout.rfind(marker) + len(marker):].strip().splitlines()[0])
     passed = compile_result.returncode == 0 and not timed_out and run_result is not None and run_result.returncode == 0 and payload and payload.get("status") == "Passed"
+    run_inputs = dict(paths)
+    run_inputs.update({"placement_config": placement_config, "map_placement_capture": map_placement_capture,
+                       "blocker_metadata": blocker_metadata, "campaign_source_graph": source_graph,
+                       "logical_campaign_map": map_path})
+    input_pins = pin_input_files(run_inputs)
+    run_request = {"kind": "S073LegacyPlacementOwnerRunRequest", "schema_version": 1,
+                   "build_receipt": str(build_path), "build_receipt_sha256": sha(build_path),
+                   "source_root": str(source_root), "captured_asset_root": str(captured_asset_root),
+                   "harness": str(harness), "harness_sha256": harness_sha,
+                   "runtime": build["runtime_selection"],
+                   "build_source_and_reference_pins": build["source_and_reference_pins"],
+                   "output_directory": str(output), "input_pins": input_pins,
+                   "replayable": input_pins_replayable(input_pins)}
+    (output / "run-request.json").write_text(json.dumps(run_request, indent=2) + "\n")
     result = {"kind": "S073LegacyPlacementOwnerHarnessRun", "status": "Passed" if passed else "Failed",
               "failure": "bounded Mono timeout" if timed_out else None, "wall_seconds": time.monotonic() - started,
               "build_receipt": str(build_path), "build_receipt_sha256": sha(build_path),
@@ -277,6 +307,7 @@ def main():
               "scope": "Pinned current full production capture; its four S073 legacy opening roots exactly match the source-bound legacy config. The deleted compact capture is retained only as historical hash metadata in the independent name readback."},
               "harness": {"path": str(harness), "sha256": harness_sha}, "compact_campaign_graph": {"path": str(compact_graph), "sha256": compact_graph_sha,
               "derived_from": str(source_graph), "source_graph_sha256": EXPECTED["graph"], "selected_nodes": 2},
+              "input_pins": input_pins, "run_request": str(output / "run-request.json"),
               "run_exit": None if run_result is None else run_result.returncode, "compile_exit": compile_result.returncode,
               "result": payload, "source_log": str(output / "run.log"),
               "captured_asset_root": str(captured_asset_root),

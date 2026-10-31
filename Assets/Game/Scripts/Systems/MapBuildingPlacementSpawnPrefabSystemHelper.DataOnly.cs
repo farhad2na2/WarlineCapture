@@ -31,11 +31,20 @@ namespace Game.Runtime
                 return true;
             }
 
-            bool queued = _sequence.Advance(placementCount, MaxPlacementsPerUpdate,
-                isPriorityPlacement, trySpawnPlacement);
+            bool queued = AdvancePlacements(placementCount, isPriorityPlacement, trySpawnPlacement);
             if (queued)
                 _authoringHidden = true;
             return queued;
+        }
+
+        // The Unity visual path and the headless data path share the exact
+        // priority/sequential scheduling decision. Only their spawn callbacks
+        // differ (visual runtime materialization versus data-world registration).
+        private bool AdvancePlacements(int placementCount, Func<int, bool> isPriorityPlacement,
+            Func<int, bool> trySpawnPlacement)
+        {
+            return _sequence.Advance(placementCount, MaxPlacementsPerUpdate,
+                isPriorityPlacement, trySpawnPlacement);
         }
     }
 }

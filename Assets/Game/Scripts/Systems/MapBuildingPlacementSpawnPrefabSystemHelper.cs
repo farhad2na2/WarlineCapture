@@ -90,9 +90,8 @@ namespace Game.Runtime
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
                 return;
 
-            if (_sequence.Advance(
+            if (AdvancePlacements(
                     context.Config.Placements.Count,
-                    MaxPlacementsPerUpdate,
                     placementIndex => IsPlayerProductionPlacement(context, context.Config.Placements[placementIndex]),
                     placementIndex => TrySpawnPlacementAtIndex(context, grid, placementIndex)))
             {

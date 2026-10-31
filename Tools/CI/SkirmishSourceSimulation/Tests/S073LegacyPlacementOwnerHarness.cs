@@ -1856,26 +1856,24 @@ internal static class S073LegacyPlacementOwnerHarness
         }
         Need(factionSummaries.Length == factionIds.Count,
             "Shared faction summary projection omitted a runtime owner faction");
-        var aiPlanner = new AIBuildPlannerSystem();
-        var aiPlannerState = State(em);
-        aiPlanner.OnCreate(ref aiPlannerState);
-        bool aiPlannerQueriesPresent = aiPlannerState.RequiredQueriesPresent;
+        JObject legacySchedulerInitialization = autonomousWorld.InitializeS073LegacyOwnerScheduler();
+        bool aiPlannerQueriesPresent = (bool?)legacySchedulerInitialization["required_queries_present"]?["AIBuildPlannerSystem"] == true;
         int aiRequestsBefore = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length;
         int aiPlannerStepCount = 0;
         const float aiPlannerStepSeconds = 1f / 60f;
+        JObject legacySchedulerFirstStep = null;
+        JObject legacySchedulerLastStep = null;
         phaseWall.Restart();
         while (aiPlannerQueriesPresent && gameplayAfterHeadlessGate.SimulationActive != 0 &&
                aiPlannerStepCount < 2700 && em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length == aiRequestsBefore)
         {
-            TimeData worldTime = em.WorldUnmanaged.Time;
-            worldTime.ElapsedTime += aiPlannerStepSeconds;
-            worldTime.DeltaTime = aiPlannerStepSeconds;
-            em.WorldUnmanaged.Time = worldTime;
-            aiPlannerState.Begin();
-            try { aiPlanner.OnUpdate(ref aiPlannerState); }
-            finally { aiPlannerState.End(); }
+            JObject ownerStep = autonomousWorld.AdvanceS073LegacyOwnerTick(aiPlannerStepSeconds);
+            if (legacySchedulerFirstStep == null) legacySchedulerFirstStep = ownerStep;
+            legacySchedulerLastStep = ownerStep;
             aiPlannerStepCount++;
         }
+        allSucceeded &= (bool?)legacySchedulerInitialization["initialized"] == true &&
+            aiPlannerQueriesPresent && aiPlannerStepCount > 0 && legacySchedulerFirstStep != null && legacySchedulerLastStep != null;
         aiPlannerWallSeconds = phaseWall.Elapsed.TotalSeconds;
         DynamicBuffer<BuildingRuntimeSpawnRequest> aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         int aiRequestCountBeforeProcessing = aiRequests.Length;
@@ -1917,7 +1915,7 @@ internal static class S073LegacyPlacementOwnerHarness
             ["performance_diagnostics"] = new JObject { ["harness_wall_seconds"] = harnessWall.Elapsed.TotalSeconds,
                 ["source_domain_build_wall_seconds"] = sourceDomainWallSeconds,
                 ["map_placement_owner_wall_seconds"] = placementOwnerWallSeconds,
-                ["ai_build_planner_wall_seconds"] = aiPlannerWallSeconds,
+                ["legacy_ai_and_ground_owner_wall_seconds"] = aiPlannerWallSeconds,
                 ["ai_build_planner_updates"] = aiPlannerStepCount },
             ["mission"] = "S073", ["source_identity_hash"] = selected.SourceIdentityHash, ["campaign_source"] = selected.SourceBinding.SourceOperationMapId,
             ["placement_config_variant"] = new JObject { ["kind"] = (string)placementConfig["kind"],
@@ -2038,7 +2036,14 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["actual_units_materialized"] = newlySpawned.Count, ["faction_one"] = factionOneUnits,
                 ["faction_two"] = factionTwoUnits, ["frames"] = spawnFrames,
                 ["original_completion_component_observed"] = em.HasComponent<InitialUnitsSpawnInitialized>(plan),
-                ["same_autonomous_world_host_retained"] = autonomousWorld.InitializationStage == "S073LegacyLoadingGateAdmitted_SchedulerCompositionPending" },
+                ["same_autonomous_world_host_retained"] = autonomousWorld.InitializationStage.StartsWith("S073Legacy", StringComparison.Ordinal) },
+            ["legacy_ai_and_ground_scheduler"] = new JObject {
+                ["initialization"] = legacySchedulerInitialization,
+                ["normal_step_count"] = aiPlannerStepCount,
+                ["first_step"] = legacySchedulerFirstStep,
+                ["last_step"] = legacySchedulerLastStep,
+                ["full_system_schedule"] = false, ["autonomous_aria"] = false,
+                ["full_mission"] = false },
             ["original_ai_startup"] = new JObject { ["source_assets_sha256"] = new JObject {
                     ["enemy"] = args[27], ["player"] = args[28], ["plan"] = args[29] },
                 ["original_owner_invoked"] = true, ["same_entity_manager"] = true,
@@ -2047,7 +2052,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 original legacy startup and complete captured-map placement owners with shared loading-gate admission; legacy scheduler composition, autonomous ARIA, full mission outcome and player readiness remain pending",
+            ["mission_world_scope"] = "S073 original legacy startup, captured-map placement, shared loading-gate admission, and a bounded original economy/faction-control/build-planner plus movement-owner prefix; downstream production/squad/targeting/combat owners, autonomous ARIA, full mission outcome and player readiness remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

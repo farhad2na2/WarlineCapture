@@ -9,6 +9,26 @@ namespace Game.Runtime
     /// <summary>Deterministic row aggregation shared by the runtime publisher and headless host.</summary>
     internal static class BuildingRuntimeReadModelProjection
     {
+        internal static void AddConfiguredUnit(
+            DynamicBuffer<BuildingConfiguredUnitReadModel> buffer,
+            FixedString128Bytes unitId,
+            FixedString128Bytes displayName,
+            int materialsCost,
+            int creditsCost,
+            bool canRequest,
+            bool isVehicle)
+        {
+            buffer.Add(new BuildingConfiguredUnitReadModel
+            {
+                UnitId = unitId,
+                DisplayName = displayName,
+                Price = Math.Max(0, materialsCost),
+                CreditsCost = Math.Max(0, creditsCost),
+                CanRequest = canRequest ? (byte)1 : (byte)0,
+                IsVehicle = isVehicle ? (byte)1 : (byte)0
+            });
+        }
+
         internal static void AddFactionSummary(
             DynamicBuffer<BuildingRuntimeFactionSummary> buffer,
             byte factionId,

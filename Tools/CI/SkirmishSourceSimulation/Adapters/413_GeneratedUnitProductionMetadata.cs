@@ -5,8 +5,10 @@ using System.Reflection;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Game.Components;
 
 namespace Game.Runtime
 {
@@ -50,6 +52,37 @@ namespace Game.Runtime
             metadata = default; return false;
         }
 
+        internal void PublishConfiguredUnitReadModels(DynamicBuffer<BuildingConfiguredUnitReadModel> buffer)
+        {
+            buffer.Clear();
+            foreach (Row row in Ordered)
+            {
+                if (row.Prefab == null)
+                    continue;
+
+                BuildingDefinitionPrefabSystemHelper.UnitDefinitionMetadata definition = row.Definition;
+                string prefabName = row.Prefab.name;
+                string unitId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefabName);
+                if (string.IsNullOrEmpty(unitId))
+                    throw new InvalidDataException("Configured unit prefab identity is not canonical: " + prefabName);
+
+                string displayName = string.IsNullOrWhiteSpace(definition.DisplayName)
+                    ? prefabName
+                    : definition.DisplayName;
+                bool isVehicle = definition.FootprintCells.x > 1 ||
+                                 definition.FootprintCells.y > 1 ||
+                                 prefabName.IndexOf("Veh", StringComparison.OrdinalIgnoreCase) >= 0;
+                BuildingRuntimeReadModelProjection.AddConfiguredUnit(
+                    buffer,
+                    new FixedString128Bytes(unitId),
+                    new FixedString128Bytes(displayName),
+                    definition.Price,
+                    definition.CreditsCost,
+                    definition.CanRequest,
+                    isVehicle);
+            }
+        }
+
         internal Row RequireDeliverable(SourceUnitPrefab prefab)
         {
             if (prefab == null || !byPrefab.TryGetValue(prefab, out Row row))
@@ -64,15 +97,52 @@ namespace Game.Runtime
             IDictionary<string, SourceUnitPrefab> canonicalAssets,
             IDictionary<string, Entity> actualTemplates, IDictionary<string,JObject> canonicalIdentities, SourceMetadataCompatibility compatibility=null)
         {
+            return LoadCore(path, sha, setupHash, seed, repoRoot, canonicalAssets, actualTemplates, canonicalIdentities, compatibility, null, false);
+        }
+
+        internal static GeneratedUnitProductionMetadata LoadS073ConfiguredUnitRegistry(
+            string evidencePath, string evidenceSha, string repoRoot,
+            IDictionary<string, SourceUnitPrefab> canonicalAssets,
+            IDictionary<string, Entity> actualTemplates, IDictionary<string, JObject> canonicalIdentities)
+        {
+            S073ConfiguredUnitRegistryEvidence evidence = S073ConfiguredUnitRegistryEvidence.Load(evidencePath, evidenceSha, repoRoot);
+            foreach (var pair in evidence.AssetIdentities)
+            {
+                if (!actualTemplates.TryGetValue(pair.Key, out Entity template) || template == Entity.Null)
+                    throw new InvalidDataException("Required original configured unit/transport template was not imported: " + pair.Key);
+                if (canonicalAssets.TryGetValue(pair.Key, out SourceUnitPrefab existing))
+                {
+                    if (existing.Template != Entity.Null && existing.Template != template)
+                        throw new InvalidDataException("Configured unit canonical template changed: " + pair.Key);
+                }
+                else
+                    canonicalAssets.Add(pair.Key, new SourceUnitPrefab(pair.Key, template));
+
+                if (canonicalIdentities.TryGetValue(pair.Key, out JObject priorIdentity) &&
+                    !JToken.DeepEquals(priorIdentity, pair.Value))
+                    throw new InvalidDataException("Configured unit canonical source identity changed: " + pair.Key);
+                canonicalIdentities[pair.Key] = (JObject)pair.Value.DeepClone();
+            }
+            return LoadCore(evidence.FactoryMetadataPath, evidence.FactoryMetadataSha, 0, 0, repoRoot,
+                canonicalAssets, actualTemplates, canonicalIdentities, null, evidence.OrderedUnitKeys, true);
+        }
+
+        private static GeneratedUnitProductionMetadata LoadCore(string path, string sha,
+            uint setupHash, int seed, string repoRoot,
+            IDictionary<string, SourceUnitPrefab> canonicalAssets,
+            IDictionary<string, Entity> actualTemplates, IDictionary<string,JObject> canonicalIdentities,
+            SourceMetadataCompatibility compatibility, IReadOnlyList<string> sourceOrderedUnitKeys, bool sourceCatalogReuse)
+        {
             if (canonicalAssets == null || canonicalIdentities == null || actualTemplates == null || string.IsNullOrEmpty(repoRoot))
                 throw new ArgumentException("Canonical source identities/templates and source root required");
             byte[] bytes = AutonomousWorld.PinnedFile(path, sha, 2 * 1024 * 1024);
             JObject root = JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes),
                 new JsonLoadSettings { DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error });
             if(compatibility!=null){compatibility.RequireTarget(setupHash,seed);compatibility.RequireUnits(sha,root);}
-            if ((int?)root["schema_version"] != (compatibility?.FactoryDomainQualified==true?2:1) || (string)root["kind"] != (compatibility?.FactoryDomainQualified==true?"NativeQualifiedSkirmishUnitProductionMetadata":"AuthoredSkirmishUnitProductionMetadata") ||
-                (string)root["authority"] != (compatibility?.FactoryDomainQualified==true?"OriginalNativeMetadataFactories_NotMissionState":"OriginalConfiguredAuthoringFactories_NotMissionState") ||
-                (compatibility==null&&((uint?)root["setup_hash"] != setupHash || (int?)root["seed"] != seed)) ||
+            bool factoryDomainQualified = compatibility?.FactoryDomainQualified == true || sourceCatalogReuse;
+            if ((int?)root["schema_version"] != (factoryDomainQualified?2:1) || (string)root["kind"] != (factoryDomainQualified?"NativeQualifiedSkirmishUnitProductionMetadata":"AuthoredSkirmishUnitProductionMetadata") ||
+                (string)root["authority"] != (factoryDomainQualified?"OriginalNativeMetadataFactories_NotMissionState":"OriginalConfiguredAuthoringFactories_NotMissionState") ||
+                (!sourceCatalogReuse&&compatibility==null&&((uint?)root["setup_hash"] != setupHash || (int?)root["seed"] != seed)) ||
                 (root["unsupported_values"] as JArray)?.Count != 0 ||
                 (bool?)root["baked_actor_footprint_substituted"] != false ||
                 (bool?)root["runtime_camera_basis_exported"] != false)
@@ -102,12 +172,27 @@ namespace Game.Runtime
             var codec = new ExactInitialValueCodec(Path.GetDirectoryName(path), new JObject());
             JArray units = root["units"] as JArray;
             JArray transportRows = root["transports"] as JArray;
-            if (units == null || units.Count != (compatibility?.FactoryDomainQualified==true?compatibility.UnitCount:12) || transportRows == null || transportRows.Count > 16)
+            if (units == null || (sourceCatalogReuse ? units.Count < sourceOrderedUnitKeys.Count || sourceOrderedUnitKeys.Count != 3 || sourceOrderedUnitKeys.Distinct(StringComparer.Ordinal).Count() != sourceOrderedUnitKeys.Count : units.Count != (compatibility?.FactoryDomainQualified==true?compatibility.UnitCount:12)) || transportRows == null || transportRows.Count > 16)
                 throw new InvalidDataException("Bounded complete original configured unit order required");
-            var rows = new List<Row>();
-            foreach (JObject unit in units)
+            IEnumerable<JObject> selectedRows = units.Cast<JObject>();
+            if (sourceCatalogReuse)
             {
-                if ((int?)unit["index"] != rows.Count || (bool?)unit["has_definition_metadata"] != true ||
+                var byKey = new Dictionary<string, JObject>(StringComparer.Ordinal);
+                for (int i = 0; i < units.Count; i++)
+                {
+                    JObject row = units[i] as JObject ?? throw new InvalidDataException("Complete original source unit row required");
+                    if ((int?)row["index"] != i || (bool?)row["has_definition_metadata"] != true ||
+                        (bool?)row["has_production_metadata"] != true || string.IsNullOrWhiteSpace((string)row["key"]) ||
+                        !byKey.TryAdd((string)row["key"], row))
+                        throw new InvalidDataException("Unique contiguous original source factory rows required");
+                }
+                selectedRows = sourceOrderedUnitKeys.Select(key => byKey.TryGetValue(key, out JObject row)
+                    ? row : throw new InvalidDataException("Configured S073 unit missing from original factory source: " + key));
+            }
+            var rows = new List<Row>();
+            foreach (JObject unit in selectedRows)
+            {
+                if ((!sourceCatalogReuse && (int?)unit["index"] != rows.Count) || (bool?)unit["has_definition_metadata"] != true ||
                     (bool?)unit["has_production_metadata"] != true)
                     throw new InvalidDataException("Actual contiguous configured unit order and metadata presence required");
                 JObject asset = unit["prefab"] as JObject ?? throw new InvalidDataException("Unit asset identity missing");
@@ -162,7 +247,7 @@ namespace Game.Runtime
             foreach (var pair in stagedAssets)
                 if (!canonicalAssets.ContainsKey(pair.Key)) canonicalAssets.Add(pair.Key, pair.Value);
             foreach(var pair in assetIdentities)if(!canonicalIdentities.ContainsKey(pair.Key))canonicalIdentities.Add(pair.Key,(JObject)pair.Value.DeepClone());
-            return new GeneratedUnitProductionMetadata(rows, transports, readIdentity, sha, compatibility?.FactoryDomainQualified==true);
+            return new GeneratedUnitProductionMetadata(rows, transports, readIdentity, sha, factoryDomainQualified);
         }
 
         private static JObject Fields(JToken envelope, string typeName, Type type)

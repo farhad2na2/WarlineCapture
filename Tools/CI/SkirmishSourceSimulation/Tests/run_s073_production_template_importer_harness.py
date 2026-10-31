@@ -31,6 +31,10 @@ def main():
     parser.add_argument("--legacy-config-sha256", required=True)
     parser.add_argument("--building-definitions", required=True)
     parser.add_argument("--building-definitions-sha256", required=True)
+    parser.add_argument("--registry-evidence", required=True)
+    parser.add_argument("--registry-evidence-sha256", required=True)
+    parser.add_argument("--supplemental-capture", required=True)
+    parser.add_argument("--supplemental-capture-sha256", required=True)
     parser.add_argument("--source-repo", required=True)
     parser.add_argument("--runtime-repo", required=True)
     parser.add_argument("--package-root", required=True)
@@ -42,6 +46,8 @@ def main():
     capture = Path(args.capture).resolve(strict=True)
     legacy_config = Path(args.legacy_config).resolve(strict=True)
     building_definitions = Path(args.building_definitions).resolve(strict=True)
+    registry_evidence = Path(args.registry_evidence).resolve(strict=True)
+    supplemental_capture = Path(args.supplemental_capture).resolve(strict=True)
     source_repo = Path(args.source_repo).resolve(strict=True)
     runtime_repo = Path(args.runtime_repo).resolve(strict=True)
     package = Path(args.package_root).resolve(strict=True)
@@ -60,6 +66,11 @@ def main():
     definitions_sha = args.building_definitions_sha256
     require(sha(legacy_config) == legacy_config_sha and sha(building_definitions) == definitions_sha,
             "Exact current S073 legacy configuration/definition inputs required")
+    registry_evidence_sha = args.registry_evidence_sha256
+    supplemental_capture_sha = args.supplemental_capture_sha256
+    require(sha(registry_evidence) == registry_evidence_sha and
+            sha(supplemental_capture) == supplemental_capture_sha,
+            "Exact S073 registry evidence and supplemental source capture required")
     harness_sha = sha(harness)
     response = build["compiler_response"]
     response_path = Path(response["path"]).resolve(strict=True)
@@ -97,14 +108,17 @@ def main():
         run_result = subprocess.run(
             [str(runtime["mono"]), str(executable), str(capture), capture_sha,
              str(legacy_config), legacy_config_sha, str(building_definitions), definitions_sha,
-             str(source_repo)],
+             str(source_repo), str(registry_evidence), registry_evidence_sha,
+             str(supplemental_capture), supplemental_capture_sha],
             env=env, capture_output=True, text=True, timeout=60)
         (output / "run.log").write_text(run_result.stdout + run_result.stderr)
 
     for path, expected in pins.items():
         require(sha(path) == expected, "Build input changed during harness run: " + path)
     require(sha(capture) == capture_sha and sha(harness) == harness_sha and
-            sha(legacy_config) == legacy_config_sha and sha(building_definitions) == definitions_sha,
+            sha(legacy_config) == legacy_config_sha and sha(building_definitions) == definitions_sha and
+            sha(registry_evidence) == registry_evidence_sha and
+            sha(supplemental_capture) == supplemental_capture_sha,
             "Harness source or captured S073 input changed during test")
     marker = "[S073ProductionTemplateImporterHarness] result=Passed"
     passed = compile_result.returncode == 0 and run_result is not None and \
@@ -119,6 +133,8 @@ def main():
         "capture": {"path": str(capture), "sha256": capture_sha},
         "legacy_config": {"path": str(legacy_config), "sha256": legacy_config_sha},
         "legacy_building_definitions": {"path": str(building_definitions), "sha256": definitions_sha},
+        "registry_evidence": {"path": str(registry_evidence), "sha256": registry_evidence_sha},
+        "supplemental_capture": {"path": str(supplemental_capture), "sha256": supplemental_capture_sha},
         "source_repo": str(source_repo),
         "harness_source": str(harness),
         "harness_source_sha256": harness_sha,

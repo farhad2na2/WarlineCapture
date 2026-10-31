@@ -58,7 +58,7 @@ internal static class S073ProductionTemplateImporterHarness
 
     public static int Main(string[] args)
     {
-        Need(args.Length == 7, "Expected captured templates/hash, external S073 legacy config/hash, authored legacy definitions/hash, and current source root");
+        Need(args.Length == 11, "Expected captured templates/hash, legacy config/hash, building definitions/hash, source root, registry evidence/hash, and supplemental capture/hash");
         string path = Path.GetFullPath(args[0]);
         Need(File.Exists(path) && Sha256(path) == args[1], "Exact immutable focused capture required");
         JObject source = JObject.Parse(File.ReadAllText(path));
@@ -105,6 +105,28 @@ internal static class S073ProductionTemplateImporterHarness
              "Only actual missile VFX references may be omitted; gameplay launcher components must remain");
         RequireRejected(source, Path.GetDirectoryName(path));
 
+        string registryEvidencePath = Path.GetFullPath(args[7]);
+        Need(Sha256(registryEvidencePath) == args[8], "Exact source-verified S073 registry evidence required");
+        string supplementalPath = Path.GetFullPath(args[9]);
+        Need(Sha256(supplementalPath) == args[10], "Exact existing supplemental prefab capture required");
+        JObject supplemental = JObject.Parse(File.ReadAllText(supplementalPath));
+        JObject supplementalRoots = supplemental["opening_prefabs"] as JObject;
+        const string transportKey = "Unit_Veh_Helicopter_Transport";
+        Need((string)supplemental["kind"] == "AuthoredSkirmishPrefabReferenceData" &&
+             (string)supplemental["authority"] == "ActualSourceAssetsAndNativeBakers_NotMissionState" &&
+             (bool?)supplemental["replay_ready"] == false &&
+             (bool?)supplemental["full_mission_initialized"] == false &&
+             supplementalRoots != null && supplementalRoots[transportKey] != null &&
+             !supplementalRoots.Properties().Any(root => roots[root.Name] != null),
+             "Disjoint existing source-only transport capture required");
+        string[] supplementalKeys = supplementalRoots.Properties().Select(root => root.Name).ToArray();
+        var supplementalImport = GeneratedReferenceTemplateImporter.Import(
+            em, supplemental, Path.GetDirectoryName(supplementalPath), supplementalKeys);
+        Need(supplementalImport.Prefabs.Count == supplementalRoots.Count &&
+             supplementalImport.Prefabs.ContainsKey(transportKey), "Original transport prefab capture failed to import");
+        foreach (var pair in supplementalImport.Prefabs)
+            Need(imported.Prefabs.TryAdd(pair.Key, pair.Value), "Supplemental prefab root overlaps: " + pair.Key);
+
         string legacyConfigPath = Path.GetFullPath(args[2]);
         Need(Sha256(legacyConfigPath) == args[3], "Exact external S073 legacy initialization config required");
         JObject legacyConfig = JObject.Parse(File.ReadAllText(legacyConfigPath));
@@ -128,7 +150,30 @@ internal static class S073ProductionTemplateImporterHarness
         foreach (var definition in definitions.Definitions.Where(d => d.Prefab.name != "Building_Barrack" && d.Prefab.name != "Building_Fuel_Bladder"))
             Need(definition.ProductionSlots.Count == 0, "S073 non-producer acquired runtime-overlay recipes");
 
-        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 requiredS073RecipeRoots=12 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 legacyDefinitions=6 barrackSlots=1 fuelBladderSlots=11 missionWorld=0 placedBuildings=0 fullMission=0 nativeReadiness=0");
+        var units = GeneratedUnitProductionMetadata.LoadS073ConfiguredUnitRegistry(
+            registryEvidencePath, args[8], Path.GetFullPath(args[6]), definitions.Assets,
+            imported.Prefabs, definitions.AssetIdentities);
+        Need(units.Ordered.Count == 3 && units.FactoryDomainQualified &&
+             units.Ordered.Select(row => row.Prefab.name).SequenceEqual(new[]
+             {
+                 "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Veh_Truck_Tray", "Unit_Veh_Truck_Tanker"
+             }), "Actual ordered S073 source registry must materialize exactly three configured units");
+        Entity boundary = em.CreateEntity();
+        DynamicBuffer<BuildingConfiguredUnitReadModel> readModels = em.AddBuffer<BuildingConfiguredUnitReadModel>(boundary);
+        units.PublishConfiguredUnitReadModels(readModels);
+        Need(readModels.Length == 3 &&
+             readModels[0].UnitId.ToString() == "unit_chr_soldier_male_02_alt_04" &&
+             readModels[1].UnitId.ToString() == "unit_veh_truck_tray" && readModels[1].IsVehicle == 1 &&
+             readModels[2].UnitId.ToString() == "unit_veh_truck_tanker" && readModels[2].IsVehicle == 1 &&
+             readModels[0].CanRequest == 1 && readModels[1].CanRequest == 1 && readModels[2].CanRequest == 1 &&
+             readModels[0].Price > 0 && readModels[1].Price > 0 && readModels[2].Price > 0 &&
+             readModels[0].CreditsCost > 0 && readModels[1].CreditsCost > 0 && readModels[2].CreditsCost > 0,
+             "Original S073 configured-unit runtime projection changed or incomplete: " +
+             string.Join(";", Enumerable.Range(0, readModels.Length).Select(i =>
+                 readModels[i].UnitId + "/" + readModels[i].DisplayName + "/" + readModels[i].Price + "/" +
+                 readModels[i].CreditsCost + "/" + readModels[i].CanRequest + "/" + readModels[i].IsVehicle)));
+
+        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 supplementalTransport=1 requiredS073RecipeRoots=12 sourceRegistryUnits=3 configuredUnitReadModels=3 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 legacyDefinitions=6 barrackSlots=1 fuelBladderSlots=11 missionWorld=0 placedBuildings=0 fullMission=0 nativeReadiness=0");
         return 0;
     }
 }

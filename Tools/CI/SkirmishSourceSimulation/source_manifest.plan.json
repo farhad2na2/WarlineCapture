@@ -5082,6 +5082,14 @@
       "scope": "Explicit package-owned data_decoder; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
     },
     {
+      "id": "S073ConfiguredUnitRegistryEvidence.cs",
+      "kind": "finite_adapter",
+      "path": "Tools/CI/SkirmishSourceSimulation/Adapters/S073ConfiguredUnitRegistryEvidence.cs",
+      "role": "data_decoder",
+      "contains_original_gameplay": false,
+      "scope": "Validates the exact current S073 preset-to-construction-to-unit-registry source chain and independently pinned original factory rows; source/config provenance only, not mission state or readiness."
+    },
+    {
       "id": "414_UnitDefinitionMetadata.source.cs",
       "kind": "current_original",
       "path": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",

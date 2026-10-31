@@ -167,6 +167,10 @@ def main():
     parser.add_argument("--map-placement-capture", required=True)
     parser.add_argument("--special-building-runtime-reference", required=True)
     parser.add_argument("--special-building-runtime-reference-sha256", required=True)
+    parser.add_argument("--unit-registry-evidence", required=True)
+    parser.add_argument("--unit-registry-evidence-sha256", required=True)
+    parser.add_argument("--supplemental-transport-template", required=True)
+    parser.add_argument("--supplemental-transport-template-sha256", required=True)
     parser.add_argument("--blocker-metadata", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
@@ -190,6 +194,14 @@ def main():
     special_building_reference_sha = sha(special_building_reference)
     require(special_building_reference_sha == args.special_building_runtime_reference_sha256,
             "Exact captured S073 airport/gate runtime-reference hash required")
+    unit_registry_evidence = Path(args.unit_registry_evidence).resolve(strict=True)
+    unit_registry_evidence_sha = sha(unit_registry_evidence)
+    require(unit_registry_evidence_sha == args.unit_registry_evidence_sha256,
+            "Exact source-verified S073 unit registry evidence required")
+    supplemental_transport_template = Path(args.supplemental_transport_template).resolve(strict=True)
+    supplemental_transport_template_sha = sha(supplemental_transport_template)
+    require(supplemental_transport_template_sha == args.supplemental_transport_template_sha256,
+            "Exact existing original transport template capture required")
     special_reference_data = json.loads(special_building_reference.read_text())
     require(special_reference_data.get("schema_version") == 1 and
             special_reference_data.get("kind") == "S073OriginalSpecialBuildingRuntimeReference" and
@@ -259,6 +271,8 @@ def main():
     paths["player_ai"] = source_root / "Assets/Game/Configs/Skirmish/Player.asset"
     paths["ai_plan"] = source_root / "Assets/Game/Configs/Skirmish/Plan.asset"
     paths["blocker_metadata"] = blocker_metadata
+    paths["unit_registry_evidence"] = unit_registry_evidence
+    paths["supplemental_transport_template"] = supplemental_transport_template
     paths["map_placement_helper"] = map_placement_helper
     paths["map_placement_data_only_owner"] = source_root / "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.DataOnly.cs"
     paths["map_definitions_adapter"] = source_root / "Tools/CI/SkirmishSourceSimulation/Adapters/300_GeneratedBuildingDefinitions.cs"
@@ -397,7 +411,9 @@ def main():
                     str(preset_readback), EXPECTED["preset_readback"], EXPECTED["enemy_ai"], EXPECTED["player_ai"], EXPECTED["ai_plan"],
                     str(map_placement_capture), map_placement_capture_sha,
                     str(blocker_metadata), EXPECTED["blocker_metadata"], str(captured_asset_root),
-                    str(special_building_reference), special_building_reference_sha]
+                    str(special_building_reference), special_building_reference_sha,
+                    str(unit_registry_evidence), unit_registry_evidence_sha,
+                    str(supplemental_transport_template), supplemental_transport_template_sha]
         try:
             run_result = subprocess.run([str(runtime["mono"]), "--config", str(mono_config), "--optimize=-float32", str(executable), *args_run], env=env, capture_output=True,
                                         text=True, timeout=300)
@@ -415,6 +431,9 @@ def main():
     require(sha(placement_config) == placement_config_sha, "External S073 placement config changed during test")
     require(sha(map_placement_capture) == EXPECTED["map_placement_capture"], "Captured S073 source placement data changed during test")
     require(sha(special_building_reference) == special_building_reference_sha, "Captured S073 special-building runtime data changed during test")
+    require(sha(unit_registry_evidence) == unit_registry_evidence_sha and
+            sha(supplemental_transport_template) == supplemental_transport_template_sha,
+            "Captured S073 registry/transport inputs changed during test")
     require(sha(preset_readback) == EXPECTED["preset_readback"], "S073 source preset readback changed during test")
     require(sha(harness) == harness_sha and sha(compact_graph) == compact_graph_sha and
             sha(map_path) == EXPECTED["map"], "Harness or derived/current map source changed")
@@ -427,6 +446,8 @@ def main():
     run_inputs = dict(paths)
     run_inputs.update({"placement_config": placement_config, "map_placement_capture": map_placement_capture,
                        "blocker_metadata": blocker_metadata, "special_building_runtime_reference": special_building_reference,
+                       "unit_registry_evidence": unit_registry_evidence,
+                       "supplemental_transport_template": supplemental_transport_template,
                        "generated_owner_adapter": generated_owner_adapter,
                        "campaign_source_graph": source_graph,
                        "logical_campaign_map": map_path})
@@ -474,6 +495,8 @@ def main():
               "map_placement_capture": {"path": str(map_placement_capture), "sha256": map_placement_capture_sha},
               "blocker_metadata": {"path": str(blocker_metadata), "sha256": sha(blocker_metadata)},
               "special_building_runtime_reference": {"path": str(special_building_reference), "sha256": special_building_reference_sha},
+              "unit_registry_evidence": {"path": str(unit_registry_evidence), "sha256": unit_registry_evidence_sha},
+              "supplemental_transport_template": {"path": str(supplemental_transport_template), "sha256": supplemental_transport_template_sha},
               "special_capture_owner_pin_compatibility": special_capture_owner_deltas,
               "opening_prefab_root_evidence": {"path": str(production_template), "sha256": EXPECTED["production_template"],
               "scope": "Pinned current full production capture; its four S073 legacy opening roots exactly match the source-bound legacy config. The deleted compact capture is retained only as historical hash metadata in the independent name readback."},

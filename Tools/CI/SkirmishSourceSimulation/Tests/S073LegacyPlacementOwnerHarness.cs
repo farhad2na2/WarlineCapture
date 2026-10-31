@@ -157,13 +157,17 @@ internal static class S073LegacyPlacementOwnerHarness
         double sourceDomainWallSeconds = 0;
         double placementOwnerWallSeconds = 0;
         double aiPlannerWallSeconds = 0;
-        Need(args.Length == 37, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, captured Campaign asset root, and hash-bound special-building runtime reference");
+        Need(args.Length == 41, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, captured Campaign asset root, special-building reference, configured-unit registry evidence, and supplemental transport capture");
         string initialTemplatePath = Path.GetFullPath(args[0]), templatePath = Path.GetFullPath(args[2]), identityPath = Path.GetFullPath(args[4]);
         string legacyPath = Path.GetFullPath(args[6]), definitionsPath = Path.GetFullPath(args[8]);
         string sourceRoot = Path.GetFullPath(args[10]);
         string capturedAssetRoot = Path.GetFullPath(args[34]);
         string specialBuildingRuntimeReferencePath = Path.GetFullPath(args[35]);
         string specialBuildingRuntimeReferenceSha = args[36];
+        string unitRegistryEvidencePath = Path.GetFullPath(args[37]);
+        string unitRegistryEvidenceSha = args[38];
+        string supplementalTransportTemplatePath = Path.GetFullPath(args[39]);
+        string supplementalTransportTemplateSha = args[40];
         string mapPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset");
         string graphPath = Path.GetFullPath(args[11]), initialPath = Path.GetFullPath(args[13]);
         string physicalPath = Path.GetFullPath(args[15]), waterPath = Path.GetFullPath(args[17]), startupPath = Path.GetFullPath(args[19]);
@@ -383,6 +387,26 @@ internal static class S073LegacyPlacementOwnerHarness
         var importedProduction = GeneratedReferenceTemplateImporter.Import(em, template, Path.GetDirectoryName(templatePath), ProductionRoots);
         var templates = importedProduction.Prefabs;
         Need(InitialRoots.All(templates.ContainsKey) && ProductionRoots.All(templates.ContainsKey), "Complete source startup/production prefab namespace required");
+        Need(Sha(supplementalTransportTemplatePath) == supplementalTransportTemplateSha,
+            "Exact existing supplemental original transport capture required");
+        JObject supplementalTransportTemplate = JObject.Parse(File.ReadAllText(supplementalTransportTemplatePath));
+        JObject supplementalTransportRoots = supplementalTransportTemplate["opening_prefabs"] as JObject;
+        const string transportPrefabKey = "Unit_Veh_Helicopter_Transport";
+        Need((string)supplementalTransportTemplate["kind"] == "AuthoredSkirmishPrefabReferenceData" &&
+             (string)supplementalTransportTemplate["authority"] == "ActualSourceAssetsAndNativeBakers_NotMissionState" &&
+             (bool?)supplementalTransportTemplate["replay_ready"] == false &&
+             (bool?)supplementalTransportTemplate["full_mission_initialized"] == false &&
+             supplementalTransportRoots != null && supplementalTransportRoots[transportPrefabKey] != null &&
+             !supplementalTransportRoots.Properties().Any(root => templates.ContainsKey(root.Name)),
+            "Disjoint existing source-only transport prefab namespace required");
+        string[] supplementalTransportKeys = supplementalTransportRoots.Properties().Select(root => root.Name).ToArray();
+        var importedSupplementalTransport = GeneratedReferenceTemplateImporter.Import(em,
+            supplementalTransportTemplate, Path.GetDirectoryName(supplementalTransportTemplatePath), supplementalTransportKeys);
+        Need(importedSupplementalTransport.Prefabs.Count == supplementalTransportRoots.Count &&
+             importedSupplementalTransport.Prefabs.ContainsKey(transportPrefabKey),
+            "Original transport prefab source graph failed to import");
+        foreach (var pair in importedSupplementalTransport.Prefabs)
+            Need(templates.TryAdd(pair.Key, pair.Value), "Supplemental original prefab root overlaps selected source namespace: " + pair.Key);
         var initialUnitTemplates = InitialRoots.ToDictionary(key => key, key => templates[key], StringComparer.Ordinal);
         var initialized = new CustomGameStartupSystemHelper(em).InitializeFromLegacyData(initialData, initialUnitTemplates);
         Need(initialized.Initialized && initialized.FactionCount == 2 && initialized.InitialBuildingEntryCount == 10, "Original S073 legacy startup owner failed");
@@ -397,6 +421,21 @@ internal static class S073LegacyPlacementOwnerHarness
         em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
         var definitions = GeneratedBuildingDefinitions.LoadS073Legacy(definitionsPath, args[9], templates, legacy, sourceRoot);
         Need(definitions.Definitions.Count == 6, "Exact S073 original building definitions required");
+        Need(Sha(unitRegistryEvidencePath) == unitRegistryEvidenceSha,
+            "Exact pinned S073 configured-unit source registry evidence required");
+        GeneratedUnitProductionMetadata configuredUnitMetadata = GeneratedUnitProductionMetadata.LoadS073ConfiguredUnitRegistry(
+            unitRegistryEvidencePath, unitRegistryEvidenceSha, sourceRoot,
+            definitions.Assets, templates, definitions.AssetIdentities);
+        DynamicBuffer<BuildingConfiguredUnitReadModel> configuredUnitReadModels =
+            em.AddBuffer<BuildingConfiguredUnitReadModel>(boundary);
+        configuredUnitMetadata.PublishConfiguredUnitReadModels(configuredUnitReadModels);
+        Need(configuredUnitReadModels.Length == 3 &&
+             configuredUnitMetadata.Ordered.Select(row => row.Prefab.name).SequenceEqual(new[]
+             { "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Veh_Truck_Tray", "Unit_Veh_Truck_Tanker" }) &&
+             configuredUnitReadModels[0].UnitId.ToString() == "unit_chr_soldier_male_02_alt_04" &&
+             configuredUnitReadModels[1].UnitId.ToString() == "unit_veh_truck_tray" &&
+             configuredUnitReadModels[2].UnitId.ToString() == "unit_veh_truck_tanker",
+            "Actual ordered S073 configured units did not publish through the shared runtime read-model projection");
         var configured = em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
         var configuredSpawnableSourceRows = new JArray();
         foreach (var d in definitions.Definitions)

@@ -262,6 +262,7 @@ namespace Game.Editor
             var temporary = new GameObject("S073_SourceOnly_RunwayAnchorProbe");
             JObject runwayResult;
             JObject runwayPathingOpening = null;
+            JObject runwayRuntimeWorldData = null;
             try
             {
                 var placement = airportRows[0].placement;
@@ -295,6 +296,21 @@ namespace Game.Editor
                     object runtimeBuilding = Activator.CreateInstance(runtimeBuildingType, true);
                     runtimeBuildingType.GetField("Definition").SetValue(runtimeBuilding, definition);
                     runtimeBuildingType.GetField("Instance").SetValue(runtimeBuilding, temporary);
+                    Type runwaySystemType = LoadedType("Game.Runtime.BuildingRunwaySystem");
+                    MethodInfo resolveWorldData = runwaySystemType.GetMethod("TryResolveRuntimeRunwayWorldData", BindingFlags.Static | BindingFlags.NonPublic);
+                    if (resolveWorldData == null) throw new InvalidOperationException("Original runtime runway world-data owner missing");
+                    object[] worldDataArgs = { runtimeBuilding, null, null, null };
+                    if (!(resolveWorldData.Invoke(null, worldDataArgs) is bool worldDataResolved) || !worldDataResolved)
+                        throw new InvalidOperationException("Original runway owner could not resolve runtime world geometry from the captured anchor");
+                    Vector3 runtimeCenter = (Vector3)worldDataArgs[1];
+                    Quaternion runtimeRotation = (Quaternion)worldDataArgs[2];
+                    Vector3 runtimeHalfExtents = (Vector3)worldDataArgs[3];
+                    runwayRuntimeWorldData = new JObject {
+                        ["center"] = BuildingReferenceVector(runtimeCenter),
+                        ["rotation_xyzw"] = new JArray(runtimeRotation.x, runtimeRotation.y, runtimeRotation.z, runtimeRotation.w),
+                        ["half_extents"] = BuildingReferenceVector(runtimeHalfExtents),
+                        ["owner"] = "BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData"
+                    };
                     Type pathingType = LoadedType("Game.Runtime.BuildingRunwayPathingSurface");
                     MethodInfo resolveOpening = pathingType.GetMethod("TryResolve", BindingFlags.Static | BindingFlags.Public);
                     if (resolveOpening == null) throw new InvalidOperationException("Original runway pathing-opening owner missing");
@@ -393,6 +409,7 @@ namespace Game.Editor
                 ["catalog_id"] = "S073",
                 ["source_scene_path"] = S073SourceScenePath,
                 ["airport_runway"] = runwayResult,
+                ["airport_runway_runtime_world_data"] = runwayRuntimeWorldData,
                 ["airport_pathing_opening"] = runwayPathingOpening,
                 ["road_gates"] = gateRows,
                 ["source_pins"] = JObject.FromObject(pins),
@@ -405,7 +422,8 @@ namespace Game.Editor
             Directory.CreateDirectory(output);
             File.WriteAllText(outputFile, report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             Debug.Log("[SkirmishS073SpecialBuildingReference] result=Passed runwayResolved=" + runwayResult["resolved"] +
-                " pathingOpening=" + (runwayPathingOpening != null) + " roadGates=" + gateRows.Count + " missionWorld=0 fullMission=0");
+                " runtimeWorldData=" + (runwayRuntimeWorldData != null) + " pathingOpening=" + (runwayPathingOpening != null) +
+                " roadGates=" + gateRows.Count + " missionWorld=0 fullMission=0");
         }
 
         static string HierarchyPath(Transform value)

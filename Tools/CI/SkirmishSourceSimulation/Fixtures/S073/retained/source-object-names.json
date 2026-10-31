@@ -1,0 +1,339 @@
+{
+  "schema_version": 1,
+  "kind": "S073LegacyPrefabSourceNameReadback",
+  "authority": "AssetDatabase exact GUID/local-fileID GameObject names; source data only",
+  "mission": "S073",
+  "source_readback_sha256": "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10",
+  "prefab_capture_sha256": "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+  "unity_version": "6000.5.8f1",
+  "source_pins": {
+    "/private/tmp/s073-source-asset-reference-audit-20261030-r1.json": "12452d3237b484ff4e7ef4da8d0ba012f9fc86f81403245bd0b7ec68ae160518",
+    "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/s073-prefab-reference-data-20261030-r5/prefab-reference-data.json": "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+    "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset": "ed3e76bfed7132ff9cd46540bb855c9fe6b4fc72e090be0058025881cd72d286",
+    "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset": "a9cb317fbdef7f3eda4fc6f505dee345af15cee40c7da6ff21164a93844904e9",
+    "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset": "d757cc62f4c5f53c347557e56ca45b20deae9e2b0c0073b6c915d38c947f7005",
+    "Assets/Game/Configs/Skirmish/Enemy.asset": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52",
+    "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset": "6688f039a073ce6c4c834a44f056d73bbada237cd0bd76c0db555d37a89be813",
+    "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset": "b81c21bfaf2a037e28f8d923b3b0a3d8028b436c6b5aa4e790d54f64b5dd9453",
+    "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset": "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a",
+    "Assets/Game/Configs/Skirmish/MapVehicles.asset": "6f370bf38c371bf6bfda5a350560da3e64caae49a801634dcf0b01df5af72ba9",
+    "Assets/Game/Configs/Skirmish/Plan.asset": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
+    "Assets/Game/Configs/Skirmish/Player.asset": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698",
+    "Assets/Game/Configs/Skirmish/UnitRegistry.asset": "71282b91f196683d3b0a003466717f25d13e57575471785582778cb076612940",
+    "Assets/Game/Resources/SkirmishIndustrialBasin.asset": "354b73f15a90a0653e263207789ba677c5251767b5a796b9c7f991af2a20f0f3",
+    "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385",
+    "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab.meta": "4372acd5dec1e1cc08d074094c5287b605c7a204f6d9006e145f27e97023b921",
+    "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+    "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab.meta": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab": "8adc7b9ab94dc27cd1a1986782d8c675ba5a3c56ad99d6f41d1cf7a3bec4c5e1",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab.meta": "fc666dd5c476528352278621be6490009cb63440e13ba15a2dbb26692ef05947",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab": "09773ac29bfa8c4203e8a74e879360b445b88fdc68214bb763fe78531620651a",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab.meta": "a8a8f57e5057aa7a79faea10a8f2257861c39449058d0194f1dc9f63cbd4a189",
+    "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75",
+    "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab.meta": "7e78163c5322d52a796f7b92e8ca66aefbb21ce3a2b2db20206ccb731b32a00b",
+    "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6",
+    "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab.meta": "285ace58c011c369fc89cb2f78354c27f2f189243451160ca3b19cdf7bf9f6e1",
+    "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab": "15245418c3959b3e6d8e633a68f5f710ef37885045903b1d4ba58ca5880f4c7c",
+    "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab.meta": "e5bdb0a6769efb86ae729d69917f242af8275a7e1414cf3f44e2edc6c550c3ae",
+    "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+    "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab.meta": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab": "ea20391585e88214b8504a67056bc1c400d2006404411a54be1d2604d14b09d4",
+    "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab.meta": "2e5bc02deb6ecd0a10df3cf757385f3b36197b57f7f2ec11c229f19b862e5a70",
+    "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab": "803043c917ffd2f78db0d03eee71b87681d8360683d61f57d0bd03faf077f1d9",
+    "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab.meta": "71cf8f289d03dc54ce945127d2397ab0b3b94d1df6988372c6a280c45db7cae0",
+    "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab": "0243f1561511a7d32786d9480f49bddd98bee71504a253fd376deb019f24ccbb",
+    "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab.meta": "e0c7c844bf162ba3b504db72ac7bbb1ec98941f568396e299ca1bd7d368b6ded"
+  },
+  "objects": [
+    {
+      "guid": "0012eb42b25984abdbd97abd513b16de",
+      "file_id": 7546298519455943663,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "asset_sha256": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab.meta",
+      "meta_sha256": "4372acd5dec1e1cc08d074094c5287b605c7a204f6d9006e145f27e97023b921",
+      "game_object_name": "Building_OilPump",
+      "unit_source_key": null,
+      "building_lookup_key": "building_oilpump",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[2].prefab",
+          "file_id": 7546298519455943663
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[2].prefab",
+          "file_id": 7546298519455943663
+        }
+      ]
+    },
+    {
+      "guid": "2855f5d3fe13f49c89f79a6914af636b",
+      "file_id": 285046366580341150,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "asset_sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab.meta",
+      "meta_sha256": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2",
+      "game_object_name": "Building_Ammunition_Depot",
+      "unit_source_key": null,
+      "building_lookup_key": "building_ammunition_depot",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[1].prefab",
+          "file_id": 285046366580341150
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[1].prefab",
+          "file_id": 285046366580341150
+        }
+      ]
+    },
+    {
+      "guid": "2855f5d3fe13f49c89f79a6914af636b",
+      "file_id": 1453209517915397753,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "asset_sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab.meta",
+      "meta_sha256": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2",
+      "game_object_name": "SM_Bld_Hangar_Door_07",
+      "unit_source_key": null,
+      "building_lookup_key": "sm_bld_hangar_door_07",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseCoreBuildingPrefab",
+          "file_id": 1453209517915397753
+        }
+      ]
+    },
+    {
+      "guid": "4d17399a465c144abb394cfee95e63d8",
+      "file_id": 8969431421773950753,
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab",
+      "asset_sha256": "8adc7b9ab94dc27cd1a1986782d8c675ba5a3c56ad99d6f41d1cf7a3bec4c5e1",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab.meta",
+      "meta_sha256": "fc666dd5c476528352278621be6490009cb63440e13ba15a2dbb26692ef05947",
+      "game_object_name": "Unit_Veh_Light_Armored_Car",
+      "unit_source_key": "Unit_Veh_Light_Armored_Car",
+      "building_lookup_key": null,
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[2].prefab",
+          "file_id": 8969431421773950753
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[2].prefab",
+          "file_id": 8969431421773950753
+        }
+      ]
+    },
+    {
+      "guid": "57f2dccc00faf49bca391aa1cc44d70a",
+      "file_id": 8579631638336695248,
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab",
+      "asset_sha256": "09773ac29bfa8c4203e8a74e879360b445b88fdc68214bb763fe78531620651a",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab.meta",
+      "meta_sha256": "a8a8f57e5057aa7a79faea10a8f2257861c39449058d0194f1dc9f63cbd4a189",
+      "game_object_name": "Unit_Veh_Truck_Tray",
+      "unit_source_key": "Unit_Veh_Truck_Tray",
+      "building_lookup_key": null,
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[4].prefab",
+          "file_id": 8579631638336695248
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[4].prefab",
+          "file_id": 8579631638336695248
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[1]",
+          "file_id": 8579631638336695248
+        }
+      ]
+    },
+    {
+      "guid": "60d6c2b9b0e504ae898d745fa2ace790",
+      "file_id": 6603657636351658259,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "asset_sha256": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab.meta",
+      "meta_sha256": "7e78163c5322d52a796f7b92e8ca66aefbb21ce3a2b2db20206ccb731b32a00b",
+      "game_object_name": "Building_Fuel_Bladder",
+      "unit_source_key": null,
+      "building_lookup_key": "building_fuel_bladder",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[4].prefab",
+          "file_id": 6603657636351658259
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[4].prefab",
+          "file_id": 6603657636351658259
+        }
+      ]
+    },
+    {
+      "guid": "683195b1e21c94df7add42ab26cd2a33",
+      "file_id": 6603657636351658259,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "asset_sha256": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab.meta",
+      "meta_sha256": "285ace58c011c369fc89cb2f78354c27f2f189243451160ca3b19cdf7bf9f6e1",
+      "game_object_name": "Building_Barrack",
+      "unit_source_key": null,
+      "building_lookup_key": "building_barrack",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[0].prefab",
+          "file_id": 6603657636351658259
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[0].prefab",
+          "file_id": 6603657636351658259
+        }
+      ]
+    },
+    {
+      "guid": "7651ed50660cd4c2f9f8287f80070252",
+      "file_id": 154980996532723225,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab",
+      "asset_sha256": "15245418c3959b3e6d8e633a68f5f710ef37885045903b1d4ba58ca5880f4c7c",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab.meta",
+      "meta_sha256": "e5bdb0a6769efb86ae729d69917f242af8275a7e1414cf3f44e2edc6c550c3ae",
+      "game_object_name": "SM_Prop_Barrier_Base_Row_03 (45)",
+      "unit_source_key": null,
+      "building_lookup_key": "sm_prop_barrier_base_row_03 (45)",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseWallPrefab",
+          "file_id": 154980996532723225
+        }
+      ]
+    },
+    {
+      "guid": "93f73d4f2fb8e428c887ae423fbfe4f3",
+      "file_id": 7546298519455943663,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "asset_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab.meta",
+      "meta_sha256": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1",
+      "game_object_name": "Building_Refinery",
+      "unit_source_key": null,
+      "building_lookup_key": "building_refinery",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[3].prefab",
+          "file_id": 7546298519455943663
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[3].prefab",
+          "file_id": 7546298519455943663
+        }
+      ]
+    },
+    {
+      "guid": "e9015a8d3f0294ca6ac7bf8614ac2e7e",
+      "file_id": 8579631638336695248,
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab",
+      "asset_sha256": "ea20391585e88214b8504a67056bc1c400d2006404411a54be1d2604d14b09d4",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab.meta",
+      "meta_sha256": "2e5bc02deb6ecd0a10df3cf757385f3b36197b57f7f2ec11c229f19b862e5a70",
+      "game_object_name": "Unit_Veh_Truck_Tanker",
+      "unit_source_key": "Unit_Veh_Truck_Tanker",
+      "building_lookup_key": null,
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[3].prefab",
+          "file_id": 8579631638336695248
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[3].prefab",
+          "file_id": 8579631638336695248
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[2]",
+          "file_id": 8579631638336695248
+        }
+      ]
+    },
+    {
+      "guid": "f37001b3891c2408b882eed3ce395d9c",
+      "file_id": 3689421368615084249,
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab",
+      "asset_sha256": "803043c917ffd2f78db0d03eee71b87681d8360683d61f57d0bd03faf077f1d9",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab.meta",
+      "meta_sha256": "71cf8f289d03dc54ce945127d2397ab0b3b94d1df6988372c6a280c45db7cae0",
+      "game_object_name": "Building_Road_Barrier",
+      "unit_source_key": null,
+      "building_lookup_key": "building_road_barrier",
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseGatePrefab",
+          "file_id": 3689421368615084249
+        }
+      ]
+    },
+    {
+      "guid": "ff73c8b7cbf844778916da330e9cd3e3",
+      "file_id": 3282182154612916099,
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab",
+      "asset_sha256": "0243f1561511a7d32786d9480f49bddd98bee71504a253fd376deb019f24ccbb",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab.meta",
+      "meta_sha256": "e0c7c844bf162ba3b504db72ac7bbb1ec98941f568396e299ca1bd7d368b6ded",
+      "game_object_name": "Unit_Chr_Soldier_Male_02_Alt_04",
+      "unit_source_key": "Unit_Chr_Soldier_Male_02_Alt_04",
+      "building_lookup_key": null,
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[0].prefab",
+          "file_id": 3282182154612916099
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[1].prefab",
+          "file_id": 3282182154612916099
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[0].prefab",
+          "file_id": 3282182154612916099
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[1].prefab",
+          "file_id": 3282182154612916099
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[0]",
+          "file_id": 3282182154612916099
+        }
+      ]
+    }
+  ],
+  "unity_world_allocated": false,
+  "mission_world_allocated": false,
+  "mission_initialized": false,
+  "native_visual_readiness": false
+}

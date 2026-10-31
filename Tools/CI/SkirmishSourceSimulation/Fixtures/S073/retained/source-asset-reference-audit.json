@@ -1,0 +1,2124 @@
+{
+  "schema_version": 1,
+  "kind": "S073LegacySourceAssetReferenceAudit",
+  "authority": "Current Unity YAML references resolved by exact current .meta GUIDs; data only",
+  "mission": "S073",
+  "claim_scope": "Direct serialized reference inventory for current preset and legacy config roots; does not prove baking, prefab template capture, world startup, routes, readiness, mission outcome or native acceptance",
+  "configuration_roots": [
+    {
+      "path": "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset",
+      "sha256": "ed3e76bfed7132ff9cd46540bb855c9fe6b4fc72e090be0058025881cd72d286"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset",
+      "sha256": "a9cb317fbdef7f3eda4fc6f505dee345af15cee40c7da6ff21164a93844904e9"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset",
+      "sha256": "d757cc62f4c5f53c347557e56ca45b20deae9e2b0c0073b6c915d38c947f7005"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Enemy.asset",
+      "sha256": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+      "sha256": "6688f039a073ce6c4c834a44f056d73bbada237cd0bd76c0db555d37a89be813"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+      "sha256": "b81c21bfaf2a037e28f8d923b3b0a3d8028b436c6b5aa4e790d54f64b5dd9453"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+      "sha256": "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/MapVehicles.asset",
+      "sha256": "6f370bf38c371bf6bfda5a350560da3e64caae49a801634dcf0b01df5af72ba9"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Plan.asset",
+      "sha256": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/Player.asset",
+      "sha256": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698"
+    },
+    {
+      "path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+      "sha256": "71282b91f196683d3b0a003466717f25d13e57575471785582778cb076612940"
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+      "sha256": "354b73f15a90a0653e263207789ba677c5251767b5a796b9c7f991af2a20f0f3"
+    }
+  ],
+  "parser": {
+    "path": "Tools/CI/SkirmishSourceSimulation/Recipes/selected_operation_map/helpers/read_source_configs.rb",
+    "sha256": "daf293636c19a83fc3281e0a0161c2d4235737612c8d89257d5fa26d07db216f"
+  },
+  "readback_artifact_sha256": "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10",
+  "unique_reference_guids": 99,
+  "resolved_reference_guids": 99,
+  "missing_guids": [],
+  "ambiguous_guids": [],
+  "asset_extension_counts": {
+    ".prefab": 49,
+    ".png": 33,
+    ".asset": 8,
+    ".cs": 9
+  },
+  "references": [
+    {
+      "guid": "0012eb42b25984abdbd97abd513b16de",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab",
+      "file_ids": [
+        7546298519455943663
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[3]",
+          "file_id": 7546298519455943663,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[2].prefab",
+          "file_id": 7546298519455943663,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[2].prefab",
+          "file_id": 7546298519455943663,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "27941593109b1991fab241b2669b91f226e8e5c39c864589efb3522e9d1f8385",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_OilPump.prefab.meta",
+      "meta_sha256": "4372acd5dec1e1cc08d074094c5287b605c7a204f6d9006e145f27e97023b921",
+      "exists": true
+    },
+    {
+      "guid": "02bcd840ebd8b4b3c84dd02b87e88691",
+      "asset_path": "Assets/Game/Prefabs/Roads/Road_Dirt_With_Sidewalk/Road_Dirt_With_Sidewalk_Straight.prefab",
+      "file_ids": [
+        6752715572181065886
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.roadPreviewPrefab",
+          "file_id": 6752715572181065886,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "aa901ec824d1228b0b16bccf641b450998c2a536e70966bb5e525fb8eef5cecd",
+      "meta_path": "Assets/Game/Prefabs/Roads/Road_Dirt_With_Sidewalk/Road_Dirt_With_Sidewalk_Straight.prefab.meta",
+      "meta_sha256": "db3a6df770cabade3004abf515abe6ec5347797e6f062f7c572b9e03ea849db5",
+      "exists": true
+    },
+    {
+      "guid": "058513b35b4a14b9cb012570502d1259",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[7].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "a64809acdb80c4eacb94919742ac02d8884687a525a6971a87da3896fc5a1330",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_01.prefab.meta",
+      "meta_sha256": "3205b1e9fdfc7be257cf88a6a7fec1c46dd0c743d4474af26d97531275ca3fb2",
+      "exists": true
+    },
+    {
+      "guid": "0a5015130aae3498f995c839384f683e",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[22].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "047f91b26712f928726c4fac2ee65f4fd8c1ffaacd10176e824d145d24c55588",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_02.png.meta",
+      "meta_sha256": "d09d1c51efdd9f47af602c324530d3f23c3dec5bd676c212206bb7ed4219fd31",
+      "exists": true
+    },
+    {
+      "guid": "0ddde1c8a3f58401abcf663bfd8f97a1",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[13].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "072fae04344ebb22d81e97dae607e343412f2230c99c2561dac3c6d36dedf3a2",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_02.prefab.meta",
+      "meta_sha256": "b681da776703eac44626e19f940412cd210465960322e0b0ed1f2b4242606d18",
+      "exists": true
+    },
+    {
+      "guid": "10ab3971438924b85bc0cd3e0a3f578b",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_05.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[16].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "f0f46218871a43d082b4d45ccc00f7a8d67c05c9b708de8dbdebdd8340f8beef",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_05.prefab.meta",
+      "meta_sha256": "770df22afd72b0871cbe4484fff4d1d611904591c5fe836d62dd717e3c867807",
+      "exists": true
+    },
+    {
+      "guid": "10c17a15357314e0587e41c557ca4573",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[8].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "c7c09b5a0f0af5ac23b3c1afba2b802102471d41cb4cb5dc6899eee7e6d022d6",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_02.png.meta",
+      "meta_sha256": "6d46cc6a4abd68509b849d54b2b8a195952e81c45ba9774e2f04a1af2d39f41e",
+      "exists": true
+    },
+    {
+      "guid": "18becdf601d32415984c1083cbbbf11c",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[25].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "2eb65d27d0a96d49b61a322ff0a4b55b19c2211a993c6f9f1acb6bf709859e41",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_02.png.meta",
+      "meta_sha256": "fab74c76a9b2c7ca36440ae491da274fdd3591db3ba3f91d672a6cc5a874418f",
+      "exists": true
+    },
+    {
+      "guid": "20949d67846d14fc0862faf37b2ba0e9",
+      "asset_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.operationMap",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a",
+      "meta_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset.meta",
+      "meta_sha256": "bc520f09b543cf15f55bcb1db0331980303bb26a228532b12eb1a046356382f3",
+      "exists": true
+    },
+    {
+      "guid": "28130757d8fd4844b171b631fb2547ce",
+      "asset_path": "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab",
+      "file_ids": [
+        5733906895582332945
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.buildingSelectionMarkerPrefab",
+          "file_id": 5733906895582332945,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "c33f52704a6a3928cb98da09f5ef45f4ae2d25847dd711805ab5c5451f868936",
+      "meta_path": "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab.meta",
+      "meta_sha256": "88f371f6caf204f9df4e2841c49d7f4677f9977a95cf55642ca976f493839acf",
+      "exists": true
+    },
+    {
+      "guid": "2842cdb0ea2049d2bc13487757390b68",
+      "asset_path": "Assets/Game/Scripts/Configs/AIPlanEntryStartupConfig.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/Plan.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "60de1bd7f9a098b0728c073afbd37d7288961a050e9531ded6a69fb83cebe5eb",
+      "meta_path": "Assets/Game/Scripts/Configs/AIPlanEntryStartupConfig.cs.meta",
+      "meta_sha256": "0abb2b4d12001d226b7dfe369b9a357b53e1a2ed555e3e4d82fd3edfcb1acbe1",
+      "exists": true
+    },
+    {
+      "guid": "2855f5d3fe13f49c89f79a6914af636b",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab",
+      "file_ids": [
+        285046366580341150,
+        1453209517915397753
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[2]",
+          "file_id": 285046366580341150,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[1].prefab",
+          "file_id": 285046366580341150,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[1].prefab",
+          "file_id": 285046366580341150,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseCoreBuildingPrefab",
+          "file_id": 1453209517915397753,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "a0c9e63dcae2ce08aa7c47c0297efe44faf6d95a06b41d55404375cfb202e9ee",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Ammunition_Depot.prefab.meta",
+      "meta_sha256": "274d7f28a039e33de5035d5bd0c9754e3127e571d39f64979d3da9cf127498d2",
+      "exists": true
+    },
+    {
+      "guid": "28a79b0ab544445ebedc61b182157be7",
+      "asset_path": "Assets/Game/Scripts/Configs/UnitPrefabRegistryAuthoringConfig.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "7379cf2af13917595b7982925cb285d01331bfd5218f7512bbe6fe1c41e595d8",
+      "meta_path": "Assets/Game/Scripts/Configs/UnitPrefabRegistryAuthoringConfig.cs.meta",
+      "meta_sha256": "d9d8b05441562199c52f4c3b2d9722eb468fdc451c312a909af6f19646f3876c",
+      "exists": true
+    },
+    {
+      "guid": "29163dfac3a1b4500a919c1f77308034",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_03.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[14].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "349b3a3b38c23c5fc6d06e09691cd624a7111ce3cfc5350a0b430f6bc65f87fd",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_03.png.meta",
+      "meta_sha256": "62a8fc19e1cfb74eab5c6349358b570046cf8f278b5e3de2f07fe50450c6feac",
+      "exists": true
+    },
+    {
+      "guid": "2a805039481d34974863fcf3f2b5a4f0",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[7].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "9f399450671259bc7e8215c7a2cc7c5e989c62ec530589494ab8e4c0e3ae4a2f",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_01.png.meta",
+      "meta_sha256": "6ed0cf86c863a9eb4aaf5c5b0c8581585febb4ba960a7e919101808dcc862bc8",
+      "exists": true
+    },
+    {
+      "guid": "31226b3e29d054b92a7d31049ed98485",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[27].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "9429c7cf76512eb5fe46c691e1e5b7b65156e0f03b5f04421bcb1da321dfaf61",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_01.prefab.meta",
+      "meta_sha256": "2a787651defc0f3d15b35c5f105166af98348b3e8daca5bde8c05dfc47f2fb93",
+      "exists": true
+    },
+    {
+      "guid": "3266214b796804cfa9b7299fe0db33fc",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[21].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1d697ab4b100fb00ec5655fd358dd584bac2a1752428f2e46feba23c5e3fae5d",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_01.png.meta",
+      "meta_sha256": "7da674cdae5c24b76ef56b26236bc81034680ae16c96e1b96d2ed791f0fc7422",
+      "exists": true
+    },
+    {
+      "guid": "3b1db3c2c57534d7db2a311f7ce33b96",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_05.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[16].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "ed736ce0a2ab86b4f18bf3fb3d0a97293b3f6cc643b19791146d7680372f4f2e",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_05.png.meta",
+      "meta_sha256": "483956c615765e05139006b431a01da13af1e1a1d2418e3b84fb6704e2e4306b",
+      "exists": true
+    },
+    {
+      "guid": "3b83809c90b3b4e1eb84681591ca9f62",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Female_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[18].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "55a63cff787a85d173d66d836f818ab0d1d778368aa60e011a1494761bdd794e",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Female_01.png.meta",
+      "meta_sha256": "783a6973d7981a1233258f94aa1ca302bcbe041548620322722edeae15bca135",
+      "exists": true
+    },
+    {
+      "guid": "3cf82468c5c6e4aa2b34ee69ab2876f4",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[2].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "6c29775a8d35caea7777a42bfaba1e31f103d25981e1fff1680dd659a900d9eb",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_01.png.meta",
+      "meta_sha256": "0efeaee5e7535f16a7aa136b2ed47e34f08f5e036bd4680afc2b9b9a97711109",
+      "exists": true
+    },
+    {
+      "guid": "416e51ffcd246420794617d340bcbe6b",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[23].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "c869be31b712aea4d3b8db327344bb450f39313fea0a5155dd2641035ad57640",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02.prefab.meta",
+      "meta_sha256": "2901f75a669fb54e3b49528b37bbab9cb8b99ec1e237d0659d77958acac06a52",
+      "exists": true
+    },
+    {
+      "guid": "43c5d1e8b2f644214bbc8f1857f9b936",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[25].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "3967c26a73aade90baac2260ed310a07d9450d91d7b68d58a0498a53db30ec8c",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_02.prefab.meta",
+      "meta_sha256": "325501df9f8ea3275571fd22634ebfa398b51763c15a3c979c971961087b8aff",
+      "exists": true
+    },
+    {
+      "guid": "44596be2557d440fab7d7874132a6b8e",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[19].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "d1efa1de76d3167508e0bf2e717c05a49e1244ceaaab77e84de2e35575e63286",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Male_01.png.meta",
+      "meta_sha256": "9d2f50d3283eaa05c33e4dfc935906bc42b15fbecd72ddf229081a68796f850b",
+      "exists": true
+    },
+    {
+      "guid": "44832a7f379be4c30b818e55ed7a45ce",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[31].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "80c4af197e4e6b817d8c551898398133fcfe84ca220ddfda2e2e7eaf10b92018",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_02.prefab.meta",
+      "meta_sha256": "fab6aff7c2418cda10abf4495fe4732bd4aa3e6ecfded361cb8152d9c245b9ca",
+      "exists": true
+    },
+    {
+      "guid": "45e248593e3114d24a968047f55ca26e",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[8].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "37b375b6edd85a235e0999475958cd829a61ccd521e7aca160013a129083a77d",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Male_02.prefab.meta",
+      "meta_sha256": "19b87ab5a3bfb7ce297f8407aa35cd937257205b1b88b7d89084b4948e081de3",
+      "exists": true
+    },
+    {
+      "guid": "46c7f5f5aa26e42c08c8aaaefd3476df",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Ghillie_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[9].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "d7fe105e14567f3c1b6a5db780df2c5a67e11119533948a2392dc7d62ef4470d",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Ghillie_Male_01.png.meta",
+      "meta_sha256": "8ba21549158e202982857eba0e2537bdd49e529cc2f8b4d7ad87cdc78bcfa37b",
+      "exists": true
+    },
+    {
+      "guid": "4d17399a465c144abb394cfee95e63d8",
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab",
+      "file_ids": [
+        8969431421773950753
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[2].prefab",
+          "file_id": 8969431421773950753,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[2].prefab",
+          "file_id": 8969431421773950753,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "8adc7b9ab94dc27cd1a1986782d8c675ba5a3c56ad99d6f41d1cf7a3bec4c5e1",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Light_Armored_Car.prefab.meta",
+      "meta_sha256": "fc666dd5c476528352278621be6490009cb63440e13ba15a2dbb26692ef05947",
+      "exists": true
+    },
+    {
+      "guid": "4e7dd2768a00645fab3308d56ba9352b",
+      "asset_path": "Assets/Game/Configs/Skirmish/Player.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.aiControllers[1]",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698",
+      "meta_path": "Assets/Game/Configs/Skirmish/Player.asset.meta",
+      "meta_sha256": "422551fa6bff1c79f7a9495afb5bdc3f1618f682c20349650550d25e76f708f4",
+      "exists": true
+    },
+    {
+      "guid": "4f6166a2a14e34cba9816b8e9354cb4e",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_04.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[15].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "00e8898f4752e4e18830ec7ad0d91db76413aafbcf9fb26935ab99133abe9223",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_04.prefab.meta",
+      "meta_sha256": "8270d991e073fd4b510edbeb6299abb5ff5d5bafabb0c46a7f67afdbd8fba6e2",
+      "exists": true
+    },
+    {
+      "guid": "52faf6df0ff664a43aa5f4c74be70e17",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[23].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "b3243b52172aeee30edec296db7eacd8c56c921a773ce8f698bfcd6e45453537",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02.png.meta",
+      "meta_sha256": "c168b78a60104927842003c4e2fd658699bd4b0f0ea50c479652b68159a37063",
+      "exists": true
+    },
+    {
+      "guid": "543cca88238af4138acebd4a267cfdf3",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[3].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "7b5b0065ebf15cb6b29f27c35d6cb2388fbffea1dbc616ab67af97f2cb538edc",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_02.png.meta",
+      "meta_sha256": "a3afe5d69aa28e951c3d153c0a7707514d96a909f318559a97b9a126b925b37b",
+      "exists": true
+    },
+    {
+      "guid": "57f2dccc00faf49bca391aa1cc44d70a",
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab",
+      "file_ids": [
+        8579631638336695248
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[4].prefab",
+          "file_id": 8579631638336695248,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[4].prefab",
+          "file_id": 8579631638336695248,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[1]",
+          "file_id": 8579631638336695248,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "09773ac29bfa8c4203e8a74e879360b445b88fdc68214bb763fe78531620651a",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab.meta",
+      "meta_sha256": "a8a8f57e5057aa7a79faea10a8f2257861c39449058d0194f1dc9f63cbd4a189",
+      "exists": true
+    },
+    {
+      "guid": "5b986cea1d7414efda56b9984cdce217",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[26].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "395c0d8e629637dcc27852ba6b36d74468bb16edaf8559f31b942a794fa8d672",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01.png.meta",
+      "meta_sha256": "7f3911ebb187661c6cf50716cc885e0c0ffd2e85b0e987b6be59b70b598e7915",
+      "exists": true
+    },
+    {
+      "guid": "5d6231a4823504efbbedb18b1d852c6b",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Ghillie_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[9].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "5acf486eb811a929b0024cf33833505ecc6f8fdc8ea129bff4036ff573760db3",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Ghillie_Male_01.prefab.meta",
+      "meta_sha256": "c4811ddf0a4182c320bd7e8dce1e939ecfebc650794f3a5411ffbb7e5636c600",
+      "exists": true
+    },
+    {
+      "guid": "60d6c2b9b0e504ae898d745fa2ace790",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab",
+      "file_ids": [
+        6603657636351658259
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[5]",
+          "file_id": 6603657636351658259,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[4].prefab",
+          "file_id": 6603657636351658259,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[4].prefab",
+          "file_id": 6603657636351658259,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "9249df01bf2b88741aeddf441ea5df0bdb67ba692e7f1f207d4c705efd01bc75",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab.meta",
+      "meta_sha256": "7e78163c5322d52a796f7b92e8ca66aefbb21ce3a2b2db20206ccb731b32a00b",
+      "exists": true
+    },
+    {
+      "guid": "655c350601d8a48e0b0efcbc75872502",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[11].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "e411cd7bb1456f299ce6384233df1b76257cd83d9e563dea80761299f578d5d3",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_02.prefab.meta",
+      "meta_sha256": "01fdf583336b1b82b309a37db23305d1d0166ea7809b09ba3cd925fa8a2535d4",
+      "exists": true
+    },
+    {
+      "guid": "673863d181b804f36a97288b14c77452",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[4].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "4ea1ebcd7a79cfd6d5cb4a30980f4fdb000f3bab692b6cca245a40cf67b84007",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_01.png.meta",
+      "meta_sha256": "5e61ebf56def7ca86fe68bac10cc00b3510d0a74e54dfc6a69cd43d26ccc6aa4",
+      "exists": true
+    },
+    {
+      "guid": "683195b1e21c94df7add42ab26cd2a33",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab",
+      "file_ids": [
+        6603657636351658259
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[0]",
+          "file_id": 6603657636351658259,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[0].prefab",
+          "file_id": 6603657636351658259,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[0].prefab",
+          "file_id": 6603657636351658259,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "5386aeac53156262cd0a731d28806bb4badb89c0ed4f82d41d292934dac8eda6",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Barrack.prefab.meta",
+      "meta_sha256": "285ace58c011c369fc89cb2f78354c27f2f189243451160ca3b19cdf7bf9f6e1",
+      "exists": true
+    },
+    {
+      "guid": "6b8ba399ab5cb42a99a90d7884bbde7a",
+      "asset_path": "Assets/Game/Scripts/Configs/Scene/AIControllerSceneConfigAsset.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "74448e2951994293084ebcdc533bbf6150f95df741dd03b3937376c65c9d05c9",
+      "meta_path": "Assets/Game/Scripts/Configs/Scene/AIControllerSceneConfigAsset.cs.meta",
+      "meta_sha256": "506e6645b49694b5fcd5fe55d2a9ed789077a332cf415542ac797416963eaa4c",
+      "exists": true
+    },
+    {
+      "guid": "6df629ef0712d4a93b2fd545ecd95313",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[28].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1202cd5524cc8b87f2469b88fa8aa44c973ab7f4b0c76f4338284a51825c561b",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_02.png.meta",
+      "meta_sha256": "11d8991e03f9b7fd397a890ee660d4adea2f26475e955b910c80f0a643ac95bb",
+      "exists": true
+    },
+    {
+      "guid": "6f55477c25a814a79ab68a8f7dfa48db",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[30].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "2fc148f5ddf5fbbbed5ecf2d37108ed15d96128ecc8cb00c32020c3c7d58b325",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_01.prefab.meta",
+      "meta_sha256": "83b7c977c7209dbf1abb1b028d5df6865b4c0890a3637841fa8bb70992e5db75",
+      "exists": true
+    },
+    {
+      "guid": "71e48079674fc47b79eb9b4c5fc12b89",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[10].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "c5d4e5ce3854c1ba64d3d8ff246d29de89b2b7cb067802c89a0f9d9b1c1a672b",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Female_01.prefab.meta",
+      "meta_sha256": "a055d74219d7874fb57fc628146b34f2db2c7bedec7e4712d866ba9ac7ff5399",
+      "exists": true
+    },
+    {
+      "guid": "7651ed50660cd4c2f9f8287f80070252",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab",
+      "file_ids": [
+        154980996532723225
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseWallPrefab",
+          "file_id": 154980996532723225,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "15245418c3959b3e6d8e633a68f5f710ef37885045903b1d4ba58ca5880f4c7c",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab.meta",
+      "meta_sha256": "e5bdb0a6769efb86ae729d69917f242af8275a7e1414cf3f44e2edc6c550c3ae",
+      "exists": true
+    },
+    {
+      "guid": "7676e85853cae45a9859c2437434df6b",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[31].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "681e3635f8b17abc0beaa398fde9aa9d2bb3ce1d2cd7ddbd1397808154e1f9e6",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_02.png.meta",
+      "meta_sha256": "8749981fd10fc226d031c69ddbb4d3c6b302a1093ca94f3d62f3f0c032d9b0e1",
+      "exists": true
+    },
+    {
+      "guid": "780b2120d216c4c20ab96b5ab8799a72",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[12].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1178ab08f5d0c367b318ef823c3f0c1584c51d2a8b333ee86f3de407608830a0",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_01.png.meta",
+      "meta_sha256": "21b406a9796c0f3a211ca6c26eb4beca3dc1a02322aee1d02b91e446d69873de",
+      "exists": true
+    },
+    {
+      "guid": "79bf06dc9b9c142249fbdc78c6e9a8ef",
+      "asset_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.buildingPlacement",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "6688f039a073ce6c4c834a44f056d73bbada237cd0bd76c0db555d37a89be813",
+      "meta_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset.meta",
+      "meta_sha256": "bd0f13679c22033a174b2c4005427819d16be3de3de95a4fe2e8ab685ee60c90",
+      "exists": true
+    },
+    {
+      "guid": "7ab678d235e72407b912caa746540808",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[24].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "2c0d81b77106dece913c69dd30d8fbc442984d0c85d07e03d7b3ce5d562ddf7a",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_02_Alt_01.prefab.meta",
+      "meta_sha256": "939cc935bd161083e2829e848e08ffe4c2455cfc3d384af832a0b91b001de044",
+      "exists": true
+    },
+    {
+      "guid": "7b6aad14ab16f497897dbd4a0ae8ca79",
+      "asset_path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1c2ea7d95b70d36923b97d4e83c88a6b83bac9dd1ee91c2645e4c9adebca6a6d",
+      "meta_path": "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs.meta",
+      "meta_sha256": "4e9b39923ed082f612a516b791ac215f6970b3ce1f8005503e4422fd2fe957e5",
+      "exists": true
+    },
+    {
+      "guid": "7b71b79d4cc27403b953586f80bf410c",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_04.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[15].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "a20db5ebd505e4dcf17d32e37a0c44e80c2fa8e6dcd9e1426a9930cede960186",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_04.png.meta",
+      "meta_sha256": "d0b70f840e75db846994d5a0e1a77cf5aa44cf533da983bb86961735aa3bf0d5",
+      "exists": true
+    },
+    {
+      "guid": "7c722f33fbe75427289f93b6f35e7e04",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[4].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "531796df82f98c021152614b55acfaf2fb21d9f32654c7e0dad4cb60b4d1167d",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_01.prefab.meta",
+      "meta_sha256": "e64cd489d7b8001c50d90933502cfecab2a2acf05a9e3f9ab6b9cb7bb59bb0e2",
+      "exists": true
+    },
+    {
+      "guid": "7f9ec3516a1db43e7bfb719b6e59d2eb",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Female_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[6].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "a1009eedcac3c235760ff599a9673c9178720ba59bde198a20374baca7813535",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Female_01.png.meta",
+      "meta_sha256": "c287bdbf5affe95aeaa721b6f1d3b0fd56753be74eb212260865884649cdf038",
+      "exists": true
+    },
+    {
+      "guid": "84ab69a4fde5d44af8a2e92cf2cefabc",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[11].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "e0af6ce1175d4fbdd693482b1f965399c235cfada2c2694eb43a17ffd867b67a",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_02.png.meta",
+      "meta_sha256": "c203b5b1054c953dcd9628a1b6d97615eabccf6845a50d595ab067f135ac41de",
+      "exists": true
+    },
+    {
+      "guid": "85730297a3598ee4d92dcb41787af9ae",
+      "asset_path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/Player.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/Enemy.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "8f4ed0c3c2068c44a7fad94fe254e8a783cfa0d06742ddf93f3e5f178da30586",
+      "meta_path": "Assets/Game/Scripts/Configs/GameplayConfigModels.cs.meta",
+      "meta_sha256": "2fb0d99bbf81754bbf52ecface84f9b3f89bd0153745156f60937cbcd661e1fb",
+      "exists": true
+    },
+    {
+      "guid": "86c7a61b3f3d34e1f983ab4927938efb",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[12].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "2b234385c11b198fb0d5b711b9a22a7868095cfef55fe66db8f7971f7934e2e6",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_01.prefab.meta",
+      "meta_sha256": "b3fd979ef1c8984bd3e101ea6c27a5c1ca9f852171a4b265b753b1916261bf51",
+      "exists": true
+    },
+    {
+      "guid": "8be6a24b3cb444eceb6e9dd320de8fca",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Female_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[18].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "19206c21ab42aab362a8fce1f234f39fbf476fbe36377211cab74ada8e0ea293",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Female_01.prefab.meta",
+      "meta_sha256": "4bfdb6772aca744ef3efd5ee2175839fd47db1364835f2c1fc9f556bbf86dea3",
+      "exists": true
+    },
+    {
+      "guid": "8cd4b7ee776fb4d42ae161060b267577",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[28].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "3ca382bcbb3f93fa46b54054efa0d31ffa43b592c75a30e0f161d233d5643af3",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01_Alt_02.prefab.meta",
+      "meta_sha256": "c211d09fcc91fccd3b2be5b0b39bef400095faefcaad3d1db0873b0f93c89650",
+      "exists": true
+    },
+    {
+      "guid": "8e4e6c0c93bb34f3ea5fce6745b6c83e",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_03.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[32].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "8c2b5e971e342ea0cefd56c6e803588ce80d14b2f46b52c79a795b13ae778a5c",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_03.prefab.meta",
+      "meta_sha256": "3c34ff1c42b98b28c804dae0b572f00cab3547c1a6a46e7497956c374b86b512",
+      "exists": true
+    },
+    {
+      "guid": "8ec7389d67b7543d0ac6050c06d26187",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[21].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "e261bf347933ca6742be4ef4451c76f3925d7417384e44bf22ae91aa3c63a53c",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_01.prefab.meta",
+      "meta_sha256": "428e2e61f95edfc0c2c128aaaa85a93950f9c630ddf89efbbb46cceceb3c093d",
+      "exists": true
+    },
+    {
+      "guid": "93f73d4f2fb8e428c887ae423fbfe4f3",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab",
+      "file_ids": [
+        7546298519455943663
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[4]",
+          "file_id": 7546298519455943663,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].buildings[3].prefab",
+          "file_id": 7546298519455943663,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].buildings[3].prefab",
+          "file_id": 7546298519455943663,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "37296878261dff908d7536800fe81848dc3d95b3b709e06fc15d4f824e3ae766",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Refinery.prefab.meta",
+      "meta_sha256": "16a2d4d3732afdfb1c5a220217b3decda94b4581489d6139e1e34c0f710f69e1",
+      "exists": true
+    },
+    {
+      "guid": "93fba5e426a2347d4821b7b7112064f9",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab",
+      "file_ids": [
+        3689421368615084249
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.spawnables[1]",
+          "file_id": 3689421368615084249,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "73368712388196e785839018df661eca86d600c9439659842f4bf782fbd0ca70",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab.meta",
+      "meta_sha256": "002346b190a736f3c15990a5f52bc7fb66580ff5f7726fcd32b7a804d2fdf3f4",
+      "exists": true
+    },
+    {
+      "guid": "965c7f108fbbe45ddaa8edf5cd8958f9",
+      "asset_path": "Assets/Game/Scripts/Configs/MapVehiclePlacementConfig.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/MapVehicles.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "513af70e6d5934735fa4767261be0814ae07a20c22a30abbe529583b4633fceb",
+      "meta_path": "Assets/Game/Scripts/Configs/MapVehiclePlacementConfig.cs.meta",
+      "meta_sha256": "b1b2395ab289193521c5a1c8dcc7ab8d554a6ecf52767f404e1769b730c592a7",
+      "exists": true
+    },
+    {
+      "guid": "9d3494e0921d647798634354c12f2bf2",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_03.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[14].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "f8026898d6026debb8959deea59e619d387fbefe2d1da481d69769add362cd60",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_03.prefab.meta",
+      "meta_sha256": "4e01963cba05aedc1609a5efdedf3175ab53067fa7a791199aac63fd111a750e",
+      "exists": true
+    },
+    {
+      "guid": "a1010000000000000000000000000004",
+      "asset_path": "Assets/Game/Scripts/Configs/Scene/BuildingPlacementSystemSceneConfigAsset.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "641bae52ad88e426721a76c8483f62b7351b6c3de7ad4efb6359a5ab76eb67c2",
+      "meta_path": "Assets/Game/Scripts/Configs/Scene/BuildingPlacementSystemSceneConfigAsset.cs.meta",
+      "meta_sha256": "81f6ce305e30324ca27c256205b36455de712f05a06b28f344d10d358c066249",
+      "exists": true
+    },
+    {
+      "guid": "a101000000000000000000000000000c",
+      "asset_path": "Assets/Game/Scripts/Configs/Scene/InitialUnitsSpawnerAuthoringSceneConfigAsset.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "2c9c1225ca19ba1277ba006e303ce22345c7a3ad76265c3330e66817b543841f",
+      "meta_path": "Assets/Game/Scripts/Configs/Scene/InitialUnitsSpawnerAuthoringSceneConfigAsset.cs.meta",
+      "meta_sha256": "5eb8e10783022a90d41c035fb43c337da21920bb8da68523aa144101b4adcaae",
+      "exists": true
+    },
+    {
+      "guid": "a3873f0cb8f24494eb79c31a4c12ec31",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[2].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "a4afb43a88219145e86e2ec7e4d8aae2a048be3e848ebccb49f938d2dd3c1796",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_01.prefab.meta",
+      "meta_sha256": "23722bdabc4d008f5a9a64c3d37762e4e517ddaa168fa47752bd6fc841e41995",
+      "exists": true
+    },
+    {
+      "guid": "a4f4b7c4b57f54c968032aca1c24f41d",
+      "asset_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.unitPrefabRegistryConfig",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "71282b91f196683d3b0a003466717f25d13e57575471785582778cb076612940",
+      "meta_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset.meta",
+      "meta_sha256": "242a4a0f153b28d5fc6d0efc1121f914991a81c5396dfafb092d9fed2f9b67c5",
+      "exists": true
+    },
+    {
+      "guid": "aa39266ae0d5e4db0a66069bf1d5a5f4",
+      "asset_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset",
+          "field_path": "MonoBehaviour.initialUnitsConfig",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "b81c21bfaf2a037e28f8d923b3b0a3d8028b436c6b5aa4e790d54f64b5dd9453",
+      "meta_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset.meta",
+      "meta_sha256": "0c873eb6dece85ab94b5342f059847dd83b374e7013b840586408fa0d37acc3c",
+      "exists": true
+    },
+    {
+      "guid": "adc602e7fd7764b2a89b3c5d9a801ddf",
+      "asset_path": "Assets/Game/Configs/Skirmish/MapVehicles.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.mapVehicles",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "6f370bf38c371bf6bfda5a350560da3e64caae49a801634dcf0b01df5af72ba9",
+      "meta_path": "Assets/Game/Configs/Skirmish/MapVehicles.asset.meta",
+      "meta_sha256": "07ea6dffb3b78433d8cdd616c943460c3fc1994189950d3cb11393666bb86ccb",
+      "exists": true
+    },
+    {
+      "guid": "b2edd227092024cfcb09ae9eb4ec8f3f",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_03.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[32].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "8345eec0f7611c1a624656aea2789343b9d70f67d323e025bc7c583d7d831cb6",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_03.png.meta",
+      "meta_sha256": "9fb92a884db54f78f0fe68b5544a23f231c654dd8fb8fdb0fac8d7f079ee0615",
+      "exists": true
+    },
+    {
+      "guid": "b3a1493b12f414f31a0d79a02ec4321d",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[26].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "106478002106e012aee5dcc2d289a1d916bf3f823f47a0009c8c1fbf4b81e147",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01.prefab.meta",
+      "meta_sha256": "ed86f3c53e8bf8e16d1baa49f9d878974f33e94438cd46c2019d0460ca35303b",
+      "exists": true
+    },
+    {
+      "guid": "b581a85bda0904a3a9dda159bddae163",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Leader_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[17].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "796d7145a7f49bedd9929ff4efe73accf0e8e34192d2e478978614ad3e3931fc",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Leader_Male_01.prefab.meta",
+      "meta_sha256": "89c67f037987b45b1a5f9438f06c4377aee35a58d4b7513ebee6e5afb0e498a4",
+      "exists": true
+    },
+    {
+      "guid": "b6790ac587427481c8b1718ba9b38a3f",
+      "asset_path": "Assets/Game/Prefabs/Vehicles/VehicleHealthBar.prefab",
+      "file_ids": [
+        4330714435077561203
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.unitHealthBarPrefab",
+          "file_id": 4330714435077561203,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.sceneUnitHealthBarPrefab",
+          "file_id": 4330714435077561203,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitHealthBarPrefab",
+          "file_id": 4330714435077561203,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "ce5d0ad0bb39f8721b953a101144341e7f499af4fab89dde516dca31bbbc757f",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/VehicleHealthBar.prefab.meta",
+      "meta_sha256": "2cb8fba38bb81c265a18608ad272ea87a1e41a85b3f0358bdaf6b8ec1584c47e",
+      "exists": true
+    },
+    {
+      "guid": "bbd305abeff394eb1985f65983dc5ab4",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[30].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "90322d57e966da7d24d4e08052bd50f0cc94d27f209fa888980cc9adf417ecf9",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_01.png.meta",
+      "meta_sha256": "46fc2570c0aef59070b3f55dfdb8aab45a1959e3bef3310e2b1b6879ca6ba3ce",
+      "exists": true
+    },
+    {
+      "guid": "be740488cf4a6442bb8ba8328708ab95",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_04.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[0].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "61051dfc084c3589c7c04cbd8651c7755573d75fd5ac4130c5af741bcd0ecaa5",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_04.png.meta",
+      "meta_sha256": "c3459eb44471ec5d46448ffcc8748d6e6d1a609703c8b626eb4e9cca1bff43e9",
+      "exists": true
+    },
+    {
+      "guid": "c0dc3268e8b65464da501457140dce1d",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Leader_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[17].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "d1e1fe9c3efb693b0a7592cdfe335bd7e489d3e9df178ca55ac3c7cfabebdf6e",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Leader_Male_01.png.meta",
+      "meta_sha256": "b0f1e9f26e8a000239ddf02368eeb111bbf638935b7720b893a1f6bd8f66d92f",
+      "exists": true
+    },
+    {
+      "guid": "c3d7226b0272d44dfa219e9185a76087",
+      "asset_path": "Assets/Game/Configs/Skirmish/Enemy.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.aiControllers[0]",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52",
+      "meta_path": "Assets/Game/Configs/Skirmish/Enemy.asset.meta",
+      "meta_sha256": "2a66072fdd2aa0cc9f6d3b270aafb4ae642f48e789e2907cec73b1887720001f",
+      "exists": true
+    },
+    {
+      "guid": "c3f8661464c974332b021d71ef616cfc",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[29].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "9299010c3c9fe3cd6cda472b2e1db0b4b9b84b161d2e762390d2dc3a6ef6c2f3",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02.png.meta",
+      "meta_sha256": "8647a5e7d04367da2cd4780947a897d73dbdb498d0f10842b2bfddc1a4872b5e",
+      "exists": true
+    },
+    {
+      "guid": "c5e6be4d80147400a9fef49e084a512a",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Bombsuit_Male_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[1].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "eb1e9dad3e9e2ff6eb7156651baf6282d94545611b8d59cddd85e8e482ab6a61",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Bombsuit_Male_01.png.meta",
+      "meta_sha256": "35d579dbe178de29c25901083aa1d6bfa34e9e2f4a57dbcab795a5e72e4990a9",
+      "exists": true
+    },
+    {
+      "guid": "c682294136a8445b78baba697db62d42",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[20].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "9c02bc1f489dbd85b210ece6f1e46de485f225a0ba7ec33de396e9063bd40681",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01.png.meta",
+      "meta_sha256": "21a80d5236e93a66dfbda422a2a2fecb406badedb6645b0406556e45cc14e505",
+      "exists": true
+    },
+    {
+      "guid": "c986d67de97b24da38851254bac65674",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[22].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "8ac06ef71a32c6695c3bf0ca99697b77361d0680667d54cdc2edeecbe09b0dcb",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01_Alt_02.prefab.meta",
+      "meta_sha256": "0e2b31250a636166f15f5ff8cfe98a179e94c990f549eadce8a6bcfdb8b1ac05",
+      "exists": true
+    },
+    {
+      "guid": "d0e6a26688cd64167910c5bb3cd30fe4",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[27].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "bed7527b7ad2d6fca111b562b807c04523471f5d6320e29ea24bfeeef444a405",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_01.png.meta",
+      "meta_sha256": "e61e474eedc0c9bca06cdeccca3075f0f5cb2cbe29b1c8f29a91f08ddaf0b399",
+      "exists": true
+    },
+    {
+      "guid": "d2834fbab75454c99b0b283a44cef502",
+      "asset_path": "Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab",
+      "file_ids": [
+        7141789922891347094
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.unitSelectionMarkerPrefab",
+          "file_id": 7141789922891347094,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.sceneUnitSelectionMarkerPrefab",
+          "file_id": 7141789922891347094,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSelectionMarkerPrefab",
+          "file_id": 7141789922891347094,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "4a8ba5c636679e60c0172749dd70f9992aaf6a8e575d6a0d8570b520a3f80340",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab.meta",
+      "meta_sha256": "21093b77858f9f7020255fb007576fc1390a8318901151082ac3f4e5ddef958c",
+      "exists": true
+    },
+    {
+      "guid": "d586b1b5678bb4c8396e9cb51b12ea21",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[19].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "af8f119ae948db75196e7e3f6d3ec1b4cbc08b1d0147aeef54a115851142de52",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Pilot_Male_01.prefab.meta",
+      "meta_sha256": "ed7db9f8b3da0f13e8a67c7a664b95141e3483d89b6cdeb99d40cf316dcc9120",
+      "exists": true
+    },
+    {
+      "guid": "d84e74af02d774a349639153cd64ed34",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[24].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "78c5a7ac3c0b5ada8a0c62fdfe67fd82a91778b4895bd72eed4932cf40e330ce",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_01.png.meta",
+      "meta_sha256": "c6f91a6f1393599bca5f0e5da307cdaa59d13fbfb99e21d51341ec40f6021488",
+      "exists": true
+    },
+    {
+      "guid": "da462e9f438ee494eb01b0ddeccd5cef",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[13].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "ce57473f32bfc66997a2e936489bac657f626266cfd125fcb63fe87df7fa7fe1",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_02.png.meta",
+      "meta_sha256": "98f041e40f8f01ad5d71a8ba316e716fb629b45c2be6129954e22d6911ddbcf4",
+      "exists": true
+    },
+    {
+      "guid": "de10bdd428c9d4ff2b2f2507809dea42",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[5].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "27587b3b87c0d322dc05506d8de8da16aedb2226b253a79577efb433b153dd5a",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Male_02.prefab.meta",
+      "meta_sha256": "a0f381601cfba75dc2c48c965b173652f0346515d1ceede0747e682670f696c1",
+      "exists": true
+    },
+    {
+      "guid": "df81751e398174cd2bbc879d76a72b94",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[29].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1ae8cb20354b963a78a9827ffa24713a8f137f5b55ab39945cb2eded0c436234",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02.prefab.meta",
+      "meta_sha256": "d0d3578e30a6eb13ba66a071c78848e40e0cd87b721de2b081f58d051382b49f",
+      "exists": true
+    },
+    {
+      "guid": "e8f9f2d3cb4d14b6d978a55eb615a62c",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_02.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[5].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "bdf7f7fd64d279d4ca0f5d4119aa8f428767f505c29d1ba4933377bb2bde8034",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_02.png.meta",
+      "meta_sha256": "d105ed91e3ea0bc4ff92ffc48467f55e227c83642195c964eaf84245ea19515e",
+      "exists": true
+    },
+    {
+      "guid": "e9015a8d3f0294ca6ac7bf8614ac2e7e",
+      "asset_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab",
+      "file_ids": [
+        8579631638336695248
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[3].prefab",
+          "file_id": 8579631638336695248,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[3].prefab",
+          "file_id": 8579631638336695248,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[2]",
+          "file_id": 8579631638336695248,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "ea20391585e88214b8504a67056bc1c400d2006404411a54be1d2604d14b09d4",
+      "meta_path": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab.meta",
+      "meta_sha256": "2e5bc02deb6ecd0a10df3cf757385f3b36197b57f7f2ec11c229f19b862e5a70",
+      "exists": true
+    },
+    {
+      "guid": "e9380ca06e23346a48a8d1d09416e955",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_02.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[3].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "3a78ff634bccbb0b3f5100ca1cc975795c07cf4d5a35ab0c75222daa7659bd12",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Civilian_Female_02.prefab.meta",
+      "meta_sha256": "12d34c29bb2c470483afc58636e2549c18530134dd6a45b2b4001e9ff5dd045c",
+      "exists": true
+    },
+    {
+      "guid": "eacf82a9f686b47628592b95037d9770",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[20].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "075c5dfbb01bae9861d19067eda6b2740313ab82d14f6734d5fb211d373e5791",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Female_01.prefab.meta",
+      "meta_sha256": "9fdd6d2837c60229d038bbc1fd4e622c26cbe209fcc29f39d755c2d028c20f3c",
+      "exists": true
+    },
+    {
+      "guid": "eeead70461e414c80a3753a7987c3f58",
+      "asset_path": "Assets/Game/Configs/Skirmish/Plan.asset",
+      "file_ids": [
+        11400000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Resources/SkirmishIndustrialBasin.asset",
+          "field_path": "MonoBehaviour.aiPlan",
+          "file_id": 11400000,
+          "type": 2
+        }
+      ],
+      "asset_sha256": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
+      "meta_path": "Assets/Game/Configs/Skirmish/Plan.asset.meta",
+      "meta_sha256": "e1af2f51b0ee4610c2e182a27e199950051e94ecd380b8e606988f6928ae5b1a",
+      "exists": true
+    },
+    {
+      "guid": "f37001b3891c2408b882eed3ce395d9c",
+      "asset_path": "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab",
+      "file_ids": [
+        3689421368615084249
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.baseGatePrefab",
+          "file_id": 3689421368615084249,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "803043c917ffd2f78db0d03eee71b87681d8360683d61f57d0bd03faf077f1d9",
+      "meta_path": "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab.meta",
+      "meta_sha256": "71cf8f289d03dc54ce945127d2397ab0b3b94d1df6988372c6a280c45db7cae0",
+      "exists": true
+    },
+    {
+      "guid": "f6662b2cec4426449a750eba281d5fb0",
+      "asset_path": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab",
+      "file_ids": [
+        1237425064649014
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.blockerPrefab",
+          "file_id": 1237425064649014,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "68a5327f4963b109eba1c3e492f0f638f818ff8ad8aca2a9233c44ae49df53dc",
+      "meta_path": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab.meta",
+      "meta_sha256": "97f934b3ec39eade7d1556ec72b922ca54522aa371b47ace269fa4c99c6911e5",
+      "exists": true
+    },
+    {
+      "guid": "f7fab5771a1744644b5f6b8efff8b6ec",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Female_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[6].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "99a54eb3be8c26b00f505614247575b6b84d686bc82f79d1ca171d3dadbd0c10",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Contractor_Female_01.prefab.meta",
+      "meta_sha256": "e14677cfec3e6a721ee401acd4d2e1d1d6a498e9ab2485b2ac4ae0ce25cb5b32",
+      "exists": true
+    },
+    {
+      "guid": "f90ebb5728e6e4546a708248d5acfb9b",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Bombsuit_Male_01.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[1].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "7ca6fc21a1e35d72618e29fdce76d9073ab32ec427df8819fb253e584831579a",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Bombsuit_Male_01.prefab.meta",
+      "meta_sha256": "b2276ee5a7e9ef99b7af82b47d10fc5bf01efa6849e58861f8f77588284190df",
+      "exists": true
+    },
+    {
+      "guid": "f935472054514bc4baed4554d4d90758",
+      "asset_path": "Assets/Game/Scripts/Configs/OperationMapDefinition.cs",
+      "file_ids": [
+        11500000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+          "field_path": "MonoBehaviour.m_Script",
+          "file_id": 11500000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "488edd38aa604370f3c39812481ade6bc38adf3b74231742a12404e8ded4041d",
+      "meta_path": "Assets/Game/Scripts/Configs/OperationMapDefinition.cs.meta",
+      "meta_sha256": "6ce4a9daef418730583979d2bdfe117424b315c1ef8aa3045a7664f9c32c78ad",
+      "exists": true
+    },
+    {
+      "guid": "fc4571445bdbb4bbc8259fe188c19c50",
+      "asset_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_01.png",
+      "file_ids": [
+        2800000
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[10].atlas",
+          "file_id": 2800000,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "1d3b5982eec4a2e92d7e2c4d0ba31cb63642f2f4c22e898eb39e1a727164d1cd",
+      "meta_path": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_01.png.meta",
+      "meta_sha256": "da50cb2e75d68efae2b4bb5336fbdb0f31f35a492cc2b60ed31415338be608f0",
+      "exists": true
+    },
+    {
+      "guid": "ff73c8b7cbf844778916da330e9cd3e3",
+      "asset_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab",
+      "file_ids": [
+        3282182154612916099
+      ],
+      "uses": [
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[0].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[0].units[1].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[0].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset",
+          "field_path": "MonoBehaviour.factions[1].units[1].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.unitSpawnPrefabs[0]",
+          "file_id": 3282182154612916099,
+          "type": 3
+        },
+        {
+          "source_path": "Assets/Game/Configs/Skirmish/UnitRegistry.asset",
+          "field_path": "MonoBehaviour.impostorAtlases[0].prefab",
+          "file_id": 3282182154612916099,
+          "type": 3
+        }
+      ],
+      "asset_sha256": "0243f1561511a7d32786d9480f49bddd98bee71504a253fd376deb019f24ccbb",
+      "meta_path": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_02_Alt_04.prefab.meta",
+      "meta_sha256": "e0c7c844bf162ba3b504db72ac7bbb1ec98941f568396e299ca1bd7d368b6ded",
+      "exists": true
+    }
+  ]
+}

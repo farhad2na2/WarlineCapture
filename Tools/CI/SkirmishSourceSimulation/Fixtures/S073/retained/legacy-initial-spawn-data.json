@@ -1,0 +1,213 @@
+{
+  "authority": "Current pinned InitialForces/UnitRegistry YAML values plus AssetDatabase exact GUID/local-fileID object names and captured prefab roots",
+  "captured_unit_prefab_roots": {
+    "Unit_Chr_Soldier_Male_02_Alt_04": "1165:1",
+    "Unit_Veh_Light_Armored_Car": "1641:1",
+    "Unit_Veh_Truck_Tanker": "1639:1",
+    "Unit_Veh_Truck_Tray": "1640:1"
+  },
+  "initial_spawn": {
+    "AddRemovePerInterval": 50,
+    "AiMaterialsCapacity": 600,
+    "BaseCoreBuildingPrefabKey": "sm_bld_hangar_door_07",
+    "BaseGatePrefabKey": "building_road_barrier",
+    "BaseHalfHeightCells": 80,
+    "BaseHalfWidthCells": 120,
+    "BaseMinimumUnitsPerFaction": 18,
+    "BaseWallPrefabKey": "sm_prop_barrier_base_row_03 (45)",
+    "BlockerCount": 0,
+    "ChurnIntervalSeconds": 1.0,
+    "CreateFactionBases": false,
+    "EnableBlockerChurn": false,
+    "Factions": [
+      {
+        "Buildings": [
+          {
+            "LookupKey": "building_barrack",
+            "OriginOffsetX": 0,
+            "OriginOffsetY": -20
+          },
+          {
+            "LookupKey": "building_ammunition_depot",
+            "OriginOffsetX": -20,
+            "OriginOffsetY": 10
+          },
+          {
+            "LookupKey": "building_oilpump",
+            "OriginOffsetX": 15,
+            "OriginOffsetY": 20
+          },
+          {
+            "LookupKey": "building_refinery",
+            "OriginOffsetX": -30,
+            "OriginOffsetY": -10
+          },
+          {
+            "LookupKey": "building_fuel_bladder",
+            "OriginOffsetX": -15,
+            "OriginOffsetY": -30
+          }
+        ],
+        "FactionId": 1,
+        "SpawnX": 800,
+        "SpawnY": 600,
+        "Units": [
+          {
+            "Count": 4,
+            "OffsetX": 12,
+            "OffsetY": -28,
+            "SourceKey": "Unit_Chr_Soldier_Male_02_Alt_04"
+          },
+          {
+            "Count": 4,
+            "OffsetX": 28,
+            "OffsetY": -20,
+            "SourceKey": "Unit_Chr_Soldier_Male_02_Alt_04"
+          },
+          {
+            "Count": 1,
+            "OffsetX": 20,
+            "OffsetY": -14,
+            "SourceKey": "Unit_Veh_Light_Armored_Car"
+          },
+          {
+            "Count": 1,
+            "OffsetX": 8,
+            "OffsetY": -8,
+            "SourceKey": "Unit_Veh_Truck_Tanker"
+          },
+          {
+            "Count": 2,
+            "OffsetX": 32,
+            "OffsetY": -4,
+            "SourceKey": "Unit_Veh_Truck_Tray"
+          }
+        ]
+      },
+      {
+        "Buildings": [
+          {
+            "LookupKey": "building_barrack",
+            "OriginOffsetX": 4,
+            "OriginOffsetY": -26
+          },
+          {
+            "LookupKey": "building_ammunition_depot",
+            "OriginOffsetX": -24,
+            "OriginOffsetY": 8
+          },
+          {
+            "LookupKey": "building_oilpump",
+            "OriginOffsetX": -24,
+            "OriginOffsetY": -22
+          },
+          {
+            "LookupKey": "building_refinery",
+            "OriginOffsetX": 8,
+            "OriginOffsetY": 10
+          },
+          {
+            "LookupKey": "building_fuel_bladder",
+            "OriginOffsetX": -24,
+            "OriginOffsetY": 42
+          }
+        ],
+        "FactionId": 2,
+        "SpawnX": 930,
+        "SpawnY": 470,
+        "Units": [
+          {
+            "Count": 4,
+            "OffsetX": -28,
+            "OffsetY": 20,
+            "SourceKey": "Unit_Chr_Soldier_Male_02_Alt_04"
+          },
+          {
+            "Count": 4,
+            "OffsetX": -12,
+            "OffsetY": 28,
+            "SourceKey": "Unit_Chr_Soldier_Male_02_Alt_04"
+          },
+          {
+            "Count": 1,
+            "OffsetX": -20,
+            "OffsetY": 14,
+            "SourceKey": "Unit_Veh_Light_Armored_Car"
+          },
+          {
+            "Count": 1,
+            "OffsetX": -32,
+            "OffsetY": 4,
+            "SourceKey": "Unit_Veh_Truck_Tanker"
+          },
+          {
+            "Count": 2,
+            "OffsetX": -8,
+            "OffsetY": 8,
+            "SourceKey": "Unit_Veh_Truck_Tray"
+          }
+        ]
+      }
+    ],
+    "InitialAiMaterials": 220,
+    "InitialDollars": 0,
+    "InitialFuel": 160,
+    "InitialMaterials": 220,
+    "InitialOil": 0,
+    "MaterialsCapacity": 600,
+    "MissingVisualReferenceCount": 0,
+    "RandomSeed": 1,
+    "RespawnDelaySeconds": 1.0,
+    "SpawnRadiusCells": 6,
+    "UnitPrefabRegistryKeys": [
+      "Unit_Chr_Soldier_Male_02_Alt_04",
+      "Unit_Veh_Truck_Tray",
+      "Unit_Veh_Truck_Tanker"
+    ],
+    "VisualRegistry": [
+      {
+        "Columns": 4,
+        "DirectionCount": 8,
+        "HasAtlas": true,
+        "Rows": 2,
+        "SourceKey": "Unit_Chr_Soldier_Male_02_Alt_04",
+        "WorldSizeX": 1.949376,
+        "WorldSizeY": 2.8428397
+      },
+      {
+        "Columns": 4,
+        "DirectionCount": 8,
+        "HasAtlas": false,
+        "Rows": 2,
+        "SourceKey": "Unit_Veh_Truck_Tray",
+        "WorldSizeX": 1.0,
+        "WorldSizeY": 1.8
+      },
+      {
+        "Columns": 4,
+        "DirectionCount": 8,
+        "HasAtlas": false,
+        "Rows": 2,
+        "SourceKey": "Unit_Veh_Truck_Tanker",
+        "WorldSizeX": 1.0,
+        "WorldSizeY": 1.8
+      }
+    ]
+  },
+  "kind": "S073LegacyInitialSpawnExternalData",
+  "mission": "S073",
+  "mission_outcome_derived": false,
+  "native_visual_readiness": false,
+  "schema_version": 1,
+  "source_artifacts": {
+    "config_readback_sha256": "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10",
+    "configuration_asset_sha256": {
+      "Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset": "b81c21bfaf2a037e28f8d923b3b0a3d8028b436c6b5aa4e790d54f64b5dd9453",
+      "Assets/Game/Configs/Skirmish/UnitRegistry.asset": "71282b91f196683d3b0a003466717f25d13e57575471785582778cb076612940"
+    },
+    "name_readback_sha256": "d06c52158242ed371d18588db60c469dea2674007e24e830a625ff84901e265e",
+    "prefab_capture_sha256": "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+    "source_audit_sha256": "12452d3237b484ff4e7ef4da8d0ba012f9fc86f81403245bd0b7ec68ae160518"
+  },
+  "world_initialized": false
+}

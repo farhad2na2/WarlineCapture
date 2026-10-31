@@ -583,6 +583,84 @@ internal static class S073LegacyPlacementOwnerHarness
         // then admitted as a later source placement, not miscounted as startup output.
         autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
 
+        JObject rotatedCandidateRow = (JObject)mapPlacementCapture["placement_rows"][2];
+        JObject rotatedCandidateOriginRow = (JObject)mapPlacementOriginReplay["origins"][2];
+        int2 rotatedCandidateOrigin = new int2((int)rotatedCandidateOriginRow["origin"][0], (int)rotatedCandidateOriginRow["origin"][1]);
+        int2 rotatedCandidateFootprint = new int2((int)rotatedCandidateOriginRow["footprint"][0], (int)rotatedCandidateOriginRow["footprint"][1]);
+        DynamicBuffer<GridWalkable> rotatedCandidateWalkable = em.GetBuffer<GridWalkable>(gridEntity);
+        DynamicBuffer<GridRoad> rotatedCandidateRoads = em.GetBuffer<GridRoad>(gridEntity);
+        DynamicBlockerComponent rotatedCandidateBlockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        int rotatedCandidateNonWalkableCells = 0, rotatedCandidateGridBlockedCells = 0, rotatedCandidateRoadCells = 0;
+        for (int y = rotatedCandidateOrigin.y; y < rotatedCandidateOrigin.y + rotatedCandidateFootprint.y; y++)
+        for (int x = rotatedCandidateOrigin.x; x < rotatedCandidateOrigin.x + rotatedCandidateFootprint.x; x++)
+        {
+            int cellIndex = GridUtils.CellToIndex(new int2(x, y), grid.Width);
+            if (rotatedCandidateWalkable[cellIndex].Value == 0) rotatedCandidateNonWalkableCells++;
+            if (rotatedCandidateBlockers.Blocked.IsCreated && rotatedCandidateBlockers.Blocked.IsSet(cellIndex)) rotatedCandidateGridBlockedCells++;
+            if (rotatedCandidateRoads[cellIndex].Value != 0) rotatedCandidateRoadCells++;
+        }
+        IReadOnlyList<int> rotatedCandidateRuntimeBlockerIds = runtimeBlockerOwnership.FindOverlappingIds(
+            rotatedCandidateOrigin, rotatedCandidateFootprint);
+        var rotatedCandidateStaticBlockerEntities = new JArray();
+        using (var candidateBlockerQuery = em.CreateEntityQuery(typeof(StaticGridBlocker), typeof(UnitGrid), typeof(GridBlockerSize)))
+        using (var candidateBlockers = candidateBlockerQuery.ToEntityArray(Allocator.Temp))
+        {
+            for (int i = 0; i < candidateBlockers.Length; i++)
+            {
+                Entity blockerEntity = candidateBlockers[i];
+                int2 blockerOrigin = em.GetComponentData<UnitGrid>(blockerEntity).Cell;
+                int2 blockerSize = em.GetComponentData<GridBlockerSize>(blockerEntity).Size;
+                bool overlaps = rotatedCandidateOrigin.x < blockerOrigin.x + blockerSize.x && blockerOrigin.x < rotatedCandidateOrigin.x + rotatedCandidateFootprint.x &&
+                    rotatedCandidateOrigin.y < blockerOrigin.y + blockerSize.y && blockerOrigin.y < rotatedCandidateOrigin.y + rotatedCandidateFootprint.y;
+                if (overlaps)
+                {
+                    var overlapEvidence = new JObject
+                    {
+                        ["entity"] = blockerEntity.Index + ":" + blockerEntity.Version,
+                        ["origin"] = new JArray(blockerOrigin.x, blockerOrigin.y),
+                        ["footprint"] = new JArray(blockerSize.x, blockerSize.y),
+                        ["has_authored_map_identity"] = em.HasComponent<OperationMapBuildingComponent>(blockerEntity)
+                    };
+                    if (em.HasComponent<OperationMapBuildingComponent>(blockerEntity))
+                    {
+                        OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(blockerEntity);
+                        overlapEvidence["operation_map_id"] = identity.OperationMapId.ToString();
+                        overlapEvidence["placement_index"] = identity.PlacementIndex;
+                        overlapEvidence["source_global_object_id"] = identity.SourceGlobalObjectId.ToString();
+                    }
+                    if (em.HasComponent<RuntimeBuildingCombatInfo>(blockerEntity))
+                    {
+                        RuntimeBuildingCombatInfo combat = em.GetComponentData<RuntimeBuildingCombatInfo>(blockerEntity);
+                        overlapEvidence["runtime_building_id"] = combat.RuntimeBuildingId;
+                        overlapEvidence["combat_origin"] = new JArray(combat.OriginCell.x, combat.OriginCell.y);
+                        overlapEvidence["combat_footprint"] = new JArray(combat.FootprintCells.x, combat.FootprintCells.y);
+                    }
+                    rotatedCandidateStaticBlockerEntities.Add(overlapEvidence);
+                }
+            }
+        }
+        bool rotatedCandidateSurfaceLevel = new BuildingSurfacePlacementUtilitySystemHelper().TryEvaluateFootprint(
+            em, rotatedCandidateOrigin, rotatedCandidateFootprint, .5f, 45f, out _);
+        JObject rotatedCandidatePreflight = new JObject
+        {
+            ["source_row_index"] = (int)rotatedCandidateRow["row_index"],
+            ["prefab"] = rotatedCandidateRow["prefab"].DeepClone(),
+            ["faction_id"] = (int)rotatedCandidateRow["faction_id"],
+            ["rotate_vertical"] = (bool)rotatedCandidateRow["rotate_vertical"],
+            ["origin"] = new JArray(rotatedCandidateOrigin.x, rotatedCandidateOrigin.y),
+            ["footprint"] = new JArray(rotatedCandidateFootprint.x, rotatedCandidateFootprint.y),
+            ["shared_original_surface_level_predicate"] = rotatedCandidateSurfaceLevel,
+            ["non_walkable_grid_cells"] = rotatedCandidateNonWalkableCells,
+            ["dynamic_grid_blocked_cells"] = rotatedCandidateGridBlockedCells,
+            ["road_cells"] = rotatedCandidateRoadCells,
+            ["runtime_blocker_owner_overlap_ids"] = new JArray(rotatedCandidateRuntimeBlockerIds),
+            ["runtime_blocker_owner_registry_scope"] = "shared kernel reconstructed by this diagnostic harness; not the production helper instance",
+            ["static_ecs_blocker_overlaps"] = rotatedCandidateStaticBlockerEntities,
+            ["registration_attempted"] = false,
+            ["placement_owner_complete"] = false,
+            ["mission_readiness_proven"] = false
+        };
+
         RuntimeBuildingEntity authoredMapBuilding = null;
         JObject authoredMapActorEvidence = null;
         bool RegisterCapturedMapRow(int scheduledIndex)
@@ -962,6 +1040,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["legacy_root_count"] = expectedInitialRoots.Properties().Count(), ["matched_current_capture"] = true,
                 ["independent_name_readback"] = true },
             ["runtime_blocker_placement"] = actualBlockerPlacement,
+            ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
             ["authored_map_actor"] = authoredMapActorEvidence,
             ["map_placements_materialized"] = 1,
             ["map_placements_total"] = 432,

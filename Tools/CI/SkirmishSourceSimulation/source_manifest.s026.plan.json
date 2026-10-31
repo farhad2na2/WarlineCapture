@@ -7181,6 +7181,12 @@
       "output": "340_BuildingOwnerFaction.source.cs"
     },
     {
+      "id": "494a_CameraFocusSequence.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/CameraFocusSequence.cs",
+      "require_declarations": ["public static class CameraFocusSequence"]
+    },
+    {
       "id": "495_SourceS002NumericCameraProvider.cs",
       "kind": "finite_adapter",
       "path": "Tools/CI/SkirmishSourceSimulation/Adapters/DeclaredGround/495_SourceS002NumericCameraProvider.cs",

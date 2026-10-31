@@ -63,42 +63,8 @@ namespace Game.Runtime
             bool useExplicitYaw = false,
             float explicitYaw = 0f)
         {
-            camera.QueueSetMatchIntroZoomSettlePending(entityManager, false);
-            bool showSquad = revealKind == 2;
-            bool showBazaar = revealKind == 3;
-            bool restoreRts = revealKind == 4;
-            bool showCombat = revealKind == 5;
-            float height = restoreRts ? rtsHeight : showBazaar ? BazaarEstablishingHeight :
-                showCombat ? CombatRevealHeight : showSquad ? SquadRevealHeight : TacticalRevealHeight;
-            float pitch = restoreRts ? rtsPitch : showBazaar ? BazaarEstablishingPitch :
-                showCombat ? CombatRevealPitch : showSquad ? SquadRevealPitch : TacticalRevealPitch;
-            float yaw = useExplicitYaw ? explicitYaw :
-                restoreRts ? rtsYaw : showBazaar ? BazaarEstablishingYaw : TacticalRevealYaw;
-            float fieldOfView = restoreRts ? rtsFieldOfView : showBazaar ? BazaarEstablishingFieldOfView :
-                showCombat ? CombatRevealFieldOfView :
-                showSquad ? SquadRevealFieldOfView : TacticalRevealFieldOfView;
-            if (smoothTimeSeconds > 0f)
-            {
-                camera.QueueCompleteZoomTransition(entityManager);
-                camera.QueueSetSmoothPerspectiveTarget(
-                    entityManager,
-                    height,
-                    pitch,
-                    yaw,
-                    fieldOfView,
-                    smoothTimeSeconds,
-                    true);
-            }
-            else
-            {
-                camera.QueueApplyPerspectiveModeInstant(
-                    entityManager,
-                    height,
-                    pitch,
-                    yaw,
-                    fieldOfView);
-                camera.QueueCompleteZoomTransition(entityManager);
-            }
+            Game.Simulation.CameraFocusSequence.Tactical(revealKind, smoothTimeSeconds, rtsHeight, rtsPitch,
+                rtsYaw, rtsFieldOfView, useExplicitYaw, explicitYaw, action => Dispatch(camera, entityManager, action));
         }
 
         public static void Queue(
@@ -111,42 +77,32 @@ namespace Game.Runtime
             float rtsYaw,
             float rtsFieldOfView)
         {
-            if (request.UseExplicitPerspective!=0)
-            {
-                var p=request.Perspective;
-                // An authored mission pose owns this transition. A pending generic match intro
-                // must not restore its old height/pitch after the mission overview is applied.
-                camera.QueueSetMatchIntroZoomSettlePending(entityManager, false);
-                camera.QueueClearSmoothPerspectiveTarget(entityManager);
-                camera.QueueCompleteZoomTransition(entityManager);
-                if(request.Smooth!=0) camera.QueueSetSmoothPerspectiveTarget(entityManager,p.x,p.y,p.z,p.w,request.SmoothTimeSeconds,true);
-                else camera.QueueApplyPerspectiveModeInstant(entityManager,p.x,p.y,p.z,p.w);
-            }
-            else if (request.UseTacticalRevealZoom != 0)
-                QueueTacticalRevealZoom(
-                    camera,
-                    entityManager,
-                    request.UseTacticalRevealZoom,
-                    request.Smooth != 0 ? Mathf.Max(0.6f, request.SmoothTimeSeconds) : 0f,
-                    rtsHeight,
-                    rtsPitch,
-                    rtsYaw,
-                    rtsFieldOfView,
-                    request.UseExplicitYaw != 0,
-                    request.YawDegrees);
-
-            if (request.Smooth != 0)
-            {
-                camera.QueueSetSmoothFocusTarget(
-                    entityManager,
-                    focusWorldPosition,
-                    true,
-                    request.SmoothTimeSeconds);
-                return;
-            }
-
-            camera.QueueMoveGroundCenterTo(entityManager, focusWorldPosition);
-            camera.QueueClearSmoothFocusTarget(entityManager);
+            var p = request.Perspective;
+            var input = new Game.Simulation.CameraFocusRequest {
+                ExplicitPerspective=request.UseExplicitPerspective!=0, Smooth=request.Smooth!=0,
+                TacticalReveal=request.UseTacticalRevealZoom, ExplicitYaw=request.UseExplicitYaw!=0,
+                Height=p.x, Pitch=p.y, Yaw=p.z, FieldOfView=p.w, Duration=request.SmoothTimeSeconds,
+                FocusX=focusWorldPosition.x, FocusY=focusWorldPosition.y, FocusZ=focusWorldPosition.z,
+                RevealYaw=request.YawDegrees, NormalHeight=rtsHeight, NormalPitch=rtsPitch,
+                NormalYaw=rtsYaw, NormalFieldOfView=rtsFieldOfView };
+            Game.Simulation.CameraFocusSequence.Emit(input, action => Dispatch(camera, entityManager, action));
         }
+
+        private static void Dispatch(RtsCameraRequestSystem camera, EntityManager em, Game.Simulation.CameraFocusAction action)
+        {
+            switch (action.Kind)
+            {
+                case Game.Simulation.CameraFocusActionKind.ClearIntroSettle: camera.QueueSetMatchIntroZoomSettlePending(em, false); break;
+                case Game.Simulation.CameraFocusActionKind.ClearPerspective: camera.QueueClearSmoothPerspectiveTarget(em); break;
+                case Game.Simulation.CameraFocusActionKind.CompleteZoom: camera.QueueCompleteZoomTransition(em); break;
+                case Game.Simulation.CameraFocusActionKind.InstantPerspective: camera.QueueApplyPerspectiveModeInstant(em, action.A, action.B, action.C, action.D); break;
+                case Game.Simulation.CameraFocusActionKind.SmoothPerspective: camera.QueueSetSmoothPerspectiveTarget(em, action.A, action.B, action.C, action.D, action.Duration, true); break;
+                case Game.Simulation.CameraFocusActionKind.MoveFocus: camera.QueueMoveGroundCenterTo(em, new Vector3(action.A, action.B, action.C)); break;
+                case Game.Simulation.CameraFocusActionKind.SmoothFocus: camera.QueueSetSmoothFocusTarget(em, new Vector3(action.A, action.B, action.C), true, action.Duration); break;
+                case Game.Simulation.CameraFocusActionKind.ClearFocus: camera.QueueClearSmoothFocusTarget(em); break;
+                default: throw new System.InvalidOperationException("Unknown focus action");
+            }
+        }
+
     }
 }

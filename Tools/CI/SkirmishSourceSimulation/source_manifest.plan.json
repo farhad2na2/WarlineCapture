@@ -6584,6 +6584,12 @@
       "scope": "Explicit package-owned engine_boundary; original current gameplay owners and shared decision kernels are separate source entries. Role is a review declaration, not semantic equivalence proof."
     },
     {
+      "id": "494a_CameraFocusSequence.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Simulation/CameraFocusSequence.cs",
+      "require_declarations": ["public static class CameraFocusSequence"]
+    },
+    {
       "id": "495_SourceS002NumericCameraProvider.cs",
       "kind": "finite_adapter",
       "path": "Tools/CI/SkirmishSourceSimulation/Adapters/495_SourceS002NumericCameraProvider.cs",

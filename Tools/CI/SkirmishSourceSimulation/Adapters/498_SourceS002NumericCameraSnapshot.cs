@@ -47,7 +47,27 @@ internal sealed partial class SourceS002NumericCameraProvider{
  void ApplySourcePerspective(bool build){if(build)throw new NotSupportedException("Current logical camera doesnot consume native buildcamera; FOV50 motion domain not qualified");cameraData.Rotation=rotation;cameraData.Position=new V3(cameraData.Position.x,build?profile.BuildHeight:profile.NormalHeight,cameraData.Position.z);cameraData.FieldOfView=build?profile.BuildFieldOfView:profile.NormalFieldOfView;motion.ClampCameraToGroundBoundary(cameraData);RequireInterior();}
  internal void InspectPublicObjective(float3 actualPublicPosition){Ready();RequireMotion();PoseMath.Finite(actualPublicPosition);motion.SetSmoothFocusTarget(new V3(actualPublicPosition.x,actualPublicPosition.y,actualPublicPosition.z),true,.35f);}
  internal void PanSourceGroundCenter(float3 actualPublicPosition){Ready();RequireMotion();PoseMath.Finite(actualPublicPosition);motion.ClearSmoothFocusTarget();motion.MoveCameraGroundCenterTo(cameraData,new V3(actualPublicPosition.x,actualPublicPosition.y,actualPublicPosition.z));RequireInterior();}
- internal void FocusBaseFallbackInstant(float3 actualPublicPosition){Ready();RequireMotion();PoseMath.Finite(actualPublicPosition);rotation=PoseMath.Euler(new float3(profile.Pitch,profile.Yaw,0));cameraData.Rotation=rotation;cameraData.Position=new V3(cameraData.Position.x,profile.NormalHeight,cameraData.Position.z);cameraData.FieldOfView=profile.NormalFieldOfView;motion.ClampCameraToGroundBoundary(cameraData);motion.MoveCameraGroundCenterTo(cameraData,new V3(actualPublicPosition.x,actualPublicPosition.y,actualPublicPosition.z));motion.ClearSmoothFocusTarget();RequireInterior();}
+ internal bool FocusIntroSettlePending,FocusSmoothPerspectiveTarget,FocusZoomTransitionActive;
+ internal float FocusHeightVelocity,FocusPitchVelocity,FocusYawVelocity,FocusFovVelocity;
+ internal int LastFocusActionCount;
+ internal void ExecuteImmediateFocus(Game.Simulation.CameraFocusRequest request){
+  Ready();RequireMotion();
+  if(!request.ExplicitPerspective||request.Smooth||request.TacticalReveal!=0)throw new NotSupportedException("Only explicit instant source focus is admitted");
+  var actions=new System.Collections.Generic.List<Game.Simulation.CameraFocusAction>();Game.Simulation.CameraFocusSequence.Emit(request,actions.Add);
+  if(actions.Count!=6||actions[0].Kind!=Game.Simulation.CameraFocusActionKind.ClearIntroSettle||actions[1].Kind!=Game.Simulation.CameraFocusActionKind.ClearPerspective||actions[2].Kind!=Game.Simulation.CameraFocusActionKind.CompleteZoom||actions[3].Kind!=Game.Simulation.CameraFocusActionKind.InstantPerspective||actions[4].Kind!=Game.Simulation.CameraFocusActionKind.MoveFocus||actions[5].Kind!=Game.Simulation.CameraFocusActionKind.ClearFocus)throw new NotSupportedException("Unsupported source camera sequence");
+  if(!math.all(math.isfinite(new float4(request.Height,request.Pitch,request.Yaw,request.FieldOfView)))||!math.all(math.isfinite(new float3(request.FocusX,request.FocusY,request.FocusZ))))throw new ArgumentException("Finite focus request required");
+  foreach(var action in actions)switch(action.Kind){
+   case Game.Simulation.CameraFocusActionKind.ClearIntroSettle:FocusIntroSettlePending=false;break;
+   case Game.Simulation.CameraFocusActionKind.ClearPerspective:FocusSmoothPerspectiveTarget=false;break;
+   case Game.Simulation.CameraFocusActionKind.CompleteZoom:FocusZoomTransitionActive=false;FocusHeightVelocity=FocusPitchVelocity=FocusYawVelocity=FocusFovVelocity=0;break;
+   case Game.Simulation.CameraFocusActionKind.InstantPerspective:rotation=PoseMath.Euler(new float3(action.B,action.C,0));cameraData.Rotation=rotation;cameraData.Position=new V3(cameraData.Position.x,action.A,cameraData.Position.z);cameraData.FieldOfView=action.D;motion.ClampCameraToGroundBoundary(cameraData);break;
+   case Game.Simulation.CameraFocusActionKind.MoveFocus:motion.MoveCameraGroundCenterTo(cameraData,new V3(action.A,action.B,action.C));break;
+   case Game.Simulation.CameraFocusActionKind.ClearFocus:motion.ClearSmoothFocusTarget();break;
+   default:throw new InvalidOperationException("Prevalidated focus sequence changed");
+  }
+  LastFocusActionCount=actions.Count;RequireInterior();
+ }
+ internal void FocusBaseFallbackInstant(float3 actualPublicPosition){Ready();RequireMotion();PoseMath.Finite(actualPublicPosition);ExecuteImmediateFocus(new Game.Simulation.CameraFocusRequest{ExplicitPerspective=true,Height=profile.NormalHeight,Pitch=profile.Pitch,Yaw=profile.Yaw,FieldOfView=profile.NormalFieldOfView,FocusX=actualPublicPosition.x,FocusY=actualPublicPosition.y,FocusZ=actualPublicPosition.z});}
  internal RuntimeCameraSnapshotComponent PublishSourceSnapshot(){
   RequireSnapshot();using var q=snapshotEm.CreateEntityQuery(typeof(RuntimeCameraSnapshotComponent));
   if(snapshotEntity==Entity.Null){if(q.CalculateEntityCount()>1)throw new NotSupportedException("Source snapshot singleton required");snapshotEntity=q.CalculateEntityCount()==1?q.GetSingletonEntity():snapshotEm.CreateEntity();if(!snapshotEm.HasComponent<RuntimeCameraSnapshotComponent>(snapshotEntity))snapshotEm.AddComponentData(snapshotEntity,new RuntimeCameraSnapshotComponent());}

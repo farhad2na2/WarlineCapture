@@ -419,6 +419,9 @@ internal static class S073LegacyPlacementOwnerHarness
         Entity boundary = em.CreateEntity(); em.AddComponentData(boundary, new BuildingRuntimeStateTag());
         var requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
         em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
+        em.AddBuffer<BuildingRuntimeUnitProductionSummary>(boundary);
+        em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
+        em.AddBuffer<BuildingFactionUnitProductionRequest>(boundary);
         var definitions = GeneratedBuildingDefinitions.LoadS073Legacy(definitionsPath, args[9], templates, legacy, sourceRoot);
         Need(definitions.Definitions.Count == 6, "Exact S073 original building definitions required");
         Need(Sha(unitRegistryEvidencePath) == unitRegistryEvidenceSha,
@@ -1897,6 +1900,7 @@ internal static class S073LegacyPlacementOwnerHarness
             "Shared faction summary projection omitted a runtime owner faction");
         JObject legacySchedulerInitialization = autonomousWorld.InitializeS073LegacyOwnerScheduler();
         bool aiPlannerQueriesPresent = (bool?)legacySchedulerInitialization["required_queries_present"]?["AIBuildPlannerSystem"] == true;
+        bool aiProductionQueriesPresent = (bool?)legacySchedulerInitialization["required_queries_present"]?["AIProductionSystem"] == true;
         int aiRequestsBefore = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length;
         int aiPlannerStepCount = 0;
         const float aiPlannerStepSeconds = 1f / 60f;
@@ -1912,13 +1916,54 @@ internal static class S073LegacyPlacementOwnerHarness
             aiPlannerStepCount++;
         }
         allSucceeded &= (bool?)legacySchedulerInitialization["initialized"] == true &&
-            aiPlannerQueriesPresent && aiPlannerStepCount > 0 && legacySchedulerFirstStep != null && legacySchedulerLastStep != null;
+            aiPlannerQueriesPresent && aiProductionQueriesPresent && aiPlannerStepCount > 0 &&
+            legacySchedulerFirstStep != null && legacySchedulerLastStep != null &&
+            (bool?)legacySchedulerFirstStep["source_ai_owner_updates"]?.Children<JObject>()
+                .SingleOrDefault(row => (string)row["owner"] == "AIProductionSystem")?["updated"] == true;
         aiPlannerWallSeconds = phaseWall.Elapsed.TotalSeconds;
         DynamicBuffer<BuildingRuntimeSpawnRequest> aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         int aiRequestCountBeforeProcessing = aiRequests.Length;
         if (aiRequestCountBeforeProcessing > aiRequestsBefore)
             pipeline.ProcessRequests((float)em.WorldUnmanaged.Time.ElapsedTime, forceScan: true);
         aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        DynamicBuffer<BuildingFactionUnitProductionRequest> aiUnitRequests =
+            em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> aiUnitSummaries =
+            em.GetBuffer<BuildingRuntimeUnitProductionSummary>(boundary);
+        var aiUnitRequestRows = new JArray(aiUnitRequests.Select(request => new JObject
+        {
+            ["request_id"] = request.RequestId,
+            ["request_owner"] = request.RequestOwner.Index + ":" + request.RequestOwner.Version,
+            ["request_attempt"] = request.RequestAttempt.ToString(),
+            ["faction_id"] = request.FactionId,
+            ["unit_id"] = request.UnitId.ToString(),
+            ["status"] = request.Status == BuildingFactionUnitProductionRequest.Pending ? "Pending" :
+                request.Status == BuildingFactionUnitProductionRequest.Succeeded ? "Succeeded" : "Failed",
+            ["result_code"] = request.ResultCode,
+            ["producer_display_name"] = request.ProducerDisplayName.ToString(),
+            ["unit_display_name"] = request.UnitDisplayName.ToString(),
+            ["credits_cost"] = request.Cost,
+            ["materials_cost"] = request.MaterialsCost,
+            ["resources_reserved"] = request.ResourcesReserved != 0,
+            ["queue_count"] = request.QueueCount,
+            ["produced_count"] = request.ProducedCount
+        }));
+        var aiUnitSummaryRows = new JArray(aiUnitSummaries.Select(summary => new JObject
+        {
+            ["faction_id"] = summary.FactionId,
+            ["unit_id"] = summary.UnitId.ToString(),
+            ["produced_count"] = summary.ProducedCount,
+            ["queued_count"] = summary.QueuedCount
+        }));
+        var aiConfiguredUnitRows = new JArray(configuredUnitReadModels.Select(unit => new JObject
+        {
+            ["unit_id"] = unit.UnitId.ToString(),
+            ["display_name"] = unit.DisplayName.ToString(),
+            ["materials_cost"] = unit.Price,
+            ["credits_cost"] = unit.CreditsCost,
+            ["can_request"] = unit.CanRequest != 0,
+            ["is_vehicle"] = unit.IsVehicle != 0
+        }));
         var aiRequestRows = new JArray(aiRequests.Skip(aiRequestsBefore).Select(request => new JObject
         {
             ["request_id"] = request.RequestId,
@@ -2081,6 +2126,9 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["normal_step_count"] = aiPlannerStepCount,
                 ["first_step"] = legacySchedulerFirstStep,
                 ["last_step"] = legacySchedulerLastStep,
+                ["configured_unit_rows"] = aiConfiguredUnitRows,
+                ["actual_unit_production_requests"] = aiUnitRequestRows,
+                ["unit_production_summaries"] = aiUnitSummaryRows,
                 ["full_system_schedule"] = false, ["autonomous_aria"] = false,
                 ["full_mission"] = false },
             ["original_ai_startup"] = new JObject { ["source_assets_sha256"] = new JObject {
@@ -2091,7 +2139,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 original legacy startup, captured-map placement, shared loading-gate admission, and a bounded original economy/faction-control/build-planner plus movement-owner prefix; downstream production/squad/targeting/combat owners, autonomous ARIA, full mission outcome and player readiness remain pending",
+            ["mission_world_scope"] = "S073 original legacy startup, captured-map placement, shared loading-gate admission, and a bounded original economy/faction-control/build-planner/AIProduction plus movement-owner prefix; production queue/delivery feedback, squads/targeting/combat, autonomous ARIA, full mission outcome and player readiness remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

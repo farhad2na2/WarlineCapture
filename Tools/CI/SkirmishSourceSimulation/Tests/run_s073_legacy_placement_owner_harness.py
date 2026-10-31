@@ -41,12 +41,14 @@ EXPECTED = {
     "map_definitions_adapter": "3a5982d3ff0d45fa74065c25cc3043ff30bafb66389a33e7ad7d3f7fcb81b34a",
     "map_definitions_adapter_base_build": "673c2d6e8f19119134252063909c1e193b4c43dae1320b288a3d4d76b6cfb768",
     "blocker_metadata": "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776",
+    "unit_registry_evidence": "f3a08f7ae59fa76b34bb340d2e0cb5eba4dffb6e9c555a1a0a0e54c2fc85935e",
+    "supplemental_transport_template": "f05590a9438f0d1d5d2fee53d774c26b05eaf82da6ca2d08e91ee85d6e5bc0e5",
     "ai_plan": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
 }
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
 SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
-    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "67206fe0267383b72e0d256ae520d0c5bf57d1e2bc8107428f1b7ac0b92e6f85",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "f4ff754bd2bffa99f63b280c011ad109f70fd9305f6dd9040c14b28d7339f6ab",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
     "Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs": "840624cebb501c8c2b7e4dcdec887569ecebda2b78cf4ef4f8902a84f7779c53",
@@ -224,7 +226,7 @@ def main():
         elif pin_path.endswith("/GameplayStartGatePolicy.cs") or pin_path.endswith("/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs"):
             evidence = "The shared gameplay-start gate policy is independently covered by portable controls; the S073 placement harness exercises the same policy and original rules transition against the actual legacy initialized-world owners."
         elif pin_path.endswith("/BuildingRuntimeProcessingCompositionSystemHelper.cs"):
-            evidence = "The existing owner now delegates only owned-building row aggregation to the shared projection. The S073 initialized-world harness independently groups the actual registered live buildings and compares every emitted faction/ID/count row; the changed owner contains no numeric placement, movement, pathing, or runway logic."
+            evidence = "The existing owner delegates configured-unit rows to the shared projection with field-for-field legacy values; the no-world S073 registry harness verified the original three source rows (IDs, names, costs, requestability, vehicle flags), while this initialized-world harness independently compares actual owned-building summaries. The change adds no numeric placement, movement, pathing, or runway behavior."
         else:
             evidence = "No-Unity S073NumericRuntimeOwnerProbe: exact runway output, invalid extent rejection, captured-original pathing opening equivalence, and numeric gate midpoint"
         special_capture_owner_deltas[pin_path] = {"captured_sha256": expected, "current_sha256": current,

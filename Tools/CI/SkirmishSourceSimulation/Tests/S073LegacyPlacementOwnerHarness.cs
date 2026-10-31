@@ -392,7 +392,37 @@ internal static class S073LegacyPlacementOwnerHarness
         var definitions = GeneratedBuildingDefinitions.LoadS073Legacy(definitionsPath, args[9], templates, legacy, sourceRoot);
         Need(definitions.Definitions.Count == 6, "Exact S073 original building definitions required");
         var configured = em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
-        foreach (var d in definitions.Definitions) configured.Add(new BuildingConfiguredSpawnableReadModel { BuildingId = new FixedString128Bytes(d.Prefab.name), FootprintCells = new int2(d.FootprintCells.x, d.FootprintCells.y) });
+        var configuredSpawnableSourceRows = new JArray();
+        foreach (var d in definitions.Definitions)
+        {
+            Need(definitions.AssetIdentities.TryGetValue(d.Prefab.name, out JObject sourcePrefabIdentity),
+                "Exact captured source prefab identity required for configured building metadata: " + d.Prefab.name);
+            bool canRequest = SourceS073LegacyPresetProjection.ReadBuildingCanRequest(
+                sourceRoot, d.Prefab.name, sourcePrefabIdentity, out JObject requestabilityEvidence);
+            string normalizedBuildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(d.Prefab.name);
+            configured.Add(new BuildingConfiguredSpawnableReadModel
+            {
+                BuildingId = new FixedString128Bytes(normalizedBuildingId),
+                DisplayName = new FixedString128Bytes(d.DisplayName ?? string.Empty),
+                Price = Math.Max(0, d.CreditsCost),
+                MaterialsCost = Math.Max(0, d.MaterialsCost),
+                FootprintCells = new int2(Math.Max(1, d.FootprintCells.x), Math.Max(1, d.FootprintCells.y)),
+                CanRequest = canRequest ? (byte)1 : (byte)0
+            });
+            configuredSpawnableSourceRows.Add(new JObject
+            {
+                ["building_id"] = normalizedBuildingId,
+                ["display_name"] = d.DisplayName,
+                ["price"] = Math.Max(0, d.CreditsCost),
+                ["materials_cost"] = Math.Max(0, d.MaterialsCost),
+                ["footprint"] = new JArray(Math.Max(1, d.FootprintCells.x), Math.Max(1, d.FootprintCells.y)),
+                ["can_request"] = canRequest,
+                ["authoritative_requestability_source"] = requestabilityEvidence
+            });
+        }
+        Need(configured.Length == 6 && configured.Any(row => row.BuildingId.ToString() == "building_guardtower" &&
+             row.CanRequest == 1 && row.Price == 22000 && row.MaterialsCost == 50),
+            "S073 GuardTower configured spawnable must use exact source identity and authored costs/requestability");
 
         var domain = SourceS073LegacySpawnRequestAdapter.LoadSharedPlacementSource(selected, physicalPath, args[16], waterPath, args[18], startupPath, args[20], sourceRoot, capturedAssetRoot);
         var masks = domain.Build(gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
@@ -511,8 +541,19 @@ internal static class S073LegacyPlacementOwnerHarness
         if (!planeMatch.Success || !float.TryParse(planeMatch.Groups[1].Value, NumberStyles.Float, CultureInfo.InvariantCulture, out float buildPlaneY))
             throw new InvalidDataException("Actual S073 build plane required");
         var registry = new Dictionary<int, RuntimeBuildingEntity>();
+        using var startupRedirectQuery = em.CreateEntityQuery(typeof(UnitMove), typeof(UnitGrid), typeof(LocalTransform));
+        var startupRedirectOwner = new BuildingPlacementRedirectCompositionSystemHelper();
+        var startupRedirectContext = new BuildingPlacementRedirectCompositionSystemHelper.Context(
+            (out EntityManager manager) => { manager = em; return true; },
+            (out Entity sourceGridEntity, out GridConfig sourceGridConfig, out DynamicBuffer<GridRoad> sourceRoads,
+                out DynamicBlockerComponent sourceBlockers) =>
+            {
+                sourceGridEntity = gridEntity; sourceGridConfig = em.GetComponentData<GridConfig>(gridEntity);
+                sourceRoads = em.GetBuffer<GridRoad>(gridEntity); sourceBlockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity); return true;
+            }, _ => { }, () => startupRedirectQuery);
+        Action<RectInt> startupRedirectUnits = rect => startupRedirectOwner.RedirectUnitsAroundPlacedBuilding(startupRedirectContext, rect);
         var pipeline = new GeneratedStartingBuildingPipeline(em, gridEntity, boundary, definitions.Definitions, true, registry,
-            masks.AuthoredBuildings, roads, masks.Sidewalks, water, buildPlaneY, RuntimeBlocked);
+            masks.AuthoredBuildings, roads, masks.Sidewalks, water, buildPlaneY, RuntimeBlocked, startupRedirectUnits);
         var gameplayStartOwner = new RuntimeGameplayStateSystem(em);
         gameplayStartOwner.ResetForGameplayStart();
         var spawnSystem = new InitialUnitsSpawnSystem();
@@ -1772,6 +1813,93 @@ internal static class S073LegacyPlacementOwnerHarness
                  summary.FactionId.ToString(CultureInfo.InvariantCulture) + "|" + summary.BuildingId,
                  out int expectedCount) && expectedCount == summary.Count),
              "Shared runtime owned-building readmodel projection disagrees with independently grouped live registry facts");
+        Need(!em.HasBuffer<BuildingRuntimeFactionSummary>(boundary),
+            "S073 AI probe must begin without an existing faction summary buffer");
+        DynamicBuffer<BuildingRuntimeFactionSummary> factionSummaries =
+            em.AddBuffer<BuildingRuntimeFactionSummary>(boundary);
+        var factionIds = new List<byte>();
+        foreach (RuntimeBuildingEntity building in registry.Values)
+            if (building != null && building.HasOwnerFaction && !factionIds.Contains(building.OwnerFactionId))
+                factionIds.Add(building.OwnerFactionId);
+        var factionSummaryInputs = new JArray();
+        var factionResourceSystem = new FactionResourceCompositionSystemHelper();
+        foreach (byte factionId in factionIds)
+        {
+            bool resourceSnapshotPresent = factionResourceSystem.TryGetFactionResourceEconomy(
+                em, registry, factionId,
+                out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy);
+            int buildingCount = registry.Values.Count(building =>
+                building != null && !building.IsDestroyed && building.HasOwnerFaction &&
+                building.OwnerFactionId == factionId);
+            BuildingRuntimeReadModelProjection.AddFactionSummary(
+                factionSummaries, factionId, buildingCount, economy);
+            factionSummaryInputs.Add(new JObject
+            {
+                ["faction_id"] = factionId,
+                ["resource_snapshot_present"] = resourceSnapshotPresent,
+                ["building_count_from_independent_live_registry_grouping"] = buildingCount,
+                ["stored_oil_barrels"] = economy.StoredOilBarrels,
+                ["stored_fuel_barrels"] = economy.StoredFuelBarrels,
+                ["oil_barrels_per_day"] = economy.OilBarrelsPerDay,
+                ["fuel_barrels_per_day"] = economy.FuelBarrelsPerDay
+            });
+        }
+        Need(factionSummaries.Length == factionIds.Count,
+            "Shared faction summary projection omitted a runtime owner faction");
+        var aiPlanner = new AIBuildPlannerSystem();
+        var aiPlannerState = State(em);
+        aiPlanner.OnCreate(ref aiPlannerState);
+        bool aiPlannerQueriesPresent = aiPlannerState.RequiredQueriesPresent;
+        int aiRequestsBefore = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length;
+        int aiPlannerStepCount = 0;
+        const float aiPlannerStepSeconds = 1f / 60f;
+        while (aiPlannerQueriesPresent && gameplayAfterHeadlessGate.SimulationActive != 0 &&
+               aiPlannerStepCount < 2700 && em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length == aiRequestsBefore)
+        {
+            TimeData worldTime = em.WorldUnmanaged.Time;
+            worldTime.ElapsedTime += aiPlannerStepSeconds;
+            worldTime.DeltaTime = aiPlannerStepSeconds;
+            em.WorldUnmanaged.Time = worldTime;
+            aiPlannerState.Begin();
+            try { aiPlanner.OnUpdate(ref aiPlannerState); }
+            finally { aiPlannerState.End(); }
+            aiPlannerStepCount++;
+        }
+        DynamicBuffer<BuildingRuntimeSpawnRequest> aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        int aiRequestCountBeforeProcessing = aiRequests.Length;
+        if (aiRequestCountBeforeProcessing > aiRequestsBefore)
+            pipeline.ProcessRequests((float)em.WorldUnmanaged.Time.ElapsedTime, forceScan: true);
+        aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        var aiRequestRows = new JArray(aiRequests.Skip(aiRequestsBefore).Select(request => new JObject
+        {
+            ["request_id"] = request.RequestId,
+            ["faction_id"] = request.FactionId,
+            ["building_id"] = request.BuildingId.ToString(),
+            ["preferred_origin"] = new JArray(request.PreferredOrigin.x, request.PreferredOrigin.y),
+            ["status"] = request.Status.ToString(),
+            ["result_code"] = request.ResultCode
+        }));
+        var aiPlanRows = new JArray();
+        using (var aiPlanQuery = em.CreateEntityQuery(ComponentType.ReadOnly<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>()))
+        using (var aiPlanEntities = aiPlanQuery.ToEntityArray(Allocator.Temp))
+        {
+            for (int i = 0; i < aiPlanEntities.Length; i++)
+            {
+                Entity planEntity = aiPlanEntities[i];
+                AIBuildPlan actualPlan = em.GetComponentData<AIBuildPlan>(planEntity);
+                aiPlanRows.Add(new JObject
+                {
+                    ["faction_id"] = actualPlan.FactionId,
+                    ["enabled"] = actualPlan.Enabled != 0,
+                    ["next_build_index"] = actualPlan.NextBuildIndex,
+                    ["base_center"] = new JArray(actualPlan.BaseCenterCell.x, actualPlan.BaseCenterCell.y),
+                    ["build_interval_seconds"] = actualPlan.BuildIntervalSeconds,
+                    ["last_build_time"] = actualPlan.LastBuildTime,
+                    ["entry_ids"] = new JArray(em.GetBuffer<AIBuildPlanEntry>(planEntity)
+                        .Select(entry => entry.BuildingId.ToString()))
+                });
+            }
+        }
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
             ["mission"] = "S073", ["source_identity_hash"] = selected.SourceIdentityHash, ["campaign_source"] = selected.SourceBinding.SourceOperationMapId,
             ["placement_config_variant"] = new JObject { ["kind"] = (string)placementConfig["kind"],
@@ -1793,6 +1921,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["historical_compact_capture_sha256"] = (string)sourceIdentity["prefab_capture_sha256"],
                 ["legacy_root_count"] = expectedInitialRoots.Properties().Count(), ["matched_current_capture"] = true,
                 ["independent_name_readback"] = true },
+            ["configured_spawnable_source_rows"] = configuredSpawnableSourceRows,
             ["runtime_blocker_placement"] = actualBlockerPlacement,
             ["map_placement_baked_owner_geometry_audit"] = bakedMapGeometryAudit,
             ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
@@ -1841,6 +1970,19 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["summary_row_count"] = ownedBuildingProjection.Length,
                 ["summary_rows"] = projectedOwnedBuildings,
                 ["matches_independent_live_registry_grouping"] = true
+            },
+            ["faction_summary_projection"] = new JObject
+            {
+                ["owner"] = "Shared BuildingRuntimeReadModelProjection with original resource and building-count owners",
+                ["faction_rows"] = factionSummaryInputs,
+                ["projected_row_count"] = factionSummaries.Length,
+                ["original_build_planner_queries_present"] = aiPlannerQueriesPresent,
+                ["original_build_planner_normal_steps"] = aiPlannerStepCount,
+                ["planner_step_seconds"] = aiPlannerStepSeconds,
+                ["planner_elapsed_seconds"] = em.WorldUnmanaged.Time.ElapsedTime,
+                ["original_plan_state_after_updates"] = aiPlanRows,
+                ["original_spawn_processor_invoked"] = aiRequestCountBeforeProcessing > aiRequestsBefore,
+                ["actual_new_build_requests"] = aiRequestRows
             },
             ["initial_plan_requests_consumed_by_original_owner"] = initialPlanRequestsRemaining == 0 && em.HasComponent<InitialUnitsSpawnInitialized>(plan),
             ["all_ten_actual_requests_succeeded"] = allTenInitialRequestsSucceeded,

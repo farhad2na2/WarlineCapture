@@ -835,15 +835,11 @@ namespace Game.Runtime
                     runtimeBuildings,
                     factionId,
                     out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy);
-                buffer.Add(new BuildingRuntimeFactionSummary
-                {
-                    FactionId = factionId,
-                    BuildingCount = runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId),
-                    StoredOilBarrels = economy.StoredOilBarrels,
-                    StoredFuelBarrels = economy.StoredFuelBarrels,
-                    OilBarrelsPerDay = economy.OilBarrelsPerDay,
-                    FuelBarrelsPerDay = economy.FuelBarrelsPerDay
-                });
+                BuildingRuntimeReadModelProjection.AddFactionSummary(
+                    buffer,
+                    factionId,
+                    runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId),
+                    economy);
 
                 if (factionResourceSystem.TryGetFactionUsableStorageSummary(
                         em,

@@ -46,7 +46,7 @@ EXPECTED = {
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
 SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
-    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "06413d31c35c785a0b6922c9328d6242043e550b26a728fdfc8602cd01c6a623",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "67206fe0267383b72e0d256ae520d0c5bf57d1e2bc8107428f1b7ac0b92e6f85",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
     "Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs": "840624cebb501c8c2b7e4dcdec887569ecebda2b78cf4ef4f8902a84f7779c53",
@@ -430,6 +430,31 @@ def main():
                        "generated_owner_adapter": generated_owner_adapter,
                        "campaign_source_graph": source_graph,
                        "logical_campaign_map": map_path})
+    for index, row in enumerate((payload or {}).get("configured_spawnable_source_rows", [])):
+        evidence = row.get("authoritative_requestability_source", {})
+        for label, path_key, hash_key in (("prefab", "prefab_path", "prefab_sha256"),
+                                          ("prefab_meta", "prefab_path", "prefab_meta_sha256"),
+                                          ("config", "config_path", "config_sha256"),
+                                          ("config_meta", "config_path", "config_meta_sha256")):
+            relative = evidence.get(path_key)
+            expected_hash = evidence.get(hash_key)
+            require(relative and expected_hash, "Complete authored building requestability source pin required")
+            source_file = source_root / relative
+            if label.endswith("_meta"):
+                source_file = Path(str(source_file) + ".meta")
+            source_file = source_file.resolve(strict=True)
+            require(sha(source_file) == expected_hash,
+                    "Authored configured-building source changed during harness: " + str(source_file))
+            run_inputs["configured_building_%s_%d" % (label, index)] = source_file
+        default_relative = evidence.get("can_request_default_source")
+        default_hash = evidence.get("can_request_default_source_sha256")
+        require(bool(default_relative) == bool(default_hash),
+                "Omitted requestability default source path/hash must be paired")
+        if default_relative:
+            default_source = (source_root / default_relative).resolve(strict=True)
+            require(sha(default_source) == default_hash,
+                    "Building requestability C# default source changed during harness: " + str(default_source))
+            run_inputs["configured_building_requestability_default_%d" % index] = default_source
     input_pins = pin_input_files(run_inputs)
     run_request = {"kind": "S073LegacyPlacementOwnerRunRequest", "schema_version": 1,
                    "build_receipt": str(build_path), "build_receipt_sha256": sha(build_path),

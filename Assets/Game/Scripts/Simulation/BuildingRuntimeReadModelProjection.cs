@@ -9,6 +9,23 @@ namespace Game.Runtime
     /// <summary>Deterministic row aggregation shared by the runtime publisher and headless host.</summary>
     internal static class BuildingRuntimeReadModelProjection
     {
+        internal static void AddFactionSummary(
+            DynamicBuffer<BuildingRuntimeFactionSummary> buffer,
+            byte factionId,
+            int buildingCount,
+            FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy)
+        {
+            buffer.Add(new BuildingRuntimeFactionSummary
+            {
+                FactionId = factionId,
+                BuildingCount = buildingCount,
+                StoredOilBarrels = economy.StoredOilBarrels,
+                StoredFuelBarrels = economy.StoredFuelBarrels,
+                OilBarrelsPerDay = economy.OilBarrelsPerDay,
+                FuelBarrelsPerDay = economy.FuelBarrelsPerDay
+            });
+        }
+
         internal static void PublishOwnedBuildingSummaries(
             DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,

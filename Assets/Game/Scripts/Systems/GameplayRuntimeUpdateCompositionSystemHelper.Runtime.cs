@@ -6,6 +6,7 @@ using Game.Rendering.Contracts;
 using Game.UI.Contracts;
 using Game.Components;
 using Game.Missions.Contracts;
+using Game.Simulation;
 using Unity.Collections;
 #if UNITY_EDITOR
 using GameplayRuntimeAllocationProbePhase = Game.Runtime.RuntimeDiagnosticsSystem.EditorGameplayRuntimeAllocationProbePhase;
@@ -17,7 +18,6 @@ namespace Game.Runtime
     public sealed partial class GameplayRuntimeUpdateCompositionSystemHelper
     {
         private const int LoadingGateDiagnosticIntervalFrames = 120;
-        private const int LoadingGateFailOpenFrames = 1800;
         private static readonly ProfilerMarker BeginUpdateMarker = new("GameplayRuntimeUpdate.BeginUpdate");
         private static readonly ProfilerMarker RoadBuildMarker = new("GameplayRuntimeUpdate.RoadBuild");
         private static readonly ProfilerMarker BuildingPlacementMarker = new("GameplayRuntimeUpdate.BuildingPlacement");
@@ -349,18 +349,23 @@ namespace Game.Runtime
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
-            if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
+            if (!gameplayInitialized)
                 return false;
-            if (!buildingRuntimeUpdateContext.StartupComplete)
+            if (!GameplayStartGatePolicy.HasLaunchRequest(gameplayInitialized, runtimeGameplayStateSystem.PlayRequested))
                 return false;
-            if (runtimeCity != null && !runtimeCity.HasSpawned)
+            if (!GameplayStartGatePolicy.IsBuildingStartupComplete(buildingRuntimeUpdateContext.StartupComplete))
                 return false;
-            if (runtimeGridBlockers != null && !runtimeGridBlockers.HasSpawned)
+            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeCity != null,
+                    runtimeCity != null && runtimeCity.HasSpawned))
                 return false;
-            if (runtimeDecorations != null && !runtimeDecorations.HasSpawned)
+            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeGridBlockers != null,
+                    runtimeGridBlockers != null && runtimeGridBlockers.HasSpawned))
+                return false;
+            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeDecorations != null,
+                    runtimeDecorations != null && runtimeDecorations.HasSpawned))
                 return false;
 
-            if (runtimeWorld == null || !runtimeWorld.IsCreated)
+            if (!GameplayStartGatePolicy.IsWorldAvailable(runtimeWorld != null && runtimeWorld.IsCreated))
                 return false;
 
             EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
@@ -368,7 +373,7 @@ namespace Game.Runtime
             int totalConfigCount = _initialSpawnConfigQuery.CalculateEntityCount();
             int initializedConfigCount = _initialSpawnInitializedQuery.CalculateEntityCount();
 
-            return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
+            return GameplayStartGatePolicy.AreInitialSpawnCountsComplete(totalConfigCount, initializedConfigCount);
         }
 
         private bool ShouldFailOpenLoadingGate(
@@ -380,11 +385,20 @@ namespace Game.Runtime
             reason = string.Empty;
             if (_loadingGateStartedFrame < 0)
                 return false;
-            if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
+            if (!gameplayInitialized)
                 return false;
-            if (UnityEngine.Time.frameCount - _loadingGateStartedFrame < LoadingGateFailOpenFrames)
+            bool playRequested = runtimeGameplayStateSystem.PlayRequested;
+            if (!playRequested)
                 return false;
-            if (runtimeCity == null || runtimeCity.HasSpawned || runtimeCity.IsGenerating)
+            if (!GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(
+                    gameplayInitialized, playRequested,
+                    _loadingGateStartedFrame, UnityEngine.Time.frameCount))
+                return false;
+            if (!GameplayStartGatePolicy.HasRuntimeCity(runtimeCity != null))
+                return false;
+            if (!GameplayStartGatePolicy.IsRuntimeCityNotSpawned(runtimeCity.HasSpawned))
+                return false;
+            if (!GameplayStartGatePolicy.IsRuntimeCityNotGenerating(runtimeCity.IsGenerating))
                 return false;
 
             reason = $"runtimeCityNotGenerating blocker={runtimeCity.DescribeStartupBlocker(UnityEngine.Time.frameCount)}";

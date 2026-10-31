@@ -1,0 +1,47 @@
+using System;
+using Game.Simulation;
+
+internal static class GameplayStartGatePolicySmoke
+{
+    private static int checks;
+
+    private static void Expect(string name, bool actual, bool expected)
+    {
+        checks++;
+        if (actual != expected)
+            throw new InvalidOperationException(name + " expected=" + expected + " actual=" + actual);
+    }
+
+    private static int Main()
+    {
+        Expect("not_initialized", GameplayStartGatePolicy.HasLaunchRequest(false, true), false);
+        Expect("not_requested", GameplayStartGatePolicy.HasLaunchRequest(true, false), false);
+        Expect("launch", GameplayStartGatePolicy.HasLaunchRequest(true, true), true);
+
+        Expect("building_pending", GameplayStartGatePolicy.IsBuildingStartupComplete(false), false);
+        Expect("optional_owner_absent", GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(false, false), true);
+        Expect("city_pending", GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(true, false), false);
+        Expect("runtime_owner_complete", GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(true, true), true);
+
+        Expect("world_missing", GameplayStartGatePolicy.IsWorldAvailable(false), false);
+        Expect("world_created", GameplayStartGatePolicy.IsWorldAvailable(true), true);
+        Expect("no_initial_spawns", GameplayStartGatePolicy.AreInitialSpawnCountsComplete(0, 0), true);
+        Expect("uninitialized_spawn", GameplayStartGatePolicy.AreInitialSpawnCountsComplete(2, 1), false);
+        Expect("all_spawns_initialized", GameplayStartGatePolicy.AreInitialSpawnCountsComplete(2, 2), true);
+        Expect("extra_initialized_rows", GameplayStartGatePolicy.AreInitialSpawnCountsComplete(2, 3), true);
+
+        Expect("no_timer", GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(true, true, -1, 1800), false);
+        Expect("not_initialized_timeout", GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(false, true, 0, 1800), false);
+        Expect("not_requested_timeout", GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(true, false, 0, 1800), false);
+        Expect("before_timeout", GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(true, true, 0, GameplayStartGatePolicy.RuntimeCityFailOpenFrames - 1), false);
+        Expect("timeout_boundary", GameplayStartGatePolicy.IsRuntimeCityFailOpenWindow(true, true, 0, GameplayStartGatePolicy.RuntimeCityFailOpenFrames), true);
+        Expect("city_absent", GameplayStartGatePolicy.HasRuntimeCity(false), false);
+        Expect("city_spawned", GameplayStartGatePolicy.IsRuntimeCityNotSpawned(true), false);
+        Expect("city_generating", GameplayStartGatePolicy.IsRuntimeCityNotGenerating(true), false);
+        Expect("city_not_spawned", GameplayStartGatePolicy.IsRuntimeCityNotSpawned(false), true);
+        Expect("city_not_generating", GameplayStartGatePolicy.IsRuntimeCityNotGenerating(false), true);
+
+        Console.WriteLine("[GameplayStartGatePolicySmoke] result=Passed checks=" + checks);
+        return 0;
+    }
+}

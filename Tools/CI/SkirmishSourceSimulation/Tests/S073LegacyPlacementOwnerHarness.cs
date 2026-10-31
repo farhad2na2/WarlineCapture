@@ -757,6 +757,7 @@ internal static class S073LegacyPlacementOwnerHarness
         JObject authoredMapRotatedActorEvidence = null;
         JObject authoredMapThirdBarrackEvidence = null;
         JObject authoredMapFourthBarrackEvidence = null;
+        JObject authoredMapFifthFuelBladderEvidence = null;
         JObject authoredMapWallEvidence = null;
         var mapPlacementCallbackRows = new List<int>();
         var mapPlacementCallbackSuccessRows = new List<int>();
@@ -785,6 +786,16 @@ internal static class S073LegacyPlacementOwnerHarness
                 authoredMapFourthBarrackEvidence = RegisterCapturedRotatedBarrack(4, 909, 345,
                     new[] { 4, 227, 367, 368, 369, 382, 383, 384 });
                 if (authoredMapFourthBarrackEvidence == null)
+                    return false;
+                mapPlacementCallbackSuccessRows.Add(scheduledIndex);
+                return true;
+            }
+            if (scheduledIndex == 5)
+            {
+                authoredMapFifthFuelBladderEvidence = RegisterCapturedRotatedBuilding(5, "Building_Fuel_Bladder",
+                    "Map/Buildings/Building_Fuel_Bladder/SM_Prop_Fuel_Bladder_01", 14, 10, 825, 368,
+                    new[] { 5, 6, 223 });
+                if (authoredMapFifthFuelBladderEvidence == null)
                     return false;
                 mapPlacementCallbackSuccessRows.Add(scheduledIndex);
                 return true;
@@ -926,25 +937,30 @@ internal static class S073LegacyPlacementOwnerHarness
             RemoveRuntimeBlockers(origin, footprint);
         }
         JObject RegisterCapturedRotatedBarrack(int sourceRowIndex, int expectedOriginX, int expectedOriginY,
+            int[] expectedPlacementIndices) => RegisterCapturedRotatedBuilding(sourceRowIndex, "Building_Barrack",
+                "Map/Buildings/Building_Barrack/SM_Bld_Barracks_01" + (sourceRowIndex == 2 ? "" : " (" + (sourceRowIndex - 2) + ")"),
+                28, 15, expectedOriginX, expectedOriginY, expectedPlacementIndices);
+
+        JObject RegisterCapturedRotatedBuilding(int sourceRowIndex, string expectedBuildingKey, string expectedSourcePath,
+            int sourceFootprintX, int sourceFootprintY, int expectedOriginX, int expectedOriginY,
             int[] expectedPlacementIndices)
         {
             JObject row = (JObject)mapPlacementCapture["placement_rows"][sourceRowIndex];
-            string sourcePathSuffix = sourceRowIndex == 2 ? "" : " (" + (sourceRowIndex - 2) + ")";
-            Need((int?)row["row_index"] == sourceRowIndex && (string)row["category"] == "Building_Barrack" &&
-                 (string)row["prefab"]?["key"] == "Building_Barrack" && (int?)row["faction_id"] == 1 &&
+            Need((int?)row["row_index"] == sourceRowIndex && (string)row["category"] == expectedBuildingKey &&
+                 (string)row["prefab"]?["key"] == expectedBuildingKey && (int?)row["faction_id"] == 1 &&
                  (bool?)row["rotate_vertical"] == true &&
-                 (string)row["source_path"] == "Map/Buildings/Building_Barrack/SM_Bld_Barracks_01" + sourcePathSuffix,
-                "Exact captured S073 rotated Barrack binding required for source row " + sourceRowIndex);
+                 (string)row["source_path"] == expectedSourcePath,
+                "Exact captured S073 rotated " + expectedBuildingKey + " binding required for source row " + sourceRowIndex);
             RuntimeDefinition sourceDefinition = mapDefinitions.Definitions[(int)row["prefab_index"]];
-            Need(sourceDefinition.SourceMetadataComplete && sourceDefinition.Prefab.name == "Building_Barrack" &&
-                 !sourceDefinition.IsWall && !sourceDefinition.HasRunway && sourceDefinition.FootprintCells.x == 28 &&
-                 sourceDefinition.FootprintCells.y == 15,
-                "Complete ordinary source Barrack definition with captured unrotated footprint required");
+            Need(sourceDefinition.SourceMetadataComplete && sourceDefinition.Prefab.name == expectedBuildingKey &&
+                 !sourceDefinition.IsWall && !sourceDefinition.HasRunway && sourceDefinition.FootprintCells.x == sourceFootprintX &&
+                 sourceDefinition.FootprintCells.y == sourceFootprintY,
+                "Complete ordinary source definition with captured unrotated footprint required for " + expectedBuildingKey);
             int2 footprint = MapBuildingPlacementOriginKernel.ResolvePlacementFootprint(
                 sourceDefinition.FootprintCells.x, sourceDefinition.FootprintCells.y,
                 isLinearWall: false, localBoundsSizeX: 0f, localBoundsSizeZ: 0f, rotateVertical: true);
-            Need(footprint.x == 15 && footprint.y == 28,
-                "Original shared placement kernel must resolve the vertical 28x15 Barrack to 15x28");
+            Need(footprint.x == sourceFootprintY && footprint.y == sourceFootprintX,
+                "Original shared placement kernel must resolve the captured vertical footprint for " + expectedBuildingKey);
             var rotatedDefinition = (RuntimeDefinition)typeof(RuntimeDefinition)
                 .GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic)
                 .Invoke(sourceDefinition, null);
@@ -958,11 +974,11 @@ internal static class S073LegacyPlacementOwnerHarness
             Need(origin.x == expectedOriginX && origin.y == expectedOriginY &&
                  origin.x == (int)replayOrigin["origin"][0] && origin.y == (int)replayOrigin["origin"][1] &&
                  (int)replayOrigin["footprint"][0] == footprint.x && (int)replayOrigin["footprint"][1] == footprint.y,
-                "Rotated Barrack source origin must match the current captured-input shared replay");
+                "Rotated source origin must match the current captured-input shared replay");
             JArray rotationBits = row["world_rotation_f32bits"] as JArray;
             Need(rotationBits != null && rotationBits.Count == 4 &&
                  rotationBits.Select(value => (int)value).SequenceEqual(new[] { 0, 1060439283, 0, 1060439283 }),
-                "Captured Barrack quaternion bits, including signed-zero anchors, required");
+                "Captured source quaternion bits, including signed-zero anchors, required");
             var mathRotation = new quaternion(
                 BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[0]), 0),
                 BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[1]), 0),
@@ -972,7 +988,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 mathRotation.value.x, mathRotation.value.y, mathRotation.value.z, mathRotation.value.w);
             JObject euler = (JObject)row["world_euler_angles"];
             var worldEuler = new Vector3((float)euler["x"], (float)euler["y"], (float)euler["z"]);
-            Need(worldEuler.Equals(new Vector3(0f, 90f, 0f)), "Captured Barrack authored Euler rotation must remain 0,90,0");
+            Need(worldEuler.Equals(new Vector3(0f, 90f, 0f)), "Captured authored Euler rotation must remain 0,90,0");
 
             var preexistingRuntimeBuildingOverlaps = new JArray();
             var preservedRuntimeBuildings = new List<RuntimeBuildingEntity>();
@@ -1039,7 +1055,8 @@ internal static class S073LegacyPlacementOwnerHarness
                 }
                 int[] observed = preservedSourceBlockers.Select(item => item.Item2).OrderBy(index => index).ToArray();
                 Need(expectedPlacementIndices.All(observed.Contains) && observed.Distinct().Count() == observed.Length,
-                    "Rotated Barrack must retain every independently identified live source-map overlap; any additional live overlaps are captured too");
+                    "Rotated source building must retain every independently identified live source-map overlap; expected=" +
+                    string.Join(",", expectedPlacementIndices.OrderBy(index => index)) + " observed=" + string.Join(",", observed));
                 observedSourceOverlapCount = observed.Length;
                 RemoveRuntimeBlockers(at, size);
                 foreach (var item in preservedSourceBlockers)
@@ -1072,8 +1089,8 @@ internal static class S073LegacyPlacementOwnerHarness
                 sourceWorldRotationOverride: sourceRotation);
             Need(building != null && building.CombatEntity != Entity.Null && building.BlockerEntity != Entity.Null &&
                  em.Exists(building.CombatEntity) && em.Exists(building.BlockerEntity) && building.OriginCell.Equals(new Vector2Int(origin.x, origin.y)) &&
-                 building.Definition.Prefab.name == "Building_Barrack" && building.Definition.FootprintCells.Equals(new Vector2Int(15, 28)),
-                "Captured row 2 must register through the existing shared building owner using the original rotated definition footprint");
+                 building.Definition.Prefab.name == expectedBuildingKey && building.Definition.FootprintCells.Equals(new Vector2Int(footprint.x, footprint.y)),
+                "Captured source row must register through the existing shared building owner using the original rotated definition footprint");
             registration.SetOwner(building, (byte?)row["faction_id"]);
             autonomousWorld.Buildings.Add(building.Id, building);
             autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
@@ -1095,7 +1112,7 @@ internal static class S073LegacyPlacementOwnerHarness
                  preservedSourceBlockers.All(item => em.Exists(item.Item1)) &&
                  preservedRuntimeBuildings.All(existing => autonomousWorld.Buildings.TryGetValue(existing.Id, out var retained) &&
                      ReferenceEquals(retained, existing) && (existing.CombatEntity == Entity.Null || em.Exists(existing.CombatEntity))),
-                "Rotated Barrack actor, rotation, faction, geometry, redirect owner, and all observed source blockers must agree");
+                "Rotated source actor, rotation, faction, geometry, redirect owner, and all observed source blockers must agree");
             buildings.Add(new JObject { ["runtime_id"] = building.Id, ["definition"] = building.Definition.Prefab.name,
                 ["origin"] = new JArray(origin.x, origin.y), ["combat_entity"] = building.CombatEntity.Index + ":" + building.CombatEntity.Version,
                 ["blocker_entity"] = building.BlockerEntity.Index + ":" + building.BlockerEntity.Version });
@@ -1383,12 +1400,13 @@ internal static class S073LegacyPlacementOwnerHarness
             mapPlacementSourceRowCount, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
         Need(mapPlacementSourceRowCount == 432 && !mapPlacementSequenceQueued && mapPlacementSequence.PriorityPassCompleted &&
              !mapPlacementSequence.IsQueued && mapPlacementSequence.NextPlacementIndex == 32 &&
-             mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2, 3, 4 }) &&
+             mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2, 3, 4, 5 }) &&
              authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed" &&
              authoredMapRotatedActorEvidence != null && (string)authoredMapRotatedActorEvidence["status"] == "Passed" &&
              authoredMapThirdBarrackEvidence != null && (string)authoredMapThirdBarrackEvidence["status"] == "Passed" &&
-             authoredMapFourthBarrackEvidence != null && (string)authoredMapFourthBarrackEvidence["status"] == "Passed",
-            "Original 432-row placement priority pass and first 32 sequential attempts must register only the four implemented source rows and remain incomplete");
+             authoredMapFourthBarrackEvidence != null && (string)authoredMapFourthBarrackEvidence["status"] == "Passed" &&
+             authoredMapFifthFuelBladderEvidence != null && (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed",
+            "Original 432-row placement priority pass and first 32 sequential attempts must register only the five implemented source rows and remain incomplete");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {
@@ -1456,27 +1474,31 @@ internal static class S073LegacyPlacementOwnerHarness
                 (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
         }
         bool authoredMapActorSucceeded = authoredMapBuilding != null && authoredMapActorEvidence != null &&
-            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 15 &&
+            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 16 &&
             registry.ContainsKey(authoredMapBuilding.Id) && autonomousWorld.Buildings.ContainsKey(authoredMapBuilding.Id);
         bool authoredMapRotatedActorSucceeded = authoredMapRotatedActorEvidence != null &&
-            (string)authoredMapRotatedActorEvidence["status"] == "Passed" && registry.Count == 15 &&
+            (string)authoredMapRotatedActorEvidence["status"] == "Passed" && registry.Count == 16 &&
             registry.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]);
         bool authoredMapThirdBarrackSucceeded = authoredMapThirdBarrackEvidence != null &&
-            (string)authoredMapThirdBarrackEvidence["status"] == "Passed" && registry.Count == 15 &&
+            (string)authoredMapThirdBarrackEvidence["status"] == "Passed" && registry.Count == 16 &&
             registry.ContainsKey((int)authoredMapThirdBarrackEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapThirdBarrackEvidence["runtime_id"]);
         bool authoredMapFourthBarrackSucceeded = authoredMapFourthBarrackEvidence != null &&
-            (string)authoredMapFourthBarrackEvidence["status"] == "Passed" && registry.Count == 15 &&
+            (string)authoredMapFourthBarrackEvidence["status"] == "Passed" && registry.Count == 16 &&
             registry.ContainsKey((int)authoredMapFourthBarrackEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapFourthBarrackEvidence["runtime_id"]);
+        bool authoredMapFifthFuelBladderSucceeded = authoredMapFifthFuelBladderEvidence != null &&
+            (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed" && registry.Count == 16 &&
+            registry.ContainsKey((int)authoredMapFifthFuelBladderEvidence["runtime_id"]) &&
+            autonomousWorld.Buildings.ContainsKey((int)authoredMapFifthFuelBladderEvidence["runtime_id"]);
         bool authoredMapWallActorSucceeded = authoredMapWallEvidence != null &&
             (string)authoredMapWallEvidence["status"] == "Passed" &&
-            registry.Count == 15 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
+            registry.Count == 16 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapWallEvidence["runtime_id"]);
         bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded &&
             authoredMapRotatedActorSucceeded && authoredMapThirdBarrackSucceeded && authoredMapFourthBarrackSucceeded &&
-            authoredMapWallActorSucceeded;
+            authoredMapFifthFuelBladderSucceeded && authoredMapWallActorSucceeded;
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1507,6 +1529,7 @@ internal static class S073LegacyPlacementOwnerHarness
             ["authored_map_rotated_actor"] = authoredMapRotatedActorEvidence,
             ["authored_map_third_barrack_actor"] = authoredMapThirdBarrackEvidence,
             ["authored_map_fourth_barrack_actor"] = authoredMapFourthBarrackEvidence,
+            ["authored_map_fifth_fuel_bladder_actor"] = authoredMapFifthFuelBladderEvidence,
             ["authored_map_wall_actor"] = authoredMapWallEvidence,
             ["map_placement_sequence"] = new JObject
             {
@@ -1522,7 +1545,7 @@ internal static class S073LegacyPlacementOwnerHarness
             },
             ["map_placements_materialized"] = (authoredMapActorEvidence != null ? 1 : 0) +
                 (authoredMapRotatedActorEvidence != null ? 1 : 0) + (authoredMapThirdBarrackEvidence != null ? 1 : 0) +
-                (authoredMapFourthBarrackEvidence != null ? 1 : 0) +
+                (authoredMapFourthBarrackEvidence != null ? 1 : 0) + (authoredMapFifthFuelBladderEvidence != null ? 1 : 0) +
                 (authoredMapWallEvidence != null ? 1 : 0),
             ["map_placements_total"] = 432,
             ["map_placement_runtime_owner_complete"] = false,
@@ -1557,7 +1580,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 actual legacy startup prefix with four captured authored-map buildings and one captured wall registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
+            ["mission_world_scope"] = "S073 actual legacy startup prefix with five captured authored-map buildings and one captured wall registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

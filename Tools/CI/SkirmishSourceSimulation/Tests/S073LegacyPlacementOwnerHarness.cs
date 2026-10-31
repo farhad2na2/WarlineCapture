@@ -20,6 +20,21 @@ using UnityEngine.AddressableAssets;
 
 internal static class S073LegacyPlacementOwnerHarness
 {
+    private sealed class ActualBlockerPlacementGrid : IRuntimeGridBlockerPlacementGrid
+    {
+        private readonly DynamicBuffer<GridWalkable> walkable;
+        private readonly DynamicBuffer<GridRoad> roads;
+        private readonly Unity.Collections.NativeBitArray blocked;
+        public int Width { get; }
+        public int Height { get; }
+        public ActualBlockerPlacementGrid(GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockers)
+        { Width = grid.Width; Height = grid.Height; this.walkable = walkable; this.roads = roads; blocked = blockers.Blocked; }
+        public bool IsWalkable(int index) => walkable[index].Value != 0;
+        public bool IsRoad(int index) => roads[index].Value != 0;
+        public bool IsBlocked(int index) => blocked.IsCreated && blocked.IsSet(index);
+    }
+
     static readonly string[] ProductionRoots =
     {
         "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Veh_APC_Fast", "Unit_Veh_APC_Heavy",
@@ -40,6 +55,62 @@ internal static class S073LegacyPlacementOwnerHarness
     }
     static void SetField(object target, string name, object value) =>
         target.GetType().GetField(name, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(target, value);
+    static string YamlScalar(string text, string key)
+    {
+        MatchCollection rows = Regex.Matches(text, "(?m)^  " + Regex.Escape(key) + @":\s*(.*?)\s*$");
+        Need(rows.Count == 1 && rows[0].Groups[1].Value.Length > 0, "Unique serialized S073 AI field required: " + key);
+        return rows[0].Groups[1].Value;
+    }
+    static List<string> YamlStringList(string text, string key)
+    {
+        string body = Regex.Match(text, "(?ms)^  " + Regex.Escape(key) + @":[ \t]*(?<body>.*?)(?=^  [A-Za-z]|\z)").Groups["body"].Value;
+        if (body.Length == 0) throw new InvalidDataException("Missing S073 AI list " + key);
+        if (body.Trim() == "[]") return new List<string>();
+        var rows = Regex.Matches(body, @"(?m)^  - ([^\r\n]+)$").Cast<Match>().Select(m => m.Groups[1].Value.Trim()).ToList();
+        if (rows.Count == 0 || rows.Any(string.IsNullOrWhiteSpace)) throw new InvalidDataException("Invalid S073 AI list " + key);
+        return rows;
+    }
+    static int YamlInt(string text, string key) => int.Parse(YamlScalar(text, key), CultureInfo.InvariantCulture);
+    static float YamlFloat(string text, string key) => float.Parse(YamlScalar(text, key), CultureInfo.InvariantCulture);
+    static bool YamlBool(string text, string key) => YamlScalar(text, key) switch { "1" => true, "0" => false, _ => throw new InvalidDataException("Invalid S073 AI boolean " + key) };
+    static AIControllerConfig ReadAIController(string path, string expectedName)
+    {
+        string text = File.ReadAllText(path);
+        Need(YamlScalar(text, "m_Name") == expectedName && YamlScalar(text, "m_Script") == "{fileID: 11500000, guid: 85730297a3598ee4d92dcb41787af9ae, type: 3}",
+            "Exact original S073 AIControllerConfig source required: " + expectedName);
+        var config = ScriptableObject.CreateInstance<AIControllerConfig>();
+        config.name = expectedName;
+        SetField(config, "enabled", YamlBool(text, "enabled"));
+        SetField(config, "role", Enum.ToObject(typeof(AIControllerRole), YamlInt(text, "role")));
+        SetField(config, "difficulty", Enum.ToObject(typeof(AIControllerDifficulty), YamlInt(text, "difficulty")));
+        SetField(config, "factionId", YamlInt(text, "factionId"));
+        SetField(config, "autoControlsPlayerFaction", YamlBool(text, "autoControlsPlayerFaction"));
+        SetField(config, "startingMoney", YamlInt(text, "startingMoney"));
+        SetField(config, "incomeMultiplier", YamlFloat(text, "incomeMultiplier"));
+        SetField(config, "oilSellPrice", YamlInt(text, "oilSellPrice"));
+        SetField(config, "fuelSellPrice", YamlInt(text, "fuelSellPrice"));
+        SetField(config, "buildIntervalSeconds", YamlFloat(text, "buildIntervalSeconds"));
+        SetField(config, "unitProductionIntervalSeconds", YamlFloat(text, "unitProductionIntervalSeconds"));
+        SetField(config, "attackIntervalSeconds", YamlFloat(text, "attackIntervalSeconds"));
+        SetField(config, "maxActiveAttackGroups", YamlInt(text, "maxActiveAttackGroups"));
+        SetField(config, "defenseRadiusCells", YamlInt(text, "defenseRadiusCells"));
+        SetField(config, "aggression", YamlFloat(text, "aggression"));
+        SetField(config, "preferredBuildingIds", YamlStringList(text, "preferredBuildingIds"));
+        SetField(config, "preferredUnitIds", YamlStringList(text, "preferredUnitIds"));
+        SetField(config, "preferredVehicleIds", YamlStringList(text, "preferredVehicleIds"));
+        return config;
+    }
+    static AIPlanEntryStartupConfig ReadAIPlan(string path)
+    {
+        string text = File.ReadAllText(path);
+        Need(YamlScalar(text, "m_Name") == "Plan" && YamlScalar(text, "m_Script") == "{fileID: 11500000, guid: 2842cdb0ea2049d2bc13487757390b68, type: 3}",
+            "Exact original S073 AI plan config source required");
+        var config = ScriptableObject.CreateInstance<AIPlanEntryStartupConfig>();
+        config.name = "Plan";
+        SetField(config, "fallbackBuildingIds", YamlStringList(text, "fallbackBuildingIds"));
+        SetField(config, "fallbackProductionUnitIds", YamlStringList(text, "fallbackProductionUnitIds"));
+        return config;
+    }
     static OperationMapDefinition ReadSelectedMap(string path)
     {
         string text = File.ReadAllText(path);
@@ -78,13 +149,14 @@ internal static class S073LegacyPlacementOwnerHarness
 
     static JObject Run(string[] args)
     {
-        Need(args.Length == 25, "Expected source templates, S073 configs, Campaign inputs and external placement-candidate descriptor");
+        Need(args.Length == 34, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, and pinned blocker metadata");
         string initialTemplatePath = Path.GetFullPath(args[0]), templatePath = Path.GetFullPath(args[2]), identityPath = Path.GetFullPath(args[4]);
         string legacyPath = Path.GetFullPath(args[6]), definitionsPath = Path.GetFullPath(args[8]);
         string sourceRoot = Path.GetFullPath(args[10]);
         string mapPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset");
         string graphPath = Path.GetFullPath(args[11]), initialPath = Path.GetFullPath(args[13]);
         string physicalPath = Path.GetFullPath(args[15]), waterPath = Path.GetFullPath(args[17]), startupPath = Path.GetFullPath(args[19]);
+        string presetReadbackPath = Path.GetFullPath(args[25]);
         string roadOutput = Path.GetFullPath(args[22]); Directory.CreateDirectory(roadOutput);
         JObject initialTemplate = JObject.Parse(File.ReadAllText(initialTemplatePath));
         JObject template = JObject.Parse(File.ReadAllText(templatePath));
@@ -93,22 +165,54 @@ internal static class S073LegacyPlacementOwnerHarness
         JObject initialization = JObject.Parse(File.ReadAllText(initialPath));
         Need(Sha(initialTemplatePath) == args[1] && Sha(templatePath) == args[3] && Sha(identityPath) == args[5] && Sha(legacyPath) == args[7] &&
              Sha(definitionsPath) == args[9] && Sha(graphPath) == args[12] && Sha(initialPath) == args[14] &&
-             Sha(physicalPath) == args[16] && Sha(waterPath) == args[18] && Sha(startupPath) == args[20],
+             Sha(physicalPath) == args[16] && Sha(waterPath) == args[18] && Sha(startupPath) == args[20] &&
+             Sha(presetReadbackPath) == args[26],
              "A pinned S073/Campaign owner input changed");
         Need((string)legacy["kind"] == "S073LegacyInitialSpawnExternalData" && (string)legacy["mission"] == "S073", "Actual S073 legacy config required");
+        Need(args[26] == "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10" &&
+             Required(legacy, "source_artifacts.config_readback_sha256") == args[26],
+             "Full source-bound S073 config readback lineage required");
+        JObject fullPresetReadback = JObject.Parse(File.ReadAllText(presetReadbackPath));
+        JObject presetFields = (JObject)fullPresetReadback["Assets/Game/Resources/SkirmishIndustrialBasin.asset"]?["MonoBehaviour"];
+        JObject constructionFields = (JObject)fullPresetReadback["Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset"]?["MonoBehaviour"];
+        JObject initialForcesFields = (JObject)fullPresetReadback["Assets/Game/Configs/Skirmish/IndustrialBasin/InitialForces.asset"]?["MonoBehaviour"];
+        JArray controllerRefs = presetFields?["aiControllers"] as JArray;
+        Need((string)presetFields?["m_Name"] == "SkirmishIndustrialBasin" &&
+             (int?)presetFields?["reinforcementInfantryTarget"] > 0 && (int?)presetFields?["attackSquadSize"] > 0 &&
+             (string)presetFields?["buildingPlacement"]?["guid"] == "79bf06dc9b9c142249fbdc78c6e9a8ef" &&
+             controllerRefs?.Count == 2 && (string)controllerRefs[0]?["guid"] == "c3d7226b0272d44dfa219e9185a76087" &&
+             (string)controllerRefs[1]?["guid"] == "4e7dd2768a00645fab3308d56ba9352b" &&
+             (string)presetFields?["aiPlan"]?["guid"] == "eeead70461e414c80a3753a7987c3f58" &&
+             (string)constructionFields?["initialUnitsConfig"]?["guid"] == "aa39266ae0d5e4db0a66069bf1d5a5f4" &&
+             (string)initialForcesFields?["m_Name"] == "InitialForces",
+             "Original S073 preset-to-construction-to-initial-forces references changed");
+        Need((int?)initialForcesFields?["initialMaterials"] == (int?)legacy["initial_spawn"]?["InitialMaterials"] &&
+             (int?)initialForcesFields?["materialsCapacity"] == (int?)legacy["initial_spawn"]?["MaterialsCapacity"] &&
+             (int?)initialForcesFields?["initialAiMaterials"] == (int?)legacy["initial_spawn"]?["InitialAiMaterials"] &&
+             (int?)initialForcesFields?["aiMaterialsCapacity"] == (int?)legacy["initial_spawn"]?["AiMaterialsCapacity"] &&
+             (int?)initialForcesFields?["initialFuel"] == (int?)legacy["initial_spawn"]?["InitialFuel"],
+             "Legacy initial-spawn values differ from the full original InitialForces readback");
         Need(args[5] == Required(legacy, "source_artifacts.name_readback_sha256"), "S073 source identity readback changed");
         Need((string)initialization["kind"] == "GeneratedMissionInitialization" && (string)initialization["mission_id"] == "S002", "Pinned shared Campaign asset graph source required");
         Need(Sha(mapPath) == args[21], "Current logical S073 OperationMapDefinition changed");
         var expectedInitialRoots = legacy["captured_unit_prefab_roots"] as JObject ?? throw new InvalidDataException("S073 initial prefab key set required");
-        Need(JToken.DeepEquals(expectedInitialRoots, initialTemplate["opening_prefabs"]) &&
+        Need(JToken.DeepEquals(expectedInitialRoots, new JObject(expectedInitialRoots.Properties().Select(p => new JProperty(p.Name, initialTemplate["opening_prefabs"]?[p.Name])))) &&
              (string)initialTemplate["kind"] == "AuthoredSkirmishPrefabReferenceData" &&
              (string)initialTemplate["authority"] == "ActualSourceAssetsAndNativeBakers_NotMissionState" &&
              (string)initialTemplate["opening_prefabs"]?["Unit_Chr_Soldier_Male_02_Alt_04"] != null,
-             "Exact four-root S073 initial source capture required");
+             "Pinned production source capture must contain the exact four S073 legacy opening roots");
         Need(JToken.DeepEquals(expectedInitialRoots, new JObject(expectedInitialRoots.Properties().Select(p => new JProperty(p.Name, template["opening_prefabs"]?[p.Name])))),
              "The production source capture changed an initial S073 prefab root");
-        Need(Sha(identityPath) == args[5] && (string)JObject.Parse(File.ReadAllText(identityPath))["prefab_capture_sha256"] == args[1],
-             "Exact S073 initial prefab identity readback lineage required");
+        JObject sourceIdentity = JObject.Parse(File.ReadAllText(identityPath));
+        Need(Sha(identityPath) == args[5] &&
+             (string)sourceIdentity["kind"] == "S073LegacyPrefabSourceNameReadback" &&
+             (string)sourceIdentity["mission"] == "S073" &&
+             (string)sourceIdentity["prefab_capture_sha256"] == "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+             "Pinned S073 source-name readback and its historical capture hash required");
+        foreach (JProperty root in expectedInitialRoots.Properties())
+            Need(sourceIdentity["objects"]?.Children<JObject>().Any(row => (string)row["unit_source_key"] == root.Name &&
+                 (string)row["game_object_name"] == root.Name) == true,
+                 "Independent S073 name readback lacks opening prefab root: " + root.Name);
         OperationMapDefinition selected = ReadSelectedMap(mapPath);
         SourceS073LegacySpawnRequestAdapter.RequireSharedPlacementSource(selected);
 
@@ -157,7 +261,9 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(surfaceMeta.AssetGuid == selected.MapSurfaceDataReference.AssetGUID && surfaceMeta.SurfaceCount == gridData.Width * gridData.Height,
              "Current baked S073 Campaign surface differs from selected logical binding");
 
-        var em = new EntityManager { LogicalAllocatorAdmitted = true };
+        using var autonomousWorld = new AutonomousWorld();
+        var em = autonomousWorld.Entities;
+        em.LogicalAllocatorAdmitted = true;
         int next = 1; em.AllocateLogicalIdentity = () => new Entity { Index = next++, Version = 1 };
         var surfaceBlob = surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out var blob) ? blob : throw new InvalidDataException("Original Campaign surface decoder rejected payload");
         ref MapSurfaceBlob surface = ref surfaceBlob.Value;
@@ -177,10 +283,84 @@ internal static class S073LegacyPlacementOwnerHarness
         var roadRun = new JObject { ["schema_version"] = 1, ["kind"] = "SkirmishSourceSimulationRun", ["mission"] = "S073",
             ["repository_root"] = sourceRoot, ["source_repository_root"] = sourceRoot, ["output_directory"] = roadOutput,
             ["mission_scene"] = new JObject { ["path"] = scenePath, ["sha256"] = Sha(scenePath) } };
-        using var roadOwner = new SourceFreshInitialRoadOwner(roadRun);
-        roadOwner.Sync(em, gridEntity); roadOwner.RequireBeforePath();
+        autonomousWorld.PrepareFreshInitialRoads(roadRun);
+        autonomousWorld.SyncS073LegacyDiagnosticRoads(gridEntity);
+
+        string blockerMetadataPath = Path.GetFullPath(args[32]);
+        Need(args[33] == "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776" &&
+             Sha(blockerMetadataPath) == args[33], "Exact reviewed original S073 runtime blocker metadata required");
+        JObject blockerCapture = JObject.Parse(File.ReadAllText(blockerMetadataPath));
+        JObject blockerConfig = blockerCapture["config"] as JObject;
+        JArray blockerPrefabRows = blockerCapture["prefabs"] as JArray;
+        Need((string)blockerCapture["kind"] == "S073OriginalRuntimeBlockerPrefabMetadata" &&
+             (string)blockerCapture["authority"] == "MatchSceneConfig_OriginalRuntimeGridBlockerPresentationSystemHelper.BuildMetadata" &&
+             (bool?)blockerConfig?["spawn_on_start"] == true && (int?)blockerConfig?["blocker_count"] == 1 &&
+             (int?)blockerConfig?["random_seed"] == 24680 && (int?)blockerConfig?["prefab_count"] == 63 &&
+             blockerPrefabRows?.Count == 63 && (bool?)blockerCapture["random_placement_executed"] == false &&
+             (bool?)blockerCapture["blocker_spawned"] == false,
+             "Source blocker capture must be config/metadata only, with no claimed placement instance");
+        var blockerPrefabs = new List<RuntimeGridBlockerPrefabData>(blockerPrefabRows.Count);
+        foreach (JObject row in blockerPrefabRows)
+        {
+            string name = (string)row["name"];
+            string kind = RuntimeGridBlockerPlacementKernel.ClassifyPrefabKind(name).ToString();
+            JArray bounds = row["local_bounds_size"] as JArray;
+            Need(!string.IsNullOrWhiteSpace(name) && kind == (string)row["kind"] &&
+                 (bool?)row["has_bounds"] == true && bounds?.Count == 3,
+                 "Exact original S073 blocker prefab metadata row required");
+            blockerPrefabs.Add(new RuntimeGridBlockerPrefabData { Name = name,
+                Kind = (BlockerPrefabKind)Enum.Parse(typeof(BlockerPrefabKind), kind),
+                BlocksOnlyCenterCell = (bool?)row["blocks_only_center_cell"] == true,
+                HasBounds = true, BoundsWidth = (float)bounds[0], BoundsDepth = (float)bounds[2] });
+        }
+        blockerPrefabs.Sort((a, b) => string.CompareOrdinal(a.Name, b.Name));
+        autonomousWorld.InitializeS073LegacyDiagnosticBlockerOwners(gridEntity);
+        DynamicBuffer<GridWalkable> blockerWalkable = em.GetBuffer<GridWalkable>(gridEntity);
+        DynamicBuffer<GridRoad> blockerRoads = em.GetBuffer<GridRoad>(gridEntity);
+        var sourceGrid = em.GetComponentData<GridConfig>(gridEntity);
+        var sourceBlockerState = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+        Need(blockerWalkable.Length == sourceGrid.Width * sourceGrid.Height && blockerRoads.Length == blockerWalkable.Length &&
+             sourceBlockerState.Blocked.IsCreated && sourceBlockerState.Blocked.Length == blockerWalkable.Length,
+             "Actual selected Campaign grid predicates and shared blocker storage required");
+        List<RuntimeGridBlockerPlacementData> actualBlockerPlan = RuntimeGridBlockerPlacementPolicy.Plan(
+            new ActualBlockerPlacementGrid(sourceGrid, blockerWalkable, blockerRoads, sourceBlockerState), blockerPrefabs,
+            (int)blockerConfig["blocker_count"], (uint)(int)blockerConfig["random_seed"], sourceGrid.CellSize,
+            (float)blockerConfig["tree_spawn_ratio"], (int)blockerConfig["tree_cluster_count"],
+            (int)blockerConfig["tree_cluster_spacing_min_cells"], (int)blockerConfig["tree_cluster_spacing_max_cells"],
+            (int)blockerConfig["tree_cluster_distance_min_cells"], (int)blockerConfig["tree_cluster_distance_max_cells"]);
+        var actualBlockerRows = new JArray();
+        foreach (RuntimeGridBlockerPlacementData placement in actualBlockerPlan)
+        {
+            Entity blockerEntity = em.CreateEntity();
+            em.AddComponentData(blockerEntity, new UnitGrid { Cell = placement.OriginCell });
+            em.AddComponentData(blockerEntity, new GridBlockerSize { Size = placement.SizeCells });
+            em.AddComponent<StaticGridBlocker>(blockerEntity);
+            autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+            sourceBlockerState = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+            bool appliedBlocked = true;
+            for (int y = placement.OriginCell.y; y < placement.OriginCell.y + placement.SizeCells.y; y++)
+                for (int x = placement.OriginCell.x; x < placement.OriginCell.x + placement.SizeCells.x; x++)
+                    appliedBlocked &= sourceBlockerState.Blocked.IsSet(x + y * sourceGrid.Width);
+            Need(appliedBlocked, "Original StaticGridBlockerUpdateSystem did not apply the placed blocker footprint");
+            actualBlockerRows.Add(new JObject { ["prefab"] = blockerPrefabs[placement.PrefabIndex].Name,
+                ["kind"] = placement.Kind.ToString(), ["origin_cell"] = new JArray(placement.OriginCell.x, placement.OriginCell.y),
+                ["footprint"] = new JArray(placement.SizeCells.x, placement.SizeCells.y),
+                ["original_static_blocker_owner_applied"] = appliedBlocked });
+        }
+        var actualBlockerPlacement = new JObject { ["source_metadata_sha256"] = args[33],
+            ["actual_selected_campaign_grid_used"] = true, ["native_grid_predicates_used"] = true,
+            ["seed"] = (int)blockerConfig["random_seed"], ["requested_count"] = (int)blockerConfig["blocker_count"],
+            ["placed_count"] = actualBlockerRows.Count, ["placements"] = actualBlockerRows,
+            ["original_grid_storage_and_static_blocker_owners_invoked"] = true,
+            ["world_is_full_mission"] = false };
 
         var initialData = legacy["initial_spawn"].ToObject<LegacyInitialSpawnData>();
+        SourceS073LegacyPresetProjection.Install(3, presetFields, initialData);
+        string enemyAIPath = Path.Combine(args[10], "Assets/Game/Configs/Skirmish/Enemy.asset");
+        string playerAIPath = Path.Combine(args[10], "Assets/Game/Configs/Skirmish/Player.asset");
+        string aiPlanPath = Path.Combine(args[10], "Assets/Game/Configs/Skirmish/Plan.asset");
+        Need(Sha(enemyAIPath) == args[27] && Sha(playerAIPath) == args[28] && Sha(aiPlanPath) == args[29],
+            "Current exact S073 AI config inputs changed");
         // The production capture is one complete source namespace, including the four exact
         // initial roots checked above. Importing the focused capture separately would allocate
         // the same source Entity identities twice in this manager.
@@ -194,9 +374,11 @@ internal static class S073LegacyPlacementOwnerHarness
         using (var query = em.CreateEntityQuery(ComponentType.ReadOnly<CustomGameStartupStateComponent>(), ComponentType.ReadOnly<InitialUnitsSpawnConfig>()))
         { Need(query.CalculateEntityCount() == 1, "Unique actual legacy startup plan required"); plan = query.GetSingletonEntity(); }
         var session = em.CreateEntity(); em.AddComponentData(session, new SkirmishMatchState { SessionId = new FixedString64Bytes("S073-legacy-placement"),
-            ScenarioIndex = 3, Phase = SkirmishPhase.Playing, StartupFailure = SkirmishStartupFailureCode.None, Outcome = SkirmishOutcome.None, Reason = SkirmishEndReason.None });
+            ScenarioIndex = 3, Phase = SkirmishPhase.Preparing, StartupFailure = SkirmishStartupFailureCode.None, Outcome = SkirmishOutcome.None, Reason = SkirmishEndReason.None });
+        em.AddBuffer<SkirmishTrackedUnit>(session);
         Entity boundary = em.CreateEntity(); em.AddComponentData(boundary, new BuildingRuntimeStateTag());
         var requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        em.AddBuffer<BuildingFactionProductionSpawnPointReadModel>(boundary);
         var definitions = GeneratedBuildingDefinitions.LoadS073Legacy(definitionsPath, args[9], templates, legacy, sourceRoot);
         Need(definitions.Definitions.Count == 6, "Exact S073 original building definitions required");
         var configured = em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
@@ -208,6 +390,24 @@ internal static class S073LegacyPlacementOwnerHarness
         if (domain.UsesOriginalOwnerMaskCapture) roads = domain.CopyOriginalOwnerRoadMask();
         var water = domain.BuildWaterMask(true, gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
         var grid = em.GetComponentData<GridConfig>(gridEntity);
+        string mapCapturePath = Path.GetFullPath(args[30]);
+        JObject mapPlacementCapture = JObject.Parse(File.ReadAllText(mapCapturePath));
+        Need(Sha(mapCapturePath) == args[31] && args[31] == "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7" &&
+             (int?)mapPlacementCapture["schema_version"] == 1 && (string)mapPlacementCapture["kind"] == "S073OriginalMapBuildingReferences" &&
+             (string)mapPlacementCapture["operation_map_id"] == selected.OperationMapId &&
+             (string)mapPlacementCapture["source_identity_hash"] == selected.SourceIdentityHash &&
+             (string)mapPlacementCapture["physical_source_binding"]?["operation_map_id"] == selected.SourceBinding.SourceOperationMapId &&
+             (string)mapPlacementCapture["placement_config"]?["path"] == "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset" &&
+             (string)mapPlacementCapture["placement_config"]?["guid"] == "a84d1564be130447197d5a5f2a7fe11d" &&
+             (int?)mapPlacementCapture["placement_config"]?["placement_count"] == 432 &&
+             (mapPlacementCapture["unsupported_values"] as JArray)?.Count == 0 &&
+             (bool?)mapPlacementCapture["placements_processed"] == false &&
+             (bool?)mapPlacementCapture["mission_world_allocated"] == false &&
+             (bool?)mapPlacementCapture["full_mission_initialized"] == false &&
+             (bool?)mapPlacementCapture["native_visual_readiness"] == false,
+             "Exact non-world source capture for the S073-bound original map placement config required");
+        var mapDefinitions = GeneratedBuildingDefinitions.LoadS073MapPlacements(mapCapturePath, args[31], sourceRoot, templates);
+        var mapPlacementOriginReplay = ReplayOriginalMapPlacementOrigins(mapPlacementCapture, grid, mapDefinitions.Definitions);
         bool RuntimeBlocked(int x, int z, int width, int height)
         {
             var blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
@@ -312,9 +512,126 @@ internal static class S073LegacyPlacementOwnerHarness
             ["definition"] = pair.Value.Definition.Prefab.name, ["origin"] = new JArray(pair.Value.OriginCell.x, pair.Value.OriginCell.y),
             ["combat_entity"] = pair.Value.CombatEntity.Index + ":" + pair.Value.CombatEntity.Version,
             ["blocker_entity"] = pair.Value.BlockerEntity.Index + ":" + pair.Value.BlockerEntity.Version }));
-        roadOwner.Complete();
-        bool allSucceeded = requests.Length == 10 && registry.Count == 10;
-        for (int i = 0; i < requests.Length; i++) allSucceeded &= requests[i].Status == BuildingRuntimeSpawnRequest.Succeeded && requests[i].BuildingRuntimeId > 0;
+        foreach (var pair in registry) autonomousWorld.Buildings.Add(pair.Key, pair.Value);
+        var gameplayStartOwner = new RuntimeGameplayStateSystem(em);
+        gameplayStartOwner.ResetForGameplayStart();
+        Entity gameplayStateEntity;
+        using (var gameplayStates = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent)))
+        {
+            Need(gameplayStates.CalculateEntityCount() == 1, "Original gameplay-start owner must create one real runtime state");
+            gameplayStateEntity = gameplayStates.GetSingletonEntity();
+        }
+        var gameplayStateAfterRequest = em.GetComponentData<RuntimeGameplayStateComponent>(gameplayStateEntity);
+        Need(gameplayStateAfterRequest.PlayRequested == 1 && gameplayStateAfterRequest.SimulationActive == 0 &&
+             gameplayStateAfterRequest.SuppressNextWorldClick == 1,
+             "Original ResetForGameplayStart must request play without bypassing the loading gate");
+        var rulesSystem = new SkirmishRulesSystem();
+        var rulesState = State(em);
+        rulesSystem.OnCreate(ref rulesState);
+        Need(rulesState.RequiredQueriesPresent, "Original SkirmishRulesSystem match/gameplay required queries must be present");
+        using (var pendingInit = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[] { ComponentType.ReadOnly<InitialUnitsSpawnConfig>() },
+            None = new[] { ComponentType.ReadOnly<InitialUnitsSpawnInitialized>(), ComponentType.ReadOnly<InitialUnitsSpawnProgress>() }
+        }))
+        {
+            Need(pendingInit.CalculateEntityCount() == 1, "Unique actual S073 initial spawn plan required before original spawner");
+            InitialUnitsSpawnSystem.InitializeInitialSpawnProgress(em, pendingInit);
+        }
+        var spawnProgress = em.GetComponentData<InitialUnitsSpawnProgress>(plan);
+        // Ten real requests were already queued and completed by the original building
+        // owner above, so the shared unit system resumes at its real issued-request state.
+        spawnProgress.InitialBuildingRequestsIssued = 1;
+        em.SetComponentData(plan, spawnProgress);
+        var spawnSystem = new InitialUnitsSpawnSystem();
+        var spawnState = new SystemState { EntityManager = em, Enabled = true };
+        spawnSystem.OnCreate(ref spawnState);
+        var beforeSpawn = new HashSet<Entity>();
+        using (var unitsBefore = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>()))
+        using (var entities = unitsBefore.ToEntityArray(Allocator.Temp))
+            for (int i = 0; i < entities.Length; i++) beforeSpawn.Add(entities[i]);
+        int spawnFrames = 0;
+        for (; spawnFrames < 12 && !em.HasComponent<InitialUnitsSpawnInitialized>(plan); spawnFrames++)
+        {
+            spawnState.Begin();
+            try { spawnSystem.OnUpdate(ref spawnState); }
+            finally { spawnState.End(); }
+        }
+        var newlySpawned = new List<Entity>();
+        using (var unitsAfter = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>()))
+        using (var entities = unitsAfter.ToEntityArray(Allocator.Temp))
+            for (int i = 0; i < entities.Length; i++) if (!beforeSpawn.Contains(entities[i])) newlySpawned.Add(entities[i]);
+        Need(em.HasComponent<InitialUnitsSpawnInitialized>(plan) && newlySpawned.Count == 24,
+             "Original initial-unit spawner must materialize all 24 S073 configured units and mark its real completion component");
+        int factionOneUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 1);
+        int factionTwoUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 2);
+        Need(factionOneUnits == 12 && factionTwoUnits == 12, "Original initial-unit spawner changed S073 faction grants");
+        var s073AIConfigs = new List<AIControllerConfig>
+        {
+            ReadAIController(enemyAIPath, "Enemy"), ReadAIController(playerAIPath, "Player")
+        };
+        AIPlanEntryStartupConfig s073AIPlan = ReadAIPlan(aiPlanPath);
+        bool TryResolveS073SpawnCell(byte factionId, out int2 spawnCell)
+        {
+            LegacyInitialFactionData faction = initialData.Factions.SingleOrDefault(row => row != null && row.FactionId == factionId);
+            if (faction == null) { spawnCell = default; return false; }
+            spawnCell = new int2(faction.SpawnX, faction.SpawnY);
+            return true;
+        }
+        var aiStartupSystem = new AIStartupSystem();
+        AIStartupSystem.Result aiStartupResult = aiStartupSystem.Initialize(
+            em, s073AIConfigs, s073AIPlan, TryResolveS073SpawnCell, AISettingsSnapshot.Defaults);
+        using (var factionControlQuery = em.CreateEntityQuery(ComponentType.ReadOnly<FactionControlConfigTag>()))
+        using (var buildPlanQuery = em.CreateEntityQuery(ComponentType.ReadOnly<AIBuildPlan>()))
+        using (var productionPlanQuery = em.CreateEntityQuery(ComponentType.ReadOnly<AIProductionPlan>()))
+        {
+            Need(factionControlQuery.CalculateEntityCount() == 1 && buildPlanQuery.CalculateEntityCount() == 2 &&
+                 productionPlanQuery.CalculateEntityCount() == 2,
+                "Original S073 AI startup must materialize plans for its two exact preset controllers");
+            Entity factionControlEntity = factionControlQuery.GetSingletonEntity();
+            DynamicBuffer<FactionControlEntry> controls = em.GetBuffer<FactionControlEntry>(factionControlEntity);
+            Need(controls.Length == 2 && controls.Any(row => row.FactionId == 2 && row.AIControlled == 1) &&
+                 controls.Any(row => row.FactionId == 1 && row.IsPlayerFaction == 1 && row.AIControlled == 0),
+                "Original S073 AI faction-control projection must preserve the authored enemy and disabled player-auto policies");
+            using NativeArray<Entity> plans = buildPlanQuery.ToEntityArray(Allocator.Temp);
+            var projectedPlans = plans.Select(entity => em.GetComponentData<AIBuildPlan>(entity)).ToArray();
+            Need(projectedPlans.Any(row => row.FactionId == 2 && row.BaseCenterCell.x == initialData.Factions.Single(f => f.FactionId == 2).SpawnX &&
+                                           row.BaseCenterCell.y == initialData.Factions.Single(f => f.FactionId == 2).SpawnY && row.Enabled == 1) &&
+                 projectedPlans.Any(row => row.FactionId == 1 && row.BaseCenterCell.x == initialData.Factions.Single(f => f.FactionId == 1).SpawnX &&
+                                           row.BaseCenterCell.y == initialData.Factions.Single(f => f.FactionId == 1).SpawnY && row.Enabled == 0),
+                "Original S073 AI build plans must use source spawn cells and actual default player-auto policy");
+        }
+        Need(aiStartupResult.HasPlayerAutoMode && !aiStartupResult.PlayerAutoModeEnabled,
+            "Original S073 AI startup result must report its configured but default-disabled player-auto mode");
+        // Invoke the real original lifecycle owner on the same retained EntityManager. Play was
+        // requested, but the source loading gate has not admitted SimulationActive; the rules
+        // owner must therefore preserve Preparing and must not invent a playing transition.
+        rulesState.Begin();
+        try { rulesSystem.OnUpdate(ref rulesState); }
+        finally { rulesState.End(); }
+        var matchAfterRules = em.GetComponentData<SkirmishMatchState>(session);
+        var gameplayAfterRules = em.GetComponentData<RuntimeGameplayStateComponent>(gameplayStateEntity);
+        Need(matchAfterRules.Phase == SkirmishPhase.Preparing && gameplayAfterRules.PlayRequested == 1 &&
+             gameplayAfterRules.SimulationActive == 0 && matchAfterRules.Outcome == SkirmishOutcome.None,
+             "Original rules owner must retain the real inactive loading gate without synthesizing mission start");
+        autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
+        autonomousWorld.CompleteInitialRoadInputs();
+        // The original initial-unit owner consumes completed initial-building requests for
+        // this plan after observing their results. Preserve the pre-spawn receipts above,
+        // then verify the owner consumed them and the actual buildings remain registered.
+        requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        int initialPlanRequestsRemaining = 0;
+        for (int i = 0; i < requests.Length; i++)
+            if (requests[i].PlanEntity == plan) initialPlanRequestsRemaining++;
+        bool allSucceeded = rows.Count == 10 && registry.Count == 10 && initialPlanRequestsRemaining == 0 &&
+            em.HasComponent<InitialUnitsSpawnInitialized>(plan) && newlySpawned.Count == 24 &&
+            actualBlockerRows.Count == (int)blockerConfig["blocker_count"];
+        foreach (JObject row in rows)
+        {
+            int runtimeId = (int)row["building_runtime_id"];
+            allSucceeded &= (string)row["status"] == BuildingRuntimeSpawnRequest.Succeeded.ToString() &&
+                (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
+        }
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -332,22 +649,173 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["persisted_to_project"] = false,
                 ["overrides"] = placementCandidates, ["changes_campaign_geometry"] = false,
                 ["changes_shared_spawn_rule"] = false, ["changes_resources_or_budgets"] = false },
+            ["original_map_placement_origin_replay"] = mapPlacementOriginReplay,
             ["grid"] = new JObject { ["width"] = grid.Width, ["height"] = grid.Height, ["origin"] = new JArray(grid.Origin.x, grid.Origin.y, grid.Origin.z), ["cell_size"] = grid.CellSize },
+            ["opening_prefab_root_evidence"] = new JObject { ["production_capture_sha256"] = args[3],
+                ["historical_compact_capture_sha256"] = (string)sourceIdentity["prefab_capture_sha256"],
+                ["legacy_root_count"] = expectedInitialRoots.Properties().Count(), ["matched_current_capture"] = true,
+                ["independent_name_readback"] = true },
+            ["runtime_blocker_placement"] = actualBlockerPlacement,
             ["surface_samples"] = surfaceCount,
-            ["authored_navigation_rows"] = authoredNavigation, ["initial_road_owner"] = roadOwner.Receipt(), ["requests_queued"] = queued,
+            ["authored_navigation_rows"] = authoredNavigation, ["initial_road_owner"] = autonomousWorld.InitialRoadReceipt, ["requests_queued"] = queued,
             ["processing_frames"] = frames, ["request_results"] = rows, ["registered_buildings"] = buildings,
-            ["building_count"] = registry.Count, ["all_ten_actual_requests_succeeded"] = allSucceeded,
+            ["building_count"] = registry.Count, ["initial_plan_requests_remaining"] = initialPlanRequestsRemaining,
+            ["initial_plan_requests_consumed_by_original_owner"] = initialPlanRequestsRemaining == 0 && em.HasComponent<InitialUnitsSpawnInitialized>(plan),
+            ["all_ten_actual_requests_succeeded"] = allSucceeded,
+            ["original_play_request"] = new JObject { ["owner"] = "RuntimeGameplayStateSystem.ResetForGameplayStart",
+                ["request_observed"] = gameplayStateAfterRequest.PlayRequested == 1,
+                ["simulation_active"] = gameplayStateAfterRequest.SimulationActive != 0,
+                ["loading_gate_evaluated"] = false, ["simulation_started"] = matchAfterRules.Phase == SkirmishPhase.Playing },
+            ["original_rules_owner"] = new JObject { ["source_owner_invoked"] = true,
+                ["required_queries_present"] = rulesState.RequiredQueriesPresent,
+                ["same_retained_entity_manager"] = true,
+                ["phase_after_owner"] = matchAfterRules.Phase.ToString(),
+                ["play_requested"] = gameplayAfterRules.PlayRequested != 0,
+                ["simulation_active"] = gameplayAfterRules.SimulationActive != 0,
+                ["outcome"] = matchAfterRules.Outcome.ToString(),
+                ["gate_honestly_remains_pending"] = matchAfterRules.Phase == SkirmishPhase.Preparing && gameplayAfterRules.SimulationActive == 0 },
+            ["initial_unit_spawn"] = new JObject { ["original_shared_spawner_executed"] = true,
+                ["actual_units_materialized"] = newlySpawned.Count, ["faction_one"] = factionOneUnits,
+                ["faction_two"] = factionTwoUnits, ["frames"] = spawnFrames,
+                ["original_completion_component_observed"] = em.HasComponent<InitialUnitsSpawnInitialized>(plan),
+                ["same_autonomous_world_host_retained"] = autonomousWorld.InitializationStage == "S073LegacyDiagnosticRetained_SchedulerAdmissionPending" },
+            ["original_ai_startup"] = new JObject { ["source_assets_sha256"] = new JObject {
+                    ["enemy"] = args[27], ["player"] = args[28], ["plan"] = args[29] },
+                ["original_owner_invoked"] = true, ["same_entity_manager"] = true,
+                ["controller_count"] = s073AIConfigs.Count, ["build_plan_count"] = 2,
+                ["production_plan_count"] = 2, ["has_player_auto_mode"] = aiStartupResult.HasPlayerAutoMode,
+                ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
+                ["spawn_cells_resolved_from_original_legacy_data"] = true },
+            ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
             ["mission_world_scope"] = "S073 mission-specific initial-origin candidate derived from actual LegacyInitialSpawnData; same manager, source grid/surface/masks and shared runtime spawn owner",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }
 
+    static JObject ReplayOriginalMapPlacementOrigins(JObject capture, GridConfig grid, IReadOnlyList<RuntimeDefinition> runtimeDefinitions)
+    {
+        var definitions = capture["definitions"] as JArray;
+        var rows = capture["placement_rows"] as JArray;
+        Need(definitions?.Count == 23 && rows?.Count == 432 && runtimeDefinitions?.Count == definitions.Count,
+             "Complete captured S073 source map definition and placement domain required");
+        var byPath = new Dictionary<string, JObject>(StringComparer.Ordinal);
+        foreach (JObject definition in definitions)
+        {
+            JObject prefab = (JObject)definition["prefab"];
+            string path = (string)prefab["path"];
+            Need((string)prefab["codec"] == "source-asset-reference-v1" && !string.IsNullOrEmpty(path) &&
+                 Guid.TryParseExact((string)prefab["guid"], "N", out _) && (long?)prefab["local_id"] > 0 &&
+                 !byPath.ContainsKey(path), "Unique exact source prefab identity required for captured map definition");
+            byPath.Add(path, definition);
+        }
+
+        var origins = new JArray();
+        int wallRows = 0, rotatedRows = 0, geometricRows = 0;
+        for (int i = 0; i < rows.Count; i++)
+        {
+            JObject row = (JObject)rows[i];
+            JObject prefab = (JObject)row["prefab"];
+            Need((int?)row["row_index"] == i, "Captured map row order mismatch");
+            Need(byPath.TryGetValue((string)prefab["path"], out var definition), "Captured map row has unknown source prefab path");
+            Need(JToken.DeepEquals(prefab, definition["prefab"]), "Captured map row prefab identity mismatch");
+            JObject fields = (JObject)definition["fields"];
+            int prefabIndex = (int?)row["prefab_index"] ?? -1;
+            Need(prefabIndex >= 0 && prefabIndex < runtimeDefinitions.Count &&
+                 runtimeDefinitions[prefabIndex].Prefab.name == (string)prefab["key"],
+                 "Captured map placement did not resolve to its loaded runtime definition");
+            RuntimeDefinition runtimeDefinition = runtimeDefinitions[prefabIndex];
+            bool isWall = runtimeDefinition.IsWall;
+            bool rotateVertical = (bool?)row["rotate_vertical"] == true;
+            if (isWall) wallRows++;
+            int2 resolvedFootprint = MapBuildingPlacementOriginKernel.ResolvePlacementFootprint(
+                runtimeDefinition.FootprintCells.x,
+                runtimeDefinition.FootprintCells.y,
+                runtimeDefinition.IsWall,
+                runtimeDefinition.LocalBounds.size.x,
+                runtimeDefinition.LocalBounds.size.z,
+                rotateVertical);
+            int width = resolvedFootprint.x, height = resolvedFootprint.y;
+            if (rotateVertical)
+            {
+                rotatedRows++;
+            }
+            Need(width > 0 && height > 0 && width <= grid.Width && height <= grid.Height,
+                 "Captured source footprint outside the selected Campaign grid domain");
+            float3 world = new float3((float)row["world_center"]!["x"], (float)row["world_center"]!["y"], (float)row["world_center"]!["z"]);
+            int2 center = GridUtils.WorldToCell(grid, world);
+            bool geometric = (bool?)row["use_geometric_footprint_center"] == true;
+            int2 origin = geometric
+                ? new int2(center.x - width / 2, center.y - height / 2)
+                : MapBuildingPlacementOriginKernel.CenterCellToOrigin(center, new Vector2Int(width, height), grid);
+            if (geometric) geometricRows++;
+            origins.Add(new JObject { ["row_index"] = i, ["category"] = (string)row["category"],
+                ["faction_id"] = (int)row["faction_id"], ["center_cell"] = new JArray(center.x, center.y),
+                ["origin"] = new JArray(origin.x, origin.y), ["footprint"] = new JArray(width, height),
+                ["rotate_vertical"] = rotateVertical, ["source_path"] = (string)row["source_path"] });
+        }
+        return new JObject { ["authority"] = "ExactCapturedSourceDefinitions plus shared MapBuildingPlacementOriginKernel.ResolvePlacementFootprint, GridUtils.WorldToCell, and shared MapBuildingPlacementOriginKernel.CenterCellToOrigin",
+            ["source_rows"] = rows.Count, ["source_definitions"] = definitions.Count, ["rows_resolved"] = origins.Count,
+            ["wall_rows"] = wallRows, ["rotated_rows"] = rotatedRows, ["geometric_center_rows"] = geometricRows,
+            ["runtime_placements_processed"] = false, ["actors_registered"] = false, ["origins"] = origins };
+    }
+
     public static int Main(string[] args)
     {
         JObject result;
-        try { result = Run(args); }
+        try
+        {
+            if (args.Length == 4 && args[0] == "--map-origin-replay")
+            {
+                string sourceRoot = Environment.GetEnvironmentVariable("WARLINE_S073_SOURCE_ROOT");
+                if (string.IsNullOrEmpty(sourceRoot)) throw new InvalidDataException("Pinned S073 source root required");
+                string mapPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset");
+                Need(Sha(mapPath) == args[3] && args[3] == "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a",
+                     "Current selected S073 map definition changed");
+                OperationMapDefinition selected = ReadSelectedMap(mapPath);
+                SourceS073LegacySpawnRequestAdapter.RequireSharedPlacementSource(selected);
+                JObject capture = JObject.Parse(File.ReadAllText(Path.GetFullPath(args[1])));
+                Need(Sha(Path.GetFullPath(args[1])) == args[2] && args[2] == "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7" &&
+                     (int?)capture["schema_version"] == 1 && (string)capture["kind"] == "S073OriginalMapBuildingReferences" &&
+                     (string)capture["operation_map_id"] == selected.OperationMapId &&
+                     (string)capture["source_identity_hash"] == selected.SourceIdentityHash &&
+                     (string)capture["physical_source_binding"]?["operation_map_id"] == selected.SourceBinding.SourceOperationMapId &&
+                     (string)capture["placement_config"]?["path"] == "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01_BuildingPlacements.asset" &&
+                     (string)capture["placement_config"]?["guid"] == "a84d1564be130447197d5a5f2a7fe11d" &&
+                     (int?)capture["placement_config"]?["placement_count"] == 432 &&
+                     (capture["unsupported_values"] as JArray)?.Count == 0 &&
+                     (bool?)capture["placements_processed"] == false && (bool?)capture["mission_world_allocated"] == false &&
+                     (bool?)capture["full_mission_initialized"] == false && (bool?)capture["native_visual_readiness"] == false,
+                     "Exact non-world source capture for the S073-bound original placement config required");
+                var mapDefinitions = GeneratedBuildingDefinitions.LoadS073MapPlacements(
+                    Path.GetFullPath(args[1]), args[2], sourceRoot, new Dictionary<string, Entity>(StringComparer.Ordinal));
+                Need(mapDefinitions.Definitions.Count == 23 &&
+                     mapDefinitions.Definitions.Select(d => d.Prefab.name).Distinct(StringComparer.Ordinal).Count() == 23 &&
+                     mapDefinitions.Definitions.Count(d => d.IsWall) == 2 &&
+                     mapDefinitions.Definitions.Count(d => d.HasRunway) == 1 &&
+                     mapDefinitions.Definitions.Count(d => !d.IsWall && !d.HasRunway) == 20,
+                    "Exact S073 map runtime definition domain must preserve the two wall and one runway gates");
+                var metadata = selected.GridMetadata;
+                var grid = new GridConfig { Width = metadata.Dimensions.x, Height = metadata.Dimensions.y,
+                    CellSize = metadata.CellSize, Origin = new float3(metadata.Origin.x, metadata.Origin.y, metadata.Origin.z) };
+                var replay = ReplayOriginalMapPlacementOrigins(capture, grid, mapDefinitions.Definitions);
+                result = new JObject { ["kind"] = "S073MapPlacementOriginReplay", ["status"] = "Passed",
+                    ["mission"] = "S073", ["source_identity_hash"] = selected.SourceIdentityHash,
+                    ["selected_campaign_source"] = selected.SourceBinding.SourceOperationMapId,
+                    ["map_definition_sha256"] = args[3], ["capture_sha256"] = args[2], ["replay"] = replay,
+                    ["map_runtime_definitions"] = new JObject { ["count"] = mapDefinitions.Definitions.Count,
+                        ["source_identity_count"] = mapDefinitions.AssetIdentities.Count,
+                        ["ordinary_ground_count"] = mapDefinitions.Definitions.Count(d => !d.IsWall && !d.HasRunway),
+                        ["wall_count"] = mapDefinitions.Definitions.Count(d => d.IsWall),
+                        ["runway_count"] = mapDefinitions.Definitions.Count(d => d.HasRunway),
+                        ["registration_executed"] = false },
+                    ["world_allocated"] = false, ["runtime_placements_processed"] = false,
+                    ["actors_registered"] = false, ["mission_initialized"] = false };
+            }
+            else result = Run(args);
+        }
         catch (Exception error) { result = new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = "Failed", ["error"] = error.ToString(), ["full_mission"] = false, ["mission_ready"] = false, ["unity_player_launched"] = false }; }
-        Console.WriteLine("[S073LegacyPlacementOwnerHarness] " + result.ToString(Newtonsoft.Json.Formatting.None));
+        string marker = (string)result["kind"] == "S073MapPlacementOriginReplay" ? "[S073MapPlacementOriginReplay] " : "[S073LegacyPlacementOwnerHarness] ";
+        Console.WriteLine(marker + result.ToString(Newtonsoft.Json.Formatting.None));
         return (string)result["status"] == "Passed" ? 0 : 1;
     }
 }

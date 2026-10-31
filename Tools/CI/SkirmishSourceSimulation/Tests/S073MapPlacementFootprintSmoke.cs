@@ -10,6 +10,16 @@ using Unity.Mathematics;
 
 internal static class S073MapPlacementFootprintSmoke
 {
+    private sealed class OpenGrid : IRuntimeGridBlockerPlacementGrid
+    {
+        public int Width { get; }
+        public int Height { get; }
+        public OpenGrid(int width, int height) { Width = width; Height = height; }
+        public bool IsWalkable(int cellIndex) => true;
+        public bool IsRoad(int cellIndex) => false;
+        public bool IsBlocked(int cellIndex) => false;
+    }
+
     public static int Main(string[] args)
     {
         JObject result;
@@ -87,6 +97,7 @@ internal static class S073MapPlacementFootprintSmoke
                 throw new InvalidDataException("Exact S073 blocker source metadata/config required; no placement instance is implied");
             var prefabNames = new HashSet<string>(StringComparer.Ordinal);
             var blockerFootprints = new JArray();
+            var plannerPrefabs = new List<RuntimeGridBlockerPrefabData>();
             int centerOnlyCount = 0;
             float gridCellSize = float.Parse(args[5], CultureInfo.InvariantCulture);
             if (!(gridCellSize > 0f) || float.IsNaN(gridCellSize) || float.IsInfinity(gridCellSize))
@@ -112,9 +123,49 @@ internal static class S073MapPlacementFootprintSmoke
                     throw new InvalidDataException("Shared blocker footprint is invalid: " + name);
                 blockerFootprints.Add(new JObject { ["name"] = name, ["kind"] = kind,
                     ["width"] = footprintWidth, ["depth"] = footprintDepth, ["center_only"] = centerOnly });
+                plannerPrefabs.Add(new RuntimeGridBlockerPrefabData { Name = name,
+                    Kind = (BlockerPrefabKind)Enum.Parse(typeof(BlockerPrefabKind), kind),
+                    BlocksOnlyCenterCell = centerOnly, HasBounds = true,
+                    BoundsWidth = (float)size[0], BoundsDepth = (float)size[2] });
             }
             Require(prefabNames.Count == 63 && centerOnlyCount > 0,
                 "Complete shared blocker prefab metadata domain required");
+
+            plannerPrefabs.Sort((a, b) => string.CompareOrdinal(a.Name, b.Name));
+            var plannerGrid = new OpenGrid(2048, 1024);
+            var plan = RuntimeGridBlockerPlacementPolicy.Plan(plannerGrid, plannerPrefabs,
+                (int)blockerConfig["blocker_count"], (uint)(int)blockerConfig["random_seed"], gridCellSize,
+                (float)blockerConfig["tree_spawn_ratio"], (int)blockerConfig["tree_cluster_count"],
+                (int)blockerConfig["tree_cluster_spacing_min_cells"], (int)blockerConfig["tree_cluster_spacing_max_cells"],
+                (int)blockerConfig["tree_cluster_distance_min_cells"], (int)blockerConfig["tree_cluster_distance_max_cells"]);
+            var repeatedPlan = RuntimeGridBlockerPlacementPolicy.Plan(plannerGrid, plannerPrefabs,
+                (int)blockerConfig["blocker_count"], (uint)(int)blockerConfig["random_seed"], gridCellSize,
+                (float)blockerConfig["tree_spawn_ratio"], (int)blockerConfig["tree_cluster_count"],
+                (int)blockerConfig["tree_cluster_spacing_min_cells"], (int)blockerConfig["tree_cluster_spacing_max_cells"],
+                (int)blockerConfig["tree_cluster_distance_min_cells"], (int)blockerConfig["tree_cluster_distance_max_cells"]);
+            Require(plan.Count == 1 && repeatedPlan.Count == 1 &&
+                    plan[0].PrefabIndex == repeatedPlan[0].PrefabIndex &&
+                    plan[0].OriginCell.Equals(repeatedPlan[0].OriginCell) &&
+                    plan[0].SizeCells.Equals(repeatedPlan[0].SizeCells),
+                "Pinned S073 seed must produce one repeatable synthetic-grid placement");
+            RuntimeGridBlockerPlacementData fixture = plan[0];
+            Require(fixture.Kind == BlockerPrefabKind.Tree && fixture.PrefabIndex >= 0 && fixture.PrefabIndex < plannerPrefabs.Count &&
+                    fixture.OriginCell.x >= 0 && fixture.OriginCell.y >= 0 &&
+                    fixture.OriginCell.x + fixture.SizeCells.x <= plannerGrid.Width &&
+                    fixture.OriginCell.y + fixture.SizeCells.y <= plannerGrid.Height,
+                "S073 synthetic seeded plan must remain inside its explicit open-grid fixture");
+            JObject seededPlanFixture = new JObject
+            {
+                ["status"] = "Passed",
+                ["synthetic_grid"] = true,
+                ["native_grid_predicates_used"] = false,
+                ["native_blocker_instance_observed"] = false,
+                ["seed"] = (int)blockerConfig["random_seed"],
+                ["repeatable_same_seed"] = true,
+                ["prefab"] = plannerPrefabs[fixture.PrefabIndex].Name,
+                ["origin_cell"] = new JArray(fixture.OriginCell.x, fixture.OriginCell.y),
+                ["footprint"] = new JArray(fixture.SizeCells.x, fixture.SizeCells.y)
+            };
 
             result = new JObject
             {
@@ -127,6 +178,7 @@ internal static class S073MapPlacementFootprintSmoke
                 ["blocker_prefabs"] = prefabs.Count,
                 ["center_only_blockers"] = centerOnlyCount,
                 ["blocker_random_placement_executed"] = false,
+                ["seeded_plan_fixture"] = seededPlanFixture,
                 ["blocker_footprints"] = blockerFootprints,
                 ["grid_cell_size"] = gridCellSize,
                 ["wall_footprints"] = JObject.FromObject(wallFootprints),

@@ -10,7 +10,10 @@ import time
 
 
 EXPECTED = {
-    "initial_template": "ee7f8dbfacde7d775a32b9cd87d7a321a0ade0af131da9a9aa0417efcc5d41d4",
+    # The old four-root capture was deleted with temporary validation artifacts.
+    # The retained full production capture contains those exact same four roots;
+    # use that pinned authoritative capture for both root checks.
+    "initial_template": "97a1ffe028eccf10b7486f6ba0694cfedda3b463b99e784f0a5325ae31e4e594",
     "production_template": "97a1ffe028eccf10b7486f6ba0694cfedda3b463b99e784f0a5325ae31e4e594",
     "identity": "d06c52158242ed371d18588db60c469dea2674007e24e830a625ff84901e265e",
     "legacy": "1565010ac85b7c07ea1892befaa44cde3fd68c5f6e91913e86d967d1596dcb83",
@@ -23,6 +26,14 @@ EXPECTED = {
     "map": "b145eae26821fa3ee559de12473354813c83d0a4c1997159086c20654ea0112a",
     "grid": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb",
     "surface": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d",
+    "preset": "354b73f15a90a0653e263207789ba677c5251767b5a796b9c7f991af2a20f0f3",
+    "construction": "6688f039a073ce6c4c834a44f056d73bbada237cd0bd76c0db555d37a89be813",
+    "preset_readback": "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10",
+    "enemy_ai": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52",
+    "player_ai": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698",
+    "map_placement_capture": "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7",
+    "blocker_metadata": "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776",
+    "ai_plan": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
 }
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
@@ -87,7 +98,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", required=True)
     parser.add_argument("--source-root", required=True)
-    parser.add_argument("--initial-template", required=True)
     parser.add_argument("--production-template", required=True)
     parser.add_argument("--identity", required=True)
     parser.add_argument("--legacy-config", required=True)
@@ -96,14 +106,18 @@ def main():
     parser.add_argument("--physical", required=True)
     parser.add_argument("--water", required=True)
     parser.add_argument("--startup", required=True)
+    parser.add_argument("--preset-readback", required=True,
+                        help="Existing hash-bound full S073 preset/config source readback")
     parser.add_argument("--placement-config", required=True)
+    parser.add_argument("--map-placement-capture", required=True)
+    parser.add_argument("--blocker-metadata", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     started = time.monotonic()
     build_path = Path(args.build).resolve(strict=True)
     source_root = Path(args.source_root).resolve(strict=True)
-    initial_template = Path(args.initial_template).resolve(strict=True)
     production_template = Path(args.production_template).resolve(strict=True)
+    initial_template = production_template
     identity = Path(args.identity).resolve(strict=True)
     legacy = Path(args.legacy_config).resolve(strict=True)
     definitions = Path(args.building_definitions).resolve(strict=True)
@@ -111,8 +125,14 @@ def main():
     physical = Path(args.physical).resolve(strict=True)
     water = Path(args.water).resolve(strict=True)
     startup = Path(args.startup).resolve(strict=True)
+    preset_readback = Path(args.preset_readback).resolve(strict=True)
     placement_config = Path(args.placement_config).resolve(strict=True)
+    map_placement_capture = Path(args.map_placement_capture).resolve(strict=True)
+    blocker_metadata = Path(args.blocker_metadata).resolve(strict=True)
     placement_config_sha = sha(placement_config)
+    map_placement_capture_sha = sha(map_placement_capture)
+    require(map_placement_capture_sha == EXPECTED["map_placement_capture"],
+            "Exact reviewed S073 source map placement capture required")
     output = Path(args.output).absolute()
     require(not output.exists(), "Fresh T-drive test output required")
     output.mkdir(parents=True)
@@ -124,6 +144,11 @@ def main():
     paths = {"initial_template": initial_template, "production_template": production_template, "identity": identity,
              "legacy": legacy, "definitions": definitions, "initialization": initialization,
              "physical": physical, "water": water, "startup": startup}
+    paths["preset_readback"] = preset_readback
+    paths["enemy_ai"] = source_root / "Assets/Game/Configs/Skirmish/Enemy.asset"
+    paths["player_ai"] = source_root / "Assets/Game/Configs/Skirmish/Player.asset"
+    paths["ai_plan"] = source_root / "Assets/Game/Configs/Skirmish/Plan.asset"
+    paths["blocker_metadata"] = blocker_metadata
     for key, path in paths.items():
         require(sha(path) == EXPECTED[key], "Retained S073 source input changed: " + key)
     initialization_data = json.loads(initialization.read_text())
@@ -135,7 +160,13 @@ def main():
     compact_graph_sha = prepare_map_graph(source_graph, source_root, compact_graph)
     map_path = source_root / "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset"
     require(sha(map_path) == EXPECTED["map"], "Current S073 logical Campaign binding changed")
-    harness = Path(build["repository_root"]) / "Tools/CI/SkirmishSourceSimulation/Tests/S073LegacyPlacementOwnerHarness.cs"
+    require(sha(source_root / "Assets/Game/Resources/SkirmishIndustrialBasin.asset") == EXPECTED["preset"],
+            "Current original S073 preset asset changed")
+    require(sha(source_root / "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset") == EXPECTED["construction"],
+            "Current original S073 construction asset changed")
+    # The source package can be an isolated T-drive worktree while --repo points
+    # at the canonical checkout containing the complete baked Campaign assets.
+    harness = Path(__file__).resolve().parents[4] / "Tools/CI/SkirmishSourceSimulation/Tests/S073LegacyPlacementOwnerHarness.cs"
     harness_sha = sha(harness)
     response = build["compiler_response"]
     rsp_path = Path(response["path"]).resolve(strict=True)
@@ -147,6 +178,14 @@ def main():
     executable = output / "S073LegacyPlacementOwnerHarness.exe"
     compiler_args[entry[0]] = "-main:S073LegacyPlacementOwnerHarness"
     compiler_args[output_arg[0]] = "-out:" + str(executable)
+    gameplay_state_source = (source_root / "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs").resolve(strict=True)
+    pinned_gameplay_state = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
+                             if path.endswith("/Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs")]
+    require(len(pinned_gameplay_state) == 1 and
+            sha(pinned_gameplay_state[0]) == build["source_and_reference_pins"][str(pinned_gameplay_state[0])] and
+            sha(gameplay_state_source) == sha(pinned_gameplay_state[0]),
+            "Hash-pinned original runtime gameplay-state owner required")
+    compiler_args.append(str(pinned_gameplay_state[0]))
     compiler_args.append(str(harness))
     test_rsp = output / "harness.rsp"
     test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))
@@ -177,7 +216,10 @@ def main():
                     str(identity), EXPECTED["identity"], str(legacy), EXPECTED["legacy"], str(definitions), EXPECTED["definitions"],
                     str(source_root), str(compact_graph), compact_graph_sha, str(initialization), EXPECTED["initialization"],
                     str(physical), EXPECTED["physical"], str(water), EXPECTED["water"], str(startup), EXPECTED["startup"],
-                    EXPECTED["map"], str(output / "initial-roads"), str(placement_config), placement_config_sha]
+                    EXPECTED["map"], str(output / "initial-roads"), str(placement_config), placement_config_sha,
+                    str(preset_readback), EXPECTED["preset_readback"], EXPECTED["enemy_ai"], EXPECTED["player_ai"], EXPECTED["ai_plan"],
+                    str(map_placement_capture), map_placement_capture_sha,
+                    str(blocker_metadata), EXPECTED["blocker_metadata"]]
         try:
             run_result = subprocess.run([str(runtime["mono"]), "--config", str(mono_config), "--optimize=-float32", str(executable), *args_run], env=env, capture_output=True,
                                         text=True, timeout=300)
@@ -193,6 +235,8 @@ def main():
     for key, path in paths.items():
         require(sha(path) == EXPECTED[key], "S073 source input changed during test: " + key)
     require(sha(placement_config) == placement_config_sha, "External S073 placement config changed during test")
+    require(sha(map_placement_capture) == EXPECTED["map_placement_capture"], "Captured S073 source placement data changed during test")
+    require(sha(preset_readback) == EXPECTED["preset_readback"], "S073 source preset readback changed during test")
     require(sha(harness) == harness_sha and sha(compact_graph) == compact_graph_sha and
             sha(map_path) == EXPECTED["map"], "Harness or derived/current map source changed")
     marker = "[S073LegacyPlacementOwnerHarness] "
@@ -205,6 +249,10 @@ def main():
               "failure": "bounded Mono timeout" if timed_out else None, "wall_seconds": time.monotonic() - started,
               "build_receipt": str(build_path), "build_receipt_sha256": sha(build_path),
               "placement_config": {"path": str(placement_config), "sha256": placement_config_sha},
+              "map_placement_capture": {"path": str(map_placement_capture), "sha256": map_placement_capture_sha},
+              "blocker_metadata": {"path": str(blocker_metadata), "sha256": sha(blocker_metadata)},
+              "opening_prefab_root_evidence": {"path": str(production_template), "sha256": EXPECTED["production_template"],
+              "scope": "Pinned current full production capture; its four S073 legacy opening roots exactly match the source-bound legacy config. The deleted compact capture is retained only as historical hash metadata in the independent name readback."},
               "harness": {"path": str(harness), "sha256": harness_sha}, "compact_campaign_graph": {"path": str(compact_graph), "sha256": compact_graph_sha,
               "derived_from": str(source_graph), "source_graph_sha256": EXPECTED["graph"], "selected_nodes": 2},
               "run_exit": None if run_result is None else run_result.returncode, "compile_exit": compile_result.returncode,

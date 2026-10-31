@@ -81,25 +81,30 @@ def main():
     dotnet, csc = tools.get("dotnet"), tools.get("csc.dll")
     require(dotnet and csc, "Pinned .NET/Roslyn tools required")
     runtime = {key: Path(value).resolve(strict=True) for key, value in build["runtime_selection"].items()}
-    simulation_output = output / "Game.Simulation.BlockerPlacementKernel.dll"
-    simulation_response = output / "simulation-kernel.rsp"
-    simulation_refs = [
+    policy_output = output / "Runtime.BlockerPlacementPolicy.dll"
+    policy_response = output / "runtime-policy.rsp"
+    runtime_refs = [
         runtime["script"] / "NetStandard/ref/2.1.0/netstandard.dll",
-        runtime["script"] / "NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll"]
-    for reference in simulation_refs:
-        require(reference.is_file(), "Required no-engine simulation reference missing: " + str(reference))
-    simulation_args = ["-nologo", "-unsafe+", "-nostdlib+", "-langversion:latest", "-target:library",
-                       "-out:" + str(simulation_output)] + ["-r:" + str(path) for path in simulation_refs] + [
-                           str(repo / "Assets/Game/Scripts/Simulation/RuntimeGridBlockerPlacementKernel.cs")]
-    simulation_response.write_text("".join(json.dumps(value) + "\n" for value in simulation_args))
-    simulation_compile = subprocess.run([str(dotnet), str(csc), "@" + str(simulation_response)],
+        runtime["script"] / "NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll",
+        runtime["engine"] / "UnityEngine.CoreModule.dll",
+        runtime["engine"] / "UnityEngine.MathematicsModule.dll",
+        repo / "Library/ScriptAssemblies/Unity.Collections.dll",
+        repo / "Library/ScriptAssemblies/Unity.Mathematics.dll"]
+    for reference in runtime_refs:
+        require(reference.is_file(), "Required runtime blocker policy reference missing: " + str(reference))
+    policy_args = ["-nologo", "-unsafe+", "-nostdlib+", "-langversion:latest", "-target:library",
+                       "-out:" + str(policy_output)] + ["-r:" + str(path) for path in runtime_refs] + [
+                           str(repo / "Assets/Game/Scripts/Simulation/RuntimeGridBlockerPlacementKernel.cs"),
+                           str(repo / "Assets/Game/Scripts/Environment/RuntimeGridBlockerPlacementPolicy.cs")]
+    policy_response.write_text("".join(json.dumps(value) + "\n" for value in policy_args))
+    policy_compile = subprocess.run([str(dotnet), str(csc), "@" + str(policy_response)],
                                         capture_output=True, text=True, timeout=60)
-    (output / "simulation-kernel-compile.log").write_text(simulation_compile.stdout + simulation_compile.stderr)
+    (output / "runtime-policy-compile.log").write_text(policy_compile.stdout + policy_compile.stderr)
     compile_result = subprocess.run([str(dotnet), str(csc), "@" + str(smoke_response)],
                                     capture_output=True, text=True, timeout=120)
     (output / "compile.log").write_text(compile_result.stdout + compile_result.stderr)
     run_result = None
-    if simulation_compile.returncode == 0 and compile_result.returncode == 0:
+    if policy_compile.returncode == 0 and compile_result.returncode == 0:
         env = dict(os.environ)
         env["MONO_PATH"] = os.pathsep.join([
             str(repo / "Library/ScriptAssemblies"), str(runtime["engine"]),
@@ -119,6 +124,7 @@ def main():
         (output / "run.log").write_text(run_result.stdout + run_result.stderr)
 
     source_unchanged = sha(smoke_source) == smoke_source_sha
+    build_pins_unchanged = all(sha(path) == expected for path, expected in build["source_and_reference_pins"].items())
     marker = "[S073MapPlacementFootprintSmoke] "
     run_payload = None
     if run_result is not None:
@@ -128,11 +134,17 @@ def main():
                 run_payload = json.loads(marker_rows[0])
             except json.JSONDecodeError:
                 run_payload = None
-    passed = simulation_compile.returncode == 0 and compile_result.returncode == 0 and \
+    passed = policy_compile.returncode == 0 and compile_result.returncode == 0 and \
         run_result is not None and run_result.returncode == 0 and \
-        source_unchanged and run_payload is not None and run_payload.get("status") == "Passed" and \
+        source_unchanged and build_pins_unchanged and run_payload is not None and run_payload.get("status") == "Passed" and \
         run_payload.get("world_allocated") is False and run_payload.get("actors_registered") is False and \
-        run_payload.get("mission_initialized") is False and run_payload.get("blocker_random_placement_executed") is False
+        run_payload.get("mission_initialized") is False and run_payload.get("blocker_random_placement_executed") is False and \
+        type(run_payload.get("seeded_plan_fixture")) is dict and \
+        run_payload["seeded_plan_fixture"].get("status") == "Passed" and \
+        run_payload["seeded_plan_fixture"].get("synthetic_grid") is True and \
+        run_payload["seeded_plan_fixture"].get("native_grid_predicates_used") is False and \
+        run_payload["seeded_plan_fixture"].get("native_blocker_instance_observed") is False and \
+        run_payload["seeded_plan_fixture"].get("repeatable_same_seed") is True
     if passed:
         metadata = json.loads(blocker_metadata.read_text())
         expected_footprints = []
@@ -154,8 +166,9 @@ def main():
               "grid_asset": str(grid_asset), "grid_asset_sha256": sha(grid_asset),
               "grid_cell_size": cell_size,
               "source_sha256": smoke_source_sha, "source_unchanged": source_unchanged,
-              "source_result": run_payload, "simulation_kernel_assembly_compile_exit": simulation_compile.returncode,
-              "simulation_kernel_references": [str(path) for path in simulation_refs],
+              "build_pins_unchanged": build_pins_unchanged,
+              "source_result": run_payload, "runtime_policy_assembly_compile_exit": policy_compile.returncode,
+              "runtime_policy_references": [str(path) for path in runtime_refs],
               "compile_exit": compile_result.returncode,
               "run_exit": None if run_result is None else run_result.returncode,
               "result_log": str(output / "run.log"), "unity_launched": False}

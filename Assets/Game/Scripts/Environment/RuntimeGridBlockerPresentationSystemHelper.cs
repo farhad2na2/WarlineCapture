@@ -28,12 +28,29 @@ namespace Game.Runtime
             public BlockerPrefabKind Kind;
         }
 
-        private struct PendingBlockerPlacement
+        private sealed class PlacementGridAdapter : IRuntimeGridBlockerPlacementGrid
         {
-            public GameObject Prefab;
-            public PrefabPlacementMetadata Metadata;
-            public Vector2Int OriginCell;
-            public Vector2Int SizeCells;
+            private readonly int _width;
+            private readonly DynamicBuffer<GridWalkable> _walkable;
+            private readonly DynamicBuffer<GridRoad> _roads;
+            private readonly NativeBitArray _blocked;
+
+            public int Width => _width;
+            public int Height { get; }
+
+            public PlacementGridAdapter(GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+                DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockers)
+            {
+                _width = grid.Width;
+                Height = grid.Height;
+                _walkable = walkable;
+                _roads = roads;
+                _blocked = blockers.Blocked;
+            }
+
+            public bool IsWalkable(int cellIndex) => _walkable[cellIndex].Value != 0;
+            public bool IsRoad(int cellIndex) => _roads[cellIndex].Value != 0;
+            public bool IsBlocked(int cellIndex) => _blocked.IsCreated && _blocked.IsSet(cellIndex);
         }
 
         private readonly Dictionary<int, RuntimeBlockerRecord> _blockersById = new();
@@ -198,88 +215,37 @@ namespace Game.Runtime
         {
             _readyForDependents = false;
             _runtimeBlockerCellCounts = new int[grid.Width * grid.Height];
-            var pendingPlacements = new List<PendingBlockerPlacement>(_blockerCount);
-
             if (_randomSeed == 0)
                 _randomSeed = 1;
-
-            var rng = new Unity.Mathematics.Random(_randomSeed);
-            var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
-            List<Vector2Int> treeClusterCenters = BuildTreeClusterCenters(ref rng, grid, _treeClusterCount);
-
-            try
+            var prefabData = new List<RuntimeGridBlockerPrefabData>(_prefabs.Count);
+            for (int i = 0; i < _prefabs.Count; i++)
             {
-                int maxAttempts = math.max(_blockerCount * 30, 200);
-                int attempts = 0;
-                int spawnedCount = 0;
-                int targetTreeCount = Mathf.Clamp(Mathf.RoundToInt(_blockerCount * _treeSpawnRatio), 0, _blockerCount);
-                int spawnedTreeCount = 0;
-                int targetTreesPerCluster = Mathf.Max(1, Mathf.CeilToInt(targetTreeCount / (float)Mathf.Max(1, _treeClusterCount)));
-                int averageTreeSpacing = Mathf.RoundToInt((_treeClusterSpacingMinCells + _treeClusterSpacingMaxCells) * 0.5f);
-                int treeClusterRadius = ComputeTreeClusterRadius(targetTreesPerCluster, averageTreeSpacing);
-
-                while (spawnedCount < _blockerCount && attempts < maxAttempts)
+                GameObject prefab = _prefabs[i];
+                PrefabPlacementMetadata metadata = GetMetadata(prefab);
+                prefabData.Add(new RuntimeGridBlockerPrefabData
                 {
-                    attempts++;
-
-                    GameObject prefab = ChooseBlockerPrefab(ref rng, spawnedTreeCount, targetTreeCount);
-                    if (prefab == null)
-                        continue;
-
-                    PrefabPlacementMetadata metadata = GetMetadata(prefab);
-                    Vector2Int sizeCells = ComputeFootprintCells(metadata, grid.CellSize);
-                    if (sizeCells.x > grid.Width || sizeCells.y > grid.Height)
-                        continue;
-
-                    if (!TryFindBlockerOrigin(
-                            ref rng,
-                            grid,
-                            walkable,
-                            roads,
-                            blockerData,
-                            reserved,
-                            pendingPlacements,
-                            treeClusterCenters,
-                            treeClusterRadius,
-                            _treeClusterDistanceMinCells,
-                            _treeClusterDistanceMaxCells,
-                            _treeClusterSpacingMinCells,
-                            _treeClusterSpacingMaxCells,
-                            metadata,
-                            sizeCells,
-                            out Vector2Int originCell))
-                    {
-                        continue;
-                    }
-
-                    int x = originCell.x;
-                    int y = originCell.y;
-                    if (!CanPlaceFootprint(grid, walkable, roads, blockerData, reserved, x, y, sizeCells))
-                        continue;
-
-                    MarkReserved(grid.Width, reserved, originCell, sizeCells);
-                    pendingPlacements.Add(new PendingBlockerPlacement
-                    {
-                        Prefab = prefab,
-                        Metadata = metadata,
-                        OriginCell = originCell,
-                        SizeCells = sizeCells
-                    });
-
-                    if (metadata.Kind == BlockerPrefabKind.Tree)
-                        spawnedTreeCount++;
-                    spawnedCount++;
-                }
-            }
-            finally
-            {
-                reserved.Dispose();
+                    Name = prefab.name,
+                    Kind = metadata.Kind,
+                    BlocksOnlyCenterCell = metadata.BlocksOnlyCenterCell,
+                    HasBounds = metadata.HasBounds,
+                    BoundsWidth = metadata.LocalBounds.size.x,
+                    BoundsDepth = metadata.LocalBounds.size.z
+                });
             }
 
-            for (int i = 0; i < pendingPlacements.Count; i++)
+            List<RuntimeGridBlockerPlacementData> placements = RuntimeGridBlockerPlacementPolicy.Plan(
+                new PlacementGridAdapter(grid, walkable, roads, blockerData), prefabData,
+                _blockerCount, _randomSeed, grid.CellSize, _treeSpawnRatio, _treeClusterCount,
+                _treeClusterSpacingMinCells, _treeClusterSpacingMaxCells,
+                _treeClusterDistanceMinCells, _treeClusterDistanceMaxCells);
+            for (int i = 0; i < placements.Count; i++)
             {
-                PendingBlockerPlacement placement = pendingPlacements[i];
-                CreateRuntimeBlocker(grid, placement.Prefab, placement.Metadata, placement.OriginCell, placement.SizeCells);
+                RuntimeGridBlockerPlacementData placement = placements[i];
+                GameObject prefab = _prefabs[placement.PrefabIndex];
+                PrefabPlacementMetadata metadata = GetMetadata(prefab);
+                CreateRuntimeBlocker(grid, prefab, metadata,
+                    new Vector2Int(placement.OriginCell.x, placement.OriginCell.y),
+                    new Vector2Int(placement.SizeCells.x, placement.SizeCells.y));
             }
 
             _spawnFinalizing = true;
@@ -409,44 +375,6 @@ namespace Game.Runtime
             }
         }
 
-        private static bool CanPlaceFootprint(
-            GridConfig grid,
-            DynamicBuffer<GridWalkable> walkable,
-            DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            NativeBitArray reserved,
-            int startX,
-            int startY,
-            Vector2Int sizeCells)
-        {
-            for (int y = startY; y < startY + sizeCells.y; y++)
-            {
-                for (int x = startX; x < startX + sizeCells.x; x++)
-                {
-                    int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
-                    if (walkable[index].Value == 0)
-                        return false;
-                    if (roads[index].Value != 0)
-                        return false;
-                    if (reserved.IsSet(index))
-                        return false;
-                    if (blockerData.Blocked.IsCreated && blockerData.Blocked.IsSet(index))
-                        return false;
-                }
-            }
-
-            return true;
-        }
-
-        private static void MarkReserved(int gridWidth, NativeBitArray reserved, Vector2Int originCell, Vector2Int sizeCells)
-        {
-            for (int y = originCell.y; y < originCell.y + sizeCells.y; y++)
-            {
-                for (int x = originCell.x; x < originCell.x + sizeCells.x; x++)
-                    reserved.Set(GridUtils.CellToIndex(new int2(x, y), gridWidth), true);
-            }
-        }
-
         private PrefabPlacementMetadata GetMetadata(GameObject prefab)
         {
             if (_metadataByPrefab.TryGetValue(prefab, out PrefabPlacementMetadata metadata))
@@ -511,301 +439,9 @@ namespace Game.Runtime
             return metadata;
         }
 
-        private static bool TryFindBlockerOrigin(
-            ref Unity.Mathematics.Random rng,
-            GridConfig grid,
-            DynamicBuffer<GridWalkable> walkable,
-            DynamicBuffer<GridRoad> roads,
-            DynamicBlockerComponent blockerData,
-            NativeBitArray reserved,
-            List<PendingBlockerPlacement> pendingPlacements,
-            List<Vector2Int> treeClusterCenters,
-            int treeClusterRadius,
-            int treeClusterDistanceMinCells,
-            int treeClusterDistanceMaxCells,
-            int treeClusterSpacingMinCells,
-            int treeClusterSpacingMaxCells,
-            PrefabPlacementMetadata metadata,
-            Vector2Int sizeCells,
-            out Vector2Int originCell)
-        {
-            int maxX = grid.Width - sizeCells.x;
-            int maxY = grid.Height - sizeCells.y;
-            originCell = default;
-            if (maxX < 0 || maxY < 0)
-                return false;
-
-            int anchorAttempts = 10;
-            for (int i = 0; i < anchorAttempts; i++)
-            {
-                if (!TryGetBlockerAnchor(ref rng, pendingPlacements, treeClusterCenters, metadata.Kind, out Vector2Int anchor))
-                    break;
-
-                int radius = metadata.Kind == BlockerPrefabKind.Tree ? treeClusterRadius : GetClusterRadius(metadata.Kind);
-                int localTreeSpacingCells = metadata.Kind == BlockerPrefabKind.Tree
-                    ? SampleSpacing(ref rng, treeClusterSpacingMinCells, treeClusterSpacingMaxCells)
-                    : Mathf.Max(1, Mathf.RoundToInt((treeClusterSpacingMinCells + treeClusterSpacingMaxCells) * 0.5f));
-                Vector2Int candidate = metadata.Kind == BlockerPrefabKind.Tree
-                    ? SampleClusterCell(ref rng, anchor, maxX, maxY, radius, treeClusterDistanceMinCells, treeClusterDistanceMaxCells)
-                    : new Vector2Int(
-                        math.clamp(anchor.x + rng.NextInt(-radius, radius + 1), 0, maxX),
-                        math.clamp(anchor.y + rng.NextInt(-radius, radius + 1), 0, maxY));
-
-                int x = candidate.x;
-                int y = candidate.y;
-                if (!CanPlaceFootprint(grid, walkable, roads, blockerData, reserved, x, y, sizeCells))
-                    continue;
-                if (!MatchesLocalPlacementHeuristics(candidate, pendingPlacements, metadata.Kind, localTreeSpacingCells))
-                    continue;
-
-                originCell = candidate;
-                return true;
-            }
-
-            int fallbackAttempts = 20;
-            for (int i = 0; i < fallbackAttempts; i++)
-            {
-                if (metadata.Kind == BlockerPrefabKind.Tree)
-                    return false;
-
-                int x = rng.NextInt(0, maxX + 1);
-                int y = rng.NextInt(0, maxY + 1);
-                var candidate = new Vector2Int(x, y);
-                if (!CanPlaceFootprint(grid, walkable, roads, blockerData, reserved, x, y, sizeCells))
-                    continue;
-                if (!MatchesLocalPlacementHeuristics(candidate, pendingPlacements, metadata.Kind, Mathf.Max(1, Mathf.RoundToInt((treeClusterSpacingMinCells + treeClusterSpacingMaxCells) * 0.5f))))
-                    continue;
-
-                originCell = candidate;
-                return true;
-            }
-
-            return false;
-        }
-
-        private static bool TryGetBlockerAnchor(
-            ref Unity.Mathematics.Random rng,
-            List<PendingBlockerPlacement> pendingPlacements,
-            List<Vector2Int> treeClusterCenters,
-            BlockerPrefabKind kind,
-            out Vector2Int anchor)
-        {
-            anchor = default;
-            if (kind == BlockerPrefabKind.Tree && treeClusterCenters != null && treeClusterCenters.Count > 0)
-            {
-                anchor = treeClusterCenters[rng.NextInt(0, treeClusterCenters.Count)];
-                return true;
-            }
-            if (pendingPlacements.Count == 0)
-                return false;
-
-            bool preferCluster = kind == BlockerPrefabKind.Tree || kind == BlockerPrefabKind.Bush || kind == BlockerPrefabKind.Grass;
-            bool preferRocksForBushes = kind == BlockerPrefabKind.Bush && rng.NextFloat() < 0.65f;
-
-            var matchingIndices = new List<int>();
-            for (int i = 0; i < pendingPlacements.Count; i++)
-            {
-                BlockerPrefabKind existingKind = pendingPlacements[i].Metadata.Kind;
-                if (preferRocksForBushes)
-                {
-                    if (existingKind == BlockerPrefabKind.Rock)
-                        matchingIndices.Add(i);
-                    continue;
-                }
-
-                if (existingKind == kind)
-                    matchingIndices.Add(i);
-            }
-
-            if (matchingIndices.Count == 0 && preferCluster)
-            {
-                for (int i = 0; i < pendingPlacements.Count; i++)
-                {
-                    BlockerPrefabKind existingKind = pendingPlacements[i].Metadata.Kind;
-                    if (kind == BlockerPrefabKind.Grass && existingKind == BlockerPrefabKind.Bush)
-                        matchingIndices.Add(i);
-                    else if (kind == BlockerPrefabKind.Bush && existingKind == BlockerPrefabKind.Tree)
-                        matchingIndices.Add(i);
-                }
-            }
-
-            if (matchingIndices.Count == 0)
-                return false;
-
-            PendingBlockerPlacement placement = pendingPlacements[matchingIndices[rng.NextInt(0, matchingIndices.Count)]];
-            anchor = placement.OriginCell;
-            return true;
-        }
-
-        private static int GetClusterRadius(BlockerPrefabKind kind)
-        {
-            return kind switch
-            {
-                BlockerPrefabKind.Tree => 10,
-                BlockerPrefabKind.Rock => 5,
-                BlockerPrefabKind.Bush => 4,
-                BlockerPrefabKind.Grass => 5,
-                _ => 6
-            };
-        }
-
-        private static bool MatchesLocalPlacementHeuristics(Vector2Int candidate, List<PendingBlockerPlacement> pendingPlacements, BlockerPrefabKind kind, int treeMinSpacingCells)
-        {
-            if (pendingPlacements.Count == 0)
-                return true;
-
-            int sameKindNearby = 0;
-            int veryCloseSameKind = 0;
-            int rocksNearby = 0;
-            int plantsNearby = 0;
-            int nearestDistanceSq = int.MaxValue;
-            int treeMinSpacingSq = treeMinSpacingCells * treeMinSpacingCells;
-
-            for (int i = 0; i < pendingPlacements.Count; i++)
-            {
-                Vector2Int existing = pendingPlacements[i].OriginCell;
-                int dx = existing.x - candidate.x;
-                int dy = existing.y - candidate.y;
-                int distanceSq = (dx * dx) + (dy * dy);
-                nearestDistanceSq = math.min(nearestDistanceSq, distanceSq);
-                if (distanceSq <= treeMinSpacingSq && pendingPlacements[i].Metadata.Kind == kind)
-                    veryCloseSameKind++;
-                if (distanceSq > 64)
-                    continue;
-
-                BlockerPrefabKind existingKind = pendingPlacements[i].Metadata.Kind;
-                if (existingKind == kind)
-                    sameKindNearby++;
-                if (existingKind == BlockerPrefabKind.Rock)
-                    rocksNearby++;
-                if (existingKind == BlockerPrefabKind.Tree || existingKind == BlockerPrefabKind.Bush || existingKind == BlockerPrefabKind.Grass)
-                    plantsNearby++;
-            }
-
-            return kind switch
-            {
-                BlockerPrefabKind.Tree => veryCloseSameKind == 0,
-                BlockerPrefabKind.Bush => rocksNearby >= 1 || sameKindNearby >= 1 || plantsNearby >= 2 || nearestDistanceSq > 100,
-                BlockerPrefabKind.Grass => plantsNearby >= 1 || sameKindNearby >= 1 || nearestDistanceSq > 121,
-                BlockerPrefabKind.Rock => sameKindNearby >= 1 || nearestDistanceSq > 49,
-                _ => true
-            };
-        }
-
         private static BlockerPrefabKind ClassifyPrefabKind(string prefabName)
         {
             return RuntimeGridBlockerPlacementKernel.ClassifyPrefabKind(prefabName);
-        }
-
-        private GameObject ChooseBlockerPrefab(ref Unity.Mathematics.Random rng, int spawnedTreeCount, int targetTreeCount)
-        {
-            bool preferTrees = spawnedTreeCount < targetTreeCount;
-            return ChoosePrefabByTreeTarget(_prefabs, ref rng, preferTrees, static prefab => ClassifyPrefabKind(prefab.name) == BlockerPrefabKind.Tree);
-        }
-
-        private static List<Vector2Int> BuildTreeClusterCenters(ref Unity.Mathematics.Random rng, GridConfig grid, int clusterCount)
-        {
-            int count = Mathf.Max(1, clusterCount);
-            var centers = new List<Vector2Int>(count);
-            int minDistance = Mathf.Max(8, Mathf.Min(grid.Width, grid.Height) / 6);
-            int minDistanceSq = minDistance * minDistance;
-
-            int maxAttempts = count * 12;
-            for (int attempt = 0; attempt < maxAttempts && centers.Count < count; attempt++)
-            {
-                var candidate = new Vector2Int(rng.NextInt(0, grid.Width), rng.NextInt(0, grid.Height));
-                bool farEnough = true;
-                for (int i = 0; i < centers.Count; i++)
-                {
-                    int dx = centers[i].x - candidate.x;
-                    int dy = centers[i].y - candidate.y;
-                    if ((dx * dx) + (dy * dy) < minDistanceSq)
-                    {
-                        farEnough = false;
-                        break;
-                    }
-                }
-
-                if (farEnough)
-                    centers.Add(candidate);
-            }
-
-            if (centers.Count == 0)
-                centers.Add(new Vector2Int(grid.Width / 2, grid.Height / 2));
-
-            return centers;
-        }
-
-        private static int ComputeTreeClusterRadius(int targetTreesPerCluster, int treeMinSpacingCells)
-        {
-            float spacing = Mathf.Max(1f, treeMinSpacingCells);
-            float estimatedSide = Mathf.Sqrt(Mathf.Max(1, targetTreesPerCluster)) * spacing;
-            return Mathf.Max(10, Mathf.CeilToInt(estimatedSide * 0.6f));
-        }
-
-        private static Vector2Int SampleClusterCell(
-            ref Unity.Mathematics.Random rng,
-            Vector2Int anchor,
-            int maxX,
-            int maxY,
-            int radius,
-            int distanceMinCells,
-            int distanceMaxCells)
-        {
-            int clampedMaxDistance = Mathf.Max(0, Mathf.Min(radius, distanceMaxCells));
-            int clampedMinDistance = Mathf.Clamp(distanceMinCells, 0, clampedMaxDistance);
-            float angle = rng.NextFloat(0f, math.PI * 2f);
-            float distance = clampedMaxDistance <= 0
-                ? 0f
-                : rng.NextFloat(clampedMinDistance, clampedMaxDistance + 1f);
-
-            int x = math.clamp(anchor.x + Mathf.RoundToInt(math.cos(angle) * distance), 0, maxX);
-            int y = math.clamp(anchor.y + Mathf.RoundToInt(math.sin(angle) * distance), 0, maxY);
-            return new Vector2Int(x, y);
-        }
-
-        private static int SampleSpacing(ref Unity.Mathematics.Random rng, int minCells, int maxCells)
-        {
-            int clampedMin = Mathf.Max(1, minCells);
-            int clampedMax = Mathf.Max(clampedMin, maxCells);
-            return rng.NextInt(clampedMin, clampedMax + 1);
-        }
-
-        private static GameObject ChoosePrefabByTreeTarget(
-            List<GameObject> prefabs,
-            ref Unity.Mathematics.Random rng,
-            bool preferTrees,
-            System.Predicate<GameObject> isTreePrefab)
-        {
-            if (prefabs == null || prefabs.Count == 0)
-                return null;
-
-            var treePrefabs = new List<GameObject>();
-            var otherPrefabs = new List<GameObject>();
-            for (int i = 0; i < prefabs.Count; i++)
-            {
-                GameObject prefab = prefabs[i];
-                if (prefab == null)
-                    continue;
-                if (isTreePrefab(prefab))
-                    treePrefabs.Add(prefab);
-                else
-                    otherPrefabs.Add(prefab);
-            }
-
-            List<GameObject> source = preferTrees
-                ? (treePrefabs.Count > 0 ? treePrefabs : otherPrefabs)
-                : (otherPrefabs.Count > 0 ? otherPrefabs : treePrefabs);
-            return source.Count == 0 ? null : source[rng.NextInt(0, source.Count)];
-        }
-
-        private static Vector2Int ComputeFootprintCells(PrefabPlacementMetadata metadata, float cellSize)
-        {
-            RuntimeGridBlockerPlacementKernel.ComputeFootprintCells(
-                metadata.BlocksOnlyCenterCell, metadata.HasBounds,
-                metadata.LocalBounds.size.x, metadata.LocalBounds.size.z, cellSize,
-                out int width, out int depth);
-            return new Vector2Int(width, depth);
         }
 
         private static Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int sizeCells, GridConfig grid, float y)

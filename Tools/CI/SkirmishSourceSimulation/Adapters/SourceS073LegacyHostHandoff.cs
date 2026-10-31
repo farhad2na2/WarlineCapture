@@ -1,6 +1,9 @@
 using System;using System.Collections.Generic;using System.IO;using Game.Components;using Game.Configs;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;
 namespace Game.Runtime { internal sealed partial class AutonomousWorld {
- internal void SyncS073LegacyDiagnosticRoads(Entity grid){if(initialRoads==null||initializationAttempted||Buildings.Count!=0)throw new NotSupportedException("Prepared road owner before actor creation required");initialRoads.Sync(Entities,grid);}
+ private bool s073DiagnosticBlockerOwnersInitialized;
+ internal void SyncS073LegacyDiagnosticRoads(Entity grid){if(initialRoads==null||initializationAttempted||Buildings.Count!=0)throw new NotSupportedException("Prepared road owner before actor creation required");initialRoads.Sync(Entities,grid);initialRoads.RequireBeforePath();}
+ internal void InitializeS073LegacyDiagnosticBlockerOwners(Entity grid){if(initializationAttempted||Buildings.Count!=0||!Entities.Exists(grid)||!Entities.HasComponent<GridConfig>(grid)||s073DiagnosticBlockerOwnersInitialized)throw new NotSupportedException("Fresh S073 grid required before source blocker lifecycle");GridEntity=grid;storageState=FreshState();storageState.Begin();storageOwner.OnCreate(ref storageState);storageState.End();dedupState=FreshState();dedupState.Begin();dedup.OnCreate(ref dedupState);dedupState.End();staticBlockerState=FreshState();staticBlockerState.Begin();staticBlockers.OnCreate(ref staticBlockerState);staticBlockerState.End();s073DiagnosticBlockerOwnersInitialized=true;UpdateSourceBlockers();}
+ internal void UpdateS073LegacyDiagnosticBlockerOwners(){if(!s073DiagnosticBlockerOwnersInitialized)throw new NotSupportedException("S073 source blocker lifecycle must be initialized first");UpdateSourceBlockers();}
  // Candidate-only handoff: retain the actual startup manager and registry in this host.
  // Captured static masks do not establish live occupancy, active water or scheduler admission.
  internal void RetainS073LegacyDiagnosticStartup(EntityManager manager, Entity grid, Entity surface, Entity session, Entity boundary, Entity owner, IReadOnlyCollection<Entity> newlySpawned) {

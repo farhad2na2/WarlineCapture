@@ -36,7 +36,7 @@ def runtime_paths(repo):
  dot=Path(shutil.which('dotnet')or'').resolve(strict=True);sdks=list((dot.parent/'sdk').glob('*/Roslyn/bincore/csc.dll'));need(bool(sdks),'Installed Roslyn compiler required')
  def key(p):return tuple(int(x)for x in p.parents[2].name.split('.')if x.isdigit())
  csc=sorted(sdks,key=key)[-1];newtons=list((repo/'Library/PackageCache').glob('com.unity.nuget.newtonsoft-json@*/Runtime/Newtonsoft.Json.dll'));need(len(newtons)==1,'One resolved current Newtonsoft assembly required')
- refs=[repo/'Library/ScriptAssemblies/Unity.Addressables.dll',repo/'Library/ScriptAssemblies/Unity.ResourceManager.dll',script/'NetStandard/ref/2.1.0/netstandard.dll',script/'NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll',engine/'UnityEngine.MathematicsModule.dll',engine/'UnityEngine.SharedInternalsModule.dll',newtons[0]]
+ refs=[repo/'Library/ScriptAssemblies/Unity.Addressables.dll',repo/'Library/ScriptAssemblies/Unity.ResourceManager.dll',repo/'Library/ScriptAssemblies/Unity.Mathematics.dll',script/'NetStandard/ref/2.1.0/netstandard.dll',script/'NetStandard/compat/2.1.0/shims/netfx/mscorlib.dll',engine/'UnityEngine.MathematicsModule.dll',engine/'UnityEngine.SharedInternalsModule.dll',newtons[0]]
  core=engine/'UnityEngine.CoreModule.dll'
  for p in refs+[core,mono,dot,csc]:need(p.is_file(),'Required installed build/runtime file missing: '+str(p))
  return {'contents':contents,'script':script,'engine':engine,'mono':mono,'dotnet':dot,'csc':csc,'refs':refs,'core':core,'newtonsoft':newtons[0]}

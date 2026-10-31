@@ -4508,6 +4508,14 @@
       ]
     },
     {
+      "id": "633_RuntimeGridBlockerPlacementPolicy.cs",
+      "kind": "native_direct",
+      "path": "Assets/Game/Scripts/Environment/RuntimeGridBlockerPlacementPolicy.cs",
+      "require_declarations": [
+        "public static class RuntimeGridBlockerPlacementPolicy"
+      ]
+    },
+    {
       "id": "353_BuildingRuntimeDataRegistrationSystemHelper.cs",
       "kind": "native_direct",
       "path": "Assets/Game/Scripts/Systems/BuildingRuntimeDataRegistrationSystemHelper.cs",

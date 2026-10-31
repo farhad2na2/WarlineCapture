@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Game.Runtime;
+using Game.Simulation;
 
 internal static class MapBuildingPlacementSequenceKernelHarness
 {
@@ -11,6 +12,22 @@ internal static class MapBuildingPlacementSequenceKernelHarness
 
     public static int Main()
     {
+        int productionChecks = 0;
+        Need(MapBuildingPlacementPriorityPolicy.GetProductionCount(2, true, true, true, true) == 2,
+            "Explicit production slots must override legacy prefab fields"); productionChecks++;
+        Need(MapBuildingPlacementPriorityPolicy.GetProductionCount(0, true, false, false, false) == 1,
+            "Legacy first producer prefab count changed"); productionChecks++;
+        Need(MapBuildingPlacementPriorityPolicy.GetProductionCount(0, false, true, false, false) == 2,
+            "Legacy secondary producer slot must preserve its authored slot index"); productionChecks++;
+        Need(MapBuildingPlacementPriorityPolicy.GetProductionCount(0, false, false, false, true) == 4,
+            "Legacy quaternary producer slot must preserve its authored slot index"); productionChecks++;
+        Need(MapBuildingPlacementPriorityPolicy.GetProductionCount(0, false, false, false, false) == 0,
+            "Non-producer prefab must remain non-priority"); productionChecks++;
+        Need(MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(1, 1, 1) &&
+             !MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(2, 1, 1) &&
+             !MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(1, 1, 0),
+            "Only player-owned production buildings must enter the priority pass"); productionChecks++;
+
         var sequence = new MapBuildingPlacementSequenceKernel();
         var production = new HashSet<int> { 35, 37 };
         var prioritySucceeded = new HashSet<int>();
@@ -119,6 +136,7 @@ internal static class MapBuildingPlacementSequenceKernelHarness
         Need(emptied.IsQueued,
             "A config becoming empty must queue even after prior indices were processed");
 
+        Console.WriteLine("[MapBuildingPlacementPriorityPolicySmoke] result=Passed checks=" + productionChecks);
         Console.WriteLine("[MapBuildingPlacementSequenceKernelHarness] Passed attempts=" + attempts.Count +
             " batches=32+8 priorityRows=2 retainedPrioritySuccesses=1 failedPriorityRetried=1 failedSequentialRetried=0" +
             " sharedAdvance=equivalent exceptionCursor=preserved dynamicCount=accepted");

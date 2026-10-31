@@ -1030,9 +1030,24 @@ internal static class S073LegacyPlacementOwnerHarness
             return true;
         }
 
+        bool IsCapturedPlayerProductionPlacement(int scheduledIndex)
+        {
+            if (scheduledIndex != 0)
+                return false;
+            JObject sourceRow = (JObject)mapPlacementCapture["placement_rows"][1];
+            RuntimeDefinition definition = mapDefinitions.Definitions[(int)sourceRow["prefab_index"]];
+            int productionCount = MapBuildingPlacementPriorityPolicy.GetProductionCount(
+                definition.ProductionSlots != null ? definition.ProductionSlots.Count : 0,
+                definition.SpawnUnitPrefab != null,
+                definition.SecondarySpawnUnitPrefab != null,
+                definition.TertiarySpawnUnitPrefab != null,
+                definition.QuaternarySpawnUnitPrefab != null);
+            return MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(
+                (byte)sourceRow["faction_id"], (byte)FactionIdentity.PlayerFactionId, productionCount);
+        }
         var mapPlacementSequence = new MapBuildingPlacementSequenceKernel();
         bool mapPlacementSequenceQueued = mapPlacementSequence.Advance(
-            1, 32, _ => false, RegisterCapturedMapRow);
+            1, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
         Need(mapPlacementSequenceQueued && mapPlacementSequence.IsQueued &&
              authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed",
             "Shared placement sequence must only complete after the captured actor registration callback succeeds");

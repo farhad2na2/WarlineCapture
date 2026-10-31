@@ -4,6 +4,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
+using Game.Simulation;
 
 namespace Game.Runtime
 {
@@ -178,7 +179,10 @@ namespace Game.Runtime
                 new Vector2Int(10, 10),
                 500,
                 context.RuntimeSpawnContext.RunwaySystem);
-            return BuildingDefinitionPrefabSystemHelper.GetProductionCount(definition) > 0;
+            return MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(
+                placement.FactionId,
+                FactionIdentity.PlayerFactionId,
+                BuildingDefinitionPrefabSystemHelper.GetProductionCount(definition));
         }
 
         private static bool TrySpawnAuthoredPlacement(

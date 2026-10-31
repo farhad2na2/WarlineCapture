@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
+using Game.Simulation;
 
 namespace Game.Runtime
 {
@@ -656,16 +657,12 @@ namespace Game.Runtime
         {
             if (definition == null)
                 return 0;
-
-            if (definition.ProductionSlots != null && definition.ProductionSlots.Count > 0)
-                return definition.ProductionSlots.Count;
-
-            int count = 0;
-            if (definition.SpawnUnitPrefab != null) count = 1;
-            if (definition.SecondarySpawnUnitPrefab != null) count = 2;
-            if (definition.TertiarySpawnUnitPrefab != null) count = 3;
-            if (definition.QuaternarySpawnUnitPrefab != null) count = 4;
-            return count;
+            return MapBuildingPlacementPriorityPolicy.GetProductionCount(
+                definition.ProductionSlots != null ? definition.ProductionSlots.Count : 0,
+                definition.SpawnUnitPrefab != null,
+                definition.SecondarySpawnUnitPrefab != null,
+                definition.TertiarySpawnUnitPrefab != null,
+                definition.QuaternarySpawnUnitPrefab != null);
         }
 
         public static GameObject GetProductionPrefab(BuildingDefinition definition, int index)

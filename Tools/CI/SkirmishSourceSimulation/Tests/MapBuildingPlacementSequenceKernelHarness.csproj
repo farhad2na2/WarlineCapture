@@ -8,6 +8,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="../../../../Assets/Game/Scripts/Systems/MapBuildingPlacementSequenceKernel.cs" />
+    <Compile Include="../../../../Assets/Game/Scripts/Simulation/MapBuildingPlacementPriorityPolicy.cs" />
     <Compile Include="MapBuildingPlacementSequenceKernelHarness.cs" />
   </ItemGroup>
 </Project>

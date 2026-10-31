@@ -54,7 +54,7 @@ namespace Game.Runtime
             return kind == AriaGroundApproachKind.AuthoredLogicalGround;
         }
 
-        static SkirmishPublicSelectedApproach Unavailable(string reason) =>
+        static SkirmishPublicSelectedApproach Unavailable(SkirmishPublicApproachUnavailableReason reason) =>
             new SkirmishPublicSelectedApproach { UnavailableReason = reason };
 
         static SkirmishPublicSelectedApproach ReadCore(EntityManager em, Entity session, float3 objective)
@@ -63,7 +63,7 @@ namespace Game.Runtime
                 !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
                 !em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
                 !em.HasComponent<SkirmishLaunchDefinitionRecord>(session))
-                return Unavailable("Exact authored session and finite public objective required.");
+                return Unavailable(SkirmishPublicApproachUnavailableReason.ExactAuthoredSessionRequired);
             var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             var launch = em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
@@ -73,30 +73,30 @@ namespace Game.Runtime
                 setup.ArmyProfileId != SkirmishArmyProfileId.GroundManeuver ||
                 !GroundMissionContext.SupportsOriginalGroundStart(setup.StartPackageId, setup.Readiness) ||
                 !SkirmishMissionLogicalBindingProvider.TryRead(em, session, out _))
-                return Unavailable("Authored source-bound ground session identity unavailable or changed.");
+                return Unavailable(SkirmishPublicApproachUnavailableReason.AuthoredSourceSessionUnavailable);
             using var grids = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable),
                 typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
-            if (grids.CalculateEntityCount() != 1) return Unavailable("Unique actual source grid required.");
+            if (grids.CalculateEntityCount() != 1) return Unavailable(SkirmishPublicApproachUnavailableReason.UniqueSourceGridRequired);
             Entity gridEntity = grids.GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
             var sourceGrid = launch.Definition.CampaignMap.GridMetadata;
             if (grid.Width != sourceGrid.Dimensions.x || grid.Height != sourceGrid.Dimensions.y ||
                 grid.CellSize != sourceGrid.CellSize || !math.all(grid.Origin == (float3)sourceGrid.Origin) ||
                 !SkirmishTypedSpawnConstraint.HasCompleteAllocator(em, gridEntity, grid))
-                return Unavailable("Actual grid differs from the same authored source frame.");
+                return Unavailable(SkirmishPublicApproachUnavailableReason.SourceGridMismatch);
             var publishedObjective = SkirmishPublicObjectiveProjection.Read(em, session);
             if (!publishedObjective.EnemyObjectiveAlive || publishedObjective.EnemyPosition.X != objective.x ||
                 publishedObjective.EnemyPosition.Y != objective.y || publishedObjective.EnemyPosition.Z != objective.z)
-                return Unavailable("Same current published objective required; hidden targets are not approach inputs.");
+                return Unavailable(SkirmishPublicApproachUnavailableReason.CurrentPublicObjectiveRequired);
             int2 desired = GridUtils.WorldToCell(grid, objective);
             if (!GridUtils.InBounds(desired, grid.Width, grid.Height))
-                return Unavailable("Public objective lies outside the actual source grid.");
+                return Unavailable(SkirmishPublicApproachUnavailableReason.ObjectiveOutsideSourceGrid);
             using var selectedQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<SelectedUnitTag>(), ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<UnitMove>());
             using var selected = new NativeList<Entity>(Allocator.Temp);
             SelectedMoveOrderCommandSystem.CollectSelectedMoveEntities(em, selectedQuery,
                 em.GetEntityTypeHandle(), null, selected);
-            if (selected.Length == 0) return Unavailable("No selected original move-eligible force.");
+            if (selected.Length == 0) return Unavailable(SkirmishPublicApproachUnavailableReason.NoSelectedMoveEligibleForce);
             var members = new List<SkirmishPublicApproachMember>(selected.Length);
             for (int i = 0; i < selected.Length; i++)
             {
@@ -105,17 +105,17 @@ namespace Game.Runtime
                     !SkirmishArmyGroupSystem.IsAlive(em, unit) || em.HasComponent<UnitAirMovement>(unit) ||
                     !em.HasComponent<SkirmishAttemptOwnedComponent>(unit) || !em.HasComponent<SkirmishArmyGroupMembershipComponent>(unit) ||
                     !em.HasComponent<Unity.Transforms.LocalTransform>(unit))
-                    return Unavailable("Selected force is not a living owned ground move cohort.");
+                    return Unavailable(SkirmishPublicApproachUnavailableReason.InvalidSelectedGroundCohort);
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
                 if (owned.FactionId != 1 || owned.IsStructure != 0 || owned.CapacityReleased != 0 ||
                     !owned.SessionId.Equals(state.SessionId) || !em.HasComponent<Faction>(unit) ||
                     em.GetComponentData<Faction>(unit).Id != owned.FactionId)
-                    return Unavailable("Foreign or released selected force cannot advertise an authored approach.");
+                    return Unavailable(SkirmishPublicApproachUnavailableReason.ForeignOrReleasedForce);
                 float3 position = em.GetComponentData<Unity.Transforms.LocalTransform>(unit).Position;
                 var overlay = em.HasComponent<SkirmishRoleOverlayComponent>(unit)
                     ? em.GetComponentData<SkirmishRoleOverlayComponent>(unit) : default;
                 uint groupId = em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId;
-                if (groupId == 0) return Unavailable("Selected owned actor has no actual army-group membership.");
+                if (groupId == 0) return Unavailable(SkirmishPublicApproachUnavailableReason.MissingArmyGroup);
                 bool ownMoveGoal = em.HasComponent<UnitTarget>(unit) &&
                     (em.HasComponent<AttackMoveOrder>(unit) || em.HasComponent<ManualMoveOrderTag>(unit));
                 int2 ownGoal = ownMoveGoal ? em.GetComponentData<UnitTarget>(unit).Cell : default;
@@ -133,11 +133,11 @@ namespace Game.Runtime
             for (int i = 0; i < members.Count; i++)
                 if (members[i].AcquisitionRadius > 0 &&
                     (result.StructureCapableCount == 0 || members[i].StructureCapable)) { leader = i; break; }
-            if (leader < 0) { result.UnavailableReason = "Selected own force has no original acquisition capability."; return result; }
+            if (leader < 0) { result.UnavailableReason = SkirmishPublicApproachUnavailableReason.NoAcquisitionCapableForce; return result; }
             using var surfaces = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
             var surfaceReader = new MapSurfacePathfindingSnapshot();
             if (!surfaceReader.TryCreateContext(em, surfaces, out var surface))
-            { result.UnavailableReason = "Actual source surface unavailable; no flat planning fallback."; return result; }
+            { result.UnavailableReason = SkirmishPublicApproachUnavailableReason.ActualSourceSurfaceUnavailable; return result; }
             long goalBegan = Stopwatch.GetTimestamp();
             var moveOwner = new UnitMoveOrderSystem();
             var currentCells = moveOwner.BuildSelectedCurrentFootprintCells(em, grid, selected.AsArray());
@@ -148,13 +148,13 @@ namespace Game.Runtime
                 blocker.FriendlyPassFactionIds, em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied,
                 localReservations, currentCells, selected[leader], desired, leader, surface, out int2 goal);
             result.GoalEvaluationTicks = Stopwatch.GetTimestamp() - goalBegan;
-            if (!legal) { result.UnavailableReason = "Original move owner found no legal approach goal."; return result; }
+            if (!legal) { result.UnavailableReason = SkirmishPublicApproachUnavailableReason.NoLegalApproachGoal; return result; }
             float3 world = GridUtils.CellToWorldCenter(grid, goal);
             float distanceSquared = math.distancesq(world.xz, objective.xz);
             float radius = members[leader].AcquisitionRadius;
             result.LegalGoalWithinOwnAcquisitionRange = distanceSquared <= radius * radius;
             if (!result.LegalGoalWithinOwnAcquisitionRange)
-            { result.UnavailableReason = "Original legal goal remains outside own acquisition envelope; source-fit/contact gate pending."; return result; }
+            { result.UnavailableReason = SkirmishPublicApproachUnavailableReason.LegalGoalOutsideAcquisitionEnvelope; return result; }
             result.LegalGoalAvailable = true;
             result.GoalX = world.x; result.GoalY = world.y; result.GoalZ = world.z;
             // This is a legal leader planning candidate, not all-member accepted

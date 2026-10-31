@@ -23,7 +23,7 @@ public static class AriaGroundApproachPolicy {
  public static Game.Skirmish.Contracts.SkirmishPublicSelectedApproach ObserveSelectedOwnForce(
   AriaGroundPosition publicObjective, IReadOnlyList<Game.Skirmish.Contracts.SkirmishPublicApproachMember> members){
   var result=new Game.Skirmish.Contracts.SkirmishPublicSelectedApproach();
-  if(members==null||members.Count==0){result.UnavailableReason="No selected living own move force.";return result;}
+  if(members==null||members.Count==0){result.UnavailableReason=Game.Skirmish.Contracts.SkirmishPublicApproachUnavailableReason.NoSelectedMoveEligibleForce;return result;}
   if(!Finite(publicObjective.X)||!Finite(publicObjective.Y)||!Finite(publicObjective.Z))throw new ArgumentException("Finite public objective required.");
   for(int i=0;i<members.Count;i++){
    var member=members[i];

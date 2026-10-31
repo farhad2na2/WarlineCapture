@@ -86,7 +86,7 @@ namespace Game.Runtime
                         surfaceId = sample.SurfaceId;
                         layerId = sample.LayerId;
                     }
-                    else if (sample.SurfaceId != surfaceId || sample.LayerId != layerId)
+                    else if (sample.LayerId != layerId)
                     {
                         result = new Result(false, heightSum / math.max(1, sampleCount), maxHeight - minHeight, maxSlope, surfaceId, layerId, sampleCount);
                         return true;

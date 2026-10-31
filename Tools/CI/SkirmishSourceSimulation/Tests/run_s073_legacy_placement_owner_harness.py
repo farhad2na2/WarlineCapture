@@ -48,6 +48,7 @@ EXPECTED = {
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
 SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
+    "Assets/Game/Scripts/Systems/BuildingSurfacePlacementUtilitySystemHelper.cs": "8b1039f300d799efb2656ecebda83ae8044f25f6855c7b1c783c9cbaa541419c",
     "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "f4ff754bd2bffa99f63b280c011ad109f70fd9305f6dd9040c14b28d7339f6ab",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
@@ -221,7 +222,9 @@ def main():
             continue
         require(SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS.get(pin_path) == current,
                 "S073 special-building capture source pin changed outside the tested numeric-owner compatibility set: " + pin_path)
-        if pin_path.endswith("/RuntimeGridBlockerOwnershipKernel.cs"):
+        if pin_path.endswith("/BuildingSurfacePlacementUtilitySystemHelper.cs"):
+            evidence = "The changed footprint owner compares cross-cell layer identity rather than per-sample SurfaceId; focused compact/full controls cover the changed semantics. The captured exporter reads runway anchor/world/opening geometry and gate prefab local transforms without evaluating building footprints or processing placements. Reuse applies only to those captured runway/gate reference facts, not placement equivalence or native readiness."
+        elif pin_path.endswith("/RuntimeGridBlockerOwnershipKernel.cs"):
             evidence = "Shared owner now maintains a reverse entity-to-id index alongside its existing ownership records; registration rejects duplicate entity owners, removal/clear update both indexes. The S073 harness cross-checks the returned record against live ECS origin and footprint before treating the entity as removable runtime occupancy."
         elif pin_path.endswith("/GameplayStartGatePolicy.cs") or pin_path.endswith("/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs"):
             evidence = "The shared gameplay-start gate policy is independently covered by portable controls; the S073 placement harness exercises the same policy and original rules transition against the actual legacy initialized-world owners."

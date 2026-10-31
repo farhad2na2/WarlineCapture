@@ -755,15 +755,19 @@ internal static class S073LegacyPlacementOwnerHarness
         RuntimeBuildingEntity authoredMapBuilding = null;
         JObject authoredMapActorEvidence = null;
         JObject authoredMapWallEvidence = null;
+        var mapPlacementCallbackRows = new List<int>();
+        var mapPlacementCallbackSuccessRows = new List<int>();
         bool RegisterCapturedMapRow(int scheduledIndex)
         {
-            if (scheduledIndex != 0)
+            mapPlacementCallbackRows.Add(scheduledIndex);
+            if (scheduledIndex != 1)
                 return false;
 
-        // Materialize one exact ordinary ground placement from the captured original map source
-        // through the existing shared building registration and actor owners. This deliberately
-        // stops at one row; walls, runway, visuals, and full map-owner completion remain pending.
-        JObject authoredMapRow = (JObject)mapPlacementCapture["placement_rows"][1];
+        // Materialize the one currently supported sequential source row through the existing
+        // shared building registration and actor owners. The callback still runs under the real
+        // 432-row priority pass and first 32 sequential attempts; all other source rows remain
+        // explicitly unhandled, and the separately selected wall row does not complete the map.
+        JObject authoredMapRow = (JObject)mapPlacementCapture["placement_rows"][scheduledIndex];
         int authoredDefinitionIndex = (int)authoredMapRow["prefab_index"];
         RuntimeDefinition authoredDefinition = mapDefinitions.Definitions[authoredDefinitionIndex];
         JObject authoredEuler = (JObject)authoredMapRow["world_euler_angles"];
@@ -777,7 +781,7 @@ internal static class S073LegacyPlacementOwnerHarness
             BitConverter.ToSingle(BitConverter.GetBytes((int)authoredRotationBits[3]), 0));
         JObject authoredScale = (JObject)authoredMapRow["world_scale"];
         JObject authoredPosition = (JObject)authoredMapRow["world_position"];
-        JObject authoredOriginRow = (JObject)mapPlacementOriginReplay["origins"][1];
+        JObject authoredOriginRow = (JObject)mapPlacementOriginReplay["origins"][scheduledIndex];
         int2 authoredOrigin = new int2((int)authoredOriginRow["origin"][0], (int)authoredOriginRow["origin"][1]);
         Vector3 authoredWorldEuler = new Vector3((float)authoredEuler["x"], (float)authoredEuler["y"], (float)authoredEuler["z"]);
         int preservedAuthoredOverlaps = 0, blockerRemovalCallbackCount = 0, redirectOwnerInvocationCount = 0;
@@ -1031,6 +1035,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["rows_registered"] = 1,
                 ["rows_total"] = 432
             };
+            mapPlacementCallbackSuccessRows.Add(scheduledIndex);
 
             // Exercise one exact captured wall row through the same source data-only
             // registration path. This is a focused capability proof, not sequence
@@ -1137,9 +1142,10 @@ internal static class S073LegacyPlacementOwnerHarness
 
         bool IsCapturedPlayerProductionPlacement(int scheduledIndex)
         {
-            if (scheduledIndex != 0)
+            JArray sourceRows = mapPlacementCapture["placement_rows"] as JArray;
+            if (sourceRows == null || scheduledIndex < 0 || scheduledIndex >= sourceRows.Count)
                 return false;
-            JObject sourceRow = (JObject)mapPlacementCapture["placement_rows"][1];
+            JObject sourceRow = (JObject)sourceRows[scheduledIndex];
             RuntimeDefinition definition = mapDefinitions.Definitions[(int)sourceRow["prefab_index"]];
             int productionCount = MapBuildingPlacementPriorityPolicy.GetProductionCount(
                 definition.ProductionSlots != null ? definition.ProductionSlots.Count : 0,
@@ -1151,11 +1157,14 @@ internal static class S073LegacyPlacementOwnerHarness
                 (byte)sourceRow["faction_id"], (byte)FactionIdentity.PlayerFactionId, productionCount);
         }
         var mapPlacementSequence = new MapBuildingPlacementSequenceKernel();
+        int mapPlacementSourceRowCount = ((JArray)mapPlacementCapture["placement_rows"]).Count;
         bool mapPlacementSequenceQueued = mapPlacementSequence.Advance(
-            1, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
-        Need(mapPlacementSequenceQueued && mapPlacementSequence.IsQueued &&
+            mapPlacementSourceRowCount, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
+        Need(mapPlacementSourceRowCount == 432 && !mapPlacementSequenceQueued && mapPlacementSequence.PriorityPassCompleted &&
+             !mapPlacementSequence.IsQueued && mapPlacementSequence.NextPlacementIndex == 32 &&
+             mapPlacementCallbackSuccessRows.Count == 1 && mapPlacementCallbackSuccessRows[0] == 1 &&
              authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed",
-            "Shared placement sequence must only complete after the captured actor registration callback succeeds");
+            "Original 432-row placement priority pass and first 32 sequential attempts must preserve the single implemented source row and remain incomplete");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {
@@ -1258,6 +1267,18 @@ internal static class S073LegacyPlacementOwnerHarness
             ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
             ["authored_map_actor"] = authoredMapActorEvidence,
             ["authored_map_wall_actor"] = authoredMapWallEvidence,
+            ["map_placement_sequence"] = new JObject
+            {
+                ["authority"] = "Shared MapBuildingPlacementSequenceKernel.Advance used by original MapBuildingPlacementSpawnPrefabSystemHelper",
+                ["configured_source_rows"] = mapPlacementSourceRowCount,
+                ["priority_pass_completed"] = mapPlacementSequence.PriorityPassCompleted,
+                ["next_sequential_index"] = mapPlacementSequence.NextPlacementIndex,
+                ["sequential_limit_per_update"] = 32,
+                ["queued_complete"] = mapPlacementSequence.IsQueued,
+                ["callback_attempt_source_rows"] = new JArray(mapPlacementCallbackRows),
+                ["callback_success_source_rows"] = new JArray(mapPlacementCallbackSuccessRows),
+                ["map_owner_complete"] = false
+            },
             ["map_placements_materialized"] = authoredMapWallEvidence != null ? 2 : 1,
             ["map_placements_total"] = 432,
             ["map_placement_runtime_owner_complete"] = false,

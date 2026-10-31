@@ -184,7 +184,7 @@ namespace Game.Composition
         private bool skirmishOwnershipNormalized;
         public void Update()
         {
-            gameplayStartupSystem.Advance(BuildingRuntimeUpdate, _buildingRuntimeUpdateContext);
+            gameplayStartupSystem.Advance(runtimeWorld, BuildingRuntimeUpdate, _buildingRuntimeUpdateContext);
             if (runtimeWorld != null && runtimeWorld.IsCreated)
                 SkirmishLaunchProjection.DriveStressLaunch(runtimeWorld.EntityManager);
             if(!skirmishOwnershipNormalized && runtimeWorld!=null && runtimeWorld.IsCreated &&

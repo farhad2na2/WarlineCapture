@@ -101,6 +101,7 @@ namespace Game.Composition
         }
 
         public void Advance(
+            World world,
             BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
             in BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext)
         {
@@ -109,7 +110,7 @@ namespace Game.Composition
 
             try
             {
-                AdvanceStep(buildingRuntimeUpdate, buildingRuntimeUpdateContext);
+                AdvanceStep(world, buildingRuntimeUpdate, buildingRuntimeUpdateContext);
             }
             catch (Exception exception)
             {
@@ -137,13 +138,13 @@ namespace Game.Composition
         }
 
         private void AdvanceStep(
+            World world,
             BuildingRuntimeUpdateCompositionSystemHelper buildingRuntimeUpdate,
             in BuildingRuntimeUpdateCompositionSystemHelper.Context buildingRuntimeUpdateContext)
         {
             if (!gameplayStartRequested || gameplayStartComplete)
                 return;
 
-            World world = World.DefaultGameObjectInjectionWorld;
             BuildingPlacementSystemConfig buildingPlacementConfig =
                 sceneView != null ? sceneView.BuildingPlacementConfig : null;
             IReadOnlyList<AIControllerConfig> aiControllerConfigs =

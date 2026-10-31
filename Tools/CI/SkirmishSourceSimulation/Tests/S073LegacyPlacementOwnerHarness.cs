@@ -1,3 +1,4 @@
+extern alias ActualCore;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,6 +16,7 @@ using Newtonsoft.Json.Linq;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -571,6 +573,248 @@ internal static class S073LegacyPlacementOwnerHarness
         int factionOneUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 1);
         int factionTwoUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 2);
         Need(factionOneUnits == 12 && factionTwoUnits == 12, "Original initial-unit spawner changed S073 faction grants");
+        // Retain the completed original startup while its canonical registry still contains
+        // exactly the ten legacy initial buildings. The separate captured map row below is
+        // then admitted as a later source placement, not miscounted as startup output.
+        autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
+
+        // Materialize one exact ordinary ground placement from the captured original map source
+        // through the existing shared building registration and actor owners. This deliberately
+        // stops at one row; walls, runway, visuals, and full map-owner completion remain pending.
+        JObject authoredMapRow = (JObject)mapPlacementCapture["placement_rows"][1];
+        int authoredDefinitionIndex = (int)authoredMapRow["prefab_index"];
+        RuntimeDefinition authoredDefinition = mapDefinitions.Definitions[authoredDefinitionIndex];
+        JObject authoredEuler = (JObject)authoredMapRow["world_euler_angles"];
+        JObject authoredScale = (JObject)authoredMapRow["world_scale"];
+        JObject authoredPosition = (JObject)authoredMapRow["world_position"];
+        JObject authoredOriginRow = (JObject)mapPlacementOriginReplay["origins"][1];
+        int2 authoredOrigin = new int2((int)authoredOriginRow["origin"][0], (int)authoredOriginRow["origin"][1]);
+        Vector3 authoredWorldEuler = new Vector3((float)authoredEuler["x"], (float)authoredEuler["y"], (float)authoredEuler["z"]);
+        RuntimeBuildingEntity authoredMapBuilding = null;
+        JObject authoredMapActorEvidence = null;
+        int preservedAuthoredOverlaps = 0, blockerRemovalCallbackCount = 0, redirectOwnerInvocationCount = 0;
+        Entity preservedAuthoredBlocker = Entity.Null;
+        JObject preservedAuthoredOverlapEvidence = null;
+        quaternion capturedAuthoredRotation = default;
+        void ReadPinnedAuthoredMapBlocker(Vector2Int origin, Vector2Int footprint,
+            out Entity matchEntity, out int2 matchOrigin, out int2 matchSize,
+            out OperationMapBuildingComponent matchIdentity, out quaternion matchRotation, out int2 selectionCenter)
+        {
+            matchEntity = Entity.Null;
+            matchOrigin = default;
+            matchSize = default;
+            matchIdentity = default;
+            matchRotation = default;
+            selectionCenter = default;
+            int overlapCount = 0;
+            using var blockers = em.CreateEntityQuery(typeof(StaticGridBlocker),
+                typeof(UnitGrid), typeof(GridBlockerSize));
+            using var entities = blockers.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity blockerEntity = entities[i];
+                int2 blockerOrigin;
+                int2 blockerSize;
+                bool authoredBuilding = em.HasComponent<OperationMapBuildingComponent>(blockerEntity) &&
+                    em.HasComponent<RuntimeBuildingCombatInfo>(blockerEntity);
+                if (authoredBuilding)
+                {
+                    RuntimeBuildingCombatInfo combat = em.GetComponentData<RuntimeBuildingCombatInfo>(blockerEntity);
+                    blockerOrigin = combat.OriginCell;
+                    blockerSize = combat.FootprintCells;
+                }
+                else
+                {
+                    blockerOrigin = em.GetComponentData<UnitGrid>(blockerEntity).Cell;
+                    blockerSize = em.GetComponentData<GridBlockerSize>(blockerEntity).Size;
+                }
+                bool overlaps = origin.x < blockerOrigin.x + blockerSize.x && blockerOrigin.x < origin.x + footprint.x &&
+                    origin.y < blockerOrigin.y + blockerSize.y && blockerOrigin.y < origin.y + footprint.y;
+                if (overlaps)
+                {
+                    if (!authoredBuilding)
+                        throw new InvalidOperationException("Unexpected blocker overlap outside the pinned authored map actor; runtime blocker-owner membership is not available in this bounded harness: " +
+                            blockerEntity.Index + ":" + blockerEntity.Version + "@" + blockerOrigin.x + "," + blockerOrigin.y + "+" + blockerSize.x + "x" + blockerSize.y);
+
+                    OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(blockerEntity);
+                    const string expectedSourceGlobalObjectId = "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1506274068195782-2359600729620732797";
+                    Need(identity.OperationMapId.ToString() == "opmap.skirmish.desert_base_01" && identity.PlacementIndex == 1 &&
+                         identity.SourceGlobalObjectId.ToString() == expectedSourceGlobalObjectId &&
+                         blockerOrigin.x == 944 && blockerOrigin.y == 346 && blockerSize.x == 32 && blockerSize.y == 37,
+                         "Overlapping authored blocker must match the pinned source identity and authoritative origin/footprint");
+                    overlapCount++;
+                    matchEntity = blockerEntity;
+                    matchOrigin = blockerOrigin;
+                    matchSize = blockerSize;
+                    matchIdentity = identity;
+                    matchRotation = em.GetComponentData<LocalTransform>(blockerEntity).Rotation;
+                    selectionCenter = em.GetComponentData<UnitGrid>(blockerEntity).Cell;
+                }
+            }
+            Need(overlapCount == 1,
+                "The exact source-authored overlap must be recorded once; unrelated static blockers are outside the runtime blocker owner's removal registry");
+            int[] capturedRotationBits = new[]
+            {
+                BitConverter.ToInt32(BitConverter.GetBytes(matchRotation.value.x), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(matchRotation.value.y), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(matchRotation.value.z), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(matchRotation.value.w), 0)
+            };
+            Need(capturedRotationBits.SequenceEqual(new[] { unchecked((int)0x80000000u), 0x33fffffe, unchecked((int)0x80000000u), 0x3f800000 }),
+                "Source actor quaternion must match exact native captured bits, including signed-zero anchors");
+        }
+        void ObserveOriginalBlockerRemovalBoundary(Vector2Int origin, Vector2Int footprint)
+        {
+            blockerRemovalCallbackCount++;
+            ReadPinnedAuthoredMapBlocker(origin, footprint, out var boundaryEntity, out var boundaryOrigin,
+                out var boundarySize, out var boundaryIdentity, out var boundaryRotation, out var selectionCenter);
+            Need(boundaryEntity == preservedAuthoredBlocker && boundaryRotation.Equals(capturedAuthoredRotation),
+                "Original blocker-removal boundary must observe the exact prevalidated actor and rotation");
+            preservedAuthoredOverlaps = 1;
+            preservedAuthoredOverlapEvidence = new JObject
+            {
+                ["entity"] = boundaryEntity.Index + ":" + boundaryEntity.Version,
+                ["operation_map_id"] = boundaryIdentity.OperationMapId.ToString(),
+                ["placement_index"] = boundaryIdentity.PlacementIndex,
+                ["source_global_object_id"] = boundaryIdentity.SourceGlobalObjectId.ToString(),
+                ["authoritative_origin"] = new JArray(boundaryOrigin.x, boundaryOrigin.y),
+                ["authoritative_footprint"] = new JArray(boundarySize.x, boundarySize.y),
+                ["unit_grid_selection_center"] = new JArray(selectionCenter.x, selectionCenter.y),
+                ["preserved_by_runtime_blocker_removal_owner"] = true
+            };
+        }
+        using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
+                   typeof(UnitGrid), typeof(LocalTransform)))
+        {
+            var redirectOwner = new BuildingPlacementRedirectCompositionSystemHelper();
+            var redirectContext = new BuildingPlacementRedirectCompositionSystemHelper.Context(
+                (out EntityManager manager) => { manager = em; return true; },
+                (out Entity sourceGridEntity, out GridConfig sourceGridConfig, out DynamicBuffer<GridRoad> sourceRoads,
+                    out DynamicBlockerComponent sourceBlockers) =>
+                {
+                    sourceGridEntity = gridEntity;
+                    sourceGridConfig = em.GetComponentData<GridConfig>(gridEntity);
+                    sourceRoads = em.GetBuffer<GridRoad>(gridEntity);
+                    sourceBlockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
+                    return true;
+                },
+                _ => { },
+                () => redirectQuery);
+            Action<RectInt> redirectSourceUnits = rect =>
+            {
+                redirectOwnerInvocationCount++;
+                redirectOwner.RedirectUnitsAroundPlacedBuilding(redirectContext, rect);
+            };
+            ReadPinnedAuthoredMapBlocker(new Vector2Int(authoredOrigin.x, authoredOrigin.y),
+                authoredDefinition.FootprintCells, out preservedAuthoredBlocker, out _, out _, out _,
+                out capturedAuthoredRotation, out _);
+            ActualCore::UnityEngine.Quaternion authoredWorldRotationOverride = new ActualCore::UnityEngine.Quaternion(
+                capturedAuthoredRotation.value.x, capturedAuthoredRotation.value.y,
+                capturedAuthoredRotation.value.z, capturedAuthoredRotation.value.w);
+            var mapRegistration = new GeneratedBuildingRegistration(
+                em, gridEntity, pipeline.CanonicalCollection, buildPlaneY, redirectSourceUnits);
+            authoredMapBuilding = mapRegistration.RegisterAtLegalOrigin(
+                authoredDefinition,
+                new Vector2Int(authoredOrigin.x, authoredOrigin.y),
+                birth: new SourceBuildingBirthContext(true),
+                worldEulerAngles: authoredWorldEuler,
+                preserveAuthoredTransform: true,
+                removeOverlappingBlockers: true,
+                removeBlockers: ObserveOriginalBlockerRemovalBoundary,
+                sourceWorldRotationOverride: authoredWorldRotationOverride);
+            Need(authoredMapBuilding != null && authoredMapBuilding.CombatEntity != Entity.Null &&
+                 authoredMapBuilding.Definition.Prefab.name == (string)authoredMapRow["prefab"]["key"] &&
+                 authoredMapBuilding.OriginCell.x == authoredOrigin.x && authoredMapBuilding.OriginCell.y == authoredOrigin.y,
+                 "Actual S073 map source row did not register through the shared runtime building owner");
+            mapRegistration.SetOwner(authoredMapBuilding, (byte?)authoredMapRow["faction_id"]);
+            autonomousWorld.Buildings.Add(authoredMapBuilding.Id, authoredMapBuilding);
+            autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+
+            var mapCombatInfo = em.GetComponentData<RuntimeBuildingCombatInfo>(authoredMapBuilding.CombatEntity);
+            var mapFaction = em.GetComponentData<Faction>(authoredMapBuilding.CombatEntity);
+            LocalTransform mapActorTransform = em.GetComponentData<LocalTransform>(authoredMapBuilding.CombatEntity);
+            var expectedMapCenter = new GeneratedSourceBuildingCenter().GetFootprintCenter(
+                new Vector2Int(authoredOrigin.x, authoredOrigin.y),
+                authoredDefinition.FootprintCells,
+                grid,
+                buildPlaneY);
+            var expectedMapMathRotation = capturedAuthoredRotation;
+            Need(mapCombatInfo.RuntimeBuildingId == authoredMapBuilding.Id,
+                "RuntimeBuildingCombatInfo runtime id mismatch actual=" + mapCombatInfo.RuntimeBuildingId + " registered=" + authoredMapBuilding.Id);
+            Need(mapFaction.Id == (byte)authoredMapRow["faction_id"] && authoredMapBuilding.HasOwnerFaction &&
+                 authoredMapBuilding.OwnerFactionId == (byte)authoredMapRow["faction_id"] &&
+                 mapCombatInfo.OwnerFactionId == (byte)authoredMapRow["faction_id"],
+                "Original owner-faction source mismatch registry=" + authoredMapBuilding.OwnerFactionId + " faction=" + mapFaction.Id +
+                " combatInfo=" + mapCombatInfo.OwnerFactionId + " expected=" + (byte)authoredMapRow["faction_id"]);
+            Need(mapActorTransform.Rotation.Equals(expectedMapMathRotation),
+                "Captured authored rotation mismatch actual=" + mapActorTransform.Rotation.value.x + "," + mapActorTransform.Rotation.value.y +
+                "," + mapActorTransform.Rotation.value.z + "," + mapActorTransform.Rotation.value.w + " expected=" +
+                expectedMapMathRotation.value.x + "," + expectedMapMathRotation.value.y + "," + expectedMapMathRotation.value.z + "," + expectedMapMathRotation.value.w);
+            Need(mapActorTransform.Position.Equals((float3)expectedMapCenter),
+                "Shared grid-centre actor position mismatch actual=" + mapActorTransform.Position.x + "," + mapActorTransform.Position.y +
+                "," + mapActorTransform.Position.z + " expected=" + expectedMapCenter.x + "," + expectedMapCenter.y + "," + expectedMapCenter.z);
+            Need(mapActorTransform.Scale == 1f, "Source combat actor scale mismatch actual=" + mapActorTransform.Scale);
+            var mapGridBlockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+            bool mapFootprintBlocked = true;
+            for (int y = authoredOrigin.y; y < authoredOrigin.y + authoredDefinition.FootprintCells.y; y++)
+                for (int x = authoredOrigin.x; x < authoredOrigin.x + authoredDefinition.FootprintCells.x; x++)
+                    mapFootprintBlocked &= mapGridBlockers.IsSet(x + y * grid.Width);
+            Need(mapFootprintBlocked && preservedAuthoredBlocker != Entity.Null && em.Exists(preservedAuthoredBlocker) &&
+                 em.HasComponent<StaticGridBlocker>(preservedAuthoredBlocker),
+                "Original static blocker owner did not retain the authored blocker while registering the runtime map actor");
+            Need(blockerRemovalCallbackCount == 1 && redirectOwnerInvocationCount == 1,
+                "Shared registration must execute the selected row's blocker-removal and original redirect callbacks");
+            var sourceMapPosition = new float3((float)authoredPosition["x"], (float)authoredPosition["y"], (float)authoredPosition["z"]);
+            var sourceMapScale = new float3((float)authoredScale["x"], (float)authoredScale["y"], (float)authoredScale["z"]);
+            buildings.Add(new JObject { ["runtime_id"] = authoredMapBuilding.Id,
+                ["definition"] = authoredMapBuilding.Definition.Prefab.name,
+                ["origin"] = new JArray(authoredOrigin.x, authoredOrigin.y),
+                ["combat_entity"] = authoredMapBuilding.CombatEntity.Index + ":" + authoredMapBuilding.CombatEntity.Version,
+                ["blocker_entity"] = authoredMapBuilding.BlockerEntity.Index + ":" + authoredMapBuilding.BlockerEntity.Version });
+            authoredMapActorEvidence = new JObject
+            {
+                ["status"] = "Passed",
+                ["source_row_index"] = (int)authoredMapRow["row_index"],
+                ["source_prefab_identity"] = authoredMapRow["prefab"].DeepClone(),
+                ["source_transform_position"] = new JArray(sourceMapPosition.x, sourceMapPosition.y, sourceMapPosition.z),
+                ["source_transform_scale"] = new JArray(sourceMapScale.x, sourceMapScale.y, sourceMapScale.z),
+                ["source_world_euler_angles"] = new JArray(authoredWorldEuler.x, authoredWorldEuler.y, authoredWorldEuler.z),
+                ["source_world_rotation"] = new JArray(capturedAuthoredRotation.value.x, capturedAuthoredRotation.value.y,
+                    capturedAuthoredRotation.value.z, capturedAuthoredRotation.value.w),
+                ["source_world_rotation_authority"] = "Pinned native baked LocalTransform for the exact same GlobalObjectId; bitwise asserted",
+                ["source_world_center"] = authoredMapRow["world_center"].DeepClone(),
+                ["runtime_id"] = authoredMapBuilding.Id,
+                ["runtime_origin"] = new JArray(authoredOrigin.x, authoredOrigin.y),
+                ["footprint"] = new JArray(authoredDefinition.FootprintCells.x, authoredDefinition.FootprintCells.y),
+                ["owner_faction_id"] = (int)authoredMapRow["faction_id"],
+                ["runtime_faction_component_id"] = mapFaction.Id,
+                ["combat_info_owner_faction_id"] = mapCombatInfo.OwnerFactionId,
+                ["combat_info_owner_faction_matches_config"] = mapCombatInfo.OwnerFactionId == (byte)authoredMapRow["faction_id"],
+                ["shared_building_registration_kernel_used"] = true,
+                ["shared_runtime_actor_factory_used"] = true,
+                ["same_live_registry_as_initial_spawn"] = true,
+                ["same_entity_manager"] = true,
+                ["actual_redirect_owner_invoked"] = true,
+                ["redirect_owner_invocation_count"] = redirectOwnerInvocationCount,
+                ["blocker_removal_requested"] = true,
+                ["blocker_removal_callback_count"] = blockerRemovalCallbackCount,
+                ["preserved_authored_overlap_count"] = preservedAuthoredOverlaps,
+                ["preserved_authored_overlap"] = preservedAuthoredOverlapEvidence,
+                ["blocker_removal_effect"] = "UnregisteredAuthoredBlockerPreserved",
+                ["native_coexistence_or_readiness_proven"] = false,
+                ["original_static_blocker_owner_updated"] = true,
+                ["combat_actor_faction_verified"] = mapFaction.Id == (byte)authoredMapRow["faction_id"],
+                ["combat_actor_rotation_verified"] = mapActorTransform.Rotation.Equals(expectedMapMathRotation),
+                ["combat_actor_center_verified"] = mapActorTransform.Position.Equals((float3)expectedMapCenter),
+                ["combat_actor_scale"] = mapActorTransform.Scale,
+                ["footprint_blocked_in_selected_grid"] = mapFootprintBlocked,
+                ["visual_instance_created"] = false,
+                ["native_visual_readiness"] = false,
+                ["rows_registered"] = 1,
+                ["rows_total"] = 432
+            };
+        }
+
         var s073AIConfigs = new List<AIControllerConfig>
         {
             ReadAIController(enemyAIPath, "Enemy"), ReadAIController(playerAIPath, "Player")
@@ -619,7 +863,6 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(matchAfterRules.Phase == SkirmishPhase.Preparing && gameplayAfterRules.PlayRequested == 1 &&
              gameplayAfterRules.SimulationActive == 0 && matchAfterRules.Outcome == SkirmishOutcome.None,
              "Original rules owner must retain the real inactive loading gate without synthesizing mission start");
-        autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
         autonomousWorld.CompleteInitialRoadInputs();
         // The original initial-unit owner consumes completed initial-building requests for
         // this plan after observing their results. Preserve the pre-spawn receipts above,
@@ -628,15 +871,19 @@ internal static class S073LegacyPlacementOwnerHarness
         int initialPlanRequestsRemaining = 0;
         for (int i = 0; i < requests.Length; i++)
             if (requests[i].PlanEntity == plan) initialPlanRequestsRemaining++;
-        bool allSucceeded = rows.Count == 10 && registry.Count == 10 && initialPlanRequestsRemaining == 0 &&
+        bool allTenInitialRequestsSucceeded = rows.Count == 10 && initialPlanRequestsRemaining == 0 &&
             em.HasComponent<InitialUnitsSpawnInitialized>(plan) && newlySpawned.Count == 24 &&
             actualBlockerRows.Count == (int)blockerConfig["blocker_count"];
         foreach (JObject row in rows)
         {
             int runtimeId = (int)row["building_runtime_id"];
-            allSucceeded &= (string)row["status"] == BuildingRuntimeSpawnRequest.Succeeded.ToString() &&
+            allTenInitialRequestsSucceeded &= (string)row["status"] == BuildingRuntimeSpawnRequest.Succeeded.ToString() &&
                 (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
         }
+        bool authoredMapActorSucceeded = authoredMapBuilding != null && authoredMapActorEvidence != null &&
+            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 11 &&
+            registry.ContainsKey(authoredMapBuilding.Id) && autonomousWorld.Buildings.ContainsKey(authoredMapBuilding.Id);
+        bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded;
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -661,12 +908,16 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["legacy_root_count"] = expectedInitialRoots.Properties().Count(), ["matched_current_capture"] = true,
                 ["independent_name_readback"] = true },
             ["runtime_blocker_placement"] = actualBlockerPlacement,
+            ["authored_map_actor"] = authoredMapActorEvidence,
+            ["map_placements_materialized"] = 1,
+            ["map_placements_total"] = 432,
+            ["map_placement_runtime_owner_complete"] = false,
             ["surface_samples"] = surfaceCount,
             ["authored_navigation_rows"] = authoredNavigation, ["initial_road_owner"] = autonomousWorld.InitialRoadReceipt, ["requests_queued"] = queued,
             ["processing_frames"] = frames, ["request_results"] = rows, ["registered_buildings"] = buildings,
             ["building_count"] = registry.Count, ["initial_plan_requests_remaining"] = initialPlanRequestsRemaining,
             ["initial_plan_requests_consumed_by_original_owner"] = initialPlanRequestsRemaining == 0 && em.HasComponent<InitialUnitsSpawnInitialized>(plan),
-            ["all_ten_actual_requests_succeeded"] = allSucceeded,
+            ["all_ten_actual_requests_succeeded"] = allTenInitialRequestsSucceeded,
             ["original_play_request"] = new JObject { ["owner"] = "RuntimeGameplayStateSystem.ResetForGameplayStart",
                 ["request_observed"] = gameplayStateAfterRequest.PlayRequested == 1,
                 ["simulation_active"] = gameplayStateAfterRequest.SimulationActive != 0,
@@ -692,7 +943,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 mission-specific initial-origin candidate derived from actual LegacyInitialSpawnData; same manager, source grid/surface/masks and shared runtime spawn owner",
+            ["mission_world_scope"] = "S073 actual legacy startup prefix with one captured authored-map building registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

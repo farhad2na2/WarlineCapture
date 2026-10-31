@@ -66,7 +66,7 @@ CURRENT_S073_REGISTRATION_SOURCE_PINS = {
     "Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs": "4abd88b4f4b9f97cb57b41f6ca1cd8b9e14afa323f56f2b35267486030a0359f",
     "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S073MapBuildings.cs": "93fcdc8528d9dc782cfefbd32a368abd675071193cc43eac54879c3165c0154b",
     "Tools/CI/SkirmishSourceSimulation/Recipes/operation_map_publication/regenerate_full_read_models.py": "b0a8a4deb7dc6c9b2998e9b61d9cdf913252454ef6a82ca5ef01651bb88dfd54",
-    "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs": "0a68e4bb0fa2501bb6a8c047aceb821a266d81eabe30d7651c945b6f7239a9fa",
+    "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs": "7c914182857a1f0c86f102814d7fc170b626e49e0c140a14312c2131b38e7778",
     "Tools/CI/SkirmishSourceSimulation/Placement/SourcePlacementDomain.OriginalOwnerCapture.cs": "b3e6a36fee1039e4205b0c3a6d741a7364742604359161f90bfe1fcf133d5274",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     **SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS,

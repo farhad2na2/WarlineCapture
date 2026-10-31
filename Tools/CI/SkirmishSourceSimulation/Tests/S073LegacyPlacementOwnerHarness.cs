@@ -1721,6 +1721,9 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(!sharedLoadingGatePassed ||
              gameplayAfterHeadlessGate.SimulationActive == 1 && matchAfterHeadlessGate.Phase == SkirmishPhase.Playing,
              "Shared loading-gate admission must reach Playing only through the original legacy rules owner");
+        Need(sharedLoadingGatePassed,
+             "The complete actual S073 legacy startup must satisfy the shared gameplay-start gate");
+        autonomousWorld.MarkS073LegacyLoadingGateAdmitted();
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1819,7 +1822,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["actual_units_materialized"] = newlySpawned.Count, ["faction_one"] = factionOneUnits,
                 ["faction_two"] = factionTwoUnits, ["frames"] = spawnFrames,
                 ["original_completion_component_observed"] = em.HasComponent<InitialUnitsSpawnInitialized>(plan),
-                ["same_autonomous_world_host_retained"] = autonomousWorld.InitializationStage == "S073LegacyDiagnosticRetained_SchedulerAdmissionPending" },
+                ["same_autonomous_world_host_retained"] = autonomousWorld.InitializationStage == "S073LegacyLoadingGateAdmitted_SchedulerCompositionPending" },
             ["original_ai_startup"] = new JObject { ["source_assets_sha256"] = new JObject {
                     ["enemy"] = args[27], ["player"] = args[28], ["plan"] = args[29] },
                 ["original_owner_invoked"] = true, ["same_entity_manager"] = true,

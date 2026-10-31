@@ -14,6 +14,17 @@ namespace Game.Runtime { internal sealed partial class AutonomousWorld {
   foreach(var e in newlySpawned)if(!Entities.Exists(e)||!Entities.HasComponent<UnitGrid>(e)||!Entities.HasComponent<Faction>(e)||!Entities.HasComponent<UnitSourcePrefabKey>(e))throw new NotSupportedException("Actual newly spawned units required");
   initializationAttempted=true;GridEntity=grid;SurfaceEntity=surface;Session=session;Boundary=boundary;InitializationStage="S073LegacyDiagnosticRetained_SchedulerAdmissionPending";
  }
+ internal void MarkS073LegacyLoadingGateAdmitted(){
+  if(disposed||!initializationAttempted||Initialized||Session==Entity.Null||!Entities.World.IsCreated||
+     !Entities.Exists(Session)||!Entities.HasComponent<SkirmishMatchState>(Session)||
+     Entities.GetComponentData<SkirmishMatchState>(Session).Phase!=SkirmishPhase.Playing)
+   throw new NotSupportedException("Actual S073 legacy rules transition must follow loading-gate admission");
+  using var gameplayQuery=Entities.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+  if(gameplayQuery.CalculateEntityCount()!=1)throw new NotSupportedException("Unique actual gameplay state required after S073 gate admission");
+  var gameplay=Entities.GetComponentData<RuntimeGameplayStateComponent>(gameplayQuery.GetSingletonEntity());
+  if(gameplay.PlayRequested==0||gameplay.SimulationActive==0)throw new NotSupportedException("Actual gameplay start request must be active after gate admission");
+  InitializationStage="S073LegacyLoadingGateAdmitted_SchedulerCompositionPending";
+ }
  } }
 
 namespace Game.Runtime {

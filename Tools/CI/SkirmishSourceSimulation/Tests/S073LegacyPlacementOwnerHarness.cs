@@ -763,6 +763,7 @@ internal static class S073LegacyPlacementOwnerHarness
         JObject authoredMapWallEvidence = null;
         var mapPlacementCallbackRows = new List<int>();
         var mapPlacementCallbackSuccessRows = new List<int>();
+        var mapPlacementPriorityPassRows = new List<int>();
         bool RegisterCapturedMapRow(int scheduledIndex)
         {
             mapPlacementCallbackRows.Add(scheduledIndex);
@@ -1408,6 +1409,7 @@ internal static class S073LegacyPlacementOwnerHarness
 
         bool IsCapturedPlayerProductionPlacement(int scheduledIndex)
         {
+            mapPlacementPriorityPassRows.Add(scheduledIndex);
             JArray sourceRows = mapPlacementCapture["placement_rows"] as JArray;
             if (sourceRows == null || scheduledIndex < 0 || scheduledIndex >= sourceRows.Count)
                 return false;
@@ -1422,12 +1424,13 @@ internal static class S073LegacyPlacementOwnerHarness
             return MapBuildingPlacementPriorityPolicy.IsPlayerProductionPlacement(
                 (byte)sourceRow["faction_id"], (byte)FactionIdentity.PlayerFactionId, productionCount);
         }
-        var mapPlacementSequence = new MapBuildingPlacementSequenceKernel();
+        var mapPlacementOwner = new MapBuildingPlacementSpawnPrefabSystemHelper();
         int mapPlacementSourceRowCount = ((JArray)mapPlacementCapture["placement_rows"]).Count;
-        bool mapPlacementSequenceQueued = mapPlacementSequence.Advance(
-            mapPlacementSourceRowCount, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
-        Need(mapPlacementSourceRowCount == 432 && !mapPlacementSequenceQueued && mapPlacementSequence.PriorityPassCompleted &&
-             !mapPlacementSequence.IsQueued && mapPlacementSequence.NextPlacementIndex == 32 &&
+        bool mapPlacementSequenceQueued = mapPlacementOwner.UpdateDataOnly(
+            mapPlacementSourceRowCount, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
+        Need(mapPlacementSourceRowCount == 432 && mapPlacementPriorityPassRows.SequenceEqual(Enumerable.Range(0, 432)) &&
+             !mapPlacementSequenceQueued && !mapPlacementOwner.IsComplete &&
+             mapPlacementCallbackRows.SequenceEqual(Enumerable.Range(0, 32)) &&
              mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2, 3, 4, 5, 6, 20 }) &&
              authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed" &&
              authoredMapRotatedActorEvidence != null && (string)authoredMapRotatedActorEvidence["status"] == "Passed" &&
@@ -1436,7 +1439,7 @@ internal static class S073LegacyPlacementOwnerHarness
              authoredMapFifthFuelBladderEvidence != null && (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed" &&
              authoredMapSixthFuelBladderEvidence != null && (string)authoredMapSixthFuelBladderEvidence["status"] == "Passed" &&
              authoredMapEnemyHallEvidence != null && (string)authoredMapEnemyHallEvidence["status"] == "Passed",
-            "Original 432-row placement priority pass and first 32 sequential attempts must register only the seven implemented source rows and remain incomplete");
+            "Original data-only placement owner must complete its 432-row priority pass, attempt the first 32 sequential rows, register seven captured actors and remain incomplete");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {
@@ -1574,15 +1577,15 @@ internal static class S073LegacyPlacementOwnerHarness
             ["authored_map_wall_actor"] = authoredMapWallEvidence,
             ["map_placement_sequence"] = new JObject
             {
-                ["authority"] = "Shared MapBuildingPlacementSequenceKernel.Advance used by original MapBuildingPlacementSpawnPrefabSystemHelper",
+                ["authority"] = "Original MapBuildingPlacementSpawnPrefabSystemHelper.UpdateDataOnly and its shared MapBuildingPlacementSequenceKernel",
                 ["configured_source_rows"] = mapPlacementSourceRowCount,
-                ["priority_pass_completed"] = mapPlacementSequence.PriorityPassCompleted,
-                ["next_sequential_index"] = mapPlacementSequence.NextPlacementIndex,
+                ["priority_pass_completed"] = mapPlacementPriorityPassRows.SequenceEqual(Enumerable.Range(0, mapPlacementSourceRowCount)),
+                ["next_sequential_index"] = mapPlacementCallbackRows.Count,
                 ["sequential_limit_per_update"] = 32,
-                ["queued_complete"] = mapPlacementSequence.IsQueued,
+                ["queued_complete"] = mapPlacementSequenceQueued,
                 ["callback_attempt_source_rows"] = new JArray(mapPlacementCallbackRows),
                 ["callback_success_source_rows"] = new JArray(mapPlacementCallbackSuccessRows),
-                ["map_owner_complete"] = false
+                ["map_owner_complete"] = mapPlacementOwner.IsComplete
             },
             ["map_placements_materialized"] = (authoredMapActorEvidence != null ? 1 : 0) +
                 (authoredMapRotatedActorEvidence != null ? 1 : 0) + (authoredMapThirdBarrackEvidence != null ? 1 : 0) +

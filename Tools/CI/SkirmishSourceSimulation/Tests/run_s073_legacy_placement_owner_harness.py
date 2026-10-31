@@ -32,6 +32,11 @@ EXPECTED = {
     "enemy_ai": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52",
     "player_ai": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698",
     "map_placement_capture": "a0107fcdaaf7ace274345b4615292134ec5e8547b456dffdb3c6b857dc72ae73",
+    "map_placement_helper": "3d3e0699295924168ed4c84757df5f76dfe288796eb61ae8f49e5607f3c2d711",
+    "map_placement_data_only_owner": "6b8695b40dba331494e0f58f29e676851b5a9ddd3b4460ee3306cd03cba62c56",
+    "map_placement_helper_base_build": "4888598f62d9ee223bc0f41e516717c7d2a07749b412bf1b54f823d8cc0d2fc1",
+    "map_definitions_adapter": "bea8316654f949cedab528ecf786e6af9a95df041fa82b3b61325b5798ef9954",
+    "map_definitions_adapter_base_build": "673c2d6e8f19119134252063909c1e193b4c43dae1320b288a3d4d76b6cfb768",
     "blocker_metadata": "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776",
     "ai_plan": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
 }
@@ -158,8 +163,23 @@ def main():
     build = json.loads(build_path.read_text())
     require(build.get("kind") == "SkirmishSourceSimulationBuild" and build.get("status") == "Passed" and
             build.get("compile_exit") == 0, "Passing pinned Roslyn source build required")
+    map_placement_helper = source_root / "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"
+    def verify_build_source_pin(path, expected):
+        actual = sha(path)
+        if Path(path).resolve() == map_placement_helper.resolve() and expected != actual:
+            require(expected == EXPECTED["map_placement_helper_base_build"] and
+                    actual == EXPECTED["map_placement_helper"],
+                    "Only the reviewed split of the original data-only placement owner may differ from the base build pin")
+            return
+        map_definitions_adapter = source_root / "Tools/CI/SkirmishSourceSimulation/Adapters/300_GeneratedBuildingDefinitions.cs"
+        if Path(path).resolve() == map_definitions_adapter.resolve() and expected != actual:
+            require(expected == EXPECTED["map_definitions_adapter_base_build"] and
+                    actual == EXPECTED["map_definitions_adapter"],
+                    "Only the reviewed original placement-owner pin refresh may differ from the base build pin")
+            return
+        require(actual == expected, "Current source build input changed: " + path)
     for path, expected in build["source_and_reference_pins"].items():
-        require(sha(path) == expected, "Current source build input changed: " + path)
+        verify_build_source_pin(path, expected)
     paths = {"initial_template": initial_template, "production_template": production_template, "identity": identity,
              "legacy": legacy, "definitions": definitions, "initialization": initialization,
              "physical": physical, "water": water, "startup": startup}
@@ -168,6 +188,9 @@ def main():
     paths["player_ai"] = source_root / "Assets/Game/Configs/Skirmish/Player.asset"
     paths["ai_plan"] = source_root / "Assets/Game/Configs/Skirmish/Plan.asset"
     paths["blocker_metadata"] = blocker_metadata
+    paths["map_placement_helper"] = map_placement_helper
+    paths["map_placement_data_only_owner"] = source_root / "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.DataOnly.cs"
+    paths["map_definitions_adapter"] = source_root / "Tools/CI/SkirmishSourceSimulation/Adapters/300_GeneratedBuildingDefinitions.cs"
     for key, path in paths.items():
         require(sha(path) == EXPECTED[key], "Retained S073 source input changed: " + key)
     initialization_data = json.loads(initialization.read_text())
@@ -218,6 +241,10 @@ def main():
             sha(pinned_placement_sequence[0]) == build["source_and_reference_pins"][str(pinned_placement_sequence[0])],
             "Hash-pinned original map placement sequence owner required")
     compiler_args.append(str(pinned_placement_sequence[0]))
+    data_only_owner = paths["map_placement_data_only_owner"].resolve(strict=True)
+    require(sha(data_only_owner) == EXPECTED["map_placement_data_only_owner"],
+            "Hash-pinned original data-only placement owner required")
+    compiler_args.append(str(data_only_owner))
     pinned_blocker_ownership = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
                                 if path.endswith("/Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs")]
     require(len(pinned_blocker_ownership) == 1 and
@@ -269,7 +296,7 @@ def main():
             if isinstance(stderr, bytes): stderr = stderr.decode("utf-8", errors="replace")
             (output / "run.log").write_text(stdout + stderr)
     for path, expected in build["source_and_reference_pins"].items():
-        require(sha(path) == expected, "Source build pin changed during test: " + path)
+        verify_build_source_pin(path, expected)
     for key, path in paths.items():
         require(sha(path) == EXPECTED[key], "S073 source input changed during test: " + key)
     require(sha(placement_config) == placement_config_sha, "External S073 placement config changed during test")

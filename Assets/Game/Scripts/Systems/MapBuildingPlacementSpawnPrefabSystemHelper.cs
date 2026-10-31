@@ -8,9 +8,8 @@ using Game.Simulation;
 
 namespace Game.Runtime
 {
-    internal sealed class MapBuildingPlacementSpawnPrefabSystemHelper
+    internal sealed partial class MapBuildingPlacementSpawnPrefabSystemHelper
     {
-        private const int MaxPlacementsPerUpdate = 32;
         private const string AirportCategory = "Building_Airport";
         private const string RunwaysRootName = "Runways";
         private const string RunwayAnchorName = "Runway";
@@ -49,12 +48,8 @@ namespace Game.Runtime
             }
         }
 
-        private bool _authoringHidden;
         private bool _warnedMissingConfig;
         private bool _warnedFailedPlacement;
-        private readonly MapBuildingPlacementSequenceKernel _sequence = new();
-
-        public bool IsComplete => _sequence.IsQueued && _authoringHidden;
 
         public bool IsCompleteFor(MapBuildingPlacementConfig config, Transform authoringRoot)
         {
@@ -103,32 +98,6 @@ namespace Game.Runtime
             {
                 HideAuthoringVisuals(context);
             }
-        }
-
-        // The same original owner sequence is exposed to a headless host. That
-        // host supplies data/actor callbacks and does not create visual objects.
-        internal bool UpdateDataOnly(int placementCount, Func<int, bool> isPriorityPlacement,
-            Func<int, bool> trySpawnPlacement)
-        {
-            if (placementCount < 0)
-                throw new ArgumentOutOfRangeException(nameof(placementCount));
-            if (_sequence.IsQueued)
-            {
-                _authoringHidden = true;
-                return true;
-            }
-            if (placementCount == 0)
-            {
-                _sequence.QueueEmpty();
-                _authoringHidden = true;
-                return true;
-            }
-
-            bool queued = _sequence.Advance(placementCount, MaxPlacementsPerUpdate,
-                isPriorityPlacement, trySpawnPlacement);
-            if (queued)
-                _authoringHidden = true;
-            return queued;
         }
 
         private bool TrySpawnPlacementAtIndex(Context context, GridConfig grid, int placementIndex)

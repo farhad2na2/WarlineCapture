@@ -52,6 +52,8 @@ SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
     "Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs": "22501469a3b1d51fd81bf6507f7b2805719eb50485d03c01cfa9807ed205f9be",
     "Assets/Game/Scripts/Systems/BuildingRunwayPathingSurface.cs": "c6cfbfdd23ce5e8cdce3c6b27cb994933a38da4aef07dd997438daddcb80bd7a",
     "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs": "489085e98e3d3698746dba2e1779cd2592ccfb40630bf496f0a33fa69b4c81d1",
+    "Assets/Game/Scripts/Simulation/GameplayStartGatePolicy.cs": "f1a5f2b1dfe614bc86cb9ddfdf41551514c839ba8d60908aef8ace789a11ed7b",
+    "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs": "f4351c2f96c7790bf6bdf183f61111bdbf5fc021af22143f25f0d178cc1ad429",
 }
 CURRENT_S073_REGISTRATION_SOURCE_PINS = {
     "Tools/CI/SkirmishSourceSimulation/Adapters/137_RuntimeBuildingBindings.cs": "dd74e299a02bc73bbecc0534debce057ab594d3528f0be5c9a4c6c925ab82680",
@@ -204,9 +206,12 @@ def main():
             continue
         require(SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS.get(pin_path) == current,
                 "S073 special-building capture source pin changed outside the tested numeric-owner compatibility set: " + pin_path)
-        evidence = ("Shared owner now maintains a reverse entity-to-id index alongside its existing ownership records; registration rejects duplicate entity owners, removal/clear update both indexes. The S073 harness cross-checks the returned record against live ECS origin and footprint before treating the entity as removable runtime occupancy."
-                    if pin_path.endswith("/RuntimeGridBlockerOwnershipKernel.cs") else
-                    "No-Unity S073NumericRuntimeOwnerProbe: exact runway output, invalid extent rejection, captured-original pathing opening equivalence, and numeric gate midpoint")
+        if pin_path.endswith("/RuntimeGridBlockerOwnershipKernel.cs"):
+            evidence = "Shared owner now maintains a reverse entity-to-id index alongside its existing ownership records; registration rejects duplicate entity owners, removal/clear update both indexes. The S073 harness cross-checks the returned record against live ECS origin and footprint before treating the entity as removable runtime occupancy."
+        elif pin_path.endswith("/GameplayStartGatePolicy.cs") or pin_path.endswith("/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs"):
+            evidence = "The shared gameplay-start gate policy is independently covered by portable controls; the S073 placement harness exercises the same policy and original rules transition against the actual legacy initialized-world owners."
+        else:
+            evidence = "No-Unity S073NumericRuntimeOwnerProbe: exact runway output, invalid extent rejection, captured-original pathing opening equivalence, and numeric gate midpoint"
         special_capture_owner_deltas[pin_path] = {"captured_sha256": expected, "current_sha256": current,
             "equivalence_evidence": evidence}
     blocker_metadata = Path(args.blocker_metadata).resolve(strict=True)
@@ -335,7 +340,17 @@ def main():
     priority_policy = source_root / "Assets/Game/Scripts/Simulation/MapBuildingPlacementPriorityPolicy.cs"
     require(priority_policy.is_file(), "Original shared placement priority policy required")
     if str(priority_policy) not in compiler_args:
-        compiler_args.append(str(priority_policy))
+        # S073's generated read-model adapter embeds this exact source file via
+        # regenerate_full_read_models.py. Do not compile it a second time; when
+        # absent from that generated source, include the shared owner directly.
+        embedded_priority_sources = [Path(value) for value in compiler_args
+            if isinstance(value, str) and value.endswith("/SourceReadModelDefinitionStatics.cs")]
+        embedded_priority = (len(embedded_priority_sources) == 1 and
+            priority_policy.read_text() in embedded_priority_sources[0].read_text())
+        require(len(embedded_priority_sources) <= 1,
+                "One generated original read-model priority source required")
+        if not embedded_priority:
+            compiler_args.append(str(priority_policy))
     data_only_owner = paths["map_placement_data_only_owner"].resolve(strict=True)
     require(sha(data_only_owner) == EXPECTED["map_placement_data_only_owner"],
             "Hash-pinned original data-only placement owner required")

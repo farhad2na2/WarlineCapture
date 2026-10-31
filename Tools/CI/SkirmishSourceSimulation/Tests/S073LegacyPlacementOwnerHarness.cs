@@ -1658,6 +1658,69 @@ internal static class S073LegacyPlacementOwnerHarness
             authoredMapEnemyHallSucceeded && authoredMapSecondEnemyHallSucceeded && authoredMapHouseSucceeded &&
             sourceDrivenMapRows.Count > 0 && sourceDrivenMapRows.All(row => (string)row["status"] == "Passed") &&
             authoredMapWallActorSucceeded;
+
+        string runtimeCityConfigPath = Path.Combine(sourceRoot,
+            "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset");
+        Need(Sha(runtimeCityConfigPath) == "e03e012f015aa3e06649d98a876088fc80661ede55bc8f47268074961232c987",
+            "Exact selected Campaign runtime-city configuration required");
+        Match runtimeCityCountMatch = Regex.Match(File.ReadAllText(runtimeCityConfigPath),
+            "(?m)^  cityCount:\\s*(\\d+)\\s*$");
+        Need(runtimeCityCountMatch.Success, "Authored runtime-city count must be observed");
+        int runtimeCityCount = int.Parse(runtimeCityCountMatch.Groups[1].Value, CultureInfo.InvariantCulture);
+        // This headless world omits the optional city presenter. That is safe only
+        // because the exact selected Campaign config requests zero generated cities.
+        bool runtimeCityOwnerPresent = false;
+        bool runtimeCityOwnerComplete = false;
+        bool runtimeCityOmissionSafe = runtimeCityCount == 0;
+        // Count through the same ownership kernel used to register these generated blockers.
+        // A broad ECS query also includes authored Campaign blockers and cannot prove that the
+        // optional runtime-blocker owner completed its own requested placements.
+        int actualRuntimeBlockerOwnerCount = runtimeBlockerOwnership.Count;
+        bool runtimeGridBlockerOwnerPresent = true;
+        bool runtimeGridBlockerOwnerComplete = actualRuntimeBlockerOwnerCount == (int)blockerConfig["blocker_count"] &&
+            actualBlockerRows.Count == (int)blockerConfig["blocker_count"];
+        using var spawnConfigQuery = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
+        using var spawnInitializedQuery = em.CreateEntityQuery(typeof(InitialUnitsSpawnInitialized));
+        int initialSpawnConfigCount = spawnConfigQuery.CalculateEntityCount();
+        int initialSpawnInitializedCount = spawnInitializedQuery.CalculateEntityCount();
+        bool headlessGameplayInitialized = allSucceeded && mapPlacementOwner.IsComplete &&
+            initialPlanRequestsRemaining == 0 && newlySpawned.Count == 24 && aiStartupResult.HasPlayerAutoMode &&
+            autonomousWorld.InitialRoadReceipt != null && runtimeGridBlockerOwnerComplete && runtimeCityOmissionSafe;
+        bool playRequestedAtGate = em.GetComponentData<RuntimeGameplayStateComponent>(gameplayStateEntity).PlayRequested != 0;
+        bool worldAvailableAtGate = em.World != null && em.World.IsCreated;
+        // The selected Campaign scene renders authored scenery, but decorations only instantiate
+        // GameObjects and reserve temporary local cells; they never mutate simulation occupancy.
+        // The CLI omits that presenter while retaining the actual city/blocker data-owner results.
+        bool runtimeDecorationPresenterPresent = false;
+        bool runtimeDecorationPresenterComplete = false;
+        bool sharedLoadingGatePassed = GameplayStartGatePolicy.IsGameplayStartComplete(
+            headlessGameplayInitialized,
+            playRequestedAtGate,
+            allSucceeded && initialPlanRequestsRemaining == 0,
+            runtimeCityOwnerPresent,
+            runtimeCityOwnerComplete,
+            runtimeGridBlockerOwnerPresent,
+            runtimeGridBlockerOwnerComplete,
+            runtimeDecorationPresenterPresent,
+            runtimeDecorationPresenterComplete,
+            worldAvailableAtGate,
+            initialSpawnConfigCount,
+            initialSpawnInitializedCount);
+        if (sharedLoadingGatePassed)
+        {
+            RuntimeGameplayStateComponent admittedGameplayState =
+                em.GetComponentData<RuntimeGameplayStateComponent>(gameplayStateEntity);
+            admittedGameplayState.SimulationActive = 1;
+            em.SetComponentData(gameplayStateEntity, admittedGameplayState);
+            rulesState.Begin();
+            try { rulesSystem.OnUpdate(ref rulesState); }
+            finally { rulesState.End(); }
+        }
+        var gameplayAfterHeadlessGate = em.GetComponentData<RuntimeGameplayStateComponent>(gameplayStateEntity);
+        var matchAfterHeadlessGate = em.GetComponentData<SkirmishMatchState>(session);
+        Need(!sharedLoadingGatePassed ||
+             gameplayAfterHeadlessGate.SimulationActive == 1 && matchAfterHeadlessGate.Phase == SkirmishPhase.Playing,
+             "Shared loading-gate admission must reach Playing only through the original legacy rules owner");
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1724,16 +1787,34 @@ internal static class S073LegacyPlacementOwnerHarness
             ["all_ten_actual_requests_succeeded"] = allTenInitialRequestsSucceeded,
             ["original_play_request"] = new JObject { ["owner"] = "RuntimeGameplayStateSystem.ResetForGameplayStart",
                 ["request_observed"] = gameplayStateAfterRequest.PlayRequested == 1,
-                ["simulation_active"] = gameplayStateAfterRequest.SimulationActive != 0,
-                ["loading_gate_evaluated"] = false, ["simulation_started"] = matchAfterRules.Phase == SkirmishPhase.Playing },
+                ["simulation_active"] = gameplayAfterHeadlessGate.SimulationActive != 0,
+                ["loading_gate_evaluated"] = true, ["simulation_started"] = matchAfterHeadlessGate.Phase == SkirmishPhase.Playing },
+            ["headless_loading_gate"] = new JObject { ["policy"] = "GameplayStartGatePolicy.IsGameplayStartComplete",
+                ["admitted"] = sharedLoadingGatePassed, ["headless_gameplay_owners_initialized"] = headlessGameplayInitialized,
+                ["building_startup_complete"] = allSucceeded && initialPlanRequestsRemaining == 0,
+                ["runtime_city_owner_present"] = runtimeCityOwnerPresent, ["runtime_city_count"] = runtimeCityCount,
+                ["runtime_city_config_sha256"] = Sha(runtimeCityConfigPath),
+                ["runtime_city_omission_safe_for_zero_count"] = runtimeCityOmissionSafe,
+                ["runtime_city_owner_complete"] = runtimeCityOwnerComplete,
+                ["runtime_grid_blocker_owner_present"] = runtimeGridBlockerOwnerPresent,
+                ["runtime_grid_blocker_owner_count"] = actualRuntimeBlockerOwnerCount,
+                ["runtime_grid_blocker_owner_complete"] = runtimeGridBlockerOwnerComplete,
+                ["runtime_decoration_presenter_omitted"] = !runtimeDecorationPresenterPresent,
+                ["runtime_decoration_gameplay_occupancy_effect"] = false,
+                ["world_available"] = worldAvailableAtGate,
+                ["initial_spawn_config_count"] = initialSpawnConfigCount,
+                ["initial_spawn_initialized_count"] = initialSpawnInitializedCount,
+                ["simulation_active_after_gate"] = gameplayAfterHeadlessGate.SimulationActive != 0,
+                ["legacy_rules_phase_after_gate"] = matchAfterHeadlessGate.Phase.ToString() },
             ["original_rules_owner"] = new JObject { ["source_owner_invoked"] = true,
                 ["required_queries_present"] = rulesState.RequiredQueriesPresent,
                 ["same_retained_entity_manager"] = true,
-                ["phase_after_owner"] = matchAfterRules.Phase.ToString(),
-                ["play_requested"] = gameplayAfterRules.PlayRequested != 0,
-                ["simulation_active"] = gameplayAfterRules.SimulationActive != 0,
-                ["outcome"] = matchAfterRules.Outcome.ToString(),
-                ["gate_honestly_remains_pending"] = matchAfterRules.Phase == SkirmishPhase.Preparing && gameplayAfterRules.SimulationActive == 0 },
+                ["phase_before_gate"] = matchAfterRules.Phase.ToString(),
+                ["phase_after_owner"] = matchAfterHeadlessGate.Phase.ToString(),
+                ["play_requested"] = gameplayAfterHeadlessGate.PlayRequested != 0,
+                ["simulation_active"] = gameplayAfterHeadlessGate.SimulationActive != 0,
+                ["outcome"] = matchAfterHeadlessGate.Outcome.ToString(),
+                ["gate_admission_applied"] = sharedLoadingGatePassed },
             ["initial_unit_spawn"] = new JObject { ["original_shared_spawner_executed"] = true,
                 ["actual_units_materialized"] = newlySpawned.Count, ["faction_one"] = factionOneUnits,
                 ["faction_two"] = factionTwoUnits, ["frames"] = spawnFrames,
@@ -1747,7 +1828,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 actual legacy startup prefix with explicit and source-driven ordinary map rows registered through shared data/actor owners; unsupported row classes and remaining placement owner work stay pending",
+            ["mission_world_scope"] = "S073 original legacy startup and complete captured-map placement owners with shared loading-gate admission; legacy scheduler composition, autonomous ARIA, full mission outcome and player readiness remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

@@ -158,6 +158,10 @@ internal static class S073ProductionTemplateImporterHarness
              {
                  "Unit_Chr_Soldier_Male_02_Alt_04", "Unit_Veh_Truck_Tray", "Unit_Veh_Truck_Tanker"
              }), "Actual ordered S073 source registry must materialize exactly three configured units");
+        var transportInputs = new GeneratedS002TransportInputs(units, Path.GetFullPath(args[6]));
+        Need(units.TransportStaticData.Count == 1 && transportInputs.Templates.Count == 1 &&
+             transportInputs.Templates.Keys.Single().name == "Unit_Veh_Helicopter_Transport",
+             "S073 configured metadata must admit its exact referenced helicopter hierarchy through the shared transport importer");
         Entity boundary = em.CreateEntity();
         DynamicBuffer<BuildingConfiguredUnitReadModel> readModels = em.AddBuffer<BuildingConfiguredUnitReadModel>(boundary);
         units.PublishConfiguredUnitReadModels(readModels);
@@ -173,7 +177,7 @@ internal static class S073ProductionTemplateImporterHarness
                  readModels[i].UnitId + "/" + readModels[i].DisplayName + "/" + readModels[i].Price + "/" +
                  readModels[i].CreditsCost + "/" + readModels[i].CanRequest + "/" + readModels[i].IsVehicle)));
 
-        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 supplementalTransport=1 requiredS073RecipeRoots=12 sourceRegistryUnits=3 configuredUnitReadModels=3 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 legacyDefinitions=6 barrackSlots=1 fuelBladderSlots=11 missionWorld=0 placedBuildings=0 fullMission=0 nativeReadiness=0");
+        Console.WriteLine("[S073ProductionTemplateImporterHarness] result=Passed roots=16 supplementalTransport=1 sharedHelicopterTemplates=" + transportInputs.Templates.Count + " requiredS073RecipeRoots=12 sourceRegistryUnits=3 configuredUnitReadModels=3 entities=546 omittedPresentationComponents=20 unsupportedPresentationReferences=29 unknownFieldRejected=1 legacyDefinitions=6 barrackSlots=1 fuelBladderSlots=11 missionWorld=0 placedBuildings=0 fullMission=0 nativeReadiness=0");
         return 0;
     }
 }

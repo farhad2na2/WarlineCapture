@@ -98,6 +98,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", required=True)
     parser.add_argument("--source-root", required=True)
+    parser.add_argument("--captured-asset-root", required=True,
+                        help="Separate complete T-drive project root for hash-pinned captured Campaign asset dependencies")
     parser.add_argument("--production-template", required=True)
     parser.add_argument("--identity", required=True)
     parser.add_argument("--legacy-config", required=True)
@@ -116,6 +118,7 @@ def main():
     started = time.monotonic()
     build_path = Path(args.build).resolve(strict=True)
     source_root = Path(args.source_root).resolve(strict=True)
+    captured_asset_root = Path(args.captured_asset_root).resolve(strict=True)
     production_template = Path(args.production_template).resolve(strict=True)
     initial_template = production_template
     identity = Path(args.identity).resolve(strict=True)
@@ -238,7 +241,7 @@ def main():
                     EXPECTED["map"], str(output / "initial-roads"), str(placement_config), placement_config_sha,
                     str(preset_readback), EXPECTED["preset_readback"], EXPECTED["enemy_ai"], EXPECTED["player_ai"], EXPECTED["ai_plan"],
                     str(map_placement_capture), map_placement_capture_sha,
-                    str(blocker_metadata), EXPECTED["blocker_metadata"]]
+                    str(blocker_metadata), EXPECTED["blocker_metadata"], str(captured_asset_root)]
         try:
             run_result = subprocess.run([str(runtime["mono"]), "--config", str(mono_config), "--optimize=-float32", str(executable), *args_run], env=env, capture_output=True,
                                         text=True, timeout=300)
@@ -275,7 +278,10 @@ def main():
               "harness": {"path": str(harness), "sha256": harness_sha}, "compact_campaign_graph": {"path": str(compact_graph), "sha256": compact_graph_sha,
               "derived_from": str(source_graph), "source_graph_sha256": EXPECTED["graph"], "selected_nodes": 2},
               "run_exit": None if run_result is None else run_result.returncode, "compile_exit": compile_result.returncode,
-              "result": payload, "source_log": str(output / "run.log"), "unity_launched": False,
+              "result": payload, "source_log": str(output / "run.log"),
+              "captured_asset_root": str(captured_asset_root),
+              "captured_asset_root_scope": "Separate root checked against every retained original Campaign asset dependency pin; current source code remains pinned by the Roslyn build and source root",
+              "unity_launched": False,
               "full_mission": False, "autonomous_aria": False, "mission_outcome": False, "mission_ready": False}
     (output / "result.json").write_text(json.dumps(result, indent=2) + "\n")
     print(json.dumps(result, separators=(",", ":")))

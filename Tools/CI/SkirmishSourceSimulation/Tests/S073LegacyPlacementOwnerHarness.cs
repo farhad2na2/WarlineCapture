@@ -151,10 +151,11 @@ internal static class S073LegacyPlacementOwnerHarness
 
     static JObject Run(string[] args)
     {
-        Need(args.Length == 34, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, and pinned blocker metadata");
+        Need(args.Length == 35, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, and captured Campaign asset root");
         string initialTemplatePath = Path.GetFullPath(args[0]), templatePath = Path.GetFullPath(args[2]), identityPath = Path.GetFullPath(args[4]);
         string legacyPath = Path.GetFullPath(args[6]), definitionsPath = Path.GetFullPath(args[8]);
         string sourceRoot = Path.GetFullPath(args[10]);
+        string capturedAssetRoot = Path.GetFullPath(args[34]);
         string mapPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset");
         string graphPath = Path.GetFullPath(args[11]), initialPath = Path.GetFullPath(args[13]);
         string physicalPath = Path.GetFullPath(args[15]), waterPath = Path.GetFullPath(args[17]), startupPath = Path.GetFullPath(args[19]);
@@ -391,7 +392,7 @@ internal static class S073LegacyPlacementOwnerHarness
         var configured = em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
         foreach (var d in definitions.Definitions) configured.Add(new BuildingConfiguredSpawnableReadModel { BuildingId = new FixedString128Bytes(d.Prefab.name), FootprintCells = new int2(d.FootprintCells.x, d.FootprintCells.y) });
 
-        var domain = SourceS073LegacySpawnRequestAdapter.LoadSharedPlacementSource(selected, physicalPath, args[16], waterPath, args[18], startupPath, args[20], sourceRoot);
+        var domain = SourceS073LegacySpawnRequestAdapter.LoadSharedPlacementSource(selected, physicalPath, args[16], waterPath, args[18], startupPath, args[20], sourceRoot, capturedAssetRoot);
         var masks = domain.Build(gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
         var roads = new bool[checked(gridData.Width * gridData.Height)]; BuildingPlacementRoadSurfaceMask.Append(em, surfaceEntity, em.GetComponentData<GridConfig>(gridEntity), roads);
         if (domain.UsesOriginalOwnerMaskCapture) roads = domain.CopyOriginalOwnerRoadMask();
@@ -753,6 +754,7 @@ internal static class S073LegacyPlacementOwnerHarness
 
         RuntimeBuildingEntity authoredMapBuilding = null;
         JObject authoredMapActorEvidence = null;
+        JObject authoredMapWallEvidence = null;
         bool RegisterCapturedMapRow(int scheduledIndex)
         {
             if (scheduledIndex != 0)
@@ -869,7 +871,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["preserved_by_runtime_blocker_removal_owner"] = true
             };
         }
-        void RemoveRuntimeBlockersAtOriginalBoundary(Vector2Int origin, Vector2Int footprint)
+        void RemoveRuntimeBlockers(Vector2Int origin, Vector2Int footprint)
         {
             IReadOnlyList<int> overlapping = runtimeBlockerOwnership.FindOverlappingIds(
                 new int2(origin.x, origin.y), new int2(footprint.x, footprint.y));
@@ -884,7 +886,11 @@ internal static class S073LegacyPlacementOwnerHarness
             }
             if (removed)
                 autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+        }
+        void RemoveRuntimeBlockersAtOriginalBoundary(Vector2Int origin, Vector2Int footprint)
+        {
             ObserveOriginalBlockerRemovalBoundary(origin, footprint);
+            RemoveRuntimeBlockers(origin, footprint);
         }
         using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
                    typeof(UnitGrid), typeof(LocalTransform)))
@@ -1025,6 +1031,105 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["rows_registered"] = 1,
                 ["rows_total"] = 432
             };
+
+            // Exercise one exact captured wall row through the same source data-only
+            // registration path. This is a focused capability proof, not sequence
+            // completion or approval of the other 431 rows.
+            JObject wallRow = (JObject)mapPlacementCapture["placement_rows"][244];
+            RuntimeDefinition wallDefinition = mapDefinitions.Definitions[(int)wallRow["prefab_index"]];
+            JObject wallOriginRow = (JObject)mapPlacementOriginReplay["origins"][244];
+            int2 wallOrigin = new int2((int)wallOriginRow["origin"][0], (int)wallOriginRow["origin"][1]);
+            int2 wallFootprint = new int2((int)wallOriginRow["footprint"][0], (int)wallOriginRow["footprint"][1]);
+            Need((int?)wallRow["row_index"] == 244 && (string)wallRow["category"] == "Wall_Fence_Straight" &&
+                 (string)wallRow["prefab"]?["key"] == "Wall_Fence_Straight" && wallDefinition.IsWall &&
+                 !wallDefinition.HasRunway && !BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(wallDefinition) &&
+                 wallDefinition.FootprintCells.x == wallFootprint.x && wallDefinition.FootprintCells.y == wallFootprint.y &&
+                 wallFootprint.x == 12 && wallFootprint.y == 1,
+                "Exact source row 244 must remain the selected unrotated 12x1 fence wall");
+            JArray wallRotationBits = wallRow["world_rotation_f32bits"] as JArray;
+            Need(wallRotationBits != null && wallRotationBits.Count == 4,
+                "Captured source wall rotation bits required");
+            int[] wallExpectedRotationBits = wallRotationBits.Select(value => (int)value).ToArray();
+            var wallRotation = new quaternion(
+                BitConverter.ToSingle(BitConverter.GetBytes(wallExpectedRotationBits[0]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes(wallExpectedRotationBits[1]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes(wallExpectedRotationBits[2]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes(wallExpectedRotationBits[3]), 0));
+            JObject wallEuler = (JObject)wallRow["world_euler_angles"];
+            Vector3 wallWorldEuler = new Vector3((float)wallEuler["x"], (float)wallEuler["y"], (float)wallEuler["z"]);
+            var wallWorldRotationOverride = new ActualCore::UnityEngine.Quaternion(
+                wallRotation.value.x, wallRotation.value.y, wallRotation.value.z, wallRotation.value.w);
+            int wallRemovalCallsBefore = blockerRemovalCallbackCount;
+            int wallRedirectCallsBefore = redirectOwnerInvocationCount;
+            RuntimeBuildingEntity wallBuilding = mapRegistration.RegisterAtLegalOrigin(
+                wallDefinition,
+                new Vector2Int(wallOrigin.x, wallOrigin.y),
+                birth: new SourceBuildingBirthContext(true),
+                worldEulerAngles: wallWorldEuler,
+                preserveAuthoredTransform: true,
+                removeOverlappingBlockers: true,
+                removeBlockers: RemoveRuntimeBlockers,
+                sourceWorldRotationOverride: wallWorldRotationOverride,
+                allowSourceAuthoredMapWall: true);
+            Need(wallBuilding != null && wallBuilding.CombatEntity != Entity.Null &&
+                 wallBuilding.BlockerEntity != Entity.Null && em.Exists(wallBuilding.CombatEntity) &&
+                 em.Exists(wallBuilding.BlockerEntity) && wallBuilding.Definition.IsWall &&
+                 wallBuilding.Definition.Prefab.name == "Wall_Fence_Straight" &&
+                 wallBuilding.OriginCell.x == wallOrigin.x && wallBuilding.OriginCell.y == wallOrigin.y,
+                "The source-authored wall must register as an actual runtime building and blocker");
+            mapRegistration.SetOwner(wallBuilding, (byte?)wallRow["faction_id"], allowSourceAuthoredMapWall: true);
+            autonomousWorld.Buildings.Add(wallBuilding.Id, wallBuilding);
+            autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+            RuntimeBuildingCombatInfo wallCombat = em.GetComponentData<RuntimeBuildingCombatInfo>(wallBuilding.CombatEntity);
+            Faction wallFaction = em.GetComponentData<Faction>(wallBuilding.CombatEntity);
+            LocalTransform wallTransform = em.GetComponentData<LocalTransform>(wallBuilding.CombatEntity);
+            UnitGrid wallBlockerGrid = em.GetComponentData<UnitGrid>(wallBuilding.BlockerEntity);
+            GridBlockerSize wallBlockerSize = em.GetComponentData<GridBlockerSize>(wallBuilding.BlockerEntity);
+            int[] wallActorRotationBits = new[]
+            {
+                BitConverter.ToInt32(BitConverter.GetBytes(wallTransform.Rotation.value.x), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(wallTransform.Rotation.value.y), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(wallTransform.Rotation.value.z), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(wallTransform.Rotation.value.w), 0)
+            };
+            Need(wallCombat.IsWall == 1 && wallCombat.IsGate == 0 &&
+                 wallCombat.FootprintCells.Equals(wallFootprint) && wallFaction.Id == (byte)wallRow["faction_id"] &&
+                 wallBlockerGrid.Cell.Equals(wallOrigin) && wallBlockerSize.Size.Equals(wallFootprint) &&
+                 wallActorRotationBits.SequenceEqual(wallExpectedRotationBits) &&
+                 autonomousWorld.Buildings.TryGetValue(wallBuilding.Id, out var sameWallBuilding) &&
+                 ReferenceEquals(sameWallBuilding, wallBuilding),
+                "Shared wall actor, wall combat classification, faction, captured rotation, blocker geometry and registry must agree");
+            buildings.Add(new JObject { ["runtime_id"] = wallBuilding.Id,
+                ["definition"] = wallBuilding.Definition.Prefab.name,
+                ["origin"] = new JArray(wallOrigin.x, wallOrigin.y),
+                ["combat_entity"] = wallBuilding.CombatEntity.Index + ":" + wallBuilding.CombatEntity.Version,
+                ["blocker_entity"] = wallBuilding.BlockerEntity.Index + ":" + wallBuilding.BlockerEntity.Version });
+            authoredMapWallEvidence = new JObject
+            {
+                ["status"] = "Passed",
+                ["source_row_index"] = 244,
+                ["runtime_id"] = wallBuilding.Id,
+                ["source_prefab_identity"] = wallRow["prefab"].DeepClone(),
+                ["source_path"] = (string)wallRow["source_path"],
+                ["origin"] = new JArray(wallOrigin.x, wallOrigin.y),
+                ["footprint"] = new JArray(wallFootprint.x, wallFootprint.y),
+                ["faction_id"] = (int)wallRow["faction_id"],
+                ["captured_rotation_f32bits"] = wallRotationBits.DeepClone(),
+                ["actor_rotation_matches_capture"] = wallActorRotationBits.SequenceEqual(wallExpectedRotationBits),
+                ["combat_is_wall"] = wallCombat.IsWall == 1,
+                ["combat_is_gate"] = wallCombat.IsGate == 1,
+                ["blocker_origin_matches"] = wallBlockerGrid.Cell.Equals(wallOrigin),
+                ["blocker_footprint_matches"] = wallBlockerSize.Size.Equals(wallFootprint),
+                ["actual_redirect_owner_invoked"] = redirectOwnerInvocationCount > wallRedirectCallsBefore,
+                ["actual_redirect_owner_call_count"] = redirectOwnerInvocationCount - wallRedirectCallsBefore,
+                ["runtime_blocker_removal_owner_invoked"] = blockerRemovalCallbackCount > wallRemovalCallsBefore,
+                ["runtime_blocker_removal_owner_call_count"] = blockerRemovalCallbackCount - wallRemovalCallsBefore,
+                ["same_live_registry_as_initial_spawn"] = autonomousWorld.Buildings.ContainsKey(wallBuilding.Id),
+                ["same_entity_manager"] = em.Exists(wallBuilding.CombatEntity),
+                ["visual_instance_created"] = false,
+                ["native_visual_readiness"] = false,
+                ["map_sequence_complete"] = false
+            };
         }
 
             return true;
@@ -1118,9 +1223,13 @@ internal static class S073LegacyPlacementOwnerHarness
                 (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
         }
         bool authoredMapActorSucceeded = authoredMapBuilding != null && authoredMapActorEvidence != null &&
-            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 11 &&
+            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 12 &&
             registry.ContainsKey(authoredMapBuilding.Id) && autonomousWorld.Buildings.ContainsKey(authoredMapBuilding.Id);
-        bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded;
+        bool authoredMapWallActorSucceeded = authoredMapWallEvidence != null &&
+            (string)authoredMapWallEvidence["status"] == "Passed" &&
+            registry.Count == 12 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
+            autonomousWorld.Buildings.ContainsKey((int)authoredMapWallEvidence["runtime_id"]);
+        bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded && authoredMapWallActorSucceeded;
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1148,7 +1257,8 @@ internal static class S073LegacyPlacementOwnerHarness
             ["map_placement_baked_owner_geometry_audit"] = bakedMapGeometryAudit,
             ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
             ["authored_map_actor"] = authoredMapActorEvidence,
-            ["map_placements_materialized"] = 1,
+            ["authored_map_wall_actor"] = authoredMapWallEvidence,
+            ["map_placements_materialized"] = authoredMapWallEvidence != null ? 2 : 1,
             ["map_placements_total"] = 432,
             ["map_placement_runtime_owner_complete"] = false,
             ["surface_samples"] = surfaceCount,

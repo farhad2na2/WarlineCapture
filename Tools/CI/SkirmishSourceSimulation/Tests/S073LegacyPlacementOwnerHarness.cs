@@ -1726,6 +1726,41 @@ internal static class S073LegacyPlacementOwnerHarness
         autonomousWorld.MarkS073LegacyLoadingGateAdmitted();
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
+        Need(!em.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary),
+            "S073 AI probe must begin without an existing owned-building summary buffer");
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> ownedBuildingProjection =
+            em.AddBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary);
+        var expectedOwnedBuildingCounts = new Dictionary<string, int>(StringComparer.Ordinal);
+        foreach (RuntimeBuildingEntity building in registry.Values)
+        {
+            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.Definition == null)
+                continue;
+
+            string buildingId = building.Definition.Prefab != null
+                ? BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(building.Definition.Prefab.name)
+                : string.Empty;
+            if (string.IsNullOrEmpty(buildingId))
+                buildingId = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(building.Definition.DisplayName);
+            if (string.IsNullOrEmpty(buildingId))
+                buildingId = building.Definition.DisplayName ?? string.Empty;
+
+            var summaryKey = building.OwnerFactionId.ToString(CultureInfo.InvariantCulture) + "|" + buildingId;
+            expectedOwnedBuildingCounts[summaryKey] = expectedOwnedBuildingCounts.TryGetValue(summaryKey, out int count)
+                ? count + 1 : 1;
+            BuildingRuntimeReadModelProjection.AddOrIncrementOwnedBuildingSummary(
+                ownedBuildingProjection, building.OwnerFactionId, new FixedString128Bytes(buildingId), 1);
+        }
+        var projectedOwnedBuildings = new JArray(ownedBuildingProjection.Select(summary => new JObject
+        {
+            ["faction_id"] = summary.FactionId,
+            ["building_id"] = summary.BuildingId.ToString(),
+            ["count"] = summary.Count
+        }));
+        Need(ownedBuildingProjection.Length == expectedOwnedBuildingCounts.Count &&
+             ownedBuildingProjection.All(summary => expectedOwnedBuildingCounts.TryGetValue(
+                 summary.FactionId.ToString(CultureInfo.InvariantCulture) + "|" + summary.BuildingId,
+                 out int expectedCount) && expectedCount == summary.Count),
+             "Shared runtime owned-building readmodel projection disagrees with independently grouped live registry facts");
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
             ["mission"] = "S073", ["source_identity_hash"] = selected.SourceIdentityHash, ["campaign_source"] = selected.SourceBinding.SourceOperationMapId,
             ["placement_config_variant"] = new JObject { ["kind"] = (string)placementConfig["kind"],
@@ -1786,6 +1821,16 @@ internal static class S073LegacyPlacementOwnerHarness
             ["authored_navigation_rows"] = authoredNavigation, ["initial_road_owner"] = autonomousWorld.InitialRoadReceipt, ["requests_queued"] = queued,
             ["processing_frames"] = frames, ["request_results"] = rows, ["registered_buildings"] = buildings,
             ["building_count"] = registry.Count, ["initial_plan_requests_remaining"] = initialPlanRequestsRemaining,
+            ["owned_building_summary_projection"] = new JObject
+            {
+                ["owner"] = "Shared BuildingRuntimeReadModelProjection called with actual live registry entries",
+                ["written_to_original_runtime_boundary"] = true,
+                ["actual_registry_count"] = registry.Count,
+                ["eligible_live_owned_registry_count"] = expectedOwnedBuildingCounts.Values.Sum(),
+                ["summary_row_count"] = ownedBuildingProjection.Length,
+                ["summary_rows"] = projectedOwnedBuildings,
+                ["matches_independent_live_registry_grouping"] = true
+            },
             ["initial_plan_requests_consumed_by_original_owner"] = initialPlanRequestsRemaining == 0 && em.HasComponent<InitialUnitsSpawnInitialized>(plan),
             ["all_ten_actual_requests_succeeded"] = allTenInitialRequestsSucceeded,
             ["original_play_request"] = new JObject { ["owner"] = "RuntimeGameplayStateSystem.ResetForGameplayStart",

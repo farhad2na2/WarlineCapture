@@ -930,23 +930,8 @@ namespace Game.Runtime
             FixedString128Bytes buildingId,
             int countDelta)
         {
-            for (int i = 0; i < buffer.Length; i++)
-            {
-                BuildingRuntimeOwnedBuildingSummary summary = buffer[i];
-                if (summary.FactionId != factionId || !summary.BuildingId.Equals(buildingId))
-                    continue;
-
-                summary.Count += countDelta;
-                buffer[i] = summary;
-                return;
-            }
-
-            buffer.Add(new BuildingRuntimeOwnedBuildingSummary
-            {
-                FactionId = factionId,
-                BuildingId = buildingId,
-                Count = countDelta
-            });
+            BuildingRuntimeReadModelProjection.AddOrIncrementOwnedBuildingSummary(
+                buffer, factionId, buildingId, countDelta);
         }
 
         private void PublishRuntimeUnitProductionSummaries(

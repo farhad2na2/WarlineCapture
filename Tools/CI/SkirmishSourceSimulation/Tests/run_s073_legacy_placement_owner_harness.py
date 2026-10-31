@@ -46,6 +46,7 @@ EXPECTED = {
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
 SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "52aea623a3af482797dc79d6be8781c03ce4faf6a872b43e946855f2351f01bf",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
     "Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs": "840624cebb501c8c2b7e4dcdec887569ecebda2b78cf4ef4f8902a84f7779c53",
@@ -210,6 +211,8 @@ def main():
             evidence = "Shared owner now maintains a reverse entity-to-id index alongside its existing ownership records; registration rejects duplicate entity owners, removal/clear update both indexes. The S073 harness cross-checks the returned record against live ECS origin and footprint before treating the entity as removable runtime occupancy."
         elif pin_path.endswith("/GameplayStartGatePolicy.cs") or pin_path.endswith("/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs"):
             evidence = "The shared gameplay-start gate policy is independently covered by portable controls; the S073 placement harness exercises the same policy and original rules transition against the actual legacy initialized-world owners."
+        elif pin_path.endswith("/BuildingRuntimeProcessingCompositionSystemHelper.cs"):
+            evidence = "The existing owner now delegates only owned-building row aggregation to the shared projection. The S073 initialized-world harness independently groups the actual registered live buildings and compares every emitted faction/ID/count row; the changed owner contains no numeric placement, movement, pathing, or runway logic."
         else:
             evidence = "No-Unity S073NumericRuntimeOwnerProbe: exact runway output, invalid extent rejection, captured-original pathing opening equivalence, and numeric gate midpoint"
         special_capture_owner_deltas[pin_path] = {"captured_sha256": expected, "current_sha256": current,

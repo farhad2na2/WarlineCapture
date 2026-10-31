@@ -220,17 +220,21 @@
         "member": "CanQueue",
         "source": "Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs",
         "replace": [
-          [
-            "SkirmishCatalogPolicy.",
-            "SourceCampCatalogPolicy."
-          ],
-          [
-            "SkirmishNativeProduction.",
-            "SourceCampNativeProduction."
-          ]
-        ],
-        "prefix_through": "                return SkirmishNativeProduction.CanQueue(em, expanded, producer, prefab);",
-        "unsupported_tail": "throw new System.NotSupportedException(\"Non-expanded population availability outside admitted S002 source profile\");}"
+          ["SkirmishCatalogPolicy.", "SourceCampCatalogPolicy."],
+          ["SkirmishNativeProduction.", "SourceCampNativeProduction."],
+          ["BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(", "GetProductionQuantity("]
+        ]
+      },
+      {
+        "id": "populationKey",
+        "member": "PopulationKey",
+        "source": "Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs"
+      },
+      {
+        "id": "productionQuantity",
+        "member": "GetProductionQuantity",
+        "source": "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+        "replace": [["public static int GetProductionQuantity(", "private static int GetProductionQuantity("]]
       }
     ]
   },

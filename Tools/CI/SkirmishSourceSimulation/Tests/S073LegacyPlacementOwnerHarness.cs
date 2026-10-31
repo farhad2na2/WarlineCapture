@@ -1817,6 +1817,46 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(sharedLoadingGatePassed,
              "The complete actual S073 legacy startup must satisfy the shared gameplay-start gate");
         autonomousWorld.MarkS073LegacyLoadingGateAdmitted();
+        SourceUnitPrefab rifleman = configuredUnitMetadata.Ordered[0].Prefab;
+        RuntimeBuildingEntity factionTwoBarracks = null;
+        int riflemanProductionIndex = -1;
+        foreach (RuntimeBuildingEntity candidate in registry.Values)
+        {
+            if (candidate == null || candidate.IsDestroyed || !candidate.HasOwnerFaction || candidate.OwnerFactionId != 2 ||
+                candidate.Definition?.ProductionSlots == null)
+                continue;
+            for (int index = 0; index < candidate.Definition.ProductionSlots.Count; index++)
+            {
+                var slot = candidate.Definition.ProductionSlots[index];
+                if (slot == null || !ReferenceEquals(slot.SpawnUnitPrefab, rifleman)) continue;
+                Need(factionTwoBarracks == null, "Unique actual faction-two configured rifleman production slot required");
+                factionTwoBarracks = candidate;
+                riflemanProductionIndex = index;
+            }
+        }
+        Need(factionTwoBarracks != null && riflemanProductionIndex >= 0,
+             "Actual faction-two Barracks rifleman production slot required");
+        JObject legacyPopulationPolicyProbe;
+        using (var legacyCatalog = new SourceS073LegacyCatalogScope(em, configuredUnitMetadata))
+        {
+            bool configuredRiflemanAllowed = SourceCampCatalogPolicy.Allows(em, rifleman, building: false);
+            bool supplementalTransportRejected = !SourceCampCatalogPolicy.Allows(
+                em, configuredUnitMetadata.Ordered[0].Production.ProductionTransportPrefab, building: false);
+            bool sourcePopulationPolicyAllowsQueue = SourceCampPopulationPolicy.CanQueue(
+                em, registry, factionTwoBarracks, rifleman, riflemanProductionIndex);
+            Need(configuredRiflemanAllowed && supplementalTransportRejected && sourcePopulationPolicyAllowsQueue,
+                 "Original S073 legacy configured-unit/population policy disagreed with source registry or live world");
+            legacyPopulationPolicyProbe = new JObject
+            {
+                ["authority"] = "OriginalSourcePopulationPolicyAndExactConfiguredPrefabTokens",
+                ["configured_rifleman_allowed"] = configuredRiflemanAllowed,
+                ["unconfigured_transport_rejected"] = supplementalTransportRejected,
+                ["original_population_policy_allows_current_faction_two_slot"] = sourcePopulationPolicyAllowsQueue,
+                ["producer_id"] = factionTwoBarracks.Id,
+                ["production_index"] = riflemanProductionIndex,
+                ["population_key"] = rifleman.name
+            };
+        }
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         Need(!em.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(boundary),
@@ -2131,6 +2171,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["unit_production_summaries"] = aiUnitSummaryRows,
                 ["full_system_schedule"] = false, ["autonomous_aria"] = false,
                 ["full_mission"] = false },
+            ["legacy_population_policy_probe"] = legacyPopulationPolicyProbe,
             ["original_ai_startup"] = new JObject { ["source_assets_sha256"] = new JObject {
                     ["enemy"] = args[27], ["player"] = args[28], ["plan"] = args[29] },
                 ["original_owner_invoked"] = true, ["same_entity_manager"] = true,

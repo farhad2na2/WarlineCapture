@@ -27,6 +27,10 @@ internal static class CameraFocusSequenceControls {
  var rows=new List<CameraFocusAction>();CameraFocusSequence.Tactical(4,.2f,40,58,7,60,false,0,rows.Add);Check(rows.Count==3&&rows[1].Kind==CameraFocusActionKind.CompleteZoom&&rows[2].A==40&&rows[2].B==58&&rows[2].C==7&&rows[2].D==60);
  rows.Clear();CameraFocusSequence.Emit(new CameraFocusRequest{ExplicitPerspective=true,Height=40,Pitch=58,Yaw=0,FieldOfView=60,FocusX=820,FocusZ=606},rows.Add);Check(rows[3].A==40&&rows[3].B==58&&rows[3].D==60&&rows[4].A==820&&rows[4].C==606);
  rows.Clear();CameraFocusSequence.Emit(new CameraFocusRequest{TacticalReveal=2,Smooth=true,Duration=.2f},rows.Add);Check(rows[2].Duration==.6f&&rows[3].Duration==.2f);
+ var legacy=CameraFocusRequestPolicy.Calculate(new CameraFocusRequestPolicyInput{Opening=true,BasinScenario=true,BaseX=800,BaseY=2,BaseZ=600});Check(legacy.X==820&&legacy.Y==2&&legacy.Z==606&&legacy.Height==60&&legacy.Pitch==58&&legacy.Yaw==0&&legacy.FieldOfView==60);
+ var s002=CameraFocusRequestPolicy.Calculate(new CameraFocusRequestPolicyInput{S002=true,BaseX=800,BaseY=2,BaseZ=600,HasMissionView=true,ViewHeight=75,ViewPitch=50,ViewYaw=10,ViewFieldOfView=44});Check(s002.X==830&&s002.Z==600&&s002.Height==75&&s002.Pitch==50&&s002.Yaw==10&&s002.FieldOfView==44);
+ var envelope=CameraFocusRequestPolicy.Calculate(new CameraFocusRequestPolicyInput{Opening=true,AuthoredOpening=true,MinimumX=0,MinimumY=2,MinimumZ=20,MaximumX=100,MaximumY=4,MaximumZ=40});Check(envelope.X==50&&envelope.Y==3&&envelope.Z==30&&envelope.Height==160);
+ var campaign=CameraFocusRequestPolicy.Calculate(new CameraFocusRequestPolicyInput{Opening=true,S004=true,BaseX=100,BaseZ=200,CampaignHeight=70,CampaignYaw=-35});Check(campaign.X==88&&campaign.Z==192&&campaign.Height==70&&campaign.Pitch==50&&campaign.Yaw==-35&&campaign.FieldOfView==50);
  Numeric();
- Console.WriteLine("[CameraFocusSequenceControls] result=Passed checks=12");return 0;}catch(Exception e){Console.Error.WriteLine(e);return 1;}}
+ Console.WriteLine("[CameraFocusSequenceControls] result=Passed checks=16");return 0;}catch(Exception e){Console.Error.WriteLine(e);return 1;}}
 }

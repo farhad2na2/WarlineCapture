@@ -187,9 +187,9 @@ namespace Game.Composition
                         campaignYaw=camera.EulerAngles.y;
                         campaignHeight=Unity.Mathematics.math.clamp(camera.Position.y,55f,100f);
                     }
-            float s002Offset = enemy ? -30f : 30f;
             var focusPosition = EntityManager.GetComponentData<LocalTransform>(entity).Position;
-            float openingDistance = 40f;
+            var minimum = focusPosition;
+            var maximum = focusPosition;
             bool authoredOpening = opening && EntityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity);
             if (authoredOpening)
             {
@@ -198,8 +198,6 @@ namespace Game.Composition
                 // army into unreadable dots. Include legal placement offsets.
                 // This only computes a camera request and never changes troop orders.
                 var owner = EntityManager.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
-                var minimum = focusPosition;
-                var maximum = focusPosition;
                 using var army = EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
                     typeof(SkirmishUnitRoleComponent), typeof(UnitHealth), typeof(LocalTransform));
                 using var actors = army.ToEntityArray(Unity.Collections.Allocator.Temp);
@@ -215,26 +213,24 @@ namespace Game.Composition
                     minimum = Unity.Mathematics.math.min(minimum, position);
                     maximum = Unity.Mathematics.math.max(maximum, position);
                 }
-                focusPosition = (minimum + maximum) * .5f;
-                float extent = Unity.Mathematics.math.max(maximum.x - minimum.x, maximum.z - minimum.z);
-                openingDistance = Unity.Mathematics.math.clamp(extent * 1.3f + 30f, 60f, 180f);
-                if(s004Focus) openingDistance=campaignHeight;
             }
-            float focusHeight = authoredOpening ? openingDistance : s004Focus ? campaignHeight : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55;
             bool missionViewBound = SkirmishMissionViewProfileApplication.TryResolve(EntityManager, out var missionView);
-            if (missionViewBound) focusHeight = missionView.NormalHeight;
-            focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focusHeight);
+            var focus = Game.Simulation.CameraFocusRequestPolicy.Calculate(new Game.Simulation.CameraFocusRequestPolicyInput {
+                Opening=opening, BasinScenario=basinOpening, S002=s002Focus, S004=s004Focus, Enemy=enemy,
+                AuthoredOpening=authoredOpening, HasMissionView=missionViewBound,
+                BaseX=focusPosition.x, BaseY=focusPosition.y, BaseZ=focusPosition.z,
+                MinimumX=minimum.x, MinimumY=minimum.y, MinimumZ=minimum.z,
+                MaximumX=maximum.x, MaximumY=maximum.y, MaximumZ=maximum.z,
+                CampaignYaw=campaignYaw, CampaignHeight=campaignHeight,
+                ViewHeight=missionViewBound?missionView.NormalHeight:0f,
+                ViewPitch=missionViewBound?missionView.Pitch:0f, ViewYaw=missionViewBound?missionView.Yaw:0f,
+                ViewFieldOfView=missionViewBound?missionView.NormalFieldOfView:0f });
+            float focusHeight = SelectionRuntimeConfigStartupSystemHelper.ClampAuthoredFocusHeight(focus.Height);
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
-                // S002 frames the Barracks and its deployment pad on every focus,
-                // including ARIA's subsequent public base-focus action.
-                Perspective=missionViewBound ? new Unity.Mathematics.float4(focusHeight,missionView.Pitch,missionView.Yaw,missionView.NormalFieldOfView) :
-                    new Unity.Mathematics.float4(focusHeight,s004Focus ? 50 : 58,s004Focus ? campaignYaw : 0,s004Focus ? 50 : 60),
-                World=focusPosition+
-                    (s004Focus ? (enemy ? Unity.Mathematics.float3.zero : new Unity.Mathematics.float3(-12,0,-8)) :
-                        authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
-                        opening ? new Unity.Mathematics.float3(20,0,6) : new Unity.Mathematics.float3(0,0,12))
+                Perspective=new Unity.Mathematics.float4(focusHeight,focus.Pitch,focus.Yaw,focus.FieldOfView),
+                World=new Unity.Mathematics.float3(focus.X,focus.Y,focus.Z)
             });
             return true;
         }

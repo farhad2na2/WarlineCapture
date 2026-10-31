@@ -84,7 +84,7 @@ def main():
     require(sha(source) == source_hash, "Control source changed during run")
     for path, expected in pins.items():
         require(sha(path) == expected, "Source build input changed during run: " + path)
-    marker = "[CameraFocusSequenceControls] result=Passed checks=12"
+    marker = "[CameraFocusSequenceControls] result=Passed checks=16"
     passed = compiled.returncode == 0 and run is not None and run.returncode == 0 and \
         run.stdout.splitlines().count(marker) == 1
     result = {"kind": "CameraFocusSequenceControlsRun", "status": "Passed" if passed else "Failed",

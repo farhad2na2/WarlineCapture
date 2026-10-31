@@ -261,6 +261,7 @@ namespace Game.Editor
             if (attach == null) throw new InvalidOperationException("Original runtime map-runway anchor owner missing");
             var temporary = new GameObject("S073_SourceOnly_RunwayAnchorProbe");
             JObject runwayResult;
+            JObject runwayPathingOpening = null;
             try
             {
                 var placement = airportRows[0].placement;
@@ -271,6 +272,7 @@ namespace Game.Editor
                 Transform start = anchor != null ? anchor.Find("Runway_Start") : null;
                 Transform end = anchor != null ? anchor.Find("Runway_End") : null;
                 if (attached is bool ok && ok && anchor != null && start != null && end != null)
+                {
                     runwayResult = new JObject {
                         ["resolved"] = true,
                         ["row_index"] = airportRows[0].index,
@@ -284,6 +286,40 @@ namespace Game.Editor
                         ["owner"] = "MapBuildingPlacementSpawnPrefabSystemHelper.TryAttachMapRunwayAnchor",
                         ["scene_path"] = S073SourceScenePath
                     };
+                    Type definitionType = LoadedType("Game.Runtime.BuildingDefinition");
+                    object definition = Activator.CreateInstance(definitionType, true);
+                    definitionType.GetField("DisplayName").SetValue(definition, "Building_Airport");
+                    definitionType.GetField("Prefab").SetValue(definition, placement.BuildingPrefab);
+                    definitionType.GetField("HasRunway").SetValue(definition, true);
+                    Type runtimeBuildingType = LoadedType("Game.Runtime.RuntimeBuildingEntity");
+                    object runtimeBuilding = Activator.CreateInstance(runtimeBuildingType, true);
+                    runtimeBuildingType.GetField("Definition").SetValue(runtimeBuilding, definition);
+                    runtimeBuildingType.GetField("Instance").SetValue(runtimeBuilding, temporary);
+                    Type pathingType = LoadedType("Game.Runtime.BuildingRunwayPathingSurface");
+                    MethodInfo resolveOpening = pathingType.GetMethod("TryResolve", BindingFlags.Static | BindingFlags.Public);
+                    if (resolveOpening == null) throw new InvalidOperationException("Original runway pathing-opening owner missing");
+                    object[] openingArgs = { runtimeBuilding, null };
+                    if (!(resolveOpening.Invoke(null, openingArgs) is bool openingResolved) || !openingResolved)
+                        throw new InvalidOperationException("Original runway owner could not derive the airport pathing opening from its captured runtime anchor");
+                    object opening = openingArgs[1];
+                    Type openingType = opening.GetType();
+                    JArray ReadFloat2(string name)
+                    {
+                        object pair = openingType.GetField(name).GetValue(opening);
+                        Type pairType = pair.GetType();
+                        return new JArray((float)pairType.GetField("x").GetValue(pair), (float)pairType.GetField("y").GetValue(pair));
+                    }
+                    runwayPathingOpening = new JObject {
+                        ["center_xz"] = ReadFloat2("Center"),
+                        ["right_xz"] = ReadFloat2("Right"),
+                        ["forward_xz"] = ReadFloat2("Forward"),
+                        ["half_extents_xz"] = ReadFloat2("HalfExtents"),
+                        ["valid"] = (bool)openingType.GetProperty("IsValid").GetValue(opening),
+                        ["owner"] = "BuildingRunwayPathingSurface.TryResolve via BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData"
+                    };
+                    if (!(bool)runwayPathingOpening["valid"])
+                        throw new InvalidOperationException("Original runway owner returned an invalid pathing opening");
+                }
                 else
                 {
                     Transform runways = view.MapRoot.Find("Runways");
@@ -340,6 +376,9 @@ namespace Game.Editor
             string[] roots = { S073SourceScenePath, S073BuildingPlacementPath,
                 "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S073MapBuildings.cs",
                 "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs",
+                "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs",
+                "Assets/Game/Scripts/Systems/BuildingRunwayPathingSurface.cs",
+                "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs",
                 "Assets/Game/Scripts/Systems/BuildingRuntimeVisualPresentationSystemHelper.cs",
                 AssetDatabase.GetAssetPath(airportRows[0].placement.BuildingPrefab),
                 AssetDatabase.GetAssetPath(gates[0].placement.BuildingPrefab) };
@@ -354,6 +393,7 @@ namespace Game.Editor
                 ["catalog_id"] = "S073",
                 ["source_scene_path"] = S073SourceScenePath,
                 ["airport_runway"] = runwayResult,
+                ["airport_pathing_opening"] = runwayPathingOpening,
                 ["road_gates"] = gateRows,
                 ["source_pins"] = JObject.FromObject(pins),
                 ["mission_world_allocated"] = false,
@@ -364,7 +404,8 @@ namespace Game.Editor
             };
             Directory.CreateDirectory(output);
             File.WriteAllText(outputFile, report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
-            Debug.Log("[SkirmishS073SpecialBuildingReference] result=Passed runwayResolved=" + runwayResult["resolved"] + " roadGates=" + gateRows.Count + " missionWorld=0 fullMission=0");
+            Debug.Log("[SkirmishS073SpecialBuildingReference] result=Passed runwayResolved=" + runwayResult["resolved"] +
+                " pathingOpening=" + (runwayPathingOpening != null) + " roadGates=" + gateRows.Count + " missionWorld=0 fullMission=0");
         }
 
         static string HierarchyPath(Transform value)

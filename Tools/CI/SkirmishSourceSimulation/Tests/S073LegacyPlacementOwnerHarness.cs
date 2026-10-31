@@ -754,12 +754,21 @@ internal static class S073LegacyPlacementOwnerHarness
 
         RuntimeBuildingEntity authoredMapBuilding = null;
         JObject authoredMapActorEvidence = null;
+        JObject authoredMapRotatedActorEvidence = null;
         JObject authoredMapWallEvidence = null;
         var mapPlacementCallbackRows = new List<int>();
         var mapPlacementCallbackSuccessRows = new List<int>();
         bool RegisterCapturedMapRow(int scheduledIndex)
         {
             mapPlacementCallbackRows.Add(scheduledIndex);
+            if (scheduledIndex == 2)
+            {
+                authoredMapRotatedActorEvidence = RegisterCapturedRotatedBarrack();
+                if (authoredMapRotatedActorEvidence == null)
+                    return false;
+                mapPlacementCallbackSuccessRows.Add(scheduledIndex);
+                return true;
+            }
             if (scheduledIndex != 1)
                 return false;
 
@@ -895,6 +904,157 @@ internal static class S073LegacyPlacementOwnerHarness
         {
             ObserveOriginalBlockerRemovalBoundary(origin, footprint);
             RemoveRuntimeBlockers(origin, footprint);
+        }
+        JObject RegisterCapturedRotatedBarrack()
+        {
+            JObject row = (JObject)mapPlacementCapture["placement_rows"][2];
+            Need((int?)row["row_index"] == 2 && (string)row["category"] == "Building_Barrack" &&
+                 (string)row["prefab"]?["key"] == "Building_Barrack" && (int?)row["faction_id"] == 1 &&
+                 (bool?)row["rotate_vertical"] == true && (string)row["source_path"] == "Map/Buildings/Building_Barrack/SM_Bld_Barracks_01",
+                "Exact captured S073 row 2 rotated Barrack binding required");
+            RuntimeDefinition sourceDefinition = mapDefinitions.Definitions[(int)row["prefab_index"]];
+            Need(sourceDefinition.SourceMetadataComplete && sourceDefinition.Prefab.name == "Building_Barrack" &&
+                 !sourceDefinition.IsWall && !sourceDefinition.HasRunway && sourceDefinition.FootprintCells.x == 28 &&
+                 sourceDefinition.FootprintCells.y == 15,
+                "Complete ordinary source Barrack definition with captured unrotated footprint required");
+            int2 footprint = MapBuildingPlacementOriginKernel.ResolvePlacementFootprint(
+                sourceDefinition.FootprintCells.x, sourceDefinition.FootprintCells.y,
+                isLinearWall: false, localBoundsSizeX: 0f, localBoundsSizeZ: 0f, rotateVertical: true);
+            Need(footprint.x == 15 && footprint.y == 28,
+                "Original shared placement kernel must resolve the vertical 28x15 Barrack to 15x28");
+            var rotatedDefinition = (RuntimeDefinition)typeof(RuntimeDefinition)
+                .GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic)
+                .Invoke(sourceDefinition, null);
+            rotatedDefinition.FootprintCells = new Vector2Int(footprint.x, footprint.y);
+            JObject center = (JObject)row["world_center"];
+            int2 centerCell = GridUtils.WorldToCell(grid,
+                new float3((float)center["x"], (float)center["y"], (float)center["z"]));
+            int2 origin = MapBuildingPlacementOriginKernel.ResolveOriginCell(centerCell,
+                new Vector2Int(footprint.x, footprint.y), grid, useGeometricFootprintCenter: false);
+            JObject replayOrigin = (JObject)mapPlacementOriginReplay["origins"][2];
+            Need(origin.x == 868 && origin.y == 386 &&
+                 origin.x == (int)replayOrigin["origin"][0] && origin.y == (int)replayOrigin["origin"][1] &&
+                 (int)replayOrigin["footprint"][0] == footprint.x && (int)replayOrigin["footprint"][1] == footprint.y,
+                "Row 2 origin and rotated footprint must match the current captured-input shared replay");
+            JArray rotationBits = row["world_rotation_f32bits"] as JArray;
+            Need(rotationBits != null && rotationBits.Count == 4 &&
+                 rotationBits.Select(value => (int)value).SequenceEqual(new[] { 0, 1060439283, 0, 1060439283 }),
+                "Captured row 2 quaternion bits, including signed-zero anchors, required");
+            var mathRotation = new quaternion(
+                BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[0]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[1]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[2]), 0),
+                BitConverter.ToSingle(BitConverter.GetBytes((int)rotationBits[3]), 0));
+            var sourceRotation = new ActualCore::UnityEngine.Quaternion(
+                mathRotation.value.x, mathRotation.value.y, mathRotation.value.z, mathRotation.value.w);
+            JObject euler = (JObject)row["world_euler_angles"];
+            var worldEuler = new Vector3((float)euler["x"], (float)euler["y"], (float)euler["z"]);
+            Need(worldEuler.Equals(new Vector3(0f, 90f, 0f)), "Captured row 2 authored Euler rotation must remain 0,90,0");
+
+            // The source map has twelve baked authored blocker actors whose combat origins and
+            // footprints overlap this placement. UnitGrid is a selection center, not an origin;
+            // the original registration owner removes only tracked runtime blockers, so preserve
+            // these exact source owners and prove their identities/geometry survive the callback.
+            int[] expectedPlacementIndices = { 2, 3, 424, 342, 337, 338, 339, 340, 341, 288, 289, 298 };
+            var preservedSourceBlockers = new List<Tuple<Entity, int, int2, int2>>();
+            int observedSourceOverlapCount = 0;
+            void ObserveAndRemoveRuntimeBlockers(Vector2Int at, Vector2Int size)
+            {
+                using var query = em.CreateEntityQuery(typeof(StaticGridBlocker), typeof(UnitGrid),
+                    typeof(GridBlockerSize), typeof(OperationMapBuildingComponent), typeof(RuntimeBuildingCombatInfo));
+                using var blockers = query.ToEntityArray(Allocator.Temp);
+                foreach (Entity entity in blockers)
+                {
+                    var selectionCenter = em.GetComponentData<UnitGrid>(entity).Cell;
+                    var declaredBlockerSize = em.GetComponentData<GridBlockerSize>(entity).Size;
+                    RuntimeBuildingCombatInfo combat = em.GetComponentData<RuntimeBuildingCombatInfo>(entity);
+                    var blockerOrigin = combat.OriginCell;
+                    var blockerSize = combat.FootprintCells;
+                    bool overlaps = at.x < blockerOrigin.x + blockerSize.x && blockerOrigin.x < at.x + size.x &&
+                        at.y < blockerOrigin.y + blockerSize.y && blockerOrigin.y < at.y + size.y;
+                    if (!overlaps) continue;
+                    OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(entity);
+                    Need(identity.OperationMapId.ToString() == selected.SourceBinding.SourceOperationMapId &&
+                         !string.IsNullOrEmpty(identity.SourceGlobalObjectId.ToString()) &&
+                         identity.PlacementIndex >= 0 && identity.PlacementIndex < 432 &&
+                         combat.FootprintCells.Equals(declaredBlockerSize) &&
+                         combat.OriginCell.x >= 0 && combat.OriginCell.y >= 0 &&
+                         GridUtils.InBounds(selectionCenter, grid.Width, grid.Height),
+                        "Every overlapping map blocker must retain exact source identity, combat origin/footprint and a valid selection center");
+                    preservedSourceBlockers.Add(Tuple.Create(entity, identity.PlacementIndex, blockerOrigin, blockerSize));
+                }
+                int[] observed = preservedSourceBlockers.Select(item => item.Item2).OrderBy(index => index).ToArray();
+                Need(expectedPlacementIndices.All(observed.Contains) && observed.Distinct().Count() == observed.Length,
+                    "Row 2 must account for all twelve independently identified live source-map overlaps; any additional live overlaps are captured and retained too");
+                observedSourceOverlapCount = observed.Length;
+                RemoveRuntimeBlockers(at, size);
+                foreach (var item in preservedSourceBlockers)
+                {
+                    Need(em.Exists(item.Item1) && em.HasComponent<StaticGridBlocker>(item.Item1) &&
+                         em.GetComponentData<OperationMapBuildingComponent>(item.Item1).PlacementIndex == item.Item2 &&
+                         em.GetComponentData<RuntimeBuildingCombatInfo>(item.Item1).OriginCell.Equals(item.Item3) &&
+                         em.GetComponentData<RuntimeBuildingCombatInfo>(item.Item1).FootprintCells.Equals(item.Item4) &&
+                         em.GetComponentData<GridBlockerSize>(item.Item1).Size.Equals(item.Item4),
+                        "Original runtime blocker removal must preserve each distinct source-authored blocker actor");
+                }
+            }
+            int redirectCalls = 0;
+            using var redirectQuery = em.CreateEntityQuery(typeof(UnitMove), typeof(UnitGrid), typeof(LocalTransform));
+            var redirectOwner = new BuildingPlacementRedirectCompositionSystemHelper();
+            var redirectContext = new BuildingPlacementRedirectCompositionSystemHelper.Context(
+                (out EntityManager manager) => { manager = em; return true; },
+                (out Entity sourceGridEntity, out GridConfig sourceGridConfig, out DynamicBuffer<GridRoad> sourceRoads,
+                    out DynamicBlockerComponent sourceBlockers) =>
+                {
+                    sourceGridEntity = gridEntity; sourceGridConfig = em.GetComponentData<GridConfig>(gridEntity);
+                    sourceRoads = em.GetBuffer<GridRoad>(gridEntity); sourceBlockers = em.GetComponentData<DynamicBlockerComponent>(gridEntity); return true;
+                }, _ => { }, () => redirectQuery);
+            Action<RectInt> redirectUnits = rect => { redirectCalls++; redirectOwner.RedirectUnitsAroundPlacedBuilding(redirectContext, rect); };
+            var registration = new GeneratedBuildingRegistration(em, gridEntity, pipeline.CanonicalCollection, buildPlaneY, redirectUnits);
+            RuntimeBuildingEntity building = registration.RegisterAtLegalOrigin(rotatedDefinition,
+                new Vector2Int(origin.x, origin.y), birth: new SourceBuildingBirthContext(true),
+                worldEulerAngles: worldEuler, preserveAuthoredTransform: true,
+                removeOverlappingBlockers: true, removeBlockers: ObserveAndRemoveRuntimeBlockers,
+                sourceWorldRotationOverride: sourceRotation);
+            Need(building != null && building.CombatEntity != Entity.Null && building.BlockerEntity != Entity.Null &&
+                 em.Exists(building.CombatEntity) && em.Exists(building.BlockerEntity) && building.OriginCell.Equals(new Vector2Int(origin.x, origin.y)) &&
+                 building.Definition.Prefab.name == "Building_Barrack" && building.Definition.FootprintCells.Equals(new Vector2Int(15, 28)),
+                "Captured row 2 must register through the existing shared building owner using the original rotated definition footprint");
+            registration.SetOwner(building, (byte?)row["faction_id"]);
+            autonomousWorld.Buildings.Add(building.Id, building);
+            autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+            RuntimeBuildingCombatInfo combatInfo = em.GetComponentData<RuntimeBuildingCombatInfo>(building.CombatEntity);
+            Faction faction = em.GetComponentData<Faction>(building.CombatEntity);
+            LocalTransform transform = em.GetComponentData<LocalTransform>(building.CombatEntity);
+            int[] actorRotationBits = new[] {
+                BitConverter.ToInt32(BitConverter.GetBytes(transform.Rotation.value.x), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(transform.Rotation.value.y), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(transform.Rotation.value.z), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(transform.Rotation.value.w), 0) };
+            Vector3 expectedCenter = new GeneratedSourceBuildingCenter().GetFootprintCenter(
+                new Vector2Int(origin.x, origin.y), rotatedDefinition.FootprintCells, grid, buildPlaneY);
+            Need(combatInfo.RuntimeBuildingId == building.Id && combatInfo.OriginCell.Equals(origin) &&
+                 combatInfo.FootprintCells.Equals(footprint) && faction.Id == (byte)row["faction_id"] &&
+                 actorRotationBits.SequenceEqual(rotationBits.Select(value => (int)value)) &&
+                 transform.Position.Equals((float3)expectedCenter) && redirectCalls == 1 &&
+                         preservedSourceBlockers.Count == observedSourceOverlapCount && observedSourceOverlapCount >= 12 &&
+                         preservedSourceBlockers.All(item => em.Exists(item.Item1)),
+                "Row 2 actor, rotation, faction, geometry, redirect owner, and all observed source blockers must agree");
+            buildings.Add(new JObject { ["runtime_id"] = building.Id, ["definition"] = building.Definition.Prefab.name,
+                ["origin"] = new JArray(origin.x, origin.y), ["combat_entity"] = building.CombatEntity.Index + ":" + building.CombatEntity.Version,
+                ["blocker_entity"] = building.BlockerEntity.Index + ":" + building.BlockerEntity.Version });
+            return new JObject { ["status"] = "Passed", ["source_row_index"] = 2,
+                ["source_prefab_identity"] = row["prefab"].DeepClone(), ["origin"] = new JArray(origin.x, origin.y),
+                ["runtime_id"] = building.Id,
+                ["footprint"] = new JArray(footprint.x, footprint.y), ["captured_euler"] = new JArray(worldEuler.x, worldEuler.y, worldEuler.z),
+                ["captured_rotation_f32bits"] = rotationBits.DeepClone(), ["actor_rotation_matches_capture"] = true,
+                ["faction_id"] = (int)row["faction_id"], ["redirect_owner_calls"] = redirectCalls,
+                ["shared_registration_kernel_used"] = true, ["same_live_registry_as_initial_spawn"] = autonomousWorld.Buildings.ContainsKey(building.Id),
+                ["live_source_blocker_overlap_count"] = observedSourceOverlapCount,
+                ["preserved_source_authored_blockers"] = new JArray(preservedSourceBlockers.Select(item => new JObject {
+                    ["entity"] = item.Item1.Index + ":" + item.Item1.Version, ["placement_index"] = item.Item2,
+                    ["origin"] = new JArray(item.Item3.x, item.Item3.y), ["footprint"] = new JArray(item.Item4.x, item.Item4.y) })),
+                ["native_visual_readiness"] = false, ["mission_readiness_proven"] = false };
         }
         using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
                    typeof(UnitGrid), typeof(LocalTransform)))
@@ -1162,9 +1322,10 @@ internal static class S073LegacyPlacementOwnerHarness
             mapPlacementSourceRowCount, 32, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
         Need(mapPlacementSourceRowCount == 432 && !mapPlacementSequenceQueued && mapPlacementSequence.PriorityPassCompleted &&
              !mapPlacementSequence.IsQueued && mapPlacementSequence.NextPlacementIndex == 32 &&
-             mapPlacementCallbackSuccessRows.Count == 1 && mapPlacementCallbackSuccessRows[0] == 1 &&
-             authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed",
-            "Original 432-row placement priority pass and first 32 sequential attempts must preserve the single implemented source row and remain incomplete");
+             mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2 }) &&
+             authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed" &&
+             authoredMapRotatedActorEvidence != null && (string)authoredMapRotatedActorEvidence["status"] == "Passed",
+            "Original 432-row placement priority pass and first 32 sequential attempts must register only the two implemented source rows and remain incomplete");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {
@@ -1232,13 +1393,18 @@ internal static class S073LegacyPlacementOwnerHarness
                 (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
         }
         bool authoredMapActorSucceeded = authoredMapBuilding != null && authoredMapActorEvidence != null &&
-            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 12 &&
+            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 13 &&
             registry.ContainsKey(authoredMapBuilding.Id) && autonomousWorld.Buildings.ContainsKey(authoredMapBuilding.Id);
+        bool authoredMapRotatedActorSucceeded = authoredMapRotatedActorEvidence != null &&
+            (string)authoredMapRotatedActorEvidence["status"] == "Passed" && registry.Count == 13 &&
+            registry.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]) &&
+            autonomousWorld.Buildings.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]);
         bool authoredMapWallActorSucceeded = authoredMapWallEvidence != null &&
             (string)authoredMapWallEvidence["status"] == "Passed" &&
-            registry.Count == 12 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
+            registry.Count == 13 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapWallEvidence["runtime_id"]);
-        bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded && authoredMapWallActorSucceeded;
+        bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded &&
+            authoredMapRotatedActorSucceeded && authoredMapWallActorSucceeded;
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1266,6 +1432,7 @@ internal static class S073LegacyPlacementOwnerHarness
             ["map_placement_baked_owner_geometry_audit"] = bakedMapGeometryAudit,
             ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
             ["authored_map_actor"] = authoredMapActorEvidence,
+            ["authored_map_rotated_actor"] = authoredMapRotatedActorEvidence,
             ["authored_map_wall_actor"] = authoredMapWallEvidence,
             ["map_placement_sequence"] = new JObject
             {
@@ -1279,7 +1446,8 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["callback_success_source_rows"] = new JArray(mapPlacementCallbackSuccessRows),
                 ["map_owner_complete"] = false
             },
-            ["map_placements_materialized"] = authoredMapWallEvidence != null ? 2 : 1,
+            ["map_placements_materialized"] = (authoredMapActorEvidence != null ? 1 : 0) +
+                (authoredMapRotatedActorEvidence != null ? 1 : 0) + (authoredMapWallEvidence != null ? 1 : 0),
             ["map_placements_total"] = 432,
             ["map_placement_runtime_owner_complete"] = false,
             ["surface_samples"] = surfaceCount,
@@ -1313,7 +1481,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 actual legacy startup prefix with one captured authored-map building registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
+            ["mission_world_scope"] = "S073 actual legacy startup prefix with two captured authored-map buildings and one captured wall registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

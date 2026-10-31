@@ -80,6 +80,36 @@ internal static class MapBuildingPlacementSequenceKernelHarness
         Need(exception.TryBeginSequentialAttempt(2, 32, 1, out _) == false && exception.QueueWhenExhausted(2),
             "A shrunken config stops the current pass and queues once the original cursor is exhausted");
 
+        var sharedAdvance = new MapBuildingPlacementSequenceKernel();
+        var sharedAttempts = new List<int>();
+        var sharedAttemptsByIndex = new Dictionary<int, int>();
+        bool SharedTry(int index)
+        {
+            sharedAttempts.Add(index);
+            sharedAttemptsByIndex[index] = sharedAttemptsByIndex.TryGetValue(index, out int count) ? count + 1 : 1;
+            if (index == 35 && sharedAttemptsByIndex[index] == 1) return false;
+            return index != 34;
+        }
+        Need(!sharedAdvance.Advance(40, 32, production.Contains, SharedTry) &&
+             sharedAdvance.NextPlacementIndex == 32,
+             "The shared data-only step must preserve the original first 32-row batch");
+        Need(sharedAdvance.Advance(40, 32, production.Contains, SharedTry) &&
+             sharedAdvance.IsQueued && sharedAdvance.NextPlacementIndex == 40,
+             "The shared data-only step must queue only after the second batch exhausts the source rows");
+        Need(sharedAttempts.Count == attempts.Count && sharedAttemptsByIndex[35] == 2 &&
+             sharedAttemptsByIndex[37] == 1 && sharedAttemptsByIndex[34] == 1,
+             "The extracted shared advance must exactly match the existing priority, retry, and cursor trace");
+        for (int i = 0; i < attempts.Count; i++)
+            Need(sharedAttempts[i] == attempts[i], "Shared attempt ordering changed at row " + i);
+
+        var sharedException = new MapBuildingPlacementSequenceKernel();
+        bool exceptionObserved = false;
+        try { sharedException.Advance(3, 32, _ => false, _ => throw new InvalidOperationException("retry")); }
+        catch (InvalidOperationException) { exceptionObserved = true; }
+        Need(exceptionObserved && sharedException.NextPlacementIndex == 0 &&
+             sharedException.Advance(3, 32, _ => false, _ => true),
+             "A throwing data-only attempt must preserve the source cursor for the next update");
+
         var emptied = new MapBuildingPlacementSequenceKernel();
         emptied.CompletePriorityPass();
         Need(emptied.TryBeginSequentialAttempt(3, 32, 0, out int priorIndex) && priorIndex == 0,
@@ -91,7 +121,7 @@ internal static class MapBuildingPlacementSequenceKernelHarness
 
         Console.WriteLine("[MapBuildingPlacementSequenceKernelHarness] Passed attempts=" + attempts.Count +
             " batches=32+8 priorityRows=2 retainedPrioritySuccesses=1 failedPriorityRetried=1 failedSequentialRetried=0" +
-            " exceptionCursor=preserved dynamicCount=accepted");
+            " sharedAdvance=equivalent exceptionCursor=preserved dynamicCount=accepted");
         return 0;
 
         bool Try(int index)

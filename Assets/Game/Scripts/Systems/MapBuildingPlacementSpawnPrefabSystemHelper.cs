@@ -94,50 +94,40 @@ namespace Game.Runtime
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
                 return;
 
-            if (!_sequence.PriorityPassCompleted)
-                SpawnPriorityPlayerProductionPlacements(context, grid);
-
-            int processed = 0;
-            while (_sequence.TryBeginSequentialAttempt(
-                       context.Config.Placements.Count, MaxPlacementsPerUpdate, processed, out int placementIndex))
-            {
-                if (_sequence.WasPrioritySuccessful(placementIndex))
-                {
-                    _sequence.CompleteSequentialAttempt(placementIndex);
-                    processed++;
-                    continue;
-                }
-
-                TrySpawnPlacementAtIndex(context, grid, placementIndex);
-                _sequence.CompleteSequentialAttempt(placementIndex);
-                processed++;
-            }
-
-            if (_sequence.QueueWhenExhausted(context.Config.Placements.Count))
+            if (_sequence.Advance(
+                    context.Config.Placements.Count,
+                    MaxPlacementsPerUpdate,
+                    placementIndex => IsPlayerProductionPlacement(context, context.Config.Placements[placementIndex]),
+                    placementIndex => TrySpawnPlacementAtIndex(context, grid, placementIndex)))
             {
                 HideAuthoringVisuals(context);
             }
         }
 
-        private void SpawnPriorityPlayerProductionPlacements(Context context, GridConfig grid)
+        // The same original owner sequence is exposed to a headless host. That
+        // host supplies data/actor callbacks and does not create visual objects.
+        internal bool UpdateDataOnly(int placementCount, Func<int, bool> isPriorityPlacement,
+            Func<int, bool> trySpawnPlacement)
         {
-            if (context.Config?.Placements == null)
-                return;
-
-            for (int i = 0; i < context.Config.Placements.Count; i++)
+            if (placementCount < 0)
+                throw new ArgumentOutOfRangeException(nameof(placementCount));
+            if (_sequence.IsQueued)
             {
-                if (_sequence.WasPrioritySuccessful(i))
-                    continue;
-
-                MapBuildingPlacementConfigEntry placement = context.Config.Placements[i];
-                if (!IsPlayerProductionPlacement(context, placement))
-                    continue;
-
-                if (TrySpawnPlacementAtIndex(context, grid, i))
-                    _sequence.RecordPrioritySuccess(i);
+                _authoringHidden = true;
+                return true;
+            }
+            if (placementCount == 0)
+            {
+                _sequence.QueueEmpty();
+                _authoringHidden = true;
+                return true;
             }
 
-            _sequence.CompletePriorityPass();
+            bool queued = _sequence.Advance(placementCount, MaxPlacementsPerUpdate,
+                isPriorityPlacement, trySpawnPlacement);
+            if (queued)
+                _authoringHidden = true;
+            return queued;
         }
 
         private bool TrySpawnPlacementAtIndex(Context context, GridConfig grid, int placementIndex)

@@ -23,6 +23,39 @@ namespace Game.Runtime
 
         internal bool WasPrioritySuccessful(int index) => prioritySpawnedIndices.Contains(index);
 
+        internal bool Advance(
+            int count,
+            int maximumExamined,
+            Func<int, bool> isPriorityPlacement,
+            Func<int, bool> trySpawnPlacement)
+        {
+            if (count < 0 || maximumExamined <= 0 || isPriorityPlacement == null || trySpawnPlacement == null)
+                throw new ArgumentException("Bounded placement sequence callbacks and count required");
+            if (IsQueued)
+                return true;
+
+            if (!PriorityPassCompleted)
+            {
+                for (int index = 0; index < count; index++)
+                {
+                    if (isPriorityPlacement(index) && trySpawnPlacement(index))
+                        RecordPrioritySuccess(index);
+                }
+                CompletePriorityPass();
+            }
+
+            int processed = 0;
+            while (TryBeginSequentialAttempt(count, maximumExamined, processed, out int index))
+            {
+                if (!WasPrioritySuccessful(index))
+                    trySpawnPlacement(index);
+                CompleteSequentialAttempt(index);
+                processed++;
+            }
+
+            return QueueWhenExhausted(count);
+        }
+
         internal void CompletePriorityPass()
         {
             if (PriorityPassCompleted || IsQueued)

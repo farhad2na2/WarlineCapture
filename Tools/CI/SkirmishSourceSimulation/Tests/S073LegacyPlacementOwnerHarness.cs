@@ -429,6 +429,34 @@ internal static class S073LegacyPlacementOwnerHarness
         GeneratedUnitProductionMetadata configuredUnitMetadata = GeneratedUnitProductionMetadata.LoadS073ConfiguredUnitRegistry(
             unitRegistryEvidencePath, unitRegistryEvidenceSha, sourceRoot,
             definitions.Assets, templates, definitions.AssetIdentities);
+        SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate actualConfiguredRead =
+            (int index, out SourceUnitPrefab prefab, out string displayName, out int price, out bool canRequest, out bool isVehicle) =>
+            {
+                prefab = null; displayName = string.Empty; price = 0; canRequest = false; isVehicle = false;
+                if (index < 0 || index >= configuredUnitMetadata.Ordered.Count) return false;
+                var row = configuredUnitMetadata.Ordered[index]; var definition = row.Definition;
+                prefab = row.Prefab;
+                displayName = string.IsNullOrWhiteSpace(definition.DisplayName) ? prefab.name : definition.DisplayName;
+                price = definition.Price; canRequest = definition.CanRequest;
+                isVehicle = definition.FootprintCells.x > 1 || definition.FootprintCells.y > 1 ||
+                    prefab.name.IndexOf("Veh", StringComparison.OrdinalIgnoreCase) >= 0;
+                return true;
+            };
+        var guardedConfiguredRead = SourceFactionProductionDispatcher.CreateS073LegacyConfiguredUnitReadModel(
+            configuredUnitMetadata, actualConfiguredRead);
+        for (int index = 0; index < configuredUnitMetadata.Ordered.Count; index++)
+            Need(guardedConfiguredRead(index, out _, out _, out _, out _, out _),
+                "Exact S073 source unit metadata callback was not retained");
+        bool failedConfiguredReadRejected = false;
+        try
+        {
+            SourceFactionProductionDispatcher.CreateS073LegacyConfiguredUnitReadModel(configuredUnitMetadata,
+                (int index, out SourceUnitPrefab prefab, out string displayName, out int price, out bool canRequest, out bool isVehicle) =>
+                { prefab = null; displayName = string.Empty; price = 0; canRequest = false; isVehicle = false; return false; });
+        }
+        catch (NotSupportedException) { failedConfiguredReadRejected = true; }
+        Need(failedConfiguredReadRejected,
+            "Failed configured-unit read must reject instead of entering native fallback price/requestability");
         DynamicBuffer<BuildingConfiguredUnitReadModel> configuredUnitReadModels =
             em.AddBuffer<BuildingConfiguredUnitReadModel>(boundary);
         configuredUnitMetadata.PublishConfiguredUnitReadModels(configuredUnitReadModels);
@@ -612,6 +640,28 @@ internal static class S073LegacyPlacementOwnerHarness
             masks.AuthoredBuildings, roads, masks.Sidewalks, water, buildPlaneY, RuntimeBlocked, startupRedirectUnits);
         var gameplayStartOwner = new RuntimeGameplayStateSystem(em);
         gameplayStartOwner.ResetForGameplayStart();
+        JObject initialCameraFocusObservation = null;
+        JObject CaptureInitialCameraFocusObservation(int startupOwnerFrame, string stage)
+        {
+            RuntimeCameraFocusRequestComponent focus = gameplayStartOwner.ReadCameraFocusRequest();
+            if (focus.Requested == 0) return null;
+            return new JObject
+            {
+                ["owner"] = "InitialUnitsSpawnSystem -> RuntimeCameraFocusRequestComponent",
+                ["stage"] = stage,
+                ["startup_owner_frame"] = startupOwnerFrame,
+                ["world_elapsed_seconds"] = em.WorldUnmanaged.Time.ElapsedTime,
+                ["requested"] = focus.Requested != 0,
+                ["smooth"] = focus.Smooth != 0,
+                ["use_explicit_perspective"] = focus.UseExplicitPerspective != 0,
+                ["use_explicit_yaw"] = focus.UseExplicitYaw != 0,
+                ["use_tactical_reveal_zoom"] = focus.UseTacticalRevealZoom != 0,
+                ["world"] = new JArray(focus.World.x, focus.World.y, focus.World.z),
+                ["perspective"] = new JArray(focus.Perspective.x, focus.Perspective.y, focus.Perspective.z, focus.Perspective.w),
+                ["yaw_degrees"] = focus.YawDegrees,
+                ["smooth_time_seconds"] = focus.SmoothTimeSeconds
+            };
+        }
         var spawnSystem = new InitialUnitsSpawnSystem();
         var spawnState = new SystemState { EntityManager = em, Enabled = true };
         spawnSystem.OnCreate(ref spawnState);
@@ -625,6 +675,7 @@ internal static class S073LegacyPlacementOwnerHarness
         spawnState.Begin();
         try { spawnSystem.OnUpdate(ref spawnState); }
         finally { spawnState.End(); }
+        initialCameraFocusObservation = CaptureInitialCameraFocusObservation(1, "first_original_spawn_update");
         requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         int queued = requests.Length;
         Need(queued == 10, "Original S073 initial-spawn owner did not queue all source rows");
@@ -662,6 +713,7 @@ internal static class S073LegacyPlacementOwnerHarness
             spawnState.Begin();
             try { spawnSystem.OnUpdate(ref spawnState); }
             finally { spawnState.End(); }
+            initialCameraFocusObservation ??= CaptureInitialCameraFocusObservation(spawnFrames + 2, "original_spawn_retry");
             pipeline.ProcessRequests((spawnFrames + 2) / 60f);
             frames++;
         }
@@ -1952,6 +2004,8 @@ internal static class S073LegacyPlacementOwnerHarness
         const float aiPlannerStepSeconds = 1f / 60f;
         JObject legacySchedulerFirstStep = null;
         JObject legacySchedulerLastStep = null;
+        JObject firstAiProductionRequestObservation = null;
+        int aiProductionRequestCountBefore = em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary).Length;
         phaseWall.Restart();
         while (aiPlannerQueriesPresent && gameplayAfterHeadlessGate.SimulationActive != 0 &&
                aiPlannerStepCount < 2700 && em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length == aiRequestsBefore)
@@ -1960,6 +2014,30 @@ internal static class S073LegacyPlacementOwnerHarness
             if (legacySchedulerFirstStep == null) legacySchedulerFirstStep = ownerStep;
             legacySchedulerLastStep = ownerStep;
             aiPlannerStepCount++;
+            if (firstAiProductionRequestObservation == null)
+            {
+                DynamicBuffer<BuildingFactionUnitProductionRequest> observedRequests =
+                    em.GetBuffer<BuildingFactionUnitProductionRequest>(boundary);
+                if (observedRequests.Length > aiProductionRequestCountBefore)
+                {
+                    BuildingFactionUnitProductionRequest observed = observedRequests[aiProductionRequestCountBefore];
+                    firstAiProductionRequestObservation = new JObject
+                    {
+                        ["owner"] = "AIProductionSystem original queue request buffer",
+                        ["scheduler_step"] = aiPlannerStepCount,
+                        ["elapsed_seconds"] = em.WorldUnmanaged.Time.ElapsedTime,
+                        ["request_id"] = observed.RequestId,
+                        ["request_owner"] = observed.RequestOwner.Index + ":" + observed.RequestOwner.Version,
+                        ["request_attempt"] = observed.RequestAttempt.ToString(),
+                        ["faction_id"] = observed.FactionId,
+                        ["unit_id"] = observed.UnitId.ToString(),
+                        ["status"] = observed.Status == BuildingFactionUnitProductionRequest.Pending ? "Pending" :
+                            observed.Status == BuildingFactionUnitProductionRequest.Succeeded ? "Succeeded" : "Failed",
+                        ["result_code"] = observed.ResultCode,
+                        ["resources_reserved"] = observed.ResourcesReserved != 0
+                    };
+                }
+            }
         }
         allSucceeded &= (bool?)legacySchedulerInitialization["initialized"] == true &&
             aiPlannerQueriesPresent && aiProductionQueriesPresent && aiPlannerStepCount > 0 &&
@@ -2136,6 +2214,20 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["request_observed"] = gameplayStateAfterRequest.PlayRequested == 1,
                 ["simulation_active"] = gameplayAfterHeadlessGate.SimulationActive != 0,
                 ["loading_gate_evaluated"] = true, ["simulation_started"] = matchAfterHeadlessGate.Phase == SkirmishPhase.Playing },
+            ["original_initial_camera_focus_request"] = initialCameraFocusObservation ?? new JObject
+            {
+                ["owner"] = "InitialUnitsSpawnSystem -> RuntimeCameraFocusRequestComponent",
+                ["request_observed"] = false,
+                ["checked_original_spawn_owner_updates"] = true,
+                ["presentation_focus_owner_executed"] = false
+            },
+            ["first_ai_production_request_observation"] = firstAiProductionRequestObservation ?? new JObject
+            {
+                ["owner"] = "AIProductionSystem original queue request buffer",
+                ["request_observed"] = false,
+                ["scheduler_steps_observed"] = aiPlannerStepCount,
+                ["elapsed_seconds"] = em.WorldUnmanaged.Time.ElapsedTime
+            },
             ["headless_loading_gate"] = new JObject { ["policy"] = "GameplayStartGatePolicy.IsGameplayStartComplete",
                 ["admitted"] = sharedLoadingGatePassed, ["headless_gameplay_owners_initialized"] = headlessGameplayInitialized,
                 ["building_startup_complete"] = allSucceeded && initialPlanRequestsRemaining == 0,

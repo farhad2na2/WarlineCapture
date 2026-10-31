@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -49,15 +48,12 @@ namespace Game.Runtime
             }
         }
 
-        private bool _queued;
         private bool _authoringHidden;
         private bool _warnedMissingConfig;
-        private int _nextPlacementIndex;
         private bool _warnedFailedPlacement;
-        private bool _priorityPlayerProductionQueued;
-        private readonly HashSet<int> _spawnedPlacementIndices = new();
+        private readonly MapBuildingPlacementSequenceKernel _sequence = new();
 
-        public bool IsComplete => _queued && _authoringHidden;
+        public bool IsComplete => _sequence.IsQueued && _authoringHidden;
 
         public bool IsCompleteFor(MapBuildingPlacementConfig config, Transform authoringRoot)
         {
@@ -69,7 +65,7 @@ namespace Game.Runtime
                 authoringRoot == null ||
                 _authoringHidden ||
                 !authoringRoot.gameObject.activeInHierarchy;
-            return _queued && authoringHidden;
+            return _sequence.IsQueued && authoringHidden;
         }
 
         public void Update(Context context)
@@ -77,7 +73,7 @@ namespace Game.Runtime
             if (context.Config == null || !context.Config.SpawnOnMatchStart || IsComplete)
                 return;
 
-            if (_queued)
+            if (_sequence.IsQueued)
             {
                 HideAuthoringVisuals(context);
                 return;
@@ -91,31 +87,34 @@ namespace Game.Runtime
             if (context.Config.Placements == null || context.Config.Placements.Count == 0)
             {
                 WarnOnce(ref _warnedMissingConfig, context, "[MapBuildingPlacement] no baked map building placements configured.");
-                _queued = true;
+                _sequence.QueueEmpty();
                 return;
             }
 
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
                 return;
 
-            if (!_priorityPlayerProductionQueued)
-            {
+            if (!_sequence.PriorityPassCompleted)
                 SpawnPriorityPlayerProductionPlacements(context, grid);
-                _priorityPlayerProductionQueued = true;
-            }
 
             int processed = 0;
-            for (; _nextPlacementIndex < context.Config.Placements.Count && processed < MaxPlacementsPerUpdate; _nextPlacementIndex++, processed++)
+            while (_sequence.TryBeginSequentialAttempt(
+                       context.Config.Placements.Count, MaxPlacementsPerUpdate, processed, out int placementIndex))
             {
-                if (_spawnedPlacementIndices.Contains(_nextPlacementIndex))
+                if (_sequence.WasPrioritySuccessful(placementIndex))
+                {
+                    _sequence.CompleteSequentialAttempt(placementIndex);
+                    processed++;
                     continue;
+                }
 
-                TrySpawnPlacementAtIndex(context, grid, _nextPlacementIndex);
+                TrySpawnPlacementAtIndex(context, grid, placementIndex);
+                _sequence.CompleteSequentialAttempt(placementIndex);
+                processed++;
             }
 
-            if (_nextPlacementIndex >= context.Config.Placements.Count)
+            if (_sequence.QueueWhenExhausted(context.Config.Placements.Count))
             {
-                _queued = true;
                 HideAuthoringVisuals(context);
             }
         }
@@ -127,7 +126,7 @@ namespace Game.Runtime
 
             for (int i = 0; i < context.Config.Placements.Count; i++)
             {
-                if (_spawnedPlacementIndices.Contains(i))
+                if (_sequence.WasPrioritySuccessful(i))
                     continue;
 
                 MapBuildingPlacementConfigEntry placement = context.Config.Placements[i];
@@ -135,8 +134,10 @@ namespace Game.Runtime
                     continue;
 
                 if (TrySpawnPlacementAtIndex(context, grid, i))
-                    _spawnedPlacementIndices.Add(i);
+                    _sequence.RecordPrioritySuccess(i);
             }
+
+            _sequence.CompletePriorityPass();
         }
 
         private bool TrySpawnPlacementAtIndex(Context context, GridConfig grid, int placementIndex)

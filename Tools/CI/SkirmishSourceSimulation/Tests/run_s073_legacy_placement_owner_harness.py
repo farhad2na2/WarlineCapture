@@ -199,6 +199,12 @@ def main():
             sha(pinned_placement_sequence[0]) == build["source_and_reference_pins"][str(pinned_placement_sequence[0])],
             "Hash-pinned original map placement sequence owner required")
     compiler_args.append(str(pinned_placement_sequence[0]))
+    pinned_blocker_ownership = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
+                                if path.endswith("/Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs")]
+    require(len(pinned_blocker_ownership) == 1 and
+            sha(pinned_blocker_ownership[0]) == build["source_and_reference_pins"][str(pinned_blocker_ownership[0])],
+            "Hash-pinned original runtime blocker ownership kernel required")
+    compiler_args.append(str(pinned_blocker_ownership[0]))
     compiler_args.append(str(harness))
     test_rsp = output / "harness.rsp"
     test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))

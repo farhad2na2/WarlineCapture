@@ -330,13 +330,17 @@ internal static class S073LegacyPlacementOwnerHarness
             (float)blockerConfig["tree_spawn_ratio"], (int)blockerConfig["tree_cluster_count"],
             (int)blockerConfig["tree_cluster_spacing_min_cells"], (int)blockerConfig["tree_cluster_spacing_max_cells"],
             (int)blockerConfig["tree_cluster_distance_min_cells"], (int)blockerConfig["tree_cluster_distance_max_cells"]);
+        var runtimeBlockerOwnership = new RuntimeGridBlockerOwnershipKernel();
+        runtimeBlockerOwnership.InitializeGrid(sourceGrid.Width, sourceGrid.Height);
         var actualBlockerRows = new JArray();
         foreach (RuntimeGridBlockerPlacementData placement in actualBlockerPlan)
         {
+            int blockerId = runtimeBlockerOwnership.AllocateId();
             Entity blockerEntity = em.CreateEntity();
             em.AddComponentData(blockerEntity, new UnitGrid { Cell = placement.OriginCell });
             em.AddComponentData(blockerEntity, new GridBlockerSize { Size = placement.SizeCells });
             em.AddComponent<StaticGridBlocker>(blockerEntity);
+            runtimeBlockerOwnership.Register(blockerId, blockerEntity, placement.OriginCell, placement.SizeCells);
             autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
             sourceBlockerState = em.GetComponentData<DynamicBlockerComponent>(gridEntity);
             bool appliedBlocked = true;
@@ -353,6 +357,7 @@ internal static class S073LegacyPlacementOwnerHarness
             ["actual_selected_campaign_grid_used"] = true, ["native_grid_predicates_used"] = true,
             ["seed"] = (int)blockerConfig["random_seed"], ["requested_count"] = (int)blockerConfig["blocker_count"],
             ["placed_count"] = actualBlockerRows.Count, ["placements"] = actualBlockerRows,
+            ["shared_runtime_blocker_ownership_kernel_invoked"] = runtimeBlockerOwnership.Count == actualBlockerPlan.Count,
             ["original_grid_storage_and_static_blocker_owners_invoked"] = true,
             ["world_is_full_mission"] = false };
 
@@ -696,6 +701,23 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["preserved_by_runtime_blocker_removal_owner"] = true
             };
         }
+        void RemoveRuntimeBlockersAtOriginalBoundary(Vector2Int origin, Vector2Int footprint)
+        {
+            IReadOnlyList<int> overlapping = runtimeBlockerOwnership.FindOverlappingIds(
+                new int2(origin.x, origin.y), new int2(footprint.x, footprint.y));
+            bool removed = false;
+            for (int i = 0; i < overlapping.Count; i++)
+            {
+                if (!runtimeBlockerOwnership.TryRemove(overlapping[i], true, out RuntimeGridBlockerOwnershipRecord blocker))
+                    continue;
+                if (blocker.Entity != Entity.Null && em.Exists(blocker.Entity))
+                    em.DestroyEntity(blocker.Entity);
+                removed = true;
+            }
+            if (removed)
+                autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
+            ObserveOriginalBlockerRemovalBoundary(origin, footprint);
+        }
         using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
                    typeof(UnitGrid), typeof(LocalTransform)))
         {
@@ -733,7 +755,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 worldEulerAngles: authoredWorldEuler,
                 preserveAuthoredTransform: true,
                 removeOverlappingBlockers: true,
-                removeBlockers: ObserveOriginalBlockerRemovalBoundary,
+                removeBlockers: RemoveRuntimeBlockersAtOriginalBoundary,
                 sourceWorldRotationOverride: authoredWorldRotationOverride);
             Need(authoredMapBuilding != null && authoredMapBuilding.CombatEntity != Entity.Null &&
                  authoredMapBuilding.Definition.Prefab.name == (string)authoredMapRow["prefab"]["key"] &&

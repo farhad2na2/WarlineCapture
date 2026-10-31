@@ -11,15 +11,6 @@ namespace Game.Runtime
 {
     public sealed class RuntimeGridBlockerPresentationSystemHelper : IRuntimeGridBlockerCellLookup
     {
-        private sealed class RuntimeBlockerRecord
-        {
-            public int Id;
-            public Entity Entity;
-            public GameObject RootObject;
-            public Vector2Int OriginCell;
-            public Vector2Int SizeCells;
-        }
-
         private sealed class PrefabPlacementMetadata
         {
             public Bounds LocalBounds;
@@ -53,10 +44,9 @@ namespace Game.Runtime
             public bool IsBlocked(int cellIndex) => _blocked.IsCreated && _blocked.IsSet(cellIndex);
         }
 
-        private readonly Dictionary<int, RuntimeBlockerRecord> _blockersById = new();
+        private readonly Dictionary<int, GameObject> _rootObjectsByBlockerId = new();
         private readonly Dictionary<GameObject, PrefabPlacementMetadata> _metadataByPrefab = new();
-        private int[] _runtimeBlockerCellCounts;
-        private int _nextBlockerId = 1;
+        private readonly RuntimeGridBlockerOwnershipKernel _ownership = new();
         private bool _spawnOnStart = true;
         private int _blockerCount = 80;
         private uint _randomSeed = 24680;
@@ -116,15 +106,15 @@ namespace Game.Runtime
 
         public void Dispose()
         {
-            foreach (RuntimeBlockerRecord blocker in _blockersById.Values)
+            foreach (GameObject rootObject in _rootObjectsByBlockerId.Values)
             {
-                if (blocker.RootObject != null)
-                    Object.Destroy(blocker.RootObject);
+                if (rootObject != null)
+                    Object.Destroy(rootObject);
             }
 
-            _blockersById.Clear();
+            _rootObjectsByBlockerId.Clear();
+            _ownership.Clear();
             _metadataByPrefab.Clear();
-            _runtimeBlockerCellCounts = null;
             _rootTransform = null;
             _cityReadModel = null;
             _initialized = false;
@@ -163,29 +153,16 @@ namespace Game.Runtime
         {
             if ((uint)x >= (uint)gridWidth || (uint)y >= (uint)gridHeight)
                 return false;
-            if (_runtimeBlockerCellCounts == null || _runtimeBlockerCellCounts.Length != gridWidth * gridHeight)
-                return false;
-
-            return _runtimeBlockerCellCounts[GridUtils.CellToIndex(new int2(x, y), gridWidth)] > 0;
+            return _ownership.IsRuntimeBlockerCell(x, y, gridWidth, gridHeight);
         }
 
         public void RemoveBlockersOverlappingFootprint(Vector2Int originCell, Vector2Int footprintCells)
         {
-            if (_blockersById.Count == 0)
+            if (_ownership.Count == 0)
                 return;
 
-            var toRemove = new List<int>();
-            RectInt footprint = new(originCell, footprintCells);
-            foreach (var entry in _blockersById)
-            {
-                RuntimeBlockerRecord blocker = entry.Value;
-                RectInt blockerRect = new(blocker.OriginCell, blocker.SizeCells);
-                if (!footprint.Overlaps(blockerRect))
-                    continue;
-
-                toRemove.Add(entry.Key);
-            }
-
+            IReadOnlyList<int> toRemove = _ownership.FindOverlappingIds(
+                new int2(originCell.x, originCell.y), new int2(footprintCells.x, footprintCells.y));
             for (int i = 0; i < toRemove.Count; i++)
                 RemoveBlockerById(toRemove[i]);
         }
@@ -214,7 +191,7 @@ namespace Game.Runtime
         private void SpawnBlockers(GridConfig grid, DynamicBuffer<GridWalkable> walkable, DynamicBuffer<GridRoad> roads, DynamicBlockerComponent blockerData)
         {
             _readyForDependents = false;
-            _runtimeBlockerCellCounts = new int[grid.Width * grid.Height];
+            _ownership.InitializeGrid(grid.Width, grid.Height);
             if (_randomSeed == 0)
                 _randomSeed = 1;
             var prefabData = new List<RuntimeGridBlockerPrefabData>(_prefabs.Count);
@@ -305,7 +282,7 @@ namespace Game.Runtime
             if (_rootTransform == null || !TryGetEntityManager(out EntityManager em))
                 return;
 
-            int blockerId = _nextBlockerId++;
+            int blockerId = _ownership.AllocateId();
             Entity entity = em.CreateEntity();
             em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
             em.AddComponentData(entity, new GridBlockerSize { Size = new int2(sizeCells.x, sizeCells.y) });
@@ -332,47 +309,23 @@ namespace Game.Runtime
             visual.transform.localRotation = Quaternion.identity;
             visual.transform.localScale = Vector3.one;
 
-            RegisterBlockerCells(grid.Width, originCell, sizeCells, +1);
-            _blockersById[blockerId] = new RuntimeBlockerRecord
-            {
-                Id = blockerId,
-                Entity = entity,
-                RootObject = root,
-                OriginCell = originCell,
-                SizeCells = sizeCells
-            };
+            _ownership.Register(blockerId, entity, new int2(originCell.x, originCell.y),
+                new int2(sizeCells.x, sizeCells.y));
+            _rootObjectsByBlockerId.Add(blockerId, root);
         }
 
         private void RemoveBlockerById(int blockerId)
         {
-            if (!_blockersById.TryGetValue(blockerId, out RuntimeBlockerRecord blocker))
+            bool hasGrid = TryGetGridData(out _, out _, out _, out _, out _);
+            if (!_ownership.TryRemove(blockerId, hasGrid, out RuntimeGridBlockerOwnershipRecord blocker))
                 return;
-
-            if (TryGetGridData(out _, out GridConfig grid, out _, out _, out _))
-                RegisterBlockerCells(grid.Width, blocker.OriginCell, blocker.SizeCells, -1);
 
             if (TryGetEntityManager(out EntityManager em) && blocker.Entity != Entity.Null && em.Exists(blocker.Entity))
                 em.DestroyEntity(blocker.Entity);
 
-            if (blocker.RootObject != null)
-                Object.Destroy(blocker.RootObject);
-
-            _blockersById.Remove(blockerId);
-        }
-
-        private void RegisterBlockerCells(int gridWidth, Vector2Int originCell, Vector2Int sizeCells, int delta)
-        {
-            if (_runtimeBlockerCellCounts == null)
-                return;
-
-            for (int y = originCell.y; y < originCell.y + sizeCells.y; y++)
-            {
-                for (int x = originCell.x; x < originCell.x + sizeCells.x; x++)
-                {
-                    int index = GridUtils.CellToIndex(new int2(x, y), gridWidth);
-                    _runtimeBlockerCellCounts[index] = math.max(0, _runtimeBlockerCellCounts[index] + delta);
-                }
-            }
+            if (_rootObjectsByBlockerId.TryGetValue(blockerId, out GameObject rootObject) && rootObject != null)
+                Object.Destroy(rootObject);
+            _rootObjectsByBlockerId.Remove(blockerId);
         }
 
         private PrefabPlacementMetadata GetMetadata(GameObject prefab)

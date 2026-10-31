@@ -31,7 +31,7 @@ EXPECTED = {
     "preset_readback": "b0b76f25ff16e67b5fb287fdd9b739754ce3f5baf1e6e93e085e0dbba480ee10",
     "enemy_ai": "4d0924531ce7f80a8f4791c2ef2518ecd0f36a4842b0175cde0899392a9c3f52",
     "player_ai": "2b651113e0952830bd4d260b0cdfe73c3864c632734333134aacf9929c9b6698",
-    "map_placement_capture": "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7",
+    "map_placement_capture": "a0107fcdaaf7ace274345b4615292134ec5e8547b456dffdb3c6b857dc72ae73",
     "blocker_metadata": "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776",
     "ai_plan": "7627f93d25d2446c7d43ba5e2c97745f275eeda3e018501c0a004ee1ec3a712f",
 }

@@ -102,9 +102,9 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
             exception => reportedFailure = exception);
 
         helper.BeginGameplay();
-        helper.Advance(null, default);
+        helper.Advance(null, default, default);
         helper.BeginGameplay();
-        helper.Advance(null, default);
+        helper.Advance(null, default, default);
 
         Assert.AreEqual(1, initializeCalls);
         Assert.IsInstanceOf<InvalidOperationException>(reportedFailure);
@@ -135,11 +135,11 @@ public sealed class MatchGameplayStartupCompositionSystemHelperTests
             null,
             _ => { });
         helper.BeginGameplay();
-        helper.Advance(null, default);
+        helper.Advance(null, default, default);
 
         helper.ResetForShutdown();
         helper.BeginGameplay();
-        helper.Advance(null, default);
+        helper.Advance(null, default, default);
 
         Assert.AreEqual(1, initializeCalls);
         Assert.IsTrue(helper.GameplayStartRequested);

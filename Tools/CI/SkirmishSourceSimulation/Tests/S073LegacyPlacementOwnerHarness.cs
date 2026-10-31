@@ -394,7 +394,7 @@ internal static class S073LegacyPlacementOwnerHarness
         var grid = em.GetComponentData<GridConfig>(gridEntity);
         string mapCapturePath = Path.GetFullPath(args[30]);
         JObject mapPlacementCapture = JObject.Parse(File.ReadAllText(mapCapturePath));
-        Need(Sha(mapCapturePath) == args[31] && args[31] == "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7" &&
+        Need(Sha(mapCapturePath) == args[31] && args[31] == "a0107fcdaaf7ace274345b4615292134ec5e8547b456dffdb3c6b857dc72ae73" &&
              (int?)mapPlacementCapture["schema_version"] == 1 && (string)mapPlacementCapture["kind"] == "S073OriginalMapBuildingReferences" &&
              (string)mapPlacementCapture["operation_map_id"] == selected.OperationMapId &&
              (string)mapPlacementCapture["source_identity_hash"] == selected.SourceIdentityHash &&
@@ -585,6 +585,14 @@ internal static class S073LegacyPlacementOwnerHarness
         int authoredDefinitionIndex = (int)authoredMapRow["prefab_index"];
         RuntimeDefinition authoredDefinition = mapDefinitions.Definitions[authoredDefinitionIndex];
         JObject authoredEuler = (JObject)authoredMapRow["world_euler_angles"];
+        JArray authoredRotationBits = authoredMapRow["world_rotation_f32bits"] as JArray;
+        Need(authoredRotationBits != null && authoredRotationBits.Count == 4,
+            "Original UnityEngine.Quaternion.Euler result is required for this authored row");
+        var authoredSourceWorldRotation = new quaternion(
+            BitConverter.ToSingle(BitConverter.GetBytes((int)authoredRotationBits[0]), 0),
+            BitConverter.ToSingle(BitConverter.GetBytes((int)authoredRotationBits[1]), 0),
+            BitConverter.ToSingle(BitConverter.GetBytes((int)authoredRotationBits[2]), 0),
+            BitConverter.ToSingle(BitConverter.GetBytes((int)authoredRotationBits[3]), 0));
         JObject authoredScale = (JObject)authoredMapRow["world_scale"];
         JObject authoredPosition = (JObject)authoredMapRow["world_position"];
         JObject authoredOriginRow = (JObject)mapPlacementOriginReplay["origins"][1];
@@ -709,8 +717,8 @@ internal static class S073LegacyPlacementOwnerHarness
                 authoredDefinition.FootprintCells, out preservedAuthoredBlocker, out _, out _, out _,
                 out capturedAuthoredRotation, out _);
             ActualCore::UnityEngine.Quaternion authoredWorldRotationOverride = new ActualCore::UnityEngine.Quaternion(
-                capturedAuthoredRotation.value.x, capturedAuthoredRotation.value.y,
-                capturedAuthoredRotation.value.z, capturedAuthoredRotation.value.w);
+                authoredSourceWorldRotation.value.x, authoredSourceWorldRotation.value.y,
+                authoredSourceWorldRotation.value.z, authoredSourceWorldRotation.value.w);
             var mapRegistration = new GeneratedBuildingRegistration(
                 em, gridEntity, pipeline.CanonicalCollection, buildPlaneY, redirectSourceUnits);
             authoredMapBuilding = mapRegistration.RegisterAtLegalOrigin(
@@ -738,7 +746,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 authoredDefinition.FootprintCells,
                 grid,
                 buildPlaneY);
-            var expectedMapMathRotation = capturedAuthoredRotation;
+            var expectedMapMathRotation = authoredSourceWorldRotation;
             Need(mapCombatInfo.RuntimeBuildingId == authoredMapBuilding.Id,
                 "RuntimeBuildingCombatInfo runtime id mismatch actual=" + mapCombatInfo.RuntimeBuildingId + " registered=" + authoredMapBuilding.Id);
             Need(mapFaction.Id == (byte)authoredMapRow["faction_id"] && authoredMapBuilding.HasOwnerFaction &&
@@ -746,7 +754,15 @@ internal static class S073LegacyPlacementOwnerHarness
                  mapCombatInfo.OwnerFactionId == (byte)authoredMapRow["faction_id"],
                 "Original owner-faction source mismatch registry=" + authoredMapBuilding.OwnerFactionId + " faction=" + mapFaction.Id +
                 " combatInfo=" + mapCombatInfo.OwnerFactionId + " expected=" + (byte)authoredMapRow["faction_id"]);
-            Need(mapActorTransform.Rotation.Equals(expectedMapMathRotation),
+            int[] actualActorRotationBits = new[]
+            {
+                BitConverter.ToInt32(BitConverter.GetBytes(mapActorTransform.Rotation.value.x), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(mapActorTransform.Rotation.value.y), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(mapActorTransform.Rotation.value.z), 0),
+                BitConverter.ToInt32(BitConverter.GetBytes(mapActorTransform.Rotation.value.w), 0)
+            };
+            int[] expectedActorRotationBits = authoredRotationBits.Select(value => (int)value).ToArray();
+            Need(actualActorRotationBits.SequenceEqual(expectedActorRotationBits),
                 "Captured authored rotation mismatch actual=" + mapActorTransform.Rotation.value.x + "," + mapActorTransform.Rotation.value.y +
                 "," + mapActorTransform.Rotation.value.z + "," + mapActorTransform.Rotation.value.w + " expected=" +
                 expectedMapMathRotation.value.x + "," + expectedMapMathRotation.value.y + "," + expectedMapMathRotation.value.z + "," + expectedMapMathRotation.value.w);
@@ -779,9 +795,10 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["source_transform_position"] = new JArray(sourceMapPosition.x, sourceMapPosition.y, sourceMapPosition.z),
                 ["source_transform_scale"] = new JArray(sourceMapScale.x, sourceMapScale.y, sourceMapScale.z),
                 ["source_world_euler_angles"] = new JArray(authoredWorldEuler.x, authoredWorldEuler.y, authoredWorldEuler.z),
-                ["source_world_rotation"] = new JArray(capturedAuthoredRotation.value.x, capturedAuthoredRotation.value.y,
-                    capturedAuthoredRotation.value.z, capturedAuthoredRotation.value.w),
-                ["source_world_rotation_authority"] = "Pinned native baked LocalTransform for the exact same GlobalObjectId; bitwise asserted",
+                ["source_world_rotation"] = new JArray(authoredSourceWorldRotation.value.x, authoredSourceWorldRotation.value.y,
+                    authoredSourceWorldRotation.value.z, authoredSourceWorldRotation.value.w),
+                ["source_world_rotation_f32bits"] = authoredRotationBits.DeepClone(),
+                ["source_world_rotation_authority"] = mapPlacementCapture["placement_rotation_authority"].DeepClone(),
                 ["source_world_center"] = authoredMapRow["world_center"].DeepClone(),
                 ["runtime_id"] = authoredMapBuilding.Id,
                 ["runtime_origin"] = new JArray(authoredOrigin.x, authoredOrigin.y),
@@ -804,7 +821,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["native_coexistence_or_readiness_proven"] = false,
                 ["original_static_blocker_owner_updated"] = true,
                 ["combat_actor_faction_verified"] = mapFaction.Id == (byte)authoredMapRow["faction_id"],
-                ["combat_actor_rotation_verified"] = mapActorTransform.Rotation.Equals(expectedMapMathRotation),
+                ["combat_actor_rotation_verified"] = actualActorRotationBits.SequenceEqual(expectedActorRotationBits),
                 ["combat_actor_center_verified"] = mapActorTransform.Position.Equals((float3)expectedMapCenter),
                 ["combat_actor_scale"] = mapActorTransform.Scale,
                 ["footprint_blocked_in_selected_grid"] = mapFootprintBlocked,
@@ -1029,7 +1046,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 OperationMapDefinition selected = ReadSelectedMap(mapPath);
                 SourceS073LegacySpawnRequestAdapter.RequireSharedPlacementSource(selected);
                 JObject capture = JObject.Parse(File.ReadAllText(Path.GetFullPath(args[1])));
-                Need(Sha(Path.GetFullPath(args[1])) == args[2] && args[2] == "6357d0fe55953e07bccea5682da23988e40b0a65279ac62628307b0ceb9c4aa7" &&
+                Need(Sha(Path.GetFullPath(args[1])) == args[2] && args[2] == "a0107fcdaaf7ace274345b4615292134ec5e8547b456dffdb3c6b857dc72ae73" &&
                      (int?)capture["schema_version"] == 1 && (string)capture["kind"] == "S073OriginalMapBuildingReferences" &&
                      (string)capture["operation_map_id"] == selected.OperationMapId &&
                      (string)capture["source_identity_hash"] == selected.SourceIdentityHash &&

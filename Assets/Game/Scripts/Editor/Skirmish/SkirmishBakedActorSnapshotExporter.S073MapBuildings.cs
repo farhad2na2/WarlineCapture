@@ -20,6 +20,19 @@ namespace Game.Editor
         const string S073SourceScenePath = "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity";
         const string S073PhysicalMapDefinitionPath = "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
 
+        static JArray S073WorldRotationBits(Quaternion value)
+        {
+            float[] components = { value.x, value.y, value.z, value.w };
+            var bits = new JArray();
+            foreach (float component in components)
+            {
+                if (float.IsNaN(component) || float.IsInfinity(component))
+                    throw new InvalidOperationException("Finite source placement quaternion required");
+                bits.Add(BitConverter.ToInt32(BitConverter.GetBytes(component), 0));
+            }
+            return bits;
+        }
+
         // Captures the original selected S073 map's distinct placed building prefabs
         // through the same runtime definition factory used by map placement. This is
         // finite source/bounds data only; it does not process placements or admit a mission.
@@ -97,12 +110,14 @@ namespace Game.Editor
             for (int i = 0; i < config.Placements.Count; i++)
             {
                 MapBuildingPlacementConfigEntry placement = config.Placements[i];
+                Quaternion sourceWorldRotation = Quaternion.Euler(placement.WorldEulerAngles);
                 placementRows.Add(new JObject { ["row_index"] = i, ["source_path"] = placement.SourcePath,
                     ["category"] = placement.Category, ["prefab_index"] = prefabIndices[placement.BuildingPrefab],
                     ["prefab"] = SourceAsset(placement.BuildingPrefab), ["faction_id"] = placement.FactionId,
                     ["world_center"] = BuildingReferenceVector(placement.WorldCenter),
                     ["world_position"] = BuildingReferenceVector(placement.WorldPosition),
                     ["world_euler_angles"] = BuildingReferenceVector(placement.WorldEulerAngles),
+                    ["world_rotation_f32bits"] = S073WorldRotationBits(sourceWorldRotation),
                     ["world_scale"] = BuildingReferenceVector(placement.WorldScale), ["yaw_degrees"] = placement.YawDegrees,
                     ["rotate_vertical"] = placement.RotateVertical,
                     ["instantiate_visual_when_source_missing"] = placement.InstantiateVisualWhenSourceMissing,
@@ -180,6 +195,7 @@ namespace Game.Editor
                     ["hide_authoring_visuals_after_spawn"] = config.HideAuthoringVisualsAfterSpawn,
                     ["use_existing_static_presentation_when_authoring_visual_missing"] = config.UseExistingStaticPresentationWhenAuthoringVisualMissing,
                     ["distinct_prefab_count"] = rows.Count, ["missing_source_path_rows"] = missingSourcePathRows },
+                ["placement_rotation_authority"] = "UnityEngine.Quaternion.Euler(MapBuildingPlacementConfigEntry.WorldEulerAngles), matching MapBuildingPlacementSpawnPrefabSystemHelper.CreateAuthoredMapVisualInstance",
                 ["definitions"] = rows, ["placement_rows"] = placementRows, ["unsupported_values"] = missing, ["source_pins"] = JObject.FromObject(pins),
                 ["placements_processed"] = false, ["mission_world_allocated"] = false,
                 ["full_mission_initialized"] = false, ["native_visual_readiness"] = false };
@@ -187,7 +203,7 @@ namespace Game.Editor
             using (var stream = new FileStream(outputFile, FileMode.CreateNew, FileAccess.Write, FileShare.None))
             using (var writer = new StreamWriter(stream, new System.Text.UTF8Encoding(false)))
                 writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
-            Debug.Log("[SkirmishS073MapBuildingReferences] result=Passed placementRows=432 prefabs=" + rows.Count +
+            Debug.Log("[SkirmishS073MapBuildingReferences] result=Passed placementRows=432 rotations=432 prefabs=" + rows.Count +
                 " unsupported=" + missing.Count + " placementsProcessed=0 missionWorld=0 fullMission=0");
         }
     }

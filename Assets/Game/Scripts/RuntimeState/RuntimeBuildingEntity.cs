@@ -92,6 +92,17 @@ namespace Game.Runtime
         public int Id { get; set; }
         public BuildingDefinition Definition;
         public GameObject Instance;
+        // Source-backed, nonvisual runtime geometry used when a mission world is
+        // materialized from data. Native presentation continues to use Instance.
+        public bool HasWorldRunwayData;
+        public Vector3 WorldRunwayCenter;
+        public Quaternion WorldRunwayRotation;
+        public Vector3 WorldRunwayHalfExtents;
+        // Numeric counterpart of the visual Door_Z transform for data-only worlds.
+        public bool HasWorldDoorData;
+        public float WorldDoorClosedLocalEulerZ;
+        public float WorldDoorOpenLocalEulerZ;
+        public float WorldDoorCurrentLocalEulerZ;
         public Vector2Int OriginCell;
         public Entity CombatEntity { get; set; }
         public Entity BlockerEntity { get; set; }

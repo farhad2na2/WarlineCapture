@@ -89,9 +89,9 @@ namespace Game.Runtime
         {
             return candidate != null &&
                    !candidate.IsDestroyed &&
-                   candidate.Instance != null &&
                    candidate.Definition != null &&
-                   candidate.Definition.HasRunway;
+                   candidate.Definition.HasRunway &&
+                   (candidate.Instance != null || (candidate.HasWorldRunwayData && HasValidWorldRunwayData(candidate)));
         }
 
         private static void TryUseNearestAirportRunway(
@@ -103,7 +103,7 @@ namespace Game.Runtime
             ref Quaternion runwayRotation,
             ref Vector3 runwayHalfExtents)
         {
-            if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
+            if (!IsAvailableAirportRunway(candidate))
                 return;
 
             if (!TryResolveRuntimeRunwayWorldData(candidate, out Vector3 candidateCenter, out Quaternion candidateRotation, out Vector3 candidateHalfExtents))
@@ -142,11 +142,20 @@ namespace Game.Runtime
             halfExtents = new Vector3(8f, 0.5f, 24f);
             if (building == null ||
                 building.IsDestroyed ||
-                building.Instance == null ||
                 building.Definition == null ||
                 !building.Definition.HasRunway)
             {
                 return false;
+            }
+
+            if (building.Instance == null)
+            {
+                if (!building.HasWorldRunwayData || !HasValidWorldRunwayData(building))
+                    return false;
+                center = building.WorldRunwayCenter;
+                rotation = building.WorldRunwayRotation;
+                halfExtents = building.WorldRunwayHalfExtents;
+                return true;
             }
 
             Transform instanceTransform = building.Instance.transform;
@@ -170,6 +179,21 @@ namespace Game.Runtime
             halfExtents = Vector3.Scale(building.Definition.RunwayHalfExtents, instanceTransform.lossyScale);
             return true;
         }
+
+        private static bool HasValidWorldRunwayData(RuntimeBuildingEntity building)
+        {
+            Vector3 center = building.WorldRunwayCenter;
+            Quaternion rotation = building.WorldRunwayRotation;
+            Vector3 extents = building.WorldRunwayHalfExtents;
+            float rotationLength = rotation.x * rotation.x + rotation.y * rotation.y + rotation.z * rotation.z + rotation.w * rotation.w;
+            return IsFinite(center.x) && IsFinite(center.y) && IsFinite(center.z) &&
+                   IsFinite(rotation.x) && IsFinite(rotation.y) && IsFinite(rotation.z) && IsFinite(rotation.w) &&
+                   Mathf.Abs(rotationLength - 1f) <= 0.001f &&
+                   IsFinite(extents.x) && IsFinite(extents.y) && IsFinite(extents.z) &&
+                   extents.x > 0f && extents.y > 0f && extents.z > 0f;
+        }
+
+        private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 
         public RectInt GetEffectivePlacementRect(
             BuildingDefinition definition,

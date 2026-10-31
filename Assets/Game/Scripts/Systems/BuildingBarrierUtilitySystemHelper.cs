@@ -464,7 +464,8 @@ namespace Game.Runtime
         public bool IsActiveRoadGateBuilding(Context context, RuntimeBuildingEntity building)
         {
             return IsRuntimeRoadGateBuilding(context, building) &&
-                   building.DoorZ != null;
+                   (building.DoorZ != null || (building.HasWorldDoorData &&
+                       IsFinite(building.WorldDoorClosedLocalEulerZ) && IsFinite(building.WorldDoorOpenLocalEulerZ)));
         }
 
         private bool IsRuntimeRoadGateBuilding(Context context, RuntimeBuildingEntity building)
@@ -476,7 +477,7 @@ namespace Game.Runtime
 
         public void UpdateRoadBarrierDoorVisual(Context context, RuntimeBuildingEntity building, bool shouldOpen, float deltaTime)
         {
-            if (building == null || building.IsDestroyed || building.DoorZ == null)
+            if (building == null || building.IsDestroyed || (building.DoorZ == null && !building.HasWorldDoorData))
                 return;
             if (!IsWallGateDefinition(context, building.Definition))
                 return;
@@ -488,13 +489,24 @@ namespace Game.Runtime
 
         public void SetBarrierDoorOpen01(RuntimeBuildingEntity building, float open01)
         {
-            if (building?.DoorZ == null)
+            if (building == null)
                 return;
+
+            if (building.DoorZ == null)
+            {
+                if (!building.HasWorldDoorData)
+                    return;
+                building.WorldDoorCurrentLocalEulerZ = Mathf.LerpAngle(building.WorldDoorClosedLocalEulerZ,
+                    building.WorldDoorOpenLocalEulerZ, Mathf.Clamp01(open01));
+                return;
+            }
 
             Vector3 localEuler = building.DoorZ.localEulerAngles;
             localEuler.z = Mathf.LerpAngle(building.DoorClosedLocalEulerZ, building.DoorOpenLocalEulerZ, Mathf.Clamp01(open01));
             building.DoorZ.localEulerAngles = localEuler;
         }
+
+        private static bool IsFinite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 
         public bool TryResolveNearbyWallVertical(Context context, Vector2Int originCell, BuildingDefinition definition, out bool vertical)
         {

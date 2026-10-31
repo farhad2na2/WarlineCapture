@@ -10,6 +10,8 @@ using Game.Runtime;
 using Newtonsoft.Json.Linq;
 using Unity.Entities;
 using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 
 namespace Game.Editor
@@ -205,6 +207,184 @@ namespace Game.Editor
                 writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
             Debug.Log("[SkirmishS073MapBuildingReferences] result=Passed placementRows=432 rotations=432 prefabs=" + rows.Count +
                 " unsupported=" + missing.Count + " placementsProcessed=0 missionWorld=0 fullMission=0");
+        }
+
+        // Captures the exact runway anchor produced by the original map-placement
+        // owner and the original road-gate door transforms. This is source data
+        // only: it does not spawn actors into a mission World or admit S073.
+        public static void RunS073SpecialMapBuildingRuntimeReferenceData()
+        {
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
+                throw new InvalidOperationException("Idle owned Editor required");
+            string[] args = Environment.GetCommandLineArgs();
+            int at = Array.IndexOf(args, "-skirmishS073SpecialBuildingReferenceData");
+            if (at < 0 || at + 1 >= args.Length)
+                throw new ArgumentException("Explicit fresh S073 special-building output directory required");
+            string output = SkirmishOfflineDataExporter.ValidateOutputDirectory(args[at + 1]);
+            string outputFile = Path.Combine(output, "s073-special-building-runtime-reference.json");
+            if (File.Exists(outputFile)) throw new InvalidOperationException("Fresh special-building reference output required");
+
+            var config = AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(S073BuildingPlacementPath);
+            if (config == null || config.Placements == null || config.Placements.Count != 432)
+                throw new InvalidOperationException("Exact unchanged S073 432-row placement source required");
+            var airportRows = config.Placements.Select((placement, index) => new { placement, index })
+                .Where(x => x.placement != null &&
+                    (string.Equals(x.placement.Category, "Building_Airport", StringComparison.Ordinal) ||
+                     (x.placement.BuildingPrefab != null && x.placement.BuildingPrefab.name.IndexOf("Airport", StringComparison.OrdinalIgnoreCase) >= 0)))
+                .ToArray();
+            if (airportRows.Length != 1 || airportRows[0].index != 0)
+                throw new InvalidOperationException("Expected the unique original airport placement at S073 source row zero");
+            var gates = config.Placements.Select((placement, index) => new { placement, index })
+                .Where(x => x.placement != null && x.placement.BuildingPrefab != null &&
+                    x.placement.BuildingPrefab.name == "Building_Road_Barrier")
+                .ToArray();
+            if (gates.Length != 3 || !gates.Select(x => x.index).OrderBy(x => x).SequenceEqual(new[] { 108, 109, 110 }))
+                throw new InvalidOperationException("Expected the three original road-barrier placements at rows 108-110");
+
+            World defaultWorldBeforeSceneLoad = World.DefaultGameObjectInjectionWorld;
+            Scene scene = EditorSceneManager.OpenScene(S073SourceScenePath, OpenSceneMode.Additive);
+            World defaultWorldAfterSceneLoad = World.DefaultGameObjectInjectionWorld;
+            var sceneViews = scene.GetRootGameObjects()
+                .SelectMany(root => root.GetComponentsInChildren<Game.Composition.OperationMapSceneView>(true))
+                .Where(view => view != null && view.OperationMapId == "opmap.skirmish.desert_base_01")
+                .ToArray();
+            string viewError = null;
+            if (sceneViews.Length != 1 || !sceneViews[0].TryValidate(out viewError))
+                throw new InvalidOperationException("Original Campaign map scene view failed validation: " + (viewError ?? "unique view missing"));
+            var view = sceneViews[0];
+            if (view.BuildingPlacements != config || view.BuildingAuthoringRoot == null ||
+                view.MapRoot == null || view.BuildingAuthoringRoot.parent != view.MapRoot)
+                throw new InvalidOperationException("S073 scene does not expose the exact selected placement config and original root chain");
+
+            var helperType = LoadedType("Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper");
+            var attach = helperType.GetMethod("TryAttachMapRunwayAnchor", BindingFlags.Static | BindingFlags.NonPublic);
+            if (attach == null) throw new InvalidOperationException("Original runtime map-runway anchor owner missing");
+            var temporary = new GameObject("S073_SourceOnly_RunwayAnchorProbe");
+            JObject runwayResult;
+            try
+            {
+                var placement = airportRows[0].placement;
+                temporary.transform.SetPositionAndRotation(placement.WorldPosition, Quaternion.Euler(placement.WorldEulerAngles));
+                temporary.transform.localScale = placement.WorldScale;
+                object attached = attach.Invoke(null, new object[] { view.BuildingAuthoringRoot, placement, temporary.transform, null });
+                Transform anchor = temporary.transform.Find("Runway");
+                Transform start = anchor != null ? anchor.Find("Runway_Start") : null;
+                Transform end = anchor != null ? anchor.Find("Runway_End") : null;
+                if (attached is bool ok && ok && anchor != null && start != null && end != null)
+                    runwayResult = new JObject {
+                        ["resolved"] = true,
+                        ["row_index"] = airportRows[0].index,
+                        ["category"] = placement.Category,
+                        ["prefab_path"] = AssetDatabase.GetAssetPath(placement.BuildingPrefab),
+                        ["placement_position"] = BuildingReferenceVector(placement.WorldPosition),
+                        ["anchor_position"] = BuildingReferenceVector(anchor.position),
+                        ["anchor_rotation_xyzw"] = new JArray(anchor.rotation.x, anchor.rotation.y, anchor.rotation.z, anchor.rotation.w),
+                        ["start_position"] = BuildingReferenceVector(start.position),
+                        ["end_position"] = BuildingReferenceVector(end.position),
+                        ["owner"] = "MapBuildingPlacementSpawnPrefabSystemHelper.TryAttachMapRunwayAnchor",
+                        ["scene_path"] = S073SourceScenePath
+                    };
+                else
+                {
+                    Transform runways = view.MapRoot.Find("Runways");
+                    Renderer[] candidateRenderers = runways != null ? runways.GetComponentsInChildren<Renderer>(true) : Array.Empty<Renderer>();
+                    runwayResult = new JObject {
+                        ["resolved"] = false,
+                        ["reason"] = "Original owner returned false; no runway anchor was synthesized",
+                        ["row_index"] = airportRows[0].index,
+                        ["runways_root_found"] = runways != null,
+                        ["runways_child_count"] = runways != null ? runways.childCount : 0,
+                        ["renderer_count"] = candidateRenderers.Length,
+                        ["renderer_hierarchy_paths"] = new JArray(candidateRenderers.Select(renderer => HierarchyPath(renderer.transform))),
+                        ["owner"] = "MapBuildingPlacementSpawnPrefabSystemHelper.TryAttachMapRunwayAnchor",
+                        ["scene_path"] = S073SourceScenePath
+                    };
+                }
+            }
+            finally { UnityEngine.Object.DestroyImmediate(temporary); }
+
+            var gateRows = new JArray();
+            foreach (var row in gates)
+            {
+                GameObject instance = PrefabUtility.InstantiatePrefab(row.placement.BuildingPrefab, scene) as GameObject;
+                if (instance == null) throw new InvalidOperationException("Could not instantiate original road-barrier prefab for read-only source capture");
+                try
+                {
+                    Transform door = FindDescendantByName(instance.transform, "Door_Z");
+                    string selectedName = "Door_Z";
+                    if (door == null)
+                    {
+                        door = FindDescendantByName(instance.transform, "SM_Prop_Road_Barrier_Arm_01");
+                        selectedName = "SM_Prop_Road_Barrier_Arm_01";
+                    }
+                    if (door == null)
+                        throw new InvalidOperationException("Original road-barrier visual has neither supported runtime door transform");
+                    gateRows.Add(new JObject {
+                        ["row_index"] = row.index,
+                        ["category"] = row.placement.Category,
+                        ["faction_id"] = row.placement.FactionId,
+                        ["prefab_path"] = AssetDatabase.GetAssetPath(row.placement.BuildingPrefab),
+                        ["door_lookup_name"] = selectedName,
+                        ["door_hierarchy_path"] = HierarchyPath(door),
+                        ["door_local_position"] = BuildingReferenceVector(door.localPosition),
+                        ["door_local_rotation_xyzw"] = new JArray(door.localRotation.x, door.localRotation.y, door.localRotation.z, door.localRotation.w),
+                        ["door_local_euler_angles"] = BuildingReferenceVector(door.localEulerAngles),
+                        ["owner"] = "BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals"
+                    });
+                }
+                finally { UnityEngine.Object.DestroyImmediate(instance); }
+            }
+
+            if (!ReferenceEquals(defaultWorldAfterSceneLoad, World.DefaultGameObjectInjectionWorld))
+                throw new InvalidOperationException("Default World changed after source-scene load during special-building reference capture");
+            string[] roots = { S073SourceScenePath, S073BuildingPlacementPath,
+                "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S073MapBuildings.cs",
+                "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs",
+                "Assets/Game/Scripts/Systems/BuildingRuntimeVisualPresentationSystemHelper.cs",
+                AssetDatabase.GetAssetPath(airportRows[0].placement.BuildingPrefab),
+                AssetDatabase.GetAssetPath(gates[0].placement.BuildingPrefab) };
+            SortedDictionary<string, string> pins = SourcePins(roots);
+            foreach (var pin in pins)
+                if (SkirmishOfflineDataExporter.HashFile(pin.Key) != pin.Value)
+                    throw new InvalidOperationException("S073 source changed during special-building reference capture: " + pin.Key);
+            var report = new JObject {
+                ["schema_version"] = 1,
+                ["kind"] = "S073OriginalSpecialBuildingRuntimeReference",
+                ["authority"] = "OriginalCampaignScene_OriginalPlacementAndVisualOwners",
+                ["catalog_id"] = "S073",
+                ["source_scene_path"] = S073SourceScenePath,
+                ["airport_runway"] = runwayResult,
+                ["road_gates"] = gateRows,
+                ["source_pins"] = JObject.FromObject(pins),
+                ["mission_world_allocated"] = false,
+                ["editor_default_world_changed_by_source_scene_load"] = !ReferenceEquals(defaultWorldBeforeSceneLoad, defaultWorldAfterSceneLoad),
+                ["placements_processed"] = false,
+                ["full_mission_initialized"] = false,
+                ["native_visual_readiness"] = false
+            };
+            Directory.CreateDirectory(output);
+            File.WriteAllText(outputFile, report.ToString(Newtonsoft.Json.Formatting.Indented) + "\n");
+            Debug.Log("[SkirmishS073SpecialBuildingReference] result=Passed runwayResolved=" + runwayResult["resolved"] + " roadGates=" + gateRows.Count + " missionWorld=0 fullMission=0");
+        }
+
+        static string HierarchyPath(Transform value)
+        {
+            if (value == null) return string.Empty;
+            var names = new Stack<string>();
+            for (Transform current = value; current != null; current = current.parent) names.Push(current.name);
+            return string.Join("/", names.ToArray());
+        }
+
+        static Transform FindDescendantByName(Transform root, string name)
+        {
+            if (root == null || string.IsNullOrEmpty(name)) return null;
+            if (root.name == name) return root;
+            for (int i = 0; i < root.childCount; i++)
+            {
+                Transform found = FindDescendantByName(root.GetChild(i), name);
+                if (found != null) return found;
+            }
+            return null;
         }
     }
 }

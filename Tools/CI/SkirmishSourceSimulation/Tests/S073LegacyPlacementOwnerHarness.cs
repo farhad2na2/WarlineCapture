@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using Game.Components;
 using Game.Configs;
@@ -151,6 +152,11 @@ internal static class S073LegacyPlacementOwnerHarness
 
     static JObject Run(string[] args)
     {
+        var harnessWall = Stopwatch.StartNew();
+        var phaseWall = Stopwatch.StartNew();
+        double sourceDomainWallSeconds = 0;
+        double placementOwnerWallSeconds = 0;
+        double aiPlannerWallSeconds = 0;
         Need(args.Length == 37, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, captured Campaign asset root, and hash-bound special-building runtime reference");
         string initialTemplatePath = Path.GetFullPath(args[0]), templatePath = Path.GetFullPath(args[2]), identityPath = Path.GetFullPath(args[4]);
         string legacyPath = Path.GetFullPath(args[6]), definitionsPath = Path.GetFullPath(args[8]);
@@ -424,11 +430,13 @@ internal static class S073LegacyPlacementOwnerHarness
              row.CanRequest == 1 && row.Price == 22000 && row.MaterialsCost == 50),
             "S073 GuardTower configured spawnable must use exact source identity and authored costs/requestability");
 
+        phaseWall.Restart();
         var domain = SourceS073LegacySpawnRequestAdapter.LoadSharedPlacementSource(selected, physicalPath, args[16], waterPath, args[18], startupPath, args[20], sourceRoot, capturedAssetRoot);
         var masks = domain.Build(gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
         var roads = new bool[checked(gridData.Width * gridData.Height)]; BuildingPlacementRoadSurfaceMask.Append(em, surfaceEntity, em.GetComponentData<GridConfig>(gridEntity), roads);
         if (domain.UsesOriginalOwnerMaskCapture) roads = domain.CopyOriginalOwnerRoadMask();
         var water = domain.BuildWaterMask(true, gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
+        sourceDomainWallSeconds = phaseWall.Elapsed.TotalSeconds;
         var grid = em.GetComponentData<GridConfig>(gridEntity);
         string mapCapturePath = Path.GetFullPath(args[30]);
         JObject mapPlacementCapture = JObject.Parse(File.ReadAllText(mapCapturePath));
@@ -1563,12 +1571,14 @@ internal static class S073LegacyPlacementOwnerHarness
         int mapPlacementSourceRowCount = ((JArray)mapPlacementCapture["placement_rows"]).Count;
         bool mapPlacementSequenceQueued = false;
         int mapPlacementOwnerUpdateCount = 0;
+        phaseWall.Restart();
         while (!mapPlacementSequenceQueued && mapPlacementOwnerUpdateCount < 16)
         {
             mapPlacementSequenceQueued = mapPlacementOwner.UpdateDataOnly(
                 mapPlacementSourceRowCount, IsCapturedPlayerProductionPlacement, RegisterCapturedMapRow);
             mapPlacementOwnerUpdateCount++;
         }
+        placementOwnerWallSeconds = phaseWall.Elapsed.TotalSeconds;
         Need(mapPlacementSourceRowCount == 432 && mapPlacementPriorityPassRows.SequenceEqual(Enumerable.Range(0, 432)) &&
              mapPlacementSequenceQueued && mapPlacementOwner.IsComplete && mapPlacementOwnerUpdateCount == 14 &&
              mapPlacementCallbackRows.Count == mapPlacementSourceRowCount &&
@@ -1853,6 +1863,7 @@ internal static class S073LegacyPlacementOwnerHarness
         int aiRequestsBefore = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length;
         int aiPlannerStepCount = 0;
         const float aiPlannerStepSeconds = 1f / 60f;
+        phaseWall.Restart();
         while (aiPlannerQueriesPresent && gameplayAfterHeadlessGate.SimulationActive != 0 &&
                aiPlannerStepCount < 2700 && em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Length == aiRequestsBefore)
         {
@@ -1865,6 +1876,7 @@ internal static class S073LegacyPlacementOwnerHarness
             finally { aiPlannerState.End(); }
             aiPlannerStepCount++;
         }
+        aiPlannerWallSeconds = phaseWall.Elapsed.TotalSeconds;
         DynamicBuffer<BuildingRuntimeSpawnRequest> aiRequests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         int aiRequestCountBeforeProcessing = aiRequests.Length;
         if (aiRequestCountBeforeProcessing > aiRequestsBefore)
@@ -1900,7 +1912,13 @@ internal static class S073LegacyPlacementOwnerHarness
                 });
             }
         }
+        harnessWall.Stop();
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
+            ["performance_diagnostics"] = new JObject { ["harness_wall_seconds"] = harnessWall.Elapsed.TotalSeconds,
+                ["source_domain_build_wall_seconds"] = sourceDomainWallSeconds,
+                ["map_placement_owner_wall_seconds"] = placementOwnerWallSeconds,
+                ["ai_build_planner_wall_seconds"] = aiPlannerWallSeconds,
+                ["ai_build_planner_updates"] = aiPlannerStepCount },
             ["mission"] = "S073", ["source_identity_hash"] = selected.SourceIdentityHash, ["campaign_source"] = selected.SourceBinding.SourceOperationMapId,
             ["placement_config_variant"] = new JObject { ["kind"] = (string)placementConfig["kind"],
                 ["path"] = placementConfigPath, ["sha256"] = args[24],

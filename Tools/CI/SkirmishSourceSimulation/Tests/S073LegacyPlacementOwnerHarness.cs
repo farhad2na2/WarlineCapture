@@ -583,6 +583,96 @@ internal static class S073LegacyPlacementOwnerHarness
         // then admitted as a later source placement, not miscounted as startup output.
         autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
 
+        // The capture rows describe the S073 logical map, while authored Campaign
+        // entities retain the map ID of the physical source declared by its binding.
+        // Join on that explicit binding instead of reporting every source row missing.
+        string sourceOperationMapId = selected.SourceBinding.SourceOperationMapId;
+        var bakedMapEntitiesByPlacementIndex = new Dictionary<int, List<Entity>>();
+        using (var bakedMapQuery = em.CreateEntityQuery(typeof(OperationMapBuildingComponent), typeof(RuntimeBuildingCombatInfo)))
+        using (var bakedMapEntities = bakedMapQuery.ToEntityArray(Allocator.Temp))
+        {
+            for (int i = 0; i < bakedMapEntities.Length; i++)
+            {
+                Entity entity = bakedMapEntities[i];
+                OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(entity);
+                if (identity.OperationMapId.ToString() != sourceOperationMapId) continue;
+                if (!bakedMapEntitiesByPlacementIndex.TryGetValue(identity.PlacementIndex, out List<Entity> placementEntities))
+                    bakedMapEntitiesByPlacementIndex.Add(identity.PlacementIndex, placementEntities = new List<Entity>());
+                placementEntities.Add(entity);
+            }
+        }
+        var bakedMapGeometryRows = new JArray();
+        int bakedMapUniqueRows = 0, bakedMapExactOriginAndFootprintMatches = 0;
+        int bakedMapMismatches = 0, bakedMapMissingRows = 0, bakedMapDuplicateIndices = 0;
+        for (int i = 0; i < ((JArray)mapPlacementCapture["placement_rows"]).Count; i++)
+        {
+            JObject capturedRow = (JObject)mapPlacementCapture["placement_rows"][i];
+            JObject resolvedRow = (JObject)mapPlacementOriginReplay["origins"][i];
+            int placementIndex = (int)capturedRow["row_index"];
+            var auditRow = new JObject
+            {
+                ["placement_index"] = placementIndex,
+                ["prefab_key"] = (string)capturedRow["prefab"]["key"],
+                ["runtime_owner_origin"] = resolvedRow["origin"].DeepClone(),
+                ["runtime_owner_footprint"] = resolvedRow["footprint"].DeepClone()
+            };
+            if (!bakedMapEntitiesByPlacementIndex.TryGetValue(placementIndex, out List<Entity> matches) || matches.Count == 0)
+            {
+                bakedMapMissingRows++;
+                auditRow["baked_owner_match_count"] = 0;
+                auditRow["geometry_matches"] = false;
+                auditRow["classification"] = "baked-owner-row-missing";
+                bakedMapGeometryRows.Add(auditRow);
+                continue;
+            }
+            if (matches.Count != 1)
+            {
+                bakedMapDuplicateIndices++;
+                auditRow["baked_owner_match_count"] = matches.Count;
+                auditRow["geometry_matches"] = false;
+                auditRow["classification"] = "baked-owner-placement-index-ambiguous";
+                bakedMapGeometryRows.Add(auditRow);
+                continue;
+            }
+
+            bakedMapUniqueRows++;
+            Entity bakedEntity = matches[0];
+            OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(bakedEntity);
+            RuntimeBuildingCombatInfo combatInfo = em.GetComponentData<RuntimeBuildingCombatInfo>(bakedEntity);
+            int2 runtimeOrigin = new int2((int)resolvedRow["origin"][0], (int)resolvedRow["origin"][1]);
+            int2 runtimeFootprint = new int2((int)resolvedRow["footprint"][0], (int)resolvedRow["footprint"][1]);
+            bool sameOrigin = combatInfo.OriginCell.x == runtimeOrigin.x && combatInfo.OriginCell.y == runtimeOrigin.y;
+            bool sameFootprint = combatInfo.FootprintCells.x == runtimeFootprint.x && combatInfo.FootprintCells.y == runtimeFootprint.y;
+            bool sameGeometry = sameOrigin && sameFootprint;
+            if (sameGeometry) bakedMapExactOriginAndFootprintMatches++;
+            else bakedMapMismatches++;
+            auditRow["baked_entity"] = bakedEntity.Index + ":" + bakedEntity.Version;
+            auditRow["baked_source_global_object_id"] = identity.SourceGlobalObjectId.ToString();
+            auditRow["baked_runtime_building_id"] = combatInfo.RuntimeBuildingId;
+            auditRow["baked_owner_origin"] = new JArray(combatInfo.OriginCell.x, combatInfo.OriginCell.y);
+            auditRow["baked_owner_footprint"] = new JArray(combatInfo.FootprintCells.x, combatInfo.FootprintCells.y);
+            auditRow["origin_matches"] = sameOrigin;
+            auditRow["footprint_matches"] = sameFootprint;
+            auditRow["geometry_matches"] = sameGeometry;
+            auditRow["classification"] = sameGeometry ? "same-origin-and-footprint" : "cross-owner-geometry-difference";
+            bakedMapGeometryRows.Add(auditRow);
+        }
+        JObject bakedMapGeometryAudit = new JObject
+        {
+            ["logical_operation_map_id"] = (string)mapPlacementCapture["operation_map_id"],
+            ["baked_source_operation_map_id"] = sourceOperationMapId,
+            ["captured_config_row_count"] = ((JArray)mapPlacementCapture["placement_rows"]).Count,
+            ["baked_owner_unique_row_count"] = bakedMapUniqueRows,
+            ["same_origin_and_footprint_count"] = bakedMapExactOriginAndFootprintMatches,
+            ["cross_owner_geometry_difference_count"] = bakedMapMismatches,
+            ["baked_owner_missing_row_count"] = bakedMapMissingRows,
+            ["baked_owner_duplicate_index_count"] = bakedMapDuplicateIndices,
+            ["runtime_owner"] = "MapBuildingPlacementOriginKernel from captured config and source runtime definition",
+            ["baked_owner"] = "OperationMapBuildingAuthoring.Baker RuntimeBuildingCombatInfo in retained ECS",
+            ["owner_equivalence_proven"] = false,
+            ["rows"] = bakedMapGeometryRows
+        };
+
         JObject rotatedCandidateRow = (JObject)mapPlacementCapture["placement_rows"][2];
         JObject rotatedCandidateOriginRow = (JObject)mapPlacementOriginReplay["origins"][2];
         int2 rotatedCandidateOrigin = new int2((int)rotatedCandidateOriginRow["origin"][0], (int)rotatedCandidateOriginRow["origin"][1]);
@@ -1040,6 +1130,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["legacy_root_count"] = expectedInitialRoots.Properties().Count(), ["matched_current_capture"] = true,
                 ["independent_name_readback"] = true },
             ["runtime_blocker_placement"] = actualBlockerPlacement,
+            ["map_placement_baked_owner_geometry_audit"] = bakedMapGeometryAudit,
             ["rotated_candidate_row_preflight"] = rotatedCandidatePreflight,
             ["authored_map_actor"] = authoredMapActorEvidence,
             ["map_placements_materialized"] = 1,

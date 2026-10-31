@@ -349,31 +349,39 @@ namespace Game.Runtime
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
-            if (!gameplayInitialized)
-                return false;
-            if (!GameplayStartGatePolicy.HasLaunchRequest(gameplayInitialized, runtimeGameplayStateSystem.PlayRequested))
-                return false;
-            if (!GameplayStartGatePolicy.IsBuildingStartupComplete(buildingRuntimeUpdateContext.StartupComplete))
-                return false;
-            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeCity != null,
-                    runtimeCity != null && runtimeCity.HasSpawned))
-                return false;
-            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeGridBlockers != null,
-                    runtimeGridBlockers != null && runtimeGridBlockers.HasSpawned))
-                return false;
-            if (!GameplayStartGatePolicy.IsOptionalRuntimeOwnerComplete(runtimeDecorations != null,
-                    runtimeDecorations != null && runtimeDecorations.HasSpawned))
-                return false;
+            bool playRequested = runtimeGameplayStateSystem.PlayRequested;
+            bool buildingStartupComplete = buildingRuntimeUpdateContext.StartupComplete;
+            bool runtimeCityPresent = runtimeCity != null;
+            bool runtimeCityComplete = runtimeCityPresent && runtimeCity.HasSpawned;
+            bool runtimeGridBlockersPresent = runtimeGridBlockers != null;
+            bool runtimeGridBlockersComplete = runtimeGridBlockersPresent && runtimeGridBlockers.HasSpawned;
+            bool runtimeDecorationsPresent = runtimeDecorations != null;
+            bool runtimeDecorationsComplete = runtimeDecorationsPresent && runtimeDecorations.HasSpawned;
+            bool worldAvailable = runtimeWorld != null && runtimeWorld.IsCreated;
 
-            if (!GameplayStartGatePolicy.IsWorldAvailable(runtimeWorld != null && runtimeWorld.IsCreated))
+            if (!gameplayInitialized ||
+                !playRequested ||
+                !buildingStartupComplete ||
+                runtimeCityPresent && !runtimeCityComplete ||
+                runtimeGridBlockersPresent && !runtimeGridBlockersComplete ||
+                runtimeDecorationsPresent && !runtimeDecorationsComplete ||
+                !worldAvailable)
                 return false;
 
             EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
-
-            int totalConfigCount = _initialSpawnConfigQuery.CalculateEntityCount();
-            int initializedConfigCount = _initialSpawnInitializedQuery.CalculateEntityCount();
-
-            return GameplayStartGatePolicy.AreInitialSpawnCountsComplete(totalConfigCount, initializedConfigCount);
+            if (!GameplayStartGatePolicy.IsGameplayStartComplete(
+                    gameplayInitialized,
+                    playRequested,
+                    buildingStartupComplete,
+                    runtimeCityPresent,
+                    runtimeCityComplete,
+                    runtimeGridBlockersPresent,
+                    runtimeGridBlockersComplete,
+                    runtimeDecorationsPresent,
+                    runtimeDecorationsComplete,
+                    worldAvailable,
+                    _initialSpawnConfigQuery.CalculateEntityCount(),
+                    _initialSpawnInitializedQuery.CalculateEntityCount());
         }
 
         private bool ShouldFailOpenLoadingGate(

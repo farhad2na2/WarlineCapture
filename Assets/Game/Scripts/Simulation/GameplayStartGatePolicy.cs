@@ -19,6 +19,33 @@ namespace Game.Simulation
         public static bool AreInitialSpawnCountsComplete(int configCount, int initializedCount) =>
             configCount == 0 || initializedCount >= configCount;
 
+        // Keep the final admission rule shared by Unity and headless hosts. Each
+        // runtime supplies facts from its own real owners; this method does not
+        // infer completion from absent or unobserved owners.
+        public static bool IsGameplayStartComplete(
+            bool gameplayInitialized,
+            bool playRequested,
+            bool buildingStartupComplete,
+            bool runtimeCityPresent,
+            bool runtimeCityComplete,
+            bool runtimeGridBlockersPresent,
+            bool runtimeGridBlockersComplete,
+            bool runtimeDecorationsPresent,
+            bool runtimeDecorationsComplete,
+            bool worldAvailable,
+            int initialSpawnConfigCount,
+            int initialSpawnInitializedCount)
+        {
+            return gameplayInitialized &&
+                   HasLaunchRequest(gameplayInitialized, playRequested) &&
+                   IsBuildingStartupComplete(buildingStartupComplete) &&
+                   IsOptionalRuntimeOwnerComplete(runtimeCityPresent, runtimeCityComplete) &&
+                   IsOptionalRuntimeOwnerComplete(runtimeGridBlockersPresent, runtimeGridBlockersComplete) &&
+                   IsOptionalRuntimeOwnerComplete(runtimeDecorationsPresent, runtimeDecorationsComplete) &&
+                   IsWorldAvailable(worldAvailable) &&
+                   AreInitialSpawnCountsComplete(initialSpawnConfigCount, initialSpawnInitializedCount);
+        }
+
         public static bool IsRuntimeCityFailOpenWindow(
             bool gameplayInitialized, bool playRequested,
             int loadingGateStartedFrame, int currentFrame) =>

@@ -369,7 +369,7 @@ namespace Game.Runtime
                 return false;
 
             EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
-            if (!GameplayStartGatePolicy.IsGameplayStartComplete(
+            return GameplayStartGatePolicy.IsGameplayStartComplete(
                     gameplayInitialized,
                     playRequested,
                     buildingStartupComplete,

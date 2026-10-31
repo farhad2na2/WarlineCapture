@@ -578,6 +578,13 @@ internal static class S073LegacyPlacementOwnerHarness
         // then admitted as a later source placement, not miscounted as startup output.
         autonomousWorld.RetainS073LegacyDiagnosticStartup(em, gridEntity, surfaceEntity, session, boundary, plan, newlySpawned);
 
+        RuntimeBuildingEntity authoredMapBuilding = null;
+        JObject authoredMapActorEvidence = null;
+        bool RegisterCapturedMapRow(int scheduledIndex)
+        {
+            if (scheduledIndex != 0)
+                return false;
+
         // Materialize one exact ordinary ground placement from the captured original map source
         // through the existing shared building registration and actor owners. This deliberately
         // stops at one row; walls, runway, visuals, and full map-owner completion remain pending.
@@ -598,8 +605,6 @@ internal static class S073LegacyPlacementOwnerHarness
         JObject authoredOriginRow = (JObject)mapPlacementOriginReplay["origins"][1];
         int2 authoredOrigin = new int2((int)authoredOriginRow["origin"][0], (int)authoredOriginRow["origin"][1]);
         Vector3 authoredWorldEuler = new Vector3((float)authoredEuler["x"], (float)authoredEuler["y"], (float)authoredEuler["z"]);
-        RuntimeBuildingEntity authoredMapBuilding = null;
-        JObject authoredMapActorEvidence = null;
         int preservedAuthoredOverlaps = 0, blockerRemovalCallbackCount = 0, redirectOwnerInvocationCount = 0;
         Entity preservedAuthoredBlocker = Entity.Null;
         JObject preservedAuthoredOverlapEvidence = null;
@@ -831,6 +836,16 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["rows_total"] = 432
             };
         }
+
+            return true;
+        }
+
+        var mapPlacementSequence = new MapBuildingPlacementSequenceKernel();
+        bool mapPlacementSequenceQueued = mapPlacementSequence.Advance(
+            1, 32, _ => false, RegisterCapturedMapRow);
+        Need(mapPlacementSequenceQueued && mapPlacementSequence.IsQueued &&
+             authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed",
+            "Shared placement sequence must only complete after the captured actor registration callback succeeds");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {

@@ -193,6 +193,12 @@ def main():
             build["source_and_reference_pins"][str(pinned_placement_origin[0])] == sha(pinned_placement_origin[0]),
             "Hash-pinned original map placement origin owner required")
     compiler_args.append(str(pinned_placement_origin[0]))
+    pinned_placement_sequence = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
+                                 if path.endswith("/Assets/Game/Scripts/Systems/MapBuildingPlacementSequenceKernel.cs")]
+    require(len(pinned_placement_sequence) == 1 and
+            sha(pinned_placement_sequence[0]) == build["source_and_reference_pins"][str(pinned_placement_sequence[0])],
+            "Hash-pinned original map placement sequence owner required")
+    compiler_args.append(str(pinned_placement_sequence[0]))
     compiler_args.append(str(harness))
     test_rsp = output / "harness.rsp"
     test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))

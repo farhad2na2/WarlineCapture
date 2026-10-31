@@ -474,10 +474,16 @@ internal static class S073LegacyPlacementOwnerHarness
 
         phaseWall.Restart();
         var domain = SourceS073LegacySpawnRequestAdapter.LoadSharedPlacementSource(selected, physicalPath, args[16], waterPath, args[18], startupPath, args[20], sourceRoot, capturedAssetRoot);
+        int placementCellCount = checked(gridData.Width * gridData.Height);
+        Need(domain.UsesOriginalOwnerMaskCapture && domain.WaterDomainKnown && domain.WaterFootprintCount == 194,
+            "Complete shared Campaign placement owner inputs required");
         var masks = domain.Build(gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
         var roads = new bool[checked(gridData.Width * gridData.Height)]; BuildingPlacementRoadSurfaceMask.Append(em, surfaceEntity, em.GetComponentData<GridConfig>(gridEntity), roads);
         if (domain.UsesOriginalOwnerMaskCapture) roads = domain.CopyOriginalOwnerRoadMask();
         var water = domain.BuildWaterMask(true, gridData.Width, gridData.Height, gridData.CellSize, gridData.Origin.x, gridData.Origin.y, gridData.Origin.z);
+        Need(masks.AuthoredBuildings.Length == placementCellCount && masks.Sidewalks.Length == placementCellCount &&
+             roads.Length == placementCellCount && water != null && water.Length == placementCellCount,
+            "Complete shared Campaign placement mask dimensions required");
         sourceDomainWallSeconds = phaseWall.Elapsed.TotalSeconds;
         var grid = em.GetComponentData<GridConfig>(gridEntity);
         string mapCapturePath = Path.GetFullPath(args[30]);

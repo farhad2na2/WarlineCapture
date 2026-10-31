@@ -72,8 +72,7 @@ namespace Game.Runtime {
   internal static SourcePlacementDomain LoadSharedPlacementSource(OperationMapDefinition selected,string physicalPath,string physicalSha,string waterPath,string waterSha,string startupPath,string startupSha,string currentSourceRoot,string capturedAssetRoot) {
    RequireSharedPlacementSource(selected);
    var domain=SourcePlacementDomain.LoadS002SourceDiagnostic(physicalPath,physicalSha,waterPath,waterSha,startupPath,startupSha,currentSourceRoot,capturedAssetRoot);
-   var masks=domain.Build(2048,1024,1,0,0,0);var activeWater=domain.BuildWaterMask(true,2048,1024,1,0,0,0);
-   if(!domain.UsesOriginalOwnerMaskCapture||!domain.WaterDomainKnown||domain.WaterFootprintCount!=194||masks.AuthoredBuildings.Length!=2048*1024||masks.Sidewalks.Length!=2048*1024||domain.CopyOriginalOwnerRoadMask().Length!=2048*1024||activeWater==null||activeWater.Length!=2048*1024)throw new InvalidDataException("Complete shared Campaign placement owner inputs required");
+   if(!domain.UsesOriginalOwnerMaskCapture||!domain.WaterDomainKnown||domain.WaterFootprintCount!=194)throw new InvalidDataException("Complete shared Campaign placement owner inputs required");
    return domain;
   }
   internal static int Queue(EntityManager em, Entity plan, Entity boundary, bool exactSkirmishSite) {

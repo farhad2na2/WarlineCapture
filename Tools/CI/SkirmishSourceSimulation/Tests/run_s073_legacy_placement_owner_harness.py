@@ -56,7 +56,7 @@ SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
     "Assets/Game/Scripts/Systems/BuildingRunwayPathingSurface.cs": "c6cfbfdd23ce5e8cdce3c6b27cb994933a38da4aef07dd997438daddcb80bd7a",
     "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs": "489085e98e3d3698746dba2e1779cd2592ccfb40630bf496f0a33fa69b4c81d1",
     "Assets/Game/Scripts/Simulation/GameplayStartGatePolicy.cs": "f1a5f2b1dfe614bc86cb9ddfdf41551514c839ba8d60908aef8ace789a11ed7b",
-    "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs": "f4351c2f96c7790bf6bdf183f61111bdbf5fc021af22143f25f0d178cc1ad429",
+    "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs": "d5604c3dd29d7a4a480177b2e87039155702d1f61cbe3abdf7e79655833bb997",
 }
 CURRENT_S073_REGISTRATION_SOURCE_PINS = {
     "Tools/CI/SkirmishSourceSimulation/Adapters/137_RuntimeBuildingBindings.cs": "dd74e299a02bc73bbecc0534debce057ab594d3528f0be5c9a4c6c925ab82680",
@@ -69,7 +69,7 @@ CURRENT_S073_REGISTRATION_SOURCE_PINS = {
     "Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs": "4abd88b4f4b9f97cb57b41f6ca1cd8b9e14afa323f56f2b35267486030a0359f",
     "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S073MapBuildings.cs": "93fcdc8528d9dc782cfefbd32a368abd675071193cc43eac54879c3165c0154b",
     "Tools/CI/SkirmishSourceSimulation/Recipes/operation_map_publication/regenerate_full_read_models.py": "b0a8a4deb7dc6c9b2998e9b61d9cdf913252454ef6a82ca5ef01651bb88dfd54",
-    "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs": "7c914182857a1f0c86f102814d7fc170b626e49e0c140a14312c2131b38e7778",
+    "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs": "75bd8ec6314cccbcafa6bcd2c1f5d3f1a917f6ec20069157e22ac14d8582cc65",
     "Tools/CI/SkirmishSourceSimulation/Placement/SourcePlacementDomain.OriginalOwnerCapture.cs": "b3e6a36fee1039e4205b0c3a6d741a7364742604359161f90bfe1fcf133d5274",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     **SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS,

@@ -86,7 +86,11 @@ namespace Game.Runtime
                         surfaceId = sample.SurfaceId;
                         layerId = sample.LayerId;
                     }
-                    else if (sample.SurfaceId != surfaceId || sample.LayerId != layerId)
+                    // SurfaceId is a sample identity (the compact single-layer
+                    // decoder uses the global cell index). A footprint therefore
+                    // spans many IDs on one continuous placement plane. LayerId
+                    // distinguishes stacked terrain, which remains disallowed.
+                    else if (sample.LayerId != layerId)
                     {
                         result = new Result(false, heightSum / math.max(1, sampleCount), maxHeight - minHeight, maxSlope, surfaceId, layerId, sampleCount);
                         return true;

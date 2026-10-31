@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text.RegularExpressions;
+using Game.Components;
 using Game.Runtime;
 using Game.Simulation;
 using Newtonsoft.Json.Linq;
@@ -36,8 +38,27 @@ internal static class S073MapPlacementFootprintSmoke
             if (rows == null || rows.Count != 432 || definitions.Definitions.Count != 23)
                 throw new InvalidDataException("Exact captured S073 map source domain required");
 
+            string gridText = File.ReadAllText(Path.Combine(args[2], "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset"));
+            int gridWidth = ReadInt(gridText, "width");
+            int gridHeight = ReadInt(gridText, "height");
+            float cellSize = ReadFloat(gridText, "cellSize");
+            Match originMatch = Regex.Match(gridText, @"(?m)^  origin: \{x: ([^,]+), y: ([^,]+), z: ([^}]+)\}$");
+            if (!originMatch.Success)
+                throw new InvalidDataException("Selected source grid origin is required");
+            var grid = new GridConfig
+            {
+                Width = gridWidth,
+                Height = gridHeight,
+                CellSize = cellSize,
+                Origin = new Unity.Mathematics.float3(
+                    float.Parse(originMatch.Groups[1].Value, CultureInfo.InvariantCulture),
+                    float.Parse(originMatch.Groups[2].Value, CultureInfo.InvariantCulture),
+                    float.Parse(originMatch.Groups[3].Value, CultureInfo.InvariantCulture))
+            };
+            VerifyOriginModeSemantics(grid);
+
             var wallFootprints = new Dictionary<string, int>(StringComparer.Ordinal);
-            int wallRows = 0, rotatedRows = 0;
+            int wallRows = 0, rotatedRows = 0, geometricRows = 0, outsideGridRows = 0, resolvedRows = 0;
             for (int i = 0; i < rows.Count; i++)
             {
                 JObject row = (JObject)rows[i];
@@ -61,6 +82,24 @@ internal static class S073MapPlacementFootprintSmoke
                     rotated);
                 if (footprint.x <= 0 || footprint.y <= 0)
                     throw new InvalidDataException("S073 source placement resolved an invalid footprint");
+
+                JObject worldCenter = (JObject)row["world_center"];
+                int2 centerCell = GridUtils.WorldToCell(grid, new Unity.Mathematics.float3(
+                    (float)worldCenter["x"], (float)worldCenter["y"], (float)worldCenter["z"]));
+                bool useGeometricCenter = (bool?)row["use_geometric_footprint_center"] == true;
+                int2 resolvedOrigin = MapBuildingPlacementOriginKernel.ResolveOriginCell(
+                    centerCell, new Vector2Int(footprint.x, footprint.y), grid, useGeometricCenter);
+                int2 expectedOrigin = useGeometricCenter
+                    ? new int2(centerCell.x - footprint.x / 2, centerCell.y - footprint.y / 2)
+                    : MapBuildingPlacementOriginKernel.CenterCellToOrigin(
+                        centerCell, new Vector2Int(footprint.x, footprint.y), grid);
+                if (!resolvedOrigin.Equals(expectedOrigin))
+                    throw new InvalidDataException("Shared placement origin changed source row " + i);
+                resolvedRows++;
+                if (useGeometricCenter) geometricRows++;
+                if (resolvedOrigin.x < 0 || resolvedOrigin.y < 0 ||
+                    resolvedOrigin.x + footprint.x > grid.Width || resolvedOrigin.y + footprint.y > grid.Height)
+                    outsideGridRows++;
                 if (rotated) rotatedRows++;
                 if (definition.IsWall)
                 {
@@ -73,6 +112,7 @@ internal static class S073MapPlacementFootprintSmoke
             }
 
             Require(wallRows == 188 && rotatedRows == 205, "S073 wall/rotation row totals changed");
+            Require(resolvedRows == rows.Count, "Every captured map row must pass through the shared origin resolver");
             Require(wallFootprints.TryGetValue("12x3:horizontal", out int dirt) && dirt == 79,
                 "Unrotated dirt walls must use the actual configured footprint");
             Require(wallFootprints.TryGetValue("12x1:horizontal", out int fence) && fence == 24,
@@ -173,6 +213,10 @@ internal static class S073MapPlacementFootprintSmoke
                 ["status"] = "Passed",
                 ["definitions"] = definitions.Definitions.Count,
                 ["placement_rows"] = rows.Count,
+                ["placement_origins_resolved"] = rows.Count,
+                ["geometric_center_rows"] = geometricRows,
+                ["origin_mode_controls"] = 3,
+                ["outside_grid_rows_preserved"] = outsideGridRows,
                 ["wall_rows"] = wallRows,
                 ["rotated_rows"] = rotatedRows,
                 ["blocker_prefabs"] = prefabs.Count,
@@ -213,5 +257,33 @@ internal static class S073MapPlacementFootprintSmoke
     {
         using (var sha = System.Security.Cryptography.SHA256.Create())
             return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
+    }
+
+    private static int ReadInt(string source, string field)
+    {
+        Match match = Regex.Match(source, @"(?m)^  " + Regex.Escape(field) + @": ([0-9]+)$");
+        if (!match.Success) throw new InvalidDataException("Missing selected source grid field " + field);
+        return int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+    }
+
+    private static float ReadFloat(string source, string field)
+    {
+        Match match = Regex.Match(source, @"(?m)^  " + Regex.Escape(field) + @": ([^\r\n]+)$");
+        if (!match.Success) throw new InvalidDataException("Missing selected source grid field " + field);
+        return float.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture);
+    }
+
+    private static void VerifyOriginModeSemantics(GridConfig grid)
+    {
+        var footprint = new Vector2Int(2, 3);
+        int2 center = new int2(10, 12);
+        int2 legacy = MapBuildingPlacementOriginKernel.ResolveOriginCell(center, footprint, grid, false);
+        int2 geometric = MapBuildingPlacementOriginKernel.ResolveOriginCell(center, footprint, grid, true);
+        if (!legacy.Equals(new int2(10, 11)) || !geometric.Equals(new int2(9, 11)))
+            throw new InvalidDataException("Legacy cell-centre and geometric-footprint centring must retain separate source semantics");
+
+        int2 edgeGeometric = MapBuildingPlacementOriginKernel.ResolveOriginCell(new int2(0, 0), footprint, grid, true);
+        if (!edgeGeometric.Equals(new int2(-1, -1)))
+            throw new InvalidDataException("Geometric-centre origin must preserve the native no-clamp rule at grid edges");
     }
 }

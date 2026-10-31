@@ -45,5 +45,17 @@ namespace Game.Runtime
                 Mathf.Clamp(originX, 0, Mathf.Max(0, grid.Width - footprint.x)),
                 Mathf.Clamp(originY, 0, Mathf.Max(0, grid.Height - footprint.y)));
         }
+
+        internal static int2 ResolveOriginCell(
+            int2 centerCell,
+            Vector2Int footprint,
+            GridConfig grid,
+            bool useGeometricFootprintCenter)
+        {
+            if (useGeometricFootprintCenter)
+                return new int2(centerCell.x - footprint.x / 2, centerCell.y - footprint.y / 2);
+
+            return CenterCellToOrigin(centerCell, footprint, grid);
+        }
     }
 }

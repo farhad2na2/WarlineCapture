@@ -749,9 +749,8 @@ internal static class S073LegacyPlacementOwnerHarness
             float3 world = new float3((float)row["world_center"]!["x"], (float)row["world_center"]!["y"], (float)row["world_center"]!["z"]);
             int2 center = GridUtils.WorldToCell(grid, world);
             bool geometric = (bool?)row["use_geometric_footprint_center"] == true;
-            int2 origin = geometric
-                ? new int2(center.x - width / 2, center.y - height / 2)
-                : MapBuildingPlacementOriginKernel.CenterCellToOrigin(center, new Vector2Int(width, height), grid);
+            int2 origin = MapBuildingPlacementOriginKernel.ResolveOriginCell(
+                center, new Vector2Int(width, height), grid, geometric);
             if (geometric) geometricRows++;
             origins.Add(new JObject { ["row_index"] = i, ["category"] = (string)row["category"],
                 ["faction_id"] = (int)row["faction_id"], ["center_cell"] = new JArray(center.x, center.y),

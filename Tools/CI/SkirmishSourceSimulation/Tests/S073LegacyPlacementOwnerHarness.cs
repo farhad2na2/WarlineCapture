@@ -484,8 +484,6 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(originalOwnerSearchRows == (prefixReplayConfig ? 9 : 10) &&
              originalPrefixReplayRows == (prefixReplayConfig ? 1 : 0),
              "S073 candidate must preserve nine original owner results and at most one explicit refinery prefix replay");
-        int queued = SourceS073LegacySpawnRequestAdapter.Queue(em, plan, boundary, true);
-        Need(queued == 10 && requests.Length == 10, "Actual S073 source rows were not queued");
         string constructionPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/Construction.asset");
         string constructionText = File.ReadAllText(constructionPath);
         var planeMatch = Regex.Match(constructionText, @"(?m)^  buildPlaneY: ([^\r\n]+)$");
@@ -494,15 +492,26 @@ internal static class S073LegacyPlacementOwnerHarness
         var registry = new Dictionary<int, RuntimeBuildingEntity>();
         var pipeline = new GeneratedStartingBuildingPipeline(em, gridEntity, boundary, definitions.Definitions, true, registry,
             masks.AuthoredBuildings, roads, masks.Sidewalks, water, buildPlaneY, RuntimeBlocked);
-        int frames = 0;
-        for (; frames < 64; frames++)
-        {
-            pipeline.ProcessRequests((frames + 1) / 60f, forceScan: frames == 0);
-            requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
-            bool pending = false;
-            for (int i = 0; i < requests.Length; i++) if (requests[i].Status == BuildingRuntimeSpawnRequest.Pending) { pending = true; break; }
-            if (!pending) { frames++; break; }
-        }
+        var gameplayStartOwner = new RuntimeGameplayStateSystem(em);
+        gameplayStartOwner.ResetForGameplayStart();
+        var spawnSystem = new InitialUnitsSpawnSystem();
+        var spawnState = new SystemState { EntityManager = em, Enabled = true };
+        spawnSystem.OnCreate(ref spawnState);
+        var beforeSpawn = new HashSet<Entity>();
+        using (var unitsBefore = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>()))
+        using (var entities = unitsBefore.ToEntityArray(Allocator.Temp))
+            for (int i = 0; i < entities.Length; i++) beforeSpawn.Add(entities[i]);
+
+        // Let the original owner issue the authored building requests, then run the
+        // existing request processor before the next original spawn-system update.
+        spawnState.Begin();
+        try { spawnSystem.OnUpdate(ref spawnState); }
+        finally { spawnState.End(); }
+        requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        int queued = requests.Length;
+        Need(queued == 10, "Original S073 initial-spawn owner did not queue all source rows");
+        pipeline.ProcessRequests(1f / 60f, forceScan: true);
+        int frames = 1;
         requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         var rows = new JArray(requests.Select(r => new JObject { ["request_id"] = r.RequestId, ["building_id"] = r.BuildingId.ToString(),
             ["faction_id"] = r.FactionId, ["preferred_origin"] = new JArray(r.PreferredOrigin.x, r.PreferredOrigin.y), ["status"] = r.Status.ToString(),
@@ -513,8 +522,6 @@ internal static class S073LegacyPlacementOwnerHarness
             ["combat_entity"] = pair.Value.CombatEntity.Index + ":" + pair.Value.CombatEntity.Version,
             ["blocker_entity"] = pair.Value.BlockerEntity.Index + ":" + pair.Value.BlockerEntity.Version }));
         foreach (var pair in registry) autonomousWorld.Buildings.Add(pair.Key, pair.Value);
-        var gameplayStartOwner = new RuntimeGameplayStateSystem(em);
-        gameplayStartOwner.ResetForGameplayStart();
         Entity gameplayStateEntity;
         using (var gameplayStates = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent)))
         {
@@ -529,40 +536,38 @@ internal static class S073LegacyPlacementOwnerHarness
         var rulesState = State(em);
         rulesSystem.OnCreate(ref rulesState);
         Need(rulesState.RequiredQueriesPresent, "Original SkirmishRulesSystem match/gameplay required queries must be present");
-        using (var pendingInit = em.CreateEntityQuery(new EntityQueryDesc
-        {
-            All = new[] { ComponentType.ReadOnly<InitialUnitsSpawnConfig>() },
-            None = new[] { ComponentType.ReadOnly<InitialUnitsSpawnInitialized>(), ComponentType.ReadOnly<InitialUnitsSpawnProgress>() }
-        }))
-        {
-            Need(pendingInit.CalculateEntityCount() == 1, "Unique actual S073 initial spawn plan required before original spawner");
-            InitialUnitsSpawnSystem.InitializeInitialSpawnProgress(em, pendingInit);
-        }
-        var spawnProgress = em.GetComponentData<InitialUnitsSpawnProgress>(plan);
-        // Ten real requests were already queued and completed by the original building
-        // owner above, so the shared unit system resumes at its real issued-request state.
-        spawnProgress.InitialBuildingRequestsIssued = 1;
-        em.SetComponentData(plan, spawnProgress);
-        var spawnSystem = new InitialUnitsSpawnSystem();
-        var spawnState = new SystemState { EntityManager = em, Enabled = true };
-        spawnSystem.OnCreate(ref spawnState);
-        var beforeSpawn = new HashSet<Entity>();
-        using (var unitsBefore = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>()))
-        using (var entities = unitsBefore.ToEntityArray(Allocator.Temp))
-            for (int i = 0; i < entities.Length; i++) beforeSpawn.Add(entities[i]);
         int spawnFrames = 0;
-        for (; spawnFrames < 12 && !em.HasComponent<InitialUnitsSpawnInitialized>(plan); spawnFrames++)
+        // The source owner rate-limits authored requests at normal 1/60 steps.
+        // Allow the full original startup window instead of an artificial 12-frame cutoff.
+        for (; spawnFrames < 128 && !em.HasComponent<InitialUnitsSpawnInitialized>(plan); spawnFrames++)
         {
             spawnState.Begin();
             try { spawnSystem.OnUpdate(ref spawnState); }
             finally { spawnState.End(); }
+            pipeline.ProcessRequests((spawnFrames + 2) / 60f);
+            frames++;
         }
         var newlySpawned = new List<Entity>();
+        var registeredBuildingEntities = new HashSet<Entity>();
+        foreach (RuntimeBuildingEntity building in registry.Values)
+        {
+            if (building.CombatEntity != Entity.Null) registeredBuildingEntities.Add(building.CombatEntity);
+            if (building.BlockerEntity != Entity.Null) registeredBuildingEntities.Add(building.BlockerEntity);
+        }
         using (var unitsAfter = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitSourcePrefabKey>()))
         using (var entities = unitsAfter.ToEntityArray(Allocator.Temp))
-            for (int i = 0; i < entities.Length; i++) if (!beforeSpawn.Contains(entities[i])) newlySpawned.Add(entities[i]);
-        Need(em.HasComponent<InitialUnitsSpawnInitialized>(plan) && newlySpawned.Count == 24,
-             "Original initial-unit spawner must materialize all 24 S073 configured units and mark its real completion component");
+            for (int i = 0; i < entities.Length; i++)
+                if (!beforeSpawn.Contains(entities[i]) && !registeredBuildingEntities.Contains(entities[i])) newlySpawned.Add(entities[i]);
+        if (!em.HasComponent<InitialUnitsSpawnInitialized>(plan) || newlySpawned.Count != 24)
+        {
+            InitialUnitsSpawnProgress progress = em.HasComponent<InitialUnitsSpawnProgress>(plan)
+                ? em.GetComponentData<InitialUnitsSpawnProgress>(plan) : default;
+            string unitProgress = em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(plan)
+                ? string.Join(",", em.GetBuffer<InitialUnitsFactionUnitSpawnProgress>(plan).Select(row => row.Spawned)) : "missing";
+            string requestStatus = em.HasBuffer<BuildingRuntimeSpawnRequest>(boundary)
+                ? string.Join(",", em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary).Select(row => row.Status + ":" + row.ResultCode)) : "missing";
+            throw new InvalidOperationException($"Original S073 spawn completion absent: frames={spawnFrames} initialized={em.HasComponent<InitialUnitsSpawnInitialized>(plan)} spawned={newlySpawned.Count} buildingRequestsIssued={progress.InitialBuildingRequestsIssued} buildingsSpawned={progress.InitialBuildingsSpawned} blockersSpawned={progress.BlockersSpawned} unitProgress=[{unitProgress}] requestStatus=[{requestStatus}]");
+        }
         int factionOneUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 1);
         int factionTwoUnits = newlySpawned.Count(entity => em.GetComponentData<Faction>(entity).Id == 2);
         Need(factionOneUnits == 12 && factionTwoUnits == 12, "Original initial-unit spawner changed S073 faction grants");

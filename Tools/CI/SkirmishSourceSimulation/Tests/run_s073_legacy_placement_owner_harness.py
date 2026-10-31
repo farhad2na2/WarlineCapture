@@ -178,14 +178,21 @@ def main():
     executable = output / "S073LegacyPlacementOwnerHarness.exe"
     compiler_args[entry[0]] = "-main:S073LegacyPlacementOwnerHarness"
     compiler_args[output_arg[0]] = "-out:" + str(executable)
-    gameplay_state_source = (source_root / "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs").resolve(strict=True)
     pinned_gameplay_state = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
                              if path.endswith("/Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs")]
+    gameplay_state_source = (Path(__file__).resolve().parents[4] /
+                             "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs").resolve(strict=True)
     require(len(pinned_gameplay_state) == 1 and
             sha(pinned_gameplay_state[0]) == build["source_and_reference_pins"][str(pinned_gameplay_state[0])] and
             sha(gameplay_state_source) == sha(pinned_gameplay_state[0]),
             "Hash-pinned original runtime gameplay-state owner required")
     compiler_args.append(str(pinned_gameplay_state[0]))
+    pinned_placement_origin = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
+                               if path.endswith("/Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs")]
+    require(len(pinned_placement_origin) == 1 and
+            build["source_and_reference_pins"][str(pinned_placement_origin[0])] == sha(pinned_placement_origin[0]),
+            "Hash-pinned original map placement origin owner required")
+    compiler_args.append(str(pinned_placement_origin[0]))
     compiler_args.append(str(harness))
     test_rsp = output / "harness.rsp"
     test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))

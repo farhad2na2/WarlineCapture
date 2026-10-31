@@ -1747,9 +1747,20 @@ internal static class S073LegacyPlacementOwnerHarness
             var summaryKey = building.OwnerFactionId.ToString(CultureInfo.InvariantCulture) + "|" + buildingId;
             expectedOwnedBuildingCounts[summaryKey] = expectedOwnedBuildingCounts.TryGetValue(summaryKey, out int count)
                 ? count + 1 : 1;
-            BuildingRuntimeReadModelProjection.AddOrIncrementOwnedBuildingSummary(
-                ownedBuildingProjection, building.OwnerFactionId, new FixedString128Bytes(buildingId), 1);
         }
+        BuildingRuntimeReadModelProjection.PublishOwnedBuildingSummaries(
+            ownedBuildingProjection, registry,
+            building =>
+            {
+                var prefab = building.Definition.Prefab;
+                string fallback = building.Definition.DisplayName;
+                string normalized = prefab != null
+                    ? BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name)
+                    : string.Empty;
+                if (string.IsNullOrEmpty(normalized))
+                    normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(fallback);
+                return new FixedString128Bytes(string.IsNullOrEmpty(normalized) ? fallback ?? string.Empty : normalized);
+            });
         var projectedOwnedBuildings = new JArray(ownedBuildingProjection.Select(summary => new JObject
         {
             ["faction_id"] = summary.FactionId,

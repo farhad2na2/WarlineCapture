@@ -876,21 +876,9 @@ namespace Game.Runtime
         {
             DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer =
                 EnsureBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(em, boundaryEntity);
-            buffer.Clear();
-
-            if (runtimeBuildings != null)
-            {
-                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
-                {
-                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
-                        PublishOwnedBuildingSummary(buffer, pair.Value);
-                }
-                else
-                {
-                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
-                        PublishOwnedBuildingSummary(buffer, pair.Value);
-                }
-            }
+            BuildingRuntimeReadModelProjection.PublishOwnedBuildingSummaries(
+                buffer, runtimeBuildings,
+                building => ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName));
 
             for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
             {
@@ -906,22 +894,6 @@ namespace Game.Runtime
                     AddOrIncrementOwnedBuildingSummary(buffer, factionId, buildingId, 0);
                 }
             }
-        }
-
-        private void PublishOwnedBuildingSummary(
-            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
-            RuntimeBuildingEntity building)
-        {
-            if (building == null ||
-                building.IsDestroyed ||
-                !building.HasOwnerFaction ||
-                building.Definition == null)
-            {
-                return;
-            }
-
-            FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
-            AddOrIncrementOwnedBuildingSummary(buffer, building.OwnerFactionId, buildingId, 1);
         }
 
         private static void AddOrIncrementOwnedBuildingSummary(

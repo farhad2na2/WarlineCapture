@@ -46,7 +46,7 @@ EXPECTED = {
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
 SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
-    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "52aea623a3af482797dc79d6be8781c03ce4faf6a872b43e946855f2351f01bf",
+    "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs": "06413d31c35c785a0b6922c9328d6242043e550b26a728fdfc8602cd01c6a623",
     "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
     "Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs": "840624cebb501c8c2b7e4dcdec887569ecebda2b78cf4ef4f8902a84f7779c53",

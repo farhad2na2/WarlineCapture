@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Game.Components;
@@ -5,9 +7,29 @@ using Game.Components;
 namespace Game.Runtime
 {
     /// <summary>Deterministic row aggregation shared by the runtime publisher and headless host.</summary>
-    public static class BuildingRuntimeReadModelProjection
+    internal static class BuildingRuntimeReadModelProjection
     {
-        public static void AddOrIncrementOwnedBuildingSummary(
+        internal static void PublishOwnedBuildingSummaries(
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            Func<RuntimeBuildingEntity, FixedString128Bytes> resolveBoundaryId)
+        {
+            buffer.Clear();
+            if (runtimeBuildings == null)
+                return;
+
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+            {
+                RuntimeBuildingEntity building = pair.Value;
+                if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.Definition == null)
+                    continue;
+
+                FixedString128Bytes buildingId = resolveBoundaryId(building);
+                AddOrIncrementOwnedBuildingSummary(buffer, building.OwnerFactionId, buildingId, 1);
+            }
+        }
+
+        internal static void AddOrIncrementOwnedBuildingSummary(
             DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
             byte factionId,
             FixedString128Bytes buildingId,

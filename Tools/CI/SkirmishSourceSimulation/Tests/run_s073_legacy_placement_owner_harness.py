@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 import re
 import subprocess
+import sys
 import time
 
 
@@ -35,6 +36,8 @@ EXPECTED = {
     "map_placement_helper": "64f61689f5fd1fda1cb61cc3d38dd7b516aca6a43dda964b447c85a1269889b4",
     "map_placement_data_only_owner": "8192cd3b7ed9acb277c8e9bc90b6861c9ece0bee91db3d4b4db51a2d842e395c",
     "map_placement_helper_base_build": "4888598f62d9ee223bc0f41e516717c7d2a07749b412bf1b54f823d8cc0d2fc1",
+    "map_placement_sequence_owner": "06ead45c98b2368edb96a0dcefb4da96d67a2d521d336a3d0e6419b07f0c61bc",
+    "runtime_grid_blocker_ownership_kernel": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
     "map_definitions_adapter": "3a5982d3ff0d45fa74065c25cc3043ff30bafb66389a33e7ad7d3f7fcb81b34a",
     "map_definitions_adapter_base_build": "673c2d6e8f19119134252063909c1e193b4c43dae1320b288a3d4d76b6cfb768",
     "blocker_metadata": "e73b06fb4913d442139071cc6739aa4d9672aa312b6543a31f377d139aab8776",
@@ -42,6 +45,30 @@ EXPECTED = {
 }
 GRID_GUID = "b201000000000000000000000000000b"
 SURFACE_GUID = "12f517deb32ab49698acbfdaf7c3eac7"
+SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS = {
+    "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
+    "Assets/Game/Scripts/Components/StaticGridBlockerSurfaceOpeningComponent.cs": "c896017f098026415f321451ab0015c1bf19ea3475de5468ea77f5322e36eb62",
+    "Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs": "840624cebb501c8c2b7e4dcdec887569ecebda2b78cf4ef4f8902a84f7779c53",
+    "Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs": "22501469a3b1d51fd81bf6507f7b2805719eb50485d03c01cfa9807ed205f9be",
+    "Assets/Game/Scripts/Systems/BuildingRunwayPathingSurface.cs": "c6cfbfdd23ce5e8cdce3c6b27cb994933a38da4aef07dd997438daddcb80bd7a",
+    "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs": "489085e98e3d3698746dba2e1779cd2592ccfb40630bf496f0a33fa69b4c81d1",
+}
+CURRENT_S073_REGISTRATION_SOURCE_PINS = {
+    "Tools/CI/SkirmishSourceSimulation/Adapters/137_RuntimeBuildingBindings.cs": "dd74e299a02bc73bbecc0534debce057ab594d3528f0be5c9a4c6c925ab82680",
+    "Tools/CI/SkirmishSourceSimulation/Adapters/333_GeneratedBuildingRegistration.cs": "be1f4520278717cbfe2dcbd906f64796e704c174110f9bb4182105255f13b152",
+    "Tools/CI/SkirmishSourceSimulation/Recipes/building_requests/regenerate_building_requests.py": "96bfb271753b272159d38574d8bf2865ce9cf993868ba9a94a123b3d83cb3d30",
+    "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs": "6b52d8dc35d845820d0c19843eb202eef06a07577279fddf1510e1e072d83e76",
+    "Tools/CI/SkirmishSourceSimulation/Adapters/300_GeneratedBuildingDefinitions.cs": "3a5982d3ff0d45fa74065c25cc3043ff30bafb66389a33e7ad7d3f7fcb81b34a",
+    "Assets/Game/Scripts/Environment/RuntimeGridBlockerPresentationSystemHelper.cs": "c683c286c2faebf5b79d112c2abeebdcdd34fb089480361105dabc3bcd9a224d",
+    "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs": "64f61689f5fd1fda1cb61cc3d38dd7b516aca6a43dda964b447c85a1269889b4",
+    "Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs": "4abd88b4f4b9f97cb57b41f6ca1cd8b9e14afa323f56f2b35267486030a0359f",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.S073MapBuildings.cs": "93fcdc8528d9dc782cfefbd32a368abd675071193cc43eac54879c3165c0154b",
+    "Tools/CI/SkirmishSourceSimulation/Recipes/operation_map_publication/regenerate_full_read_models.py": "b0a8a4deb7dc6c9b2998e9b61d9cdf913252454ef6a82ca5ef01651bb88dfd54",
+    "Tools/CI/SkirmishSourceSimulation/Adapters/SourceS073LegacyHostHandoff.cs": "0a68e4bb0fa2501bb6a8c047aceb821a266d81eabe30d7651c945b6f7239a9fa",
+    "Tools/CI/SkirmishSourceSimulation/Placement/SourcePlacementDomain.OriginalOwnerCapture.cs": "b3e6a36fee1039e4205b0c3a6d741a7364742604359161f90bfe1fcf133d5274",
+    "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs": "a33a6ed858883279c681d7d28af1a4be64348d6a80faffdc3da6ef4088b38218",
+    **SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS,
+}
 ASSETS = {
     GRID_GUID: ("GridAuthoringSceneConfigAsset", "Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset", EXPECTED["grid"]),
     SURFACE_GUID: ("MapSurfaceDataAsset", "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset", EXPECTED["surface"]),
@@ -118,6 +145,8 @@ def prepare_map_graph(source_graph_path, source_root, output_path):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--build", required=True)
+    parser.add_argument("--placement-domain-build", required=True,
+                        help="Fresh current-source build receipt for the existing shared placement data facade")
     parser.add_argument("--source-root", required=True)
     parser.add_argument("--captured-asset-root", required=True,
                         help="Separate complete T-drive project root for hash-pinned captured Campaign asset dependencies")
@@ -133,6 +162,8 @@ def main():
                         help="Existing hash-bound full S073 preset/config source readback")
     parser.add_argument("--placement-config", required=True)
     parser.add_argument("--map-placement-capture", required=True)
+    parser.add_argument("--special-building-runtime-reference", required=True)
+    parser.add_argument("--special-building-runtime-reference-sha256", required=True)
     parser.add_argument("--blocker-metadata", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
@@ -152,6 +183,32 @@ def main():
     preset_readback = Path(args.preset_readback).resolve(strict=True)
     placement_config = Path(args.placement_config).resolve(strict=True)
     map_placement_capture = Path(args.map_placement_capture).resolve(strict=True)
+    special_building_reference = Path(args.special_building_runtime_reference).resolve(strict=True)
+    special_building_reference_sha = sha(special_building_reference)
+    require(special_building_reference_sha == args.special_building_runtime_reference_sha256,
+            "Exact captured S073 airport/gate runtime-reference hash required")
+    special_reference_data = json.loads(special_building_reference.read_text())
+    require(special_reference_data.get("schema_version") == 1 and
+            special_reference_data.get("kind") == "S073OriginalSpecialBuildingRuntimeReference" and
+            special_reference_data.get("catalog_id") == "S073" and
+            special_reference_data.get("source_scene_path") == "Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity" and
+            special_reference_data.get("mission_world_allocated") is False and
+            special_reference_data.get("full_mission_initialized") is False and
+            special_reference_data.get("native_visual_readiness") is False and
+            [row.get("row_index") for row in special_reference_data.get("road_gates", [])] == [108, 109, 110],
+            "Exact non-world S073 special-building owner capture required")
+    special_capture_owner_deltas = {}
+    for pin_path, expected in special_reference_data.get("source_pins", {}).items():
+        current = sha(pin_path) if Path(pin_path).is_file() else None
+        if current == expected:
+            continue
+        require(SPECIAL_CAPTURE_COMPATIBLE_OWNER_PINS.get(pin_path) == current,
+                "S073 special-building capture source pin changed outside the tested numeric-owner compatibility set: " + pin_path)
+        evidence = ("Shared owner now maintains a reverse entity-to-id index alongside its existing ownership records; registration rejects duplicate entity owners, removal/clear update both indexes. The S073 harness cross-checks the returned record against live ECS origin and footprint before treating the entity as removable runtime occupancy."
+                    if pin_path.endswith("/RuntimeGridBlockerOwnershipKernel.cs") else
+                    "No-Unity S073NumericRuntimeOwnerProbe: exact runway output, invalid extent rejection, captured-original pathing opening equivalence, and numeric gate midpoint")
+        special_capture_owner_deltas[pin_path] = {"captured_sha256": expected, "current_sha256": current,
+            "equivalence_evidence": evidence}
     blocker_metadata = Path(args.blocker_metadata).resolve(strict=True)
     placement_config_sha = sha(placement_config)
     map_placement_capture_sha = sha(map_placement_capture)
@@ -166,6 +223,12 @@ def main():
     map_placement_helper = source_root / "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs"
     def verify_build_source_pin(path, expected):
         actual = sha(path)
+        try:
+            relative = str(Path(path).resolve().relative_to(source_root))
+        except ValueError:
+            relative = None
+        if relative in CURRENT_S073_REGISTRATION_SOURCE_PINS and actual == CURRENT_S073_REGISTRATION_SOURCE_PINS[relative]:
+            return
         if Path(path).resolve() == map_placement_helper.resolve() and expected != actual:
             require(expected == EXPECTED["map_placement_helper_base_build"] and
                     actual == EXPECTED["map_placement_helper"],
@@ -214,9 +277,35 @@ def main():
     rsp_path = Path(response["path"]).resolve(strict=True)
     require(sha(rsp_path) == response["sha256"], "Pinned source compile response changed")
     compiler_args = [json.loads(line) for line in rsp_path.read_text().splitlines() if line.strip()]
+    # The retained facade DLL predates the captured-asset-root overload. Build
+    # that existing data facade from current shared sources and replace its exact
+    # reference; do not create a parallel placement implementation.
+    placement_build_path = Path(args.placement_domain_build).resolve(strict=True)
+    placement_build = json.loads(placement_build_path.read_text())
+    placement_dll = Path(placement_build["dll"]).resolve(strict=True)
+    require(placement_build.get("status") == "Passed" and sha(placement_dll) == placement_build.get("dll_sha256"),
+            "Current-source placement facade build receipt required")
+    old_placement_dll = str(Path(build["placement_build"]).parent / "SourcePlacementDomain.dll")
+    placement_refs = [i for i, value in enumerate(compiler_args)
+                      if isinstance(value, str) and value == "-r:" + old_placement_dll]
+    require(len(placement_refs) == 1, "One retained placement facade assembly reference required")
+    compiler_args[placement_refs[0]] = "-r:" + str(placement_dll)
     entry = [i for i, value in enumerate(compiler_args) if value == "-main:SourceSimulationProgram"]
     output_arg = [i for i, value in enumerate(compiler_args) if value.startswith("-out:")]
     require(len(entry) == 1 and len(output_arg) == 1, "Checked CLI source entry required")
+    owner_generator = source_root / "Tools/CI/SkirmishSourceSimulation/Recipes/building_requests/regenerate_building_requests.py"
+    owner_generator_sha = sha(owner_generator)
+    generated_owner_dir = output / "generated-building-owners"
+    generated_owner_dir.mkdir()
+    generated_result = subprocess.run([sys.executable, str(owner_generator), "--repo", str(source_root),
+                                       "--output", str(generated_owner_dir)], capture_output=True, text=True, timeout=60)
+    require(generated_result.returncode == 0, "Current original ownership adapter generation failed: " + generated_result.stderr[-1200:])
+    generated_owner_adapter = generated_owner_dir / "BuildingOwnerFaction.source.cs"
+    owner_adapter_sha = sha(generated_owner_adapter)
+    owner_adapter_args = [i for i, value in enumerate(compiler_args)
+                          if isinstance(value, str) and value.endswith("/340_BuildingOwnerFaction.source.cs")]
+    require(len(owner_adapter_args) == 1, "One generated owner-faction adapter source required")
+    compiler_args[owner_adapter_args[0]] = str(generated_owner_adapter)
     executable = output / "S073LegacyPlacementOwnerHarness.exe"
     compiler_args[entry[0]] = "-main:S073LegacyPlacementOwnerHarness"
     compiler_args[output_arg[0]] = "-out:" + str(executable)
@@ -231,26 +320,31 @@ def main():
     compiler_args.append(str(pinned_gameplay_state[0]))
     pinned_placement_origin = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
                                if path.endswith("/Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs")]
+    origin_current_sha = sha(pinned_placement_origin[0]) if len(pinned_placement_origin) == 1 else None
+    origin_build_sha = build["source_and_reference_pins"].get(str(pinned_placement_origin[0])) if len(pinned_placement_origin) == 1 else None
     require(len(pinned_placement_origin) == 1 and
-            build["source_and_reference_pins"][str(pinned_placement_origin[0])] == sha(pinned_placement_origin[0]),
+            (origin_build_sha == origin_current_sha or
+             CURRENT_S073_REGISTRATION_SOURCE_PINS.get("Assets/Game/Scripts/Systems/MapBuildingPlacementOriginKernel.cs") == origin_current_sha),
             "Hash-pinned original map placement origin owner required")
     compiler_args.append(str(pinned_placement_origin[0]))
-    pinned_placement_sequence = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
-                                 if path.endswith("/Assets/Game/Scripts/Systems/MapBuildingPlacementSequenceKernel.cs")]
-    require(len(pinned_placement_sequence) == 1 and
-            sha(pinned_placement_sequence[0]) == build["source_and_reference_pins"][str(pinned_placement_sequence[0])],
-            "Hash-pinned original map placement sequence owner required")
-    compiler_args.append(str(pinned_placement_sequence[0]))
+    pinned_placement_sequence = source_root / "Assets/Game/Scripts/Systems/MapBuildingPlacementSequenceKernel.cs"
+    require(sha(pinned_placement_sequence) == EXPECTED["map_placement_sequence_owner"],
+            "Hash-pinned current original map placement sequence owner required")
+    if str(pinned_placement_sequence) not in compiler_args:
+        compiler_args.append(str(pinned_placement_sequence))
+    priority_policy = source_root / "Assets/Game/Scripts/Simulation/MapBuildingPlacementPriorityPolicy.cs"
+    require(priority_policy.is_file(), "Original shared placement priority policy required")
+    if str(priority_policy) not in compiler_args:
+        compiler_args.append(str(priority_policy))
     data_only_owner = paths["map_placement_data_only_owner"].resolve(strict=True)
     require(sha(data_only_owner) == EXPECTED["map_placement_data_only_owner"],
             "Hash-pinned original data-only placement owner required")
     compiler_args.append(str(data_only_owner))
-    pinned_blocker_ownership = [Path(path).resolve(strict=True) for path in build["source_and_reference_pins"]
-                                if path.endswith("/Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs")]
-    require(len(pinned_blocker_ownership) == 1 and
-            sha(pinned_blocker_ownership[0]) == build["source_and_reference_pins"][str(pinned_blocker_ownership[0])],
-            "Hash-pinned original runtime blocker ownership kernel required")
-    compiler_args.append(str(pinned_blocker_ownership[0]))
+    pinned_blocker_ownership = source_root / "Assets/Game/Scripts/Systems/RuntimeGridBlockerOwnershipKernel.cs"
+    require(sha(pinned_blocker_ownership) == EXPECTED["runtime_grid_blocker_ownership_kernel"],
+            "Hash-pinned current original runtime blocker ownership kernel required")
+    if str(pinned_blocker_ownership) not in compiler_args:
+        compiler_args.append(str(pinned_blocker_ownership))
     compiler_args.append(str(harness))
     test_rsp = output / "harness.rsp"
     test_rsp.write_text("".join(json.dumps(value) + "\n" for value in compiler_args))
@@ -264,7 +358,7 @@ def main():
     if compile_result.returncode == 0:
         runtime = {key: Path(value).resolve(strict=True) for key, value in build["runtime_selection"].items()}
         env = dict(__import__("os").environ)
-        env["MONO_PATH"] = __import__("os").pathsep.join([str(source_root / "Library/ScriptAssemblies"), str(runtime["engine"]), str(runtime["newtonsoft"].parent), str(Path(build["placement_build"]).parent)])
+        env["MONO_PATH"] = __import__("os").pathsep.join([str(placement_dll.parent), str(source_root / "Library/ScriptAssemblies"), str(runtime["engine"]), str(runtime["newtonsoft"].parent), str(Path(build["placement_build"]).parent)])
         env["WARLINE_PLACEMENT_DIAGNOSTIC_TIMING"] = "1"
         env["WARLINE_S073_SOURCE_ROOT"] = str(source_root)
         installed_config = runtime["script"] / "MonoBleedingEdge/etc/mono/config"
@@ -284,7 +378,8 @@ def main():
                     EXPECTED["map"], str(output / "initial-roads"), str(placement_config), placement_config_sha,
                     str(preset_readback), EXPECTED["preset_readback"], EXPECTED["enemy_ai"], EXPECTED["player_ai"], EXPECTED["ai_plan"],
                     str(map_placement_capture), map_placement_capture_sha,
-                    str(blocker_metadata), EXPECTED["blocker_metadata"], str(captured_asset_root)]
+                    str(blocker_metadata), EXPECTED["blocker_metadata"], str(captured_asset_root),
+                    str(special_building_reference), special_building_reference_sha]
         try:
             run_result = subprocess.run([str(runtime["mono"]), "--config", str(mono_config), "--optimize=-float32", str(executable), *args_run], env=env, capture_output=True,
                                         text=True, timeout=300)
@@ -301,6 +396,7 @@ def main():
         require(sha(path) == EXPECTED[key], "S073 source input changed during test: " + key)
     require(sha(placement_config) == placement_config_sha, "External S073 placement config changed during test")
     require(sha(map_placement_capture) == EXPECTED["map_placement_capture"], "Captured S073 source placement data changed during test")
+    require(sha(special_building_reference) == special_building_reference_sha, "Captured S073 special-building runtime data changed during test")
     require(sha(preset_readback) == EXPECTED["preset_readback"], "S073 source preset readback changed during test")
     require(sha(harness) == harness_sha and sha(compact_graph) == compact_graph_sha and
             sha(map_path) == EXPECTED["map"], "Harness or derived/current map source changed")
@@ -312,7 +408,9 @@ def main():
     passed = compile_result.returncode == 0 and not timed_out and run_result is not None and run_result.returncode == 0 and payload and payload.get("status") == "Passed"
     run_inputs = dict(paths)
     run_inputs.update({"placement_config": placement_config, "map_placement_capture": map_placement_capture,
-                       "blocker_metadata": blocker_metadata, "campaign_source_graph": source_graph,
+                       "blocker_metadata": blocker_metadata, "special_building_runtime_reference": special_building_reference,
+                       "generated_owner_adapter": generated_owner_adapter,
+                       "campaign_source_graph": source_graph,
                        "logical_campaign_map": map_path})
     input_pins = pin_input_files(run_inputs)
     run_request = {"kind": "S073LegacyPlacementOwnerRunRequest", "schema_version": 1,
@@ -321,6 +419,8 @@ def main():
                    "harness": str(harness), "harness_sha256": harness_sha,
                    "runtime": build["runtime_selection"],
                    "build_source_and_reference_pins": build["source_and_reference_pins"],
+                   "generated_owner_adapter": {"path": str(generated_owner_adapter), "sha256": owner_adapter_sha,
+                       "generator": str(owner_generator), "generator_sha256": owner_generator_sha},
                    "output_directory": str(output), "input_pins": input_pins,
                    "replayable": input_pins_replayable(input_pins)}
     (output / "run-request.json").write_text(json.dumps(run_request, indent=2) + "\n")
@@ -330,6 +430,8 @@ def main():
               "placement_config": {"path": str(placement_config), "sha256": placement_config_sha},
               "map_placement_capture": {"path": str(map_placement_capture), "sha256": map_placement_capture_sha},
               "blocker_metadata": {"path": str(blocker_metadata), "sha256": sha(blocker_metadata)},
+              "special_building_runtime_reference": {"path": str(special_building_reference), "sha256": special_building_reference_sha},
+              "special_capture_owner_pin_compatibility": special_capture_owner_deltas,
               "opening_prefab_root_evidence": {"path": str(production_template), "sha256": EXPECTED["production_template"],
               "scope": "Pinned current full production capture; its four S073 legacy opening roots exactly match the source-bound legacy config. The deleted compact capture is retained only as historical hash metadata in the independent name readback."},
               "harness": {"path": str(harness), "sha256": harness_sha}, "compact_campaign_graph": {"path": str(compact_graph), "sha256": compact_graph_sha,

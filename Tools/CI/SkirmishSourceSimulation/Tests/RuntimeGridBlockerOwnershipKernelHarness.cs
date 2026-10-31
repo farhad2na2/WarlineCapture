@@ -22,6 +22,18 @@ internal static class RuntimeGridBlockerOwnershipKernelHarness
         ownership.Register(first, new Entity(1, 1), new int2(1, 1), new int2(3, 2));
         ownership.Register(second, new Entity(2, 1), new int2(3, 2), new int2(2, 2));
         ownership.Register(third, new Entity(3, 1), new int2(6, 6), new int2(1, 1));
+        Need(ownership.TryGetOwnedEntity(new Entity(2, 1), out RuntimeGridBlockerOwnershipRecord secondRecord) &&
+             secondRecord.Id == second && secondRecord.OriginCell.Equals(new int2(3, 2)) &&
+             secondRecord.SizeCells.Equals(new int2(2, 2)),
+            "Entity lookup must return the exact shared runtime blocker ownership record");
+        Need(!ownership.TryGetOwnedEntity(new Entity(2, 2), out _),
+            "Entity lookup must preserve versioned ECS identity");
+        bool rejectedDuplicateEntity = false;
+        try { ownership.Register(4, new Entity(2, 1), new int2(0, 0), new int2(1, 1)); }
+        catch (InvalidOperationException) { rejectedDuplicateEntity = true; }
+        Need(rejectedDuplicateEntity && ownership.Count == 3 &&
+             ownership.TryGetOwnedEntity(new Entity(2, 1), out secondRecord) && secondRecord.Id == second,
+            "An ECS entity cannot acquire a second blocker owner or alter existing membership");
 
         IReadOnlyList<int> overlaps = ownership.FindOverlappingIds(new int2(2, 2), new int2(2, 1));
         Need(overlaps.Count == 2 &&
@@ -40,6 +52,8 @@ internal static class RuntimeGridBlockerOwnershipKernelHarness
         Need(ownership.TryRemove(second, true, out _) && !ownership.IsRuntimeBlockerCell(3, 2, 8, 8) &&
              ownership.IsRuntimeBlockerCell(6, 6, 8, 8), "Final overlap removal clears only the owned cells");
         Need(!ownership.TryRemove(second, true, out _), "Removed blocker ids cannot be removed twice");
+        Need(!ownership.TryGetOwnedEntity(new Entity(2, 1), out _),
+            "Entity-to-owner index must be removed with the original ownership record");
 
         bool rejectedOutOfBounds = false;
         try { ownership.Register(99, new Entity(99, 1), new int2(7, 7), new int2(2, 2)); }
@@ -48,7 +62,8 @@ internal static class RuntimeGridBlockerOwnershipKernelHarness
             "Out-of-bounds blocker footprints must fail before changing registry membership");
 
         ownership.Clear();
-        Need(ownership.Count == 0 && !ownership.IsRuntimeBlockerCell(6, 6, 8, 8),
+        Need(ownership.Count == 0 && !ownership.IsRuntimeBlockerCell(6, 6, 8, 8) &&
+             !ownership.TryGetOwnedEntity(new Entity(3, 1), out _),
             "Disposal clears records and occupancy");
         ownership.InitializeGrid(8, 8);
         Need(ownership.AllocateId() == 4, "Clearing owner state must preserve monotonic blocker identity");

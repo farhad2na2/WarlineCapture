@@ -15,14 +15,10 @@ namespace Game.Runtime
                     BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey("Building_Airport")) ||
                 !BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData(building, out Vector3 center,
                     out Quaternion rotation, out Vector3 halfExtents)) return false;
-            Vector3 right = rotation * Vector3.right, forward = rotation * Vector3.forward;
-            surface = new StaticGridBlockerSurfaceOpeningComponent
-            {
-                Center = new float2(center.x, center.z),
-                Right = new float2(right.x, right.z), Forward = new float2(forward.x, forward.z),
-                HalfExtents = new float2(halfExtents.x, halfExtents.z)
-            };
-            return surface.IsValid;
+            return StaticGridBlockerSurfaceOpeningComponent.TryCreateFromWorldRunway(
+                new float3(center.x, center.y, center.z),
+                new quaternion(rotation.x, rotation.y, rotation.z, rotation.w),
+                new float3(halfExtents.x, halfExtents.y, halfExtents.z), out surface);
         }
 
         public static void Attach(EntityManager em, RuntimeBuildingEntity building)

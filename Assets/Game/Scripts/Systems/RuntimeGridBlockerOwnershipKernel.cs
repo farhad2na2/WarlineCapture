@@ -28,6 +28,7 @@ namespace Game.Runtime
     internal sealed class RuntimeGridBlockerOwnershipKernel
     {
         private readonly Dictionary<int, RuntimeGridBlockerOwnershipRecord> _records = new();
+        private readonly Dictionary<Entity, int> _idsByEntity = new();
         private int[] _cellCounts;
         private int _width;
         private int _height;
@@ -62,10 +63,22 @@ namespace Game.Runtime
                 throw new ArgumentOutOfRangeException(nameof(originCell), "Runtime blocker must have a unique id and a positive in-grid footprint");
             if (_records.ContainsKey(id))
                 throw new InvalidOperationException("Runtime blocker id already registered: " + id);
+            if (_idsByEntity.ContainsKey(entity))
+                throw new InvalidOperationException("Runtime blocker entity already has an owner: " + entity);
 
             var record = new RuntimeGridBlockerOwnershipRecord(id, entity, originCell, sizeCells);
             _records.Add(id, record);
+            _idsByEntity.Add(entity, id);
             AdjustCells(record, +1);
+        }
+
+        internal bool TryGetOwnedEntity(Entity entity, out RuntimeGridBlockerOwnershipRecord record)
+        {
+            if (_idsByEntity.TryGetValue(entity, out int id) && _records.TryGetValue(id, out record))
+                return true;
+
+            record = default;
+            return false;
         }
 
         internal IReadOnlyList<int> FindOverlappingIds(int2 originCell, int2 sizeCells)
@@ -95,6 +108,7 @@ namespace Game.Runtime
                 return false;
 
             _records.Remove(id);
+            _idsByEntity.Remove(record.Entity);
             if (adjustOccupancy)
                 AdjustCells(record, -1);
             return true;
@@ -112,6 +126,7 @@ namespace Game.Runtime
         internal void Clear()
         {
             _records.Clear();
+            _idsByEntity.Clear();
             _cellCounts = null;
             _width = 0;
             _height = 0;

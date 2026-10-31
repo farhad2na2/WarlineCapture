@@ -86,12 +86,12 @@ def generate(repo,output):
   constants.append(text['requests'][found[0].start():found[0].end()].strip())
  bodies['RequestConstants']='\n'.join(constants)
  owner=selected('faction','SetRuntimeBuildingOwnerFaction').replace('public void SetRuntimeBuildingOwnerFaction','internal void Set',1)
- owner=owner.replace('byte? ownerFactionId)','byte? ownerFactionId, bool allowSourceAuthoredMapWall=false)',1)
+ owner=owner.replace('byte? ownerFactionId)','byte? ownerFactionId, bool allowSourceAuthoredMapWall=false, bool allowSourceAuthoredMapRunway=false)',1)
  gate='UpdateRuntimeGateFriendlyPassFaction(context, building, ownerFactionId);';visual='ApplyRuntimeBuildingFactionVisual(context, building);'
  if owner.count(gate)!=1 or owner.count(visual)!=1:raise ValueError('Native faction collaborator shape changed')
  visual_body=selected('faction','ApplyRuntimeBuildingFactionVisual');code=re.sub(r'\s+','',mask(visual_body).split('{',1)[1]);expected='if(context.BuildingFactionVisualSystem==null)return;'
  if not code.startswith(expected):raise ValueError('Native non-rendered faction early-return domain changed')
- owner=owner.replace(gate,'if (building.Definition?.HasRunway == true || (building.Definition?.IsWall == true && !allowSourceAuthoredMapWall))\n                throw new System.NotSupportedException("Active wall/runway ownership outside starting ground scope");',1).replace(visual,'/* NonRendered scope: original null BuildingFactionVisualSystem early-return, no presentation instance. */',1);bodies['Set']=owner;bodies['UpdateRuntimeCombatFaction']=selected('faction','UpdateRuntimeCombatFaction')
+ owner=owner.replace(gate,'if ((building.Definition?.HasRunway == true && (!allowSourceAuthoredMapRunway || !building.HasWorldRunwayData)) || (building.Definition?.IsWall == true && !allowSourceAuthoredMapWall))\n                throw new System.NotSupportedException("Active wall/runway ownership outside source-captured map scope");',1).replace(visual,'/* NonRendered scope: original null BuildingFactionVisualSystem early-return, no presentation instance. */',1);bodies['Set']=owner;bodies['UpdateRuntimeCombatFaction']=selected('faction','UpdateRuntimeCombatFaction')
  for name in ['VerifyNativeAdoption','VerifyBuildingRecord']:
   source=selected('birth',name);code=re.sub(r'\s+','',mask(source).split('{',1)[1]);expected='if(!em.HasComponent<RuntimeActorBirthRecord>(actor))return;'
   if not code.startswith(expected):raise ValueError('Native no-record adoption branch changed: '+name)

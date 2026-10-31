@@ -51,6 +51,7 @@ namespace Unity.Entities {
   internal static EntityManager Manager=>EM;static EntityManager EM=>current??throw new InvalidOperationException("Owned system phase not bound");
   public static TimeData Time=>EM.WorldUnmanaged.Time;
   public static EntityStorageInfoLookup GetEntityStorageInfoLookup()=>new EntityStorageInfoLookup(EM);
+  public static bool HasSingleton<T>(){var count=EM.CreateEntityQuery(typeof(T)).CalculateEntityCount();if(count>1)throw new InvalidOperationException("SystemAPI.HasSingleton found multiple singleton components");return count==1;}
   public static bool TryGetSingleton<T>(out T value){var q=EM.CreateEntityQuery(typeof(T));if(q.CalculateEntityCount()==0){value=default;return false;}value=q.GetSingleton<T>();return true;}public static DynamicBuffer<T> GetBuffer<T>(Entity e)=>EM.GetBuffer<T>(e);public static T GetSingleton<T>()=>EM.CreateEntityQuery(typeof(T)).GetSingleton<T>();
   public static Entity GetSingletonEntity<T>()=>EM.CreateEntityQuery(typeof(T)).GetSingletonEntity();
   public static RefRW<T> GetSingletonRW<T>()where T:struct=>new RefRW<T>(EM,GetSingletonEntity<T>());

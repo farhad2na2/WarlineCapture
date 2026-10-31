@@ -151,11 +151,13 @@ internal static class S073LegacyPlacementOwnerHarness
 
     static JObject Run(string[] args)
     {
-        Need(args.Length == 35, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, and captured Campaign asset root");
+        Need(args.Length == 37, "Expected source templates, S073 configs, Campaign inputs, placement candidate, preset readback, exact AI source pins, captured map-placement data, pinned blocker metadata, captured Campaign asset root, and hash-bound special-building runtime reference");
         string initialTemplatePath = Path.GetFullPath(args[0]), templatePath = Path.GetFullPath(args[2]), identityPath = Path.GetFullPath(args[4]);
         string legacyPath = Path.GetFullPath(args[6]), definitionsPath = Path.GetFullPath(args[8]);
         string sourceRoot = Path.GetFullPath(args[10]);
         string capturedAssetRoot = Path.GetFullPath(args[34]);
+        string specialBuildingRuntimeReferencePath = Path.GetFullPath(args[35]);
+        string specialBuildingRuntimeReferenceSha = args[36];
         string mapPath = Path.Combine(sourceRoot, "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset");
         string graphPath = Path.GetFullPath(args[11]), initialPath = Path.GetFullPath(args[13]);
         string physicalPath = Path.GetFullPath(args[15]), waterPath = Path.GetFullPath(args[17]), startupPath = Path.GetFullPath(args[19]);
@@ -400,6 +402,17 @@ internal static class S073LegacyPlacementOwnerHarness
         var grid = em.GetComponentData<GridConfig>(gridEntity);
         string mapCapturePath = Path.GetFullPath(args[30]);
         JObject mapPlacementCapture = JObject.Parse(File.ReadAllText(mapCapturePath));
+        JObject specialBuildingRuntimeReference = JObject.Parse(File.ReadAllText(specialBuildingRuntimeReferencePath));
+        Need(Sha(specialBuildingRuntimeReferencePath) == specialBuildingRuntimeReferenceSha &&
+             specialBuildingRuntimeReferenceSha == "0eb6f1fb3eacac1a6fde4986b3b8118923ce021f48fa245279949385e52c2b1e" &&
+             (int?)specialBuildingRuntimeReference["schema_version"] == 1 &&
+             (string)specialBuildingRuntimeReference["kind"] == "S073OriginalSpecialBuildingRuntimeReference" &&
+             (string)specialBuildingRuntimeReference["catalog_id"] == "S073" &&
+             (bool?)specialBuildingRuntimeReference["mission_world_allocated"] == false &&
+             (bool?)specialBuildingRuntimeReference["full_mission_initialized"] == false &&
+             (bool?)specialBuildingRuntimeReference["native_visual_readiness"] == false &&
+             ((JArray)specialBuildingRuntimeReference["road_gates"]).Select(item => (int)item["row_index"]).SequenceEqual(new[] { 108, 109, 110 }),
+             "Pinned non-world original source airport/runway and road-gate data required");
         Need(Sha(mapCapturePath) == args[31] && args[31] == "a0107fcdaaf7ace274345b4615292134ec5e8547b456dffdb3c6b857dc72ae73" &&
              (int?)mapPlacementCapture["schema_version"] == 1 && (string)mapPlacementCapture["kind"] == "S073OriginalMapBuildingReferences" &&
              (string)mapPlacementCapture["operation_map_id"] == selected.OperationMapId &&
@@ -753,6 +766,7 @@ internal static class S073LegacyPlacementOwnerHarness
         };
 
         RuntimeBuildingEntity authoredMapBuilding = null;
+        var registeredSourceMapActors = new Dictionary<Entity, Tuple<RuntimeBuildingEntity, int, string>>();
         JObject authoredMapActorEvidence = null;
         JObject authoredMapRotatedActorEvidence = null;
         JObject authoredMapThirdBarrackEvidence = null;
@@ -888,6 +902,8 @@ internal static class S073LegacyPlacementOwnerHarness
         Entity preservedAuthoredBlocker = Entity.Null;
         JObject preservedAuthoredOverlapEvidence = null;
         quaternion capturedAuthoredRotation = default;
+        int observedSourceMapOverlapCount = 0;
+        bool expectsLegacyS002AuthoredOverlap = (string)mapPlacementCapture["operation_map_id"] == "opmap.skirmish.desert_base_01";
         void ReadPinnedAuthoredMapBlocker(Vector2Int origin, Vector2Int footprint,
             out Entity matchEntity, out int2 matchOrigin, out int2 matchSize,
             out OperationMapBuildingComponent matchIdentity, out quaternion matchRotation, out int2 selectionCenter)
@@ -907,6 +923,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 Entity blockerEntity = entities[i];
                 int2 blockerOrigin;
                 int2 blockerSize;
+                bool registeredSourceMapActor = registeredSourceMapActors.TryGetValue(blockerEntity, out var sourceActor);
                 bool authoredBuilding = em.HasComponent<OperationMapBuildingComponent>(blockerEntity) &&
                     em.HasComponent<RuntimeBuildingCombatInfo>(blockerEntity);
                 if (authoredBuilding)
@@ -915,36 +932,74 @@ internal static class S073LegacyPlacementOwnerHarness
                     blockerOrigin = combat.OriginCell;
                     blockerSize = combat.FootprintCells;
                 }
+                else if (registeredSourceMapActor)
+                {
+                    Need(sourceActor.Item2 >= 0 && sourceActor.Item2 < 432 &&
+                         (string)mapPlacementCapture["placement_rows"][sourceActor.Item2]["source_path"] == sourceActor.Item3 &&
+                         sourceActor.Item1.BlockerEntity == blockerEntity && sourceActor.Item1.CombatEntity != Entity.Null &&
+                         em.Exists(sourceActor.Item1.CombatEntity) && em.HasComponent<RuntimeBuildingCombatInfo>(sourceActor.Item1.CombatEntity),
+                        "Previously registered map blocker must retain its exact captured source-row owner");
+                    RuntimeBuildingCombatInfo combat = em.GetComponentData<RuntimeBuildingCombatInfo>(sourceActor.Item1.CombatEntity);
+                    blockerOrigin = combat.OriginCell;
+                    blockerSize = combat.FootprintCells;
+                    Need(combat.RuntimeBuildingId == sourceActor.Item1.Id && sourceActor.Item1.Definition != null &&
+                         combat.FootprintCells.Equals(new int2(sourceActor.Item1.Definition.FootprintCells.x, sourceActor.Item1.Definition.FootprintCells.y)),
+                        "Previously registered map blocker must match its canonical runtime owner footprint");
+                }
                 else
                 {
                     blockerOrigin = em.GetComponentData<UnitGrid>(blockerEntity).Cell;
                     blockerSize = em.GetComponentData<GridBlockerSize>(blockerEntity).Size;
+                    // Runtime blockers registered through the shared owner are
+                    // removed by that owner below; they are not baked map actors.
+                    if (runtimeBlockerOwnership.TryGetOwnedEntity(blockerEntity, out RuntimeGridBlockerOwnershipRecord owned))
+                    {
+                        Need(owned.OriginCell.Equals(blockerOrigin) && owned.SizeCells.Equals(blockerSize),
+                            "Runtime blocker owner record must match the live ECS footprint");
+                        continue;
+                    }
                 }
                 bool overlaps = origin.x < blockerOrigin.x + blockerSize.x && blockerOrigin.x < origin.x + footprint.x &&
                     origin.y < blockerOrigin.y + blockerSize.y && blockerOrigin.y < origin.y + footprint.y;
                 if (overlaps)
                 {
-                    if (!authoredBuilding)
+                    if (!authoredBuilding && !registeredSourceMapActor)
                         throw new InvalidOperationException("Unexpected blocker overlap outside the pinned authored map actor; runtime blocker-owner membership is not available in this bounded harness: " +
                             blockerEntity.Index + ":" + blockerEntity.Version + "@" + blockerOrigin.x + "," + blockerOrigin.y + "+" + blockerSize.x + "x" + blockerSize.y);
 
-                    OperationMapBuildingComponent identity = em.GetComponentData<OperationMapBuildingComponent>(blockerEntity);
-                    const string expectedSourceGlobalObjectId = "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1506274068195782-2359600729620732797";
-                    Need(identity.OperationMapId.ToString() == "opmap.skirmish.desert_base_01" && identity.PlacementIndex == 1 &&
-                         identity.SourceGlobalObjectId.ToString() == expectedSourceGlobalObjectId &&
-                         blockerOrigin.x == 944 && blockerOrigin.y == 346 && blockerSize.x == 32 && blockerSize.y == 37,
-                         "Overlapping authored blocker must match the pinned source identity and authoritative origin/footprint");
+                    OperationMapBuildingComponent identity = authoredBuilding ? em.GetComponentData<OperationMapBuildingComponent>(blockerEntity) : default;
+                    if (authoredBuilding)
+                    {
+                        const string expectedSourceGlobalObjectId = "GlobalObjectId_V1-2-ca1f2d7f265d8495f8c815441d68fda0-1506274068195782-2359600729620732797";
+                        Need(identity.OperationMapId.ToString() == "opmap.skirmish.desert_base_01" && identity.PlacementIndex == 1 &&
+                             identity.SourceGlobalObjectId.ToString() == expectedSourceGlobalObjectId &&
+                             blockerOrigin.x == 944 && blockerOrigin.y == 346 && blockerSize.x == 32 && blockerSize.y == 37,
+                             "Overlapping authored blocker must match the pinned source identity and authoritative origin/footprint");
+                    }
+                    else
+                    {
+                        JObject sourceRow = (JObject)mapPlacementCapture["placement_rows"][sourceActor.Item2];
+                        Need(sourceActor.Item1.Definition.Prefab.name == (string)sourceRow["category"] &&
+                             sourceActor.Item1.OriginCell.x == blockerOrigin.x && sourceActor.Item1.OriginCell.y == blockerOrigin.y,
+                            "Overlapping source-map actor must match its exact captured row and original shared runtime owner");
+                    }
                     overlapCount++;
                     matchEntity = blockerEntity;
                     matchOrigin = blockerOrigin;
                     matchSize = blockerSize;
                     matchIdentity = identity;
-                    matchRotation = em.GetComponentData<LocalTransform>(blockerEntity).Rotation;
+                    Entity transformEntity = registeredSourceMapActor ? sourceActor.Item1.CombatEntity : blockerEntity;
+                    matchRotation = em.GetComponentData<LocalTransform>(transformEntity).Rotation;
                     selectionCenter = em.GetComponentData<UnitGrid>(blockerEntity).Cell;
                 }
             }
-            Need(overlapCount == 1,
-                "The exact source-authored overlap must be recorded once; unrelated static blockers are outside the runtime blocker owner's removal registry");
+            observedSourceMapOverlapCount = overlapCount;
+            Need(!expectsLegacyS002AuthoredOverlap || overlapCount == 1,
+                "S002 must retain its exact source-authored overlap; every other overlap must match a tracked source row or runtime blocker owner");
+            if (overlapCount == 0)
+                return;
+            if (!expectsLegacyS002AuthoredOverlap && registeredSourceMapActors.ContainsKey(matchEntity))
+                return; // The exact source row's transform was already checked by RegisterCapturedMapBuilding.
             int[] capturedRotationBits = new[]
             {
                 BitConverter.ToInt32(BitConverter.GetBytes(matchRotation.value.x), 0),
@@ -960,18 +1015,21 @@ internal static class S073LegacyPlacementOwnerHarness
             blockerRemovalCallbackCount++;
             ReadPinnedAuthoredMapBlocker(origin, footprint, out var boundaryEntity, out var boundaryOrigin,
                 out var boundarySize, out var boundaryIdentity, out var boundaryRotation, out var selectionCenter);
-            Need(boundaryEntity == preservedAuthoredBlocker && boundaryRotation.Equals(capturedAuthoredRotation),
-                "Original blocker-removal boundary must observe the exact prevalidated actor and rotation");
-            preservedAuthoredOverlaps = 1;
+            Need(boundaryEntity == preservedAuthoredBlocker &&
+                 (boundaryEntity == Entity.Null || boundaryRotation.Equals(capturedAuthoredRotation)),
+                "Original blocker-removal boundary must observe the exact prevalidated source actor, if one overlaps");
+            preservedAuthoredOverlaps = observedSourceMapOverlapCount;
             preservedAuthoredOverlapEvidence = new JObject
             {
-                ["entity"] = boundaryEntity.Index + ":" + boundaryEntity.Version,
-                ["operation_map_id"] = boundaryIdentity.OperationMapId.ToString(),
-                ["placement_index"] = boundaryIdentity.PlacementIndex,
-                ["source_global_object_id"] = boundaryIdentity.SourceGlobalObjectId.ToString(),
-                ["authoritative_origin"] = new JArray(boundaryOrigin.x, boundaryOrigin.y),
-                ["authoritative_footprint"] = new JArray(boundarySize.x, boundarySize.y),
-                ["unit_grid_selection_center"] = new JArray(selectionCenter.x, selectionCenter.y),
+                ["observed_source_map_overlap_count"] = observedSourceMapOverlapCount,
+                ["source_authored_overlap"] = boundaryEntity != Entity.Null,
+                ["entity"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JValue(boundaryEntity.Index + ":" + boundaryEntity.Version),
+                ["operation_map_id"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JValue(boundaryIdentity.OperationMapId.ToString()),
+                ["placement_index"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JValue(boundaryIdentity.PlacementIndex),
+                ["source_global_object_id"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JValue(boundaryIdentity.SourceGlobalObjectId.ToString()),
+                ["authoritative_origin"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JArray(boundaryOrigin.x, boundaryOrigin.y),
+                ["authoritative_footprint"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JArray(boundarySize.x, boundarySize.y),
+                ["unit_grid_selection_center"] = boundaryEntity == Entity.Null ? JValue.CreateNull() : new JArray(selectionCenter.x, selectionCenter.y),
                 ["preserved_by_runtime_blocker_removal_owner"] = true
             };
         }
@@ -1006,7 +1064,8 @@ internal static class S073LegacyPlacementOwnerHarness
             int sourceFootprintX, int sourceFootprintY, int expectedOriginX, int expectedOriginY, bool expectedRotateVertical,
             int expectedFactionId,
             int[] expectedRotationBits, Vector3 expectedEuler,
-            int[] expectedPlacementIndices, bool allowSourceAuthoredMapWall = false)
+            int[] expectedPlacementIndices, bool allowSourceAuthoredMapWall = false,
+            SourceMapRuntimeFacts sourceMapRuntimeFacts = null)
         {
             JObject row = (JObject)mapPlacementCapture["placement_rows"][sourceRowIndex];
             Need((int?)row["row_index"] == sourceRowIndex && (string)row["category"] == expectedBuildingKey &&
@@ -1015,11 +1074,17 @@ internal static class S073LegacyPlacementOwnerHarness
                  (string)row["source_path"] == expectedSourcePath,
                 "Exact captured S073 map " + expectedBuildingKey + " binding required for source row " + sourceRowIndex);
             RuntimeDefinition sourceDefinition = mapDefinitions.Definitions[(int)row["prefab_index"]];
+            bool isRunway = sourceDefinition.HasRunway;
+            bool isGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(sourceDefinition);
+            bool runwayFactsMatch = sourceMapRuntimeFacts != null && sourceMapRuntimeFacts.SourceRowIndex == sourceRowIndex &&
+                sourceMapRuntimeFacts.SourceBuildingKey == expectedBuildingKey && sourceMapRuntimeFacts.HasRunway && !sourceMapRuntimeFacts.HasDoor;
+            bool gateFactsMatch = sourceMapRuntimeFacts != null && sourceMapRuntimeFacts.SourceRowIndex == sourceRowIndex &&
+                sourceMapRuntimeFacts.SourceBuildingKey == expectedBuildingKey && sourceMapRuntimeFacts.HasDoor && !sourceMapRuntimeFacts.HasRunway;
             Need(sourceDefinition.SourceMetadataComplete && sourceDefinition.Prefab.name == expectedBuildingKey &&
-                 sourceDefinition.IsWall == allowSourceAuthoredMapWall && !sourceDefinition.HasRunway &&
-                 !BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(sourceDefinition) &&
+                 sourceDefinition.IsWall == allowSourceAuthoredMapWall && (!isRunway || runwayFactsMatch) && (!isGate || gateFactsMatch) &&
+                 ((isRunway && runwayFactsMatch) || (isGate && gateFactsMatch) || (!isRunway && !isGate && sourceMapRuntimeFacts == null)) &&
                  sourceDefinition.FootprintCells.x == sourceFootprintX && sourceDefinition.FootprintCells.y == sourceFootprintY,
-                "Complete source definition with the explicitly qualified ordinary/wall owner and captured footprint required for " + expectedBuildingKey);
+                "Complete source definition with the explicitly captured ordinary, runway, gate, or wall owner and footprint required for " + expectedBuildingKey);
             int2 footprint = MapBuildingPlacementOriginKernel.ResolvePlacementFootprint(
                 sourceDefinition.FootprintCells.x, sourceDefinition.FootprintCells.y,
                 isLinearWall: allowSourceAuthoredMapWall,
@@ -1160,7 +1225,8 @@ internal static class S073LegacyPlacementOwnerHarness
                 worldEulerAngles: worldEuler, preserveAuthoredTransform: true,
                 removeOverlappingBlockers: true, removeBlockers: ObserveAndRemoveRuntimeBlockers,
                 sourceWorldRotationOverride: sourceRotation,
-                allowSourceAuthoredMapWall: allowSourceAuthoredMapWall);
+                allowSourceAuthoredMapWall: allowSourceAuthoredMapWall,
+                sourceMapRuntimeFacts: sourceMapRuntimeFacts);
             bool expectedPathingBlocker = new BuildingRuntimeEntityCompositionSystemHelper()
                 .ShouldRuntimeBuildingBlockPathing(rotatedDefinition);
             Need(building != null && building.CombatEntity != Entity.Null &&
@@ -1169,8 +1235,11 @@ internal static class S073LegacyPlacementOwnerHarness
                  building.OriginCell.Equals(new Vector2Int(origin.x, origin.y)) &&
                  building.Definition.Prefab.name == expectedBuildingKey && building.Definition.FootprintCells.Equals(new Vector2Int(footprint.x, footprint.y)),
                 "Captured source row must register through the existing shared owner with the original pathing-blocker policy, identity, and rotated footprint");
-            registration.SetOwner(building, (byte?)row["faction_id"], allowSourceAuthoredMapWall);
+            registration.SetOwner(building, (byte?)row["faction_id"], allowSourceAuthoredMapWall,
+                allowSourceAuthoredMapRunway: sourceMapRuntimeFacts?.HasRunway == true);
             autonomousWorld.Buildings.Add(building.Id, building);
+            if (building.BlockerEntity != Entity.Null)
+                registeredSourceMapActors.Add(building.BlockerEntity, Tuple.Create(building, sourceRowIndex, (string)row["source_path"]));
             autonomousWorld.UpdateS073LegacyDiagnosticBlockerOwners();
             RuntimeBuildingCombatInfo combatInfo = em.GetComponentData<RuntimeBuildingCombatInfo>(building.CombatEntity);
             Faction faction = em.GetComponentData<Faction>(building.CombatEntity);
@@ -1232,10 +1301,42 @@ internal static class S073LegacyPlacementOwnerHarness
             Need(definitionIndex >= 0 && definitionIndex < mapDefinitions.Definitions.Count,
                 "Captured source map definition index must resolve for row " + sourceRowIndex);
             RuntimeDefinition definition = mapDefinitions.Definitions[definitionIndex];
-            if (!definition.SourceMetadataComplete || definition.HasRunway ||
-                definition.AttackImpactPrefab != null || definition.MuzzleFlashPrefab != null ||
-                BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition))
+            bool isGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition);
+            bool isCapturedRunway = sourceRowIndex == 0 && definition.HasRunway;
+            bool isCapturedGate = sourceRowIndex >= 108 && sourceRowIndex <= 110 && isGate;
+            if (!definition.SourceMetadataComplete || definition.AttackImpactPrefab != null || definition.MuzzleFlashPrefab != null ||
+                (definition.HasRunway && !isCapturedRunway) || (isGate && !isCapturedGate))
                 return null;
+
+            SourceMapRuntimeFacts runtimeFacts = null;
+            if (isCapturedRunway)
+            {
+                Need((string)row["category"] == "Building_Airport" &&
+                     (string)row["prefab"]["path"] == "Assets/Game/Prefabs/Buildings/Building_Airport.prefab" &&
+                     (int?)row["faction_id"] == 1,
+                    "Airport runtime facts must remain bound to S073 source row 0");
+                JObject data = (JObject)specialBuildingRuntimeReference["airport_runway_runtime_world_data"];
+                JObject center = (JObject)data["center"], extents = (JObject)data["half_extents"];
+                JArray rotation = (JArray)data["rotation_xyzw"];
+                Need((string)data["owner"] == "BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData" && rotation.Count == 4,
+                    "Original runway world geometry owner result required");
+                runtimeFacts = new SourceMapRuntimeFacts { SourceRowIndex = sourceRowIndex, SourceBuildingKey = "Building_Airport", HasRunway = true,
+                    RunwayCenter = new[] { (float)center["x"], (float)center["y"], (float)center["z"] },
+                    RunwayRotationXyzw = rotation.Select(value => (float)value).ToArray(),
+                    RunwayHalfExtents = new[] { (float)extents["x"], (float)extents["y"], (float)extents["z"] } };
+            }
+            else if (isCapturedGate)
+            {
+                JObject gate = ((JArray)specialBuildingRuntimeReference["road_gates"]).Single(item => (int)item["row_index"] == sourceRowIndex) as JObject;
+                Need((string)row["category"] == "Building_Road_Barrier" &&
+                     (string)row["prefab"]["path"] == (string)gate["prefab_path"] &&
+                     (int?)row["faction_id"] == (int?)gate["faction_id"] && (string)gate["door_lookup_name"] == "Door_Z" &&
+                     (string)gate["owner"] == "BuildingRuntimeVisualPresentationSystemHelper.InitializeBuildingVisuals",
+                    "Road-gate runtime facts must remain bound to the exact S073 source row and original visual owner");
+                float open = (float)gate["door_local_euler_angles"]["z"];
+                runtimeFacts = new SourceMapRuntimeFacts { SourceRowIndex = sourceRowIndex, SourceBuildingKey = "Building_Road_Barrier", HasDoor = true,
+                    DoorClosedLocalEulerZ = 0f, DoorOpenLocalEulerZ = open };
+            }
 
             JObject replayOrigin = (JObject)mapPlacementOriginReplay["origins"][sourceRowIndex];
             JArray capturedRotation = row["world_rotation_f32bits"] as JArray;
@@ -1250,7 +1351,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 (int)replayOrigin["origin"][0], (int)replayOrigin["origin"][1], (bool)row["rotate_vertical"],
                 (int)row["faction_id"], capturedRotation.Select(value => (int)value).ToArray(),
                 new Vector3((float)capturedEuler["x"], (float)capturedEuler["y"], (float)capturedEuler["z"]),
-                Array.Empty<int>(), allowSourceAuthoredMapWall: definition.IsWall);
+                Array.Empty<int>(), allowSourceAuthoredMapWall: definition.IsWall, sourceMapRuntimeFacts: runtimeFacts);
         }
         using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
                    typeof(UnitGrid), typeof(LocalTransform)))
@@ -1336,9 +1437,10 @@ internal static class S073LegacyPlacementOwnerHarness
             for (int y = authoredOrigin.y; y < authoredOrigin.y + authoredDefinition.FootprintCells.y; y++)
                 for (int x = authoredOrigin.x; x < authoredOrigin.x + authoredDefinition.FootprintCells.x; x++)
                     mapFootprintBlocked &= mapGridBlockers.IsSet(x + y * grid.Width);
-            Need(mapFootprintBlocked && preservedAuthoredBlocker != Entity.Null && em.Exists(preservedAuthoredBlocker) &&
-                 em.HasComponent<StaticGridBlocker>(preservedAuthoredBlocker),
-                "Original static blocker owner did not retain the authored blocker while registering the runtime map actor");
+            Need(mapFootprintBlocked && (!expectsLegacyS002AuthoredOverlap ||
+                 (preservedAuthoredBlocker != Entity.Null && em.Exists(preservedAuthoredBlocker) &&
+                  em.HasComponent<StaticGridBlocker>(preservedAuthoredBlocker))),
+                "Original static blocker owner did not retain the required source-authored blocker while registering the runtime map actor");
             Need(blockerRemovalCallbackCount == 1 && redirectOwnerInvocationCount == 1,
                 "Shared registration must execute the selected row's blocker-removal and original redirect callbacks");
             var sourceMapPosition = new float3((float)authoredPosition["x"], (float)authoredPosition["y"], (float)authoredPosition["z"]);

@@ -1247,7 +1247,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["origin"] = new JArray(origin.x, origin.y), ["footprint"] = new JArray(width, height),
                 ["rotate_vertical"] = rotateVertical, ["source_path"] = (string)row["source_path"] });
         }
-        return new JObject { ["authority"] = "ExactCapturedSourceDefinitions plus shared MapBuildingPlacementOriginKernel.ResolvePlacementFootprint, GridUtils.WorldToCell, and shared MapBuildingPlacementOriginKernel.CenterCellToOrigin",
+        return new JObject { ["authority"] = "ExactCapturedSourceDefinitions plus shared footprint kernel with the exact original linear-wall predicate (definition.IsWall) and local-bounds inputs, GridUtils.WorldToCell, and shared MapBuildingPlacementOriginKernel.CenterCellToOrigin",
             ["source_rows"] = rows.Count, ["source_definitions"] = definitions.Count, ["rows_resolved"] = origins.Count,
             ["wall_rows"] = wallRows, ["rotated_rows"] = rotatedRows, ["geometric_center_rows"] = geometricRows,
             ["runtime_placements_processed"] = false, ["actors_registered"] = false, ["origins"] = origins };

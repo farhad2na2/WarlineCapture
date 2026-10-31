@@ -3601,6 +3601,7 @@
         "Assets/Game/Scripts/Composition/OperationMapRuntimeRootContract.cs",
         "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
         "Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs",
+        "Assets/Game/Scripts/Simulation/MapBuildingPlacementPriorityPolicy.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryCommands.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
         "Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs",

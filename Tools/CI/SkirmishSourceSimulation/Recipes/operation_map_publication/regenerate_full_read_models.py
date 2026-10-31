@@ -6,6 +6,7 @@ INPUTS = {
     'query': 'Assets/Game/Scripts/Systems/BuildingRuntimeReadModelCompositionSystemHelper.cs',
     'overlay': 'Assets/Game/Scripts/Systems/BuildingRuntimeSurfaceOverlaySystem.cs',
     'definition': 'Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs',
+    'placement_priority': 'Assets/Game/Scripts/Simulation/MapBuildingPlacementPriorityPolicy.cs',
     'runway': 'Assets/Game/Scripts/Systems/OperationMapRunwayReadModelUtility.cs',
     'signature': 'Assets/Game/Scripts/Systems/BuildingRuntimeSignatureUtility.cs',
 }
@@ -94,7 +95,9 @@ def generate(repo, output):
     count = lex.member(count_part, 'CountRuntimeBuildingsForFaction') + '\n' + lex.member(text['query'], 'CountBuildingForFaction')
     count = count.replace('Context context', 'GeneratedProductionReadModelSource.Context context')
     files['SourceRuntimeBuildingCountReader.cs'] = 'using System.Collections.Generic;namespace Game.Runtime{internal sealed class SourceRuntimeBuildingCountReader{' + count + '}}'
-    files['SourceReadModelDefinitionStatics.cs'] = 'namespace Game.Runtime{internal static class SourceReadModelDefinitionStatics{' + lex.member(text['definition'], 'GetProductionCount').replace('BuildingDefinition definition', 'RuntimeDefinition definition') + '}}'
+    production_count = lex.member(text['definition'], 'GetProductionCount').replace('BuildingDefinition definition', 'RuntimeDefinition definition')
+    production_count = production_count.replace('MapBuildingPlacementPriorityPolicy.', 'Game.Simulation.MapBuildingPlacementPriorityPolicy.')
+    files['SourceReadModelDefinitionStatics.cs'] = 'namespace Game.Runtime{internal static class SourceReadModelDefinitionStatics{' + production_count + '}}\n' + text['placement_priority']
     files['SourceFullReadModelCadence.cs'] = files['SourceFullReadModelCadence.cs'].replace('RuntimeBuildingEntity.PendingProduction', 'SourcePendingProduction')
     files['SourceOperationMapRunwayReadModelUtility.cs'] = text['runway']
     signature_body = text['signature']

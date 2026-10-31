@@ -761,6 +761,7 @@ internal static class S073LegacyPlacementOwnerHarness
         JObject authoredMapSixthFuelBladderEvidence = null;
         JObject authoredMapEnemyHallEvidence = null;
         JObject authoredMapSecondEnemyHallEvidence = null;
+        JObject authoredMapHouseEvidence = null;
         JObject authoredMapWallEvidence = null;
         var mapPlacementCallbackRows = new List<int>();
         var mapPlacementCallbackSuccessRows = new List<int>();
@@ -831,6 +832,14 @@ internal static class S073LegacyPlacementOwnerHarness
                     "Map/Buildings/Building_Hall/SM_Bld_Hall_01", 24, 37, 545, 379,
                     true, 0, new[] { 0, 1060439289, 0, 1060439277 }, new Vector3(0f, 90.00006f, 0f), Array.Empty<int>());
                 if (authoredMapSecondEnemyHallEvidence == null)
+                    return false;
+                mapPlacementCallbackSuccessRows.Add(scheduledIndex);
+                return true;
+            }
+            if (scheduledIndex == 25)
+            {
+                authoredMapHouseEvidence = RegisterCapturedOrdinaryMapRow(scheduledIndex);
+                if (authoredMapHouseEvidence == null)
                     return false;
                 mapPlacementCallbackSuccessRows.Add(scheduledIndex);
                 return true;
@@ -1174,6 +1183,33 @@ internal static class S073LegacyPlacementOwnerHarness
                     ["origin"] = new JArray(item.Item3.x, item.Item3.y), ["footprint"] = new JArray(item.Item4.x, item.Item4.y) })),
                 ["native_visual_readiness"] = false, ["mission_readiness_proven"] = false };
         }
+        JObject RegisterCapturedOrdinaryMapRow(int sourceRowIndex)
+        {
+            JObject row = (JObject)mapPlacementCapture["placement_rows"][sourceRowIndex];
+            int definitionIndex = (int)row["prefab_index"];
+            Need(definitionIndex >= 0 && definitionIndex < mapDefinitions.Definitions.Count,
+                "Captured source map definition index must resolve for row " + sourceRowIndex);
+            RuntimeDefinition definition = mapDefinitions.Definitions[definitionIndex];
+            if (!definition.SourceMetadataComplete || definition.IsWall || definition.HasRunway ||
+                definition.AttackImpactPrefab != null || definition.MuzzleFlashPrefab != null ||
+                BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition))
+                return null;
+
+            JObject replayOrigin = (JObject)mapPlacementOriginReplay["origins"][sourceRowIndex];
+            JArray capturedRotation = row["world_rotation_f32bits"] as JArray;
+            JObject capturedEuler = row["world_euler_angles"] as JObject;
+            Need(replayOrigin != null && capturedRotation != null && capturedRotation.Count == 4 &&
+                 capturedEuler != null && (int?)replayOrigin["row_index"] == sourceRowIndex &&
+                 (string)replayOrigin["source_path"] == (string)row["source_path"],
+                "Exact captured placement and shared-origin replay must agree for row " + sourceRowIndex);
+
+            return RegisterCapturedMapBuilding(sourceRowIndex, (string)row["category"],
+                (string)row["source_path"], definition.FootprintCells.x, definition.FootprintCells.y,
+                (int)replayOrigin["origin"][0], (int)replayOrigin["origin"][1], (bool)row["rotate_vertical"],
+                (int)row["faction_id"], capturedRotation.Select(value => (int)value).ToArray(),
+                new Vector3((float)capturedEuler["x"], (float)capturedEuler["y"], (float)capturedEuler["z"]),
+                new[] { sourceRowIndex });
+        }
         using (var redirectQuery = em.CreateEntityQuery(typeof(UnitMove),
                    typeof(UnitGrid), typeof(LocalTransform)))
         {
@@ -1442,7 +1478,7 @@ internal static class S073LegacyPlacementOwnerHarness
         Need(mapPlacementSourceRowCount == 432 && mapPlacementPriorityPassRows.SequenceEqual(Enumerable.Range(0, 432)) &&
              !mapPlacementSequenceQueued && !mapPlacementOwner.IsComplete &&
              mapPlacementCallbackRows.SequenceEqual(Enumerable.Range(0, 32)) &&
-             mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2, 3, 4, 5, 6, 20, 21 }) &&
+             mapPlacementCallbackSuccessRows.SequenceEqual(new[] { 1, 2, 3, 4, 5, 6, 20, 21, 25 }) &&
              authoredMapActorEvidence != null && (string)authoredMapActorEvidence["status"] == "Passed" &&
              authoredMapRotatedActorEvidence != null && (string)authoredMapRotatedActorEvidence["status"] == "Passed" &&
              authoredMapThirdBarrackEvidence != null && (string)authoredMapThirdBarrackEvidence["status"] == "Passed" &&
@@ -1450,8 +1486,9 @@ internal static class S073LegacyPlacementOwnerHarness
              authoredMapFifthFuelBladderEvidence != null && (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed" &&
              authoredMapSixthFuelBladderEvidence != null && (string)authoredMapSixthFuelBladderEvidence["status"] == "Passed" &&
              authoredMapEnemyHallEvidence != null && (string)authoredMapEnemyHallEvidence["status"] == "Passed" &&
-             authoredMapSecondEnemyHallEvidence != null && (string)authoredMapSecondEnemyHallEvidence["status"] == "Passed",
-            "Original data-only placement owner must complete its 432-row priority pass, attempt the first 32 sequential rows, register eight captured actors and remain incomplete");
+             authoredMapSecondEnemyHallEvidence != null && (string)authoredMapSecondEnemyHallEvidence["status"] == "Passed" &&
+             authoredMapHouseEvidence != null && (string)authoredMapHouseEvidence["status"] == "Passed",
+            "Original data-only placement owner must complete its 432-row priority pass, attempt the first 32 sequential rows, register nine captured ordinary actors and remain incomplete");
 
         var s073AIConfigs = new List<AIControllerConfig>
         {
@@ -1519,44 +1556,48 @@ internal static class S073LegacyPlacementOwnerHarness
                 (int)row["result_code"] == 0 && runtimeId > 0 && registry.ContainsKey(runtimeId);
         }
         bool authoredMapActorSucceeded = authoredMapBuilding != null && authoredMapActorEvidence != null &&
-            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapActorEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey(authoredMapBuilding.Id) && autonomousWorld.Buildings.ContainsKey(authoredMapBuilding.Id);
         bool authoredMapRotatedActorSucceeded = authoredMapRotatedActorEvidence != null &&
-            (string)authoredMapRotatedActorEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapRotatedActorEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapRotatedActorEvidence["runtime_id"]);
         bool authoredMapThirdBarrackSucceeded = authoredMapThirdBarrackEvidence != null &&
-            (string)authoredMapThirdBarrackEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapThirdBarrackEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapThirdBarrackEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapThirdBarrackEvidence["runtime_id"]);
         bool authoredMapFourthBarrackSucceeded = authoredMapFourthBarrackEvidence != null &&
-            (string)authoredMapFourthBarrackEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapFourthBarrackEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapFourthBarrackEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapFourthBarrackEvidence["runtime_id"]);
         bool authoredMapFifthFuelBladderSucceeded = authoredMapFifthFuelBladderEvidence != null &&
-            (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapFifthFuelBladderEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapFifthFuelBladderEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapFifthFuelBladderEvidence["runtime_id"]);
         bool authoredMapSixthFuelBladderSucceeded = authoredMapSixthFuelBladderEvidence != null &&
-            (string)authoredMapSixthFuelBladderEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapSixthFuelBladderEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapSixthFuelBladderEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapSixthFuelBladderEvidence["runtime_id"]);
         bool authoredMapEnemyHallSucceeded = authoredMapEnemyHallEvidence != null &&
-            (string)authoredMapEnemyHallEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapEnemyHallEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapEnemyHallEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapEnemyHallEvidence["runtime_id"]);
         bool authoredMapSecondEnemyHallSucceeded = authoredMapSecondEnemyHallEvidence != null &&
-            (string)authoredMapSecondEnemyHallEvidence["status"] == "Passed" && registry.Count == 19 &&
+            (string)authoredMapSecondEnemyHallEvidence["status"] == "Passed" && registry.Count == 20 &&
             registry.ContainsKey((int)authoredMapSecondEnemyHallEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapSecondEnemyHallEvidence["runtime_id"]);
+        bool authoredMapHouseSucceeded = authoredMapHouseEvidence != null &&
+            (string)authoredMapHouseEvidence["status"] == "Passed" && registry.Count == 20 &&
+            registry.ContainsKey((int)authoredMapHouseEvidence["runtime_id"]) &&
+            autonomousWorld.Buildings.ContainsKey((int)authoredMapHouseEvidence["runtime_id"]);
         bool authoredMapWallActorSucceeded = authoredMapWallEvidence != null &&
             (string)authoredMapWallEvidence["status"] == "Passed" &&
-            registry.Count == 19 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
+            registry.Count == 20 && registry.ContainsKey((int)authoredMapWallEvidence["runtime_id"]) &&
             autonomousWorld.Buildings.ContainsKey((int)authoredMapWallEvidence["runtime_id"]);
         bool allSucceeded = allTenInitialRequestsSucceeded && authoredMapActorSucceeded &&
             authoredMapRotatedActorSucceeded && authoredMapThirdBarrackSucceeded && authoredMapFourthBarrackSucceeded &&
             authoredMapFifthFuelBladderSucceeded && authoredMapSixthFuelBladderSucceeded &&
-            authoredMapEnemyHallSucceeded && authoredMapSecondEnemyHallSucceeded && authoredMapWallActorSucceeded;
+            authoredMapEnemyHallSucceeded && authoredMapSecondEnemyHallSucceeded && authoredMapHouseSucceeded && authoredMapWallActorSucceeded;
         var surfaceComponent = em.GetComponentData<MapSurfaceComponent>(surfaceEntity);
         int surfaceCount = MapSurfaceBlobAccess.SurfaceCount(ref surfaceComponent.SurfaceBlob.Value);
         return new JObject { ["kind"] = "S073LegacyPlacementOwnerHarness", ["status"] = allSucceeded ? "Passed" : "Failed",
@@ -1591,6 +1632,7 @@ internal static class S073LegacyPlacementOwnerHarness
             ["authored_map_sixth_fuel_bladder_actor"] = authoredMapSixthFuelBladderEvidence,
             ["authored_map_enemy_hall_actor"] = authoredMapEnemyHallEvidence,
             ["authored_map_second_enemy_hall_actor"] = authoredMapSecondEnemyHallEvidence,
+            ["authored_map_house_actor"] = authoredMapHouseEvidence,
             ["authored_map_wall_actor"] = authoredMapWallEvidence,
             ["map_placement_sequence"] = new JObject
             {
@@ -1608,7 +1650,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 (authoredMapRotatedActorEvidence != null ? 1 : 0) + (authoredMapThirdBarrackEvidence != null ? 1 : 0) +
                 (authoredMapFourthBarrackEvidence != null ? 1 : 0) + (authoredMapFifthFuelBladderEvidence != null ? 1 : 0) +
                 (authoredMapSixthFuelBladderEvidence != null ? 1 : 0) + (authoredMapEnemyHallEvidence != null ? 1 : 0) +
-                (authoredMapSecondEnemyHallEvidence != null ? 1 : 0) +
+                (authoredMapSecondEnemyHallEvidence != null ? 1 : 0) + (authoredMapHouseEvidence != null ? 1 : 0) +
                 (authoredMapWallEvidence != null ? 1 : 0),
             ["map_placements_total"] = 432,
             ["map_placement_runtime_owner_complete"] = false,
@@ -1643,7 +1685,7 @@ internal static class S073LegacyPlacementOwnerHarness
                 ["player_auto_mode_enabled"] = aiStartupResult.PlayerAutoModeEnabled,
                 ["spawn_cells_resolved_from_original_legacy_data"] = true },
             ["autonomous_host_stage"] = autonomousWorld.InitializationStage,
-            ["mission_world_scope"] = "S073 actual legacy startup prefix with eight captured authored-map buildings and one captured wall registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
+            ["mission_world_scope"] = "S073 actual legacy startup prefix with nine captured ordinary authored-map buildings and one captured wall registered through shared data/actor owners; other map rows and original placement-owner completion remain pending",
             ["full_mission"] = false, ["autonomous_aria"] = false, ["mission_outcome"] = false, ["mission_ready"] = false,
             ["native_visual_readiness"] = false, ["unity_player_launched"] = false };
     }

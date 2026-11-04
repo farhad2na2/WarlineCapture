@@ -1,4 +1,5 @@
 using UnityEngine;
+using Game.Components;
 using Game.Authoring;
 using Game.Runtime;
 
@@ -16,16 +17,18 @@ namespace Game.Composition
         {
             if (prefab != null && prefab.TryGetComponent(out UnitGridAuthoring authoring))
             {
+                Game.Components.UnitProductionMetadataScalarValues scalarMetadata =
+                    Game.Components.UnitProductionMetadataScalarPolicy.Project(authoring.CaptureProductionMetadataScalarSource());
                 metadata = new BuildingProductionQueueCompositionSystemHelper.UnitProductionMetadata(
-                    authoring.ProductionDurationSeconds,
+                    scalarMetadata.ProductionDurationSeconds,
                     authoring.ProductionTransportPrefab,
-                    authoring.IsAirUnit,
-                    authoring.ProductionTransportArrivalSeconds,
-                    authoring.ProductionTransportHoldForNextReadySeconds,
-                    authoring.ProductionTransportMaxConcurrent,
-                    authoring.ProductionTransportRequiresAirportRunway,
-                    authoring.ProductionTransportUsesRunwayLanding,
-                    authoring.GetConfiguredFootprintCells());
+                    scalarMetadata.IsAirUnit,
+                    scalarMetadata.ProductionTransportArrivalSeconds,
+                    scalarMetadata.ProductionTransportHoldForNextReadySeconds,
+                    scalarMetadata.ProductionTransportMaxConcurrent,
+                    scalarMetadata.ProductionTransportRequiresAirportRunway,
+                    scalarMetadata.ProductionTransportUsesRunwayLanding,
+                    new Vector2Int(scalarMetadata.FootprintWidth, scalarMetadata.FootprintDepth));
                 return true;
             }
 

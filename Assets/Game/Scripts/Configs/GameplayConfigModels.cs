@@ -415,6 +415,9 @@ namespace Game.Configs
         public Sprite PortraitCardSprite => portraitCardSprite;
         public Sprite PortraitActionSprite => portraitActionSprite;
         public int MaxHealth => maxHealth;
+        public int ScalarProjectionRawPrice => price;
+        public int ScalarProjectionRawMaterialsCost => materialsCost;
+        public float ScalarProjectionRawProductionDurationSeconds => productionDurationSeconds;
         public BuildingRole Role => role;
         public bool IsWall => isWall;
         public bool CanRequest => canRequest;

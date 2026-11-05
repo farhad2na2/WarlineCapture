@@ -1,0 +1,105 @@
+{
+  "status": "Passed",
+  "stages": [
+    {
+      "name": "native-review",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/native-review.log",
+      "started": 1792587042.4963279,
+      "exitCode": 0,
+      "elapsedSeconds": 186.5,
+      "markers": {
+        "[ApprovedMissionAtlasReview] result=Passed": true,
+        "[ArmySizeChoiceReview] result=Passed": true,
+        "[ArmySizeChoiceReview] rebindStyles=Passed": true
+      }
+    },
+    {
+      "name": "tests",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/tests.log",
+      "started": 1792587229.03141,
+      "exitCode": 0,
+      "elapsedSeconds": 47.5,
+      "markers": {}
+    },
+    {
+      "name": "campaign",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/campaign.log",
+      "started": 1792587276.531151,
+      "exitCode": 0,
+      "elapsedSeconds": 152.6,
+      "markers": {
+        "[ApprovedCampaignJourney] result=Passed": true
+      }
+    },
+    {
+      "name": "s002-en",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/s002-en.log",
+      "started": 1792587429.10403,
+      "exitCode": 0,
+      "elapsedSeconds": 316.8,
+      "markers": {
+        "[SagaNativeMedalJourney] result=Passed": true,
+        "[SkirmishS002AriaRun] appended=1 countedWin=1 error=": true
+      },
+      "proof": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-en-11957c88393b49da9acb50ed9f8ac316.jsonl.terminal-saga-medal-proof.json"
+    },
+    {
+      "name": "restart-en",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/restart-en.log",
+      "started": 1792587745.898986,
+      "exitCode": 0,
+      "elapsedSeconds": 44.5,
+      "markers": {
+        "[SagaProcessRestart] result=Passed": true
+      }
+    },
+    {
+      "name": "s002-fa-IR",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/s002-fa-IR.log",
+      "started": 1792587790.435591,
+      "exitCode": 0,
+      "elapsedSeconds": 320.4,
+      "markers": {
+        "[SagaNativeMedalJourney] result=Passed": true,
+        "[SkirmishS002AriaRun] appended=1 countedWin=1 error=": true
+      },
+      "proof": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-fa-249894117d8c40709efa6ab781a6542e.jsonl.terminal-saga-medal-proof.json"
+    },
+    {
+      "name": "restart-fa-IR",
+      "status": "Passed",
+      "log": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/logs/restart-fa-IR.log",
+      "started": 1792588110.8921978,
+      "exitCode": 0,
+      "elapsedSeconds": 46.4,
+      "markers": {
+        "[SagaProcessRestart] result=Passed": true
+      }
+    }
+  ],
+  "candidateSourceHash": "51846da24a6269d7e309becf85737adbf1749961594824a7c3d7a6da17606ef8",
+  "nativeVisualOutput": "Design/AgentReports/ApprovedMissionAtlas/20261021-125117",
+  "tests": {
+    "id": "2",
+    "testcasecount": "35",
+    "result": "Passed",
+    "total": "35",
+    "passed": "35",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-21 12:54:20Z",
+    "end-time": "2026-10-21 12:54:29Z",
+    "duration": "9.3701051"
+  },
+  "finalSourceHash": "51846da24a6269d7e309becf85737adbf1749961594824a7c3d7a6da17606ef8"
+}

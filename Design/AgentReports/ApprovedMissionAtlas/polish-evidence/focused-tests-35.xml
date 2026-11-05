@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="35" result="Passed" total="35" passed="35" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-10-20 22:53:45Z" end-time="2026-10-20 22:53:54Z" duration="8.8617368">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="6537" result="Passed" start-time="2026-10-20 22:53:45Z" end-time="2026-10-20 22:53:54Z" duration="8.861737" total="35" passed="35" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="8456" name="Game.Tests.Editor.dll" fullname="/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="6473" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:54Z" duration="8.827358" total="35" passed="35" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="62113" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="8457" name="Game" fullname="Game" runstate="Runnable" testcasecount="1660" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:54Z" duration="8.704235" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="8458" name="Tests" fullname="Game.Tests" runstate="Runnable" testcasecount="1660" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:54Z" duration="8.690742" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="8459" name="Editor" fullname="Game.Tests.Editor" runstate="Runnable" testcasecount="1660" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:54Z" duration="8.676442" total="34" passed="34" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="8270" name="SkirmishLibraryJourneyTests" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:54Z" duration="8.474170" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="8279" name="BackToLibraryRestoresTheBattlefieldCard" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.BackToLibraryRestoresTheBattlefieldCard" methodname="BackToLibraryRestoresTheBattlefieldCard" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="903158732" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:46Z" duration="0.009255" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8277" name="FirstMedalLineIsVisibleOnlyForAFirstAward" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.FirstMedalLineIsVisibleOnlyForAFirstAward" methodname="FirstMedalLineIsVisibleOnlyForAFirstAward" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="966559430" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:46Z" duration="0.000233" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8274" name="FreshProfileNavigationKeepsS001PlayableAndLocksTheRest" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.FreshProfileNavigationKeepsS001PlayableAndLocksTheRest" methodname="FreshProfileNavigationKeepsS001PlayableAndLocksTheRest" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="1577946092" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:46Z" duration="0.101984" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8276" name="LibraryLocKeysResolveInEnglishAndPersian" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.LibraryLocKeysResolveInEnglishAndPersian" methodname="LibraryLocKeysResolveInEnglishAndPersian" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="223623085" result="Passed" start-time="2026-10-20 22:53:46Z" end-time="2026-10-20 22:53:51Z" duration="5.483332" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8271" name="NormalInputJourneyMatchesLedgerAndCatalogCounts" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.NormalInputJourneyMatchesLedgerAndCatalogCounts" methodname="NormalInputJourneyMatchesLedgerAndCatalogCounts" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="556294008" result="Passed" start-time="2026-10-20 22:53:51Z" end-time="2026-10-20 22:53:54Z" duration="2.851366" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8272" name="PublishedCountsFollowCatalogRowsRatherThanAFixedGrid" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.PublishedCountsFollowCatalogRowsRatherThanAFixedGrid" methodname="PublishedCountsFollowCatalogRowsRatherThanAFixedGrid" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="180647539" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001360" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8280" name="QuickBattleRaisesOneClickAndDoesNotAlsoRaiseTheCardSound" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.QuickBattleRaisesOneClickAndDoesNotAlsoRaiseTheCardSound" methodname="QuickBattleRaisesOneClickAndDoesNotAlsoRaiseTheCardSound" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="1790002159" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000615" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8278" name="ResultCardShowsTheFirstMedalAndBattlefieldBack" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.ResultCardShowsTheFirstMedalAndBattlefieldBack" methodname="ResultCardShowsTheFirstMedalAndBattlefieldBack" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="1897571807" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.012262" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8275" name="ShippedFreshProfileResolverRejectsEveryNonSampleCatalogEntry" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.ShippedFreshProfileResolverRejectsEveryNonSampleCatalogEntry" methodname="ShippedFreshProfileResolverRejectsEveryNonSampleCatalogEntry" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="111251435" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.005367" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8273" name="TheaterHeaderTotalsUsePlayableCountsInReleaseAndDev" fullname="Game.Tests.Editor.SkirmishLibraryJourneyTests.TheaterHeaderTotalsUsePlayableCountsInReleaseAndDev" methodname="TheaterHeaderTotalsUsePlayableCountsInReleaseAndDev" classname="Game.Tests.Editor.SkirmishLibraryJourneyTests" runstate="Runnable" seed="1967939584" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000471" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="8281" name="SkirmishLibraryViewModelTests" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.041668" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="8295" name="CompiledBriefingSourceSuppliesDeadlineSizeStructuresAndMapExtent" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.CompiledBriefingSourceSuppliesDeadlineSizeStructuresAndMapExtent" methodname="CompiledBriefingSourceSuppliesDeadlineSizeStructuresAndMapExtent" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1347659453" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000943" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8292" name="FreshProfileWithOnlyS001OwnedCannotLaunchTheRest" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.FreshProfileWithOnlyS001OwnedCannotLaunchTheRest" methodname="FreshProfileWithOnlyS001OwnedCannotLaunchTheRest" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="868376027" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000632" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8288" name="GridIsRowMajorAndMapShowsTheSelectedObjective" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.GridIsRowMajorAndMapShowsTheSelectedObjective" methodname="GridIsRowMajorAndMapShowsTheSelectedObjective" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1265038394" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.027543" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8293" name="NormalInputJourneyKeepsTheMedalOnTheCardGridAndTheater" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.NormalInputJourneyKeepsTheMedalOnTheCardGridAndTheater" methodname="NormalInputJourneyKeepsTheMedalOnTheCardGridAndTheater" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="692514342" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001307" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8289" name="NotOwnedCardsKeepTheFullBriefingAndStoreRoute" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.NotOwnedCardsKeepTheFullBriefingAndStoreRoute" methodname="NotOwnedCardsKeepTheFullBriefingAndStoreRoute" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="911747240" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000239" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8296" name="PlannedBriefingWithoutCompiledDefinitionDoesNotInventTimeOrSize" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.PlannedBriefingWithoutCompiledDefinitionDoesNotInventTimeOrSize" methodname="PlannedBriefingWithoutCompiledDefinitionDoesNotInventTimeOrSize" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="201963261" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000346" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8294" name="PlayableBriefingWithoutCompiledDefinitionUsesLegacyClockAndLeavesSizeBlank" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.PlayableBriefingWithoutCompiledDefinitionUsesLegacyClockAndLeavesSizeBlank" methodname="PlayableBriefingWithoutCompiledDefinitionUsesLegacyClockAndLeavesSizeBlank" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1674898359" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000429" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8286" name="QuickBattleSelectsAnOwnedScenarioAndDoesNotLaunch" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.QuickBattleSelectsAnOwnedScenarioAndDoesNotLaunch" methodname="QuickBattleSelectsAnOwnedScenarioAndDoesNotLaunch" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="388487507" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000171" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8285" name="QuickBattleSkipsTheSelectedScenarioWhenAnotherIsPlayable" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.QuickBattleSkipsTheSelectedScenarioWhenAnotherIsPlayable" methodname="QuickBattleSkipsTheSelectedScenarioWhenAnotherIsPlayable" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1065232362" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000574" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8282" name="ReadingAtlasProgressForAnotherMapPreservesSelectionAndUsesPublishedDenominators" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.ReadingAtlasProgressForAnotherMapPreservesSelectionAndUsesPublishedDenominators" methodname="ReadingAtlasProgressForAnotherMapPreservesSelectionAndUsesPublishedDenominators" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1919849580" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000298" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8284" name="RecommendedNextSkipsNotOwnedUntilNothingOwnedRemains" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.RecommendedNextSkipsNotOwnedUntilNothingOwnedRemains" methodname="RecommendedNextSkipsNotOwnedUntilNothingOwnedRemains" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="154437864" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000201" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8283" name="RecommendedNextUsesTheBattlefieldWithFewestWinsThenCatalogOrder" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.RecommendedNextUsesTheBattlefieldWithFewestWinsThenCatalogOrder" methodname="RecommendedNextUsesTheBattlefieldWithFewestWinsThenCatalogOrder" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1513177997" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000386" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8287" name="ReleaseHidesPlannedOnlyBattlefieldsAndKeepsPublishedCounts" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.ReleaseHidesPlannedOnlyBattlefieldsAndKeepsPublishedCounts" methodname="ReleaseHidesPlannedOnlyBattlefieldsAndKeepsPublishedCounts" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1582365720" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000690" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8291" name="RestoreFromPrefsReturnsToTheBattlefieldCardAndDifficulty" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.RestoreFromPrefsReturnsToTheBattlefieldCardAndDifficulty" methodname="RestoreFromPrefsReturnsToTheBattlefieldCardAndDifficulty" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1598951488" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000625" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8290" name="SearchAndMedalFiltersJumpToTheMatchingBattlefield" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.SearchAndMedalFiltersJumpToTheMatchingBattlefield" methodname="SearchAndMedalFiltersJumpToTheMatchingBattlefield" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="721474400" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000784" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8297" name="SizeLocKeyNamesWarAndLargeWarWithoutUsingStructureCount" fullname="Game.Tests.Editor.SkirmishLibraryViewModelTests.SizeLocKeyNamesWarAndLargeWarWithoutUsingStructureCount" methodname="SizeLocKeyNamesWarAndLargeWarWithoutUsingStructureCount" classname="Game.Tests.Editor.SkirmishLibraryViewModelTests" runstate="Runnable" seed="1185110823" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000206" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="8298" name="SkirmishMedalLedgerTests" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.059858" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="8302" name="CountsPerMapAndObjectiveFollowCatalogIdentity" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.CountsPerMapAndObjectiveFollowCatalogIdentity" methodname="CountsPerMapAndObjectiveFollowCatalogIdentity" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="1123045893" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001136" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8301" name="CustomLegacyDrawDefeatSurrenderAndTechnicalFailureAwardNothing" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.CustomLegacyDrawDefeatSurrenderAndTechnicalFailureAwardNothing" methodname="CustomLegacyDrawDefeatSurrenderAndTechnicalFailureAwardNothing" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="1302783888" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000197" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8300" name="DuplicateSessionAndLaterContentVersionDoNotReplaceTheMedal" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.DuplicateSessionAndLaterContentVersionDoNotReplaceTheMedal" methodname="DuplicateSessionAndLaterContentVersionDoNotReplaceTheMedal" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="1017123268" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000247" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8306" name="FailedMedalCommitDoesNotAcknowledgeUntilTheRetryLands" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.FailedMedalCommitDoesNotAcknowledgeUntilTheRetryLands" methodname="FailedMedalCommitDoesNotAcknowledgeUntilTheRetryLands" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="490236813" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.035594" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8304" name="MigrationFromPreviousVersionLeavesMedalsEmptyAndIgnoresLastResult" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.MigrationFromPreviousVersionLeavesMedalsEmptyAndIgnoresLastResult" methodname="MigrationFromPreviousVersionLeavesMedalsEmptyAndIgnoresLastResult" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="215753735" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001488" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8303" name="SaveRoundTripPreservesMedals" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.SaveRoundTripPreservesMedals" methodname="SaveRoundTripPreservesMedals" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="1987818977" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001003" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8299" name="VictoryAwardsOneMedal" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.VictoryAwardsOneMedal" methodname="VictoryAwardsOneMedal" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="1494440128" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.000229" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="8305" name="VictorySettlementPersistsTheFirstMedalAndExposesTheAward" fullname="Game.Tests.Editor.SkirmishMedalLedgerTests.VictorySettlementPersistsTheFirstMedalAndExposesTheAward" methodname="VictorySettlementPersistsTheFirstMedalAndExposesTheAward" classname="Game.Tests.Editor.SkirmishMedalLedgerTests" runstate="Runnable" seed="852376400" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.017158" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+      <test-suite type="TestFixture" id="3354" name="MainMenuNavigationViewTests" fullname="MainMenuNavigationViewTests" classname="MainMenuNavigationViewTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.003779" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3355" name="ActiveTab_PersistsAcrossViewsAndResetsForNewSession" fullname="MainMenuNavigationViewTests.ActiveTab_PersistsAcrossViewsAndResetsForNewSession" methodname="ActiveTab_PersistsAcrossViewsAndResetsForNewSession" classname="MainMenuNavigationViewTests" runstate="Runnable" seed="431860483" result="Passed" start-time="2026-10-20 22:53:54Z" end-time="2026-10-20 22:53:54Z" duration="0.001337" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/WarlineCapture/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

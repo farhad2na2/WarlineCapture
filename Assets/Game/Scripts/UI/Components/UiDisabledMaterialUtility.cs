@@ -10,7 +10,8 @@ namespace Game.UI.Runtime
     {
         None = 0,
         MissionRestriction = 1 << 0,
-        CinematicInteractionLock = 1 << 1
+        CinematicInteractionLock = 1 << 1,
+        UnavailableAction = 1 << 2
     }
 
     internal static class UiDisabledMaterialUtility

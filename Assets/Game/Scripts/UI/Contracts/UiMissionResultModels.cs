@@ -1,5 +1,11 @@
 namespace Game.UI.Contracts
 {
+    public readonly struct UiMissionFirstContactResultDetails
+    {
+        public readonly bool Applicable, CommandSquadSpawned, CommandSquadAlive;
+        public UiMissionFirstContactResultDetails(bool spawned,bool alive)
+        { Applicable=true;CommandSquadSpawned=spawned;CommandSquadAlive=alive; }
+    }
     public readonly struct UiMissionConstructionResultDetails
     {
         public readonly bool Applicable;
@@ -64,6 +70,7 @@ namespace Game.UI.Contracts
         public readonly UiMissionExtractionResultDetails Extraction;
         public readonly UiMissionBreachResultDetails Breach;
         public readonly UiMissionConstructionResultDetails Construction;
+        public readonly UiMissionFirstContactResultDetails FirstContact;
 
         public UiMissionResultPopupModel(
             UiMissionResultOutcome outcome,
@@ -95,6 +102,7 @@ namespace Game.UI.Contracts
             Extraction = default;
             Breach = default;
             Construction = default;
+            FirstContact = default;
         }
 
         public UiMissionResultPopupModel(
@@ -102,7 +110,7 @@ namespace Game.UI.Contracts
             string subtitle, string summaryBody, byte stars, string elapsedText,
             string squadLossText, string enemiesDefeatedText, string rewardsText,
             string primaryActionLabel, bool primaryActionEnabled, bool retryVisible,
-            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default, UiMissionConstructionResultDetails construction = default, int civilianLossCount = 0)
+            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default, UiMissionConstructionResultDetails construction = default, int civilianLossCount = 0, UiMissionFirstContactResultDetails firstContact = default)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -127,6 +135,7 @@ namespace Game.UI.Contracts
             Extraction = extraction;
             Breach = breach;
             Construction = construction;
+            FirstContact = firstContact;
         }
 
         public static UiMissionResultPopupModel VictoryDefault =>

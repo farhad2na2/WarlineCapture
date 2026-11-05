@@ -58,8 +58,8 @@ namespace Game.UI.Runtime
             Canvas.willRenderCanvases+=LayoutDefenseResult;
             BindDefenseLayout();
             if(defenseGuideButton!=null) defenseGuideButton.onClick.AddListener(OpenDefenseGuide);
-            if (primaryButton != null) primaryButton.onClick.AddListener(OnPrimaryRequested);
-            if (retryButton != null) retryButton.onClick.AddListener(OnRetryRequested);
+            if (sharedResult == null && primaryButton != null) primaryButton.onClick.AddListener(OnPrimaryRequested);
+            if (sharedResult == null && retryButton != null) retryButton.onClick.AddListener(OnRetryRequested);
         }
 
         private void OnDisable()
@@ -67,6 +67,7 @@ namespace Game.UI.Runtime
             Canvas.willRenderCanvases-=LayoutDefenseResult;
             UnbindDefenseLayout();
             if(defenseGuideButton!=null) defenseGuideButton.onClick.RemoveListener(OpenDefenseGuide);
+            if (sharedResult != null) sharedResult.UnbindActions();
             if (primaryButton != null) primaryButton.onClick.RemoveListener(OnPrimaryRequested);
             if (retryButton != null) retryButton.onClick.RemoveListener(OnRetryRequested);
         }
@@ -116,6 +117,7 @@ namespace Game.UI.Runtime
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);
+            ApplySharedResult(in model);
             Button focus = model.RetryVisible ? retryButton : primaryButton;
             if (focus != null && focus.interactable && EventSystem.current != null)
                 EventSystem.current.SetSelectedGameObject(focus.gameObject);

@@ -1,0 +1,82 @@
+{
+  "published_main": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "pins": {
+    "collect_skirmish_batch_inspection_test.py": {
+      "sha256": "cfb3692dec2dc70b844ba531d4b01afb79f1ec519bff3a79e6db615811c5e285",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_production_queue.py": {
+      "sha256": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_production_matrix_authority.py": {
+      "sha256": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_counterpart_authority.py": {
+      "sha256": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "audit_skirmish_native_contacts.py": {
+      "sha256": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_production_operational_inspector.py": {
+      "sha256": "428022cb329a56d22b5949c0277051876f2b383a952e0a4b6f857367541ebf84",
+      "origin": "ReviewedProposal"
+    },
+    "s005_windows_source_snapshot.py": {
+      "sha256": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_profile_journal_admission.py": {
+      "sha256": "2d21f79ca77c3a06dfb1067a20bd84e0ee183e65df4e90ac994b373ca114fd52",
+      "origin": "ReviewedProposal"
+    },
+    "skirmish_native_identity.py": {
+      "sha256": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "invoke_skirmish_production_batch.py": {
+      "sha256": "53eea71618e4cdfe9fd1c65bc110bb1c2dbbbc6ba4c8fef2602402807037d493",
+      "origin": "ReviewedProposal"
+    },
+    "collect_skirmish_batch_inspection.py": {
+      "sha256": "f83b337fa2329eadc8e2570995f04d82d39abc56fb021754602a1a95d3d0a18a",
+      "origin": "ReviewedProposal"
+    },
+    "skirmish_operational_test_fixture.py": {
+      "sha256": "d8f4d9ce19b114cd52f77fc7afdf8802134f1e6b34312d982a259391ed432710",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_profile_journal_admission_test.py": {
+      "sha256": "ee78c471d7e60bb7f29c68d3b601e396496b2015b95d297ffb5aa808bced4654",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "skirmish_production_operational_inspector_test.py": {
+      "sha256": "adb506dfe7dd49a8a91e0e8ae55c17d636a9d5008400ed9006494b5fc6cf91f4",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "mac_skirmish_normal_worker_test.py": {
+      "sha256": "57f8af34fa317fc1ff5ec601865ccc244d804fb5dcac11322286a13863d0fa80",
+      "origin": "ReviewedProposal"
+    },
+    "mac_skirmish_normal_worker.py": {
+      "sha256": "24813986d9b18897d7b457f9ced6f6ead0bcb99514b8acf5b7e4cbca817ed4bc",
+      "origin": "ReviewedProposal"
+    },
+    "prepare_skirmish_production_batch.py": {
+      "sha256": "b717046d7ce8cb146879211504de1dff62554ba2340930687b45b6b2935e7341",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    },
+    "mac_tanker_probe35_controller.py": {
+      "sha256": "1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6",
+      "origin": "FrozenLifecycle1ffe"
+    },
+    "skirmish_construction_ledger_admission.py": {
+      "sha256": "f1d9279dc628034e6267475f00c6bfe709ea1c4e78f0e959494a2a5667cb2b24",
+      "origin": "f2a1b825c12e9c5597789fdaf4da679ebb7761af"
+    }
+  },
+  "no_assets_or_unity_project_created": true
+}

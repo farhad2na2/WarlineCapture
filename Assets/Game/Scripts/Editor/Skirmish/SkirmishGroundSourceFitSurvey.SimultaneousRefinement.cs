@@ -62,7 +62,7 @@ namespace Game.Editor
         // The caller owns definition/layout lifetime. This core creates only
         // proposal metadata and uses the same native allocator for every family.
         static JObject RefineLoadedCandidateCore(JObject mission,GroundObjective30CandidateOwner owner,OperationMapDefinition source,
-            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false,Action<SkirmishMapLayoutConfig> strictCandidatePreparation=null)
+            EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,string artifactPrefix=null,Action<JObject> checkpoint=null,JObject compoundOverride=null,bool requireExactJointRoutes=false,bool requireExactJointBaseline=false,bool preparedAuthoring=false,Action<SkirmishMapLayoutConfig> strictCandidatePreparation=null,JObject reviewedRouteDeltaProof=null)
         {
             using var live=em.CreateEntityQuery(typeof(SkirmishMatchState));
             Require(live.IsEmptyIgnoreFilter,"Refinement requires disposable source world, never live gameplay");
@@ -71,13 +71,34 @@ namespace Game.Editor
                 owner.Layout.OperationMapId==source.OperationMapId&&owner.Layout.WorldBinding.SourceHash==source.ContentHash&&
                 owner.Definition.CatalogId==(string)mission["catalog_id"],"Exact caller-owned source/definition/layout identity required");
             bool apPairServiceRequested=ApPairServiceAuthority(owner.Definition);
-            if(apPairServiceRequested)
+            bool completeGroundBaServiceRequested=CompleteGroundBaServiceAuthority(owner.Definition);
+            if(apPairServiceRequested||completeGroundBaServiceRequested)
                 Require(grid.Width==source.GridMetadata.Dimensions.x&&grid.Height==source.GridMetadata.Dimensions.y&&
                     grid.CellSize==source.GridMetadata.CellSize&&math.all(grid.Origin==(float3)source.GridMetadata.Origin),
                     "AP service queries require actual pinned source grid metadata");
             string error;
+
+            if(reviewedRouteDeltaProof!=null)
+            {
+                bool apReviewed=(string)reviewedRouteDeltaProof["scope"]==ApReviewedReplayScope;
+                if(apReviewed)
+                {
+                    Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
+                        apPairServiceRequested&&apGroundJointPreferencesRequested&&!mpGroundBaPilotRequested&&!s049BoundedCompoundRouteRequested&&
+                        !ProtectedRefinementCatalog(owner.Definition.CatalogId),
+                        "Only explicit prepared reviewed AP pair clone may enter this replay");
+                    ValidateReviewedApRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof,grid);
+                }
+                else
+                {
+                    Require(preparedAuthoring&&refinementPreferenceReplay&&strictCandidatePreparation==null&&
+                        completeGroundBaServiceRequested&&!mpGroundBaPilotRequested&&!apGroundJointPreferencesRequested,
+                        "Only explicit prepared generic route clone may enter this replay");
+                    ValidateReviewedRouteReplayProof(JsonUtility.ToJson(owner.Layout),mission,reviewedRouteDeltaProof);
+                }
+            }
             JObject mpEndpointRevision=null;
-            if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid);
+            if(mpGroundBaPilotRequested)mpEndpointRevision=ApplyMpPilotEndpointRevision(owner.Definition,grid,preparedAuthoring);
             JObject s049MainRouteRevision=s049BoundedCompoundRouteRequested?ApplyS049NativeCorridorMainSegments(owner.Definition,grid):null;
             if(strictCandidatePreparation!=null)
             {
@@ -139,6 +160,14 @@ namespace Game.Editor
                         }
                     }
                 }
+
+                if(reviewedRouteDeltaProof!=null)
+                {
+                    var requestedPointEvidence=new JObject{["queriesBySize"]=baselineRoutes.DeepClone()};
+                    AppendReviewedRoutePointClearance(requestedPointEvidence,routeClearance);
+                    output["reviewedRouteDelta"]=reviewedRouteDeltaProof.DeepClone();
+                    output["reviewedRequestedPointClearance"]=requestedPointEvidence;
+                }
                 output["baselineNativeApproaches"]=baselineRoutes;
                 output["approachFootprintReservations"]=new JArray(routeClearance.Select(RectJson));
                 if(requireExactJointBaseline&&baselineRoutes.OfType<JObject>().Any(r=>!JointRoutesExact(r)))
@@ -173,11 +202,12 @@ namespace Game.Editor
                             ["logicalFrameSearch"]=refinementLogicalFrameSearchRequested,
                             ["actualLogicalFrameJson"]=refinementLogicalFrameSearchRequested?JsonUtility.ToJson(owner.Layout):null,
                             ["allSizeFacilities"]=Ground30PreferredFacilities(budget,owner.Layout,grid)};
+                        if(completeGroundBaServiceRequested)row["completeGroundBaAuthority"]=CompleteGroundBaBudgetReceipt(owner.Definition,budget,grid);
                         sizes.Add(row);
                         try
                         {
                         ProbePilotNormalFacilityRelocation(new JObject(),System.Array.Empty<JObject>(),owner.Layout,owner.Definition.RoleCatalog,
-                            em,gridEntity,grid,surface,row,true,discovery,routeClearance,serviceAuthority:(mpGroundBaPilotRequested||apPairServiceRequested)?owner.Definition:null);
+                            em,gridEntity,grid,surface,row,true,discovery,routeClearance,serviceAuthority:(mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)?owner.Definition:null);
                         var facilities=(JArray)row["normalFacilityRelocationProposals"];
                         bool allFacilities=facilities!=null&&facilities.Count==budget.Structures.Length&&
                             facilities.All(f=>(bool?)f["entireConfigurationFound"]==true);
@@ -196,15 +226,15 @@ namespace Game.Editor
                         if((bool?)row["routeQueriesWithSameFacilityReservations"]?["endpointPolicyPreflight"]?["accepted"]!=true)
                         {row["jointRouteRefused"]="Authored endpoint policy preflight refused; no native route queries";complete=false;}
 
-                        if((requireExactJointRoutes||apPairServiceRequested)&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
+                        if((requireExactJointRoutes||apPairServiceRequested||completeGroundBaServiceRequested)&&!JointRoutesExact((JObject)row["routeQueriesWithSameFacilityReservations"]))
                         {row["jointRouteRefused"]="Nonexact native route with actual facility blockers";complete=false;}
-                        if(refinementPreferenceReplay||mpGroundBaPilotRequested||apPairServiceRequested)
+                        if(refinementPreferenceReplay||mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)
                         {
                             bool independent=PreferencePathsIndependent(owner.Layout,grid,(JObject)row["routeQueriesWithSameFacilityReservations"],out var independence);
                             row["actualProfileRouteIndependence"]=independence;
                             if(!independent)complete=false;
                         }
-                        if(mpGroundBaPilotRequested||apPairServiceRequested)
+                        if(mpGroundBaPilotRequested||apPairServiceRequested||completeGroundBaServiceRequested)
                         {
                             bool coverage=MpPilotCanonicalRouteCoverage(budget,owner.Layout,em,grid,(JObject)row["routeQueriesWithSameFacilityReservations"]);
                             row["mpPilotCanonicalRouteCoverage"]=coverage;

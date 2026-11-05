@@ -1,0 +1,38 @@
+[ApprovedCampaignJourney] started menuInput=InputSystemTouch gameplayInput=RaycastPointer profileFixture=FirstLaunchOnly outcomesInjected=0
+[ApprovedCampaignJourney] touch=ContinueButton
+[ApprovedCampaignJourney] touch=ChapterCard_1
+[ApprovedCampaignJourney] touch=StartBattleButton
+[ApprovedCampaignJourney] touch=DeployOperationButton
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=1 body=Press Select on the command bar.
+[CampaignPlayerJourney] action=1:SelectCommand
+[CampaignPlayerJourney] settled lesson=1 phase=FindSquad outcome=None produced=0 guidance=FindSquad body=Drag from one corner of the marked box to the opposite corner, enclosing the units, then release.
+[CampaignPlayerJourney] action=1:NormalSelectionGesture
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=2 body=Tap MOVE to select the move command.
+[CampaignPlayerJourney] action=2:MoveCommand
+[CampaignPlayerJourney] settled lesson=2 phase=MoveToCover outcome=None produced=0 guidance=MoveToCover body=Tap the highlighted destination to move your squad.
+[CampaignPlayerJourney] action=2:ShowMeButton
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=3 body=Your squad is moving to the marked cover position.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] settled lesson=3 phase=ConfirmThreat outcome=None produced=0 guidance=ConfirmThreat body=Tap the highlighted enemy to issue the attack.
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=en
+[ApprovedCampaignJourney] touch=CampaignMission_saga.ch01.m01.first_contact
+[ApprovedCampaignJourney] touch=StartBattleButton
+[ApprovedCampaignJourney] touch=DeployOperationButton
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=1 body=دکمهٔ «انتخاب» رو توی نوار فرمان بزن.
+[CampaignPlayerJourney] action=1:SelectCommand
+[CampaignPlayerJourney] settled lesson=1 phase=FindSquad outcome=None produced=0 guidance=FindSquad body=از گوشهٔ کادر مشخص‌شده بکش تا دور همهٔ نیروها کادر بیفته، بعد رها کن.
+[CampaignPlayerJourney] action=1:NormalSelectionGesture
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=2 body=«حرکت» رو بزن تا دستور حرکت انتخاب بشه.
+[CampaignPlayerJourney] action=2:MoveCommand
+[CampaignPlayerJourney] settled lesson=2 phase=MoveToCover outcome=None produced=0 guidance=MoveToCover body=حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.
+[CampaignPlayerJourney] action=2:ShowMeButton
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=3 body=گروهت داره به محل پوشش مشخص‌شده می‌ره.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] settled lesson=3 phase=ConfirmThreat outcome=None produced=0 guidance=ConfirmThreat body=حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=fa-IR
+[ApprovedCampaignJourney] result=Passed menuGestures=9 outcomesInjected=0 deviceAcceptance=Pending
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact

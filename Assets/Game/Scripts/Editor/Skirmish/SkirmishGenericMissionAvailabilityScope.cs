@@ -35,7 +35,7 @@ namespace Game.Editor
             var scope=new SkirmishGenericMissionAvailabilityScope();
             try
             {
-                scope.candidate=ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();scope.candidate.Configure(rows);
+                scope.candidate=ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();scope.candidate.hideFlags=HideFlags.HideAndDontSave;scope.candidate.Configure(rows);
                 scope.authoredScope=SkirmishExpansionCatalogConfig.UseEditorValidationCatalog(exactAuthored);
                 scope.libraryScope=SkirmishBattleCatalogConfig.UseEditorValidationCatalog(scope.candidate);
                 Debug.Log("[SkirmishCandidateAvailability] catalog="+catalogId+" index="+explicitIndex+

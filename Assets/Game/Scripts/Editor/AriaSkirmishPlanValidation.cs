@@ -9,6 +9,262 @@ namespace Game.Editor
     {
         public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
 
+        static int RunSurvivingStructureRifleDrawerControls()
+        {
+            int checks = 0;
+            void Check(bool ok, string name) { if (!ok) throw new InvalidOperationException(name); checks++; }
+            var view = new AriaSkirmishObservation(); var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent(); var output = new AriaPlayObservationComponent();
+            void Reset()
+            {
+                view = new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                    ExpandedBaseAssault = true, Time = 100, Frame = 100, Infantry = 12,
+                    PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                    ExpandedPageCount = 2, ExpandedPageIndex = 1, ExpandedTotalGroups = 7,
+                    ExpandedRosterRevision = 10, CanAffordRifle = true, OwnStructureAttackUnits = 4,
+                    Recruit = new AriaTouchTarget { Available = true, Id = 31,
+                        Position = new UnityEngine.Vector2(30,40) },
+                    CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 } };
+                plan = new AriaSkirmishPlanComponent { AssaultIssued = 1, StructureOrdered = 1,
+                    PagesOrdered = 3, SweepRosterRevision = 10, LastProgressAt = 100,
+                    Infantry = 12, PlayerHealth = 800, EnemyHealth = 800,
+                    Intent = AriaSkirmishIntent.ObserveBattle };
+                touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Waiting,
+                    GoalId = 10000, LastProgressAt = 100, LastObjectiveProgressAt = 100,
+                    ObjectiveWatchdogInitialized = 1, VisitedGoalMask = 1UL << (10000 & 63) };
+            }
+            void Step()
+            {
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            Reset(); Step();
+            Check(output.TargetId == 31 && touch.Phase == AriaPlayPhase.Aiming,
+                "surviving structure force approaches public Rifle Build opener");
+            view.Time = 101; view.Frame++; Step();
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                "Rifle Build opener requires ordinary aim and touch");
+            // Sample a completed input acknowledgement; no production command is fabricated.
+            view.DrawerOpen = true; view.Recruit = default; view.Time = 102; view.Frame = 103;
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0; touch.Pressed = 0;
+            touch.Actions = 1; touch.LastCompletedTargetId = 31;
+            touch.LastCompletedFrame = 102; touch.DueAt = 103;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0,
+                "surviving structure Rifle catalog gap must not become Inspect CloseDrawer");
+            view.Time = 103; view.Frame++; Step();
+            Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.GestureRequested == 0, "Rifle presentation gap retains owned recruitment without purchase");
+            view.Time = 103.5f; view.Frame++;
+            view.Recruit = new AriaTouchTarget { Available = true, Id = 61,
+                Position = new UnityEngine.Vector2(50,40) };
+            Step(); Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.Actions == 1,
+                "fresh eligible Rifle item receives its own normal approach");
+            view.Time = 104.5f; view.Frame++; Step();
+            Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 1,
+                "Rifle purchase remains a second ordinary UI gesture");
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0;
+            touch.Actions = 2; touch.LastCompletedTargetId = 61;
+            touch.LastCompletedFrame = view.Frame; touch.DueAt = view.Time + 1;
+            view.RifleRecruitPending = true; view.Time++; view.Frame++;
+            Step(); Check(output.TargetId == 63 && touch.Actions == 2,
+                "public pending Rifle production closes without duplicate purchase");
+            Reset(); view.DrawerOpen = true; view.Recruit = default;
+            plan.Intent = AriaSkirmishIntent.Recruit; plan.RecruitUnavailableAt = 96;
+            Step(); Check(output.TargetId == 63 && plan.NextRecruitAt == 112 &&
+                plan.Intent == AriaSkirmishIntent.Inspect,
+                "persistent Rifle catalog refusal retains bounded close and cooldown");
+            Reset(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.CanAffordRifle = false; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "Rifle public affordability refusal cannot be overridden by drawer recovery");
+            Reset(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.RifleRecruitPending = true; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "existing pending Rifle prevents another purchase");
+            Reset(); view.DrawerOpen = true; view.Recruit = default;
+            plan.Intent = AriaSkirmishIntent.Recruit;
+            touch.Phase = AriaPlayPhase.Aiming; touch.TargetId = 77; Step();
+            Check(output.TargetId != 31 && touch.GestureRequested == 0,
+                "Rifle catalog recovery cannot replace unrelated active aim");
+            return checks;
+        }
+
+        static int RunExpandedAssaultRecruitmentControls()
+        {
+            int checks = 0;
+            void Check(bool ok, string name) { if (!ok) throw new InvalidOperationException(name); checks++; }
+            var view = new AriaSkirmishObservation(); var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent(); var output = new AriaPlayObservationComponent();
+            void Reset()
+            {
+                view = new AriaSkirmishObservation { Active = true, ExpandedSession = true,
+                    ExpandedBaseAssault = true, Time = 100, Frame = 100, Infantry = 10,
+                    PlayerHealth = 800, EnemyHealth = 800, EnemyDesignatedAlive = true,
+                    ExpandedPageCount = 2, ExpandedPageIndex = 1, ExpandedTotalGroups = 7,
+                    ExpandedRosterRevision = 10, AssaultDistanceVisible = true,
+                    CanAffordRifle = true, OwnStructureAttackUnits = 3,
+                    Recruit = new AriaTouchTarget { Available = true, Id = 61,
+                        Position = new UnityEngine.Vector2(30, 40) } };
+                plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, AssaultIssued = 1, StructureOrdered = 1,
+                    PagesOrdered = 3, SweepRosterRevision = 10, LastProgressAt = 100,
+                    Infantry = 10, PlayerHealth = 800, EnemyHealth = 800,
+                    Intent = AriaSkirmishIntent.ObserveBattle };
+                touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Waiting,
+                    GoalId = 10000, LastProgressAt = 100, LastObjectiveProgressAt = 100,
+                    ObjectiveWatchdogInitialized = 1, VisitedGoalMask = 1UL << (10000 & 63) };
+            }
+            void Step()
+            {
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            void NoRecruit(string name)
+            {
+                Step(); Check(output.TargetId != 61 && touch.GestureRequested == 0, name);
+            }
+            Reset(); Step();
+            Check(output.Kind == AriaPlayObservationKind.Control && output.TargetId == 61 &&
+                plan.Intent == AriaSkirmishIntent.Recruit && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.Actions == 0,
+                "expanded accepted assault offers one normal replacement recruitment control");
+            view.Time = 101; view.Frame++; Step();
+            Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Attempts == 1 && touch.Actions == 0,
+                "replacement uses normal Decision aim delay and requests one gesture without synthetic purchase");
+            Check(plan.AssaultIssued == 1 && plan.StructureOrdered == 1 && plan.PagesOrdered == 3 &&
+                touch.LastObjectiveProgressAt == 100,
+                "recruitment preserves accepted assault orders and grants no objective progress");
+            Reset(); view.CanAffordRifle = false; NoRecruit("public stock/readiness/cap eligibility refusal preserves page observation");
+            Reset(); view.Recruit.Available = false; NoRecruit("unavailable production control is not bypassed");
+            Reset(); view.RifleRecruitPending = true; NoRecruit("pending replacement never queues another purchase");
+            Reset(); view.Infantry = 16; NoRecruit("viable force keeps existing assault observation");
+            Reset(); view.AirProfile = true; NoRecruit("air strategy retains its existing production priority");
+            Reset(); plan.NextRecruitAt = 101; NoRecruit("existing recruitment cooldown remains effective");
+            Reset(); touch.Phase = AriaPlayPhase.Aiming; touch.TargetId = 77;
+            NoRecruit("another control aim is not replaced by recruitment");
+            Reset(); touch.Phase = AriaPlayPhase.Touching; touch.GestureRequested = 1; touch.Pressed = 1;
+            Step(); Check(output.TargetId != 61 && touch.TargetId == 0 && touch.GestureRequested == 1,
+                "active gesture is left to the existing input lifecycle");
+            Reset(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            NoRecruit("incomplete verification is not bypassed");
+            Reset(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            touch.LastCompletedTargetId = 78; touch.LastCompletedFrame = 99;
+            NoRecruit("wrong completed target refuses recruitment transition");
+            Reset(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            touch.LastCompletedTargetId = 77; touch.LastCompletedFrame = 100;
+            NoRecruit("same-frame completion cannot start recruitment");
+            Reset(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            touch.LastCompletedTargetId = 77; touch.LastCompletedFrame = 99; touch.DueAt = 101;
+            NoRecruit("not-due completed verification cannot start recruitment");
+            Reset(); touch.Phase = AriaPlayPhase.Verifying; touch.TargetId = 77; touch.Actions = 1;
+            touch.LastCompletedTargetId = 77; touch.LastCompletedFrame = 99;
+            Step(); Check(output.TargetId == 61 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0, "fresh completed verification can approach the public Recruit control");
+            void MissingStructure()
+            {
+                Reset(); view.OwnStructureAttackUnits = 0; view.Infantry = 0;
+                view.ExpandedTotalGroups = 2;
+                view.CanAffordRocketeer = true;
+                view.RecruitRocketeer = new AriaTouchTarget { Available = true, Id = 62,
+                    Position = new UnityEngine.Vector2(50, 40) };
+                view.NextSquadPage = new AriaTouchTarget { Available = true, Id = 71 };
+                plan.AssaultIssued = 0; plan.StructureOrdered = 0; plan.PagesOrdered = 1;
+                plan.PagedToAssault = 1; view.ExpandedPageIndex = 0;
+            }
+            void NoStructurePurchase(string name)
+            {
+                Step(); Check(output.TargetId != 61 && output.TargetId != 62 &&
+                    touch.GestureRequested == 0, name);
+            }
+            MissingStructure(); Step();
+            Check(output.TargetId == 62 && plan.Intent == AriaSkirmishIntent.Recruit &&
+                touch.Phase == AriaPlayPhase.Aiming && touch.GestureRequested == 0,
+                "lost structure force requests eligible public Rocketeer before empty-page traversal");
+            view.Time = 101; view.Frame++; Step();
+            Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 0,
+                "structure replacement uses actual normal Decision gesture without production injection");
+            MissingStructure(); view.Infantry = 24; Step();
+            Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Aiming,
+                "public-eligible structure replacement is not blocked by legacy Combined Arms infantry threshold");
+            MissingStructure(); view.ExpandedPageCount = 0; view.ExpandedTotalGroups = 0;
+            view.NextSquadPage = default; view.CanAffordRocketeer = false;
+            NoStructurePurchase("absent-page sentinel with ineligible structure production cannot buy rifles instead");
+            MissingStructure(); view.ExpandedPageCount = 0; view.ExpandedTotalGroups = 0;
+            view.NextSquadPage = default; view.RecruitRocketeer.Available = false;
+            NoStructurePurchase("absent-page sentinel with unavailable structure control cannot buy rifles instead");
+            MissingStructure(); view.ExpandedPageCount = 0; view.ExpandedTotalGroups = 0;
+            view.NextSquadPage = default; view.CanAffordRocketeer = false;
+            view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            NoStructurePurchase("own open drawer cannot substitute rifles for unavailable structure production");
+            MissingStructure(); view.CanAffordRocketeer = false;
+            NoStructurePurchase("structure affordability/cap refusal cannot fall back to rifles for Barracks");
+            MissingStructure(); view.RecruitRocketeer.Available = false;
+            NoStructurePurchase("unavailable structure production preserves ordinary page behavior");
+            MissingStructure(); view.RocketeerRecruitPending = true;
+            NoStructurePurchase("pending structure replacement waits without a duplicate or rifle purchase");
+            MissingStructure(); plan.NextRecruitAt = 101;
+            NoStructurePurchase("lost structure force still honors cooldown");
+            MissingStructure(); touch.Phase = AriaPlayPhase.Aiming; touch.TargetId = 77;
+            NoStructurePurchase("structure recovery cannot replace an unrelated aim");
+            MissingStructure(); plan.TargetPending = 1;
+            NoStructurePurchase("structure recovery preserves pending assault input");
+            MissingStructure(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            Step(); Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Aiming,
+                "own normal recruitment drawer continues the eligible structure purchase");
+            Reset(); plan.TargetPending = 1; NoRecruit("pending assault target retains priority");
+            Reset(); plan.MapNavigationStage = 1; NoRecruit("active page navigation retains priority");
+            // Public UI sequence: Build opener -> completed input -> catalog -> role purchase.
+            // Acknowledgements below are sampled input-driver state, not production commands.
+            MissingStructure();
+            view.RecruitRocketeer.Id = 31;
+            view.CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 };
+            Step(); Check(output.TargetId == 31 && touch.Phase == AriaPlayPhase.Aiming,
+                "structure recruitment approaches the actual public Build opener");
+            view.Time = 101; view.Frame++; Step();
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                "drawer opening requires the ordinary Decision gesture");
+            view.DrawerOpen = true; view.RecruitRocketeer = default;
+            view.Time = 102; view.Frame = 103;
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0; touch.Pressed = 0;
+            touch.Actions = 1; touch.LastCompletedTargetId = 31;
+            touch.LastCompletedFrame = 102; touch.DueAt = 103;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0,
+                "completed Build opener not yet due must not become Inspect CloseDrawer");
+            view.Time = 103; view.Frame++; Step();
+            Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != 63 &&
+                touch.GestureRequested == 0,
+                "own recruitment catalog presentation gap waits without a purchase or close");
+            view.Time = 103.5f; view.Frame++;
+            view.RecruitRocketeer = new AriaTouchTarget { Available = true, Id = 62,
+                Position = new UnityEngine.Vector2(50,40) };
+            Step(); Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.Actions == 1,
+                "fresh public role item gets its own Decision approach after the opener");
+            view.Time = 104.5f; view.Frame++; Step();
+            Check(output.TargetId == 62 && touch.Phase == AriaPlayPhase.Touching &&
+                touch.GestureRequested == 1 && touch.Actions == 1,
+                "only the presented eligible role requests the second ordinary gesture");
+            touch.Phase = AriaPlayPhase.Verifying; touch.GestureRequested = 0;
+            touch.Actions = 2; touch.LastCompletedTargetId = 62;
+            touch.LastCompletedFrame = view.Frame; touch.DueAt = view.Time + 1;
+            view.RocketeerRecruitPending = true; view.Time++; view.Frame++;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.ObserveBattle && output.TargetId == 63 &&
+                touch.Actions == 2, "public pending production ends recruitment without duplicate purchase");
+            MissingStructure(); view.DrawerOpen = true; plan.Intent = AriaSkirmishIntent.Recruit;
+            view.RecruitRocketeer = default; view.CloseDrawer = new AriaTouchTarget { Available = true, Id = 63 };
+            plan.RecruitUnavailableAt = 96;
+            Step(); Check(output.TargetId == 63 && plan.NextRecruitAt == 112 &&
+                plan.Intent == AriaSkirmishIntent.Inspect,
+                "persistent unavailable role keeps bounded refusal and cooldown instead of looping forever");
+            return checks;
+        }
+
+
         public static void RunPublicPrecisionAttackValidation()
         {
             int checks=0;
@@ -274,6 +530,215 @@ namespace Game.Editor
             Step(110, 127.9f);
             Check(touch.LastObjectiveProgressAt == 110 && plan.AssaultIssued == 1,
                 "existing completed-sweep eligibility works even on a page with no current assault mask");
+
+            void PartialPage()
+            {
+                Reset(31);
+                view.ExpandedPageIndex = 2;
+                view.ExpandedPageCount = 5;
+                view.ExpandedTotalGroups = 21;
+                view.ExpandedAssaultMask = 31;
+                view.ExpandedSelectedMask = 31;
+                view.ExpandedSelectedGroups = 5;
+                view.AssaultDistanceVisible = false;
+                plan.AssaultPageSeen = 3;
+                plan.PagesOrdered = 3;
+                plan.StructureOrdered = 0;
+            }
+            void MapStep(float time, bool open, bool distanceVisible, float distance)
+            {
+                view.Time = time;
+                view.Frame++;
+                view.MapOpen = open;
+                view.AssaultDistanceVisible = distanceVisible;
+                view.NearestFriendlyObjectiveDistance = distance;
+                view.AssaultMap = new AriaAssaultMapObservation {
+                    Identity = open ? 22 : 11, ExpectedIdentity = true, Complete = true,
+                    ProjectionValid = true, FullMap = open,
+                    MarkerRevision = (uint)view.Frame, MarkerFrame = view.Frame,
+                    MarkerTime = time, ObjectiveHudIdentity = 77,
+                    ObjectiveWorld = UnityEngine.Vector3.zero,
+                    OpenMap = new AriaTouchTarget { Available = !open, Id = -20010 }
+                };
+                view.CloseMap = new AriaTouchTarget { Available = open, Id = -20012 };
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            }
+            PartialPage(); MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010 &&
+                plan.AssaultIssued == 0 && plan.PagesOrdered == 3,
+                "accepted same-roster five-page partial sweep can request normal map inspection");
+            NoProgress("normal map request is not objective progress");
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(111, true, false, 0);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectMapIdentity == 22,
+                "partial inspection retains owned open across later frames");
+            MapStep(112, true, true, 178.4f);
+            Check(plan.AssaultDistanceObserved == 1 && plan.BestAssaultDistance == 178.4f &&
+                output.TargetId == -20012,
+                "fresh actually presented full-map sample sets baseline and uses normal close");
+            NoProgress("first full-map sample and normal close request earn no credit");
+            touch.Actions++;
+            touch.TargetId = -20012;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(113, false, false, 0);
+            Check(plan.AssaultInspectStage == 0 && plan.AssaultInspectReadyAt == 125,
+                "actual normal close clears the operation and starts existing cooldown");
+            MapStep(124, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "cooldown cannot reopen early");
+            NoProgress("close and cooldown earn no objective progress");
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(125, false, false, 0);
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010,
+                "later missing compact contacts request a second owned normal open");
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(126, true, false, 0);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectOpenedFrame == view.Frame,
+                "second actual open establishes its own new marker boundary");
+            MapStep(127, true, true, 175.9f);
+            Check(plan.LastProgressAt == 127 && touch.LastObjectiveProgressAt == 127 &&
+                plan.AssaultIssued == 0 && plan.PagesOrdered == 3 && output.TargetId == -20012,
+                "only second genuinely closer presented sample renews progress and normally closes");
+            PartialPage(); MapStep(110, false, false, 0);
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(111, true, false, 0);
+            view.ExpandedAssaultMask = 0;
+            MapStep(112, true, false, 0);
+            Check(plan.AssaultInspectStage == 3 && output.TargetId == -20012 &&
+                plan.AssaultDistanceObserved == 0,
+                "loss of accepted masks during an owned open requests close without progress");
+            NoProgress("suppressed or lost page projection earns no baseline or progress");
+            PartialPage(); view.ExpandedAttackOrderMask = 15;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "partially accepted page cannot interrupt selection");
+            PartialPage(); view.ExpandedRosterRevision++;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "changed roster cannot borrow accepted-page inspection");
+            PartialPage(); view.AttackMode = true;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "armed command mode cannot be interrupted by inspection");
+            PartialPage();
+            plan.LastProgressAt = 62.142464f;
+            touch.LastProgressAt = 62.142464f;
+            touch.LastObjectiveProgressAt = 62.142464f;
+            MapStep(239.547409f, false, false, 0);
+            Check(touch.Phase != AriaPlayPhase.Blocked && plan.LastProgressAt == 62.142464f,
+                "captured prior177.405seconds remains below the unchanged watchdog");
+            MapStep(242.241562f, false, false, 0);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0 &&
+                plan.LastProgressAt == 62.142464f && touch.LastObjectiveProgressAt == 62.142464f,
+                "exact captured FA180.099seconds boundary still blocks without real progress");
+            PartialPage();
+            MapStep(281, false, false, 0);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0 &&
+                plan.LastProgressAt == 100 && touch.LastObjectiveProgressAt == 100,
+                "five-page acceptance and map availability do not weaken180second watchdog");
+
+            // Actual Plan -> Decision ordering, with the completed-input receipt shape
+            // sampled at EN64776 input line77. DueAt/Pressed/GestureRequested are not
+            // traced: fixture values follow AriaPlayInputSystem's completed-touch API.
+            void CompletedPage()
+            {
+                PartialPage();
+                view.Frame = 445;
+                plan.AssaultSelecting = 2;
+                plan.SelectionResetPage = 2;
+                touch.Phase = AriaPlayPhase.Verifying;
+                touch.Actions = 43;
+                touch.TargetId = 1073741835;
+                touch.LastCompletedTargetId = 1073741835;
+                touch.LastCompletedFrame = 445;
+                touch.DueAt = 123.15753f; // fixture: completion122.50753 + existing .65s cooldown
+                touch.Pressed = 0;
+                touch.GestureRequested = 0;
+                touch.GoalId = 10000;
+                touch.ObjectiveWatchdogInitialized = 1;
+                touch.VisitedGoalMask = 1UL << (10000 & 63);
+            }
+            void Pipeline(float time, bool open = false, bool visible = false, float distance = 0)
+            {
+                MapStep(time, open, visible, distance);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            void RefuseCompletedBoundary(string name, Action change)
+            {
+                CompletedPage(); change(); Pipeline(123.3f);
+                Check(plan.AssaultInspectStage == 0, name);
+            }
+            RefuseCompletedBoundary("aiming remains owned by the current target", () => touch.Phase = AriaPlayPhase.Aiming);
+            RefuseCompletedBoundary("touching cannot be interrupted", () => touch.Phase = AriaPlayPhase.Touching);
+            RefuseCompletedBoundary("pressed completed-looking receipt refuses inspection", () => touch.Pressed = 1);
+            RefuseCompletedBoundary("pending gesture refuses inspection", () => touch.GestureRequested = 1);
+            RefuseCompletedBoundary("no completed action refuses inspection", () => touch.Actions = 0);
+            RefuseCompletedBoundary("wrong completed target refuses inspection", () => touch.LastCompletedTargetId--);
+            RefuseCompletedBoundary("missing completion frame refuses inspection", () => touch.LastCompletedFrame = 0);
+            RefuseCompletedBoundary("same-frame completion waits for a later planner frame", () => touch.LastCompletedFrame = 446);
+            RefuseCompletedBoundary("future completion frame refuses inspection", () => touch.LastCompletedFrame = 447);
+            RefuseCompletedBoundary("completed touch cooldown is preserved", () => touch.DueAt = 123.4f);
+            RefuseCompletedBoundary("incomplete page acknowledgement refuses inspection", () => view.ExpandedAttackOrderMask = 15);
+            RefuseCompletedBoundary("inspection cooldown still refuses early restart", () => plan.AssaultInspectReadyAt = 123.4f);
+            RefuseCompletedBoundary("foreign command presentation still refuses inspection", () => view.AttackMode = true);
+
+            CompletedPage();
+            Pipeline(123.3f);
+            // This is the red assertion on the unchanged R8 planner: it excludes
+            // Verifying and Decision immediately resumes an ordinary card/page aim.
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010 &&
+                touch.TargetId == -20010 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.DueAt == 123.3f + .9f,
+                "completed Verifying Plan->Decision must normally aim the owned map open");
+            Check(touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100 &&
+                plan.PagesOrdered == 3 && plan.AssaultIssued == 0,
+                "inspection entry neither renews objective progress nor finishes pending pages");
+            Pipeline(124.3f);
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1 &&
+                touch.TargetId == -20010, "normal Decision delay must submit the map gesture");
+            // Explicit input-owner completion fixture, not a hardware-input claim.
+            void CompleteRequestedGesture(float time)
+            {
+                Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                    "fixture only acknowledges a real Decision gesture request");
+                touch.GestureRequested = 0;
+                touch.Pressed = 0;
+                touch.Actions++;
+                touch.LastCompletedTargetId = touch.TargetId;
+                touch.LastCompletedFrame = view.Frame;
+                touch.Phase = AriaPlayPhase.Verifying;
+                touch.DueAt = time + .65f;
+            }
+            CompleteRequestedGesture(124.3f);
+            Pipeline(125.1f, true);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectOpenedFrame == view.Frame &&
+                plan.AssaultDistanceObserved == 0,
+                "actual open acknowledgement waits for a later rendered marker");
+            Pipeline(125.2f, true, true, 178.4f);
+            Check(plan.AssaultInspectStage == 3 && plan.AssaultDistanceObserved == 1 &&
+                output.TargetId == -20012 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100,
+                "fresh marker establishes baseline and normally aims close without progress credit");
+            Pipeline(126.2f, true, true, 178.4f);
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.TargetId == -20012 &&
+                touch.GestureRequested == 1, "normal Decision delay must submit close gesture");
+            CompleteRequestedGesture(126.2f);
+            Pipeline(126.3f);
+            Check(plan.AssaultInspectStage == 0 && plan.AssaultInspectReadyAt == 126.3f + 12 &&
+                touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100,
+                "acknowledged normal close retains watchdog and existing inspection cooldown");
+            view.ExpandedSelectedGroups = 0;
+            view.ExpandedSelectedMask = 0;
+            view.SelectedCount = 0;
+            view.SelectionVisible = false;
+            view.NextSquadPage = new AriaTouchTarget { Available = true, Id = -268468306 };
+            Pipeline(127);
+            Check(output.TargetId == -268468306 && touch.TargetId == -268468306 &&
+                touch.Phase == AriaPlayPhase.Aiming && plan.PagesOrdered == 3 &&
+                plan.AssaultIssued == 0 && touch.LastObjectiveProgressAt == 100,
+                "after close normal pending-page input resumes without sweep or progress credit");
             return checks;
         }
 
@@ -765,6 +1230,8 @@ namespace Game.Editor
                     touch.Phase != AriaPlayPhase.Blocked,
                     "unselected in-flight assault observes battle instead of exhausting Hold retries");
             }
+            checks += RunExpandedAssaultRecruitmentControls();
+            checks += RunSurvivingStructureRifleDrawerControls();
             checks += RunPublicApproachProgressControls();
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 

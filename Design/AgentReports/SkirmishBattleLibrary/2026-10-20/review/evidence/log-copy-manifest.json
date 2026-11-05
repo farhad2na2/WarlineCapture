@@ -1,0 +1,1135 @@
+{
+  "createdUtc": "2026-10-20T17:02:55.058187+00:00",
+  "archive": "validation-logs.zip",
+  "originals": "Full originals remain locally; no source logs deleted",
+  "files": [
+    {
+      "file": "logs/skirmish-saga-ap-fa-4x3-01.log",
+      "rawSha256": "7946ea4e4701177b1725754445a7a140c3861d436d53b5b125e28ccf4d5bc7b1",
+      "publicSha256": "c70071495fb490b4cebbcf83653b6106c995678a551c89fc859d010d8c655631",
+      "privateLinesRedacted": 7,
+      "rawBytes": 3232837,
+      "publicBytes": 3232518
+    },
+    {
+      "file": "logs/skirmish-saga-baseline-01.log",
+      "rawSha256": "2407af833746cb4f4c8cf01faf62de151f2103fecf13587deaadbb6f0461a96f",
+      "publicSha256": "f865582cd6d17ca88dcc7ea0ee95aafa57e1c957a44d832a4da42d3b0f63f2bc",
+      "privateLinesRedacted": 5,
+      "rawBytes": 16647914,
+      "publicBytes": 16647667
+    },
+    {
+      "file": "logs/skirmish-saga-baseline-02.log",
+      "rawSha256": "327c0887a926064adb1d31c84c8acfb7c0762781ffa6fcbfbcc31d77643d2f96",
+      "publicSha256": "267ae25fd606487e8f17e26146586dee896630ea0612375d9697f7fc6f524c0d",
+      "privateLinesRedacted": 7,
+      "rawBytes": 25646920,
+      "publicBytes": 25646601
+    },
+    {
+      "file": "logs/skirmish-saga-bootstrap-diagnostic-01.log",
+      "rawSha256": "3c2071fa0520bc2d8da4e7f642e7a773f75dfeb878033abaea8d2f542837184f",
+      "publicSha256": "885239f2d562bd990b6af6cb7cb20494d45f3279623809ebb6c373c6933379e1",
+      "privateLinesRedacted": 9,
+      "rawBytes": 324262,
+      "publicBytes": 323890
+    },
+    {
+      "file": "logs/skirmish-saga-briefing-01.log",
+      "rawSha256": "4d6e8d76967df084a7ef32139942c812d808955c2e680cd0841c9e04d0895b88",
+      "publicSha256": "26e9fecee561dd1080af10b6547a9a26fe54288e8df2757bf741167c9cbc4cce",
+      "privateLinesRedacted": 7,
+      "rawBytes": 369885,
+      "publicBytes": 369566
+    },
+    {
+      "file": "logs/skirmish-saga-briefing-02.log",
+      "rawSha256": "7279cc255e64254eca73d5c6eb58b39ba4af5cb9aebbb56eb8bda3a6e54a524e",
+      "publicSha256": "40bdb768d9ab81454a510a45ad411b79c0eb706749079ca863e54eff3e7db13e",
+      "privateLinesRedacted": 7,
+      "rawBytes": 531210,
+      "publicBytes": 530891
+    },
+    {
+      "file": "logs/skirmish-saga-briefing-03.log",
+      "rawSha256": "03d105ab9e180fee3707a1da9b1ff50074b169d744fce8450ce0726e3238f26c",
+      "publicSha256": "9772e965b6802393a340e512ded2317f42da3003c98af77802f7ade1bf56c387",
+      "privateLinesRedacted": 7,
+      "rawBytes": 736587,
+      "publicBytes": 736268
+    },
+    {
+      "file": "logs/skirmish-saga-briefing-04.log",
+      "rawSha256": "810ffd04599819ed3459994fcc55df206fe6443c15f06a84a9fb684fc72e7534",
+      "publicSha256": "dbb123a97cfbc74cde72e69e8ca579c3a4bc396c15608fb02204997377b31fee",
+      "privateLinesRedacted": 7,
+      "rawBytes": 765012,
+      "publicBytes": 764693
+    },
+    {
+      "file": "logs/skirmish-saga-briefing-05.log",
+      "rawSha256": "58fc24cf1e0c623f37eef2122b13904bf0f1de4fe822234b489870f00bc33d57",
+      "publicSha256": "9bb614e6cb34cec03245c7b4522b4eda4d5f68585ac95c419c2098ebe31efe65",
+      "privateLinesRedacted": 7,
+      "rawBytes": 624264,
+      "publicBytes": 623945
+    },
+    {
+      "file": "logs/skirmish-saga-cache-audit-01.log",
+      "rawSha256": "7cd5695d450cdeb1af645f25c4eff45a39831ac14d043b2c929230aeb2c8cd57",
+      "publicSha256": "6e8c1068f2a36e3e759759634e5b3a9dd5f45ba39f0abed1805199fb7303cf92",
+      "privateLinesRedacted": 7,
+      "rawBytes": 263850,
+      "publicBytes": 263531
+    },
+    {
+      "file": "logs/skirmish-saga-cache-stamp-preparation-01.log",
+      "rawSha256": "cacf9c7dd04ffc9264e36c756a493c850c516e4830853c499b12536545466356",
+      "publicSha256": "9ab8894324d4aa8cc1f176c9d2b6fbae0cdb01f197ab24493f58e613c36fc52e",
+      "privateLinesRedacted": 7,
+      "rawBytes": 268074,
+      "publicBytes": 267755
+    },
+    {
+      "file": "logs/skirmish-saga-capture-01.log",
+      "rawSha256": "34b735ad457fe1b4e217d45bdb5015b6968535fe7b72be79063d9df8a58c23c0",
+      "publicSha256": "588ad03e77e4da7fb29ace109b2b6d8eb68b9ca6f9b077b2067282d602f4dbae",
+      "privateLinesRedacted": 7,
+      "rawBytes": 18744055,
+      "publicBytes": 18743736
+    },
+    {
+      "file": "logs/skirmish-saga-capture-02.log",
+      "rawSha256": "28fc1f6561a1cf06a10471bd85b8a9e8afa391f013106d0cb804c426fe77187e",
+      "publicSha256": "22c1fb44e5ba0eb9cf68817d9c03775127d5eda94fb454b2fdd17330020f8da5",
+      "privateLinesRedacted": 7,
+      "rawBytes": 18568042,
+      "publicBytes": 18567723
+    },
+    {
+      "file": "logs/skirmish-saga-capture-03.log",
+      "rawSha256": "05829b2c51f0ee4e5d3121e44eab21d0859366333e64b9b011b87d4752c58d97",
+      "publicSha256": "574f5f49a48e0dacd219fbf4d65ad39a83ac7d2f18d112cf6524aeb690374c9b",
+      "privateLinesRedacted": 7,
+      "rawBytes": 18653226,
+      "publicBytes": 18652907
+    },
+    {
+      "file": "logs/skirmish-saga-capture-04.log",
+      "rawSha256": "a94f5194ba2cd4352e13c47ea35f6f6480ed386e1fc9eb3a7507a16ead86ef38",
+      "publicSha256": "df106cddc0e6f311a81a7646c6698ee3217514c7edcd2dd6ce4cebb34dd77ed4",
+      "privateLinesRedacted": 7,
+      "rawBytes": 18580209,
+      "publicBytes": 18579890
+    },
+    {
+      "file": "logs/skirmish-saga-capture-05.log",
+      "rawSha256": "3712db9e5fbcddf3f0161d8f4e450892a55550d78cc98e2f199af180c30e2ca4",
+      "publicSha256": "10b31ecc7935978b379711a687e82fa1231d985ffe3c49041c389bfa94f6c119",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19455278,
+      "publicBytes": 19454959
+    },
+    {
+      "file": "logs/skirmish-saga-capture-06.log",
+      "rawSha256": "9f43714aee2a7fd1bc36e8e979df1dcf1f73af1c84ea310fdeec35a4c57dc72c",
+      "publicSha256": "a63a7e5675e18dc1634748abeca0ff681469d25e22b90c5d8918bb497c21567d",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19514753,
+      "publicBytes": 19514434
+    },
+    {
+      "file": "logs/skirmish-saga-capture-07.log",
+      "rawSha256": "3877e0f56bea30bdeac71fba714d4009c1af4201c0503d19197610288a71053f",
+      "publicSha256": "17b12b0c344d5a2b82718f2069e4a34402acbe418935b9df973003f09ab53351",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19490845,
+      "publicBytes": 19490526
+    },
+    {
+      "file": "logs/skirmish-saga-capture-08.log",
+      "rawSha256": "9fb5bf7a7a869f8f3cffc8bd636b591007ec4065cfdb188403b4935220359068",
+      "publicSha256": "2606dd1c6942d708e6b3819a32e9f07f0204a243f7ab8d60b87b960ef6d8c4e8",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19523520,
+      "publicBytes": 19523201
+    },
+    {
+      "file": "logs/skirmish-saga-capture-09.log",
+      "rawSha256": "24fcc05799990d01c1844837d043bc77da83148da15196d86b21c6ceb2fb91ab",
+      "publicSha256": "a2d4ecfbe3d94bd11112b4a16d0798fb021560e2160d58e6c358c779036e6d55",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19328379,
+      "publicBytes": 19328060
+    },
+    {
+      "file": "logs/skirmish-saga-capture-10.log",
+      "rawSha256": "90bb8e04f965cdf59fdf940b8f586bfe8eb98c0018699f0d0b2c138e10c79565",
+      "publicSha256": "ac8c439cac4d59ac41727ae240eb158c61512e43fa3f543ba78efbcba8b7240f",
+      "privateLinesRedacted": 7,
+      "rawBytes": 19321718,
+      "publicBytes": 19321399
+    },
+    {
+      "file": "logs/skirmish-saga-capture-11.log",
+      "rawSha256": "807be60ba5ea8ba8fa42fe84f555831353ec97cc3d7fbf0da6adc6f7c9152adb",
+      "publicSha256": "45c467244d1d08d4b81b0a93c8ada70c3ab23dfd643079e0e9866d1fb9f7abb4",
+      "privateLinesRedacted": 7,
+      "rawBytes": 14627977,
+      "publicBytes": 14627658
+    },
+    {
+      "file": "logs/skirmish-saga-capture-12.log",
+      "rawSha256": "bc7a1d3cdd1550aaa56b3971da350cc75a719a1926060386e7e96bff7405e907",
+      "publicSha256": "cfa681f14075270f106b21caa40ff0da1e6bd9f8d25858b53496c104ee7fe41f",
+      "privateLinesRedacted": 7,
+      "rawBytes": 12637713,
+      "publicBytes": 12637395
+    },
+    {
+      "file": "logs/skirmish-saga-capture-13.log",
+      "rawSha256": "c563eb6df25a481ec6d784fc3ff61533ea6c8aa5e75dfc443d6b1b9d49fe95d5",
+      "publicSha256": "cd5bf44bf20d3283734067e60a9ea3e863fa3ad40644fdba477a9e9dc1ed6e84",
+      "privateLinesRedacted": 7,
+      "rawBytes": 16970713,
+      "publicBytes": 16970394
+    },
+    {
+      "file": "logs/skirmish-saga-capture-14.log",
+      "rawSha256": "f3e7884f75cd43511bf2501db0ce4c0328a083ec49d0efa129febf03af231752",
+      "publicSha256": "68d019f738c2b088b072557f1f32696dc55c6a116e2d8ab07bf61fd72edc59a5",
+      "privateLinesRedacted": 7,
+      "rawBytes": 16787785,
+      "publicBytes": 16787466
+    },
+    {
+      "file": "logs/skirmish-saga-capture-15.log",
+      "rawSha256": "16721e172e0fef467bbcc288efcca701e4dd19109925f5f640fbcf62ee594547",
+      "publicSha256": "6449bff8877b38d527391c6e3f4d752f647af8091baaa1831de35935bf47edeb",
+      "privateLinesRedacted": 7,
+      "rawBytes": 14015529,
+      "publicBytes": 14015213
+    },
+    {
+      "file": "logs/skirmish-saga-chrome-probe-02.log",
+      "rawSha256": "6d9207d2b80f6e46407d93e7c99dc9dd33fcd7d68a28d994e51728afa74ec663",
+      "publicSha256": "92b24c105aae6f1c09101f0c5d87be9be5601b6dd2b9545ca35d8ca71c55d4c2",
+      "privateLinesRedacted": 7,
+      "rawBytes": 377569,
+      "publicBytes": 377250
+    },
+    {
+      "file": "logs/skirmish-saga-chrome-probe.log",
+      "rawSha256": "b5e78472cdad7365422a370b60494b19be7b01f03f6b47b2c83d61a55eb84ec4",
+      "publicSha256": "b611578ef01c70ae70b69cce401c10f5338962fc1e417a2d4e79b4148c804082",
+      "privateLinesRedacted": 5,
+      "rawBytes": 449869,
+      "publicBytes": 449622
+    },
+    {
+      "file": "logs/skirmish-saga-coast-rounding.log",
+      "rawSha256": "55e2b7da0cd1d68e85c5f4422d3712aca8671fb83abaec0270869da160464df8",
+      "publicSha256": "55e2b7da0cd1d68e85c5f4422d3712aca8671fb83abaec0270869da160464df8",
+      "privateLinesRedacted": 0,
+      "rawBytes": 13904,
+      "publicBytes": 13904
+    },
+    {
+      "file": "logs/skirmish-saga-diff-check.log",
+      "rawSha256": "570330aeafe7bb1c0fbfcab71fda2df8c46a8944ecf7f2bc50a40d3f2be960ec",
+      "publicSha256": "570330aeafe7bb1c0fbfcab71fda2df8c46a8944ecf7f2bc50a40d3f2be960ec",
+      "privateLinesRedacted": 0,
+      "rawBytes": 9840,
+      "publicBytes": 9840
+    },
+    {
+      "file": "logs/skirmish-saga-en-4x3-01.log",
+      "rawSha256": "943f29ecf85bad6535af46f9c618e2495d1efb98e26d9dbb7dfd4bc9dba2967e",
+      "publicSha256": "21a66ff40d2c1dbf4ad3b71c38ee4ee620adb24189986c027e4359be9acf57ea",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2633245,
+      "publicBytes": 2632926
+    },
+    {
+      "file": "logs/skirmish-saga-en-4x3-02.log",
+      "rawSha256": "55605b08e67286770f0763260f00cce3c1f930d9e88ebaf69d2d7164482fb29a",
+      "publicSha256": "780bd394ed445c01d0f1db1b7a4d3ebfb3a9da601a035f7a9f3461a5698651a2",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2597810,
+      "publicBytes": 2597491
+    },
+    {
+      "file": "logs/skirmish-saga-en-4x3-03.log",
+      "rawSha256": "6cb6b64a746a0203e6478ced6594caa96f49b59d6cba4b61c6692dafb952c156",
+      "publicSha256": "fc97e9c54be3ea43d1e54f60e578cc907fb99db58264365a680ee7993b081b00",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2594490,
+      "publicBytes": 2594171
+    },
+    {
+      "file": "logs/skirmish-saga-en-4x3-04.log",
+      "rawSha256": "42de04112b8194920d266e77016c506bb329550bf3117497b0cd728f23920eb3",
+      "publicSha256": "9ea170ee28cb285d2c9cd6cf656e560577cff5d90c296238b33ada148824b0c2",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2594337,
+      "publicBytes": 2594018
+    },
+    {
+      "file": "logs/skirmish-saga-en-4x3-05.log",
+      "rawSha256": "85025052b10d4a12e4774351258ab14a542d77e2354a329f6a28d19fae7eb734",
+      "publicSha256": "affdf9c6f5c88bd5a8d5c3ceb2ae8c370a8a2d5141cff28187bdcebfea9f11f2",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2373227,
+      "publicBytes": 2372909
+    },
+    {
+      "file": "logs/skirmish-saga-fa-4x3-06.log",
+      "rawSha256": "85b5e39d5f744ba67e128018ecc0637eaa4fd0e5f767b4609de80bf5b2e184e5",
+      "publicSha256": "9325a224e4002a1328dab69a0052e187e23a59f3438d6f68958cae5cecce9985",
+      "privateLinesRedacted": 7,
+      "rawBytes": 1817429,
+      "publicBytes": 1817111
+    },
+    {
+      "file": "logs/skirmish-saga-fa-4x3-07.log",
+      "rawSha256": "6604faae731bdb4cec61be4760bc8a49c8dad5a830c29d08a7fd79450207a577",
+      "publicSha256": "1600a358533c5301ab4e041359340d21a9cbe6bb201c2cdae8c3746e8ebf0eca",
+      "privateLinesRedacted": 7,
+      "rawBytes": 1768397,
+      "publicBytes": 1768079
+    },
+    {
+      "file": "logs/skirmish-saga-fa-4x3-08.log",
+      "rawSha256": "adb5503702780c476684f7dc6a19e7797827d000c4ef8e5ed64b3ac598c11a13",
+      "publicSha256": "d47a2a41a638da602de8e0b2ce0cf66b1b0b145504dbaeb84364f3f186647422",
+      "privateLinesRedacted": 7,
+      "rawBytes": 1810604,
+      "publicBytes": 1810285
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-01.log",
+      "rawSha256": "303623c9ac16f1594fa891dfde69262952427fae63e6a435f25965073faaaaf4",
+      "publicSha256": "5b041e4e9f8dc2d64ae8e79f266354d4d679b7cd50330f02c6745eee358d3d5c",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2493912,
+      "publicBytes": 2493593
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-02.log",
+      "rawSha256": "7bd494070e0ce9d038ca34a59c8d73b9ba6739494e04af46cc3c08c9d733d1ad",
+      "publicSha256": "48a5eea2015a485a17dd7e056bc612866e027b095a4ff3235ddaa721ed852e45",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2491802,
+      "publicBytes": 2491483
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-03.log",
+      "rawSha256": "ca6ab5855f8c09aa534aa6db59ae785cbe60262059dd3dac01747155efb131b3",
+      "publicSha256": "e3e15aeae9c45875c03bd5f56176915ccadd068f39e2326696eb0c7d31f3885b",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2483016,
+      "publicBytes": 2482698
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-04.log",
+      "rawSha256": "23ce18fcf20d0146797c7cb0fb3685818b4a798613dff57dd15fc70679cd8317",
+      "publicSha256": "c6f2482929d688000b02d33e66f3668583d1ebf358cf296a5118fd1c003d315d",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2520920,
+      "publicBytes": 2520601
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-05.log",
+      "rawSha256": "a73ccfc6c9a743956dd4954bd18664fb02c132afcf960bd00cc536f9b4d1d802",
+      "publicSha256": "7bf89b99df4a2a6a87db390ac4085d9c653c272c73e254caff0797d18c44078b",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2635470,
+      "publicBytes": 2635151
+    },
+    {
+      "file": "logs/skirmish-saga-focused-fa-06.log",
+      "rawSha256": "f8099f0a03cd325eb0ea20e78052c2ad693ea8effc02355add7df7eda7d2f948",
+      "publicSha256": "79fff2f13c39921cbd91058dd4ba6ae3bbc5c8517dfec0d8eaf796cbcd180e4a",
+      "privateLinesRedacted": 7,
+      "rawBytes": 2456445,
+      "publicBytes": 2456126
+    },
+    {
+      "file": "logs/skirmish-saga-format.log",
+      "rawSha256": "1550d816f28974b220dc27bc384061a0ea3134a7aee9d063b43075ebfb09e7c6",
+      "publicSha256": "1550d816f28974b220dc27bc384061a0ea3134a7aee9d063b43075ebfb09e7c6",
+      "privateLinesRedacted": 0,
+      "rawBytes": 33,
+      "publicBytes": 33
+    },
+    {
+      "file": "logs/skirmish-saga-frame-experiment.log",
+      "rawSha256": "1959c7a3a29247bdcef1a8c1862d26e53b758a56e1b341aa56dc8f8cfe2ddd33",
+      "publicSha256": "1959c7a3a29247bdcef1a8c1862d26e53b758a56e1b341aa56dc8f8cfe2ddd33",
+      "privateLinesRedacted": 0,
+      "rawBytes": 541,
+      "publicBytes": 541
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-09.log",
+      "rawSha256": "6bbd88f0b11e81c9482a867a0ee23d033e4df3359356acb715616adfeef918d0",
+      "publicSha256": "75f28883d819ca6c9ccd55b311099bef0670d5285b0f73f62da10a2140505e85",
+      "privateLinesRedacted": 7,
+      "rawBytes": 7285806,
+      "publicBytes": 7285488
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-10.log",
+      "rawSha256": "d08aa9f238891bb96970460e8152e3c09062df8e97ba284ace1afa7b3ec28b82",
+      "publicSha256": "daa935b28e54578f5cc48221bb6e14469493c65896ac93e9a0cfa85c6ab9d274",
+      "privateLinesRedacted": 7,
+      "rawBytes": 7258366,
+      "publicBytes": 7258047
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-11.log",
+      "rawSha256": "1eaf1845a1e1e95278e6c20660b955ad8a366de1889d854b682d860b31dd140c",
+      "publicSha256": "2e44bff3c1d9ddc98c76d4d4c6d860184b59159e19b124ada2dc3663d1a0ee40",
+      "privateLinesRedacted": 7,
+      "rawBytes": 13091020,
+      "publicBytes": 13090701
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-12.log",
+      "rawSha256": "3af9c564217eabeb68ef1beff49dda13568136f332c3d85caefcad9ef4ce95af",
+      "publicSha256": "bf18909176cb25925e4130e14937e7cd9efa0c38a128de5a2b6fdf021a7ea5c5",
+      "privateLinesRedacted": 7,
+      "rawBytes": 13182644,
+      "publicBytes": 13182325
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-13.log",
+      "rawSha256": "6a168a0c7156f6cc8c61c86ccc56d0a28018dfe2c5f63ccb309fc83262855f9f",
+      "publicSha256": "ab439d7edfd0dc9f24a3689c0e8bab024efe51bfa418b1f38e79f5f2885b0f78",
+      "privateLinesRedacted": 7,
+      "rawBytes": 12354153,
+      "publicBytes": 12353834
+    },
+    {
+      "file": "logs/skirmish-saga-native-regression-14.log",
+      "rawSha256": "7068123cb0313bd0c6d2b69f44924ae0984c376bd366312ed9bccd76e1d28dbf",
+      "publicSha256": "a28a174fffc75ae4d8f9d2988d543a938bfdc66fbfbd82da563953265b4ddec2",
+      "privateLinesRedacted": 7,
+      "rawBytes": 11984294,
+      "publicBytes": 11983975
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-01-abort.log",
+      "rawSha256": "8ad4cb6b9eb8932553121e580bf2658e8e62bd103c942f2c9f0fc593232905c0",
+      "publicSha256": "8ad4cb6b9eb8932553121e580bf2658e8e62bd103c942f2c9f0fc593232905c0",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2056,
+      "publicBytes": 2056
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-01.log",
+      "rawSha256": "7259955233bfa6b9126120523a6a4827c6e07743edbbfc40459fcb70d95ef2e6",
+      "publicSha256": "1e0d359c67a79058f3df2cc63e1cf7ef22b49827f3ce0cc44aedd5bdc1b0bce2",
+      "privateLinesRedacted": 11,
+      "rawBytes": 13451247,
+      "publicBytes": 13450362
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-02-abort.log",
+      "rawSha256": "70a89815f6358b16e3f577e0d70e2a349433c759f7b3fe6c3e2ea328e210b2af",
+      "publicSha256": "70a89815f6358b16e3f577e0d70e2a349433c759f7b3fe6c3e2ea328e210b2af",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2056,
+      "publicBytes": 2056
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-02.log",
+      "rawSha256": "240cba8735cbf9ea38e1dea3b1bb22cf974222bf2b588eb79b4ea290587a261b",
+      "publicSha256": "e44fc9f3d8a486ef7388db584c5930a1d219e85083dc90772e3c8403b082c80e",
+      "privateLinesRedacted": 9,
+      "rawBytes": 69987,
+      "publicBytes": 69615
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-03.log",
+      "rawSha256": "d87d6cfae45e4da4a50fa21eee9a0525e227b86e079ed5f8047e10fd7a1d5b34",
+      "publicSha256": "a6c92d449f13e05d3c180c4aadc20928ff58b1eaa0bb3f1761f7133af280562b",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2523934,
+      "publicBytes": 2523562
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-04-abort.log",
+      "rawSha256": "3373e3c93a6153d34e2860c56b27159f9fd5e9a6d175ec8b59cf4665382b0d37",
+      "publicSha256": "3373e3c93a6153d34e2860c56b27159f9fd5e9a6d175ec8b59cf4665382b0d37",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2056,
+      "publicBytes": 2056
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-04.log",
+      "rawSha256": "eb1ef522eb922366a9cc27b04a670acbec59d7fcf2c366af1640c1f4628b51cf",
+      "publicSha256": "0f2380d20e1f1f178271bfaef5e6ae0854046ae2615ead2b514b422ba921e9cc",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2765355,
+      "publicBytes": 2764983
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-05.log",
+      "rawSha256": "d845171905c91f848114d977ebe9545aa37551653b300b00d254d6d8d1064d1c",
+      "publicSha256": "e12bbf40cd8b6ce8a06e023e6d2b140157254d03354d1bcb6349eebcef012882",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2816710,
+      "publicBytes": 2816338
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-06.log",
+      "rawSha256": "606bd8ebcffde1b096d2df75e10be238c775a73fad3e9ececa1f32cc10366e83",
+      "publicSha256": "c80ad4d14b32ff6b702d52353ebc6f880ace8a65b3909e24adb3e5bb30f3c875",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2930588,
+      "publicBytes": 2930216
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-07.log",
+      "rawSha256": "f07d757fe8d7c497c875a28af84097fe1c3fb1fb7ad2f4bfdb7de994df326d25",
+      "publicSha256": "3739e71baafbd3db5768a4bb36fad2f57671d3c1466ccf1ed14021e72ea12b0a",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2871705,
+      "publicBytes": 2871335
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-08.log",
+      "rawSha256": "b529f7722c90101ce331f2dcb3eff6a62e083e5afc2587bed540e3ebdac14d88",
+      "publicSha256": "82948b8fcc4fce59180e6fcd9879a43664d2a726e874d33198807f9080b64a7b",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2862828,
+      "publicBytes": 2862456
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-09-fa.log",
+      "rawSha256": "426394f4ecdf804d602f0de291d43c8a6985cbbdc272b33ab6459388474bf441",
+      "publicSha256": "b5758fce7b3f10dbb781bca7a3b23d769184828ba262a115bed27be70cffd843",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2921418,
+      "publicBytes": 2921046
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-10-en.log",
+      "rawSha256": "bfd471b4acfa74c5a3eb92aa144b9709e4f36eaf58b986484183c07d7b631746",
+      "publicSha256": "6707e27834ebdbe6ba2323dfaed90836f9ed80ac06c559122d711c4101af00a9",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2057652,
+      "publicBytes": 2057280
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-11-fa.log",
+      "rawSha256": "2f1d8d360ab57c6575d2ef738cf2cd4821e1c6be466eca481ac4a9730ee14784",
+      "publicSha256": "8b148686284b200c01e539ad762ae4f69a2b9ba9ae797aecceb4bac9b7b0a75d",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2128792,
+      "publicBytes": 2128421
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-12-en.log",
+      "rawSha256": "e8266d3b3a2bba0d1481286eb5fba3d24d6dc3b1af60c264bfa46856916ca474",
+      "publicSha256": "d69b51ed86053e41ad4ceb9ecc89b1a3c0c3136a44587318d22199325abf555b",
+      "privateLinesRedacted": 9,
+      "rawBytes": 10560562,
+      "publicBytes": 10560190
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-13-en.log",
+      "rawSha256": "9e352d864bf3c052eb4da0192eccca53c9d2733747dd146067c6969777762cc0",
+      "publicSha256": "6639effc228905602b78b6f353845f33d1818b390527d885a9312aa44b28520a",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1918972,
+      "publicBytes": 1918600
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-14-en.log",
+      "rawSha256": "09a34751b9c9b3f74b212298562c6f3b140b5b1a435c72d63c8cf56927e5f66d",
+      "publicSha256": "42a97c04a602b3c9ac46f02856b6b3d28efdb207804e360361511658f1f62acd",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1833176,
+      "publicBytes": 1832804
+    },
+    {
+      "file": "logs/skirmish-saga-normal-input-15-fa.log",
+      "rawSha256": "d45bd8ab781efd018caf11e3a0cd9f5dfc99ae8e333706bbf1618e6306d7b341",
+      "publicSha256": "aec451ad0d12cea664ab085dc53035af8ab889c265a59fd144110f3b303af213",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1844116,
+      "publicBytes": 1843744
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-01.log",
+      "rawSha256": "45b7c6028f7a3616d15eb745f4b5e5ba425d10ffcf7f26ea13699c9dd882b6e7",
+      "publicSha256": "d3f00a7cd7f8c1622f9b14d9785ae8052baa5d81ad825957b96c4ab0365b7062",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2507783,
+      "publicBytes": 2507411
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-02.log",
+      "rawSha256": "cf635c43fc772ccfdccb40fa14ffa2f72e4e6578a2b55e3e592355741eb5b3b6",
+      "publicSha256": "d2cbccf636771d48f4a1478c4aa608303d0987c00af269173cbbb0cbc1f96350",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2510006,
+      "publicBytes": 2509634
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-03-fa.log",
+      "rawSha256": "23b655ed5707fdb6a5a87974c92ed1a84a554b174568fb12eba84b8043794230",
+      "publicSha256": "497733e9733ebe0dec6cf40b00147ff6b1edbda4d64e1c33b6537d5b06324259",
+      "privateLinesRedacted": 9,
+      "rawBytes": 2490004,
+      "publicBytes": 2489632
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-04-en.log",
+      "rawSha256": "ffbc80b450e8be060feb9fa4b20bd84749ed1d5a5e31494b3e517ebb43ad6caa",
+      "publicSha256": "1d011a24a4e7623b59b7b53068a22c2d70996a070e58b517b9ea422c25357618",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1702683,
+      "publicBytes": 1702311
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-05-en.log",
+      "rawSha256": "515d6085a6b8731adceb6650c732da62992d75b72c92ede5d1ea1b3bb8f7214e",
+      "publicSha256": "ea0a439ea557351045d0c5e9541209a8545656f320d0384d6c85eaf5bbe1ebd8",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1436331,
+      "publicBytes": 1435959
+    },
+    {
+      "file": "logs/skirmish-saga-process-restart-06-fa.log",
+      "rawSha256": "2dc0f452c208a0fd6e226e4ccfbe50d6d2a13a8b31eb0376d1d4f321f64755f9",
+      "publicSha256": "ea4131d4603da2a027a1b4037eafd43a34b9a113a53ecc71764d9e2f1abafdf6",
+      "privateLinesRedacted": 9,
+      "rawBytes": 1443982,
+      "publicBytes": 1443611
+    },
+    {
+      "file": "logs/skirmish-saga-round-strict-03.log",
+      "rawSha256": "1cb39081701f6017ebb6c22c512a70fbb063c9dea486ec265a867a436aa52d33",
+      "publicSha256": "1cb39081701f6017ebb6c22c512a70fbb063c9dea486ec265a867a436aa52d33",
+      "privateLinesRedacted": 0,
+      "rawBytes": 967,
+      "publicBytes": 967
+    },
+    {
+      "file": "logs/skirmish-saga-round-strict-04.log",
+      "rawSha256": "1cb39081701f6017ebb6c22c512a70fbb063c9dea486ec265a867a436aa52d33",
+      "publicSha256": "1cb39081701f6017ebb6c22c512a70fbb063c9dea486ec265a867a436aa52d33",
+      "privateLinesRedacted": 0,
+      "rawBytes": 967,
+      "publicBytes": 967
+    },
+    {
+      "file": "logs/skirmish-saga-round-strict-05.log",
+      "rawSha256": "58aa78c3f695d1d1ddf6be4602c755613b708d58f6108d7259ca7e80b7e3b3c2",
+      "publicSha256": "58aa78c3f695d1d1ddf6be4602c755613b708d58f6108d7259ca7e80b7e3b3c2",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2036,
+      "publicBytes": 2036
+    },
+    {
+      "file": "logs/skirmish-saga-round-strict-06.log",
+      "rawSha256": "a35fb371ec213a1d294e891b0daa80f94560280c7128a2bebe57983363f90b6d",
+      "publicSha256": "a35fb371ec213a1d294e891b0daa80f94560280c7128a2bebe57983363f90b6d",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2346,
+      "publicBytes": 2346
+    },
+    {
+      "file": "logs/skirmish-saga-rounded-final-02.log",
+      "rawSha256": "71ae246ed47216ed18e4040443cd201bcc5d46d05ff4331a2a2092f72dcf056f",
+      "publicSha256": "71ae246ed47216ed18e4040443cd201bcc5d46d05ff4331a2a2092f72dcf056f",
+      "privateLinesRedacted": 0,
+      "rawBytes": 543,
+      "publicBytes": 543
+    },
+    {
+      "file": "logs/skirmish-saga-scale-01.log",
+      "rawSha256": "672fb4ddb67f0fccf469f1ca9dadbb985068066b3cec24dc7f68e878d1df4831",
+      "publicSha256": "766a5d5ff2aa8c3ca3fc65143aadfedbbcc03b9043f8cb114b9ffcf90acb5bd1",
+      "privateLinesRedacted": 7,
+      "rawBytes": 401052,
+      "publicBytes": 400734
+    },
+    {
+      "file": "logs/skirmish-saga-scale-02.log",
+      "rawSha256": "604eb72bde00a08120daa29ce1d356a8f1393d8d4fd36810da5a83cb687c5afb",
+      "publicSha256": "e71bc82f6868467c68030126ca871413fb5b4f1ed10ca6bf27f24a5c09f87276",
+      "privateLinesRedacted": 7,
+      "rawBytes": 357788,
+      "publicBytes": 357469
+    },
+    {
+      "file": "logs/skirmish-saga-scale-03.log",
+      "rawSha256": "63b7029ae2789be04187ce65ad425569906081f476a12bde46fdce2a786a2fe2",
+      "publicSha256": "c534db0a2389f464e61de76cda3d26ab1c1d13085e918ce0da1aa41e6b794588",
+      "privateLinesRedacted": 7,
+      "rawBytes": 468871,
+      "publicBytes": 468552
+    },
+    {
+      "file": "logs/skirmish-saga-seat-check-10.log",
+      "rawSha256": "54014725655d813fb578451a54c17667c14e3bb26095adfabf249aed0d4ea800",
+      "publicSha256": "54014725655d813fb578451a54c17667c14e3bb26095adfabf249aed0d4ea800",
+      "privateLinesRedacted": 0,
+      "rawBytes": 66401,
+      "publicBytes": 66401
+    },
+    {
+      "file": "logs/skirmish-saga-seat-check-11.log",
+      "rawSha256": "af383389fa10a4c52a95a65b4eae118cc88e7d503b4cfa7c3af8bf6b2d505e9a",
+      "publicSha256": "af383389fa10a4c52a95a65b4eae118cc88e7d503b4cfa7c3af8bf6b2d505e9a",
+      "privateLinesRedacted": 0,
+      "rawBytes": 66992,
+      "publicBytes": 66992
+    },
+    {
+      "file": "logs/skirmish-saga-seat-check-12.log",
+      "rawSha256": "7e7297adccac31aaee13a4a47eefcedbe9624846a83c016fb06be33575062908",
+      "publicSha256": "7e7297adccac31aaee13a4a47eefcedbe9624846a83c016fb06be33575062908",
+      "privateLinesRedacted": 0,
+      "rawBytes": 66637,
+      "publicBytes": 66637
+    },
+    {
+      "file": "logs/skirmish-saga-seat-check-13.log",
+      "rawSha256": "0d1e19175e699e9f965e54d009126bbe97e38375091ab6503575416a42bcde93",
+      "publicSha256": "0d1e19175e699e9f965e54d009126bbe97e38375091ab6503575416a42bcde93",
+      "privateLinesRedacted": 0,
+      "rawBytes": 55556,
+      "publicBytes": 55556
+    },
+    {
+      "file": "logs/skirmish-saga-seat-check-14.log",
+      "rawSha256": "a5a1e4bc332238d9a0ef7054dffbdaff2b7b73551f7b0c5d95c2feab088cb70f",
+      "publicSha256": "a5a1e4bc332238d9a0ef7054dffbdaff2b7b73551f7b0c5d95c2feab088cb70f",
+      "privateLinesRedacted": 0,
+      "rawBytes": 66494,
+      "publicBytes": 66494
+    },
+    {
+      "file": "logs/skirmish-saga-stable-selection-03.log",
+      "rawSha256": "ee2db4f5586e8d838761360bbbaaf092ce03d49c236a507943d8042476678a55",
+      "publicSha256": "ee2db4f5586e8d838761360bbbaaf092ce03d49c236a507943d8042476678a55",
+      "privateLinesRedacted": 0,
+      "rawBytes": 2064,
+      "publicBytes": 2064
+    },
+    {
+      "file": "logs/skirmish-saga-tests-01.log",
+      "rawSha256": "738f8f163f69cb07a8927c4455e4d6343f4da1c1fbd0e1531a44093321b9b792",
+      "publicSha256": "231938072958916b20e664b5c13acf4bbbee6dc148caed7275e270688ab9c791",
+      "privateLinesRedacted": 5,
+      "rawBytes": 129923,
+      "publicBytes": 129678
+    },
+    {
+      "file": "logs/skirmish-saga-tests-02.log",
+      "rawSha256": "9654db5a862134b01c5cebe2917d699ea9cd96b50cb96e50838ccc028bf66f9c",
+      "publicSha256": "0fc5504e11ef6f7bf0b2c1c452244add3b23a57bc6c897d27be2c31672f67663",
+      "privateLinesRedacted": 9,
+      "rawBytes": 958938,
+      "publicBytes": 958566
+    },
+    {
+      "file": "logs/skirmish-saga-tests-03.log",
+      "rawSha256": "069fc123d9e379c4be5b1cd7403a943bcdb6c952d0e43a06dc47e8e142a8dd32",
+      "publicSha256": "921dad8ae38b8c6f59971839d2d7891df6321994ff617b91a661e452871d76d0",
+      "privateLinesRedacted": 9,
+      "rawBytes": 3297121,
+      "publicBytes": 3296749
+    },
+    {
+      "file": "logs/skirmish-saga-tests-04.log",
+      "rawSha256": "33f4c0fdb049979f72d7e94dd77b8b8dacd4944aedcc902125fefde673f7d759",
+      "publicSha256": "bfe9ee45d6aa51d37842a57f83feed4c58c7ddf0b0da1d373d41b61fb742ebc2",
+      "privateLinesRedacted": 9,
+      "rawBytes": 3091493,
+      "publicBytes": 3091121
+    },
+    {
+      "file": "logs/skirmish-saga-tests-05.log",
+      "rawSha256": "76f46272e6e1722305b8f4af221108f24400b7c8a8bb2aae690383e9c2b60013",
+      "publicSha256": "700a7e237af603ae259d3f8ceaf4623291fd0b058e0f5e2edb72d19722d10a32",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4753468,
+      "publicBytes": 4753096
+    },
+    {
+      "file": "logs/skirmish-saga-tests-06.log",
+      "rawSha256": "0f0729baa0c1e2d2d3be5c71b84cd8b0952242668a3c60a914538d45163566ce",
+      "publicSha256": "b2c230a9e4c3459699ca7c9424ad12573345b4661182518a44b65d1e47e7455b",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4294093,
+      "publicBytes": 4293721
+    },
+    {
+      "file": "logs/skirmish-saga-tests-07.log",
+      "rawSha256": "e831b5dbe11079c777fea5a9e04c3e6fe90311d919705b7b00e4b9a64890283f",
+      "publicSha256": "1f9410586330e45e604e4b13743d83547bc629d266ae8ccfaf36e3cc7eeca85b",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4306141,
+      "publicBytes": 4305770
+    },
+    {
+      "file": "logs/skirmish-saga-tests-08.log",
+      "rawSha256": "12e0e624f3c29de4455c33cc11f588786f08889a756d47fac59808d4e62187f7",
+      "publicSha256": "d78aca992743f839e702e02a29e7d51c9e00ecc8a2edee260e44e136502fd1d8",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4722532,
+      "publicBytes": 4722160
+    },
+    {
+      "file": "logs/skirmish-saga-tests-09.log",
+      "rawSha256": "215bc674135efd7d838bacd8fa2793599fe362c5d9e88fbba4be9eac61a7eea3",
+      "publicSha256": "a33d24684745f2e95565a69524ff77429339613f9f5eac370483d59751f6038e",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4854280,
+      "publicBytes": 4853908
+    },
+    {
+      "file": "logs/skirmish-saga-tests-10.log",
+      "rawSha256": "302fa75eded58b05b443d9cc0678444cf2d273ebf5c10065f74bb0f6230063f4",
+      "publicSha256": "0fa705f1cb73714100507bbd045559b6468818b682a21cff61d353fa51a8c694",
+      "privateLinesRedacted": 9,
+      "rawBytes": 4860083,
+      "publicBytes": 4859711
+    },
+    {
+      "file": "logs/skirmish-saga-tests-11.log",
+      "rawSha256": "2517a880e6b19f83775a7f272ce0ff845658e5adad4192e388b09796c4834642",
+      "publicSha256": "5bdcede4b02e1fb35926c62ead33e59b3c9fe5f58cf04ceb61d3278a3f0c89ff",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5070356,
+      "publicBytes": 5069985
+    },
+    {
+      "file": "logs/skirmish-saga-tests-12.log",
+      "rawSha256": "c3c01ae6231f815f1bf81fc11b91435e4aeddcb5e6376fb41eeb8f4c1eb87ce8",
+      "publicSha256": "526e801576153ec516da418ef0089042545bae7d87c48893a1751925b56e0732",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5201479,
+      "publicBytes": 5201107
+    },
+    {
+      "file": "logs/skirmish-saga-tests-13.log",
+      "rawSha256": "08ab7b09dac8f46f9a91981c1bb0efb944b6cde0a8ff272d82151c2003a83e08",
+      "publicSha256": "4c81a1d1aca57808bf5f68f8c2480edb6f542519787fc634326a8792159a4932",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5703683,
+      "publicBytes": 5703312
+    },
+    {
+      "file": "logs/skirmish-saga-tests-14.log",
+      "rawSha256": "cb6dfbb0243dc9869472cbb738bafada4c7f47b17d1aee2398cace51db472082",
+      "publicSha256": "0ed42e33a80c7e16b7d4ae866c5b5c744c2e77bca8fa5f4e6b8be768f4345ae4",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5631991,
+      "publicBytes": 5631619
+    },
+    {
+      "file": "logs/skirmish-saga-tests-15.log",
+      "rawSha256": "6164be83d2ec91b6c3ba4b60f44ce75a9eee903b5b0332e51a1d2407aa65873e",
+      "publicSha256": "4c85170733db0b1a638fb2d503bdb8826f1c9b27d294ea4cdff2fa9fb19a02fc",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5652713,
+      "publicBytes": 5652341
+    },
+    {
+      "file": "logs/skirmish-saga-tests-16.log",
+      "rawSha256": "b84cfb95ae278e7ec9ba52854b0a708c5496eb928aa2ebaa465298d35c4da140",
+      "publicSha256": "f4d2f5f9794d12f68fe6516283490b64fc304f1cf79316a00de5ff5dcb821751",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5863684,
+      "publicBytes": 5863312
+    },
+    {
+      "file": "logs/skirmish-saga-tests-17.log",
+      "rawSha256": "066f8413c9f5beec5e29fdf46162c661ddeb760684da1106ed052dd67fffdb0b",
+      "publicSha256": "0ae11e5c3410bd15752667da2ce3524b706e0aa4baf596cfe3df795c405f1518",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5992813,
+      "publicBytes": 5992441
+    },
+    {
+      "file": "logs/skirmish-saga-tests-18.log",
+      "rawSha256": "de29ed3d03c9381c276d3316197b11f8de402d2b7cc3f1b43c1b6581901515b2",
+      "publicSha256": "304a81345be693ac6cfa56c25c972a4f90c1e9336aff62474779441d07d673c9",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6266486,
+      "publicBytes": 6266114
+    },
+    {
+      "file": "logs/skirmish-saga-tests-19.log",
+      "rawSha256": "c7e493b0bfc6a44529596b165365a66f9b47735d53293adca5995ce84671317d",
+      "publicSha256": "f2ab390fa716f8776ba5a1eae370ff6afa0dcc62946253234a566481adf510c4",
+      "privateLinesRedacted": 9,
+      "rawBytes": 5973778,
+      "publicBytes": 5973406
+    },
+    {
+      "file": "logs/skirmish-saga-tests-20.log",
+      "rawSha256": "50b0900221a4b9548bca0174b79b7ec4b07f1b13df55f99120aa7ba68e3ff13e",
+      "publicSha256": "162c4605fca2a20d59a79b6bfd7b9d23245d47b550348f43f09e8ce4cedcfd87",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6018197,
+      "publicBytes": 6017825
+    },
+    {
+      "file": "logs/skirmish-saga-tests-21.log",
+      "rawSha256": "93ba93c40f7a98df5dd58e72d0569192fa6e8fe17077e3813469d1a822faad34",
+      "publicSha256": "bc647437329a013f47e2df04e0248838a6584fda9f76e5a42088b0b7f41f478e",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6436221,
+      "publicBytes": 6435849
+    },
+    {
+      "file": "logs/skirmish-saga-tests-22.log",
+      "rawSha256": "b229b8ffbe56029d59e4aec4a27b4435628729d5ba0f607535f7da9977815e6a",
+      "publicSha256": "4930d8152e42fc58533042628fb63512e0d6607976a0c6d67401d3d05e61e629",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6151375,
+      "publicBytes": 6151003
+    },
+    {
+      "file": "logs/skirmish-saga-tests-23.log",
+      "rawSha256": "d7f6018d16c41c09d1c5708f8281afb5c43598a367f6fb6b78fcf79581c5dcf4",
+      "publicSha256": "904c41207ae5f78fedcd85150be245ed9fd026cc94b448d8ac0a1b77e541e71f",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6568142,
+      "publicBytes": 6567772
+    },
+    {
+      "file": "logs/skirmish-saga-tests-24.log",
+      "rawSha256": "7278dc3b193aedfe3678da1a232f8a8540acf74f60a1ccc631a4be058616f8a5",
+      "publicSha256": "79a400af9e5c40cbd757c8e9d46d917038c1f62344a8ca83893e75a068b79efb",
+      "privateLinesRedacted": 9,
+      "rawBytes": 6360274,
+      "publicBytes": 6359902
+    },
+    {
+      "file": "logs/skirmish-saga-tests-25.log",
+      "rawSha256": "f1a5684af26725be5032c1a21634a85bb018a4d38d1fcb08525fd833f731499e",
+      "publicSha256": "30a7363cbb6e2f6a9f12ada971b46453f90694777df6ae1ba6024d4e94071bfa",
+      "privateLinesRedacted": 9,
+      "rawBytes": 11796091,
+      "publicBytes": 11795719
+    },
+    {
+      "file": "logs/skirmish-saga-tests-26.log",
+      "rawSha256": "ef12052c5d006551b22096910e41d35568a2a16b1e8d6ef71f4af71b6398fd2f",
+      "publicSha256": "defcdb23a1e553726551ec06b960c42e029b088c91f62a47b904d9958fbdd08f",
+      "privateLinesRedacted": 9,
+      "rawBytes": 18908835,
+      "publicBytes": 18908463
+    },
+    {
+      "file": "tests/tests-02-results.xml",
+      "rawSha256": "bff511a66d4976183d35e6cda67a871f23f707e836f684955217d7bae7e3ab16",
+      "publicSha256": "f7cb248f69a1b2ff40d37c2268ed389bf887c007a247922bf06f65a120328200",
+      "privateLinesRedacted": 0,
+      "rawBytes": 48091,
+      "publicBytes": 47899
+    },
+    {
+      "file": "tests/tests-03-results.xml",
+      "rawSha256": "14b9067d3377413675f39c56672bc02bc887b52f2080b09fd7e99129c4070c60",
+      "publicSha256": "dfc06af0a95a9aa9eb018d9463d90fa6670d933c5d457fabe729d85f2653e253",
+      "privateLinesRedacted": 0,
+      "rawBytes": 84134,
+      "publicBytes": 83946
+    },
+    {
+      "file": "tests/tests-04-results.xml",
+      "rawSha256": "32b3da727e7b35c719b6838a060abbef17272daa625062d04095b81ee4d9609b",
+      "publicSha256": "c1c727d46fb4a1498ae2c93b09a3038503ee0b23d394f8ae5ab68a218ac8b18d",
+      "privateLinesRedacted": 0,
+      "rawBytes": 79890,
+      "publicBytes": 79791
+    },
+    {
+      "file": "tests/tests-05-results.xml",
+      "rawSha256": "96a6a10f4dadc47bcd404e1fcbb37b242dac9362f1e4b66b8463f968cc0a0bd5",
+      "publicSha256": "0045918f4a2224384891391380a700506936df092f6c7f96c42346d8f6726dfc",
+      "privateLinesRedacted": 0,
+      "rawBytes": 100264,
+      "publicBytes": 100327
+    },
+    {
+      "file": "tests/tests-06-results.xml",
+      "rawSha256": "43dc1beea8f6d7c4b18ad60b3a8bfbbc99d7c9030c445fb69d2fd3584407b1c4",
+      "publicSha256": "9a8c728f3465acd56babf3c62ba5f354375a63e13ebf253e5ed5f60f69c6f47a",
+      "privateLinesRedacted": 0,
+      "rawBytes": 91123,
+      "publicBytes": 91240
+    },
+    {
+      "file": "tests/tests-07-results.xml",
+      "rawSha256": "130c1173c394bcbde209567566caa058fcd75d058cc9e97f04bd157b23e0b9b0",
+      "publicSha256": "0c84e9cd44ade8dd9a582a387c350efb3b5e8e85c63e0abe750d31b44adaf30e",
+      "privateLinesRedacted": 0,
+      "rawBytes": 91604,
+      "publicBytes": 91733
+    },
+    {
+      "file": "tests/tests-08-results.xml",
+      "rawSha256": "3b6a0793aa05b62d3898c5fb95b09166b38165c19457f4cdbab798f345d8872d",
+      "publicSha256": "f4582afb309cff5d81adab98aa58e46c498d4ea8f3a13d40f9b0cea1f2df17d9",
+      "privateLinesRedacted": 0,
+      "rawBytes": 102044,
+      "publicBytes": 102050
+    },
+    {
+      "file": "tests/tests-09-results.xml",
+      "rawSha256": "ba587d258a5f34b4296b8319632c7bb1a98411752b6b52525d37176e4ca8e4c7",
+      "publicSha256": "a8aabd98d925a5fd616cc1d6141b60d0842a7c5892bc6f8f856239365d83fb5a",
+      "privateLinesRedacted": 0,
+      "rawBytes": 104063,
+      "publicBytes": 104093
+    },
+    {
+      "file": "tests/tests-10-results.xml",
+      "rawSha256": "9a90eebe64ac961f42b82db42824bfccf094549dbf32d6d3185ab9d1e92a93d4",
+      "publicSha256": "f67fe8bd926771d142266ab91540330222357a2a9cba4657a72f1b5a05cce055",
+      "privateLinesRedacted": 0,
+      "rawBytes": 103815,
+      "publicBytes": 103854
+    },
+    {
+      "file": "tests/tests-11-results.xml",
+      "rawSha256": "afd9686fc615311d1d034a9b37fe8eb25c1b85341e800361ad845c269eaf6eae",
+      "publicSha256": "5d9d921a4d8c85ea65b227825ba79bc691315f87a1acf492e9787f2a1a10dfb2",
+      "privateLinesRedacted": 0,
+      "rawBytes": 101660,
+      "publicBytes": 101747
+    },
+    {
+      "file": "tests/tests-12-results.xml",
+      "rawSha256": "5734794ef3578b5b3de55e4c55c246f9946fa0a666cc1af41364a660818e0f46",
+      "publicSha256": "2624cfe9f4a345467b94536b7b83b6dc89949222b3450f5823d575403233d0cb",
+      "privateLinesRedacted": 0,
+      "rawBytes": 103065,
+      "publicBytes": 103161
+    },
+    {
+      "file": "tests/tests-13-results.xml",
+      "rawSha256": "020801b872051aeddf628050aae010437906bdc1c15de3ea421f184d8738efa5",
+      "publicSha256": "7654a570fa3dffe711e0b914fbfa3f873618be746bdea67fbd53eff4939a911f",
+      "privateLinesRedacted": 0,
+      "rawBytes": 108370,
+      "publicBytes": 108469
+    },
+    {
+      "file": "tests/tests-14-results.xml",
+      "rawSha256": "4a89ce8851aa4e80009c16b81b5d48204d3906e7085b210886a83a41063c3522",
+      "publicSha256": "544bdaeed607a8661352ff2743e34b95681d35596a0e975cab0d7564fe9087a5",
+      "privateLinesRedacted": 0,
+      "rawBytes": 108377,
+      "publicBytes": 108476
+    },
+    {
+      "file": "tests/tests-15-results.xml",
+      "rawSha256": "a90a46816a6a8e08ee933113be951a0d274a2ac61b729bcb99af5264b20cbafe",
+      "publicSha256": "e31725e7d9d0b017e2c1a362a014d7261a515724a9e1c8615ad698705427953a",
+      "privateLinesRedacted": 0,
+      "rawBytes": 108371,
+      "publicBytes": 108470
+    },
+    {
+      "file": "tests/tests-16-results.xml",
+      "rawSha256": "1a11b3c947d8307d185663ca2b44d87b827d928d4026aac9e3984b2f3fc50194",
+      "publicSha256": "3ed90a81523a24c7b8ef2ea5e6db66519b148d7d11eeb6ab3692d0f63521168f",
+      "privateLinesRedacted": 0,
+      "rawBytes": 108365,
+      "publicBytes": 108464
+    },
+    {
+      "file": "tests/tests-17-results.xml",
+      "rawSha256": "d172a7a2a881ed60aedb0bfda4eb27c0e48859c5d2ae8be61ceeb264a83f9483",
+      "publicSha256": "1cb03c5e65b7f007179bcf0703cfa7920fbb2da4e336a5200802eadb36c1b9e5",
+      "privateLinesRedacted": 0,
+      "rawBytes": 113225,
+      "publicBytes": 113327
+    },
+    {
+      "file": "tests/tests-18-broader-results.xml",
+      "rawSha256": "cafeb31c988763a39f23569df5cb7476a92cca198131c75dd3979216b5402219",
+      "publicSha256": "885088f2a4bc47e66e728fc85e15b60ed7266abd32c65bfadee19635c5e8868d",
+      "privateLinesRedacted": 0,
+      "rawBytes": 213542,
+      "publicBytes": 212790
+    },
+    {
+      "file": "tests/tests-19-results.xml",
+      "rawSha256": "e30803ba171b16a7712ead922fca686b98d2ba4f3dad38056ba292f5e8e90aae",
+      "publicSha256": "0167cce7a3cd790e8d52180aef9eb87e65352130fa0e6a6a6e8f1b12d6104111",
+      "privateLinesRedacted": 0,
+      "rawBytes": 119347,
+      "publicBytes": 119437
+    },
+    {
+      "file": "tests/tests-20-results.xml",
+      "rawSha256": "8f99f15086fa3fff4e9bbef78c16fe46c24d47ed03bccb48c5bb4348e43a3c34",
+      "publicSha256": "9ae083c973eaced95b652607e0e05f8ac16755298388e45e07c10f9e9cd82784",
+      "privateLinesRedacted": 0,
+      "rawBytes": 120526,
+      "publicBytes": 120607
+    },
+    {
+      "file": "tests/tests-21-results.xml",
+      "rawSha256": "68c065537c0aa635d615c6c8567d4c136829e01cb508c7d94bd8094665103022",
+      "publicSha256": "89d5fc50df76fb9d2285c7cdcf7a5dd6f6200b1324bfc3fa79867f69d097ce11",
+      "privateLinesRedacted": 0,
+      "rawBytes": 127194,
+      "publicBytes": 127182
+    },
+    {
+      "file": "tests/tests-22-results.xml",
+      "rawSha256": "4d0172b35265ee4d82f2017d4105c27c60a69d61d18747128036ca5f58a9e9bf",
+      "publicSha256": "002a7ca70fd665fd23d25e689708448c02c17af6c582ca18abb3f34c246ad62f",
+      "privateLinesRedacted": 0,
+      "rawBytes": 124665,
+      "publicBytes": 124749
+    },
+    {
+      "file": "tests/tests-23-results.xml",
+      "rawSha256": "da255942108806ec002e2d77318b22cfc09dee2699085e5bfabc2f5114250a66",
+      "publicSha256": "95164e22aecaf15042f33895b8c1b94412af88b14b585832312f41814ee97be1",
+      "privateLinesRedacted": 0,
+      "rawBytes": 130018,
+      "publicBytes": 130066
+    },
+    {
+      "file": "tests/tests-24-results.xml",
+      "rawSha256": "0a13e32c203b78bc28d9e5c8a7a167620bb77961e46698514b8d66ff2c3cd534",
+      "publicSha256": "95c9acc0bebf91395137a0bf7d9d25eb4eace53e7f9021de04cd59732c284a9e",
+      "privateLinesRedacted": 0,
+      "rawBytes": 130030,
+      "publicBytes": 130078
+    },
+    {
+      "file": "tests/tests-25-results.xml",
+      "rawSha256": "29a90fee463823ac7445505cb42b1c4f21bdf198f283f0776c7a388fd8aabdaa",
+      "publicSha256": "c6e36109e79eadb992a275bc3a3c4e349bcbd97e6959880e1c163dd931acc72b",
+      "privateLinesRedacted": 0,
+      "rawBytes": 172301,
+      "publicBytes": 172349
+    },
+    {
+      "file": "tests/tests-26-results.xml",
+      "rawSha256": "7b24730352be9bd57462236176144fb7f5c28d7662c643b49b9b67e9723b092e",
+      "publicSha256": "70b72e29d2efde66bd7a0d6b53b4007415ae362aa3d0ef33e466b7b82db8ca06",
+      "privateLinesRedacted": 0,
+      "rawBytes": 239359,
+      "publicBytes": 239413
+    }
+  ]
+}

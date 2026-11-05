@@ -58,7 +58,7 @@ namespace Game.UI.Runtime
             continueButton?.onClick.RemoveListener(OpenCampaign);
             if (UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.ActiveRoute != UIRoute.MainMenu) visitActive=false;
         }
-        public void BeginHomeVisit() { visitAftermath = -1; visitActive = true; }
+        public void BeginHomeVisit() { visitAftermath = -1; visitActive = true; routeRequested = false; }
         private void LateUpdate() => Refresh();
         public void Refresh()
         {
@@ -96,7 +96,10 @@ namespace Game.UI.Runtime
                 Set(title, full ? "CAMPAIGN COMPLETE" : "ALL AVAILABLE MISSIONS COMPLETED");
                 Set(purpose, full ? "The city is rebuilding. Your command made the difference." :
                     visitAftermath >= 0 ? UiShellRuntimeGateway.Localization.Get(aftermathScenes[visitAftermath].captionKey, aftermathScenes[visitAftermath].captionFallback) : "Review your Campaign missions.");
-                Set(actionLabel, "CHOOSE MISSION   ›");
+                Set(actionLabel, full
+                    ? (Game.Configs.GameLocalization.CurrentLocaleCode==Game.Configs.GameLocalization.PersianLocaleCode
+                        ? "تکرار فصل‌ها  ‹" : "REPLAY CHAPTERS  ›")
+                    : "CHOOSE MISSION   ›");
                 return;
             }
             Sprite plate = FindPlate(PresentedMissionId);
@@ -124,10 +127,19 @@ namespace Game.UI.Runtime
         }
         private void OpenCampaign()
         {
+#if UNITY_EDITOR
+            Debug.Log("[MainMenuCampaignNavigation] requested="+routeRequested+" visit="+visitActive+" mission="+PresentedMissionId);
+#endif
             if(routeRequested) return;
             Refresh(); // Re-read progression/access at the activation boundary.
             if (!string.IsNullOrEmpty(PresentedMissionId) &&
-                !UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select, PresentedMissionId)) return;
+                !UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select, PresentedMissionId))
+            {
+#if UNITY_EDITOR
+                Debug.LogWarning("[MainMenuCampaignNavigation] selectRefused="+PresentedMissionId);
+#endif
+                return;
+            }
             routeRequested=UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.Campaign, true);
         }
         private static void Set(TMP_Text target, string value)

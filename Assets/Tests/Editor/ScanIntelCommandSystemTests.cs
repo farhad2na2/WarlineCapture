@@ -25,7 +25,13 @@ public sealed class ScanIntelCommandSystemTests
 
             tests.SetUp();
             tests.TryIssueScan_RejectsWhenClickedCellCannotResolve();
-            UnityEngine.Debug.Log("[ScanIntelCommandFocusedValidation] result=Passed tests=2");
+            for (int entryPoint = 0; entryPoint < 3; entryPoint++)
+            {
+                tests.TearDown();
+                tests.SetUp();
+                tests.Scan_CompletesSelectionMarkerTransformWriterBeforeChunkRead(entryPoint);
+            }
+            UnityEngine.Debug.Log("[ScanIntelCommandFocusedValidation] result=Passed tests=5");
         }
         catch (System.Exception ex)
         {
@@ -118,6 +124,89 @@ public sealed class ScanIntelCommandSystemTests
 
         Assert.IsFalse(result.CommandResult.Accepted);
         Assert.AreEqual(TacticalCommandReasonCode.TargetOutOfBounds, result.CommandResult.ReasonCode);
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(2)]
+    public void Scan_CompletesSelectionMarkerTransformWriterBeforeChunkRead(int entryPoint)
+    {
+        CreateGrid(64, 64);
+        Entity hostile = CreateUnit(FactionIdentity.EnemyFactionId, new int2(14, 14));
+        Entity friendly = CreateUnit(FactionIdentity.PlayerFactionId, new int2(15, 15));
+        Entity farHostile = CreateUnit(FactionIdentity.EnemyFactionId, new int2(40, 40));
+        SystemHandle scanHandle = _world.CreateSystem<ScanIntelCommandSystem>();
+        Entity visualChild = _entityManager.CreateEntity(typeof(LocalTransform));
+        _entityManager.SetComponentData(visualChild, LocalTransform.Identity);
+        Entity marker = _entityManager.CreateEntity(
+            typeof(LocalTransform), typeof(Parent), typeof(SelectionMarkerTag),
+            typeof(SelectionMarkerVisualChild));
+        _entityManager.SetComponentData(marker, LocalTransform.Identity);
+        _entityManager.SetComponentData(marker, new Parent { Value = friendly });
+        _entityManager.SetComponentData(marker, new SelectionMarkerVisualChild
+        {
+            Value = visualChild,
+            VisibleScale = 1f
+        });
+        SystemHandle visibility = _world.CreateSystem<SelectionMarkerVisibilitySystem>();
+        using EntityQuery gridQuery = _entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (entryPoint != 2)
+            ScanIntelCommandSystem.EnqueueScan(_entityManager, 17, 42, new int2(12, 12), new float3(12.5f, 0f, 12.5f));
+
+        // The actual presentation producer remains scheduled across the synchronous scan.
+        // No component reads, structural changes or explicit completion occur before the call under test.
+        visibility.Update(_world.Unmanaged);
+        try
+        {
+            if (entryPoint == 0)
+                Assert.DoesNotThrow(() => scanHandle.Update(_world.Unmanaged));
+            else if (entryPoint == 1)
+                Assert.DoesNotThrow(() => ScanIntelCommandSystem.ProcessPendingRequests(_entityManager));
+            else
+            {
+                var scan = new ScanIntelCommandSystem();
+                ScanIntelCommandSystem.Result observed = default;
+                Assert.DoesNotThrow(() => observed = scan.TryIssueScan(
+                    _entityManager, Vector2.zero, 17, 42, gridQuery,
+                    (Vector2 screen, EntityManager em, out int2 cell, out Vector3 world) =>
+                    {
+                        cell = new int2(12, 12);
+                        world = new Vector3(12.5f, 0f, 12.5f);
+                        return true;
+                    }));
+                Assert.IsTrue(observed.CommandResult.Accepted);
+                Assert.AreEqual(1, observed.RevealedCount);
+            }
+
+            using EntityQuery resultQuery = _entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<ScanIntelCommandQueueComponent>(),
+                ComponentType.ReadOnly<ScanIntelCommandResultElement>());
+            DynamicBuffer<ScanIntelCommandResultElement> results =
+                _entityManager.GetBuffer<ScanIntelCommandResultElement>(resultQuery.GetSingletonEntity());
+            Assert.AreEqual(1, results.Length);
+            Assert.AreEqual(17, results[0].RequestId);
+            Assert.AreEqual(42, results[0].Frame);
+            Assert.AreEqual(1, results[0].Accepted);
+            Assert.AreEqual(1, results[0].RevealedCount);
+            Assert.IsTrue(_entityManager.HasComponent<ScanIntelRevealedTag>(hostile));
+            Assert.IsFalse(_entityManager.HasComponent<ScanIntelRevealedTag>(friendly));
+            Assert.IsFalse(_entityManager.HasComponent<ScanIntelRevealedTag>(farHostile));
+            Assert.AreEqual(new float3(14.5f, 0f, 14.5f),
+                _entityManager.GetComponentData<ScanIntelLastSeen>(hostile).Position);
+            using EntityQuery feedQuery = _entityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<ScanIntelFeedQueueTag>(), ComponentType.ReadOnly<ScanIntelFeedEntry>());
+            DynamicBuffer<ScanIntelFeedEntry> feed =
+                _entityManager.GetBuffer<ScanIntelFeedEntry>(feedQuery.GetSingletonEntity());
+            Assert.AreEqual(1, feed.Length);
+            Assert.AreEqual(17, feed[0].RequestId);
+            Assert.AreEqual(42, feed[0].Frame);
+            Assert.AreEqual(1, feed[0].RevealedCount);
+            Assert.AreEqual(new float3(12.5f, 0f, 12.5f), feed[0].CenterWorld);
+        }
+        finally
+        {
+            _entityManager.CompleteAllTrackedJobs();
+        }
     }
 
     private Entity CreateGrid(int width, int height)

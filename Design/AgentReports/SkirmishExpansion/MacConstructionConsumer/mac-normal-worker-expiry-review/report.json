@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-10-18T20:14:40.363337+00:00",
+  "predecessor_commit_preserved": "b43b857c015911a77e93d17a767b3807bcb44307",
+  "scope": "OnlyReviewedExpiryBoundariesAndPOSIXRootContainment",
+  "source_pins": {
+    "Tools/CI/mac_skirmish_normal_worker.py": "eeb218c0badbb9d6c54f850b2854be891b796083769de19f1f9c7e951cb4ae8e",
+    "Tools/CI/mac_skirmish_normal_worker_test.py": "9df2a0e3d388f35892a75e4625c50fe5cc3e71288260d6f17bac92b9e1426b07",
+    "Tools/CI/skirmish_production_queue.py": "4d057261ee84a6a5880338fa99b26240cebd1d02a53000d8e1e2fe062e9df156",
+    "Tools/CI/skirmish_profile_journal_admission.py": "ec2da91d1c49bdb1c3d81262aa44b5ac62a08011ee6699b5dc13eac959457e3f"
+  },
+  "changes": [
+    "Reusable check_grant_time reads original issued_utc/expires_utc; no renewal/newnonce/reserializationSHA",
+    "Before each public canonicalclaim AND final before_reserve callback after complete canonical preflight/historyIO",
+    "Immediately before actual Popen through spawn_checked_wrapper",
+    "Canonicalclaim callback optional and defaultNone preserves prior path, validation, locking, history and success prohibition",
+    "MacPOSIX commonpath rejects original_root=/ containing every owned profile; Windows prefix branch unchanged"
+  ],
+  "focused_controls": {
+    "tests": 20,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log_sha256": "673dc2be75c4bf0e0501f2708528aa7dab51fd2aac273a1f0af0246d45822fa1"
+  },
+  "counterexamples_closed": [
+    "Expiry at end of canonicalpreflight creates no attempt/claim, releases only short metadata lock",
+    "Expiry after first validclaim prevents secondclaim/descriptor and preserves the firstownedclaim",
+    "Expiry exactly at Popen prevents any process factory call",
+    "Valid lastboundary uses exact originalargv/env and leaves originalgrant subject unchanged",
+    "OriginalPOSIXfilesystemroot / is rejected as overlapping ownedprofile"
+  ],
+  "authorization_scope": "Expiry is rechecked for new reservations/spawn; an already-owned originalprocess still follows checkedwrapper timeout/lifecycle, never killed by expiry",
+  "native_launches": 0,
+  "production_claims": 0,
+  "native_source_settings_mutations": 0,
+  "normal_or_720_or_device_credit": 0,
+  "disabled_contract_unchanged": true,
+  "all720slots_preserved": true,
+  "protected_legacy_and_counterpart_gates_unchanged": true,
+  "root_review_pending": true
+}

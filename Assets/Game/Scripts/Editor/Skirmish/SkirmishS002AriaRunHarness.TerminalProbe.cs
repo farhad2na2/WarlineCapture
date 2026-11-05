@@ -53,6 +53,7 @@ namespace Game.Editor
             using (var entities = oldState.ToEntityArray(Allocator.Temp))
                 foreach (var entity in entities) terminalOldBattlefield.Add(entity);
             terminalAction = Environment.GetEnvironmentVariable("WARLINE_TERMINAL_ACTION") ?? "MAIN MENU";
+            if(terminalAction=="RESULT RETURN")terminalAction=match.Outcome==SkirmishOutcome.Victory?"MAIN MENU":"ADJUST SETUP";
             if (terminalAction != "MAIN MENU" && terminalAction != "REPLAY" && terminalAction != "ADJUST SETUP")
                 throw new ArgumentException("Unsupported terminal action: " + terminalAction);
             if (productionCanary?.Request.IsLegacyPreset == true && terminalAction != "MAIN MENU") throw new InvalidOperationException("Legacy production proof uses normal MainMenu return only");
@@ -109,6 +110,7 @@ namespace Game.Editor
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
                     terminalResultPresentation = SkirmishTerminalPresentationObservation.ReadResult(view, terminalAttempt.ToString(), match.Outcome);
                     if (!SkirmishTerminalPresentationObservation.AcceptResult(terminalResultPresentation, terminalAttempt.ToString(), match.Outcome)) return;
+                    if (sagaMenuProof && !ObserveSagaResultMedal(em,session,in match)) return;
                     if (UiShellRuntimeGateway.Localization.IsRightToLeft)
                     {
                         var card = UnityEngine.Object.FindAnyObjectByType<CampaignStyleResultCard>();
@@ -122,10 +124,13 @@ namespace Game.Editor
                         Debug.Log("[SkirmishNativeResultLocalization] result=Passed locale=" +
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode);
                     }
-                    string actionObject = terminalAction == "REPLAY" ? "Replay"
-                        : terminalAction == "ADJUST SETUP" ? "Adjust"
-                        : terminalAction == "RETRY" ? "Retry" : "Leave";
-                    var button = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult/" + actionObject)?.GetComponent<Button>();
+                    var shared = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult")?.GetComponent<SharedMissionResultView>();
+                    var controls = shared?.Controls;
+                    var button = controls == null ? null : terminalAction == "REPLAY" ? controls.Secondary
+                        : terminalAction == "ADJUST SETUP" ? controls.Tertiary
+                        : terminalAction == "RETRY" ? controls.Retry
+                        : terminalAction == "MAIN MENU" ? (controls.Primary.gameObject.activeInHierarchy ? controls.Tertiary : SkirmishTerminalPresentationObservation.CopyMatches(controls.SecondaryLabel.text,UiLocalizedText.CatalogLabel("MAIN MENU")) ? controls.Secondary : null)
+                        : controls.Primary;
                     if (!TryPresentedButtonPoint(button, out var point)) return;
                     // Retain the delayed, verified terminal state as well as the
                     // first finish observation before leaving the match.
@@ -216,6 +221,7 @@ namespace Game.Editor
                             " fuel=" + SkirmishStartingSupplyService.ReadFuel(em, fresh, 1) +
                             " materials=" + SkirmishMaterialsService.Read(em, fresh, 1));
                     }
+                    if(sagaMenuProof) VerifySagaReturnedMedal(prefix);
                     ScreenCapture.CaptureScreenshot(prefix + "-destination.png");
                     terminalStep = 2;
                     terminalDue = now + 1d;

@@ -82,7 +82,7 @@ class BreakthroughOfflineTests(unittest.TestCase):
         print(output, end="")
 
     def test_drafts_compile_against_actual_matching_editor_and_nunit_references(self):
-        version = (self.project / "ProjectSettings/ProjectVersion.txt").read_text(encoding="utf-8").splitlines()[0].split(":", 1)[1].strip()
+        version = (self.project / "ProjectSettings/ProjectVersion.txt").read_text(encoding="utf-8").splitlines()[0].split(":", 1)[1].replace("\r", "").strip()
         engine = Path("D:/Program Files/Unity") / version / "Editor/Data/Managed/UnityEngine"
         refs = [engine / dll for dll in ("UnityEngine.CoreModule.dll", "UnityEngine.JSONSerializeModule.dll")]
         self.assertTrue(all(path.is_file() for path in refs), "Version-matched installed Editor refs required")

@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "kind": "MacNormalMissionWorkerDisabledProposal",
+  "enabled": false,
+  "launch_authorized": false,
+  "claims_authorized": false,
+  "worker": "Tools/CI/mac_skirmish_normal_worker.py",
+  "reference_commit": "3a38730df1721fe38c7aaa2a239fc412dfc44be1",
+  "actual_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionBatchCanariesFromEnvironment",
+  "checked_wrapper": "Tools/CI/invoke_unity_macos.sh",
+  "gui_licensing": true,
+  "batchmode": false,
+  "quit_argument": false,
+  "source_build_settings_grants_per_host_capacity": "PendingRootReviewAndActualFreshByteIdentities",
+  "future_grant_schema": {
+    "schema_version": 1,
+    "launch_authorized": false,
+    "nonce": null,
+    "issued_utc": null,
+    "expires_utc": null,
+    "project": null,
+    "host": {
+      "node": null,
+      "uid": null
+    },
+    "worker": null,
+    "controller_sha256": null,
+    "dependency_pins": null,
+    "source": {
+      "head": null,
+      "parent": null,
+      "branch": null,
+      "candidate_sha256": null,
+      "build_sha256": null,
+      "manifest_ref": null,
+      "wrapper_sha256": null
+    },
+    "settings": {
+      "baseline_ref": null,
+      "global_roots": null,
+      "global_gui_scope_reviewed": false,
+      "shared_writer_policy": "NoOtherEditors"
+    },
+    "sampling_plan": {
+      "path": null,
+      "sha256": null
+    },
+    "jobs": [],
+    "timeout_seconds": null,
+    "capacity": {
+      "minimum_free_bytes": null,
+      "minimum_memory_pressure_free_percent": null,
+      "max_native_workers_on_host": 1
+    },
+    "tool_pins": null,
+    "reviews": {
+      "source_build": null,
+      "normal_menu_input_api": null,
+      "source_fit": null,
+      "settings_global_gui": null,
+      "toolchain": null,
+      "dispatch_partition": null
+    },
+    "python_runtime": {
+      "executable": null,
+      "sha256": null,
+      "version": null
+    }
+  },
+  "future_review_receipt_schema": {
+    "kind": "OneOfClosedReviewKinds",
+    "execution_scope_reviewed": false,
+    "candidate_sha256": null,
+    "build_sha256": null,
+    "source_fit_and_dispatch_extra": "reviewed_job_sha256s must equal sorted exact granted job hashes",
+    "dispatch_extra": "worker,host,nonce and exclusive_slots_reserved_by_coordinator=true must bind Root coordinator partition"
+  },
+  "local_file_lock_is_not_distributed_authority": true,
+  "coordinator_must_reserve_disjoint_slots_across_hosts": true,
+  "host_lease": "/private/tmp/warline-mac-normal-worker.host-lock; exclusive, no age reclaim; only exact own lease removed after original reaping/full owned shutdown",
+  "lifecycle": "Reuse exact reviewed1ffe1514 originalPopen/birth-owned tree; new unowned Editor latches failure and is protected; wrapper alone owns timeout; no process termination/adoption",
+  "outcome_policy": {
+    "Victory": "Record normal observation, no qualification",
+    "Defeat": "Record real loss, do not convert to Abort or retry",
+    "Draw": "Record real terminal outcome, no qualification",
+    "Abort_Blocked_partial": "Native batch stops, whole outer result incomplete; preserve all claims/evidence; no next worker batch/retry"
+  },
+  "claims_policy": "Fresh canonical q.claim only after reviewed gates; immutable copies kept; no automatic finish, reclaim, rollback or queue-success writes. Root must separately resolve unqualified/failed/interrupted claims via existing canonical policy.",
+  "full_authority": "Exact Baseline720 plan and all120catalog/twenty packet source pins; only grant-selected distinct ARIA Standard Regular slots",
+  "normal_evidence": "Actual Menu/Touch/ARIA/Playing/Finished/localizedresult/MainMenu and driver/census joins use existing full inspector. All four owned PNG stage artifacts and three profile boundaries required. Baseline/before-play/after-owned-return actor/world/scene censuses must match; this is not whole-mission actor conservation.",
+  "pending_acceptance": [
+    "Complete camera/actor three-boundary witness",
+    "Independent compilation/native input closure",
+    "Current normal candidate-specific visual review",
+    "Whole-attempt paid-resource readiness",
+    "Normal720 qualification adapter",
+    "Real player/device acceptance",
+    "Typed protected legacy identity collector/profile compatibility; all18 protected slots preserved"
+  ],
+  "runtime_capacity_limit": "Fresh host admission twice before launch, host lease and shared-Editor failure monitor. No new runtime hard-memory cancellation API is claimed; checked wrapper timeout remains the only process timeout authority. Root must review capacity/watch policy before launch.",
+  "global_settings_policy": "Full unfiltered ProjectSettings/UserSettings plus explicitly reviewed global directory inventories; exact byte/existence/ownership baseline. Unexpected changes fail, no restoration or ignored/dirty whitelist. Complete global GUI scope/shared writer review remains pending.",
+  "r6_authorization_reuse": false,
+  "r6_failure_upgraded": false,
+  "assets_scene_gameplay_changes": false,
+  "worker_queue_success_enabled": false,
+  "normal_720_credit": 0,
+  "current_published_commit": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "published_api_equivalence": "13 referenced queue/runtime/harness files byte-identical3a387->f2a; separate exact receipt",
+  "minimum_python_version": "3.12",
+  "available_runtime_observations": [
+    {
+      "version": [
+        3,
+        12,
+        14
+      ],
+      "executable": "/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "54f31dd7440a150d5ad7ec4c51d19658b3b5c8b047969bcae09948b8990346ba",
+      "Path.is_junction": true,
+      "selected_for_controls": true
+    },
+    {
+      "version": [
+        3,
+        14,
+        4
+      ],
+      "executable": "/opt/homebrew/Cellar/python@3.14/3.14.4_1/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+      "sha256": "02a8df1726463faedb3adef289b3d1bdeabb7785c837fd8c174023aeeeb4d312",
+      "Path.is_junction": true,
+      "selected_for_controls": false
+    }
+  ],
+  "protected_identity_dispatch_gap": "18slots S001/S025/S073 remain required. Schema2 legacy jobs block beforeclaim pending typed legacy collector/profile bridge; development-only schema3 counterparts also block, never auto-substituted."
+}

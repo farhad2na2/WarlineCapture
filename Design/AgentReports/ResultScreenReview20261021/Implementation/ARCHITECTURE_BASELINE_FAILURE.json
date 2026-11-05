@@ -1,0 +1,187 @@
+{
+  "test": "ProductionSourceGrowthArchitectureTests.RunFocusedValidation",
+  "outcome": "Failed",
+  "requiredStandaloneGuardUnchanged": true,
+  "offendingPaths": [
+    {
+      "path": "Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "5b4cbfe26e43efef27121813de2b1ac94606e463a8c0dccd0493bacc0c363e1d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "b754be78eafb08fc675b996149859bdc8add6d68ffd43a9652dbaf4ce3baacef"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "ba64d2e2a86aeb233bd3575239979b4847d3923b01034b6eaa12c7c1386d483b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeProfileCompositionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "ffdadb6cd0dbf6118bbf60a38a59d37c9a3dcfd7eecafabc795cb45783f1dae3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/OperationsReconSpawnCompositionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "df01bdf087e90baafa8bae38ce3d6e74d73f171ab048c1194ee16702ece497c9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "cc8b43569a48c07d2218d5622f089093b2b36b553d9614c25ce7393e04716e47"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyObjectiveAllocationUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "17bd3fd7d1821c3edab4d42d1c37a8287865160489e5be42de4d58b560ecd9e5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishObjectivePolicyUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "19e13b960847afb48ab0842200a8d337bffe88931c9f299119775394c55c8982"
+    },
+    {
+      "path": "Assets/Game/Scripts/Skirmish/Contracts/SkirmishPlayerObjectivePolicyUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "fc4311d9dd5a98b6322d1e8ca5c6eff8841baf8048b1295b1e4eaaae6c2ff5b5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/AIBuildPlanningPolicySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "1c76833c07884a7bb287a3d68184972588a97071d031285d99c3605b6dfde1d7"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "111c8f1a585efa120807baf30156f8d0c1200f2cc4ab89905b0ef3f03bf2bfd9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingConstructionResourceTransactionSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "38daf611d9103717b131f66112bf5ca1f793e80a79d5f34b9ae850e6356512ff"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingFactionAIOilAllocationInputSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "baf9beb0ccfec11b3e350a0e6dc61d946726b505eeb76ef513a93150b0edb34a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "6f586e8a9f5334624a82a4518a94577097d22b143c7c13c09b72bc5924ba87b5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "1733e4703b8663e0974eed48646f70bf369a5367c5b404b1d139f1286a34fbb3"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/FactionTacticalMaterialsUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "10c2827cf812bd9ed6f77b61fafd632e2725e3df51d14ef49d0d139d596bbbf0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerAutomaticRoutePolicySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "c15db9583c8637fbfcba14dca3e4bc11294db743745940d65f1aace3746019be"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ResourceHaulerStorageAccessSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "dbd8d013ea559c214d9a5ef7e7197f339bfb0d2410a1c312f9078dd7ba73c13d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RuntimeFactionResourceSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "dfebb4af2b1a78815442f51aa299bfade96398875c3f8651ea3f6ebd3423e9b1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportAirValidationUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "372098edc92698282c704462ed4a13c8c747980411c75efda9c5998e088c04cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportDamageUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "ebd3468985636dad70ee601d4131e3929215cc0d7712cefb7433f08066341caa"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportLandingUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "20c7684e7678129803693527350d725d263d5236b430d5c5c63298d8b0a72f06"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportParatrooperAdapterSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "0642a38728be358beba3b411e0d246c86c83475f21f096907bbceeb120aad13d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportSupplyAdapterSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "ebf30480afe73228aa02cdbca68bd01b46ba2c11985c6344acdf8b76207eb763"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/Support/SupportTargetValidationUtilitySystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "8927124609c19badb0a66854270a970d85add52501c7f9808727fbcacb9d507e"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Narrative/NarrativeDialoguePresentationSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "509ca947987ab4e68826aec0d7671330d76a4964451c76f77775a3eb5175112a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "045a256233db860c8da7879cf9bba50a620d89044ec08de56cede7f231a81d21"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "d23d461e7da3f02c0af9924b79c12c7618878911e75de265ea55e6f0d06a9d65"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/SupportTargetingInputUiSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "fbc5a4f1db443d91401f7894a212141afe4ea33307fac7d2147067c5740c9976"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiActionResourceExchangeRequestSystemHelper.cs",
+      "trackedAtBase": true,
+      "matchesBase": true,
+      "sha256": "e001adceab157519b5c183ab226c3dc871a7e15ed9b6296bba03100b859178a9"
+    }
+  ]
+}

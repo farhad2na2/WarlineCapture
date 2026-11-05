@@ -62,7 +62,7 @@ namespace Game.UI.Runtime
             {
                 BuildDrawerCategory.Buildings => "BUILDINGS",
                 BuildDrawerCategory.Vehicles => "VEHICLES",
-                BuildDrawerCategory.Aircrafts => "AIRCRAFTS",
+                BuildDrawerCategory.Aircrafts => "AIRCRAFT",
                 BuildDrawerCategory.Soldiers => "SOLDIERS",
                 _ => "ITEMS"
             };

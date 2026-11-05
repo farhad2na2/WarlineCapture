@@ -283,7 +283,7 @@ namespace Game.UI.Runtime
         {
             var content=BuildResult(match);
             if(objectiveModel?.Applicable!=true)return content;
-            content.HasObjectiveFacts=false;content.CompletedObjectives=0;
+            content.HasObjectiveFacts=false;content.CompletedObjectives=0;content.IncompleteObjectives=0;content.NeutralObjectives=6;
             content.ObjectiveTitle=match.Objective;content.Objective1=content.Objective2=content.Objective3="";
             content.Objective1State=content.Objective2State=content.Objective3State="";
             if(!objectiveModel.Available||objectiveModel.Goal==null)return content;

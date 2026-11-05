@@ -208,6 +208,7 @@ namespace Game.Runtime
                 if(found!=Entity.Null)throw new InvalidOperationException("Duplicate native construction result.");found=actor;
             }
             if(found==Entity.Null)throw new InvalidOperationException("Native construction result actor missing.");
+            RuntimeActorBirthContext.VerifyBuildingAdoption(em, found, r);
             if(!em.HasComponent<SkirmishAttemptOwnedComponent>(found))
             {
                 SkirmishScenarioSpawnSystem.BindStructure(em,found,i.SessionId,new SkirmishResolvedStructureEntry{

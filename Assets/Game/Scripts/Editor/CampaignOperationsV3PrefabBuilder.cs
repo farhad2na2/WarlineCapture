@@ -153,6 +153,7 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
+            ApprovedMissionAtlasBuilder.BuildCampaign();
             Debug.Log("[CampaignOperationsV3PrefabBuilder] result=Passed states=2 map=SCN05_SahrinMissionMap_V3 chrome=procedural-shared");
         }
 

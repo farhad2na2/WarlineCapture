@@ -268,37 +268,14 @@ function Stop-UnityProcessTree {
         Write-InvocationLog "[UnityInvoke] Owned root already exited; no process-ID cleanup attempted."
         return
     }
-    $taskkillExe = Join-Path $env:SystemRoot "System32\taskkill.exe"
-    $taskkillOutput = @()
-    $taskkillExitCode = $null
-    $previousErrorActionPreference = $ErrorActionPreference
+    # The cached Process handle belongs to this wrapper's Start-Process child.
+    # Parent-PID links can be reused and cannot authorize stopping descendants.
     try {
-        if (-not (Test-Path -LiteralPath $taskkillExe -PathType Leaf)) {
-            throw "Windows taskkill executable is missing: $taskkillExe"
-        }
-        # PowerShell 5.1 wraps native stderr as NativeCommandError. A diagnostic
-        # about an already-ended child must not abort the remaining cleanup or
-        # replace the original fatal/timeout failure. Scope this preference to
-        # this owned-tree command, retaining both output and its real status.
-        $ErrorActionPreference = "Continue"
-        $taskkillOutput = @(& $taskkillExe /PID $UnityProcess.Id /T /F 2>&1)
-        $taskkillExitCode = $LASTEXITCODE
-    } catch {
-        Write-InvocationLog "[UnityInvoke] WARN: Owned-tree taskkill invocation failed: $($_.Exception.Message)"
-    } finally {
-        $ErrorActionPreference = $previousErrorActionPreference
-    }
-    foreach ($line in $taskkillOutput) {
-        Write-InvocationLog "[UnityInvoke] taskkill: $line"
-    }
-    Write-InvocationLog "[UnityInvoke] taskkill ExitCode: $taskkillExitCode"
-    try {
+        $UnityProcess.Kill()
         if (-not $UnityProcess.WaitForExit(5000)) {
-            Write-InvocationLog "[UnityInvoke] WARN: Owned root PID $($UnityProcess.Id) survived tree cleanup; attempting its cached Process handle."
-            $UnityProcess.Kill()
-            if (-not $UnityProcess.WaitForExit(5000)) {
-                Write-InvocationLog "[UnityInvoke] ERROR: Owned root PID $($UnityProcess.Id) remains active after cleanup."
-            }
+            Write-InvocationLog "[UnityInvoke] ERROR: Owned root PID $($UnityProcess.Id) remains active after cached-handle cleanup."
+        } else {
+            Write-InvocationLog "[UnityInvoke] Owned root stopped via cached Process handle; descendant shutdown not claimed."
         }
     } catch {
         Write-InvocationLog "[UnityInvoke] ERROR: Owned root cleanup failed: $($_.Exception.Message)"
@@ -318,7 +295,7 @@ while (-not $process.HasExited) {
 
     if ($TimeoutSeconds -gt 0 -and ((Get-Date) - $startedAt).TotalSeconds -ge $TimeoutSeconds) {
         $timedOut = $true
-        Write-InvocationLog "[UnityInvoke] ERROR: Unity timed out after $TimeoutSeconds seconds. Killing process tree for PID $($process.Id)."
+        Write-InvocationLog "[UnityInvoke] ERROR: Unity timed out after $TimeoutSeconds seconds. Stopping owned root PID $($process.Id) via its cached Process handle."
         Stop-UnityProcessTree -UnityProcess $process
         break
     }

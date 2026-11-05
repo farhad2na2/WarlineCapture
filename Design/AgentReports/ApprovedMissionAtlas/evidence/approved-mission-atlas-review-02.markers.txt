@@ -1,0 +1,3 @@
+[ApprovedMissionAtlas] result=Passed campaignComics=25 chapterComics=5 sharedNativeLayout=true
+InvalidOperationException: Obstructed native target ChapterCard_3 hit=none
+[ApprovedMissionAtlasReview] result=Failed output=Design/AgentReports/ApprovedMissionAtlas/20261020-194718

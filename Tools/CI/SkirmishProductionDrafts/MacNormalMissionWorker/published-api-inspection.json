@@ -1,0 +1,42 @@
+{
+  "reference_commit": "3a38730df1721fe38c7aaa2a239fc412dfc44be1",
+  "actual_entry": "Game.Editor.SkirmishS002AriaRunHarness.RunProductionBatchCanariesFromEnvironment",
+  "actual_dispatch": "RunProductionJobFromEnvironment",
+  "entry_lines": "ProductionBatch.cs:222-240",
+  "async": true,
+  "quit_argument": false,
+  "environment": "WARLINE_SKIRMISH_PRODUCTION_BATCH",
+  "canonical_python_apis": [
+    "skirmish_production_queue.claim",
+    "prepare_skirmish_production_batch.prepare",
+    "skirmish_production_matrix_authority.SamplingAuthority",
+    "collect_skirmish_batch_inspection.build_spec",
+    "collect_skirmish_batch_inspection.collect_and_inspect"
+  ],
+  "queue_success_api": "NotIntegrated_queue.finish_only_failed_interrupted",
+  "actual_screenshot_suffixes": {
+    "setup": ".setup.png",
+    "opening": ".opening.png",
+    "result": ".terminal-result.png",
+    "return": ".terminal-destination.png"
+  },
+  "actual_profile_events": [
+    "ProfileBeforeDispatch",
+    "ProfileBeforeRestore",
+    "ProfileAfterRestore"
+  ],
+  "complete_camera_actor_three_boundary_witness": "Pending_NotFoundInPublishedNormalContext",
+  "source_pins": {
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionBatch.cs": "e1cbe915dfdec286a0fb700f169162be4013c6aabe6a94ed0fd19ce60890e12e",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionCanary.cs": "373a29aa058fc275e4c33f8eb8077963b63f1e96b3389a5e526e8289b0fa63a2",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.MenuProbe.cs": "b0fe98b3d3b14395c54f4aed5b6c68529f7c8837c8ed87cfed341ad6b3896ed7",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.TerminalProbe.cs": "9263e5e62df0dce92a44e936740f483ec61872af1ec673bd59449c84fc06e570",
+    "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs": "d97a023851684c3a37f260706d0dc85bd86e89763a476f3252c2e48b82633bf0"
+  },
+  "actual_actor_accounting_boundaries": [
+    "BatchCaptured.baseline_ownership_census",
+    "Dispatch.before_play_ownership_census",
+    "CleanupOwnershipCensus.census"
+  ],
+  "camera_boundary_witness": "Pending_NoCompletePublishedNormalCameraJournal"
+}

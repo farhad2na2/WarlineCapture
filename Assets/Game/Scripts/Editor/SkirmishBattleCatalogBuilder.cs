@@ -56,6 +56,8 @@ namespace Game.Editor
             try
             {
                 SkirmishScenarioAssetsBuilder.ConfigureChoices(root);
+                root.GetComponent<QuickCustomScreenView>()?.EnsureBattleLibraryChrome();
+                SkirmishScenarioAssetsBuilder.RecaptureSectionLayoutBases(root);
                 PrefabUtility.SaveAsPrefabAsset(root, SetupPrefabPath);
             }
             finally

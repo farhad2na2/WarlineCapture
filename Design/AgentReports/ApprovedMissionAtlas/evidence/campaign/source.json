@@ -1,0 +1,13 @@
+{
+  "run": "/private/tmp/approved-atlas-campaign-m01-native-04.log",
+  "nativeScreens": true,
+  "menuAndGameplayInput": "InputSystemTouch",
+  "outcomesInjected": 0,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "result": "Passed",
+  "mission": "saga.ch01.m01.first_contact",
+  "scope": "Actual victory, settlement and return; no device acceptance claim. Other Campaign missions are not certified by this run."
+}

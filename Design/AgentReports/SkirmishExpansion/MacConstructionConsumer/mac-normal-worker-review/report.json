@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "prepared_utc": "2026-10-18T20:02:20.513872+00:00",
+  "scope": "DisabledReusableNormalWorker_PythonCodeTestsContract_NoNativeExecution",
+  "reference_commit": "3a38730df1721fe38c7aaa2a239fc412dfc44be1",
+  "current_published_commit": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+  "interface_equivalence": {
+    "referenced_queue_runtime_harness_files": 13,
+    "canonical720_authority_sources": 22,
+    "all_byte_identical": true,
+    "not_native_candidate_or_evidence_transfer": true
+  },
+  "source_pins": {
+    "Tools/CI/mac_skirmish_normal_worker.py": "24813986d9b18897d7b457f9ced6f6ead0bcb99514b8acf5b7e4cbca817ed4bc",
+    "Tools/CI/mac_skirmish_normal_worker_test.py": "57f8af34fa317fc1ff5ec601865ccc244d804fb5dcac11322286a13863d0fa80",
+    "Tools/CI/collect_skirmish_batch_inspection.py": "f83b337fa2329eadc8e2570995f04d82d39abc56fb021754602a1a95d3d0a18a",
+    "Tools/CI/invoke_skirmish_production_batch.py": "53eea71618e4cdfe9fd1c65bc110bb1c2dbbbc6ba4c8fef2602402807037d493",
+    "Tools/CI/skirmish_production_operational_inspector.py": "428022cb329a56d22b5949c0277051876f2b383a952e0a4b6f857367541ebf84",
+    "Tools/CI/skirmish_profile_journal_admission.py": "2d21f79ca77c3a06dfb1067a20bd84e0ee183e65df4e90ac994b373ca114fd52",
+    "Tools/CI/SkirmishProductionDrafts/MacNormalMissionWorker/published-interface-equivalence.json": "ad4b9dad5bde9258313bb00d77ee3460884f9d0fe60332d69da8296ba81bc2ce",
+    "Tools/CI/SkirmishProductionDrafts/MacNormalMissionWorker/protected-slot-identity-map.json": "d7ea84780cd045a5a0db30559d16e70c55d647c07692755b7315b80c8e2ec341",
+    "Tools/CI/SkirmishProductionDrafts/MacNormalMissionWorker/README.md": "7d7e3e4785941ee2b78a33bf37ed1358da516f31ecdf3527bed960f4214fa8e4",
+    "Tools/CI/SkirmishProductionDrafts/MacNormalMissionWorker/worker.disabled.json": "e2b8097a5ef9373eddcbfa3f05ac75eaaef5f9c6c5f91b0a7383abf5c2b2c2d2",
+    "Tools/CI/SkirmishProductionDrafts/MacNormalMissionWorker/published-api-inspection.json": "9c5735bb849fde0ff15de4a6390ac3135a176fb831cb35a43f2309576cf57a29"
+  },
+  "python_runtime": {
+    "executable": "/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+    "sha256": "54f31dd7440a150d5ad7ec4c51d19658b3b5c8b047969bcae09948b8990346ba",
+    "version": [
+      3,
+      12,
+      14
+    ]
+  },
+  "tests": {
+    "all_mac_controls": 204,
+    "new_worker_controls": 34,
+    "existing_collector_inspector_profile_controls": 121,
+    "existing_mac_lifecycle_controls": 49,
+    "portable_worker_and_shared_controls": 155,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "full_log_sha256": "6e71f4e512000b3a2888dfb8f84a1429842ade73cb60198ef7d8ff653f22e9da",
+    "no_unity_or_real_production_claims": true
+  },
+  "shipping_reader_and_fixture_unchanged": true,
+  "existing_windows_behavior": "Default wrapper/profile routes preserved;121existing controls passed onMac, independentWindowspeer pending",
+  "prior_failures_preserved": [
+    {
+      "run": "initial21 worker controls",
+      "tool_session": 34268,
+      "failures": 5,
+      "errors": 5,
+      "cause": "Temporary fixture paths used /var alias against strict /private resolved roots; corrected fixture paths only; tool output retained in chat history"
+    },
+    {
+      "log": "normal-worker-final-controls-r3.log",
+      "tests": 148,
+      "errors": 1,
+      "sha256": "25a4a8e499df857a7822d35a58a73262b49fb0a8f80b92f83fa4b8dd4984d24c",
+      "cause": "Constructed process row omitted required executable identity; fixed fake row, did not weaken ownership gate"
+    }
+  ],
+  "implemented": [
+    "Real fullBaseline720 SamplingAuthority and canonical fresh q.claim/prepare seams",
+    "Host/nonce/exact-job source-fit and coordinator partition grant; local lease is not distributed authority",
+    "Exact dependency/runtime/source/build/tool/settings/globalGUI/capacity grant binding; all current real execution grants pending",
+    "CheckedMacGUIAndroid noquit entry; originalPopen drain/reap, birth ownership, fullshutdown and firstfailure latch",
+    "ExplicitMac wrapper receipt path in existing collector/inspector; no fakeWindowsmarkers or monkeypatch",
+    "ExplicitMacPOSIX profile path mode; original Windows default intact",
+    "Actualnormal Menu/Touch/ARIA/activePlaying/Finished/localizedresult/MainMenu/fullinput-driver/CSVtracejoins",
+    "Four owned stagePNG paths with byte/chunkCRC/hash stability checks; not pixel/visual readiness",
+    "Three profile boundaries and nativebaseline/beforeplay/afterreturnactor-scene accounting",
+    "RealDefeat/Draw retained; Abort/Blocked stops; partialclaims preserved; no queue success/reclaim/automaticretry",
+    "Protectedschema2dispatchgap and schema3developmentcounterpart refusal beforeclaim, all720slots retained"
+  ],
+  "pending": [
+    "IndependentRootcode/Windowspeerreview",
+    "Newactualcandidate/build/settings/globalGUIscope/toolchain/hostcapacity/dispatchgrants",
+    "Typedlegacyidentity collector/profile compatibility for18protectedslots; no schema relabel/substitution",
+    "Completecamera boundary witness and wholemissionactor/paidresourceconservation",
+    "AnyactualMacnormalmissionrun, normal720queuequalification, visual/player/deviceacceptance"
+  ],
+  "executed_actions": {
+    "unity_launches": 0,
+    "production_claims_consumed": 0,
+    "real_queue_mutations": 0,
+    "assets_or_scenes_edits": 0,
+    "native_settings_mutations": 0,
+    "library_copies": 0,
+    "baseline_adoptions": 0,
+    "old_r6_authority_reuse": 0,
+    "test_fixture_claims_and_benign_python_children": "Constructed temporary tests only"
+  },
+  "r6_historical_scope": "Originalfailedresult/log/settingspreserved;192DLLunchanged retainedonly; no newoperationalpass",
+  "admission": {
+    "qualified": false,
+    "paid_resources_qualified": false,
+    "queue_success_enabled": false,
+    "normal_720_credit": 0,
+    "android_build": false,
+    "player_device": false
+  },
+  "review_status": "FrozenCodeTestsDisabledContractAndIdentityMap_ReadyForIndependentRootReview",
+  "shipping_deployment_validation": {
+    "published_main": "f2a1b825c12e9c5597789fdaf4da679ebb7761af",
+    "tests": 155,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log_sha256": "ce3f9650b14bbf45c2f4f3a4132a026cc8882076b8398a8a8a39e1504c3c0670",
+    "runtime": {
+      "executable": "/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
+      "sha256": "54f31dd7440a150d5ad7ec4c51d19658b3b5c8b047969bcae09948b8990346ba",
+      "version": [
+        3,
+        12,
+        14
+      ]
+    },
+    "actual_deployment_dependency_pins": {
+      "mac_skirmish_normal_worker.py": "24813986d9b18897d7b457f9ced6f6ead0bcb99514b8acf5b7e4cbca817ed4bc",
+      "skirmish_production_operational_inspector.py": "428022cb329a56d22b5949c0277051876f2b383a952e0a4b6f857367541ebf84",
+      "s005_windows_source_snapshot.py": "60a6d7deab7da48ed5a61687bdc750002400160eccf3e62c8effd906e4622bba",
+      "skirmish_profile_journal_admission.py": "2d21f79ca77c3a06dfb1067a20bd84e0ee183e65df4e90ac994b373ca114fd52",
+      "skirmish_production_matrix_authority.py": "2712b7710fa780fbd1506133d444492b29dc7af9f0c8bf74c700c4723876af85",
+      "skirmish_production_queue.py": "95a53a42392769e20b4b7ab8ba94179b64fef0a28fe1689b34daf42ef94759fd",
+      "skirmish_counterpart_authority.py": "eb1181034507a5bd1313e3eacc9c20aa4229409c26a551306d37a23e715650fc",
+      "audit_skirmish_native_contacts.py": "273d7ce0c997d8f0e0d1b901a5607c4c1314928c1e4ddffd2fe7c22caab44f92",
+      "skirmish_native_identity.py": "e85cb0558fa845af215860031dbcd79ac7f2a019a2a238101f25a171802003c5",
+      "invoke_skirmish_production_batch.py": "53eea71618e4cdfe9fd1c65bc110bb1c2dbbbc6ba4c8fef2602402807037d493",
+      "collect_skirmish_batch_inspection.py": "f83b337fa2329eadc8e2570995f04d82d39abc56fb021754602a1a95d3d0a18a",
+      "prepare_skirmish_production_batch.py": "b717046d7ce8cb146879211504de1dff62554ba2340930687b45b6b2935e7341",
+      "mac_tanker_probe35_controller.py": "1ffe15144cde97e971e7cd97e137bab0040020ad56f71fb25edde9ef0d18d6b6",
+      "skirmish_construction_ledger_admission.py": "f1d9279dc628034e6267475f00c6bfe709ea1c4e78f0e959494a2a5667cb2b24"
+    },
+    "real_native_launches_and_production_claims": 0
+  },
+  "prototype_dependency_context": "204 controls include49 original lifecycle controls in frozen review dependency context (constructionfb03). Separate155-control deployment run uses actualf2a shippingf1d module; do not conflate the two contexts.",
+  "protected_slot_disposition": "All720slots retained;18ordinarycodedpreset slots pending separatelyreviewedtypedlegacycollector/profileadapter. Both schema2 and development-onlyschema3 stop beforeclaim; no substitution."
+}

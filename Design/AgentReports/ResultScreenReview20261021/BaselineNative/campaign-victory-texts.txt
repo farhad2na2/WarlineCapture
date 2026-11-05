@@ -1,0 +1,25 @@
+OutcomeTitlePanel/TitleText | VICTORY
+StarPanel/StarCountText | 3 / 3 STARS
+MissionIdentityPanel/V3MissionIdentityText | M01 FIRST CONTACT
+OLD MARKET
+MissionIdentityPanel/MissionStatusText | MISSION COMPLETE
+MissionTimerPanel/MissionMetaText | 00:44
+ObjectivesPanel/SectionTitleText | OBJECTIVES
+Objective_DestroyHostilePatrol/Label | NEUTRALIZE HOSTILE PATROL
+Objective_DestroyHostilePatrol/Status | COMPLETE
+Objective_KeepCommandSquadAlive/Label | KEEP COMMAND SQUAD ALIVE
+Objective_KeepCommandSquadAlive/Status | COMPLETE
+Objective_CityConsequenceNeutral/Label | CIVILIAN CONSEQUENCE
+Objective_CityConsequenceNeutral/Status | STABLE
+PerformancePanel/SectionTitleText | PERFORMANCE
+UnitsLostCard/Label | SQUAD LOSSES
+UnitsLostCard/ValueText | 0
+EnemiesDefeatedCard/Label | ENEMIES DEFEATED
+EnemiesDefeatedCard/ValueText | 3/3
+CiviliansLostCard/Label | CIVILIANS LOST
+CiviliansLostCard/ValueText | 0
+RewardsPanel/SectionTitleText | REWARDS
+RewardsPanel/AuthoritativeRewardsText | Commander XP     +260
+Credits     +1200
+ConsequenceRow/ConsequenceText | Hostile patrol neutralized. The Old Market corridor is secure.
+ContinueButton/Label | CONTINUE

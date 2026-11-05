@@ -57,6 +57,26 @@ namespace Game.Configs
     }
 
     [Serializable]
+    public struct SkirmishFacilityPlacementConfig
+    {
+        public byte FactionId;
+        public string StructureId;
+        public string PadId;
+        public float AcrossOffsetMetres;
+        public float ForwardOffsetMetres;
+    }
+
+    [Serializable]
+    public struct SkirmishFactionCompoundConfig
+    {
+        public string CompoundId;
+        public byte FactionId;
+        public string SourceHash;
+        public float MinX, MinZ, MaxX, MaxZ;
+        public string[] FacilityPadIds;
+    }
+
+    [Serializable]
     public struct SkirmishLegalPadConfig
     {
         public string PadId;
@@ -127,6 +147,8 @@ namespace Game.Configs
         [SerializeField] private SkirmishLayoutRouteConfig[] routes = Array.Empty<SkirmishLayoutRouteConfig>();
         [SerializeField] private SkirmishLegalPadConfig[] pads = Array.Empty<SkirmishLegalPadConfig>();
         [SerializeField] private SkirmishLayoutWorldBindingConfig worldBinding;
+        [SerializeField] private SkirmishFactionCompoundConfig[] factionCompounds = Array.Empty<SkirmishFactionCompoundConfig>();
+        [SerializeField] private SkirmishFacilityPlacementConfig[] facilityPlacements = Array.Empty<SkirmishFacilityPlacementConfig>();
 
         public string LayoutId => layoutId;
         public string OperationMapId => operationMapId;
@@ -142,6 +164,35 @@ namespace Game.Configs
         public SkirmishLegalPadConfig[] Pads => pads;
         public SkirmishLayoutWorldBindingConfig WorldBinding => worldBinding;
         public bool HasWorldBinding => worldBinding.IsValid;
+        public SkirmishFactionCompoundConfig[] FactionCompounds => factionCompounds;
+        public SkirmishFacilityPlacementConfig[] FacilityPlacements => facilityPlacements;
+        public bool HasFacilityPlacements => facilityPlacements != null && facilityPlacements.Length != 0;
+        public bool HasFactionCompounds => factionCompounds != null && factionCompounds.Length != 0;
+
+        public bool TryGetFactionCompound(byte faction, out SkirmishFactionCompoundConfig result)
+        {
+            result = default;
+            if (!HasFactionCompounds || factionCompounds.Length != 2) return false;
+            int matched = 0;
+            foreach (var zone in factionCompounds)
+            {
+                if (zone.FactionId < 1 || zone.FactionId > 2 || string.IsNullOrEmpty(zone.CompoundId) ||
+                    zone.SourceHash != WorldBinding.SourceHash || zone.FacilityPadIds == null || zone.FacilityPadIds.Length == 0 ||
+                    float.IsNaN(zone.MinX) || float.IsNaN(zone.MinZ) || float.IsNaN(zone.MaxX) || float.IsNaN(zone.MaxZ) ||
+                    float.IsInfinity(zone.MinX) || float.IsInfinity(zone.MinZ) || float.IsInfinity(zone.MaxX) || float.IsInfinity(zone.MaxZ) ||
+                    zone.MaxX <= zone.MinX || zone.MaxZ <= zone.MinZ) return false;
+                var seen = new System.Collections.Generic.HashSet<string>(StringComparer.Ordinal);
+                foreach (string id in zone.FacilityPadIds)
+                {
+                    if (string.IsNullOrEmpty(id) || !seen.Add(id)) return false;
+                    int padMatches = 0;
+                    foreach (var pad in pads) if (pad.PadId == id && pad.FactionId == zone.FactionId) padMatches++;
+                    if (padMatches != 1) return false;
+                }
+                if (zone.FactionId == faction) { result = zone; matched++; }
+            }
+            return matched == 1;
+        }
 
         internal void ApplyWorldBinding(in SkirmishLayoutWorldBindingConfig binding)
         {

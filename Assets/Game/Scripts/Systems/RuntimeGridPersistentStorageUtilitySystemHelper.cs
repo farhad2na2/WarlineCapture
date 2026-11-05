@@ -54,8 +54,10 @@ namespace Game.Runtime
                    blockerData.Counts.IsCreated &&
                    blockerData.Blocked.IsCreated &&
                    blockerData.FriendlyPassFactionIds.IsCreated &&
+                   blockerData.Counts.Length == gridSize && blockerData.Blocked.Length == gridSize &&
+                   blockerData.FriendlyPassFactionIds.Length == gridSize &&
                    occupancyData.GridSize == gridSize &&
-                   occupancyData.Occupied.IsCreated &&
+                   occupancyData.Occupied.IsCreated && occupancyData.Occupied.Length == gridSize &&
                    pathPool.Cells.IsCreated;
         }
 
@@ -70,9 +72,18 @@ namespace Game.Runtime
             if (blockerData.GridSize != gridSize ||
                 !blockerData.Counts.IsCreated ||
                 !blockerData.Blocked.IsCreated ||
-                !blockerData.FriendlyPassFactionIds.IsCreated)
+                !blockerData.FriendlyPassFactionIds.IsCreated ||
+                blockerData.Counts.Length != gridSize || blockerData.Blocked.Length != gridSize ||
+                blockerData.FriendlyPassFactionIds.Length != gridSize)
             {
+                // Invalidate before allocation: an exception cannot leave the old certificate valid.
+                RuntimeGridBlockerEpoch.Invalidate(ref blockerData);
+                entityManager.SetComponentData(entity, blockerData);
                 DynamicBlockerComponent replacement = CreateBlockerStorage(gridSize);
+                replacement.StorageEpoch = blockerData.StorageEpoch;
+                replacement.EpochExhausted = blockerData.EpochExhausted;
+                replacement.AppliedRevision = blockerData.AppliedRevision;
+                replacement.WriteInProgress = 1;
                 DisposeBlocker(ref blockerData);
                 blockerData = replacement;
                 entityManager.SetComponentData(entity, blockerData);
@@ -80,7 +91,7 @@ namespace Game.Runtime
             }
 
             DynamicOccupancyComponent occupancyData = entityManager.GetComponentData<DynamicOccupancyComponent>(entity);
-            if (occupancyData.GridSize != gridSize || !occupancyData.Occupied.IsCreated)
+            if (occupancyData.GridSize != gridSize || !occupancyData.Occupied.IsCreated || occupancyData.Occupied.Length != gridSize)
             {
                 DynamicOccupancyComponent replacement = new()
                 {
@@ -114,6 +125,8 @@ namespace Game.Runtime
             if (entityManager.HasComponent<DynamicBlockerComponent>(entity))
             {
                 DynamicBlockerComponent blockerData = entityManager.GetComponentData<DynamicBlockerComponent>(entity);
+                RuntimeGridBlockerEpoch.Invalidate(ref blockerData);
+                entityManager.SetComponentData(entity, blockerData);
                 DisposeBlocker(ref blockerData);
                 entityManager.SetComponentData(entity, blockerData);
             }
@@ -186,7 +199,11 @@ namespace Game.Runtime
                 blockerData.Blocked.Dispose();
             if (blockerData.FriendlyPassFactionIds.IsCreated)
                 blockerData.FriendlyPassFactionIds.Dispose();
-            blockerData = default;
+            // Preserve monotonic identity across disposal/reallocation on the same entity.
+            ulong epoch = blockerData.StorageEpoch, revision = blockerData.AppliedRevision;
+            byte exhausted = blockerData.EpochExhausted;
+            blockerData = new DynamicBlockerComponent { StorageEpoch = epoch, AppliedRevision = revision,
+                EpochExhausted = exhausted, WriteInProgress = 1 };
         }
 
         private static void DisposeOccupancy(ref DynamicOccupancyComponent occupancyData)

@@ -1,0 +1,15 @@
+{
+  "result": "Passed",
+  "priorProof": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-en-1effdbc6887a40f3a3e5fe9f1261edca.jsonl.terminal-saga-medal-proof.json",
+  "priorProofSha256": "38cbf21a096307a2b83676d7cdd486485b237992953296f11eaace3f12904cf1",
+  "priorPid": 97845,
+  "restartPid": 98867,
+  "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+  "locale": "en",
+  "scenario": "S002",
+  "nativeTouchGestures": 6,
+  "diskMedal": true,
+  "nativeRibbon": true,
+  "nativeBriefingMedal": true,
+  "profileSeeded": false
+}

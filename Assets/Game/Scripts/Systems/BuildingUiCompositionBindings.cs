@@ -95,6 +95,12 @@ namespace Game.Runtime
                     var placement = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement;
                     return placement == null ? Vector2Int.zero : source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(
                         placement.Definition, placement.AutoRotateVertical);
+                },
+                () =>
+                {
+                    var definition = source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement?.Definition;
+                    return definition?.SelectionPortraitSprite != null
+                        ? definition.SelectionPortraitSprite : definition?.CardPortraitSprite;
                 });
         }
     }

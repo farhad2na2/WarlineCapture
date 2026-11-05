@@ -1,0 +1,378 @@
+[
+  {
+    "file": "Implementation/FinalNative/hud-en-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "123890433d481703aa9da6193e6a369b01f6322e30423d844995b5a823c3c847",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/hud-en-1280.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "497ab5155c34144c14d12ecd05d6f2f4a2cfb01bec124f8f3770ee3185cf8be0",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/hud-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "8223d4ae0ff0932a0e015b91ff798fe5078901bda0a28c815731f2e8b99e7bf5",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/hud-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/feedback-move-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "2b4463766b190e9b108c6d2e71f7b914e270e094263b5f02b570ea661693fc54",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/commands-en-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "5d78725a388613eb20a33893f1fe0b290c4746f6583fd6989dc4055f4b9f272f",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/commands-en-1280.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "2f1656dc575164005adeb7fba2743ade9e537d46620653d7e65b412ab7ab27b4",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/commands-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "3300a68de9b5e35191ff89762fa0864d4c916f33cc2e32d142fc56d1eb8aeb15",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/commands-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/command-menu-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "33c0e4ba3753084e592dae35570460bb42170688352e9a7a32e66515bd513d6d",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/passengers-en-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/passengers-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "cb355afbdfd7f7664f983b6b6fe910ee6fc5ec4dd67cd46c2cab2ff1dda5f19b",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": "0/10"
+  },
+  {
+    "file": "Implementation/FinalNative/passengers-en-1280.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/passengers-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "2032a22655790fccced42b8dae7c250d34ad5a070265d08f813a0e383d437679",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": "0/10"
+  },
+  {
+    "file": "Implementation/FinalNative/passengers-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/passengers-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "6dd9a27fba85fe433a615d88142f2d06c7a170b90a9e659a9243bf03f537237e",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": "0/10"
+  },
+  {
+    "file": "Implementation/FinalNative/passengers-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/passengers-20261021-162947/passengers-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "54fb1ac593f6960a9cdd2ac9a5fef23d12c230e28bf3e109e40d4f72070621f7",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": "0/10"
+  },
+  {
+    "file": "Implementation/FinalNative/exchange-en-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "647b93fdc98bd01f9f4492569199dd336a8c5d0ac8dbf32622d0a1f6c598988f",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/exchange-en-1280.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "e96f8537ab14cd96815c0677385e9c28a9929931b1166b27adcc3c47d86967f0",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/exchange-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "05edfc00b18b93e92c5b279ae04aeadff69885b88cb1cc40d4d6e9de8909fc07",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/exchange-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/03-exchange-request-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "169259e54f723227cd30994d5307b03fc8af4ff0a0536d8b35a48696b4727969",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/pause-en-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/04-pause-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "786e74d4ecc73501e90fdd86be7d3ee92689627762952be3ba97b1beac768583",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/pause-en-1280.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/04-pause-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "05ae4432b0aec68e76100b3dcf38d58fcd55e949d7344f8cc9a266c6d07105aa",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/pause-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/04-pause-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "cb32666e311fd64e79a5801dbfae7834ac07575be6cdb69db7e433fc26498a29",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/pause-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/04-pause-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "4a8ec1c63edd2075094339fa99548942687f7b3be66509930643395c8512c276",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/settings-en-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/05-settings-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "501e0ec450dadc9a55d7c519e30de1e26baf87c263f669fe8f6987229896102f",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/settings-en-1280.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/05-settings-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "2b79de82811461a27f2e1e11ab7007682ed33d755fc8c84913752d8458bf0415",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/settings-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/05-settings-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "a502766b444741b22f7c868b3e5a8b9bf9c31a4e3ba8882e370246767a508174",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/settings-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/05-settings-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "5c794574a800d0ed283270f695bb3bc6192f0ff90f9a09914eb6b3b5d932765a",
+    "kind": "NativeGameCapture",
+    "mission": "M04",
+    "occupancy": null
+  },
+  {
+    "file": "Implementation/FinalNative/build-en-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/build-menu-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "a108e150dee3e37a2992c8bbb864f177066a4aa4fd7b6ae694af3f6138135ddd",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/build-en-1280.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/build-menu-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "fb861c880647a464a7a6478a290f146f307f773ea72a7cff4ebac82221410912",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/build-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/build-menu-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "f7727e1e0fb15c672457aa9a4db512387d35968a70ee977f0b5bacc2ff5c28c2",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/build-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/build-menu-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "271de9fc1f0a719232d6b714ec368cee0dd0eac167f8c75b568d67e664ec2b13",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/placement-en-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-en-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "cf861d307fe6005a0a160f03eb14417fe9f4398880f57022d7735c3a59a36afe",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/placement-en-1280.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-en-1280.png",
+    "size": [
+      1280,
+      720
+    ],
+    "sha256": "3b0c495632ef87c3a34fdce572031fbe256196031d9db8be4c5ef0526e2d6fbc",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/placement-fa-IR-1920.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-fa-IR-1920.png",
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "5abdf86be7858ec64c995e132012874c24f6208d89ef37c8af23d10a3e6df977",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  },
+  {
+    "file": "Implementation/FinalNative/placement-fa-IR-2400.png",
+    "source": "Implementation/NativeAfter/menus-20261021-165251/placement-confirmation-fa-IR-2400.png",
+    "size": [
+      2400,
+      1080
+    ],
+    "sha256": "0176445053a2e4221e7701e020dcdaeed8cbf820d487c690ef9438b5db060072",
+    "kind": "NativeGameCapture",
+    "mission": "M02"
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+  "producerPid": 97845,
+  "locale": "en",
+  "scenario": "S002",
+  "difficulty": "Regular",
+  "outcome": "Victory",
+  "resultFirstMedalShown": true,
+  "returnedBattlefield": "DB",
+  "returnedScenario": "S002",
+  "nativeStopRibbonVisible": true,
+  "nativeBriefingMedalRefreshed": true,
+  "diskReloadHasMedal": true,
+  "profileRoot": "/var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/aria-play-validation-profile/1effdbc6887a40f3a3e5fe9f1261edca",
+  "processRestartAcceptance": "Pending"
+}

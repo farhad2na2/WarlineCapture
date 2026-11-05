@@ -41,9 +41,9 @@ namespace Game.Editor
             };
             string[] pins =
             {
-                "3903e2a1a93af11e7254bbd3bf5a1dcf9849b83e403505f8ae19450daa54b9ae",
-                "5028f5eea8aef4d31caee2d1a730cd8704c29a6a020f97784ae3e9533edfcb80",
-                "0eb796b92051e4ac6d16e09769a227cf687b0fbc38b8f1f79517ce151e1bcf5d"
+                "186c72a0ed0b6c3dbeba06015463b9d9e9c761b6e68b861a8d48daa69a614f4b",
+                "f8a00c494aec924cee9fcc9de6154f0393ef777bd3cabc5b0e0f7d7e0db78353",
+                "3c2a3f9b6b3c6e15b4164038f56aaa26c7a4b1329acbff859d0ad337ae9ae0d9"
             };
             var assets = new ScriptableObject[]
             {
@@ -83,7 +83,7 @@ namespace Game.Editor
                     metas[i] = Hash(paths[i] + ".meta");
                 }
 
-                string backup = Path.GetFullPath("Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation");
+                string backup = Path.GetFullPath("Logs/SkirmishProduction/Offline/S074SagaAuditedDependencyStampRefreshRootExecution_20261021/cache-backups-and-receipt");
                 Directory.CreateDirectory(backup);
                 for (int i = 0; i < 3; i++)
                 {

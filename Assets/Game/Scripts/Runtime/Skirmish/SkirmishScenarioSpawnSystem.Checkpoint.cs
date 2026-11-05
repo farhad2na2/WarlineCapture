@@ -17,7 +17,7 @@ namespace Game.Runtime
         // Called by the native reconstruction owner after document compatibility
         // passes. Never create a bare ledger as a substitute for a baked prefab.
         internal static bool TryInstantiateCheckpointUnit(EntityManager em,
-            SkirmishNativeCheckpointSnapshotService.Actor saved, out Entity actor, Game.Configs.SkirmishResolvedSetup setup = null)
+            SkirmishNativeCheckpointSnapshotService.Actor saved, out Entity actor, Game.Configs.SkirmishResolvedSetup setup = null, RuntimeActorBirthContext birth = default)
         {
             actor = Entity.Null;
             if (em == default || saved == null || saved.IsStructure != 0 || string.IsNullOrEmpty(saved.PrefabKey) ||
@@ -40,6 +40,7 @@ namespace Game.Runtime
                 if (existing.SessionId.Equals(owner.SessionId) && existing.StableObjectId.Equals(owner.StableObjectId)) return false;
 
             Entity created = em.Instantiate(prefab);
+            birth.StampFresh(em, created, birth.Source.Grid);
             SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, created);
             SetOrAdd(em, created, owner);
             SetOrAdd(em, created, role);

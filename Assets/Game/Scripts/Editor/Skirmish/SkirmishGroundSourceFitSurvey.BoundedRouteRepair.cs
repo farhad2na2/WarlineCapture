@@ -159,9 +159,7 @@ namespace Game.Editor
                         var a=Anchor((string)revised[i-1]);var b=Anchor((string)revised[i]);
                         float x=(float)b["WorldX"]-(float)a["WorldX"],z=(float)b["WorldZ"]-(float)a["WorldZ"];length+=(float)Math.Sqrt(x*x+z*z);
                     }
-                    Require(float.IsFinite(oldLength)&&oldLength>0&&float.IsFinite(length)&&length>0,"Finite existing route rates required");
-                    foreach(string metric in new[]{"InfantryTransitSeconds","GroundTransitSeconds","AirTransitSeconds","InfantryFirstContactSeconds","GroundFirstContactSeconds"})
-                    {float value=(float)route[metric];Require(float.IsFinite(value)&&value>0,"Unchanged existing rate required");route[metric]=value*(length/oldLength);}
+                    RescaleBoundedRouteTimes(route,oldLength,length);
                     route["LengthMetres"]=length;route["ProvisionalTimes"]=true;routeIndex++;
                 }
                 JsonUtility.FromJsonOverwrite(data.ToString(Newtonsoft.Json.Formatting.None),layout);
@@ -174,6 +172,72 @@ namespace Game.Editor
                 report["additionalNativeQueryCount"]=calls;report["movedMacroCenters"]=moved;report["addedSteeringAnchors"]=added;
                 if(report["status"]==null)JsonUtility.FromJsonOverwrite(original,layout);
             }
+        }
+
+        static void RescaleBoundedRouteTimes(JObject route,float oldLength,float length)
+        {
+            Require(float.IsFinite(oldLength)&&oldLength>0&&float.IsFinite(length)&&length>0,"Finite existing route rates required");
+            Require(route["AllowsVehicles"]?.Type==JTokenType.Boolean&&route["AllowsAircraft"]?.Type==JTokenType.Boolean,
+                "Actual serialized route movement permissions required");
+            bool ground=(bool)route["AllowsVehicles"],air=(bool)route["AllowsAircraft"];
+            float scale=length/oldLength;
+            Require(float.IsFinite(scale)&&scale>0,"Finite positive route length scale required");
+            foreach(string metric in new[]{"InfantryTransitSeconds","GroundTransitSeconds","AirTransitSeconds","InfantryFirstContactSeconds","GroundFirstContactSeconds"})
+            {
+                bool active=metric.StartsWith("Ground",StringComparison.Ordinal)?ground:metric=="AirTransitSeconds"?air:true;
+                float value=(float)route[metric];
+                Require(float.IsFinite(value)&&value>=0&&(!active||value>0),"Unchanged existing rate required for applicable route mode");
+                float revised=value*scale;
+                Require(float.IsFinite(revised)&&(value==0?revised==0:revised>0),"Finite representable route time required");
+                route[metric]=revised;
+            }
+        }
+
+        public static void RunBoundedRouteTimeControls()
+        {
+            int controls=0;
+            void Check(bool ok,string message){Require(ok,message);controls++;}
+            JObject Times(bool vehicles=true,bool aircraft=false)=>new JObject{
+                ["AllowsVehicles"]=vehicles,["AllowsAircraft"]=aircraft,
+                ["InfantryTransitSeconds"]=10f,["GroundTransitSeconds"]=vehicles?5f:0f,["AirTransitSeconds"]=aircraft?2f:0f,
+                ["InfantryFirstContactSeconds"]=5f,["GroundFirstContactSeconds"]=vehicles?2.5f:0f};
+            bool Refuses(Action action)
+            {try{action();return false;}catch(InvalidOperationException){return true;}}
+            var ground=Times();RescaleBoundedRouteTimes(ground,100,150);
+            Check((float)ground["InfantryTransitSeconds"]==15&&(float)ground["GroundTransitSeconds"]==7.5f&&
+                (float)ground["AirTransitSeconds"]==0&&(float)ground["InfantryFirstContactSeconds"]==7.5f&&
+                (float)ground["GroundFirstContactSeconds"]==3.75f,"Ground-only zero air time preserves all existing applicable speeds");
+            var infantry=Times(false);RescaleBoundedRouteTimes(infantry,100,200);
+            Check((float)infantry["GroundTransitSeconds"]==0&&(float)infantry["GroundFirstContactSeconds"]==0&&
+                (float)infantry["AirTransitSeconds"]==0&&(float)infantry["InfantryTransitSeconds"]==20,"Inactive ground and air zero times remain zero");
+            var air=Times(false,true);RescaleBoundedRouteTimes(air,100,200);
+            Check((float)air["AirTransitSeconds"]==4&&(float)air["InfantryTransitSeconds"]==20,"Active aircraft retains its existing positive speed");
+            var badAir=Times(true,true);badAir["AirTransitSeconds"]=0f;
+            Check(Refuses(()=>RescaleBoundedRouteTimes(badAir,100,150)),"Enabled aircraft zero rate still refuses");
+            foreach(string metric in new[]{"GroundTransitSeconds","GroundFirstContactSeconds"})
+            {var bad=Times();bad[metric]=0f;Check(Refuses(()=>RescaleBoundedRouteTimes(bad,100,150)),"Enabled ground zero rate still refuses");}
+            foreach(string metric in new[]{"InfantryTransitSeconds","InfantryFirstContactSeconds"})
+            {var bad=Times();bad[metric]=0f;Check(Refuses(()=>RescaleBoundedRouteTimes(bad,100,150)),"Infantry zero rate still refuses");}
+            foreach(string metric in new[]{"GroundTransitSeconds","AirTransitSeconds"})
+            {var bad=Times(false);bad[metric]=-1f;Check(Refuses(()=>RescaleBoundedRouteTimes(bad,100,150)),"Negative inactive rate refuses");}
+            foreach(float value in new[]{float.NaN,float.PositiveInfinity,float.NegativeInfinity})
+            foreach(string metric in new[]{"InfantryTransitSeconds","GroundTransitSeconds","AirTransitSeconds","InfantryFirstContactSeconds","GroundFirstContactSeconds"})
+            {var bad=Times(false);bad[metric]=value;Check(Refuses(()=>RescaleBoundedRouteTimes(bad,100,150)),"Nonfinite rate refuses in every mode");}
+            foreach(float invalid in new[]{0f,-1f,float.NaN,float.PositiveInfinity})
+            {
+                Check(Refuses(()=>RescaleBoundedRouteTimes(Times(),invalid,100)),"Invalid original length refuses");
+                Check(Refuses(()=>RescaleBoundedRouteTimes(Times(),100,invalid)),"Invalid revised length refuses");
+            }
+            Check(Refuses(()=>RescaleBoundedRouteTimes(Times(),float.Epsilon,float.MaxValue)),"Overflowing length scale refuses");
+            Check(Refuses(()=>RescaleBoundedRouteTimes(Times(),float.MaxValue,float.Epsilon)),"Underflowing length scale refuses");
+            var overflow=Times();overflow["InfantryTransitSeconds"]=float.MaxValue;
+            Check(Refuses(()=>RescaleBoundedRouteTimes(overflow,100,200)),"Overflowing positive time refuses");
+            var underflow=Times();underflow["InfantryTransitSeconds"]=float.Epsilon;
+            Check(Refuses(()=>RescaleBoundedRouteTimes(underflow,100,50)),"Underflow cannot erase a positive existing rate");
+            foreach(string flag in new[]{"AllowsVehicles","AllowsAircraft"})
+            {var bad=Times();bad[flag]=0;Check(Refuses(()=>RescaleBoundedRouteTimes(bad,100,150)),"Typed actual movement permissions required");}
+            Require(controls==39,"Exact bounded route-time regression coverage");
+            Debug.Log("[BoundedRouteTimeControls] result=Passed controls=39 nativeQueries=0 sourceFitCertified=0 normalMissionReady=0");
         }
 
         static bool RouteCandidateWithinSemantics(Vector2 point,Vector2 a,Vector2 b,Vector2 globalStart,Vector2 globalEnd,float t)
@@ -240,6 +304,7 @@ namespace Game.Editor
 
         public static void RunBoundedRouteRepairControls()
         {
+            RunBoundedRouteTimeControls();
             Require(RepairNeighborOffsets.Length==9&&RepairNeighborOffsets.Distinct().Count()==9&&RepairNeighborOffsets.Contains(new int2(-1,0)),"Finite native endpoint window includes measured west candidate");
             Require(RouteCandidateWithinSemantics(new Vector2(20,20),new Vector2(0,20),new Vector2(60,20),Vector2.zero,new Vector2(100,0),1f/3)&&
                 !RouteCandidateWithinSemantics(new Vector2(20,-1),new Vector2(0,20),new Vector2(60,20),Vector2.zero,new Vector2(100,0),1f/3),"Flank cannot silently become opposite-side route");

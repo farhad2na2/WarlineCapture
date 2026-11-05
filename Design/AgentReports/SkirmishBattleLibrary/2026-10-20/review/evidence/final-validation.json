@@ -1,0 +1,141 @@
+{
+  "result": "Passed",
+  "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+  "sourceCommit": "ac03176c1639617665d64bcf93aec90efc3868a4",
+  "focusedTests": {
+    "passed": 95,
+    "failed": 0,
+    "skipped": 0
+  },
+  "ariaPlanCases": 141,
+  "pureGeometry": {
+    "seated": 113,
+    "blocked": 0,
+    "result": "Passed"
+  },
+  "nativeCaptureFiles": 18,
+  "territoryCoverage": 0.661,
+  "limits": {
+    "aspect": 0.1,
+    "haloGapPx": 12
+  },
+  "journeys": [
+    {
+      "locale": "en",
+      "artifactId": "1effdbc6887a40f3a3e5fe9f1261edca",
+      "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+      "outcome": "Victory",
+      "normalInput": "Touch",
+      "aria": "Actual victory",
+      "resultMedal": true,
+      "returnSelection": "S002",
+      "stopRibbon": true,
+      "freshDiskLoad": true,
+      "coldProcessRestart": {
+        "result": "Passed",
+        "priorProof": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-en-1effdbc6887a40f3a3e5fe9f1261edca.jsonl.terminal-saga-medal-proof.json",
+        "priorProofSha256": "38cbf21a096307a2b83676d7cdd486485b237992953296f11eaace3f12904cf1",
+        "priorPid": 97845,
+        "restartPid": 98867,
+        "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+        "locale": "en",
+        "scenario": "S002",
+        "nativeTouchGestures": 6,
+        "diskMedal": true,
+        "nativeRibbon": true,
+        "nativeBriefingMedal": true,
+        "profileSeeded": false
+      },
+      "files": [
+        {
+          "file": "native-en/journey.menu-scale.json",
+          "sha256": "f73e0812fcbf1dae8829402dcd3df0f5a2da9dde0aaa885df35810f7a713966b"
+        },
+        {
+          "file": "native-en/journey.menu-scale.png",
+          "sha256": "549248e0f93f69738eb8e54739120cd30809a72c500dc51bdf81aefa711784c9"
+        },
+        {
+          "file": "native-en/journey.terminal-result.png",
+          "sha256": "f72950d7679e1abb0478178735016d392bcfea882ea6c96e42ce973920a26143"
+        },
+        {
+          "file": "native-en/journey.terminal-destination.png",
+          "sha256": "9e67c33b08d1533105519dd0e11db4be811cb3b6fc200fb9cb81b6ed2aa0f86a"
+        },
+        {
+          "file": "native-en/journey.terminal-saga-medal-proof.json",
+          "sha256": "38cbf21a096307a2b83676d7cdd486485b237992953296f11eaace3f12904cf1"
+        },
+        {
+          "file": "native-en/journey.terminal-saga-medal-proof.json.process-restart.json",
+          "sha256": "8ed2e2b36f3951ece5df10c620fafde8e52565f324964e5ef5c9ff3b5d758c3c"
+        },
+        {
+          "file": "native-en/journey.terminal-saga-medal-proof.json.process-restart.png",
+          "sha256": "9e968f2fca19312093c02b032a95c72dc3bed55ee53ac5bf68faa258fcfa6c05"
+        }
+      ]
+    },
+    {
+      "locale": "fa",
+      "artifactId": "f70e9d3adcf34eec8f978fb3f4666739",
+      "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+      "outcome": "Victory",
+      "normalInput": "Touch",
+      "aria": "Actual victory",
+      "resultMedal": true,
+      "returnSelection": "S002",
+      "stopRibbon": true,
+      "freshDiskLoad": true,
+      "coldProcessRestart": {
+        "result": "Passed",
+        "priorProof": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-live-104731-fa-f70e9d3adcf34eec8f978fb3f4666739.jsonl.terminal-saga-medal-proof.json",
+        "priorProofSha256": "69e6d6d3c9be8fbcdd1f7f7a592c203394ed2f24a9a87abd9c2f166641eafc96",
+        "priorPid": 99157,
+        "restartPid": 1104,
+        "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0",
+        "locale": "fa-IR",
+        "scenario": "S002",
+        "nativeTouchGestures": 6,
+        "diskMedal": true,
+        "nativeRibbon": true,
+        "nativeBriefingMedal": true,
+        "profileSeeded": false
+      },
+      "files": [
+        {
+          "file": "native-fa/journey.menu-scale.json",
+          "sha256": "f73e0812fcbf1dae8829402dcd3df0f5a2da9dde0aaa885df35810f7a713966b"
+        },
+        {
+          "file": "native-fa/journey.menu-scale.png",
+          "sha256": "d6163fbc79fef04c5f51992ca4ffd0c7d512ee723cd6b123997cf712fac29203"
+        },
+        {
+          "file": "native-fa/journey.terminal-result.png",
+          "sha256": "5ee4efa333357f0ae156ffbd3cb8ba6909800542202a842a9c3686e36455d6ca"
+        },
+        {
+          "file": "native-fa/journey.terminal-destination.png",
+          "sha256": "0c3498ebf400507a2ca26e2b383d79eec62f0178d5b9c6b2d1f967ba8026dc50"
+        },
+        {
+          "file": "native-fa/journey.terminal-saga-medal-proof.json",
+          "sha256": "69e6d6d3c9be8fbcdd1f7f7a592c203394ed2f24a9a87abd9c2f166641eafc96"
+        },
+        {
+          "file": "native-fa/journey.terminal-saga-medal-proof.json.process-restart.json",
+          "sha256": "c25396068009fb7a4a2f6d5c90e101e8157f11d1095843c69279dc8b8a40b501"
+        },
+        {
+          "file": "native-fa/journey.terminal-saga-medal-proof.json.process-restart.png",
+          "sha256": "b5c72c3342ab027aa60f4656fc49caf2b8a1e0de3d362c5528ca3750b994cc6f"
+        }
+      ]
+    }
+  ],
+  "ownerVisualReview": "Pending",
+  "realPlayerDeviceAcceptance": "Pending",
+  "windowsFilesystemLane": "Unverified on macOS"
+}

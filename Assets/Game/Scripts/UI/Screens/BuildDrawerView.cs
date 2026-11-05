@@ -351,6 +351,7 @@ namespace Game.UI.Runtime
                     actionEnabled ? new Color32(92, 224, 79, 255) : new Color32(90, 99, 102, 255),
                     3f);
             }
+            HudActionVisuals.Refresh(primaryButton);
         }
     }
 }

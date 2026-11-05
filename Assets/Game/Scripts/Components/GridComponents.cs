@@ -430,6 +430,9 @@ namespace Game.Components
         public int2 Min; // inclusive
         public int2 Max; // exclusive
         public byte FriendlyPassFactionId;
+        // Actual application owner, retained through entity/component destruction.
+        public Entity AppliedGrid;
+        public ulong StorageEpoch;
     }
 
     public struct RuntimeGridBlockerDependencyComponent : IComponentData
@@ -453,15 +456,21 @@ namespace Game.Components
 
         public static int2 IndexToCell(int index, int width) => new(index % width, index / width);
 
-        public static float3 CellToWorldCenter(in GridConfig grid, int2 cell) =>
-            grid.Origin + new float3((cell.x + 0.5f) * grid.CellSize, 0f, (cell.y + 0.5f) * grid.CellSize);
+        private static GridCoordinateFrame CoordinateFrame(in GridConfig grid) => new GridCoordinateFrame
+        {
+            OriginX = grid.Origin.x, OriginY = grid.Origin.y, OriginZ = grid.Origin.z, CellSize = grid.CellSize
+        };
+
+        public static float3 CellToWorldCenter(in GridConfig grid, int2 cell)
+        {
+            var value = GridCoordinateKernel.CellToWorldCenter(CoordinateFrame(grid), cell.x, cell.y);
+            return new float3(value.X, value.Y, value.Z);
+        }
 
         public static int2 WorldToCell(in GridConfig grid, float3 worldPos)
         {
-            float3 local = worldPos - grid.Origin;
-            int x = (int)math.floor(local.x / grid.CellSize);
-            int y = (int)math.floor(local.z / grid.CellSize);
-            return new int2(x, y);
+            var value = GridCoordinateKernel.WorldToCell(CoordinateFrame(grid), worldPos.x, worldPos.z);
+            return new int2(value.X, value.Z);
         }
     }
 
@@ -473,6 +482,31 @@ namespace Game.Components
         public NativeArray<int> Counts;
         public NativeBitArray Blocked;
         public NativeArray<byte> FriendlyPassFactionIds;
+        // Storage/writer correctness only. None of these fields certifies source ownership.
+        public ulong StorageEpoch;
+        public ulong AppliedStorageEpoch;
+        public ulong AppliedRevision;
+        public GridConfig AppliedGrid;
+        public byte WriteInProgress;
+        public byte EpochExhausted;
+    }
+
+    public static class RuntimeGridBlockerEpoch
+    {
+        public static bool SameLayout(in GridConfig a, in GridConfig b) =>
+            a.Width == b.Width && a.Height == b.Height && a.CellSize == b.CellSize && math.all(a.Origin == b.Origin);
+
+        public static void Invalidate(ref DynamicBlockerComponent data)
+        {
+            if (data.StorageEpoch == ulong.MaxValue) data.EpochExhausted = 1;
+            else data.StorageEpoch++;
+            data.AppliedStorageEpoch = 0;
+            data.WriteInProgress = 1;
+        }
+
+        public static bool IsCommitted(in GridConfig grid, in DynamicBlockerComponent data) =>
+            data.EpochExhausted == 0 && data.StorageEpoch != 0 && data.AppliedRevision != 0 &&
+            data.AppliedStorageEpoch == data.StorageEpoch && data.WriteInProgress == 0 && SameLayout(grid, data.AppliedGrid);
     }
 
     public struct PathPoolComponent : ICleanupComponentData

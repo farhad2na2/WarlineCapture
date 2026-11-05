@@ -1,0 +1,21 @@
+{
+  "scope": "Menu thumbnail recapture only; existing mission bindings and physical geometry unchanged. Runtime-spawned armies/bases are not inserted into static scene captures.",
+  "log": "/private/tmp/mission-atlas-polish-thumbnails-01.log",
+  "publishedScenarios": [
+    "S001",
+    "S002",
+    "S003",
+    "S004",
+    "S025",
+    "S073"
+  ],
+  "camera": "Distinct deterministic azimuth; lower oblique view of actual existing scene geometry.",
+  "sha256": {
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S001.png": "be4ad19642e20bff89a3bdcd8b82c1f57309fd27d7f04fc96ef89ec958b37b95",
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S002.png": "129dcaae9ca95708786c113cb917bbd75d6c3420d795dbb3f07286f960c5f0ca",
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S003.png": "e1a264e99e4a333b5701e222f965f410ef71fb6956d7604ab5ebd9ecd13502bc",
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S004.png": "b410b56a61e5c159462211924a7a89eb7c1be3ad86781f73323cdf8933ee760b",
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S025.png": "2cca1fed55b8fb73df58ebec013111d40fb7e504965e4ef0d06633044d8a1982",
+    "Assets/Game/Art/SkirmishLibrary/Previews/skirmish.preview.S073.png": "ec74f57fa25558e84a416c1ab1ebd16d1b2ab3b5e87e18a9c17f6ac95567dd0e"
+  }
+}

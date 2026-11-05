@@ -23,6 +23,322 @@ namespace Game.Tests.Editor
     public sealed class SkirmishS002AriaHarnessTests
     {
 
+
+        private static System.Collections.IEnumerator CompanionTemplateCaptureStreamingWarmup(Action<Newtonsoft.Json.Linq.JObject> completed)
+        {
+            var own=typeof(SkirmishS002AriaRunHarness);
+            var flags=System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Static|
+                System.Reflection.BindingFlags.DeclaredOnly;
+            var batchField=own.GetField("productionBatch",flags);
+            var canaryField=own.GetField("productionCanary",flags);
+            var keyField=own.GetField("Key",flags);
+            Assert.IsNotNull(batchField);Assert.IsNotNull(canaryField);Assert.IsNotNull(keyField);
+            Assert.AreEqual(own,batchField.DeclaringType);Assert.AreEqual(own,canaryField.DeclaringType);
+            Assert.AreEqual(own,keyField.DeclaringType);Assert.IsTrue(keyField.IsLiteral);
+            Assert.AreEqual(typeof(string),keyField.FieldType);
+            string ownerKey=(string)keyField.GetRawConstantValue();
+            Assert.AreEqual("Warline.S002.AriaRun",ownerKey);
+            if(batchField.GetValue(null)!=null||canaryField.GetValue(null)!=null||
+                UnityEditor.SessionState.GetBool(ownerKey,false)||
+                UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode||
+                UnityEditor.EditorApplication.isCompiling||UnityEditor.EditorApplication.isUpdating)
+                throw new InvalidOperationException("Companion-template diagnostic requires an idle unowned Editor");
+            var catalog=SkirmishExpansionCatalogConfig.Load();
+            if(catalog==null||!catalog.TryGetDefinition("S074",out var mission)||mission==null)
+                throw new InvalidOperationException("Actual S074 definition is required");
+            var resolve=own.GetMethod("ResolveProductionBatchWarmupSource",flags,
+                null,new[]{typeof(SkirmishScenarioDefinitionConfig)},null);
+            Assert.IsNotNull(resolve);Assert.AreEqual(own,resolve.DeclaringType);
+            Assert.AreEqual(typeof(OperationMapDefinition),resolve.ReturnType);
+            Assert.IsFalse(resolve.IsGenericMethod);
+            var map=resolve.Invoke(null,new object[]{mission}) as OperationMapDefinition;
+            if(map==null||map.SourceSceneReference==null||!map.SourceSceneReference.RuntimeKeyIsValid())
+                throw new InvalidOperationException("Actual source-scene binding is required");
+            string sourceGuid=map.SourceSceneReference.AssetGUID;
+            string sourcePath=UnityEditor.AssetDatabase.GUIDToAssetPath(sourceGuid);
+            string navGuid=map.NavigationMetadata.AuthoredSubSceneGuid;
+            string runtimeGuid=UnityEditor.AssetDatabase.AssetPathToGUID("Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity");
+            if(string.IsNullOrWhiteSpace(sourcePath)||!sourcePath.EndsWith(".unity",StringComparison.Ordinal)||
+                string.IsNullOrWhiteSpace(navGuid)||string.IsNullOrWhiteSpace(runtimeGuid))
+                throw new InvalidOperationException("Exact source/nav/runtime scene identities are required");
+            var context=own.GetNestedType("ProductionBatchContext",System.Reflection.BindingFlags.NonPublic);
+            Assert.IsNotNull(context);Assert.IsTrue(context.IsNestedPrivate);
+            Assert.AreEqual(own,context.DeclaringType);Assert.AreEqual(context,batchField.FieldType);
+            var prepare=context.GetMethod("BeginNativeSceneBaseline",flags,
+                null,new[]{typeof(IEnumerable<Newtonsoft.Json.Linq.JObject>),typeof(Action<Newtonsoft.Json.Linq.JObject>),typeof(Action<Exception>)},null);
+            Assert.IsNotNull(prepare);Assert.AreEqual(context,prepare.DeclaringType);
+            Assert.AreEqual(typeof(void),prepare.ReturnType);Assert.IsFalse(prepare.IsGenericMethod);
+            var before=SkirmishProductionBatchOwnershipCensus.Capture();
+            bool done=false;Exception failure=null;Newtonsoft.Json.Linq.JObject preparation=null;
+            double deadline=UnityEditor.EditorApplication.timeSinceStartup+125d;
+            prepare.Invoke(null,new object[]{new Newtonsoft.Json.Linq.JObject[]{
+                new Newtonsoft.Json.Linq.JObject{["catalog_id"]="S074",["schema_version"]=1}},
+                new Action<Newtonsoft.Json.Linq.JObject>(value=>{preparation=value;done=true;}),
+                new Action<Exception>(error=>{failure=error;done=true;})});
+            while(!done)
+            {
+                Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline,"Async warmup callback did not terminate");
+                yield return null; // Let genuine EditorApplication.update and the installed async loader run.
+            }
+            if(failure!=null)throw new InvalidOperationException("Async source warmup failed; no baseline/mission credit",failure);
+            Assert.IsNotNull(preparation);Assert.IsTrue((bool)preparation["default_world_unchanged"]);
+            Assert.IsFalse((bool)preparation["blocking_stream_in"]);
+            foreach(Newtonsoft.Json.Linq.JObject row in (Newtonsoft.Json.Linq.JArray)preparation["completed"])
+            {
+                Assert.IsTrue((bool)row["loaded_before_dispose"]);Assert.IsTrue((bool)row["world_disposed"]);
+                Assert.Greater((int)row["genuine_editor_updates"],0);
+            }
+            completed(new Newtonsoft.Json.Linq.JObject{["scope"]="CompanionTemplateWarmupDiagnostic_NoMission",
+                ["catalog_id"]="S074",["operation_map_id"]=map.OperationMapId,
+                ["expected_view_operation_map_id"]=map.SourceBinding.IsConfigured?
+                    map.SourceBinding.SourceOperationMapId:map.OperationMapId,
+                ["source_scene_guid"]=sourceGuid,["source_scene_path"]=sourcePath,
+                ["navigation_subscene_guid"]=navGuid,["runtime_subscene_guid"]=runtimeGuid,
+                ["before"]=before,["after"]=SkirmishProductionBatchOwnershipCensus.Capture(),
+                ["async_scene_preparation"]=preparation,
+                ["productionBaselineChanged"]=false,["missionAccepted"]=false});
+        }
+
+
+        // Opt-in native diagnostic. No production job, input journey or mission is started.
+        private bool companionTemplateStarted,companionTemplateCyclesComplete;
+        private string companionTemplateOutput,companionTemplateSaveRoot,companionTemplateLocale;
+        private bool companionTemplateOptionsEnabled,companionTemplateBackground;
+        private UnityEditor.EnterPlayModeOptions companionTemplateOptions;
+        private UnityEditor.SceneManagement.SceneSetup[] companionTemplateSceneSetup;
+        private Newtonsoft.Json.Linq.JObject companionTemplateReport;
+
+        private static string CompanionTemplateSceneSetupIdentity(UnityEditor.SceneManagement.SceneSetup[] rows)
+        {
+            var values=new Newtonsoft.Json.Linq.JArray();
+            foreach(var row in rows)values.Add(new Newtonsoft.Json.Linq.JObject{
+                ["path"]=row.path,["loaded"]=row.isLoaded,["active"]=row.isActive});
+            return SkirmishProductionCanaryRequest.Canonical(values);
+        }
+        private static void CompanionTemplateRequireCleanScenes()
+        {
+            for(int i=0;i<UnityEngine.SceneManagement.SceneManager.sceneCount;i++)
+                Assert.IsFalse(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).isDirty,
+                    "Preserve dirty Editor scenes");
+        }
+        private static string CompanionTemplateValidateOutput(string requested,bool fresh)
+        {
+            Assert.IsTrue(Path.IsPathRooted(requested));
+            Assert.IsFalse(Array.Exists(requested.Replace('\\','/').Split('/'),p=>p==".."));
+            string root=Path.GetFullPath(Path.Combine(Application.dataPath,".."));
+            string output=Path.GetFullPath(requested);
+            string allowed=Path.Combine(root,"Logs","SkirmishProduction")+Path.DirectorySeparatorChar;
+            Assert.IsTrue(output.StartsWith(allowed,StringComparison.OrdinalIgnoreCase));
+            Assert.AreEqual(".json",Path.GetExtension(output));
+            Assert.IsFalse(Directory.Exists(output));
+            if(fresh)Assert.IsFalse(File.Exists(output));
+            else Assert.IsTrue(File.Exists(output),"Owned report must still exist");
+            if(File.Exists(output))Assert.AreEqual(0,(int)(File.GetAttributes(output)&FileAttributes.ReparsePoint));
+            for(var cursor=new DirectoryInfo(Path.GetDirectoryName(output));cursor!=null;cursor=cursor.Parent)
+                if(cursor.Exists)Assert.AreEqual(0,(int)(cursor.Attributes&FileAttributes.ReparsePoint),
+                    "Ordinary owned output ancestry required");
+            Assert.IsTrue(Directory.Exists(Path.GetDirectoryName(output)),"Owned run directory must already exist");
+            return output;
+        }
+        private static string CompanionTemplateOwnedOutput(string requested)
+            =>CompanionTemplateValidateOutput(requested,true);
+        private void CompanionTemplateSave()
+        {
+            Assert.AreEqual(companionTemplateOutput,CompanionTemplateValidateOutput(companionTemplateOutput,false));
+            File.WriteAllText(companionTemplateOutput,
+                companionTemplateReport.ToString(Newtonsoft.Json.Formatting.Indented)+"\n",
+                new System.Text.UTF8Encoding(false));
+        }
+        private void CompanionTemplateObserve(string stage,int cycle)
+        {
+            ((Newtonsoft.Json.Linq.JArray)companionTemplateReport["stages"]).Add(
+                new Newtonsoft.Json.Linq.JObject{["stage"]=stage,["cycle"]=cycle,
+                    ["frame"]=Time.frameCount,["census"]=SkirmishProductionBatchOwnershipCensus.Capture()});
+            CompanionTemplateSave();
+            // Read-only census refuses any mission/session/provider ownership even during loading.
+            SkirmishProductionBatchOwnershipCensus.CleanupSignature(
+                (Newtonsoft.Json.Linq.JObject)((Newtonsoft.Json.Linq.JArray)companionTemplateReport["stages"])
+                    [((Newtonsoft.Json.Linq.JArray)companionTemplateReport["stages"]).Count-1]["census"]);
+        }
+        private static void CompanionTemplateGuardControls()
+        {
+            var baseline=new Newtonsoft.Json.Linq.JObject{
+                ["preview_census_complete"]=true,["actual_preview_count"]=1,["measured_preview_count"]=1,
+                ["worlds"]=new Newtonsoft.Json.Linq.JArray(),["input_devices"]=new Newtonsoft.Json.Linq.JArray(),
+                ["companion_package_owner_fields"]=new Newtonsoft.Json.Linq.JArray(
+                    new Newtonsoft.Json.Linq.JObject{["owner_field"]="_companionScene",["valid"]=true,["handle"]="1"}),
+                ["scenes"]=new Newtonsoft.Json.Linq.JArray(new Newtonsoft.Json.Linq.JObject{
+                    ["handle"]="1",["name"]="OwnedFixture",["path"]="",["preview"]=true,["loaded"]=true,
+                    ["root_count"]=0,["roots"]=new Newtonsoft.Json.Linq.JArray()})};
+            string expected=SkirmishProductionBatchOwnershipCensus.CleanupSignature(baseline);
+            var roots=(Newtonsoft.Json.Linq.JObject)baseline.DeepClone();
+            roots["scenes"][0]["root_count"]=1;
+            ((Newtonsoft.Json.Linq.JArray)roots["scenes"][0]["roots"]).Add(
+                new Newtonsoft.Json.Linq.JObject{["native_entity_id"]="2",["name"]="Template"});
+            Assert.AreNotEqual(expected,SkirmishProductionBatchOwnershipCensus.CleanupSignature(roots));
+            var handle=(Newtonsoft.Json.Linq.JObject)baseline.DeepClone();handle["scenes"][0]["handle"]="3";
+            Assert.AreNotEqual(expected,SkirmishProductionBatchOwnershipCensus.CleanupSignature(handle));
+            var owner=(Newtonsoft.Json.Linq.JObject)baseline.DeepClone();
+            owner["companion_package_owner_fields"][0]["handle"]="4";
+            Assert.AreNotEqual(expected,SkirmishProductionBatchOwnershipCensus.CleanupSignature(owner));
+            Debug.Log("[S074CompanionTemplateGuardControls] result=Passed controls=3 productionBaselineChanged=0");
+        }
+        [UnityEngine.TestTools.UnityTest]
+        public System.Collections.IEnumerator CompanionTemplates_ExactSourceLoadUnload_IsIdempotentBeforeBaseline()
+        {
+            string requested=Environment.GetEnvironmentVariable("WARLINE_S074_COMPANION_TEMPLATE_OUTPUT");
+            if(string.IsNullOrWhiteSpace(requested))
+                Assert.Ignore("Owned companion-template output binding required; excluded from ordinary suites");
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
+            companionTemplateOutput=CompanionTemplateOwnedOutput(requested);
+            CompanionTemplateRequireCleanScenes();
+            companionTemplateSceneSetup=UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup();
+            companionTemplateOptions=UnityEditor.EditorSettings.enterPlayModeOptions;
+            companionTemplateOptionsEnabled=UnityEditor.EditorSettings.enterPlayModeOptionsEnabled;
+            companionTemplateBackground=Application.runInBackground;
+            companionTemplateSaveRoot=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            companionTemplateLocale=GameLocalization.CurrentLocaleCode;
+            companionTemplateReport=new Newtonsoft.Json.Linq.JObject{["schema"]=1,
+                ["scope"]="S074CompanionTemplateLifecycle_Diagnostic_NoMission",
+                ["result"]="Incomplete",["cyclesCompleted"]=0,["stages"]=new Newtonsoft.Json.Linq.JArray(),
+                ["productionBaselineChanged"]=false,["missionAccepted"]=false,["restorationVerified"]=false};
+            using(File.Open(companionTemplateOutput,FileMode.CreateNew,FileAccess.Write,FileShare.Read)){}
+            companionTemplateStarted=true;
+            CompanionTemplateGuardControls();
+            CompanionTemplateObserve("BeforeStreamingWarmup",0);
+            Newtonsoft.Json.Linq.JObject warmup=null;
+            yield return CompanionTemplateCaptureStreamingWarmup(value=>warmup=value);
+            Assert.IsNotNull(warmup);
+            companionTemplateReport["streamingWarmup"]=warmup;
+            CompanionTemplateObserve("AfterStreamingWarmup",0);
+            UnityEditor.EditorSettings.enterPlayModeOptionsEnabled=true;
+            UnityEditor.EditorSettings.enterPlayModeOptions=UnityEditor.EnterPlayModeOptions.DisableDomainReload;
+            Application.runInBackground=true;
+            string profile=companionTemplateOutput+".isolated-profile";
+            Assert.IsFalse(Directory.Exists(profile));
+            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",profile);
+            yield return new UnityEngine.TestTools.EnterPlayMode(false);
+            CompanionTemplateObserve("AfterEnterPlay",0);
+            var world=World.DefaultGameObjectInjectionWorld;
+            Assert.IsNotNull(world);Assert.IsTrue(world.IsCreated);
+            string sourcePath=(string)warmup["source_scene_path"];
+            string firstPostCycle=null;
+            for(int cycle=1;cycle<=2;cycle++)
+            {
+                CompanionTemplateObserve("BeforeSourceLoad",cycle);
+                var priorScene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sourcePath);
+                Assert.IsFalse(priorScene.IsValid(),"Do not borrow a pre-existing source scene");
+                var load=UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(sourcePath,
+                    new UnityEngine.SceneManagement.LoadSceneParameters(UnityEngine.SceneManagement.LoadSceneMode.Additive));
+                Assert.IsNotNull(load);
+                double deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                while(!load.isDone){Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                var ownedScene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sourcePath);
+                Assert.IsTrue(ownedScene.IsValid()&&ownedScene.isLoaded);
+                var views=new List<OperationMapSceneView>();
+                foreach(var root in ownedScene.GetRootGameObjects())views.AddRange(root.GetComponentsInChildren<OperationMapSceneView>(true));
+                Assert.AreEqual(1,views.Count);Assert.IsTrue(views[0].TryValidate(out string viewError),viewError);
+                Assert.AreEqual((string)warmup["expected_view_operation_map_id"],views[0].OperationMapId);
+                CompanionTemplateObserve("SourceSceneLoaded",cycle);
+                var ownedEntities=new List<Entity>();
+                var sceneRows=new Newtonsoft.Json.Linq.JArray();
+                foreach(string guid in new[]{(string)warmup["navigation_subscene_guid"],(string)warmup["runtime_subscene_guid"]})
+                {
+                    var hash=new Unity.Entities.Hash128(guid);
+                    Entity scene=Unity.Scenes.SceneSystem.GetSceneEntity(world.Unmanaged,hash);
+                    bool borrowed=scene!=Entity.Null&&world.EntityManager.Exists(scene);
+                    if(!borrowed){scene=Unity.Scenes.SceneSystem.LoadSceneAsync(world.Unmanaged,hash);ownedEntities.Add(scene);}
+                    Assert.AreNotEqual(Entity.Null,scene);
+                    deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                    while(!Unity.Scenes.SceneSystem.IsSceneLoaded(world.Unmanaged,scene))
+                    {Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                    sceneRows.Add(new Newtonsoft.Json.Linq.JObject{["guid"]=guid,["borrowed"]=borrowed,
+                        ["entityIndex"]=scene.Index,["entityVersion"]=scene.Version});
+                }
+                companionTemplateReport["cycle"+cycle+"SceneLoads"]=sceneRows;
+                CompanionTemplateObserve("SubScenesReady",cycle);
+                foreach(var scene in ownedEntities)
+                    if(world.EntityManager.Exists(scene))Unity.Scenes.SceneSystem.UnloadScene(world.Unmanaged,scene,
+                        Unity.Scenes.SceneSystem.UnloadParameters.DestroyMetaEntities);
+                var unload=UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(ownedScene);
+                Assert.IsNotNull(unload);deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                while(!unload.isDone){Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                foreach(var scene in ownedEntities)
+                    while(world.EntityManager.Exists(scene))
+                    {Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                yield return null;
+                CompanionTemplateObserve("AfterSourceUnload",cycle);
+                string signature=SkirmishProductionBatchOwnershipCensus.CleanupSignature(
+                    SkirmishProductionBatchOwnershipCensus.Capture());
+                if(cycle==1)firstPostCycle=signature;
+                else Assert.AreEqual(firstPostCycle,signature,"Exact post-cycle cache identities must stabilize; never waive preview roots");
+                companionTemplateReport["cyclesCompleted"]=cycle;
+                CompanionTemplateSave();
+            }
+            companionTemplateReport["postCycleEquality"]=true;
+            yield return new UnityEngine.TestTools.ExitPlayMode();
+            CompanionTemplateObserve("AfterExitPlay",2);
+            companionTemplateCyclesComplete=true;
+        }
+        private static void CompanionTemplateRestoreAction(List<string> errors,string name,Action action)
+        {
+            try{action();}
+            catch(Exception error){errors.Add(name+": "+error);}
+        }
+        [UnityEngine.TestTools.UnityTearDown]
+        public System.Collections.IEnumerator RestoreCompanionTemplateDiagnostic()
+        {
+            if(!companionTemplateStarted)yield break;
+            if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+                yield return new UnityEngine.TestTools.ExitPlayMode();
+            var errors=new List<string>();
+            try
+            {
+                CompanionTemplateRequireCleanScenes();
+                Assert.AreEqual(CompanionTemplateSceneSetupIdentity(companionTemplateSceneSetup),
+                    CompanionTemplateSceneSetupIdentity(UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup()));
+                CompanionTemplateObserve("AfterRestoration",2);
+            }
+            catch(Exception error){errors.Add("SceneRestoration: "+error);}
+            finally
+            {
+                CompanionTemplateRestoreAction(errors,"EnterPlayOptions",
+                    ()=>UnityEditor.EditorSettings.enterPlayModeOptions=companionTemplateOptions);
+                CompanionTemplateRestoreAction(errors,"EnterPlayOptionsEnabled",
+                    ()=>UnityEditor.EditorSettings.enterPlayModeOptionsEnabled=companionTemplateOptionsEnabled);
+                CompanionTemplateRestoreAction(errors,"Background",()=>Application.runInBackground=companionTemplateBackground);
+                CompanionTemplateRestoreAction(errors,"SaveRoot",
+                    ()=>Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",companionTemplateSaveRoot));
+                CompanionTemplateRestoreAction(errors,"Locale",()=>{GameLocalization.SetLocale(companionTemplateLocale,false);});
+                var observed=new Newtonsoft.Json.Linq.JObject();
+                bool restored=false;
+                CompanionTemplateRestoreAction(errors,"ObservedRestoredSettings",()=>
+                {
+                    observed["options"]=(int)UnityEditor.EditorSettings.enterPlayModeOptions;
+                    observed["optionsEnabled"]=UnityEditor.EditorSettings.enterPlayModeOptionsEnabled;
+                    observed["background"]=Application.runInBackground;
+                    observed["saveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+                    observed["locale"]=GameLocalization.CurrentLocaleCode;
+                    restored=UnityEditor.EditorSettings.enterPlayModeOptions==companionTemplateOptions&&
+                        UnityEditor.EditorSettings.enterPlayModeOptionsEnabled==companionTemplateOptionsEnabled&&
+                        Application.runInBackground==companionTemplateBackground&&
+                        Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT")==companionTemplateSaveRoot&&
+                        GameLocalization.CurrentLocaleCode==companionTemplateLocale;
+                });
+                companionTemplateReport["restorationObserved"]=observed;
+                companionTemplateReport["restorationErrors"]=new Newtonsoft.Json.Linq.JArray(errors);
+                companionTemplateReport["restorationVerified"]=restored&&errors.Count==0;
+                companionTemplateReport["result"]=companionTemplateCyclesComplete&&restored&&errors.Count==0?
+                    "Collected_NoMission":"FailedOrIncomplete";
+                // Persist the failed witness even if an individual restoration action threw.
+                CompanionTemplateSave();
+            }
+            Assert.IsEmpty(errors);
+            Assert.IsTrue((bool)companionTemplateReport["restorationVerified"]);
+            if(companionTemplateCyclesComplete)
+                Debug.Log("[S074CompanionTemplateLifecycle] result=Collected cycles=2 productionBaselineChanged=0 missionAccepted=0");
+        }
+
         private static string CanonicalOracle(Newtonsoft.Json.Linq.JToken value)
         {
             var method=typeof(SkirmishProductionCanaryRequest).GetMethod("CanonicalLegacy",
@@ -2352,7 +2668,7 @@ namespace Game.Tests.Editor
         public void DeadlineDrawPublishesFinishedMatchWithoutStampingVictory()
         {
             using var world = new World(nameof(DeadlineDrawPublishesFinishedMatchWithoutStampingVictory));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Assert.Greater(em.GetComponentData<SkirmishResolvedSetupComponent>(session).DeadlineSeconds, 0);
             var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
@@ -2383,7 +2699,7 @@ namespace Game.Tests.Editor
         public void DeadEnemyBarracksFinishesVictoryWithoutRulesSystem()
         {
             using var world = new World(nameof(DeadEnemyBarracksFinishesVictoryWithoutRulesSystem));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity enemyBase = DesignatedBase(em, 2);
             Entity playerBase = DesignatedBase(em, 1);
@@ -2409,7 +2725,7 @@ namespace Game.Tests.Editor
         public void AssaultColumnDestroysEnemyBarracksAndPublishesVictory()
         {
             using var world = new World(nameof(AssaultColumnDestroysEnemyBarracksAndPublishesVictory));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             int materials = SkirmishMaterialsService.Read(em, session, 1);
@@ -2574,7 +2890,7 @@ namespace Game.Tests.Editor
         private static void PresentedColumnDestroysEnemyBaseBeforeDeadline(int seed)
         {
             using var world = new World("PresentedColumn-" + seed);
-            BootPlayingSession(world, out Entity session, seed);
+            BootPlayingLedgerSimulation(world, out Entity session, seed);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             ObserveEnemyFixtureThreats(world, session);
@@ -2831,7 +3147,7 @@ namespace Game.Tests.Editor
         public void RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating()
         {
             using var world = new World(nameof(RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
             Entity barracks = DesignatedBase(em, 2);
@@ -2857,7 +3173,7 @@ namespace Game.Tests.Editor
         public void FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup()
         {
             using var world = new World(nameof(FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup));
-            BootPlayingSession(world, out Entity session);
+            BootPlayingLedgerSimulation(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
             SkirmishExpandedSessionComponent expanded = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
@@ -2882,7 +3198,7 @@ namespace Game.Tests.Editor
         public void PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase()
         {
             using var world = new World(nameof(PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase));
-            BootPlayingSession(world, out Entity session, 130365);
+            BootPlayingLedgerSimulation(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             ObserveEnemyFixtureThreats(world, session);
@@ -2936,7 +3252,7 @@ namespace Game.Tests.Editor
         public void MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders()
         {
             using var world = new World(nameof(MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders));
-            BootPlayingSession(world, out Entity session, 130365);
+            BootPlayingLedgerSimulation(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
@@ -3242,9 +3558,8 @@ namespace Game.Tests.Editor
             return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         }
 
-        private static void BootPlayingSession(World world, out Entity session, int seed = 104731)
+        private static void QueueLedgerFixture(EntityManager em, out Entity session, int seed)
         {
-            EntityManager em = world.EntityManager;
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
             SkirmishExpansionAuthoredSet authored = CreateLedgerFixture();
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
@@ -3262,16 +3577,45 @@ namespace Game.Tests.Editor
                 out var reasons),
                 reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
             session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        }
+
+        // These command/settlement tests deliberately use prefab-free ledgers.
+        // Their Playing state is a model fixture, never native readiness or an ARIA win.
+        private static void BootPlayingLedgerSimulation(World world, out Entity session, int seed = 104731)
+        {
+            EntityManager em=world.EntityManager;
+            QueueLedgerFixture(em,out session,seed);
+            world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
+            var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(em,session,setup,out var reason,out byte visualPending),reason.ToString());
+            Assert.AreEqual(0,visualPending);
+            var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            Assert.AreEqual(SkirmishSessionPhase.Spawning,state.Phase);
+            state.SpawnComplete=1;
+            state.Phase=SkirmishSessionPhase.Playing;
+            em.SetComponentData(session,state);
+            var objective=em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            objective.State=SkirmishObjectiveStateKind.Active;
+            em.SetComponentData(session,objective);
+            em.AddComponentData(session,new SkirmishObjectiveClockComponent {
+                DeadlineSeconds=setup.DeadlineSeconds,Playing=1 });
+            using var owned=em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(em,owned,state.SessionId,setup);
+            SkirmishArmyGroupSystem.RefreshAlive(em,session,owned,state.SessionId);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em,session);
+            Assert.AreEqual(SkirmishPhase.Playing,em.GetComponentData<SkirmishMatchState>(session).Phase);
+        }
+
+        [Test]
+        public void PrefabFreeLedgerFixtureCannotClaimNativeReadiness()
+        {
+            using var world=new World("S002 prefab-free native refusal");
+            QueueLedgerFixture(world.EntityManager,out var session,104731);
             world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
             world.GetOrCreateSystem<SkirmishScenarioSpawnSystem>().Update(world.Unmanaged);
-            Assert.AreEqual(SkirmishSessionPhase.Playing, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
-            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
-            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, setup);
-            SkirmishArmyGroupSystem.RefreshAlive(em, session, owned, sessionId);
-            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
-            Assert.AreEqual(SkirmishPhase.Playing, em.GetComponentData<SkirmishMatchState>(session).Phase);
+            var state=world.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            Assert.AreEqual(SkirmishSessionPhase.Failed,state.Phase);
+            Assert.AreEqual(SkirmishReasonCode.MissingReference,state.FailureCode);
         }
 
         private static void PublishProjectedMatch(World world, Entity session)
@@ -3794,6 +4138,207 @@ namespace Game.Tests.Editor
             RunHomePadRefusalFocusedValidation();
             Debug.Log("[HomePadWitnessAndBoundaryFocusedControls] result=Passed siteControls=11 inputFrameControls=5 boundaryControls=8 normalMissionReady=0");
         }
+
+
+        // Opt-in second Play regression. The prior one-Play diagnostic stays unchanged.
+        private bool companionSecondStarted,companionSecondComplete;
+        private string companionSecondOutput,companionSecondBaselineSignature;
+        private Newtonsoft.Json.Linq.JObject companionSecondReport,companionSecondOriginalContext;
+        private static Newtonsoft.Json.Linq.JObject CompanionSecondContext()
+            =>new Newtonsoft.Json.Linq.JObject{
+                ["options"]=(int)UnityEditor.EditorSettings.enterPlayModeOptions,
+                ["optionsEnabled"]=UnityEditor.EditorSettings.enterPlayModeOptionsEnabled,
+                ["background"]=Application.runInBackground,
+                ["saveRoot"]=Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"),
+                ["locale"]=GameLocalization.CurrentLocaleCode,
+                ["sceneSetup"]=CompanionTemplateSceneSetupIdentity(
+                    UnityEditor.SceneManagement.EditorSceneManager.GetSceneManagerSetup())};
+        private void CompanionSecondSave()
+        {
+            Assert.AreEqual(companionSecondOutput,CompanionTemplateValidateOutput(companionSecondOutput,false));
+            File.WriteAllText(companionSecondOutput,companionSecondReport.ToString(Newtonsoft.Json.Formatting.Indented)+"\n",
+                new System.Text.UTF8Encoding(false));
+        }
+        private Newtonsoft.Json.Linq.JObject CompanionSecondObserve(string stage,int play,int sourceCycle=0)
+        {
+            var census=SkirmishProductionBatchOwnershipCensus.Capture();
+            ((Newtonsoft.Json.Linq.JArray)companionSecondReport["stages"]).Add(
+                new Newtonsoft.Json.Linq.JObject{["stage"]=stage,["play"]=play,["sourceCycle"]=sourceCycle,
+                    ["frame"]=Time.frameCount,["census"]=census});
+            CompanionSecondSave();
+            SkirmishProductionBatchOwnershipCensus.CleanupSignature(census);
+            return census;
+        }
+        private void CompanionSecondApplyPlayContext(int play)
+        {
+            string profile=companionSecondOutput+".play"+play+".isolated-profile";
+            Assert.IsFalse(Directory.Exists(profile),"Fresh owned isolated profile required");
+            UnityEditor.EditorSettings.enterPlayModeOptionsEnabled=true;
+            UnityEditor.EditorSettings.enterPlayModeOptions=UnityEditor.EnterPlayModeOptions.DisableDomainReload;
+            Application.runInBackground=true;
+            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",profile);
+        }
+        private void CompanionSecondRestoreContext(List<string> errors)
+        {
+            CompanionTemplateRestoreAction(errors,"EnterPlayOptions",()=>
+                UnityEditor.EditorSettings.enterPlayModeOptions=(UnityEditor.EnterPlayModeOptions)(int)companionSecondOriginalContext["options"]);
+            CompanionTemplateRestoreAction(errors,"EnterPlayOptionsEnabled",()=>
+                UnityEditor.EditorSettings.enterPlayModeOptionsEnabled=(bool)companionSecondOriginalContext["optionsEnabled"]);
+            CompanionTemplateRestoreAction(errors,"Background",()=>Application.runInBackground=(bool)companionSecondOriginalContext["background"]);
+            CompanionTemplateRestoreAction(errors,"SaveRoot",()=>
+                Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",(string)companionSecondOriginalContext["saveRoot"]));
+            CompanionTemplateRestoreAction(errors,"Locale",()=>{GameLocalization.SetLocale((string)companionSecondOriginalContext["locale"],false);});
+        }
+        [UnityEngine.TestTools.UnityTest]
+        public System.Collections.IEnumerator CompanionTemplates_SecondPlayPreservesExactPreparedEditorBaseline()
+        {
+            string requested=Environment.GetEnvironmentVariable("WARLINE_S074_COMPANION_SECOND_PLAY_OUTPUT");
+            if(string.IsNullOrWhiteSpace(requested))
+                Assert.Ignore("Owned second-Play diagnostic output binding required; excluded from ordinary suites");
+            Assert.IsFalse(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode);
+            companionSecondOutput=CompanionTemplateOwnedOutput(requested);
+            CompanionTemplateRequireCleanScenes();
+            companionSecondOriginalContext=CompanionSecondContext();
+            companionSecondReport=new Newtonsoft.Json.Linq.JObject{["schema"]=2,
+                ["scope"]="S074CompanionSecondPlay_Diagnostic_NoMission",["result"]="Incomplete",
+                ["playsCompleted"]=0,["sourceCyclesCompleted"]=0,["originalContext"]=companionSecondOriginalContext.DeepClone(),
+                ["stages"]=new Newtonsoft.Json.Linq.JArray(),["productionBaselineChanged"]=false,
+                ["missionAccepted"]=false,["restorationVerified"]=false};
+            using(File.Open(companionSecondOutput,FileMode.CreateNew,FileAccess.Write,FileShare.Read)){}
+            companionSecondStarted=true;
+            CompanionTemplateGuardControls();
+            CompanionSecondObserve("BeforeStreamingWarmup",0);
+            Newtonsoft.Json.Linq.JObject warmup=null;
+            yield return CompanionTemplateCaptureStreamingWarmup(value=>warmup=value);
+            companionSecondReport["streamingWarmup"]=warmup;
+            CompanionSecondObserve("AfterStreamingWarmup",0);
+            CompanionSecondApplyPlayContext(1);
+            yield return new UnityEngine.TestTools.EnterPlayMode(false);
+            CompanionSecondObserve("AfterFirstEnterPlay",1);
+            yield return new UnityEngine.TestTools.ExitPlayMode();
+            CompanionSecondObserve("AfterFirstExitPlay",1);
+            var firstRestoreErrors=new List<string>();
+            CompanionSecondRestoreContext(firstRestoreErrors);
+            companionSecondReport["firstRestoreErrors"]=new Newtonsoft.Json.Linq.JArray(firstRestoreErrors);
+            companionSecondReport["contextAfterFirstExit"]=CompanionSecondContext();
+            CompanionSecondSave();
+            Assert.IsEmpty(firstRestoreErrors);
+            Assert.IsTrue(Newtonsoft.Json.Linq.JToken.DeepEquals(companionSecondOriginalContext,companionSecondReport["contextAfterFirstExit"]));
+            CompanionTemplateRequireCleanScenes();
+            var baseline=CompanionSecondObserve("FirstEditorBaseline",1);
+            Assert.AreEqual(0,((Newtonsoft.Json.Linq.JArray)baseline["worlds"]).Count,"Restored Editor baseline must have no Worlds");
+            companionSecondBaselineSignature=SkirmishProductionBatchOwnershipCensus.CleanupSignature(baseline);
+            companionSecondReport["firstEditorBaselineSignature"]=companionSecondBaselineSignature;
+            companionSecondReport["playsCompleted"]=1;
+            CompanionSecondSave();
+            CompanionSecondApplyPlayContext(2);
+            yield return new UnityEngine.TestTools.EnterPlayMode(false);
+            CompanionSecondObserve("AfterSecondEnterPlay",2);
+            var world=World.DefaultGameObjectInjectionWorld;
+            Assert.IsNotNull(world);Assert.IsTrue(world.IsCreated);
+            string sourcePath=(string)warmup["source_scene_path"];
+            CompanionSecondObserve("BeforeSourceLoad",2,1);
+                var priorScene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sourcePath);
+                Assert.IsFalse(priorScene.IsValid(),"Do not borrow a pre-existing source scene");
+                var load=UnityEditor.SceneManagement.EditorSceneManager.LoadSceneAsyncInPlayMode(sourcePath,
+                    new UnityEngine.SceneManagement.LoadSceneParameters(UnityEngine.SceneManagement.LoadSceneMode.Additive));
+                Assert.IsNotNull(load);
+                double deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                while(!load.isDone){Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                var ownedScene=UnityEngine.SceneManagement.SceneManager.GetSceneByPath(sourcePath);
+                Assert.IsTrue(ownedScene.IsValid()&&ownedScene.isLoaded);
+                var views=new List<OperationMapSceneView>();
+                foreach(var root in ownedScene.GetRootGameObjects())views.AddRange(root.GetComponentsInChildren<OperationMapSceneView>(true));
+                Assert.AreEqual(1,views.Count);Assert.IsTrue(views[0].TryValidate(out string viewError),viewError);
+                Assert.AreEqual((string)warmup["expected_view_operation_map_id"],views[0].OperationMapId);
+                CompanionSecondObserve("SourceSceneLoaded",2,1);
+                var ownedEntities=new List<Entity>();
+                var sceneRows=new Newtonsoft.Json.Linq.JArray();
+                foreach(string guid in new[]{(string)warmup["navigation_subscene_guid"],(string)warmup["runtime_subscene_guid"]})
+                {
+                    var hash=new Unity.Entities.Hash128(guid);
+                    Entity scene=Unity.Scenes.SceneSystem.GetSceneEntity(world.Unmanaged,hash);
+                    bool borrowed=scene!=Entity.Null&&world.EntityManager.Exists(scene);
+                    if(!borrowed){scene=Unity.Scenes.SceneSystem.LoadSceneAsync(world.Unmanaged,hash);ownedEntities.Add(scene);}
+                    Assert.AreNotEqual(Entity.Null,scene);
+                    deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                    while(!Unity.Scenes.SceneSystem.IsSceneLoaded(world.Unmanaged,scene))
+                    {Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                    sceneRows.Add(new Newtonsoft.Json.Linq.JObject{["guid"]=guid,["borrowed"]=borrowed,
+                        ["entityIndex"]=scene.Index,["entityVersion"]=scene.Version});
+                }
+                companionSecondReport["sourceSceneLoads"]=sceneRows;
+                CompanionSecondObserve("SubScenesReady",2,1);
+                foreach(var scene in ownedEntities)
+                    if(world.EntityManager.Exists(scene))Unity.Scenes.SceneSystem.UnloadScene(world.Unmanaged,scene,
+                        Unity.Scenes.SceneSystem.UnloadParameters.DestroyMetaEntities);
+                var unload=UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(ownedScene);
+                Assert.IsNotNull(unload);deadline=UnityEditor.EditorApplication.timeSinceStartup+120d;
+                while(!unload.isDone){Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                foreach(var scene in ownedEntities)
+                    while(world.EntityManager.Exists(scene))
+                    {Assert.Less(UnityEditor.EditorApplication.timeSinceStartup,deadline);yield return null;}
+                yield return null;
+                CompanionSecondObserve("AfterSourceUnload",2,1);
+            companionSecondReport["sourceCyclesCompleted"]=1;
+            CompanionSecondSave();
+            yield return new UnityEngine.TestTools.ExitPlayMode();
+            var after=CompanionSecondObserve("AfterSecondExitPlay",2);
+            string afterSignature=SkirmishProductionBatchOwnershipCensus.CleanupSignature(after);
+            companionSecondReport["afterSecondExitSignature"]=afterSignature;
+            companionSecondReport["exactBaselineEqualAfterSecondExit"]=afterSignature==companionSecondBaselineSignature;
+            companionSecondReport["playsCompleted"]=2;
+            CompanionSecondSave();
+            Assert.AreEqual(0,((Newtonsoft.Json.Linq.JArray)after["worlds"]).Count);
+            Assert.AreEqual(companionSecondBaselineSignature,afterSignature,"Second Play/source lifecycle must preserve every strict baseline field");
+            companionSecondComplete=true;
+        }
+        [UnityEngine.TestTools.UnityTearDown]
+        public System.Collections.IEnumerator RestoreCompanionSecondPlayDiagnostic()
+        {
+            if(!companionSecondStarted)yield break;
+            if(UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+            {
+                companionSecondReport["teardownExitRequested"]=true;CompanionSecondSave();
+                yield return new UnityEngine.TestTools.ExitPlayMode();
+            }
+            var errors=new List<string>();
+            bool restored=false,baselineEqual=false;
+            try
+            {
+                CompanionTemplateRequireCleanScenes();
+                CompanionSecondRestoreContext(errors);
+                var actual=CompanionSecondContext();
+                companionSecondReport["restorationObserved"]=actual;
+                restored=Newtonsoft.Json.Linq.JToken.DeepEquals(companionSecondOriginalContext,actual);
+                var census=CompanionSecondObserve("AfterRestoration",2);
+                string signature=SkirmishProductionBatchOwnershipCensus.CleanupSignature(census);
+                companionSecondReport["afterRestorationSignature"]=signature;
+                baselineEqual=companionSecondBaselineSignature!=null&&signature==companionSecondBaselineSignature&&
+                    ((Newtonsoft.Json.Linq.JArray)census["worlds"]).Count==0;
+            }
+            catch(Exception error){errors.Add("Restoration: "+error);}
+            finally
+            {
+                // Retry every setting independently even if scene/census validation threw.
+                CompanionSecondRestoreContext(errors);
+                CompanionTemplateRestoreAction(errors,"FinalContextWitness",()=>
+                {
+                    var actual=CompanionSecondContext();companionSecondReport["restorationObserved"]=actual;
+                    restored=Newtonsoft.Json.Linq.JToken.DeepEquals(companionSecondOriginalContext,actual);
+                });
+                companionSecondReport["restorationErrors"]=new Newtonsoft.Json.Linq.JArray(errors);
+                companionSecondReport["exactBaselineEqualAfterRestoration"]=baselineEqual;
+                companionSecondReport["restorationVerified"]=restored&&errors.Count==0;
+                companionSecondReport["result"]=companionSecondComplete&&baselineEqual&&restored&&errors.Count==0?
+                    "Collected_TwoPlay_NoMission":"FailedOrIncomplete";
+                CompanionSecondSave();
+            }
+            Assert.IsEmpty(errors);Assert.IsTrue(restored);Assert.IsTrue(baselineEqual);
+            Assert.IsTrue(companionSecondComplete);
+            Debug.Log("[S074CompanionSecondPlay] result=Collected plays=2 sourceCycles=1 strictBaselineEqual=1 missionAccepted=0");
+        }
+
 
     }
 }

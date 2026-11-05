@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36e08482e6fa14d459a2f47824660b0b, type: 3}
+  m_Name: MissionAtlasMissionArtwork
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionAtlasMissionArtworkCatalog
+  entries:
+  - MissionId: S001
+    Texture: {fileID: 2800000, guid: a42c497ad61a54508bd1e66a5e5d9dcd, type: 3}
+  - MissionId: S002
+    Texture: {fileID: 2800000, guid: 1be5834e1149b4760b7c3cd98b06c655, type: 3}
+  - MissionId: S003
+    Texture: {fileID: 2800000, guid: b3809cc008414643923e6edc5ead3fcf, type: 3}
+  - MissionId: S004
+    Texture: {fileID: 2800000, guid: 5288d06722d34e248ea5969e1f981ca8, type: 3}
+  - MissionId: operation.o001
+    Texture: {fileID: 2800000, guid: 9e6888d6096d9489da39d28cc4198459, type: 3}

@@ -22,7 +22,7 @@ namespace Game.Configs
         {
             if (layout == null) throw new ArgumentNullException(nameof(layout));
             using var hash = SHA256.Create();
-            return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout))))).Replace("-", "").ToLowerInvariant();
+            return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout)) + (layout.HasFactionCompounds ? "|authored-compounds-v1|" + JsonUtility.ToJson(new CompoundValues { Rows = layout.FactionCompounds }) : string.Empty) + (layout.HasFacilityPlacements ? "|authored-facility-offsets-v1|" + JsonUtility.ToJson(new FacilityPlacementValues { Rows = layout.FacilityPlacements }) : string.Empty)))).Replace("-", "").ToLowerInvariant();
         }
         public static bool PreservesPackagedLegacyBinding(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition,
             string reviewedLayoutSemanticFingerprint)
@@ -183,9 +183,31 @@ namespace Game.Configs
                 float x = projected.x, z = projected.y;
                 SkirmishMapLayoutBuilder.ApplyFrameOffset(layout, structure.AcrossOffsetMetres, structure.ForwardOffsetMetres, ref x, ref z);
                 if (!Inside(source, x, z)) Add(reasons, structure.StructureId, "Facility center after compiled frame offset leaves source bounds.");
+                if (layout.HasFactionCompounds)
+                {
+                    if (!layout.TryGetFactionCompound(structure.FactionId, out var zone) ||
+                        Array.IndexOf(zone.FacilityPadIds, pad.PadId) < 0 || x < zone.MinX || x > zone.MaxX || z < zone.MinZ || z > zone.MaxZ ||
+                        !Inside(source, zone.MinX, zone.MinZ) || !Inside(source, zone.MaxX, zone.MaxZ))
+                        Add(reasons, structure.StructureId, "Explicit same-source faction compound/member pad/center required.");
+                }
                 structure.SpawnWorldX = x; structure.SpawnWorldZ = z; structures[i] = structure;
             }
             if (reasons.Count != start) return false;
+
+            if(layout.HasFacilityPlacements)
+            {
+                foreach(byte faction in new byte[]{1,2})
+                {
+                    int count=0;SkirmishResolvedStructureEntry designated=default;
+                    foreach(var item in structures)if(item.FactionId==faction&&item.DesignatedBase){count++;designated=item;}
+                    string role=faction==1?"base.player":"base.enemy";
+                    if(count!=1||!layout.TryGetAnchor(role,out var anchor)||designated.SpawnAnchorId!=anchor.AnchorId||
+                        !layout.TryProjectToMap(anchor.NormalizedU,anchor.NormalizedV,out float ax,out float az)||
+                        Mathf.Abs(ax-designated.SpawnWorldX)>.01f||Mathf.Abs(az-designated.SpawnWorldZ)>.01f)
+                        Add(reasons,role,"Authored designated base, typed base anchor and deployment must resolve one position.");
+                }
+                if(reasons.Count!=start)return false;
+            }
 
             // The actual native placement owner still validates real facility footprints,
             // grid blockers, relocation, exits and census. No arbitrary 8m margin is invented here.
@@ -199,12 +221,19 @@ namespace Game.Configs
             setup.EnemyStagingWorldX = points[5].x; setup.EnemyStagingWorldZ = points[5].y;
             setup.EnemySpawnPadX = points[6].x; setup.EnemySpawnPadZ = points[6].y;
             setup.EnemyRallyPadX = points[7].x; setup.EnemyRallyPadZ = points[7].y;
+            if(layout.HasFacilityPlacements)
+                foreach(var item in structures)if(item.DesignatedBase)
+                {
+                    if(item.FactionId==1){setup.PlayerBaseWorldX=item.SpawnWorldX;setup.PlayerBaseWorldZ=item.SpawnWorldZ;}
+                    else if(item.FactionId==2){setup.EnemyBaseWorldX=item.SpawnWorldX;setup.EnemyBaseWorldZ=item.SpawnWorldZ;}
+                }
             setup.WorldWidthMetres = source.Bounds.WorldMax.x - source.Bounds.WorldMin.x;
             setup.WorldDepthMetres = source.Bounds.WorldMax.z - source.Bounds.WorldMin.z;
             setup.GridOriginX = source.GridMetadata.Origin.x; setup.GridOriginZ = source.GridMetadata.Origin.z;
             setup.CellSize = source.GridMetadata.CellSize;
             setup.DefaultRouteId = defaultRoute;
             setup.MeasuredLayoutBound = true;
+            setup.RequireAuthoredStructureOrigins = layout.HasFactionCompounds;
             return true;
         }
 
@@ -386,6 +415,8 @@ namespace Game.Configs
                 CellSize = source.CellSize, Frame = source.WorldBinding, Anchors = source.Anchors, Routes = source.Routes, Pads = source.Pads
             };
         }
+        [Serializable] private sealed class CompoundValues { public SkirmishFactionCompoundConfig[] Rows; }
+        [Serializable] private sealed class FacilityPlacementValues { public SkirmishFacilityPlacementConfig[] Rows; }
         private static string Fingerprint(OperationMapDefinition source, SkirmishMapLayoutConfig layout,
             SkirmishResolvedForceEntry[] forces, SkirmishResolvedStructureEntry[] structures)
         {
@@ -395,6 +426,8 @@ namespace Game.Configs
             // Do not serialize ScriptableObjects, prefab refs or Addressables cached state.
             string text = "generic-layout-v1|" + JsonUtility.ToJson(SourceValues.From(source)) + "|" + JsonUtility.ToJson(LayoutValues.From(layout)) + "|" +
                 JsonUtility.ToJson(new ProjectedActors { Forces = forces, Structures = structures });
+            if (layout.HasFactionCompounds) text += "|authored-compounds-v1|" + JsonUtility.ToJson(new CompoundValues { Rows = layout.FactionCompounds });
+            if (layout.HasFacilityPlacements) text += "|authored-facility-offsets-v1|" + JsonUtility.ToJson(new FacilityPlacementValues { Rows = layout.FacilityPlacements });
             using (var sha = SHA256.Create())
                 return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-", "").ToLowerInvariant();
         }

@@ -1,0 +1,92 @@
+{
+  "result": "Passed",
+  "nativeScreens": 18,
+  "matrix": 16,
+  "selectionRegressions": [
+    "fa-IR 16:9 DB",
+    "en 20:9 AP"
+  ],
+  "territoryCoverage": 0.661,
+  "aspectLimit": 0.1,
+  "minimumHaloGapPx": 12,
+  "ownerVisualReview": "Pending",
+  "realPlayerDeviceAcceptance": "Pending",
+  "progress": "Labelled capture fixture; native earned medals are evidenced separately",
+  "liveControls": "Native cue button and unchanged-layout instance preservation",
+  "files": [
+    {
+      "file": "saga-16x9-en.png",
+      "sha256": "a0e86f7bd6959a27fc3fa76090182043ddc2a9753df2ae4bc71e6e4902927fde"
+    },
+    {
+      "file": "saga-16x9-fa-IR.png",
+      "sha256": "503540c350b79f6f9ef7037f182afc183821b957428892118c4ed11fde513af2"
+    },
+    {
+      "file": "saga-20x9-en.png",
+      "sha256": "c6fe4b068f7ad4388701648a3534ee9c5dc1a6b7d246e3b036bf415750799a06"
+    },
+    {
+      "file": "saga-20x9-fa-IR.png",
+      "sha256": "433693a077cc6bc31ccb7d02b1de4efa95c7a0b6079e20bd77f1fc10003de586"
+    },
+    {
+      "file": "saga-20x9-notch-en.png",
+      "sha256": "2a71a1604a35d632d257728c88dcdab4a98aaa1bcd72fac4dac920fead0bad78"
+    },
+    {
+      "file": "saga-20x9-notch-fa-IR.png",
+      "sha256": "cb278fb992789c01eced286a3e760d65692cc9dd81701002e82eed577984d414"
+    },
+    {
+      "file": "saga-4x3-en.png",
+      "sha256": "f9495dc4ddcc6d0650e0e09b9ff2bd8c854c817662c9354219f355b75b96e491"
+    },
+    {
+      "file": "saga-4x3-fa-IR.png",
+      "sha256": "cb2ff1a8e9a8b9361df7c085020e62971f6b338e1143d2914de4b3afffb727e5"
+    },
+    {
+      "file": "theater-16x9-en.png",
+      "sha256": "e58b02d436aa4db0a8fc90854ef22528b9d867ffa548706f3e30c7c96f04fb0a"
+    },
+    {
+      "file": "theater-16x9-fa-IR-selected-DB.png",
+      "sha256": "a7fbc747db5bd0a6a65f7ac908bc1d984f79ebe240e86b71cf8ec5b53a938f22"
+    },
+    {
+      "file": "theater-16x9-fa-IR.png",
+      "sha256": "31702de3897610f30789a4837dc154edd3980a437b501659700cf31cb3b089a1"
+    },
+    {
+      "file": "theater-20x9-en-selected-AP.png",
+      "sha256": "12c753e717741fc409108b5be78066b9dfb00bfd520133e97067e3f3c6b670c9"
+    },
+    {
+      "file": "theater-20x9-en.png",
+      "sha256": "67842b1950ed81862847322a55afe2d5538aaaf3416d0bae475f1e097b183ca5"
+    },
+    {
+      "file": "theater-20x9-fa-IR.png",
+      "sha256": "e4304a60ebb2b6f63c6aaed6ea5e12d930685073d52d63985d2517cb8d3c3ed9"
+    },
+    {
+      "file": "theater-20x9-notch-en.png",
+      "sha256": "b9862c5211490aa21e18ca87de6c7ae1d26760155daf918855ea3593d5979ec2"
+    },
+    {
+      "file": "theater-20x9-notch-fa-IR.png",
+      "sha256": "0a22a36e688ab707ea8c2f404de4c2ef39a3d63e425a345f190d2697c6969c37"
+    },
+    {
+      "file": "theater-4x3-en.png",
+      "sha256": "be3904d25470b8d6647cb67bbe0d7b4213fd9b9783cafbefeb8e230f86771df0"
+    },
+    {
+      "file": "theater-4x3-fa-IR.png",
+      "sha256": "fd27ffe208325e6fd91623202a6bb0465034512bdf9de9e1bccde2f3ad008d16"
+    }
+  ],
+  "sourceCommit": "ac03176",
+  "candidateSourceHash": "ceeb2284efe03f150ffa4e58e8fb3d312e91ff4968fd7d49221e20c2b4c9a0c0"
+}

@@ -41,7 +41,8 @@ namespace Game.UI.Runtime
                 bool enabled = source != null && source.interactable;
                 selectionActions[i].interactable = enabled;
                 var group = selectionActions[i].GetComponent<CanvasGroup>();
-                if (group != null) group.alpha = enabled ? 1f : .65f;
+                if (group != null) group.alpha = 1f;
+                HudActionVisuals.Refresh(selectionActions[i]);
             }
             return true;
         }

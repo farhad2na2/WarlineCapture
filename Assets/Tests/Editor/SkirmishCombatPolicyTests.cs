@@ -9,6 +9,12 @@ using UnityEngine;
 
 public sealed class SkirmishCombatPolicyTests
 {
+    [SetUp]
+    public void ResetLocalization() => LocalizationTestState.UseShippedCatalog();
+
+    [TearDown]
+    public void RestoreLocalization() => LocalizationTestState.UseShippedCatalog();
+
     [Test]
     public void MovingAttackTargetEnteringRangeStopsApproachAndDeadTargetReleasesPath()
     {

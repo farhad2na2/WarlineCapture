@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "kind": "ProtectedExpandedNormalInputGapProposal",
+  "enabled": false,
+  "authority_issued": false,
+  "normal_dispatch_schema": "PendingWindowsRuntimeReview_NoNewSchemaAcceptedByThisPatch",
+  "total_canonical_slots": 720,
+  "protected_slots": 18,
+  "all_slots_retained": true,
+  "protected_tuples": [
+    {
+      "catalog_id": "S001",
+      "seed": 104730,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 104730,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 130364,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 130364,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 155922,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S001",
+      "seed": 155922,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 104754,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 104754,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 130388,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 130388,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 155946,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S025",
+      "seed": 155946,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 104802,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 104802,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 130436,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 130436,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 155994,
+      "locale": "EN",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    },
+    {
+      "catalog_id": "S073",
+      "seed": 155994,
+      "locale": "FA",
+      "size": "Standard",
+      "difficulty": "Regular",
+      "control_mode": "aria"
+    }
+  ],
+  "required_independent_authorities": {
+    "reviewed_dispatch_table": "Exact private QA definition/catalog/version/source/build/packaged graph and supported normal launch mode, preserving shipped practice bindings; issued by separate reviewed build producer, not inferred from IsPlayable or job schema.",
+    "native_tuple_fit": "Actual native fit receipt for exact definition/version/seed/size/difficulty and Campaign source/layout/binding identities, including army/facility/route legality; development three-size seed1 or edit-mode readback is not exact tuple fit.",
+    "run_grant": "Fresh finite host/epoch/owned-job authorization plus source-fit and exclusive dispatch partition; existing Mac worker remains disabled until separately reviewed."
+  },
+  "required_observation_joins": [
+    "versioned normal dispatch authority -> SHA-pinned job -> canonical claim -> native selected definition identity",
+    "selected card and normal input contact receipts -> actual queued payload -> owned world/session",
+    "launch-definition record -> actual source resolver -> actual loaded Campaign geometry and logical placements",
+    "actual compiled setup hash/content identity -> native v1 identity -> run CSV/trace/config/source/build hashes",
+    "same reviewed dispatch/fit identity through save, source reload and resume; no index-only or practice fallback",
+    "finished frozen outcome -> normal rendered result and Main Menu -> profile before/restore/after and ownership cleanup",
+    "camera journal remains pending until actual required native boundaries exist; no invented events"
+  ],
+  "must_remain_zero": [
+    "ordinary schema2 protected legacy regressions",
+    "existing schema3 MeasuredExpandedCounterpartDevelopmentAuthority",
+    "PublicSetupMethods_EditModeFixture readbacks",
+    "unreviewed private QA availability or boolean eligibility flags"
+  ],
+  "future_collector_change": "After reviewed normal authority API is frozen, validate independent dispatch/fit pins at preflight and each native boundary, classify it separately from schema2/3, retain actual normal input/ARIA/result/return proof. This proposal does not implement or recognize that future authority.",
+  "native_jobs": 0,
+  "qualified": false,
+  "queue_success_enabled": false,
+  "mission_ready": false,
+  "device_accepted": false
+}

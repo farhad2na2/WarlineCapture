@@ -34,7 +34,11 @@ namespace Game.UI.Runtime
         {
             if(!IsOpen)return false;
             if(confirming){confirming=false;modal.SetActive(false);return true;}
-            if(UiShellRuntimeGateway.TryReadSkirmish(out var model)&&model.Finished)Send(UiSkirmishAction.MainMenu);
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var model)&&model.Finished)
+            {
+                if(!string.IsNullOrEmpty(model.CatalogId)) ReturnToLibrary(model);
+                else Send(UiSkirmishAction.MainMenu);
+            }
             return true;
         }
         public static SkirmishMatchView Create()
@@ -75,6 +79,10 @@ namespace Game.UI.Runtime
                 ()=>Send(UiSkirmishAction.Replay),
                 ()=>Send(UiSkirmishAction.MainMenu),
                 ()=>Send(UiSkirmishAction.AdjustSetup));
+            resultCard.BindBattlefield(()=>
+            {
+                if(UiShellRuntimeGateway.TryReadSkirmish(out var open)) ReturnToLibrary(open);
+            });
             var confirmation=Panel("ConfirmationActions",shade,false);
             confirmation.anchorMin=confirmation.anchorMax=new Vector2(.5f,.5f);
             confirmation.sizeDelta=new Vector2(760,280);
@@ -172,6 +180,14 @@ namespace Game.UI.Runtime
         }
 
         private static void Send(UiSkirmishAction action)=>UiShellRuntimeGateway.TryRequestSkirmish(action);
+        private static void ReturnToLibrary(UiSkirmishModel model)
+        {
+            string scenarioId = !string.IsNullOrEmpty(model.CatalogId) ? model.CatalogId : model.MedalScenarioId;
+            SkirmishLibraryReturn.Queue(scenarioId);
+            foreach (var setup in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Include))
+                setup.ReturnLibraryToScenario(scenarioId);
+            Send(UiSkirmishAction.AdjustSetup);
+        }
         private static ModeResultContent BuildResult(UiSkirmishModel model)
         {
             string mapKey = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "ui.skirmish.industrial_basin_map"
@@ -179,14 +195,37 @@ namespace Game.UI.Runtime
                 : "ui.skirmish.base_assault_map";
             string mapFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "INDUSTRIAL BASIN"
                 : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
+            // Expanded catalog theatre identity must not fall through the legacy ScenarioIndex.
+            var catalog = SkirmishBattleCatalogConfig.Load();
+            if (!string.IsNullOrEmpty(model.CatalogId) && catalog != null && catalog.TryGet(model.CatalogId, out var entry))
+            {
+                mapKey = entry.MapId == "DB" ? "ui.skirmish.base_assault_map"
+                    : entry.MapId == "CC" ? "ui.skirmish.city_crossroads_map"
+                    : entry.MapId == "IB" ? "ui.skirmish.industrial_basin_map"
+                    : "ui.skirmish.theater." + entry.MapId.ToLowerInvariant() + ".title";
+                mapFallback = entry.MapId == "DB" ? "DESERT BASE"
+                    : entry.MapId == "CC" ? "CITY CROSSROADS"
+                    : entry.MapId == "IB" ? "INDUSTRIAL BASIN" : entry.MapId;
+            }
             string map = string.IsNullOrEmpty(model.MissionTitle)
                 ? UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback) : model.MissionTitle;
             string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get("ui.skirmish.result." + key, fallback);
             string complete = Text("complete", "Complete");
             string failed = Text("failed", "Failed");
             bool victory = model.ResultStars > 0;
+            SkirmishResultMedalLine medal = SkirmishResultMedalPresentation.Describe(
+                model.MedalIsFirstAward, model.MedalScenarioId, model.MedalDifficulty);
+            string medalText = string.Empty;
+            if (medal.Visible)
+            {
+                string first = UiShellRuntimeGateway.Localization.Get(medal.FirstLocKey, "First medal");
+                string difficulty = UiShellRuntimeGateway.Localization.Get(medal.DifficultyLocKey, "Medal");
+                medalText = first + " · " + model.MedalScenarioId + " · " + difficulty;
+            }
             return new ModeResultContent
             {
+                Mode = ResultScreenMode.Skirmish, MissionId = !string.IsNullOrEmpty(model.CatalogId) ? model.CatalogId : model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "S073" : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "S025" : "S001",
+                Context = UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback), MedalTier = (byte)Mathf.Clamp(model.MedalDifficulty - 1, 0, 3),
                 Victory = victory,
                 Title = string.IsNullOrEmpty(model.ResultTitle) ? (victory ? "VICTORY" : "DEFEAT") : model.ResultTitle,
                 Identity = Text("mode", "SKIRMISH") + "\n" + map,
@@ -202,7 +241,7 @@ namespace Game.UI.Runtime
                 Objective1State = model.EnemyBaseDestroyed ? complete : failed,
                 Objective2State = model.PlayerBaseHeld ? Text("held", "Held") : failed,
                 Objective3State = victory && model.PlayerUnitsLost <= 2 ? complete : failed,
-                HasObjectiveFacts = true,
+                HasObjectiveFacts = true, IncompleteObjectives = (byte)(model.EnemyBaseDestroyed ? 0 : 1),
                 CompletedObjectives = (byte)((model.EnemyBaseDestroyed ? 1 : 0) | (model.PlayerBaseHeld ? 2 : 0) |
                     (victory && model.PlayerUnitsLost <= 2 ? 4 : 0)),
                 Performance1 = Text("units_lost", "UNITS LOST"),
@@ -215,7 +254,12 @@ namespace Game.UI.Runtime
                 LeaveLabel = "MAIN MENU",
                 ShowAdjust = true,
                 ActionsEnabled = true,
+                ShowMedal = medal.Visible,
+                MedalText = medalText,
+                ShowBattlefieldBack = !string.IsNullOrEmpty(model.CatalogId),
+                BattlefieldBackLabel = Text("battlefield", "BATTLEFIELD"),
                 Signature = model.ResultTitle + "|" + model.ResultStars + "|" + model.PlayerUnitsLost + "|" + model.ScenarioIndex + "|" +
+                            (medal.Visible ? model.MedalScenarioId : string.Empty) + "|" + model.CatalogId + "|" +
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode
             };
         }

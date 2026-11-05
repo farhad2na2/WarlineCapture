@@ -1,0 +1,10 @@
+Assets/Game/Scripts/Editor/ApprovedMissionAtlasBuilder.cs
+Assets/Game/Scripts/Editor/ApprovedMissionAtlasReview.cs
+Assets/Game/Scripts/UI/Components/UISegmentedControlView.cs
+Assets/Game/Scripts/UI/Screens/MissionAtlasArmySizeView.cs
+Assets/Game/Scripts/UI/Screens/MissionAtlasArmySizeView.cs.meta
+Assets/Game/Scripts/UI/Screens/MissionAtlasArtworkView.cs
+Assets/Game/Scripts/UI/Screens/MissionAtlasScreenView.Polish.cs
+Assets/Game/Scripts/UI/Screens/MissionAtlasScreenView.cs
+Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab
+Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab

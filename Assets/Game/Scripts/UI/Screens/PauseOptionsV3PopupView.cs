@@ -422,15 +422,21 @@ namespace Game.UI.Runtime
                 SetText(missionText, campaign.SelectedMission.DisplayName);
             }
 
+            string fallbackObjective = "—";
+            if (UiShellRuntimeGateway.TryReadMissionBriefing(out var briefing) && briefing.Objectives != null && briefing.Objectives.Length > 0)
+                fallbackObjective = UiShellRuntimeGateway.Localization.Get(briefing.Objectives[0].DisplayTextKey, "—");
+            SetText(currentTimeText, UiShellRuntimeGateway.Localization.Get("hud.pause.time", "CURRENT TIME") + "  —");
+            SetText(objectiveText, fallbackObjective);
+            SetText(squadsAliveText, "—");
             if (UiShellRuntimeGateway.TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel status))
             {
-                string elapsed = string.IsNullOrWhiteSpace(status.ElapsedText) ? "14:32" : status.ElapsedText;
-                SetText(currentTimeText, "CURRENT TIME  " + elapsed);
+                string elapsed = string.IsNullOrWhiteSpace(status.ElapsedText) ? "—" : status.ElapsedText;
+                SetText(currentTimeText, UiShellRuntimeGateway.Localization.Get("hud.pause.time", "CURRENT TIME") + "  " + elapsed);
                 string objective = FirstNonEmpty(
                     status.Objective0.Text,
                     status.Objective1.Text,
                     status.Objective2.Text,
-                    "Capture the Enemy HQ");
+                    fallbackObjective);
                 SetText(objectiveText, objective);
             }
 

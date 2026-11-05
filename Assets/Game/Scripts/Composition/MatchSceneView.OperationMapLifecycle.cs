@@ -40,6 +40,7 @@ namespace Game.Composition
             {
                 matchBootstrapSystem.Awake(world, this, transform, gameObject.layer);
                 matchRuntimeBound = true;
+                RegisterActorBirthSourceProvider(world);
                 error = null;
                 return true;
             }
@@ -59,6 +60,7 @@ namespace Game.Composition
                 return;
             }
 
+            UnregisterActorBirthSourceProvider();
             GpuAnimationTeardownFence.TryFlushPendingStructuralChanges(World.DefaultGameObjectInjectionWorld);
             try
             {

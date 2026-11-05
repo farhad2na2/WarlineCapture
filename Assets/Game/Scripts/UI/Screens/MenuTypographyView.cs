@@ -16,6 +16,14 @@ namespace Game.UI.Runtime
             labels=texts;sizes=new float[texts.Length];
             for(int i=0;i<texts.Length;i++)sizes[i]=texts[i].fontSize;
         }
+        // A responsive/localized presenter can own font sizes inside its subtree.
+        // Keep this component's direction/arrow behavior and other menu labels.
+        public void ReleaseFontSizingUnder(Transform subtree)
+        {
+            if (subtree==null || labels==null) return;
+            for(int i=0;i<labels.Length;i++)
+                if(labels[i]!=null && labels[i].transform.IsChildOf(subtree)) labels[i]=null;
+        }
         private bool? rightToLeft;
         private void LateUpdate()
         {

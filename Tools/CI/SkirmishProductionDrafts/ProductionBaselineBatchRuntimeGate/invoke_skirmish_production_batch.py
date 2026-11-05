@@ -141,7 +141,7 @@ def main():
         "if($taskEditor.CommandLine.Replace('/','\\').IndexOf($taskProject,[StringComparison]::OrdinalIgnoreCase)-ge 0){throw 'Existing Editor owns this project; preserve it'}\n}\n", encoding='utf-8-sig')
     shell = ['rtk', 'proxy', 'powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File']
     subprocess.run(shell + [str(check)], check=True, env=env)
-    version = re.search(r'^m_EditorVersion:\s*(\S+)', (project / 'ProjectSettings/ProjectVersion.txt').read_text(), re.M).group(1)
+    version = re.search(r'^m_EditorVersion:\s*(\S+)', (project / 'ProjectSettings/ProjectVersion.txt').read_text(), re.M).group(1).replace('\r', '')
     resolved = output / 'resolved-editor.txt'
     subprocess.run(shell + [str(project / 'Tools/CI/ResolveUnityEditor.ps1'), '-UnityVersion', version, '-OutputPath', str(resolved)],
                    check=True, env=env, stdout=subprocess.PIPE)

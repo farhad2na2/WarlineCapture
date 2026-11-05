@@ -1,0 +1,135 @@
+{
+  "baseCommit": "16ecb2c70f894180d40141e71e929bd714d30393",
+  "designOnly": true,
+  "captureExitCode": 0,
+  "captureMarker": "[ResultScreenDesignReview] result=Captured nativeViews=6 representativeModels=true missionReadiness=NotClaimed runtimeAssetsChanged=false",
+  "images": [
+    {
+      "file": "BaselineNative/campaign-defeat.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "57e14d735ea73c4c0b7acabf0814aed36f63e4eb75fb92e9c576d9e73bb0dd74",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "BaselineNative/campaign-victory-live-M01.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "f10150de8db21586e153435d7c87b89b7b68ebcecf1fd9a57fe3f859cf6396e2",
+      "kind": "PriorNormalInputCapture"
+    },
+    {
+      "file": "BaselineNative/campaign-victory.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "44ee8aa491bd58fd8b7d916a631cd1702250a4c3f07eacfa8efccbb82f5ee5bb",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "BaselineNative/operations-defeat.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "174a0e3902287ea1e2e45543ba998af6ee1f16662977db61f0b7080a061a0620",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "BaselineNative/operations-victory.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "6717d93279311defdf194f68f55058be2694d350ac826bde92b55d8b73633ea2",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "BaselineNative/skirmish-defeat.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "d669c58eff4d6c80e67ada5ca97052f383b73b9563163c722bcd5c3b411c5594",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "BaselineNative/skirmish-victory.png",
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "d22d6bb71b5bed1a7d5e77edb3c16a06aee29ced0ae7a1c03891e7f52149706b",
+      "kind": "CurrentNativeViewRepresentativeModel"
+    },
+    {
+      "file": "Proposals/campaign-v01.png",
+      "size": [
+        1177,
+        1337
+      ],
+      "sha256": "abd2955cf6a57a41607f885a5d85e4babf3f0f2a6783258902d028853bbd0fdb",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/campaign-v02.png",
+      "size": [
+        1176,
+        1337
+      ],
+      "sha256": "0ac96090fdad8c6a1eda025fcf0df1317fc607e0e812cef11015490be6aca972",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/operations-v01.png",
+      "size": [
+        1672,
+        941
+      ],
+      "sha256": "a281221a285aa571690be491f02391e540a179cae5259eaf48f956ab21597f81",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/operations-v02.png",
+      "size": [
+        1182,
+        1330
+      ],
+      "sha256": "1e08be91a1333520b63334b585bccd1372a1131c7ed749eff89085d317c513b8",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/operations-v03.png",
+      "size": [
+        1182,
+        1330
+      ],
+      "sha256": "757d31ac325a8d54f91802cb1da9e710248f1ef6ebdc211510b4cf122cb43365",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/skirmish-v01.png",
+      "size": [
+        1177,
+        1337
+      ],
+      "sha256": "9005ab8fd5e90651ef28f229962669d39d2ff538cb15769d842e61281aa0d992",
+      "kind": "ImageGenProposal"
+    },
+    {
+      "file": "Proposals/skirmish-v02.png",
+      "size": [
+        1176,
+        1337
+      ],
+      "sha256": "83ff97c761b21b69cdaffe387dd1eaebcbfcf7e9bed7044bf4af4ecd3837bd5c",
+      "kind": "ImageGenProposal"
+    }
+  ],
+  "scope": "Original design review and baseline captures; implemented candidate and QA are recorded under Implementation/."
+}

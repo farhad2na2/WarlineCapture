@@ -110,6 +110,7 @@ namespace Game.Configs
         public string ResultVictoryKey = string.Empty;
         public string ResultDefeatKey = string.Empty;
         public bool MeasuredLayoutBound;
+        public bool RequireAuthoredStructureOrigins;
         // Empty for exact reviewed legacy bindings; generic logical provenance only.
         public string LayoutBindingFingerprint = string.Empty;
         public string MissionLogicalBindingFingerprint = string.Empty;

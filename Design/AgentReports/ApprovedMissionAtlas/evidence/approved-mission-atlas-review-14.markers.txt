@@ -1,0 +1,43 @@
+[CampaignComicBindings] result=Passed mainPage=25 ownMissionArt=true existingBindingsPreserved=true
+[ApprovedMissionAtlas] result=Passed campaignComics=25 chapterComics=5 sharedNativeLayout=true
+[ApprovedMissionAtlasReview] canvas=(x:-2400.00, y:-1080.00, width:4800.00, height:2160.00) scale=(1.00, 1.00, 1.00) host=(1.00, 1.00, 1.00) frame=(2.00, 2.00, 2.00) rect=(x:0.00, y:-1080.00, width:2400.00, height:1080.00)
+[ApprovedMissionAtlasReview] touch=ChapterCard_3
+[ApprovedMissionAtlasReview] touch=SkipButton
+[ApprovedMissionAtlasReview] touch=CampaignMission_saga.ch03.m03.false_front
+[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] touch=StartBattleButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=TheaterPin_DB
+[ApprovedMissionAtlasReview] touch=StartBattleButton
+[ApprovedMissionAtlasReview] touch=BattleCard_S002
+[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=en navigationText=Passed
+[ApprovedMissionAtlasReview] touch=ObjectiveTab_CE
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] canvas=(x:-2400.00, y:-1080.00, width:4800.00, height:2160.00) scale=(1.00, 1.00, 1.00) host=(1.00, 1.00, 1.00) frame=(2.00, 2.00, 2.00) rect=(x:0.00, y:-1080.00, width:2400.00, height:1080.00)
+[ApprovedMissionAtlasReview] touch=ChapterCard_3
+[ApprovedMissionAtlasReview] touch=SkipButton
+[ApprovedMissionAtlasReview] touch=CampaignMission_saga.ch03.m03.false_front
+[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] touch=StartBattleButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=TheaterPin_DB
+[ApprovedMissionAtlasReview] touch=StartBattleButton
+[ApprovedMissionAtlasReview] touch=BattleCard_S002
+[ApprovedMissionAtlasReview] ratio=(1920, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(1440, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] ratio=(2400, 1080) locale=fa-IR navigationText=Passed
+[ApprovedMissionAtlasReview] touch=ObjectiveTab_CE
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] touch=BackButton
+[ApprovedMissionAtlasReview] result=Passed input=InputSystemTouch campaignFiveComics=true skirmishSixPerRegion=true stageBack=true locales=en,fa-IR nativeScreens=true completeMission=Pending deviceAcceptance=Pending output=Design/AgentReports/ApprovedMissionAtlas/20261020-205416

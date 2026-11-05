@@ -24,6 +24,7 @@ namespace Game.UI.Runtime
         private int _activeCount;
         private bool _layingOut;
 
+        public int SelectedIndex { get; private set; } = -1;
         public Transform SegmentRoot => segmentRoot;
         public Button[] SegmentButtons => segmentButtons;
         public TMP_Text[] SegmentLabels => segmentLabels;
@@ -71,6 +72,7 @@ namespace Game.UI.Runtime
             EnsureCapacity(labels?.Length ?? 0);
             int count = Mathf.Min(labels?.Length ?? 0, segmentLabels.Length);
             _activeCount = count;
+            SelectedIndex = selectedIndex >= 0 && selectedIndex < count ? selectedIndex : -1;
             for (int i = 0; i < segmentLabels.Length; i++)
             {
                 bool active = i < count;

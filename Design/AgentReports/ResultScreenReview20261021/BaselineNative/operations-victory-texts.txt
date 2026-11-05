@@ -1,0 +1,25 @@
+Title/Label | VICTORY
+Stars/Label | 
+Identity/Label | STREET SIGNALS
+OLD QUARTER
+Identity/Label | EVIDENCE SECURED
+Time/Label | 09:40
+Objectives/Label | OBJECTIVES
+Objective0/Label | Scan signal sites
+Objective0/Label | COMPLETE
+Objective1/Label | Recover relay evidence
+Objective1/Label | COMPLETE
+Objective2/Label | Extract with 2+ infantry
+Objective2/Label | COMPLETE
+Performance/Label | PERFORMANCE
+Stat0/Label | SIGNALS
+Stat0/Label | 3/3
+Stat1/Label | EXTRACTED
+Stat1/Label | 4
+Stat2/Label | SURVIVORS
+Stat2/Label | 4
+MatchFacts/Label | Relay evidence recovered with the squad.
+Summary/Label | Relay evidence recovered. The squad returned safely.
+Retry/Label | RETRY
+Replay/Label | REPLAY
+Leave/Label | CONTINUE

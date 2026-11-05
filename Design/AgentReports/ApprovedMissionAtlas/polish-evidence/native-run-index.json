@@ -1,0 +1,66 @@
+[
+  {
+    "log": "/private/tmp/mission-atlas-polish-focused-01.log",
+    "sha256": "758796fba1388d152ee4594dad23c3e235292df72d14fa5a9467c272b83d1009",
+    "markers": []
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-focused-02.log",
+    "sha256": "2b3a2e3a2fd78aab60c38bef92146e4d122cd8cb85b0b8280d8161218944f534",
+    "markers": []
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-campaign-01.log",
+    "sha256": "5a2474197818cffccab93a7e3c733ad67dca94b64de4ff8db70e05c08c1236c6",
+    "markers": [
+      "[ApprovedCampaignJourney] started menuInput=InputSystemTouch gameplayInput=InputSystemTouch profileFixture=FirstLaunchOnly outcomesInjected=0",
+      "[ApprovedCampaignJourney] touch=ContinueButton",
+      "[ApprovedCampaignJourney] touch=ChapterCard_1",
+      "[ApprovedCampaignJourney] touch=StartBattleButton",
+      "[ApprovedCampaignJourney] touch=DeployOperationButton",
+      "[ApprovedCampaignJourney] touch=CampaignMission_saga.ch01.m01.first_contact",
+      "[ApprovedCampaignJourney] touch=StartBattleButton",
+      "[ApprovedCampaignJourney] touch=DeployOperationButton",
+      "[ApprovedCampaignJourney] result=Passed menuGestures=25 outcomesInjected=0 deviceAcceptance=Pending",
+      "[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact"
+    ]
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-s002-en-01.log",
+    "sha256": "99f950f3945ac60d3f1c78f182135cb2252ae72746459cf2c75640c44a530ddc",
+    "markers": [
+      "[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog",
+      "[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=6619.1185000000005 sha256=d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+      "[SagaNativeMedalJourney] result=Passed nativeResult=1 returnSelection=1 earnedCardMedal=1 diskReload=1 processRestart=Pending",
+      "[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=False reason=",
+      "[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=13354.5453 taskStatus=RanToCompletion sha256=d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+      "[SkirmishS002AriaRun] appended=1 countedWin=1 error="
+    ]
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-restart-en-01.log",
+    "sha256": "4f5856e0d9cad952701a3ef69e64086396f8165b96bbabd67dcf269dccc9365c",
+    "markers": [
+      "[SagaProcessRestart] result=Passed reason=coldProfileNativeMenuMedal profileSeeded=0 nativeTouch=1"
+    ]
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-s002-fa-01.log",
+    "sha256": "6bbdf1af655b4c1fe3e9a3ace2308a02a90e76fd28ec25926df362bc54a7465c",
+    "markers": [
+      "[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog",
+      "[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=7074.5791 sha256=d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+      "[SagaNativeMedalJourney] result=Passed nativeResult=1 returnSelection=1 earnedCardMedal=1 diskReload=1 processRestart=Pending",
+      "[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=False reason=",
+      "[SkirmishCandidateFingerprint] phase=Completed owner=Finish elapsedMilliseconds=11805.5224 taskStatus=RanToCompletion sha256=d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+      "[SkirmishS002AriaRun] appended=1 countedWin=1 error="
+    ]
+  },
+  {
+    "log": "/private/tmp/mission-atlas-polish-restart-fa-01.log",
+    "sha256": "f975db5fd0f8ca00311b42e873928424ffab38c2d38185841fa8c6a58dd2364d",
+    "markers": [
+      "[SagaProcessRestart] result=Passed reason=coldProfileNativeMenuMedal profileSeeded=0 nativeTouch=1"
+    ]
+  }
+]

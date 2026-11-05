@@ -193,7 +193,7 @@ namespace Game.Editor
             placeholder.font = title.font;
             placeholder.fontSize = 24f;
             placeholder.color = new Color(1f, 1f, 1f, 0.35f);
-            placeholder.text = "Search battles (S001, Desert, BA, …)";
+            placeholder.text = "Search battles";
             placeholder.raycastTarget = false;
             LayoutFill(placeholder.rectTransform, 14, 14, 8, 8);
             var search = searchRoot.GetComponent<TMP_InputField>();
@@ -288,7 +288,7 @@ namespace Game.Editor
             RecaptureSectionLayoutBases(root);
         }
 
-        private static void RecaptureSectionLayoutBases(GameObject root)
+        internal static void RecaptureSectionLayoutBases(GameObject root)
         {
             var layout = root.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null)

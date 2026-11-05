@@ -158,7 +158,9 @@ namespace Game.Runtime
                 source.BuildingGameplayDependencyCompositionSystemHelper.BuildingFactionTintStrength,
                 buildingId => source.BuildingRuntimeEntityCompositionSystemHelper.DeleteBuildingById(runtimeEntityContext, buildingId),
                 () => beginDeferredRuntimeBuildingSideEffects(source),
-                () => endDeferredRuntimeBuildingSideEffects(source));
+                () => endDeferredRuntimeBuildingSideEffects(source),
+                (definition, instance, originCell, removeOverlappingBlockers, birth) => source.BuildingRuntimeCreationCompositionSystemHelper.RegisterRuntimeBuilding(
+                    creationContext, definition, instance, originCell, removeOverlappingBlockers, birth));
             creationContext = factory.CreateCreationContext(result);
             ownershipContext = factory.CreateOwnershipContext(result);
             return result;

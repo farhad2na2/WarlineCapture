@@ -1,0 +1,18 @@
+{
+  "candidateSourceHash": "d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+  "producerPid": 67620,
+  "locale": "fa-IR",
+  "scenario": "S002",
+  "difficulty": "Regular",
+  "outcome": "Victory",
+  "resultFirstMedalShown": true,
+  "returnedBattlefield": "DB",
+  "returnedScenario": "S002",
+  "nativeStopRibbonVisible": false,
+  "nativeMissionCardMedalVisible": true,
+  "presentation": "approved-map-cards",
+  "nativeBriefingMedalRefreshed": true,
+  "diskReloadHasMedal": true,
+  "profileRoot": "/var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/aria-play-validation-profile/409d0354ca5e409581b4768dc5a4547c",
+  "processRestartAcceptance": "Pending"
+}

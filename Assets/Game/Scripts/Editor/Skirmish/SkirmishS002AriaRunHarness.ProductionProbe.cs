@@ -177,6 +177,17 @@ namespace Game.Editor
             var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
             var wedge = button.targetGraphic as V3RadialWedgeGraphic;
             var visiblePoint = wedge != null ? wedge.GuidanceTouchPoint : rect.TransformPoint(rect.rect.center);
+            // A coast's bounding-box centre can contain its selected zoom button.
+            // Select at the visible marker, while still requiring the native raycast
+            // below to hit this exact region button rather than a different action.
+            const string regionPrefix = "TheaterPin_";
+            if (button.name.StartsWith(regionPrefix, StringComparison.Ordinal))
+            {
+                string map = button.name.Substring(regionPrefix.Length);
+                var plate = button.transform.parent != null ? button.transform.parent.parent : null;
+                if (plate != null && plate.Find("ZonePin_" + map) is RectTransform marker)
+                    visiblePoint = marker.TransformPoint(marker.rect.center);
+            }
             point = RectTransformUtility.WorldToScreenPoint(camera, visiblePoint);
             if (!Screen.safeArea.Contains(point)) return false;
             var hits = new System.Collections.Generic.List<RaycastResult>();

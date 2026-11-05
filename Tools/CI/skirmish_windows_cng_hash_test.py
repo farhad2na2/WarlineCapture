@@ -73,7 +73,7 @@ class WindowsCngHashTests(unittest.TestCase):
         print(output)
 
     def test_focused_unity_draft_compiles_against_matching_editor_reference_assemblies(self):
-        version = (self.project / "ProjectSettings/ProjectVersion.txt").read_text().splitlines()[0].split(":", 1)[1].strip()
+        version = (self.project / "ProjectSettings/ProjectVersion.txt").read_text().splitlines()[0].split(":", 1)[1].replace("\r", "").strip()
         engine = Path("D:/Program Files/Unity") / version / "Editor/Data/Managed/UnityEngine"
         for name in ("UnityEngine.CoreModule.dll", "UnityEngine.JSONSerializeModule.dll"):
             self.assertTrue((engine / name).is_file(), "Matching installed Editor reference assembly required: " + name)

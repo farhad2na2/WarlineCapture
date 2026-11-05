@@ -93,6 +93,7 @@ namespace Game.Composition
             bool wasInitialized = initialized;
             EnsurePersistentDiagnosticsInitialized();
             autoStartMatchRequested = ShouldAutoStartMatch();
+            MainMenuModeProgressGateway.Read = MainMenuModeProgressComposition.Read;
             view.ApplyRuntimeUiMode();
 
             if (view.ShellEcsPresentation != null)
@@ -103,7 +104,10 @@ namespace Game.Composition
                 view.ContentSystem.ConfigureCatalogMetadataResolvers(
                     UiCatalogAuthoringMetadataUiSystemHelper.TryGetBuildingMetadata,
                     UiCatalogAuthoringMetadataUiSystemHelper.TryGetUnitMetadata);
-                view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
+                view.ContentSystem.BindQuickCustomRuntimeDependencies(
+                    quickCustomGameConfigStore,
+                    matchLaunchCommand,
+                    SkirmishLibraryComposition.Create);
             }
             if (view.Router != null)
                 view.Router.Initialize();
@@ -711,7 +715,10 @@ namespace Game.Composition
                 matchBootstrap.SelectionDiagnosticsSink,
                 selectionUiReadModel);
             view.ContentSystem.BindBuildDrawerRuntimeQueries(matchBootstrap.BuildingUiQueryContract);
-            view.ContentSystem.BindQuickCustomRuntimeDependencies(quickCustomGameConfigStore, matchLaunchCommand);
+            view.ContentSystem.BindQuickCustomRuntimeDependencies(
+                quickCustomGameConfigStore,
+                matchLaunchCommand,
+                SkirmishLibraryComposition.Create);
             boundMatchRuntimeView = matchScene;
             boundSelectionUiCommand = selectionUiCommand;
             boundSelectionUiReadModel = selectionUiReadModel;

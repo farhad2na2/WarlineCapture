@@ -55,7 +55,15 @@ namespace Game.UI.Runtime
 
         public override Material material
         {
-            get => SurfaceMaterial != null ? SurfaceMaterial : base.material;
+            get
+            {
+                // Availability styling must take precedence over decorative military textures.
+                // Keep mainTexture below so the grayscale shader still receives their detail.
+                Material assigned = base.material;
+                if (assigned != null && assigned.shader != null && assigned.shader.name == "Warline/UI/Disabled Grayscale")
+                    return assigned;
+                return SurfaceMaterial != null ? SurfaceMaterial : assigned;
+            }
             set => base.material = value;
         }
         public override Texture mainTexture => SurfaceMaterial != null ? SurfaceMaterial.mainTexture : base.mainTexture;

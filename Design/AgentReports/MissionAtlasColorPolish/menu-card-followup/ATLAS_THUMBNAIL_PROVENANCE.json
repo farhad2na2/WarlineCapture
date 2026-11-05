@@ -1,0 +1,52 @@
+{
+  "source": "Assets/Game/Art/SkirmishLibrary/Theatre/skirmish.theatre.base.png",
+  "sha256": "6c876ee5a0d57862cb44ccdd4b58458ec446c5d556201eb411ebef7dbcd4308c",
+  "method": "Native UV cover crops of the existing atlas illustration; no new bitmap or physical map",
+  "sourceRegions": [
+    {
+      "map": "DB",
+      "rect": [
+        0.04,
+        0.66,
+        0.38,
+        0.3
+      ]
+    },
+    {
+      "map": "CC",
+      "rect": [
+        0.5,
+        0.66,
+        0.48,
+        0.32
+      ]
+    },
+    {
+      "map": "MP",
+      "rect": [
+        0.02,
+        0.26,
+        0.42,
+        0.39
+      ]
+    },
+    {
+      "map": "IB",
+      "rect": [
+        0.52,
+        0.26,
+        0.46,
+        0.4
+      ]
+    },
+    {
+      "map": "AP",
+      "rect": [
+        0.3,
+        0,
+        0.5,
+        0.3
+      ]
+    }
+  ]
+}

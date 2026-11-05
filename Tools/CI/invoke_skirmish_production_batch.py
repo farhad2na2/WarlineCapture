@@ -42,7 +42,47 @@ def observe_endpoint(project, descriptor, output, phase):
     return receipt
 
 
-def verify_native_events(descriptor, events, log, project=None):
+def verify_mac_wrapper(descriptor, receipt, project):
+    """Read-only receipt consistency, never independent process/mission qualification."""
+    if project is None or not isinstance(receipt, dict):
+        raise ValueError('Actual Mac project and original-child receipt required')
+    root = str(Path(project).resolve())
+    expected = dict(schema_version=1, platform='macos', execute_method=METHOD,
+                    checked_wrapper='Tools/CI/invoke_unity_macos.sh',
+                    descriptor_fingerprint=fingerprint(descriptor), project=root,
+                    checked_wrapper_exit=0, wrapper_reaped=True,
+                    parent_environment_unchanged=True, source_settings_unchanged=True,
+                    observed_target_editor=True, queue_success_enabled=False)
+    if not all(type(receipt.get(k)) is type(v) and receipt[k] == v for k, v in expected.items()):
+        raise ValueError('Mac original-child wrapper receipt differs')
+    birth = receipt.get('wrapper_birth')
+    if not (type(receipt.get('wrapper_pid')) is int and receipt['wrapper_pid'] > 0
+            and isinstance(birth, list) and len(birth) == 3
+            and all(type(v) is int and v >= 0 for v in birth)
+            and birth[0] == receipt['wrapper_pid'] and birth[1] > 0):
+        raise ValueError('Mac wrapper kernel birth missing')
+    shutdown = receipt.get('owned_shutdown')
+    if not (isinstance(shutdown, dict) and shutdown.get('closed') is True
+            and type(shutdown.get('observed_absence_samples')) is int
+            and shutdown['observed_absence_samples'] >= 2 and shutdown.get('survivors') == []):
+        raise ValueError('Mac full owned shutdown missing')
+    if receipt.get('lifecycle_errors') or receipt.get('controller_error'):
+        raise ValueError('Mac lifecycle failure remains latched')
+    if not re.fullmatch('[a-f0-9]{64}', receipt.get('grant_sha256', '')):
+        raise ValueError('Mac reviewed grant binding missing')
+    command = receipt.get('argv')
+    timeout = receipt.get('timeout_seconds')
+    if type(timeout) is not int or not 1 <= timeout <= 28800:
+        raise ValueError('Mac bounded timeout missing')
+    expected_command = ['rtk', 'proxy', str(Path(root)/'Tools/CI/invoke_unity_macos.sh'),
+                        '--project', root, '--timeout', str(timeout), '--log',
+                        str(Path(descriptor['artifact_directory'])/'unity.log'),
+                        '--', '-buildTarget', 'Android', '-executeMethod', METHOD]
+    if command != expected_command:
+        raise ValueError('Mac checked GUI/no-quit command differs')
+
+
+def verify_native_events(descriptor, events, log, project=None, *, mac_wrapper_receipt=None):
     """Consistency of actual wrapper/native rows only, never gameplay certification."""
     if descriptor.get('schema_version')==2:
         if project is None: raise ValueError('Actual project required to revalidate matrix authority')
@@ -53,7 +93,9 @@ def verify_native_events(descriptor, events, log, project=None):
     if log.count(runtime_marker)!=1 or '[SkirmishProductionRuntimeGate] result=Failed' in log or len(runtime)!=1 or runtime[0].get('passed') is not True or type(runtime[0].get('errors')) is not int or runtime[0]['errors']!=0 or runtime[0].get('completed_jobs')!=count:
         raise ValueError('Whole-run runtime Error/Exception/Assert gate missing or failed')
     marker='[SkirmishProductionBatch] result=Completed jobs='+str(count)+' queueSuccessEnabled=0'
-    if marker not in log or re.search(r'\[UnityInvoke\] ExitCode: 0\s*$', log, re.M) is None:
+    if mac_wrapper_receipt is not None:
+        verify_mac_wrapper(descriptor, mac_wrapper_receipt, project)
+    if marker not in log or (mac_wrapper_receipt is None and re.search(r'\[UnityInvoke\] ExitCode: 0\s*$', log, re.M) is None):
         raise ValueError('Actual checked wrapper exit0 or two-job marker absent')
     if 'process exit code was unavailable' in log.lower():
         raise ValueError('Actual process exit was unavailable; log fallback cannot qualify this benchmark')
@@ -105,6 +147,28 @@ def quoted(value):
     return "'" + str(value).replace("'", "''") + "'"
 
 
+READ_ONLY_MEASUREMENT_FLAGS = (
+    'WARLINE_PRODUCTION_RESOURCE_LEDGER',
+    'WARLINE_REPAIR_RESOURCE_LEDGER',
+    'WARLINE_PRODUCTION_READ_ONLY_OBSERVER_PROOF',
+)
+
+
+def reviewed_measurement_environment(environ, descriptor_path):
+    """Forward only three existing read-only measurements; never gameplay overrides."""
+    enabled = {}
+    for key, value in environ.items():
+        canonical = key.upper()
+        if canonical in READ_ONLY_MEASUREMENT_FLAGS:
+            if key != canonical or value != '1':
+                raise ValueError('Measurement flag requires exact canonical name and literal 1')
+            enabled[key] = value
+    env = {key: value for key, value in environ.items() if not key.upper().startswith('WARLINE_')}
+    env.update(enabled)
+    env['WARLINE_SKIRMISH_PRODUCTION_BATCH'] = str(descriptor_path)
+    return env, enabled
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', type=Path, default=Path(__file__).resolve().parents[2])
@@ -123,16 +187,19 @@ def main():
     allowed = (project / 'Logs/SkirmishProduction/Batches').resolve()
     if not output.is_relative_to(allowed) or output.name != descriptor['batch_id'] or descriptor_path != output / 'batch.json':
         raise ValueError('Use canonical prepared durable batch descriptor')
+    upm_log = output / 'upm.log'
+    if os.path.lexists(upm_log):
+        raise ValueError('Fresh owned UPM log required; retain existing evidence')
+    env, measurement_flags = reviewed_measurement_environment(os.environ, descriptor_path)
     plan = dict(result='PlanOnly', execute_method=METHOD, checked_wrapper='Tools/CI/InvokeUnity.ps1',
                 gui_licensing=True, quit_argument=False, timeout_seconds=args.timeout,
-                descriptor_sha256=sha(descriptor_path), queue_success_enabled=False)
+                descriptor_sha256=sha(descriptor_path), queue_success_enabled=False,
+                read_only_measurement_flags=measurement_flags)
     if not args.run:
         print(json.dumps(plan, indent=2)); return 0
     if os.name != 'nt':
         raise ValueError('This launcher is the checked Windows route only')
     write_new(output / 'outer-started.json', plan)
-    env = {key: value for key, value in os.environ.items() if not key.upper().startswith('WARLINE_')}
-    env['WARLINE_SKIRMISH_PRODUCTION_BATCH'] = str(descriptor_path)
     # All shell values are literal single-quoted strings. No user text is executable.
     check = output / 'checked-project-lane.ps1'
     check.write_text("$ErrorActionPreference='Stop'\nif(-not(Get-Process -Name 'Unity Hub' -ErrorAction SilentlyContinue)){throw 'Keep Unity Hub open and signed in'}\n" +
@@ -141,16 +208,16 @@ def main():
         "if($taskEditor.CommandLine.Replace('/','\\').IndexOf($taskProject,[StringComparison]::OrdinalIgnoreCase)-ge 0){throw 'Existing Editor owns this project; preserve it'}\n}\n", encoding='utf-8-sig')
     shell = ['rtk', 'proxy', 'powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File']
     subprocess.run(shell + [str(check)], check=True, env=env)
-    version = re.search(r'^m_EditorVersion:\s*(\S+)', (project / 'ProjectSettings/ProjectVersion.txt').read_text(), re.M).group(1)
+    version = re.search(r'^m_EditorVersion:\s*(\S+)', (project / 'ProjectSettings/ProjectVersion.txt').read_text(), re.M).group(1).replace('\r', '')
     resolved = output / 'resolved-editor.txt'
     subprocess.run(shell + [str(project / 'Tools/CI/ResolveUnityEditor.ps1'), '-UnityVersion', version, '-OutputPath', str(resolved)],
                    check=True, env=env, stdout=subprocess.PIPE)
     unity = resolved.read_text(encoding='ascii')
     before = observe_endpoint(project, descriptor, output, 'before')
     launch = output / 'checked-no-quit-launch.ps1'; log = output / 'unity.log'
-    launch.write_text("$ErrorActionPreference='Stop'\n& " + quoted(check) + "\n& " + quoted(project / 'Tools/CI/InvokeUnity.ps1') +
+    launch.write_text("$ErrorActionPreference='Stop'\n& " + quoted(check) + "\n$taskUpmAbsent=$false\ntry { Get-Item -LiteralPath " + quoted(upm_log) + " -Force -ErrorAction Stop | Out-Null } catch [System.Management.Automation.ItemNotFoundException] { $taskUpmAbsent=$true }\nif(-not $taskUpmAbsent){throw 'Fresh owned UPM log required; retain existing evidence'}\n& " + quoted(project / 'Tools/CI/InvokeUnity.ps1') +
         ' -UnityExe ' + quoted(unity) + ' -ProjectPath ' + quoted(project) + ' -LogFile ' + quoted(log) +
-        ' -TimeoutSeconds ' + str(args.timeout) + " -GuiLicensing -NoProcessExit -UnityArguments @('-executeMethod'," + quoted(METHOD) + ")\nif($global:LASTEXITCODE -ne 0){exit $global:LASTEXITCODE}\n$runtimeLog=[IO.File]::ReadAllText(" + quoted(log) + ")\nif(-not $runtimeLog.Contains(" + quoted('[SkirmishProductionRuntimeGate] result=Passed errors=0 jobs='+str(len(descriptor['jobs']))+' actualWrapperExitStillRequired=1') + ") -or $runtimeLog.Contains('[SkirmishProductionRuntimeGate] result=Failed')){throw 'Required whole-run runtime gate absent or failed'}\nexit 0\n", encoding='utf-8-sig')
+        ' -TimeoutSeconds ' + str(args.timeout) + " -GuiLicensing -NoProcessExit -UnityArguments @('-executeMethod'," + quoted(METHOD) + ",'-upmLogFile'," + quoted(upm_log) + ")\nif($global:LASTEXITCODE -ne 0){exit $global:LASTEXITCODE}\n$runtimeLog=[IO.File]::ReadAllText(" + quoted(log) + ")\nif(-not $runtimeLog.Contains(" + quoted('[SkirmishProductionRuntimeGate] result=Passed errors=0 jobs='+str(len(descriptor['jobs']))+' actualWrapperExitStillRequired=1') + ") -or $runtimeLog.Contains('[SkirmishProductionRuntimeGate] result=Failed')){throw 'Required whole-run runtime gate absent or failed'}\nexit 0\n", encoding='utf-8-sig')
     began = time.perf_counter(); result = None; after = None; wrapper_wall = None
     try:
         with (output / 'checked-wrapper-console.log').open('x', encoding='utf-8') as console:

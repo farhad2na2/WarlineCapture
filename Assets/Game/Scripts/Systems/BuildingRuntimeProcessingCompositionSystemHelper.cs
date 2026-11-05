@@ -499,7 +499,7 @@ namespace Game.Runtime
                 else
                 {
                     placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
-                        requestSpawnContext,
+                        requestSpawnContext.WithBirthRequest(em, request),
                         spawnable.Prefab,
                         new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
                         spawnable.DisplayName,

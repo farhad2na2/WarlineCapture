@@ -83,9 +83,15 @@ namespace Game.Runtime
                 if (!complete) return;
                 if (!record.UnitsCreated)
                 {
+                    using var reconstructionGrids = em.CreateEntityQuery(typeof(GridConfig));
+                    Entity reconstructionGrid = reconstructionGrids.CalculateEntityCount() == 1 ? reconstructionGrids.GetSingletonEntity() : Entity.Null;
                     foreach (var actor in record.Snapshot.Actors)
-                        if (actor.IsStructure == 0 && !SkirmishScenarioSpawnSystem.TryInstantiateCheckpointUnit(em, actor, out _, setup))
+                    {
+                        if (actor.IsStructure != 0) continue;
+                        var birth = RuntimeActorBirthContext.CaptureReconstruction(em, reconstructionGrid, session, new Unity.Collections.FixedString64Bytes(actor.Id));
+                        if (!SkirmishScenarioSpawnSystem.TryInstantiateCheckpointUnit(em, actor, out _, setup, birth))
                         { Fail(em, session, record, "NativeRecoveryUnitFailed:" + actor.Id); return; }
+                    }
                     record.UnitsCreated = true;
                     // Restore the authoritative banks, never reseed forces or the
                     // physical starting supply grant through TrySpawnLedgers.

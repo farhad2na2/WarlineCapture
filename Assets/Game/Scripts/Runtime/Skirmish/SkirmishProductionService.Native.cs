@@ -60,6 +60,8 @@ namespace Game.Runtime
             var ledgerBefore=BeginLedger(em,session,receipt.FactionId,id);
             ReadStocks(em, session, receipt.FactionId, out int materials, out int fuel, out var capacity, out uint next);
             SkirmishCapacityLedger.PromoteLive(ref capacity, receipt.Category, 1, supply);
+            // A missing/mismatched diagnostic record never blocks this genuine paid delivery.
+            RuntimeActorBirthContext.VerifyNativeAdoption(em, member, session, id, producerId, attemptId);
             SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, member);
             em.AddComponentData(member, new SkirmishAttemptOwnedComponent {
                 SessionId = sessionId, StableObjectId = new FixedString64Bytes("production." + id + "." + receipt.DeliveredMembers),

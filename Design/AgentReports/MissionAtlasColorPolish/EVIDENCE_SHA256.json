@@ -1,0 +1,21 @@
+{
+  "ART_PROVENANCE.json": "8d6026940c1857af9b83fc246a786c86c7db220f913748f9282c4004cfe984ed",
+  "RECEIPT.json": "1bde82e2578432f8895fa391596c9143414eba629ad8dd29a013a604deecf68a",
+  "REVIEW.md": "eadaa9e4d2eb03a5c934d6cf66344e92ff399dc40eb8ee6916d1e4d37a588e1b",
+  "SOURCE_MANIFEST.json": "8e7773b609f5baca28a4623a752ab6a91557eb781e4154d370dfa13e22b24e38",
+  "VALIDATION.json": "3827e2035aef95688d101fa174a08f4d24a28a57ff312dfbad642239da95c245",
+  "VISUAL_RUNS.json": "59335517df7860c83724c58b43cc712fa205e499f8074ae0848ed08a4c6feff5",
+  "campaign-evidence-sha256.json": "3c1f4ab5d7e99b789ebb9141cae0eea9496d721eed79acfe91801d7122d81949",
+  "campaign-journey-evidence.zip": "e78cb71e8a33e485d1bcaa284df2691884da000235b2c83f9e88c3c02baccf5b",
+  "final-validation-logs.zip": "b34c7370f45d29f533b74e47b8e880107f262d2476a09a8a91b92d7259017d65",
+  "owned-source-paths.txt": "c3ec3c8c486fe43a10e742da5c369538b9e2746cd71cb5f2fefad684162af75e",
+  "s002-en-evidence-sha256.json": "1a7f7848a044fa02828a96378a708fb68688e7e629367c22e65b90ff9ebfbfb2",
+  "s002-en-evidence.zip": "a981345c4b4dc1f26a3c039f07da0901604ce5df54544975c5198f5beb51daab",
+  "s002-fa-IR-evidence-sha256.json": "2f88881f35a12ad18de2190d174cad0ed383a558e678a3bf9dacd027fe152ed6",
+  "s002-fa-IR-evidence.zip": "f272d1e6e182c2645ee170ef41726544dd77778373fe0d9d2adbd0186386ec08",
+  "screens/skirmish-earned-en.png": "70056ad73a6666f71d210b6d79d6d71fad4735b977fe50fec4b05acbaf98671f",
+  "screens/skirmish-earned-fa-IR.png": "a1d92fde349fcc2904b01ba82477518e390bc452f50b8bc149e7571df086b967",
+  "screens/skirmish-result-en.png": "e782feae15bcc055dc876a9d901121280edeacdeb45edca311a0bb9ab75c3831",
+  "screens/skirmish-result-fa-IR.png": "5e3dac25df772b97355b9c2af9593d6d018848c09cded334a72ff6e07a5d4527",
+  "visual-review-logs.zip": "831abc472f66fae72cfdb45551f17a504af4ed55afcd5a232843150ff1e3cc3d"
+}

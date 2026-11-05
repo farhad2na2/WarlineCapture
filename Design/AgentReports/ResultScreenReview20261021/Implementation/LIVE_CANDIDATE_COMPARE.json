@@ -1,0 +1,6 @@
+{
+  "runtimeAndNativePrefabIdenticalToLiveRuns": true,
+  "changedSinceLiveFreeze": [],
+  "ownedFiles": 50,
+  "reason": "Both final normal-input journeys used exactly the frozen mockup-fidelity runtime/prefab. Harness-generated HUD/catalog assets were reversibly backed up and returned to their packaged baseline."
+}

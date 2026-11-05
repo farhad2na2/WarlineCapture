@@ -1,0 +1,248 @@
+{
+  "units": "native layout pixels before canvas scaling",
+  "reasonCentersPassed": true,
+  "visibleSavedTextCentersPassed": true,
+  "limit": 2,
+  "cases": [
+    {
+      "view": "campaign-defeat-en-1280",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-defeat-en-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-defeat-fa-IR-1440",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-defeat-fa-IR-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-defeat-fa-IR-2400",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-victory-en-1280",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-victory-en-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-victory-fa-IR-1440",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-victory-fa-IR-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "campaign-victory-fa-IR-2400",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-defeat-en-1280",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-defeat-en-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-defeat-fa-IR-1440",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-defeat-fa-IR-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-defeat-fa-IR-2400",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-victory-en-1280",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-victory-en-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-victory-fa-IR-1440",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-victory-fa-IR-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "operations-victory-fa-IR-2400",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-defeat-en-1280",
+      "savedTextVisible": false,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 24.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-defeat-en-1920",
+      "savedTextVisible": false,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 24.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-defeat-fa-IR-1440",
+      "savedTextVisible": false,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 24.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-defeat-fa-IR-1920",
+      "savedTextVisible": false,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 24.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-defeat-fa-IR-2400",
+      "savedTextVisible": false,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 24.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-victory-en-1280",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-victory-en-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-victory-fa-IR-1440",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-victory-fa-IR-1920",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    },
+    {
+      "view": "skirmish-victory-fa-IR-2400",
+      "savedTextVisible": true,
+      "reasonCenterDelta": 0.0,
+      "savedCenterDelta": 0.0,
+      "summaryViewport": 140.0,
+      "summaryContent": 140.0
+    }
+  ]
+}

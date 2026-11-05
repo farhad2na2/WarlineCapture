@@ -32,7 +32,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     public void SetUp()
     {
         _previousLocaleForTest = GameLocalization.CurrentLocaleCode;
-        GameLocalization.SetLocale(GameLocalization.EnglishLocaleCode, persist: false);
+        LocalizationTestState.UseShippedCatalog();
     }
 
     [UnityEditor.MenuItem("Game/Validation/Run ARIA Tutorial Briefing Focused")]
@@ -154,6 +154,7 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
     [TearDown]
     public void TearDown()
     {
+        LocalizationTestState.UseShippedCatalog();
         UiShellRuntimeGateway.Register(null);
         GameObject[] roots = Resources.FindObjectsOfTypeAll<GameObject>();
         for (int i = roots.Length - 1; i >= 0; i--)

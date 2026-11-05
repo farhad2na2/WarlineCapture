@@ -1,0 +1,12 @@
+{
+  "tool": "built-in image_gen",
+  "kind": "Mission thumbnail illustration, not a gameplay screenshot",
+  "mission": "operation.o001",
+  "prompt": "Use case: ui-mockup / stylized-concept. Asset type: Operations mission thumbnail illustration for the EXISTING Warline Capture mission O001 STREET SIGNALS — OLD QUARTER. Create a single 16:9 landscape illustration without any UI or text. Input image 1 is the actual mission's rendered physical environment and architectural/material reference. Input image 2 is the approved S002 mission thumbnail; match its rich warm/cool color contrast, finished faceted game illustration quality, strong sunlit tan masonry, crisp detail and attractive thumbnail composition. This must depict Street Signals, NOT the S002 enemy HQ.\nReframe the existing old-quarter environment into an inviting readable view of its street and arched courtyard: the light sandstone arched buildings and turquoise cloth shade from input1, rooftops and city around it, warm low-poly masonry details, distant palms and blue sky. Show a small radio/electronics case near an arch as a subtle mission subject for scanning communications. Use ordinary existing military equipment; omit vehicles and people if not evidenced in input1. All visual storytelling should be in the environment, with a clear central subject and layered depth. Preserve the architectural identity of input1, make the court/streets visually coherent, no new terrain, no new physical map claims. This is 2D mission artwork based on the existing setting, not a screenshot or gameplay capture.\nDo not copy the red enemy emblem, HQ fortifications, watchtower, or armored truck from input2. Input2 is style only. No aircraft, no A10, no futuristic hardware, no flags, no labels, no numerals, no words, no borders, no watermark. Bright colorful premium faceted 3D comic-game finish; avoid gray washed out aerial roofs and avoid photorealism. Use a slightly elevated oblique street-scale camera so the arches and turquoise awning read clearly at small card size.",
+  "references": [
+    "Native Street Signals source-map render operation.o001.png",
+    "Existing approved S002-menu-illustration.png (style only)"
+  ],
+  "generatedPath": "/Users/farhad/.codex/generated_images/01a15818-2610-7d42-86d1-8439e09ab44f/exec-e24fc5fd-942a-4a13-bda0-072affe6eb88.png",
+  "finalSavedPath": "/Users/farhad/.codex/worktrees/skirmish-saga-menu/WarlineCapture/Assets/Game/Art/UI/MainMenuPanels/Missions/operation.o001-illustration.png"
+}

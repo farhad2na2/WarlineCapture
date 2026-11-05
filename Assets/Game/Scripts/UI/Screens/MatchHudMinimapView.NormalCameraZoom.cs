@@ -43,6 +43,7 @@ namespace Game.UI.Runtime
             if(!HasNormalCameraZoomControls)return;
             var state=normalCameraZoomState();
             zoomInButton.interactable=state.ZoomInEnabled;zoomOutButton.interactable=state.ZoomOutEnabled;
+            HudActionVisuals.Refresh(zoomInButton);HudActionVisuals.Refresh(zoomOutButton);
         }
         void HandleNormalCameraZoomIn(){if(HasNormalCameraZoomControls&&normalCameraZoomState().ZoomInEnabled){UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);normalCameraZoomIn();RefreshNormalCameraZoomControls();}}
         void HandleNormalCameraZoomOut(){if(HasNormalCameraZoomControls&&normalCameraZoomState().ZoomOutEnabled){UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);normalCameraZoomOut();RefreshNormalCameraZoomControls();}}

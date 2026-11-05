@@ -1,0 +1,24 @@
+{
+  "ratio": "4:3",
+  "notch": "section",
+  "locale": "fa",
+  "selected": "IB",
+  "reserve": false,
+  "canvas": [1440.0, 1080.0],
+  "insets": { "left": 0.0, "top": 0.0, "right": 0.0, "bottom": 0.0 },
+  "plate": { "x": 0, "y": 0, "w": 1111.0, "h": 705.0 },
+  "detail": { "x": 0.0, "y": 0.0, "w": 0.0, "h": 0.0 },
+  "viewport": { "x": 0.0, "y": 0.0, "w": 1111.0, "h": 705.0 },
+  "band": { "portraitMinW": 112, "portraitMaxW": 160, "portraitMinH": 140, "portraitMaxH": 212, "chosenMinW": 124.0, "chosenMaxW": 124.0, "chosenMinH": 156.0, "chosenMaxH": 156.0 },
+  "names": [
+    { "id": "IB", "text": "حوضه صنعتی", "font": 16.0, "boxW": 112.0, "boxH": 42.0, "preferredW": 42.0, "preferredH": 42.0, "statusH": 34.0, "band": 156.0, "cardW": 124.0, "cardH": 156.0 }
+  ],
+  "loggedGaps": [
+    { "pair": "DB-MP", "en": -27.0, "fa": -25.0 },
+    { "pair": "CC-IB", "en": -31.0, "fa": -28.0 },
+    { "pair": "IB-AP", "en": -4.0, "fa": -1.0 },
+    { "pair": "MP-AP", "spare": 127.0 },
+    { "pair": "MP-IB", "spare": 55.0 },
+    { "pair": "DB-CC", "spare": 42.0 }
+  ]
+}

@@ -10,6 +10,19 @@ namespace Game.UI.Runtime
     public sealed partial class MatchHudTransportPassengerDrawerView
     {
         internal UnityEngine.UI.Button ExitAllButton => exitAllButton;
+        private void ApplyDrawerLayout(int passengerRows)
+        {
+            if (drawerRoot == null) return;
+            // Keep the selected-unit panel intact. The drawer begins below the mission strip.
+            var rect = drawerRoot.transform as RectTransform;
+            float height = passengerRows == 0 ? 330f : Mathf.Clamp(166f + passengerRows * 82f, 330f, 494f);
+            SetTopLeft(rect, 396f, 214f, 450f, height);
+            SetTopLeft(FindDirectChild(rect, "Footer"), 12f, height - 66f, 426f, 54f);
+            SetTopLeft(FindDirectChild(rect, "Scroll View"), 12f, 96f, 426f, height - 174f);
+            SetTopLeft(emptyStateRoot != null ? emptyStateRoot.transform as RectTransform : null,
+                20f, 112f, 410f, height - 192f);
+        }
+
         private void ApplyCapacitySlots(int occupiedCount, int capacity)
         {
             if (capacitySlotsRoot == null)

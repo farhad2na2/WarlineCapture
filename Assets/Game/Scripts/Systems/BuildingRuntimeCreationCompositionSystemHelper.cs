@@ -14,8 +14,8 @@ namespace Game.Runtime
         public delegate RectInt ResolvePlacementRectDelegate(BuildingDefinition definition, Vector2Int originCell, GridConfig grid);
         public delegate bool ShouldBlockPathingDelegate(BuildingDefinition definition);
         public delegate void RemoveOverlappingBlockersDelegate(Vector2Int originCell, Vector2Int footprintCells);
-        public delegate Entity CreateBlockerEntityDelegate(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells);
-        public delegate Entity CreateCombatEntityDelegate(int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation);
+        public delegate Entity CreateBlockerEntityDelegate(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, RuntimeActorBirthContext birth);
+        public delegate Entity CreateCombatEntityDelegate(int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation, RuntimeActorBirthContext birth);
         public delegate void RedirectUnitsDelegate(RectInt occupiedRect);
         public delegate void AddDeferredRedirectFootprintDelegate(RectInt occupiedRect);
         public delegate void RuntimeBuildingAction(RuntimeBuildingEntity building);
@@ -88,7 +88,7 @@ namespace Game.Runtime
             BuildingDefinition definition,
             GameObject instance,
             Vector2Int originCell,
-            bool removeOverlappingBlockers)
+            bool removeOverlappingBlockers, RuntimeActorBirthContext birth = default)
         {
             if (context.RuntimeBuildingSystem == null || definition == null || instance == null)
                 return null;
@@ -118,10 +118,10 @@ namespace Game.Runtime
                 context.RemoveOverlappingBlockers?.Invoke(originCell, definition.FootprintCells);
 
             Entity blockerEntity = pathBlocking && context.CreateBlockerEntity != null
-                ? context.CreateBlockerEntity(definition, originCell, definition.FootprintCells)
+                ? context.CreateBlockerEntity(definition, originCell, definition.FootprintCells, birth)
                 : Entity.Null;
             Entity combatEntity = context.CreateCombatEntity != null
-                ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation)
+                ? context.CreateCombatEntity(buildingId, originCell, definition, 0, instance.transform.rotation, birth)
                 : Entity.Null;
             if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
                 FoundationVisuals?.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);

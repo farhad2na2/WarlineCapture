@@ -1,0 +1,11 @@
+{
+  "source": "Temp/__Backupscenes/0.backup",
+  "preservedCopy": "Design/AgentReports/MissionAtlasColorPolish/menu-card-followup/recovery/20261021-reboot-scene-0.backup",
+  "sha256": "d61794cc5c5f9b26d7370789163c1afc5f4d8320023f579abf70571c3ef2a383",
+  "bytes": 499200,
+  "editorPid": 26239,
+  "editorPath": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+  "reason": "Post-reboot Recovering Scene Backups dialog blocks initialization",
+  "action": "Preserve exact backup outside Assets, then click No to avoid introducing a recovery scene into the validated source",
+  "validationStatus": "Still incomplete"
+}

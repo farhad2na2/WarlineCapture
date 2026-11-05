@@ -1,0 +1,27 @@
+[
+  {
+    "original": "Design/AgentReports/ApprovedMissionAtlas/20261020-220534/campaign-chapters-en.png",
+    "reason": "Missing status CanvasRenderer.",
+    "sha256": "84a628cbff74fff6204d4c0d1439f862d0fcc0fb3941da8227caaad2b1362721"
+  },
+  {
+    "original": "Design/AgentReports/ApprovedMissionAtlas/20261020-221548/campaign-chapters-1920x1080-en.png",
+    "reason": "Truncated chapter progress names.",
+    "sha256": "5e8157a58748715e4f26e2d779397f7e4896b281adedac029956c0d083a70475"
+  },
+  {
+    "original": "Design/AgentReports/ApprovedMissionAtlas/20261020-223034/skirmish-missions-1440x1080-en.png",
+    "reason": "Truncated army profile and awkward narrow wrapping.",
+    "sha256": "3dd9fe1979d6e779d16c734ecbe7d58857a5b2879555f66c3d39a2d3f1f29f76"
+  },
+  {
+    "original": "Design/AgentReports/ApprovedMissionAtlas/20261020-224025/skirmish-s002-fa-IR.png",
+    "reason": "Persian spacing and sticky legend collision.",
+    "sha256": "41be3c3b088f26102459344aa6563a4a4a75c77b4cf4ba04c98616f29d9b6d22"
+  },
+  {
+    "original": "Design/AgentReports/ApprovedMissionAtlas/20261020-224543/campaign-missions-1440x1080-fa-IR.png",
+    "reason": "Manual review: Campaign purpose remained English after shortening.",
+    "sha256": "65d7972a7258e83ed38c60fd8a09131c75eb657a59ac6ced36b75244226c0295"
+  }
+]

@@ -98,7 +98,7 @@ namespace Game.Runtime
         public bool TryCommitOperations(
             int expectedProfileRevision, int expectedOperationsRevision,
             OperationsSaveData operations, string attemptJson,
-            out PlayerProfileSaveData committed, out string reason)
+            out PlayerProfileSaveData committed, out string reason, OperationsMissionMedalSaveData medal = null)
         {
             committed = null;
             reason = string.Empty;
@@ -143,6 +143,17 @@ namespace Game.Runtime
                 return false;
             }
 
+            if (medal != null && medal.difficulty < 4 &&
+                Array.Exists(nextOperations.firstClearRewardIds, id => id == medal.missionId))
+            {
+                var medals = current.operationsMissionMedals ?? Array.Empty<OperationsMissionMedalSaveData>();
+                if (!Array.Exists(medals, row => row != null && row.missionId == medal.missionId && row.difficulty == medal.difficulty))
+                {
+                    Array.Resize(ref medals, medals.Length + 1);
+                    medals[^1] = new OperationsMissionMedalSaveData { missionId=medal.missionId, difficulty=medal.difficulty, sessionId=medal.sessionId };
+                    current.operationsMissionMedals = medals;
+                }
+            }
             current.operations = nextOperations;
             current.operationsAttemptJson = attemptJson;
             current.credits += (int)creditDelta;

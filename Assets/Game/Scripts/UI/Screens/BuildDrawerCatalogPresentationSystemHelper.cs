@@ -148,8 +148,8 @@ namespace Game.UI.Runtime
                 "Select an item to place, produce, or recruit.",
                 null,
                 null,
-                UiShellRuntimeGateway.Localization.Get(category == BuildDrawerCategory.Buildings ? "ui.build.title" : "ui.build.produce",
-                    category == BuildDrawerCategory.Buildings ? "BUILD" : "PRODUCE"),
+                UiShellRuntimeGateway.Localization.Get(category == BuildDrawerCategory.Buildings ? "hud.build.place" : "ui.build.produce",
+                    category == BuildDrawerCategory.Buildings ? "PLACE BUILDING" : "PRODUCE"),
                 false);
         }
 
@@ -324,6 +324,7 @@ namespace Game.UI.Runtime
 
         private static bool PopulateItems(Context context)
         {
+            context.View.SetCatalogItemCount(context.Items?.Count ?? 0);
             ClearBindings(context.ItemBindings);
             ClearRuntimeItems(context.View, context.RuntimeItems);
             HideStaticPlaceholderItems(context.View);

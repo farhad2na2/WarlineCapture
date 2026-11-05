@@ -27,10 +27,10 @@ namespace Game.Runtime
 
         public bool TrySettle(OperationsCommand command, OperationsMissionResult missionResult, string terminalAttemptJson,
             out OperationsCommandResult result, out string error) =>
-            TryCommit(session => session.SubmitResult(command, missionResult), terminalAttemptJson, out result, out error);
+            TryCommit(session => session.SubmitResult(command, missionResult), terminalAttemptJson, out result, out error, missionResult);
 
         private bool TryCommit(Func<OperationsStrategicSession, OperationsCommandResult> reduce,
-            string attemptJson, out OperationsCommandResult result, out string error)
+            string attemptJson, out OperationsCommandResult result, out string error, OperationsMissionResult? medalResult = null)
         {
             result = default;
             error = string.Empty;
@@ -52,8 +52,18 @@ namespace Game.Runtime
                 return true;
             }
 
+            OperationsMissionMedalSaveData medal = null;
+            if (candidate.Accepted && medalResult.HasValue && medalResult.Value.Outcome == OperationsOutcomeKind.Victory &&
+                profile.operations.activeRun != null)
+            {
+                var attempt = Array.Find(profile.operations.activeRun.attempts ?? Array.Empty<OperationsAttemptSaveData>(),
+                    item => item.sessionId == medalResult.Value.SessionId && item.missionId == medalResult.Value.MissionId);
+                byte tier = (byte)profile.operations.activeRun.difficulty;
+                if (attempt != null && !attempt.practice && tier < 4)
+                    medal = new OperationsMissionMedalSaveData { missionId=medalResult.Value.MissionId, difficulty=tier, sessionId=medalResult.Value.SessionId };
+            }
             if (!store.TryCommitOperations(profile.profileCommitRevision, previousRevision, session.Save,
-                attemptJson ?? profile.operationsAttemptJson, out _, out error))
+                attemptJson ?? profile.operationsAttemptJson, out _, out error, medal))
                 return false;
             result = candidate;
             return true;

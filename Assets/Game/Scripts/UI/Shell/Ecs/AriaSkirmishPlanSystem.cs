@@ -638,8 +638,19 @@ namespace Game.UI.Shell.Ecs
             plan.AssaultInspectRevision = 0; plan.AssaultInspectDeadline = 0; plan.AssaultInspectReadyAt = 0;
             plan.AssaultInspectObjectiveHudIdentity = 0; plan.AssaultInspectObjectiveWorld = default;
         }
+        // A completed visible page is enough to inspect the moving cohort on the
+        // normal map. Paging itself never renews the objective watchdog.
+        static bool AcceptedAssaultInspectionPage(in AriaSkirmishObservation view,
+            in AriaSkirmishPlanComponent plan)
+            => plan.AssaultIssued == 0 && plan.PagesOrdered > 0 &&
+               plan.AssaultPageSeen == view.ExpandedPageIndex + 1 &&
+               plan.SweepRosterRevision == view.ExpandedRosterRevision &&
+               view.ExpandedAssaultMask != 0 &&
+               (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
+
         static bool AssaultInspectionUiBusy(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
-            => view.DrawerOpen || view.PlacementOpen || view.AttackMode || plan.AssaultSelecting != 0 ||
+            => view.DrawerOpen || view.PlacementOpen || view.AttackMode ||
+               (plan.AssaultSelecting != 0 && !AcceptedAssaultInspectionPage(view, plan)) ||
                plan.TargetPending != 0 || plan.AdvanceNavigation != 0 || plan.MapNavigationStage != 0 ||
                (plan.PadStage != 0 && plan.PadStage != 8) ||
                (view.AirProfile && plan.AirCycleCount == 0 && plan.AirCycleStage >= 1 && plan.AirCycleStage <= 4 &&
@@ -665,8 +676,13 @@ namespace Game.UI.Shell.Ecs
         {
             if (plan.AssaultInspectStage == 0)
             {
-                if (plan.AssaultIssued == 0 || plan.StructureOrdered == 0 ||
-                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting) ||
+                if (((plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                     !AcceptedAssaultInspectionPage(view, plan)) ||
+                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting &&
+                     !(touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0 &&
+                       touch.Pressed == 0 && touch.Actions > 0 &&
+                       touch.LastCompletedTargetId == touch.TargetId && touch.LastCompletedFrame > 0 &&
+                       view.Frame > touch.LastCompletedFrame && view.Time >= touch.DueAt)) ||
                     view.AssaultDistanceVisible || view.MapOpen || AssaultInspectionUiBusy(view,plan) ||
                     view.PresentedHomeThreat ||
                     view.Time < plan.AssaultInspectReadyAt || !view.AssaultMap.OpenMap.Available) return false;
@@ -772,7 +788,9 @@ namespace Game.UI.Shell.Ecs
         {
             // Public visible controls only. No gameplay Entity mutation from this planner.
             if (view.Finished || touch.Phase == AriaPlayPhase.Manual ||
-                plan.AssaultIssued == 0 || plan.StructureOrdered == 0)
+                (plan.AssaultInspectStage == 0 &&
+                 (plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                 !AcceptedAssaultInspectionPage(view, plan)))
                 ClearAssaultMapInspection(ref plan);
             if (view.Finished)
             {
@@ -954,9 +972,27 @@ namespace Game.UI.Shell.Ecs
                 Target(view.RecruitAntiAir, false, ref output);
                 return;
             }
+            // Ground replacements still use public eligibility and ordinary UI gestures.
+            AriaTouchTarget replacementRecruit = view.OwnStructureAttackUnits == 0
+                ? view.RecruitRocketeer : view.Recruit;
+            bool replacementTouchReady = touch.GestureRequested == 0 && touch.Pressed == 0 &&
+                (touch.Phase is AriaPlayPhase.Observing or AriaPlayPhase.Waiting ||
+                 (touch.Phase == AriaPlayPhase.Aiming && plan.Intent == AriaSkirmishIntent.Recruit &&
+                  touch.TargetId == replacementRecruit.Id) ||
+                 (touch.Phase == AriaPlayPhase.Verifying && touch.Actions > 0 &&
+                  touch.LastCompletedTargetId == touch.TargetId && touch.LastCompletedFrame > 0 &&
+                  view.Frame > touch.LastCompletedFrame && view.Time >= touch.DueAt));
+            bool replacementUiReady = !view.MapOpen && !view.PlacementOpen && !view.AttackMode &&
+                (!view.DrawerOpen || plan.Intent == AriaSkirmishIntent.Recruit) &&
+                plan.TargetPending == 0 && plan.AdvanceNavigation == 0 && plan.MapNavigationStage == 0 &&
+                plan.AssaultSelecting == 0 && (plan.PadStage == 0 || plan.PadStage == 8);
+            bool missingGroundStructure = !view.AirProfile && view.EnemyDesignatedAlive &&
+                view.OwnStructureAttackUnits == 0;
+            bool restoreGroundStructure = missingGroundStructure && view.Time >= plan.NextRecruitAt &&
+                replacementTouchReady && replacementUiReady;
             // Combined Arms needs a viable structure force before spending
             // its remaining materials on rifles that cannot hurt the base.
-            if (view.CombinedArmsField && view.OwnStructureAttackUnits < 8 && view.Infantry < 24)
+            if ((view.CombinedArmsField && view.OwnStructureAttackUnits < 8 && view.Infantry < 24) || restoreGroundStructure)
             {
                 if (view.RocketeerRecruitPending)
                 {
@@ -966,9 +1002,61 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (view.CanAffordRocketeer && view.RecruitRocketeer.Available)
                 {
+                    plan.RecruitUnavailableAt = 0;
                     plan.Intent = AriaSkirmishIntent.Recruit;
                     Target(view.RecruitRocketeer, false, ref output);
                     return;
+                }
+            }
+            // Opening the public drawer is only the first recruitment gesture.
+            // Do not interpret its still-verifying acknowledgement or one short
+            // catalog presentation gap as a completed purchase and close it.
+            if (missingGroundStructure && view.DrawerOpen && !view.RocketeerRecruitPending &&
+                plan.Intent == AriaSkirmishIntent.Recruit && replacementUiReady &&
+                view.Time >= plan.NextRecruitAt)
+            {
+                bool ownCompletedRecruitTouch = touch.Phase == AriaPlayPhase.Verifying &&
+                    touch.Actions > 0 && touch.LastCompletedTargetId == touch.TargetId &&
+                    touch.LastCompletedFrame > 0;
+                if (view.DrawerOpen && view.CanAffordRocketeer && ownCompletedRecruitTouch &&
+                    !replacementTouchReady)
+                {
+                    output.Kind = AriaPlayObservationKind.Unavailable;
+                    return; // Keep verification intact; never advance its due/frame guards.
+                }
+                if (view.DrawerOpen && view.CanAffordRocketeer && replacementTouchReady &&
+                    !view.RecruitRocketeer.Available)
+                {
+                    if (plan.RecruitUnavailableAt == 0) plan.RecruitUnavailableAt = view.Time;
+                    if (view.Time - plan.RecruitUnavailableAt < 3f) return;
+                    plan.NextRecruitAt = view.Time + 12f;
+                }
+            }
+            // The accepted structure force buys its depleted Rifle screen through
+            // the same public Build/category/item sequence, not a synthetic order.
+            if (!view.AirProfile && view.OwnStructureAttackUnits > 0 &&
+                plan.AssaultIssued != 0 && plan.StructureOrdered != 0 && view.Infantry < 16 &&
+                !view.RifleRecruitPending && view.CanAffordRifle && view.VisibleHostileAir == 0 &&
+                !view.AirQueueOffered && view.DrawerOpen && plan.Intent == AriaSkirmishIntent.Recruit &&
+                replacementUiReady && view.Time >= plan.NextRecruitAt)
+            {
+                if (view.Recruit.Available) plan.RecruitUnavailableAt = 0;
+                else
+                {
+                    bool ownCompletedRecruitTouch = touch.Phase == AriaPlayPhase.Verifying &&
+                        touch.Actions > 0 && touch.LastCompletedTargetId == touch.TargetId &&
+                        touch.LastCompletedFrame > 0;
+                    if (ownCompletedRecruitTouch && !replacementTouchReady)
+                    {
+                        output.Kind = AriaPlayObservationKind.Unavailable;
+                        return;
+                    }
+                    if (replacementTouchReady)
+                    {
+                        if (plan.RecruitUnavailableAt == 0) plan.RecruitUnavailableAt = view.Time;
+                        if (view.Time - plan.RecruitUnavailableAt < 3f) return;
+                        plan.NextRecruitAt = view.Time + 12f;
+                    }
                 }
             }
             if (view.AirProfile && plan.AssaultStarted == 0)
@@ -1019,7 +1107,7 @@ namespace Game.UI.Shell.Ecs
             }
             if (view.DrawerOpen)
             {
-                if (!view.AirProfile && !view.RifleRecruitPending && plan.Intent == AriaSkirmishIntent.Recruit && view.Infantry < 16 &&
+                if (!view.AirProfile && !missingGroundStructure && !view.RifleRecruitPending && plan.Intent == AriaSkirmishIntent.Recruit && view.Infantry < 16 &&
                     view.CanAffordRifle && view.Recruit.Available &&
                     view.VisibleHostileAir == 0 && !view.AirQueueOffered)
                 {
@@ -1045,6 +1133,15 @@ namespace Game.UI.Shell.Ecs
             // column with the rifle card on page 0.
             if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0)
             {
+                // Keep accepted structure orders while a depleted screen buys replacements.
+                if (!view.AirProfile && view.OwnStructureAttackUnits > 0 && !view.RifleRecruitPending &&
+                    view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available &&
+                    view.Time >= plan.NextRecruitAt && replacementTouchReady && replacementUiReady)
+                {
+                    plan.Intent = AriaSkirmishIntent.Recruit;
+                    Target(view.Recruit, false, ref output);
+                    return;
+                }
                 // New reinforcements can arrive on another page. Inspect the
                 // public tray periodically without replacing existing orders.
                 if (plan.MapNavigationStage == 1 && view.ExpandedPageIndex != plan.AssaultPageSeen)
@@ -1074,7 +1171,7 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (!view.AirProfile && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            if (!view.AirProfile && !missingGroundStructure && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.Recruit, false, ref output);

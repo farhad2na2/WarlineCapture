@@ -1,3 +1,4 @@
+using System;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
@@ -146,6 +147,23 @@ namespace Game.UI.Shell.Ecs
                 playerBase=HiddenAwareBaseLabel(playerReadout,"player_base","YOUR MAIN BASE");
                 enemyBase=HiddenAwareBaseLabel(enemyReadout,"enemy_base","ENEMY MAIN BASE");
             }
+            string catalogId = string.Empty;
+            if (em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                catalogId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString();
+            string medalScenario = string.Empty;
+            byte medalDifficulty = 0;
+            bool medalFirst = false;
+            if (match.Phase == SkirmishPhase.Finished && !string.IsNullOrEmpty(catalogId))
+            {
+                SkirmishMedalAwardResult award = SkirmishResultSettlementService.LastMedalAward;
+                if (award.IsFirstAward &&
+                    string.Equals(award.ScenarioId, catalogId, StringComparison.OrdinalIgnoreCase))
+                {
+                    medalScenario = award.ScenarioId;
+                    medalDifficulty = (byte)award.Difficulty;
+                    medalFirst = true;
+                }
+            }
             string objective=GameText.Get("ui.skirmish.objective_explanation","Destroy the marked enemy Barracks. Protect your own main base.");
             string resultTitle=GameText.Get("ui.skirmish.result."+outcome,match.Outcome.ToString());
             string resultDetail=GameText.Get("ui.skirmish.reason."+reason,match.Reason.ToString());
@@ -181,6 +199,10 @@ namespace Game.UI.Shell.Ecs
                 EnemyBuildingsLost=match.EnemyBuildingsLost,
                 PlayerBaseHeld=playerAlive,
                 EnemyBaseDestroyed=!enemyAlive && match.Outcome==SkirmishOutcome.Victory,
+                MedalScenarioId=medalScenario,
+                MedalDifficulty=medalDifficulty,
+                MedalIsFirstAward=medalFirst,
+                CatalogId=catalogId,
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };
@@ -191,7 +213,8 @@ namespace Game.UI.Shell.Ecs
                 {
                     if (!string.IsNullOrEmpty(setup.TitleKey)) model.MissionTitle = setup.CatalogId == "S005"
                         ? GameText.Get("ui.skirmish.s005.mission_name", GameLocalization.CurrentLocaleCode == GameLocalization.PersianLocaleCode ? "میدان رزم ترکیبی" : "COMBINED ARMS FIELD")
-                        : GameText.Get(setup.TitleKey, setup.CatalogId);
+                        : GameText.TryGet(setup.TitleKey, out string existingMissionTitle) ? existingMissionTitle
+                        : GameText.Get(setup.TitleKey == "skirmish." + (setup.CatalogId ?? string.Empty).ToLowerInvariant() + ".title" ? "ui." + setup.TitleKey : setup.TitleKey, setup.CatalogId);
                     var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
                         SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
                     model.OwnMaterials = publicView.OwnMaterials;

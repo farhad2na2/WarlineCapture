@@ -32,7 +32,7 @@ public sealed class ModeResultStarRulesTests
         card.Bind(() => { }, () => { }, () => { }, () => { });
         card.Present(new ModeResultContent
         {
-            Victory = true,
+            Mode = ResultScreenMode.Skirmish, Victory = true,
             Title = "VICTORY",
             Identity = "SKIRMISH\nDESERT BASE",
             Status = "MATCH COMPLETE",
@@ -56,21 +56,22 @@ public sealed class ModeResultStarRulesTests
             ActionsEnabled = true,
             Signature = "win"
         });
-        Assert.IsNotNull(root.transform.Find("CampaignStyleResult/Retry"));
-        Assert.IsNotNull(root.transform.Find("CampaignStyleResult/Replay"));
-        Assert.IsNotNull(root.transform.Find("CampaignStyleResult/Leave"));
-        Assert.IsNotNull(root.transform.Find("CampaignStyleResult/Adjust"));
-        Assert.IsTrue(root.transform.Find("CampaignStyleResult/Adjust").gameObject.activeSelf);
+        var controls = card.SharedView.Controls;
+        Assert.IsTrue(controls.Primary.gameObject.activeSelf);
+        Assert.IsFalse(controls.Retry.gameObject.activeSelf, "Victory must not offer both retry and replay.");
+        Assert.IsTrue(controls.Secondary.gameObject.activeSelf);
+        Assert.IsTrue(controls.Tertiary.gameObject.activeSelf);
         // Translated labels must not determine whether an objective is green or red.
         card.Present(new ModeResultContent
         {
             HasObjectiveFacts = true, CompletedObjectives = 3,
+            Objective1 = "First", Objective2 = "Second", Objective3 = "Third",
             Objective1State = "تکمیل شد", Objective2State = "حفظ شد", Objective3State = "ناموفق",
             Signature = "localized-facts"
         });
-        var first = root.transform.Find("CampaignStyleResult/Objectives/Objective0").GetComponentsInChildren<TMPro.TMP_Text>()[1];
-        var second = root.transform.Find("CampaignStyleResult/Objectives/Objective1").GetComponentsInChildren<TMPro.TMP_Text>()[1];
-        var third = root.transform.Find("CampaignStyleResult/Objectives/Objective2").GetComponentsInChildren<TMPro.TMP_Text>()[1];
+        var first = controls.ObjectiveValues[0];
+        var second = controls.ObjectiveValues[1];
+        var third = controls.ObjectiveValues[2];
         Assert.AreEqual(first.color, second.color);
         Assert.AreNotEqual(first.color, third.color);
         Object.DestroyImmediate(root);

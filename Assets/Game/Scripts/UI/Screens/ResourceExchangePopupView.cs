@@ -175,6 +175,8 @@ namespace Game.UI.Runtime
                 confirmButton.interactable = confirmEnabled;
             if (footerConfirmButton != null)
                 footerConfirmButton.interactable = confirmEnabled;
+            HudActionVisuals.Refresh(confirmButton);
+            HudActionVisuals.Refresh(footerConfirmButton);
         }
 
         public void ApplyModel(UiResourceExchangeModel model)
@@ -202,7 +204,7 @@ namespace Game.UI.Runtime
                 model.Detail.InstructionText,
                 model.Detail.ConfirmEnabled,
                 model.Detail.WarningVisible,
-                ResolveRecipeThumbnail(model.SelectedRecipeSlot));
+                ResolveInputThumbnail(model.Detail.InputCostText, model.SelectedRecipeSlot));
             ApplyQueueRows(model);
             ApplyQueueControls(model.RushAllEnabled, model.ClearCompletedEnabled);
             var empty = queueContentRoot != null ? queueContentRoot.parent.Find("EmptyQueue") : null;
@@ -234,7 +236,7 @@ namespace Game.UI.Runtime
                     card.OutputText,
                     card.DurationText,
                     card.ReasonText,
-                    ResolveRecipeThumbnail(i),
+                    ResolveInputThumbnail(card.InputText, i),
                     card.Selected,
                     card.Enabled,
                     card.Locked,
@@ -273,7 +275,7 @@ namespace Game.UI.Runtime
                     row.PercentText,
                     row.StateText,
                     row.Progress01,
-                    ResolveRecipeThumbnail(i),
+                    ResolveInputThumbnail(row.InputText, i),
                     row.RushEnabled,
                     row.CancelEnabled,
                     row.CompletedVisible,
@@ -290,9 +292,24 @@ namespace Game.UI.Runtime
                 clearCompletedButton.interactable = clearCompletedEnabled;
                 clearCompletedButton.gameObject.SetActive(clearCompletedEnabled);
             }
+            HudActionVisuals.Refresh(rushAllButton);
+            HudActionVisuals.Refresh(clearCompletedButton);
         }
 
 
+
+        // Projection supplies canonical resource tokens; localization happens in UiLocalizedText.
+        // Choose by the input resource so filtering or queue order cannot change the icon.
+        public Sprite ResolveInputThumbnail(string canonicalInput, int fallbackIndex)
+        {
+            if (!string.IsNullOrEmpty(canonicalInput))
+            {
+                if (canonicalInput.EndsWith(" MATERIALS", System.StringComparison.Ordinal)) return ResolveRecipeThumbnail(3);
+                if (canonicalInput.EndsWith(" OIL", System.StringComparison.Ordinal)) return ResolveRecipeThumbnail(1);
+                if (canonicalInput.EndsWith(" FUEL", System.StringComparison.Ordinal)) return ResolveRecipeThumbnail(0);
+            }
+            return ResolveRecipeThumbnail(fallbackIndex);
+        }
 
         public Sprite ResolveRecipeThumbnail(int index)
         {

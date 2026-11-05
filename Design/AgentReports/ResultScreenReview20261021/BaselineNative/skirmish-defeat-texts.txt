@@ -1,0 +1,27 @@
+Title/Label | DEFEAT
+Stars/Label | 
+Identity/Label | SKIRMISH
+COMMAND SIEGE
+Identity/Label | DEFEAT
+Time/Label | 05:18
+Objectives/Label | OBJECTIVES
+Objective0/Label | Destroy the enemy main base
+Objective0/Label | Failed
+Objective1/Label | Protect your main base
+Objective1/Label | Failed
+Objective2/Label | Keep squad losses low
+Objective2/Label | Failed
+Performance/Label | PERFORMANCE
+Stat0/Label | UNITS LOST
+Stat0/Label | 8
+Stat1/Label | UNITS DEFEATED
+Stat1/Label | 6
+Stat2/Label | BUILDINGS LOST / DESTROYED
+Stat2/Label | 1 / 0
+MatchFacts/Label | Your main base was lost.
+Summary/Label | Your main base was lost.
+Retry/Label | RETRY
+Replay/Label | REPLAY
+Leave/Label | MAIN MENU
+Adjust/Label | ADJUST SETUP
+Battlefield/Label | BATTLEFIELD

@@ -1,0 +1,24 @@
+{
+  "log": "/private/tmp/mission-atlas-polish-campaign-01.log",
+  "sourceCommit": "28648094e5da633499bdb1bb94aefad412fe724b",
+  "result": "Passed",
+  "menuAndGameplayInput": "InputSystemTouch",
+  "menuGestures": 25,
+  "outcomesInjected": 0,
+  "locales": [
+    "en",
+    "fa-IR"
+  ],
+  "mission": "saga.ch01.m01.first_contact",
+  "fixture": "Isolated first-launch profile plus M01\u2013M05 availability, no seeded wins/outcomes.",
+  "scope": "Actual victories, settlement and Campaign return; no device or other-mission certification.",
+  "sha256": {
+    "1-journey-lesson-1-settled.png": "44b1e9aa1cc16b78e0aad4fd291cc1686bc81e1256fc326b71ffc5ff1909b5af",
+    "native-journey-screens.zip": "7696a52ecfe4a295c5241804ff0c677e10e88cd061ea471539896e262c49f2f6",
+    "6-journey-victory.png": "78e6e1bec7e39e0aca5a9e99b1f729603f306f55a46e9fce2e47f0e575d39e60",
+    "1-journey-victory.png": "530a0ba637492cdfef91a3d4903726b9924d07cca26c03c68e1545b3a19eaba4",
+    "6-opening.png": "c643fad046e29e6d08bc718cd8d2dfa85f907c7fb99b2497885b07d08a60eecc",
+    "6-journey-lesson-1-settled.png": "d7a9ecb568e3bd6a1c6cb4ec841f9cc5f612077dafc7c90dbd96148937c87248",
+    "1-opening.png": "9e2af6457d65e3e1588cb17994658e5a165d954c8d95d81c7b23d2ea717d9f88"
+  }
+}

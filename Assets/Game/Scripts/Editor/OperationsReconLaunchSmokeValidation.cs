@@ -308,6 +308,21 @@ namespace Game.Editor
                 }
                 if (stage == 2)
                 {
+                    // Observe the existing technical-failure reason before the refund destroys the mission owner.
+                    var diagnosticWorld=World.DefaultGameObjectInjectionWorld;
+                    if(diagnosticWorld!=null&&diagnosticWorld.IsCreated)
+                    {
+                        using var diagnosticQuery=diagnosticWorld.EntityManager.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                        if(diagnosticQuery.CalculateEntityCount()==1)
+                        {
+                            var diagnosticRoot=diagnosticQuery.GetSingletonEntity();
+                            if(diagnosticWorld.EntityManager.HasComponent<OperationsReconLaunchReference>(diagnosticRoot))
+                            {
+                                var reason=diagnosticWorld.EntityManager.GetComponentObject<OperationsReconLaunchReference>(diagnosticRoot).StartupFailure;
+                                if(!string.IsNullOrEmpty(reason))Debug.LogError("[OperationsStartupObserved] failure="+reason+" readOnly=1");
+                            }
+                        }
+                    }
                     if (UiShellRuntimeGateway.TryReadOperationsMission(out var launchModel) &&
                         !launchModel.InMission && !string.IsNullOrEmpty(launchModel.Status))
                         throw new InvalidOperationException(launchModel.Status);
@@ -605,7 +620,7 @@ namespace Game.Editor
                     var saved = SaveService.CreateDefault().LoadProfile().operations;
                     if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Withdrawal did not durably settle the single AP reservation.");
-                    if (Click("CONTINUE")) stage = 6;
+                    if (ClickResultReturn()) stage = 6;
                     return;
                 }
                 if (stage == 6 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -793,7 +808,7 @@ namespace Game.Editor
                             " extracted=" + operation.InfantryAtExit + " saved=1");
                     }
                     if (resultCaptureFrames < 30) return;
-                    if (Click("CONTINUE")) stage = 21;
+                    if (ClickResultReturn()) stage = 21;
                     return;
                 }
                 if (stage == 21 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
@@ -905,6 +920,19 @@ namespace Game.Editor
                         throw new InvalidOperationException("Mission text overflows its native box: " + label.text + " rect=" + label.rectTransform.rect);
                 }
             }
+        }
+
+        // Return through the shared native result action, independent of translated captions.
+        private static bool ClickResultReturn()
+        {
+            foreach(var view in UnityEngine.Object.FindObjectsByType<SharedMissionResultView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if(view.GetComponentInParent<OperationsMissionScreenView>()==null)continue;
+                var button=view.Controls.Primary.gameObject.activeInHierarchy?view.Controls.Primary:view.Controls.Secondary;
+                if(!button.IsActive()||!button.interactable)continue;
+                AssertButtonReachable(button);button.onClick.Invoke();return true;
+            }
+            return false;
         }
 
         private static bool Click(string name, string ancestor = null)

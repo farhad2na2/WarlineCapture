@@ -88,10 +88,13 @@ namespace Game.UI.Runtime
         {
             _selectedItemView = null;
             _hasSelectedItem = false;
-            BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view, _activeCategory);
+            if (_items.Count == 1)
+                BuildDrawerCatalogPresentationSystemHelper.PreviewOnly(CreatePresentationContext(), _items[0]);
+            else
+                BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view, _activeCategory);
             ApplyInstruction(
                 FormatNoSelectionInstruction(),
-                BuildDrawerInstructionSeverity.Warning);
+                BuildDrawerInstructionSeverity.Neutral);
         }
 
     }

@@ -1,0 +1,10 @@
+{
+  "screenWidth": 2400,
+  "screenHeight": 1080,
+  "footerHeightPixels": 100.000008,
+  "stopDiameterPixels": 79.99994,
+  "footerScreenHeightRatio": 0.0925926,
+  "stopScreenHeightRatio": 0.074074015,
+  "actualPlayMode": true,
+  "selectedScenario": "S002"
+}

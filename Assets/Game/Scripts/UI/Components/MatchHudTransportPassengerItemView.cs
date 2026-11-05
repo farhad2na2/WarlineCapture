@@ -44,6 +44,9 @@ namespace Game.UI.Runtime
             SetHealthFill(model.Health01);
             if (exitButton != null && exitButton.interactable != model.ExitEnabled)
                 exitButton.interactable = model.ExitEnabled;
+            var label = exitButton != null ? exitButton.GetComponentInChildren<TMP_Text>(true) : null;
+            if (label != null) UiLocalizedText.Set(label, Game.Configs.GameLocalization.Get("hud.passenger.unload", "UNLOAD"));
+            HudActionVisuals.Refresh(exitButton);
         }
 
         private void BindUnityEvents()

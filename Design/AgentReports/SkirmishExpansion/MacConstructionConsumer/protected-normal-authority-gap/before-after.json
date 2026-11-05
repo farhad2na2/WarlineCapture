@@ -1,0 +1,20 @@
+{
+  "kind": "ConstructedArtifactsOnly",
+  "catalog": "S025",
+  "before": {
+    "result": "NormalCompletedUnqualified",
+    "wins": 1
+  },
+  "after": {
+    "result": "NormalCompletedUnqualified",
+    "wins": 0,
+    "actual_native_wins": [
+      1,
+      0,
+      0
+    ]
+  },
+  "qualified": false,
+  "native_jobs": 0,
+  "sampling_coverage_credit": 0
+}

@@ -1,0 +1,62 @@
+{
+  "sourceCommit": "28648094e5da633499bdb1bb94aefad412fe724b",
+  "worktreeSourceFingerprint": "d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596",
+  "sourceQualifier": "Includes the two preserved local differences documented in preserved-local-source.json; clean-checkout acceptance pending.",
+  "nativeVisualReview": {
+    "run": 14,
+    "matrixCases": 24,
+    "captures": 40,
+    "locales": [
+      "en",
+      "fa-IR"
+    ],
+    "ratios": [
+      "2400x1080",
+      "1920x1080",
+      "1440x1080"
+    ],
+    "input": "InputSystemTouch",
+    "gearCenterTolerancePixels": 0.5,
+    "result": "Passed",
+    "ownerReview": "Pending"
+  },
+  "focusedTests": {
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0
+  },
+  "campaignM01": {
+    "result": "Passed",
+    "locales": [
+      "en",
+      "fa-IR"
+    ],
+    "actualVictoriesAndReturn": true,
+    "input": "InputSystemTouch",
+    "outcomesInjected": 0
+  },
+  "skirmishS002": {
+    "en": {
+      "victory": true,
+      "nativeResultAndReturnedCardMedal": true,
+      "diskReload": true,
+      "coldRestart": "Passed",
+      "producerPid": 63423,
+      "restartPid": 66421,
+      "profileSeeded": false
+    },
+    "fa": {
+      "victory": true,
+      "nativeResultAndReturnedCardMedal": true,
+      "diskReload": true,
+      "coldRestart": "Passed",
+      "producerPid": 67620,
+      "restartPid": 70192,
+      "profileSeeded": false
+    }
+  },
+  "playerDeviceAcceptance": "Pending",
+  "windowsAcceptance": "Pending",
+  "cleanCheckoutAcceptance": "Pending",
+  "merge": "Not performed; PR remains draft"
+}

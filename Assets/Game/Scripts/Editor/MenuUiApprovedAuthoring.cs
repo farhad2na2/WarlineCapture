@@ -291,17 +291,17 @@ namespace Game.Editor
         }
         private static void Skirmish(GameObject root)
         {
-            var preview=Find(root,"OperationPreview");Place(preview,14,108,800,680);
-            var name=Text(root,"OperationName");if(name!=null){Place(name.rectTransform,8,0,784,54);name.overflowMode=TextOverflowModes.Overflow;}
-            Place(Find(root,"BattleLibraryMapTabs"),8,54,784,102);
-            Place(Find(root,"BattleLibrarySearch"),8,168,784,96);
+            var preview=Find(root,"OperationPreview");Place(preview,14,108,1040,688);
+            var name=Text(root,"OperationName");if(name!=null){Place(name.rectTransform,16,8,720,52);name.overflowMode=TextOverflowModes.Overflow;name.textWrappingMode=TextWrappingModes.Normal;}
+            Place(Find(root,"BattleLibraryMapTabs"),16,64,720,72);
+            Place(Find(root,"BattleLibrarySearch"),748,8,276,48);
             var placeholder=Find(root,"BattleLibrarySearch")?.GetComponentsInChildren<TMP_Text>(true).FirstOrDefault(t=>t.name=="Placeholder");
             if(placeholder!=null)Bind(placeholder,"Search battles");
             Hide(root,"BattleLibraryCount");
-            Place(Find(root,"BattleLibrary"),8,276,784,396);
-            var map=Find(root,"MapPreviewClip");Place(map,812,0,830,250);
-            Place(Find(root,"SeedHelp"),812,262,830,106);
-            var rules=Find(root,"BaseAssaultRules");Place(rules,826,488,830,300);
+            Place(Find(root,"BattleLibrary"),16,144,1008,520);
+            var map=Find(root,"MapPreviewClip");Place(map,16,144,1008,528);
+            Place(Find(root,"SeedHelp"),16,620,1008,52);
+            var rules=Find(root,"BaseAssaultRules");Place(rules,1068,108,590,688);
             if(rules!=null)
             {
                 ScrollContent(rules,"RulesScroll",940);

@@ -1,0 +1,49 @@
+{
+  "status": "Interrupted",
+  "stages": [
+    {
+      "name": "tests",
+      "status": "Passed",
+      "log": "/private/tmp/mission-atlas-army-size-final-tests.log",
+      "started": 1792578301.047466,
+      "exitCode": 0,
+      "elapsedSeconds": 106.7,
+      "markers": {}
+    },
+    {
+      "name": "campaign",
+      "status": "Passed",
+      "log": "/private/tmp/mission-atlas-army-size-final-campaign.log",
+      "started": 1792578407.7671292,
+      "exitCode": 0,
+      "elapsedSeconds": 225.8,
+      "markers": {
+        "[ApprovedCampaignJourney] result=Passed": true
+      }
+    },
+    {
+      "name": "s002-en",
+      "status": "Incomplete",
+      "log": "/private/tmp/mission-atlas-army-size-final-s002-en.log",
+      "started": 1792578633.545954
+    }
+  ],
+  "candidateSourceHash": "794aa1681ae054bd732e3ec0730df5a52566834ef4b1ff615deb7c320eaa558c",
+  "tests": {
+    "id": "2",
+    "testcasecount": "35",
+    "result": "Passed",
+    "total": "35",
+    "passed": "35",
+    "failed": "0",
+    "inconclusive": "0",
+    "skipped": "0",
+    "asserts": "0",
+    "engine-version": "3.5.0.0",
+    "clr-version": "4.0.30319.42000",
+    "start-time": "2026-10-21 10:26:09Z",
+    "end-time": "2026-10-21 10:26:29Z",
+    "duration": "20.531817"
+  },
+  "interruption": "Machine reboot 2026-10-21 12:37:27 Europe/Berlin; session and /private/tmp logs lost. No final S002 pass proof exists for this candidate. Completed stages will be rerun to restore full logs."
+}

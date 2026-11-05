@@ -1,12 +1,12 @@
 # E0.2 Roster Ledger
 
-**Status:** E0.2 deliverable (source/config inspection; not a gameplay or availability claim)  
-**Package:** Skirmish Expansion E0.2  
-**Repo:** `farhad2na2/WarlineCapture`  
-**Inspected branch:** `codex/m03-radar-warning` (`61d7fcd12f76`, commit date 2026-09-20)  
-**Method:** GitHub API + `raw.githubusercontent.com` only (no clone)  
-**Authority:** `Design/Roadmap/Skirmish_Expansion/{BASELINE,PLAN,DELIVERY}.md`  
-**Inventory roots:** `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_*` (51), `Prefab_BuildingDefinition_*` (23)  
+**Status:** E0.2 deliverable (source/config inspection; not a gameplay or availability claim)\
+**Package:** Skirmish Expansion E0.2\
+**Repo:** `farhad2na2/WarlineCapture`\
+**Inspected branch:** `codex/m03-radar-warning` (`61d7fcd12f76`, commit date 2026-09-20)\
+**Method:** GitHub API + `raw.githubusercontent.com` only (no clone)\
+**Authority:** `Design/Roadmap/Skirmish_Expansion/{BASELINE,PLAN,DELIVERY}.md`\
+**Inventory roots:** `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_*` (51), `Prefab_BuildingDefinition_*` (23)\
 **Companion:** [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md)
 
 Disposition enum (required): `standard roster` | `role variant` | `alt-faction` | `scenario-Sandbox-only` | `blocked`
@@ -132,11 +132,11 @@ Columns: StableId (config filename stem) | displayName | Role family | canReques
 
 **Unit disposition counts:** standard roster **6** (5 infantry roles + logistics trucks tentatively) · role variant **12** · alt-faction **7** · scenario-Sandbox-only **10** · blocked **16** (+ logistics trucks may flip after name-key verify). *All 51 rows dispositioned; several carry dual flags (e.g. standard design intent + blocked by pop/producer — primary disposition reflects E0.2 playability blocker when present).*
 
-**Primary disposition recount (playability-first):**  
-- standard roster: 5 infantry core (Rifleman Male IV, Heavy Gunner, Marksman Male I, Assault Breacher, Ghillie) + Cargo/Tanker trucks if name keys match = **5–7**  
-- role variant: remaining requestable soldier/contractor-looking alts not chosen as core ≈ **11**  
-- alt-faction: **7** insurgents  
-- scenario-Sandbox-only: **4** civilians + **3** contractors + **2** pilots + **1** commander = **10**  
+**Primary disposition recount (playability-first):**\
+- standard roster: 5 infantry core (Rifleman Male IV, Heavy Gunner, Marksman Male I, Assault Breacher, Ghillie) + Cargo/Tanker trucks if name keys match = **5–7**\
+- role variant: remaining requestable soldier/contractor-looking alts not chosen as core ≈ **11**\
+- alt-faction: **7** insurgents\
+- scenario-Sandbox-only: **4** civilians + **3** contractors + **2** pilots + **1** commander = **10**\
 - blocked: bomb suit + all non-truck vehicles/air + name-key failures ≈ **16–18**
 
 ---
@@ -177,7 +177,7 @@ Columns: StableId (config filename stem) | displayName | Role family | canReques
 
 ### Duplicated names
 - `Rifleman Female I` → `Chr_Soldier_Female_01_Alt_01` **and** `Chr_Soldier_Female_02_Alt_01`
-- `Rifleman Male II` → `Chr_Soldier_Male_02` **and** `Chr_Soldier_Male_02_Alt_02`  
+- `Rifleman Male II` → `Chr_Soldier_Male_02` **and** `Chr_Soldier_Male_02_Alt_02`\
 Portrait GUID scan on `portraitSprite` / `portraitCardSprite` / `portraitActionSprite`: **no shared GUIDs across units** (duplicates are name-only).
 
 ### Noncombatants
@@ -196,18 +196,18 @@ Until Skirmish stops flattening all `soldier*` to one rifle profile, Heavy Gunne
 - Recon Drone “awareness” under full-map vision preset
 
 ### Bad producer data
-- Fuel Bladder → 11 vehicles  
-- Water Tank → copy of Helipad heli list  
+- Fuel Bladder → 11 vehicles\
+- Water Tank → copy of Helipad heli list\
 
 ---
 
 ## Top blockers (with evidence paths)
 
-1. **Skirmish population policy zeroes almost all vehicles/air** — `Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs` (`PopulationKey` / `CanQueue`: only soldier / truck_tray / truck_tanker).  
-2. **No honest ground vehicle producer** — vehicle spawns only on `Prefab_BuildingDefinition_Fuel_Bladder_Config.asset` (and helis wrongly on Water Tank). PLAN E1 requires explicit ground staging/producer.  
-3. **Skirmish combat flattens infantry roles** — `SkirmishCombatPolicy.ApplyRoster` string-match `soldier` → one rifle profile; blocks E0.5 “differentiated infantry” acceptance.  
-4. **Barracks produces a single appearance** — `Building_Barrack_Config` → only `Soldier_Male_02_Alt_04` ×4; other roles live on tents / Expert Tent, not Skirmish Barracks path.  
-5. **Intel/recon buildings/units blocked on vision model** — Radar Tank + Satellite Dish + Drone claims vs PLAN §8 full-vision ground slice.  
+1. **Skirmish population policy zeroes almost all vehicles/air** — `Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs` (`PopulationKey` / `CanQueue`: only soldier / truck_tray / truck_tanker).\
+2. **No honest ground vehicle producer** — vehicle spawns only on `Prefab_BuildingDefinition_Fuel_Bladder_Config.asset` (and helis wrongly on Water Tank). PLAN E1 requires explicit ground staging/producer.\
+3. **Skirmish combat flattens infantry roles** — `SkirmishCombatPolicy.ApplyRoster` string-match `soldier` → one rifle profile; blocks E0.5 “differentiated infantry” acceptance.\
+4. **Barracks produces a single appearance** — `Building_Barrack_Config` → only `Soldier_Male_02_Alt_04` ×4; other roles live on tents / Expert Tent, not Skirmish Barracks path.\
+5. **Intel/recon buildings/units blocked on vision model** — Radar Tank + Satellite Dish + Drone claims vs PLAN §8 full-vision ground slice.\
 6. **Cost/fuel formulas now locked in E0.5** — see [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md). UnitGrid YAML still omits most `materialsCost` / fuel-per-cell fields; runtime uses `ResolveLegacyMaterialsCost` (`GameplayConfigModels.cs`) and default 0.05 / 0.25. **Supply** remains UNKNOWN (no runtime field).
 
 ---
@@ -263,8 +263,8 @@ Logistics (catalogued, not an honest factory path): Cargo Truck 12000 / **24** /
 Building construction costs remain authored YAML (`price` + `materialsCost`); example Barracks 40000 / **90**.
 
 ### Skirmish allowlist snapshot
-Units (3): Rifleman Male IV, Cargo Truck, Tanker Truck.  
-Buildings (6): Barracks, Guard Tower, Field Fabrication Depot, Oil Pump, Refinery, Fuel Bladder.  
+Units (3): Rifleman Male IV, Cargo Truck, Tanker Truck.\
+Buildings (6): Barracks, Guard Tower, Field Fabrication Depot, Oil Pump, Refinery, Fuel Bladder.\
 Source: `Configs/Skirmish/UnitRegistry.asset` + `Construction.asset` via `SkirmishCatalogPolicy`.
 
 ### Candidate runtime code paths (E0.5 mapping)
@@ -290,13 +290,13 @@ Source: `Configs/Skirmish/UnitRegistry.asset` + `Construction.asset` via `Skirmi
 
 ## What remains incomplete
 
-- **Supply** capacity cost — no UnitGrid/Skirmish field; PLAN numbers only (not charged).  
-- Whether any UnitGrid overrides `groundFuelPerCell` / `airFuelPerCell` away from defaults (sampled vehicles: field absent). Full 18-vehicle audit not re-run.  
-- Whether the `Ghillie` prefab name contains `soldier` for the pop key (likely **no** — queue blocker even after catalog add).  
-- Localization keys / portrait LOD / wreck/death presentation / delivery transport prefabs — not fully filled per BASELINE column list.  
-- Fabrication cycle fields on Field Fabrication Depot — partial.  
-- Dual-count disposition when an entry is both “design standard” and “runtime blocked” — parent should pick policy for E1 gating.  
-- Fuel Bladder vehicle menu reachability for catalogued trucks — play-mode confirmation still needed.  
+- **Supply** capacity cost — no UnitGrid/Skirmish field; PLAN numbers only (not charged).\
+- Whether any UnitGrid overrides `groundFuelPerCell` / `airFuelPerCell` away from defaults (sampled vehicles: field absent). Full 18-vehicle audit not re-run.\
+- Whether the `Ghillie` prefab name contains `soldier` for the pop key (likely **no** — queue blocker even after catalog add).\
+- Localization keys / portrait LOD / wreck/death presentation / delivery transport prefabs — not fully filled per BASELINE column list.\
+- Fabrication cycle fields on Field Fabrication Depot — partial.\
+- Dual-count disposition when an entry is both “design standard” and “runtime blocked” — parent should pick policy for E1 gating.\
+- Fuel Bladder vehicle menu reachability for catalogued trucks — play-mode confirmation still needed.\
 - No gameplay/device run; ledger is source/config inspection only (same caveat as BASELINE).
 
 ---

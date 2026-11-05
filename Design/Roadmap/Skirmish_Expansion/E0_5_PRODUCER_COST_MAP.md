@@ -1,10 +1,10 @@
 # E0.5 Producer / Cost / Fuel Map
 
-**Status:** E0.5 deliverable (source/config inspection; not a match-readiness or availability claim)  
-**Package:** Skirmish Expansion E0.5  
-**Repo / branch:** `farhad2na2/WarlineCapture` @ `codex/m03-radar-warning`  
-**Method:** GitHub API + raw only (no clone)  
-**Depends on:** `Design/Roadmap/Skirmish_Expansion/E0_2_ROSTER_LEDGER.md`  
+**Status:** E0.5 deliverable (source/config inspection; not a match-readiness or availability claim)\
+**Package:** Skirmish Expansion E0.5\
+**Repo / branch:** `farhad2na2/WarlineCapture` @ `codex/m03-radar-warning`\
+**Method:** GitHub API + raw only (no clone)\
+**Depends on:** `Design/Roadmap/Skirmish_Expansion/E0_2_ROSTER_LEDGER.md`\
 **Authority:** DELIVERY.md E0.5 — first 5 infantry + 3 vehicle roles; cost/production/fuel table; producer mapping before E1.
 
 ---
@@ -33,7 +33,7 @@ public static int ResolveLegacyMaterialsCost(int legacyPrice)
 | Else (0 / absent) | `max(1, ceil(price / 500))` |
 | Authored `materialsCost: 0` on Rifleman Male IV | still triggers legacy (because `> 0` check) → **20** |
 
-Same fallback on MonoBehaviour path: `UnitGridAuthoring.MaterialsCost` → `UnitGridAuthoringConfig.ResolveLegacyMaterialsCost(price)` when no config SO / local materialsCost ≤ 0  
+Same fallback on MonoBehaviour path: `UnitGridAuthoring.MaterialsCost` → `UnitGridAuthoringConfig.ResolveLegacyMaterialsCost(price)` when no config SO / local materialsCost ≤ 0\
 (`Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs`).
 
 ### 1.2 Fuel-per-cell defaults
@@ -47,7 +47,7 @@ Same fallback on MonoBehaviour path: `UnitGridAuthoring.MaterialsCost` → `Unit
 
 Helpers: `ResolveDefaultGroundFuelPerCell`, `ResolveDefaultAirFuelPerCell`.
 
-Baker only adds `UnitFuelConsumption` when `(UsesVehicleMotion \|\| IsAirUnit) && (ground > 0 \|\| air > 0)`  
+Baker only adds `UnitFuelConsumption` when `(UsesVehicleMotion \|\| IsAirUnit) && (ground > 0 \|\| air > 0)`\
 (`UnitGridAuthoring.cs` baker). Infantry with 0/0 → **no fuel component**.
 
 Runtime drain: `VehicleFuelConsumptionSystem.cs` (per-cell × faction storage). Hold/return: `GroundVehicleFuelHoldSystem.cs`, `AircraftFuelSafetyReturnSystem.cs`.
@@ -85,20 +85,20 @@ Buildings (placement): charge **materials only** from `BuildingDefinition.Materi
 | `Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tanker.prefab` | contains `Truck_Tanker` | `truck_tanker` | **YES** | **1** |
 | `Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab` | `Truck_Canopy` | neither | **NO** | **0** (blocked) |
 
-**Policy path:** `Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs` — `PopulationKey` / `CanQueue`.  
+**Policy path:** `Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs` — `PopulationKey` / `CanQueue`.\
 Soldiers: key contains `soldier` → `SkirmishPresetConfig.InfantryLimitPerFaction` (**24**).
 
 ---
 
 ## 3. Skirmish catalog allowlists (both presets)
 
-Presets: `Assets/Game/Resources/SkirmishBaseAssault.asset`, `SkirmishCityCrossroads.asset`  
-→ `buildingPlacement` = `Assets/Game/Configs/Skirmish/Construction.asset` (shared spawnables; City Construction asset mirrors same 6 GUIDs)  
+Presets: `Assets/Game/Resources/SkirmishBaseAssault.asset`, `SkirmishCityCrossroads.asset`\
+→ `buildingPlacement` = `Assets/Game/Configs/Skirmish/Construction.asset` (shared spawnables; City Construction asset mirrors same 6 GUIDs)\
 → `unitPrefabRegistryConfig` = `Assets/Game/Configs/Skirmish/UnitRegistry.asset` (**shared**)
 
-**Catalog gate:** `SkirmishCatalogPolicy.Allows` uses  
-`preset.buildingPlacement.Spawnables` (buildings) and  
-`preset.buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs` (units).  
+**Catalog gate:** `SkirmishCatalogPolicy.Allows` uses\
+`preset.buildingPlacement.Spawnables` (buildings) and\
+`preset.buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs` (units).\
 Impostor atlas entries are **not** the allowlist.
 
 ### Units in `UnitSpawnPrefabs` (exactly 3)
@@ -194,11 +194,11 @@ Numbers below use **locked** credits YAML + **derived** materials/fuel. Supply l
 
 ## 7. Remains UNKNOWN / open
 
-- **Supply** capacity cost — PLAN numbers only; no UnitGrid/Skirmish field found.  
-- Whether any UnitGrid overrides `groundFuelPerCell`/`airFuelPerCell` to non-default on vehicle assets (sampled Light Armored Car / trucks: field absent → defaults). Full 18-vehicle audit not re-run this pass.  
-- Whether `Ghillie` prefab name contains `soldier` for pop key (likely **no** — blocker for queue even after catalog add).  
-- Construction resource wallet field names / starting credits-materials for Skirmish economy balance.  
-- Whether Fuel Bladder vehicle menu is reachable when unit is catalogued (trucks) despite being a storage building — needs play-mode confirmation.  
+- **Supply** capacity cost — PLAN numbers only; no UnitGrid/Skirmish field found.\
+- Whether any UnitGrid overrides `groundFuelPerCell`/`airFuelPerCell` to non-default on vehicle assets (sampled Light Armored Car / trucks: field absent → defaults). Full 18-vehicle audit not re-run this pass.\
+- Whether `Ghillie` prefab name contains `soldier` for pop key (likely **no** — blocker for queue even after catalog add).\
+- Construction resource wallet field names / starting credits-materials for Skirmish economy balance.\
+- Whether Fuel Bladder vehicle menu is reachable when unit is catalogued (trucks) despite being a storage building — needs play-mode confirmation.\
 - City vs Base: Construction spawnables match; confirm City Construction meta GUID vs Resource reference if scenarios diverge later.
 
 ---
@@ -213,10 +213,10 @@ Numbers below use **locked** credits YAML + **derived** materials/fuel. Supply l
 | Can the proposed **5 infantry + 3 combat vehicles** be treated as currently playable Skirmish roles? | **NO** — only Rifleman (+ logistics trucks) are catalogued; combat vehicles blocked by catalog + pop + bad producer; specialists need Barracks entries + combat un-flatten |
 | **Ready for E1 planning?** | **YES, as an evidence pack** for what E1 must change (catalog, producers, pop keys, combat roles, optional Supply). **NO** as a claim that the eight roles are implementation-complete or match-ready. |
 
-**Recommended E1 entry work (from this map):**  
-1) Expand `UnitRegistry.unitSpawnPrefabs` + Barracks `productions` for the five infantry.  
-2) Add honest ground vehicle producer; remove vehicle list from Fuel Bladder.  
-3) Extend `SkirmishPopulationPolicy` beyond soldier/tray/tanker.  
-4) Stop `ApplyRoster` rifle flatten for named roles.  
-5) Author explicit `materialsCost` on UnitGrids if designers dislike price/500.  
+**Recommended E1 entry work (from this map):**\
+1) Expand `UnitRegistry.unitSpawnPrefabs` + Barracks `productions` for the five infantry.\
+2) Add honest ground vehicle producer; remove vehicle list from Fuel Bladder.\
+3) Extend `SkirmishPopulationPolicy` beyond soldier/tray/tanker.\
+4) Stop `ApplyRoster` rifle flatten for named roles.\
+5) Author explicit `materialsCost` on UnitGrids if designers dislike price/500.\
 6) Decide Supply accounting (new field) before advertising Supply costs.

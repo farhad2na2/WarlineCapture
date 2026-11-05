@@ -1,6 +1,6 @@
 # Polished Campaign and Skirmish map menus
 
-Owner approved the refined map-first Skirmish direction and the Campaign A chapter-first flow with five large comic mission cards. Native menu source is committed as `28648094e5da633499bdb1bb94aefad412fe724b`. PR70 remains draft and unmerged; owner visual review of the implemented screens is pending.
+Owner approved the refined map-first Skirmish direction and the Campaign A chapter-first flow with five large comic mission cards. Native menu source is committed as `28648094e5da633499bdb1bb94aefad412fe724b`. PR #70 was merged on October 21. These captures are the earlier implementation; the later #71 English and Persian visual style was explicitly accepted by Farhad on November 5 after viewing the native captures. [Current acceptance record](https://github.com/farhad2na2/WarlineCapture/issues/69) keeps fresh-current-build engineering and player/device gates separate.
 
 [Current native gallery](REVIEW.md) · [40 final Game view captures](20261020-225027/) · [Capture checksums](20261020-225027/sha256.json).
 
@@ -18,7 +18,7 @@ Owner approved the refined map-first Skirmish direction and the Campaign A chapt
 | Gate | Result and scope |
 | --- | --- |
 | Owner mockup direction | Approved; [Campaign polish](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/campaign-polish-04/README.md) and [Skirmish polish](../../SkirmishUIConcepts/2026-10-20-menu-alternatives/skirmish-polish-03/README.md). |
-| Owner native visual review | Pending. Review the current gallery before merging. |
+| Owner native visual review | Earlier English captures reviewed November 5; the accepted current visual baseline is the later #71 gallery in EN/fa-IR. This does not certify a fresh run of current main. |
 | Native visual/input QA | Review14 passed all four pages at 2400×1080, 1920×1080 and 1440×1080 in EN/fa-IR:24 page/ratio/language cases and 40 captures. Input System touch covers selection, difficulty, next region, swipe/pinned heading, Back, Campaign briefing and return. Every active label is checked for truncation; card ink bounds use actual per-character font metrics. Gear center is asserted within 0.5 px of its box center in every case. Layout fixtures do not count as gameplay. |
 | Focused automated tests |35 passed, 0 failed, 0 skipped on the frozen final source. Read-only progress across maps, selection/access/launch/result models, medal ledger and main-menu navigation. [Exact XML](polish-evidence/focused-tests-35.xml). |
 | Campaign normal input | Fresh M01 journey passed English and Persian actual victories, settlement and Campaign return, with 25 menu touches and Input System touch for briefing, selection drag, commands, world destinations and result action. Outcomes injected:0. The isolated fixture ensures first-launch state plus M01–M05 availability, with no seeded wins/outcomes. Other missions are not certified. [Source and screenshots](polish-evidence/campaign/source.json). |

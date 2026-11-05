@@ -1,6 +1,6 @@
 # Native Campaign and Skirmish review
 
-Actual Unity Game view captures of source commit `2864809`, after the approved polish. PR70 remains draft and unmerged. Review these implemented screens before merging.
+Actual Unity Game view captures of source commit `2864809`, after the approved polish. PR #70 was merged on October 21. This is the earlier native gallery; the later #71 English and Persian visual style was accepted by Farhad on November 5. [Acceptance and remaining technical gates](https://github.com/farhad2na2/WarlineCapture/issues/69).
 
 ## Campaign
 

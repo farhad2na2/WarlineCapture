@@ -1,6 +1,6 @@
 # Map cards, Campaign comics and army-size choices
 
-The requested visual changes are implemented. Owner review before merging remains pending.
+PR #71 was merged on October 21. On November 5, Farhad explicitly accepted the four displayed English native screens and the four displayed Persian native screens from this later UI version, after comparison with the earlier #70 gallery. This records acceptance of the shown visual style; it does not relabel these historical captures as a fresh validation of current main. [Acceptance record](https://github.com/farhad2na2/WarlineCapture/issues/69).
 
 - Map cards now retain thumbnails. Skirmish crops the matching district from the existing atlas painting; Campaign uses its existing exact chapter comics.
 - Map and chapter headings share their accent colors between the map and left rail. Progress and availability have distinct colors, with a cyan outline for selection.
@@ -26,7 +26,7 @@ Frozen worktree source SHA-256: `51846da24a6269d7e309becf85737adbf1749961594824a
 - Automated checks: 35 focused tests pass.
 - Normal-input Campaign: fresh M01 touch victories and returns in both locales, first-launch fixture only, outcomesInjected=0.
 - Normal-input Skirmish: fresh Standard/Regular S002 normal-speed ARIA victories, native results, returned mission-card medals and independent-process reloads in both locales. War and Large War remain unpublished and disabled. These journeys do not certify those sizes or all mission IDs.
-- Owner visual review, clean-checkout, Windows and real player/device acceptance remain pending.
+- Owner visual style review: accepted by Farhad on November 5 for the shown English and Persian native screens. Fresh-current-build engineering, clean-checkout, Windows and real player/device acceptance remain separate gates.
 
 The exact worktree includes preserved pre-existing SCN08 HUD and NotoSansArabic font edits excluded from this PR. Its fingerprints do not certify a clean checkout. Layout screenshots use progress fixtures; the separate fresh normal-input journey archives supply result evidence.
 

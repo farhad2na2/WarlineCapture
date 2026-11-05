@@ -2,6 +2,14 @@
 
 PR #71 was merged on October 21. On November 5, Farhad explicitly accepted the four displayed English native screens and the four displayed Persian native screens from this later UI version, after comparison with the earlier #70 gallery. This records acceptance of the shown visual style; it does not relabel these historical captures as a fresh validation of current main. [Acceptance record](https://github.com/farhad2na2/WarlineCapture/issues/69).
 
+## November 5 native menu recheck
+
+[PR #79](https://github.com/farhad2na2/WarlineCapture/pull/79), source `3728a38af1f22d70b0ed833653096d6929b07534`, fixes stale aircraft source-dependency stamps without changing geometry. Eleven maintenance controls and the original three geometry verifiers pass. A separate repository-wrapper run passes native menu input and all 24 page/locale/ratio cases in English and Persian at 1920×1080, 1440×1080 and 2400×1080, producing 40 local captures. Selection, difficulty, real army-size availability/rejection, region navigation, briefing and Back are covered. Reviewed current screens retain the accepted later #71 style.
+
+The run used an isolated checkout with no preserved HUD/font or other runtime-source overrides. Burst stayed enabled; synchronous Editor compilation was requested during validation setup. Runtime jobs, scheduling and numeric/safety settings are unchanged. [Compact source/evidence receipt](../../ApprovedMissionAtlas/2026-11-05-menu-recheck.json) records exact identities; raw logs, backups, failed attempts and PNGs remain local and are not uploaded. The successful menu wrapper exited 0 and emitted `[ApprovedMissionAtlasReview] result=Passed`. Earlier failures remain failures; one produced a diagnostic failure screenshot rather than a comparison gallery. A shutdown warning reported three persistent allocations, so this is not a leak-free claim.
+
+This closes the fresh menu engineering check associated with #69. The layout/progression fixture does not establish current gameplay victories. Full mission/result/return, Windows, player/device and physical notch-device acceptance remain separate pending gates. Historical gameplay evidence below retains its original source and limitations.
+
 - Map cards now retain thumbnails. Skirmish crops the matching district from the existing atlas painting; Campaign uses its existing exact chapter comics.
 - Map and chapter headings share their accent colors between the map and left rail. Progress and availability have distinct colors, with a cyan outline for selection.
 - Campaign mission comics occupy 40% of each card width with a taller crop and padded number/title/status areas.

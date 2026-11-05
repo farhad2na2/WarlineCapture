@@ -452,20 +452,21 @@ namespace Game.Authoring
                 float traceScrollSpeed = authoring.config != null ? authoring.config.AttackTraceScrollSpeed : authoring.attackTraceScrollSpeed;
                 float traceDashDensity = authoring.config != null ? authoring.config.AttackTraceDashDensity : authoring.attackTraceDashDensity;
                 float traceVisibleSeconds = authoring.config != null ? authoring.config.AttackTraceVisibleSeconds : authoring.attackTraceVisibleSeconds;
-                AddComponent(entity, new UnitAttack
-                {
-                    Range = authoring.ConfiguredAttackRange,
-                    CooldownSeconds = authoring.ConfiguredAttackCooldownSeconds,
-                    Damage = authoring.ConfiguredAttackDamage,
-                    TraceColor = new float4(traceColor.r, traceColor.g, traceColor.b, traceColor.a),
-                    TraceWidth = math.max(0.01f, traceWidth),
-                    TraceScrollSpeed = math.max(0.1f, traceScrollSpeed),
-                    TraceDashDensity = math.max(1f, traceDashDensity),
-                    TraceVisibleSeconds = math.max(0.01f, traceVisibleSeconds),
-                    TracerEveryNthShot = math.max(1, authoring.config != null
+                AddComponent(entity, UnitAttackAuthoringProjection.FromConfiguredValues(
+                    authoring.ConfiguredAttackRange,
+                    authoring.ConfiguredAttackCooldownSeconds,
+                    authoring.ConfiguredAttackDamage,
+                    traceColor.r,
+                    traceColor.g,
+                    traceColor.b,
+                    traceColor.a,
+                    traceWidth,
+                    traceScrollSpeed,
+                    traceDashDensity,
+                    traceVisibleSeconds,
+                    authoring.config != null
                         ? authoring.config.AttackTracerEveryNthShot
-                        : authoring.attackTracerEveryNthShot)
-                });
+                        : authoring.attackTracerEveryNthShot));
                 if (ShouldUseDualSideAttackTrace(authoring))
                 {
                     float lateralOffset = ResolveDualSideAttackTraceLateralOffset(authoring);

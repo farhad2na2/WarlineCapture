@@ -2,7 +2,15 @@
 
 Owner approved the refined map-first Skirmish direction and the Campaign A chapter-first flow with five large comic mission cards. Native menu source is committed as `28648094e5da633499bdb1bb94aefad412fe724b`. PR #70 was merged on October 21. These captures are the earlier implementation; the later #71 English and Persian visual style was explicitly accepted by Farhad on November 5 after viewing the native captures. [Current acceptance record](https://github.com/farhad2na2/WarlineCapture/issues/69) keeps fresh-current-build engineering and player/device gates separate.
 
-[Current native gallery](REVIEW.md) · [40 final Game view captures](20261020-225027/) · [Capture checksums](20261020-225027/sha256.json).
+## November 5 native menu recheck
+
+[PR #79](https://github.com/farhad2na2/WarlineCapture/pull/79), source `3728a38af1f22d70b0ed833653096d6929b07534`, fixes stale aircraft source-dependency stamps without changing geometry. Eleven maintenance controls and the original three geometry verifiers pass. A separate repository-wrapper run passes native menu input and all 24 page/locale/ratio cases in English and Persian at 1920×1080, 1440×1080 and 2400×1080, producing 40 local captures. Selection, difficulty, real army-size availability/rejection, region navigation, briefing and Back are covered. Reviewed current screens retain the accepted later #71 style.
+
+The run used an isolated checkout with no preserved HUD/font or other runtime-source overrides. Burst stayed enabled; synchronous Editor compilation was requested during validation setup. Runtime jobs, scheduling and numeric/safety settings are unchanged. [Compact source/evidence receipt](2026-11-05-menu-recheck.json) records exact identities; raw logs, backups, failed attempts and PNGs remain local and are not uploaded. The successful menu wrapper exited 0 and emitted `[ApprovedMissionAtlasReview] result=Passed`. Earlier failures remain failures; one produced a diagnostic failure screenshot rather than a comparison gallery. A shutdown warning reported three persistent allocations, so this is not a leak-free claim.
+
+This closes the fresh menu engineering check associated with #69. The layout/progression fixture does not establish current gameplay victories. Full mission/result/return, Windows, player/device and physical notch-device acceptance remain separate pending gates. Historical gameplay evidence below retains its original source and limitations.
+
+[Historical #70 native gallery](REVIEW.md) · [40 final Game view captures](20261020-225027/) · [Capture checksums](20261020-225027/sha256.json).
 
 ## Implemented behavior
 
@@ -13,7 +21,7 @@ Owner approved the refined map-first Skirmish direction and the Campaign A chapt
 - Six released mission thumbnails were recaptured on existing geometry, with distinct camera angles and a matching selected preview. Campaign uses its existing comics. No playable map geometry, mission definitions, budgets or fixed scene bindings were changed.
 - QA fixes include narrow-screen text fitting, status/icon overlap, real mission-size control spacing, locked/coming-soon distinctions, access-to-store reachability, region heading stability and translating full Campaign purpose text before shortening it.
 
-## Current candidate validation
+## Historical implementation validation (October 20–21)
 
 | Gate | Result and scope |
 | --- | --- |
@@ -28,7 +36,7 @@ Owner approved the refined map-first Skirmish direction and the Campaign A chapt
 
 Frozen worktree source/configuration fingerprint: `d7b218f1f1107dab322d44bba172b58a51978a98dcd0c6d4096937521736b596`. The native Skirmish runner compares complete launch and finish fingerprints; original thumbnail PNGs and native screenshots have separate checksum manifests.
 
-Native worktree checks include two preserved local differences outside this menu commit: the existing Match HUD prefab and Arabic narrative font asset. Their [path/hash record](polish-evidence/preserved-local-source.json) makes this qualification explicit. Neither is silently included in the PR. Automatic approval review rejected restoring the unrelated HUD prefab because it could discard uncommitted work; it remains intact. A clean-checkout pass remains a separate pre-merge gate.
+Native worktree checks include two preserved local differences outside this menu commit: the existing Match HUD prefab and Arabic narrative font asset. Their [path/hash record](polish-evidence/preserved-local-source.json) makes this qualification explicit. Neither is silently included in the PR. Automatic approval review rejected restoring the unrelated HUD prefab because it could discard uncommitted work; it remains intact. Those historical gameplay runs retain their clean-checkout qualification; the November 5 menu-only recheck does not rerun those gameplay journeys.
 
 ## Retained evidence and failures
 

@@ -2,6 +2,14 @@
 
 Actual Unity Game view captures of source commit `2864809`, after the approved polish. PR #70 was merged on October 21. This is the earlier native gallery; the later #71 English and Persian visual style was accepted by Farhad on November 5. [Acceptance and remaining technical gates](https://github.com/farhad2na2/WarlineCapture/issues/69).
 
+## November 5 native menu recheck
+
+[PR #79](https://github.com/farhad2na2/WarlineCapture/pull/79), source `3728a38af1f22d70b0ed833653096d6929b07534`, fixes stale aircraft source-dependency stamps without changing geometry. Eleven maintenance controls and the original three geometry verifiers pass. A separate repository-wrapper run passes native menu input and all 24 page/locale/ratio cases in English and Persian at 1920×1080, 1440×1080 and 2400×1080, producing 40 local captures. Selection, difficulty, real army-size availability/rejection, region navigation, briefing and Back are covered. Reviewed current screens retain the accepted later #71 style.
+
+The run used an isolated checkout with no preserved HUD/font or other runtime-source overrides. Burst stayed enabled; synchronous Editor compilation was requested during validation setup. Runtime jobs, scheduling and numeric/safety settings are unchanged. [Compact source/evidence receipt](2026-11-05-menu-recheck.json) records exact identities; raw logs, backups, failed attempts and PNGs remain local and are not uploaded. The successful menu wrapper exited 0 and emitted `[ApprovedMissionAtlasReview] result=Passed`. Earlier failures remain failures; one produced a diagnostic failure screenshot rather than a comparison gallery. A shutdown warning reported three persistent allocations, so this is not a leak-free claim.
+
+This closes the fresh menu engineering check associated with #69. The layout/progression fixture does not establish current gameplay victories. Full mission/result/return, Windows, player/device and physical notch-device acceptance remain separate pending gates. Historical gameplay evidence below retains its original source and limitations.
+
 ## Campaign
 
 Choose a chapter with its comic cover, then select one of five large individual comic cards on that chapter's map. The selected preview uses the same mission's exact existing comic. Names lead; mission numbers are secondary. Green completion marks and released/locked/coming-soon states come from the existing Campaign model.

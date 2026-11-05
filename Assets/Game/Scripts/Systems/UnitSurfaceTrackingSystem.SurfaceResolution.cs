@@ -5,7 +5,7 @@ namespace Game.Runtime
 {
     public partial struct UnitSurfaceTrackingSystem
     {
-        private partial struct TrackUnitSurfacesJob
+        private partial struct SurfaceSamplingKernel
         {
             private bool TryResolveSurface(int2 cell, UnitSurfaceComponent unitSurface, out MapSurfaceSample sample)
             {

@@ -22,6 +22,7 @@ Detailed catalog: [120 battles and path to 200](BATTLE_CATALOG.md), [five map br
 For programming, start with [TECHNICAL_ARCHITECTURE](TECHNICAL_ARCHITECTURE.md), [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md), [all battle packets](Scenarios/README.md) and the [117 remaining work items](WORK_QUEUE_004_120.csv). Existing prototypes are S001/S025/S073; work ordinals 4–120 are not runtime indices or a renumbering of S-IDs. Every released entry requires ARIA to play and win through normal visible controls.
 
 Companions: [source audit](BASELINE.md), [delivery packages](DELIVERY.md), [acceptance and performance gates](ACCEPTANCE.md), [unit unlocks and upgrades](UNLOCKS_AND_UPGRADES.md).
+UI wireframes: [P0 battle library](P0_BATTLE_LIBRARY_WIREFRAMES.md).
 
 The unlock/upgrade direction was accepted for documentation on 2026-09-18. Later that day the owner requested the [Watch ARIA play plan](../Aria_Demonstration/PLAN.md) before expansion implementation. This expansion remains unstarted. Its new group, upgrade, air and objective mechanics must extend ARIA's shared skills and coverage as each package becomes playable.
 

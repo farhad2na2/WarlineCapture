@@ -1,9 +1,9 @@
 # Skirmish Battle Library — P0 Wireframes
 
-Date: 2026-09-20  
-Author: Game Design  
-Status: Accepted design handoff for post-E0 UI (Programmer 1 / Astra)  
-Authority branch: `codex/m03-radar-warning`  
+Date: 2026-09-20\
+Author: Game Design\
+Status: Accepted design handoff for post-E0 UI (Programmer 1 / Astra)\
+Authority branch: `codex/m03-radar-warning`\
 Upstream: `Design/Roadmap/Skirmish_Expansion/PLAN.md`, `BATTLE_CATALOG.md`, `MATCH_SETUP.md`, `DELIVERY.md` (E7/E8), `MAPS.md`
 
 ## Purpose
@@ -36,9 +36,9 @@ Design only. No implementation in this document. Do not invent parallel public m
 | IB | Industrial Basin |
 | AP | Airfield Plains |
 
-Objectives: **BA** Base Assault · **FC** Frontline Control · **BT** Breakthrough · **CE** Convoy Escort  
-Armies: **G** Ground Maneuver · **A** Air Mobile · **C** Combined Arms  
-Starts: **F** Field Base · **E** Established Base  
+Objectives: **BA** Base Assault · **FC** Frontline Control · **BT** Breakthrough · **CE** Convoy Escort\
+Armies: **G** Ground Maneuver · **A** Air Mobile · **C** Combined Arms\
+Starts: **F** Field Base · **E** Established Base\
 
 IDs **S001–S120** never change when labels localize or cards reorder.
 
@@ -220,7 +220,7 @@ First-session defaults: **Regular + Standard + Random**. CSV “recommended size
 
 ### Custom gate (P0 minimum)
 
-If the player later changes army / start / resources / asymmetry (when those controls exist): banner **“Custom — will not count as scenario completion.”**  
+If the player later changes army / start / resources / asymmetry (when those controls exist): banner **“Custom — will not count as scenario completion.”**\
 Seed / difficulty / legal size alone = still catalog identity.
 
 ### Planned briefing

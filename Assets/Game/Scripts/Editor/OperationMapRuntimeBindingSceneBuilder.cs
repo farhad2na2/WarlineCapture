@@ -197,8 +197,23 @@ namespace Game.Editor
                 MapSurfaceSceneOverlayAuthoringData[] virtualizedOverlays =
                     CaptureVirtualizedRoadSurfaceOverlays(surfaceData);
                 var combined=CombineSurfaceSceneOverlays(authoredOverlays,virtualizedOverlays,sourceScenePath);
-                MapSurfaceMeshGeometryAssetBuilder.Persist(combined);
-                return combined;
+                // The current presentation SubScene can contain newer paving than
+                // the legacy virtualization database. Bake its actual support faces too.
+                string presentationPath = sourceView.MapSubScene == null ? null :
+                    AssetDatabase.GetAssetPath(sourceView.MapSubScene.SceneAsset);
+                var paving = string.IsNullOrEmpty(presentationPath)
+                    ? Array.Empty<MapSurfaceSceneOverlayAuthoringData>()
+                    : CaptureGeneratedPavingSupport(presentationPath);
+                var complete = new List<MapSurfaceSceneOverlayAuthoringData>(combined);
+                // Replace matching generated support when the database also has it.
+                if (paving.Length > 0)
+                {
+                    complete.RemoveAll(o => o.Geometry != null && IsGeneratedPavingGeometry(o.Geometry));
+                    complete.AddRange(paving);
+                }
+                var result = complete.ToArray();
+                MapSurfaceMeshGeometryAssetBuilder.Persist(result);
+                return result;
             }
             finally
             {
@@ -351,6 +366,12 @@ namespace Game.Editor
             if (mesh == null || string.IsNullOrEmpty(mesh.name))
                 return false;
 
+            // Generated paving replaces the visible road top after Campaign beautification.
+            // Match authored support assets exactly: lane paint, rubble and sand decals
+            // must never become walkable geometry merely because their names look similar.
+            if (IsGeneratedPavingSupport(mesh))
+                return true;
+
             string name = mesh.name;
             if (name.IndexOf("DirtRoad_Slope", StringComparison.OrdinalIgnoreCase) >= 0)
                 return false;
@@ -373,6 +394,58 @@ namespace Game.Editor
 
             return name.StartsWith("SM_Env_Road_", StringComparison.OrdinalIgnoreCase) ||
                    name.StartsWith("SM_Gen_Env_Road_", StringComparison.OrdinalIgnoreCase);
+        }
+
+        internal static MapSurfaceSceneOverlayAuthoringData[] CaptureGeneratedPavingSupport(string scenePath)
+        {
+            Scene scene = SceneManager.GetSceneByPath(scenePath);
+            bool opened = !scene.IsValid() || !scene.isLoaded;
+            if (opened) scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+            try
+            {
+                var overlays = new List<MapSurfaceSceneOverlayAuthoringData>();
+                foreach (var root in scene.GetRootGameObjects())
+                foreach (var filter in root.GetComponentsInChildren<MeshFilter>(true))
+                {
+                    var renderer = filter.GetComponent<MeshRenderer>();
+                    if (renderer == null || !renderer.enabled || !filter.gameObject.activeInHierarchy ||
+                        !IsGeneratedPavingSupport(filter.sharedMesh)) continue;
+                    MapSurfaceMeshOverlayBuilder.Append(overlays, filter.sharedMesh,
+                        filter.transform.localToWorldMatrix, MapSurfaceType.Road,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded,
+                        MapSurfaceFlags.Road, 0);
+                }
+                var result = overlays.ToArray();
+                // Persist while the source scene still owns its loaded meshes.
+                MapSurfaceMeshGeometryAssetBuilder.Persist(result);
+                return result;
+            }
+            finally { if (opened) EditorSceneManager.CloseScene(scene, true); }
+        }
+
+        internal static bool IsGeneratedPavingSupport(Mesh mesh) =>
+            IsGeneratedPavingPath(AssetDatabase.GetAssetPath(mesh));
+
+        internal static bool IsGeneratedPavingGeometry(Game.Configs.MapSurfaceMeshGeometryAsset geometry) =>
+            IsGeneratedPavingPath(GroundGeometrySourcePath(geometry));
+
+        internal static string GroundGeometrySourcePath(Game.Configs.MapSurfaceMeshGeometryAsset geometry)
+        {
+            if (geometry == null) return string.Empty;
+            if (geometry.Source != null) return AssetDatabase.GetAssetPath(geometry.Source);
+            // Ground geometry keeps its mesh GUID in its deterministic asset filename;
+            // Source is deliberately nonserialized and is absent after an asset reload.
+            string filename = Path.GetFileNameWithoutExtension(AssetDatabase.GetAssetPath(geometry));
+            string[] parts = filename.Split('_');
+            return parts.Length == 4 && parts[0] == "Ground"
+                ? AssetDatabase.GUIDToAssetPath(parts[1]) : string.Empty;
+        }
+
+        private static bool IsGeneratedPavingPath(string path)
+        {
+            return path == "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_FlatPaving.asset" ||
+                   path == "Assets/Game/Art/MapBeautify/DenseCity/DenseCity_KerbPaving.asset" ||
+                   path == "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261016/BridgeSurfaces/DenseCity_PavingBridgeCutouts.asset";
         }
 
         private static Bounds TransformBounds(Bounds localBounds, Matrix4x4 matrix)

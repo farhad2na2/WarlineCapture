@@ -15,6 +15,7 @@ namespace Game.Runtime
         private const float MaxInfantrySupportLift = 1.5f;
         private EntityQuery _surfaceQuery;
         private EntityQuery _runtimeSurfaceOverlayQuery;
+        private EntityQuery _ambientCivilianQuery;
 
         public void OnCreate(ref SystemState state)
         {
@@ -22,6 +23,16 @@ namespace Game.Runtime
             _runtimeSurfaceOverlayQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
                 ComponentType.ReadOnly<BuildingRuntimeSurfaceOverlay>());
+            _ambientCivilianQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[]
+                {
+                    ComponentType.ReadOnly<CampaignMissionAmbientCivilianComponent>(),
+                    ComponentType.ReadWrite<UnitSurfaceComponent>(),
+                    ComponentType.ReadOnly<LocalTransform>()
+                },
+                None = new[] { ComponentType.ReadOnly<UnitAirMovement>() }
+            });
             state.RequireForUpdate(_surfaceQuery);
             state.RequireForUpdate<UnitSurfaceComponent>();
         }
@@ -70,7 +81,7 @@ namespace Game.Runtime
             if (!runtimeSurfaceOverlays.IsCreated)
                 runtimeSurfaceOverlays = new NativeArray<BuildingRuntimeSurfaceOverlay>(0, Allocator.TempJob);
 
-            var job = new TrackUnitSurfacesJob
+            var sampler = new SurfaceSamplingKernel
             {
                 Surface = surface,
                 MeshTriangles=_meshCache.Triangles,MeshInstances=_meshCache.Instances,
@@ -82,13 +93,59 @@ namespace Game.Runtime
                 SceneOverlayBinCellSize = SceneOverlayBinCellSize,
                 RuntimeSurfaceOverlays = runtimeSurfaceOverlays
             };
-            state.Dependency = job.ScheduleParallel(state.Dependency);
+            state.Dependency = new TrackUnitSurfacesJob { Sampler = sampler }.ScheduleParallel(state.Dependency);
+            if (!_ambientCivilianQuery.IsEmptyIgnoreFilter)
+            {
+                // Keep regular units on their original chunk query. Only the
+                // presentation-only civilians need the component lookup fallback.
+                state.Dependency = new TrackAmbientCivilianSurfacesJob
+                {
+                    Sampler = sampler,
+                    UnitGrids = SystemAPI.GetComponentLookup<UnitGrid>(true),
+                    MovementBehaviors = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true)
+                }.ScheduleParallel(state.Dependency);
+            }
             state.Dependency = runtimeSurfaceOverlays.Dispose(state.Dependency);
         }
 
         [BurstCompile]
         [WithNone(typeof(UnitAirMovement))]
+        private partial struct TrackAmbientCivilianSurfacesJob : IJobEntity
+        {
+            [ReadOnly] public SurfaceSamplingKernel Sampler;
+            [ReadOnly] public ComponentLookup<UnitGrid> UnitGrids;
+            [ReadOnly] public ComponentLookup<UnitMovementBehavior> MovementBehaviors;
+
+            public void Execute(Entity entity, ref UnitSurfaceComponent unitSurface,
+                in LocalTransform transform, in CampaignMissionAmbientCivilianComponent ambient)
+            {
+                if (UnitGrids.HasComponent(entity) && MovementBehaviors.HasComponent(entity))
+                    return;
+                var grid = new UnitGrid
+                {
+                    Cell = (int2)math.floor((transform.Position.xz - Sampler.Surface.GridOrigin.xz) / Sampler.Surface.CellSize)
+                };
+                var movement = default(UnitMovementBehavior);
+                Sampler.Execute(ref unitSurface, in grid, in movement, in transform);
+            }
+        }
+
+        [BurstCompile]
+        [WithNone(typeof(UnitAirMovement))]
         private partial struct TrackUnitSurfacesJob : IJobEntity
+        {
+            [ReadOnly] public SurfaceSamplingKernel Sampler;
+
+            public void Execute(ref UnitSurfaceComponent unitSurface, in UnitGrid unitGrid,
+                in UnitMovementBehavior movementBehavior, in LocalTransform transform)
+            {
+                Sampler.Execute(ref unitSurface, in unitGrid, in movementBehavior, in transform);
+            }
+        }
+
+        // Unmanaged sampling state shared by the two Burst jobs. Keeping it
+        // separate avoids carrying generated job/query handles into another job.
+        private partial struct SurfaceSamplingKernel
         {
             [ReadOnly] public MapSurfaceComponent Surface;
             [ReadOnly] public NativeArray<MapSurfaceMeshTriangle> MeshTriangles;

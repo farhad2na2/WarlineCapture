@@ -14,7 +14,14 @@ public sealed partial class MapSurfaceLayeredGridFocusedTests
 {
     [TestCase(false)]
     [TestCase(true)]
-    public void SpawnAndMovementUseRoadFacesAndAnimationContact(bool vehicle)
+    public void SpawnAndMovementUseRoadFacesAndAnimationContact(bool vehicle) =>
+        CheckSpawnAndMovementContact(vehicle, false);
+
+    [Test]
+    public void AmbientCiviliansGroundWithoutGameplayMovementComponents() =>
+        CheckSpawnAndMovementContact(false, true);
+
+    private void CheckSpawnAndMovementContact(bool vehicle, bool ambient)
     {
         using SurfaceBlobScope scope=CreateSurface(new int2(3,1),FlatCells(3,1),
             new[]{Sample(new int2(0,0),1,0,.813f),Sample(new int2(1,0),2,0,.813f),Sample(new int2(2,0),3,0,.813f)},Array.Empty<MapSurfaceConnection>());
@@ -34,11 +41,22 @@ public sealed partial class MapSurfaceLayeredGridFocusedTests
             {
                 em.AddComponentData(unit,new UnitResolvedAnimationIndex{Value=1});var offsets=em.AddBuffer<UnitAnimationGroundOffset>(unit);offsets.Add(default);offsets.Add(new UnitAnimationGroundOffset{Value=contactOffset});
             }
+            if (ambient)
+            {
+                em.AddComponent<CampaignMissionAmbientCivilianComponent>(unit);
+                em.RemoveComponent<UnitGrid>(unit);
+                em.RemoveComponent<UnitMovementBehavior>(unit);
+            }
             var tracking=world.CreateSystem<UnitSurfaceTrackingSystem>();var grounding=world.CreateSystem<UnitGroundingSystem>();
             for(int cell=0;cell<3;cell++)
             {
-                float3 position=new float3(cell+.5f,4,.5f);em.SetComponentData(unit,LocalTransform.FromPosition(position));em.SetComponentData(unit,new UnitGrid{Cell=new int2(cell,0)});
+                float3 position=new float3(cell+.5f,4,.5f);em.SetComponentData(unit,LocalTransform.FromPosition(position));if (!ambient) em.SetComponentData(unit,new UnitGrid{Cell=new int2(cell,0)});
                 tracking.Update(world.Unmanaged);grounding.Update(world.Unmanaged);em.CompleteAllTrackedJobs();
+                if (ambient)
+                {
+                    Assert.That(em.HasComponent<UnitGrid>(unit), Is.False);
+                    Assert.That(em.HasComponent<UnitMovementBehavior>(unit), Is.False);
+                }
                 Assert.That(em.GetComponentData<UnitSurfaceComponent>(unit).LastSampledHeight,Is.EqualTo(.45f).Within(.0001f));
                 Assert.That(em.GetComponentData<LocalTransform>(unit).Position.y-contactOffset,Is.EqualTo(.45f).Within(.0001f));
                 var grid=new GridConfig{Width=3,Height=1,CellSize=1};

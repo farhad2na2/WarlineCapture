@@ -16,10 +16,11 @@ namespace Game.Skirmish.Contracts
         public readonly SkirmishPublicArmyOrderGoalKind Kind;
         public readonly int PublicObjectiveIdentity;
         public readonly float ObjectiveX, ObjectiveZ;
-        public bool Known => sessionLength!=0 && WorldSequenceNumber!=0 && Kind != SkirmishPublicArmyOrderGoalKind.None && PublicObjectiveIdentity!=0;
+        // A World sequence number is an opaque identity; Unity assigns 0 to the first World, so 0 is valid.
+        public bool Known => sessionLength!=0 && Kind != SkirmishPublicArmyOrderGoalKind.None && PublicObjectiveIdentity!=0;
         public SkirmishPublicArmyOrderGoal(string sessionId, SkirmishPublicArmyOrderGoalKind kind, int publicObjectiveIdentity, float x, float z, ulong worldSequenceNumber)
         {
-            if (string.IsNullOrEmpty(sessionId) || sessionId.Length > 128 || worldSequenceNumber==0 || publicObjectiveIdentity==0 || kind <= SkirmishPublicArmyOrderGoalKind.None || kind > SkirmishPublicArmyOrderGoalKind.HomeDefense || float.IsNaN(x) || float.IsInfinity(x) || float.IsNaN(z) || float.IsInfinity(z)) throw new ArgumentException("Current public army goal required");
+            if (string.IsNullOrEmpty(sessionId) || sessionId.Length > 128 || publicObjectiveIdentity==0 || kind <= SkirmishPublicArmyOrderGoalKind.None || kind > SkirmishPublicArmyOrderGoalKind.HomeDefense || float.IsNaN(x) || float.IsInfinity(x) || float.IsNaN(z) || float.IsInfinity(z)) throw new ArgumentException("Current public army goal required");
             var bytes=new System.Text.UTF8Encoding(false,true).GetBytes(sessionId);
             if(bytes.Length>64)throw new ArgumentException("Native fixed session identity exceeds public goal capacity");
             var parts=new ulong[8];for(int i=0;i<bytes.Length;i++)parts[i/8]|=(ulong)bytes[i]<<(8*(i%8));

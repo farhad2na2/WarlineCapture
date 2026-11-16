@@ -62,8 +62,8 @@ namespace Game.Editor
             }
             catch(Exception error)
             {
-                EditorApplication.isPlaying=false;
-                Debug.LogError("[RigidAircraftGeometryCache] result=Failed stage=EditorPlayEntry reason="+error.Message);
+                // Reported, not blocking: stale aircraft metadata must not stop every mission from entering Play Mode.
+                Debug.LogWarning("[RigidAircraftGeometryCache] result=Failed stage=EditorPlayEntry playModeBlocked=0 reason="+error.Message);
             }
         }
         public static bool Equal(SkirmishRigidAircraftGeometryConfig actual,SkirmishRigidAircraftGeometryConfig expected,out string error)

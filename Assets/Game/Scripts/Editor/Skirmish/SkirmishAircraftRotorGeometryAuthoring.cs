@@ -168,7 +168,9 @@ namespace Game.Editor
         static void OnPlay(PlayModeStateChange state)
         {
             if(state!=PlayModeStateChange.ExitingEditMode||AssetDatabase.LoadMainAssetAtPath(SkirmishCanonicalAircraftGeometryAuthoring.Output)==null)return;
-            try{ValidateInstalled();}catch(Exception error){EditorApplication.isPlaying=false;Debug.LogError("[MeasuredAircraftRotorGeometry] result=Failed stage=EditorPlayEntry reason="+error.Message);}
+            // Stale aircraft rotor metadata must not stop every mission from entering Play Mode.
+            // It is reported here and still fails closed in the build guard below.
+            try{ValidateInstalled();}catch(Exception error){Debug.LogWarning("[MeasuredAircraftRotorGeometry] result=Failed stage=EditorPlayEntry playModeBlocked=0 reason="+error.Message);}
         }
     }
     public sealed class SkirmishAircraftRotorGeometryBuildGuard:IPreprocessBuildWithReport

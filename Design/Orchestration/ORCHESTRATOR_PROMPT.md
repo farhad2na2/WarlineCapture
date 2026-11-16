@@ -43,7 +43,8 @@ Read these once; they are binding and already decided.
 - Delete only your own run logs under the program log folder, per the retention rule below.
 - Edit `AGENTS.md` only to add the pointer to this program and to document `--reuse`.
 
-Not authorized: new physical maps, changes to unit stats, purchases, new accounts, deleting anything
+Not authorized: rebuilding, deleting or duplicating the Unity `Library` (owner rule: it takes too
+long; Unity runs only on the main checkout), new physical maps, changes to unit stats, purchases, new accounts, deleting anything
 outside the program log folder, touching Unity Hub, licensing or unrelated Editors.
 
 ## The loop

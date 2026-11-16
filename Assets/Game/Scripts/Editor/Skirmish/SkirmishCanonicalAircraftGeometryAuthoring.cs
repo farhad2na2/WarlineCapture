@@ -99,7 +99,8 @@ namespace Game.Editor
             if(state!=PlayModeStateChange.ExitingEditMode)return;
             var installed=AssetDatabase.LoadAssetAtPath<SkirmishCanonicalAircraftGeometryConfig>(Output);if(installed==null)return;
             try{if(EditorUtility.IsDirty(installed))throw new InvalidOperationException("Dirty canonical aircraft metadata");Validate(installed);}
-            catch(Exception error){EditorApplication.isPlaying=false;Debug.LogError("[CanonicalAircraftGeometry] result=Failed stage=EditorPlayEntry reason="+error.Message);}
+            // Reported, not blocking: stale aircraft metadata must not stop every mission from entering Play Mode.
+            catch(Exception error){Debug.LogWarning("[CanonicalAircraftGeometry] result=Failed stage=EditorPlayEntry playModeBlocked=0 reason="+error.Message);}
         }
     }
     public sealed class SkirmishCanonicalAircraftGeometryBuildGuard:IPreprocessBuildWithReport

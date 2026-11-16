@@ -24,7 +24,8 @@ namespace Game.Runtime
         readonly Dictionary<string,Dictionary<uint,SkirmishAcceptedArmyOrderIntent>> sessions=new();
         ulong sequence;
         readonly ulong worldSequenceNumber;
-        public SkirmishAcceptedArmyOrderLedger(ulong worldSequenceNumber){if(worldSequenceNumber==0)throw new ArgumentOutOfRangeException(nameof(worldSequenceNumber));this.worldSequenceNumber=worldSequenceNumber;}
+        // Unity assigns sequence number 0 to the first World after a domain reload, so 0 is a valid identity.
+        public SkirmishAcceptedArmyOrderLedger(ulong worldSequenceNumber){this.worldSequenceNumber=worldSequenceNumber;}
         public bool ObserveResult(bool accepted,string session,uint group,in SkirmishPublicArmyOrderGoal goal,SkirmishAcceptedArmyOrderArgumentKind kind,int x,int y,float3 position,Entity target)
         {
             if(!accepted)return false;

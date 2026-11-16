@@ -13,8 +13,8 @@ import statistics
 import subprocess
 import sys
 
-JOB = re.compile(r'^\[SkirmishAriaQueue\] job=(\d+)/(\d+) catalog=(\S+) seed=(\S+) locale=(\S+) result=(Victory|Defeat|Draw|Abort) seconds=((?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)$')
-COMPLETED = re.compile(r'^\[SkirmishAriaQueue\] result=Completed jobs=(\d+) recorded=(\d+) wins=(\d+)$')
+JOB = re.compile(r'^\[SkirmishAriaQueue\] job=(\d+)/(\d+) catalog=(\S+) seed=(\S+) locale=(\S+) result=(Victory|Defeat|Draw|Abort) seconds=((?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)(?: recorded=\d+ countedWin=\d+)?$')
+COMPLETED = re.compile(r'^\[SkirmishAriaQueue\] result=Completed jobs=(\d+) recorded=(\d+) wins=(\d+)(?: .*)?$')
 COLUMNS = ('aria_en', 'aria_fa', 'aria_time_s', 'unity_result', 'last_log', 'updated')
 
 

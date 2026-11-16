@@ -64,8 +64,16 @@ Run this cycle until the goal is met or a circuit breaker trips.
    10 or more missions per session, normal speed and normal input.
 6. **Record.** Update `missions.csv` from harness log output only. Write the daily review. Commit.
 
-Wake yourself with a scheduled task every 4 hours while work is in flight, and whenever a worker
-finishes. Keep the Mac awake while a batch is running.
+**Cadence (owner rule, 2026-11-16): the orchestrator runs once a day, not continuously**, because
+it is the most expensive model. One scheduled cycle per day: review, verify, write the next
+directive in `Design/Orchestration/directives/YYYY-MM-DD.md`, start the shift, stop.
+
+Between cycles a **Sonnet shift lead** executes the directive: it merges worker branches that pass
+their check, owns the Unity lane, runs the queue batches, updates the table through
+`Tools/Missions/run_aria_queue.py`, and writes `Design/Orchestration/daily/shift-YYYY-MM-DD.md`.
+The shift lead never makes gate or design decisions; it records blockers and moves on. Codex does
+the bulk mechanical work in parallel. Set Codex reasoning effort per brief: low or medium for
+mechanical tasks, high only for scoped C#.
 
 ## Workers and cost tiers
 

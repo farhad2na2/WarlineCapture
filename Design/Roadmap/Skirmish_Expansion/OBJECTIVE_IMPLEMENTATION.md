@@ -27,7 +27,7 @@ Inputs: original designated player/enemy main-base stable IDs, live health/destr
 | Enemy main base dead, player alive | Victory / MainBaseDestroyed |
 | Player dead, enemy alive | Defeat / MainBaseDestroyed |
 | Both dead on current tick | Draw / BothBasesDestroyed |
-| Both alive at deadline | Draw / TimeLimit |
+| Both alive at deadline | The side with the higher main-base health percentage wins; equal percentages draw. Both base health bars are visible on the HUD from mission start. |
 | Either army wiped but its base alive | Continue; normal production/recovery remains possible |
 
 UI: both base health/status, deadline, public focus actions and correct hidden-target behavior. A known base marker is not a live hidden-health feed; use last observed health outside vision and explain its age. The result uses authoritative base facts while the planner only knows visible/last-seen facts.

@@ -1,5 +1,9 @@
 # All 120 Skirmish programming briefs
 
+## Mission plan amendment — 2026-11-16
+
+The [mission plan](../MISSION_PLAN_2026-11-16.md) is binding and supersedes conflicting text below: Unity is the only authority for mission results; per-mission acceptance is Standard size and Regular difficulty (three English ARIA wins and one Farsi win at 40–70% of the deadline, using every available unit type); other sizes and difficulties are certified once per layout; Base Assault uses a main-base health tiebreak at the deadline; starting forces, resources, production capacity and deadlines are tuned from Unity ARIA results.
+
 **Status: Planned.** Twenty map/objective packets each contain six individually specified army/start variants. The [handoff](../IMPLEMENTATION_HANDOFF.md) explains the distinction between work ordinals 4–120 and stable S-IDs. Read the shared architecture, objectives, roster/economy and map contracts before the assigned packet.
 
 ## Mission product amendment — 2026-09-28

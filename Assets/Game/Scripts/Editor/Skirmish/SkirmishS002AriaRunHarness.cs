@@ -474,6 +474,7 @@ namespace Game.Editor
             "S005" => "Design/AgentReports/SkirmishExpansion/S005/",
             SkirmishAcceptanceCensusCapture.S004CatalogId => SkirmishAcceptanceScaffold.S004RelativeReportEvidenceDirectory,
             SkirmishAcceptanceCensusCapture.S003CatalogId => SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory,
+            _ when IsGenericAriaCatalog(catalogId) => SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectoryFor(catalogId),
             _ => SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory
         };
 
@@ -502,6 +503,8 @@ namespace Game.Editor
                 return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS004(selectedSeed, selectedLocale, out payload, out error);
             if (catalog == SkirmishAcceptanceCensusCapture.S003CatalogId)
                 return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(selectedSeed, selectedLocale, out payload, out error);
+            if (IsGenericAriaCatalog(catalog))
+                return TryCreateGenericAriaPayload(catalog, selectedSeed, selectedLocale, out payload, out error);
             return SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(selectedSeed, selectedLocale, out payload, out error);
         }
 
@@ -541,9 +544,11 @@ namespace Game.Editor
                 : requestedCatalog;
             seed = requestedSeed;
             locale = requestedLocale;
-            Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog");
+            // An ARIA queue hashes once at queue start and again at queue end.
+            string launchFingerprint = AriaQueueSourceHashOrNull();
+            if (launchFingerprint == null) Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=LaunchCatalog");
             var launchFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
-            string launchFingerprint = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
+            if (launchFingerprint == null) launchFingerprint = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
             launchFingerprintTimer.Stop();
             Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=LaunchCatalog elapsedMilliseconds=" + launchFingerprintTimer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + launchFingerprint);
             RecordProductionBatchFingerprint("Begin",launchFingerprint,launchFingerprintTimer.Elapsed.TotalMilliseconds);
@@ -1006,6 +1011,7 @@ namespace Game.Editor
                 ? SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex
                 : catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
                     ? SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex
+                    : IsGenericAriaCatalog(catalogId) ? GenericAriaScenarioIndex(catalogId)
                     : SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
             config.MapSeed = seed;
             if (!SkirmishLaunchProjection.TryQueue(em, config))
@@ -1916,7 +1922,9 @@ namespace Game.Editor
             // Editor thread, and no receipt is written until this task completes.
             Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=Finish aborted=" + abort + " reason=" + abortReason);
             finishFingerprintTimer = System.Diagnostics.Stopwatch.StartNew();
-            finishSourceHash = System.Threading.Tasks.Task.Run(() => SkirmishCandidateSourceHash.Compute(root));
+            string queueSourceHash = AriaQueueSourceHashOrNull(); // Queue end re-hashes once for the whole queue.
+            finishSourceHash = queueSourceHash != null ? System.Threading.Tasks.Task.FromResult(queueSourceHash)
+                : System.Threading.Tasks.Task.Run(() => SkirmishCandidateSourceHash.Compute(root));
             EditorApplication.update += PollFinishSourceHash;
         }
 
@@ -2145,7 +2153,8 @@ namespace Game.Editor
                 productionBatch.Matrix.ValidateJob(productionCanary.Request.Job);
                 runId=catalogId+"-aria-matrix-"+(string)productionCanary.Request.Claim["attempt_id"];
             }
-            if (!matrixJob&&!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out runId, out idError))
+            if (!matrixJob&&!(IsGenericAriaCatalog(catalogId) ? TryNextGenericAriaRunId(csv, catalogId, seed, locale, out runId, out idError)
+                : SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out runId, out idError)))
             {
                 Debug.LogError("[SkirmishS002AriaRun] result=Failed " + idError);
                 UiShellRuntimeGateway.StopAriaPlay();
@@ -2242,6 +2251,7 @@ namespace Game.Editor
                 Debug.Log(log.Trim());
             else
                 Debug.LogError(log.Trim());
+            ObserveAriaQueueJobRow(appended, counted, row);
 
             AriaCommandEvidence.End();
             UiShellRuntimeGateway.StopAriaPlay();
@@ -2256,6 +2266,7 @@ namespace Game.Editor
         {
             census = null;
             if(productionBatch?.Matrix!=null)return false; // Matrix records use verified native setup observations, never the S002 fallback.
+            if (IsGenericAriaCatalog(catalogId)) return TryReadGenericAriaCensus(out census);
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out _))
                 return false;
             var packaged = SkirmishExpansionCatalogConfig.Load();
@@ -2325,6 +2336,7 @@ namespace Game.Editor
                 Debug.LogError("[SkirmishProductionCanaryCleanup] result=Failed error=" + cleanupError);
                 // Preserve context/artifacts for investigation; complete wrapper as failed.
             }
+            if(TryContinueAriaQueue(exitCode)) return;
             if(TryCompleteProductionBatchJob(exitCode)) return;
             Debug.Log("[SkirmishValidationExit] result=Requested code=" + exitCode);
             if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)

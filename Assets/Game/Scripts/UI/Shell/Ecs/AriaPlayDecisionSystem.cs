@@ -34,7 +34,7 @@ namespace Game.UI.Shell.Ecs
             }
             if (session.Phase != AriaPlayPhase.Touching && now - session.LastObjectiveProgressAt > 180f)
             {
-                session.Phase = AriaPlayPhase.Blocked;
+                session.Phase = AriaPlayPhase.Blocked; session.StopReason = 111;
                 session.GestureRequested = 0;
                 return;
             }
@@ -49,6 +49,7 @@ namespace Game.UI.Shell.Ecs
             if (observation.Kind == AriaPlayObservationKind.Cinematic)
             {
                 session.Phase = now - session.LastProgressAt > 180f ? AriaPlayPhase.Blocked : AriaPlayPhase.Waiting;
+                if (session.Phase == AriaPlayPhase.Blocked) session.StopReason = 112;
                 session.GestureRequested = 0;
                 return;
             }
@@ -63,13 +64,14 @@ namespace Game.UI.Shell.Ecs
                 // than leaving the session permanently aimed at stale screen geometry.
                 if (session.Phase != AriaPlayPhase.Aiming || now > session.DueAt + 1.5f)
                     session.Phase = now - session.LastProgressAt > 180f ? AriaPlayPhase.Blocked : AriaPlayPhase.Waiting;
+                if (session.Phase == AriaPlayPhase.Blocked) session.StopReason = 113;
                 session.GestureRequested = 0;
                 return;
             }
             if (observation.Kind == AriaPlayObservationKind.Unavailable)
             {
                 session.GestureRequested = 0;
-                if (now - session.LastProgressAt > 15f) session.Phase = AriaPlayPhase.Blocked;
+                if (now - session.LastProgressAt > 15f) { session.Phase = AriaPlayPhase.Blocked; session.StopReason = 114; }
                 return;
             }
             if (now < session.DueAt) return;
@@ -104,7 +106,7 @@ namespace Game.UI.Shell.Ecs
                     session.LastProgressAt = now;
                 }
             }
-            if (session.Attempts >= 3) { session.Phase = AriaPlayPhase.Blocked; return; }
+            if (session.Attempts >= 3) { session.Phase = AriaPlayPhase.Blocked; session.StopReason = 115; return; }
             if (session.Phase != AriaPlayPhase.Aiming)
             {
                 session.Target = observation.Position;

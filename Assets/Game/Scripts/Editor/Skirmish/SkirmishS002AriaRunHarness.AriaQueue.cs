@@ -37,6 +37,8 @@ namespace Game.Editor
         private const string AriaQueueJobRecordedKey = "Warline.AriaQueue.JobRecorded";
         private const string AriaQueueJobCountedKey = "Warline.AriaQueue.JobCounted";
         private const string AriaQueueJobResultKey = "Warline.AriaQueue.JobResult";
+        private const string AriaQueueRowsKey = "Warline.AriaQueue.Rows";
+        private const string AriaQueueResultsKey = "Warline.AriaQueue.Results";
         private const string AriaQueueLog = "[SkirmishAriaQueue]";
         private const int AriaQueueMaximumJobs = 1200;
         // Tick already aborts a playing job after WallClockBudgetSeconds. This only
@@ -191,6 +193,7 @@ namespace Game.Editor
         /// </summary>
         public static void RunAriaQueueAndExit()
         {
+            QueuePhase("queue_start");
             try
             {
                 if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling ||
@@ -209,15 +212,19 @@ namespace Game.Editor
                 if (jobs.Count < 1 || jobs.Count > AriaQueueMaximumJobs)
                     throw new InvalidDataException("ARIA queue requires 1.." + AriaQueueMaximumJobs + " jobs; found " + jobs.Count + ".");
 
+                QueuePhase("fingerprint_start");
                 Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=AriaQueue");
                 var timer = System.Diagnostics.Stopwatch.StartNew();
-                string sourceHash = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
-                timer.Stop();
+                string sourceHash;
+                try { sourceHash = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, ".."))); }
+                finally { timer.Stop(); QueuePhase("fingerprint_end"); }
                 if (string.IsNullOrEmpty(sourceHash) || sourceHash.Length != 64)
                     throw new InvalidDataException("ARIA queue source fingerprint unavailable.");
                 Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=AriaQueue elapsedMilliseconds=" +
                     timer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + sourceHash);
 
+                SessionState.SetString(AriaQueueRowsKey, "");
+                SessionState.SetString(AriaQueueResultsKey, "");
                 SessionState.SetString(AriaQueuePathKey, path);
                 SessionState.SetString(AriaQueueJobsKey, string.Join("\n", jobs));
                 SessionState.SetInt(AriaQueueIndexKey, 0);
@@ -238,7 +245,7 @@ namespace Game.Editor
             {
                 Debug.LogError(AriaQueueLog + " result=Failed reason=startup error=" + error);
                 SessionState.SetBool(AriaQueueActiveKey, false);
-                if (!EditorApplication.isPlayingOrWillChangePlaymode) EditorApplication.Exit(2);
+                if (!EditorApplication.isPlayingOrWillChangePlaymode) { QueuePhase("exit"); EditorApplication.Exit(2); }
             }
         }
 
@@ -329,6 +336,7 @@ namespace Game.Editor
                 CompleteAriaQueue();
                 return;
             }
+            QueuePhase("job_start", index + 1);
             SessionState.SetString(AriaQueueJobStartKey, DateTime.UtcNow.Ticks.ToString(CultureInfo.InvariantCulture));
             SessionState.SetBool(AriaQueueJobRecordedKey, false);
             SessionState.SetBool(AriaQueueJobCountedKey, false);
@@ -365,6 +373,13 @@ namespace Game.Editor
         private static void ObserveAriaQueueJobRow(bool appended, bool counted, string row)
         {
             if (!SessionState.GetBool(AriaQueueActiveKey, false)) return;
+            if (appended)
+            {
+                string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+                string entry = Convert.ToBase64String(Encoding.UTF8.GetBytes(RunsCsvPath(root))) + " " +
+                    Convert.ToBase64String(Encoding.UTF8.GetBytes(row));
+                SessionState.SetString(AriaQueueRowsKey, SessionState.GetString(AriaQueueRowsKey, "") + entry + "\n");
+            }
             SessionState.SetBool(AriaQueueJobRecordedKey, appended);
             SessionState.SetBool(AriaQueueJobCountedKey, appended && counted);
             string result = appended ? RowResult(row) : string.Empty;
@@ -398,11 +413,11 @@ namespace Game.Editor
             string seconds = AriaQueueJobSeconds().ToString("0.#", CultureInfo.InvariantCulture);
             if (recorded) SessionState.SetInt(AriaQueueRecordedKey, SessionState.GetInt(AriaQueueRecordedKey, 0) + 1);
             if (counted) SessionState.SetInt(AriaQueueWinsKey, SessionState.GetInt(AriaQueueWinsKey, 0) + 1);
-            Debug.Log(AriaQueueLog + " job=" + (index + 1) + "/" + jobs.Length + " catalog=" + fields[0] +
-                " seed=" + fields[1] + " locale=" + fields[2] + " result=" + result + " seconds=" + seconds +
-                " recorded=" + (recorded ? 1 : 0) + " countedWin=" + (counted ? 1 : 0));
-            AppendAriaQueueResult(string.Join(",", (index + 1).ToString(CultureInfo.InvariantCulture), fields[0], fields[1],
-                fields[2], result, recorded ? "1" : "0", counted ? "1" : "0", seconds), false);
+            QueuePhase("job_end", index + 1);
+            // Publish job markers only after the queue-wide source guard is known.
+            string entry = string.Join(",", (index + 1).ToString(CultureInfo.InvariantCulture), fields[0], fields[1],
+                fields[2], result, recorded ? "1" : "0", counted ? "1" : "0", seconds);
+            SessionState.SetString(AriaQueueResultsKey, SessionState.GetString(AriaQueueResultsKey, "") + entry + "\n");
             SessionState.SetBool(AriaQueueInFlightKey, false);
             SessionState.SetInt(AriaQueueIndexKey, index + 1);
             SessionState.SetBool(AriaQueuePendingKey, true);
@@ -423,10 +438,11 @@ namespace Game.Editor
             string endHash = string.Empty;
             try
             {
+                QueuePhase("fingerprint_start");
                 Debug.Log("[SkirmishCandidateFingerprint] phase=Start owner=AriaQueueEnd");
                 var timer = System.Diagnostics.Stopwatch.StartNew();
-                endHash = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, "..")));
-                timer.Stop();
+                try { endHash = SkirmishCandidateSourceHash.Compute(Path.GetFullPath(Path.Combine(Application.dataPath, ".."))); }
+                finally { timer.Stop(); QueuePhase("fingerprint_end"); }
                 Debug.Log("[SkirmishCandidateFingerprint] phase=Completed owner=AriaQueueEnd elapsedMilliseconds=" +
                     timer.Elapsed.TotalMilliseconds.ToString("R", CultureInfo.InvariantCulture) + " sha256=" + endHash);
             }
@@ -435,6 +451,13 @@ namespace Game.Editor
                 Debug.LogError("[SkirmishSourceFingerprint] result=Failed owner=AriaQueueEnd error=" + error);
             }
             bool sourceUnchanged = startHash.Length == 64 && endHash == startHash;
+            if (!sourceUnchanged)
+            {
+                try { InvalidateAriaQueueRows(); }
+                catch (Exception error) { Debug.LogError(AriaQueueLog + " rowInvalidationFailed=1 error=" + error); }
+                wins = 0;
+            }
+            PublishAriaQueueJobs(jobs.Length, sourceUnchanged);
             int exitCode = sourceUnchanged && recorded == jobs.Length ? 0 : 2;
             if (sourceUnchanged)
                 Debug.Log(AriaQueueLog + " result=Completed jobs=" + jobs.Length + " recorded=" + recorded + " wins=" + wins +
@@ -442,8 +465,57 @@ namespace Game.Editor
             else
                 Debug.LogError(AriaQueueLog + " result=Failed reason=candidateSourceChangedDuringQueue jobs=" + jobs.Length +
                     " recorded=" + recorded + " wins=" + wins + " sourceUnchanged=0 exitCode=" + exitCode);
-            Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT", "1");
-            RequestQuitIfAsked(exitCode);
+            // The queue is already idle and each job has completed its owned cleanup.
+            // Do not defer to another Editor update after a long synchronous census.
+            Debug.Log("[SkirmishValidationExit] result=Requested code=" + exitCode);
+            QueuePhase("exit");
+            if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
+                MissionEditorValidationExit.Complete(exitCode == 0);
+            else
+                EditorApplication.Exit(exitCode);
+        }
+
+        private static void QueuePhase(string phase, int job = 0)
+        {
+            Debug.Log(AriaQueueLog + " phase=" + phase + " t=" + DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture) +
+                (job > 0 ? " job=" + job.ToString(CultureInfo.InvariantCulture) : ""));
+        }
+
+        private static void PublishAriaQueueJobs(int total, bool sourceUnchanged)
+        {
+            foreach (string entry in SessionState.GetString(AriaQueueResultsKey, "").Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                string[] fields = entry.Split(',');
+                if (!sourceUnchanged) { fields[4] = SkirmishS002AriaRunLog.ResultAbort; fields[6] = "0"; }
+                Debug.Log(AriaQueueLog + " job=" + fields[0] + "/" + total + " catalog=" + fields[1] +
+                    " seed=" + fields[2] + " locale=" + fields[3] + " result=" + fields[4] + " seconds=" + fields[7] +
+                    " recorded=" + fields[5] + " countedWin=" + fields[6]);
+                AppendAriaQueueResult(string.Join(",", fields), false);
+            }
+        }
+
+        private static void InvalidateAriaQueueRows()
+        {
+            foreach (string entry in SessionState.GetString(AriaQueueRowsKey, "").Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                try
+                {
+                string[] parts = entry.Split(' ');
+                string path = Encoding.UTF8.GetString(Convert.FromBase64String(parts[0]));
+                string row = Encoding.UTF8.GetString(Convert.FromBase64String(parts[1]));
+                string[] fields = row.Split(',');
+                if (fields.Length != 20) throw new InvalidDataException("Unexpected queue run row.");
+                fields[13] = SkirmishS002AriaRunLog.ResultAbort;
+                fields[14] = "candidateSourceChangedDuringQueue";
+                string content = File.ReadAllText(path);
+                string original = row + "\n";
+                int position = content.IndexOf(original, StringComparison.Ordinal);
+                if (position < 0 || (position > 0 && content[position - 1] != '\n'))
+                    throw new InvalidDataException("Queue run row missing: " + fields[0]);
+                File.WriteAllText(path, content.Remove(position, original.Length).Insert(position, string.Join(",", fields) + "\n"), new UTF8Encoding(false));
+                }
+                catch (Exception error) { Debug.LogError(AriaQueueLog + " rowInvalidationFailed=1 error=" + error); }
+            }
         }
 
         private static void AppendAriaQueueResult(string line, bool header)

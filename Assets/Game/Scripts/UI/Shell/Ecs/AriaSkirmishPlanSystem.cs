@@ -53,7 +53,10 @@ namespace Game.UI.Shell.Ecs
                 if(!view.ValueRO.Value.Active){plan.ValueRW=default;continue;}
                 var touch=em.GetComponentData<AriaPlaySessionComponent>(boundary);
                 var output=em.GetComponentData<AriaPlayObservationComponent>(boundary);
+                var priorPhase=touch.Phase;
                 Step(view.ValueRO.Value,ref plan.ValueRW,ref touch,ref output);
+                if(priorPhase!=AriaPlayPhase.Blocked && touch.Phase==AriaPlayPhase.Blocked)
+                    touch.StopReason=101; // Planner; input diagnostics include its inspection/watchdog state.
                 em.SetComponentData(boundary,touch);em.SetComponentData(boundary,output);
             }
             cleanup.Playback(em);

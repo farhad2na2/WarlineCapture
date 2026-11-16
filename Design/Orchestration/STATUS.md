@@ -35,3 +35,7 @@ record is `missions.csv`.
 - 2026-11-16 23:59 codex: codex-003-terminal-probe finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-003-terminal-probe.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-003-terminal-probe-report.txt (not yet verified or merged)
 - 2026-11-16 23:59 codex: batch finished: codex-003-terminal-probe:high:50 codex-004-aria-blocked:high:50 codex-005-queue-exit:high:50 codex-006-ba-drafts:medium:40
 - 2026-11-16 23:58 shift lead: S006 authoring PASSED (`result=Passed catalog=S006 ... variants=12 publication=InProgress`); committing generated assets, then S006 queue run (S006,130370,en).
+- 2026-11-17 00:02 shift lead: four Codex patches applied cleanly; compile check started (compile-2.log).
+- 2026-11-17 00:02 orchestrator: Codex batch reviewed: tasks 3, 4 and 5 found no root cause and added trace logging only; task 6 wrote 16 drafts (S074–S078 have no layout data). Shift lead told to apply them and run S002 + S006 in one queue.
+- 2026-11-17 00:02 orchestrator: WARNING disk: 11 piled-up git repack processes wrote about 141 GB of temp files; free space 67 GB and falling. Auto maintenance is now off; stopping the processes needs the owner. Unity runs pause below 30 GB.
+- 2026-11-17 00:21 shift lead: compile check with 4 Codex patches PASSED (compile-2.log), test_drafts PASS (16). Next: queue S002,130365,en + S006,130370,en. Disk free 48 GB.

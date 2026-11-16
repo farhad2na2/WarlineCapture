@@ -16,6 +16,17 @@ namespace Game.UI.Shell.Ecs
         private AriaTouchInputUiSystemHelper touch;
         private Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoal gestureGoal;
         private string goalSession; private ulong goalWorld;
+        private bool reportedBlocked;
+        private void TraceS002(string eventName, in AriaPlaySessionComponent session, in AriaPlayObservationComponent observation)
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1) return;
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            Debug.Log($"[AriaS002Trace] event={eventName} frame={v.Frame} time={v.Time} phase={session.Phase} reason={session.StopReason} intent={p.Intent} kind={observation.Kind} target={session.TargetId} offered={observation.TargetId} goal={observation.GoalId} attempts={session.Attempts} actions={session.Actions} screen={session.Target} drag={session.Drag} dragEnd={session.DragEnd} lastProgress={session.LastProgressAt} objectiveProgress={session.LastObjectiveProgressAt} planProgress={p.LastProgressAt} infantry={v.Infantry} playerHealth={v.PlayerHealth} enemyHealth={v.EnemyHealth} distanceKnown={v.AssaultDistanceVisible} distance={v.NearestFriendlyObjectiveDistance} selected={v.SelectedCount} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} groups={v.ExpandedTotalGroups} group0={v.ExpandedGroup0} group1={v.ExpandedGroup1} group2={v.ExpandedGroup2} group3={v.ExpandedGroup3} group4={v.ExpandedGroup4} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} inspectStage={p.AssaultInspectStage} mapOpen={v.MapOpen} mapOwned={v.AssaultMap.ExpectedIdentity} mapId={v.AssaultMap.Identity} expectedMapId={p.AssaultInspectMapIdentity} closeAvailable={v.CloseMap.Available} precisionStage={p.PrecisionStage} precisionGroup={p.PrecisionGroup} precisionAttempts={p.PrecisionAttempts} receiptPresented={v.PrecisionAttack.Presented} receiptGroup={v.PrecisionAttack.GroupId} receiptAccepted={v.PrecisionAttack.AcceptedMembers} receiptSource={v.PrecisionAttack.SourceMembers} goalKind={gestureGoal.Kind} goalKnown={gestureGoal.Known} goalX={gestureGoal.ObjectiveX} goalZ={gestureGoal.ObjectiveZ}");
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -88,7 +99,9 @@ namespace Game.UI.Shell.Ecs
                 found = true;
                 ref var current = ref session.ValueRW;
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
-                { if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
+                { if (current.Phase == AriaPlayPhase.Blocked && !reportedBlocked) { TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true; }
+                  if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
+                reportedBlocked = false;
                 if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match ||
                     (!Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation) || UnityEngine.Time.timeScale <= 0 ||
                     (current.Phase != AriaPlayPhase.Starting && UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5) ||
@@ -121,9 +134,10 @@ namespace Game.UI.Shell.Ecs
                 {
                     current.GestureRequested = 0;
                     CaptureGoal(current.TargetId);
+                    TraceS002("gesture", current, observation.ValueRO);
                     if (!touch.TryGesture(current.Target, current.Drag != 0 ? current.DragEnd : current.Target,
                         current.Drag != 0 ? .5f : hasSkirmish ? .15f : .08f, current.Drag != 0 ? .9f : 0, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime)))
-                    { touch.Stop();ClearGoalContext(); current.Phase = AriaPlayPhase.Blocked; continue; }
+                    { current.Phase = AriaPlayPhase.Blocked; current.StopReason = 116; TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true; touch.Stop();ClearGoalContext(); continue; }
                 }
                 touch.Tick(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime));
                 current.Contact = touch.ContactPosition;

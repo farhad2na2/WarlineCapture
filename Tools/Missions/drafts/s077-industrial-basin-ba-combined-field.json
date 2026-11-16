@@ -1,0 +1,8 @@
+{
+  "catalog_id": "S077",
+  "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
+  "notes": "S074 logical binding supplies no layout coordinates; source identity is from the binding. Layout is incomplete.",
+  "anchors": {},
+  "pads": {},
+  "routes": []
+}

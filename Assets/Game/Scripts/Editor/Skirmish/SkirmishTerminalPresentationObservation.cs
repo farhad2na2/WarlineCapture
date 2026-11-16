@@ -68,7 +68,7 @@ namespace Game.Editor
         }
 
         // The caller supplies the existing normal presented-button predicate; no alternate raycast/input path.
-        public static Proof ReadMenu(string attempt, Func<Button, Vector2?> presentedPoint)
+        public static Proof ReadMenu(string attempt, Func<Button, Vector2?> presentedPoint, bool logCandidates = false)
         {
             var candidates = new List<Proof>();
             foreach (var binding in UnityEngine.Object.FindObjectsByType<UIShellRouteButtonView>(FindObjectsInactive.Exclude))
@@ -85,8 +85,14 @@ namespace Game.Editor
                 var point = presentedPoint == null ? null : presentedPoint(button);
                 proof.presented = point.HasValue;
                 if (point.HasValue) { proof.pointX = point.Value.x; proof.pointY = point.Value.y; }
+                if (logCandidates)
+                    Debug.Log("[SkirmishTerminalTimeoutMenuProof] accepted=" + AcceptMenu(proof, attempt) +
+                        " owner=" + proof.ownerPath + " control=" + proof.controlPath + " titlePath=" + proof.titlePath +
+                        " rendered=" + proof.rendered + " presented=" + proof.presented + " copyMatches=" + proof.copyMatches +
+                        " expected=" + proof.expectedTitle + " actual=" + proof.actualTitle + " locale=" + proof.locale);
                 candidates.Add(proof);
             }
+            if (logCandidates) Debug.Log("[SkirmishTerminalTimeoutMenuProof] candidates=" + candidates.Count);
             return SelectUniqueMenu(candidates, attempt);
         }
 

@@ -27,6 +27,7 @@ namespace Game.Editor
         private static int terminalPlayerHp, terminalEnemyHp, terminalStep;
         private static double terminalDue, terminalDeadline;
         private static double terminalDestinationVisibleSince;
+        private static double terminalLastPlayerFrame;
         private static SkirmishTerminalPresentationObservation.Proof terminalResultPresentation, terminalMenuPresentation;
         private static AriaTouchInputUiSystemHelper terminalTouch;
         private static int terminalInterventions, terminalUnexpectedSamples;
@@ -62,6 +63,7 @@ namespace Game.Editor
             terminalPlayerHp = DesignatedBaseHp(em, session, 1);
             terminalEnemyHp = DesignatedBaseHp(em, session, 2);
             terminalStep = 0;
+            terminalLastPlayerFrame = EditorApplication.timeSinceStartup;
             terminalDestinationVisibleSince = 0d;
             terminalResultPresentation = terminalMenuPresentation = null;
             terminalDue = EditorApplication.timeSinceStartup + 3d;
@@ -74,6 +76,7 @@ namespace Game.Editor
         internal static void TickTerminalPlayerFrame()
         {
             if (!terminalProbeActive) return;
+            terminalLastPlayerFrame = EditorApplication.timeSinceStartup;
             try
             {
                 double now = EditorApplication.timeSinceStartup;
@@ -247,6 +250,8 @@ namespace Game.Editor
 
         private static void EndTerminalProbe(bool passed, string reason)
         {
+            if (reason == "playerFrameTimeout" || reason == "returnTimeout")
+                LogTerminalTimeoutState(reason);
             terminalInterventions = (int)(terminalTouch?.PhysicalInterventions ?? 0);
             terminalUnexpectedSamples = (int)(terminalTouch?.UnexpectedSamples ?? 0);
             if (terminalUnexpectedSamples > 0) { passed = false; reason = "unexpectedTerminalInput"; }
@@ -260,6 +265,41 @@ namespace Game.Editor
             terminalProbeActive = false;
             terminalTouch?.Dispose(); terminalTouch = null;
             Finish(!passed, passed ? null : "terminal:" + reason);
+        }
+
+        private static void LogTerminalTimeoutState(string reason)
+        {
+            try
+            {
+                bool hasShell = UiShellRuntimeGateway.TryReadShellState(out var shell);
+                var world = World.DefaultGameObjectInjectionWorld;
+                int sessions = world != null && world.IsCreated
+                    ? SkirmishTerminalPresentationObservation.NativeSessionCount(world.EntityManager) : -1;
+                var view = UnityEngine.Object.FindAnyObjectByType<UIShellView>();
+                float loadingAlpha = view != null && view.TryGetRegion(UIShellRegionId.LoadingLayer, out var loading) && loading.CanvasGroup != null
+                    ? loading.CanvasGroup.alpha : -1f;
+                Debug.Log("[SkirmishTerminalTimeoutState] reason=" + reason + " outcome=" + terminalMatch.Outcome +
+                    " step=" + terminalStep + " lastPlayerFrameAge=" + (EditorApplication.timeSinceStartup - terminalLastPlayerFrame).ToString("F2") +
+                    " touchBusy=" + (terminalTouch?.IsBusy ?? false) + " shell=" + hasShell +
+                    " route=" + (hasShell ? shell.ActiveRoute.ToString() : "missing") +
+                    " transition=" + (hasShell && shell.IsTransitionRunning) + " sessions=" + sessions +
+                    " loadingAlpha=" + loadingAlpha + " menuProof=" + (ReadTerminalMenuPresentation() != null) +
+                    " visibleAge=" + (terminalDestinationVisibleSince == 0d ? -1d : EditorApplication.timeSinceStartup - terminalDestinationVisibleSince).ToString("F2"));
+                SkirmishTerminalPresentationObservation.ReadMenu(terminalAttempt.ToString(),
+                    button => TryPresentedButtonPoint(button, out var point) ? point : (Vector2?)null, true);
+                foreach (var binding in UnityEngine.Object.FindObjectsByType<UIShellRouteButtonView>(FindObjectsInactive.Exclude))
+                {
+                    var button = binding.GetComponent<Button>();
+                    if (button == null || button.name != "Hotspot" || button.transform.parent == null || button.transform.parent.name != "Card_Skirmish") continue;
+                    var title = button.transform.parent.Find("Title")?.GetComponent<TMPro.TMP_Text>();
+                    Debug.Log("[SkirmishTerminalTimeoutMenu] intent=" + binding.Intent + " route=" + binding.Route +
+                        " pushHistory=" + binding.PushHistory + " presented=" + TryPresentedButtonPoint(button, out _) +
+                        " title=" + (title == null ? "<missing>" : title.text) +
+                        " titleActive=" + (title != null && title.isActiveAndEnabled) +
+                        " titleCulled=" + (title != null && title.canvasRenderer.cull));
+                }
+            }
+            catch (Exception error) { Debug.LogWarning("[SkirmishTerminalTimeoutState] diagnosticError=" + error); }
         }
     }
 

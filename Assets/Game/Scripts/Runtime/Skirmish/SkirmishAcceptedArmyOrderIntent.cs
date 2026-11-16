@@ -96,6 +96,8 @@ namespace Game.Runtime
             var state=em.GetComponentData<SkirmishExpandedSessionComponent>(session);
             var actualBase=em.HasComponent<SkirmishMatchState>(session)?em.GetComponentData<SkirmishMatchState>(session).EnemyMainBase:Entity.Null;
             var goal=AssociateAcceptedGoal(AriaCommandEvidence.CurrentPublicGoal,kind,state.SessionId.ToString(),em.WorldUnmanaged.SequenceNumber,target,actualBase);
+            if(AriaCommandEvidence.Active)
+                UnityEngine.Debug.Log($"[AriaArmyOrderTrace] frame={UnityEngine.Time.frameCount} group={group} kind={kind} cell={cell} position={position} target={target} designatedBase={actualBase} requestedGoal={AriaCommandEvidence.CurrentPublicGoal.Kind} requestedKnown={AriaCommandEvidence.CurrentPublicGoal.Known} associated={goal.Known} goalX={AriaCommandEvidence.CurrentPublicGoal.ObjectiveX} goalZ={AriaCommandEvidence.CurrentPublicGoal.ObjectiveZ} world={em.WorldUnmanaged.SequenceNumber}");
             For(em).ObserveResult(true,state.SessionId.ToString(),group,goal,kind,cell.x,cell.y,position,target);
         }
     }

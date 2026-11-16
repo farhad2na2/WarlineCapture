@@ -1,0 +1,546 @@
+{
+  "catalog_id": "S029",
+  "campaign_source": "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset",
+  "notes": "Provisional Standard/Regular layout from S026 salvage referenced layout; verify profile-specific placements and source fit.",
+  "anchors": {
+    "base.player": [
+      1020.0,
+      750.0
+    ],
+    "base.enemy": [
+      1100.0,
+      400.0
+    ],
+    "candidate.structure.standard.0": [
+      982.0,
+      682.5
+    ],
+    "candidate.structure.standard.1": [
+      1098.0,
+      361.5
+    ],
+    "staging.player": [
+      998.0,
+      710.5
+    ],
+    "staging.enemy": [
+      1068.0,
+      344.5
+    ],
+    "economy.player": [
+      984.5,
+      716.0
+    ],
+    "economy.enemy": [
+      1087.5,
+      371.0
+    ],
+    "candidate.structure.standard.6": [
+      999.5,
+      699.5
+    ],
+    "candidate.structure.standard.7": [
+      1071.5,
+      359.5
+    ],
+    "candidate.structure.standard.8": [
+      980.0,
+      695.0
+    ],
+    "candidate.structure.standard.9": [
+      1104.0,
+      345.0
+    ],
+    "candidate.structure.standard.10": [
+      1005.5,
+      684.0
+    ],
+    "candidate.structure.standard.11": [
+      1063.5,
+      332.0
+    ],
+    "service.player": [
+      987.5,
+      709.0
+    ],
+    "service.enemy": [
+      1098.5,
+      352.0
+    ],
+    "candidate.structure.standard.14": [
+      1009.5,
+      709.0
+    ],
+    "candidate.structure.standard.15": [
+      1072.5,
+      350.0
+    ],
+    "candidate.structure.standard.16": [
+      1001.0,
+      671.0
+    ],
+    "candidate.structure.standard.17": [
+      1091.0,
+      320.0
+    ],
+    "air.player": [
+      1013.0,
+      719.5
+    ],
+    "air.enemy": [
+      1064.0,
+      374.5
+    ],
+    "candidate.route.shared.waypoint.00": [
+      1004.5,
+      734.5
+    ],
+    "candidate.route.shared.waypoint.01": [
+      988.5,
+      721.5
+    ],
+    "candidate.route.shared.waypoint.02": [
+      969.5,
+      695.5
+    ],
+    "candidate.route.rifle.start": [
+      1020.5,
+      750.5
+    ],
+    "candidate.route.rifle.goal": [
+      1100.5,
+      400.5
+    ],
+    "candidate.route.tank.start": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.goal": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.apc_armored.start": [
+      1028.5,
+      751.5
+    ],
+    "candidate.route.apc_armored.goal": [
+      1101.5,
+      406.5
+    ],
+    "candidate.spawn.variant0.faction_1.infantry": [
+      1012.0,
+      750.0
+    ],
+    "candidate.spawn.variant0.faction_1.vehicle": [
+      1028.0,
+      750.0
+    ],
+    "candidate.spawn.variant0.faction_2.infantry": [
+      1092.0,
+      400.0
+    ],
+    "candidate.spawn.variant0.faction_2.vehicle": [
+      1108.0,
+      400.0
+    ],
+    "candidate.rally.variant0.faction_1": [
+      1025.5,
+      715.5
+    ],
+    "candidate.rally.variant0.faction_2": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.tank.primary.waypoint.00": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.primary.waypoint.01": [
+      1028.5,
+      695.5
+    ],
+    "candidate.route.tank.primary.waypoint.02": [
+      1008.5,
+      636.5
+    ],
+    "candidate.route.tank.primary.waypoint.03": [
+      989.5,
+      577.5
+    ],
+    "candidate.route.tank.primary.waypoint.04": [
+      986.5,
+      519.5
+    ],
+    "candidate.route.tank.primary.waypoint.05": [
+      1035.5,
+      468.5
+    ],
+    "candidate.route.tank.primary.waypoint.06": [
+      1094.5,
+      409.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.00": [
+      1025.5,
+      753.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.01": [
+      1004.5,
+      734.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.02": [
+      988.5,
+      721.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.03": [
+      969.5,
+      695.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.04": [
+      912.5,
+      636.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.05": [
+      919.5,
+      577.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.06": [
+      948.5,
+      548.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.07": [
+      977.5,
+      519.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.08": [
+      1035.5,
+      461.5
+    ],
+    "candidate.route.tank.west_refined.waypoint.09": [
+      1094.5,
+      409.5
+    ]
+  },
+  "pads": {
+    "base.candidate.structure.standard.0.player": {
+      "at": [
+        982.0,
+        682.5
+      ],
+      "anchor": "candidate.structure.standard.0",
+      "size": [
+        28.0,
+        15.0
+      ]
+    },
+    "base.candidate.structure.standard.1.enemy": {
+      "at": [
+        1098.0,
+        361.5
+      ],
+      "anchor": "candidate.structure.standard.1",
+      "size": [
+        28.0,
+        15.0
+      ]
+    },
+    "staging.candidate.structure.standard.2.player": {
+      "at": [
+        998.0,
+        710.5
+      ],
+      "anchor": "staging.player",
+      "size": [
+        14.0,
+        7.0
+      ]
+    },
+    "staging.candidate.structure.standard.3.enemy": {
+      "at": [
+        1068.0,
+        344.5
+      ],
+      "anchor": "staging.enemy",
+      "size": [
+        14.0,
+        7.0
+      ]
+    },
+    "economy.candidate.structure.standard.4.player": {
+      "at": [
+        984.5,
+        716.0
+      ],
+      "anchor": "economy.player",
+      "size": [
+        15.0,
+        4.0
+      ]
+    },
+    "economy.candidate.structure.standard.5.enemy": {
+      "at": [
+        1087.5,
+        371.0
+      ],
+      "anchor": "economy.enemy",
+      "size": [
+        15.0,
+        4.0
+      ]
+    },
+    "economy.candidate.structure.standard.6.player": {
+      "at": [
+        999.5,
+        699.5
+      ],
+      "anchor": "candidate.structure.standard.6",
+      "size": [
+        25.0,
+        15.0
+      ]
+    },
+    "economy.candidate.structure.standard.7.enemy": {
+      "at": [
+        1071.5,
+        359.5
+      ],
+      "anchor": "candidate.structure.standard.7",
+      "size": [
+        25.0,
+        15.0
+      ]
+    },
+    "economy.candidate.structure.standard.8.player": {
+      "at": [
+        980.0,
+        695.0
+      ],
+      "anchor": "candidate.structure.standard.8",
+      "size": [
+        14.0,
+        10.0
+      ]
+    },
+    "economy.candidate.structure.standard.9.enemy": {
+      "at": [
+        1104.0,
+        345.0
+      ],
+      "anchor": "candidate.structure.standard.9",
+      "size": [
+        14.0,
+        10.0
+      ]
+    },
+    "economy.candidate.structure.standard.10.player": {
+      "at": [
+        1005.5,
+        684.0
+      ],
+      "anchor": "candidate.structure.standard.10",
+      "size": [
+        19.0,
+        16.0
+      ]
+    },
+    "economy.candidate.structure.standard.11.enemy": {
+      "at": [
+        1063.5,
+        332.0
+      ],
+      "anchor": "candidate.structure.standard.11",
+      "size": [
+        19.0,
+        16.0
+      ]
+    },
+    "service.candidate.structure.standard.12.player": {
+      "at": [
+        987.5,
+        709.0
+      ],
+      "anchor": "service.player",
+      "size": [
+        3.0,
+        4.0
+      ]
+    },
+    "service.candidate.structure.standard.13.enemy": {
+      "at": [
+        1098.5,
+        352.0
+      ],
+      "anchor": "service.enemy",
+      "size": [
+        3.0,
+        4.0
+      ]
+    },
+    "service.candidate.structure.standard.14.player": {
+      "at": [
+        1009.5,
+        709.0
+      ],
+      "anchor": "candidate.structure.standard.14",
+      "size": [
+        3.0,
+        4.0
+      ]
+    },
+    "service.candidate.structure.standard.15.enemy": {
+      "at": [
+        1072.5,
+        350.0
+      ],
+      "anchor": "candidate.structure.standard.15",
+      "size": [
+        3.0,
+        4.0
+      ]
+    },
+    "service.candidate.structure.standard.16.player": {
+      "at": [
+        1001.0,
+        671.0
+      ],
+      "anchor": "candidate.structure.standard.16",
+      "size": [
+        10.0,
+        10.0
+      ]
+    },
+    "service.candidate.structure.standard.17.enemy": {
+      "at": [
+        1091.0,
+        320.0
+      ],
+      "anchor": "candidate.structure.standard.17",
+      "size": [
+        10.0,
+        10.0
+      ]
+    },
+    "air.candidate.structure.standard.18.player": {
+      "at": [
+        1013.0,
+        719.5
+      ],
+      "anchor": "air.player",
+      "size": [
+        16.0,
+        15.0
+      ]
+    },
+    "air.candidate.structure.standard.19.enemy": {
+      "at": [
+        1064.0,
+        374.5
+      ],
+      "anchor": "air.enemy",
+      "size": [
+        16.0,
+        15.0
+      ]
+    },
+    "spawn.infantry.player": {
+      "at": [
+        1012.0,
+        750.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_1.infantry",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.player": {
+      "at": [
+        1028.0,
+        750.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_1.vehicle",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "spawn.infantry.enemy": {
+      "at": [
+        1092.0,
+        400.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_2.infantry",
+      "size": [
+        12.0,
+        10.0
+      ]
+    },
+    "spawn.vehicle.enemy": {
+      "at": [
+        1108.0,
+        400.0
+      ],
+      "anchor": "candidate.spawn.variant0.faction_2.vehicle",
+      "size": [
+        14.0,
+        12.0
+      ]
+    },
+    "rally.player": {
+      "at": [
+        1025.5,
+        715.5
+      ],
+      "anchor": "candidate.rally.variant0.faction_1",
+      "size": [
+        3.0,
+        3.0
+      ]
+    },
+    "rally.enemy": {
+      "at": [
+        1094.5,
+        409.5
+      ],
+      "anchor": "candidate.rally.variant0.faction_2",
+      "size": [
+        3.0,
+        3.0
+      ]
+    }
+  },
+  "routes": [
+    {
+      "kind": "MainHighway",
+      "via": [
+        "candidate.route.tank.primary.waypoint.00",
+        "candidate.route.tank.primary.waypoint.01",
+        "candidate.route.tank.primary.waypoint.02",
+        "candidate.route.tank.primary.waypoint.03",
+        "candidate.route.tank.primary.waypoint.04",
+        "candidate.route.tank.primary.waypoint.05",
+        "candidate.route.tank.primary.waypoint.06"
+      ],
+      "width": 12.0,
+      "vehicles": true,
+      "aircraft": false
+    },
+    {
+      "kind": "FlankNorthRuins",
+      "via": [
+        "candidate.route.tank.west_refined.waypoint.00",
+        "candidate.route.tank.west_refined.waypoint.01",
+        "candidate.route.tank.west_refined.waypoint.02",
+        "candidate.route.tank.west_refined.waypoint.03",
+        "candidate.route.tank.west_refined.waypoint.04",
+        "candidate.route.tank.west_refined.waypoint.05",
+        "candidate.route.tank.west_refined.waypoint.06",
+        "candidate.route.tank.west_refined.waypoint.07",
+        "candidate.route.tank.west_refined.waypoint.08",
+        "candidate.route.tank.west_refined.waypoint.09"
+      ],
+      "width": 6.0,
+      "vehicles": true,
+      "aircraft": false
+    }
+  ]
+}

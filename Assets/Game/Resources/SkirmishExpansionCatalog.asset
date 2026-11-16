@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6a22ceeed854b39a9bc552f09f0f58c, type: 3}
   m_Name: SkirmishExpansionCatalog
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishExpansionCatalogConfig
+  productionInputPackage: {fileID: 0}
   objectiveBa: {fileID: 11400000, guid: c68e97d46042477882a82718ce98061a, type: 2}
   armyGround: {fileID: 11400000, guid: a7e29fa83f1c4735acd2aa8a75df7d60, type: 2}
   armyAir: {fileID: 11400000, guid: c4e8a1b27d9f4e6a9c0d5f3b8a217604, type: 2}
@@ -36,3 +37,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7f2c9e14b6a84d0e8f31c5a9d2b70418, type: 2}
   - {fileID: 11400000, guid: 2b7e4c91a0d64f3e8a5c1d9b6e0f4732, type: 2}
   - {fileID: 11400000, guid: ae31f3108b36b47cab4fb6ca76e84797, type: 2}
+  - {fileID: 11400000, guid: fe91cc784e4de4b26851a856e2cc7200, type: 2}
+  historicalDefinitions: []

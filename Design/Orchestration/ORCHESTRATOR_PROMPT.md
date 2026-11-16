@@ -91,8 +91,12 @@ and grep patterns, never pasted logs. A worker's report is a claim; verify the d
 
 ## Codex
 
-- Run it only as a one-shot worker: `codex exec` with the brief on stdin, in its own worktree, with a
-  time limit. No standing goal, no automation, no heartbeat.
+- Run it only as a one-shot worker: `codex exec` with the brief on stdin, in its own copy of the
+  script folders, with a time limit. No standing goal, no automation, no heartbeat.
+- **Codex must not sit idle (owner rule, 2026-11-16).** Keep up to 4 tasks running in parallel
+  through `Tools/Missions/run_codex_batch.sh <brief name>:<effort>:<minutes> ...`; it logs start and
+  finish to `STATUS.md` and leaves one patch per task in the briefs folder. Refill the batch when
+  it finishes. The Unity-lane owner applies verified patches with `git apply --3way` between runs.
 - Judge it by data. Track per task type: briefs sent, acceptance checks passed first time. If it
   misses the check twice in a row on a task type, stop routing that type to it.
 - It never runs Unity and never writes to `missions.csv`.
@@ -105,6 +109,9 @@ and grep patterns, never pasted logs. A worker's report is a claim; verify the d
 - `Design/Orchestration/daily/YYYY-MM-DD.md`: rows advanced (count and IDs), stalled rows with the
   blocker, drift findings with evidence, next directives, pending owner gates. 40 lines at most.
 - `Design/Orchestration/owner_queue.md`: decisions taken by default and items waiting for the owner.
+- `Design/Orchestration/STATUS.md`: the owner's live view. Every agent (orchestrator, shift lead,
+  workers) appends one dated line when it starts or finishes a step, and the "Who is working" table
+  is kept current. Every brief must say so. Trim the log to the last 60 lines each daily cycle.
 - `.claude/skills/mission-orchestrator/SKILL.md`: this loop as a reusable skill, under 200 lines, each
   rule with its reason. Create it once with the skill-creator skill, then keep it current.
 

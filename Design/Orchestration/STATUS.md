@@ -10,8 +10,8 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Shift lead | Sonnet | `directives/2026-11-17.md` (merge, compile, S002 queue, S006) | Running, step 4 (S006 authoring Unity run in progress) |
-| Unity lane | — | One Editor at a time, owned by the shift lead | Busy: S006 authoring run |
+| Shift lead | Sonnet | `directives/2026-11-17.md` (merge, compile, S002 queue, S006) | Stopped: disk below 30 GB |
+| Unity lane | — | One Editor at a time, owned by the shift lead | Idle (paused: disk) |
 | Authoring workers | Opus | Harness queue, authoring entry | Finished, merged |
 | Codex | gpt-6.1-terra | 4 tasks in parallel: why ARIA loses S002 (high), result-screen return failure (high), slow Editor exit (high), 15 Base Assault drafts for 3 maps (medium) | Running since 23:58; each ends with a patch and a report in the briefs folder |
 | Orchestrator | Fable | Daily review at 08:33; reviews the Codex patches when the batch ends | Idle |
@@ -39,3 +39,5 @@ record is `missions.csv`.
 - 2026-11-17 00:02 orchestrator: Codex batch reviewed: tasks 3, 4 and 5 found no root cause and added trace logging only; task 6 wrote 16 drafts (S074–S078 have no layout data). Shift lead told to apply them and run S002 + S006 in one queue.
 - 2026-11-17 00:02 orchestrator: WARNING disk: 11 piled-up git repack processes wrote about 141 GB of temp files; free space 67 GB and falling. Auto maintenance is now off; stopping the processes needs the owner. Unity runs pause below 30 GB.
 - 2026-11-17 00:21 shift lead: compile check with 4 Codex patches PASSED (compile-2.log), test_drafts PASS (16). Next: queue S002,130365,en + S006,130370,en. Disk free 48 GB.
+- 2026-11-17 00:27 shift lead: patches committed (d4b932e). Tool cannot pair S006 with seed 130370 (cartesian), so queue file written by hand; first launch of tool killed within seconds (my own Editor, no run). Starting queue2 S002,130365,en + S006,130370,en; disk 46 GB.
+- 2026-11-17 00:47 shift lead: Unity runs paused: disk below 30 GB (29 GB free, falling about 1 GB/min from git repack tmp packs). Stopped my own Editor (PID 40297, started 00:27, queue2 S002+S006) while it was still in the 20-minute start fingerprint; no run executed. S002/S006 trace capture NOT done. Shift ending.

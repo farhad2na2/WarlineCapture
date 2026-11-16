@@ -1,5 +1,9 @@
 # Expansion acceptance and performance plan
 
+## Mission plan amendment — 2026-11-16
+
+The [mission plan](MISSION_PLAN_2026-11-16.md) is binding and supersedes conflicting text below: Unity is the only authority for mission results; per-mission acceptance is Standard size and Regular difficulty (three English ARIA wins and one Farsi win at 40–70% of the deadline, using every available unit type); other sizes and difficulties are certified once per layout; Base Assault uses a main-base health tiebreak at the deadline; starting forces, resources, production capacity and deadlines are tuned from Unity ARIA results.
+
 ## Existing Campaign maps only — 2026-10-03
 
 Follow the [Campaign map reuse policy](../../MapVariants/CAMPAIGN_MAP_REUSE_POLICY.md) before implementing any Skirmish or Operations mission. Reuse current Campaign physical sources; author only logical bounds, anchors/routes, objectives, spawns and legal gameplay placements. Do not create terrain, roads, bridges, runways, procedural scenery, environment scenes or physical derivatives. This supersedes older mountain/highland, expanded-envelope, paired-runway and Demo 2 environment-authoring requirements for these modes. Preserve coded bindings, catalog IDs/counts, gameplay budgets/rules and evidence. Select another existing Campaign source if needed; otherwise record the source-fit gate without exposing unsupported content. New physical map design requires an explicit owner request.

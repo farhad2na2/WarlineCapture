@@ -81,43 +81,6 @@ namespace Game.Authoring
                        value.IndexOf(token, System.StringComparison.OrdinalIgnoreCase) >= 0;
             }
 
-            private static int2 ResolveFootprint(UnitGridAuthoring authoring, bool hasModelBounds, Bounds modelBounds)
-            {
-                int2 configured = new int2(math.max(1, authoring.footprintCells.x), math.max(1, authoring.footprintCells.y));
-
-                if (!authoring.UsesVehicleMotion)
-                    return configured;
-
-                if (configured.x > 1 || configured.y > 1)
-                    return configured;
-
-                if (!hasModelBounds)
-                    return configured;
-
-                int2 modelFootprint = new int2(
-                    math.max(1, (int)math.ceil(modelBounds.size.x)),
-                    math.max(1, (int)math.ceil(modelBounds.size.z)));
-
-                if (!authoring.autoCalculateFootprint)
-                    return configured;
-
-                return modelFootprint;
-            }
-
-            private static UnitVehicleMovement ResolveVehicleMovement(UnitGridAuthoring authoring, int2 footprint, bool hasModelBounds, Bounds modelBounds)
-            {
-                bool isVehicle = authoring.UsesVehicleMotion;
-                float modelLength = hasModelBounds ? math.max(modelBounds.size.x, modelBounds.size.z) : math.max(footprint.x, footprint.y);
-
-                return new UnitVehicleMovement
-                {
-                    TurnSpeedDegrees = isVehicle ? 180f : 720f,
-                    Acceleration = isVehicle ? math.max(6f, modelLength * 3f) : 999f,
-                    Braking = isVehicle ? math.max(8f, modelLength * 4f) : 999f,
-                    RearPivotOffset = isVehicle ? math.max(0.35f, modelLength * 0.22f) : 0f
-                };
-            }
-
             private void AddHelicopterBladeReferences(DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer, Transform root)
             {
                 if (root == null)

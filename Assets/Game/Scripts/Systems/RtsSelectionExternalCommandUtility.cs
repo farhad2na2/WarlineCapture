@@ -37,56 +37,86 @@ namespace Game.Runtime
             Entity representative = request.TargetEntity;
             bool sameMissionRole = request.SelectMissionRole != 0;
             if (!context.TryGetEntityManager(out EntityManager em) ||
-                representative == Entity.Null ||
-                !em.Exists(representative) ||
-                !em.HasComponent<CampaignMissionUnitRoleComponent>(representative))
+                representative == Entity.Null || !em.Exists(representative))
             {
                 return false;
             }
 
-            CampaignMissionUnitRoleComponent representativeRole =
-                em.GetComponentData<CampaignMissionUnitRoleComponent>(representative);
             _missionSquadSelectionScratch.Clear();
-            using EntityQuery query = em.CreateEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
-                ComponentType.ReadOnly<Faction>(),
-                ComponentType.ReadOnly<UnitMove>());
-            using NativeArray<ArchetypeChunk> queryChunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            var entitiesType = em.GetEntityTypeHandle();
-            var rolesType = em.GetComponentTypeHandle<CampaignMissionUnitRoleComponent>(true);
-            var factionsType = em.GetComponentTypeHandle<Faction>(true);
-
-
-            foreach(var sourceChunk in queryChunks)
+            bool legacySkirmishSelection = false;
+            if (em.HasComponent<CampaignMissionUnitRoleComponent>(representative))
             {
-                var entities = sourceChunk.GetNativeArray(entitiesType);
-                var roles = sourceChunk.GetNativeArray(ref rolesType);
-                var factions = sourceChunk.GetNativeArray(ref factionsType);
-                for (int i = 0; i < entities.Length; i++)
+                CampaignMissionUnitRoleComponent representativeRole =
+                    em.GetComponentData<CampaignMissionUnitRoleComponent>(representative);
+                using EntityQuery query = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitMove>());
+                using NativeArray<ArchetypeChunk> queryChunks = query.ToArchetypeChunkArray(Allocator.Temp);
+                var entitiesType = em.GetEntityTypeHandle();
+                var rolesType = em.GetComponentTypeHandle<CampaignMissionUnitRoleComponent>(true);
+                var factionsType = em.GetComponentTypeHandle<Faction>(true);
+                foreach (var sourceChunk in queryChunks)
                 {
-                    if (!MatchesMissionSelection(roles[i], representativeRole, sameMissionRole) ||
-                        !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
-                        em.HasComponent<UnitTransportPassenger>(entities[i]) ||
-                        em.HasComponent<SupportPassengerOwnerComponent>(entities[i])&&em.GetComponentData<SupportPassengerOwnerComponent>(entities[i]).Landed==0 ||
-                        (em.HasComponent<UnitHealth>(entities[i]) &&
-                         em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
+                    var entities = sourceChunk.GetNativeArray(entitiesType);
+                    var roles = sourceChunk.GetNativeArray(ref rolesType);
+                    var factions = sourceChunk.GetNativeArray(ref factionsType);
+                    for (int i = 0; i < entities.Length; i++)
                     {
-                        continue;
+                        if (!MatchesMissionSelection(roles[i], representativeRole, sameMissionRole) ||
+                            !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
+                            em.HasComponent<UnitTransportPassenger>(entities[i]) ||
+                            em.HasComponent<SupportPassengerOwnerComponent>(entities[i]) && em.GetComponentData<SupportPassengerOwnerComponent>(entities[i]).Landed == 0 ||
+                            (em.HasComponent<UnitHealth>(entities[i]) &&
+                             em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
+                            continue;
+                        _missionSquadSelectionScratch.Add(entities[i]);
                     }
-
-                    _missionSquadSelectionScratch.Add(entities[i]);
                 }
             }
+            else if (em.HasComponent<SkirmishSquadMember>(representative) &&
+                     em.HasComponent<Faction>(representative) &&
+                     em.HasComponent<UnitHealth>(representative))
+            {
+                Entity matchEntity;
+                using (var matches = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>()))
+                {
+                    if (matches.CalculateEntityCount() != 1) return false;
+                    matchEntity = matches.GetSingletonEntity();
+                }
+                byte slot = em.GetComponentData<SkirmishSquadMember>(representative).Slot;
+                if (em.GetComponentData<Faction>(representative).Id != FactionIdentity.PlayerFactionId ||
+                    !SkirmishArmySelectionService.TrySelectLegacySquad(em, matchEntity, slot, false, out _))
+                    return false;
+
+                using var selected = em.CreateEntityQuery(
+                    ComponentType.ReadOnly<SelectedUnitTag>(),
+                    ComponentType.ReadOnly<SkirmishSquadMember>(),
+                    ComponentType.ReadOnly<Faction>(),
+                    ComponentType.ReadOnly<UnitMove>(),
+                    ComponentType.ReadOnly<UnitHealth>());
+                using var selectedEntities = selected.ToEntityArray(Allocator.Temp);
+                foreach (var unit in selectedEntities)
+                    if (em.GetComponentData<Faction>(unit).Id == FactionIdentity.PlayerFactionId &&
+                        em.GetComponentData<SkirmishSquadMember>(unit).Slot == slot &&
+                        em.GetComponentData<UnitHealth>(unit).Current > 0)
+                        _missionSquadSelectionScratch.Add(unit);
+                legacySkirmishSelection = true;
+            }
+            else return false;
 
             if (_missionSquadSelectionScratch.Count == 0)
                 return false;
 
-            context.ClearCurrentSelection?.Invoke(em, "AssistantFocusSquad");
-            for (int i = 0; i < _missionSquadSelectionScratch.Count; i++)
+            if (!legacySkirmishSelection)
             {
-                Entity entity = _missionSquadSelectionScratch[i];
-                if (!em.HasComponent<SelectedUnitTag>(entity))
-                    em.AddComponent<SelectedUnitTag>(entity);
+                context.ClearCurrentSelection?.Invoke(em, "AssistantFocusSquad");
+                for (int i = 0; i < _missionSquadSelectionScratch.Count; i++)
+                {
+                    Entity entity = _missionSquadSelectionScratch[i];
+                    if (!em.HasComponent<SelectedUnitTag>(entity))
+                        em.AddComponent<SelectedUnitTag>(entity);
+                }
             }
 
             context.SelectionStateCompositionSystemHelper.CacheSelectedMoveEntities(

@@ -1,0 +1,49 @@
+using System;
+using System.Collections.Generic;
+using Game.Runtime.Targeting;
+
+internal static class SparseCellParity
+{
+    private struct Item { public int Id; public float Score; public bool Eligible; public Item(int id,float score,bool eligible){Id=id;Score=score;Eligible=eligible;} }
+    private static void Require(bool value,string message){if(!value)throw new Exception(message);}
+    private static List<int> Original(int width,int height,int cx,int cz,int range,HashSet<int> occupied)
+    {
+        var result=new List<int>();
+        for(int z=cz-range;z<=cz+range;z++){if(z<0||z>=height)continue;for(int x=cx-range;x<=cx+range;x++){if(x<0||x>=width)continue;int key=x+z*width;if(occupied.Contains(key))result.Add(key);}}
+        return result;
+    }
+    private static List<int> Sparse(int width,int height,int cx,int cz,int range,int[] keys)
+    {
+        var iterator=new SourceSparseCellIterator();int key;
+        Require(iterator.Begin(keys,keys.Length,cx,cz,range,width,height,out key),"safe snapshot rejected");
+        var result=new List<int>();while(key>=0){result.Add(key);if(!iterator.Next(out key))break;}
+        return result;
+    }
+    private static Tuple<List<string>,int> Visit(List<int> cells,Dictionary<int,List<Item>> buckets)
+    {
+        var visited=new List<string>();int winner=-1;float best=float.MaxValue;
+        foreach(int key in cells)if(buckets.TryGetValue(key,out var items))foreach(var item in items){visited.Add(key+":"+item.Id);if(item.Eligible&&item.Score<best){best=item.Score;winner=item.Id;}}
+        return Tuple.Create(visited,winner);
+    }
+    public static int Main()
+    {
+        var random=new Random(0x5A002);int cases=0;
+        foreach(double density in new[]{0.002,0.03,0.5,0.95,1.0})for(int sample=0;sample<150;sample++)
+        {
+            int width=random.Next(1,71),height=random.Next(1,56),cx=random.Next(-width,width*2+1),cz=random.Next(-height,height*2+1),range=random.Next(0,Math.Max(width,height)+4);
+            var occupied=new HashSet<int>();for(int key=0;key<width*height;key++)if(random.NextDouble()<density)occupied.Add(key);
+            var buckets=new Dictionary<int,List<Item>>();int id=0;
+            foreach(int key in occupied){int n=random.Next(0,5);if(n==0)continue;var rows=new List<Item>();for(int i=0;i<n;i++)rows.Add(new Item(id++,random.Next(0,13),random.NextDouble()<0.75));buckets[key]=rows;}
+            int[] sorted=new List<int>(buckets.Keys).ToArray();Array.Sort(sorted);
+            var expected=Original(width,height,cx,cz,range,new HashSet<int>(sorted));var actual=Sparse(width,height,cx,cz,range,sorted);
+            Require(expected.Count==actual.Count,"cell count mismatch");for(int i=0;i<expected.Count;i++)Require(expected[i]==actual[i],"cell order mismatch");
+            var originalVisit=Visit(expected,buckets);var sparseVisit=Visit(actual,buckets);
+            Require(originalVisit.Item2==sparseVisit.Item2,"tie/winner mismatch");Require(originalVisit.Item1.Count==sparseVisit.Item1.Count,"candidate visit count mismatch");
+            for(int i=0;i<originalVisit.Item1.Count;i++)Require(originalVisit.Item1[i]==sparseVisit.Item1[i],"candidate order mismatch");cases++;
+        }
+        var invalid=new SourceSparseCellIterator();int ignored;
+        Require(!invalid.Begin(new[]{2,1},2,0,0,2,4,4,out ignored),"unsorted snapshot accepted");
+        Require(!invalid.Begin(new[]{0},1,int.MaxValue,0,2,4,4,out ignored),"overflow bounds accepted");
+        Console.WriteLine("[SparseCellParity] cases="+cases+" passed=true");return 0;
+    }
+}

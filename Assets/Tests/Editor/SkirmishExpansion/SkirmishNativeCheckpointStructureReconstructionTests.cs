@@ -42,11 +42,15 @@ namespace Game.Tests.Editor
             Assert.AreEqual(1, request.RequirePreferredOrigin);
             Assert.AreEqual(1, request.AuthoredStartingGrant);
             Assert.AreEqual(session, request.PlanEntity);
+            Assert.IsTrue(em.HasComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session));
+            Assert.IsTrue(BuildingRuntimeProcessingCompositionSystemHelper.IsExactCheckpointReconstructionRequest(
+                em, request, new int2(2, 2)), "Only the validated TryBegin path should publish the matching request receipt.");
             Assert.IsTrue(SkirmishNativeCheckpointStructureReconstruction.TryBindCompleted(em, session, out var complete, out failure), failure);
             Assert.IsFalse(complete);
             SkirmishNativeCheckpointStructureReconstruction.Cancel(em, session);
             Assert.AreEqual(BuildingRuntimeSpawnRequest.Failed, em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary)[0].Status);
             Assert.IsFalse(em.HasComponent<BuildingStartingGrantOwner>(session));
+            Assert.IsFalse(em.HasComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session));
         }
 
         [Test]
@@ -76,6 +80,7 @@ namespace Game.Tests.Editor
             { Building = new RuntimeBuildingEntity { Id = 105, CombatEntity = building } });
             Assert.IsTrue(SkirmishNativeCheckpointStructureReconstruction.TryBindCompleted(em, session, out var complete, out failure), failure);
             Assert.IsTrue(complete);
+            Assert.IsFalse(em.HasComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session));
             Assert.AreEqual("original-base", em.GetComponentData<SkirmishAttemptOwnedComponent>(building).StableObjectId.ToString());
             Assert.IsFalse(em.HasComponent<SkirmishAttemptOwnedComponent>(scenery));
             Assert.IsFalse(em.HasComponent<BuildingStartingGrantOwner>(session));

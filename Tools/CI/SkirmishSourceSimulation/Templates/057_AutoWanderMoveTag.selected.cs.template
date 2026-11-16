@@ -1,0 +1,1 @@
+using System;using Unity.Entities;using Unity.Mathematics;namespace Game.Components{/*SOURCE:type_0*/}

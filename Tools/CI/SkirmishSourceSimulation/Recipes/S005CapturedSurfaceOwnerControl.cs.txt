@@ -1,0 +1,58 @@
+using System;
+using System.IO;
+using System.Linq;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Unity.Collections;
+
+// Executes the original surface evaluator on captured S005 preferred rectangles.
+internal static class S005CapturedSurfaceOwnerControl
+{
+    static void Need(bool value,string message) { if(!value) throw new InvalidDataException(message); }
+    static int Main(string[] args)
+    {
+        try
+        {
+            Need(args.Length==3,"Expected source graph, request receipt and publisher capture");
+            var graph=JObject.Parse(File.ReadAllText(args[0]));var requests=JObject.Parse(File.ReadAllText(args[1]));
+            var publisher=JObject.Parse(File.ReadAllText(args[2]));
+            Need((string)requests["status"]=="OriginalS005StartingRequestsPending" && (int?)requests["request_count"]==14 &&
+                 (uint?)requests["setup_hash"]==1865447784u && (uint?)publisher["setup_hash"]==1865447784u,
+                 "Exact S005 captured requests and publisher required");
+            var materializer=new SourceConfigMaterializer(graph);
+            var asset=materializer.ByPath<MapSurfaceDataAsset>("Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset");
+            Need(asset!=null,"Original surface asset required");
+            Need(asset.TryCreateRuntimeBlobAsset(Allocator.Persistent,out var blob),"Original surface decode required");
+            try
+            {
+                ref var value=ref blob.Value;
+                Need(value.Dimensions.x==2048 && value.Dimensions.y==1024 && value.CellSize==1f,"Campaign surface frame differs");
+                var surface=new MapSurfaceComponent { SurfaceBlob=blob,GridOrigin=value.GridOrigin,CellSize=value.CellSize,Dimensions=value.Dimensions,HasSurfaceData=1 };
+                var evaluator=new BuildingSurfacePlacementUtilitySystemHelper();var rows=new JArray();
+                foreach(JObject request in (JArray)requests["requests"])
+                {
+                    string key=(string)request["building"];var matches=((JArray)publisher["entries"]).OfType<JObject>().Where(x=>(string)x["visual_key"]==key).ToArray();
+                    Need(matches.Length==1,"Exact publisher footprint required");var f=matches[0]["read_model"]["FootprintCells"];
+                    int w=(int)f["x"],h=(int)f["y"],x0=(int)request["preferred_x"],z0=(int)request["preferred_y"];
+                    bool evaluated=evaluator.TryEvaluateFootprint(surface,new Vector2Int(x0,z0),new Vector2Int(w,h),.5f,45f,out var result);
+                    rows.Add(new JObject { ["request_id"]=(int)request["request_id"],["building"]=key,["evaluated"]=evaluated,
+                        ["surface_valid"]=evaluated ? (JToken)new JValue(result.IsValid) : JValue.CreateNull(),
+                        ["foundation_height"]=evaluated ? (JToken)new JValue(result.FoundationHeight) : JValue.CreateNull(),
+                        ["height_delta"]=evaluated ? (JToken)new JValue(result.MaxFootprintHeightDelta) : JValue.CreateNull(),
+                        ["max_slope_degrees"]=evaluated ? (JToken)new JValue(result.MaxFootprintSlopeDegrees) : JValue.CreateNull(),
+                        ["sample_count"]=evaluated ? (JToken)new JValue(result.SampleCount) : JValue.CreateNull() });
+                }
+                Need(rows.Count==14,"All original request rectangles required");
+                Console.WriteLine(new JObject { ["status"]="OriginalSurfaceOwnerMeasured",["rows"]=rows,
+                    ["surface_limits"]="Original registration call: height delta 0.5, slope 45 degrees",
+                    ["search_attempted"]=false,["mountain_mesh_clearance_proven"]=false,["mission_ready"]=false }.ToString(Formatting.None));
+            }
+            finally { blob.Dispose(); }
+            return 0;
+        }
+        catch(Exception e) { Console.Error.WriteLine("[S005CapturedSurfaceOwnerControl] "+e);return 1; }
+    }
+}

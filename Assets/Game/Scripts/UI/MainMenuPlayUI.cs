@@ -144,7 +144,7 @@ namespace Game.UI.Runtime
 
         public void Update()
         {
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             using (MinimapUpdateMarker.Auto())
             {
                 bool fullMapOpen = _matchHudFullMapPopupView != null && _matchHudFullMapPopupView.IsOpen;
@@ -163,7 +163,7 @@ namespace Game.UI.Runtime
 
             using (FeedbackLifetimeMarker.Auto())
             {
-                BattleHudRuntimeFeedbackUiSystemHelper.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Time.unscaledTime);
+                BattleHudRuntimeFeedbackUiSystemHelper.TickFeedbackLifetime(_matchHudRuntimeFeedbackView, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
             }
 
             using (CameraControlsMarker.Auto())
@@ -422,7 +422,7 @@ namespace Game.UI.Runtime
                 references.FuelSlot.Value,
                 references.CivilianRiskSlot?.Label,
                 references.CivilianRiskSlot?.Value,
-                Time.unscaledTime);
+                Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
         }
 
         private void BindMatchHudResourceExchangeButtons(MatchHudHeaderReferenceUiSystemHelper references)
@@ -741,14 +741,14 @@ namespace Game.UI.Runtime
         {
             CaptureZoomUiClick();
             _selectionUiCameraSystem?.RequestZoomInLevel();
-            RefreshZoomControlsNow(Time.unscaledTime);
+            RefreshZoomControlsNow(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
         }
 
         private void RequestMatchHudZoomOut()
         {
             CaptureZoomUiClick();
             _selectionUiCameraSystem?.RequestZoomOutLevel();
-            RefreshZoomControlsNow(Time.unscaledTime);
+            RefreshZoomControlsNow(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
         }
 
         private void RefreshZoomControlsIfDue(float now)

@@ -79,7 +79,8 @@ namespace Game.Runtime
                 {
                     float previousOil = storedOil;
                     float barrelsPerSecond = oilBarrelsPerDay / secondsPerDay;
-                    storedOil = math.min(oilCapacity, storedOil + barrelsPerSecond * deltaTime);
+                    storedOil = Game.Simulation.BuildingResourceProductionPrecisionKernel.AccumulateOil(
+                        storedOil, barrelsPerSecond, deltaTime, oilCapacity);
                     oilExtracted = storedOil - previousOil;
                 }
             }
@@ -91,7 +92,8 @@ namespace Game.Runtime
             if (maxFuelFromOil <= 0f)
                 return new Result(storedOil, storedFuel, oilExtracted, fuelProduced);
 
-            float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
+            float desiredFuel = Game.Simulation.BuildingResourceProductionPrecisionKernel.DesiredFuel(
+                fuelBarrelsPerDay, secondsPerDay, deltaTime);
             fuelProduced = math.min(desiredFuel, maxFuelFromOil);
             if (fuelCapacity > 0)
                 fuelProduced = math.min(fuelProduced, math.max(0f, fuelCapacity - storedFuel));
@@ -99,7 +101,8 @@ namespace Game.Runtime
             if (fuelProduced <= 0f)
                 return new Result(storedOil, storedFuel, oilExtracted, 0f);
 
-            storedOil = math.max(0f, storedOil - fuelProduced * oilBarrelsPerFuelBarrel);
+            storedOil = math.max(0f, Game.Simulation.BuildingResourceProductionPrecisionKernel.SubtractConversionOil(
+                storedOil, fuelProduced, oilBarrelsPerFuelBarrel));
             if (fuelCapacity > 0)
                 storedFuel = math.min(fuelCapacity, storedFuel + fuelProduced);
 

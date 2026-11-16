@@ -5,6 +5,7 @@ using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
+using Game.Simulation;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Entities;
@@ -14,6 +15,90 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishExpandedCheckpointTests
     {
+        [Test]
+        public void DeliveryBasisCleanupRemovesCompletePartialAndAbsentComponentPairs()
+        {
+            using var world = new World(nameof(DeliveryBasisCleanupRemovesCompletePartialAndAbsentComponentPairs));
+            EntityManager em = world.EntityManager;
+
+            Entity complete = em.CreateEntity();
+            em.AddComponentData(complete, new SkirmishProductionDeliveryBasisComponent());
+            em.AddComponentData(complete, new SkirmishProductionDeliveryBasisProvenanceComponent());
+            SkirmishProductionDeliveryBasisStartup.RemoveSessionComponents(em, complete);
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisComponent>(complete));
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(complete));
+
+            Entity basisOnly = em.CreateEntity();
+            em.AddComponentData(basisOnly, new SkirmishProductionDeliveryBasisComponent());
+            SkirmishProductionDeliveryBasisStartup.RemoveSessionComponents(em, basisOnly);
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisComponent>(basisOnly));
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(basisOnly));
+
+            Entity provenanceOnly = em.CreateEntity();
+            em.AddComponentData(provenanceOnly, new SkirmishProductionDeliveryBasisProvenanceComponent());
+            SkirmishProductionDeliveryBasisStartup.RemoveSessionComponents(em, provenanceOnly);
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisComponent>(provenanceOnly));
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(provenanceOnly));
+
+            Entity neither = em.CreateEntity();
+            Assert.DoesNotThrow(() => SkirmishProductionDeliveryBasisStartup.RemoveSessionComponents(em, neither));
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisComponent>(neither));
+            Assert.IsFalse(em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(neither));
+        }
+
+        [Test]
+        public void ReusedCheckpointLaunchCandidateWithStaleBasisRejectsBeforeQueueMutation()
+        {
+            using var world = new World(nameof(ReusedCheckpointLaunchCandidateWithStaleBasisRejectsBeforeQueueMutation));
+            EntityManager em = world.EntityManager;
+            LoadAuthored(out SkirmishExpansionAuthoredSet authored, out List<SkirmishSetupMatrixRow> matrix,
+                out SkirmishContentManifest manifest);
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(authored.DefinitionS002,
+                SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, 104731, manifest, matrix,
+                out SkirmishResolvedSetup setup, out List<SkirmishCompileReason> reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+
+            Entity grid = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(grid, new GridConfig
+            { Width = 32, Height = 32, CellSize = 1f, Origin = Unity.Mathematics.float3.zero });
+            Entity candidate = em.CreateEntity(typeof(SkirmishMatchState));
+            var originalMatch = new SkirmishMatchState { SessionId = new Unity.Collections.FixedString64Bytes("preexisting-launch"), Seed = 91 };
+            em.SetComponentData(candidate, originalMatch);
+            em.AddComponentData(candidate, new SkirmishProductionDeliveryBasisComponent
+            {
+                Basis = SharedProductionDeliveryKernel.ProductionDeliveryLogicalBasis.WorldAxes,
+                SetupHash = setup.SetupHash ^ 1u,
+                PlacementGrid = grid
+            });
+            em.AddComponentData(candidate, new SkirmishProductionDeliveryBasisProvenanceComponent
+            {
+                OperationMapId = new Unity.Collections.FixedString128Bytes(setup.OperationMapId),
+                SourceIdentityHash = new Unity.Collections.FixedString128Bytes("stale-source-identity"),
+                MapGeneration = 1
+            });
+            var proposedBasis = new SkirmishProductionDeliveryBasisComponent
+            {
+                Basis = SharedProductionDeliveryKernel.ProductionDeliveryLogicalBasis.WorldAxes,
+                SetupHash = setup.SetupHash,
+                PlacementGrid = grid
+            };
+            var proposedProvenance = new SkirmishProductionDeliveryBasisProvenanceComponent
+            {
+                OperationMapId = new Unity.Collections.FixedString128Bytes(setup.OperationMapId),
+                SourceIdentityHash = new Unity.Collections.FixedString128Bytes("actual-source-identity"),
+                MapGeneration = 2
+            };
+
+            Assert.IsFalse(SkirmishProductionDeliveryBasisStartup.CanAttachResolved(
+                em, candidate, setup, in proposedBasis, in proposedProvenance));
+            Assert.AreEqual(originalMatch.SessionId, em.GetComponentData<SkirmishMatchState>(candidate).SessionId);
+            Assert.AreEqual(setup.SetupHash ^ 1u,
+                em.GetComponentData<SkirmishProductionDeliveryBasisComponent>(candidate).SetupHash);
+            Assert.IsFalse(em.HasComponent<SkirmishExpandedSessionComponent>(candidate));
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            Assert.AreEqual(0, sessions.CalculateEntityCount());
+        }
+
         [Test]
         public void IncompleteNativeCheckpointIsRejectedBeforeAnyMutation()
         {
@@ -438,6 +523,7 @@ namespace Game.Tests.Editor
             try
             {
                 var suite = new SkirmishExpandedCheckpointTests();
+                suite.ReusedCheckpointLaunchCandidateWithStaleBasisRejectsBeforeQueueMutation();
                 suite.FreshReplayResetsPersistentFactionBankAndEventHistory();
                 suite.IncompleteNativeCheckpointIsRejectedBeforeAnyMutation();
                 suite.FirstCheckpointSystemRequestAttachesItsDocumentWithoutStructuralIterationFailure();

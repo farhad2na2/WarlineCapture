@@ -1,0 +1,6 @@
+{
+  "kind": "UnitAttackAuthoringProjectionParityControl",
+  "runner": "run_unit_attack_authoring_projection_control.py",
+  "scope": "UnitAttack value fields from current UnitGridAuthoring Baker; exact authoring getter order and Unity.Mathematics clamp parity across NaN, infinities, signed zero, subnormal and boundary floats.",
+  "excludes": ["impact and muzzle prefab references", "muzzle offsets", "importer", "admission", "other callers", "Unity builds"]
+}

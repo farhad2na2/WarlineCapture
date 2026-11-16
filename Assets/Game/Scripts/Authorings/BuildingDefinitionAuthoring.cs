@@ -17,6 +17,7 @@ namespace Game.Authoring
         }
 
         [SerializeField] private BuildingDefinitionAuthoringConfig config;
+        public BuildingDefinitionAuthoringConfig AuthoringConfig => config;
 
         [Header("Identity")]
         [SerializeField, HideInInspector] private string displayName = "Building";
@@ -126,6 +127,22 @@ namespace Game.Authoring
         public int ConfiguredAttackTracerEveryNthShot => Mathf.Max(1, attackTracerEveryNthShot);
         public int ConfiguredProductionCount => productions != null ? productions.Count : 0;
         public GameObject ConfiguredDestroyedVisualPrefab => destroyedVisualPrefab;
+
+        public BuildingDefinitionAuthoringScalarSource CaptureScalarMetadataSource()
+        {
+            return new BuildingDefinitionAuthoringScalarSource(
+                config != null,
+                maxHealth,
+                footprintCells.x,
+                footprintCells.y,
+                price,
+                materialsCost,
+                productionDurationSeconds,
+                config != null ? config.MaxHealth : 0,
+                config != null ? config.ScalarProjectionRawPrice : 0,
+                config != null ? config.ScalarProjectionRawMaterialsCost : 0,
+                config != null ? config.ScalarProjectionRawProductionDurationSeconds : 0f);
+        }
 
         public ProductionDefinition GetProductionOrDefault(int index)
         {

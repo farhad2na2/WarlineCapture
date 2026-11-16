@@ -1,0 +1,9 @@
+using System;using Unity.Entities;using Unity.Mathematics;using UnityEngine;using Game.Components;using static Game.Runtime.ResourceHaulerStorageAccessSystemHelper;namespace Game.Runtime {internal sealed partial class ResourceHaulerUtilitySystemHelper {
+@@SOURCE_0@@@@SOURCE_1@@@@SOURCE_2@@@@SOURCE_3@@        {
+@@SOURCE_4@@@@SOURCE_5@@@@SOURCE_6@@        }
+@@SOURCE_7@@        {
+@@SOURCE_8@@@@SOURCE_9@@        }
+@@SOURCE_10@@        {
+@@SOURCE_11@@@@SOURCE_12@@@@SOURCE_13@@        }
+@@SOURCE_14@@@@SOURCE_15@@@@SOURCE_16@@@@SOURCE_17@@@@SOURCE_18@@} internal partial class FactionResourceCompositionSystemHelper {
+@@SOURCE_19@@}}

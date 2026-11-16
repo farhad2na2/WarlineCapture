@@ -218,11 +218,25 @@ namespace Game.Runtime
             float loadAmount,
             ref UnitResourceHauler hauler)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "TryCompleteLoad", source, null, (byte)resourceKind, loadAmount, hasHauler: true, hauler: hauler);
+            try
+            {
+#endif
             if (source == null)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             if (!TryGetEntityResourceStorage(entityManager, source, out BuildingResourceStorageComponent storage))
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, TryCompleteLoad((FactionResourceCompositionSystemHelper.IResourceBuilding)source, resourceKind, loadAmount, ref hauler));
+#else
                 return TryCompleteLoad((FactionResourceCompositionSystemHelper.IResourceBuilding)source, resourceKind, loadAmount, ref hauler);
+#endif
 
             bool loaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteLoad(
                 ref storage,
@@ -230,10 +244,22 @@ namespace Game.Runtime
                 loadAmount,
                 ref hauler);
             if (!loaded)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             CommitEntityResourceStorage(entityManager, source, storage);
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, storageObservedResult, hasHauler: true, hauler: hauler); }
+#endif
         }
 
         public void RevertLoad(
@@ -261,6 +287,12 @@ namespace Game.Runtime
             float loadAmount,
             ref UnitResourceHauler hauler)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "RevertLoad", source, null, (byte)resourceKind, loadAmount, hasHauler: true, hauler: hauler);
+            try
+            {
+#endif
             if (source == null || loadAmount <= 0f)
                 return;
 
@@ -276,6 +308,10 @@ namespace Game.Runtime
                 loadAmount,
                 ref hauler);
             CommitEntityResourceStorage(entityManager, source, storage);
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, null, hasHauler: true, hauler: hauler); }
+#endif
         }
 
         public bool HasReceivingCapacity(FactionResourceCompositionSystemHelper.IResourceBuilding destination, ResourceHaulKind resourceKind, float cargo)
@@ -329,8 +365,18 @@ namespace Game.Runtime
             ResourceHaulKind resourceKind,
             float loadAmount)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "TryReserveSource", source, null, (byte)resourceKind, loadAmount);
+            try
+            {
+#endif
             if (source == null || loadAmount <= 0f)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             if (!TryGetEntityResourceStorage(entityManager, source, out BuildingResourceStorageComponent storage))
             {
@@ -341,7 +387,11 @@ namespace Game.Runtime
                     loadAmount);
                 if (reserved)
                     ApplyResourceStorage(source, storage);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, reserved);
+#else
                 return reserved;
+#endif
             }
 
             if (!BuildingResourceStorageTransferSystemHelper.TryReserveSource(
@@ -349,11 +399,23 @@ namespace Game.Runtime
                     ToStorageResourceKind(resourceKind),
                     loadAmount))
             {
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             CommitEntityResourceStorage(entityManager, source, storage);
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, storageObservedResult); }
+#endif
         }
 
         internal bool TryReserveDestination(
@@ -362,8 +424,18 @@ namespace Game.Runtime
             ResourceHaulKind resourceKind,
             float cargo)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "TryReserveDestination", null, destination, (byte)resourceKind, cargo);
+            try
+            {
+#endif
             if (destination == null || cargo <= 0f)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             if (!TryGetEntityResourceStorage(entityManager, destination, out BuildingResourceStorageComponent storage))
             {
@@ -374,7 +446,11 @@ namespace Game.Runtime
                     cargo);
                 if (reserved)
                     ApplyResourceStorage(destination, storage);
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, reserved);
+#else
                 return reserved;
+#endif
             }
 
             if (!BuildingResourceStorageTransferSystemHelper.TryReserveDestination(
@@ -382,11 +458,23 @@ namespace Game.Runtime
                     ToStorageResourceKind(resourceKind),
                     cargo))
             {
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
             }
 
             CommitEntityResourceStorage(entityManager, destination, storage);
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, storageObservedResult); }
+#endif
         }
 
         internal void ReleaseSourceReservation(
@@ -395,6 +483,12 @@ namespace Game.Runtime
             ResourceHaulKind resourceKind,
             float loadAmount)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "ReleaseSourceReservation", source, null, (byte)resourceKind, loadAmount);
+            try
+            {
+#endif
             if (source == null || loadAmount <= 0f)
                 return;
 
@@ -414,6 +508,10 @@ namespace Game.Runtime
                 ToStorageResourceKind(resourceKind),
                 loadAmount);
             CommitEntityResourceStorage(entityManager, source, storage);
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, null); }
+#endif
         }
 
         internal void ReleaseDestinationReservation(
@@ -422,6 +520,12 @@ namespace Game.Runtime
             ResourceHaulKind resourceKind,
             float cargo)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "ReleaseDestinationReservation", null, destination, (byte)resourceKind, cargo);
+            try
+            {
+#endif
             if (destination == null || cargo <= 0f)
                 return;
 
@@ -441,6 +545,10 @@ namespace Game.Runtime
                 ToStorageResourceKind(resourceKind),
                 cargo);
             CommitEntityResourceStorage(entityManager, destination, storage);
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, null); }
+#endif
         }
 
         public bool TryCompleteUnload(
@@ -469,21 +577,47 @@ namespace Game.Runtime
             ResourceHaulKind resourceKind,
             ref UnitResourceHauler hauler)
         {
+#if UNITY_EDITOR
+            bool? storageObservedResult = null;
+            var storageObservedCall = S002PhysicalStartupObservation.StorageBegin(entityManager, "TryCompleteUnload", null, destination, (byte)resourceKind, 0f, hasHauler: true, hauler: hauler);
+            try
+            {
+#endif
             if (destination == null)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             if (!TryGetEntityResourceStorage(entityManager, destination, out BuildingResourceStorageComponent storage))
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, TryCompleteUnload((FactionResourceCompositionSystemHelper.IResourceBuilding)destination, resourceKind, ref hauler));
+#else
                 return TryCompleteUnload((FactionResourceCompositionSystemHelper.IResourceBuilding)destination, resourceKind, ref hauler);
+#endif
 
             bool unloaded = BuildingResourceHaulerTransferEcsSystem.TryCompleteUnload(
                 ref storage,
                 ToStorageResourceKind(resourceKind),
                 ref hauler);
             if (!unloaded)
+#if UNITY_EDITOR
+                return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, false);
+#else
                 return false;
+#endif
 
             CommitEntityResourceStorage(entityManager, destination, storage);
+#if UNITY_EDITOR
+            return S002PhysicalStartupObservation.StorageResult(ref storageObservedResult, true);
+#else
             return true;
+#endif
+        #if UNITY_EDITOR
+            }
+            finally { S002PhysicalStartupObservation.StorageEnd(storageObservedCall, storageObservedResult, hasHauler: true, hauler: hauler); }
+#endif
         }
 
     }

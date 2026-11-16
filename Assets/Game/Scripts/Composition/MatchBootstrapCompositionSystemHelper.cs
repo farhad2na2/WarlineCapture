@@ -983,7 +983,8 @@ namespace Game.Composition
                 return;
 
             bool enableLegacyPresentation = sceneView == null ||
-                sceneView.CanonicalPresentationMode != OperationMapCanonicalPresentationMode.EntityScene;
+                GameplayStartCompletionPredicate.LegacyPresentationEnabled(
+                    sceneView.CanonicalPresentationMode == OperationMapCanonicalPresentationMode.EntityScene);
             GameplayFeatureStartupCompositionSystemHelper.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
                 enableLegacyPresentation,
                 RuntimeCitySpawnerConfig,

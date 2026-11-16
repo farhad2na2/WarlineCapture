@@ -1,0 +1,13 @@
+            RuntimeActorBirthContext birth = default;
+            if (fromPrefab)
+            {
+                // Select/capture once while the creator still owns the pre-birth context.
+                // Missing proof never prevents the existing actor/placement path.
+                using var birthGrids = em.CreateEntityQuery(typeof(GridConfig));
+                if (birthGrids.CalculateEntityCount() == 1)
+                {
+                    placementGrid = birthGrids.GetSingletonEntity();
+                    var layout = em.GetComponentData<GridConfig>(placementGrid);
+                    birth = RuntimeActorBirthContext.CaptureScenario(em, placementGrid, sessionId, stableId, layout);
+                }
+            }

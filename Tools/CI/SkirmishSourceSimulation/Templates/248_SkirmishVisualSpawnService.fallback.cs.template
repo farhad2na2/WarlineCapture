@@ -1,0 +1,3 @@
+using UnityEngine;namespace Game.Runtime {public static class SkirmishVisualSpawnService {
+        /*SOURCE:constant_2*//*SOURCE:method_0*//*SOURCE:method_1*/
+}}

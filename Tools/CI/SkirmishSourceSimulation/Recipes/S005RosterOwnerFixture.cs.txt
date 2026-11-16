@@ -1,0 +1,46 @@
+// Isolated source-host controls for the original roster projection owner.
+// Fixture values are not S005 mission evidence.
+using System;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
+using Unity.Entities;
+
+internal static class RosterOwnerFixture
+{
+    private static void Require(bool value, string message) { if (!value) throw new Exception(message); }
+    private static int Main()
+    {
+        int next = 400000;
+        var em = new EntityManager { LogicalAllocatorAdmitted = true };
+        em.AllocateLogicalIdentity = () => new Entity { Index = next++, Version = 1 };
+        var id = new FixedString64Bytes("fixture-session");
+        var otherId = new FixedString64Bytes("other-session");
+        var overlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
+        Require(overlays.Length > 0, "fixture overlay required");
+        var setup = new SkirmishResolvedSetup { RoleOverlays = overlays };
+        Entity Actor(FixedString64Bytes owner)
+        {
+            var e = em.CreateEntity();
+            em.AddComponentData(e, new SkirmishAttemptOwnedComponent { SessionId = owner });
+            em.AddComponentData(e, new SkirmishUnitRoleComponent { Role = overlays[0].RoleKind });
+            em.AddComponentData(e, new SkirmishSharedActorTag());
+            em.AddComponentData(e, new CampaignMissionCombatSuppressedTag());
+            return e;
+        }
+        var actor = Actor(id);
+        var other = Actor(otherId);
+        using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+        Require(SkirmishRosterProjectionSystem.Apply(em, owned, id, setup) == 1, "one same-session actor expected");
+        Require(em.GetComponentData<SkirmishRoleOverlayComponent>(actor).Applied == 1, "overlay absent");
+        Require(em.GetComponentData<UnitHealth>(actor).Max == overlays[0].MaxHealth, "health differs from overlay");
+        Require(em.HasComponent<CombatTargetPolicy>(actor), "shared combat policy absent");
+        Require(!em.HasComponent<CampaignMissionCombatSuppressedTag>(actor), "shared actor still suppressed");
+        Require(!em.HasComponent<SkirmishRoleOverlayComponent>(other) && em.HasComponent<CampaignMissionCombatSuppressedTag>(other), "foreign session changed");
+        Require(SkirmishRosterProjectionSystem.Apply(em, owned, id, setup) == 0, "repeated application not idempotent");
+        Console.WriteLine("[RosterOwnerFixture] result=Passed cases=3 scope=SyntheticSourceFixture");
+        return 0;
+    }
+}

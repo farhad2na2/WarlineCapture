@@ -1,0 +1,43 @@
+{
+  "missions": ["S002", "S026", "S050", "S074", "S098"],
+  "sizes": ["Standard", "War", "LargeWar"],
+  "family": "BA",
+  "cases": [
+    {
+      "name": "enemy_base_destroyed",
+      "area_ids": [], "original_ids": [],
+      "steps": [{"facts": {"PlayerDesignatedAlive": true, "EnemyDesignatedAlive": false, "ReplacementBarracksPresent": false, "FieldArmyWiped": false, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 30}, "expect": {"Terminal": true, "Outcome": "Victory"}}],
+      "expect": {"Terminal": true, "Outcome": "Victory", "Reason": "MainBaseDestroyed"}
+    },
+    {
+      "name": "replacement_does_not_save_base",
+      "area_ids": [], "original_ids": [],
+      "steps": [{"facts": {"PlayerDesignatedAlive": false, "EnemyDesignatedAlive": true, "ReplacementBarracksPresent": true, "FieldArmyWiped": false, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 31}, "expect": {"Terminal": true, "Outcome": "Defeat"}}],
+      "expect": {"Terminal": true, "Outcome": "Defeat", "Reason": "MainBaseDestroyed"}
+    },
+    {
+      "name": "simultaneous_base_loss",
+      "area_ids": [], "original_ids": [],
+      "steps": [{"facts": {"PlayerDesignatedAlive": false, "EnemyDesignatedAlive": false, "ReplacementBarracksPresent": false, "FieldArmyWiped": true, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 32}, "expect": {"Terminal": true, "Outcome": "Draw"}}],
+      "expect": {"Terminal": true, "Outcome": "Draw", "Reason": "BothBasesDestroyed"}
+    },
+    {
+      "name": "army_loss_does_not_end_battle",
+      "area_ids": [], "original_ids": [],
+      "steps": [
+        {"facts": {"PlayerDesignatedAlive": true, "EnemyDesignatedAlive": true, "ReplacementBarracksPresent": false, "FieldArmyWiped": true, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 33}, "expect": {"Terminal": false, "Outcome": "None"}},
+        {"facts": {"PlayerDesignatedAlive": true, "EnemyDesignatedAlive": false, "ReplacementBarracksPresent": false, "FieldArmyWiped": true, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 34}, "expect": {"Terminal": true, "Outcome": "Victory"}}
+      ],
+      "expect": {"Terminal": true, "Outcome": "Victory", "Reason": "MainBaseDestroyed"}
+    },
+    {
+      "name": "paused_deadline_waits_for_resume",
+      "area_ids": [], "original_ids": [],
+      "steps": [
+        {"facts": {"PlayerDesignatedAlive": true, "EnemyDesignatedAlive": true, "ReplacementBarracksPresent": false, "FieldArmyWiped": false, "Playing": true, "Paused": true, "Surrender": false, "ElapsedSeconds": 2000}, "expect": {"Terminal": false, "Outcome": "None"}},
+        {"facts": {"PlayerDesignatedAlive": true, "EnemyDesignatedAlive": true, "ReplacementBarracksPresent": false, "FieldArmyWiped": false, "Playing": true, "Paused": false, "Surrender": false, "ElapsedSeconds": 2000}, "expect": {"Terminal": true, "Outcome": "Draw"}}
+      ],
+      "expect": {"Terminal": true, "Outcome": "Draw", "Reason": "TimeLimit"}
+    }
+  ]
+}

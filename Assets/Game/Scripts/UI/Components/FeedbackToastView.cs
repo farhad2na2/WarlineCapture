@@ -91,7 +91,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Smooth01(elapsed / duration);
                 motionRoot.anchoredPosition = Vector2.LerpUnclamped(from, to, t);
                 canvasGroup.alpha = Mathf.Lerp(fromAlpha, toAlpha, t);

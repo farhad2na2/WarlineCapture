@@ -116,14 +116,30 @@ namespace Game.Runtime
             var requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
             foreach (var request in requests) next = Math.Max(next, request.RequestId);
             if ((long)next + staged.Requests.Count > int.MaxValue) return false;
+            var savedInfo = new RuntimeBuildingCombatInfo[staged.Requests.Count];
+            var requestGuard = new SkirmishNativeCheckpointStructureRequestGuard.RequestIdentity[staged.Requests.Count];
+            for (int i = 0; i < staged.Requests.Count; i++)
+            {
+                var item = staged.Requests[i];
+                if (!SkirmishNativeCheckpointParts.TryReadComponent(item.Actor.Parts, out savedInfo[i]) ||
+                    savedInfo[i].OwnerFactionId < 1 || savedInfo[i].OwnerFactionId > 2 ||
+                    savedInfo[i].FootprintCells.x < 1 || savedInfo[i].FootprintCells.y < 1 ||
+                    string.IsNullOrEmpty(item.Actor.PrefabKey)) return false;
+                item.Id = ++next;
+                requestGuard[i] = new SkirmishNativeCheckpointStructureRequestGuard.RequestIdentity(
+                    item.Id, i, item.Actor.PrefabKey, savedInfo[i].OwnerFactionId,
+                    savedInfo[i].OriginCell, savedInfo[i].FootprintCells);
+            }
             em.AddComponent<BuildingStartingGrantOwner>(session);
             em.AddComponentObject(session, staged);
+            em.AddComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session);
+            em.AddComponentObject(session,
+                SkirmishNativeCheckpointStructureRequestGuard.CreateValidated(session, requestGuard));
             requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
             for (int i = 0; i < staged.Requests.Count; i++)
             {
                 var item = staged.Requests[i];
-                SkirmishNativeCheckpointParts.TryReadComponent(item.Actor.Parts, out RuntimeBuildingCombatInfo info);
-                item.Id = ++next;
+                RuntimeBuildingCombatInfo info = savedInfo[i];
                 requests.Add(new BuildingRuntimeSpawnRequest
                 {
                     RequestId = item.Id, RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
@@ -181,7 +197,12 @@ namespace Game.Runtime
                     Set(em, building, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
                     item.BoundEntity = building;
                 }
-                if (complete) em.RemoveComponent<BuildingStartingGrantOwner>(session);
+                if (complete)
+                {
+                    em.RemoveComponent<BuildingStartingGrantOwner>(session);
+                    em.RemoveComponent<SkirmishNativeCheckpointStructureRequestGuard>(session);
+                    em.RemoveComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session);
+                }
                 failure = string.Empty;
                 return true;
             }
@@ -193,6 +214,8 @@ namespace Game.Runtime
             if (em == default || !em.Exists(session)) return;
             SkirmishStartingBuildingsService.Cancel(em, session);
             em.RemoveComponent<SkirmishNativeCheckpointStructureReconstructionRecord>(session);
+            em.RemoveComponent<SkirmishNativeCheckpointStructureRequestGuard>(session);
+            em.RemoveComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(session);
         }
 
         private static void Set<T>(EntityManager em, Entity entity, T value) where T : unmanaged, IComponentData

@@ -65,7 +65,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
                 buildingPrefab,
                 price: 300,
                 focusProducerOnSuccess: true);
-            requestBoundary.ProcessPendingUiCampItemCommands(em, context, frameCount: 10);
+            requestBoundary.ProcessPendingUiCampItemCommands(em, context, frameCount: 10, now: 0f);
 
             Assert.IsTrue(requestBoundary.TryGetUiCampItemCommandResult(
                 em,
@@ -83,7 +83,7 @@ public sealed class BuildingPlacementProductionPlayModeTests
                 unitPrefab,
                 price: 125,
                 focusProducerOnSuccess: true);
-            requestBoundary.ProcessPendingUiCampItemCommands(em, context, frameCount: 11);
+            requestBoundary.ProcessPendingUiCampItemCommands(em, context, frameCount: 11, now: 0f);
 
             Assert.IsTrue(requestBoundary.TryGetUiCampItemCommandResult(
                 em,
@@ -167,13 +167,13 @@ public sealed class BuildingPlacementProductionPlayModeTests
             trySpendMaterials,
             _ => { },
             setActivePlacementCost,
-            (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
+            (building, productionIndex, spawnUnitPrefab, now) => productionSystem.TryQueuePlayerUnitFromBuilding(
                 queueContext,
                 building,
                 productionIndex,
                 spawnUnitPrefab,
                 em,
-                now: 2f),
+                now),
             selectRuntimeBuilding,
             () => { },
             () => { },

@@ -92,7 +92,7 @@ namespace Game.Runtime
                 NativeBitArray dynamicBlockers = dynamicBlockerData.Blocked;
                 NativeArray<byte> friendlyPassFactionIds = dynamicBlockerData.FriendlyPassFactionIds;
                 NativeBitArray occupied = dynamicOccupancyData.Occupied;
-                liveUnitSnapshot.Capture(ref state, queries.LiveUnitsQuery);
+                liveUnitSnapshot.Capture(ref state, queries.LiveUnitsQuery, grid);
                 NativeArray<Entity> liveUnitEntities = liveUnitSnapshot.Entities;
                 NativeArray<UnitGrid> liveUnitGrids = liveUnitSnapshot.Grids;
                 NativeArray<UnitFootprint> liveUnitFootprints = liveUnitSnapshot.Footprints;
@@ -223,8 +223,8 @@ namespace Game.Runtime
                     bool isSegmentedRequest = !pathGoal.Equals(requestedGoal);
                     segmented[i] = (byte)(isSegmentedRequest ? 1 : 0);
                     bool cheapSegmentMode = isManualMove && !isVehicle;
-                    cheapSegmentModes[i] = (byte)(detailedHaulerPath ? 3 : detailedVehiclePath && isVehicle ? 2 : cheapSegmentMode ? 1 : 0);
-                    bool skipAlternateSearch = detailedHaulerPath || isManualMove && (!isVehicle || detailedSkirmishPath);
+                    cheapSegmentModes[i] = PathGoalPolicyKernel.GetRoutingMode(isManualMove,isVehicle,detailedSkirmishPath,detailedHaulerPath);
+                    bool skipAlternateSearch = PathGoalPolicyKernel.SkipAlternateSearch(isManualMove,isVehicle,detailedSkirmishPath,detailedHaulerPath);
                     alternateSearchSkipped[i] = (byte)(skipAlternateSearch ? 1 : 0);
                     alternateAttempts[i] = 0;
                     int2 assignedGoal = goalAssignment.FindNearestFreeGoal(
@@ -248,12 +248,17 @@ namespace Game.Runtime
                         footprintSize,
                         requestFactions[i],
                         startIndex);
-                    if (assignedGoal.Equals(start) && !pathGoal.Equals(start) &&
-                        GridUtils.InBounds(pathGoal, grid.Width, grid.Height) &&
-                        new MapSurfaceTraversalValidation().CanTraverseFootprint(
+                    if (PathGoalAssignmentKernel.ShouldRestoreDesiredGoal(
+                        new PlacementCell(assignedGoal.x,assignedGoal.y),new PlacementCell(start.x,start.y),
+                        new PlacementCell(pathGoal.x,pathGoal.y),grid.Width,grid.Height))
+                    {
+                        bool validSurface=new MapSurfaceTraversalValidation().CanTraverseFootprint(
                             surfaceContext.Surface, surfaceContext.HasSurfaceData, grid,
-                            pathGoal, footprintSize, isVehicle))
-                        assignedGoal = pathGoal;
+                            pathGoal, footprintSize, isVehicle);
+                        var restored=PathGoalAssignmentKernel.RestoreDesiredGoal(new PlacementCell(assignedGoal.x,assignedGoal.y),
+                            new PlacementCell(pathGoal.x,pathGoal.y),validSurface);
+                        assignedGoal=new int2(restored.x,restored.y);
+                    }
                     assignedGoals[i] = assignedGoal;
 
                     if ((isManualMove || em.HasComponent<UnitResourceHaulOrder>(requestEntities[i])) && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)
@@ -316,6 +321,7 @@ namespace Game.Runtime
                     LiveUnitGrids = liveUnitGrids,
                     LiveUnitFootprints = liveUnitFootprints,
                     LiveUnitManualGroupMembers = liveUnitManualGroupMembers,
+                    LiveUnitCoverage = liveUnitSnapshot.Coverage,
                     Entities = requestEntities,
                     UnitGrids = requestUnitGrids,
                     Footprints = requestFootprints,

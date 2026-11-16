@@ -1,0 +1,22 @@
+System.UInt32 Unity.Mathematics.math::hash(Unity.Mathematics.int3)
+IL_0000: ldarg.0
+IL_0001: call Unity.Mathematics.uint3 Unity.Mathematics.math::asuint(Unity.Mathematics.int3)
+IL_0006: ldc.i4 1283419601
+IL_000b: ldc.i4 1210229737
+IL_0010: ldc.i4 -1430011299
+IL_0015: call Unity.Mathematics.uint3 Unity.Mathematics.math::uint3(System.UInt32,System.UInt32,System.UInt32)
+IL_001a: call Unity.Mathematics.uint3 Unity.Mathematics.uint3::op_Multiply(Unity.Mathematics.uint3,Unity.Mathematics.uint3)
+IL_001f: call System.UInt32 Unity.Mathematics.math::csum(Unity.Mathematics.uint3)
+IL_0024: ldc.i4 -769849019
+IL_0029: add
+IL_002a: ret
+System.UInt32 Unity.Mathematics.math::csum(Unity.Mathematics.uint3)
+IL_0000: ldarg.0
+IL_0001: ldfld System.UInt32 Unity.Mathematics.uint3::x
+IL_0006: ldarg.0
+IL_0007: ldfld System.UInt32 Unity.Mathematics.uint3::y
+IL_000c: add
+IL_000d: ldarg.0
+IL_000e: ldfld System.UInt32 Unity.Mathematics.uint3::z
+IL_0013: add
+IL_0014: ret

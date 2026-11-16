@@ -53,18 +53,22 @@ namespace Game.Runtime
 
             public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in LocalTransform selfTransform, ref EngageTarget engage)
             {
-                if (engage.Target == Entity.Null || !TransformLookup.HasComponent(engage.Target))
+                bool hasTransform=engage.Target!=Entity.Null&&TransformLookup.HasComponent(engage.Target);
+                Unity.Mathematics.float3 position=default;
+                Unity.Mathematics.int2 cell=default;
+                if (hasTransform)
                 {
-                    engage.Target = Entity.Null;
-                    engage.Cell = default;
-                    engage.Position = default;
-                    Ecb.RemoveComponent<EngageTarget>(sortKey, entity);
-                    return;
+                    position=TransformLookup[engage.Target].Position;
+                    cell=GridUtils.WorldToCell(Grid,position);
                 }
-
-                var t = TransformLookup[engage.Target];
-                engage.Position = t.Position;
-                engage.Cell = GridUtils.WorldToCell(Grid, t.Position);
+                var original=new EngagementTargetState{TargetIndex=engage.Target.Index,TargetVersion=engage.Target.Version,
+                    CellX=engage.Cell.x,CellZ=engage.Cell.y,X=engage.Position.x,Y=engage.Position.y,Z=engage.Position.z,IsCommanded=engage.IsCommanded};
+                var result=EngageTargetLifecycleKernel.Sync(original,hasTransform,position.x,position.y,position.z,cell.x,cell.y);
+                engage.Target=new Entity{Index=result.State.TargetIndex,Version=result.State.TargetVersion};
+                engage.Cell=new Unity.Mathematics.int2(result.State.CellX,result.State.CellZ);
+                engage.Position=new Unity.Mathematics.float3(result.State.X,result.State.Y,result.State.Z);
+                engage.IsCommanded=result.State.IsCommanded;
+                if(result.RemoveAtEndSimulation)Ecb.RemoveComponent<EngageTarget>(sortKey,entity);
             }
         }
     }

@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using System;
 
 namespace Game.Runtime
 {
@@ -10,6 +11,7 @@ namespace Game.Runtime
 
     internal sealed class BuildingPlacementAdapterCompositionSystemHelper
     {
+        internal static event Action<RectInt, bool> SkirmishFootprintLevelValidationObserved;
         private const float SkirmishMaxFoundationHeightDelta = 0.5f;
         private const float SkirmishMaxBuildingSlopeDegrees = 8f;
         private const float SkirmishMaxFoundationElevation = 0.75f;
@@ -161,7 +163,9 @@ namespace Game.Runtime
             if (surfaceQuery.CalculateEntityCount() != 1)
                 return false;
             MapSurfaceComponent surface = surfaceQuery.GetSingleton<MapSurfaceComponent>();
-            return IsSkirmishFootprintLevel(surface, footprint);
+            bool level = IsSkirmishFootprintLevel(surface, footprint);
+            SkirmishFootprintLevelValidationObserved?.Invoke(footprint, level);
+            return level;
         }
 
         internal static bool IsSkirmishFootprintLevel(MapSurfaceComponent surface, RectInt footprint)

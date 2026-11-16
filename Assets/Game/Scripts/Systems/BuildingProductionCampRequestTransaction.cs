@@ -1,3 +1,4 @@
+using System;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
@@ -142,142 +143,111 @@ namespace Game.Runtime
             int price,
             bool focusProducerOnSuccess,
             int frameCount,
+            float now,
             out string requiredBuildingDisplayName)
         {
-            CampRequestFailure failure = GetCampRequestFailure(context, prefab, price, out requiredBuildingDisplayName);
-            if (failure != CampRequestFailure.None)
-                return failure;
+            return FromSemanticFailure(UnitProductionSemanticRequestOwner.Execute<GameObject, RuntimeBuildingEntity, RuntimeBuildingEntity.PendingProduction>(
+                new NativeUnitProductionRequestAdapter(this, context, frameCount),
+                prefab, price, focusProducerOnSuccess, frameCount, now,
+                out requiredBuildingDisplayName));
+        }
 
-            if (context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab))
+        private sealed class NativeUnitProductionRequestAdapter : UnitProductionSemanticRequestOwner.IAdapter<GameObject, RuntimeBuildingEntity, RuntimeBuildingEntity.PendingProduction>
+        {
+            readonly BuildingProductionRequestSystemHelper owner;
+            readonly Context context;
+            readonly int frameCount;
+            internal NativeUnitProductionRequestAdapter(BuildingProductionRequestSystemHelper owner, Context context, int frameCount)
+            { this.owner = owner; this.context = context; this.frameCount = frameCount; }
+            public UnitProductionSemanticRequestOwner.Failure Evaluate(GameObject prefab, int price, out string required) => ToSemanticFailure(owner.GetCampRequestFailure(context, prefab, price, out required));
+            public bool IsConfiguredSpawnable(GameObject prefab) => context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab);
+            public bool BeginConfiguredPlacement(GameObject prefab) => context.BeginPlacementForConfiguredSpawnable != null && context.BeginPlacementForConfiguredSpawnable(prefab);
+            public bool HasGlobalQueueCapacity() => BuildingProductionRequestSystemHelper.HasGlobalQueueCapacity(context);
+            public bool TryResolveCosts(GameObject prefab, int fallback, out int credits, out int materials) => TryResolveUnitResourceCosts(context, prefab, fallback, out credits, out materials);
+            public bool TryFindProducer(GameObject prefab, bool requireCapacity, out int id, out int index, out string display) => owner.TryFindFirstFriendlyProducerBuilding(context, prefab, requireCapacity, out id, out index, out display);
+            public bool TryGetRequiredProducerDisplayName(GameObject prefab, out string display) => owner.TryGetRequiredProducerDisplayName(context, prefab, out display);
+            public bool TryFindOperationMapProducer(GameObject prefab) => owner.TryFindFirstFriendlyOperationMapProducer(context, prefab, out _, out _, out _);
+            public bool HasGlobalQueueCapacityAfterOperationMapFailure() => BuildingProductionRequestSystemHelper.HasGlobalQueueCapacity(context);
+            public UnitProductionSemanticRequestOwner.Failure Spend(int credits, int materials) => ToSemanticFailure(TrySpendUnitProductionResources(context, credits, materials));
+            public void Restore(int credits, int materials) => RestoreUnitProductionResources(context, credits, materials);
+            public bool TryQueueOperationMap(GameObject prefab, float now) => owner.TryEnqueueFriendlyOperationMapProduction(context, prefab, now, out _, out _, out _);
+            public bool IsMissionReceipt() => context.TryGetEntityManager != null && context.TryGetEntityManager(out var em) && SkirmishNativeProduction.TrySession(em, out _);
+            public bool TryGetProducer(int id, out RuntimeBuildingEntity producer)
             {
-                if (context.BeginPlacementForConfiguredSpawnable == null ||
-                    !context.BeginPlacementForConfiguredSpawnable(prefab))
-                    return CampRequestFailure.InvalidSelection;
-
-                return CampRequestFailure.None;
+                producer = null;
+                return context.RuntimeBuildings != null && context.RuntimeBuildings.TryGetValue(id, out producer) && producer != null;
             }
-
-            if (!HasGlobalQueueCapacity(context))
-                return CampRequestFailure.GlobalProductionQueueFull;
-
-            if (!TryResolveUnitResourceCosts(
-                    context,
-                    prefab,
-                    price,
-                    out int creditsCost,
-                    out int materialsCost))
-                return CampRequestFailure.InvalidSelection;
-
-            if (!TryFindFirstFriendlyProducerBuilding(
-                    context,
-                    prefab,
-                    requireQueueCapacity: true,
-                    out int producerBuildingId,
-                    out int productionIndex,
-                    out _))
+            public void FocusProducer(RuntimeBuildingEntity producer, GameObject prefab) => owner.SelectBuildingForProductionRequest(context, producer, prefab);
+            public UnitProductionSemanticRequestOwner.QueueOutcome TryQueueUnit(RuntimeBuildingEntity producer, int index, int ignoredFrameCount, float now, out RuntimeBuildingEntity.PendingProduction pending)
             {
-                if (TryFindFirstFriendlyProducerBuilding(
-                        context,
-                        prefab,
-                        requireQueueCapacity: false,
-                        out _,
-                        out _,
-                        out string fullProducerDisplayName))
-                {
-                    requiredBuildingDisplayName = fullProducerDisplayName;
-                    return CampRequestFailure.ProductionQueueFull;
-                }
-
-                if (TryFindFirstFriendlyOperationMapProducer(context, prefab, out _, out _, out _))
-                {
-                    CampRequestFailure spendFailure = TrySpendUnitProductionResources(
-                        context,
-                        creditsCost,
-                        materialsCost);
-                    if (spendFailure != CampRequestFailure.None)
-                        return spendFailure;
-
-                    if (!TryEnqueueFriendlyOperationMapProduction(
-                            context,
-                            prefab,
-                            Time.time,
-                            out _,
-                            out _,
-                            out _))
-                    {
-                        RestoreUnitProductionResources(context, creditsCost, materialsCost);
-                        return HasGlobalQueueCapacity(context)
-                            ? CampRequestFailure.InvalidSelection
-                            : CampRequestFailure.GlobalProductionQueueFull;
-                    }
-
-                    context.RecordUnitOrdered?.Invoke(prefab);
-                    return CampRequestFailure.None;
-                }
-
-                TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
-                return CampRequestFailure.MissingProducerBuilding;
-            }
-
-            bool missionReceipt = context.TryGetEntityManager != null && context.TryGetEntityManager(out var receiptWorld) &&
-                SkirmishNativeProduction.TrySession(receiptWorld, out _);
-            CampRequestFailure buildingSpendFailure = missionReceipt ? CampRequestFailure.None : TrySpendUnitProductionResources(
-                context,
-                creditsCost,
-                materialsCost);
-            if (buildingSpendFailure != CampRequestFailure.None)
-                return buildingSpendFailure;
-
-            if (context.RuntimeBuildings == null ||
-                !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
-                producerBuilding == null)
-            {
-                if (!missionReceipt) RestoreUnitProductionResources(context, creditsCost, materialsCost);
-                return CampRequestFailure.InvalidSelection;
-            }
-
-            if (focusProducerOnSuccess)
-                SelectBuildingForProductionRequest(context, producerBuilding, prefab);
-
-            if (!TryCreateUnitFromBuilding(
-                    context,
-                    producerBuildingId,
-                    productionIndex,
-                    frameCount,
-                    frameCount,
-                    out byte resultCode))
-            {
-                if (!missionReceipt) RestoreUnitProductionResources(context, creditsCost, materialsCost);
+                bool accepted = owner.TryCreateUnitFromBuilding(context, producer.Id, index, frameCount, frameCount, now, out byte resultCode);
+                pending = accepted && producer.PendingProductions != null && producer.PendingProductions.Count > 0
+                    ? producer.PendingProductions[producer.PendingProductions.Count - 1]
+                    : null;
+                if (accepted) return UnitProductionSemanticRequestOwner.QueueOutcome.Queued;
                 return resultCode switch
                 {
-                    BuildingUiProductionCommandResultElement.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,
-                    BuildingUiProductionCommandResultElement.QueueFull => CampRequestFailure.ProductionQueueFull,
-                    _ => CampRequestFailure.InvalidSelection
+                    BuildingUiProductionCommandResultElement.GlobalQueueFull => UnitProductionSemanticRequestOwner.QueueOutcome.GlobalQueueFull,
+                    BuildingUiProductionCommandResultElement.QueueFull => UnitProductionSemanticRequestOwner.QueueOutcome.ProducerQueueFull,
+                    _ => UnitProductionSemanticRequestOwner.QueueOutcome.Rejected
                 };
             }
-
-            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var paidWorld))
+            public void AdjustAcceptedPending(RuntimeBuildingEntity producer, RuntimeBuildingEntity.PendingProduction pending, int credits, int materials)
             {
-                if (!missionReceipt && producerBuilding.PendingProductions.Count > 0)
-                {
-                    var paid = producerBuilding.PendingProductions[producerBuilding.PendingProductions.Count - 1];
-                    int refundableMaterials = materialsCost;
-                    using var economiesQuery = paidWorld.CreateEntityQuery(typeof(FactionEconomy));
-                    using var economies = economiesQuery.ToComponentDataArray<FactionEconomy>(Unity.Collections.Allocator.Temp);
-                    foreach (var economy in economies)
-                        if (FactionIdentity.IsPlayerControlled(economy.FactionId) &&
-                            Game.Tactical.Contracts.MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
-                                creditsCost, materialsCost, out _, out int effectiveMaterials))
-                            refundableMaterials = effectiveMaterials;
-                    // The cancellation receipt holds the amount actually paid,
-                    // rather than the legacy Materials component of that price.
-                    paid.RefundableMaterials = refundableMaterials;
-                    paid.PaidQuantity = Mathf.Max(1, paid.RemainingQuantity);
-                }
+                if (pending == null || context.TryGetEntityManager == null || !context.TryGetEntityManager(out var em)) return;
+                int refundableMaterials = materials;
+                using var query = em.CreateEntityQuery(typeof(FactionEconomy));
+                using var economies = query.ToComponentDataArray<FactionEconomy>(Unity.Collections.Allocator.Temp);
+                foreach (var economy in economies)
+                    if (FactionIdentity.IsPlayerControlled(economy.FactionId) &&
+                        Game.Tactical.Contracts.MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                            credits, materials, out _, out int effectiveMaterials))
+                        refundableMaterials = effectiveMaterials;
+                pending.RefundableMaterials = refundableMaterials;
+                pending.PaidQuantity = Mathf.Max(1, pending.RemainingQuantity);
             }
-            context.RecordUnitOrdered?.Invoke(prefab);
-            return CampRequestFailure.None;
+            public void RecordUnitOrdered(GameObject prefab) => context.RecordUnitOrdered?.Invoke(prefab);
         }
+
+        private static UnitProductionSemanticRequestOwner.Failure ToSemanticFailure(CampRequestFailure failure) => failure switch
+        {
+            CampRequestFailure.None => UnitProductionSemanticRequestOwner.Failure.None,
+            CampRequestFailure.NotEnoughMoney => UnitProductionSemanticRequestOwner.Failure.NotEnoughMoney,
+            CampRequestFailure.MissingProducerBuilding => UnitProductionSemanticRequestOwner.Failure.MissingProducerBuilding,
+            CampRequestFailure.InvalidSelection => UnitProductionSemanticRequestOwner.Failure.InvalidSelection,
+            CampRequestFailure.ProductionQueueFull => UnitProductionSemanticRequestOwner.Failure.ProducerQueueFull,
+            CampRequestFailure.GlobalProductionQueueFull => UnitProductionSemanticRequestOwner.Failure.GlobalQueueFull,
+            CampRequestFailure.InsufficientCredits => UnitProductionSemanticRequestOwner.Failure.InsufficientCredits,
+            CampRequestFailure.InsufficientMaterials => UnitProductionSemanticRequestOwner.Failure.InsufficientMaterials,
+            CampRequestFailure.InsufficientCreditsAndMaterials => UnitProductionSemanticRequestOwner.Failure.InsufficientCreditsAndMaterials,
+            CampRequestFailure.InfantryLimit => UnitProductionSemanticRequestOwner.Failure.InfantryLimit,
+            CampRequestFailure.LogisticsLimit => UnitProductionSemanticRequestOwner.Failure.LogisticsLimit,
+            CampRequestFailure.ReadinessEstablishedRequired => UnitProductionSemanticRequestOwner.Failure.ReadinessEstablishedRequired,
+            CampRequestFailure.ReadinessFullArsenalRequired => UnitProductionSemanticRequestOwner.Failure.ReadinessFullArsenalRequired,
+            CampRequestFailure.ArmyCapacityReached => UnitProductionSemanticRequestOwner.Failure.ArmyCapacityReached,
+            CampRequestFailure.ResearchInProgress => UnitProductionSemanticRequestOwner.Failure.ResearchInProgress,
+            _ => UnitProductionSemanticRequestOwner.Failure.InvalidSelection
+        };
+
+        private static CampRequestFailure FromSemanticFailure(UnitProductionSemanticRequestOwner.Failure failure) => failure switch
+        {
+            UnitProductionSemanticRequestOwner.Failure.None => CampRequestFailure.None,
+            UnitProductionSemanticRequestOwner.Failure.NotEnoughMoney => CampRequestFailure.NotEnoughMoney,
+            UnitProductionSemanticRequestOwner.Failure.MissingProducerBuilding => CampRequestFailure.MissingProducerBuilding,
+            UnitProductionSemanticRequestOwner.Failure.InvalidSelection => CampRequestFailure.InvalidSelection,
+            UnitProductionSemanticRequestOwner.Failure.ProducerQueueFull => CampRequestFailure.ProductionQueueFull,
+            UnitProductionSemanticRequestOwner.Failure.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,
+            UnitProductionSemanticRequestOwner.Failure.InsufficientCredits => CampRequestFailure.InsufficientCredits,
+            UnitProductionSemanticRequestOwner.Failure.InsufficientMaterials => CampRequestFailure.InsufficientMaterials,
+            UnitProductionSemanticRequestOwner.Failure.InsufficientCreditsAndMaterials => CampRequestFailure.InsufficientCreditsAndMaterials,
+            UnitProductionSemanticRequestOwner.Failure.InfantryLimit => CampRequestFailure.InfantryLimit,
+            UnitProductionSemanticRequestOwner.Failure.LogisticsLimit => CampRequestFailure.LogisticsLimit,
+            UnitProductionSemanticRequestOwner.Failure.ReadinessEstablishedRequired => CampRequestFailure.ReadinessEstablishedRequired,
+            UnitProductionSemanticRequestOwner.Failure.ReadinessFullArsenalRequired => CampRequestFailure.ReadinessFullArsenalRequired,
+            UnitProductionSemanticRequestOwner.Failure.ArmyCapacityReached => CampRequestFailure.ArmyCapacityReached,
+            UnitProductionSemanticRequestOwner.Failure.ResearchInProgress => CampRequestFailure.ResearchInProgress,
+            _ => CampRequestFailure.InvalidSelection
+        };
 
         private static bool TryResolveUnitResourceCosts(
             Context context,
@@ -340,4 +310,142 @@ namespace Game.Runtime
             context.RefundMaterials?.Invoke(materialsCost);
         }
     }
+}
+
+namespace Game.Runtime
+{
+// Shared ordered unit-request executor. Concrete adapters only read and mutate
+// their actual world/context owners; legality ordering, spend/refund sequencing,
+// focus timing, and queue-result mapping stay here.
+internal static class UnitProductionSemanticRequestOwner
+{
+    internal enum Failure
+    {
+        None,
+        NotEnoughMoney,
+        MissingProducerBuilding,
+        InvalidSelection,
+        ProducerQueueFull,
+        GlobalQueueFull,
+        InsufficientCredits,
+        InsufficientMaterials,
+        InsufficientCreditsAndMaterials,
+        InfantryLimit,
+        LogisticsLimit,
+        ReadinessEstablishedRequired,
+        ReadinessFullArsenalRequired,
+        ArmyCapacityReached,
+        ResearchInProgress
+    }
+
+    internal enum QueueOutcome { Queued, ProducerQueueFull, GlobalQueueFull, Rejected }
+
+    internal interface IAdapter<TPrefab, TProducer, TPending> where TProducer : class where TPending : class
+    {
+        Failure Evaluate(TPrefab prefab, int price, out string requiredBuildingDisplayName);
+        bool IsConfiguredSpawnable(TPrefab prefab);
+        bool BeginConfiguredPlacement(TPrefab prefab);
+        bool HasGlobalQueueCapacity();
+        bool TryResolveCosts(TPrefab prefab, int fallbackMaterialsCost, out int creditsCost, out int materialsCost);
+        bool TryFindProducer(TPrefab prefab, bool requireQueueCapacity, out int buildingId, out int productionIndex, out string displayName);
+        bool TryGetRequiredProducerDisplayName(TPrefab prefab, out string displayName);
+        bool TryFindOperationMapProducer(TPrefab prefab);
+        bool HasGlobalQueueCapacityAfterOperationMapFailure();
+        Failure Spend(int creditsCost, int materialsCost);
+        void Restore(int creditsCost, int materialsCost);
+        bool TryQueueOperationMap(TPrefab prefab, float now);
+        bool IsMissionReceipt();
+        bool TryGetProducer(int buildingId, out TProducer producer);
+        void FocusProducer(TProducer producer, TPrefab prefab);
+        QueueOutcome TryQueueUnit(TProducer producer, int productionIndex, int frameCount, float now, out TPending pending);
+        void AdjustAcceptedPending(TProducer producer, TPending pending, int creditsCost, int materialsCost);
+        void RecordUnitOrdered(TPrefab prefab);
+    }
+
+    internal static Failure Execute<TPrefab, TProducer, TPending>(
+        IAdapter<TPrefab, TProducer, TPending> adapter,
+        TPrefab prefab,
+        int price,
+        bool focusProducerOnSuccess,
+        int frameCount,
+        float now,
+        out string requiredBuildingDisplayName)
+        where TProducer : class
+        where TPending : class
+    {
+        if (adapter == null) throw new ArgumentNullException(nameof(adapter));
+        requiredBuildingDisplayName = string.Empty;
+        var failure = adapter.Evaluate(prefab, price, out requiredBuildingDisplayName);
+        if (failure != Failure.None) return failure;
+
+        if (adapter.IsConfiguredSpawnable(prefab))
+            return adapter.BeginConfiguredPlacement(prefab)
+                ? Failure.None
+                : Failure.InvalidSelection;
+
+        if (!adapter.HasGlobalQueueCapacity())
+            return Failure.GlobalQueueFull;
+
+        if (!adapter.TryResolveCosts(prefab, price, out int creditsCost, out int materialsCost))
+            return Failure.InvalidSelection;
+
+        if (!adapter.TryFindProducer(prefab, true, out int producerBuildingId, out int productionIndex, out _))
+        {
+            if (adapter.TryFindProducer(prefab, false, out _, out _, out string fullProducerDisplayName))
+            {
+                requiredBuildingDisplayName = fullProducerDisplayName;
+                return Failure.ProducerQueueFull;
+            }
+
+            if (adapter.TryFindOperationMapProducer(prefab))
+            {
+                failure = adapter.Spend(creditsCost, materialsCost);
+                if (failure != Failure.None) return failure;
+                if (!adapter.TryQueueOperationMap(prefab, now))
+                {
+                    adapter.Restore(creditsCost, materialsCost);
+                    return adapter.HasGlobalQueueCapacityAfterOperationMapFailure()
+                        ? Failure.InvalidSelection
+                        : Failure.GlobalQueueFull;
+                }
+
+                adapter.RecordUnitOrdered(prefab);
+                return Failure.None;
+            }
+
+            adapter.TryGetRequiredProducerDisplayName(prefab, out requiredBuildingDisplayName);
+            return Failure.MissingProducerBuilding;
+        }
+
+        bool missionReceipt = adapter.IsMissionReceipt();
+        if (!missionReceipt)
+        {
+            failure = adapter.Spend(creditsCost, materialsCost);
+            if (failure != Failure.None) return failure;
+        }
+
+        if (!adapter.TryGetProducer(producerBuildingId, out TProducer producer) || producer == null)
+        {
+            if (!missionReceipt) adapter.Restore(creditsCost, materialsCost);
+            return Failure.InvalidSelection;
+        }
+
+        if (focusProducerOnSuccess) adapter.FocusProducer(producer, prefab);
+        QueueOutcome queueOutcome = adapter.TryQueueUnit(producer, productionIndex, frameCount, now, out TPending pending);
+        if (queueOutcome != QueueOutcome.Queued)
+        {
+            if (!missionReceipt) adapter.Restore(creditsCost, materialsCost);
+            return queueOutcome switch
+            {
+                QueueOutcome.GlobalQueueFull => Failure.GlobalQueueFull,
+                QueueOutcome.ProducerQueueFull => Failure.ProducerQueueFull,
+                _ => Failure.InvalidSelection
+            };
+        }
+
+        if (!missionReceipt) adapter.AdjustAcceptedPending(producer, pending, creditsCost, materialsCost);
+        adapter.RecordUnitOrdered(prefab);
+        return Failure.None;
+    }
+}
 }

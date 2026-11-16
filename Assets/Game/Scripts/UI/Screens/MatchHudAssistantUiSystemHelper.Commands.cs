@@ -58,7 +58,7 @@ namespace Game.UI.Runtime
                 }
                 else
                 {
-                    QueueM02DoItRetry(_lastPanelModel.TutorialStep, Time.unscaledTime);
+                    QueueM02DoItRetry(_lastPanelModel.TutorialStep, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
                 }
                 return;
             }

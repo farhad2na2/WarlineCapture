@@ -40,8 +40,8 @@ namespace Game.UI.Runtime
             restoreCancellation = pending;
             try
             {
-                float deadline = Time.unscaledTime + duration;
-                while (Time.unscaledTime < deadline)
+                float deadline = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + duration;
+                while (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < deadline)
                     await Awaitable.NextFrameAsync(pending.Token);
                 if(label != null) label.text = _defaultText;
             }

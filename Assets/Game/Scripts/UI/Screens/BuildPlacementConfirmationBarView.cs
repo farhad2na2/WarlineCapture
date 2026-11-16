@@ -219,10 +219,10 @@ namespace Game.UI.Runtime
 
         private void Refresh(bool force)
         {
-            if (!force && Time.unscaledTime < _nextRefreshAt)
+            if (!force && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < _nextRefreshAt)
                 return;
 
-            _nextRefreshAt = Time.unscaledTime + RefreshIntervalSeconds;
+            _nextRefreshAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + RefreshIntervalSeconds;
             bool hasPlacement = _commandSystem != null && _commandSystem.HasPendingBuildingPlacement;
             // The full map owns navigation input. Keep the placement preview alive,
             // but remove its foreground controls until the map closes.

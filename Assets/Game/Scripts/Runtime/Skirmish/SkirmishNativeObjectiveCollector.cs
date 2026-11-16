@@ -403,16 +403,9 @@ namespace Game.Runtime
         public static bool TryProjectClock(in SkirmishObjectiveCollectorClock cursor,in SkirmishObjectiveClockComponent clock,
             out SkirmishObjectiveCollectorClock next,out long delta,out string error)
         {
-            next=cursor;delta=0;error="Invalid/regressing authoritative objective clock.";
-            double now=clock.ElapsedSeconds;
-            if(clock.Playing>1||clock.Paused>1||double.IsNaN(now)||double.IsInfinity(now)||now<0||double.IsNaN(cursor.LastAuthoritativeSeconds)||
-                double.IsInfinity(cursor.LastAuthoritativeSeconds)||cursor.LastAuthoritativeSeconds<0||now<cursor.LastAuthoritativeSeconds||
-                double.IsNaN(cursor.FractionalTicks)||double.IsInfinity(cursor.FractionalTicks)||cursor.FractionalTicks<0||cursor.FractionalTicks>=1)return false;
-            if((clock.Playing==0||clock.Paused!=0)&&now!=cursor.LastAuthoritativeSeconds)
-            {error="Paused/nonplaying authoritative clock advanced.";return false;}
-            double total=(now-cursor.LastAuthoritativeSeconds)*TimeSpan.TicksPerSecond+cursor.FractionalTicks;
-            if(total>=long.MaxValue)return false;
-            delta=(long)Math.Floor(total);next.LastAuthoritativeSeconds=now;next.FractionalTicks=total-delta;error=null;return true;
+            next=cursor;
+            return SkirmishMissionOrchestrationKernel.TryProjectCollectorClock(cursor.LastAuthoritativeSeconds,cursor.FractionalTicks,
+                clock.ElapsedSeconds,clock.Playing,clock.Paused,out next.LastAuthoritativeSeconds,out next.FractionalTicks,out delta,out error);
         }
 
         public bool TryCommitCollectedTombstones(SkirmishNativeObjectiveFacts facts,out string error)

@@ -26,6 +26,10 @@ public sealed partial class BuildingDefenseAttackSystemTests
         try
         {
             var tests = new BuildingDefenseAttackSystemTests();
+            tests.FinishedSkirmish_DoesNotAcquireFireOrCreateFeedback();
+            passed++;
+            tests.SkirmishFinishesWithCachedTarget_DoesNotFireReadyShot();
+            passed++;
             tests.GuardTowerDefense_MissionOverlayBindsBothFactionsAndPreservesLegacy();
             passed++;
             tests.GuardTowerDefense_PolicyAppliesAtAcquisitionAndBeforeCachedShot();

@@ -1684,13 +1684,13 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             trySpendMaterials,
             _ => { },
             setActivePlacementCost,
-            (building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
+            (building, productionIndex, spawnUnitPrefab, now) => productionSystem.TryQueuePlayerUnitFromBuilding(
                 queueContext,
                 building,
                 productionIndex,
                 spawnUnitPrefab,
                 entityManager,
-                10f),
+                now),
             _ => { },
             () => { },
             () => { },
@@ -1726,6 +1726,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 price,
                 focusProducer,
                 100,
+                0f,
                 out requiredBuilding),
             () => false,
             () => false,

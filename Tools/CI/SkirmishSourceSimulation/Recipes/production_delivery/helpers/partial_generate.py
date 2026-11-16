@@ -1,0 +1,8 @@
+s=source['Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs'];src=repo/'Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs';raw=native_raw['Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs']
+names=['TryGetProductionSpawnPointFromReadModel','TryGetAvailableProductionSpawnPointFromReadModel','HasAnyProductionSpawnPointInReadModel','IsProductionSlotOccupied','IsProductionSlotOccupiedByReadModel','IsProducedUnitAlive','PublishProductionSpawnRequest','PublishProducedUnitReadModel']
+constant=re.search(r'private const int MaxProductionSpawnRequestHistory\s*=\s*([^;]+);',s).group(1);header='using Game.Components;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;namespace Game.Runtime { internal static class SourceProductionSpawnReadModels { const int MaxProductionSpawnRequestHistory='+constant+';\n';b=[];spans=[]
+for name in names:
+ body,span=method(s,name);span['raw_body_sha256']=hashlib.sha256(body.encode()).hexdigest();spans.append(span);body=body.replace('private static','internal static',1);body=re.sub(r'\bContext context\b','BuildingProductionQueueCompositionSystemHelper.QueueContext context',body);body=body.replace('ResolveProducedUnitFaction(building)','SharedProductionActorInitializer.ResolveProducedUnitFaction(building)');b.append(body)
+out=header+'\n'.join(b)+'\n\n}}\n';O=P;O.mkdir(exist_ok=True);f=O/'SourceProductionSpawnReadModels.cs';f.write_text(out)
+proof={'native':str(src),'native_sha256':hashlib.sha256(raw).hexdigest(),'methods':spans}
+(P/'spawn-read-source-spans.json').write_text(json.dumps(proof,indent=2)+'\n')

@@ -323,7 +323,7 @@ namespace Game.UI.Runtime
                 return;
             }
             startAt = new float[earned];
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             for (int i = 0; i < earned; i++)
                 startAt[i] = now + 0.28f + i * 0.46f;
             playing = true;
@@ -340,7 +340,7 @@ namespace Game.UI.Runtime
         {
             if (!playing || stars == null)
                 return;
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             bool finished = true;
             for (int i = 0; i < earned; i++)
             {

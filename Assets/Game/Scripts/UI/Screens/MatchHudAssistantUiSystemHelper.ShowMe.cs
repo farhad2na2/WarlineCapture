@@ -45,7 +45,7 @@ namespace Game.UI.Runtime
             else _highlightPresentationSystem.ShowTutorialWorld(position);
             if (_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(selection))
             {
-                _tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
+                _tutorialFocusPendingUntil=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:UiShellRuntimeGateway.IsDefensePreparationGuideContext()?4f:2f);
                 _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
             }
         }
@@ -68,7 +68,7 @@ namespace Game.UI.Runtime
             if(!_selectionActionRequested) _embeddedTutorialView.SetSelectionActionAvailable(false);
             if (!UsesNextTutorialAction) { _embeddedTutorialView.ShowMeButton.gameObject.SetActive(true); _embeddedTutorialView.SetContinueAvailable(false); return; }
             if(_highlightPresentationSystem.HasVisibleDirectTutorialTarget) _tutorialFocusPendingUntil=0;
-            bool focusing=_tutorialFocusPendingStep==_lastPanelModel.TutorialStep && Time.unscaledTime<_tutorialFocusPendingUntil;
+            bool focusing=_tutorialFocusPendingStep==_lastPanelModel.TutorialStep && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)<_tutorialFocusPendingUntil;
             // A wait, missing target or disabled placement is not an actionable Show Me step.
             _embeddedTutorialView.ShowMeButton.interactable = _lastPanelModel.CanShow &&
                 _highlightPresentationSystem.HasDirectTutorialTarget && !_highlightPresentationSystem.HasVisibleDirectTutorialTarget && !_tutorialCinematicSuspended && !focusing;

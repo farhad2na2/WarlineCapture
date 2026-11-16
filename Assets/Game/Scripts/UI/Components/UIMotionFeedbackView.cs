@@ -261,7 +261,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Smooth01(elapsed / duration);
                 target.localScale = Vector3.LerpUnclamped(from, to, t);
                 LerpFlash(flashColor, 1f - t);
@@ -280,7 +280,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Mathf.Clamp01(elapsed / duration);
                 float decay = 1f - t;
                 float offset = Mathf.Sin(t * Mathf.PI * 6f) * amplitude * decay;
@@ -301,7 +301,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Smooth01(elapsed / duration);
                 if (target != null)
                     target.localScale = Vector3.LerpUnclamped(fromScale, toScale, t);
@@ -322,7 +322,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Smooth01(elapsed / duration);
                 if (target != null)
                     target.anchoredPosition = Vector2.LerpUnclamped(fromPosition, toPosition, t);
@@ -345,7 +345,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 LerpFlash(color, 1f - Mathf.Clamp01(elapsed / duration));
                 yield return null;
             }

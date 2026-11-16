@@ -1,0 +1,6 @@
+@@SOURCE_0@@namespace Game.Components{
+public struct UnitMovementBehavior
+@@SOURCE_1@@public struct UnitFuelConsumption
+@@SOURCE_2@@public struct UnitFuelConsumptionState
+@@SOURCE_3@@}
+namespace Unity.Transforms { public struct LocalTransform { public float3 Position; public quaternion Rotation; public float Scale; } }

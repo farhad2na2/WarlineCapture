@@ -1,0 +1,17 @@
+using System;using System.IO;using System.Text.RegularExpressions;using Game.Components;
+namespace Game.Runtime{
+// Guarded source specialization: real fresh state + source-disabled population; no displaced-household branch admitted.
+internal sealed class SourceS002HomeDestruction{
+ internal const string ConfigRelativePath="Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
+ internal const string ConfigSha256="e03e012f015aa3e06649d98a876088fc80661ede55bc8f47268074961232c987";
+ internal readonly CitizenPopulationStateCompositionSystemHelper State;
+ internal SourceS002HomeDestruction(string root){byte[] bytes=File.ReadAllBytes(Path.Combine(root,ConfigRelativePath));if(AutonomousWorld.Hash(bytes)!=ConfigSha256)throw new NotSupportedException("Pinned Match city-spawner source required");var matches=Regex.Matches(System.Text.Encoding.UTF8.GetString(bytes),@"(?m)^  cityCount: (-?\d+)\r?$");if(matches.Count!=1)throw new NotSupportedException("Exact source cityCount required");RequireDisabled(int.Parse(matches[0].Groups[1].Value,System.Globalization.CultureInfo.InvariantCulture));State=new CitizenPopulationStateCompositionSystemHelper();RequireFresh();}
+ internal static void RequireDisabled(int cityCount){if(cityCount>0)throw new NotSupportedException("Positive citizen population requires original lifecycle owner");}
+ internal void RequireFresh(){if(State.HouseholdCount!=0||State.CitizenCount!=0||State.HouseholdIdsByHomeBuildingId.Count!=0||State.VisibleCitizensById.Count!=0)throw new NotSupportedException("Foreign citizen/household state is outside fresh disabled-population profile");}
+ internal void NotifyHomeBuildingDestroyed(int buildingId){RequireFresh();
+  // Exact first source predicate from CitizenRefugeeCompositionSystemHelper.NotifyHomeBuildingDestroyedState.
+  if(!TryFindHouseholdByHomeBuildingIdState(State,buildingId,out CitizenHouseholdRecordComponent household))return;
+  throw new NotSupportedException("Mapped household requires the original refugee lifecycle");
+ }
+        /*SOURCE:household_lookup*/
+}}

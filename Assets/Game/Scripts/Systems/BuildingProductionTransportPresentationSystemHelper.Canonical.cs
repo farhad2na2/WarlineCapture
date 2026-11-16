@@ -1,8 +1,10 @@
 using System.Collections.Generic;
 using Game.Components;
+using Game.Simulation;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using ProductionDeliveryLogicalBasis = Game.Simulation.SharedProductionDeliveryKernel.ProductionDeliveryLogicalBasis;
 
 namespace Game.Runtime
 {
@@ -23,6 +25,9 @@ namespace Game.Runtime
         {
             public readonly IReadOnlyDictionary<int, RuntimeBuildingEntity> RuntimeBuildings;
             public readonly Camera WorldCamera;
+            public readonly ProductionDeliveryLogicalBasis LogicalDeliveryBasis;
+            public readonly bool HasLogicalDeliveryBasis;
+            public readonly bool RequiresLogicalDeliveryBasis;
             public readonly BuildingProductionQueueCompositionSystemHelper ProductionSystem;
             public readonly BuildingVisualSystem VisualSystem;
             public readonly BuildingRunwaySystem RunwaySystem;
@@ -40,10 +45,16 @@ namespace Game.Runtime
                 BuildingProductionTransportBridgeCompositionSystemHelper transportBridgeSystem,
                 BuildingProductionTransportBridgeCompositionSystemHelper.Context transportBridgeContext,
                 PrepareTransportDropVisualDelegate prepareTransportDropVisual = null,
-                FocusProductionDeliveryDelegate focusProductionDelivery = null)
+                FocusProductionDeliveryDelegate focusProductionDelivery = null,
+                ProductionDeliveryLogicalBasis logicalDeliveryBasis = default,
+                bool hasLogicalDeliveryBasis = false,
+                bool requiresLogicalDeliveryBasis = false)
             {
                 RuntimeBuildings = runtimeBuildings;
                 WorldCamera = worldCamera;
+                LogicalDeliveryBasis = logicalDeliveryBasis;
+                HasLogicalDeliveryBasis = hasLogicalDeliveryBasis;
+                RequiresLogicalDeliveryBasis = requiresLogicalDeliveryBasis;
                 ProductionSystem = productionSystem;
                 VisualSystem = visualSystem;
                 RunwaySystem = runwaySystem;
@@ -138,6 +149,8 @@ namespace Game.Runtime
 
             if (settings.Mode != BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter)
                 return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.NotRequired;
+            if (context.RequiresLogicalDeliveryBasis && !context.HasLogicalDeliveryBasis)
+                return BuildingProductionRequestSystemHelper.OperationMapProductionDeliveryResult.Rejected;
 
             CanonicalDeliveryKey key = new(producer, requestId);
             if (!_canonicalDeliverySessions.TryGetValue(key, out CanonicalDeliverySession session))
@@ -249,9 +262,19 @@ namespace Game.Runtime
             float now)
         {
             Vector3 hoverPosition = dropPosition + new Vector3(0f, 8f, 0f);
-            Vector3 horizontalOffset = context.WorldCamera != null
-                ? -context.WorldCamera.transform.right.normalized * 60f
-                : new Vector3(-60f, 0f, 0f);
+            Vector3 horizontalOffset;
+            if (context.HasLogicalDeliveryBasis)
+            {
+                float3 logicalOffset = SharedProductionDeliveryKernel.ProductionTransportIngressOffset(
+                    in context.LogicalDeliveryBasis, 60f);
+                horizontalOffset = new Vector3(logicalOffset.x, logicalOffset.y, logicalOffset.z);
+            }
+            else
+            {
+                horizontalOffset = context.WorldCamera != null
+                    ? -context.WorldCamera.transform.right.normalized * 60f
+                    : new Vector3(-60f, 0f, 0f);
+            }
             Vector3 entryPosition = hoverPosition + horizontalOffset + new Vector3(0f, 12f, 0f);
             Vector3 departureDirection = -horizontalOffset.normalized;
             Vector3 exitPosition = hoverPosition +

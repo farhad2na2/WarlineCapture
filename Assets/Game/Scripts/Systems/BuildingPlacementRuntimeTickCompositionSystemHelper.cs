@@ -9,8 +9,6 @@ namespace Game.Runtime
         private const double ProductionIntervalSeconds = 0.1d;
         private const double ActiveProductionTransportIntervalSeconds = 0.08d;
         private const double IdleActiveProductionTransportProbeIntervalSeconds = 0.5d;
-        private const double ResourceProductionIntervalSeconds = 1d;
-        private const double ResourceHaulerIntervalSeconds = 0.25d;
         private const double ResourceVisualIntervalSeconds = 0.25d;
         private const double ReservationCleanupIntervalSeconds = 0.5d;
         private const double DestroyedCleanupIntervalSeconds = 0.5d;
@@ -190,16 +188,14 @@ namespace Game.Runtime
                 }
 
                 afterBoundary = UnityEngine.Time.realtimeSinceStartupAsDouble;
-                double now = afterBoundary;
-                float deltaTime = context.GetDeltaTime != null
-                    ? Mathf.Max(0f, context.GetDeltaTime())
-                    : Mathf.Max(0f, UnityEngine.Time.deltaTime);
-                _resourceProductionElapsedSeconds += deltaTime;
+                double now = SkirmishValidationClock.RealtimeOrOriginal(afterBoundary);
+                float deltaTime = Game.Simulation.BuildingResourceCadenceKernel.ClampDelta(
+                    context.GetDeltaTime != null ? context.GetDeltaTime() : UnityEngine.Time.deltaTime);
+                Game.Simulation.BuildingResourceCadenceKernel.AccumulateDelta(deltaTime, ref _resourceProductionElapsedSeconds);
                 bool pendingProductionObservedActiveTransport = false;
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
-                    now >= _nextProductionAt)
+                if (Game.Simulation.BuildingProductionCadenceKernel.BeginPending(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime, ref _nextProductionAt))
                 {
-                    _nextProductionAt = now + ProductionIntervalSeconds;
                     using (ProcessPendingProductionsMarker.Auto())
                     {
                         pendingProductionObservedActiveTransport =
@@ -209,12 +205,12 @@ namespace Game.Runtime
                 }
                 afterPendingProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterPendingProductions;
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterPendingProductions);
                 bool shouldUpdateActiveTransports =
-                    !GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime &&
-                    ((_activeProductionTransportsObserved && now >= _nextActiveProductionTransportProbeAt) ||
-                     pendingProductionObservedActiveTransport ||
-                     now >= _nextActiveProductionTransportProbeAt);
+                    Game.Simulation.BuildingProductionCadenceKernel.ShouldUpdateActive(now,
+                        GameplayRuntimeUpdateDebugFlags.DisableBuildingProductionRuntime,
+                        _activeProductionTransportsObserved, pendingProductionObservedActiveTransport,
+                        _nextActiveProductionTransportProbeAt);
                 if (shouldUpdateActiveTransports)
                 {
                     using (UpdateActiveProductionTransportsMarker.Auto())
@@ -224,39 +220,51 @@ namespace Game.Runtime
                             context.UpdateActiveProductionTransports();
                     }
 
-                    _nextActiveProductionTransportProbeAt = _activeProductionTransportsObserved
-                        ? now + ActiveProductionTransportIntervalSeconds
-                        : now + IdleActiveProductionTransportProbeIntervalSeconds;
+                    Game.Simulation.BuildingProductionCadenceKernel.RecordActiveResult(now,
+                        _activeProductionTransportsObserved, ref _activeProductionTransportsObserved,
+                        ref _nextActiveProductionTransportProbeAt);
                 }
                 afterProductions = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterProductions;
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime &&
-                    now >= _nextResourceProductionAt)
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterProductions);
+                if (Game.Simulation.BuildingResourceCadenceKernel.BeginProduction(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceRuntime, ref _nextResourceProductionAt))
                 {
-                    _nextResourceProductionAt = now + ResourceProductionIntervalSeconds;
                     using (UpdateResourceProductionMarker.Auto())
                     {
-                        float resourceDeltaTime = Mathf.Max(deltaTime, _resourceProductionElapsedSeconds);
-                        _resourceProductionElapsedSeconds = 0f;
+                        float resourceDeltaTime = Game.Simulation.BuildingResourceCadenceKernel.ConsumeProductionDelta(
+                            deltaTime, ref _resourceProductionElapsedSeconds);
                         context.UpdateResourceProduction?.Invoke(resourceDeltaTime);
                     }
                 }
                 afterResources = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterResources;
-                if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime &&
-                    now >= _nextResourceHaulerAt)
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterResources);
+#if UNITY_EDITOR
+                double continuousBeforeDue = _nextResourceHaulerAt;
+                if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = continuousBeforeDue, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
+                if (Game.Simulation.BuildingResourceCadenceKernel.BeginHaulers(now,
+                    GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, ref _nextResourceHaulerAt))
                 {
-                    _nextResourceHaulerAt = now + ResourceHaulerIntervalSeconds;
+#if UNITY_EDITOR
+                    if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                        if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = _nextResourceHaulerAt, Invoke = true, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
                     using (UpdateResourceHaulersMarker.Auto())
                     {
                         context.UpdateResourceHaulers?.Invoke();
                     }
                 }
+#if UNITY_EDITOR
+                if (S002PhysicalStartupObservation.ContinuousOwner != null && S002PhysicalStartupObservation.ContinuousRead(16))
+                    S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousOwner, new S002PhysicalStartupObservation.ContinuousOwnerFacts { Owner = this, Now = now, BeforeDue = continuousBeforeDue, AfterDue = _nextResourceHaulerAt, After = true, Disabled = GameplayRuntimeUpdateDebugFlags.DisableBuildingResourceHaulerRuntime, CallbackPresent = context.UpdateResourceHaulers != null });
+#endif
                 afterHaulers = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterHaulers;
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterHaulers);
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingVisualRuntime &&
                     now >= _nextResourceVisualAt)
                 {
@@ -268,7 +276,7 @@ namespace Game.Runtime
                 }
                 afterResourceVisuals = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterResourceVisuals;
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterResourceVisuals);
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingReservationCleanupRuntime &&
                     now >= _nextReservationCleanupAt)
                 {
@@ -280,7 +288,7 @@ namespace Game.Runtime
                 }
                 afterReservations = UnityEngine.Time.realtimeSinceStartupAsDouble;
 
-                now = afterReservations;
+                now = SkirmishValidationClock.RealtimeOrOriginal(afterReservations);
                 if (!GameplayRuntimeUpdateDebugFlags.DisableBuildingDestroyedRuntime &&
                     now >= _nextDestroyedCleanupAt)
                 {

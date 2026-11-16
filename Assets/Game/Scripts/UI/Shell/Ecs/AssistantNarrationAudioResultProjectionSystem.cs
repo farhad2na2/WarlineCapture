@@ -54,7 +54,7 @@ namespace Game.UI.Shell.Ecs
                 state.EntityManager.GetComponentData<AssistantNarrationStateComponent>(boundary);
             AudioSettingsComponent audioSettings =
                 state.EntityManager.GetComponentData<AudioSettingsComponent>(audioEntity);
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             bool changed = ObserveEffectiveAudioState(audioSettings);
 
             AudioPlaybackResultQueueComponent resultQueue =

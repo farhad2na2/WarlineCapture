@@ -1,12 +1,13 @@
+using Game.Simulation;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Runtime
 {
-    internal sealed class BuildingProductionUpdateCompositionSystemHelper
+    internal sealed partial class BuildingProductionUpdateCompositionSystemHelper
     {
-        private const int MaxTransportLaunchesPerTick = 1;
-        private const int MaxImmediateProductionSpawnsPerTick = 2;
+        private const int MaxTransportLaunchesPerTick = SharedProductionQueueKernel.MaxTransportLaunchesPerTick;
+        private const int MaxImmediateProductionSpawnsPerTick = SharedProductionQueueKernel.MaxImmediateProductionSpawnsPerTick;
         private readonly List<RuntimeBuildingEntity> _activeTransportBuildings = new();
         private bool _activeTransportCachePrimed;
 
@@ -148,78 +149,8 @@ namespace Game.Runtime
             ref int remainingTransportLaunches,
             ref int remainingSpawns)
         {
-            if (building == null)
-                return false;
-
-            bool hasActiveTransport = building.ActiveTransport != null;
-            if (building.PendingProductions == null || building.PendingProductions.Count == 0)
-                return hasActiveTransport;
-
-            for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
-            {
-                RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null)
-                {
-                    if (context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
-                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: i > 0);
-                    continue;
-                }
-
-                if (pending.ReceiptId != 0 && now >= pending.StartedAt &&
-                    context.TransportContext.TransportBridgeContext.TryGetEntityManager != null &&
-                    context.TransportContext.TransportBridgeContext.TryGetEntityManager(out var receiptWorld))
-                    SkirmishProductionService.StartNativeQueue(receiptWorld, pending.ReceiptOwner, pending.ReceiptId, pending.ReceiptAttempt);
-
-                BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
-                    pending,
-                    now,
-                    pending.TransportPrefab != null);
-
-                if (pending.TransportPrefab != null)
-                {
-                    float transportLaunchWindow = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
-                    if (context.ProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
-                        context.ProductionSystem.ShouldLaunchTransport(pending, now))
-                    {
-                        if (remainingTransportLaunches <= 0)
-                            continue;
-
-                        bool hadActiveTransport = building.ActiveTransport != null;
-                        if (!context.TransportSystem.TryEnsureActiveProductionTransport(context.TransportContext, building, pending, now, ref randomState))
-                        {
-                            context.ProductionSystem.DelayPendingProduction(pending, deltaTime);
-                        }
-                        else if (!hadActiveTransport)
-                        {
-                            hasActiveTransport = true;
-                            remainingTransportLaunches--;
-                        }
-                    }
-                    continue;
-                }
-
-                if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
-                    continue;
-
-                if (remainingSpawns <= 0)
-                    continue;
-
-                if (BuildingProductionTransportPresentationSystemHelper.TrySpawnPlayerUnitNearBuilding(
-                        context.TransportContext,
-                        building,
-                        pending.ProductionIndex,
-                        pending.ReservedProductionSlotIndex,
-                        null,
-                        null,
-                        ref randomState, pending))
-                {
-                    remainingSpawns--;
-                    if (pending.ConsumeUnit() && context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))
-                        context.ProductionSystem.RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: false);
-                }
-            }
-
-            return hasActiveTransport || building.ActiveTransport != null;
+            var view = new NativeProductionQueueView(context);
+            return SharedProductionQueueKernel.UpdateBuilding<RuntimeBuildingEntity, RuntimeBuildingEntity.PendingProduction, NativeProductionQueueView>(ref view, building, now, deltaTime, ref randomState, ref remainingTransportLaunches, ref remainingSpawns);
         }
     }
 }

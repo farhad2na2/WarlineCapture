@@ -1,0 +1,76 @@
+{
+  "admission": false,
+  "errors": [],
+  "kind": "S073NativeR13DiagnosticEvidenceValidation",
+  "mission_ready": false,
+  "native_capture": {
+    "bounds_area": [
+      903.0,
+      332.0,
+      197.0,
+      197.0
+    ],
+    "bounds_call": "ActualOriginalReserveStaticRenderDropBuffersCollectStaticBoundsCall",
+    "bounds_count": 1899,
+    "bounds_time": 19.8055419921875,
+    "camera_forward": [
+      0.0,
+      -0.8480480909347534,
+      0.5299192667007446
+    ],
+    "camera_position": [
+      834.006103515625,
+      60.0,
+      556.0043334960938
+    ],
+    "camera_right": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "camera_sample_time": 19.8055419921875,
+    "drop_search_time": 19.8055419921875,
+    "preferred_cell": [
+      1001,
+      430
+    ],
+    "random_state_observed": false
+  },
+  "prohibited_claims": [
+    "replay",
+    "admission",
+    "mission_readiness",
+    "source_revision_provenance"
+  ],
+  "qualification_receipt_expected_sha256": "5da37bdf725bce31fe6420d66e65f963e9359454e9463cce13b33128a51e37d1",
+  "qualification_receipt_sha256": "5da37bdf725bce31fe6420d66e65f963e9359454e9463cce13b33128a51e37d1",
+  "replay": false,
+  "schema_version": 1,
+  "scope": "ReadOnlyRetainedEvidenceValidation",
+  "session": {
+    "mission": "S073",
+    "scenario_index": 3,
+    "seed": 104729,
+    "session_id": "d69e88db2bbe4deea25c054c752c7d56",
+    "world_name": "Default World"
+  },
+  "unknown_domains": {
+    "grid_revision": "Unknown_NotCapturedInRetainedRows",
+    "provider_identity": "Unknown_NotCapturedInStaticBoundsRow",
+    "rng": "Unknown_random_state_observed_false",
+    "source_revision": "Unknown_NotPinnedByRetainedReceipt"
+  },
+  "use_class": "diagnostic_only",
+  "validation_status": "Passed",
+  "verified_artifact_sha256": {
+    "delivery.jsonl": "6e1fcd4c814dacb31e64b9ffce7febb56e98e2f89cd76f36c3980b9e3343c74c",
+    "editor.log": "504950272cdb6399e99c9cce1209f81d6538c2c124a2cc40d42b20236223b343",
+    "result.json": "30bf4b36c1631f86ba247ea284878a705a886037f54395b899b43c22951fb333"
+  },
+  "wrapper_evidence": {
+    "completion_marker_found_in_editor_log": true,
+    "exit_code_basis": "r13 wrapper result reported by task owner",
+    "exit_code_independently_verified": false,
+    "reported_exit_code": 0
+  }
+}

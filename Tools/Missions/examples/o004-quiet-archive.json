@@ -1,0 +1,76 @@
+{
+  "mission": "O004",
+  "campaign_source": {
+    "packet": "old-quarter-source.json",
+    "roles": {
+      "player_start": "anchor.operations.d01.spawn.player",
+      "enemy_a": "anchor.operations.d01.spawn.enemy_a",
+      "enemy_b": "anchor.operations.d01.spawn.enemy_b",
+      "exit": "anchor.operations.d01.exit.ground",
+      "archive": null,
+      "evidence_pickup": null,
+      "protected_home": null,
+      "front_approach": null,
+      "rear_approach": null
+    }
+  },
+  "graph": {
+    "PartialNodeIds": ["scan_archive", "clear_guards"],
+    "PartialMinimumComplete": 2,
+    "PartialExtractMinimum": 2,
+    "MandatoryEvidenceIds": ["site.archive.record"],
+    "Nodes": [
+      {"NodeId":"scan_archive","Rule":"Scan","TargetIds":["site.archive"],"DurationTicks":6,"RadiusMeters":8,"HiddenUntilObserved":true},
+      {"NodeId":"clear_guards","Rule":"Clear","RoleIds":["role.hostile.archive_guard"],"Prerequisites":["scan_archive"],"Activation":"Prerequisites"},
+      {"NodeId":"recover_record","Rule":"Interact","TargetIds":["site.archive.record"],"DurationTicks":20,"RadiusMeters":6,"Prerequisites":["clear_guards"],"Activation":"Prerequisites"},
+      {"NodeId":"extract","Rule":"Extract","TargetCount":2,"Prerequisites":["recover_record"],"Activation":"Prerequisites"},
+      {"NodeId":"protect_archive","Rule":"Protect","TargetIds":["site.archive"]},
+      {"NodeId":"protect_home","Rule":"Protect","TargetIds":["site.home"],"Optional":true}
+    ],
+    "Spawns": [
+      {"ObjectId":"site.archive","RoleId":"role.neutral.archive","Faction":"Neutral","Body":"Site","AnchorId":"anchor.operations.d01.archive"},
+      {"ObjectId":"site.archive.record","RoleId":"role.neutral.record","Faction":"Neutral","Body":"Evidence","AnchorId":"anchor.operations.d01.archive"},
+      {"ObjectId":"site.home","RoleId":"role.neutral.home","Faction":"Neutral","Body":"Site","AnchorId":"anchor.operations.d01.courtyard"}
+    ],
+    "Waves": [
+      {"Group":1,"Trigger":"NodeCompletion","TriggerNodeId":"scan_archive","WarningSeconds":30},
+      {"Group":2,"Trigger":"NodeActivation","TriggerNodeId":"extract","WarningSeconds":45}
+    ]
+  },
+  "groups": [
+    {"count":12,"spawn":{"ObjectId":"rifle","RoleId":"role.friendly.rifle","Faction":"Player","Body":"Infantry","RosterRole":"RifleInfantry","AnchorId":"anchor.operations.d01.player_spawn"}},
+    {"count":2,"spawn":{"ObjectId":"recon","RoleId":"role.friendly.recon","Faction":"Player","Body":"Infantry","RosterRole":"ReconInfantry","AnchorId":"anchor.operations.d01.player_spawn"}},
+    {"count":2,"spawn":{"ObjectId":"support","RoleId":"role.friendly.support","Faction":"Player","Body":"Infantry","RosterRole":"SupportInfantry","AnchorId":"anchor.operations.d01.player_spawn"}},
+    {"count":2,"spawn":{"ObjectId":"guard","RoleId":"role.hostile.archive_guard","Faction":"Hostile","Body":"Infantry","RosterRole":"RifleInfantry","AnchorId":"anchor.operations.d01.archive"}},
+    {"count":7,"spawn":{"ObjectId":"enemy.rifle","RoleId":"role.hostile.rifle","Faction":"Hostile","Body":"Infantry","RosterRole":"RifleInfantry","AnchorId":"anchor.operations.d01.enemy_a"}},
+    {"count":1,"spawn":{"ObjectId":"enemy.support","RoleId":"role.hostile.support","Faction":"Hostile","Body":"Infantry","RosterRole":"SupportInfantry","AnchorId":"anchor.operations.d01.enemy_a"}},
+    {"count":4,"spawn":{"ObjectId":"enemy.wave_a","RoleId":"role.hostile.rifle","Faction":"Hostile","Body":"Infantry","RosterRole":"RifleInfantry","AnchorId":"anchor.operations.d01.enemy_a","Group":1}},
+    {"count":5,"spawn":{"ObjectId":"enemy.wave_b","RoleId":"role.hostile.rifle","Faction":"Hostile","Body":"Infantry","RosterRole":"RifleInfantry","AnchorId":"anchor.operations.d01.enemy_b","Group":2}},
+    {"count":1,"spawn":{"ObjectId":"enemy.wave_b_support","RoleId":"role.hostile.support","Faction":"Hostile","Body":"Infantry","RosterRole":"SupportInfantry","AnchorId":"anchor.operations.d01.enemy_b","Group":2}}
+  ],
+  "cases": [
+    {"name":"recover record and extract","expect":"Victory","orders":[
+      {"at":0,"verb":"move","actor":"recon.01","target":"anchor.operations.d01.lane"},
+      {"at":8,"verb":"move","actor":"recon.01","target":"anchor.operations.d01.archive"},
+      {"at":12,"verb":"observe","actor":"recon.01","target":"site.archive"},
+      {"at":12,"verb":"scan","actor":"recon.01","target":"site.archive"},
+      {"at":20,"verb":"attack","actor":"recon.01","target":"guard.01"},
+      {"at":20,"verb":"attack","actor":"rifle.01","target":"guard.02"},
+      {"at":23,"verb":"interact","actor":"recon.01","target":"site.archive.record"},
+      {"at":45,"verb":"extract","actor":"recon.01"},
+      {"at":45,"verb":"extract","actor":"rifle.01"}
+    ]},
+    {"name":"extract without the record and conclude","expect":"Partial","orders":[
+      {"at":0,"verb":"move","actor":"recon.01","target":"anchor.operations.d01.archive"},
+      {"at":8,"verb":"observe","actor":"recon.01","target":"site.archive"},
+      {"at":8,"verb":"scan","actor":"recon.01","target":"site.archive"},
+      {"at":16,"verb":"attack","actor":"recon.01","target":"guard.01"},
+      {"at":16,"verb":"attack","actor":"rifle.01","target":"guard.02"},
+      {"at":19,"verb":"extract","actor":"recon.01"},
+      {"at":19,"verb":"extract","actor":"rifle.01"},
+      {"at":34,"verb":"conclude"}
+    ]},
+    {"name":"idle until deadline","expect":"Defeat","orders":[]},
+    {"name":"withdraw before contact","expect":"Withdrawn","orders":[{"at":3,"verb":"withdraw"}]}
+  ]
+}

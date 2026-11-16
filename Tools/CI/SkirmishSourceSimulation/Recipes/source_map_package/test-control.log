@@ -1,0 +1,12 @@
+[rtk] /!\ No hook installed — run `rtk init -g` for automatic token savings
+test_clearance_projection_wrong_kind_rejected (test_preflight.PreflightTests) ... ok
+test_duplicate_json_keys_rejected (test_preflight.PreflightTests) ... ok
+test_malformed_binary_mask_rejected (test_preflight.PreflightTests) ... ok
+test_pinned_file_tamper_rejected (test_preflight.PreflightTests) ... ok
+test_real_s026_source_only_package (test_preflight.PreflightTests) ... ok
+test_wrong_package_kind_rejected_before_source_load (test_preflight.PreflightTests) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 7.018s
+
+OK

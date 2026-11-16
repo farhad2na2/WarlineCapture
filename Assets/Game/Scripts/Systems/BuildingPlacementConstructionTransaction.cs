@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Simulation;
 using UnityEngine;
 
 namespace Game.Runtime
@@ -41,108 +42,109 @@ namespace Game.Runtime
             ConfirmContext context,
             out ConfirmFailureReason failureReason)
         {
-            if (placement == null)
+            var host = new PlayerConstructionTransactionHost(placement, transactionId, context);
+            ConstructionTransactionFailure result = ConstructionTransactionKernel.Execute(
+                hasPlacement: placement != null,
+                placementIsValid: placement != null && placement.IsValid,
+                placement: placement,
+                transactionId: transactionId,
+                ref host);
+            failureReason = ToFailureReason(result);
+            return result == ConstructionTransactionFailure.None;
+        }
+
+        private struct PlayerConstructionTransactionHost : IConstructionTransactionHost<PlacementState>
+        {
+            private readonly PlacementState _placement;
+            private readonly int _transactionId;
+            private readonly ConfirmContext _context;
+
+            public PlayerConstructionTransactionHost(PlacementState placement, int transactionId, ConfirmContext context)
             {
-                failureReason = ConfirmFailureReason.MissingActivePlacement;
-                return false;
+                _placement = placement;
+                _transactionId = transactionId;
+                _context = context;
             }
 
-            if (!placement.IsValid)
+            public bool Validate(PlacementState placement) =>
+                _context.ValidateConfirm == null || _context.ValidateConfirm(placement);
+
+            public void GetCosts(PlacementState placement, out int creditsCost, out int materialsCost)
             {
-                failureReason = ConfirmFailureReason.BlockedPlacement;
-                return false;
+                creditsCost = Mathf.Max(0, placement.Definition?.CreditsCost ?? 0);
+                materialsCost = Mathf.Max(0, placement.Definition?.MaterialsCost ?? 0);
             }
 
-            if (context.ValidateConfirm != null && !context.ValidateConfirm(placement))
+            public ConstructionMutationResult TryReserve(int transactionId, int creditsCost, int materialsCost)
             {
-                failureReason = ConfirmFailureReason.InvalidPlacement;
-                return false;
-            }
+                if (_context.TryReserveCost == null)
+                    return ConstructionMutationResult.Rejected;
 
-            int creditsCost = Mathf.Max(0, placement.Definition?.CreditsCost ?? 0);
-            int materialsCost = Mathf.Max(0, placement.Definition?.MaterialsCost ?? 0);
-            if (context.TryReserveCost == null)
-            {
-                failureReason = ConfirmFailureReason.TransactionRejected;
-                return false;
-            }
-
-            FactionConstructionResourceMutationResult reserveResult =
-                context.TryReserveCost(transactionId, creditsCost, materialsCost);
-            if (reserveResult != FactionConstructionResourceMutationResult.Applied)
-            {
-                failureReason = ToFailureReason(reserveResult);
-                return false;
-            }
-
-            if(SkirmishConstructionLedger.Observer!=null)
-            {
-                if(context.TryReserveCost.Target is BuildingConstructionResourceTransactionSystemHelper owner)
-                    owner.ObservePlacement(placement,transactionId);
-                else SkirmishConstructionLedger.UnsupportedPlacement();
-            }
-
-            // Commit the pose that was displayed and validated above. Road alignment and
-            // rotation may have moved it since the last raw pointer/drag snapshot.
-            placement.CommittedOriginCell = placement.OriginCell;
-            BuildingPlacementCommitCompositionSystemHelper.CommitOutcome outcome =
-                context.CommitPlacement != null ? context.CommitPlacement(placement) : default;
-            if(SkirmishConstructionLedger.Observer!=null)
-            {
-                if(context.TryReserveCost.Target is BuildingConstructionResourceTransactionSystemHelper owner)
-                    owner.ObservePlacement(placement,transactionId,outcome);
-                else SkirmishConstructionLedger.UnsupportedPlacement();
-            }
-
-            if (!outcome.FullyCommitted)
-            {
-                if (outcome.PlacementCommitted)
+                ConstructionMutationResult result = ToKernelResult(
+                    _context.TryReserveCost(transactionId, creditsCost, materialsCost));
+                if (result == ConstructionMutationResult.Applied && SkirmishConstructionLedger.Observer != null)
                 {
-                    failureReason = TrySettle(context.FinalizeCost, transactionId)
-                        ? ConfirmFailureReason.RegistrationFailed
-                        : ConfirmFailureReason.TransactionRejected;
-                    return false;
+                    if (_context.TryReserveCost.Target is BuildingConstructionResourceTransactionSystemHelper owner)
+                        owner.ObservePlacement(_placement, transactionId);
+                    else
+                        SkirmishConstructionLedger.UnsupportedPlacement();
                 }
 
-                failureReason = TrySettle(context.RollbackCost, transactionId)
-                    ? ConfirmFailureReason.RegistrationFailed
-                    : ConfirmFailureReason.TransactionRejected;
-                return false;
+                return result;
             }
 
-            if (!TrySettle(context.FinalizeCost, transactionId))
+            public ConstructionCommitResult Commit(PlacementState placement)
             {
-                failureReason = ConfirmFailureReason.TransactionRejected;
-                return false;
+                // Commit the pose displayed and validated above, including the latest road alignment.
+                placement.CommittedOriginCell = placement.OriginCell;
+                BuildingPlacementCommitCompositionSystemHelper.CommitOutcome outcome =
+                    _context.CommitPlacement != null ? _context.CommitPlacement(placement) : default;
+                if (SkirmishConstructionLedger.Observer != null)
+                {
+                    if (_context.TryReserveCost?.Target is BuildingConstructionResourceTransactionSystemHelper owner)
+                        owner.ObservePlacement(placement, _transactionId, outcome);
+                    else
+                        SkirmishConstructionLedger.UnsupportedPlacement();
+                }
+
+                return new ConstructionCommitResult(outcome.CommittedInstanceCount, outcome.ExpectedInstanceCount);
             }
 
-            failureReason = ConfirmFailureReason.None;
-            return true;
+            public ConstructionMutationResult TryFinalize(int transactionId) =>
+                _context.FinalizeCost == null
+                    ? ConstructionMutationResult.Rejected
+                    : ToKernelResult(_context.FinalizeCost(transactionId));
+
+            public ConstructionMutationResult TryRollback(int transactionId) =>
+                _context.RollbackCost == null
+                    ? ConstructionMutationResult.Rejected
+                    : ToKernelResult(_context.RollbackCost(transactionId));
         }
 
-        private static bool TrySettle(
-            BuildingPlacementLifecycleCompositionSystemHelper.SettleCostDelegate settle,
-            int transactionId)
-        {
-            return settle != null &&
-                   settle(transactionId) == FactionConstructionResourceMutationResult.Applied;
-        }
-
-        private static ConfirmFailureReason ToFailureReason(
-            FactionConstructionResourceMutationResult result)
-        {
-            return result switch
+        private static ConstructionMutationResult ToKernelResult(FactionConstructionResourceMutationResult result) =>
+            result switch
             {
-                FactionConstructionResourceMutationResult.InsufficientCredits =>
-                    ConfirmFailureReason.InsufficientCredits,
-                FactionConstructionResourceMutationResult.InsufficientMaterials =>
-                    ConfirmFailureReason.InsufficientMaterials,
-                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials =>
-                    ConfirmFailureReason.InsufficientCreditsAndMaterials,
-                FactionConstructionResourceMutationResult.DuplicateTransaction =>
-                    ConfirmFailureReason.DuplicateTransaction,
+                FactionConstructionResourceMutationResult.Applied => ConstructionMutationResult.Applied,
+                FactionConstructionResourceMutationResult.InsufficientCredits => ConstructionMutationResult.InsufficientCredits,
+                FactionConstructionResourceMutationResult.InsufficientMaterials => ConstructionMutationResult.InsufficientMaterials,
+                FactionConstructionResourceMutationResult.InsufficientCreditsAndMaterials => ConstructionMutationResult.InsufficientCreditsAndMaterials,
+                FactionConstructionResourceMutationResult.DuplicateTransaction => ConstructionMutationResult.DuplicateTransaction,
+                _ => ConstructionMutationResult.Rejected
+            };
+
+        private static ConfirmFailureReason ToFailureReason(ConstructionTransactionFailure result) =>
+            result switch
+            {
+                ConstructionTransactionFailure.None => ConfirmFailureReason.None,
+                ConstructionTransactionFailure.MissingPlacement => ConfirmFailureReason.MissingActivePlacement,
+                ConstructionTransactionFailure.BlockedPlacement => ConfirmFailureReason.BlockedPlacement,
+                ConstructionTransactionFailure.InvalidPlacement => ConfirmFailureReason.InvalidPlacement,
+                ConstructionTransactionFailure.InsufficientCredits => ConfirmFailureReason.InsufficientCredits,
+                ConstructionTransactionFailure.InsufficientMaterials => ConfirmFailureReason.InsufficientMaterials,
+                ConstructionTransactionFailure.InsufficientCreditsAndMaterials => ConfirmFailureReason.InsufficientCreditsAndMaterials,
+                ConstructionTransactionFailure.DuplicateTransaction => ConfirmFailureReason.DuplicateTransaction,
+                ConstructionTransactionFailure.RegistrationFailed => ConfirmFailureReason.RegistrationFailed,
                 _ => ConfirmFailureReason.TransactionRejected
             };
-        }
     }
 }

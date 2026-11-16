@@ -1,0 +1,210 @@
+// Authored-only source-bound replay; not a JsonUtility implementation.
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+internal static class S004LayoutCaptureReplaySourceBinding
+{
+    private const int Seed = 104733;
+    private const BindingFlags PublicInstance = BindingFlags.Instance | BindingFlags.Public;
+    private static Type replayType;
+    private static object replayValues;
+    private static string replayJson;
+    private static int replayCalls;
+
+    public static int Main(string[] args)
+    {
+        try
+        {
+            if (args == null || args.Length != 4) throw new InvalidDataException("Expected graph, matrix, native JSON log, and output path");
+            JObject graph = JObject.Parse(File.ReadAllText(args[0]));
+            string matrix = File.ReadAllText(args[1]);
+            string log = File.ReadAllText(args[2]);
+            if ((string)graph["authority"] != "AuthoredConfigAssets" || (bool?)graph["compiled_setup"] != false ||
+                (bool?)graph["world_initialized"] != false || (bool?)graph["native_world_state_used"] != false)
+                throw new InvalidDataException("Exact authored uncompiled graph required");
+
+            var materializer = new SourceConfigMaterializer(graph);
+            var catalog = materializer.ByPath<SkirmishExpansionCatalogConfig>((string)graph["catalog_path"]);
+            var definition = materializer.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
+            if (definition == null || definition.CatalogId != "S004" || definition.MapLayout == null)
+                throw new InvalidDataException("Actual authored S004 layout missing");
+            if (catalog == null || !catalog.TryGetDefinition("S004", definition.ContentVersion, out var catalogDefinition) ||
+                !Object.ReferenceEquals(catalogDefinition, definition))
+                throw new InvalidDataException("Graph-materialized S004 catalog/definition identity mismatch");
+            const string operationMapPath = "Assets/Game/Resources/SkirmishS004OperationMap.asset";
+            if (!((JArray)graph["nodes"]).OfType<JObject>().Any(x => (string)x["source_path"] == operationMapPath &&
+                    (string)x["source_type"] == "OperationMapDefinition"))
+                throw new InvalidDataException("Exact authored S004 operation map node missing from typed graph");
+            var operationMap = materializer.ByPath<OperationMapDefinition>(operationMapPath);
+            if (operationMap == null || operationMap.OperationMapId != definition.MapLayout.OperationMapId)
+                throw new InvalidDataException("Graph-materialized S004 operation map identity mismatch");
+            UnityEngine.Resources.BindSourceResources(new Dictionary<string, object>
+                { [SkirmishExpansionCatalogConfig.ResourceName] = catalog, ["SkirmishS004OperationMap"] = operationMap });
+            Type binder = typeof(SkirmishMeasuredLayoutBinder);
+            Type projection = binder.GetNestedType("LayoutValues", BindingFlags.NonPublic);
+            MethodInfo from = projection == null ? null : projection.GetMethod("From", BindingFlags.Public | BindingFlags.Static);
+            if (projection == null || from == null) throw new InvalidDataException("Original LayoutValues projection unavailable");
+            object typedValues = from.Invoke(null, new object[] { definition.MapLayout });
+            string raw = ExtractJson(log, "authored asset=");
+            object captured = JsonConvert.DeserializeObject(raw, projection);
+            var schema = CompareSchema(projection, JObject.Parse(raw));
+            if (!schema) throw new InvalidDataException("Captured JSON fields/order do not match reflected LayoutValues schema");
+            if (!Equal(typedValues, captured, projection)) throw new InvalidDataException("Authored graph LayoutValues do not match captured native typed values");
+            replayType = projection; replayValues = captured; replayJson = raw; replayCalls = 0;
+
+            var mutationResults = MutationNegatives(typedValues, projection, raw);
+            var sizes = new[] { SkirmishSizeId.Standard, SkirmishSizeId.War, SkirmishSizeId.LargeWar };
+            var nativeHashes = ParseNativeSetupHashes(log);
+            var compilerResults = new JArray();
+            bool compilerBoundary = false;
+            foreach (var size in sizes)
+            {
+                try
+                {
+                    bool ok = SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, size, Seed,
+                        new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds },
+                        LoadMatrix(matrix), out SkirmishResolvedSetup setup, out List<SkirmishCompileReason> reasons);
+                    if (!ok || setup == null) throw new InvalidDataException("Original compiler rejected " + size + ": " + String.Join(" | ", reasons));
+                    string expected = nativeHashes[size.ToString()];
+                    bool matched = setup.SetupHash.ToString(System.Globalization.CultureInfo.InvariantCulture) == expected;
+                    if (!matched) throw new InvalidDataException("Native setup hash mismatch for " + size + ": source=" + setup.SetupHash + " native=" + expected);
+                    compilerResults.Add(new JObject { ["size"] = size.ToString(), ["setupHash"] = setup.SetupHash, ["nativeSetupHash"] = expected, ["matched"] = true });
+                }
+                catch (NotSupportedException e)
+                {
+                    compilerBoundary = true;
+                    compilerResults.Add(new JObject { ["size"] = size.ToString(), ["nativeSetupHash"] = nativeHashes[size.ToString()],
+                        ["matched"] = false, ["sourceHostBoundary"] = e.ToString() });
+                }
+            }
+
+            File.WriteAllText(args[3], raw, new UTF8Encoding(false));
+            Console.WriteLine(new JObject { ["kind"] = "S004AuthoredLayoutCaptureReplay", ["status"] = compilerBoundary ? "SourceHostBoundary" : "Passed",
+                ["mode"] = "SourceBoundRawCaptureReplay", ["authoredLayoutTypedValuesMatched"] = true,
+                ["fieldSchemaAndOrderMatched"] = true, ["float32BitwiseCompared"] = true,
+                ["rawJsonSha256"] = Hash(Encoding.UTF8.GetBytes(raw)), ["rawReplayToJsonCalls"] = replayCalls,
+                ["mutationNegatives"] = mutationResults,
+                ["compiler"] = compilerResults, ["world_initialized"] = false,
+                ["physical_source_fit_verified"] = false, ["mission_readiness"] = false,
+                ["scope"] = "Exact authored S004 graph only; returns pinned native capture bytes; no serializer/general JsonUtility claim" }.ToString(Formatting.None));
+            return 0;
+        }
+        catch (Exception e) { Console.Error.WriteLine("[S004LayoutCaptureReplay] result=Failed " + e); return 1; }
+    }
+
+    private static List<SkirmishSetupMatrixRow> LoadMatrix(string text)
+    {
+        if (!SkirmishSetupMatrixTable.TryLoadFromText(text, out List<SkirmishSetupMatrixRow> rows, out string error))
+            throw new InvalidDataException("Pinned setup matrix rejected: " + error);
+        return rows;
+    }
+
+    private static string ExtractJson(string log, string discriminator)
+    {
+        const string marker = "[S004OriginalLayoutNativeJson] ";
+        foreach (string line in log.Split(new[] { '\n' }, StringSplitOptions.None))
+        {
+            int at = line.IndexOf(marker, StringComparison.Ordinal);
+            if (at < 0) continue;
+            string body = line.Substring(at + marker.Length);
+            if (!body.StartsWith(discriminator, StringComparison.Ordinal)) continue;
+            int json = body.IndexOf(" json=", StringComparison.Ordinal);
+            if (json < 0) throw new InvalidDataException("Native JSON capture line malformed");
+            return body.Substring(json + 6).TrimEnd('\r');
+        }
+        throw new InvalidDataException("Required native capture case missing: " + discriminator);
+    }
+
+    private static bool CompareSchema(Type type, JObject value)
+    {
+        FieldInfo[] fields = type.GetFields(PublicInstance | BindingFlags.DeclaredOnly).OrderBy(x => x.MetadataToken).ToArray();
+        if (!value.Properties().Select(x => x.Name).SequenceEqual(fields.Select(x => x.Name))) return false;
+        foreach (FieldInfo field in fields)
+        {
+            JToken child = value[field.Name];
+            if (child == null) return false;
+            Type childType = field.FieldType;
+            if (childType.IsArray && child.Type == JTokenType.Array && childType.GetElementType() != typeof(string))
+            {
+                foreach (JToken item in (JArray)child)
+                    if (!CompareSchema(childType.GetElementType(), (JObject)item)) return false;
+            }
+            else if (!childType.IsArray && childType.IsValueType && !childType.IsPrimitive && !childType.IsEnum && child.Type == JTokenType.Object)
+            {
+                if (!CompareSchema(childType, (JObject)child)) return false;
+            }
+        }
+        return true;
+    }
+
+    internal static string DiagnosticToJson(object value)
+    {
+        if (replayType == null || value == null || value.GetType() != replayType || !Equal(value, replayValues, replayType))
+            throw new NotSupportedException("S004 diagnostic JsonUtility rejects unvalidated type/value: " + (value == null ? "null" : value.GetType().FullName));
+        replayCalls++;
+        return replayJson;
+    }
+
+    private static bool Equal(object left, object right, Type type)
+    {
+        if (left == null || right == null) return left == right;
+        if (type.IsArray)
+        {
+            Array a = (Array)left, b = (Array)right;
+            if (a.Length != b.Length) return false;
+            Type itemType = type.GetElementType();
+            for (int i = 0; i < a.Length; ++i) if (!Equal(a.GetValue(i), b.GetValue(i), itemType)) return false;
+            return true;
+        }
+        if (type == typeof(float)) return BitConverter.ToInt32(BitConverter.GetBytes((float)left), 0) == BitConverter.ToInt32(BitConverter.GetBytes((float)right), 0);
+        if (type.IsPrimitive || type.IsEnum || type == typeof(string)) return left.Equals(right);
+        foreach (FieldInfo field in type.GetFields(PublicInstance | BindingFlags.DeclaredOnly).OrderBy(x => x.MetadataToken))
+            if (!Equal(field.GetValue(left), field.GetValue(right), field.FieldType)) return false;
+        return true;
+    }
+
+    private static JArray MutationNegatives(object original, Type projection, string raw)
+    {
+        string[] mutations = { "OriginX", "Frame.OriginZ", "Anchors[0].WorldX", "Routes[0].Kind", "Pads[0].FactionId", "Anchors" };
+        var results = new JArray();
+        foreach (string path in mutations)
+        {
+            JObject changed = JObject.Parse(raw);
+            JToken target = changed.SelectToken(path, false);
+            if (target == null) throw new InvalidDataException("Mutation target absent in authored layout: " + path);
+            target.Replace(path == "Routes[0].Kind" ? new JValue(3) :
+                path == "Pads[0].FactionId" ? new JValue(3) :
+                path == "Anchors" ? JValue.CreateNull() : new JValue(0.25f));
+            object clone = JsonConvert.DeserializeObject(changed.ToString(Formatting.None), projection);
+            bool rejected = !Equal(original, clone, projection);
+            if (!rejected) throw new InvalidDataException("Mutation negative was not rejected: " + path);
+            results.Add(new JObject { ["mutation"] = path, ["rejected"] = true });
+        }
+        return results;
+    }
+
+    private static Dictionary<string, string> ParseNativeSetupHashes(string log)
+    {
+        var result = new Dictionary<string, string>();
+        foreach (Match m in Regex.Matches(log, @"\[S004OriginalLayoutNativeJson\] compiler size=(Standard|War|LargeWar) difficulty=Regular seed=104733 outcome=accepted setupHash=([0-9]+)"))
+            result[m.Groups[1].Value] = m.Groups[2].Value;
+        if (result.Count != 3) throw new InvalidDataException("Three native compiler setup hashes required");
+        return result;
+    }
+
+    private static string Hash(byte[] bytes)
+    {
+        using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+    }
+}

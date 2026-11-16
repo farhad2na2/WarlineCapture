@@ -848,6 +848,13 @@ namespace Game.Editor
                         using var banks = em.CreateEntityQuery(typeof(FactionTacticalMaterialsComponent));
                         using var units = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent), typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishVisualSpawnedComponent));
                         var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                        using var deliveryGrids = em.CreateEntityQuery(typeof(GridConfig));
+                        Entity selectedDeliveryGrid = deliveryGrids.CalculateEntityCount() == 1
+                            ? deliveryGrids.GetSingletonEntity() : Entity.Null;
+                        bool deliveryBasisRequired = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId &&
+                            Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1";
+                        bool deliveryBasisValid = !deliveryBasisRequired || SkirmishProductionDeliveryBasisWitness.Record(
+                            em, session, selectedDeliveryGrid, "Playing");
                         int expectedUnits = 0;
                         foreach (var force in setup.Forces) expectedUnits += math.max(1, force.Quantity);
                         bool rosterValid = NativeStartupRosterMatches(em, session, setup, out int initialUnits, out int deliveredUnits);
@@ -891,7 +898,7 @@ namespace Game.Editor
                             + " suppressedSharedUnits=" + suppressedUnits.CalculateEntityCount()
                             + " genericStrategyControllers=" + genericControllers
                             + " claimedScenery=" + claimedScenery + " mismatchedBuildingOwners=" + mismatchedOwners);
-                        bool invalid = ready.CalculateEntityCount() != 1 || buildings.CalculateEntityCount() != setup.Structures.Length ||
+                        bool invalid = !deliveryBasisValid || ready.CalculateEntityCount() != 1 || buildings.CalculateEntityCount() != setup.Structures.Length ||
                             !rosterValid || units.CalculateEntityCount() != initialUnits + deliveredUnits || playerBanks != 1 || enemyBanks != 1 ||
                             sharedUnits.CalculateEntityCount() != units.CalculateEntityCount() || suppressedUnits.CalculateEntityCount() != 0 ||
                             controls.IsEmptyIgnoreFilter || genericControllers != 0 || claimedScenery != 0 || mismatchedOwners != 0 ||

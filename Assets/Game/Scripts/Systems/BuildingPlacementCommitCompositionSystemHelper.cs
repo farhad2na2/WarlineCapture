@@ -128,30 +128,7 @@ namespace Game.Runtime
 
         public static List<Vector2Int> BuildWallRunOrigins(Vector2Int start, Vector2Int end, Vector2Int footprint, bool vertical)
         {
-            var origins = new List<Vector2Int> { start };
-            if (start == end)
-                return origins;
-
-            if (vertical)
-            {
-                int stepCells = Mathf.Max(1, footprint.y);
-                int delta = end.y - start.y;
-                int direction = delta >= 0 ? 1 : -1;
-                int segmentCount = Mathf.Abs(delta) / stepCells;
-                for (int i = 1; i <= segmentCount; i++)
-                    origins.Add(new Vector2Int(start.x, start.y + direction * stepCells * i));
-            }
-            else
-            {
-                int stepCells = Mathf.Max(1, footprint.x);
-                int delta = end.x - start.x;
-                int direction = delta >= 0 ? 1 : -1;
-                int segmentCount = Mathf.Abs(delta) / stepCells;
-                for (int i = 1; i <= segmentCount; i++)
-                    origins.Add(new Vector2Int(start.x + direction * stepCells * i, start.y));
-            }
-
-            return origins;
+            return InitialSpawnSharedReadModelPolicy.BuildWallRunOrigins(start, end, footprint, vertical);
         }
 
         public static Vector2Int GetWallSegmentFootprint(BuildingDefinition definition, bool vertical)

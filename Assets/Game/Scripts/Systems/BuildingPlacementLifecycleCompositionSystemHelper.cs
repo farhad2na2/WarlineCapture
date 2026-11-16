@@ -192,18 +192,19 @@ namespace Game.Runtime
                 context.TryResolveInitialOrigin(definition, origin, out Vector2Int resolvedOrigin))
                 origin = resolvedOrigin;
 
+            var initial = BuildingPlacementInitialPreviewState.FromResolvedOrigin(origin);
             ActivePlacement = new PlacementState
             {
                 Definition = definition,
                 PreviewInstance = context.CreatePreview?.Invoke(definition, context.BuildingRoot),
-                OriginCell = origin,
-                CommittedOriginCell = origin,
-                DragStartOriginCell = origin,
-                DragCurrentOriginCell = origin,
+                OriginCell = initial.OriginCell,
+                CommittedOriginCell = initial.CommittedOriginCell,
+                DragStartOriginCell = initial.DragStartOriginCell,
+                DragCurrentOriginCell = initial.DragCurrentOriginCell,
                 DragFirstAxis = BuildingPlacementInputUiSystemHelper.DragFirstAxis.None,
-                AutoRotateVertical = false,
+                AutoRotateVertical = initial.AutoRotateVertical,
                 CommittedWallRuns = new List<BuildingPlacementInputUiSystemHelper.WallRun>(),
-                HideCurrentWallPreview = false,
+                HideCurrentWallPreview = initial.HideCurrentWallPreview,
                 LastPointerMovedAt = UnityEngine.Time.time,
                 LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero
             };

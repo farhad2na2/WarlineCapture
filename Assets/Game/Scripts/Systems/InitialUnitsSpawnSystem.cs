@@ -166,7 +166,7 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
-            SkirmishWorldSetup.SuppressUnselectedStartupConfigs(state.EntityManager);
+            SkirmishStartupConfigSuppression.SuppressUnselectedStartupConfigs(state.EntityManager);
             if (_activeConfigQuery.IsEmptyIgnoreFilter &&
                 _pendingFuelSeedQuery.IsEmptyIgnoreFilter)
             {
@@ -823,23 +823,8 @@ namespace Game.Runtime
             bool isAirUnit,
             out int2 cell)
         {
-            if (isAirUnit &&
-                TryReserveInitialAirSpawnCell(grid, walkable, blocked, occupied, ref reserved, center, footprintSize, out cell))
-            {
-                return true;
-            }
-
-            return SpawnCellUtility.TryFindSpawnCellNear(
-                ref rng,
-                grid,
-                walkable,
-                blocked,
-                occupied,
-                ref reserved,
-                center,
-                radiusCells,
-                footprintSize,
-                out cell);
+            return SpawnCellUtility.TryFind(ref rng, grid, walkable, blocked, occupied, ref reserved,
+                center, radiusCells, footprintSize, isAirUnit, out cell);
         }
 
         internal static void ApplyInitialResourceTotals(EntityManager em, InitialUnitsSpawnConfig config)
@@ -1174,63 +1159,19 @@ namespace Game.Runtime
             if (boundaryEntity == Entity.Null)
                 return false;
 
-            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawnsBuffer =
-                em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
-            for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
-            {
-                InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
-                string buildingId = building.PrefabLookupKey.ToString();
-                if (string.IsNullOrWhiteSpace(buildingId))
-                    continue;
-
-                if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell))
-                {
-                    diagnosticLogWriter.EnqueueWarning(em, $"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} buildingId={buildingId}");
-                    continue;
-                }
-
-                int2 origin = factionSpawnCell + building.OriginOffset;
-                EnqueueConfiguredInitialBuildingSpawnRequest(
-                    em,
-                    boundaryEntity,
-                    configEntity,
-                    building.FactionId,
-                    buildingId,
-                    origin);
-                requestCount++;
-            }
-
-            return true;
-        }
-
-        private static void EnqueueConfiguredInitialBuildingSpawnRequest(
-            EntityManager em,
-            Entity boundaryEntity,
-            Entity configEntity,
-            byte factionId,
-            string buildingId,
-            int2 origin)
-        {
             using var skirmishQuery = em.CreateEntityQuery(typeof(SkirmishMatchState));
             bool exactSkirmishSite = !skirmishQuery.IsEmptyIgnoreFilter;
-            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
-                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
-            requests.Add(new BuildingRuntimeSpawnRequest
-            {
-                RequestId = requests.Length + 1,
-                RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
-                FactionId = factionId,
-                HasOwnerFaction = 1,
-                BuildingId = new FixedString128Bytes(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId)),
-                PreferredOrigin = origin,
-                EndOrigin = default,
-                RotateVertical = 0,
-                RequirePreferredOrigin = exactSkirmishSite ? (byte)1 : (byte)0,
-                AllowExistingWallOverlap = 0,
-                Status = BuildingRuntimeSpawnRequest.Pending,
-                PlanEntity = configEntity,
-                EntryIndex = 0
-            });
+            InitialSpawnDiagnosticLogWriter writer = diagnosticLogWriter;
+            bool result = BuildingDefinitionPrefabSystemHelper.EnqueueConfiguredInitialBuildingRequests(
+                em,
+                boundaryEntity,
+                configEntity,
+                factionSpawns,
+                exactSkirmishSite,
+                message => writer.EnqueueWarning(em, message),
+                out requestCount);
+            diagnosticLogWriter = writer;
+            return result;
         }
 
         internal static bool EnqueueInitialFactionBaseRequests(
@@ -1408,7 +1349,7 @@ namespace Game.Runtime
                 end.y = start.y;
 
             Vector2Int footprint = vertical ? sideWallFootprint : bottomWallFootprint;
-            List<Vector2Int> origins = BuildingPlacementCommitCompositionSystemHelper.BuildWallRunOrigins(start, end, footprint, vertical);
+            List<Vector2Int> origins = InitialSpawnSharedReadModelPolicy.BuildWallRunOrigins(start, end, footprint, vertical);
             int enqueued = 0;
             for (int i = 0; i < origins.Count; i++)
             {
@@ -1549,9 +1490,9 @@ namespace Game.Runtime
                 }
 
                 if (request.Status == BuildingRuntimeSpawnRequest.Succeeded && FactionIdentity.IsPlayerControlled(request.FactionId) &&
-                    request.EntryIndex == initialBaseCoreRequestEntryIndex && !RuntimeCameraFocusRequestUtility.HasActiveCampaignMission(em))
+                    request.EntryIndex == initialBaseCoreRequestEntryIndex && !InitialSpawnSharedReadModelPolicy.HasActiveCampaignMission(em))
                 {
-                    Vector3 coreFocus = RuntimeCameraFocusRequestUtility.GetInitialBuildingFootprintCenterWorld(
+                    Vector3 coreFocus = InitialSpawnSharedReadModelPolicy.GetInitialBuildingFootprintCenterWorld(
                         new Vector2Int(request.ActualOrigin.x, request.ActualOrigin.y),
                         new Vector2Int(request.ActualFootprint.x, request.ActualFootprint.y),
                         grid);
@@ -1751,64 +1692,27 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool TryReserveInitialAirSpawnCell(
-            in GridConfig grid,
-            in NativeArray<GridWalkable> walkable,
-            in NativeBitArray blocked,
-            in NativeBitArray occupied,
-            ref NativeBitArray reserved,
-            int2 center,
-            int2 footprintSize,
-            out int2 cell)
-        {
-            cell = default;
-            int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-            int2 min = UnitFootprintUtility.GetMinCell(center, size);
-            int2 max = min + size;
-            if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
-                return false;
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    int index = row + x;
-                    if (walkable[index].Value == 0 || occupied.IsSet(index))
-                        return false;
-                    if (reserved.IsSet(index) && !blocked.IsSet(index))
-                        return false;
-                }
-            }
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                    reserved.Set(row + x, true);
-            }
-
-            cell = center;
-            return true;
-        }
-
-        private static void ReserveStaticBlockerFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)
+        internal static void ReserveStaticBlockerFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)
         {
             using var blockerQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<StaticGridBlocker>(),
                 ComponentType.ReadOnly<UnitGrid>(),
                 ComponentType.ReadOnly<GridBlockerSize>());
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
             ComponentTypeHandle<UnitGrid> unitGridType = em.GetComponentTypeHandle<UnitGrid>(true);
             ComponentTypeHandle<GridBlockerSize> blockerSizeType = em.GetComponentTypeHandle<GridBlockerSize>(true);
             using NativeArray<ArchetypeChunk> chunks = blockerQuery.ToArchetypeChunkArray(Allocator.Temp);
             for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
             {
                 ArchetypeChunk chunk = chunks[chunkIndex];
+                NativeArray<Entity> entities = chunk.GetNativeArray(entityType);
                 NativeArray<UnitGrid> unitGrids = chunk.GetNativeArray(ref unitGridType);
                 NativeArray<GridBlockerSize> blockerSizes = chunk.GetNativeArray(ref blockerSizeType);
                 for (int i = 0; i < unitGrids.Length; i++)
                 {
-                    int2 origin = unitGrids[i].Cell;
+                    Entity entity = entities[i];
+                    int2 origin = em.HasComponent<OperationMapBuildingComponent>(entity) && em.HasComponent<RuntimeBuildingCombatInfo>(entity)
+                        ? em.GetComponentData<RuntimeBuildingCombatInfo>(entity).OriginCell : unitGrids[i].Cell;
                     int2 size = blockerSizes[i].Size;
                     for (int y = origin.y; y < origin.y + size.y; y++)
                     {

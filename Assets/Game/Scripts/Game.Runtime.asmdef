@@ -2,6 +2,8 @@
     "name": "Game.Runtime",
     "rootNamespace": "Game.Runtime",
     "references": [
+        "Game.Simulation",
+        "Game.Simulation.Mathematics",
         "Game.Components",
         "Game.Configs",
         "Game.Missions.Contracts",

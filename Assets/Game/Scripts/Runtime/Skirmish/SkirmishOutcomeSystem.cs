@@ -39,10 +39,14 @@ namespace Game.Runtime
                     SkirmishRulesSystem.TrackLosses(em, entity, ref match, session.SessionId);
                     em.SetComponentData(entity, match);
                 }
-                if (session.IsLegacy != 0 || objective.Terminal == 0)
+                // Preserve the original short circuit before reading a stored result.
+                bool alreadyFrozen = session.IsLegacy == 0 && objective.Terminal != 0 &&
+                    em.HasComponent<SkirmishResultComponent>(entity) &&
+                    em.GetComponentData<SkirmishResultComponent>(entity).Frozen != 0;
+                var freeze = SkirmishMissionOrchestrationKernel.DecideFreeze(session.IsLegacy != 0, objective.Terminal != 0, alreadyFrozen);
+                if (freeze == SkirmishResultFreezeDecision.None)
                     continue;
-                if (em.HasComponent<SkirmishResultComponent>(entity) &&
-                    em.GetComponentData<SkirmishResultComponent>(entity).Frozen != 0)
+                if (freeze == SkirmishResultFreezeDecision.ProjectExisting)
                 {
                     if (session.Phase != SkirmishSessionPhase.Finished)
                     {

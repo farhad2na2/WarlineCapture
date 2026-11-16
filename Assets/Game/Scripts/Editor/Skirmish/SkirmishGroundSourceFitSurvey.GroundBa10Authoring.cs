@@ -17,8 +17,8 @@ namespace Game.Editor
 
         static JObject ReadAll120RefinementIndex()
         {
-            Require(Hash(All120RefinementIndex)==All120RefinementIndexSha,"Exact Full120 authority required");
-            return JObject.Parse(File.ReadAllText(All120RefinementIndex));
+            Require(Hash(SelectedAll120RefinementIndex)==SelectedAll120RefinementIndexSha,"Exact Full120 authority required");
+            return JObject.Parse(File.ReadAllText(SelectedAll120RefinementIndex));
         }
 
         static JObject[] GroundBa10Rows()

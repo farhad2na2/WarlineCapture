@@ -83,7 +83,7 @@ namespace Game.Runtime
 
         public bool HasSpawned(int cityCount)
         {
-            return _spawned || cityCount <= 0;
+            return GameplayStartCompletionPredicate.RuntimeCityOwnerSpawned(_spawned, cityCount);
         }
 
         public bool ShouldYield(int completedWorkItems, int generationYieldInterval)

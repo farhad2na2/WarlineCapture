@@ -66,9 +66,9 @@ namespace Game.UI.Runtime
             Rect safe = Screen.safeArea;
             float margin = Mathf.Max(6, Screen.height * .008f);
             safe = Rect.MinMaxRect(safe.xMin + margin, safe.yMin + margin, safe.xMax - margin, safe.yMax - margin);
-            if (screen != lastTarget || safe != lastSafe || Time.unscaledTime >= refreshAt || !placed)
+            if (screen != lastTarget || safe != lastSafe || Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) >= refreshAt || !placed)
             {
-                lastTarget = screen; lastSafe = safe; refreshAt = Time.unscaledTime + .25f;
+                lastTarget = screen; lastSafe = safe; refreshAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + .25f;
                 obstacles.Clear();
                 // Exclude the target itself and all of its decoration. Other labels and
                 // controls are obstacles, including ARIA copy and adjacent popup tabs.
@@ -119,7 +119,7 @@ namespace Game.UI.Runtime
             arrow.gameObject.SetActive(placed);
             if (!placed) return;
             float bounce = SettingsService.LoadReducedMotionPreference() ? 0 :
-                Mathf.Clamp(Screen.height * .014f, 8, 18) * Mathf.Sin(Time.unscaledTime * Mathf.PI * 2 / 1.2f);
+                Mathf.Clamp(Screen.height * .014f, 8, 18) * Mathf.Sin(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) * Mathf.PI * 2 / 1.2f);
             var approach = (arrowScreen.center - screen.center).normalized;
             Place(arrow, arrowScreen.center + approach * bounce, arrowScreen.size);
             arrow.localRotation = Quaternion.Euler(0, 0, Vector2.SignedAngle(

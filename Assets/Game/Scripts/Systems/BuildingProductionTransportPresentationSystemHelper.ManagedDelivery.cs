@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Game.Components;
+using Game.Simulation;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace Game.Runtime
             float now,
             ref uint randomState)
         {
+            if (context.RequiresLogicalDeliveryBasis && !context.HasLogicalDeliveryBasis)
+                return false;
             if (building == null || pending == null || pending.TransportPrefab == null || building.ActiveTransport != null)
                 return building?.ActiveTransport != null;
 
@@ -83,9 +86,19 @@ namespace Game.Runtime
                 touchdownPosition = ResolveProductionTransportDropPosition(context, building, pending, ref randomState);
                 hoverPosition = touchdownPosition + new Vector3(0f, 6f, 0f);
                 hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
-                Vector3 horizontalOffset = context.WorldCamera != null
-                    ? -context.WorldCamera.transform.right.normalized * 70f
-                    : new Vector3(-70f, 0f, 0f);
+                Vector3 horizontalOffset;
+                if (context.HasLogicalDeliveryBasis)
+                {
+                    float3 logicalOffset = SharedProductionDeliveryKernel.ProductionTransportIngressOffset(
+                        in context.LogicalDeliveryBasis, 70f);
+                    horizontalOffset = new Vector3(logicalOffset.x, logicalOffset.y, logicalOffset.z);
+                }
+                else
+                {
+                    horizontalOffset = context.WorldCamera != null
+                        ? -context.WorldCamera.transform.right.normalized * 70f
+                        : new Vector3(-70f, 0f, 0f);
+                }
                 entryPosition = hoverPosition + horizontalOffset + new Vector3(0f, 16f, 0f);
                 exitPosition = hoverPosition;
                 hoverRotation = Quaternion.LookRotation((hoverPosition - entryPosition).normalized, Vector3.up);
@@ -94,23 +107,53 @@ namespace Game.Runtime
             }
             else
             {
+#if UNITY_EDITOR
+                // Snapshot exact launch inputs before the original resolver runs. These reads are
+                // opt-in diagnostics only; all delivery decisions continue through the original owner.
+                S073NativeProductionDeliveryObserver.LaunchInputs launchInputs =
+                    S073NativeProductionDeliveryObserver.CaptureHelicopterLaunchInputs(context.WorldCamera, randomState);
+#endif
                 if (!TryAcquireProductionTransportLane(context, pending.TransportPrefab, pending.TransportMaxConcurrent, out laneIndex))
                     return false;
 
                 hoverPosition = ResolveProductionTransportHoverPosition(building, pending);
                 hoverPosition += ResolveProductionTransportLaneOffset(context, laneIndex, pending.TransportMaxConcurrent);
                 // The landing point belongs to this transport. Re-resolving it between drops visibly teleports the carrier.
-                if (!TryResolveClearHelicopterDropPosition(
+                int searchStartRadius = pending.TransportClearDropSearchStartRadius;
+#if UNITY_EDITOR
+                var searchDiagnostics = S073NativeProductionDeliveryObserver.CreateDropSearchDiagnostics();
+#else
+                HelicopterDropSearchDiagnostics searchDiagnostics = null;
+#endif
+                bool resolvedDrop = TryResolveClearHelicopterDropPosition(
                         context,
                         building,
                         pending,
                         hoverPosition,
                         null,
                         pending.TransportClearDropSearchStartRadius,
+                        searchDiagnostics,
                         out bool exhaustedSearchBudget,
                         out int nextSearchRadius,
                         out committedDropCell,
-                        out committedDropPosition))
+                        out committedDropPosition);
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.ObserveHelicopterDropSearch(
+                    context,
+                    building,
+                    pending,
+                    now,
+                    launchInputs,
+                    randomState,
+                    searchStartRadius,
+                    resolvedDrop,
+                    exhaustedSearchBudget,
+                    nextSearchRadius,
+                    committedDropCell,
+                    committedDropPosition,
+                    searchDiagnostics);
+#endif
+                if (!resolvedDrop)
                 {
                     pending.TransportClearDropSearchStartRadius = exhaustedSearchBudget
                         ? nextSearchRadius
@@ -122,9 +165,19 @@ namespace Game.Runtime
                 hasCommittedDropPosition = true;
                 hoverPosition.x = committedDropPosition.x;
                 hoverPosition.z = committedDropPosition.z;
-                Vector3 horizontalOffset = context.WorldCamera != null
-                    ? -context.WorldCamera.transform.right.normalized * 60f
-                    : new Vector3(-60f, 0f, 0f);
+                Vector3 horizontalOffset;
+                if (context.HasLogicalDeliveryBasis)
+                {
+                    float3 logicalOffset = SharedProductionDeliveryKernel.ProductionTransportIngressOffset(
+                        in context.LogicalDeliveryBasis, 60f);
+                    horizontalOffset = new Vector3(logicalOffset.x, logicalOffset.y, logicalOffset.z);
+                }
+                else
+                {
+                    horizontalOffset = context.WorldCamera != null
+                        ? -context.WorldCamera.transform.right.normalized * 60f
+                        : new Vector3(-60f, 0f, 0f);
+                }
                 entryPosition = hoverPosition + horizontalOffset;
                 Vector3 departureDirection = -horizontalOffset.normalized;
                 exitPosition = hoverPosition +

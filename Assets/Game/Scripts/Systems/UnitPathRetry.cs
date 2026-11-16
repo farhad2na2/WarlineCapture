@@ -7,13 +7,12 @@ namespace Game.Runtime
 {
     internal struct UnitPathRetry
     {
-        public const int FailedManualRetryDelayFrames = 8;
+        public const int FailedManualRetryDelayFrames = Movement.InfantryPathLifecycleKernel.FailedManualRetryDelayFrames;
 
         public bool ShouldRetryManualMove(EntityManager em, Entity entity, byte segmented)
         {
-            return em.HasComponent<ManualMoveOrderTag>(entity) ||
-                   em.HasComponent<UnitLongDistanceMove>(entity) ||
-                   segmented != 0;
+            return Movement.InfantryPathLifecycleKernel.ShouldRetry(
+                em.HasComponent<ManualMoveOrderTag>(entity), em.HasComponent<UnitLongDistanceMove>(entity), segmented);
         }
 
         public void ApplyRetry(
@@ -49,7 +48,7 @@ namespace Game.Runtime
                     em.AddComponentData(entity, new UnitTarget { Cell = request.Goal });
             }
 
-            int resumeFrame = Time.frameCount + FailedManualRetryDelayFrames;
+            int resumeFrame = Movement.InfantryPathLifecycleKernel.RetryResumeFrame(Time.frameCount);
             if (em.HasComponent<UnitPathRetryCooldown>(entity))
                 em.SetComponentData(entity, new UnitPathRetryCooldown { ResumeFrame = resumeFrame });
             else

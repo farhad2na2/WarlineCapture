@@ -12,13 +12,17 @@ using UnityEngine;
 
 namespace Game.Composition
 {
-    internal sealed class SkirmishLaunchSnapshot : IComponentData
-    {
-        public QuickGameConfig Configuration;
-    }
-
     internal static class SkirmishLaunchProjection
     {
+#if UNITY_EDITOR
+        // Optional editor-only observation; it must never change launch behavior.
+        internal static Action<EntityManager, bool> PrepareMapObserver;
+        private static void ObservePrepareMap(EntityManager em, bool after)
+        {
+            try { PrepareMapObserver?.Invoke(em, after); }
+            catch (Exception error) { Debug.LogException(error); }
+        }
+#endif
         public const string MissionId = "skirmish.base_assault";
         public const string ScenarioId = "scenario.skirmish.desert_base_standard";
         public const string OperationMapId = "opmap.skirmish.desert_base_01";
@@ -63,7 +67,13 @@ namespace Game.Composition
         }
 
         public static bool TryQueue(EntityManager em, QuickGameConfig config)
-            => TryQueueCore(em,config,default);
+        {
+            // S073's legacy practice path is owned by a shared production method
+            // used by the source host as well. Other scenarios retain this path.
+            if (config.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+                return SkirmishLegacyLaunchOwner.TryQueueIndustrialBasin(em, config);
+            return TryQueueCore(em,config,default);
+        }
 
         private static bool TryQueueCore(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
         {
@@ -212,6 +222,9 @@ namespace Game.Composition
         public static void PrepareMap(EntityManager em)
         {
             if (!TryGet(em, out var session, out var match) || match.Phase != SkirmishPhase.Queued) return;
+#if UNITY_EDITOR
+            ObservePrepareMap(em, false);
+#endif
             // The shared map's authored ownership belongs to campaign scenarios. Only
             // this preset's newly spawned force and supply buildings belong to its sides.
             using var query = em.CreateEntityQuery(typeof(OperationMapBuildingComponent), typeof(Faction));
@@ -232,22 +245,14 @@ namespace Game.Composition
                 if (em.HasComponent<AIControlledTag>(entity)) em.RemoveComponent<AIControlledTag>(entity);
             }
             match.Phase = SkirmishPhase.Preparing; em.SetComponentData(session, match);
+#if UNITY_EDITOR
+            ObservePrepareMap(em, true);
+#endif
         }
 
         public static void ApplySeed(EntityManager em)
         {
-            if (!TryGet(em, out var session, out var state)) return;
-            if (em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
-                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0)
-            {
-                Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
-                return;
-            }
-            Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
-            using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
-            if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("Skirmish requires one initial spawn configuration.");
-            var config = query.GetSingleton<InitialUnitsSpawnConfig>(); config.RandomSeed = (uint)state.Seed;
-            em.SetComponentData(query.GetSingletonEntity(), config);
+            SkirmishLegacyLaunchOwner.ApplySeed(em);
         }
 
         public static bool IsShellReadyToEnterMatch(EntityManager em)

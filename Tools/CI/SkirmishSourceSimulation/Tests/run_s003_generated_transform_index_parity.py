@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Compare current and indexed child projections on pinned Mono."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+
+
+def sha(path):
+    h = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def need(value, message):
+    if not value:
+        raise ValueError(message)
+
+
+def main():
+    need(len(sys.argv) == 3, "build receipt and fresh output directory required")
+    build_path = Path(sys.argv[1]).resolve(strict=True)
+    output = Path(sys.argv[2]).absolute(); output.mkdir(parents=True, exist_ok=False)
+    build = json.loads(build_path.read_bytes())
+    need(build.get("status") == "Passed" and build.get("mission") == "S003", "Passing S003 source build required")
+    pins = build["source_and_reference_pins"]
+    def verify():
+        for path, digest in pins.items():
+            need(sha(path) == digest, "Source build pin changed: " + path)
+    verify()
+    root = Path(build["repository_root"]).resolve(strict=True)
+    source = root / "Tools/CI/SkirmishSourceSimulation/Tests/S003TransformChildrenIndexControl.cs"
+    source_sha = sha(source)
+    response = Path(build["compiler_response"]["path"])
+    need(sha(response) == build["compiler_response"]["sha256"], "Compiler response changed")
+    args = [json.loads(line) for line in response.read_text().splitlines() if line.strip()]
+    mains = [i for i, value in enumerate(args) if value == "-main:SourceSimulationProgram"]
+    outputs = [i for i, value in enumerate(args) if value.startswith("-out:")]
+    need(len(mains) == len(outputs) == 1, "Unique source entry and output required")
+    exe = output / "S003TransformChildrenIndexControl.exe"
+    args[mains[0]] = "-main:S003TransformChildrenIndexControl"
+    args[outputs[0]] = "-out:" + str(exe)
+    bridge = root / "Tools/CI/SkirmishSourceSimulation/Adapters/S026/extra-614-SourceMissionTransformBridge.s003.cs"
+    raw = bridge.read_bytes(); need(sha(bridge) == pins[str(bridge)], "Original transform bridge source pin changed")
+    lines = raw.decode("utf-8").splitlines()
+    method = [line for line in lines if "internal static Dictionary<Entity,List<Entity>> BuildChildren(" in line]
+    guard = [line for line in lines if "static void Need(bool condition,string reason)" in line]
+    need(len(method)==len(guard)==1, "Exact original child method and guard required")
+    reference = output / "SourceOriginalChildrenReference.cs"
+    reference.write_text("using System;using System.Collections.Generic;using Unity.Entities;\ninternal static class SourceOriginalChildrenReference {\n"+guard[0]+"\n"+method[0]+"\n}\n")
+    fixture = source.read_text()
+    need(fixture.count("SourceMissionTransformBridge.BuildChildren(")==3, "Original fixture boundaries changed")
+    fixture = fixture.replace("SourceMissionTransformBridge.BuildChildren(", "SourceOriginalChildrenReference.BuildChildren(")
+    fixture = fixture.replace("var candidate=Candidate(nodes,parents,old);", "var candidate=SourceMissionTransformBridge.BuildChildren(nodes,parents,old);")
+    fixture = fixture.replace("try{Candidate(new[]{duplicateParent,duplicateChild},duplicateParents,duplicateOld);}", "try{SourceMissionTransformBridge.BuildChildren(new[]{duplicateParent,duplicateChild},duplicateParents,duplicateOld);}")
+    fixture = fixture.replace("Action b=()=>Candidate(large,relationships,existing);", "Action b=()=>SourceMissionTransformBridge.BuildChildren(large,relationships,existing);")
+    need("var candidate=Candidate(nodes,parents,old);" not in fixture and "Action b=()=>Candidate(" not in fixture, "Fixture transformation incomplete")
+    generated_fixture = output / "S003TransformChildrenIndexControl.cs"; generated_fixture.write_text(fixture)
+    args.extend([str(generated_fixture), str(reference)]); rsp = output / "compile.rsp"
+    rsp.write_text("\n".join(json.dumps(value) for value in args) + "\n")
+    compiler = next(Path(name) for name in pins if name.endswith("/Roslyn/bincore/csc.dll"))
+    dotnet = shutil.which("dotnet")
+    need(dotnet and any(Path(name).name == "dotnet" and Path(name).resolve() == Path(dotnet).resolve() for name in pins),
+         "Pinned compiler host required")
+    compiled = subprocess.run([dotnet, str(compiler), "@" + str(rsp)], capture_output=True, text=True, timeout=300)
+    (output / "compile.log").write_text(compiled.stdout + compiled.stderr)
+    need(compiled.returncode == 0, "Source control compilation failed")
+    runtime = build["runtime_selection"]; env = os.environ.copy()
+    env["MONO_PATH"] = os.pathsep.join((str(build_path.parent / "placement"), runtime["engine"],
+                                         str(Path(runtime["newtonsoft"]).parent), str(root / "Library/ScriptAssemblies"), str(output)))
+    env["WARLINE_SOURCE_TRANSFORM_CHILDREN_INDEX"] = "1"
+    run = subprocess.run([runtime["mono"], "--optimize=-float32", str(exe)], cwd=root, env=env,
+                         capture_output=True, text=True, timeout=300)
+    (output / "run.log").write_text(run.stdout + run.stderr)
+    marker = "[S003TransformChildrenIndexControl] result=Passed random=200 duplicate=Passed paired=12 sourceOnly=1"
+    need(run.returncode == 0 and marker in run.stdout, "Source control or marker failed")
+    need(run.stdout.count("[SourceTransformChildrenIndex] enabled=1 scope=ExperimentalSourceOnly") == 1, "Generated index was not enabled")
+    verify(); need(sha(source) == source_sha and bridge.read_bytes() == raw, "Control or original bridge source changed during execution")
+    rows = dict(line.split("=", 1) for line in run.stdout.splitlines() if line.startswith(("original_ms=", "candidate_ms=")))
+    times = {key: [float(x) for x in value.split(",")] for key, value in rows.items()}
+    need(set(times) == {"original_ms", "candidate_ms"} and all(len(x) == 12 for x in times.values()), "Twelve measured pairs required")
+    result = {"kind": "S003TransformChildrenIndexControl", "status": "PassedSourceOnlyFixture",
+              "build_receipt_sha256": sha(build_path), "source_sha256": source_sha, "original_bridge_sha256": sha(bridge), "original_reference_sha256": sha(reference), "generated_fixture_sha256": sha(generated_fixture),
+              "source_pins_verified": len(pins), "compile_exit": compiled.returncode, "run_exit": run.returncode,
+              "times_ms": times, "gameplay_run": False, "native_parity_proven": False,
+              "optimization_promoted": False, "mission_ready": False}
+    (output / "receipt.json").write_text(json.dumps(result, indent=2) + "\n")
+    print(json.dumps(result))
+
+
+if __name__ == "__main__":
+    main()

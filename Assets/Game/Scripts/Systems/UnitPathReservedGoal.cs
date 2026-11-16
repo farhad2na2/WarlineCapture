@@ -1,6 +1,7 @@
 using Unity.Collections;
 using Unity.Mathematics;
 using Game.Components;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {
@@ -13,23 +14,15 @@ namespace Game.Runtime
 
         public void Prepare(int gridSize)
         {
-            if (!Epochs.IsCreated || _gridSize != gridSize)
+            var decision=PathGoalReservationKernel.DecidePrepare(Epochs.IsCreated,_gridSize,Generation,gridSize);
+            if (decision.Reallocate)
             {
                 Dispose();
                 Epochs = new NativeArray<int>(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
-                _gridSize = gridSize;
-                Generation = 1;
-                return;
             }
-
-            if (Generation == int.MaxValue)
-            {
-                Epochs.AsSpan().Clear();
-                Generation = 1;
-                return;
-            }
-
-            Generation++;
+            else if(decision.Clear) Epochs.AsSpan().Clear();
+            Generation=decision.Generation;
+            _gridSize=decision.RememberedGridSize;
         }
 
         public void Dispose()
@@ -47,15 +40,14 @@ namespace Game.Runtime
             int2 cell,
             int2 footprintSize)
         {
-            int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-            int2 min = UnitFootprintUtility.GetMinCell(cell, size);
-            int2 max = min + size;
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                    reservedGoalEpochs[row + x] = reservedGoalGeneration;
-            }
+            var storage=new ReservationStorage { Epochs=reservedGoalEpochs };
+            PathGoalReservationKernel.ReserveFootprint(ref storage,grid.Width,reservedGoalGeneration,
+                new PlacementCell(cell.x,cell.y),new PlacementCell(footprintSize.x,footprintSize.y));
+        }
+        private struct ReservationStorage : IPathGoalReservationStorage
+        {
+            public NativeArray<int> Epochs;
+            public void SetEpoch(int index,int generation) => Epochs[index]=generation;
         }
     }
 }

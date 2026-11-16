@@ -64,7 +64,7 @@ public sealed class Aph806BuildingPlacementProductionPlayModeTests
                 unitPrefab,
                 price: 125,
                 focusProducerOnSuccess: true);
-            productionGateway.ProcessPendingUiCampItemCommands(em, productionContext, frameCount: 20);
+            productionGateway.ProcessPendingUiCampItemCommands(em, productionContext, frameCount: 20, now: 0f);
 
             Assert.That(
                 productionGateway.TryGetUiCampItemCommandResult(em, productionRequestId, out var productionResult),
@@ -190,13 +190,13 @@ public sealed class Aph806BuildingPlacementProductionPlayModeTests
             _ => true,
             _ => { },
             _ => { },
-            (building, productionIndex, spawnUnitPrefab) => productionQueue.TryQueuePlayerUnitFromBuilding(
+            (building, productionIndex, spawnUnitPrefab, now) => productionQueue.TryQueuePlayerUnitFromBuilding(
                 queueContext,
                 building,
                 productionIndex,
                 spawnUnitPrefab,
                 em,
-                now: 2f),
+                now),
             _ => { },
             () => { },
             () => { },

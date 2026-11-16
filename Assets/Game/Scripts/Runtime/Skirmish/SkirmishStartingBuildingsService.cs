@@ -31,6 +31,24 @@ namespace Game.Runtime
             if (!em.HasBuffer<BuildingRuntimeSpawnRequest>(boundary)) return false;
             if (!em.HasBuffer<SkirmishStartingBuildingRequest>(session))
             {
+                bool requireTypedPads = SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup);
+                SkirmishMapLayoutConfig boundLayout = null;
+                if (requireTypedPads)
+                {
+                    if (!em.HasComponent<SkirmishLaunchDefinitionRecord>(session) ||
+                        !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                        !em.HasComponent<SkirmishResolvedSetupRecord>(session))
+                    { reason = SkirmishReasonCode.MissingReference; return false; }
+                    var launch = em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
+                    var native = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                    if (launch?.Definition == null || !launch.Matches(setup, native) ||
+                        !ReferenceEquals(em.GetComponentObject<SkirmishResolvedSetupRecord>(session)?.Setup, setup))
+                    { reason = SkirmishReasonCode.MissingReference; return false; }
+                    boundLayout = launch.Definition.MapLayout;
+                    for (int i = 0; i < (setup.Structures?.Length ?? 0); i++)
+                        if (!SkirmishStartingGrantPlacementConstraint.TryResolvePad(boundLayout, setup, i, out _))
+                        { reason = SkirmishReasonCode.MissingReference; return false; }
+                }
                 // Preflight all keys before submitting any grants.
                 var definitions = em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
                 if (definitions.Length == 0) return false;
@@ -60,7 +78,9 @@ namespace Game.Runtime
                         RequestId = ++next, RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
                         BuildingId = new FixedString128Bytes(SkirmishStructureIds.VisualKey(structure.StructureId)),
                         FactionId = structure.FactionId, HasOwnerFaction = 1,
-                        AuthoredStartingGrant = 1, PlanEntity = session, EntryIndex = i,
+                        AuthoredStartingGrant = 1, RequireTypedPad = (byte)(SkirmishStartingGrantPlacementConstraint
+                            .RequiresTypedConstraint(true, requireTypedPads) ? 1 : 0),
+                        PlanEntity = session, EntryIndex = i,
                         PreferredOrigin = center - footprints[i] / 2,
                         // The shared placement owner finds the nearest legal footprint around this anchor.
                         RequirePreferredOrigin = 0, Status = BuildingRuntimeSpawnRequest.Pending

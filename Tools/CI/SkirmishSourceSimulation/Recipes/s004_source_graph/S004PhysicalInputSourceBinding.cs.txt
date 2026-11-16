@@ -1,0 +1,314 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+using System.Globalization;
+using Game.Configs;
+using Game.Components;
+using Game.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+internal static class S004PhysicalInputSourceBinding
+{
+    private const string MapPath = "Assets/Game/Resources/SkirmishS004OperationMap.asset";
+    private const string GridPath = "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset";
+    private const string SurfacePath = "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Surface.asset";
+    private const string OutputKind = "S004PinnedCityEdgePhysicalInputSourceProjection";
+
+    public static int Main(string[] args)
+    {
+        try
+        {
+            if (args.Length != 3 && args.Length != 4) throw new InvalidDataException("usage: graph.json repository-root output-directory [negative-control]");
+            JObject graph = JObject.Parse(File.ReadAllText(args[0]), new JsonLoadSettings
+            {
+                DuplicatePropertyNameHandling = DuplicatePropertyNameHandling.Error
+            });
+            string root = Path.GetFullPath(args[1]);
+            string output = Path.GetFullPath(args[2]);
+            if (args.Length == 4)
+            {
+                if (args[3] == "hash-text-parity")
+                {
+                    RunHashTextParityControl();
+                    Console.WriteLine(new JObject { ["control"] = args[3], ["result"] = "Passed" }.ToString(Formatting.None));
+                    return 0;
+                }
+                RunNegativeControl(graph, root, args[3]);
+                Console.WriteLine(new JObject { ["control"] = args[3], ["result"] = "RejectedAsExpected" }.ToString(Formatting.None));
+                return 0;
+            }
+            Directory.CreateDirectory(output);
+            JObject receipt = Capture(graph, root, output);
+            File.WriteAllText(Path.Combine(output, "source-projection.json"), receipt.ToString(Formatting.Indented) + "\n");
+            Console.WriteLine(receipt.ToString(Formatting.None));
+            return 0;
+        }
+        catch (Exception error)
+        {
+            Console.Error.WriteLine("S004 source physical-input projection failed closed: " + error);
+            return 2;
+        }
+    }
+
+    private static JObject Capture(JObject graph, string root, string output)
+    {
+        if ((int?)graph["schema_version"] != 1 || (string)graph["authority"] != "AuthoredConfigAssets")
+            throw new InvalidDataException("Pinned authored config graph required");
+        JArray nodes = graph["nodes"] as JArray ?? throw new InvalidDataException("Graph nodes required");
+        JObject pins = graph["source_pins"] as JObject ?? throw new InvalidDataException("Graph source pins required");
+        JObject mapNode = nodes.OfType<JObject>().Single(n => (string)n["source_path"] == MapPath);
+        JObject gridNode = nodes.OfType<JObject>().Single(n => (string)n["source_path"] == GridPath);
+        JObject surfaceNode = nodes.OfType<JObject>().Single(n => (string)n["source_path"] == SurfacePath);
+        VerifyPin(root, pins, gridNode, GridPath);
+        VerifyPin(root, pins, surfaceNode, SurfacePath);
+
+        var assets = new SourceConfigMaterializer(graph);
+        var map = assets.ByPath<OperationMapDefinition>(MapPath);
+        var grid = assets.ByPath<GridAuthoringSceneConfigAsset>(GridPath);
+        var surface = assets.ByPath<MapSurfaceDataAsset>(SurfacePath);
+
+        if (grid.Width != map.GridMetadata.Dimensions.x || grid.Height != map.GridMetadata.Dimensions.y ||
+            grid.CellSize != map.GridMetadata.CellSize || grid.Origin.x != map.GridMetadata.Origin.x ||
+            grid.Origin.y != map.GridMetadata.Origin.y || grid.Origin.z != map.GridMetadata.Origin.z)
+            throw new InvalidDataException("Materialized authored grid frame differs from selected map metadata");
+        if (surface.Dimensions.x != grid.Width || surface.Dimensions.y != grid.Height ||
+            surface.CellSize != grid.CellSize || surface.GridOrigin.x != grid.Origin.x ||
+            surface.GridOrigin.y != grid.Origin.y || surface.GridOrigin.z != grid.Origin.z ||
+            surface.SurfaceCount != map.SurfaceMetadata.SurfaceCount ||
+            surface.PayloadVersion != map.SurfaceMetadata.PayloadVersion ||
+            surface.PayloadEncoding != map.SurfaceMetadata.PayloadEncoding)
+            throw new InvalidDataException("Pinned serialized surface identity or frame differs from selected map metadata: dims=" +
+                surface.Dimensions + " metadata=" + map.SurfaceMetadata.SurfaceCount + "/" + map.SurfaceMetadata.PayloadVersion + "/" +
+                map.SurfaceMetadata.PayloadEncoding + "/" + map.SurfaceMetadata.RuntimeBlobHash + " asset=" + surface.SurfaceCount + "/" +
+                surface.PayloadVersion + "/" + surface.PayloadEncoding + "/" + HashText(surface.ComputeRuntimeBlobHash()));
+        string computedRuntimeHash = HashText(surface.ComputeRuntimeBlobHash());
+        string metadataRuntimeHash = map.SurfaceMetadata.RuntimeBlobHash;
+
+        Vector2Int[] blocked = grid.BlockedCells ?? Array.Empty<Vector2Int>();
+        int cellCount = checked(grid.Width * grid.Height);
+        if (cellCount <= 0 || cellCount > 4_194_304 || blocked.Length != map.GridMetadata.AuthoredBlockedCellCount)
+            throw new InvalidDataException("Bounded authored grid or blocked-cell count mismatch");
+        var seen = new HashSet<long>();
+        var walkable = Enumerable.Repeat((byte)1, cellCount).ToArray();
+        foreach (Vector2Int cell in blocked)
+        {
+            if ((uint)cell.x >= (uint)grid.Width || (uint)cell.y >= (uint)grid.Height)
+                throw new InvalidDataException("Authored blocked cell outside pinned grid; original Baker would skip it");
+            long key = ((long)cell.y * grid.Width) + cell.x;
+            if (!seen.Add(key)) throw new InvalidDataException("Duplicate authored blocked cell");
+            walkable[(int)key] = 0;
+        }
+        string walkPath = Path.Combine(output, "authored-grid-walkable-emulation.u8");
+        File.WriteAllBytes(walkPath, walkable);
+
+        if (!surface.TryCreateRuntimeBlobAsset(Allocator.Temp, out BlobAssetReference<MapSurfaceBlob> blob))
+            throw new InvalidDataException("Original MapSurfaceDataAsset decoder rejected pinned payload");
+        JObject decoded;
+        try
+        {
+            ref MapSurfaceBlob data = ref blob.Value;
+            if (data.Dimensions.x != grid.Width || data.Dimensions.y != grid.Height ||
+                data.CellSize != grid.CellSize || data.GridOrigin.x != grid.Origin.x ||
+                data.GridOrigin.y != grid.Origin.y || data.GridOrigin.z != grid.Origin.z ||
+                MapSurfaceBlobAccess.SurfaceCount(ref data) != map.SurfaceMetadata.SurfaceCount ||
+                MapSurfaceBlobAccess.ConnectionCount(ref data) != 0 ||
+                data.CompactSamples.Length != cellCount)
+                throw new InvalidDataException("Original decoded surface dimensions/count/frame differ");
+            float minHeight = float.PositiveInfinity, maxHeight = float.NegativeInfinity;
+            int zeroPackedHeight = 0, maxPackedHeight = 0;
+            for (int i = 0; i < data.CompactSamples.Length; i++)
+            {
+                MapSurfaceCompactSample sample = data.CompactSamples[i];
+                float height = data.CompactMinHeight + sample.PackedHeight * data.CompactHeightStep;
+                if (float.IsNaN(height) || float.IsInfinity(height)) throw new InvalidDataException("Decoded non-finite compact height");
+                minHeight = Math.Min(minHeight, height);
+                maxHeight = Math.Max(maxHeight, height);
+                if (sample.PackedHeight == 0) zeroPackedHeight++;
+                if (sample.PackedHeight == ushort.MaxValue) maxPackedHeight++;
+            }
+            decoded = new JObject
+            {
+                ["decoder"] = "Original MapSurfaceDataAsset.TryCreateRuntimeBlobAsset",
+                ["payload_version"] = surface.PayloadVersion,
+                ["payload_encoding"] = surface.PayloadEncoding,
+                ["runtime_blob_hash"] = HashText(surface.ComputeRuntimeBlobHash()),
+                ["operation_map_metadata_runtime_blob_hash"] = metadataRuntimeHash,
+                ["runtime_blob_hash_metadata_match"] = computedRuntimeHash == metadataRuntimeHash,
+                ["dimensions"] = new JArray(data.Dimensions.x, data.Dimensions.y),
+                ["cell_size"] = data.CellSize,
+                ["grid_origin"] = new JArray(data.GridOrigin.x, data.GridOrigin.y, data.GridOrigin.z),
+                ["runtime_encoding"] = (int)data.RuntimeEncoding,
+                ["surface_count"] = MapSurfaceBlobAccess.SurfaceCount(ref data),
+                ["connection_count"] = MapSurfaceBlobAccess.ConnectionCount(ref data),
+                ["compact_sample_count"] = data.CompactSamples.Length,
+                ["compact_min_height"] = data.CompactMinHeight,
+                ["compact_height_step"] = data.CompactHeightStep,
+                ["decoded_min_height"] = minHeight,
+                ["decoded_max_height"] = maxHeight,
+                ["zero_packed_height_samples"] = zeroPackedHeight,
+                ["max_packed_height_samples"] = maxPackedHeight
+            };
+        }
+        finally { blob.Dispose(); }
+
+        var result = new JObject
+        {
+            ["kind"] = OutputKind,
+            ["status"] = "Passed",
+            ["authority"] = "Exact pinned serialized CityEdge Grid/Surface assets plus original surface decoder",
+            ["grid"] = new JObject
+            {
+                ["path"] = GridPath,
+                ["sha256"] = (string)gridNode["source_sha256"],
+                ["dimensions"] = new JArray(grid.Width, grid.Height),
+                ["origin"] = new JArray(grid.Origin.x, grid.Origin.y, grid.Origin.z),
+                ["cell_size"] = grid.CellSize,
+                ["authored_blocked_cell_count"] = blocked.Length,
+                ["projected_walkable_cell_count"] = cellCount - blocked.Length,
+                ["projection_scope"] = "Authored GridAuthoring.Baker blocked-cell rule emulation only; not Unity Baker output, not scene GridWalkable/GridRoad readback",
+                ["projection_sha256"] = HashFile(walkPath),
+                ["projection_byte_count"] = new FileInfo(walkPath).Length
+            },
+            ["surface"] = JObject.FromObject(new
+            {
+                path = SurfacePath,
+                sha256 = (string)surfaceNode["source_sha256"],
+                decoded
+            }),
+            ["source_map"] = new JObject
+            {
+                ["path"] = MapPath,
+                ["sha256"] = (string)mapNode["source_sha256"],
+                ["operation_map_id"] = map.OperationMapId,
+                ["source_binding_operation_map_id"] = map.SourceBinding.SourceOperationMapId,
+                ["source_identity_hash"] = map.SourceIdentityHash,
+                ["source_scene_guid"] = map.SourceSceneReference.AssetGUID
+            },
+            ["world_initialized"] = false,
+            ["unity_editor_or_baker_run"] = false,
+            ["native_scene_grid_readback"] = false,
+            ["scene_geometry_read"] = false,
+            ["physical_source_fit_verified"] = false,
+            ["route_or_clearance_fit_verified"] = false,
+            ["standard_setup_fit_verified"] = false,
+            ["mission_readiness"] = false
+        };
+        return result;
+    }
+
+    private static void RunNegativeControl(JObject original, string root, string control)
+    {
+        JObject graph = (JObject)original.DeepClone();
+        JArray nodes = (JArray)graph["nodes"];
+        JObject gridNode = nodes.OfType<JObject>().Single(n => (string)n["source_path"] == GridPath);
+        JObject surfaceNode = nodes.OfType<JObject>().Single(n => (string)n["source_path"] == SurfacePath);
+        switch (control)
+        {
+            case "changed-pin":
+                graph["source_pins"][root + "/" + GridPath] = new string('0', 64);
+                ExpectRejected(() => VerifyPin(root, (JObject)graph["source_pins"], gridNode, GridPath), control);
+                break;
+            case "duplicate-guid":
+                nodes.Add((JObject)gridNode.DeepClone());
+                ExpectRejected(() => _ = new SourceConfigMaterializer(graph), control);
+                break;
+            case "out-of-bounds-blocked-cell":
+                JArray blocked = (JArray)gridNode["fields"]["blockedCells"];
+                blocked[0]["x"] = gridNode["fields"]["width"].Value<int>() + 1;
+                ExpectRejected(() => _ = new SourceConfigMaterializer(graph).ByPath<GridAuthoringSceneConfigAsset>(GridPath), control);
+                break;
+            case "corrupt-surface-gzip":
+                string packed = (string)surfaceNode["fields"]["compressedSurfacePayload"];
+                surfaceNode["fields"]["compressedSurfacePayload"] = "00" + packed.Substring(2);
+                var materializer = new SourceConfigMaterializer(graph);
+                var surface = materializer.ByPath<MapSurfaceDataAsset>(SurfacePath);
+                ExpectRejected(() =>
+                {
+                    if (!surface.TryCreateRuntimeBlobAsset(Allocator.Temp, out BlobAssetReference<MapSurfaceBlob> blob))
+                        throw new InvalidDataException("Original decoder rejected corrupt gzip");
+                    blob.Dispose();
+                }, control);
+                break;
+            default: throw new InvalidDataException("Unknown negative control: " + control);
+        }
+    }
+
+    private static void ExpectRejected(Action action, string control)
+    {
+        try { action(); }
+        catch (Exception) { return; }
+        throw new InvalidDataException("Negative control unexpectedly accepted: " + control);
+    }
+
+    private static void VerifyPin(string root, JObject pins, JObject node, string relative)
+    {
+        string sha = (string)node["source_sha256"] ?? throw new InvalidDataException("Node SHA missing: " + relative);
+        string full = Path.GetFullPath(Path.Combine(root, relative));
+        if (!File.Exists(full) || (File.GetAttributes(full) & FileAttributes.ReparsePoint) != 0 || HashFile(full) != sha)
+            throw new InvalidDataException("Pinned regular source asset changed: " + relative);
+        JProperty[] matches = pins.Properties().Where(p => p.Name.Replace('\\', '/').EndsWith("/" + relative, StringComparison.Ordinal)).ToArray();
+        if (matches.Length != 1 || (string)matches[0].Value != sha)
+            throw new InvalidDataException("Unique exact graph pin required: " + relative);
+    }
+
+    private static string HashFile(string path)
+    {
+        using (SHA256 sha = SHA256.Create())
+        using (FileStream stream = File.OpenRead(path))
+            return string.Concat(sha.ComputeHash(stream).Select(b => b.ToString("x2")));
+    }
+
+    private static string HashText(Unity.Entities.Hash128 hash)
+    {
+        // Match Unity.Entities.Hash128.ToString(): its source writes each
+        // nibble at index j, reversing the formatted word's character order.
+        var value = hash.Value;
+        return ReverseWord(value.x) + ReverseWord(value.y) + ReverseWord(value.z) + ReverseWord(value.w);
+    }
+
+    private static string ReverseWord(uint value)
+    {
+        char[] digits = value.ToString("x8", CultureInfo.InvariantCulture).ToCharArray();
+        Array.Reverse(digits);
+        return new string(digits);
+    }
+
+    private static void RunHashTextParityControl()
+    {
+        uint[][] cases =
+        {
+            new uint[] { 0u, 0u, 0u, 0u },
+            new uint[] { 0xffffffffu, 0xffffffffu, 0xffffffffu, 0xffffffffu },
+            new uint[] { 0x01234567u, 0x89abcdefu, 0x10203040u, 0xa1b2c3d4u },
+            new uint[] { 0x00000001u, 0x80000000u, 0x0000ffffu, 0xffff0000u },
+            new uint[] { 0xdeadbeefu, 0x76543210u, 0x13579bdfu, 0x2468ace0u }
+        };
+        foreach (uint[] words in cases)
+        {
+            var hash = new Unity.Entities.Hash128(words[0], words[1], words[2], words[3]);
+            string actual = HashText(hash);
+            string packageMethodOracle = ExactPackageHash128ToString(words);
+            if (!string.Equals(actual, packageMethodOracle, StringComparison.Ordinal))
+                throw new InvalidDataException("HashText differs from pinned Unity.Entities.Hash128.ToString source: " + actual + " != " + packageMethodOracle);
+        }
+    }
+
+    // Independent transcription of the pinned Hash128.cs ToString loop. The
+    // source file hash is checked by the Python runner and recorded in receipt.
+    private static string ExactPackageHash128ToString(uint[] words)
+    {
+        const string hex = "0123456789abcdef";
+        char[] chars = new char[32];
+        for (int i = 0; i < 4; i++)
+            for (int j = 7; j >= 0; j--)
+                chars[i * 8 + j] = hex[(int)((words[i] >> (j * 4)) & 0xfu)];
+        return new string(chars);
+    }
+}

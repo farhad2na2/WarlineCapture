@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System;
 using Unity.Entities;
 using UnityEngine;
 using Game.Components;
@@ -7,6 +8,66 @@ namespace Game.Runtime
 {
     internal sealed partial class BuildingRuntimeSpawnCompositionSystemHelper
     {
+        // Opt-in observer for the exact candidate stream already evaluated by
+        // the original owner. Subscribers receive results after each original
+        // predicate; subscribing never changes admission or placement.
+        internal static event Action<InitialPlacementCandidateObservation> InitialPlacementCandidateObserved;
+        internal static event Action<InitialPlacementSearchObservation> InitialPlacementSearchCompleted;
+
+        internal static void NotifyInitialPlacementCandidate(string prefabName, Vector2Int preferredOrigin,
+            Vector2Int candidateOrigin, RectInt effectiveRect, bool cachedInvalid,
+            bool placementValidationRan, bool placementValid) =>
+            InitialPlacementCandidateObserved?.Invoke(new InitialPlacementCandidateObservation(prefabName,
+                preferredOrigin, candidateOrigin, effectiveRect, cachedInvalid, placementValidationRan, placementValid));
+
+        internal static void NotifyInitialPlacementSearchCompleted(string prefabName, Vector2Int preferredOrigin,
+            bool found, Vector2Int resolvedOrigin, int evaluatedCandidateCount) =>
+            InitialPlacementSearchCompleted?.Invoke(new InitialPlacementSearchObservation(prefabName,
+                preferredOrigin, found, resolvedOrigin, evaluatedCandidateCount));
+
+        internal readonly struct InitialPlacementSearchObservation
+        {
+            internal readonly string PrefabName;
+            internal readonly Vector2Int PreferredOrigin;
+            internal readonly bool Found;
+            internal readonly Vector2Int ResolvedOrigin;
+            internal readonly int EvaluatedCandidateCount;
+
+            internal InitialPlacementSearchObservation(string prefabName, Vector2Int preferredOrigin,
+                bool found, Vector2Int resolvedOrigin, int evaluatedCandidateCount)
+            {
+                PrefabName = prefabName;
+                PreferredOrigin = preferredOrigin;
+                Found = found;
+                ResolvedOrigin = resolvedOrigin;
+                EvaluatedCandidateCount = evaluatedCandidateCount;
+            }
+        }
+
+        internal readonly struct InitialPlacementCandidateObservation
+        {
+            internal readonly string PrefabName;
+            internal readonly Vector2Int PreferredOrigin;
+            internal readonly Vector2Int CandidateOrigin;
+            internal readonly RectInt EffectiveRect;
+            internal readonly bool CachedInvalid;
+            internal readonly bool PlacementValidationRan;
+            internal readonly bool PlacementValid;
+
+            internal InitialPlacementCandidateObservation(string prefabName, Vector2Int preferredOrigin,
+                Vector2Int candidateOrigin, RectInt effectiveRect, bool cachedInvalid,
+                bool placementValidationRan, bool placementValid)
+            {
+                PrefabName = prefabName;
+                PreferredOrigin = preferredOrigin;
+                CandidateOrigin = candidateOrigin;
+                EffectiveRect = effectiveRect;
+                CachedInvalid = cachedInvalid;
+                PlacementValidationRan = placementValidationRan;
+                PlacementValid = placementValid;
+            }
+        }
+
         public bool TryFindValidInitialBuildingOrigin(
             Context context,
             BuildingDefinition definition,
@@ -16,7 +77,12 @@ namespace Game.Runtime
             DynamicBuffer<GridRoad> roads,
             DynamicBlockerComponent blockerData,
             out Vector2Int originCell,
-            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false)
+            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false,
+            bool emitCensusEvents = true, int maxSearchRadiusLimit = 160
+#if UNITY_EDITOR
+            , Action<Vector2Int, RectInt, bool> candidateObserved = null
+#endif
+            )
         {
             originCell = default;
             if (definition == null || context.GetPlacementFootprint == null || context.GetEffectivePlacementRect == null || context.IsPlacementValid == null)
@@ -63,12 +129,14 @@ namespace Game.Runtime
                         footprintSearchRadius,
                         preferredPlacementRect.width,
                         preferredPlacementRect.height)));
+            maxSearchRadius = Mathf.Min(maxSearchRadius, Mathf.Clamp(maxSearchRadiusLimit, 0, 160));
             if (requirePreferredOrigin)
             {
                 if (clampedPreferred != preferredOrigin) { if(citywideDiagnostic)Debug.LogError("[CitywidePlacement] reject=clamped-preferred");return false; }
                 maxSearchRadius = 0;
             }
             int cachedRejected = 0, placementRejected = 0;
+            int evaluatedCandidates = 0;
             for (int radius = 0; radius <= maxSearchRadius; radius++)
             {
                 for (int dy = -radius; dy <= radius; dy++)
@@ -79,17 +147,29 @@ namespace Game.Runtime
                             continue;
 
                         Vector2Int candidate = clampedPreferred + new Vector2Int(dx, dy);
+                        evaluatedCandidates++;
                         RectInt candidateRect = context.GetEffectivePlacementRect(definition, candidate, grid, rotateVertical);
-                        if (!BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) && context.HasCachedInvalidCellInFootprint != null &&
-                            context.HasCachedInvalidCellInFootprint(candidateRect.position, candidateRect.size))
+                        bool cachedInvalid = !BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) && context.HasCachedInvalidCellInFootprint != null &&
+                            context.HasCachedInvalidCellInFootprint(candidateRect.position, candidateRect.size);
+#if UNITY_EDITOR
+                        candidateObserved?.Invoke(candidate, candidateRect, cachedInvalid);
+#endif
+                        if (cachedInvalid)
                         {
+                            if (emitCensusEvents)
+                                NotifyInitialPlacementCandidate(definition.Prefab?.name, preferredOrigin, candidate,
+                                    candidateRect, true, false, false);
                             cachedRejected++;
                             if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             if(citywideDiagnostic)LogCitywidePlacementCells(context,definition,candidateRect,grid,roads,blockerData,"cached-invalid-prefix");
                             continue;
                         }
 
-                        if (!context.IsPlacementValid(definition, candidate, placementFootprint, rotateVertical, grid, roads, blockerData))
+                        bool placementValid = context.IsPlacementValid(definition, candidate, placementFootprint, rotateVertical, grid, roads, blockerData);
+                        if (emitCensusEvents)
+                            NotifyInitialPlacementCandidate(definition.Prefab?.name, preferredOrigin, candidate,
+                                candidateRect, false, true, placementValid);
+                        if (!placementValid)
                         {
                             placementRejected++;
                             if(trustDiagnostic)LogTrustPlacementCells(context,definition,candidateRect,grid,roads,blockerData,"placement-validation");
@@ -100,11 +180,17 @@ namespace Game.Runtime
                         }
 
                         originCell = candidate;
+                        if (emitCensusEvents)
+                            NotifyInitialPlacementSearchCompleted(definition.Prefab?.name, preferredOrigin,
+                                true, candidate, evaluatedCandidates);
                         return true;
                     }
                 }
             }
 
+            if (emitCensusEvents)
+                NotifyInitialPlacementSearchCompleted(definition.Prefab?.name, preferredOrigin,
+                    false, default, evaluatedCandidates);
             Debug.LogWarning($"[BuildingInitialPlacement] failed prefab={definition.Prefab?.name} preferred={preferredOrigin} footprint={placementFootprint} effectiveRect={preferredPlacementRect} searchRadius={maxSearchRadius} cachedRejected={cachedRejected} placementRejected={placementRejected}");
             return false;
         }

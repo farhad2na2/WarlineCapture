@@ -1,0 +1,8 @@
+using Game.Skirmish.Contracts;
+namespace Game.Runtime { internal static class GeneratedEnemyTargetDomain {
+public static bool DomainAllows(
+            SkirmishTargetDomain domains,
+            bool structure,
+            SkirmishPopulationCategory category)
+        {/*SOURCE:body_0*/}
+}}

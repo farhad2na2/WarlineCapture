@@ -1,0 +1,64 @@
+{
+  "capture": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-physical-project-r1/Logs/SkirmishProduction/s026-physical-input-r2.json",
+    "sha256": "fa0d0dedd774ba7648ee2cedaa872f506339878bff45429abadf9585157e2710"
+  },
+  "clearance_descriptor": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/source-map-clearance-host-20261107-r3/valid-projection.json",
+    "sha256": "9365b5c14bf80f9475cf0f19d68fa973dd49c12ffef1d6423bed93e0c1d7b8a3"
+  },
+  "external_inputs": {
+    "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity": {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/MacOS/Unity",
+      "sha256": "c2d46bbaa42a8f5abfdfa04ea0f6ebc98765188c350e0fd803bb08440a2a17af"
+    },
+    "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.CoreModule.dll": {
+      "path": "/Applications/Unity/Hub/Editor/6000.5.8f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.CoreModule.dll",
+      "sha256": "8aa998f99dbe14e2c5dcfa03786094ba9711e2f88d72fcc4d2f410361101f018"
+    },
+    "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-author-result-r3/authoring-result.json": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-author-result-r3/authoring-result.json",
+      "sha256": "41a4d1e0502731962578aa4b54e98c61ea46dfe7b2062aa5d3f2d603f10c91d8"
+    },
+    "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-physical-input-candidate-r1/request.json": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-physical-input-candidate-r1/request.json",
+      "sha256": "9a4ec771b460928b899bacf1420e3666972e6cfccc45dbee7adc46a554f3beac"
+    }
+  },
+  "frame": {
+    "cell_size": 1.0,
+    "height": 1024,
+    "origin": [
+      0,
+      0,
+      0
+    ],
+    "width": 2048
+  },
+  "kind": "SourceDerivedCampaignMapPackage",
+  "live_occupancy_measured": false,
+  "mission_initialized": false,
+  "mission_ready": false,
+  "schema_version": 1,
+  "source_fit_certified": false,
+  "source_root": "/Volumes/T7/Projects/WarlineCapture/Logs/private-candidates/s026-prefab-relocation-control-r1",
+  "static_map": {
+    "definition": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+      "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8"
+    },
+    "grid_config": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset",
+      "sha256": "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb"
+    },
+    "operation_map_id": "opmap.skirmish.desert_base_01",
+    "surface_data": {
+      "path": "/Volumes/T7/Projects/WarlineCapture/Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset",
+      "sha256": "5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d"
+    }
+  },
+  "water_descriptor": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/s026-water-source-map-descriptor-20261107-r1/map-descriptor.json",
+    "sha256": "61032bbe5a5719510996e120f1ba3bf59df92d13af2214f24bf1da6ded67df89"
+  }
+}

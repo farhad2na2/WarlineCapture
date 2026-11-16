@@ -1,0 +1,1 @@
+using Unity.Mathematics;namespace Game.Runtime {internal readonly struct SourceAriaPublicApproach {internal readonly int2 Cell;internal readonly float3 Position;internal SourceAriaPublicApproach(int2 cell,float3 position){Cell=cell;Position=position;}}}

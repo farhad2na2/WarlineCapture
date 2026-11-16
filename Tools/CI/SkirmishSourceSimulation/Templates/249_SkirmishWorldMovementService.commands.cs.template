@@ -1,0 +1,14 @@
+using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Game.Tactical.Contracts;using Unity.Collections;using Unity.Entities;using Unity.Mathematics;using Unity.Transforms;using UnityEngine;
+namespace Game.Runtime { public static class SkirmishWorldMovementService {
+        /*SOURCE:constant_9*/
+        /*SOURCE:constant_10*/
+        /*SOURCE:constant_11*/
+
+        public static bool AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
+            =>/*SOURCE:expression_0*/;/*SOURCE:method_1*//*SOURCE:method_2*//*SOURCE:method_3*/
+
+        /*SOURCE:constant_12*//*SOURCE:method_4*//*SOURCE:method_5*/
+
+        private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
+            =>/*SOURCE:expression_6*/;/*SOURCE:method_7*//*SOURCE:method_8*/
+}}

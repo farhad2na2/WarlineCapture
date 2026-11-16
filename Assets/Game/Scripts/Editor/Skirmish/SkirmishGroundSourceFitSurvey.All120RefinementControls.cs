@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.IO;
 using System.Linq;
 using Game.Configs;
 using Game.Skirmish.Contracts;
@@ -12,6 +13,78 @@ namespace Game.Editor
 {
     public static partial class SkirmishGroundSourceFitSurvey
     {
+        const string CurrentGridBytesInputRevision="20261101-current-grid-lf";
+        const string CurrentGridBytesFullIndex="Design/AgentReports/SkirmishExpansion/Full120/GridLFRecapture-20261101-01/source-fit-authoring-batches.current-grid-bytes.json";
+        const string CurrentGridBytesFullIndexSha="b50cf1c636b3c6109dda0c68f3c61c1969c28566996c86e4c90e8a260c9ac72b";
+        const string CurrentGridBytesGround30="Design/AgentReports/SkirmishExpansion/Full120/GridLFRecapture-20261101-01/ground-objective-thirty.current-grid-bytes.authoring.json";
+        const string CurrentGridBytesGround30Sha="d686a5a101938b0d710b0a13626e51766469c42c110ed01e709d45ce3a6a53dd";
+        const string CurrentGridBytesPhysicalGrid="Assets/Game/Configs/Scene/MatchSubScene_GridAuthoring_Config.asset";
+        const string CurrentGridBytesPhysicalGridSha="8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb";
+        static string authoringInputRevisionOverride;
+
+        static string SelectedAll120RefinementIndex => authoringInputRevisionOverride==CurrentGridBytesInputRevision?
+            CurrentGridBytesFullIndex:All120RefinementIndex;
+        static string SelectedAll120RefinementIndexSha => authoringInputRevisionOverride==CurrentGridBytesInputRevision?
+            CurrentGridBytesFullIndexSha:All120RefinementIndexSha;
+        static string SelectedGroundObjective30Inputs => authoringInputRevisionOverride==CurrentGridBytesInputRevision?
+            CurrentGridBytesGround30:GroundObjective30Inputs;
+        static string SelectedGroundObjective30InputsSha => authoringInputRevisionOverride==CurrentGridBytesInputRevision?
+            CurrentGridBytesGround30Sha:GroundObjective30InputsSha;
+
+        // Explicit alternate raw-byte authority. Existing default pins and old
+        // evidence remain untouched; only this entrypoint selects the paired LF
+        // index/envelope and it retains ordinary raw SHA checks downstream.
+        public static void RunAll120RefinementAuthoringControlsCurrentGridBytes()
+            => RunCurrentGridBytesAuthoringControls("all120-combined",RunAll120RefinementAuthoringControls);
+
+        // Narrow opt-in for the independent GroundObjective30 authoring check.
+        // It does not enter the combined A/C control or its separate authority gate.
+        public static void RunGroundObjective30AuthoringControlsCurrentGridBytes()
+            => RunCurrentGridBytesAuthoringControls("ground-objective30-only",RunGroundObjective30AuthoringControls);
+
+        static void RunCurrentGridBytesAuthoringControls(string scope,Action action)
+        {
+            Require(authoringInputRevisionOverride==null,"No nested authoring input revision selection allowed");
+            authoringInputRevisionOverride=CurrentGridBytesInputRevision;
+            try
+            {
+                Require(Hash(SelectedAll120RefinementIndex)==SelectedAll120RefinementIndexSha&&
+                    Hash(SelectedGroundObjective30Inputs)==SelectedGroundObjective30InputsSha&&
+                    Hash(CurrentGridBytesPhysicalGrid)==CurrentGridBytesPhysicalGridSha,
+                    "Exact paired current-grid authoring inputs and physical grid raw bytes required");
+                var index=JObject.Parse(File.ReadAllText(SelectedAll120RefinementIndex));
+                var ground=JObject.Parse(File.ReadAllText(SelectedGroundObjective30Inputs));
+                var fullPin=(JObject)ground["authority"]["full_index"];
+                var cc=(JObject)index["source_candidates"]["CC"];
+                var missions=((JArray)ground["missions"]).OfType<JObject>().ToArray();
+                var sharedCityRows=missions.Where(m=>
+                    (string)m["tuple"]["map_id"]=="CC"||(string)m["tuple"]["map_id"]=="DB").ToArray();
+                Require((string)fullPin["path"]==SelectedAll120RefinementIndex&&
+                    (string)fullPin["sha256"]==SelectedAll120RefinementIndexSha&&
+                    (string)cc["gridPath"]==CurrentGridBytesPhysicalGrid&&
+                    (string)cc["gridAssetSha256"]==CurrentGridBytesPhysicalGridSha&&
+                    sharedCityRows.Length>0&&sharedCityRows.All(m=>
+                        (string)m["source_candidate"]["gridPath"]==CurrentGridBytesPhysicalGrid&&
+                        (string)m["source_candidate"]["gridAssetSha256"]==CurrentGridBytesPhysicalGridSha),
+                    "Exact paired Full120/Ground30 shared-city raw grid authority join required");
+                foreach(var mission in missions)
+                {
+                    var sourcePin=(JObject)mission["source_candidate"];
+                    Require(!string.IsNullOrEmpty((string)sourcePin["gridPath"])&&
+                        Hash((string)sourcePin["gridPath"])==(string)sourcePin["gridAssetSha256"],
+                        "Exact per-mission current grid raw bytes required: "+(string)mission["catalog_id"]);
+                }
+                Debug.Log("[All120AuthoringInputRevision] result=Selected revision="+CurrentGridBytesInputRevision+
+                    " fullIndexSha256="+SelectedAll120RefinementIndexSha+
+                    " ground30Sha256="+SelectedGroundObjective30InputsSha+
+                    " gridRawSha256="+CurrentGridBytesPhysicalGridSha+
+                    " sharedCityRows="+sharedCityRows.Length+" distinctGridSources="+missions.Select(m=>(string)m["source_candidate"]["gridPath"]).Distinct().Count()+
+                    " bytePinRefresh=ExactLFBytes pairJoin=Passed scope="+scope+" sourceFitCertified=0 cameraAccepted=0 normalMissionReady=0");
+                action();
+            }
+            finally { authoringInputRevisionOverride=null; }
+        }
+
         public static void RunAll120RefinementAuthoringControls()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Idle nonstreaming authoring controls required");

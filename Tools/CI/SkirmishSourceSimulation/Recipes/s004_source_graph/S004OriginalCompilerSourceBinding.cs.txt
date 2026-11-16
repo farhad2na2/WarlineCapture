@@ -1,0 +1,120 @@
+// Strict source-only invocation of the game's original S004 setup compiler.
+// Caller supplies the generated, pinned authored graph and exact matrix bytes.
+// This performs no world creation and makes no physical source-fit/readiness claim.
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Newtonsoft.Json.Linq;
+
+internal static class S004OriginalCompilerSourceBinding
+{
+    public static int Main(string[] args)
+    {
+        try
+        {
+            if (args == null || args.Length != 3) throw new InvalidDataException("Expected graph path, matrix path, and seed");
+            JObject graph = JObject.Parse(File.ReadAllText(args[0]));
+            string matrix = File.ReadAllText(args[1]);
+            int seed = Int32.Parse(args[2], System.Globalization.CultureInfo.InvariantCulture);
+            Console.WriteLine(Compile(graph, matrix, seed).ToString(Newtonsoft.Json.Formatting.None));
+            return 0;
+        }
+        catch (Exception e) { Console.Error.WriteLine("[S004OriginalCompilerSourceOnly] result=Failed " + e); return 1; }
+    }
+
+    internal static JObject Compile(JObject graph, string matrixText, int seed)
+    {
+        if (graph == null || matrixText == null || seed < 0 ||
+            (int?)graph["schema_version"] != 1 ||
+            (string)graph["authority"] != "AuthoredConfigAssets" ||
+            (bool?)graph["compiled_setup"] != false ||
+            (bool?)graph["world_initialized"] != false ||
+            (bool?)graph["native_world_state_used"] != false ||
+            (string)graph["definition_path"] != "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset" ||
+            (string)graph["catalog_path"] != "Assets/Game/Resources/SkirmishExpansionCatalog.asset")
+            throw new InvalidDataException("Exact externally supplied authored S004 graph required");
+
+        var pins = graph["source_pins"] as JObject ?? throw new InvalidDataException("Pinned graph sources required");
+        var matrix = graph["setup_matrix"] as JObject ?? throw new InvalidDataException("Pinned original setup matrix descriptor required");
+        string matrixPath = (string)matrix["path"];
+        if (string.IsNullOrEmpty(matrixPath) || !File.Exists(matrixPath) ||
+            !String.Equals(Hash(File.ReadAllBytes(matrixPath)), (string)matrix["sha256"], StringComparison.Ordinal) ||
+            !String.Equals(File.ReadAllText(matrixPath), matrixText, StringComparison.Ordinal))
+            throw new InvalidDataException("Exact pinned source setup matrix required");
+        foreach (var pin in pins.Properties())
+            if (!File.Exists(pin.Name) || !String.Equals(Hash(File.ReadAllBytes(pin.Name)), (string)pin.Value, StringComparison.Ordinal))
+                throw new InvalidDataException("Authored S004 source pin changed: " + pin.Name);
+
+        var source = new SourceConfigMaterializer(graph);
+        var catalog = source.ByPath<SkirmishExpansionCatalogConfig>((string)graph["catalog_path"]);
+        var definition = source.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
+        if (definition.CatalogId != "S004" || definition.DefinitionId != "skirmish.s004" ||
+            !catalog.TryGetDefinition("S004", definition.ContentVersion, out var catalogDefinition) ||
+            catalogDefinition == null || !Object.ReferenceEquals(catalogDefinition, definition))
+            throw new InvalidDataException("Authored S004 definition and source catalog disagree");
+        if (!SkirmishSetupMatrixTable.TryLoadFromText(matrixText, out List<SkirmishSetupMatrixRow> rows, out string matrixError))
+            throw new InvalidDataException("Original setup matrix parser rejected pinned bytes: " + matrixError);
+        // The source-only host derives the manifest feature set directly from this authored
+        // definition. It is not evidence that a packaged/native manifest was loaded.
+        var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
+        var setups = new List<SkirmishResolvedSetup>();
+        var reasons = new List<SkirmishCompileReason>();
+        var authoredRows = rows.Where(x => x.CatalogId == "S004").ToList();
+        if (authoredRows.Count == 0 || authoredRows.Select(x => x.SizeId).Distinct().Count() != authoredRows.Count)
+            throw new InvalidDataException("At least one unique authored S004 size row is required");
+        bool ok = true;
+        var rowResults = new JArray();
+        foreach (var row in authoredRows)
+        {
+            try
+            {
+                if (SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, row.SizeId,
+                        seed, manifest, rows, out SkirmishResolvedSetup setup, out List<SkirmishCompileReason> rowReasons))
+                {
+                    setups.Add(setup);
+                    rowResults.Add(new JObject { ["size_id"] = row.SizeId.ToString(), ["compiled"] = true,
+                        ["setup_hash"] = setup.SetupHash, ["reasons"] = new JArray() });
+                }
+                else
+                {
+                    ok = false; reasons.AddRange(rowReasons);
+                    var rejected = new JArray(); foreach (var reason in rowReasons) rejected.Add(reason.ToString());
+                    rowResults.Add(new JObject { ["size_id"] = row.SizeId.ToString(), ["compiled"] = false,
+                        ["reasons"] = rejected });
+                }
+            }
+            catch (NotSupportedException exception)
+            {
+                ok = false;
+                rowResults.Add(new JObject { ["size_id"] = row.SizeId.ToString(), ["compiled"] = false,
+                    ["source_host_boundary"] = exception.Message });
+            }
+        }
+        var results = new JArray();
+        foreach (var setup in setups.Where(x => x != null && x.CatalogId == "S004"))
+            results.Add(new JObject { ["catalog_id"] = setup.CatalogId, ["definition_id"] = setup.DefinitionId,
+                ["content_version"] = setup.ContentVersion, ["seed"] = setup.Seed,
+                ["size_id"] = setup.SizeId.ToString(), ["difficulty_id"] = setup.DifficultyId.ToString(),
+                ["setup_hash"] = setup.SetupHash, ["compiled"] = true });
+        var failures = new JArray();
+        foreach (var reason in reasons) failures.Add(reason.ToString());
+        bool hasHostBoundary = rowResults.Any(x => x["source_host_boundary"] != null);
+        return new JObject { ["kind"] = "S004OriginalCompilerSourceOnlyResult", ["compiled"] = ok,
+            ["status"] = hasHostBoundary ? "SourceHostBoundary" : ok ? "Compiled" : "CompilerRejected",
+            ["catalog_id"] = "S004", ["definition_id"] = definition.DefinitionId,
+            ["matrix_rows"] = rows.Count, ["s004_rows"] = rowResults, ["setups"] = results, ["reasons"] = failures,
+            ["manifest_feature_source"] = "AuthoredDefinition.RequiredFeatureIds",
+            ["world_initialized"] = false, ["physical_source_fit_verified"] = false,
+            ["mission_readiness"] = false };
+    }
+
+    private static string Hash(byte[] bytes)
+    {
+        using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+    }
+}

@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using Game.Configs;
 using static Game.Runtime.BuildingRuntimeBoundaryBuffers;
 using RuntimeSignature = Game.Runtime.BuildingRuntimeSignatureUtility;
 
@@ -197,7 +198,8 @@ namespace Game.Runtime
             productionRequestSystem.ProcessPendingUiCampItemCommandsIfPresent(
                 em,
                 productionRequestContext,
-                frameCount);
+                frameCount,
+                now);
         }
 
         private void ProcessResourceSellRequests(
@@ -383,6 +385,47 @@ namespace Game.Runtime
                     WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                     continue;
                 }
+                SkirmishMapLayoutConfig typedGrantLayout = null;
+                SkirmishLegalPadConfig typedGrantPad = default;
+                OperationMapBoundsConfig typedGrantSourceBounds = default;
+                bool typedGrantRequired = request.RequireTypedPad != 0;
+                bool hasCheckpointReconstruction = request.PlanEntity != Entity.Null &&
+                    em.HasComponent<SkirmishNativeCheckpointStructureRequestGuardTag>(request.PlanEntity);
+                bool checkpointReconstruction = hasCheckpointReconstruction &&
+                    IsExactCheckpointReconstructionRequest(em, request, definition.FootprintCells);
+                if (hasCheckpointReconstruction && !checkpointReconstruction)
+                {
+                    request.Status = BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                    continue;
+                }
+                if (startingGrant && !checkpointReconstruction)
+                {
+                    bool setupIdentityValid = TryResolveStartingGrantSetup(em, request.PlanEntity,
+                        typedGrantRequired, out var setup, out var launch, out bool setupRequiresBinding,
+                        out bool launchMatches);
+                    bool exactPadExists = false;
+                    if (typedGrantRequired && setupIdentityValid && setup != null && launchMatches &&
+                        request.EntryIndex >= 0 && request.EntryIndex < (setup.Structures?.Length ?? 0))
+                    {
+                        typedGrantLayout = launch.Definition.MapLayout;
+                        typedGrantSourceBounds = launch.Definition.CampaignMap != null
+                            ? launch.Definition.CampaignMap.Bounds : default;
+                        exactPadExists = SkirmishStartingGrantPlacementConstraint.TryResolvePad(
+                            typedGrantLayout, setup, request.EntryIndex, out typedGrantPad);
+                        exactPadExists &= launch.Definition.CampaignMap != null &&
+                            typedGrantSourceBounds.TryValidate(out _);
+                    }
+                    if (!setupIdentityValid || !SkirmishStartingGrantPlacementConstraint.IsCurrentGrantBinding(startingGrant,
+                        setupRequiresBinding, typedGrantRequired, launchMatches, exactPadExists))
+                    {
+                        request.Status = BuildingRuntimeSpawnRequest.Failed;
+                        request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                        WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                        continue;
+                    }
+                }
                 bool authoredEnemy = request.AllowNonBuildableEnemy != 0 && request.HasOwnerFaction != 0 &&
                     request.FactionId != FactionIdentity.PlayerFactionId;
                 if (spawnable.Prefab == null || (!spawnable.CanRequest && !authoredEnemy && !startingGrant))
@@ -411,6 +454,10 @@ namespace Game.Runtime
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        if (!SkirmishStartingGrantPlacementConstraint.AllowsCandidate(typedGrantRequired,
+                            typedGrantLayout, typedGrantPad, g, typedGrantSourceBounds,
+                            new RectInt(rect.x, rect.y, rect.width, rect.height)))
+                            return false;
                         if (enemyConstruction && !SkirmishEnemyConstructionAdapter.NativeRectFits(em,request,
                             new int2(rect.x,rect.y),new int2(rect.width,rect.height))) { grantOriginalRejected++;return false; }
                         if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; return false; }
@@ -451,8 +498,122 @@ namespace Game.Runtime
                             for (int x = rect.xMin; x < rect.xMax; x++)
                                 if (x < 0 || y < 0 || x >= skirmishGrid.Width || y >= skirmishGrid.Height ||
                                     sidewalks != null && sidewalks[y * skirmishGrid.Width + x]) { roadOverlap = true; rejectedSidewalkCell = new(x, y); break; }
+#if UNITY_EDITOR
+                        string currentMaskPrefix = System.Environment.GetEnvironmentVariable("WARLINE_S073_CURRENT_ROAD_MASK_PREFIX");
+                        bool isCurrentS073SourceMaskRequest = false;
+                        if (!string.IsNullOrEmpty(currentMaskPrefix) && request.FactionId == 2 &&
+                            request.HasOwnerFaction != 0 && request.RequirePreferredOrigin != 0 &&
+                            request.PlanEntity != Entity.Null && em.Exists(request.PlanEntity) &&
+                            em.HasComponent<InitialUnitsSpawnConfig>(request.PlanEntity) &&
+                            em.HasBuffer<InitialUnitsFactionSpawnEntry>(request.PlanEntity) &&
+                            em.HasBuffer<InitialUnitsFactionBuildingSpawnEntry>(request.PlanEntity))
+                        {
+                            using var currentMaskMatches = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
+                            bool currentMaskS073Match = false;
+                            if (currentMaskMatches.CalculateEntityCount() == 1)
+                            {
+                                var currentMaskMatch = currentMaskMatches.GetSingleton<SkirmishMatchState>();
+                                currentMaskS073Match = currentMaskMatch.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex &&
+                                    currentMaskMatch.Seed == 104729;
+                            }
+                            if (currentMaskS073Match &&
+                                TryResolveS073InitialSourcePair(em, request.PlanEntity, out var maskBarrackSource,
+                                    out var maskAmmoSource, out _))
+                            {
+                                string requestKey = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(request.BuildingId.ToString());
+                                if (requestKey == maskBarrackSource.Key)
+                                    isCurrentS073SourceMaskRequest = request.PreferredOrigin.x == maskBarrackSource.Preferred.x &&
+                                        request.PreferredOrigin.y == maskBarrackSource.Preferred.y;
+                                else if (requestKey == maskAmmoSource.Key)
+                                    isCurrentS073SourceMaskRequest = request.PreferredOrigin.x == maskAmmoSource.Preferred.x &&
+                                        request.PreferredOrigin.y == maskAmmoSource.Preferred.y;
+                            }
+                        }
+                        if (isCurrentS073SourceMaskRequest)
+                        {
+                            var currentRoads = new bool[skirmishGrid.Width * skirmishGrid.Height];
+                            BuildingPlacementRoadSurfaceMask.Append(em, surfaces.GetSingletonEntity(), skirmishGrid, currentRoads);
+                            var roadBytes = new byte[currentRoads.Length]; var walkBytes = new byte[currentRoads.Length];
+                            int roadCells = 0, sidewalkCells = 0;
+                            for (int cell = 0; cell < currentRoads.Length; cell++)
+                            {
+                                roadBytes[cell] = currentRoads[cell] ? (byte)1 : (byte)0;
+                                walkBytes[cell] = sidewalks != null && cell < sidewalks.Length && sidewalks[cell] ? (byte)1 : (byte)0;
+                            }
+                            for (int y = rect.yMin; y < rect.yMax; y++) for (int x = rect.xMin; x < rect.xMax; x++)
+                            {
+                                int index = y * skirmishGrid.Width + x;
+                                if (roadBytes[index] != 0) roadCells++;
+                                if (walkBytes[index] != 0) sidewalkCells++;
+                            }
+                            string roadPath = currentMaskPrefix + ".surface.bin", walkPath = currentMaskPrefix + ".sidewalk.bin";
+                            if (!System.IO.File.Exists(roadPath))
+                            {
+                                using (var file = new System.IO.FileStream(roadPath, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write)) file.Write(roadBytes, 0, roadBytes.Length);
+                                using (var file = new System.IO.FileStream(walkPath, System.IO.FileMode.CreateNew, System.IO.FileAccess.Write)) file.Write(walkBytes, 0, walkBytes.Length);
+                            }
+                            else if (!System.Linq.Enumerable.SequenceEqual(roadBytes, System.IO.File.ReadAllBytes(roadPath)) ||
+                                     !System.Linq.Enumerable.SequenceEqual(walkBytes, System.IO.File.ReadAllBytes(walkPath)))
+                                throw new System.InvalidOperationException("S073 physical road masks changed between authored startup requests");
+                            using var roadHash = System.Security.Cryptography.SHA256.Create();
+                            string surfaceSha = System.BitConverter.ToString(roadHash.ComputeHash(roadBytes)).Replace("-", "").ToLowerInvariant();
+                            string sidewalkSha = System.BitConverter.ToString(roadHash.ComputeHash(walkBytes)).Replace("-", "").ToLowerInvariant();
+                            UnityEngine.Debug.Log($"[S073CurrentRoadMasks] faction=2 building={request.BuildingId} origin={request.PreferredOrigin} rect={rect} cells={roadBytes.Length} surfaceCells={roadCells} sidewalkCells={sidewalkCells} roadOverlap={roadOverlap} waterOverlap={waterOverlap} surfaceSha={surfaceSha} sidewalkSha={sidewalkSha} scope=OriginalPreSpawnPhysicalInputs_NotReadiness");
+                        }
+#endif
                         if (roadOverlap)
                         {
+#if UNITY_EDITOR
+                            if (System.Environment.GetEnvironmentVariable("WARLINE_S073_TRACE_STARTUP_ROADS") == "1" &&
+                                request.FactionId == 2 && ((request.PreferredOrigin.x == 950 && request.PreferredOrigin.y == 438) ||
+                                                           (request.PreferredOrigin.x == 887 && request.PreferredOrigin.y == 444)))
+                            {
+                                var cached = new bool[skirmishGrid.Width * skirmishGrid.Height];
+                                var direct = new bool[cached.Length];
+                                _skirmishRoads.AppendTo(cached);
+                                BuildingPlacementRoadSurfaceMask.Append(em, surfaces.GetSingletonEntity(), skirmishGrid, direct);
+                                string maskPrefix = System.Environment.GetEnvironmentVariable("WARLINE_S073_ROAD_MASK_PREFIX");
+                                if (!string.IsNullOrEmpty(maskPrefix) && !System.IO.File.Exists(maskPrefix + ".surface.bin"))
+                                {
+                                    var surfaceBytes = new byte[direct.Length]; var sidewalkBytes = new byte[direct.Length];
+                                    for (int cell = 0; cell < direct.Length; cell++)
+                                    {
+                                        surfaceBytes[cell] = direct[cell] ? (byte)1 : (byte)0;
+                                        sidewalkBytes[cell] = sidewalks != null && cell < sidewalks.Length && sidewalks[cell] ? (byte)1 : (byte)0;
+                                    }
+                                    using (var file = new System.IO.FileStream(maskPrefix + ".surface.bin", System.IO.FileMode.CreateNew, System.IO.FileAccess.Write)) file.Write(surfaceBytes, 0, surfaceBytes.Length);
+                                    using (var file = new System.IO.FileStream(maskPrefix + ".sidewalk.bin", System.IO.FileMode.CreateNew, System.IO.FileAccess.Write)) file.Write(sidewalkBytes, 0, sidewalkBytes.Length);
+                                    UnityEngine.Debug.Log($"[S073StartupRoadMasks] result=Captured cells={direct.Length} source=OriginalPlacementRoadOwner sessionState=0 readiness=0");
+                                }
+                                var cachedCells = new System.Collections.Generic.List<string>();
+                                var directCells = new System.Collections.Generic.List<string>();
+                                var sidewalkCells = new System.Collections.Generic.List<string>();
+                                for (int y = rect.yMin; y < rect.yMax; y++) for (int x = rect.xMin; x < rect.xMax; x++)
+                                {
+                                    int index = y * skirmishGrid.Width + x;
+                                    if (cached[index]) cachedCells.Add($"{x}:{y}");
+                                    if (direct[index]) directCells.Add($"{x}:{y}");
+                                    if (sidewalks != null && sidewalks[index]) sidewalkCells.Add($"{x}:{y}");
+                                }
+                                UnityEngine.Debug.Log($"[S073StartupRoadTrace] building={request.BuildingId} origin={request.PreferredOrigin} rect={rect} cached={string.Join(",", cachedCells)} directSurface={string.Join(",", directCells)} sidewalk={string.Join(",", sidewalkCells)}");
+                                if (System.Environment.GetEnvironmentVariable("WARLINE_S073_VALIDATE_SITE_CANDIDATES") == "1" &&
+                                    runtimeSpawnContext.TryGetGridData(out _, out var candidateGrid, out var candidateRoads, out var candidateBlockers))
+                                {
+                                    var candidates = request.BuildingId.ToString() == "building_barrack"
+                                        ? new[] { new Vector2Int(828, 462), new Vector2Int(951, 558) }
+                                        : new[] { new Vector2Int(867, 444), new Vector2Int(867, 462) };
+                                    foreach (var candidate in candidates)
+                                    {
+                                        var footprint = runtimeSpawnContext.GetPlacementFootprint(definition, false);
+                                        var candidateRect = runtimeSpawnContext.GetEffectivePlacementRect(definition, candidate, candidateGrid, false);
+                                        bool road = _skirmishRoads.Overlaps(candidateGrid, candidateRect.position, candidateRect.size);
+                                        bool water = _skirmishRoads.OverlapsWater(candidateGrid, candidateRect.position, candidateRect.size);
+                                        bool original = runtimeSpawnContext.IsPlacementValid(definition, candidate, footprint, false, candidateGrid, candidateRoads, candidateBlockers);
+                                        UnityEngine.Debug.Log($"[S073CandidatePlacement] building={request.BuildingId} origin={candidate} rect={candidateRect} road={road} water={water} originalValid={original} scope=InstrumentedPreSpawnCandidate_NotMissionReadiness");
+                                    }
+                                }
+                            }
+#endif
                             UnityEngine.Debug.LogWarning($"[ExactBuildingPlacement] failed building={request.BuildingId} origin={request.PreferredOrigin} configured={definition.FootprintCells} rect={rect} road={authoredRoadOverlap} water={waterOverlap} sidewalkOrBounds={rejectedSidewalkCell}");
                             request.Status = BuildingRuntimeSpawnRequest.Failed;
                             request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
@@ -462,6 +623,36 @@ namespace Game.Runtime
                     }
                 }
 
+#if UNITY_EDITOR
+                try
+                {
+                    TrySurveyS073PreparingInitialPair(em, request, definitionSystem, runtimeSpawnSystem,
+                        runtimeSpawnContext);
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogError("[S073PreparingCandidatePairSurvey] observer=result=Failed error=" + ex.Message);
+                }
+                try
+                {
+                    TrySurveyS073PreparingBarrackExhaustive(em, request, definitionSystem, runtimeSpawnSystem,
+                        runtimeSpawnContext);
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogError("[S073PreparingBarrackExhaustiveSurvey] observer=result=Failed error=" + ex.Message);
+                }
+                try
+                {
+                    TrySurveyS073PreparingBarrackFromFactionTwoSpawn(em, request, definitionSystem,
+                        runtimeSpawnSystem, runtimeSpawnContext);
+                }
+                catch (Exception ex)
+                {
+                    UnityEngine.Debug.LogError("[S073PreparingBarrackSpawnCenterSurvey] observer=result=Failed error=" + ex.Message);
+                }
+                if (startingGrant) S002PhysicalStartupObservation.BeforePlacement?.Invoke(em, request, definition, requestSpawnContext, _skirmishBuildings, _skirmishRoads);
+#endif
                 // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
                 bool placed;
                 BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result = default;
@@ -525,6 +716,9 @@ namespace Game.Runtime
                 request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
                 request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
                 WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+#if UNITY_EDITOR
+                if (startingGrant) S002PhysicalStartupObservation.AfterPlacement?.Invoke(em, request);
+#endif
                 if (enemyConstruction && placed)
                 {
                     SkirmishEnemyConstructionAdapter.RecordNativeResult(em, request);
@@ -571,13 +765,13 @@ namespace Game.Runtime
             IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
             float now)
         {
-            bool forcePublish = _forcePublishNextUpdate;
-            if (!forcePublish && _configuredReadModelsPublished && now < _nextPublishAt)
+            var publishDecision = Game.Simulation.BuildingReadModelPublishCadenceKernel.Begin(
+                now, PublishIntervalSeconds, _configuredReadModelsPublished,
+                ref _forcePublishNextUpdate, ref _nextPublishAt);
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Skip)
                 return;
 
-            _forcePublishNextUpdate = false;
-            _nextPublishAt = now + PublishIntervalSeconds;
-            if (!_configuredReadModelsPublished)
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Initial)
             {
                 PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
                 PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
@@ -601,7 +795,7 @@ namespace Game.Runtime
                 return;
             }
 
-            if (forcePublish)
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Forced)
             {
                 PublishAllDynamicReadModels(
                     definitionSystem,
@@ -665,7 +859,7 @@ namespace Game.Runtime
                         _lastPublishedFactionSummarySignature = factionSummarySignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.OwnedBuildingSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 case PublishPhase.OwnedBuildingSummaries:
                     int ownedBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
@@ -675,7 +869,7 @@ namespace Game.Runtime
                         _lastPublishedOwnedBuildingSummarySignature = ownedBuildingSignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.UnitProductionSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 case PublishPhase.UnitProductionSummaries:
                     int unitProductionSummarySignature = ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
@@ -685,7 +879,7 @@ namespace Game.Runtime
                         _lastPublishedUnitProductionSummarySignature = unitProductionSummarySignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.BuildingSetReadModels;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
                 default:
                     int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
@@ -696,7 +890,7 @@ namespace Game.Runtime
                         _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
                     }
 
-                    _nextPublishPhase = PublishPhase.FactionSummaries;
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
                     break;
             }
         }
@@ -1283,19 +1477,10 @@ namespace Game.Runtime
             for (int i = 0; i < building.ProductionSpawnLocalPositions.Length; i++)
             {
                 Vector3 world = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
-                int2 cell = GridUtils.WorldToCell(grid, world);
-                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
-                    continue;
-
-                buffer.Add(new BuildingFactionProductionSpawnPointReadModel
-                {
-                    FactionId = building.OwnerFactionId,
-                    BuildingId = buildingId,
-                    BuildingRuntimeId = building.Id,
-                    SlotIndex = i,
-                    Cell = cell,
-                    WorldPosition = new float3(world.x, world.y, world.z)
-                });
+                if (BuildingFactionProductionSpawnPointReadModelProjection.TryCreate(
+                        building.OwnerFactionId, buildingId, building.Id, i, grid,
+                        new float3(world.x, world.y, world.z), out var row))
+                    buffer.Add(row);
             }
         }
 

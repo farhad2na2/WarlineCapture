@@ -6,7 +6,7 @@ namespace Game.Authoring
 {
     public partial class GridAuthoring
     {
-        [BakingVersion("WarlineCapture", 1)]
+        [BakingVersion("WarlineCapture", 2)]
         private class GridBaker : Baker<GridAuthoring>
         {
             public override void Bake(GridAuthoring authoring)
@@ -49,6 +49,20 @@ namespace Game.Authoring
                         walkable[index] = new GridWalkable { Value = 0 };
                     }
                 }
+#if UNITY_EDITOR
+                if (authoring.config != null)
+                {
+                    DependsOn(authoring.config);
+                    string path = UnityEditor.AssetDatabase.GetAssetPath(authoring.config);
+                    string guid = UnityEditor.AssetDatabase.AssetPathToGUID(path);
+                    if (!string.IsNullOrEmpty(path) && System.IO.File.Exists(path))
+                    {
+                        using var sha = System.Security.Cryptography.SHA256.Create();
+                        string hash = System.BitConverter.ToString(sha.ComputeHash(System.IO.File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
+                        AddComponent(entity, GridWalkableSourceWitness.Capture(guid, hash, walkable));
+                    }
+                }
+#endif
             }
         }
     }

@@ -62,7 +62,7 @@ namespace Game.UI.Shell.Ecs
             if (messages.Length == 0)
                 return;
 
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             if (!TryFindBestMessage(messages, settings.NarrationMode, narrationState, now, out AssistantMessageElement message))
                 return;
 

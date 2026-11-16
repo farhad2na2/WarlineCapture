@@ -32,7 +32,7 @@ namespace Game.Editor
             var before=CaptureMaterializationWorldCensus();var defaultBefore=World.DefaultGameObjectInjectionWorld;
             int scenes=UnityEngine.SceneManagement.SceneManager.sceneCount,previews=UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount;
             var sources=new JArray();var report=new JObject{["schema"]=1,["scope"]="StaticAuthoringSourceQueries_NotCompiledMissionQualification",
-                ["inputSha256"]=Hash(GroundObjective30Inputs),["sourceFitCertified"]=false,["playerReady"]=false,["sources"]=sources};
+                ["inputSha256"]=Hash(SelectedGroundObjective30Inputs),["sourceFitCertified"]=false,["playerReady"]=false,["sources"]=sources};
             var groups=((JArray)input["missions"]).OfType<JObject>().GroupBy(m=>(string)m["source_candidate"]["sourcePath"]).OrderBy(g=>g.Key,StringComparer.Ordinal).ToArray();
             Require(groups.Length==4,"Exactly four existing physical sources required; DB aliases CC");
             int errors=0,worlds=0;
@@ -66,8 +66,8 @@ namespace Game.Editor
 
         static JObject ReadGround30Envelope()
         {
-            Require(Hash(GroundObjective30Inputs)==GroundObjective30InputsSha,"Exact reviewed ground30 input bytes required");
-            var input=JObject.Parse(File.ReadAllText(GroundObjective30Inputs));
+            Require(Hash(SelectedGroundObjective30Inputs)==SelectedGroundObjective30InputsSha,"Exact reviewed ground30 input bytes required");
+            var input=JObject.Parse(File.ReadAllText(SelectedGroundObjective30Inputs));
             ValidateGround30Envelope(input);
             return input;
         }
@@ -287,7 +287,7 @@ namespace Game.Editor
             return rows;
         }
 
-        static JArray Ground30PackBudget(SkirmishStaticAuthoringBudget budget,SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray acceptedFacilities,Game.Runtime.SkirmishTypedSpawnConstraint typedConstraint=null)
+        static JArray Ground30PackBudget(SkirmishStaticAuthoringBudget budget,SkirmishMapLayoutConfig layout,EntityManager em,Entity gridEntity,GridConfig grid,MapSurfaceComponent surface,JArray acceptedFacilities,Game.Runtime.SkirmishTypedSpawnConstraint typedConstraint=null,int missionSeed=1)
         {
             using var matches=em.CreateEntityQuery(typeof(SkirmishMatchState));Require(matches.IsEmptyIgnoreFilter,"Never query a live gameplay World");
             Entity context=em.CreateEntity(typeof(SkirmishMatchState));
@@ -300,11 +300,13 @@ namespace Game.Editor
                 try
                 {
                     for(int i=0;i<walkable.Length;i++)if(walkable[i].Value==0)blocked.Set(i,true);
+                    InitialUnitsSpawnSystem.ReserveStaticBlockerFootprints(em,ref reserved,grid);
                     Ground30OccupyFacilities(acceptedFacilities,grid,occupied);
                     var random=new Unity.Mathematics.Random(1);int forceIndex=0;
                     foreach(var force in budget.Forces)
                     {
-                        var row=new JObject{["forceIndex"]=forceIndex++,["faction"]=force.FactionId,["roleId"]=force.RoleId,["role"]=force.RoleKind.ToString(),["objectiveRoleId"]=force.ObjectiveRoleId,["requestedCount"]=force.Quantity,["runtimePrefabKey"]=force.RuntimePrefabKey,["scope"]=acceptedFacilities.Count==0?"StaticNativeSourceOnly_ExactTypedCanonicalRoster_SeedOne":"StaticNativeWithCompleteFacilityReservations_ExactTypedCanonicalRoster_SeedOne",["liveOccupancyIncluded"]=false,["candidateFacilityOccupancyIncluded"]=acceptedFacilities.Count>0,["sourceFitCertified"]=false};output.Add(row);
+                        var row=new JObject{["forceIndex"]=forceIndex++,["faction"]=force.FactionId,["roleId"]=force.RoleId,["role"]=force.RoleKind.ToString(),["objectiveRoleId"]=force.ObjectiveRoleId,["requestedCount"]=force.Quantity,["runtimePrefabKey"]=force.RuntimePrefabKey,["scope"]=acceptedFacilities.Count==0?"StaticNativeSourceOnly_ExactTypedCanonicalRoster_SeedOne":"StaticNativeWithCompleteFacilityReservations_ExactTypedCanonicalRoster_SeedOne",["typedPlacementMissionSeed"]=typedConstraint!=null?(JToken)new JValue(missionSeed):JValue.CreateNull(),["untypedRandomSeed"]=typedConstraint==null?(JToken)new JValue(1):JValue.CreateNull(),["liveOccupancyIncluded"]=false,["candidateFacilityOccupancyIncluded"]=acceptedFacilities.Count>0,["sourceFitCertified"]=false};output.Add(row);
+                        if(typedConstraint!=null&&missionSeed!=1)row["scope"]=acceptedFacilities.Count==0?"StaticNativeSourceOnly_ExactTypedCanonicalRoster_ExplicitMissionSeed":"StaticNativeWithCompleteFacilityReservations_ExactTypedCanonicalRoster_ExplicitMissionSeed";
                         var prefab=FindNativePrefab(em,force.RuntimePrefabKey);
                         if(prefab==Entity.Null||!em.HasComponent<UnitFootprint>(prefab)){row["status"]="ExactNativeRolePrefabMissing";continue;}
                         float x=0,z=0;
@@ -332,8 +334,8 @@ namespace Game.Editor
                             {
                                 Require(typedConstraint.TryRequestedWorld(force,member,out var requested),"Exact normal member offset required");
                                 requestedCenter=GridUtils.WorldToCell(grid,new float3(requested.x,requested.y,requested.z));
-                                random=Game.Runtime.SkirmishTypedSpawnConstraint.PlacementRandom(1,
-                                    new FixedString64Bytes(force.RoleId+"."+force.FactionId+"."+(forceIndex-1)+"."+member),requestedCenter);
+                                random=Game.Runtime.SkirmishTypedSpawnConstraint.PlacementRandom(missionSeed,
+                                    new FixedString64Bytes(Game.Simulation.SkirmishMissionBootstrapKernel.StableActorId(force.RoleId,force.FactionId,forceIndex-1,member)),requestedCenter);
                             }
                             if(!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref random,grid,walkable,blocked,placementOccupancy,ref reserved,requestedCenter,12,footprint,air,out var cell))break;
                             var initial=cell;bool accepted=air||SkirmishSpawnPlacement.EnsureTraversable(em,grid,walkable,blocked,placementOccupancy,ref reserved,prefab,footprint,ref cell);

@@ -310,7 +310,21 @@ namespace Game.Runtime
                 footprint => source.PlacementRedirectSystem?.AddDeferredRedirectFootprint(footprint),
                 () => source.PlacementRedirectSystem?.MarkPendingMarkerRefresh(),
                 source.InitializeVisuals,
-                source.RefreshMarkers);
+                source.RefreshMarkers,
+                (BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, RuntimeActorBirthContext birth, out System.Action cleanup) =>
+                {
+                    if (source.RuntimeEntitySystem != null)
+                        return source.RuntimeEntitySystem.CreateBlockerEntity(source.RuntimeEntityContext, definition, originCell, footprintCells, birth, out cleanup);
+                    cleanup = null;
+                    return Entity.Null;
+                },
+                (int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation, RuntimeActorBirthContext birth, out System.Action cleanup) =>
+                {
+                    if (source.RuntimeEntitySystem != null)
+                        return source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation, birth, out cleanup);
+                    cleanup = null;
+                    return Entity.Null;
+                });
         }
 
         public BuildingRuntimeOwnershipCompositionSystemHelper.Context CreateOwnershipContext(Source source)

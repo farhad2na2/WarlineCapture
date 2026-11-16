@@ -1,0 +1,9 @@
+using Game.Runtime;using Game.UI.Contracts;using Unity.Entities;namespace Game.Runtime {internal static class SourceExpandedPageProjection {/*SOURCE:page_0*/
+        /*SOURCE:page_1*/
+
+        /*SOURCE:page_2*/
+
+        /*SOURCE:page_3*/
+
+        /*SOURCE:page_4*/
+}}

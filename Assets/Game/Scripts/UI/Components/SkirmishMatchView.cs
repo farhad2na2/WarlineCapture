@@ -89,9 +89,11 @@ namespace Game.UI.Runtime
             pendingAction=action;confirming=true;
             UiLocalizedText.Set(confirmText,action==UiSkirmishAction.Surrender?"Surrender this match? This records a defeat.":"Restart this skirmish with the same setup?");
         }
+        public Game.Skirmish.Contracts.SkirmishPublicSelectedApproach SelectedApproach { get; private set; }
         private void Update()
         {
             if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)){hud.SetActive(false);modal.SetActive(false);return;}
+            SelectedApproach = model.SelectedApproach;
             bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
             if(buildDrawer==null)buildDrawer=FindAnyObjectByType<BuildDrawerView>();

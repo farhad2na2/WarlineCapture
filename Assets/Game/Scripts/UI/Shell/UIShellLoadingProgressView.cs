@@ -71,7 +71,7 @@ namespace Game.UI.Runtime
             if (!Application.isPlaying)
                 return;
 
-            if (lastReadWasComplete && Time.unscaledTime < nextCompletedPollTime)
+            if (lastReadWasComplete && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < nextCompletedPollTime)
                 return;
 
             if (!TryGetLoading(out UiShellLoadingProgressModel loading))
@@ -80,7 +80,7 @@ namespace Game.UI.Runtime
             ApplyProgress(loading.Progress01, loading.Status);
             lastReadWasComplete = loading.IsComplete;
             nextCompletedPollTime = lastReadWasComplete
-                ? Time.unscaledTime + CompletedPollIntervalSeconds
+                ? Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + CompletedPollIntervalSeconds
                 : 0f;
         }
 

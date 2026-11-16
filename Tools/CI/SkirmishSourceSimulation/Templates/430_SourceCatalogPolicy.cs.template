@@ -1,0 +1,6 @@
+using System.Linq;
+using Game.Components;using Unity.Entities;using GameObject=Game.Runtime.LogicalCatalogPrefab;using SkirmishPresetResolver=Game.Runtime.SourceCatalogLegacyFallback;namespace Game.Runtime{internal static class SourceCatalogPolicy{
+/*SOURCE:allows*/
+internal static bool AllowsCurrentMatch(LogicalCatalogPrefab prefab,bool building)=>Allows(CatalogMetadataReadScope.Current.Em,prefab,building);}
+internal static class SourceCatalogPolicyLists{internal static bool Allows(this SkirmishProductionCatalog catalog,LogicalCatalogPrefab prefab,bool building){var c=CatalogMetadataReadScope.Current;if(!ReferenceEquals(c.Catalog,catalog))throw new System.NotSupportedException("Wrong retained source catalog");if(building)c.Store.RequireBuildingDomain();var Config=c.Store.RuntimeOverlay;var registry=c.Store.RuntimeOverlay;return /*SOURCE:catalog_allowlist*/;}}
+internal static class SourceCatalogLegacyFallback{internal sealed class Preset{internal Placement buildingPlacement;}internal sealed class Placement{internal System.Collections.Generic.IReadOnlyList<LogicalCatalogPrefab> Spawnables;internal SourceCatalogRegistry UnitPrefabRegistryConfig;}internal static Preset Load(EntityManager em)=>throw new System.NotSupportedException("Legacy/non-expanded source catalog policy outside S002 profile");}}

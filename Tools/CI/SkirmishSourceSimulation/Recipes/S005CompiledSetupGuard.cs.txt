@@ -1,0 +1,52 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+using Game.Configs;
+using Newtonsoft.Json.Linq;
+
+namespace Game.Runtime
+{
+    // Source-only experimental guard: checks the complete original S005 compiled
+    // setup, not merely its deliberately incomplete gameplay setup hash.
+    internal static class SourceS005CompiledSetupGuard
+    {
+        const string ExpectedSha = "24a1cebbfd8e37015b218b175db3f33a8049f89a55aa28f18e5496ed971c7fe3";
+        internal static void RequireExact(SkirmishResolvedSetup setup, string path)
+        {
+            if (!Path.IsPathRooted(path ?? "") || !File.Exists(path)) throw new InvalidDataException("Pinned S005 compiler receipt required");
+            byte[] bytes=File.ReadAllBytes(path);string hash;
+            using(var sha=SHA256.Create())hash=BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();
+            if(hash!=ExpectedSha)throw new InvalidDataException("S005 compiler receipt changed");
+            var receipt=JObject.Parse(System.Text.Encoding.UTF8.GetString(bytes));
+            var rows=receipt["result"]?["compiler"] as JArray;
+            var matches=rows?.OfType<JObject>().Where(x=>(string)x["size"]=="Standard").ToArray();
+            if((string)receipt["status"]!="Passed" || (bool?)receipt["world_initialized"]!=false || matches==null || matches.Length!=1 ||
+                (bool?)matches[0]["matched"]!=true || (uint?)matches[0]["setupHash"]!=1865447784u ||
+                setup==null || setup.CatalogId!="S005" || setup.Seed!=1 || setup.SetupHash!=1865447784u)
+                throw new InvalidDataException("S005 compiler identity differs from the pinned output");
+            // Normalize through the same JSON parser used for the pinned receipt:
+            // JValue otherwise compares a CLR float token to a parsed double token.
+            var actual=JObject.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(setup,Newtonsoft.Json.Formatting.None));
+            var expected=matches[0]["compiled_setup"];
+            if(!JToken.DeepEquals(actual,expected))
+                throw new InvalidDataException("S005 live setup differs from the pinned full compiler output at "+FirstDifference(actual,expected,"setup"));
+        }
+        static string FirstDifference(JToken actual,JToken expected,string path)
+        {
+            if(JToken.DeepEquals(actual,expected))return "<none>";
+            if(actual is JObject a && expected is JObject b)
+            {
+                foreach(var name in a.Properties().Select(x=>x.Name).Union(b.Properties().Select(x=>x.Name),StringComparer.Ordinal))
+                    if(!JToken.DeepEquals(a[name],b[name]))return FirstDifference(a[name],b[name],path+"."+name);
+            }
+            if(actual is JArray aa && expected is JArray bb)
+            {
+                if(aa.Count!=bb.Count)return path+".length("+aa.Count+"/"+bb.Count+")";
+                for(int i=0;i<aa.Count;i++)if(!JToken.DeepEquals(aa[i],bb[i]))return FirstDifference(aa[i],bb[i],path+"["+i+"]");
+            }
+            return path+" actual="+(actual?.ToString(Newtonsoft.Json.Formatting.None)??"<missing>")+" expected="+(expected?.ToString(Newtonsoft.Json.Formatting.None)??"<missing>");
+        }
+    }
+}

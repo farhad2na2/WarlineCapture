@@ -15,7 +15,10 @@ namespace Game.Composition
             if (prefab == null || !prefab.TryGetComponent(out BuildingDefinitionAuthoring authoring))
                 return false;
 
+            BuildingDefinitionAuthoringScalarSource scalarSource = authoring.CaptureScalarMetadataSource();
             authoring.ApplyConfigIfAvailable();
+            BuildingDefinitionAuthoringScalarMetadata scalarMetadata =
+                BuildingDefinitionAuthoringScalarProjection.Project(scalarSource);
             int productionCount = Mathf.Max(0, authoring.ConfiguredProductionCount);
             GameObject[] productionPrefabs = productionCount > 0 ? new GameObject[productionCount] : null;
             int[] productionQuantities = productionCount > 0 ? new int[productionCount] : null;
@@ -30,7 +33,7 @@ namespace Game.Composition
             {
                 DisplayName = authoring.ConfiguredDisplayName,
                 Description = authoring.ConfiguredDescription,
-                MaxHealth = authoring.ConfiguredMaxHealth,
+                MaxHealth = scalarMetadata.MaxHealth,
                 DestroyedVisualPrefab = authoring.ConfiguredDestroyedVisualPrefab,
                 SelectionPortraitSprite = authoring.ConfiguredPortraitActionSprite != null
                     ? authoring.ConfiguredPortraitActionSprite
@@ -38,13 +41,13 @@ namespace Game.Composition
                 CardPortraitSprite = authoring.ConfiguredPortraitCardSprite != null
                     ? authoring.ConfiguredPortraitCardSprite
                     : authoring.ConfiguredPortraitSprite,
-                FootprintCells = authoring.ConfiguredFootprintCells,
+                FootprintCells = new Vector2Int(scalarMetadata.FootprintWidth, scalarMetadata.FootprintDepth),
                 Role = authoring.ConfiguredRole,
                 IsWall = authoring.ConfiguredIsWall,
                 CanRequest = authoring.ConfiguredCanRequest,
-                Price = authoring.ConfiguredPrice,
-                MaterialsCost = authoring.ConfiguredMaterialsCost,
-                ProductionDurationSeconds = authoring.ConfiguredProductionDurationSeconds,
+                Price = scalarMetadata.Price,
+                MaterialsCost = scalarMetadata.MaterialsCost,
+                ProductionDurationSeconds = scalarMetadata.ProductionDurationSeconds,
                 OilBarrelsPerDay = authoring.ConfiguredOilBarrelsPerDay,
                 OilStorageCapacity = authoring.ConfiguredOilStorageCapacity,
                 FuelBarrelsPerDay = authoring.ConfiguredFuelBarrelsPerDay,

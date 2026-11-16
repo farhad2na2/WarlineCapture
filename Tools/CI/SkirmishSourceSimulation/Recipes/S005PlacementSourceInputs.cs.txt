@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Newtonsoft.Json.Linq;
+using Unity.Collections;
+using Unity.Entities;
+
+// Captured inactive Campaign input projection for this isolated experiment only.
+internal static class S005PlacementSourceInputs
+{
+    internal sealed class State
+    {
+        internal bool[] Buildings,Roads,Sidewalks,Water;
+        internal int[] Prefix;
+        internal int PhysicalBlockers;
+        internal BlobAssetReference<MapSurfaceBlob> SurfaceBlob;
+        internal bool Blocked(EntityManager em,Entity grid,int x,int z,int w,int h)
+        {
+            const int width=2048,height=1024,prefixWidth=2049;
+            if(x<0||z<0||w<1||h<1||x+w>width||z+h>height)return true;
+            int bad=Prefix[(z+h)*prefixWidth+x+w]-Prefix[z*prefixWidth+x+w]-Prefix[(z+h)*prefixWidth+x]+Prefix[z*prefixWidth+x];
+            if(bad>0)return true;
+            var bits=em.GetComponentData<DynamicBlockerComponent>(grid).Blocked;
+            for(int zz=z;zz<z+h;zz++)for(int xx=x;xx<x+w;xx++)if(bits.IsSet(zz*width+xx))return true;
+            return false;
+        }
+    }
+    static byte[] Read(string directory,string name,int count)
+    { var bytes=File.ReadAllBytes(Path.Combine(directory,name+".bin"));if(bytes.Length!=count)throw new InvalidDataException("Captured input length differs: "+name);return bytes; }
+    static bool[] Mask(string directory,string name,int count)
+    { var bytes=Read(directory,name,count);if(bytes.Any(v=>v>1))throw new InvalidDataException("Nonbinary captured mask");return bytes.Select(v=>v!=0).ToArray(); }
+    internal static State Bind(EntityManager em,Entity gridEntity,GridConfig grid,string directory,string physicalPath,string surfaceGraphPath)
+    {
+        const int width=2048,height=1024,count=width*height;
+        if(grid.Width!=width||grid.Height!=height||grid.CellSize!=1f||!BitConverter.IsLittleEndian)throw new InvalidDataException("Exact captured grid frame required");
+        var state=new State { Buildings=Mask(directory,"authoredBuildings",count), Roads=Mask(directory,"authoredRoadsIncludingSidewalks",count),
+            Sidewalks=Mask(directory,"sidewalks",count), Water=new bool[count], Prefix=new int[(width+1)*(height+1)] };
+        var prefix=Read(directory,"sourceInvalidPrefix",state.Prefix.Length*4);Buffer.BlockCopy(prefix,0,state.Prefix,0,prefix.Length);
+        byte[] walk=Read(directory,"gridWalkable",count),roads=Read(directory,"gridRoad",count);
+        var walkBuffer=em.AddBuffer<GridWalkable>(gridEntity);var roadBuffer=em.AddBuffer<GridRoad>(gridEntity);
+        for(int i=0;i<count;i++){if(walk[i]>1||roads[i]>1)throw new InvalidDataException("Invalid captured grid byte");walkBuffer.Add(new GridWalkable{Value=walk[i]});roadBuffer.Add(new GridRoad{Value=roads[i]});}
+        var bits=new NativeBitArray(count,Allocator.Persistent,NativeArrayOptions.ClearMemory);
+        em.AddComponentData(gridEntity,new DynamicBlockerComponent { GridSize=count,Blocked=bits,
+            Counts=new NativeArray<int>(count,Allocator.Persistent,NativeArrayOptions.ClearMemory),
+            FriendlyPassFactionIds=new NativeArray<byte>(count,Allocator.Persistent,NativeArrayOptions.ClearMemory) });
+        em.AddComponentData(gridEntity,new DynamicOccupancyComponent { GridSize=count,Occupied=new NativeBitArray(count,Allocator.Persistent,NativeArrayOptions.ClearMemory) });
+        var physical=JObject.Parse(File.ReadAllText(physicalPath));
+        var projected=GeneratedReferenceTemplateImporter.ProjectFixedMapNonBuildingBlockers(em,physical,Path.GetDirectoryName(physicalPath),"opmap.skirmish.desert_base_01");
+        state.PhysicalBlockers=projected.Count;if(state.PhysicalBlockers!=23)throw new InvalidDataException("Exact physical blocker domain required");
+        var ownerState=new SystemState { EntityManager=em,Enabled=true };var blockerOwner=new StaticGridBlockerUpdateSystem();
+        ownerState.Begin();blockerOwner.OnCreate(ref ownerState);ownerState.End();ownerState.Begin();
+        if(!ownerState.Enabled||!ownerState.RequiredQueriesPresent)throw new InvalidDataException("Original blocker owner prerequisites missing");
+        blockerOwner.OnUpdate(ref ownerState);ownerState.End();
+        var graph=JObject.Parse(File.ReadAllText(surfaceGraphPath));var source=new SourceConfigMaterializer(graph);
+        var asset=source.ByPath<MapSurfaceDataAsset>("Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset");
+        if(asset==null||!asset.TryCreateRuntimeBlobAsset(Allocator.Persistent,out state.SurfaceBlob))throw new InvalidDataException("Original captured surface decode required");
+        ref var blob=ref state.SurfaceBlob.Value;
+        if(blob.Dimensions.x!=width||blob.Dimensions.y!=height||blob.CellSize!=1f)throw new InvalidDataException("Captured surface frame differs");
+        var surfaceEntity=em.CreateEntity();em.AddComponentData(surfaceEntity,new MapSurfaceComponent { SurfaceBlob=state.SurfaceBlob,
+            GridOrigin=blob.GridOrigin,CellSize=blob.CellSize,Dimensions=blob.Dimensions,HasSurfaceData=1 });
+        return state;
+    }
+}

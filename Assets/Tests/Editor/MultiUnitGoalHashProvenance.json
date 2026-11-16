@@ -1,0 +1,10 @@
+{
+  "editor_version": "6000.5.8f1",
+  "module_file": "UnityEngine.MathematicsModule.dll",
+  "module_sha256": "87bdf65c5fc23bbef3afd323cc2da9cb1e2cfb94f3f36eddf29f49c58bc79661",
+  "package_forwarders_sha256": "f007c8b60774cbe596a5865bcaf857204214516829644fc0cf0bd96a7917c9ec",
+  "method": "System.UInt32 Unity.Mathematics.math::hash(Unity.Mathematics.int3)",
+  "canonical_il_file": "MultiUnitGoalInstalledHashInt3.il.txt",
+  "canonical_il_sha256": "fa5d69ae0a341d58f8c68a0712acb879d7848febc4313ce99ff5de83340282e0",
+  "verification": "Actual installed math.hash comparisons in both managed and Burst execution; module hash records origin, not a cross-platform equality requirement."
+}

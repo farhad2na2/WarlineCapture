@@ -494,6 +494,8 @@ namespace Game.Components
         // Authored mission enemies may use prefabs excluded from the player build catalogue.
         public byte AllowNonBuildableEnemy;
         public byte AuthoredStartingGrant;
+        // Exact typed-pad enforcement for an explicitly bound Skirmish grant.
+        public byte RequireTypedPad;
         // Authored objectives must keep their wall/mission layout rather than relocate.
         public byte RequirePreferredOrigin;
         public FixedString128Bytes BuildingId;

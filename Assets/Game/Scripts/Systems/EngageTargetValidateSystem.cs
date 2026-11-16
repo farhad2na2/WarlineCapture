@@ -67,33 +67,37 @@ namespace Game.Runtime
             private void Execute(Entity entity, in EngageTarget engage)
             {
                 Entity target = engage.Target;
-                bool invalid = false;
-                if (target == Entity.Null)
-                    invalid = true;
-                else if (!TargetTransformLookup.HasComponent(target))
-                    invalid = true;
-                else if (TargetHealthLookup.HasComponent(target) && TargetHealthLookup[target].Current <= 0)
-                    invalid = true;
-
-                if (!invalid && FogOwned.HasComponent(entity) && FogOwned.HasComponent(target))
+                var facts = new EngageValidationFacts { TargetNull=target==Entity.Null };
+                if (!facts.TargetNull)
                 {
-                    var observer = FogOwned[entity];
-                    invalid = !observer.SessionId.Equals(FogOwned[target].SessionId) ||
-                        !SkirmishFogConsumerUtility.IsVisible(FogOwned, FogSight, FogKnowledge,
-                            target, observer.FactionId);
+                    facts.TargetHasTransform=TargetTransformLookup.HasComponent(target);
+                    if (facts.TargetHasTransform)
+                    {
+                        facts.TargetHasHealth=TargetHealthLookup.HasComponent(target);
+                        if (facts.TargetHasHealth) facts.TargetHealth=TargetHealthLookup[target].Current;
+                    }
                 }
-                if (!invalid)
-                    return;
+                if (!EngageTargetLifecycleKernel.IsInvalid(facts) && FogOwned.HasComponent(entity) && FogOwned.HasComponent(target))
+                {
+                    var observer=FogOwned[entity];facts.PairedFog=true;
+                    facts.SameFogSession=observer.SessionId.Equals(FogOwned[target].SessionId);
+                    if (facts.SameFogSession) facts.FogVisible=SkirmishFogConsumerUtility.IsVisible(FogOwned,FogSight,FogKnowledge,target,observer.FactionId);
+                }
+                if (!EngageTargetLifecycleKernel.IsInvalid(facts)) return;
 
                 Ecb.RemoveComponent<EngageTarget>(entity);
 
-                if (AirStateLookup.HasComponent(entity))
+                bool hasAir=AirStateLookup.HasComponent(entity);
+                bool hasPath=!hasAir&&PathRequestLookup.HasComponent(entity);
+                bool hasTarget=!hasAir&&!hasPath&&TargetLookup.HasComponent(entity);
+                var effects=EngageTargetLifecycleKernel.PlanInvalidation(hasAir,hasPath,hasTarget);
+                if (effects.ReturningHome)
                 {
                     UnitAirComponent airState = AirStateLookup[entity];
                     airState.ReturningHome = 1;
                     AirStateLookup[entity] = airState;
                 }
-                else if (!PathRequestLookup.HasComponent(entity) && TargetLookup.HasComponent(entity))
+                else if (effects.RestorePathRequest)
                     Ecb.AddComponent(entity, new UnitPathRequest { Goal = TargetLookup[entity].Cell });
             }
         }

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "kind": "SkirmishMissionAuthoringDraft",
+  "catalog_id": "S026",
+  "seed": 104755,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "graph": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/s026-alias-graph-20261116-r2/source-config-graph.json",
+    "sha256": "1ffad850fadb9cc250364c7c8fda10ba93cf57169edc66ba2f6aa9261fe24cc1"
+  },
+  "profiles": {
+    "objective": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset",
+    "army": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+    "start": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+    "economy": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+    "upgrades": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset",
+    "intel": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+    "roles": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset"
+  },
+  "campaign_source_path": "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset",
+  "layout": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/s026-native-shape-draft-20261116-r4/layout.json",
+    "sha256": "1f4ce196bfdc5a8bbe2a1809b981fe1dc3d492dfc51cb160559a544d473eed6c"
+  },
+  "setup_matrix": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/five-mission-pilot-20261106-T1/experimental-opening-mix-matrix.csv",
+    "sha256": "9661befa60717d575c78571e28761c8d9e310d8b9c2b45874a3a7b92dbdebd22"
+  },
+  "binding": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Logs/SkirmishProduction/s026-alias-logical-binding-20261116-r3/candidate/mission-logical-binding.json",
+    "sha256": "7a93807e64b2c93b999ae2b698a3c0dc5ce697c1723fb3637d49d3d675ac6396"
+  }
+}

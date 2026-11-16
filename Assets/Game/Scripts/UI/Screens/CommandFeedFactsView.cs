@@ -12,7 +12,7 @@ namespace Game.UI.Runtime
         public void Configure(TMP_Text[] headings,TMP_Text[] copy){titles=headings;bodies=copy;}
         private void LateUpdate()
         {
-            if(Time.unscaledTime<nextRefresh)return;nextRefresh=Time.unscaledTime+.25f;
+            if(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)<nextRefresh)return;nextRefresh=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+.25f;
             bool fa=GameLocalization.IsRightToLeft;
             if(UiShellRuntimeGateway.TryReadCommanderProfile(out var p))
             {

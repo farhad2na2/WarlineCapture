@@ -90,15 +90,13 @@ namespace Game.Runtime
 
         public bool IsCompleteFor(MapVehiclePlacementConfig config, Transform authoringRoot)
         {
-            if (config == null || !config.SpawnOnMatchStart)
-                return true;
-
-            bool authoringHidden =
-                !config.HideAuthoringVisualsAfterSpawn ||
-                authoringRoot == null ||
-                _authoringHidden ||
-                !authoringRoot.gameObject.activeInHierarchy;
-            return _isQueued && authoringHidden;
+            return GameplayStartCompletionPredicate.MapPlacementOwnerComplete(
+                config == null || !config.SpawnOnMatchStart,
+                config != null && config.HideAuthoringVisualsAfterSpawn,
+                authoringRoot != null,
+                _authoringHidden,
+                authoringRoot != null && !authoringRoot.gameObject.activeInHierarchy,
+                _isQueued);
         }
 
         public void Update(Context context)

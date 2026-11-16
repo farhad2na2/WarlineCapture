@@ -7,6 +7,98 @@ namespace Game.Runtime
 {
     public static class SkirmishArmySelectionService
     {
+        // Legacy skirmishes do not have expanded group/session records. Their original
+        // SkirmishRulesSystem assigns SkirmishSquadMember slots, which remain the source
+        // of truth for selection in that profile. This overload lets the native focus
+        // command and the headless source host share the same selection owner.
+        public static bool TrySelectLegacySquad(
+            EntityManager em,
+            Entity legacyMatch,
+            byte slot,
+            bool add,
+            out SkirmishCommandDecision decision)
+        {
+            decision = default;
+            decision.Field = "legacySquadSlot";
+            if (legacyMatch == Entity.Null || !em.Exists(legacyMatch) ||
+                !em.HasComponent<SkirmishMatchState>(legacyMatch) || slot > 4)
+            {
+                decision.Reason = SkirmishReasonCode.InvalidSelection;
+                return false;
+            }
+
+            using (var matches = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>()))
+            {
+                if (matches.CalculateEntityCount() != 1 || matches.GetSingletonEntity() != legacyMatch)
+                {
+                    decision.Reason = SkirmishReasonCode.InvalidSelection;
+                    return false;
+                }
+            }
+
+            var match = em.GetComponentData<SkirmishMatchState>(legacyMatch);
+            if (match.ScenarioIndex != 3 || match.Phase != SkirmishPhase.Playing ||
+                match.StartupFailure != SkirmishStartupFailureCode.None || match.Outcome != SkirmishOutcome.None)
+            {
+                decision.Reason = SkirmishReasonCode.InvalidSelection;
+                return false;
+            }
+
+            using var candidates = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SkirmishSquadMember>(),
+                ComponentType.ReadOnly<Faction>(),
+                ComponentType.ReadOnly<UnitHealth>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<UnitMove>());
+            using var entities = candidates.ToEntityArray(Allocator.Temp);
+            int selected = 0;
+            foreach (var unit in entities)
+            {
+                if (em.GetComponentData<Faction>(unit).Id != FactionIdentity.PlayerFactionId ||
+                    em.GetComponentData<UnitHealth>(unit).Current <= 0 ||
+                    em.GetComponentData<SkirmishSquadMember>(unit).Slot != slot ||
+                    em.HasComponent<RuntimeBuildingCombatTag>(unit) ||
+                    em.HasComponent<StaticGridBlocker>(unit) ||
+                    em.HasComponent<UnitTransportPassenger>(unit))
+                    continue;
+                selected++;
+            }
+
+            if (selected == 0)
+            {
+                decision.Reason = SkirmishReasonCode.InvalidSelection;
+                return false;
+            }
+
+            if (!add)
+            {
+                using var previous = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+                using var selectedEntities = previous.ToEntityArray(Allocator.Temp);
+                foreach (var unit in selectedEntities)
+                    if (em.Exists(unit) && em.HasComponent<SelectedUnitTag>(unit))
+                        em.RemoveComponent<SelectedUnitTag>(unit);
+            }
+
+            int issued = 0;
+            foreach (var unit in entities)
+            {
+                if (em.GetComponentData<Faction>(unit).Id != FactionIdentity.PlayerFactionId ||
+                    em.GetComponentData<UnitHealth>(unit).Current <= 0 ||
+                    em.GetComponentData<SkirmishSquadMember>(unit).Slot != slot ||
+                    em.HasComponent<RuntimeBuildingCombatTag>(unit) ||
+                    em.HasComponent<StaticGridBlocker>(unit) ||
+                    em.HasComponent<UnitTransportPassenger>(unit))
+                    continue;
+                if (!em.HasComponent<SelectedUnitTag>(unit)) em.AddComponent<SelectedUnitTag>(unit);
+                issued++;
+            }
+
+            decision.Accepted = issued > 0;
+            decision.IssuedCount = issued;
+            decision.Reason = issued > 0 ? SkirmishReasonCode.None : SkirmishReasonCode.InvalidSelection;
+            return decision.Accepted;
+        }
+
         public static bool TrySelectGroup(
             EntityManager em,
             Entity session,

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
+using Game.Simulation;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -78,6 +79,29 @@ namespace Game.Runtime
             }
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
+            Entity selectedPlacementGrid = Entity.Null;
+            if (Application.isPlaying)
+            {
+                using var placementGrids = em.CreateEntityQuery(typeof(GridConfig));
+                if (placementGrids.CalculateEntityCount() == 1)
+                    selectedPlacementGrid = placementGrids.GetSingletonEntity();
+
+                SkirmishProductionDeliveryBasisStartupResult basisResult =
+                    SkirmishProductionDeliveryBasisStartup.TryInitialize(
+                        em, entity, setup, selectedPlacementGrid, out string basisFailure);
+                if (basisResult == SkirmishProductionDeliveryBasisStartupResult.Pending)
+                    return;
+                if (basisResult == SkirmishProductionDeliveryBasisStartupResult.Invalid)
+                {
+                    SkirmishStartingBuildingsService.Cancel(em, entity);
+                    DestroyAttemptOwned(em, session.SessionId);
+                    session.FailureCode = SkirmishReasonCode.MissingReference;
+                    session.Phase = SkirmishSessionPhase.Failed;
+                    em.SetComponentData(entity, session);
+                    UnityEngine.Debug.LogError("[SkirmishDeliveryBasis] " + basisFailure);
+                    return;
+                }
+            }
             if (em.HasComponent<SkirmishNativeCheckpointRecoveryRecord>(entity))
             {
                 SkirmishNativeCheckpointRecoveryRunner.Step(em, entity, setup);
@@ -95,7 +119,8 @@ namespace Game.Runtime
                 }
                 return;
             }
-            if (!TrySpawnLedgers(em, entity, setup, out SkirmishReasonCode reason, out byte visualPending))
+            if (!TrySpawnLedgersForSelectedGrid(em, entity, setup, selectedPlacementGrid,
+                    out SkirmishReasonCode reason, out byte visualPending))
             {
                 DestroyAttemptOwned(em, session.SessionId);
                 session.FailureCode = reason;
@@ -104,6 +129,33 @@ namespace Game.Runtime
                 return;
             }
 
+#if UNITY_EDITOR
+            if (Application.isPlaying)
+                SkirmishProductionDeliveryBasisWitness.Record(
+                    em, entity, selectedPlacementGrid, "PreCommit");
+#endif
+            CommitLogicalSpawn(em, entity, setup, ref session, visualPending);
+            if ((Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup) &&
+                !SkirmishMissionLogicalBindingProvider.TryAttachAfterActualSpawn(em,entity,out _)) ||
+                !SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(em,entity,out _))
+            {
+                session.Phase=SkirmishSessionPhase.Failed;session.FailureCode=SkirmishReasonCode.MissingReference;
+                em.SetComponentData(entity,session);
+                if(em.HasComponent<SkirmishObjectiveClockComponent>(entity))
+                {var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(entity);clock.Playing=0;em.SetComponentData(entity,clock);}
+                return;
+            }
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
+#if UNITY_EDITOR
+            S002InitialWorldBoundaryWitness.RecordSpawnComplete(em, entity);
+#endif
+        }
+
+        // Shared logical transition. Presentation dispatch remains in TrySpawn so
+        // native view validation and failure handling keep their original order.
+        internal static void CommitLogicalSpawn(EntityManager em, Entity entity, SkirmishResolvedSetup setup,
+            ref SkirmishExpandedSessionComponent session, byte visualPending)
+        {
             session.SpawnComplete = 1;
             session.SpawnVisualPending = visualPending;
             session.Phase = SkirmishSessionPhase.Playing;
@@ -126,17 +178,6 @@ namespace Game.Runtime
             }
 
             em.SetComponentData(entity, session);
-            if ((Game.Configs.SkirmishMissionLogicalBindingCompiler.RequiresBinding(setup) &&
-                !SkirmishMissionLogicalBindingProvider.TryAttachAfterActualSpawn(em,entity,out _)) ||
-                !SkirmishS005OpeningViewPolicy.TryQueueAfterActualSpawn(em,entity,out _))
-            {
-                session.Phase=SkirmishSessionPhase.Failed;session.FailureCode=SkirmishReasonCode.MissingReference;
-                em.SetComponentData(entity,session);
-                if(em.HasComponent<SkirmishObjectiveClockComponent>(entity))
-                {var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(entity);clock.Playing=0;em.SetComponentData(entity,clock);}
-                return;
-            }
-            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
         }
 
         public static bool TrySpawnLedgers(
@@ -146,8 +187,72 @@ namespace Game.Runtime
             out SkirmishReasonCode reason,
             out byte visualPending)
         {
+            Entity selectedPlacementGrid = Entity.Null;
+            if (Application.isPlaying && em.Exists(session) &&
+                em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0 &&
+                em.HasComponent<SkirmishProductionDeliveryBasisComponent>(session))
+            {
+                selectedPlacementGrid = em.GetComponentData<SkirmishProductionDeliveryBasisComponent>(session).PlacementGrid;
+            }
+            return TrySpawnLedgersForSelectedGrid(em, session, setup, selectedPlacementGrid, out reason, out visualPending);
+        }
+
+        internal static bool TrySpawnLedgersForSelectedGrid(
+            EntityManager em,
+            Entity session,
+            SkirmishResolvedSetup setup,
+            Entity selectedPlacementGrid,
+            out SkirmishReasonCode reason,
+            out byte visualPending)
+        {
             reason = SkirmishReasonCode.None;
             visualPending = 0;
+            // Keep the public ledger entrypoint fail-closed too. The normal
+            // expanded startup caller supplies the same singleton grid it bound
+            // before side effects; old direct restore callers cannot spawn first
+            // and acquire a basis only on a later system update.
+            if (Application.isPlaying && em.HasComponent<SkirmishExpandedSessionComponent>(session))
+            {
+                SkirmishExpandedSessionComponent sessionState =
+                    em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if (sessionState.IsLegacy == 0)
+                {
+                    bool hasValidLogicalBasis = false;
+                    uint basisSetupHash = 0;
+                    bool hasValidNativeProvenance = false;
+                    if (em.HasComponent<SkirmishProductionDeliveryBasisComponent>(session))
+                    {
+                        SkirmishProductionDeliveryBasisComponent basisOwner =
+                            em.GetComponentData<SkirmishProductionDeliveryBasisComponent>(session);
+                        basisSetupHash = basisOwner.SetupHash;
+                        hasValidLogicalBasis = SharedProductionDeliveryKernel.IsValidProductionDeliveryLogicalBasis(
+                            in basisOwner.Basis) && basisOwner.PlacementGrid == selectedPlacementGrid;
+                    }
+                    if (em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(session))
+                    {
+                        SkirmishProductionDeliveryBasisProvenanceComponent provenance =
+                            em.GetComponentData<SkirmishProductionDeliveryBasisProvenanceComponent>(session);
+                        hasValidNativeProvenance = provenance.OperationMapId.ToString() == setup?.OperationMapId &&
+                            provenance.SourceIdentityHash.Length > 0 && provenance.MapGeneration > 0;
+                    }
+                    if (selectedPlacementGrid == Entity.Null || !em.Exists(selectedPlacementGrid) ||
+                        !em.HasComponent<GridConfig>(selectedPlacementGrid) || !hasValidLogicalBasis || !hasValidNativeProvenance ||
+                        !em.HasComponent<SkirmishResolvedSetupRecord>(session) || setup == null ||
+                        basisSetupHash != setup.SetupHash)
+                    {
+                        reason = SkirmishReasonCode.MissingReference;
+                        return false;
+                    }
+                    using var selectedGridCheck = em.CreateEntityQuery(typeof(GridConfig));
+                    if (selectedGridCheck.CalculateEntityCount() != 1 ||
+                        selectedGridCheck.GetSingletonEntity() != selectedPlacementGrid)
+                    {
+                        reason = SkirmishReasonCode.MissingReference;
+                        return false;
+                    }
+                }
+            }
             if (setup?.Forces == null)
             {
                 reason = SkirmishReasonCode.MissingResolvedSetup;
@@ -208,93 +313,57 @@ namespace Game.Runtime
             // every other mode; the bare-entity fallback only covers Editor fixtures
             // without a baked registry and keeps SpawnVisualPending set.
             Dictionary<string, Entity> prefabLookup = BuildPrefabEntityLookup(em);
-            bool startingSetBound = true;
-            int infantryLive = 0;
-            int groundLive = 0;
-            int airLive = 0;
-            int supplyLive = 0;
-            int enemyInfantryLive = 0;
-            int enemyGroundLive = 0;
-            int enemyAirLive = 0;
-            int enemySupplyLive = 0;
-            uint openGroupId = 0;
-            byte openFaction = 0;
-            SkirmishRoleKind openRole = SkirmishRoleKind.None;
-            int openFill = 0;
-
-            for (int i = 0; i < setup.Forces.Length; i++)
+            var openingForces = new Game.Simulation.SkirmishBootstrapForce[setup.Forces.Length];
+            for (int index = 0; index < openingForces.Length; index++)
             {
-                SkirmishResolvedForceEntry force = setup.Forces[i];
-                int quantity = force.Quantity < 1 ? 1 : force.Quantity;
-                int perMemberSupply = quantity == 0 ? 0 : force.SupplyCost / quantity;
-                string prefabKey = force.RuntimePrefabKey ?? string.Empty;
-                if (string.IsNullOrEmpty(prefabKey))
-                    startingSetBound = false;
-                SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
-                for (int member = 0; member < quantity; member++)
-                {
-                    Entity spawned = CreateForceMember(
-                        em,
-                        sessionId,
-                        force,
-                        i,
-                        member,
-                        perMemberSupply,
-                        prefabKey,
-                        prefabLookup,
-                        setup,typedPlacement);
-                    if (spawned == Entity.Null)
-                    {
-                        UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + prefabKey +
-                            " faction=" + force.FactionId + " member=" + member);
-                        DestroyAttemptOwned(em, sessionId);
-                        reason = SkirmishReasonCode.BlockedSpawn;
-                        return false;
-                    }
-                    bool infantry = category == SkirmishPopulationCategory.Infantry;
-                    bool needNew = openGroupId == 0 ||
-                                   force.FactionId != openFaction ||
-                                   force.RoleKind != openRole ||
-                                   !infantry ||
-                                   openFill >= SkirmishRoleIds.InfantrySquadMembers;
-                    if (needNew)
-                    {
-                        openGroupId = SkirmishArmyGroupSystem.OpenGroup(
-                            em, session, force.FactionId, force.RoleKind, category);
-                        openFaction = force.FactionId;
-                        openRole = force.RoleKind;
-                        openFill = 0;
-                    }
-
-                    SkirmishArmyGroupSystem.BindMember(em, session, spawned, openGroupId);
-                    openFill++;
-                    if (category == SkirmishPopulationCategory.Infantry ||
-                        category == SkirmishPopulationCategory.Ground ||
-                        category == SkirmishPopulationCategory.Air)
-                    {
-                        if (force.FactionId == 1)
-                        {
-                            if (category == SkirmishPopulationCategory.Infantry)
-                                infantryLive++;
-                            else if (category == SkirmishPopulationCategory.Ground)
-                                groundLive++;
-                            else
-                                airLive++;
-                            supplyLive += perMemberSupply;
-                        }
-                        else if (force.FactionId == 2)
-                        {
-                            if (category == SkirmishPopulationCategory.Infantry)
-                                enemyInfantryLive++;
-                            else if (category == SkirmishPopulationCategory.Ground)
-                                enemyGroundLive++;
-                            else
-                                enemyAirLive++;
-                            enemySupplyLive += perMemberSupply;
-                        }
-                    }
-                }
+                var force = setup.Forces[index];
+                openingForces[index] = new Game.Simulation.SkirmishBootstrapForce(force.RoleId, force.FactionId,
+                    force.RoleKind, force.Quantity, force.SupplyCost, force.RuntimePrefabKey);
             }
+            var opening = new Game.Simulation.SkirmishMissionBootstrapKernel(openingForces);
+            while (opening.TryBeginMember(out var member))
+            {
+                SkirmishResolvedForceEntry force = setup.Forces[member.ForceIndex];
+                if (Application.isPlaying && !IsSelectedPlacementGridCurrent(em, selectedPlacementGrid))
+                {
+                    opening.Abort();
+                    DestroyAttemptOwned(em, sessionId);
+                    reason = SkirmishReasonCode.MissingReference;
+                    return false;
+                }
+                Entity spawned = CreateForceMember(em, sessionId, force, member.ForceIndex, member.MemberIndex,
+                    member.PerMemberSupply, member.SourceKey, prefabLookup, setup, typedPlacement);
+                if (Application.isPlaying && !IsSelectedPlacementGridCurrent(em, selectedPlacementGrid))
+                {
+                    opening.Abort();
+                    DestroyAttemptOwned(em, sessionId);
+                    reason = SkirmishReasonCode.MissingReference;
+                    return false;
+                }
+                if (spawned == Entity.Null)
+                {
+                    UnityEngine.Debug.LogError("[SkirmishStartingForce] failed prefab=" + member.SourceKey +
+                        " faction=" + force.FactionId + " member=" + member.MemberIndex);
+                    opening.Abort();
+                    DestroyAttemptOwned(em, sessionId);
+                    reason = SkirmishReasonCode.BlockedSpawn;
+                    return false;
+                }
+                uint groupId = opening.RequiresNewGroup
+                    ? SkirmishArmyGroupSystem.OpenGroup(em, session, member.Faction, member.Role, member.Category)
+                    : opening.OpenGroupId;
+                SkirmishArmyGroupSystem.BindMember(em, session, spawned, groupId);
+                opening.RecordCreatedAndBound(groupId);
+            }
+            bool startingSetBound = opening.StartingSetBound;
+            int infantryLive = opening.Player.Infantry;
+            int groundLive = opening.Player.Ground;
+            int airLive = opening.Player.Air;
+            int supplyLive = opening.Player.Supply;
+            int enemyInfantryLive = opening.Enemy.Infantry;
+            int enemyGroundLive = opening.Enemy.Ground;
+            int enemyAirLive = opening.Enemy.Air;
+            int enemySupplyLive = opening.Enemy.Supply;
 
             if (setup.Structures != null && !em.HasComponent<SkirmishSharedBuildingsReady>(session))
             {
@@ -368,6 +437,14 @@ namespace Game.Runtime
             return true;
         }
 
+        private static bool IsSelectedPlacementGridCurrent(EntityManager em, Entity selectedGrid)
+        {
+            if (selectedGrid == Entity.Null || !em.Exists(selectedGrid) || !em.HasComponent<GridConfig>(selectedGrid))
+                return false;
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            return grids.CalculateEntityCount() == 1 && grids.GetSingletonEntity() == selectedGrid;
+        }
+
         public static Entity CreateForceMember(
             EntityManager em,
             FixedString64Bytes sessionId,
@@ -394,7 +471,7 @@ namespace Game.Runtime
             bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
             if (!fromPrefab && Application.isPlaying)
                 return Entity.Null;
-            var stableId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member);
+            var stableId = new FixedString64Bytes(Game.Simulation.SkirmishMissionBootstrapKernel.StableActorId(force.RoleId, force.FactionId, forceIndex, member));
             Entity placementGrid = Entity.Null;
             RuntimeActorBirthContext birth = default;
             if (fromPrefab)
@@ -445,7 +522,11 @@ namespace Game.Runtime
                             : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
                 if(typedPlacement!=null&&!typedPlacement.TryRequestedWorld(force,member,out position))
                 {em.DestroyEntity(owned);return Entity.Null;}
-                if (!TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, placementGrid, out var actualPlacementGrid))
+                bool placed = TryPlaceTypedOnMap(em, owned, position, setup?.Seed ?? 0,force,typedPlacement, placementGrid, out var actualPlacementGrid);
+#if UNITY_EDITOR
+                ObserveStartupPlacementResult?.Invoke(em, owned, placed);
+#endif
+                if (!placed)
                 {
                     em.DestroyEntity(owned);
                     return Entity.Null;
@@ -566,6 +647,20 @@ namespace Game.Runtime
                         var rng = SkirmishTypedSpawnConstraint.PlacementRandom(missionSeed,stableId,cell);
                         int2 footprint = em.HasComponent<UnitFootprint>(entity)
                             ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+#if UNITY_EDITOR
+                        MapSurfaceComponent observedSurface = default; int observedSurfaceCount = 0;
+                        if (ObserveStartupAllocator != null) observedSurface = StartupSurface(em, out observedSurfaceCount);
+                        ObserveStartupAllocator?.Invoke(new StartupAllocatorObservation
+                        {
+                            EntityManager = em, Actor = entity, GridEntity = gridEntity, Grid = grid,
+                            Seed = missionSeed, RandomState = rng.state, RequestedCell = cell,
+                            RequestedWorld = pos, Footprint = footprint,
+                            Air = em.HasComponent<UnitAirMovement>(entity), Typed = typedPlacement != null,
+                            HasMatch = StartupHasMatch(em), SurfaceCount = observedSurfaceCount,
+                            Surface = observedSurface, Walkable = walkable,
+                            Blocked = blocked, Occupied = occupied, Reserved = reserved
+                        });
+#endif
                         if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
                             blocked, occupied, ref reserved, cell, 12, footprint,
                             em.HasComponent<UnitAirMovement>(entity), out cell)) return false;

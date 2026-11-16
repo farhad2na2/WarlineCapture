@@ -9,6 +9,9 @@ namespace Game.Runtime
     {
         public Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, float buildPlaneY)
         {
+#if UNITY_EDITOR
+            S002PhysicalStartupObservation.FootprintCenter?.Invoke(originCell, footprintCells, grid, buildPlaneY);
+#endif
             return new Vector3(
                 grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
                 buildPlaneY,
@@ -30,9 +33,7 @@ namespace Game.Runtime
 
         public static Vector2Int CenterCellToOrigin(Vector2Int centerCell, Vector2Int footprintCells)
         {
-            return new Vector2Int(
-                centerCell.x - Mathf.FloorToInt(footprintCells.x * 0.5f),
-                centerCell.y - Mathf.FloorToInt(footprintCells.y * 0.5f));
+            return BuildingPlacementInitialPreviewState.CenterCellToOrigin(centerCell, footprintCells);
         }
 
         public bool TryGetGridCell(
@@ -47,16 +48,7 @@ namespace Game.Runtime
                 return false;
 
             Ray ray = worldCamera.ScreenPointToRay(screenPosition);
-            Plane plane = new(Vector3.up, new Vector3(0f, buildPlaneY, 0f));
-            if (!plane.Raycast(ray, out float distance))
-                return false;
-
-            int2 gridCell = GridUtils.WorldToCell(grid, ray.GetPoint(distance));
-            if (!GridUtils.InBounds(gridCell, grid.Width, grid.Height))
-                return false;
-
-            cell = new Vector2Int(gridCell.x, gridCell.y);
-            return true;
+            return BuildingPlacementRayGridPolicy.TryResolve(ray, grid, buildPlaneY, out cell);
         }
 
         public Vector2Int GetPlacementFootprint(BuildingDefinition definition, bool rotateVertical)

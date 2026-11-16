@@ -1,0 +1,6 @@
+internal sealed partial class OwnerDue {
+@@SOURCE_0@@@@SOURCE_1@@
+    void AdvanceOriginal(double afterResources, Context context) {
+        double now;
+@@SOURCE_2@@    }
+}

@@ -65,7 +65,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < loadingDurationSeconds)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float progress = Mathf.Clamp01(elapsed / loadingDurationSeconds);
                 isCompletingLoading = true;
                 SetLoading(progress, "Loading command shell", progress >= 1f);

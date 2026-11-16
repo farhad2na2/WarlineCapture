@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "kind": "SkirmishMissionAuthoringDraft",
+  "catalog_id": "S050",
+  "seed": 104779,
+  "size": "Standard",
+  "difficulty": "Regular",
+  "graph": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/five-mission-pilot-20261106-T1/s050-citywide-source-search-inputs-r1/source-config-graph.json",
+    "sha256": "4d1ad13e9fb6f2439eadc1ebe6a121b4d5f5ccdcf4d2b22e584b8de2f1d76f47"
+  },
+  "profiles": {
+    "objective": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishObjective_BA.asset",
+    "army": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishArmy_GroundManeuver.asset",
+    "start": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishStart_Established.asset",
+    "economy": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishEconomy_V1.asset",
+    "upgrades": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishUpgrade_V1.asset",
+    "intel": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishIntel_SharedFog.asset",
+    "roles": "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishRoleCatalog_V1.asset"
+  },
+  "campaign_source_path": "Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset",
+  "layout": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/s050-grid-aligned-deployment-pad-layout-20261116-r9/layout.json",
+    "sha256": "448ac50e60f072a1ee42af1a3e6f4505e1a5e3d0022f639ae7fc9a87ec2e9f71"
+  },
+  "setup_matrix": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/five-mission-pilot-20261106-T1/experimental-opening-mix-matrix.csv",
+    "sha256": "9661befa60717d575c78571e28761c8d9e310d8b9c2b45874a3a7b92dbdebd22"
+  },
+  "binding": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/T Logs/SkirmishProduction/s050-grid-aligned-deployment-pad-binding-roundtrip-20261116-r3/binding.json",
+    "sha256": "3c5900a16551de45096b8b856558c37016bdbcd584bcd509d1aa4d514b1e5403"
+  },
+  "resource_preset": {
+    "path": "/Volumes/T7/Projects/WarlineCapture/Assets/Game/Resources/SkirmishBaseAssault.asset",
+    "sha256": "ff020b7c082ecbede2e0383731f0ca11443b715e8f625336174ebddf89c412fe"
+  }
+}

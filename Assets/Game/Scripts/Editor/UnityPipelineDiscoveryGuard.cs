@@ -56,6 +56,14 @@ namespace Game.Editor
                 if (startupType == null || tokenType == null)
                     return;
 
+                // Pipeline 0.9 owns the descriptor and its endpoint/heartbeat data.
+                // The legacy recovery writer must not replace that richer record.
+                var package = UnityEditor.PackageManager.PackageInfo.FindForAssembly(startupType.Assembly);
+                string packageVersion = package?.version?.Split('-')[0];
+                if (Version.TryParse(packageVersion, out var version) &&
+                    version >= new Version(0, 9, 0))
+                    return;
+
                 const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
                 object server = startupType.GetProperty("Server", flags)?.GetValue(null);
                 if (server == null)

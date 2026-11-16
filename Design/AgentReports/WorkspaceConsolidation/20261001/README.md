@@ -4,7 +4,7 @@ Active project: `/Users/farhad/Projects/WarlineCapture`.
 
 The primary `main` was fast-forwarded from `2c36f349fb7feef6214cf9e4fbf67c0eeb3111af` to reviewed mission commit `37a7cce2cf0ae7368cd99dcb40b29318da316b90`. The docs and comic commits are already ancestors. No source merge conflicts occurred.
 
-## Remote preservation
+## Historical remote preservation (backup references retired 2026-10-21)
 
 | Work | Pushed reference | Commit |
 | --- | --- | --- |
@@ -16,16 +16,18 @@ The primary `main` was fast-forwarded from `2c36f349fb7feef6214cf9e4fbf67c0eeb31
 
 Backup commits are Git stash snapshots: parent 2 preserves the index; parent 3 preserves untracked files. They preserve work rather than representing a playable candidate. Primary local changes were restored without conflicts. The two runtime/test edits already match the reviewed branch exactly; four pre-existing material/font edits and primary untracked recovery/evidence files remain local.
 
-The redundant `airlift-local-evidence.tar.gz` was removed from the current tree on 2026-10-18. Before removal, all **343 regular files** were compared using their Git blob hashes against the untracked snapshot tree `1f0a733df00931f00223381aef48e824035ffcb9^3`: **zero mismatches and zero missing/extra files**. The remote branch `codex/workspace-airlift-backup-20261001` was verified to point to that preserved commit. The removed archive was 373,161,923 bytes, SHA-256 `50ad226e0ab4ef22529591230d64ae46c84ccd73d000e35bcd51ea771f0f9380`. Preserve that backup reference; it owns the snapshot, which is not duplicated in the current main tree.
+The redundant `airlift-local-evidence.tar.gz` was removed from the current tree on 2026-10-18. Before removal, all **343 regular files** were compared using their Git blob hashes against the untracked snapshot tree `1f0a733df00931f00223381aef48e824035ffcb9^3`: **zero mismatches and zero missing/extra files**. The remote branch `codex/workspace-airlift-backup-20261001` was verified to point to that preserved commit. The removed archive was 373,161,923 bytes, SHA-256 `50ad226e0ab4ef22529591230d64ae46c84ccd73d000e35bcd51ea771f0f9380`. That backup reference was retired by owner request on 2026-10-21 after all 343 files were archived and verified against their original Git blob hashes. The recovery source is now the local archive documented below; the snapshot is not duplicated in the current main tree.
 
-Recover the snapshot without changing the checkout:
+Recover the snapshot from the verified local archive without changing the active checkout:
 
 ```sh
-rtk git fetch origin codex/workspace-airlift-backup-20261001
-rtk proxy git archive --format=tar --output=/private/tmp/warline-airlift-evidence.tar '1f0a733df00931f00223381aef48e824035ffcb9^3'
+rtk proxy tar -tzf /Volumes/T7/Projects/WarlineCapture/.local/lfs-cleanup-20261021/airlift-evidence-1f0a733df.tar.gz
+# Extract into a separate recovery directory when needed.
 ```
 
-This recreates the file contents in a new tar archive; it does not reproduce the original gzip container byte-for-byte. Extract it outside the active project when needed.
+The archive is 373,161,923 bytes with SHA-256 `315edaa7c7cf64371793a9752297de30d76d3c1bb29b6f76affe5a5ee21bcbb6`. Its adjacent `airlift-evidence-manifest.json` records original Git blob IDs, file sizes and SHA-256 hashes. Verification found 343 files, zero missing/extra files, zero hash mismatches, no unresolved LFS pointers, and valid gzip integrity. This archive recreates the original file contents; its gzip container hash differs from the earlier removed archive.
+
+The archive and full manifest are intentionally outside version control under ignored `.local/`. They must be copied separately when moving or backing up this project. [Backup retirement receipt](backup-retirement-20261021.json) records the seven retired remote branches and verification summary. The primary workspace backup was also retired: its saved code changes are present in main, 291 untracked files match main exactly, and its one remaining obsolete crash report was deliberately discarded. That crash report was already absent from the working tree.
 
 External evidence folders and ignored validation logs are preserved alongside this report. Cache, generated project and zero-byte lock files are not player source. All 64 reviewed source hashes and 28 decompressed validation log hashes match (`verification.json`).
 

@@ -72,8 +72,7 @@ namespace Game.Runtime
                 UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, entity);
                 return true;
             }
-            UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
-            return true;
+            return UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, entity, goal);
         }
 
         private static bool TryResolveReturnToBaseGoal(

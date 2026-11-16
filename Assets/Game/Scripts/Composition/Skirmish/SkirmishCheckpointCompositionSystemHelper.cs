@@ -53,6 +53,36 @@ namespace Game.Composition
             // Old fixture documents cannot reconstruct the versioned native enemy planner.
             if (checkedSetup.EnemyPolicy != null) { reason = SkirmishReasonCode.UnsupportedCapability; return false; }
 
+            Entity selectedPlacementGrid = Entity.Null;
+            SkirmishProductionDeliveryBasisComponent preflightDeliveryBasis = default;
+            SkirmishProductionDeliveryBasisProvenanceComponent preflightDeliveryProvenance = default;
+            bool bindDeliveryBasis = UnityEngine.Application.isPlaying;
+            if (bindDeliveryBasis)
+            {
+                using var placementGrids = em.CreateEntityQuery(typeof(GridConfig));
+                if (placementGrids.CalculateEntityCount() == 1)
+                    selectedPlacementGrid = placementGrids.GetSingletonEntity();
+                SkirmishProductionDeliveryBasisStartupResult basisResult =
+                    SkirmishProductionDeliveryBasisStartup.TryResolveForSetup(
+                        em, checkedSetup, selectedPlacementGrid, mapReadyForSession: false,
+                        out preflightDeliveryBasis, out preflightDeliveryProvenance, out _);
+                if (basisResult != SkirmishProductionDeliveryBasisStartupResult.Ready)
+                {
+                    // This API cannot retain a queued session as a pending restore.
+                    // Resolve all map/grid facts before TryCompileAndQueue mutates
+                    // the launch entity; callers can retry once streaming completes.
+                    reason = SkirmishReasonCode.MissingReference;
+                    return false;
+                }
+                if (SkirmishLaunchProjection.TryGet(em, out Entity reusableLaunch, out _) &&
+                    !SkirmishProductionDeliveryBasisStartup.CanAttachResolved(
+                        em, reusableLaunch, checkedSetup, in preflightDeliveryBasis, in preflightDeliveryProvenance))
+                {
+                    reason = SkirmishReasonCode.MissingReference;
+                    return false;
+                }
+            }
+
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
                     document.Header.CatalogId,
@@ -80,6 +110,12 @@ namespace Game.Composition
                 var match = em.GetComponentData<SkirmishMatchState>(session);
                 match.SessionId = state.SessionId;
                 em.SetComponentData(session, match);
+            }
+            if (bindDeliveryBasis && !SkirmishProductionDeliveryBasisStartup.TryAttachResolved(
+                    em, session, setup, in preflightDeliveryBasis, in preflightDeliveryProvenance))
+            {
+                reason = SkirmishReasonCode.MissingReference;
+                return false;
             }
 
             if (!SkirmishScenarioSpawnSystem.TrySpawnLedgers(em, session, setup, out reason, out _))
@@ -289,6 +325,7 @@ namespace Game.Composition
             RemoveIfPresent<SkirmishExpandedPauseRequest>(em, session);
             RemoveIfPresent<SkirmishExpandedReplayRequest>(em, session);
             RemoveIfPresent<SkirmishResolvedSetupComponent>(em, session);
+            SkirmishProductionDeliveryBasisStartup.RemoveSessionComponents(em, session);
             RemoveIfPresent<SkirmishResearchStateComponent>(em, session);
             RemoveIfPresent<SkirmishEnemyResearchStateComponent>(em, session);
             if (em.HasBuffer<SkirmishResearchQueueItem>(session))

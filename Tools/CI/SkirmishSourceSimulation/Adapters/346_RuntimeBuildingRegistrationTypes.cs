@@ -1,0 +1,1 @@
+using Unity.Entities;namespace Game.Runtime{internal sealed partial class RuntimeBuildingEntity{internal Entity BlockerEntity;}public sealed class SkirmishNativeBuildingCheckpointRecord:IComponentData{internal RuntimeBuildingEntity Building;}}

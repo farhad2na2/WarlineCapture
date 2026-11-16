@@ -1,0 +1,8 @@
+extern alias ActualCore;
+using System; using Unity.Entities; using Unity.Collections; using Unity.Mathematics; using Game.Components;
+using Mathf = ActualCore::UnityEngine.Mathf;
+namespace Game.Runtime { public sealed partial class BuildingPlacementValidationUtilitySystemHelper {
+ internal readonly struct WallValidationContext {
+  internal readonly System.Collections.Generic.IReadOnlyDictionary<int,RuntimeBuildingEntity> RuntimeBuildings;
+  internal WallValidationContext(System.Collections.Generic.IReadOnlyDictionary<int,RuntimeBuildingEntity> buildings) { RuntimeBuildings=buildings; }
+ }

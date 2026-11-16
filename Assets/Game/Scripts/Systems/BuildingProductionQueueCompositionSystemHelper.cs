@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
@@ -41,6 +42,10 @@ namespace Game.Runtime
             int TransportMaxConcurrent { get; set; }
             ProductionTransportMode TransportMode { get; set; }
             bool TransportRequiresAirportRunway { get; set; }
+            int RemainingQuantity { get; set; }
+            Entity ReceiptOwner { get; set; }
+            uint ReceiptId { get; set; }
+            FixedString64Bytes ReceiptAttempt { get; set; }
         }
 
         private readonly Dictionary<GameObject, ProductionTransportSettings> _productionTransportSettingsByPrefab = new();
@@ -55,6 +60,14 @@ namespace Game.Runtime
                 if (recipe != null && recipe.UseProducerGroundExit && recipe.UnitPrefab != null)
                     _producerGroundExitPrefabs.Add(recipe.UnitPrefab);
         }
+#if UNITY_EDITOR
+        internal GameObject[] CopyProducerGroundExitPrefabsForObservation()
+        {
+            var result = new GameObject[_producerGroundExitPrefabs.Count];
+            _producerGroundExitPrefabs.CopyTo(result);
+            return result;
+        }
+#endif
         private IReadOnlyList<GameObject> _cachedTransportUnitSpawnPrefabs;
         private IReadOnlyDictionary<string, GameObject> _cachedTransportUnitSpawnPrefabsByKey;
         private int _cachedTransportUnitSpawnPrefabCount = -1;
@@ -118,6 +131,44 @@ namespace Game.Runtime
             building.PendingProductions ??= new List<RuntimeBuildingEntity.PendingProduction>();
             building.ProducedUnits ??= new List<Entity>();
 
+            return TryQueuePlayerUnitFromBuildingShared(
+                context,
+                building,
+                productionIndex,
+                spawnUnitPrefab,
+                entityManager,
+                now,
+                building.PendingProductions,
+                AcquirePendingProduction,
+                ReleasePendingProduction,
+                (owner, index) => BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(owner.Definition, index),
+                out _);
+        }
+
+        // One presentation-free queue transaction is shared by the native UI
+        // command path and source-host paid recruitment. The callers supply only
+        // their actual pending DTO pool/list and authored recipe quantity.
+        internal bool TryQueuePlayerUnitFromBuildingShared<TPending>(
+            QueueContext context,
+            RuntimeBuildingEntity building,
+            int productionIndex,
+            GameObject spawnUnitPrefab,
+            EntityManager entityManager,
+            float now,
+            IList<TPending> pendingProductions,
+            System.Func<TPending> acquirePendingProduction,
+            System.Action<TPending> releasePendingProduction,
+            System.Func<RuntimeBuildingEntity, int, int> resolveProductionQuantity,
+            out TPending queuedProduction)
+            where TPending : class, IPendingProduction
+        {
+            queuedProduction = null;
+            if (building == null || spawnUnitPrefab == null || pendingProductions == null ||
+                acquirePendingProduction == null || releasePendingProduction == null || resolveProductionQuantity == null)
+                return false;
+
+            building.ProducedUnits ??= new List<Entity>();
+
             PruneProducedUnits(
                 building.ProducedUnits,
                 building.ProducedUnitSlots,
@@ -150,27 +201,91 @@ namespace Game.Runtime
             if (!SkirmishNativeProduction.TryReserve(entityManager, building, spawnUnitPrefab, out Entity receiptOwner, out uint receiptId))
                 return false;
 
-            Production queuedProduction = AcquirePendingProduction();
-            InitializePendingProduction(
-                queuedProduction,
-                productionIndex,
-                spawnUnitPrefab,
-                now,
-                ResolveProductionDurationSeconds(spawnUnitPrefab),
-                reservedProductionSlotIndex,
-                transportSettings.TransportPrefab,
-                transportSettings.ArrivalSeconds,
-                transportSettings.HoldForNextReadySeconds,
-                transportSettings.MaxConcurrent,
-                transportSettings.Mode,
-                transportSettings.RequiresAirportRunway);
-            queuedProduction.RemainingQuantity = BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(building.Definition, productionIndex);
-            queuedProduction.ReceiptOwner = receiptOwner;
-            queuedProduction.ReceiptId = receiptId;
-            queuedProduction.ReceiptAttempt = receiptId > 0 ? entityManager.GetComponentData<SkirmishExpandedSessionComponent>(receiptOwner).SessionId : default;
-            building.PendingProductions.Add(queuedProduction);
-            RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
-            return true;
+            TPending pending = null;
+            TPending[] priorPending = null;
+            float[] priorStartedAt = null;
+            float[] priorReadyAt = null;
+            try
+            {
+                pending = acquirePendingProduction();
+                if (pending == null)
+                    throw new InvalidOperationException("Actual pending-production pool returned null after payment reservation");
+                InitializePendingProduction(
+                    pending,
+                    productionIndex,
+                    spawnUnitPrefab,
+                    now,
+                    ResolveProductionDurationSeconds(spawnUnitPrefab),
+                    reservedProductionSlotIndex,
+                    transportSettings.TransportPrefab,
+                    transportSettings.ArrivalSeconds,
+                    transportSettings.HoldForNextReadySeconds,
+                    transportSettings.MaxConcurrent,
+                    transportSettings.Mode,
+                    transportSettings.RequiresAirportRunway);
+                pending.RemainingQuantity = Mathf.Max(1, resolveProductionQuantity(building, productionIndex));
+                pending.ReceiptOwner = receiptOwner;
+                pending.ReceiptId = receiptId;
+                pending.ReceiptAttempt = receiptId > 0 ? entityManager.GetComponentData<SkirmishExpandedSessionComponent>(receiptOwner).SessionId : default;
+                int priorCount = pendingProductions.Count;
+                priorPending = new TPending[priorCount];
+                priorStartedAt = new float[priorCount];
+                priorReadyAt = new float[priorCount];
+                for (int i = 0; i < priorCount; i++)
+                {
+                    priorPending[i] = pendingProductions[i];
+                    if (priorPending[i] == null) continue;
+                    priorStartedAt[i] = priorPending[i].StartedAt;
+                    priorReadyAt[i] = priorPending[i].ReadyAt;
+                }
+                pendingProductions.Add(pending);
+                RebuildPendingProductionTimeline(pendingProductions, now, preserveActiveProgress: true);
+                queuedProduction = pending;
+                return true;
+            }
+            catch (Exception transactionFailure)
+            {
+                Exception cleanupFailure = null;
+                try { RemovePendingReference(pendingProductions, pending); }
+                catch (Exception e) { cleanupFailure = e; }
+                if (priorPending != null)
+                    for (int i = 0; i < priorPending.Length; i++)
+                        if (priorPending[i] != null)
+                        {
+                            try
+                            {
+                                priorPending[i].StartedAt = priorStartedAt[i];
+                                priorPending[i].ReadyAt = priorReadyAt[i];
+                            }
+                            catch (Exception e)
+                            {
+                                cleanupFailure = cleanupFailure == null ? e : new AggregateException(cleanupFailure, e);
+                            }
+                        }
+                try { if (pending != null) releasePendingProduction(pending); }
+                catch (Exception e) { cleanupFailure = cleanupFailure == null ? e : new AggregateException(cleanupFailure, e); }
+
+                if (receiptId > 0 && !SkirmishProductionService.TryRefundFailedDispatch(
+                        entityManager, receiptOwner, receiptId, out var refundDecision))
+                    throw new InvalidOperationException(
+                        "Failed to roll back production reservation after queue transaction failure: " + refundDecision.Reason,
+                        transactionFailure);
+                if (cleanupFailure != null)
+                    throw new AggregateException("Production queue transaction failed and pending-pool cleanup also failed", transactionFailure, cleanupFailure);
+                throw;
+            }
+        }
+
+        private static void RemovePendingReference<TPending>(IList<TPending> pendingProductions, TPending pending)
+            where TPending : class
+        {
+            if (pendingProductions == null || pending == null) return;
+            for (int i = pendingProductions.Count - 1; i >= 0; i--)
+                if (ReferenceEquals(pendingProductions[i], pending))
+                {
+                    pendingProductions.RemoveAt(i);
+                    return;
+                }
         }
 
         internal bool HasAvailableProductionSlot(

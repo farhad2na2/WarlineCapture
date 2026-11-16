@@ -135,12 +135,12 @@ namespace Game.UI.Runtime
                     {
                         // Reissuing a smooth focus every frame restarts the pan. Let
                         // each camera request settle before following a moving hauler.
-                        float sinceFocus=Time.unscaledTime-supplyWatchFocusAt;
+                        float sinceFocus=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)-supplyWatchFocusAt;
                         if(!supplyWatchFocusSet || sinceFocus>3f &&
                            (Vector3.Distance(worldPoint,supplyWatchFocusTarget)>35f || sinceFocus>8f))
                         {
                             if(UiShellRuntimeGateway.TryFocusMissionTutorialTarget(supplyFocus.NeedsSelection))
-                            {supplyWatchFocusSet=true;supplyWatchFocusTarget=worldPoint;supplyWatchFocusAt=Time.unscaledTime;}
+                            {supplyWatchFocusSet=true;supplyWatchFocusTarget=worldPoint;supplyWatchFocusAt=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);}
                         }
                         supplyFocusPending=true;
                         kind=AriaPlayObservationKind.Waiting;target=0;drag=false;dragEnd=default;
@@ -177,12 +177,12 @@ namespace Game.UI.Runtime
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
                 {
-                    extractionWatchPointStableAt = Time.unscaledTime;
+                    extractionWatchPointStableAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
                     extractionWatchPoint = position;
                     extractionWatchDragEnd = dragEnd;
                 }
                 extractionWatchPointSet = true;
-                if (Time.unscaledTime - extractionWatchPointStableAt < .5f)
+                if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) - extractionWatchPointStableAt < .5f)
                 { kind = AriaPlayObservationKind.Waiting; target = 0; drag = false; dragEnd = default; }
             }
             else extractionWatchPointSet = false;
@@ -220,7 +220,7 @@ namespace Game.UI.Runtime
             if(_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int reserveFuel))
                 goalId=7600+_lastPanelModel.TutorialStep*8+Mathf.Clamp(reserveFuel/8,0,6);
             UiShellRuntimeGateway.PublishAriaObservation(new AriaPlayObservation(kind, target,
-                goalId, position, Time.frameCount, Time.unscaledTime,drag,dragEnd));
+                goalId, position, Time.frameCount, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime),drag,dragEnd));
             var state = UiShellRuntimeGateway.ReadAriaPlay();
             _embeddedTutorialView.PresentWatch(state, available);
             _embeddedTutorialView.RefreshContentLayout();
@@ -229,7 +229,7 @@ namespace Game.UI.Runtime
 
         private AriaPlayObservation ObserveOperationsWatch(UiOperationsMissionModel model)
         {
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             int goal = model.NextSite >= 0 ? 100 + model.NextSite : model.EvidenceCarried ? 300 : 200;
             if (model.Finished) return new AriaPlayObservation(AriaPlayObservationKind.Finished, 0, goal, default, Time.frameCount, now);
             if (watchOperations == null)

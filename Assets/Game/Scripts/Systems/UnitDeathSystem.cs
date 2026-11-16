@@ -124,11 +124,13 @@ namespace Game.Runtime
                     continue;
 
                 UnitDeathAnimationComponent deathState = em.GetComponentData<UnitDeathAnimationComponent>(entity);
-                if (deathState.PoseFrozen == 0)
+                if (UnitDeathLifecycleKernel.DecideFinalize(deathState.PoseFrozen, hasValidCamera, false) == DeathFinalizationAction.Freeze)
                 {
                     FreezeDeathPose(em, entity);
-                    deathState.TimeRemaining = 0f;
-                    deathState.PoseFrozen = 1;
+                    var frozen = new InfantryDeathState { TimeRemaining=deathState.TimeRemaining, PoseFrozen=deathState.PoseFrozen };
+                    UnitDeathLifecycleKernel.Freeze(ref frozen);
+                    deathState.TimeRemaining = frozen.TimeRemaining;
+                    deathState.PoseFrozen = frozen.PoseFrozen;
                     em.SetComponentData(entity, deathState);
                     continue;
                 }
@@ -137,10 +139,8 @@ namespace Game.Runtime
                     continue;
                 bool insideViewport = em.HasComponent<LocalTransform>(entity) &&
                                       IsInsideCameraViewport(camera, em.GetComponentData<LocalTransform>(entity).Position);
-                if (insideViewport)
-                {
+                if (UnitDeathLifecycleKernel.DecideFinalize(deathState.PoseFrozen, hasValidCamera, insideViewport) != DeathFinalizationAction.Remove)
                     continue;
-                }
 
                 FinalizeDeath(em, queueEntity, entity, now, respawnDelay);
             }
@@ -155,13 +155,13 @@ namespace Game.Runtime
 
             private void Execute(Entity entity, in UnitHealth health, in UnitAnimationSettings animationSettings)
             {
-                if (health.Current > 0)
+                if (!UnitDeathLifecycleKernel.TryBegin(health.Current, animationSettings.DeathAnimationSeconds, out float duration))
                     return;
 
                 Candidates.AddNoResize(new DeathBeginCandidate
                 {
                     Entity = entity,
-                    Duration = math.max(0.01f, animationSettings.DeathAnimationSeconds)
+                    Duration = duration
                 });
             }
         }
@@ -175,18 +175,11 @@ namespace Game.Runtime
 
             private void Execute(Entity entity, in UnitHealth health, ref UnitDeathAnimationComponent deathState)
             {
-                if (health.Current > 0)
-                    return;
-
-                if (deathState.PoseFrozen != 0)
-                {
-                    FinalizeEntities.AddNoResize(entity);
-                    return;
-                }
-
-                deathState.TimeRemaining = math.max(0f, deathState.TimeRemaining - DeltaTime);
-                if (deathState.TimeRemaining <= 0f)
-                    FinalizeEntities.AddNoResize(entity);
+                var shared = new InfantryDeathState { TimeRemaining=deathState.TimeRemaining, PoseFrozen=deathState.PoseFrozen };
+                bool ready = UnitDeathLifecycleKernel.Tick(health.Current, DeltaTime, ref shared);
+                deathState.TimeRemaining=shared.TimeRemaining;
+                deathState.PoseFrozen=shared.PoseFrozen;
+                if (ready) FinalizeEntities.AddNoResize(entity);
             }
         }
 
@@ -275,30 +268,43 @@ namespace Game.Runtime
 
         internal static void StripActiveUnitState(EntityManager em, Entity entity)
         {
-            if (em.HasComponent<SelectedUnitTag>(entity))
+            DeathStripFlags present=DeathStripFlags.None;
+            if(em.HasComponent<SelectedUnitTag>(entity)) present|=DeathStripFlags.Selected;
+            if(em.HasComponent<ManualMoveOrderTag>(entity)) present|=DeathStripFlags.ManualMove;
+            if(em.HasComponent<AutoWanderMoveTag>(entity)) present|=DeathStripFlags.AutoWander;
+            if(em.HasComponent<EngageTarget>(entity)) present|=DeathStripFlags.Engage;
+            if(em.HasComponent<RecentAttacker>(entity)) present|=DeathStripFlags.RecentAttacker;
+            if(em.HasComponent<RecentDamageHealthBarVisibility>(entity)) present|=DeathStripFlags.RecentDamageVisibility;
+            if(em.HasComponent<UnitPathFollow>(entity)) present|=DeathStripFlags.PathFollow;
+            if(em.HasComponent<UnitPathRange>(entity)) present|=DeathStripFlags.PathRange;
+            if(em.HasComponent<UnitPathRequest>(entity)) present|=DeathStripFlags.PathRequest;
+            if(em.HasComponent<UnitAttackAnimationComponent>(entity)) present|=DeathStripFlags.ResetAttackAnimation;
+            if(em.HasComponent<UnitMoveVisualComponent>(entity)) present|=DeathStripFlags.ResetMoveVisual;
+            var strip=UnitDeathLifecycleKernel.PlanStrip(present,em.HasBuffer<UnitAttachedLightSetupElement>(entity),em.HasComponent<UnitAttachedLightCleanupRequest>(entity));
+            if ((strip & DeathStripFlags.Selected) != 0)
                 em.RemoveComponent<SelectedUnitTag>(entity);
-            if (em.HasComponent<ManualMoveOrderTag>(entity))
+            if ((strip & DeathStripFlags.ManualMove) != 0)
                 em.RemoveComponent<ManualMoveOrderTag>(entity);
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
+            if ((strip & DeathStripFlags.AutoWander) != 0)
                 em.RemoveComponent<AutoWanderMoveTag>(entity);
-            if (em.HasComponent<EngageTarget>(entity))
+            if ((strip & DeathStripFlags.Engage) != 0)
                 em.RemoveComponent<EngageTarget>(entity);
-            if (em.HasComponent<RecentAttacker>(entity))
+            if ((strip & DeathStripFlags.RecentAttacker) != 0)
                 em.RemoveComponent<RecentAttacker>(entity);
-            if (em.HasComponent<RecentDamageHealthBarVisibility>(entity))
+            if ((strip & DeathStripFlags.RecentDamageVisibility) != 0)
                 em.RemoveComponent<RecentDamageHealthBarVisibility>(entity);
-            if (em.HasComponent<UnitPathFollow>(entity))
+            if ((strip & DeathStripFlags.PathFollow) != 0)
                 em.RemoveComponent<UnitPathFollow>(entity);
-            if (em.HasComponent<UnitPathRange>(entity))
+            if ((strip & DeathStripFlags.PathRange) != 0)
                 em.RemoveComponent<UnitPathRange>(entity);
-            if (em.HasComponent<UnitPathRequest>(entity))
+            if ((strip & DeathStripFlags.PathRequest) != 0)
                 em.RemoveComponent<UnitPathRequest>(entity);
-            if (em.HasComponent<UnitAttackAnimationComponent>(entity))
+            if ((strip & DeathStripFlags.ResetAttackAnimation) != 0)
                 em.SetComponentData(entity, new UnitAttackAnimationComponent { TimeRemaining = 0f });
-            if (em.HasComponent<UnitMoveVisualComponent>(entity))
+            if ((strip & DeathStripFlags.ResetMoveVisual) != 0)
                 em.SetComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
 
-            if (em.HasBuffer<UnitAttachedLightSetupElement>(entity) && !em.HasComponent<UnitAttachedLightCleanupRequest>(entity))
+            if ((strip & DeathStripFlags.RequestLightCleanup) != 0)
                 em.AddComponent<UnitAttachedLightCleanupRequest>(entity);
         }
 

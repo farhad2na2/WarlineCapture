@@ -2,7 +2,8 @@
     "name": "Game.UI.Contracts",
     "rootNamespace": "Game.UI.Contracts",
     "references": [
-        "Game.Tactical.Contracts"
+        "Game.Tactical.Contracts",
+        "Game.Skirmish.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

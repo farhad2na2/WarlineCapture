@@ -65,12 +65,12 @@ namespace Game.Runtime
                 // Keep player-order pathfinding priority; combat checks AttackMoveOrder
                 // to distinguish this interruptible advance from a plain Move.
             }
-            StampAcceptedExpandedGroups(em, accepted.AsArray(), actingFaction);
+            StampAcceptedExpandedGroups(em, accepted.AsArray(), actingFaction,cell,position);
             if(recordAcceptedCommand)AriaMoveExecutionEvidence.ObserveAttackMove(em,accepted.AsArray(),result);
             return TacticalCommandResult.Success();
         }
 
-        private static void StampAcceptedExpandedGroups(EntityManager em, NativeArray<Entity> accepted, byte faction)
+        private static void StampAcceptedExpandedGroups(EntityManager em, NativeArray<Entity> accepted, byte faction,int2 requestedCell,float3 requestedPosition)
         {
             // LastOrder is the last accepted group intent, including interruptible Attack Move.
             // Reuse the same meaning as precision TryAttackMember; never stamp the selected set
@@ -96,6 +96,7 @@ namespace Game.Runtime
                         var group = groups[i];
                         if (group.GroupId != groupId || group.FactionId != faction || group.AliveCount <= 0) continue;
                         group.LastOrder = SkirmishGroupOrderKind.Attack;
+                        SkirmishAcceptedArmyOrders.RecordAccepted(em,session,groupId,SkirmishAcceptedArmyOrderArgumentKind.Terrain,requestedCell,requestedPosition,Entity.Null);
                         groups[i] = group;
                         break;
                     }

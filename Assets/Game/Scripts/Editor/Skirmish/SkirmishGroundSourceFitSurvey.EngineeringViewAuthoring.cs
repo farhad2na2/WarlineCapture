@@ -14,25 +14,33 @@ namespace Game.Editor
     {
         public static bool TryAttachRefinementLogicalBinding(SkirmishScenarioDefinitionConfig definition,
             SkirmishMissionLogicalVariant[] variants,IReadOnlyList<SkirmishSetupMatrixRow> matrix,
-            out SkirmishMissionLogicalBindingConfig binding,out string error)
+            out SkirmishMissionLogicalBindingConfig binding,out string error,int seed=1)
         {
-            binding=null;error="Exact disposable definition and all three measured logical variants required";
+            binding=null;error="Exact disposable definition and a matching declared tuple or complete measured variants required";
             if(definition==null||definition.ObjectiveConfig==null||definition.CampaignMap==null||definition.CampaignMap.SourceSceneReference==null||definition.MapLayout==null||variants==null||
-                variants.Length!=3||variants.Any(v=>v==null)||!variants.Select(v=>v.Size).OrderBy(v=>(byte)v).SequenceEqual(
-                    new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}.OrderBy(v=>(byte)v)))return false;
+                variants.Any(v=>v==null))return false;
+            bool three=variants.Length==3&&variants.Select(v=>v.Size).OrderBy(v=>(byte)v).SequenceEqual(
+                new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}.OrderBy(v=>(byte)v));
+            var required=(from size in new[]{SkirmishSizeId.Standard,SkirmishSizeId.War,SkirmishSizeId.LargeWar}
+                from difficulty in new[]{SkirmishDifficultyId.Recruit,SkirmishDifficultyId.Regular,SkirmishDifficultyId.Veteran,SkirmishDifficultyId.Commander}
+                select ((byte)size<<8)|(byte)difficulty).OrderBy(x=>x).ToArray();
+            bool twelve=variants.Length==12&&variants.Select(v=>((byte)v.Size<<8)|(byte)v.Difficulty).OrderBy(x=>x).SequenceEqual(required);
+            bool singleDeclared=SkirmishStructureInstanceBinding.AllowsSingleDeclaredRefinement(definition.MapLayout,variants);
+            if(!three&&!twelve&&!singleDeclared)return false;
             var source=definition.CampaignMap;var prior=definition.MissionLogicalBinding;
             var candidate=ScriptableObject.CreateInstance<SkirmishMissionLogicalBindingConfig>();
             candidate.CatalogId=definition.CatalogId;candidate.DefinitionId=definition.DefinitionId;candidate.DefinitionVersion=definition.ContentVersion;
             candidate.ObjectiveKind=definition.ObjectiveConfig.Kind;candidate.SourceOperationMapId=source.OperationMapId;
             candidate.SourceSceneGuid=source.SourceSceneReference.AssetGUID;candidate.SourceContentHash=source.ContentHash;
-            candidate.SourceSemanticFingerprint=SkirmishMissionLogicalBindingCompiler.SourceFingerprint(source);
+            candidate.ValueFormat=definition.MapLayout.BindingValueFormat;
+            candidate.SourceSemanticFingerprint=SkirmishMissionLogicalBindingCompiler.SourceFingerprint(source,candidate.ValueFormat);
             candidate.LayoutId=definition.MapLayout.LayoutId;
             candidate.ReviewedLayoutSemanticFingerprint=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout);
             candidate.Variants=variants;definition.BindMissionLogicalBinding(candidate);
             try
             {
                 foreach(var variant in variants)
-                    if(!SkirmishSetupCompiler.TryCompile(definition,variant.Difficulty,variant.Size,1,
+                    if(!SkirmishSetupCompiler.TryCompile(definition,variant.Difficulty,variant.Size,seed,
                         new SkirmishContentManifest{RequiredFeatureIds=definition.RequiredFeatureIds},matrix,out _,out var reasons))
                     {error=string.Join(";",reasons);return false;}
                 binding=candidate;error=null;return true;
@@ -51,33 +59,9 @@ namespace Game.Editor
             EntityManager em,SkirmishObjectiveAreaConfig measuredAreas,
             IReadOnlyDictionary<SkirmishRoleKind,float> authoredAircraftMinimumViewportHeights)
         {
-            Require(definition!=null&&inputs!=null&&inputs.CatalogId==definition.CatalogId&&
-                inputs.DefinitionId==definition.DefinitionId&&inputs.LayoutSemanticFingerprint==
-                SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(definition.MapLayout),"Exact current compiled authoring inputs required");
-            var source=definition.CampaignMap;
-            Require(source!=null&&inputs.SourceSemanticFingerprint==SkirmishMissionLogicalBindingCompiler.SourceFingerprint(source)&&
-                inputs.SourceMinimumElevation==source.SurfaceMetadata.MinimumHeight&&inputs.SourceMaximumElevation==source.SurfaceMetadata.MaximumHeight,
-                "Exact source/elevation pins required");
-            var view=ScriptableObject.CreateInstance<SkirmishMissionViewProfile>();
+            var view=SkirmishEngineeringViewProfileFactory.Create(definition,inputs);
             try
             {
-                view.CatalogId=definition.CatalogId;view.DefinitionId=definition.DefinitionId;view.DefinitionVersion=definition.ContentVersion;
-                view.AuthoredNonBaseAssault=inputs.ObjectiveKind!=SkirmishObjectiveKind.BaseAssault;
-                view.AuthoredGenericBaseAssault=!view.AuthoredNonBaseAssault;view.ObjectiveKind=inputs.ObjectiveKind;
-                view.CampaignSourceContentHash=source.ContentHash;view.LayoutContentHash=definition.MapLayout.ContentHash;
-                view.GroundReferenceY=inputs.SourceMinimumElevation;
-                // Initial source-relative engineering intent, not a universal
-                // accepted distance. Actual actor elevation is projected by the
-                // existing role-focus owner; all normal zoom PNG gates remain.
-                view.MinHeight=view.GroundReferenceY+12;view.NormalHeight=view.GroundReferenceY+18;
-                view.MaxHeight=view.GroundReferenceY+20;view.BuildHeight=view.MaxHeight;
-                view.Pitch=65;view.Yaw=35;view.NormalFieldOfView=46;view.BuildFieldOfView=50;
-                view.MaximumGroundCenterSlantDistance=32;view.InfantryMinimumViewportHeight=.03f;
-                view.PlaneMaximumViewportDimension=.45f;
-                view.AircraftPitch=50;view.AircraftFieldOfView=60;
-                // Positive floor only: role-specific actual-bounds/near-clip fit
-                // determines usable aircraft distance, not an inherited80m clamp.
-                view.AircraftMinimumDistance=1;view.AircraftMaximumDistance=300;
                 Require(view.IsValid,"Engineering view invalid for actual source height; explicit per-source tuning required");
                 var variant=new SkirmishMissionLogicalVariant{Size=inputs.Size,Difficulty=inputs.Difficulty,Areas=measuredAreas,View=view,
                     SourceMinimumElevation=inputs.SourceMinimumElevation,SourceMaximumElevation=inputs.SourceMaximumElevation,

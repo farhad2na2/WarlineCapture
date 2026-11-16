@@ -37,7 +37,7 @@ namespace Game.Runtime
         {
             get
             {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || WARLINE_VALIDATION_PLAYER
                 string validation = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
                 if (!string.IsNullOrWhiteSpace(validation)) return Path.Combine(validation, "skirmish-s005-native.json");
 #endif

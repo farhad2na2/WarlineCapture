@@ -61,6 +61,12 @@ namespace Game.Runtime
 
             BuildingResourceStorageComponent storage =
                 entityManager.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+#if UNITY_EDITOR
+            bool continuousSyncActive = S002PhysicalStartupObservation.ContinuousSync != null && S002PhysicalStartupObservation.ContinuousRead(40);
+            var continuousBeforeStorage = continuousSyncActive ? storage : default;
+            var continuousProfile = default(BuildingResourceProductionProfileComponent);
+            bool continuousHasProfile = false;
+#endif
             storage.RuntimeBuildingId = building.Id;
             storage.OwnerFactionId = building.OwnerFactionId;
             storage.OilStorageCapacity = Math.Max(0, building.OilStorageCapacity);
@@ -70,13 +76,22 @@ namespace Game.Runtime
             if (entityManager.HasComponent<BuildingResourceProductionProfileComponent>(building.CombatEntity))
             {
                 var profile = entityManager.GetComponentData<BuildingResourceProductionProfileComponent>(building.CombatEntity);
+#if UNITY_EDITOR
+                if (continuousSyncActive) { continuousProfile = profile; continuousHasProfile = true; }
+#endif
                 storage.OilBarrelsPerDay = profile.OilPerPeriod;
                 storage.FuelBarrelsPerDay = profile.FuelPerPeriod;
             }
+#if UNITY_EDITOR
+            if (continuousSyncActive) S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousSync, new S002PhysicalStartupObservation.ContinuousSyncFacts { Manager = entityManager, Building = building, Before = continuousBeforeStorage, Prepared = storage, Profile = continuousProfile, HasProfile = continuousHasProfile });
+#endif
             entityManager.SetComponentData(building.CombatEntity, storage);
 
             building.StoredOilBarrels = Math.Max(0f, storage.StoredOilBarrels);
             building.StoredFuelBarrels = Math.Max(0f, storage.StoredFuelBarrels);
+#if UNITY_EDITOR
+            if (continuousSyncActive) S002PhysicalStartupObservation.ContinuousSend(S002PhysicalStartupObservation.ContinuousSync, new S002PhysicalStartupObservation.ContinuousSyncFacts { Manager = entityManager, Building = building, Before = continuousBeforeStorage, Prepared = storage, Profile = continuousProfile, HasProfile = continuousHasProfile, After = true });
+#endif
         }
     }
 }

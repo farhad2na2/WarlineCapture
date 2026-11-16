@@ -349,18 +349,23 @@ namespace Game.Runtime
             RuntimeGridBlockerPresentationSystemHelper runtimeGridBlockers,
             RuntimeDecorationSpawnerPresentationSystemHelper runtimeDecorations)
         {
-            if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
+            if (!gameplayInitialized || !GameplayStartCompletionPredicate.GameplayStartRequested(
+                    gameplayInitialized, runtimeGameplayStateSystem.PlayRequested))
                 return false;
-            if (!buildingRuntimeUpdateContext.StartupComplete)
+            if (!GameplayStartCompletionPredicate.BuildingStartupComplete(
+                    buildingRuntimeUpdateContext.StartupComplete))
                 return false;
-            if (runtimeCity != null && !runtimeCity.HasSpawned)
+            if (!GameplayStartCompletionPredicate.OptionalRuntimeOwnerReady(
+                    runtimeCity != null, runtimeCity != null && runtimeCity.HasSpawned))
                 return false;
-            if (runtimeGridBlockers != null && !runtimeGridBlockers.HasSpawned)
+            if (!GameplayStartCompletionPredicate.OptionalRuntimeOwnerReady(
+                    runtimeGridBlockers != null, runtimeGridBlockers != null && runtimeGridBlockers.HasSpawned))
                 return false;
-            if (runtimeDecorations != null && !runtimeDecorations.HasSpawned)
+            if (!GameplayStartCompletionPredicate.OptionalRuntimeOwnerReady(
+                    runtimeDecorations != null, runtimeDecorations != null && runtimeDecorations.HasSpawned))
                 return false;
-
-            if (runtimeWorld == null || !runtimeWorld.IsCreated)
+            if (!GameplayStartCompletionPredicate.RuntimeWorldAvailable(
+                    runtimeWorld != null, runtimeWorld != null && runtimeWorld.IsCreated))
                 return false;
 
             EnsureInitialSpawnQueries(runtimeWorld.EntityManager);
@@ -368,7 +373,8 @@ namespace Game.Runtime
             int totalConfigCount = _initialSpawnConfigQuery.CalculateEntityCount();
             int initializedConfigCount = _initialSpawnInitializedQuery.CalculateEntityCount();
 
-            return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
+            return GameplayStartCompletionPredicate.InitialSpawnConfigsComplete(
+                totalConfigCount, initializedConfigCount);
         }
 
         private bool ShouldFailOpenLoadingGate(

@@ -16,6 +16,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public float DefenseDeadline, DefenseReadyAt, RecruitUnavailableAt, NextRecruitAt, ObserveUntil, LastProgressAt, EnemyHealth, PlayerHealth, ForceHealth, RegroupAt, GroupReadyAt, OpeningUntil, MapNavigationReadyAt, MapOpenedAt;
         public byte AdvanceNavigation, TargetPending, RecruitDrawerSeen, AssaultStarted, ExpandedRetries;
         public byte PagedToAssault, AssaultSelecting, AssaultIssued, StructureOrdered;
+        public Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoal ObservedAssaultGoal;
         // Fixed capacity: excess public groups fail closed; no page-bit identity collisions.
         public Unity.Collections.FixedList512Bytes<uint> PrecisionAcceptedGroups, PrecisionExhaustedGroups;
         public byte PrecisionStage, PrecisionAttempts;

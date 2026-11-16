@@ -18,9 +18,9 @@ namespace Game.UI.Runtime
             // Inner UI consumes Back; only the unobstructed root delegates to Android.
             Input.backButtonLeavesApp=CanLeaveFromRoot();
 #endif
-            if(Keyboard.current?.escapeKey.wasPressedThisFrame==true&&Time.unscaledTime>=nextBack)
+            if(Keyboard.current?.escapeKey.wasPressedThisFrame==true&&Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)>=nextBack)
             {
-                nextBack=Time.unscaledTime+.25f;
+                nextBack=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+.25f;
                 HandleBack();
             }
         }

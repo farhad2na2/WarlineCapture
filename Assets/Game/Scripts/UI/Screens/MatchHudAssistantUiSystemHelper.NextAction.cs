@@ -156,7 +156,7 @@ namespace Game.UI.Runtime
             {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
             if(target.NeedsSelection)
             {
-                _marketDestinationFocusReadyAt=Time.unscaledTime+.75f;
+                _marketDestinationFocusReadyAt=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+.75f;
                 ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;
             }
             if(target.Moving||target.ExecutingAttack){WaitForTutorialArrival();return;}
@@ -172,15 +172,15 @@ namespace Game.UI.Runtime
                 // the player receive a visible target; camera focus never submits an order.
                 if(!UiShellRuntimeGateway.IsRouteReopenedGuideContext() &&
                    !_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
-                   Time.unscaledTime>=_marketDestinationFocusReadyAt &&
+                   Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)>=_marketDestinationFocusReadyAt &&
                    UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false))
                 {
-                    _tutorialFocusPendingUntil=Time.unscaledTime+2f;
+                    _tutorialFocusPendingUntil=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+2f;
                     _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
                     // Let the protected-route camera finish its pan before another
                     // request. Reissuing every frame leaves a long route off-screen.
                     if(UiShellRuntimeGateway.IsPowerRelayGuideContext())
-                        _marketDestinationFocusReadyAt=Time.unscaledTime+3f;
+                        _marketDestinationFocusReadyAt=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+3f;
                 }
             }
             else Cue(button,mode==TacticalCommandMode.Attack?"ui.aria.press_attack":"ui.aria.press_move");
@@ -246,7 +246,7 @@ namespace Game.UI.Runtime
                 }
                 _embeddedTutorialView.SetNormalSelectionInstruction(true,true);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
-                {_tutorialFocusPendingUntil=Time.unscaledTime+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+                {_tutorialFocusPendingUntil=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+((UiShellRuntimeGateway.IsGroundedSignalGuideContext() || UiShellRuntimeGateway.IsArmorBreakGuideContext() || UiShellRuntimeGateway.IsCitywideAlertGuideContext() || UiShellRuntimeGateway.IsTrustUnderFireGuideContext() || UiShellRuntimeGateway.IsNetworkCollapseGuideContext() || UiShellRuntimeGateway.IsCommandNodeGuideContext() || UiShellRuntimeGateway.IsLastCorridorGuideContext())?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
             else
             {

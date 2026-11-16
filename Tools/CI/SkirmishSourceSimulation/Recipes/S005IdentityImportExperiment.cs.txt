@@ -1,0 +1,89 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Game.Components;
+using Game.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+
+// Private to this diagnostic executable. Positive values are local table handles,
+// not Unity instance IDs; the ordinary host's Value getter remains fail-closed.
+internal static class S005IdentityHandles
+{
+    static Dictionary<string,string> bindings;
+    static Dictionary<string,int> handles;
+    static void Need(bool ok,string message) { if (!ok) throw new InvalidDataException(message); }
+    internal static void Bind(JObject source)
+    {
+        var refs=source["reference_bindings"] as JArray; var identities=source["identities"] as JObject;
+        var ledger=source["original_unsupported_values"] as JArray;
+        Need(refs!=null && identities!=null && ledger!=null && refs.Count==29 && ledger.Count==29,
+             "Exact S005 captured reference domain required");
+        var paths=new HashSet<string>(ledger.Select(x=>(string)x["path"]),StringComparer.Ordinal);
+        Need(paths.Count==29,"Unique original reference paths required");
+        var nextBindings=new Dictionary<string,string>(StringComparer.Ordinal);
+        foreach(JObject row in refs)
+        {
+            string path=(string)row["path"], key=(string)row["identity_sha256"];
+            Need(path!=null && key!=null && key.Length==64 && paths.Contains(path) && !nextBindings.ContainsKey(path) && identities[key] is JObject,
+                "Bound source identity required for every path");
+            nextBindings.Add(path,key);
+        }
+        Need(nextBindings.Count==paths.Count,"Missing reference path");
+        var nextHandles=new Dictionary<string,int>(StringComparer.Ordinal); int next=1;
+        foreach(var p in identities.Properties().OrderBy(p=>p.Name,StringComparer.Ordinal))
+        {
+            var value=p.Value as JObject; string kind=(string)value?["codec"];
+            Need(value!=null && p.Name.Length==64 && (kind=="null-v1" || (kind=="source-asset-reference-v1" &&
+                (string)value["type"]=="UnityEngine.GameObject" && !string.IsNullOrEmpty((string)value["guid"]) &&
+                !string.IsNullOrEmpty((string)value["path"]))),"Unsupported source object identity");
+            nextHandles.Add(p.Name,kind=="null-v1"?0:next++);
+        }
+        bindings=nextBindings;handles=nextHandles;
+    }
+    internal static int Resolve(string path,string key)
+    {
+        Need(bindings!=null && handles!=null && bindings.TryGetValue(path,out var expected) && expected==key && handles.ContainsKey(key),
+            "Unbound diagnostic object identity");
+        return handles[key];
+    }
+}
+
+internal static class S005IdentityImportExperiment
+{
+    static void Need(bool ok,string message) { if(!ok) throw new InvalidDataException(message); }
+    static int Main(string[] args)
+    {
+        try
+        {
+            Need(args.Length==1,"Projection path required"); string path=Path.GetFullPath(args[0]);
+            var doc=JObject.Parse(File.ReadAllText(path)); var keys=((JArray)doc["requested_prefab_keys"]).Values<string>().ToArray();
+            var bad=(JObject)doc.DeepClone(); ((JArray)bad["reference_bindings"])[0]["identity_sha256"]=new string('0',64);
+            bool rejected=false; try { GeneratedReferenceTemplateImporter.Preflight(bad,Path.GetDirectoryName(path),keys); }
+            catch(InvalidDataException) { rejected=true; } Need(rejected,"Foreign reference must fail before allocation");
+            var pre=GeneratedReferenceTemplateImporter.Preflight(doc,Path.GetDirectoryName(path),keys);
+            Need((bool?)pre["world_allocated"]==false && (int?)pre["omitted_presentation_components"]==0,"Component-preserving preflight required");
+            int next=500000;var em=new EntityManager { LogicalAllocatorAdmitted=true };
+            em.AllocateLogicalIdentity=()=>new Entity { Index=next++,Version=1 };
+            var result=GeneratedReferenceTemplateImporter.Import(em,doc,Path.GetDirectoryName(path),keys);
+            Need(result.Prefabs.Count==16 && result.OmittedPresentationComponents==0,"Complete diagnostic import required");
+            int muzzle=0,impact=0,air=0,ground=0;
+            foreach(var entity in result.SourceToLogical.Values)
+            {
+                if(em.HasComponent<UnitMuzzleFlashVfxReference>(entity)) muzzle++;
+                if(em.HasComponent<UnitAttackImpactVfxReference>(entity)) impact++;
+                if(em.HasComponent<AirMissileLauncherVfxReferenceComponent>(entity)) air++;
+                if(em.HasComponent<GroundMissileLauncherVfxReferenceComponent>(entity)) ground++;
+            }
+            Need(muzzle==8 && impact==10 && air==1 && ground==1,"Captured component presence changed");
+            Console.WriteLine(new JObject { ["status"]="ImportedDiagnosticOnly",["roots"]=result.Prefabs.Count,
+                ["entities"]=result.ImportedEntities,["muzzle_components"]=muzzle,["impact_components"]=impact,
+                ["air_components"]=air,["ground_components"]=ground,["omitted_components"]=result.OmittedPresentationComponents,
+                ["foreign_reference_rejected_before_allocation"]=true,["native_object_values_resolved"]=false,
+                ["combat_owner_parity"]=false,["mission_ready"]=false }.ToString(Formatting.None)); return 0;
+        }
+        catch(Exception e) { Console.Error.WriteLine("[S005IdentityImportExperiment] "+e);return 1; }
+    }
+}

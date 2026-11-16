@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
 using Game.Configs;
@@ -16,6 +17,95 @@ namespace Game.Runtime
         public delegate void ObjectAction(UnityEngine.Object target);
         public delegate bool TryGetBuildingDefinitionMetadataDelegate(GameObject prefab, out BuildingDefinitionMetadata metadata);
         public delegate bool TryGetUnitDefinitionMetadataDelegate(GameObject prefab, out UnitDefinitionMetadata metadata);
+
+        // Shared request projection used by the original legacy spawner and
+        // headless source hosts. Placement and registration remain owned by the
+        // existing BuildingRuntimeSpawn pipeline.
+        internal static BuildingRuntimeSpawnRequest CreateConfiguredInitialBuildingRequest(
+            int requestId,
+            Entity configEntity,
+            byte factionId,
+            string buildingId,
+            int2 origin,
+            bool exactSkirmishSite)
+        {
+            if (requestId <= 0) throw new System.ArgumentOutOfRangeException(nameof(requestId));
+            if (configEntity == Entity.Null) throw new System.ArgumentException("Legacy spawn plan entity required", nameof(configEntity));
+            if (string.IsNullOrWhiteSpace(buildingId)) throw new System.ArgumentException("Configured building key required", nameof(buildingId));
+
+            return new BuildingRuntimeSpawnRequest
+            {
+                RequestId = requestId,
+                RequestKind = BuildingRuntimeSpawnRequest.KindBuilding,
+                FactionId = factionId,
+                HasOwnerFaction = 1,
+                BuildingId = new FixedString128Bytes(NormalizeSpawnableKey(buildingId)),
+                PreferredOrigin = origin,
+                EndOrigin = default,
+                RotateVertical = 0,
+                RequirePreferredOrigin = exactSkirmishSite ? (byte)1 : (byte)0,
+                AllowExistingWallOverlap = 0,
+                Status = BuildingRuntimeSpawnRequest.Pending,
+                PlanEntity = configEntity,
+                EntryIndex = 0
+            };
+        }
+
+        // Shared policy for projecting legacy InitialUnits building rows into the
+        // existing runtime spawn request buffer. The caller supplies the match
+        // exact-site state and owns any warning/log writer.
+        internal static bool EnqueueConfiguredInitialBuildingRequests(
+            EntityManager em,
+            Entity boundaryEntity,
+            Entity configEntity,
+            NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+            bool exactSkirmishSite,
+            System.Action<string> warnMissingFaction,
+            out int requestCount)
+        {
+            requestCount = 0;
+            if (boundaryEntity == Entity.Null)
+                return false;
+
+            DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawns =
+                em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
+            DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+                em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+            for (int buildingIndex = 0; buildingIndex < buildingSpawns.Length; buildingIndex++)
+            {
+                InitialUnitsFactionBuildingSpawnEntry building = buildingSpawns[buildingIndex];
+                string buildingId = building.PrefabLookupKey.ToString();
+                if (string.IsNullOrWhiteSpace(buildingId))
+                    continue;
+
+                int2 factionSpawnCell = default;
+                bool foundFaction = false;
+                for (int factionIndex = 0; factionIndex < factionSpawns.Length; factionIndex++)
+                {
+                    if (factionSpawns[factionIndex].FactionId != building.FactionId)
+                        continue;
+                    factionSpawnCell = factionSpawns[factionIndex].SpawnCell;
+                    foundFaction = true;
+                    break;
+                }
+                if (!foundFaction)
+                {
+                    warnMissingFaction?.Invoke($"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} buildingId={buildingId}");
+                    continue;
+                }
+
+                requests.Add(CreateConfiguredInitialBuildingRequest(
+                    requests.Length + 1,
+                    configEntity,
+                    building.FactionId,
+                    buildingId,
+                    factionSpawnCell + building.OriginOffset,
+                    exactSkirmishSite));
+                requestCount++;
+            }
+
+            return true;
+        }
 
         public struct BuildingDefinitionMetadata
         {
@@ -381,11 +471,24 @@ namespace Game.Runtime
                 null);
             productionSlots = ResolveProductionRecipes(prefab, productionSlots);
 
-            return new BuildingDefinition
+            Vector2Int runtimeFootprint = ResolveRuntimeBuildingFootprint(
+                PreserveCitywideConfiguredFootprint(prefab),
+                prefab != null && prefab.name.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0,
+                metadata.HasVisualFootprint,
+                metadata.VisualFootprint,
+                metadata.HasDefinitionMetadata,
+                metadata.DefinitionMetadata.FootprintCells,
+                fallbackFootprint);
+            int runtimeMaxHealth = metadata.HasDefinitionMetadata ? Mathf.Max(1, metadata.DefinitionMetadata.MaxHealth) : Mathf.Max(1, fallbackMaxHealth);
+            int runtimeCreditsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.Price) : 0;
+            int runtimeMaterialsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.MaterialsCost) : 0;
+            float runtimeConstructionDuration = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.ProductionDurationSeconds) : 30f;
+
+            var definition = new BuildingDefinition
             {
                 DisplayName = metadata.HasDefinitionMetadata && !string.IsNullOrWhiteSpace(metadata.DefinitionMetadata.DisplayName) ? metadata.DefinitionMetadata.DisplayName : fallbackDisplayName,
                 Description = metadata.HasDefinitionMetadata && !string.IsNullOrWhiteSpace(metadata.DefinitionMetadata.Description) ? metadata.DefinitionMetadata.Description : fallbackDescription,
-                MaxHealth = metadata.HasDefinitionMetadata ? Mathf.Max(1, metadata.DefinitionMetadata.MaxHealth) : Mathf.Max(1, fallbackMaxHealth),
+                MaxHealth = runtimeMaxHealth,
                 ProductionSlots = productionSlots,
                 SpawnUnitPrefab = GetProductionPrefab(productionSlots, 0),
                 SecondarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 1),
@@ -395,16 +498,12 @@ namespace Game.Runtime
                 DestroyedVisualPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.DestroyedVisualPrefab : null,
                 SelectionPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.SelectionPortraitSprite : null,
                 CardPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.CardPortraitSprite : null,
-                FootprintCells = PreserveCitywideConfiguredFootprint(prefab)
-                    ? Vector2Int.Max(metadata.HasVisualFootprint ? metadata.VisualFootprint : Vector2Int.one, metadata.HasDefinitionMetadata ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells) : fallbackFootprint)
-                    : metadata.HasVisualFootprint && prefab.name.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) < 0
-                    ? metadata.VisualFootprint : Vector2Int.Max(metadata.HasVisualFootprint ? metadata.VisualFootprint : Vector2Int.one,
-                        metadata.HasDefinitionMetadata ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells) : fallbackFootprint),
+                FootprintCells = runtimeFootprint,
                 Role = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.Role : BuildingRole.None,
                 IsWall = metadata.HasDefinitionMetadata && metadata.DefinitionMetadata.IsWall,
-                CreditsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.Price) : 0,
-                MaterialsCost = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.MaterialsCost) : 0,
-                ProductionDurationSeconds = metadata.HasDefinitionMetadata ? Mathf.Max(0.01f, metadata.DefinitionMetadata.ProductionDurationSeconds) : 30f,
+                CreditsCost = runtimeCreditsCost,
+                MaterialsCost = runtimeMaterialsCost,
+                ProductionDurationSeconds = runtimeConstructionDuration,
                 OilBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.OilBarrelsPerDay) : 0f,
                 OilStorageCapacity = metadata.HasDefinitionMetadata ? Mathf.Max(0, metadata.DefinitionMetadata.OilStorageCapacity) : 0,
                 FuelBarrelsPerDay = metadata.HasDefinitionMetadata ? Mathf.Max(0f, metadata.DefinitionMetadata.FuelBarrelsPerDay) : 0f,
@@ -444,6 +543,47 @@ namespace Game.Runtime
                 RunwayLocalRotation = metadata.RunwayLocalRotation,
                 RunwayHalfExtents = metadata.RunwayHalfExtents
             };
+
+            // Keep the Barrack's native factory as the only policy owner. The
+            // shared projection receives its already-resolved values and feeds
+            // those same values back into the runtime definition consumed by
+            // placement/construction. Unit recipes and mission overlays stay in
+            // their original ProductionSlots owner.
+            if (prefab != null && string.Equals(prefab.name, "Building_Barrack", System.StringComparison.Ordinal))
+            {
+                BuildingProducerCoreProjection core = BuildingProducerCoreProjection.FromFactoryValues(
+                    prefab.name,
+                    new int2(runtimeFootprint.x, runtimeFootprint.y),
+                    runtimeCreditsCost,
+                    runtimeMaterialsCost,
+                    runtimeMaxHealth,
+                    runtimeConstructionDuration);
+                definition.FootprintCells = new Vector2Int(core.FootprintCells.x, core.FootprintCells.y);
+                definition.CreditsCost = core.CreditsCost;
+                definition.MaterialsCost = core.MaterialsCost;
+                definition.MaxHealth = core.MaxHealth;
+                definition.ProductionDurationSeconds = core.ConstructionDurationSeconds;
+            }
+
+            return definition;
+        }
+
+        internal static Vector2Int ResolveRuntimeBuildingFootprint(
+            bool preserveCitywideConfiguredFootprint,
+            bool isRoadBarrier,
+            bool hasVisualFootprint,
+            Vector2Int visualFootprint,
+            bool hasDefinitionMetadata,
+            Vector2Int configuredFootprint,
+            Vector2Int fallbackFootprint)
+        {
+            return preserveCitywideConfiguredFootprint
+                ? Vector2Int.Max(hasVisualFootprint ? visualFootprint : Vector2Int.one,
+                    hasDefinitionMetadata ? NormalizeFootprint(configuredFootprint) : fallbackFootprint)
+                : hasVisualFootprint && !isRoadBarrier
+                    ? visualFootprint
+                    : Vector2Int.Max(hasVisualFootprint ? visualFootprint : Vector2Int.one,
+                        hasDefinitionMetadata ? NormalizeFootprint(configuredFootprint) : fallbackFootprint);
         }
 
         public BuildingDefinition CreateDefinition(

@@ -1,0 +1,72 @@
+// Source-only binding. This does not establish native startup or mission readiness.
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using Game.Configs;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+
+namespace Game.Runtime
+{
+    internal static class S073AIStartupSourceBinding
+    {
+        private const string Enemy = "Assets/Game/Configs/Skirmish/Enemy.asset";
+        private const string Player = "Assets/Game/Configs/Skirmish/Player.asset";
+        private const string Plan = "Assets/Game/Configs/Skirmish/Plan.asset";
+
+        internal static AIStartupSystem.Result Initialize(EntityManager em, string repositoryRoot,
+            string graphPath, string graphSha256, AISettingsSnapshot settings,
+            AIStartupSystem.TryResolveFactionSpawnCell resolveSpawnCell, double elapsedTime)
+        {
+            if (em == null || em.World == null || !em.World.IsCreated || resolveSpawnCell == null ||
+                double.IsNaN(elapsedTime) || double.IsInfinity(elapsedTime) || elapsedTime < 0)
+                throw new InvalidDataException("Live source world, explicit spawn resolver and finite elapsed time required");
+            string root = Path.GetFullPath(repositoryRoot).TrimEnd(Path.DirectorySeparatorChar) + Path.DirectorySeparatorChar;
+            using var sha = SHA256.Create();
+            Func<string, string> digest = path => BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(path))).Replace("-", "").ToLowerInvariant();
+            if (graphSha256 == null || graphSha256.Length != 64 || digest(graphPath) != graphSha256)
+                throw new InvalidDataException("Exact AI source graph digest required");
+            var graph = JObject.Parse(File.ReadAllText(graphPath));
+            if ((string)graph["authority"] != "AuthoredConfigAssets" || (int?)graph["schema_version"] != 1 ||
+                (bool?)graph["compiled_setup"] != false || (bool?)graph["world_initialized"] != false ||
+                (bool?)graph["native_world_state_used"] != false ||
+                (string)graph["preset_path"] != "Assets/Game/Resources/SkirmishIndustrialBasin.asset")
+                throw new InvalidDataException("Unmodified authored S073 AI graph required");
+            var pins = graph["source_pins"] as JObject ?? throw new InvalidDataException("Source pins required");
+            string[] requiredPins = {
+                "Assets/Game/Resources/SkirmishIndustrialBasin.asset", "Assets/Game/Resources/SkirmishIndustrialBasin.asset.meta",
+                Enemy, Enemy + ".meta", Player, Player + ".meta", Plan, Plan + ".meta",
+                "Assets/Game/Scripts/Configs/SkirmishPresetConfig.cs.meta",
+                "Assets/Game/Scripts/Configs/GameplayConfigModels.cs.meta",
+                "Assets/Game/Scripts/Configs/AIPlanEntryStartupConfig.cs.meta",
+                "Tools/CI/SkirmishSourceSimulation/Recipes/selected_operation_map/helpers/read_source_configs.rb",
+                "Tools/CI/SkirmishSourceSimulation/Fixtures/S073/retained/provenance.json"
+            };
+            if (requiredPins.Any(relative => pins[Path.GetFullPath(Path.Combine(root, relative))] == null))
+                throw new InvalidDataException("Complete authored AI input pins required");
+            foreach (var pin in pins.Properties())
+            {
+                string path = Path.GetFullPath(pin.Name);
+                if (!path.StartsWith(root, StringComparison.Ordinal) || digest(path) != (string)pin.Value)
+                    throw new InvalidDataException("AI source pin changed: " + pin.Name);
+            }
+            var nodes = graph["nodes"] as JArray ?? throw new InvalidDataException("AI source nodes required");
+            string[] paths = { Enemy, Player, Plan };
+            if (nodes.Count != paths.Length || nodes.Where((row, i) => (string)row["source_path"] != paths[i]).Any())
+                throw new InvalidDataException("Exact authored controller order and plan required");
+            var refs = graph["preset_ai_controllers"] as JArray;
+            if (refs == null || refs.Count != 2 || (string)refs[0]["guid"] != (string)nodes[0]["asset_guid"] ||
+                (string)refs[1]["guid"] != (string)nodes[1]["asset_guid"] ||
+                (string)graph["preset_ai_plan"]?["guid"] != (string)nodes[2]["asset_guid"])
+                throw new InvalidDataException("Preset AI references changed");
+            var source = new SourceConfigMaterializer(graph);
+            var configs = new List<AIControllerConfig> { source.ByPath<AIControllerConfig>(Enemy), source.ByPath<AIControllerConfig>(Player) };
+            var plan = source.ByPath<AIPlanEntryStartupConfig>(Plan);
+            if (digest(graphPath) != graphSha256 || pins.Properties().Any(pin => digest(pin.Name) != (string)pin.Value))
+                throw new InvalidDataException("AI source changed during materialization");
+            return new AIStartupSystem().Initialize(em, configs, plan, resolveSpawnCell, settings, elapsedTime);
+        }
+    }
+}

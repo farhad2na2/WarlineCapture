@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d501fb93dbe94f6cb7e248c87a73e253, type: 3}
+  m_Name: OneProducerAuthoredReferencePackage
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OneProducerAuthoredReferencePackageConfig
+  packageJson: {fileID: 4900000, guid: a5579baa75cc47f29636376d2b583c46, type: 3}
+  producerPrefabReference: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+  unitPrefabReference: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+  transportPrefabReference: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+  producerConfigReference: {fileID: 11400000, guid: b3010000000000000000000000000005, type: 2}
+  unitConfigReference: {fileID: 11400000, guid: a3d36fd8847164cc596e0b5ba7bd9bb9, type: 2}
+  transportConfigReference: {fileID: 11400000, guid: 07dfa4493490a46c8897eb8ca6909849, type: 2}

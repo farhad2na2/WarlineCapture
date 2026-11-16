@@ -42,13 +42,13 @@ namespace Game.Runtime
                 cost => source.BuildingPlacementCommandRequestCompositionSystemHelper.SetActivePlacementCost(
                     createPlacementCommandContext(source, interactionContext, markerPropertyBlock),
                     cost),
-                (building, productionIndex, spawnUnitPrefab) =>
+                (building, productionIndex, spawnUnitPrefab, now) =>
                     source.BuildingProductionContextCompositionSystemHelper.TryQueuePlayerUnitProduction(
                         productionSource,
                         building,
                         productionIndex,
                         spawnUnitPrefab,
-                        UnityEngine.Time.time),
+                        now),
                 buildingId => source.RuntimeBuildingSystem.SelectBuilding(buildingId),
                 () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
                 () => runtimeSource.RefreshBuildingMarkerVisibility?.Invoke(),

@@ -8,6 +8,23 @@ namespace Game.Runtime
     public static partial class OperationMapMetadataUtility
     {
         private const float MinimumProjectionExtent = 0.001f;
+        private const float GridFrameTolerance = 0.0001f;
+
+        // Data-only join shared by source-host validation and the live scene
+        // binding owner. A match does not establish that a Scene is loaded or
+        // that its grid entity belongs to the authored SceneSection.
+        public static bool MatchesGridFrame(in OperationMapGridBlob source, in GridConfig candidate)
+        {
+            if (!IsValidGrid(in source) || candidate.Width <= 0 || candidate.Height <= 0 ||
+                !math.isfinite(candidate.CellSize) || candidate.CellSize <= 0f ||
+                !math.all(math.isfinite(candidate.Origin)))
+                return false;
+
+            return candidate.Width == source.Dimensions.x &&
+                   candidate.Height == source.Dimensions.y &&
+                   math.abs(candidate.CellSize - source.CellSize) <= GridFrameTolerance &&
+                   math.all(math.abs(candidate.Origin - source.Origin) <= new float3(GridFrameTolerance));
+        }
 
         public static bool TryResolveActiveGridConfig(
             EntityManager entityManager,

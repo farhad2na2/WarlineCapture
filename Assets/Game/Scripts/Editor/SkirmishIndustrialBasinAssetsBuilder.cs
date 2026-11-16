@@ -53,14 +53,14 @@ namespace Game.Editor
                 Vector2Int[] sites = i == 0
                     ? new[]
                     {
-                        new Vector2Int(800, 580), new Vector2Int(780, 610), new Vector2Int(815, 620),
-                        new Vector2Int(770, 590), new Vector2Int(785, 570)
+                        new Vector2Int(806, 635), new Vector2Int(837, 622), new Vector2Int(815, 622),
+                        new Vector2Int(811, 604), new Vector2Int(840, 584)
                     }
                     : new[]
                     {
-                        // Level foundations surveyed against every surface cell and road mask.
-                        new Vector2Int(934, 444), new Vector2Int(906, 478), new Vector2Int(906, 448),
-                        new Vector2Int(938, 480), new Vector2Int(906, 512)
+                        // Existing-map sites; full startup and visual acceptance remain separate gates.
+                        new Vector2Int(987, 438), new Vector2Int(921, 445), new Vector2Int(906, 448),
+                        new Vector2Int(950, 438), new Vector2Int(906, 510)
                     };
                 var buildings = faction.FindPropertyRelative("buildings");
                 Vector2Int spawn = faction.FindPropertyRelative("spawnCell").vector2IntValue;

@@ -13,10 +13,10 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     public partial struct MatchHudMinimapMarkerSystem : ISystem
     {
-        private const int MaxMarkers = 1024;
+        private const int MaxMarkers = Game.Simulation.AriaPublicPlayerMarkerPolicy.MaxMarkers;
         private const byte CollectPlayerMarkers = 1;
         private const byte CollectEnemyMarkers = 2;
-        private const double MarkerRefreshIntervalSeconds = 0.2d;
+        private const double MarkerRefreshIntervalSeconds = Game.Simulation.AriaPublicPlayerMarkerPolicy.RefreshIntervalSeconds;
 
         private Entity _markerBoundaryEntity;
         private double _nextMarkerRefreshTime;
@@ -221,6 +221,17 @@ namespace Game.Runtime
                 in LocalTransform transform,
                 in Faction faction)
             {
+                if (CollectMode == CollectPlayerMarkers && !DefenseRoster && !RequireObservedIntel)
+                {
+                    bool passengerOwner = FogPassengerOwner.HasComponent(entity);
+                    if (!Game.Simulation.AriaPublicPlayerMarkerPolicy.Include(Markers.Length, MaxMarkers, faction.Id,
+                        FogOwned.HasComponent(entity), FogDisabled.HasComponent(entity), FogPassenger.HasComponent(entity),
+                        passengerOwner, passengerOwner && FogPassengerOwner[entity].Landed != 0, health.Current)) return;
+                    if (FogOwned.HasComponent(entity))
+                        Represented.Add(new ContactKey { Session = FogOwned[entity].SessionId, Contact = FogOwned[entity].StableObjectId });
+                    Markers.Add(new MatchHudMinimapMarkerElement { SourceEntity = entity, Position = transform.Position, FactionId = faction.Id });
+                    return;
+                }
                 if (Markers.Length >= MaxMarkers ||
                     (CollectMode == CollectEnemyMarkers && CombatSuppressionLookup.HasComponent(entity)) ||
                     !ShouldCollectFaction(faction.Id))

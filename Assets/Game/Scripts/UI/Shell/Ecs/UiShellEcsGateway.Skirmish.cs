@@ -194,6 +194,10 @@ namespace Game.UI.Shell.Ecs
                         : GameText.Get(setup.TitleKey, setup.CatalogId);
                     var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
                         SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
+                    var publicObjectives = SkirmishPublicObjectiveProjection.Read(em, session);
+                    if (publicObjectives.EnemyObjectiveAlive)
+                        model.SelectedApproach = SkirmishPublicSelectedApproachProjection.Read(em, session,
+                            new Unity.Mathematics.float3(publicObjectives.EnemyPosition.X, publicObjectives.EnemyPosition.Y, publicObjectives.EnemyPosition.Z));
                     model.OwnMaterials = publicView.OwnMaterials;
                     model.CanAffordRifle = publicView.CanAffordRifle;
                     model.CombinedArmsField = setup.ArmyProfileId == Game.Skirmish.Contracts.SkirmishArmyProfileId.CombinedArms &&
@@ -239,8 +243,8 @@ namespace Game.UI.Shell.Ecs
             em=default;entity=Entity.Null;match=default;
             var world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return false;
             em=world.EntityManager;using var query=em.CreateEntityQuery(typeof(SkirmishMatchState));
-            if(query.CalculateEntityCount()!=1)return false;
-            entity=query.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(entity);return true;
+            if(query.CalculateEntityCount()!=1){SkirmishAcceptedArmyOrders.ObserveCurrentSession(em,Entity.Null);return false;}
+            entity=query.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(entity);SkirmishAcceptedArmyOrders.ObserveCurrentSession(em,entity);return true;
         }
         private static int VisibleBaseHealth(EntityManager em, Entity entity) =>
             em.Exists(entity) && em.HasComponent<UnitHealth>(entity)

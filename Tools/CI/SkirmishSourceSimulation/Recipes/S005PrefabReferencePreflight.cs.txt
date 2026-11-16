@@ -1,0 +1,77 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using Game.Components;
+using Game.Runtime;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+
+// Inspection only: references remain identities, never fabricated Unity instance IDs.
+internal static class S005PrefabReferencePreflight
+{
+    static void Need(bool ok, string message) { if (!ok) throw new InvalidDataException(message); }
+    static JObject Inspect(JObject doc, string directory)
+    {
+        Need((string)doc["kind"] == "S005PrefabObjectIdentityProjection" && (bool?)doc["replay_ready"] == false &&
+             (bool?)doc["mission_ready"] == false, "Inspection-only S005 projection required");
+        var types = new Dictionary<string, Type>(StringComparer.Ordinal) {
+            [typeof(UnitAttackImpactVfxReference).FullName] = typeof(UnitAttackImpactVfxReference),
+            [typeof(UnitMuzzleFlashVfxReference).FullName] = typeof(UnitMuzzleFlashVfxReference),
+            [typeof(GroundMissileLauncherVfxReferenceComponent).FullName] = typeof(GroundMissileLauncherVfxReferenceComponent),
+            [typeof(AirMissileLauncherVfxReferenceComponent).FullName] = typeof(AirMissileLauncherVfxReferenceComponent) };
+        var identity = (JObject)doc["identities"]; var ledger = (JArray)doc["original_unsupported_values"];
+        var bindings = (JArray)doc["reference_bindings"]; var entities = (JArray)doc["entities"];
+        Need(identity != null && ledger != null && bindings != null && entities != null && ledger.Count == 29 && bindings.Count == 29, "Exact reference domain required");
+        var expected = new HashSet<string>(ledger.Select(x => (string)x["path"]), StringComparer.Ordinal);
+        var seen = new HashSet<string>(StringComparer.Ordinal); int scalars = 0, references = 0, nulls = 0;
+        var codec = new ExactInitialValueCodec(directory, new JObject());
+        foreach (JObject row in entities)
+        {
+            string id = (string)row["id"]; ExactInitialValueCodec.EntityId(id);
+            foreach (var pair in ((JObject)row["components"]).Properties())
+            {
+                if (!types.TryGetValue(pair.Name, out Type type)) continue;
+                var value = (JObject)pair.Value["value"]; var wire = (JObject)value["fields"];
+                Need((string)value["codec"] == "struct-fields-v1" && (string)value["type"] == type.FullName && wire != null, "Exact component shape required");
+                var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                Need(wire.Count == fields.Length, "Complete component fields required");
+                foreach (var field in fields)
+                {
+                    string path = id + "/" + pair.Name + "/" + field.Name;
+                    var node = (JObject)wire[type.FullName + "::" + field.Name]; Need(node != null, "Captured field missing");
+                    if (field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(UnityObjectRef<>))
+                    {
+                        Need((string)node["codec"] == "source-object-identity-v1" && node.Count == 2 && expected.Contains(path) && seen.Add(path), "Unknown object reference leaf");
+                        string key = (string)node["identity_sha256"]; var target = identity[key] as JObject;
+                        Need(target != null && key != null && key.Length == 64, "Unbound object identity");
+                        string kind = (string)target["codec"];
+                        Need(kind == "null-v1" || (kind == "source-asset-reference-v1" && (string)target["type"] == "UnityEngine.GameObject" &&
+                            !string.IsNullOrEmpty((string)target["guid"]) && !string.IsNullOrEmpty((string)target["path"])), "Invalid object identity");
+                        if (kind == "null-v1") nulls++;
+                        var matches = bindings.OfType<JObject>().Where(x => (string)x["path"] == path && (string)x["identity_sha256"] == key).Count();
+                        Need(matches == 1, "Reference binding differs"); references++;
+                    }
+                    else { codec.Decode(node, field.FieldType, path); scalars++; }
+                }
+            }
+        }
+        Need(seen.SetEquals(expected) && references == 29, "Missing object reference bindings");
+        return new JObject { ["status"] = "DecodedIdentityInspectionOnly", ["reference_count"] = references,
+            ["null_count"] = nulls, ["nonvisual_fields_decoded"] = scalars,
+            ["entities_allocated"] = 0, ["runtime_import_attempted"] = false, ["mission_ready"] = false };
+    }
+    static int Main(string[] args)
+    {
+        try {
+            Need(args.Length == 1, "Projection path required"); var path = Path.GetFullPath(args[0]);
+            var doc = JObject.Parse(File.ReadAllText(path)); var result = Inspect(doc, Path.GetDirectoryName(path));
+            var negative = (JObject)doc.DeepClone(); negative["identities"] = new JObject();
+            bool rejected = false; try { Inspect(negative, Path.GetDirectoryName(path)); } catch (InvalidDataException) { rejected = true; }
+            Need(rejected, "Missing identity must fail closed"); result["missing_identity_rejected"] = true;
+            Console.WriteLine(result.ToString(Formatting.None)); return 0;
+        } catch (Exception e) { Console.Error.WriteLine("[S005PrefabReferencePreflight] " + e); return 1; }
+    }
+}

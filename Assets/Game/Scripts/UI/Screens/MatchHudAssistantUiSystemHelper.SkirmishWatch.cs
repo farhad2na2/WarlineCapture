@@ -114,8 +114,8 @@ namespace Game.UI.Runtime
             if (watchSkirmish == null) watchSkirmish = Object.FindAnyObjectByType<SkirmishMatchView>();
             if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (watchBuild == null) watchBuild = Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
-            var view = new AriaSkirmishObservation { Active = true, Finished = model.Finished || model.StartupFailed,
-                Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen,
+            var view = new AriaSkirmishObservation { SourceScenarioIndex=model.ScenarioIndex, Active = true, Finished = model.Finished || model.StartupFailed,
+                Frame = Time.frameCount, Time = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime), SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen,
                 ExpandedSession = model.Expanded, PlayerDesignatedAlive = model.PlayerDesignatedAlive,
                 EnemyDesignatedAlive = model.EnemyDesignatedAlive };
             if (model.Expanded && UiShellRuntimeGateway.TryReadExpandedSquadPage(out UiExpandedSquadPage page))
@@ -268,6 +268,7 @@ namespace Game.UI.Runtime
             ObserveMapThreat(ref view);
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
+            ObserveAcceptedAssaultGoal(ref view);
             ObserveGroupRectangle(ref view);
             ObservePublicObjective(ref view);
             ObservePublicScan(ref view);
@@ -446,6 +447,20 @@ namespace Game.UI.Runtime
             }
         }
 
+        private void ObserveAcceptedAssaultGoal(ref AriaSkirmishObservation view)
+        {
+            view.ExpandedAttackOrderMask=0;
+            if(watchSkirmish==null||!watchSkirmish.EnemyBaseObjectiveAlive)return;
+            int identity=watchSkirmish.GetEntityId().GetHashCode();var p=watchSkirmish.EnemyBaseObjectivePosition;
+            var kind=watchScenarioIndex==SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                ?(watchFlankReached?Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.CityFinal:Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.CityFlank)
+                :Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.Approach;
+            if(!UiShellRuntimeGateway.TryReadAcceptedAssaultGoal(kind,identity,p.x,p.z,out view.AdvanceOrderGoal,out int advanceMask))return;
+            if(!UiShellRuntimeGateway.TryReadAcceptedAssaultGoal(Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoalKind.VisibleObjective,identity,p.x,p.z,out view.VisibleObjectiveOrderGoal,out int visibleMask))return;
+            view.CurrentAssaultGoal=view.AdvanceOrderGoal;
+            view.ExpandedAttackOrderMask=advanceMask;
+        }
+
         private void ObserveAdvanceGround(ref AriaSkirmishObservation view)
         {
             if (view.DrawerOpen || watchMap == null || watchSkirmish == null ||
@@ -454,34 +469,37 @@ namespace Game.UI.Runtime
             // Use the base objective and contacts already presented on the player's map.
             // A point on its approach lets ordinary Attack Move fight the route's defenders.
             var objective = watchSkirmish.EnemyBaseObjectivePosition;
-            Vector3 nearest = objective; float distance = float.MaxValue; int close = 0, assault = 0;
+            var publicPlayers = new System.Collections.Generic.List<Game.Simulation.AriaGroundPosition>();
             foreach (var ally in watchMap.PresentedContacts)
             {
                 if (ally.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Player ||
                     !watchMap.IsContactCurrentlyPresented(ally, ResolveEventCamera(watchMap.MapImage))) continue;
-                float d = (ally.Model.Position - objective).sqrMagnitude;
-                if (d < 45 * 45) close++;
-                if (d < 50 * 50) assault++;
-                if (d < distance) { distance = d; nearest = ally.Model.Position; }
+                var p = ally.Model.Position;
+                publicPlayers.Add(new Game.Simulation.AriaGroundPosition(p.x, p.y, p.z));
             }
-            view.AssaultDistanceVisible = distance < float.MaxValue;
-            view.NearestFriendlyObjectiveDistance = view.AssaultDistanceVisible ? Mathf.Sqrt(distance) : 0f;
-            int required = view.EnemyHealth > 0 && view.EnemyHealth <= 400
-                ? 1 : Mathf.Max(4, Mathf.Min(8, view.SelectedCount));
-            view.AssaultAtBase = assault >= required;
+            var objectivePoint = new Game.Simulation.AriaGroundPosition(objective.x, objective.y, objective.z);
+            var distances = Game.Simulation.AriaGroundApproachPolicy.Observe(objectivePoint, publicPlayers, view.EnemyHealth, view.SelectedCount);
+            Vector3 nearest = new Vector3(distances.Nearest.X, distances.Nearest.Y, distances.Nearest.Z);
+            float distance = distances.SquaredDistance; int close = distances.Close, assault = distances.Assault;
+            view.AssaultDistanceVisible = distances.DistanceVisible;
+            view.NearestFriendlyObjectiveDistance = distances.Distance;
+            view.AssaultAtBase = distances.AssaultAtBase;
             view.AdvancePreferred = close < 4;
             if (watchScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex)
             {
-                var forward = objective - watchSkirmish.PlayerBaseObjectivePosition; forward.y = 0; forward.Normalize();
-                var side = new Vector3(-forward.z, 0, forward.x);
-                var flank = objective - forward * 50 + side * 70;
-                int arrived = 0;
+                var sourcePlayerPositions = new System.Collections.Generic.List<Game.Simulation.AriaGroundPosition>();
                 foreach (var ally in watchMap.PresentedContacts)
-                    if (ally.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Player &&
-                        (ally.Model.Position - flank).sqrMagnitude < 35 * 35) arrived++;
-                if (arrived >= 4) watchFlankReached = true;
-                var goal = watchFlankReached ? objective + side * 20 : flank;
-                view.AdvancePreferred = !view.AssaultAtBase;
+                    if (ally.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Player)
+                    {
+                        var p = ally.Model.Position;
+                        sourcePlayerPositions.Add(new Game.Simulation.AriaGroundPosition(p.x, p.y, p.z));
+                    }
+                var cityHome = watchSkirmish.PlayerBaseObjectivePosition;
+                var city = Game.Simulation.AriaGroundApproachPolicy.City(objectivePoint,
+                    new Game.Simulation.AriaGroundPosition(cityHome.x, cityHome.y, cityHome.z),
+                    sourcePlayerPositions, view.AssaultAtBase, ref watchFlankReached);
+                var goal = new Vector3(city.Goal.X, city.Goal.Y, city.Goal.Z);
+                view.AdvancePreferred = city.AdvancePreferred;
                 // The labelled base control provides an exact, visible camera action
                 // for the final approach; reserve map navigation for the remote flank.
                 if (watchFlankReached) view.FocusAdvance = view.FocusEnemy;
@@ -499,21 +517,30 @@ namespace Game.UI.Runtime
                 }
                 return;
             }
-            if (watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+            var selectedOwn = watchSkirmish.SelectedApproach;
+            if (selectedOwn.Required)
             {
-                // NW→SE basin uses the verified base-relative approach corridor below.
-                // City Crossroads' wide eastern flank projected into blocked fabric here.
-                view.AdvancePreferred = !view.AssaultAtBase && close < 8;
+                // Unavailable authored data never falls back to a global friendly quorum.
+                view.AdvanceGround = default;
+                view.FocusAdvance = default;
+                view.AssaultAtBase = Game.Simulation.AriaGroundApproachPolicy.SelectedObjectiveContactReach(selectedOwn);
+                view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.TrySelectedOwnApproach(selectedOwn, out var ownGoal);
+                if (!view.AdvancePreferred) return;
+                var ownGround = new Vector3(ownGoal.X, ownGoal.Y, ownGoal.Z);
+                if (view.MapOpen) { ObserveAdvanceMapFocus(ownGround, ref view); return; }
+                var ownScreen = Camera.main.WorldToScreenPoint(ownGround);
+                view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = ownScreen,
+                    Available = ownScreen.z > 0 && Screen.safeArea.Contains(ownScreen) && WatchTargetIsReachable(ownScreen, -20006, true) };
+                if (!view.AdvanceGround.Available) ObserveAdvanceMapFocus(ownGround, ref view);
+                return;
             }
+            bool industrialBasin = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
+            view.AdvancePreferred = Game.Simulation.AriaGroundApproachPolicy.AdvancePreferred(industrialBasin, distances);
             if (!view.AdvancePreferred) return;
-            // The two labelled base objectives remain public when the camera leaves
-            // the army. Keep a usable approach instead of repeatedly focusing the base.
-            if (distance == float.MaxValue) nearest = watchSkirmish.PlayerBaseObjectivePosition;
-            var direction = nearest - objective; direction.y = 0;
-            // Preserve the first battlefield's verified clear base approach. Wider
-            // offsets project behind its neutral ruins and become rejected attacks.
-            float standoff = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? 30f : 25f;
-            var ground = objective + direction.normalized * standoff;
+            var home = watchSkirmish.PlayerBaseObjectivePosition;
+            var approach = Game.Simulation.AriaGroundApproachPolicy.Approach(industrialBasin, objectivePoint,
+                new Game.Simulation.AriaGroundPosition(home.x, home.y, home.z), distances);
+            var ground = new Vector3(approach.X, approach.Y, approach.Z);
             if (view.MapOpen)
             {
                 if (watchScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)
@@ -648,7 +675,7 @@ namespace Game.UI.Runtime
             for (int i = 0; i < frontCount; i++) armyCenter += watchFront[i];
             armyCenter /= frontCount;
             MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
-            float homeDistance = 120f * 120f;
+            float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;
             float trackedDistance = 12 * 12;
             foreach (var enemy in watchMap.PresentedContacts)
             {
@@ -660,8 +687,10 @@ namespace Game.UI.Runtime
                     ((Vector2)groundPoint - watchSkirmish.VisibleEnemyBasePoint).sqrMagnitude < 1) continue;
                 if (watchSkirmish != null)
                 {
-                    float distance = (enemy.Model.Position - watchSkirmish.PlayerBaseObjectivePosition).sqrMagnitude;
-                    if (distance < homeDistance) { homeDistance = distance; homeThreat = enemy; }
+                    var publicContact=enemy.Model.Position;var publicHome=watchSkirmish.PlayerBaseObjectivePosition;
+                    if (Game.Simulation.AriaPublicHomeThreatPolicy.Consider(
+                        new Game.Simulation.AriaGroundPosition(publicContact.x,publicContact.y,publicContact.z),
+                        new Game.Simulation.AriaGroundPosition(publicHome.x,publicHome.y,publicHome.z),ref homeDistance)) homeThreat=enemy;
                 }
                 float nearest = (enemy.Model.Position - armyCenter).sqrMagnitude;
                 float continuity = (enemy.Model.Position - watchThreatPosition).sqrMagnitude;

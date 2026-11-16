@@ -8,9 +8,28 @@ namespace Game.UI.Shell.Ecs
     [BurstCompile, UpdateInGroup(typeof(PresentationSystemGroup)), UpdateBefore(typeof(AriaPlayDecisionSystem))]
     public partial struct AriaSkirmishPlanSystem : ISystem
     {
+#if UNITY_EDITOR
+        private static int s_managedOnUpdateFallbackCount;
+
+        [BurstDiscard]
+        private static void RecordManagedOnUpdateFallback()
+        {
+            System.Threading.Interlocked.Increment(ref s_managedOnUpdateFallbackCount);
+        }
+
+        public static void ResetManagedOnUpdateFallbackWitness() =>
+            System.Threading.Interlocked.Exchange(ref s_managedOnUpdateFallbackCount, 0);
+
+        public static int ManagedOnUpdateFallbackWitness =>
+            System.Threading.Volatile.Read(ref s_managedOnUpdateFallbackCount);
+#endif
+
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
+#if UNITY_EDITOR
+            RecordManagedOnUpdateFallback();
+#endif
             var em=state.EntityManager;
             using var cleanup=new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
             foreach (var (view, plan, owner, storage) in SystemAPI.Query<RefRW<AriaSkirmishObservationComponent>, RefRW<AriaSkirmishPlanComponent>, RefRO<AriaSkirmishObservationOwner>>().WithEntityAccess())
@@ -42,6 +61,7 @@ namespace Game.UI.Shell.Ecs
         public static void Step(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
+            if(AriaS002NativeAdapter.CanHandle(view)&&AriaS002NativeAdapter.TryStep(view,ref plan,ref touch,ref output))return;
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.PublicObjective.Applicable)
             {
@@ -638,8 +658,19 @@ namespace Game.UI.Shell.Ecs
             plan.AssaultInspectRevision = 0; plan.AssaultInspectDeadline = 0; plan.AssaultInspectReadyAt = 0;
             plan.AssaultInspectObjectiveHudIdentity = 0; plan.AssaultInspectObjectiveWorld = default;
         }
+        // A completed visible page is enough to inspect the moving cohort on the
+        // normal map. Paging itself never renews the objective watchdog.
+        static bool AcceptedAssaultInspectionPage(in AriaSkirmishObservation view,
+            in AriaSkirmishPlanComponent plan)
+            => plan.AssaultIssued == 0 && plan.PagesOrdered > 0 &&
+               plan.AssaultPageSeen == view.ExpandedPageIndex + 1 &&
+               plan.SweepRosterRevision == view.ExpandedRosterRevision &&
+               view.ExpandedAssaultMask != 0 &&
+               (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
+
         static bool AssaultInspectionUiBusy(in AriaSkirmishObservation view, in AriaSkirmishPlanComponent plan)
-            => view.DrawerOpen || view.PlacementOpen || view.AttackMode || plan.AssaultSelecting != 0 ||
+            => view.DrawerOpen || view.PlacementOpen || view.AttackMode ||
+               (plan.AssaultSelecting != 0 && !AcceptedAssaultInspectionPage(view, plan)) ||
                plan.TargetPending != 0 || plan.AdvanceNavigation != 0 || plan.MapNavigationStage != 0 ||
                (plan.PadStage != 0 && plan.PadStage != 8) ||
                (view.AirProfile && plan.AirCycleCount == 0 && plan.AirCycleStage >= 1 && plan.AirCycleStage <= 4 &&
@@ -665,8 +696,13 @@ namespace Game.UI.Shell.Ecs
         {
             if (plan.AssaultInspectStage == 0)
             {
-                if (plan.AssaultIssued == 0 || plan.StructureOrdered == 0 ||
-                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting) ||
+                if (((plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                     !AcceptedAssaultInspectionPage(view, plan)) ||
+                    (touch.Phase != AriaPlayPhase.Observing && touch.Phase != AriaPlayPhase.Waiting &&
+                     !(touch.Phase == AriaPlayPhase.Verifying && touch.GestureRequested == 0 &&
+                       touch.Pressed == 0 && touch.Actions > 0 &&
+                       touch.LastCompletedTargetId == touch.TargetId && touch.LastCompletedFrame > 0 &&
+                       view.Frame > touch.LastCompletedFrame && view.Time >= touch.DueAt)) ||
                     view.AssaultDistanceVisible || view.MapOpen || AssaultInspectionUiBusy(view,plan) ||
                     view.PresentedHomeThreat ||
                     view.Time < plan.AssaultInspectReadyAt || !view.AssaultMap.OpenMap.Available) return false;
@@ -772,7 +808,9 @@ namespace Game.UI.Shell.Ecs
         {
             // Public visible controls only. No gameplay Entity mutation from this planner.
             if (view.Finished || touch.Phase == AriaPlayPhase.Manual ||
-                plan.AssaultIssued == 0 || plan.StructureOrdered == 0)
+                (plan.AssaultInspectStage == 0 &&
+                 (plan.AssaultIssued == 0 || plan.StructureOrdered == 0) &&
+                 !AcceptedAssaultInspectionPage(view, plan)))
                 ClearAssaultMapInspection(ref plan);
             if (view.Finished)
             {
@@ -792,15 +830,11 @@ namespace Game.UI.Shell.Ecs
             // Supply and construction are public progress, but each milestone
             // counts once. Repeated taps and spending/earning loops cannot
             // indefinitely refresh the watchdog.
-            int milestones = (view.LogisticsTruckCommitted ? 1 : 0) |
-                (view.ReadinessEligible ? 2 : 0) | (view.PadPresent ? 4 : 0);
-            bool newMilestone = view.AirProfile && (milestones & ~plan.EconomicMilestones) != 0;
-            if (newMilestone) plan.MaterialsHighWater = view.OwnMaterials;
-            bool savingForAir = view.AirProfile && view.LogisticsTruckCommitted && !view.AirQueueOffered;
-            int savedMaterials = UnityEngine.Mathf.Min(view.OwnMaterials, 300);
-            bool supplyProgress = savingForAir && savedMaterials > plan.MaterialsHighWater;
-            plan.EconomicMilestones |= milestones;
-            if (supplyProgress) plan.MaterialsHighWater = savedMaterials;
+            var economicState=new Game.Simulation.AriaEconomicProgressState{EconomicMilestones=plan.EconomicMilestones,MaterialsHighWater=plan.MaterialsHighWater};
+            var economic=Game.Simulation.AriaEconomicProgressPolicy.Observe(new Game.Simulation.AriaEconomicProgressView {
+                AirProfile=view.AirProfile,LogisticsTruckCommitted=view.LogisticsTruckCommitted,ReadinessEligible=view.ReadinessEligible,PadPresent=view.PadPresent,AirQueueOffered=view.AirQueueOffered,OwnMaterials=view.OwnMaterials },ref economicState);
+            plan.EconomicMilestones=economicState.EconomicMilestones;plan.MaterialsHighWater=economicState.MaterialsHighWater;
+            bool newMilestone=economic.NewMilestone,supplyProgress=economic.SupplyProgress;
             // Only a new closest approach on the player's presented minimap
             // counts. Paging, jitter and retreat/re-advance cannot mask a stall.
             bool assaultAdvance = false;
@@ -830,21 +864,11 @@ namespace Game.UI.Shell.Ecs
                     assaultAdvance = true;
                 }
             }
-            if (plan.LastProgressAt == 0 || plan.EnemyHealth != view.EnemyHealth ||
-                plan.PlayerHealth != view.PlayerHealth || plan.Infantry != view.Infantry ||
-                newMilestone || supplyProgress || assaultAdvance)
-            {
-                plan.LastProgressAt = view.Time;
-                plan.EnemyHealth = view.EnemyHealth; plan.PlayerHealth = view.PlayerHealth; plan.Infantry = view.Infantry;
-                touch.LastProgressAt = view.Time;
-                touch.LastObjectiveProgressAt = view.Time;
-            }
-            if (view.Time - plan.LastProgressAt > 180f)
-            {
-                touch.Phase = AriaPlayPhase.Blocked;
-                touch.GestureRequested = 0;
-                return;
-            }
+            var progress=new Game.Simulation.AriaGroundProgressState{LastProgressAt=plan.LastProgressAt,EnemyHealth=plan.EnemyHealth,PlayerHealth=plan.PlayerHealth,Infantry=plan.Infantry};
+            if(Game.Simulation.AriaGroundProgressPolicy.Observe(view.Time,view.EnemyHealth,view.PlayerHealth,view.Infantry,newMilestone,supplyProgress,assaultAdvance,ref progress,out bool blocked))
+            {touch.LastProgressAt=view.Time;touch.LastObjectiveProgressAt=view.Time;}
+            plan.LastProgressAt=progress.LastProgressAt;plan.EnemyHealth=progress.EnemyHealth;plan.PlayerHealth=progress.PlayerHealth;plan.Infantry=progress.Infantry;
+            if(blocked){touch.Phase=AriaPlayPhase.Blocked;touch.GestureRequested=0;return;}
             if (plan.PrecisionStage != 0)
             {
                 // Actual home defence may interrupt; accepted group history is retained.
@@ -883,38 +907,27 @@ namespace Game.UI.Shell.Ecs
             // Preserve a viable base-assault force, then establish physical
             // Oil and Fuel delivery before research or repeated aircraft sorties.
             // These are visible paid catalog controls, with queue/capacity eligibility.
-            bool openingNeedsInfantry = !view.CombinedArmsField && plan.AssaultStarted == 0 && view.Infantry < 20 &&
-                (plan.OpeningUntil == 0 || view.Time < plan.OpeningUntil);
-            bool supplyReady = view.AirProfile && !openingNeedsInfantry &&
-                (!view.CombinedArmsField || view.OwnStructureAttackUnits >= 8);
-            // The opening force or its existing deadline is complete before
-            // a supply touch can return from this frame.
-            if (supplyReady && !view.CombinedArmsField) plan.AssaultStarted = 1;
-            if (supplyReady && !view.LogisticsTruckCommitted && view.CanAffordLogisticsTruck &&
-                view.RecruitLogisticsTruck.Available)
-            {
-                plan.Intent = AriaSkirmishIntent.Recruit;
-                Target(view.RecruitLogisticsTruck, false, ref output);
-                return;
-            }
-            if (supplyReady && view.LogisticsTruckCommitted && view.TankersCommitted < 2 &&
-                view.CanAffordTanker && view.RecruitTanker.Available)
-            {
-                plan.Intent = AriaSkirmishIntent.Recruit;
-                Target(view.RecruitTanker, false, ref output);
-                return;
-            }
+            var preparationView=new Game.Simulation.AriaPreparationView {
+                AirProfile=view.AirProfile,CombinedArmsField=view.CombinedArmsField,Infantry=view.Infantry,Time=view.Time,OwnStructureAttackUnits=view.OwnStructureAttackUnits,
+                LogisticsTruckCommitted=view.LogisticsTruckCommitted,CanAffordLogisticsTruck=view.CanAffordLogisticsTruck,LogisticsTargetAvailable=view.RecruitLogisticsTruck.Available,
+                TankersCommitted=view.TankersCommitted,CanAffordTanker=view.CanAffordTanker,TankerTargetAvailable=view.RecruitTanker.Available };
+            var preparationState=new Game.Simulation.AriaPreparationState{AssaultStarted=plan.AssaultStarted,OpeningUntil=plan.OpeningUntil};
+            var preparationAction=Game.Simulation.AriaExpandedPreparationPolicy.Supply(preparationView,ref preparationState);
+            plan.AssaultStarted=preparationState.AssaultStarted;
+            if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitLogisticsTruck){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitLogisticsTruck,false,ref output);return;}
+            if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
             {
-                if (view.EnemyBase.Available)
+                var objectiveContact=Game.Simulation.AriaGroundObjectivePolicy.Contact(view.EnemyBase.Available,view.AdvanceGround.Available);
+                if (objectiveContact==Game.Simulation.AriaObjectiveContact.VisibleEnemyTarget)
                 {
                     plan.Intent = AriaSkirmishIntent.TargetBase;
                     Target(view.EnemyBase, true, ref output);
                 }
-                else if (view.AdvanceGround.Available)
+                else if (objectiveContact==Game.Simulation.AriaObjectiveContact.PublicTerrainApproach)
                 {
                     // The labelled objective is public; a hidden base is not a precision target.
                     // Offer the already presented terrain approach for a separate normal Attack Move touch.
@@ -971,30 +984,26 @@ namespace Game.UI.Shell.Ecs
                     return;
                 }
             }
-            if (view.AirProfile && plan.AssaultStarted == 0)
+            preparationView.RifleRecruitPending=view.RifleRecruitPending;
+            preparationView.CanAffordRifle=view.CanAffordRifle;
+            preparationState.AssaultStarted=plan.AssaultStarted;
+            preparationState.OpeningUntil=plan.OpeningUntil;
+            var airOpening=Game.Simulation.AriaExpandedPreparationPolicy.AirOpening(preparationView,ref preparationState);
+            plan.AssaultStarted=preparationState.AssaultStarted;plan.OpeningUntil=preparationState.OpeningUntil;
+            if(airOpening==Game.Simulation.AriaAirOpeningAction.WaitForPending)
             {
-                if (plan.OpeningUntil == 0) plan.OpeningUntil = view.Time + 75f;
-                if (view.Infantry < 20 && view.Time < plan.OpeningUntil)
-                {
-                    if (view.RifleRecruitPending)
-                    {
-                        plan.Intent = AriaSkirmishIntent.ObserveBattle;
-                        if (view.DrawerOpen) Target(view.CloseDrawer, false, ref output);
-                        else output.Kind = AriaPlayObservationKind.Waiting;
-                        return;
-                    }
-                    if (view.CanAffordRifle)
-                    {
-                        plan.Intent = AriaSkirmishIntent.Recruit;
-                        // Drawer/category transitions can briefly hide their next
-                        // control. Keep the bounded opening instead of treating
-                        // one unavailable frame as an unaffordable reinforcement.
-                        if (view.Recruit.Available) Target(view.Recruit, false, ref output);
-                        else output.Kind = AriaPlayObservationKind.Waiting;
-                        return;
-                    }
-                }
-                plan.AssaultStarted = 1;
+                plan.Intent=AriaSkirmishIntent.ObserveBattle;
+                if(view.DrawerOpen)Target(view.CloseDrawer,false,ref output);
+                else output.Kind=AriaPlayObservationKind.Waiting;
+                return;
+            }
+            if(airOpening==Game.Simulation.AriaAirOpeningAction.RecruitRifle)
+            {
+                plan.Intent=AriaSkirmishIntent.Recruit;
+                // A missing presented control still waits; the gameplay decision has no UI dependency.
+                if(view.Recruit.Available)Target(view.Recruit,false,ref output);
+                else output.Kind=AriaPlayObservationKind.Waiting;
+                return;
             }
             if (!view.ReadinessEligible && view.CanUpgradeReadiness && view.UpgradeReadiness.Available &&
                 plan.AssaultIssued != 0)
@@ -1074,7 +1083,8 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (!view.AirProfile && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            if (Game.Simulation.AriaExpandedPreparationPolicy.FallbackGroundRecruit(new Game.Simulation.AriaPreparationView {
+                AirProfile=view.AirProfile,RifleRecruitPending=view.RifleRecruitPending,Infantry=view.Infantry,CanAffordRifle=view.CanAffordRifle,RifleTargetAvailable=view.Recruit.Available }) == Game.Simulation.AriaPreparationAction.RecruitRifle)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.Recruit, false, ref output);
@@ -1114,186 +1124,59 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
         {
-            if (!view.PresentedHomeThreat)
-            {
-                if (plan.HomeDefenseStage != 0)
-                {
-                    plan.HomeDefenseStage = 0;
-                    // Defensive orders do not prove the enemy-base sweep was issued.
-                    plan.AssaultIssued = plan.PagedToAssault = plan.AssaultSelecting = plan.StructureOrdered = 0;
-                    plan.PagesOrdered = plan.AssaultPageSeen = 0;
-                }
-                return false;
+            var facts=new Game.Simulation.AriaHomeDefenseView {
+                PresentedHomeThreat=view.PresentedHomeThreat,PlacementOpen=view.PlacementOpen,DrawerOpen=view.DrawerOpen,MapOpen=view.MapOpen,AttackMode=view.AttackMode,
+                CancelAvailable=view.PlacementCancel.Available,CloseDrawerAvailable=view.CloseDrawer.Available,CloseMapAvailable=view.CloseMap.Available,
+                FocusAvailable=view.FocusPlayer.Available,PreviousAvailable=view.PreviousSquadPage.Available,NextAvailable=view.NextSquadPage.Available,
+                ToggleAvailable=view.SelectedSquadToToggle.Available,AttackAvailable=view.Attack.Available,
+                ThreatGroundAvailable=view.ThreatGround.Available,ThreatVisibleAvailable=view.Threat.Available,
+                ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
+                CompletedContacts=touch.Actions,Time=view.Time };
+            for(int slot=0;slot<5;slot++)if(view.Squad(slot).Available)facts.AvailableSquadMask|=1<<slot;
+            var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
+                Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
+            bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
+            plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
+            plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
+            if(decision.Defend)plan.Intent=AriaSkirmishIntent.DefendBase;
+            switch(decision.Action){
+                case Game.Simulation.AriaHomeDefenseAction.Waiting:output.Kind=AriaPlayObservationKind.Waiting;break;
+                case Game.Simulation.AriaHomeDefenseAction.Unavailable:output.Kind=AriaPlayObservationKind.Unavailable;break;
+                case Game.Simulation.AriaHomeDefenseAction.CancelPlacement:Target(view.PlacementCancel,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.CloseDrawer:Target(view.CloseDrawer,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.CloseMap:Target(view.CloseMap,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.InspectHome:Target(view.FocusPlayer,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.PreviousPage:Target(view.PreviousSquadPage,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.NextPage:Target(view.NextSquadPage,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.ToggleSelected:Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.SelectSlot:Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.ArmAttack:Target(view.Attack,false,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackThreatTerrain:Target(view.ThreatGround,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackThreatVisible:Target(view.Threat,true,ref output);break;
             }
-            plan.Intent = AriaSkirmishIntent.DefendBase;
-            // Finish through the same player controls before selecting defenders.
-            if (view.PlacementOpen) { Target(view.PlacementCancel, false, ref output); return true; }
-            if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
-            if (view.MapOpen) { Target(view.CloseMap, false, ref output); return true; }
-            if (plan.HomeDefenseStage == 0)
-            {
-                if (!view.FocusPlayer.Available) return true;
-                plan.DefenseStage = 4;
-                plan.HomeDefenseAction = touch.Actions;
-                plan.HomeDefenseStage = 1;
-                Target(view.FocusPlayer, false, ref output);
-                return true;
-            }
-            if (plan.HomeDefenseStage == 1)
-            {
-                if (touch.Actions <= plan.HomeDefenseAction)
-                { Target(view.FocusPlayer, false, ref output); return true; }
-                if (view.ExpandedPageIndex > 0)
-                { Target(view.PreviousSquadPage, false, ref output); return true; }
-                plan.HomeDefensePage = 0;
-                plan.HomeDefenseStage = 2;
-            }
-            if (plan.HomeDefenseStage == 2)
-            {
-                if (TryDeselectSquads(view, ref output)) return true;
-                // Deselecting an off-screen squad may have moved the roster.
-                // Restore this sweep's window, including later defense windows.
-                if (view.ExpandedPageIndex != plan.HomeDefensePage)
-                {
-                    Target(view.ExpandedPageIndex < plan.HomeDefensePage
-                        ? view.NextSquadPage : view.PreviousSquadPage, false, ref output);
-                    return true;
-                }
-                plan.HomeDefenseStage = 3;
-            }
-            if (plan.HomeDefenseStage == 3)
-            {
-                int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
-                if (pending != 0)
-                { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
-                plan.HomeDefenseStage = view.ExpandedAssaultMask == 0 ? 6 : 4;
-            }
-            if (plan.HomeDefenseStage == 4)
-            {
-                if (!view.AttackMode) { Target(view.Attack, false, ref output); return true; }
-                var threat = view.ThreatGround.Available ? view.ThreatGround : view.Threat;
-                if (!threat.Available) { Target(view.FocusPlayer, false, ref output); return true; }
-                plan.HomeDefenseAction = touch.Actions;
-                plan.HomeDefenseStage = 5;
-                Target(threat, true, ref output);
-                return true;
-            }
-            if (plan.HomeDefenseStage == 5)
-            {
-                if (touch.Actions <= plan.HomeDefenseAction || view.AttackMode)
-                { Target(view.ThreatGround.Available ? view.ThreatGround : view.Threat, true, ref output); return true; }
-                plan.HomeDefenseStage = 6;
-            }
-            if (plan.HomeDefenseStage == 6)
-            {
-                if (view.NextSquadPage.Available)
-                {
-                    plan.HomeDefensePage = view.ExpandedPageIndex;
-                    plan.HomeDefenseStage = 7;
-                    Target(view.NextSquadPage, false, ref output);
-                    return true;
-                }
-                plan.HomeDefenseObserveUntil = view.Time + 8f;
-                plan.HomeDefenseStage = 8;
-            }
-            if (plan.HomeDefenseStage == 7)
-            {
-                if (view.ExpandedPageIndex == plan.HomeDefensePage)
-                    Target(view.NextSquadPage, false, ref output);
-                else
-                {
-                    plan.HomeDefensePage = view.ExpandedPageIndex;
-                    plan.HomeDefenseStage = 2;
-                }
-                return true;
-            }
-            if (view.Time >= plan.HomeDefenseObserveUntil) plan.HomeDefenseStage = 0;
-            return true;
+            return handled;
         }
 
-        private static bool StepAircraftCycle(in AriaSkirmishObservation view,
-            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
-            ref AriaPlayObservationComponent output)
-        {
-            if (!view.AirProfile || plan.AirCycleCount != 0) return false;
-            if (plan.AirCycleStage == 0)
-            {
-                if (view.OwnAttackAirActive == 0 || plan.AssaultIssued == 0)
-                { plan.AirSortieObservedAt = 0; return false; }
-                if (plan.AirSortieObservedAt == 0) plan.AirSortieObservedAt = view.Time;
-                if (view.Time - plan.AirSortieObservedAt < 45f) return false;
-                plan.AirCycleStage = 1;
-                plan.AirCycleDeadline = view.Time + 120f;
-            }
-            if (view.OwnAttackAirLive == 0 || !view.PadPresent || view.Time >= plan.AirCycleDeadline)
-            {
-                plan.AirCycleStage = 0;
-                plan.AirCycleCount = 2; // Bounded recovery; normal assault remains available.
-                return false;
-            }
-            if (plan.AirCycleStage == 1)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
-                if (view.SelectedAircraft && view.ExpandedSelectedGroups <= 1) { plan.AirCycleStage = 2; }
-                else
-                {
-                    if (TryDeselectSquads(view, ref output)) return true;
-                    for (int slot = 0; slot < 5; slot++)
-                        if ((view.ExpandedAirMask & (1 << slot)) != 0 && view.Squad(slot).Available)
-                        { Target(view.Squad(slot), false, ref output); return true; }
-                    if (TryDeselectSquads(view, ref output)) return true;
-                    if (view.NextSquadPage.Available)
-                        Target(view.NextSquadPage, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-            }
-            if (plan.AirCycleStage == 2)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (!view.SelectedAircraft) { plan.AirCycleStage = 1; return true; }
-                if (!view.ReturnAircraft.Available)
-                {
-                    if (view.OpenAircraftActions.Available) Target(view.OpenAircraftActions, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-                plan.AirCycleAction = touch.Actions;
-                plan.AirCycleStage = 3;
-                Target(view.ReturnAircraft, false, ref output);
-                return true;
-            }
-            if (plan.AirCycleStage == 3)
-            {
-                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
-                if (touch.Actions <= plan.AirCycleAction)
-                {
-                    if (view.ReturnAircraft.Available) Target(view.ReturnAircraft, false, ref output);
-                    else output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
-                if (view.OwnAttackAirActive == 0 && view.OwnAttackAirLanded > 0)
-                {
-                    plan.AirCycleStage = 4;
-                    plan.AirServiceReadyAt = view.Time + 5f;
-                }
-                else { output.Kind = AriaPlayObservationKind.Waiting; return true; }
-            }
-            plan.Intent = AriaSkirmishIntent.ServiceAircraft;
-            if (view.Time < plan.AirServiceReadyAt || view.OwnAirFuel <= 0)
-            { output.Kind = AriaPlayObservationKind.Waiting; return true; }
-            // The landed aircraft is serviced by shared home/fuel owners. Allow
-            // the visible squad-card attack sequence to issue a second sortie.
-            plan.AirCycleStage = 0;
-            plan.AirCycleCount = 1;
-            plan.AssaultIssued = 0;
-            plan.PagesOrdered = 0;
-            plan.StructureOrdered = 0;
-            plan.ObserveUntil = view.Time + 1f;
-            output.Kind = AriaPlayObservationKind.Waiting;
-            return true;
-        }
+        static bool StepAircraftCycle(in AriaSkirmishObservation v,ref AriaSkirmishPlanComponent p,ref AriaPlaySessionComponent t,ref AriaPlayObservationComponent o){
+ var v0=new Game.Simulation.AriaAircraftCycleView{AirProfile=v.AirProfile,PadPresent=v.PadPresent,DrawerOpen=v.DrawerOpen,SelectedAircraft=v.SelectedAircraft,
+ CloseDrawerAvailable=v.CloseDrawer.Available,ToggleAvailable=v.SelectedSquadToToggle.Available,NextPageAvailable=v.NextSquadPage.Available,OpenActionsAvailable=v.OpenAircraftActions.Available,ReturnAvailable=v.ReturnAircraft.Available,
+ Active=v.OwnAttackAirActive,Live=v.OwnAttackAirLive,Landed=v.OwnAttackAirLanded,Fuel=v.OwnAirFuel,SelectedGroups=v.ExpandedSelectedGroups,AirMask=v.ExpandedAirMask,Actions=t.Actions,Time=v.Time};
+ for(int i=0;i<5;i++)if(v.Squad(i).Available)v0.AvailableSquadMask|=1<<i;
+ var s=new Game.Simulation.AriaAircraftCycleState{Stage=p.AirCycleStage,Action=p.AirCycleAction,Count=p.AirCycleCount,AssaultIssued=p.AssaultIssued,PagesOrdered=p.PagesOrdered,StructureOrdered=p.StructureOrdered,SortieObservedAt=p.AirSortieObservedAt,Deadline=p.AirCycleDeadline,ServiceReadyAt=p.AirServiceReadyAt,ObserveUntil=p.ObserveUntil};
+ bool handled=Game.Simulation.AriaAircraftCyclePolicy.Step(v0,ref s,out var d);
+ p.AirCycleStage=s.Stage;p.AirCycleAction=s.Action;p.AirCycleCount=s.Count;p.AssaultIssued=(byte)s.AssaultIssued;p.PagesOrdered=s.PagesOrdered;p.StructureOrdered=(byte)s.StructureOrdered;p.AirSortieObservedAt=s.SortieObservedAt;p.AirCycleDeadline=s.Deadline;p.AirServiceReadyAt=s.ServiceReadyAt;p.ObserveUntil=s.ObserveUntil;
+ if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ReturnAircraft)p.Intent=AriaSkirmishIntent.ReturnAircraft;
+ else if(d.Intent==Game.Simulation.AriaAircraftCycleIntent.ServiceAircraft)p.Intent=AriaSkirmishIntent.ServiceAircraft;
+ switch(d.Action){
+ case Game.Simulation.AriaAircraftCycleAction.Waiting:o.Kind=AriaPlayObservationKind.Waiting;break;
+ case Game.Simulation.AriaAircraftCycleAction.CloseDrawer:Target(v.CloseDrawer,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ToggleSelected:Target(v.SelectedSquadToToggle,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.SelectSlot:Target(v.Squad(d.Slot),false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.NextPage:Target(v.NextSquadPage,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.OpenActions:Target(v.OpenAircraftActions,false,ref o);break;
+ case Game.Simulation.AriaAircraftCycleAction.ReturnAircraft:Target(v.ReturnAircraft,false,ref o);break;
+ }return handled;
+}
 
         private static bool SelectionCanDamageDesignatedBase(
             in AriaSkirmishObservation view,
@@ -1468,137 +1351,44 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan,
             ref AriaPlayObservationComponent output)
         {
-            if (!view.EnemyDesignatedAlive || plan.AssaultIssued != 0)
-                return false;
-            // Older public-control observations have no page projection. Keep
-            // their existing Attack/Hold path; a live expanded roster always
-            // reports at least one page, including when it has zero groups.
-            if (view.ExpandedPageCount <= 0 && view.ExpandedTotalGroups == 0 &&
-                view.ExpandedAssaultMask == 0 && view.ExpandedStructureMask == 0 &&
-                !view.ExpandedCanPreviousPage && !view.ExpandedCanNextPage)
-                return false;
-            // Begin every bounded sweep at page zero. Page changes are acknowledged only
-            // when a later observation reports a different PageIndex.
-            if (plan.PagedToAssault == 0 && view.ExpandedPageIndex > 0)
-            {
-                if (view.PreviousSquadPage.Available)
-                { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.PreviousSquadPage, false, ref output); }
-                else output.Kind = AriaPlayObservationKind.Waiting;
-                return true;
+            var facts = new Game.Simulation.AriaGroundColumnView {
+                ExpandedPageCount=view.ExpandedPageCount,ExpandedPageIndex=view.ExpandedPageIndex,
+                ExpandedTotalGroups=view.ExpandedTotalGroups,EnemyDesignatedAlive=view.EnemyDesignatedAlive,
+                ExpandedCanPreviousPage=view.ExpandedCanPreviousPage,ExpandedCanNextPage=view.ExpandedCanNextPage,
+                ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,
+                ExpandedAttackOrderMask=view.ExpandedAttackOrderMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
+                ExpandedStructureMask=view.ExpandedStructureMask,
+                PreviousAvailable=view.PreviousSquadPage.Available,NextAvailable=view.NextSquadPage.Available,
+                ToggleAvailable=view.SelectedSquadToToggle.Available,AttackAvailable=view.Attack.Available };
+            for(int slot=0;slot<5;slot++)if(view.Squad(slot).Available)facts.AvailableSquadMask|=1<<slot;
+            var state = new Game.Simulation.AriaGroundColumnState {
+                PagesOrdered=plan.PagesOrdered,SelectionResetPage=plan.SelectionResetPage,AssaultPageSeen=plan.AssaultPageSeen,
+                AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,
+                PagedToAssault=plan.PagedToAssault,AssaultIssued=plan.AssaultIssued };
+            bool handled=Game.Simulation.AriaGroundColumnPolicy.StepGroundAssault(facts,ref state,out var decision);
+            plan.PagesOrdered=state.PagesOrdered;plan.SelectionResetPage=state.SelectionResetPage;plan.AssaultPageSeen=state.AssaultPageSeen;
+            plan.AssaultSelecting=state.AssaultSelecting;plan.StructureOrdered=state.StructureOrdered;
+            plan.PagedToAssault=state.PagedToAssault;plan.AssaultIssued=state.AssaultIssued;
+            switch(decision.Intent) {
+                case Game.Simulation.AriaGroundIntent.Inspect:plan.Intent=AriaSkirmishIntent.Inspect;break;
+                case Game.Simulation.AriaGroundIntent.SelectSquad:plan.Intent=AriaSkirmishIntent.SelectSquad;break;
+                case Game.Simulation.AriaGroundIntent.Attack:plan.Intent=AriaSkirmishIntent.Attack;break;
             }
-            if (plan.PagedToAssault == 0) plan.PagedToAssault = 1;
-            // Rifles screen the structure column against enemy troops. Visit
-            // every assault page, then require a tank or rocketeer Attack order
-            // before treating the Barracks assault as issued.
-            return TryStructureColumn(view, ref plan, ref output);
+            switch(decision.Action) {
+                case Game.Simulation.AriaGroundAction.Wait:output.Kind=AriaPlayObservationKind.Waiting;break;
+                case Game.Simulation.AriaGroundAction.Unavailable:output.Kind=AriaPlayObservationKind.Unavailable;break;
+                case Game.Simulation.AriaGroundAction.PreviousPage:Target(view.PreviousSquadPage,false,ref output);break;
+                case Game.Simulation.AriaGroundAction.NextPage:Target(view.NextSquadPage,false,ref output);break;
+                case Game.Simulation.AriaGroundAction.ToggleSelected:Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaGroundAction.SelectSlot:Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaGroundAction.ArmAttack:Target(view.Attack,false,ref output);break;
+            }
+            return handled;
         }
 
-        private static bool TryStructureColumn(
-            in AriaSkirmishObservation view,
-            ref AriaSkirmishPlanComponent plan,
-            ref AriaPlayObservationComponent output)
-        {
-            if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0)
-            {
-                plan.SelectionResetPage = view.ExpandedPageIndex;
-                plan.AssaultSelecting = 2;
-            }
-            if (plan.AssaultSelecting == 2)
-            {
-                if (TryDeselectSquads(view, ref output)) return true;
-                // Resume the intended assault window after normal card/swipe input.
-                if (view.ExpandedPageIndex != plan.SelectionResetPage)
-                {
-                    plan.Intent = AriaSkirmishIntent.Inspect;
-                    Target(view.ExpandedPageIndex < plan.SelectionResetPage
-                        ? view.NextSquadPage : view.PreviousSquadPage, false, ref output);
-                    return true;
-                }
-                plan.AssaultSelecting = 0;
-            }
-            int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
-            if (pending != 0)
-            {
-                int slot = LowestSetBit(pending);
-                AriaTouchTarget card = view.Squad(slot);
-                if (!card.Available)
-                    return false;
-                plan.AssaultSelecting = 1;
-                plan.Intent = AriaSkirmishIntent.SelectSquad;
-                Target(card, false, ref output);
-                return true;
-            }
 
-            if ((view.ExpandedStructureMask & view.ExpandedAttackOrderMask) != 0)
-                plan.StructureOrdered = 1;
 
-            bool assaultOrdered = view.ExpandedAssaultMask == 0 ||
-                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
-            // Already accepted groups keep fighting while the remaining cohort is selected.
-            // Selection above deliberately excludes their AttackOrder bits, so requiring them
-            // selected here would prevent the next explicit Attack command from ever arming.
-            int remainingAssault = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask;
-            bool assaultSelected = remainingAssault != 0 &&
-                (remainingAssault & ~view.ExpandedSelectedMask) == 0;
-            if (!assaultOrdered && assaultSelected)
-            {
-                // Keep pressing Attack until the drawer shows the order.
-                // Latching on the request left the tank unselected when the tap missed.
-                // Paging away while Attack is covered clears that selection.
-                if (!view.Attack.Available)
-                {
-                    plan.Intent = AriaSkirmishIntent.Inspect;
-                    output.Kind = AriaPlayObservationKind.Waiting;
-                    return true;
-                }
 
-                plan.Intent = AriaSkirmishIntent.Attack;
-                Target(view.Attack, false, ref output);
-                return true;
-            }
-
-            bool pageInspected = assaultOrdered;
-            if (pageInspected && plan.AssaultPageSeen != view.ExpandedPageIndex + 1)
-            {
-                plan.PagesOrdered++;
-                plan.AssaultPageSeen = view.ExpandedPageIndex + 1;
-            }
-            if (plan.PagedToAssault == 2)
-            {
-                if (view.ExpandedPageIndex > 0 && view.PreviousSquadPage.Available)
-                { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.PreviousSquadPage, false, ref output); return true; }
-                if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 &&
-                    plan.PagesOrdered >= (view.ExpandedPageCount > 0 ? view.ExpandedPageCount : 1))
-                { plan.AssaultIssued = 1; return false; }
-            }
-            if (view.NextSquadPage.Available)
-            {
-                plan.PagedToAssault = 1;
-                plan.AssaultSelecting = 0;
-                plan.Intent = AriaSkirmishIntent.SelectSquad;
-                Target(view.NextSquadPage, false, ref output);
-                return true;
-            }
-            if (view.PreviousSquadPage.Available)
-            {
-                plan.PagedToAssault = 2;
-                plan.AssaultSelecting = 0;
-                plan.Intent = AriaSkirmishIntent.Inspect;
-                Target(view.PreviousSquadPage, false, ref output);
-                return true;
-            }
-            // A one-page roster completes in place. Multi-page sweeps complete only
-            // after the observed Previous actions have returned the tray to page zero.
-            if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 && plan.PagesOrdered >= view.ExpandedPageCount)
-            { plan.AssaultIssued = 1; return false; }
-            if (!pageInspected || plan.StructureOrdered == 0)
-            {
-                plan.Intent = AriaSkirmishIntent.Inspect;
-                output.Kind = AriaPlayObservationKind.Waiting;
-                return true;
-            }
-            return false;
-        }
 
         private static bool TryDeselectSquads(in AriaSkirmishObservation view,
             ref AriaPlayObservationComponent output)

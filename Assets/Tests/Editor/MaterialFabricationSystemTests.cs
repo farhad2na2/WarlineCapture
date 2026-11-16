@@ -654,4 +654,149 @@ public sealed class MaterialFabricationSystemTests
             Version = 1u
         };
     }
+
+    // Focused native World fixture. This is not a battle outcome or performance test.
+    public static void RunBurstObserverValidation()
+    {
+        try
+        {
+            var type = typeof(MaterialFabricationSystem);
+            Assert.IsTrue(Attribute.IsDefined(type, typeof(Unity.Burst.BurstCompileAttribute)));
+            Assert.IsFalse(Attribute.IsDefined(type.GetMethod(nameof(MaterialFabricationSystem.OnUpdate)), typeof(Unity.Burst.BurstCompileAttribute)));
+            Assert.IsTrue(Attribute.IsDefined(type.GetMethod(nameof(MaterialFabricationSystem.OnCreate)), typeof(Unity.Burst.BurstCompileAttribute)));
+            Assert.IsTrue(Attribute.IsDefined(type.GetMethod(nameof(MaterialFabricationSystem.OnDestroy)), typeof(Unity.Burst.BurstCompileAttribute)));
+            var tests = new MaterialFabricationSystemTests();
+            tests.SystemUpdate_ProcessesCorrelatedProductionRequestWhileSimulationPaused();
+            tests.SystemUpdate_UsesCanonicalFactionMaterialsAtOneSecondCadence();
+            tests.SystemUpdate_ObserverPreservesGameplayAndReportsCallbackFailure();
+            Debug.Log("[MaterialFabricationBurstObserverValidation] result=Passed cases=3 observed_ticks=2 failure_channel=ContinuousFailure mission=false");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MaterialFabricationBurstObserverValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
+    [Test]
+    public void SystemUpdate_ObserverPreservesGameplayAndReportsCallbackFailure()
+    {
+        MaterialObserverSnapshot off = RunMaterialObserverCase(0);
+        MaterialObserverSnapshot on = RunMaterialObserverCase(1);
+        MaterialObserverSnapshot failed = RunMaterialObserverCase(2);
+        AssertMaterialObserverSnapshotEqual(off, on);
+        AssertMaterialObserverSnapshotEqual(off, failed);
+        Assert.AreEqual(20, on.Materials.Current);
+        Assert.AreEqual(4f, on.Storage.StoredOilBarrels);
+        Assert.AreEqual(2f, on.Telemetry.ActiveSeconds);
+        Assert.AreEqual(2, on.Events.Length);
+        Assert.AreEqual(0, off.TickEvents);
+        Assert.AreEqual(2, on.TickEvents);
+        Assert.AreEqual(2, on.UpdateBeforeEvents);
+        Assert.AreEqual(2, on.UpdateAfterEvents);
+        Assert.IsNull(off.ObserverFailure);
+        Assert.IsNull(on.ObserverFailure);
+        Assert.AreEqual(1, failed.FailureCallbacks);
+        StringAssert.Contains("Controlled material observer callback failure", failed.ObserverFailure);
+    }
+
+    private sealed class MaterialObserverSnapshot
+    {
+        internal MaterialFabricationComponent Fabrication;
+        internal BuildingResourceStorageComponent Storage;
+        internal FactionTacticalMaterialsComponent Materials;
+        internal FactionMaterialFabricationTelemetryComponent Telemetry;
+        internal MaterialFabricationEconomyEventQueueComponent Queue;
+        internal MaterialFabricationEconomyEventElement[] Events;
+        internal int TickEvents, UpdateBeforeEvents, UpdateAfterEvents, FailureCallbacks;
+        internal string ObserverFailure;
+    }
+
+    private static void AssertMaterialObserverSnapshotEqual(MaterialObserverSnapshot expected, MaterialObserverSnapshot actual)
+    {
+        Assert.AreEqual(expected.Fabrication, actual.Fabrication);
+        Assert.AreEqual(expected.Storage, actual.Storage);
+        Assert.AreEqual(expected.Materials, actual.Materials);
+        Assert.AreEqual(expected.Telemetry, actual.Telemetry);
+        Assert.AreEqual(expected.Queue, actual.Queue);
+        CollectionAssert.AreEqual(expected.Events, actual.Events);
+    }
+
+    private static MaterialObserverSnapshot RunMaterialObserverCase(int mode)
+    {
+        // Never replace an active capture. Restore every touched observer field below.
+        Assert.IsNull(S002PhysicalStartupObservation.ContinuousMaterialAdmission);
+        Assert.IsNull(S002PhysicalStartupObservation.ContinuousMaterial);
+        Assert.IsNull(S002PhysicalStartupObservation.ContinuousBeforeRead);
+        Assert.IsNull(S002PhysicalStartupObservation.ContinuousFailed);
+        Assert.IsNull(S002PhysicalStartupObservation.ContinuousFailure);
+        var result = new MaterialObserverSnapshot();
+        using World world = new("MaterialObserverCase" + mode);
+        EntityManager em = world.EntityManager;
+        Entity gameplay = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        em.SetComponentData(gameplay, new RuntimeGameplayStateComponent { SimulationActive = 1 });
+        Entity economy = em.CreateEntity(typeof(FactionEconomy), typeof(FactionTacticalMaterialsComponent),
+            typeof(MaterialFabricationEconomyEventQueueComponent), typeof(FactionMaterialFabricationTelemetryComponent));
+        em.AddBuffer<MaterialFabricationEconomyEventElement>(economy);
+        em.SetComponentData(economy, new FactionEconomy { FactionId = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(economy, CreateMaterials(0, 100));
+        em.SetComponentData(economy, new FactionMaterialFabricationTelemetryComponent { FactionId = FactionIdentity.PlayerFactionId });
+        Entity depot = em.CreateEntity(typeof(MaterialFabricationComponent), typeof(MaterialFabricationInputTag),
+            typeof(BuildingResourceStorageComponent), typeof(UnitHealth));
+        MaterialFabricationComponent fabrication = CreateFabrication();
+        fabrication.CycleDurationSeconds = 2f;
+        em.SetComponentData(depot, fabrication);
+        em.SetComponentData(depot, CreateStorage(8f));
+        em.SetComponentData(depot, new UnitHealth { Current = 100, Max = 100 });
+        try
+        {
+            if (mode != 0)
+            {
+                S002PhysicalStartupObservation.ContinuousBeforeRead = work => true;
+                S002PhysicalStartupObservation.ContinuousFailed = reason => result.FailureCallbacks++;
+                S002PhysicalStartupObservation.ContinuousMaterialAdmission = (manager, ingress) => manager.Equals(em) && !ingress;
+                S002PhysicalStartupObservation.ContinuousMaterial = facts =>
+                {
+                    Assert.IsTrue(facts.Scope.Manager.Equals(em));
+                    if (facts.Stage == "update-before") result.UpdateBeforeEvents++;
+                    if (facts.Stage == "update-after") result.UpdateAfterEvents++;
+                    if (facts.Stage != "tick-after") return;
+                    Assert.AreEqual(depot, facts.Entity);
+                    Assert.IsTrue(facts.Applied && facts.HasMaterials);
+                    Assert.AreEqual(em.GetComponentData<MaterialFabricationComponent>(depot), facts.Fabrication);
+                    Assert.AreEqual(em.GetComponentData<BuildingResourceStorageComponent>(depot), facts.Storage);
+                    Assert.AreEqual(em.GetComponentData<FactionTacticalMaterialsComponent>(economy), facts.Materials);
+                    result.TickEvents++;
+                    if (mode == 2) throw new InvalidOperationException("Controlled material observer callback failure");
+                };
+            }
+            SystemHandle system = world.CreateSystem<MaterialFabricationSystem>();
+            for (int step = 1; step <= 2; step++)
+            {
+                world.SetTime(new TimeData(step, 1f));
+                system.Update(world.Unmanaged);
+            }
+            result.Fabrication = em.GetComponentData<MaterialFabricationComponent>(depot);
+            result.Storage = em.GetComponentData<BuildingResourceStorageComponent>(depot);
+            result.Materials = em.GetComponentData<FactionTacticalMaterialsComponent>(economy);
+            result.Telemetry = em.GetComponentData<FactionMaterialFabricationTelemetryComponent>(economy);
+            result.Queue = em.GetComponentData<MaterialFabricationEconomyEventQueueComponent>(economy);
+            var events = em.GetBuffer<MaterialFabricationEconomyEventElement>(economy);
+            result.Events = new MaterialFabricationEconomyEventElement[events.Length];
+            for (int i = 0; i < events.Length; i++) result.Events[i] = events[i];
+            result.ObserverFailure = S002PhysicalStartupObservation.ContinuousFailure;
+            return result;
+        }
+        finally
+        {
+            S002PhysicalStartupObservation.ContinuousMaterialAdmission = null;
+            S002PhysicalStartupObservation.ContinuousMaterial = null;
+            S002PhysicalStartupObservation.ContinuousBeforeRead = null;
+            S002PhysicalStartupObservation.ContinuousFailed = null;
+            S002PhysicalStartupObservation.ContinuousFailure = null;
+        }
+    }
+
 }

@@ -944,12 +944,12 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var requestSystem = new BuildingProductionRequestSystemHelper();
 
         requestSystem.ProcessPendingUiProductionCommandsIfPresent(world.EntityManager, default, 0);
-        requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0);
+        requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0, 0f);
         long idleAllocationStart = GC.GetAllocatedBytesForCurrentThread();
         for (int i = 0; i < 300; i++)
         {
             requestSystem.ProcessPendingUiProductionCommandsIfPresent(world.EntityManager, default, 0);
-            requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0);
+            requestSystem.ProcessPendingUiCampItemCommandsIfPresent(world.EntityManager, default, 0, 0f);
         }
         long idleAllocatedBytes = GC.GetAllocatedBytesForCurrentThread() - idleAllocationStart;
 
@@ -3697,6 +3697,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     25,
                     focusProducerOnSuccess: true,
                     frameCount: 1,
+                    now: 0f,
                     out string requiredBuildingDisplayName));
             Assert.IsEmpty(requiredBuildingDisplayName);
             Assert.AreEqual(25, spent);
@@ -3759,6 +3760,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     price: 20,
                     focusProducerOnSuccess: false,
                     frameCount: 1,
+                    now: 0f,
                     out _));
 
             Assert.AreEqual(1, spendCount);
@@ -3808,6 +3810,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     price: 20,
                     focusProducerOnSuccess: false,
                     frameCount: 1,
+                    now: 0f,
                     out _));
             Assert.AreEqual(0, spendCount);
             Assert.AreEqual(0, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
@@ -3841,7 +3844,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 new BuildingProductionQueueCompositionSystemHelper(),
                 unitPrefab,
                 world.EntityManager,
-                tryQueuePlayerUnit: (_, _, _) => false,
+                tryQueuePlayerUnit: (_, _, _, _) => false,
                 evaluateConstructionResources: (_, _) => FactionConstructionResourceMutationResult.Applied,
                 tryResolveUnitResourceCosts: ResolveMission2RifleCosts,
                 trySpendConstructionResources: (creditsCost, materialsCost) =>
@@ -3868,6 +3871,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     price: 20,
                     focusProducerOnSuccess: false,
                     frameCount: 1,
+                    now: 0f,
                     out _));
             Assert.AreEqual(1, spendCount);
             Assert.AreEqual(1, restoreCount);
@@ -3927,6 +3931,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                     25,
                     focusProducerOnSuccess: false,
                     frameCount: 1,
+                    now: 0f,
                     out _));
             Assert.AreEqual(0, spent);
             Assert.AreEqual(1, em.GetBuffer<OperationMapBuildingUnitProductionRequest>(producer, true).Length);
@@ -4229,7 +4234,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 productionSystem,
                 unitPrefab,
                 world.EntityManager,
-                tryQueuePlayerUnit: (_, _, _) => false);
+                tryQueuePlayerUnit: (_, _, _, _) => false);
 
             int requestId = requestSystem.EnqueueCreateUnitFromSelectedBuilding(
                 world.EntityManager,
@@ -4325,7 +4330,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         var context = CreateProducerSelectionContext(buildings, production, prefab, em,
             trySpendMaterials: cost => { materials -= cost; return true; }, refundMaterials: amount => materials += amount);
         int order = requests.EnqueueCampItemRequest(em, prefab, 20, false);
-        requests.ProcessPendingUiCampItemCommands(em, context, 88);
+        requests.ProcessPendingUiCampItemCommands(em, context, 88, 0f);
         Assert.IsTrue(requests.TryGetUiCampItemCommandResult(em, order, out var result));
         Assert.AreEqual(1, result.Accepted);
         Assert.AreEqual(80, materials);
@@ -4380,7 +4385,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 buildingPrefab,
                 price: 1234,
                 focusProducerOnSuccess: true);
-            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 77);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 77, now: 0f);
 
             Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
                 world.EntityManager,
@@ -4434,7 +4439,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 unitPrefab,
                 price: 5678,
                 focusProducerOnSuccess: false);
-            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88, now: 0f);
 
             Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
                 world.EntityManager,
@@ -4499,7 +4504,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 unitPrefab,
                 price: 1200,
                 focusProducerOnSuccess: false);
-            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88, now: 0f);
 
             Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
                 world.EntityManager,
@@ -4560,7 +4565,7 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
                 unitPrefab,
                 price: 1200,
                 focusProducerOnSuccess: false);
-            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88);
+            requestSystem.ProcessPendingUiCampItemCommands(world.EntityManager, context, frameCount: 88, now: 0f);
 
             Assert.IsTrue(requestSystem.TryGetUiCampItemCommandResult(
                 world.EntityManager,
@@ -5802,6 +5807,9 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         public float TransportHoldForNextReadySeconds { get; set; }
         public int TransportMaxConcurrent { get; set; }
         public int RemainingQuantity { get; set; }
+        public Entity ReceiptOwner { get; set; }
+        public uint ReceiptId { get; set; }
+        public FixedString64Bytes ReceiptAttempt { get; set; }
         public BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
     }
@@ -5994,13 +6002,13 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             trySpendMaterials ?? (_ => true),
             refundMaterials ?? (_ => { }),
             _ => { },
-            tryQueuePlayerUnit ?? ((building, productionIndex, spawnUnitPrefab) => productionSystem.TryQueuePlayerUnitFromBuilding(
+            tryQueuePlayerUnit ?? ((building, productionIndex, spawnUnitPrefab, now) => productionSystem.TryQueuePlayerUnitFromBuilding(
                 queueContext,
                 building,
                 productionIndex,
                 spawnUnitPrefab,
                 entityManager,
-                10f)),
+                now)),
             _ => { },
             () => { },
             () => { },

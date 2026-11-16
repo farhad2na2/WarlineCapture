@@ -8,6 +8,14 @@ using UnityEngine;
 
 public sealed class OperationMapCameraPoseCameraHelperTests
 {
+    public static void RunFocusedValidation()
+    {
+        var tests = new OperationMapCameraPoseCameraHelperTests();
+        tests.AppliesInitialPlanningAndBattlePosesFromActiveMapBlob();
+        tests.SharedDataSelectorChoosesRequestedIdAndRejectsNonFinitePose();
+        Debug.Log("[OperationMapCameraPoseValidation] result=Passed cases=2 scope=FixtureOnly");
+    }
+
     [Test]
     public void AppliesInitialPlanningAndBattlePosesFromActiveMapBlob()
     {
@@ -70,7 +78,40 @@ public sealed class OperationMapCameraPoseCameraHelperTests
         }
     }
 
-    private static BlobAssetReference<OperationMapBlob> CreateMetadataBlob()
+    [Test]
+    public void SharedDataSelectorChoosesRequestedIdAndRejectsNonFinitePose()
+    {
+        BlobAssetReference<OperationMapBlob> blob = CreateMetadataBlob();
+        try
+        {
+            Assert.That(
+                OperationMapCameraPoseSelectionData.TryResolve(ref blob.Value, true, out OperationMapCameraBlob planning),
+                Is.True);
+            Assert.That(planning.Id, Is.EqualTo(new FixedString64Bytes("camera.test.planning")));
+            Assert.That(
+                OperationMapCameraPoseSelectionData.TryResolve(ref blob.Value, false, out OperationMapCameraBlob battle),
+                Is.True);
+            Assert.That(battle.Id, Is.EqualTo(new FixedString64Bytes("camera.test.battle")));
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+
+        BlobAssetReference<OperationMapBlob> invalidBlob = CreateMetadataBlob(invalidPlanningPosition: true);
+        try
+        {
+            Assert.That(
+                OperationMapCameraPoseSelectionData.TryResolve(ref invalidBlob.Value, true, out _),
+                Is.False);
+        }
+        finally
+        {
+            invalidBlob.Dispose();
+        }
+    }
+
+    private static BlobAssetReference<OperationMapBlob> CreateMetadataBlob(bool invalidPlanningPosition = false)
     {
         using var builder = new BlobBuilder(Allocator.Temp);
         ref OperationMapBlob root = ref builder.ConstructRoot<OperationMapBlob>();
@@ -80,7 +121,9 @@ public sealed class OperationMapCameraPoseCameraHelperTests
         cameras[0] = new OperationMapCameraBlob
         {
             Id = root.PlanningCameraId,
-            Position = new float3(10f, 20f, 30f),
+            Position = invalidPlanningPosition
+                ? new float3(float.NaN, 20f, 30f)
+                : new float3(10f, 20f, 30f),
             Rotation = quaternion.identity,
             OrthographicSize = 35f,
             FieldOfView = 60f,

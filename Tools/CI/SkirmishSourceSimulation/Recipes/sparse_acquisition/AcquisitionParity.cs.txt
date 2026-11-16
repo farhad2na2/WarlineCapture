@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using Game.Runtime.Targeting;
+
+internal sealed class TargetData
+{
+    public byte Faction; public int Health=100,Attackers; public TargetPosition Position;
+    public TargetData(byte faction,float x,float z,int attackers=0){Faction=faction;Position=new TargetPosition(x,0,z);Attackers=attackers;}
+}
+
+internal struct AcquisitionContext : __CONTEXT_INTERFACE__
+{
+    public bool AttackMove,Manual,PathFollow,Scan; public int RecentId;
+    private Dictionary<int,List<TargetIdentity>> cells; private Dictionary<int,TargetData> targets; private List<TargetIdentity> bucket; private int bucketIndex;
+    private TargetIdentity source; private int[] keys; private int buildingIndex; private List<int> visited,buildings; __SPARSE_FIELD__
+    public List<int> Visited=>visited; public List<int> Buildings=>buildings;
+    public void Initialize(TargetIdentity src){source=src;cells=new Dictionary<int,List<TargetIdentity>>();targets=new Dictionary<int,TargetData>();visited=new List<int>();buildings=new List<int>();}
+    public void Add(int id,int x,int z,byte faction,int attackers=0,bool building=false)
+    {
+        targets[id]=new TargetData(faction,x+0.5f,z+0.5f,attackers);
+        if(building){buildingIndex++;return;}
+        int key=x+z*10;if(!cells.TryGetValue(key,out var rows)){rows=new List<TargetIdentity>();cells.Add(key,rows);}rows.Add(new TargetIdentity(id,1));keys=cells.Keys.OrderBy(v=>v).ToArray();
+    }
+    public bool SourceHasAttackMove()=>AttackMove; public bool SourceHasManualMove()=>Manual; public bool SourceHasPathFollow()=>PathFollow; public bool SourceHasPathRequest()=>false; public bool SourceHoldsPosition()=>false;
+    public bool TryReadScan(out TargetScanOrder order){order=default;if(!Scan)return false;order=new TargetScanOrder{CenterX=2,CenterZ=2,RadiusCells=2,HasStarted=1,EngageDetectedTargets=1};return true;}
+    public bool TryReadRecent(out TargetIdentity target){target=default;if(RecentId==0)return false;target=new TargetIdentity(RecentId,1);return true;}
+    public bool BeginCell(int key,out TargetIdentity candidate){bucket=null;bucketIndex=0;if(cells.TryGetValue(key,out bucket)&&bucket.Count>0){candidate=bucket[0];visited.Add(candidate.Index);return true;}candidate=default;return false;}
+    public bool NextCell(out TargetIdentity candidate){bucketIndex++;if(bucket!=null&&bucketIndex<bucket.Count){candidate=bucket[bucketIndex];visited.Add(candidate.Index);return true;}candidate=default;return false;}
+    public int BuildingCount()=>buildingIndex;
+    public TargetIdentity BuildingAt(int index){buildings.Add(index);int id=30+index;return new TargetIdentity(id,1);}
+    public bool HasFaction(TargetIdentity target)=>targets.ContainsKey(target.Index); public byte Faction(TargetIdentity target)=>targets[target.Index].Faction;
+    public bool HasTransform(TargetIdentity target)=>targets.ContainsKey(target.Index); public TargetPosition Position(TargetIdentity target)=>targets[target.Index].Position;
+    public bool HasHealth(TargetIdentity target)=>targets.ContainsKey(target.Index); public int Health(TargetIdentity target)=>targets[target.Index].Health;
+    public bool HasEngagement(TargetIdentity target)=>false; public TargetIdentity EngagementTarget(TargetIdentity target)=>default; public bool ProtectedRecords(TargetIdentity target)=>false;
+    public TargetPolicyFacts PolicyFacts(TargetIdentity src,TargetIdentity target)=>default; public int AttackerCount(TargetIdentity target)=>targets[target.Index].Attackers;
+    public TargetCell WorldToCell(TargetPosition position)=>new TargetCell((int)Math.Floor(position.X),(int)Math.Floor(position.Z));
+    public bool TryBeginSparseCells(int centerX,int centerZ,int range,int width,int height,out int key)
+    {
+        if(keys==null)keys=Array.Empty<int>();
+        __SPARSE_BEGIN__
+    }
+    public bool TryNextSparseCell(out int key){__SPARSE_NEXT__}
+}
+
+internal static class AcquisitionParity
+{
+    private static TargetAcquisitionInput Input(bool canAttack= true)=>new TargetAcquisitionInput{Source=new TargetIdentity(1,1),Position=new TargetPosition(1.5f,0,1.5f),GridCell=new TargetCell(1,1),GridWidth=10,GridHeight=10,AggroRangeCells=2,CellSize=1,AttackRange=2,FactionId=1,CanAttack=(byte)(canAttack?1:0),AutoEngage=1};
+    private static string Run(string name,AcquisitionContext context,TargetAcquisitionInput input)
+    {
+        var result=TargetAcquisitionKernel.AcquireFromReadOnlyFacts(ref context,input);
+        return name+"|"+(result.Acquired?1:0)+"|"+result.Target.Index+"|"+(result.Retaliation?1:0)+"|"+(result.RemoveRecentAttacker?1:0)+"|"+string.Join(",",context.Visited)+"|"+string.Join(",",context.Buildings);
+    }
+    private static AcquisitionContext New(bool attackMove=false,bool manual=false,bool scan=false)
+    {var c=new AcquisitionContext{AttackMove=attackMove,Manual=manual,PathFollow=manual,Scan=scan};c.Initialize(new TargetIdentity(1,1));return c;}
+    public static int Main()
+    {
+        var c=New();c.Add(20,2,1,2);c.Add(22,2,1,2);c.Add(21,0,1,2);Console.WriteLine(Run("mobile-tie",c,Input()));
+        c=New(true);c.Add(30,2,1,2,building:true);c.Add(31,0,1,2,building:true);Console.WriteLine(Run("building-tie",c,Input()));
+        c=New(true);c.Add(20,2,1,2);c.Add(30,2,1,2,building:true);Console.WriteLine(Run("mobile-before-building",c,Input()));
+        c=New(false,true);c.Add(40,2,1,2);c.RecentId=40;Console.WriteLine(Run("manual-cancel",c,Input()));
+        c=New(false,true,true);c.Add(50,2,1,2);Console.WriteLine(Run("scan-command",c,Input()));
+        c=New(true,true);c.Add(60,2,1,2);Console.WriteLine(Run("attack-move-command",c,Input()));
+        c=New();c.Add(70,2,1,2);c.RecentId=70;Console.WriteLine(Run("recent-retaliation",c,Input()));
+        return 0;
+    }
+}

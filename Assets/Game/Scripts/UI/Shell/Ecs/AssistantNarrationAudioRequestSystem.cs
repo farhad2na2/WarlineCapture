@@ -75,7 +75,7 @@ namespace Game.UI.Shell.Ecs
             }
 
             bool changed = false;
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             for (int i = 0; i < requests.Length; i++)
             {
                 AssistantNarrationRequestElement request = requests[i];

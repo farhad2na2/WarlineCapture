@@ -26,6 +26,30 @@ namespace Game.Runtime
             out bool hasActiveMap,
             out string error)
         {
+            hasActiveMap = false;
+            if (!SkirmishMissionProductionInfrastructure.TryResolveOwnership(
+                    entityManager, out bool missionOwned, out Entity session, out error))
+                return false;
+            if (missionOwned)
+            {
+                if (!OperationMapMetadataUtility.TryResolveActiveMetadata(
+                        entityManager, out _, out hasActiveMap, out error) &&
+                    (hasActiveMap || error != null))
+                    return false;
+                return SkirmishMissionProductionInfrastructure.TryValidateHelipadRows(
+                    entityManager, session, destination, in grid, out error);
+            }
+
+            return TryBindCampaign(entityManager, destination, in grid, out hasActiveMap, out error);
+        }
+
+        private static bool TryBindCampaign(
+            EntityManager entityManager,
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> destination,
+            in GridConfig grid,
+            out bool hasActiveMap,
+            out string error)
+        {
             if (!OperationMapMetadataUtility.TryResolveActiveMetadata(
                     entityManager,
                     out BlobAssetReference<OperationMapBlob> metadata,

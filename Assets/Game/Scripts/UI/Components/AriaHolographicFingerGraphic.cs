@@ -41,11 +41,11 @@ namespace Game.UI.Runtime
             if (nextAim && (!aiming || (approachTarget - value.Target).sqrMagnitude > 1))
             {
                 approachFrom = position; approachTarget = value.Target;
-                approachAt = Time.unscaledTime;
+                approachAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
                 approachDuration = Mathf.Clamp(value.AimDueAt - approachAt - .1f, .05f, .7f);
             }
             aiming = nextAim;
-            if (value.Pressed && !pressed) contactAt = Time.unscaledTime;
+            if (value.Pressed && !pressed) contactAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             pressed = value.Pressed;
         }
 
@@ -56,7 +56,7 @@ namespace Game.UI.Runtime
             if (state.Pressed || state.Phase == AriaPlayPhase.Touching) position = state.Contact;
             else if (aiming)
                 position = Vector2.Lerp(approachFrom, approachTarget,
-                    Mathf.SmoothStep(0, 1, (Time.unscaledTime - approachAt) / approachDuration));
+                    Mathf.SmoothStep(0, 1, (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) - approachAt) / approachDuration));
             float scale = Mathf.Clamp(Screen.height / 720f, .8f, 2.5f);
             rectTransform.position = position;
             rectTransform.localScale = Vector3.one * scale;
@@ -87,7 +87,7 @@ namespace Game.UI.Runtime
             }
             Ring(mesh, pressed ? 13 : 10, 2, new Color32(150, 250, 255, 240));
             Ring(mesh, pressed ? 19 : 15, 3, new Color32(0, 220, 255, 110));
-            float ripple = (Time.unscaledTime - contactAt) / .65f;
+            float ripple = (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) - contactAt) / .65f;
             if (ripple >= 0 && ripple < 1)
                 Ring(mesh, Mathf.Lerp(15, 36, ripple), 2.5f,
                     new Color32(70, 240, 255, (byte)(230 * (1 - ripple))));

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "module": "generate.py",
+  "entrypoint": "generate",
+  "scope": "Source-only projection of the original ECS-backed FactionResourceCompositionSystemHelper production owner and its production kernel dependencies.",
+  "generator_inputs": [
+    "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs",
+    "Assets/Game/Scripts/Systems/BuildingResourceProductionEcsSystem.cs",
+    "Assets/Game/Scripts/Systems/BuildingResourceProductionSystemHelper.cs",
+    "Assets/Game/Scripts/Simulation/BuildingResourceProductionPrecisionKernel.cs"
+  ],
+  "outputs": [
+    "FactionResourceProductionOwner.members.cs.txt",
+    "BuildingResourceProductionEcsSystem.cs.txt",
+    "BuildingResourceProductionSystemHelper.cs.txt",
+    "BuildingResourceProductionPrecisionKernel.cs.txt"
+  ],
+  "controls": "python3 Tools/CI/SkirmishSourceSimulation/Recipes/resource_production/test_generate.py",
+  "alternate_manifest": "prepare_manifest.py copies the current source manifest, verifies the three original native owner rows, and adds compile-only scope metadata.",
+  "compile_command": "python3 Tools/CI/run_skirmish_source_simulation.py build --repo <repo> --package-root <repo> --manifest <alternate-manifest> --output <new-output> --mission S002 --seed 104731 --timeout 600",
+  "compile_authority": "The runner compiles native_direct owner sources from its recorded manifest. The adjacent source extracts are audit material, not generated compile inputs.",
+  "unity_required": false,
+  "readiness_claim": false
+}

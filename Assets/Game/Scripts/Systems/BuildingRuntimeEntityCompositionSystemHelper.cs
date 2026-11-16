@@ -44,15 +44,30 @@ namespace Game.Runtime
 
         public Entity CreateBlockerEntity(Context context, BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, RuntimeActorBirthContext birth = default)
         {
+            return CreateBlockerEntity(context, definition, originCell, footprintCells, birth, out _);
+        }
+
+        public Entity CreateBlockerEntity(Context context, BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, RuntimeActorBirthContext birth, out System.Action cleanup)
+        {
+            cleanup = null;
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
                 return Entity.Null;
 
             Entity entity = em.CreateEntity();
-            em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
-            em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
-            em.AddComponent<StaticGridBlocker>(entity);
-            birth.StampFresh(em, entity, birth.Source.Grid, pathingBlocker: true);
-            return entity;
+            try
+            {
+                em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
+                em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
+                em.AddComponent<StaticGridBlocker>(entity);
+                birth.StampFresh(em, entity, birth.Source.Grid, pathingBlocker: true);
+                cleanup = () => DestroyEntityAfterFactoryFailure(em, entity);
+                return entity;
+            }
+            catch
+            {
+                DestroyEntityAfterFactoryFailure(em, entity);
+                throw;
+            }
         }
 
         public bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)
@@ -64,6 +79,12 @@ namespace Game.Runtime
 
         public Entity CreateBuildingCombatEntity(Context context, int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation, RuntimeActorBirthContext birth = default)
         {
+            return CreateBuildingCombatEntity(context, runtimeBuildingId, originCell, definition, ownerFactionId, worldRotation, birth, out _);
+        }
+
+        public Entity CreateBuildingCombatEntity(Context context, int runtimeBuildingId, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation, RuntimeActorBirthContext birth, out System.Action cleanup)
+        {
+            cleanup = null;
             if (definition == null)
                 return Entity.Null;
             if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
@@ -73,79 +94,109 @@ namespace Game.Runtime
             if (context.GetFootprintCenter == null)
                 return Entity.Null;
 
+#if UNITY_EDITOR
+            if (birth.Origin == RuntimeActorBirthContext.Kind.BuildingRequest)
+                S002PhysicalStartupObservation.BeforeFactory?.Invoke(em, actualGrid, definition, runtimeBuildingId, originCell, ownerFactionId, worldRotation, birth);
+#endif
             Vector2Int footprintCells = new(Mathf.Max(1, definition.FootprintCells.x), Mathf.Max(1, definition.FootprintCells.y));
             float3 center = (float3)context.GetFootprintCenter(originCell, footprintCells, grid);
             int maxHealth = Mathf.Max(1, definition.MaxHealth);
             Entity entity = em.CreateEntity();
-            em.AddComponentData(entity, new LocalTransform
+            try
             {
-                Position = center,
-                Rotation = new quaternion(worldRotation.x, worldRotation.y, worldRotation.z, worldRotation.w),
-                Scale = 1f
-            });
-            em.AddComponentData(entity, new LocalToWorld());
-            // Match the visual root's horizontal bounds recentering. Navigation cells
-            // alone cannot pick the face of a tall building or a thin gate.
-            if (definition.HasLocalBounds)
-            {
-                em.AddComponentData(entity, new UnitSelectionHitbox
+                em.AddComponentData(entity, new LocalTransform
                 {
-                    Center = new float3(0f, definition.LocalBounds.center.y, 0f),
-                    Extents = (float3)definition.LocalBounds.extents
+                    Position = center,
+                    Rotation = new quaternion(worldRotation.x, worldRotation.y, worldRotation.z, worldRotation.w),
+                    Scale = 1f
                 });
-            }
-            em.AddComponentData(entity, new UnitGrid
-            {
-                Cell = new int2(originCell.x + footprintCells.x / 2, originCell.y + footprintCells.y / 2)
-            });
-            em.AddComponentData(entity, new UnitFootprint
-            {
-                Size = new int2(footprintCells.x, footprintCells.y)
-            });
-            em.AddComponent<RuntimeBuildingCombatTag>(entity);
-            em.AddComponentData(entity, new RuntimeBuildingCombatInfo
-            {
-                RuntimeBuildingId = runtimeBuildingId,
-                OwnerFactionId = ownerFactionId,
-                OriginCell = new int2(originCell.x, originCell.y),
-                FootprintCells = new int2(footprintCells.x, footprintCells.y),
-                IsWall = definition.IsWall ? (byte)1 : (byte)0,
-                IsGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) ? (byte)1 : (byte)0
-            });
-            AddResourceStorageComponent(em, entity, runtimeBuildingId, ownerFactionId, definition);
-            AddMaterialFabricationComponents(em, entity, runtimeBuildingId, ownerFactionId, definition);
-            em.AddComponentData(entity, new UnitGridInitialized());
-            em.AddComponentData(entity, new Faction { Id = ownerFactionId });
-            em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });
-            em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
-            em.AddComponentData(entity, new UnitSourcePrefabKey
-            {
-                Value = new FixedString64Bytes(definition.Prefab != null ? definition.Prefab.name : definition.DisplayName)
-            });
-            em.AddComponentData(entity, new UnitDisplayInfo
-            {
-                Name = new FixedString64Bytes(string.IsNullOrWhiteSpace(definition.DisplayName) ? "Building" : definition.DisplayName),
-                Description = new FixedString128Bytes(definition.Description ?? string.Empty)
-            });
-            if (definition.ThreatDetectionKind != ThreatDetectionKind.None && definition.ThreatDetectionRadiusCells > 0)
-            {
-                em.AddComponentData(entity, new ThreatDetector
+                em.AddComponentData(entity, new LocalToWorld());
+                // Match the visual root's horizontal bounds recentering. Navigation cells
+                // alone cannot pick the face of a tall building or a thin gate.
+                if (definition.HasLocalBounds)
                 {
-                    Kind = (byte)definition.ThreatDetectionKind,
-                    RadiusCells = Mathf.Max(0, definition.ThreatDetectionRadiusCells)
+                    em.AddComponentData(entity, new UnitSelectionHitbox
+                    {
+                        Center = new float3(0f, definition.LocalBounds.center.y, 0f),
+                        Extents = (float3)definition.LocalBounds.extents
+                    });
+                }
+                em.AddComponentData(entity, new UnitGrid
+                {
+                    Cell = new int2(originCell.x + footprintCells.x / 2, originCell.y + footprintCells.y / 2)
                 });
-                AddAirDefenseSupportProvider(em, entity, definition.ThreatDetectionKind, definition.ThreatDetectionRadiusCells);
+                em.AddComponentData(entity, new UnitFootprint
+                {
+                    Size = new int2(footprintCells.x, footprintCells.y)
+                });
+                em.AddComponent<RuntimeBuildingCombatTag>(entity);
+                em.AddComponentData(entity, new RuntimeBuildingCombatInfo
+                {
+                    RuntimeBuildingId = runtimeBuildingId,
+                    OwnerFactionId = ownerFactionId,
+                    OriginCell = new int2(originCell.x, originCell.y),
+                    FootprintCells = new int2(footprintCells.x, footprintCells.y),
+                    IsWall = definition.IsWall ? (byte)1 : (byte)0,
+                    IsGate = BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) ? (byte)1 : (byte)0
+                });
+                AddResourceStorageComponent(em, entity, runtimeBuildingId, ownerFactionId, definition);
+                AddMaterialFabricationComponents(em, entity, runtimeBuildingId, ownerFactionId, definition);
+                em.AddComponentData(entity, new UnitGridInitialized());
+                em.AddComponentData(entity, new Faction { Id = ownerFactionId });
+                em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });
+                em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
+                em.AddComponentData(entity, new UnitSourcePrefabKey
+                {
+                    Value = new FixedString64Bytes(definition.Prefab != null ? definition.Prefab.name : definition.DisplayName)
+                });
+                em.AddComponentData(entity, new UnitDisplayInfo
+                {
+                    Name = new FixedString64Bytes(string.IsNullOrWhiteSpace(definition.DisplayName) ? "Building" : definition.DisplayName),
+                    Description = new FixedString128Bytes(definition.Description ?? string.Empty)
+                });
+                if (definition.ThreatDetectionKind != ThreatDetectionKind.None && definition.ThreatDetectionRadiusCells > 0)
+                {
+                    em.AddComponentData(entity, new ThreatDetector
+                    {
+                        Kind = (byte)definition.ThreatDetectionKind,
+                        RadiusCells = Mathf.Max(0, definition.ThreatDetectionRadiusCells)
+                    });
+                    AddAirDefenseSupportProvider(em, entity, definition.ThreatDetectionKind, definition.ThreatDetectionRadiusCells);
+                }
+                AddBuildingDefenseWeapon(em, entity, definition);
+                em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
+                em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
+                em.AddComponentData(entity, new UnitAnimationSettings
+                {
+                    AttackAnimationSeconds = 0.1f,
+                    DeathAnimationSeconds = 0.01f
+                });
+                birth.StampFresh(em, entity, actualGrid);
+    #if UNITY_EDITOR
+                if (birth.Origin == RuntimeActorBirthContext.Kind.BuildingRequest)
+                    S002PhysicalStartupObservation.AfterFactory?.Invoke(em, entity, birth);
+    #endif
+                cleanup = () => DestroyEntityAfterFactoryFailure(em, entity);
+                return entity;
             }
-            AddBuildingDefenseWeapon(em, entity, definition);
-            em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
-            em.AddComponentData(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
-            em.AddComponentData(entity, new UnitAnimationSettings
+            catch
             {
-                AttackAnimationSeconds = 0.1f,
-                DeathAnimationSeconds = 0.01f
-            });
-            birth.StampFresh(em, entity, actualGrid);
-            return entity;
+                DestroyEntityAfterFactoryFailure(em, entity);
+                throw;
+            }
+        }
+
+        private static void DestroyEntityAfterFactoryFailure(EntityManager em, Entity entity)
+        {
+            try
+            {
+                if (em.Exists(entity))
+                    em.DestroyEntity(entity);
+            }
+            catch
+            {
+                // Cleanup must not replace the factory's original exception.
+            }
         }
 
         private static void AddBuildingDefenseWeapon(EntityManager em, Entity entity, BuildingDefinition definition)

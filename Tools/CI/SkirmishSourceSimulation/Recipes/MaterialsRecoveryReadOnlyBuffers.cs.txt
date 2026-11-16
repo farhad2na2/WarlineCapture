@@ -1,0 +1,35 @@
+// Bounded recovery-owner adapter. Not a general Unity buffer/safety substitute.
+using System;
+namespace Unity.Entities
+{
+    public struct BufferTypeHandle<T> { internal EntityManager Manager; public void Update(ref SystemState state) { if (Manager == null || Manager != state.EntityManager) throw new NotSupportedException("Recovery buffer handle owner changed"); } }
+    public struct BufferAccessor<T>
+    {
+        internal DynamicBuffer<T>[] Snapshots;
+        public int Length => Snapshots.Length;
+        public DynamicBuffer<T> this[int index] => Snapshots[index];
+    }
+    public static class MaterialsRecoveryReadOnlyBuffers
+    {
+        public static BufferTypeHandle<T> GetBufferTypeHandle<T>(this EntityManager manager, bool readOnly)
+        {
+            if (manager == null || !readOnly) throw new NotSupportedException("Recovery requires a read-only buffer handle");
+            return new BufferTypeHandle<T> { Manager = manager };
+        }
+        public static BufferAccessor<T> GetBufferAccessor<T>(this ArchetypeChunk chunk, ref BufferTypeHandle<T> handle)
+        {
+            if (chunk.SourceBank != null || chunk.Manager == null || chunk.Manager != handle.Manager ||
+                chunk.Entities == null || chunk.Count != chunk.Entities.Length)
+                throw new NotSupportedException("Recovery requires an ordinary, complete entity-aligned chunk");
+            var snapshots = new DynamicBuffer<T>[chunk.Count];
+            for (int i = 0; i < snapshots.Length; i++)
+            {
+                var entity = chunk.Entities[i];
+                if (!chunk.Manager.Exists(entity) || !chunk.Manager.HasBuffer<T>(entity))
+                    throw new InvalidOperationException("Recovery query requires a real buffer for every entity");
+                snapshots[i] = new DynamicBuffer<T>(chunk.Manager.GetBuffer<T>(entity).Copy());
+            }
+            return new BufferAccessor<T> { Snapshots = snapshots };
+        }
+    }
+}

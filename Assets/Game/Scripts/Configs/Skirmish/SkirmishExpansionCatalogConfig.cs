@@ -11,7 +11,7 @@ namespace Game.Configs
     /// validated against the in-memory factory so the two cannot drift.
     /// </summary>
     [CreateAssetMenu(menuName = "Game/SkirmishExpansion/Expansion Catalog")]
-    public sealed class SkirmishExpansionCatalogConfig : ScriptableObject
+    public sealed partial class SkirmishExpansionCatalogConfig : ScriptableObject
     {
         public const string ResourceName = "SkirmishExpansionCatalog";
 

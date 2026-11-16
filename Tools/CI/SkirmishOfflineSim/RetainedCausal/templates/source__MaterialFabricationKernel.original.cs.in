@@ -1,0 +1,3 @@
+using Game.Components;using Unity.Entities;using Unity.Mathematics;
+namespace Game.Runtime { public partial class MaterialFabricationSystem {
+@@SOURCE_0@@@@SOURCE_1@@@@SOURCE_2@@@@SOURCE_3@@}}

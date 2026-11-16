@@ -1,0 +1,2 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime { public static class MaterialFabricationCommandUtilitySystemHelper {
+@@SOURCE_0@@@@SOURCE_1@@}}

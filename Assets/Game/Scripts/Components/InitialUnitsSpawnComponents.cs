@@ -89,4 +89,5 @@ namespace Game.Components
         public uint RandomState;
         public Entity BlockerPrefab;
     }
+
 }

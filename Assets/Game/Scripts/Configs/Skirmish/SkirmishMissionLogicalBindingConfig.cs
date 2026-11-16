@@ -46,6 +46,7 @@ namespace Game.Configs
     public sealed class SkirmishMissionLogicalBindingConfig : ScriptableObject
     {
         public int SchemaVersion=1, ContentVersion=1, DefinitionVersion;
+        public SkirmishBindingValueFormat ValueFormat = SkirmishBindingValueFormat.NativeJsonV1;
         public string CatalogId, DefinitionId, SourceOperationMapId, SourceSceneGuid, SourceContentHash;
         public string SourceSemanticFingerprint, LayoutId, ReviewedLayoutSemanticFingerprint;
         public SkirmishObjectiveKind ObjectiveKind;
@@ -92,24 +93,26 @@ namespace Game.Configs
             var config=definition?.MissionLogicalBinding;
             var source=definition?.CampaignMap;var layout=definition?.MapLayout;
             if(config==null||source==null||source.SourceSceneReference==null||layout==null||setup==null||!RequiresBinding(setup)||
-                config.SchemaVersion!=1||config.ContentVersion<=0||config.CatalogId!=definition.CatalogId||
+                config.SchemaVersion!=1||config.ContentVersion<=0||config.ValueFormat!=layout.BindingValueFormat||config.CatalogId!=definition.CatalogId||
                 config.DefinitionId!=definition.DefinitionId||config.DefinitionVersion!=definition.ContentVersion||
                 setup.CatalogId!=definition.CatalogId||setup.DefinitionId!=definition.DefinitionId||setup.ContentVersion!=definition.ContentVersion||
                 definition.ObjectiveConfig==null||config.ObjectiveKind!=definition.ObjectiveConfig.Kind||config.ObjectiveKind!=setup.ObjectiveKind||
                 config.SourceOperationMapId!=source.OperationMapId||config.SourceSceneGuid!=source.SourceSceneReference.AssetGUID||
                 config.SourceContentHash!=source.ContentHash||config.LayoutId!=layout.LayoutId||setup.LayoutId!=layout.LayoutId||
                 setup.OperationMapId!=layout.OperationMapId||!Hex(config.SourceSemanticFingerprint)||
-                config.SourceSemanticFingerprint!=SourceFingerprint(source)||!Hex(config.ReviewedLayoutSemanticFingerprint)||
+                config.SourceSemanticFingerprint!=SourceFingerprint(source,config.ValueFormat)||!Hex(config.ReviewedLayoutSemanticFingerprint)||
                 config.ReviewedLayoutSemanticFingerprint!=SkirmishMeasuredLayoutBinder.ComputeLayoutSemanticFingerprint(layout)||
                 !source.TryValidateMetadata(out error)||!source.TryValidateLocalContentReferences(out error)||config.Variants==null||config.Variants.Length==0||config.Variants.Length>12)return false;
             // Independently recompute the canonical layout on a value copy. Never
             // mutate the actual setup or import/author physical source geometry.
-            var clone=JsonUtility.FromJson<SkirmishResolvedSetup>(JsonUtility.ToJson(setup));
+            var clone=layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2 ? SkirmishBindingCanonicalValues.CopyForLayoutRebind(setup) : JsonUtility.FromJson<SkirmishResolvedSetup>(JsonUtility.ToJson(setup));
             var reasons=new List<SkirmishCompileReason>();
             if(!SkirmishMeasuredLayoutBinder.TryBind(clone,definition,reasons,out string actualLayout)||
                 actualLayout!=setup.LayoutBindingFingerprint||
-                JsonUtility.ToJson(new Actors{Forces=clone.Forces,Structures=clone.Structures,Bays=clone.ObjectiveTruckBays})!=
-                JsonUtility.ToJson(new Actors{Forces=setup.Forces,Structures=setup.Structures,Bays=setup.ObjectiveTruckBays}))
+                (layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2 ?
+                    !SkirmishBindingCanonicalValues.ProjectedActorsEqual(clone,setup) :
+                    JsonUtility.ToJson(new Actors{Forces=clone.Forces,Structures=clone.Structures,Bays=clone.ObjectiveTruckBays})!=
+                    JsonUtility.ToJson(new Actors{Forces=setup.Forces,Structures=setup.Structures,Bays=setup.ObjectiveTruckBays})))
             {error="Actual source/layout/actor projection differs from compiled setup.";return false;}
             SkirmishMissionLogicalVariant selected=null;var keys=new HashSet<int>();
             foreach(var variant in config.Variants)
@@ -144,7 +147,7 @@ namespace Game.Configs
             string view=ViewFingerprint(selected);
             if(!Hex(selected.ReviewedViewFingerprint)||selected.ReviewedViewFingerprint!=view)
             {error="Mission view/role/elevation semantic pin differs.";return false;}
-            string fingerprint=Hash("mission-logical-v1|"+config.ContentVersion.ToString(System.Globalization.CultureInfo.InvariantCulture)+"|"+
+            string fingerprint=Hash((config.ValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2?"mission-logical-v2|2|":"mission-logical-v1|")+config.ContentVersion.ToString(System.Globalization.CultureInfo.InvariantCulture)+"|"+
                 actualLayout+"|"+config.SourceSemanticFingerprint+"|"+(areas?.LogicalFingerprint??"")+"|"+view);
             compiled=new SkirmishCompiledMissionLogicalBinding(areas,selected,fingerprint);error=null;return true;
         }
@@ -196,10 +199,17 @@ namespace Game.Configs
         public static string SourceFingerprint(OperationMapDefinition source)
         {
             if(source==null)throw new ArgumentNullException(nameof(source));
-            return Hash(JsonUtility.ToJson(new Source { Id=source.OperationMapId,Identity=source.SourceIdentityHash,Content=source.ContentHash,
+            return Hash(JsonUtility.ToJson(SourceValueSnapshot(source)));
+        }
+        internal static Source SourceValueSnapshot(OperationMapDefinition source) => new Source { Id=source.OperationMapId,Identity=source.SourceIdentityHash,Content=source.ContentHash,
                 SchemaVersion=source.SchemaVersion,ContentVersion=source.ContentVersion,
                 Metadata=source.GeneratedMetadataHash,Bounds=source.Bounds,Grid=source.GridMetadata,Surface=source.SurfaceMetadata,Navigation=source.NavigationMetadata,
-                Scene=source.SourceSceneReference.AssetGUID }));
+                Scene=source.SourceSceneReference.AssetGUID };
+        public static string SourceFingerprint(OperationMapDefinition source,SkirmishBindingValueFormat format)
+        {
+            if(format==SkirmishBindingValueFormat.NativeJsonV1)return SourceFingerprint(source);
+            if(format!=SkirmishBindingValueFormat.CanonicalBinaryV2)throw new NotSupportedException("Unsupported binding value format.");
+            return SkirmishBindingCanonicalValues.SourceFingerprint(source);
         }
         public static string ViewFingerprint(SkirmishMissionLogicalVariant variant)
         {
@@ -230,7 +240,7 @@ namespace Game.Configs
         private static bool Fraction(float value)=>float.IsFinite(value)&&value>0&&value<1;
         private static string Hash(string text){using var hash=SHA256.Create();return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-","").ToLowerInvariant();}
         [Serializable] private sealed class Actors {public SkirmishResolvedForceEntry[] Forces;public SkirmishResolvedStructureEntry[] Structures;public SkirmishResolvedConvoyBay[] Bays;}
-        [Serializable] private sealed class Source
+        [Serializable] internal sealed class Source
         {
             public string Id,Identity,Content,Metadata,Scene;
             public int SchemaVersion,ContentVersion;

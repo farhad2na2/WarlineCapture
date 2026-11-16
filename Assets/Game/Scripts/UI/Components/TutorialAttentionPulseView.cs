@@ -47,7 +47,7 @@ namespace Game.UI.Runtime
         }
         // Placement validity, responsive sections and the HUD camera can all move
         // controls after Update. Follow their final rendered geometry, not that snapshot.
-        private void RenderBeforeCanvas() => RenderAt(Time.unscaledTime);
+        private void RenderBeforeCanvas() => RenderAt(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
         internal void RenderAt(float time)
         {
             if (!eligible || !gameObject.activeInHierarchy) return;

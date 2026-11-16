@@ -1,0 +1,23 @@
+using Unity.Entities;using Unity.Mathematics;using Unity.Collections;using UnityEngine;
+namespace Game.Components{
+/*SOURCE:type_0*/
+/*SOURCE:type_1*/
+/*SOURCE:type_2*/
+/*SOURCE:type_3*/
+/*SOURCE:type_4*/
+/*SOURCE:type_5*/
+/*SOURCE:type_6*/
+/*SOURCE:type_7*/
+/*SOURCE:type_8*/
+/*SOURCE:type_9*/
+/*SOURCE:type_10*/
+/*SOURCE:type_11*/
+/*SOURCE:type_12*/
+/*SOURCE:type_13*/
+/*SOURCE:type_14*/
+/*SOURCE:type_15*/
+/*SOURCE:type_16*/
+/*SOURCE:type_17*/
+/*SOURCE:type_18*/
+/*SOURCE:type_19*/
+}

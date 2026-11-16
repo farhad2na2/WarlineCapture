@@ -126,6 +126,7 @@ namespace Game.Runtime
                     price,
                     focusProducerOnSuccess,
                     frameCount,
+                    source.GetNow?.Invoke() ?? UnityEngine.Time.time,
                     out requiredBuildingDisplayName);
             }
 
@@ -135,6 +136,7 @@ namespace Game.Runtime
                 price,
                 focusProducerOnSuccess,
                 frameCount,
+                source.GetNow != null ? source.GetNow() : Time.time,
                 out requiredBuildingDisplayName);
         }
 

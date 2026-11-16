@@ -92,7 +92,7 @@ namespace Game.UI.Runtime
             {
                 lastScanResult=model.ScanResultVersion;
                 if(feedback==null) feedback=transform.root.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
-                feedback?.ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel.ShowTransient(model.ScanFeedback,CommandFeedbackSeverity.Ready,8f),Time.unscaledTime);
+                feedback?.ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel.ShowTransient(model.ScanFeedback,CommandFeedbackSeverity.Ready,8f),Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
             }
             if(skipButton!=null) skipButton.gameObject.SetActive(!model.RequiresHoldResume && model.GuidanceId is 45004 or 45007 or 45008 or 45009);
         }

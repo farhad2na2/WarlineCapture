@@ -52,9 +52,9 @@ namespace Game.UI.Runtime
                     _productionQuery = _buildDrawerCatalogRuntimeView.ProductionQuery;
                 if (_productionQuery == null)
                     return _buildDrawerCatalogRuntimeView != null && _buildDrawerCatalogRuntimeView.HasPendingProduction;
-                if (Time.unscaledTime >= _nextProductionQueryAt)
+                if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) >= _nextProductionQueryAt)
                 {
-                    _nextProductionQueryAt = Time.unscaledTime + .2f;
+                    _nextProductionQueryAt = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + .2f;
                     _productionQuery.GetFriendlyPendingProductionUiEntries(_productionQueue);
                 }
                 return _productionQueue.Count > 0 ||

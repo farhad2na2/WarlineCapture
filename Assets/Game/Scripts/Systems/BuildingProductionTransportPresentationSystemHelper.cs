@@ -1,3 +1,4 @@
+using Game.Simulation;
 using System.Collections.Generic;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
@@ -15,7 +16,6 @@ namespace Game.Runtime
 
     internal sealed partial class BuildingProductionTransportPresentationSystemHelper
     {
-        private const float ProductionTransportLaneSpacing = 12f;
         private const float RunwaySurfaceClearance = 0.03f;
         private const int HelicopterDropSearchRadiusCells = 96;
         private const float HelicopterDropBlockedRetryBaseSeconds = 0.5f;
@@ -68,29 +68,8 @@ namespace Game.Runtime
 
         public void UpdateActiveProductionTransport(Context context, RuntimeBuildingEntity building, float now, float deltaTime, ref uint randomState)
         {
-            if (building == null || building.ActiveTransport == null || building.ActiveTransport.Transform == null)
-                return;
-
-            RuntimeBuildingEntity.ActiveProductionTransport transport = building.ActiveTransport;
-            if (transport.Mode == ProductionTransportMode.Helicopter || transport.Mode == ProductionTransportMode.AirSelf)
-                RotateProductionTransportBlades(transport.Instance, deltaTime);
-
-            switch (transport.Phase)
-            {
-                case 0:
-                    UpdateArrivalPhase(context, building, transport, now);
-                    break;
-
-                case 1:
-                    UpdateDeliveryPhase(context, building, transport, now, ref randomState);
-                    break;
-
-                case 2:
-                    UpdateDeparturePhase(building, transport, now);
-                    break;
-            }
-
-            PublishManagedDeliveryReadModel(context);
+            var view = new NativeProductionTransportView(this, context);
+            SharedProductionTransportDispatchKernel.Step<RuntimeBuildingEntity, NativeProductionTransportView>(ref view, building, now, deltaTime, ref randomState);
         }
 
         private void UpdateArrivalPhase(
@@ -99,6 +78,7 @@ namespace Game.Runtime
             RuntimeBuildingEntity.ActiveProductionTransport transport,
             float now)
         {
+            if (TryAdvanceSharedHelicopterArrival(context, building, transport, now)) return;
             float duration = Mathf.Max(0.5f, transport.ArrivalSeconds);
             float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
             if (transport.Mode == ProductionTransportMode.Plane)
@@ -297,6 +277,7 @@ namespace Game.Runtime
 
         private void UpdateDeparturePhase(RuntimeBuildingEntity building, RuntimeBuildingEntity.ActiveProductionTransport transport, float now)
         {
+            if (TryAdvanceSharedHelicopterDeparture(building, transport, now)) return;
             float duration = Mathf.Max(0.5f, transport.DepartureSeconds);
             float t = Mathf.Clamp01((now - transport.PhaseStartedAt) / duration);
             transport.Transform.position = Vector3.Lerp(transport.HoverPosition, transport.ExitPosition, t);
@@ -412,16 +393,19 @@ namespace Game.Runtime
 
         private static Vector3 ResolveProductionTransportLaneOffset(Context context, int laneIndex, int maxConcurrent)
         {
-            int safeMax = Mathf.Max(1, maxConcurrent);
-            float centered = laneIndex - ((safeMax - 1) * 0.5f);
-            Vector3 axis = context.WorldCamera != null
-                ? context.WorldCamera.transform.forward.normalized
-                : Vector3.forward;
-            axis.y = 0f;
-            if (axis.sqrMagnitude <= 0.0001f)
-                axis = Vector3.forward;
-            axis.Normalize();
-            return axis * (centered * ProductionTransportLaneSpacing);
+            if (context.HasLogicalDeliveryBasis)
+            {
+                float3 logicalOffset = SharedProductionDeliveryKernel.ProductionTransportLaneOffsetForLogicalBasis(
+                    in context.LogicalDeliveryBasis, laneIndex, maxConcurrent);
+                return new Vector3(logicalOffset.x, logicalOffset.y, logicalOffset.z);
+            }
+            bool hasCameraForward = context.WorldCamera != null;
+            Vector3 cameraForward = hasCameraForward ? context.WorldCamera.transform.forward : Vector3.zero;
+            return SharedProductionDeliveryKernel.ProductionTransportLaneOffset(
+                hasCameraForward,
+                cameraForward,
+                laneIndex,
+                maxConcurrent);
         }
 
         private void StartActiveTransportDrop(
@@ -495,6 +479,10 @@ namespace Game.Runtime
             drop.EndPosition = dropEndPosition;
             drop.FinalGoalCell = finalGoalCell;
             transport.ActiveDrop = drop;
+#if UNITY_EDITOR
+            if (transport.Mode == ProductionTransportMode.Helicopter)
+                S073NativeProductionDeliveryObserver.ObserveTransportEvent(context, building, transport, pending, "HelicopterDropStarted", now);
+#endif
         }
 
         private void ApplyTemporaryCharacterIdlePose(GameObject visual)
@@ -748,7 +736,9 @@ namespace Game.Runtime
                 return;
 
             float t = Mathf.Clamp01((now - drop.StartedAt) / Mathf.Max(0.01f, drop.Duration));
-            Vector3 unitPosition = Vector3.Lerp(drop.StartPosition, drop.EndPosition, t);
+            Vector3 unitPosition = transport.Mode == ProductionTransportMode.Helicopter
+                ? SharedHelicopterDropPoint(drop, now)
+                : Vector3.Lerp(drop.StartPosition, drop.EndPosition, t);
             if (transport.Mode == ProductionTransportMode.Plane)
                 unitPosition.y = Mathf.Lerp(drop.StartPosition.y, drop.EndPosition.y, Mathf.SmoothStep(0f, 1f, t));
 
@@ -808,6 +798,14 @@ namespace Game.Runtime
 
             if (spawned && transport.Mode == ProductionTransportMode.Helicopter)
                 transport.DeliveredUnitCount++;
+
+#if UNITY_EDITOR
+            if (transport.Mode == ProductionTransportMode.Helicopter)
+                S073NativeProductionDeliveryObserver.ObserveTransportEvent(
+                    context, building, transport, production,
+                    spawned ? "HelicopterUnitSpawnedAndPlaced" : "HelicopterUnitSpawnFailed",
+                    now, spawned);
+#endif
 
             bool removedProduction = false;
             if (spawned && production.ConsumeUnit())
@@ -985,6 +983,7 @@ namespace Game.Runtime
             Vector3 preferredWorld,
             RuntimeBuildingEntity.ActiveProductionTransport ignoredTransport,
             int startRadius,
+            HelicopterDropSearchDiagnostics diagnostics,
             out bool exhaustedSearchBudget,
             out int nextSearchRadius,
             out int2 dropCell,
@@ -1010,17 +1009,34 @@ namespace Game.Runtime
                 : default;
             int2 unitFootprint = context.TransportBridgeSystem.ResolveUnitFootprintForPrefab(context.TransportBridgeContext, em, pending?.Prefab);
             int2 preferredCell = GridUtils.WorldToCell(grid, preferredWorld);
+            if (diagnostics != null)
+            {
+                diagnostics.searchStarted = true;
+                diagnostics.preferredWorldX = preferredWorld.x;
+                diagnostics.preferredWorldY = preferredWorld.y;
+                diagnostics.preferredWorldZ = preferredWorld.z;
+                diagnostics.preferredCellX = preferredCell.x;
+                diagnostics.preferredCellY = preferredCell.y;
+                diagnostics.gridWidth = grid.Width;
+                diagnostics.gridHeight = grid.Height;
+                diagnostics.gridCellSize = grid.CellSize;
+                diagnostics.gridOriginX = grid.Origin.x;
+                diagnostics.gridOriginY = grid.Origin.y;
+                diagnostics.gridOriginZ = grid.Origin.z;
+                diagnostics.footprintX = unitFootprint.x;
+                diagnostics.footprintY = unitFootprint.y;
+            }
             int gridSize = math.max(0, grid.Width * grid.Height);
             NativeBitArray reserved = new(gridSize, Allocator.Temp, NativeArrayOptions.ClearMemory);
             try
             {
                 ReserveRuntimeBuildingDropBuffers(context, ref reserved, grid, HelicopterDropBuildingBufferCells);
                 ReserveActiveProductionTransportDropBuffers(context, ignoredTransport, ref reserved, grid, HelicopterDropActiveTransportBufferCells);
-                ReserveStaticRenderDropBuffers(em, ref reserved, grid, preferredCell);
+                ReserveStaticRenderDropBuffers(em, ref reserved, gridEntity, grid, blockerData, true, preferredCell);
                 // Dynamic occupancy already rejects live and produced unit footprints. Avoid rebuilding
                 // broad per-unit safety reservations during the production transport frame tick.
                 return TryFindClearHelicopterDropCell(em, grid, walkable, blockerData.Blocked,
-                    occupied, reserved, preferredCell, unitFootprint, startRadius,
+                    occupied, reserved, preferredCell, unitFootprint, startRadius, diagnostics,
                     out exhaustedSearchBudget, out nextSearchRadius, out dropCell, out dropPosition);
             }
             finally
@@ -1039,37 +1055,20 @@ namespace Game.Runtime
             out bool exhaustedSearchBudget, out int nextSearchRadius,
             out int2 dropCell, out Vector3 dropPosition)
         {
-            exhaustedSearchBudget = false;
-            nextSearchRadius = 0;
-            dropCell = default;
-            dropPosition = default;
-            int candidateChecks = 0;
-            int safeStartRadius = math.clamp(startRadius, 0, HelicopterDropSearchRadiusCells);
-            for (int radius = safeStartRadius; radius <= HelicopterDropSearchRadiusCells; radius++)
-            {
-                for (int y = preferredCell.y - radius; y <= preferredCell.y + radius; y++)
-                {
-                    for (int x = preferredCell.x - radius; x <= preferredCell.x + radius; x++)
-                    {
-                        if (radius > 0 && math.abs(x - preferredCell.x) != radius &&
-                            math.abs(y - preferredCell.y) != radius) continue;
-                        candidateChecks++;
-                        var candidate = new int2(x, y);
-                        if (!TryResolveHelicopterDropCandidate(em, grid, walkable, blocked,
-                            occupied, reserved, candidate, unitFootprint, out var position)) continue;
-                        dropCell = candidate;
-                        dropPosition = position;
-                        return true;
-                    }
-                }
-                if (candidateChecks >= HelicopterDropMaxCandidateChecksPerSearch)
-                {
-                    nextSearchRadius = radius < HelicopterDropSearchRadiusCells ? radius + 1 : 0;
-                    exhaustedSearchBudget = nextSearchRadius > 0;
-                    return false;
-                }
-            }
-            return false;
+            return TryFindClearHelicopterDropCell(em, grid, walkable, blocked, occupied, reserved,
+                preferredCell, unitFootprint, startRadius, null, out exhaustedSearchBudget,
+                out nextSearchRadius, out dropCell, out dropPosition);
+        }
+
+        internal static bool TryFindClearHelicopterDropCell(
+            EntityManager em, GridConfig grid, NativeArray<GridWalkable> walkable,
+            NativeBitArray blocked, NativeBitArray occupied, NativeBitArray reserved,
+            int2 preferredCell, int2 unitFootprint, int startRadius,
+            HelicopterDropSearchDiagnostics diagnostics,
+            out bool exhaustedSearchBudget, out int nextSearchRadius,
+            out int2 dropCell, out Vector3 dropPosition)
+        {
+            return SharedHelicopterDropKernel.TryFindClearHelicopterDropCell(em, grid, walkable, blocked, occupied, reserved, preferredCell, unitFootprint, startRadius, diagnostics, out exhaustedSearchBudget, out nextSearchRadius, out dropCell, out dropPosition);
         }
 
         private static bool TryResolveHelicopterDropCandidate(
@@ -1146,6 +1145,18 @@ namespace Game.Runtime
             GridConfig grid,
             int2 preferredCell)
         {
+            ReserveStaticRenderDropBuffers(entityManager, ref reserved, Entity.Null, grid, default, false, preferredCell);
+        }
+
+        internal static void ReserveStaticRenderDropBuffers(
+            EntityManager entityManager,
+            ref NativeBitArray reserved,
+            Entity gridEntity,
+            GridConfig grid,
+            DynamicBlockerComponent blockerData,
+            bool blockerComponentPresent,
+            int2 preferredCell)
+        {
             if (!reserved.IsCreated || entityManager.World == null || !entityManager.World.IsCreated)
                 return;
 
@@ -1163,6 +1174,12 @@ namespace Game.Runtime
             try
             {
                 provider.CollectStaticBounds(entityManager, area, safeCellSize * 0.25f, maxExtent, ref renderBounds);
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.ObserveStaticRenderBounds(
+                    entityManager, provider,
+                    gridEntity, grid, blockerData, blockerComponentPresent, preferredCell, area,
+                    safeCellSize * 0.25f, maxExtent, renderBounds);
+#endif
                 for (int index = 0; index < renderBounds.Length; index++)
                 {
                     Bounds bounds = renderBounds[index];

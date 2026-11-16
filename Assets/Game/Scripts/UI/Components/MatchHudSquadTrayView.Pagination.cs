@@ -289,9 +289,9 @@ namespace Game.UI.Runtime
         {
             EnsureScrollingLayout(); HidePagination();
             if (_readRoster == null || _squadScroll == null) return;
-            if (_rosterActive && inputReady == _rosterInputReady && Time.unscaledTime < _nextRosterRefresh) return;
+            if (_rosterActive && inputReady == _rosterInputReady && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < _nextRosterRefresh) return;
             _rosterInputReady = inputReady;
-            _nextRosterRefresh = Time.unscaledTime + .1f;
+            _nextRosterRefresh = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + .1f;
             bool entering = !_rosterActive;
             _rosterActive = true;
             _readRoster(_rosterModels);

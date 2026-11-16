@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "numeric_runtime": "InstalledMono",
+  "profiles": [
+    {
+      "mission_id": "S002",
+      "difficulty_id": 2,
+      "size_id": 1,
+      "seeds": [
+        104731,
+        1
+      ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 1,
+      "seeds": [
+        104755
+      ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 2,
+      "seeds": [
+        104755
+      ]
+    },
+    {
+      "mission_id": "S026",
+      "difficulty_id": 2,
+      "size_id": 3,
+      "seeds": [
+        104755
+      ]
+    },
+    {
+      "mission_id": "S073",
+      "difficulty_id": 2,
+      "size_id": 1,
+      "seeds": [
+        104729
+      ],
+      "runtime_backend": "LegacyS073OwnerV1",
+      "scope": "LegacyStartupAndQueueOnly"
+    }
+  ]
+}

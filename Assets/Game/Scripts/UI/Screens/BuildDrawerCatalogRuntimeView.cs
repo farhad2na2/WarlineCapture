@@ -62,10 +62,10 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if (view == null || _uiQuerySystem == null || Time.unscaledTime < _nextQueueRefreshTime)
+            if (view == null || _uiQuerySystem == null || Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < _nextQueueRefreshTime)
                 return;
 
-            _nextQueueRefreshTime = Time.unscaledTime + QueueRefreshIntervalSeconds;
+            _nextQueueRefreshTime = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + QueueRefreshIntervalSeconds;
             string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             if (_instructionLocale != locale)
             {

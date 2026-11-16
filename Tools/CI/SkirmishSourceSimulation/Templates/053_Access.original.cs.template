@@ -1,0 +1,39 @@
+using Game.Components;
+using Unity.Entities;
+using UnityEngine;
+
+namespace Game.Runtime
+{
+    internal static partial class ResourceHaulerStorageAccessSystemHelper
+    {
+        internal static byte ToStorageResourceKind(ResourceHaulerUtilitySystemHelper.ResourceHaulKind resourceKind)
+        {/*SOURCE:body_0*/}
+
+        internal static BuildingResourceStorageComponent CreateResourceStorage(
+            FactionResourceCompositionSystemHelper.IResourceBuilding building)
+        {/*SOURCE:body_1*/}
+
+        internal static bool TryGetEntityResourceStorage(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {/*SOURCE:body_2*/}
+
+        internal static void CommitEntityResourceStorage(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            in BuildingResourceStorageComponent storage)
+        {/*SOURCE:body_3*/}
+
+        private static void SyncResourceStorageMetadata(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building,
+            ref BuildingResourceStorageComponent storage)
+        {/*SOURCE:body_4*/}
+
+        internal static void ApplyResourceStorage(
+            FactionResourceCompositionSystemHelper.IResourceBuilding building,
+            in BuildingResourceStorageComponent storage)
+        {/*SOURCE:body_5*/}
+    }
+}

@@ -1,0 +1,1 @@
+using System;using System.Collections.Generic;using Game.Components;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using UnityEngine;namespace Game.Runtime{public static partial class SkirmishPublicOrderFeedback{/*SOURCE:constant_6*//*SOURCE:method_0*//*SOURCE:method_1*//*SOURCE:method_2*//*SOURCE:method_3*//*SOURCE:method_4*//*SOURCE:method_5*/}}

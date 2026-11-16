@@ -15,6 +15,31 @@ namespace Game.Runtime
 
     internal sealed partial class BuildingProductionRequestSystemHelper
     {
+        // Normalized facts read from one live producer and one authored slot.
+        // Selection itself is data-only so native and source callers keep the
+        // same player-before-neutral and registry/slot ordering.
+        internal struct UnitProducerCandidate
+        {
+            public int Pass;
+            public int BuildingId;
+            public int ProductionIndex;
+            public string DisplayName;
+            public bool HasQueueCapacity;
+        }
+
+        internal static bool SelectUnitProducerCandidate(
+            UnitProducerCandidate candidate,
+            int currentPass,
+            bool requireQueueCapacity,
+            out UnitProducerCandidate selected)
+        {
+            selected = default;
+            if (candidate.Pass != currentPass || (requireQueueCapacity && !candidate.HasQueueCapacity))
+                return false;
+            selected = candidate;
+            return true;
+        }
+
         public enum OperationMapProductionSchedulerOutcome : byte
         {
             InvalidRuntime = 0,
@@ -104,7 +129,7 @@ namespace Game.Runtime
         public delegate bool TrySpendMaterialsDelegate(int amount);
         public delegate void RefundMaterialsDelegate(int amount);
         public delegate void SetActivePlacementCostDelegate(int cost);
-        public delegate bool TryQueuePlayerUnitDelegate(RuntimeBuildingEntity building, int productionIndex, GameObject spawnUnitPrefab);
+        public delegate bool TryQueuePlayerUnitDelegate(RuntimeBuildingEntity building, int productionIndex, GameObject spawnUnitPrefab, float now);
         public delegate void SelectRuntimeBuildingDelegate(int buildingId);
         public delegate void RuntimeGameplayAction();
         public delegate void CameraFocusAction(Vector3 worldPosition);
@@ -503,6 +528,7 @@ namespace Game.Runtime
                 request.ProductionIndex,
                 request.FrameCount,
                 frameCount,
+                now,
                 out resultCode);
         }
 
@@ -512,6 +538,7 @@ namespace Game.Runtime
             int productionIndex,
             int requestFrameCount,
             int frameCount,
+            float now,
             out byte resultCode)
         {
             if (requestFrameCount != frameCount)
@@ -553,7 +580,7 @@ namespace Game.Runtime
                 return false;
             }
 
-            bool queued = context.TryQueuePlayerUnit(building, productionIndex, spawnUnitPrefab);
+            bool queued = context.TryQueuePlayerUnit(building, productionIndex, spawnUnitPrefab, now);
             resultCode = queued
                 ? BuildingUiProductionCommandResultElement.Queued
                 : BuildingUiProductionCommandResultElement.QueueFull;
@@ -654,10 +681,11 @@ namespace Game.Runtime
             int price,
             bool focusProducerOnSuccess,
             int frameCount,
+            float now,
             out string requiredBuildingDisplayName)
         {
             int requestId = EnqueueCampItemRequest(em, prefab, price, focusProducerOnSuccess);
-            ProcessPendingUiCampItemCommands(em, context, frameCount);
+            ProcessPendingUiCampItemCommands(em, context, frameCount, now);
             if (TryGetUiCampItemCommandResult(em, requestId, out BuildingUiCampItemCommandResultElement result))
             {
                 requiredBuildingDisplayName = result.RequiredBuildingDisplayName.ToString();
@@ -689,24 +717,25 @@ namespace Game.Runtime
             return false;
         }
 
-        public void ProcessPendingUiCampItemCommands(EntityManager em, Context context, int frameCount)
+        public void ProcessPendingUiCampItemCommands(EntityManager em, Context context, int frameCount, float now)
         {
             Entity queueEntity = EnsureUiCampItemCommandEntity(em);
-            ProcessPendingUiCampItemCommands(em, context, frameCount, queueEntity);
+            ProcessPendingUiCampItemCommands(em, context, frameCount, now, queueEntity);
         }
 
-        public void ProcessPendingUiCampItemCommandsIfPresent(EntityManager em, Context context, int frameCount)
+        public void ProcessPendingUiCampItemCommandsIfPresent(EntityManager em, Context context, int frameCount, float now)
         {
             if (!TryGetUiCampItemCommandEntity(em, out Entity queueEntity))
                 return;
 
-            ProcessPendingUiCampItemCommands(em, context, frameCount, queueEntity);
+            ProcessPendingUiCampItemCommands(em, context, frameCount, now, queueEntity);
         }
 
         private void ProcessPendingUiCampItemCommands(
             EntityManager em,
             Context context,
             int frameCount,
+            float now,
             Entity queueEntity)
         {
             DynamicBuffer<BuildingUiCampItemCommandRequestElement> requests =
@@ -731,6 +760,7 @@ namespace Game.Runtime
                     context,
                     request,
                     frameCount,
+                    now,
                     out byte resultCode,
                     out FixedString128Bytes requiredBuildingDisplayName);
                 results = em.GetBuffer<BuildingUiCampItemCommandResultElement>(queueEntity);
@@ -1059,7 +1089,7 @@ namespace Game.Runtime
             }
 
             if (context.TryQueuePlayerUnit == null ||
-                !context.TryQueuePlayerUnit(producerBuilding, productionIndex, unitPrefab))
+                !context.TryQueuePlayerUnit(producerBuilding, productionIndex, unitPrefab, UnityEngine.Time.time))
             {
                 result = new FactionUnitProductionResult(
                     FactionUnitProductionResultCode.ProducerUnavailable,
@@ -1749,26 +1779,37 @@ namespace Game.Runtime
             if (!CanQueueTransportForAnyProducer(context, unitPrefab, transportSettings, false, FactionIdentity.PlayerFactionId))
                 return false;
 
-            if (context.RuntimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildings)
-            {
-                for (int pass = 0; pass < 2; pass++)
-                {
-                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
-                    {
-                        if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, requireQueueCapacity, pair, out buildingId, out productionIndex, out buildingDisplayName))
-                            return true;
-                    }
-                }
-
-                return false;
-            }
-
             for (int pass = 0; pass < 2; pass++)
             {
                 foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in context.RuntimeBuildings)
                 {
-                    if (TryUseFriendlyProducerBuilding(context, unitPrefab, pass, requireQueueCapacity, pair, out buildingId, out productionIndex, out buildingDisplayName))
+                    RuntimeBuildingEntity building = pair.Value;
+                    if (building?.Definition == null || building.IsDestroyed || building.IsCityGenerated ||
+                        !IsFriendlyProducerBuildingForPass(building, pass))
+                        continue;
+
+                    int productionCount = GetProductionCount(building.Definition);
+                    for (int i = 0; i < productionCount; i++)
+                    {
+                        if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                            continue;
+
+                        var candidate = new UnitProducerCandidate
+                        {
+                            Pass = pass,
+                            BuildingId = pair.Key,
+                            ProductionIndex = i,
+                            DisplayName = building.Definition.DisplayName ?? string.Empty,
+                            HasQueueCapacity = !requireQueueCapacity || CanQueueUnitFromBuilding(context, building, unitPrefab, false)
+                        };
+                        if (!SelectUnitProducerCandidate(candidate, pass, requireQueueCapacity, out var selected))
+                            continue;
+
+                        buildingId = selected.BuildingId;
+                        productionIndex = selected.ProductionIndex;
+                        buildingDisplayName = selected.DisplayName;
                         return true;
+                    }
                 }
             }
 
@@ -1875,6 +1916,7 @@ namespace Game.Runtime
             Context context,
             BuildingUiCampItemCommandRequestElement request,
             int frameCount,
+            float now,
             out byte resultCode,
             out FixedString128Bytes requiredBuildingDisplayName)
         {
@@ -1893,6 +1935,7 @@ namespace Game.Runtime
                 request.Price,
                 request.FocusProducerOnSuccess != 0,
                 frameCount,
+                now,
                 out string requiredBuilding);
             requiredBuildingDisplayName = ToFixedString128(requiredBuilding);
             resultCode = BuildingCampItemCommandPolicySystemHelper.ToResultCode(failure, isConfiguredBuilding);

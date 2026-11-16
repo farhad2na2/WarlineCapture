@@ -75,7 +75,7 @@ namespace Game.UI.Runtime
         {
             unchecked { PresentedMarkerRevision++; if (PresentedMarkerRevision == 0) PresentedMarkerRevision++; }
             PresentedMarkerFrame = Time.frameCount;
-            PresentedMarkerTime = Time.unscaledTime;
+            PresentedMarkerTime = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             PresentedMarkersComplete = true;
         }
         internal void InvalidatePresentedMarkerUpdate()

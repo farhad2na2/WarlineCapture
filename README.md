@@ -63,6 +63,8 @@ The first Campaign is provisionally titled `Shattered Relay`. It follows a local
 | Architecture and performance | Early-development hardening closed; post-hardening Phases 0–2 accepted, including the AM-025 feature-readiness closeout. | AM-027 is the next maturity task in the [accepted handoff](Design/Architecture/am025_feature_resume_handoff.md). Release certification and device evidence remain deferred or pending. |
 | Overall completion | Substantial implemented systems and documented internal baselines. | No current authoritative percentage or ship forecast: the project-state source still contains a May estimate. |
 
+For Skirmish and Operations mission authoring, run the [fast command-line checks](Tools/Missions/README.md) to validate catalog combinations, exercise shared objective rules and test Operations drafts before starting Unity.
+
 ### Unity CLI Workflow
 
 Use the Unity CLI directly with the installed `com.unity.pipeline` package for connected Editor work. Keep Unity Hub open and signed in. From the repository root, the discovery commands are:

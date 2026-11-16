@@ -4,6 +4,10 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using Game.Components;
+using Game.Configs;
+using Game.Simulation;
+using Game.Skirmish.Contracts;
+using ProductionDeliveryLogicalBasis = Game.Simulation.SharedProductionDeliveryKernel.ProductionDeliveryLogicalBasis;
 
 namespace Game.Runtime
 {
@@ -291,6 +295,8 @@ namespace Game.Runtime
 
         public BuildingProductionTransportPresentationSystemHelper.Context CreateProductionTransportContext(Source source)
         {
+            bool hasLogicalDeliveryBasis = TryReadActiveLogicalDeliveryBasis(
+                source, out ProductionDeliveryLogicalBasis logicalDeliveryBasis, out bool requiresLogicalDeliveryBasis);
             return new BuildingProductionTransportPresentationSystemHelper.Context(
                 source.RuntimeBuildings,
                 source.WorldCamera,
@@ -300,7 +306,54 @@ namespace Game.Runtime
                 source.TransportBridgeSystem,
                 CreateProductionTransportBridgeContext(source),
                 source.PrepareTransportDropVisual,
-                source.FocusProductionDelivery);
+                source.FocusProductionDelivery,
+                logicalDeliveryBasis,
+                hasLogicalDeliveryBasis,
+                requiresLogicalDeliveryBasis);
+        }
+
+        private static bool TryReadActiveLogicalDeliveryBasis(
+            Source source,
+            out ProductionDeliveryLogicalBasis basis,
+            out bool requiresBasis)
+        {
+            basis = default;
+            requiresBasis = false;
+            if (source.TryGetEntityManager == null || !source.TryGetEntityManager(out EntityManager em))
+                return false;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            using var entities = sessions.ToEntityArray(Unity.Collections.Allocator.Temp);
+            Entity activeSession = Entity.Null;
+            int activeCount = 0;
+            for (int index = 0; index < entities.Length; index++)
+            {
+                Entity candidate = entities[index];
+                SkirmishExpandedSessionComponent state = em.GetComponentData<SkirmishExpandedSessionComponent>(candidate);
+                if (state.IsLegacy != 0 || state.SpawnComplete == 0 || state.Phase != SkirmishSessionPhase.Playing)
+                    continue;
+                activeSession = candidate;
+                activeCount++;
+            }
+            if (activeCount == 0)
+                return false;
+            requiresBasis = true;
+            if (activeCount != 1 || !em.HasComponent<SkirmishProductionDeliveryBasisComponent>(activeSession) ||
+                !em.HasComponent<SkirmishProductionDeliveryBasisProvenanceComponent>(activeSession))
+                return false;
+            SkirmishExpandedSessionComponent activeState = em.GetComponentData<SkirmishExpandedSessionComponent>(activeSession);
+            var basisOwner = em.GetComponentData<SkirmishProductionDeliveryBasisComponent>(activeSession);
+            var provenance = em.GetComponentData<SkirmishProductionDeliveryBasisProvenanceComponent>(activeSession);
+            SkirmishResolvedSetup activeSetup = em.HasComponent<SkirmishResolvedSetupRecord>(activeSession)
+                ? em.GetComponentObject<SkirmishResolvedSetupRecord>(activeSession).Setup : null;
+            basis = basisOwner.Basis;
+            if (activeSetup != null && basisOwner.SetupHash == activeState.SetupHash &&
+                basisOwner.SetupHash == activeSetup.SetupHash && basisOwner.PlacementGrid != Entity.Null &&
+                provenance.OperationMapId.ToString() == activeSetup.OperationMapId && provenance.MapGeneration > 0 &&
+                provenance.SourceIdentityHash.Length > 0 &&
+                SharedProductionDeliveryKernel.IsValidProductionDeliveryLogicalBasis(in basis))
+                return true;
+            basis = default;
+            return false;
         }
 
         public BuildingProductionTransportBridgeCompositionSystemHelper.Context CreateProductionTransportBridgeContext(Source source)

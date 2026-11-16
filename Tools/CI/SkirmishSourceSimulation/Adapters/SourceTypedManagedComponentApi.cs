@@ -1,0 +1,1 @@
+using Unity.Entities;namespace Game.Runtime{internal static class SourceTypedManagedComponentApi{internal static void AddComponentObject<T>(this EntityManager em,Entity entity,T value)where T:class,IComponentData=>em.AddComponentData(entity,value);}}

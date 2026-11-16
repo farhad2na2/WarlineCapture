@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Runtime.Combat;
 using Unity.Entities;
 namespace Game.Runtime
 {
@@ -6,9 +7,7 @@ namespace Game.Runtime
     {
         public static int Apply(int damage, ushort permille)
         {
-            if(damage<=0) return 0;
-            if(permille==0 || permille>=1000) return damage;
-            return (int)System.Math.Max(1L, ((long)damage*permille+500L)/1000L);
+            return DirectDamageSequencer.ApplyCover(damage, permille);
         }
         public static int ApplyToTarget(EntityManager em, Entity target, int damage)
         {

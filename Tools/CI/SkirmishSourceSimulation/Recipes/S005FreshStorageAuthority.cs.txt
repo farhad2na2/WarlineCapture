@@ -1,0 +1,32 @@
+using System;
+using System.IO;
+using Game.Components;
+using Game.Configs;
+using Unity.Entities;
+
+namespace Game.Runtime
+{
+    // Source-only adapter; the full compiler receipt and the retained session
+    // must both name the exact same original setup object.
+    internal sealed partial class FreshSourceStorageLifetimeAuthority
+    {
+        internal static FreshSourceStorageLifetimeAuthority FromS005RetainedSource(
+            EntityManager em, Entity session, SkirmishScenarioDefinitionConfig definition,
+            SkirmishResolvedSetup setup, string receiptPath, string receiptHash)
+        {
+            if (em == null || !em.Exists(session) || definition == null || setup == null ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                !em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
+                !ReferenceEquals(em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup, setup) ||
+                definition.CatalogId != setup.CatalogId || definition.DefinitionId != setup.DefinitionId ||
+                definition.ContentVersion != setup.ContentVersion ||
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SetupHash != setup.SetupHash)
+                throw new InvalidDataException("Same-world compiled source setup required");
+            SourceS005CompiledSetupGuard.RequireExact(setup, receiptPath);
+            byte[] receipt = File.ReadAllBytes(receiptPath);
+            if (AutonomousWorld.Hash(receipt) != receiptHash)
+                throw new InvalidDataException("Exact source compiler receipt hash required");
+            return new FreshSourceStorageLifetimeAuthority(definition, setup, receiptHash);
+        }
+    }
+}

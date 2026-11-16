@@ -45,6 +45,15 @@ namespace Game.Runtime
         public static bool TryResolve(EntityManager em,out bool generic,out SkirmishLaunchDefinitionRecord record,
             out OperationMapDefinition source,out string error)
         {
+            return TryResolveCore(em, true, out generic, out record, out source, out error);
+        }
+        // Explicit compiled-data consumers validate original source identity without claiming
+        // a native playable catalog transport. Native TryResolve retains its catalog gate.
+        public static bool TryResolveCompiledData(EntityManager em,out bool generic,out SkirmishLaunchDefinitionRecord record,
+            out OperationMapDefinition source,out string error) => TryResolveCore(em,false,out generic,out record,out source,out error);
+        private static bool TryResolveCore(EntityManager em,bool requirePlayableCatalog,out bool generic,out SkirmishLaunchDefinitionRecord record,
+            out OperationMapDefinition source,out string error)
+        {
             generic=false;record=null;source=null;error=null;
             using var matches=em.CreateEntityQuery(typeof(SkirmishMatchState));
             if(matches.CalculateEntityCount()==0)return true;
@@ -54,7 +63,7 @@ namespace Game.Runtime
             if(em.HasComponent<SkirmishExpandedSessionComponent>(entity))
             {
                 var selected=em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
-                generic|=selected.IsLegacy==0&&SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId.ToString());
+                generic|=selected.IsLegacy==0&&(SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId.ToString())||!requirePlayableCatalog&&SkirmishMissionDispatch.RequiresSourceBoundDefinition(selected.CatalogId.ToString(),selected.ContentVersion));
             }
             // A partially lost expanded owner must fail closed, rather than
             // turn the same historical index back into a practice source.
@@ -67,7 +76,7 @@ namespace Game.Runtime
             if(em.HasComponent<SkirmishResolvedSetupRecord>(entity))
             {
                 var selected=em.GetComponentObject<SkirmishResolvedSetupRecord>(entity)?.Setup;
-                generic|=selected!=null&&SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId);
+                generic|=selected!=null&&(SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId)||!requirePlayableCatalog&&SkirmishMissionDispatch.RequiresSourceBoundDefinition(selected.CatalogId,selected.ContentVersion));
             }
             if(!generic)return true;
             error="Exact authored generic mission/source binding missing or changed.";
@@ -76,13 +85,21 @@ namespace Game.Runtime
             var state=em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
             var setup=em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
             var actual=em.GetComponentObject<SkirmishLaunchDefinitionRecord>(entity);
-            if(actual==null||!actual.RequiresExplicitSource||!actual.Matches(setup,state)||!setup.MeasuredLayoutBound||
-                string.IsNullOrEmpty(setup.LayoutBindingFingerprint)||match.SessionId!=state.SessionId||match.Seed!=setup.Seed||
-                !SkirmishMissionDispatch.TryGetGenericByIndex(SkirmishBattleCatalogConfig.Load(),match.ScenarioIndex,out var entry)||
-                !SkirmishMissionDispatch.MatchesDefinition(entry,actual.Definition)||
-                actual.Definition.CampaignMap==null||!actual.Definition.CampaignMap.TryValidateMetadata(out error)||
-                !actual.Definition.CampaignMap.TryValidateLocalContentReferences(out error))return false;
+            if(!TryResolveCompiledIdentity(actual,setup,state,match,out source,out error))return false;
+            if(requirePlayableCatalog && (!SkirmishMissionDispatch.TryGetGenericByIndex(SkirmishBattleCatalogConfig.Load(),match.ScenarioIndex,out var entry)||
+                !SkirmishMissionDispatch.MatchesDefinition(entry,actual.Definition))){error="Playable native catalog transport required.";source=null;return false;}
             record=actual;source=actual.Definition.CampaignMap;error=null;return true;
+        }
+        public static bool TryResolveCompiledIdentity(SkirmishLaunchDefinitionRecord actual,SkirmishResolvedSetup setup,
+            in SkirmishExpandedSessionComponent state,in SkirmishMatchState match,out OperationMapDefinition source,out string error)
+        {
+            source=null;error="Exact compiled mission/source identity missing or changed.";
+            if(actual==null||!actual.RequiresExplicitSource||!actual.Matches(setup,state)||!setup.MeasuredLayoutBound||
+                string.IsNullOrEmpty(setup.LayoutBindingFingerprint)||state.SessionId.IsEmpty||match.ScenarioIndex < -1||match.SessionId!=state.SessionId||
+                state.Seed!=setup.Seed||state.SizeId!=setup.SizeId||state.DifficultyId!=setup.DifficultyId||state.ObjectiveKind!=setup.ObjectiveKind||match.Seed!=setup.Seed||
+                setup.SetupHash!=SkirmishSetupCompiler.ComputeHash(setup,setup.Seed)||actual.Definition.CampaignMap==null||
+                !actual.Definition.CampaignMap.TryValidateMetadata(out error)||!actual.Definition.CampaignMap.TryValidateLocalContentReferences(out error))return false;
+            source=actual.Definition.CampaignMap;error=null;return true;
         }
         // Presentation reads use cheap captured identity. Full source/layout
         // validation belongs to queue/load/save boundaries, not every UI getter.

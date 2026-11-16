@@ -19,6 +19,8 @@ namespace Game.Runtime
         public BuildingPlacementSystemConfig Config { get; private set; }
         private UnitPrefabRegistryAuthoringConfig registry;
         private readonly Dictionary<string, SkirmishRoleOverlay> roles = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, GameObject> roleUnits = new(StringComparer.Ordinal);
+        private readonly Dictionary<string, GameObject> roleProducers = new(StringComparer.Ordinal);
         public SkirmishResolvedSetup Setup { get; private set; }
         private readonly Dictionary<SkirmishRoleKind,float> productionDeliverySeconds = new();
 
@@ -74,6 +76,8 @@ namespace Game.Runtime
                     if (!buildings.Contains(producer)) buildings.Add(producer);
                     result.registry.UnitSpawnPrefabs.Add(unit);
                     result.roles.Add(unitKey, overlay);
+                    result.roleUnits.Add(unitKey, unit);
+                    result.roleProducers.Add(unitKey, producer);
                     // Capture the same authored metadata used by the native queue;
                     // optional callers without a resolver keep timing unavailable.
                     if (timingResolver != null && timingResolver(unit,out var timing) &&
@@ -104,6 +108,12 @@ namespace Game.Runtime
         }
 
         public bool TryRole(string prefabKey, out SkirmishRoleOverlay overlay) => roles.TryGetValue(prefabKey, out overlay);
+        public bool TryGetRolePrefabs(string prefabKey, out GameObject producer, out GameObject unit)
+        {
+            bool hasProducer = roleProducers.TryGetValue(prefabKey, out producer);
+            bool hasUnit = roleUnits.TryGetValue(prefabKey, out unit);
+            return hasProducer && hasUnit;
+        }
         public bool TryReadProductionDeliverySeconds(SkirmishRoleKind role, out float seconds) =>
             productionDeliverySeconds.TryGetValue(role,out seconds);
         public bool Allows(GameObject prefab, bool building) => prefab != null && Config != null &&

@@ -415,6 +415,9 @@ namespace Game.Configs
         public Sprite PortraitCardSprite => portraitCardSprite;
         public Sprite PortraitActionSprite => portraitActionSprite;
         public int MaxHealth => maxHealth;
+        public int ScalarProjectionRawPrice => price;
+        public int ScalarProjectionRawMaterialsCost => materialsCost;
+        public float ScalarProjectionRawProductionDurationSeconds => productionDurationSeconds;
         public BuildingRole Role => role;
         public bool IsWall => isWall;
         public bool CanRequest => canRequest;
@@ -640,8 +643,7 @@ namespace Game.Configs
 
         public static int ResolveLegacyMaterialsCost(int legacyPrice)
         {
-            const int creditsPerMaterial = 500;
-            return Mathf.Max(1, Mathf.CeilToInt(Mathf.Max(0, legacyPrice) / (float)creditsPerMaterial));
+            return UnitMaterialsCostPolicy.ResolveLegacyMaterialsCost(legacyPrice);
         }
         public GameObject UnitSelectionMarkerPrefab => unitSelectionMarkerPrefab != null ? unitSelectionMarkerPrefab : vehicleSelectionMarkerPrefab;
         public GameObject UnitHealthBarPrefab => unitHealthBarPrefab != null ? unitHealthBarPrefab : vehicleHealthBarPrefab;

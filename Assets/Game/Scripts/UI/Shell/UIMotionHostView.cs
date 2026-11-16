@@ -301,7 +301,7 @@ namespace Game.UI.Runtime
                 if (!IsCurrentTransition(transitionId))
                     yield break;
 
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float eased = EvaluateEase(ease, elapsed / duration);
                 target.anchoredPosition = Vector2.LerpUnclamped(from, to, eased);
                 yield return null;
@@ -341,7 +341,7 @@ namespace Game.UI.Runtime
                 if (!IsCurrentTransition(transitionId))
                     yield break;
 
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float eased = EvaluateEase(ease, elapsed / duration);
                 target.localScale = Vector3.LerpUnclamped(from, to, eased);
                 yield return null;
@@ -381,7 +381,7 @@ namespace Game.UI.Runtime
                 if (!IsCurrentTransition(transitionId))
                     yield break;
 
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float eased = EvaluateEase(ease, elapsed / duration);
                 target.alpha = Mathf.LerpUnclamped(from, to, eased);
                 yield return null;

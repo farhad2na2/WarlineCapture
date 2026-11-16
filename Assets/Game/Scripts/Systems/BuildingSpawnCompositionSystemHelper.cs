@@ -967,58 +967,7 @@ namespace Game.Runtime
             bool isAirUnit,
             ref uint randomState)
         {
-            if (em.HasComponent<UnitGridInitialized>(instance))
-                em.RemoveComponent<UnitGridInitialized>(instance);
-            if (em.HasComponent<UnitPrevWorldPos>(instance))
-                em.SetComponentData(instance, new UnitPrevWorldPos { Value = pos });
-            if (em.HasComponent<UnitAirComponent>(instance))
-            {
-                em.SetComponentData(instance, new UnitAirComponent
-                {
-                    HomePosition = pos,
-                    HomeCell = cell,
-                    HomeInitialized = 1,
-                    ReturningHome = 0,
-                    Airborne = 0
-                });
-            }
-            if (em.HasComponent<UnitMoveVisualComponent>(instance))
-                em.SetComponentData(instance, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
-            if (em.HasComponent<Faction>(instance))
-                em.SetComponentData(instance, new Faction { Id = ResolveProducedUnitFaction(building) });
-            if (em.HasComponent<UnitRespawnPrefab>(instance))
-                em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = Entity.Null });
-            if (em.HasComponent<UnitAttackCooldownComponent>(instance))
-                em.SetComponentData(instance, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
-            if (em.HasComponent<UnitIdleWanderComponent>(instance))
-            {
-                randomState = math.max(1u, randomState + 1u);
-                em.SetComponentData(instance, new UnitIdleWanderComponent
-                {
-                    RandomState = randomState,
-                    RetrySeconds = 0f,
-                    CurrentIdleDelaySeconds = 0f
-                });
-            }
-            if (em.HasComponent<UnitMovementBehavior>(instance) && em.GetComponentData<UnitMovementBehavior>(instance).AllowIdleWander == 0)
-            {
-                if (em.HasComponent<AutoWanderMoveTag>(instance))
-                    em.RemoveComponent<AutoWanderMoveTag>(instance);
-            }
-            if (em.HasComponent<UnitPathFollow>(instance))
-                em.RemoveComponent<UnitPathFollow>(instance);
-            if (em.HasComponent<UnitPathRange>(instance))
-                em.RemoveComponent<UnitPathRange>(instance);
-            if (em.HasComponent<EngageTarget>(instance))
-                em.RemoveComponent<EngageTarget>(instance);
-            if (em.HasComponent<UnitPathRequest>(instance))
-                em.RemoveComponent<UnitPathRequest>(instance);
-            if (em.HasComponent<UnitTarget>(instance))
-                em.RemoveComponent<UnitTarget>(instance);
-            if (em.HasComponent<AutoWanderMoveTag>(instance))
-                em.RemoveComponent<AutoWanderMoveTag>(instance);
-            if (em.HasComponent<SelectedUnitTag>(instance))
-                em.RemoveComponent<SelectedUnitTag>(instance);
+            SharedProductionActorInitializer.Initialize(em, instance, pos, cell, building, isAirUnit, ref randomState);
         }
 
         internal static byte ResolveProducedUnitFaction(RuntimeBuildingEntity building)
@@ -1461,50 +1410,10 @@ namespace Game.Runtime
             int2 footprintSize,
             out int2 result)
         {
-            result = default;
-            const int randomTries = 192;
-            for (int i = 0; i < randomTries; i++)
-            {
-                int2 candidate = new(
-                    center.x + rng.NextInt(-radiusCells, radiusCells + 1),
-                    center.y + rng.NextInt(-radiusCells, radiusCells + 1));
-
-                if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, footprintSize))
-                    continue;
-                if (OverlapsRecentSpawnReservation(context, em, candidate, footprintSize))
-                    continue;
-                if (OverlapsExistingUnitFootprint(context, em, candidate, footprintSize))
-                    continue;
-
-                result = candidate;
-                return true;
-            }
-
-            int maxRadius = math.max(8, radiusCells + 32);
-            for (int r = 0; r <= maxRadius; r++)
-            {
-                for (int dy = -r; dy <= r; dy++)
-                {
-                    for (int dx = -r; dx <= r; dx++)
-                    {
-                        if (math.abs(dx) != r && math.abs(dy) != r)
-                            continue;
-
-                        int2 candidate = new(center.x + dx, center.y + dy);
-                        if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, footprintSize))
-                            continue;
-                        if (OverlapsRecentSpawnReservation(context, em, candidate, footprintSize))
-                            continue;
-                        if (OverlapsExistingUnitFootprint(context, em, candidate, footprintSize))
-                            continue;
-
-                        result = candidate;
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            return SharedProductionPlacementKernel.TryFindStrictSpawnCell(
+                (candidate, footprint) => OverlapsRecentSpawnReservation(context, em, candidate, footprint),
+                (candidate, footprint) => OverlapsExistingUnitFootprint(context, em, candidate, footprint),
+                ref rng, grid, walkable, blocked, occupied, ref reserved, center, radiusCells, footprintSize, out result);
         }
 
         private bool TryFindStrictSpawnCellAdjacentToBuilding(
@@ -1521,58 +1430,10 @@ namespace Game.Runtime
             int2 unitFootprint,
             out int2 result)
         {
-            result = default;
-            int maxExtraRadius = math.max(6, math.max(unitFootprint.x, unitFootprint.y) + 2);
-            for (int extraRadius = 1; extraRadius <= maxExtraRadius; extraRadius++)
-            {
-                var candidates = new NativeList<int2>(Allocator.Temp);
-                try
-                {
-                    int minX = originCell.x - extraRadius;
-                    int minY = originCell.y - extraRadius;
-                    int maxX = originCell.x + footprintCells.x - 1 + extraRadius;
-                    int maxY = originCell.y + footprintCells.y - 1 + extraRadius;
-
-                    for (int x = minX; x <= maxX; x++)
-                    {
-                        candidates.Add(new int2(x, minY));
-                        if (maxY != minY)
-                            candidates.Add(new int2(x, maxY));
-                    }
-
-                    for (int y = minY + 1; y < maxY; y++)
-                    {
-                        candidates.Add(new int2(minX, y));
-                        if (maxX != minX)
-                            candidates.Add(new int2(maxX, y));
-                    }
-
-                    if (candidates.Length == 0)
-                        continue;
-
-                    int startIndex = rng.NextInt(candidates.Length);
-                    for (int offset = 0; offset < candidates.Length; offset++)
-                    {
-                        int2 candidate = candidates[(startIndex + offset) % candidates.Length];
-                        if (!TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, candidate, unitFootprint))
-                            continue;
-                        if (OverlapsRecentSpawnReservation(context, em, candidate, unitFootprint))
-                            continue;
-                        if (OverlapsExistingUnitFootprint(context, em, candidate, unitFootprint))
-                            continue;
-
-                        result = candidate;
-                        return true;
-                    }
-                }
-                finally
-                {
-                    if (candidates.IsCreated)
-                        candidates.Dispose();
-                }
-            }
-
-            return false;
+            return SharedProductionPlacementKernel.TryFindStrictSpawnCellAdjacentToBuilding(
+                (candidate, footprint) => OverlapsRecentSpawnReservation(context, em, candidate, footprint),
+                (candidate, footprint) => OverlapsExistingUnitFootprint(context, em, candidate, footprint),
+                ref rng, grid, walkable, blocked, occupied, ref reserved, originCell, footprintCells, unitFootprint, out result);
         }
 
         private bool OverlapsExistingUnitFootprint(Context context, EntityManager em, int2 cell, int2 size)
@@ -1616,33 +1477,7 @@ namespace Game.Runtime
             int2 cell,
             int2 footprintSize)
         {
-            int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-            int2 min = UnitFootprintUtility.GetMinCell(cell, size);
-            int2 max = min + size;
-            if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
-                return false;
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    int idx = row + x;
-                    if (walkable[idx].Value == 0)
-                        return false;
-                    if (blocked.IsSet(idx) || occupied.IsSet(idx) || reserved.IsSet(idx))
-                        return false;
-                }
-            }
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                    reserved.Set(row + x, true);
-            }
-
-            return true;
+            return SharedProductionPlacementKernel.TryReserveSpawnCandidate(grid, walkable, blocked, occupied, ref reserved, cell, footprintSize);
         }
 
         private static void ReserveDynamicOccupancy(EntityManager em, Entity gridEntity, in GridConfig grid, int2 centerCell, int2 footprintSize)

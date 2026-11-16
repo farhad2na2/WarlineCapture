@@ -6,6 +6,12 @@ namespace Game.Composition
 {
     internal static class OperationMapRuntimeRootContract
     {
+#if UNITY_EDITOR
+        internal static System.Action<string> RootFailureProbe;
+        private static void Probe(string stage) => RootFailureProbe?.Invoke(stage);
+#else
+        private static void Probe(string stage) { }
+#endif
         public static Entity Create(EntityManager entityManager)
         {
             Entity entity = entityManager.CreateEntity(
@@ -16,9 +22,19 @@ namespace Game.Composition
                 typeof(OperationMapBoundsComponent),
                 typeof(OperationMapMetadataComponent),
                 typeof(OperationMapReadinessComponent));
-            entityManager.AddBuffer<OperationMapLoadRequestElement>(entity);
-            entityManager.AddBuffer<OperationMapLoadResultElement>(entity);
-            return entity;
+            try
+            {
+                Probe("root-created");
+                entityManager.AddBuffer<OperationMapLoadRequestElement>(entity);
+                Probe("root-first-buffer");
+                entityManager.AddBuffer<OperationMapLoadResultElement>(entity);
+                return entity;
+            }
+            catch
+            {
+                if (entityManager.Exists(entity)) entityManager.DestroyEntity(entity);
+                throw;
+            }
         }
 
         public static void Ensure(EntityManager entityManager, Entity rootEntity)

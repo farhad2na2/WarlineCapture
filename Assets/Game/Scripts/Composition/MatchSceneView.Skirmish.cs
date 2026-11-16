@@ -23,8 +23,12 @@ namespace Game.Composition
                 if (em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0) return baseline;
                 var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
                 if (expandedProductionCatalog == null)
-                    expandedProductionCatalog = SkirmishProductionCatalog.Create(setup, baseline, buildingPlacementConfig,
-                        BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata);
+                {
+                    var inputPackageConfig = SkirmishExpansionCatalogConfig.Load()?.ProductionInputPackage;
+                    expandedProductionCatalog = SkirmishProductionNativeReferenceBinding.Create(setup, baseline, buildingPlacementConfig,
+                        BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata,
+                        inputPackageConfig);
+                }
                 if (!em.HasComponent<SkirmishProductionCatalogRecord>(session))
                     em.AddComponentObject(session, new SkirmishProductionCatalogRecord { Catalog = expandedProductionCatalog });
                 return expandedProductionCatalog.Config;

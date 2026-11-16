@@ -1,0 +1,50 @@
+{
+  "selection": {
+    "FallbackMissionId": "skirmish.base_assault",
+    "FallbackScenarioId": "scenario.skirmish.desert_base_standard",
+    "FallbackMapId": "opmap.skirmish.desert_base_01",
+    "PresetResource": "SkirmishBaseAssault",
+    "PresetPath": "Assets/Game/Resources/SkirmishBaseAssault.asset",
+    "PresetSha": "ff020b7c082ecbede2e0383731f0ca11443b715e8f625336174ebddf89c412fe",
+    "CatalogPath": "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset",
+    "CatalogSha": "dd0f215650aab0648e9aa48fff37d957cc5552d2e19d2d72a759a0ec050d69d0",
+    "MapPath": "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset",
+    "MapSha": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "MapGuid": "55e36a8d7e7a84e2b9893cee052b0e61"
+  },
+  "asset_pins": {
+    "Assets/Game/Scenes/Match.unity": "cc8a67dee8510f38f3a35fdcac1b4045893debe92cbc8a50eb824f2fdd530bc0",
+    "Assets/Game/Resources/SkirmishBaseAssault.asset": "ff020b7c082ecbede2e0383731f0ca11443b715e8f625336174ebddf89c412fe",
+    "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset": "dd0f215650aab0648e9aa48fff37d957cc5552d2e19d2d72a759a0ec050d69d0",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset": "8a03d36fd1d4d59a180c65d82f1c708fd70e7c291f49d480c80629a80ec728c0",
+    "Assets/Game/Scenes/Match.unity.meta": "29cc5d290fbc309e086736a1829112f6d07122b0e977f436d60049e1e23ec33f",
+    "Assets/Game/Resources/SkirmishBaseAssault.asset.meta": "401611f6913d46259ad31e3075dcf5b1ffa5140a99a05bb0f440b02770552707",
+    "Assets/Game/Configs/OperationMaps/OperationMapCatalog_Compatibility.asset.meta": "91cd2f334dd89ff4c529356edddc8c2f52da963c4e628d8067b9c821673891f5",
+    "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset.meta": "025585a0469f0339fa3cffb91ee20e87fbc27e5016c2388004c944643be9c66f"
+  },
+  "preset_operation_map_present": false,
+  "preset_operation_map_value": null,
+  "catalog_definitions": [
+    {
+      "fileID": 11400000,
+      "guid": "55e36a8d7e7a84e2b9893cee052b0e61",
+      "type": 2
+    }
+  ],
+  "catalog_entries": [
+    {
+      "definition": {
+        "fileID": 11400000,
+        "guid": "55e36a8d7e7a84e2b9893cee052b0e61",
+        "type": 2
+      },
+      "contentPack": {
+        "contentPackId": "opmap-pack.skirmish.desert_base_01",
+        "deliveryKind": 0,
+        "contentVersion": 4,
+        "contentHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c"
+      }
+    }
+  ],
+  "origin": "Actual safe-parser output in generated2; raw source pins remain required. This is finite configuration data, not caller authority."
+}

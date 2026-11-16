@@ -10,14 +10,14 @@ namespace Game.Runtime
 {
     internal static class UnitDeathAnimationPlaybackUtility
     {
-        private const float MinimumPlaybackSeconds = 0.01f;
+        private const float MinimumPlaybackSeconds = UnitDeathLifecycleKernel.MinimumPlaybackSeconds;
 
         internal static float Prepare(
             EntityManager entityManager,
             Entity unit,
             float configuredDuration)
         {
-            float playbackDuration = math.max(MinimumPlaybackSeconds, configuredDuration);
+            float playbackDuration = UnitDeathLifecycleKernel.ClampPlaybackDuration(configuredDuration);
             if (!TryResolveDeathAnimationIndex(entityManager, unit, out byte deathAnimationIndex))
                 return playbackDuration;
 
@@ -62,12 +62,12 @@ namespace Game.Runtime
                 ref MaterialAnimatorBlobAsset animator = ref animatorReference.Value;
                 int targetIndex = deathAnimationIndex % animator.Animations.Length;
                 ref MaterialAnimationBlobAsset animation = ref animator.Animations[targetIndex];
-                playbackDuration = math.min(
+                playbackDuration = UnitDeathLifecycleKernel.AccumulatePlaybackDuration(
                     playbackDuration,
                     ResolveSinglePlaybackDuration(ref animation, playbackDuration));
             }
 
-            return math.max(MinimumPlaybackSeconds, playbackDuration);
+            return UnitDeathLifecycleKernel.ClampPlaybackDuration(playbackDuration);
         }
 
         internal static MaterialAnimationData ResetPlaybackClock(
@@ -86,15 +86,7 @@ namespace Game.Runtime
             ref MaterialAnimationBlobAsset animation,
             float fallbackDuration)
         {
-            float safeFallback = math.max(MinimumPlaybackSeconds, fallbackDuration);
-            if (animation.Frames <= 1 || animation.Fps == 0 || animation.Speed == 0)
-                return safeFallback;
-
-            float frameRate = animation.Fps * animation.Speed;
-            float finalFrameTime = (animation.Frames - 1) / frameRate;
-            return math.isfinite(finalFrameTime) && finalFrameTime > 0f
-                ? math.max(MinimumPlaybackSeconds, finalFrameTime)
-                : safeFallback;
+            return UnitDeathLifecycleKernel.ResolveSinglePlaybackDuration(animation.Frames, animation.Fps, animation.Speed, fallbackDuration);
         }
 
         private static bool TryResolveDeathAnimationIndex(

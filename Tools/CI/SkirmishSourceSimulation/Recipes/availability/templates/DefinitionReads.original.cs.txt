@@ -1,0 +1,2 @@
+using UnityEngine;using GameObject=Game.Runtime.SourceUnitPrefab;using BuildingDefinition=Game.Runtime.RuntimeDefinition;namespace Game.Runtime{internal static class SourceCampDefinitionReads{@@member19@@
+@@member20@@}}

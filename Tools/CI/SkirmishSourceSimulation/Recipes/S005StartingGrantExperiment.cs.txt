@@ -1,0 +1,68 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using Game.Components;
+using Game.Configs;
+using Game.Runtime;
+using Game.Skirmish.Contracts;
+using Newtonsoft.Json.Linq;
+using Unity.Entities;
+using Unity.Mathematics;
+
+// Source-only request handoff. No masks are read and no placement is attempted.
+internal static class S005StartingGrantExperiment
+{
+    static string projectionPath, factoryPath, readmodelPath;
+    static JObject graph;
+    static void Need(bool value,string message) { if(!value) throw new InvalidDataException(message); }
+    internal static void Configure(JObject sourceGraph,string projection,string factory,string readmodel)
+    { graph=sourceGraph;projectionPath=projection;factoryPath=factory;readmodelPath=readmodel; }
+    internal static JObject Run(EntityManager em,Entity session,SkirmishResolvedSetup setup)
+    {
+        Need(setup.CatalogId=="S005" && setup.Seed==1 && setup.SetupHash==1865447784u && setup.Structures.Length==14,"Exact S005 Standard setup required");
+        var projection=JObject.Parse(File.ReadAllText(projectionPath));
+        var keys=((JArray)projection["requested_prefab_keys"]).Values<string>().ToArray();
+        var templates=GeneratedReferenceTemplateImporter.Import(em,projection,Path.GetDirectoryName(projectionPath),keys);
+        Need(templates.Prefabs.Count==16 && templates.OmittedPresentationComponents==0,"Actual S005 diagnostic templates required");
+        var definitions=GeneratedBuildingDefinitions.LoadS005Source(factoryPath,
+            "4d8c71bc75c7db22a3a3f569e0cb172bf9171ea295f00543f31cd82a9a3dd3c6",templates.Prefabs,setup);
+        var native=JObject.Parse(File.ReadAllText(readmodelPath)); var entries=(JArray)native["entries"];
+        Need((string)native["kind"]=="S005OriginalConfiguredSpawnableReadModel" && (uint?)native["setup_hash"]==setup.SetupHash && entries!=null && entries.Count==7,"Exact S005 native publisher data required");
+        var source=new GeneratedConfiguredDefinitionSource();source.BindGeneratedDefinitions(definitions.Definitions,true);
+        var order=new List<SourceUnitPrefab>();var requestMetadata=new Dictionary<SourceUnitPrefab,BuildingUiCommandSystemHelper.ConfiguredSpawnableEntry>();
+        foreach(JObject row in entries)
+        {
+            string key=(string)row["visual_key"];var definition=definitions.Definitions.Single(d=>d.Prefab.name==key);var nativeDefinition=(JObject)row["source_definition"];
+            Need(JToken.DeepEquals(nativeDefinition["prefab"],definitions.AssetIdentities[key]) && (string)nativeDefinition["display_name"]==definition.DisplayName && nativeDefinition["can_request"].Type==JTokenType.Boolean,"S005 definition identity differs from native publisher capture");
+            order.Add(definition.Prefab);requestMetadata.Add(definition.Prefab,new BuildingUiCommandSystemHelper.ConfiguredSpawnableEntry(definition.DisplayName,definition.Description,definition.Prefab,(bool)nativeDefinition["can_request"],Math.Max(0,definition.CreditsCost)));
+        }
+        source.BindRequestMetadata(order,requestMetadata);
+        var map=((JArray)graph["nodes"]).OfType<JObject>().Single(n=>(string)n["source_path"]=="Assets/Game/Configs/SkirmishExpansion/Scenarios/S005/SkirmishOperationMap_S005.asset");
+        var meta=map["fields"]["gridMetadata"];int width=(int)meta["dimensions"]["x"],height=(int)meta["dimensions"]["y"];
+        Need(width==2048 && height==1024 && (float)meta["cellSize"]==1f && (float)meta["origin"]["x"]==0f && (float)meta["origin"]["z"]==0f,"Exact S005 grid frame required");
+        var gridEntity=em.CreateEntity();var grid=new GridConfig { Width=width,Height=height,CellSize=1f,Origin=new float3(0,0,0) };em.AddComponentData(gridEntity,grid);
+        var boundary=em.CreateEntity();em.AddComponentData(boundary,new BuildingRuntimeStateTag());em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
+        // Constructor-only placeholders; this probe does not invoke any placement or mask read.
+        var unused=new bool[checked(width*height)];var publisher=new GeneratedRuntimeSpawnProcessor(new GeneratedRoadMask(grid,unused,unused,unused),new GeneratedBuildingMask(grid,unused));
+        publisher.PublishConfiguredSpawnablesReadModel(source,em,boundary);
+        var actual=em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundary);Need(actual.Length==entries.Count,"S005 publisher count differs");
+        for(int i=0;i<actual.Length;i++)
+        {
+            var expected=entries[i]["read_model"];var model=actual[i];
+            Need(model.BuildingId.ToString()==(string)expected["BuildingId"] && model.DisplayName.ToString()==(string)expected["DisplayName"] && model.Price==(int)expected["Price"] && model.MaterialsCost==(int)expected["MaterialsCost"] && model.FootprintCells.x==(int)expected["FootprintCells"]["x"] && model.FootprintCells.y==(int)expected["FootprintCells"]["y"] && model.CanRequest==(byte)expected["CanRequest"],"Original source publisher differs from native S005 capture");
+        }
+        bool ready=SkirmishStartingBuildingsService.Step(em,session,setup,out var reason);
+        Need(!ready && reason==SkirmishReasonCode.None,"Starting owner did not queue requests");
+        var requests=em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);var tracked=em.GetBuffer<SkirmishStartingBuildingRequest>(session);
+        Need(requests.Length==14 && tracked.Length==14,"Exact 14 S005 requests required");
+        var rows=new JArray();for(int i=0;i<requests.Length;i++)
+        {
+            var r=requests[i];var s=setup.Structures[i];Need(r.RequestId>0 && r.EntryIndex==i && r.PlanEntity==session && r.FactionId==s.FactionId && r.HasOwnerFaction==1 && r.AuthoredStartingGrant==1 && r.Status==BuildingRuntimeSpawnRequest.Pending && tracked[i].RequestId==r.RequestId,"S005 request identity differs");
+            rows.Add(new JObject { ["request_id"]=r.RequestId,["structure_index"]=i,["building"]=r.BuildingId.ToString(),["faction"]=r.FactionId,["preferred_x"]=r.PreferredOrigin.x,["preferred_y"]=r.PreferredOrigin.y,["status"]="Pending" });
+        }
+        return new JObject { ["status"]="OriginalS005StartingRequestsPending",["native_publisher_rows_matched"]=actual.Length,["requests"]=rows,
+            ["template_roots"]=templates.Prefabs.Count,["constructor_mask_placeholders_read"]=false,["placement_attempted"]=false,
+            ["native_session"]=false,["mission_ready"]=false };
+    }
+}

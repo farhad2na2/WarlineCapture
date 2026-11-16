@@ -61,10 +61,12 @@ namespace Game.Composition
             }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var worldCamera = Camera.main;
-            bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
-                EntityManager.GetComponentData<UnitHealth>(match.EnemyMainBase).Current > 0 && EntityManager.HasComponent<LocalTransform>(match.EnemyMainBase);
-            view.PresentEnemyBaseMarker(baseAlive && worldCamera != null
-                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive, baseAlive ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position : default, EntityManager.Exists(match.PlayerMainBase) && EntityManager.HasComponent<LocalTransform>(match.PlayerMainBase) ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.PlayerMainBase).Position : default, SkirmishFogConsumerUtility.PlayerVisible(EntityManager, match.EnemyMainBase));
+            var publicObjectiveFacts = SkirmishPublicObjectiveProjection.Read(EntityManager, match);
+            var knownEnemyPosition = new Vector3(publicObjectiveFacts.EnemyPosition.X, publicObjectiveFacts.EnemyPosition.Y, publicObjectiveFacts.EnemyPosition.Z);
+            var knownPlayerPosition = new Vector3(publicObjectiveFacts.PlayerPosition.X, publicObjectiveFacts.PlayerPosition.Y, publicObjectiveFacts.PlayerPosition.Z);
+            view.PresentEnemyBaseMarker(publicObjectiveFacts.EnemyObjectiveAlive && worldCamera != null
+                ? worldCamera.WorldToScreenPoint(knownEnemyPosition) : Vector3.back, publicObjectiveFacts.EnemyObjectiveAlive,
+                knownEnemyPosition, knownPlayerPosition, publicObjectiveFacts.EnemyTargetVisible);
 #endif
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)
@@ -166,7 +168,7 @@ namespace Game.Composition
         }
         private bool Focus(Entity entity,bool opening,int scenarioIndex,bool enemy,bool s002Session)
         {
-            if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return false;
+            if(!SkirmishPublicObjectiveProjection.TryReadFocusPosition(EntityManager,entity,out var focusPosition))return false;
             if(opening && EntityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
                (!EntityManager.HasComponent<SkirmishVisualSpawnedComponent>(entity) ||
                 EntityManager.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned==0))return false;
@@ -186,7 +188,6 @@ namespace Game.Composition
                         campaignHeight=Unity.Mathematics.math.clamp(camera.Position.y,55f,100f);
                     }
             float s002Offset = enemy ? -30f : 30f;
-            var focusPosition = EntityManager.GetComponentData<LocalTransform>(entity).Position;
             float openingDistance = 40f;
             bool authoredOpening = opening && EntityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity);
             if (authoredOpening)

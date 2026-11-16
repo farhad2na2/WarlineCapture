@@ -193,7 +193,7 @@ namespace Game.UI.Runtime
                     projectionGrid = _capturedProjectionGrid;
                     _currentProjectionGrid = _capturedProjectionGrid;
                 }
-                else if (Time.unscaledTime >= _nextStaticMapRetryTime)
+                else if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) >= _nextStaticMapRetryTime)
                 {
                     bool wasFirstCapture = !_hasCapturedProjectionGrid;
                     bool rendered = RenderStaticMap(
@@ -219,7 +219,7 @@ namespace Game.UI.Runtime
                             _warmupStaticMapRefreshesRemaining--;
                     }
 
-                    _nextStaticMapRetryTime = Time.unscaledTime + (_warmupStaticMapRefreshesRemaining > 0
+                    _nextStaticMapRetryTime = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + (_warmupStaticMapRefreshesRemaining > 0
                         ? WarmupStaticMapRefreshSeconds
                         : CameraCenteredMapRefreshSeconds);
                 }
@@ -229,7 +229,7 @@ namespace Game.UI.Runtime
                     _currentProjectionGrid = _capturedProjectionGrid;
                 }
             }
-            else if (_warmupStaticMapRefreshesRemaining > 0 && Time.unscaledTime >= _nextStaticMapRetryTime)
+            else if (_warmupStaticMapRefreshesRemaining > 0 && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) >= _nextStaticMapRetryTime)
             {
                 _staticMapDirty = true;
             }
@@ -329,9 +329,9 @@ namespace Game.UI.Runtime
         private bool IsCameraRefreshBlocked()
         {
             if (_selectionUiCameraSystem != null && _selectionUiCameraSystem.IsCameraDragging)
-                _cameraDragRefreshBlockedUntil = Time.unscaledTime + CameraDragRecaptureDebounceSeconds;
+                _cameraDragRefreshBlockedUntil = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + CameraDragRecaptureDebounceSeconds;
 
-            return Time.unscaledTime < _cameraDragRefreshBlockedUntil;
+            return Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < _cameraDragRefreshBlockedUntil;
         }
 
         private static bool IsViewportNearRefreshEdge(Rect viewport)
@@ -432,11 +432,11 @@ namespace Game.UI.Runtime
 
         private void UpdateMarkersIfDue(MatchHudMinimapProjectionGrid grid)
         {
-            if (!_markersDirty && Time.unscaledTime < _nextMarkerRefreshTime)
+            if (!_markersDirty && Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) < _nextMarkerRefreshTime)
                 return;
 
             _markersDirty = false;
-            _nextMarkerRefreshTime = Time.unscaledTime + MarkerRefreshSeconds;
+            _nextMarkerRefreshTime = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime) + MarkerRefreshSeconds;
             UpdateMarkers(grid);
         }
 
@@ -447,7 +447,7 @@ namespace Game.UI.Runtime
             if (!_view.ShowsViewport)
                 return;
 
-            float now = Time.unscaledTime;
+            float now = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime);
             bool dragging = _view.IsDraggingViewport;
             if (!dragging && now < _nextViewportRefreshTime)
                 return;

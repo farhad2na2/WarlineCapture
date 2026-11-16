@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Rendering.Contracts;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -12,17 +13,32 @@ namespace Game.Runtime
         private Entity owner, sidewalkOwner;
         private uint revision;
         private uint sidewalkSourceSignature;
+        private object waterProvider;
         private MapSurfaceComponent surface;
         private GridConfig grid;
         private bool[] mask, sidewalkMask, waterMask;
+        private bool hasSkirmishMatch;
+
+        internal bool IsReady => mask != null && sidewalkMask != null && waterMask != null;
+        internal bool HasKnownWaterMask => IsWaterMaskKnownForPlacement(hasSkirmishMatch,waterProvider,waterMask);
 
         internal void Ensure(EntityManager em,EntityQuery query,GridConfig currentGrid)
         {
-            if(query.CalculateEntityCount()!=1) {mask=null;sidewalkMask=null;waterMask=null;world=null;return;}
+            if(query.CalculateEntityCount()!=1)
+            {
+                using var matches=em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
+                hasSkirmishMatch=!matches.IsEmptyIgnoreFilter;
+                waterProvider=RenderBoundsGateway.Provider;
+                mask=null;sidewalkMask=null;waterMask=null;world=null;
+                return;
+            }
             Entity entity=query.GetSingletonEntity();
             var current=em.GetComponentData<MapSurfaceComponent>(entity);
             uint version=em.HasComponent<MapSurfaceSceneOverlayRevision>(entity)
                 ? em.GetComponentData<MapSurfaceSceneOverlayRevision>(entity).Value : 0;
+            using var matchQuery=em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
+            bool currentHasSkirmishMatch=!matchQuery.IsEmptyIgnoreFilter;
+            object currentWaterProvider=RenderBoundsGateway.Provider;
             // Packed sidewalk owners can stream in after the surface owner.
             // Surface revision alone does not describe that source census.
             using var authoredSidewalks=em.CreateEntityQuery(ComponentType.ReadOnly<OperationMapSidewalkFootprint>());
@@ -37,15 +53,20 @@ namespace Game.Runtime
             if(world==em.World && owner==entity && revision==version && surface.SurfaceBlob==current.SurfaceBlob && surface.HasSurfaceData==current.HasSurfaceData &&
                 surface.CellSize==current.CellSize && math.all(surface.GridOrigin==current.GridOrigin) &&
                 grid.Width==currentGrid.Width && grid.Height==currentGrid.Height && grid.CellSize==currentGrid.CellSize &&
-                math.all(grid.Origin==currentGrid.Origin) && sidewalkSourceSignature==currentSidewalkSignature && mask!=null) return;
+                math.all(grid.Origin==currentGrid.Origin) && sidewalkSourceSignature==currentSidewalkSignature &&
+                WaterSourceIsCurrent(waterProvider,hasSkirmishMatch,waterMask,currentWaterProvider,currentHasSkirmishMatch) && mask!=null) return;
             if(world!=em.World || !em.Exists(sidewalkOwner))
             {
                 using var sidewalkQuery=em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>(),ComponentType.ReadOnly<GridRoadSidewalk>());
                 sidewalkOwner=sidewalkQuery.CalculateEntityCount()==1 ? sidewalkQuery.GetSingletonEntity() : Entity.Null;
             }
             world=em.World;owner=entity;revision=version;surface=current;grid=currentGrid;sidewalkSourceSignature=currentSidewalkSignature;
+            waterProvider=currentWaterProvider;hasSkirmishMatch=currentHasSkirmishMatch;
             mask=new bool[grid.Width*grid.Height];
-            waterMask=SkirmishWaterPlacement.CreateMask(em,grid);
+            // With an active Skirmish match, a missing provider means that the
+            // water census is unavailable, not that the map contains no water.
+            waterMask=currentHasSkirmishMatch && currentWaterProvider==null
+                ? null : SkirmishWaterPlacement.CreateMask(em,grid);
             BuildingPlacementRoadSurfaceMask.Append(em,entity,grid,mask);
             sidewalkMask=new bool[mask.Length];
             var live=GetLiveSidewalks();
@@ -105,6 +126,11 @@ namespace Game.Runtime
             ? world.EntityManager.GetBuffer<GridRoadSidewalk>(sidewalkOwner,true) : default;
         internal bool[] GetSidewalks()=>sidewalkMask;
         internal bool[] GetWater()=>waterMask;
+        internal static bool IsWaterMaskKnownForPlacement(bool hasMatch,object provider,bool[] cachedWaterMask)
+            => !hasMatch || (provider!=null && cachedWaterMask!=null);
+        internal static bool WaterSourceIsCurrent(object cachedProvider,bool cachedHasMatch,bool[] cachedWaterMask,
+            object currentProvider,bool currentHasMatch) => ReferenceEquals(cachedProvider,currentProvider) &&
+                cachedHasMatch==currentHasMatch && (!currentHasMatch || cachedWaterMask!=null);
         internal void AppendWaterTo(bool[] target)
         {
             if(waterMask==null || waterMask.Length!=target.Length)return;
@@ -112,6 +138,7 @@ namespace Game.Runtime
         }
         internal bool OverlapsWater(GridConfig currentGrid,Vector2Int origin,Vector2Int footprint)
         {
+            if(!HasKnownWaterMask)return true;
             if(waterMask==null)return false;
             if(!BuildingPlacementValidationUtilitySystemHelper.IsFootprintInsideGrid(origin,footprint,currentGrid))return true;
             for(int y=origin.y;y<origin.y+footprint.y;y++)

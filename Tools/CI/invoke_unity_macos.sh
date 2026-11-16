@@ -137,10 +137,34 @@ PYCODE
     fi
     echo "[UnityInvokeMac] LicensingMode: existing GUI Editor; project=$PROJECT_PATH"
     echo "[UnityInvokeMac] Existing executeMethod: $execute_method; LogFile: $LOG_FILE; TimeoutSeconds: $TIMEOUT_SECONDS"
+    # Pipeline 0.9 groups script commands and uses seconds for their timeout.
+    # Keep the exact legacy dispatch contract for the pinned 0.6 package.
+    dispatch_protocol="$(python3 - "$PROJECT_PATH" <<'PYCODE'
+import json,re,sys
+from pathlib import Path
+root=Path(sys.argv[1])
+lock=root/'Packages/packages-lock.json'
+version=None
+if lock.exists():
+    version=json.loads(lock.read_text()).get('dependencies',{}).get('com.unity.pipeline',{}).get('version')
+if version is None:
+    version=json.loads((root/'Packages/manifest.json').read_text()).get('dependencies',{}).get('com.unity.pipeline')
+match=re.fullmatch(r'(\d+)\.(\d+)\.(\d+)(?:[-+][A-Za-z0-9.+-]+)?',version or '')
+if match is None:
+    raise SystemExit('Cannot resolve the installed Pipeline dispatch version: '+str(version))
+print('grouped' if tuple(map(int,match.groups())) >= (0,9,0) else 'legacy')
+PYCODE
+    )"
+    dispatch_command=(run_script)
+    dispatch_timeout_args=(--timeout_ms "$dispatch_timeout_ms" --timeout "$TIMEOUT_SECONDS")
+    if [[ "$dispatch_protocol" == "grouped" ]]; then
+        dispatch_command=(script run)
+        dispatch_timeout_args=(--timeout "$((dispatch_timeout_ms / 1000))")
+    fi
     # CLI targets the exact existing project. Failure never falls back to opening another Editor.
     live_started_seconds=$SECONDS
     dispatch_status=0
-    dispatch_output="$(unity command run_script --project-path "$PROJECT_PATH" --file "$dispatch_source" --entry WarlineExistingValidationDispatch.Run --timeout_ms "$dispatch_timeout_ms" --timeout "$TIMEOUT_SECONDS" --format json)" || dispatch_status=$?
+    dispatch_output="$(unity command "${dispatch_command[@]}" --project-path "$PROJECT_PATH" --file "$dispatch_source" --entry WarlineExistingValidationDispatch.Run "${dispatch_timeout_args[@]}" --format json)" || dispatch_status=$?
     printf '%s\n' "$dispatch_output" > "$LOG_FILE.dispatch.json"
     printf '%s\n' "$dispatch_output"
     # One monitor process retains the exact ownership/receipt checks and timeout.

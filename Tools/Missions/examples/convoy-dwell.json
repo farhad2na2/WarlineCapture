@@ -1,0 +1,17 @@
+{
+  "missions": ["S019", "S020", "S043"],
+  "sizes": ["Standard", "War", "LargeWar"],
+  "family": "CE",
+  "cases": [{
+    "name": "leaving_destination_resets_dwell",
+    "area_ids": ["destination"],
+    "original_ids": ["original.lead","original.middle","original.rear"],
+    "steps": [
+      {"facts":{"Playing":true,"Paused":false,"SimulationDeltaTicks":10000000,"OriginalTrucks":[{"StableOriginalId":"original.lead","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.middle","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.rear","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false}]},"repeat":4,"expect":{"Terminal":false,"Outcome":"None"}},
+      {"facts":{"Playing":true,"Paused":false,"SimulationDeltaTicks":10000000,"OriginalTrucks":[{"StableOriginalId":"original.lead","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false},{"StableOriginalId":"original.middle","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false},{"StableOriginalId":"original.rear","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false}]},"repeat":1,"expect":{"Terminal":false,"Outcome":"None"}},
+      {"facts":{"Playing":true,"Paused":false,"SimulationDeltaTicks":10000000,"OriginalTrucks":[{"StableOriginalId":"original.lead","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.middle","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.rear","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false}]},"repeat":4,"expect":{"Terminal":false,"Outcome":"None"}},
+      {"facts":{"Playing":true,"Paused":false,"SimulationDeltaTicks":10000000,"OriginalTrucks":[{"StableOriginalId":"original.lead","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.middle","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":true},{"StableOriginalId":"original.rear","AuthoritativeLifeKnown":true,"Alive":true,"InsideDestination":false}]},"repeat":1,"expect":{"Terminal":true,"Outcome":"Victory"}}
+    ],
+    "expect": {"Terminal":true,"Outcome":"Victory","Reason":"ConvoyDelivered","ElapsedTicks":100000000}
+  }]
+}

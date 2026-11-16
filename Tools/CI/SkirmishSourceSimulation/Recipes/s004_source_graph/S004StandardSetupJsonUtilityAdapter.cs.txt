@@ -1,0 +1,11 @@
+// Isolated generated-response adapter for the exact previously validated S004
+// Standard layout projection. It is not a general JsonUtility implementation.
+using System;
+namespace UnityEngine
+{
+    public static class JsonUtility
+    {
+        public static string ToJson(object value) => S004StandardSetupExportSourceBinding.DiagnosticToJson(value);
+        public static T FromJson<T>(string json) => throw new NotSupportedException("S004 Standard source adapter rejects JsonUtility.FromJson");
+    }
+}

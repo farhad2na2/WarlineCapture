@@ -1,0 +1,6 @@
+using Game.Components;using Game.Skirmish.Contracts;using Unity.Entities;namespace Game.Runtime{public static partial class SkirmishExpandedSessionControlService{
+public static void ProjectMatchPhase(EntityManager em, Entity session)
+        {/*SOURCE:body_0*/}
+public static void ProjectTerminalMatch(EntityManager em, Entity session)
+        {/*SOURCE:body_1*/}
+}}

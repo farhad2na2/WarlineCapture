@@ -28,6 +28,10 @@ namespace Game.Runtime
             cellSize = Mathf.Max(0.01f, cellSize);
 
             Entity gridEntity = ResolveGridEntity(entityManager);
+            // This compatibility producer overwrites walkability; it cannot retain
+            // an earlier baked source witness across that write.
+            if (entityManager.HasComponent<GridWalkableSourceWitness>(gridEntity))
+                entityManager.RemoveComponent<GridWalkableSourceWitness>(gridEntity);
             entityManager.SetComponentData(gridEntity, new GridConfig
             {
                 Width = width,

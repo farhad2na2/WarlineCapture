@@ -63,11 +63,28 @@ namespace Game.Runtime
 
             MaterialPropertyBlock markerPropertyBlock = BuildingMarkerVisualPresentationSystemHelper.GetMarkerPropertyBlock(_markerVisualPresentationHelper);
             BuildingGameplaySourceCompositionSystemHelper childSystems = _childSystem.Create();
+#if UNITY_EDITOR
+            S002InitialWorldManagedAuthority.Register(childSystems);
+#endif
             childSystems.BuildingDefinitionPrefabSystemHelper.ConfigureAuthoringMetadataResolvers(
                 tryGetBuildingDefinitionMetadata,
                 tryGetUnitDefinitionMetadata);
             childSystems.BuildingProductionQueueCompositionSystemHelper.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
             childSystems.BuildingProductionQueueCompositionSystemHelper.ConfigureProductionRecipes(buildingPlacementConfig?.RuntimeProductionRecipes);
+#if UNITY_EDITOR
+            try
+            {
+                ObserveS073ProductionRecipeStartup(
+                    buildingPlacementConfig,
+                    childSystems,
+                    buildingPlacementConfig?.RuntimeProductionRecipes,
+                    childSystems.BuildingProductionQueueCompositionSystemHelper);
+            }
+            catch (Exception observationError)
+            {
+                Debug.LogWarning("[S073ProductionRecipeStartupObservation] observer failed without changing startup: " + observationError);
+            }
+#endif
             childSystems.BuildingProductionTransportPresentationSystemHelper.SetRuntimeRoot(runtimeTransportsRoot);
             childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
             _startupCompositionHelper.Initialize(
@@ -747,5 +764,105 @@ namespace Game.Runtime
         {
             return new BuildingCitizenPopulationCompositionSystemHelper();
         }
+
+#if UNITY_EDITOR
+        private static void ObserveS073ProductionRecipeStartup(
+            BuildingPlacementSystemConfig config,
+            BuildingGameplaySourceCompositionSystemHelper sourceOwner,
+            System.Collections.Generic.IReadOnlyList<BuildingProductionRecipe> recipes,
+            BuildingProductionQueueCompositionSystemHelper productionOwner)
+        {
+            if (!string.Equals(
+                    Environment.GetEnvironmentVariable("WARLINE_S073_PRODUCTION_RECIPE_OBSERVATION"),
+                    "1",
+                    StringComparison.Ordinal))
+                return;
+
+            Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            if (world == null || !world.IsCreated)
+                return;
+
+            EntityManager em = world.EntityManager;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishMatchState));
+            if (sessions.CalculateEntityCount() != 1)
+                return;
+
+            Entity session = sessions.GetSingletonEntity();
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            if (match.ScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+                return;
+            const int expectedSeed = 104729;
+            if (match.Seed != expectedSeed)
+                return;
+            if (em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0)
+                return;
+
+            var recipeRows = new System.Collections.Generic.List<string>();
+            if (recipes != null)
+            {
+                for (int i = 0; i < recipes.Count; i++)
+                {
+                    BuildingProductionRecipe recipe = recipes[i];
+                    recipeRows.Add(recipe == null
+                        ? $"{i}:<null>"
+                        : $"{i}:{recipe.ProducerPrefab?.name ?? "<null>"}->{recipe.UnitPrefab?.name ?? "<null>"};quantity={recipe.Quantity};materials={recipe.MaterialsCost};credits={recipe.CreditsCost};groundExit={recipe.UseProducerGroundExit}");
+                }
+            }
+
+            var groundExitRows = new System.Collections.Generic.List<string>();
+            foreach (UnityEngine.GameObject prefab in productionOwner.CopyProducerGroundExitPrefabsForObservation())
+                groundExitRows.Add(prefab != null ? prefab.name : "<null>");
+            groundExitRows.Sort(StringComparer.Ordinal);
+
+            Debug.Log("[S073ProductionRecipeStartupObservation] " + JsonUtility.ToJson(new S073ProductionRecipeStartupObservation
+            {
+                schema_version = 1,
+                mission = "S073",
+                scenario_index = match.ScenarioIndex,
+                seed = match.Seed,
+                expected_seed = expectedSeed,
+                session_id = match.SessionId.ToString(),
+                session_entity = $"{session.Index}:{session.Version}",
+                session_phase = match.Phase.ToString(),
+                legacy_session = !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                    em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0,
+                building_placement_config = config != null ? config.name : "<null>",
+                recipe_input_is_null = recipes == null,
+                recipe_input_count = recipes?.Count ?? 0,
+                recipe_input_rows = recipeRows.ToArray(),
+                resulting_ground_exit_prefabs = groundExitRows.ToArray(),
+                resulting_ground_exit_count = groundExitRows.Count,
+                source_owner_type = typeof(BuildingGameplaySourceCompositionSystemHelper).FullName,
+                production_owner_type = typeof(BuildingProductionQueueCompositionSystemHelper).FullName,
+                building_spawn_random_state = sourceOwner.BuildingSpawnRandomState,
+                random_state_owner = "BuildingGameplaySourceCompositionSystemHelper.BuildingSpawnRandomState"
+            }));
+        }
+
+        [Serializable]
+        private sealed class S073ProductionRecipeStartupObservation
+        {
+            public int schema_version;
+            public string mission;
+            public int scenario_index;
+            public int seed;
+            public int expected_seed;
+            public string session_id;
+            public string session_entity;
+            public string session_phase;
+            public bool legacy_session;
+            public string building_placement_config;
+            public bool recipe_input_is_null;
+            public int recipe_input_count;
+            public string[] recipe_input_rows;
+            public string[] resulting_ground_exit_prefabs;
+            public int resulting_ground_exit_count;
+            public string source_owner_type;
+            public string production_owner_type;
+            public uint building_spawn_random_state;
+            public string random_state_owner;
+        }
+#endif
     }
 }

@@ -22,8 +22,8 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
-            if(Time.unscaledTime<nextMissionRefresh) return;
-            nextMissionRefresh=Time.unscaledTime+0.2f;
+            if(Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)<nextMissionRefresh) return;
+            nextMissionRefresh=Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime)+0.2f;
             if(!UiShellRuntimeGateway.TryReadMissionDefense(out var model)) return;
             if(missionGuideButton!=null) missionGuideButton.gameObject.SetActive(true);
             if(jumpToThreatButton!=null) ((RectTransform)jumpToThreatButton.transform).sizeDelta=new Vector2(450,84);

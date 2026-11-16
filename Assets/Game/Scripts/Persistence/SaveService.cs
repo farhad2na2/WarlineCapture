@@ -19,8 +19,12 @@ namespace Game.Runtime
 
         public static SaveService CreateDefault()
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || WARLINE_VALIDATION_PLAYER
             string validationRoot = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+#if WARLINE_VALIDATION_PLAYER
+            if (string.IsNullOrWhiteSpace(validationRoot))
+                throw new InvalidOperationException("Validation player requires isolated save root");
+#endif
             if (!string.IsNullOrWhiteSpace(validationRoot))
                 return new SaveService(new JsonSaveRepository(validationRoot));
 #endif

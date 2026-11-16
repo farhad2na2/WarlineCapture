@@ -1,0 +1,1 @@
+using Game.Components;using Game.Tactical.Contracts;using ResourceResult=Game.Components.FactionConstructionResourceMutationResult;namespace Game.Runtime{internal static class SourceCampResourceEvaluate{@@member29@@}}

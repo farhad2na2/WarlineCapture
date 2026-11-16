@@ -230,7 +230,8 @@ namespace Game.Runtime
             internal bool BuildingRequestMatches(in BuildingRuntimeSpawnRequest r) => Request.RequestKind == r.RequestKind &&
                 Request.BuildingId.Equals(r.BuildingId) && Request.FactionId == r.FactionId && Request.HasOwnerFaction == r.HasOwnerFaction &&
                 Request.AuthoredStartingGrant == r.AuthoredStartingGrant && Request.PreferredOrigin.Equals(r.PreferredOrigin) &&
-                Request.RotateVertical == r.RotateVertical && Request.MaterialsCost == r.MaterialsCost;
+                Request.RequireTypedPad == r.RequireTypedPad && Request.RotateVertical == r.RotateVertical &&
+                Request.MaterialsCost == r.MaterialsCost;
         }
     }
 }

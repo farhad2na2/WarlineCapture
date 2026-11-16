@@ -295,7 +295,7 @@ namespace Game.Editor
         }
         public static void RunMpGroundBaServiceRegionControls()
         {
-            Require(Hash("Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs")=="3d83cf7f9e44d3ea8f115428846a3f2ac0ac3a3dd78762c2f20a2613d0aa9b55","Exact reviewed runtime service spatial authority required");
+            Require(Hash("Assets/Game/Scripts/Runtime/Skirmish/VehicleFieldRepairService.cs")=="0273a9cae359375fcd28438409a452b37e76ba3da7b09006c43bd4d226b9bfe0","Exact reviewed runtime service spatial authority required");
             var zero=float2.zero;
             Require(MpPilotRepairWorldInRange(new float2(12,0),zero),"Inclusive runtime12m boundary must admit");
             Require(!MpPilotRepairWorldInRange(new float2(12.001f,0),zero),"Outside runtime radius must refuse");

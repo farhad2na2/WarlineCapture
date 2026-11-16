@@ -795,6 +795,10 @@ public sealed class BuildingUiQuerySystemTests
         public float TransportArrivalSeconds { get; set; }
         public float TransportHoldForNextReadySeconds { get; set; }
         public int TransportMaxConcurrent { get; set; }
+        public int RemainingQuantity { get; set; }
+        public Entity ReceiptOwner { get; set; }
+        public uint ReceiptId { get; set; }
+        public FixedString64Bytes ReceiptAttempt { get; set; }
         public BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
     }

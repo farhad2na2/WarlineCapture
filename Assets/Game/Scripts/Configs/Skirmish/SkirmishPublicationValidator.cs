@@ -64,7 +64,9 @@ namespace Game.Configs
 
             string catalogId = FirstNonEmpty(row.CatalogId, definition?.CatalogId, setup?.CatalogId);
             string definitionId = FirstNonEmpty(row.DefinitionId, definition?.DefinitionId, setup?.DefinitionId);
-            if (catalogId != S002CatalogId && catalogId != S003CatalogId && catalogId != S004CatalogId && catalogId != "S005")
+            bool existingPublicationPolicy = catalogId == S002CatalogId || catalogId == S003CatalogId ||
+                catalogId == S004CatalogId || catalogId == "S005";
+            if (!SkirmishMissionDispatch.Canonical(catalogId))
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InvalidIdentity, "catalogId", catalogId));
                 return false;
@@ -157,6 +159,18 @@ namespace Game.Configs
                     catalogId == S004CatalogId
                         ? "S004 full evidence stays InProgress until Established air flight/refuel and the ARIA matrix land."
                         : "S003 full evidence stays InProgress until air flight/refuel and the ARIA matrix land."));
+                return true;
+            }
+
+            // Other canonical missions may be staged and evaluated, but the
+            // existing four-mission evidence policy does not certify them.
+            if (!existingPublicationPolicy)
+            {
+                status = SkirmishPublicationStatus.InProgress;
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.MissingReadiness,
+                    "publication",
+                    "This mission requires its own complete publication acceptance evidence."));
                 return true;
             }
 

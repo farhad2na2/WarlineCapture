@@ -6,28 +6,6 @@ using Unity.Collections;
 
 namespace Game.Runtime
 {
-    public static class SkirmishOutcomeRules
-    {
-        public static bool Evaluate(ref SkirmishMatchState match, bool playerBaseAlive, bool enemyBaseAlive,
-            float deltaSeconds, bool simulationActive, bool surrender = false)
-        {
-            if (match.Phase != SkirmishPhase.Playing) return false;
-            if (simulationActive && math.isfinite(deltaSeconds)) match.ElapsedSeconds += math.max(0, deltaSeconds);
-            if (!playerBaseAlive || !enemyBaseAlive)
-            {
-                match.Outcome = playerBaseAlive ? SkirmishOutcome.Victory : enemyBaseAlive ? SkirmishOutcome.Defeat : SkirmishOutcome.Draw;
-                match.Reason = !playerBaseAlive && !enemyBaseAlive ? SkirmishEndReason.BothBasesDestroyed : SkirmishEndReason.MainBaseDestroyed;
-            }
-            else if (surrender) { match.Outcome=SkirmishOutcome.Defeat; match.Reason=SkirmishEndReason.Surrender; }
-            else if (match.ElapsedSeconds >= SkirmishPresetConfig.MatchDurationSeconds)
-            { match.Outcome=SkirmishOutcome.Draw; match.Reason=SkirmishEndReason.TimeLimit; }
-            else return false;
-            match.ElapsedSeconds=math.min(match.ElapsedSeconds,SkirmishPresetConfig.MatchDurationSeconds);
-            match.Phase=SkirmishPhase.Finished;
-            return true;
-        }
-    }
-
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     public partial struct SkirmishRulesSystem : ISystem
     {
@@ -82,12 +60,10 @@ namespace Game.Runtime
             SkirmishSquadAssignment.Assign(em);
             if (gameplay.SimulationActive != 0) SkirmishCombatPolicy.RallyPlayerReinforcements(em, match);
             TrackLosses(em,entity,ref match);
-            bool ended=SkirmishOutcomeRules.Evaluate(ref match,Alive(em,match.PlayerMainBase),Alive(em,match.EnemyMainBase),
-                SystemAPI.Time.DeltaTime,gameplay.SimulationActive!=0,match.SurrenderRequested!=0);
+            bool ended=SkirmishOutcomeRules.Evaluate(em,ref match,SystemAPI.Time.DeltaTime,ref gameplay);
             em.SetComponentData(entity,match);
             if(ended)
             {
-                gameplay.SimulationActive=0; gameplay.PlayRequested=0; gameplay.SelectionModeActive=0; gameplay.BuildModeActive=0;
                 em.SetComponentData(SystemAPI.GetSingletonEntity<RuntimeGameplayStateComponent>(),gameplay);
             }
         }

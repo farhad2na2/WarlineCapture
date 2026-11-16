@@ -1,0 +1,4 @@
+using Unity.Entities;using Unity.Collections;using Game.Components;namespace Game.Runtime {internal sealed partial class BuildingResourceHaulerBridgeCompositionSystemHelper {readonly FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper _fuelLogisticsTelemetry=new FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper();
+@@SOURCE_0@@} internal sealed class FactionFuelLogisticsTelemetryBridgeCompositionSystemHelper {static readonly FixedString64Bytes TrayTruckSourceKey=new FixedString64Bytes("Unit_Veh_Truck_Tray");
+@@SOURCE_1@@@@SOURCE_2@@@@SOURCE_3@@private bool TryResolveTelemetryEntity(EntityManager em,byte faction,out Entity result){result=Entity.Null;throw new System.NotSupportedException("Actual telemetry query/session census unavailable; eligible Oil failure requires original query");}
+}}

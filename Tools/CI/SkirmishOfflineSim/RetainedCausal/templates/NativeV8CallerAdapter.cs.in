@@ -1,0 +1,78 @@
+using System;using System.Linq;using System.Collections.Generic;using System.Reflection;using Newtonsoft.Json.Linq;using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using Game.Components;
+namespace Game.Runtime {
+// Consumed component decoder reused from frozen native caller adapter. Input is the V8 canonical host's admitted BEFORE census, never the journal.
+internal static class NativeV8CallerAdapter {
+static void Need(bool x,string m){if(!x)throw new NotSupportedException(m);}
+static JToken Get(JToken x,string k){Need(x is JObject&&((JObject)x).Property(k)!=null,"Missing BEFORE field "+k);return x[k];}
+static bool Present(JToken x)=>x!=null&&x.Type!=JTokenType.Null;
+static int I(JToken x){Need(x.Type==JTokenType.Integer,"Exact integer required");return checked(x.Value<int>());}
+static uint U(JToken x){Need(x.Type==JTokenType.Integer,"Exact raw uint required");return checked(x.Value<uint>());}
+static bool B(JToken x){Need(x.Type==JTokenType.Boolean,"Boolean required");return x.Value<bool>();}
+internal static float F(JToken x){float f=BitConverter.ToSingle(BitConverter.GetBytes(U(x)),0);Need(!float.IsNaN(f)&&!float.IsInfinity(f),"Nonfinite BEFORE float unsupported");return f;}
+internal static Entity E(JToken x)=>new Entity{Index=I(Get(x,"index")),Version=I(Get(x,"version"))};
+internal static object Decode(Type t,JToken x){if(t==typeof(float))return F(x);if(t==typeof(int))return I(x);if(t==typeof(uint))return U(x);if(t==typeof(byte))return checked((byte)I(x));if(t.IsEnum)return Enum.ToObject(t,checked((byte)I(x)));Need(x is JObject,"Component object required: "+t.Name);var fields=t.GetFields(BindingFlags.Public|BindingFlags.Instance);Need(((JObject)x).Count==fields.Length,"Complete exact component fields required: "+t.Name);object o=Activator.CreateInstance(t);foreach(var f in fields)f.SetValue(o,Decode(f.FieldType,Get(x,f.Name)));return o;}
+static void Add<T>(EntityManager em,Entity e,JToken x){if(Present(x))em.AddComponentData(e,(T)Decode(typeof(T),x));}
+// Presence-only shim types are never read by the frozen original prepair methods.
+static void Presence<T>(EntityManager em,Entity e,JToken x){if(Present(x)){Need(x is JObject,"Presence object required");em.AddComponentData(e,default(T));}}
+internal sealed class Prepared {internal AutomaticCallerAdmission.Input Input;internal JObject RetainedBeforeFacts;}
+internal static Prepared Read(JObject c,JObject firstDispatch,JArray broadRoots,EntityManager em,Dictionary<int,RuntimeBuildingEntity> actualBindings,bool requireRetainedFabrication=false){
+Need(em!=null&&em.BankBound,"Same canonical manager must bind genuine initial bank once before predecessor stages");Need(I(Get(c,"schema_version"))==2&&B(Get(c,"census_complete")),"Complete R7 schema2 required");Need(firstDispatch!=null&&broadRoots!=null&&em!=null&&actualBindings!=null,"Canonically admitted V8 first dispatch, broad roots and same retained manager required");
+// Independently assert the exact captured caller domain before publishing ANY
+// nonstorage component or runtime binding. The constructor's bound EM/delegate
+// equality is insufficient provenance on its own. No full-bank superset demand.
+var rawCandidates=(JArray)Get(c,"full_runtime_buildings_enumeration");var rawHaulers=(JArray)Get(c,"full_hauler_query_order_and_components");
+Need(rawCandidates.Count<=18&&rawCandidates.Count==I(Get(c,"actual_candidate_count"))&&rawHaulers.Count>0&&rawHaulers.Count<=8&&rawHaulers.Count==I(Get(c,"actual_query_count")),"Exact bounded raw caller census required");
+var descriptors=(JArray)Get(firstDispatch,"candidate_order_and_observed_components");var dispatchHaulers=(JArray)Get(firstDispatch,"hauler_order_and_observed_components");
+Need(descriptors.Count==rawCandidates.Count&&dispatchHaulers.Count==rawHaulers.Count,"First dispatch exact raw domains differ");
+Need(broadRoots.Count>0&&broadRoots.Count<=16,"Complete bounded independent expanded roots required before publication");var rootIds=new HashSet<Entity>();foreach(var row in broadRoots){var root=E(Get(row,"entity"));Need(root!=Entity.Null&&rootIds.Add(root),"Unique nonnull expanded roots required before publication");}
+var incomingBindings=new Dictionary<int,Tuple<int,Entity,byte,int,int,uint,uint>>();
+var haulerIds=new HashSet<Entity>();for(int i=0;i<rawHaulers.Count;i++){var h=rawHaulers[i];Need(I(Get(h,"query_ordinal"))==i&&E(Get(h,"entity"))!=Entity.Null&&haulerIds.Add(E(Get(h,"entity")))&&JToken.DeepEquals(h,dispatchHaulers[i]),"Unique ordered actual first hauler domain differs");}
+var candidateKeys=new HashSet<int>();for(int i=0;i<rawCandidates.Count;i++){var raw=rawCandidates[i];var descriptor=descriptors[i];int key=I(Get(raw,"dictionary_key"));
+Need(I(Get(raw,"enumeration_ordinal"))==i&&candidateKeys.Add(key)&&I(Get(descriptor,"enumeration_ordinal"))==i&&I(Get(descriptor,"dictionary_key"))==key,"Unique ordered actual candidate dictionary domain differs");
+if(((JObject)raw).Property("runtime")!=null){Need(!Present(raw["runtime"])&&!Present(Get(descriptor,"runtime_id"))&&!Present(Get(descriptor,"combat_entity"))&&!Present(Get(descriptor,"runtime_binding_ref")),"Exact null candidate descriptor required");continue;}
+var entity=E(Get(raw,"combat_entity"));int id=I(Get(raw,"runtime_id"));int binding=I(Get(descriptor,"runtime_binding_ref"));Need(binding>0&&binding<=18&&!haulerIds.Contains(entity)&&E(Get(descriptor,"combat_entity"))==entity&&I(Get(descriptor,"runtime_id"))==id,"Candidate/hauler collision or exact runtime binding identity differs");
+var def=Get(raw,"definition_fields");var signature=Tuple.Create(id,entity,checked((byte)I(Get(raw,"owner_faction"))),Present(def)?I(Get(def,"oil_capacity")):0,Present(def)?I(Get(def,"fuel_capacity")):0,Present(def)?U(Get(def,"oil_rate_bits")):0u,Present(def)?U(Get(def,"fuel_rate_bits")):0u);
+Tuple<int,Entity,byte,int,int,uint,uint> staged;if(incomingBindings.TryGetValue(binding,out staged))Need(staged.Equals(signature),"Incoming alias runtime binding identity/metadata conflict before publication");else incomingBindings.Add(binding,signature);
+RuntimeBuildingEntity previous;if(actualBindings.TryGetValue(binding,out previous)){var d=Get(raw,"definition_fields");Need(previous.Id==id&&previous.CombatEntity==entity&&previous.OwnerFactionId==checked((byte)I(Get(raw,"owner_faction"))),"Raw candidate conflicts with prior actual Sync identity/owner");if(Present(d))Need(previous.OilStorageCapacity==I(Get(d,"oil_capacity"))&&previous.FuelStorageCapacity==I(Get(d,"fuel_capacity"))&&BitConverter.ToUInt32(BitConverter.GetBytes(previous.OilBarrelsPerDay),0)==U(Get(d,"oil_rate_bits"))&&BitConverter.ToUInt32(BitConverter.GetBytes(previous.FuelBarrelsPerDay),0)==U(Get(d,"fuel_rate_bits")),"Prior Sync static metadata differs from first raw caller");}}
+foreach(var raw in rawCandidates){if(((JObject)raw).Property("runtime")!=null){Need(!Present(raw["runtime"]),"Unknown null candidate form");continue;}var entity=E(Get(raw,"combat_entity"));var rs=Get(raw,"storage");var rp=Get(raw,"production_profile");
+Need(em.HasComponent<BuildingResourceStorageComponent>(entity)==Present(rs),"Raw first-caller storage presence differs from canonical bank");
+if(Present(rs))Need(CanonicalStorageBank.Same(em.GetComponentData<BuildingResourceStorageComponent>(entity),(BuildingResourceStorageComponent)Decode(typeof(BuildingResourceStorageComponent),rs)),"Raw first-caller storage differs from already computed bank");
+Need(em.HasComponent<BuildingResourceProductionProfileComponent>(entity)==Present(rp),"Raw first-caller profile presence differs from canonical bank");
+if(Present(rp))Need(CanonicalStorageBank.Same(em.GetComponentData<BuildingResourceProductionProfileComponent>(entity),(BuildingResourceProductionProfileComponent)Decode(typeof(BuildingResourceProductionProfileComponent),rp)),"Raw first-caller profile differs from already computed bank");
+if(requireRetainedFabrication){var rf=Get(raw,"fabrication");var tag=Get(raw,"fabrication_input_tag");Need(em.HasComponent<MaterialFabricationComponent>(entity)==Present(rf),"Raw first-caller fabrication presence differs from retained material state");Need(em.HasComponent<MaterialFabricationInputTag>(entity)==Present(tag),"Raw first-caller fabrication InputTag presence differs from retained material state");if(Present(rf))Need(CanonicalStorageBank.Same(em.GetComponentData<MaterialFabricationComponent>(entity),(MaterialFabricationComponent)Decode(typeof(MaterialFabricationComponent),rf)),"Raw first-caller fabrication differs from already computed material state");}}
+var buildings=new Dictionary<int,RuntimeBuildingEntity>();var query=new List<Entity>();
+var ps=Get(c,"private_state");Need(B(Get(ps,"ai_policy_present")),"Missing actual AI policy unsupported");
+foreach(var r in (JArray)Get(c,"full_hauler_query_order_and_components")){
+Need(I(Get(r,"query_ordinal"))==query.Count,"Query order differs");var e=E(Get(r,"entity"));Need(!query.Contains(e)&&e!=Entity.Null,"Duplicate/null query entity");query.Add(e);
+Add<UnitResourceHauler>(em,e,Get(r,"UnitResourceHauler"));Add<UnitGrid>(em,e,Get(r,"UnitGrid"));Presence<UnitMove>(em,e,Get(r,"UnitMove"));Add<Faction>(em,e,Get(r,"Faction"));Presence<ManualMoveOrderTag>(em,e,Get(r,"ManualMoveOrderTag"));Presence<UnitAirMovement>(em,e,Get(r,"UnitAirMovement"));
+Add<UnitResourceHaulOrder>(em,e,Get(r,"UnitResourceHaulOrder"));Add<UnitResourceHaulReservation>(em,e,Get(r,"UnitResourceHaulReservation"));Add<UnitResourceHaulStatus>(em,e,Get(r,"UnitResourceHaulStatus"));
+var unitOwn=Get(r,"attempt_owned");if(Present(unitOwn)){Need(unitOwn is JObject&&((JObject)unitOwn).Count==6,"Exact raw attempt-owned fields required");em.AddComponentData(e,new SkirmishAttemptOwnedComponent{SessionId=new FixedString64Bytes(Get(unitOwn,"SessionId").Value<string>()),CapacityReleased=checked((byte)I(Get(unitOwn,"CapacityReleased"))),FactionId=checked((byte)I(Get(unitOwn,"FactionId")))});}
+var key=Get(r,"source_prefab_key");if(Present(key)){Need(key.Type==JTokenType.String,"Exact source string required");em.AddComponentData(e,new UnitSourcePrefabKey{Value=new FixedString64Bytes(key.Value<string>())});}
+}
+foreach(var r in (JArray)Get(c,"full_runtime_buildings_enumeration")){
+Need(I(Get(r,"enumeration_ordinal"))==buildings.Count,"Candidate order differs");int key=I(Get(r,"dictionary_key"));Need(!buildings.ContainsKey(key),"Duplicate candidate dictionary key");if(((JObject)r).Property("runtime")!=null){Need(!Present(r["runtime"]),"Unknown null candidate form");buildings.Add(key,null);continue;}
+var e=E(Get(r,"combat_entity"));Need(!query.Contains(e),"Candidate/hauler identity collision unsupported");var d=Get(r,"definition_fields");
+var descriptor=((JArray)Get(firstDispatch,"candidate_order_and_observed_components"))[buildings.Count];Need(I(Get(descriptor,"dictionary_key"))==key,"Actual first candidate binding order differs");int binding=I(Get(descriptor,"runtime_binding_ref"));
+RuntimeBuildingEntity b;if(!actualBindings.TryGetValue(binding,out b)){b=new RuntimeBuildingEntity{Id=I(Get(r,"runtime_id")),CombatEntity=e,OwnerFactionId=checked((byte)I(Get(r,"owner_faction")))};actualBindings.Add(binding,b);}
+else{Need(b.Id==I(Get(r,"runtime_id"))&&b.CombatEntity==e&&b.OwnerFactionId==checked((byte)I(Get(r,"owner_faction"))),"First raw candidate conflicts with prior actual Sync identity/owner");if(Present(d))Need(b.OilStorageCapacity==I(Get(d,"oil_capacity"))&&b.FuelStorageCapacity==I(Get(d,"fuel_capacity"))&&BitConverter.ToUInt32(BitConverter.GetBytes(b.OilBarrelsPerDay),0)==U(Get(d,"oil_rate_bits"))&&BitConverter.ToUInt32(BitConverter.GetBytes(b.FuelBarrelsPerDay),0)==U(Get(d,"fuel_rate_bits")),"Prior Sync static metadata differs from first raw caller");}
+b.IsDestroyed=B(Get(r,"is_destroyed"));b.HasOwnerFaction=B(Get(r,"has_owner_faction"));
+if(Present(d)){b.OilStorageCapacity=I(Get(d,"oil_capacity"));b.FuelStorageCapacity=I(Get(d,"fuel_capacity"));b.OilBarrelsPerDay=F(Get(d,"oil_rate_bits"));b.FuelBarrelsPerDay=F(Get(d,"fuel_rate_bits"));}
+if(!requireRetainedFabrication){Add<MaterialFabricationComponent>(em,e,Get(r,"fabrication"));Presence<MaterialFabricationInputTag>(em,e,Get(r,"fabrication_input_tag"));}
+var own=Get(r,"attempt_owned");if(Present(own)){
+// Global expanded-session query is NOT in the R7 census; never substitute an empty query.
+byte released=checked((byte)I(Get(own,"CapacityReleased"))), faction=checked((byte)I(Get(own,"FactionId")));
+Need(broadRoots.Count>0&&broadRoots.Count<=16,"Complete independent broad expanded-session query required");
+em.AddComponentData(e,new SkirmishAttemptOwnedComponent{SessionId=new FixedString64Bytes(Get(own,"SessionId").Value<string>()),CapacityReleased=released,FactionId=faction});}
+buildings.Add(key,b);
+}
+Need(query.Count==I(Get(c,"actual_query_count"))&&buildings.Count==I(Get(c,"actual_candidate_count")),"Complete census counts differ");
+var context=new BuildingResourceHaulerBridgeCompositionSystemHelper.Context{RuntimeBuildings=buildings,ResourceHaulerUtilitySystemHelper=new ResourceHaulerUtilitySystemHelper(),FactionResourceCompositionSystemHelper=new FactionResourceCompositionSystemHelper()};
+var roots=new List<Entity>();foreach(var row in broadRoots){var entity=E(Get(row,"entity"));Need(!roots.Contains(entity),"Unique expanded roots required");roots.Add(entity);em.AddComponentData(entity,new SkirmishExpandedSessionComponent{SessionId=new FixedString64Bytes(Get(row,"SessionId").Value<string>()),IsLegacy=checked((byte)I(Get(row,"IsLegacy")))});}em.Sessions=roots.ToArray();
+var cb=Get(c,"callback_presence");bool focus=B(Get(cb,"focus")),ai=B(Get(cb,"ai_input"));
+// Presence is retained; callbacks cannot run before the existing scoped provider tape installs actual returns.
+context.ResolveBuildingFocusWorldPosition=focus?(Func<RuntimeBuildingEntity,Vector3>)(building=>throw new NotSupportedException("Scoped actual focus provider not installed")):null;
+context.TryResolveFactionAIOilAllocationInput=ai?(BuildingResourceHaulerBridgeCompositionSystemHelper.TryResolveFactionAIOilAllocationInputDelegate)((EntityManager manager,byte faction,out BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input)=>{input=default;throw new NotSupportedException("Scoped actual AI provider not installed");}):null;
+return new Prepared{RetainedBeforeFacts=(JObject)c.DeepClone(),Input=new AutomaticCallerAdmission.Input{Context=context,Manager=em,Grid=(GridConfig)Decode(typeof(GridConfig),Get(c,"grid")),QueryOrder=query.ToArray(),QueryComplete=true,RuntimeBuildingsComplete=true,PrivateStateComplete=true,FocusBoundaryProven=true,AIResultBoundaryProven=true,HasSignature=B(Get(firstDispatch,"has_signature")),LastSignature=U(Get(firstDispatch,"last_signature")),NextRefreshAt=F(Get(firstDispatch,"next_refresh_bits")),NextReservationId=U(Get(firstDispatch,"next_reservation_id")),Now=F(Get(firstDispatch,"now_argument_bits")),WorkLimit=2000000}};
+}
+}
+}

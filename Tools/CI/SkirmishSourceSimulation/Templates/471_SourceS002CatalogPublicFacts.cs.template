@@ -1,0 +1,30 @@
+using System;using Game.Components;using Game.UI.Contracts;using Game.UI.Shell.Contracts.Ecs;using Unity.Collections;using Unity.Entities;
+namespace Game.Runtime{
+// Exact consumed gateway data for an owned source S002 world, not a replacement UI gateway.
+// Campaign/Operations/intro branches are explicitly unsupported when actually encountered.
+internal static class SourceS002CatalogPublicFacts{
+ internal static CatalogPublicFacts Read(EntityManager em,Entity session){
+  if(em==null)throw new ArgumentNullException(nameof(em));
+  // UiShellEcsGateway.TryGetMissionRoot -> zero roots is the genuine early false branch
+  // of both TryReadMissionBuildCatalog and TryReadMissionDefense.
+  using(var q=em.CreateEntityQuery(typeof(CampaignMissionRootComponent)))if(q.CalculateEntityCount()!=0)throw new NotSupportedException("Active CampaignMissionRootComponent needs original Campaign catalog/defense gateway data");
+  // Original MissionHudRestrictions gives the Operations singleton priority.
+  using(var q=em.CreateEntityQuery(typeof(OperationsReconMissionComponent)))if(q.CalculateEntityCount()==1)throw new NotSupportedException("Active OperationsReconMissionComponent restrictions are outside S002");
+  using var matches=em.CreateEntityQuery(typeof(SkirmishMatchState));
+  if(matches.CalculateEntityCount()!=1||matches.GetSingletonEntity()!=session)throw new NotSupportedException("Exact owned SkirmishMatchState singleton required");
+  var match=em.GetComponentData<SkirmishMatchState>(session);
+  if(match.Phase!=SkirmishPhase.Playing)throw new NotSupportedException("Current source Playing catalog required");
+  // Original IsSkirmishIntroInputLocked returns false at zero transitions.
+  // A present transition requires original UiShellState/transition authority, never default false.
+  using(var q=em.CreateEntityQuery(typeof(MatchIntroTransitionComponent)))if(q.CalculateEntityCount()!=0)throw new NotSupportedException("Active MatchIntroTransitionComponent requires original source UI state/lock read");
+  UiMissionHudRestrictionsModel restrictions;
+/*SOURCE:skirmish_restrictions*/
+  // Original Assistant Skirmish branch invokes the short UiAssistantPanelModel ctor;
+  // that exact ctor explicitly sets these four consumed fields to zero.
+  var guidance=new CatalogGuidanceFacts{TutorialStep=SourceAssistantShortConstructorGuidance.TutorialStep,TutorialStepCount=SourceAssistantShortConstructorGuidance.TutorialStepCount,RecommendationKind=SourceAssistantShortConstructorGuidance.RecommendationKind,RecommendationTargetKind=SourceAssistantShortConstructorGuidance.RecommendationTargetKind};
+  return new CatalogPublicFacts(true,false,default,null,false,default,true,guidance,true,restrictions);
+ }
+/*SOURCE:intro_guard*/
+
+}
+}

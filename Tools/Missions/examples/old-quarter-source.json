@@ -1,0 +1,14 @@
+{
+  "campaign_map": {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset",
+    "sha256": "7db46d43c7b58fc869e0a3dd5273839c030a8a6a1be9dc0ed0a10a523ed823a1"
+  },
+  "physical_source": {
+    "path": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "sha256": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8"
+  },
+  "logical_map": {
+    "path": "Assets/Game/Resources/Operations/OldQuarter.asset",
+    "sha256": "185d1079921628be6be4b344f79a89efe1d117b2b6b2bf2bd3d1bbfff8bb9740"
+  }
+}

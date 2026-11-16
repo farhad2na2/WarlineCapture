@@ -1,5 +1,7 @@
 # Operations host tools
 
+For fast authoring batches, the [mission quickcheck](../Missions/README.md) checks the production catalog, runs authored Operations with ARIA on the host, and accepts external tactical drafts alongside Skirmish rule cases.
+
 - `check_p0.py` — Linux/host schema and ownership checks. No Unity.
 - `check_p1.py` — Linux/host city and profile transaction checks. No Unity.
 - `check_p2.py` — Linux/host tactical rule checks. No Unity.

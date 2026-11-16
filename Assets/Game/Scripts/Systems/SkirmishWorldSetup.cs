@@ -1,4 +1,6 @@
+using System.Linq;
 using Game.Components;
+using Game.Configs;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -7,29 +9,42 @@ namespace Game.Runtime
 {
     public static class SkirmishWorldSetup
     {
+        internal static SkirmishPresetRuntimeValues ProjectNativePreset(SkirmishPresetConfig preset)
+        {
+            var source = preset.buildingPlacement.InitialUnitsConfig;
+            var initial = new InitialUnitsSpawnConfig
+            {
+                BlockerCount = source.BlockerCount,
+                SpawnRadiusCells = source.SpawnRadiusCells,
+                RespawnDelaySeconds = source.RespawnDelaySeconds,
+                RandomSeed = source.RandomSeed,
+                InitialDollars = source.InitialDollars,
+                InitialMaterials = source.InitialMaterials,
+                MaterialsCapacity = source.MaterialsCapacity,
+                InitialAiMaterials = source.InitialAiMaterials,
+                AiMaterialsCapacity = source.AiMaterialsCapacity,
+                InitialOil = source.InitialOil,
+                InitialFuel = source.InitialFuel,
+                CreateFactionBases = source.CreateFactionBases ? (byte)1 : (byte)0,
+                BaseHalfWidthCells = source.BaseHalfWidthCells,
+                BaseHalfHeightCells = source.BaseHalfHeightCells,
+                BaseMinimumUnitsPerFaction = source.BaseMinimumUnitsPerFaction,
+                BaseWallPrefabLookupKey = source.BaseWallPrefab != null ? source.BaseWallPrefab.name : default,
+                BaseGatePrefabLookupKey = source.BaseGatePrefab != null ? source.BaseGatePrefab.name : default,
+                BaseCoreBuildingPrefabLookupKey = source.BaseCoreBuildingPrefab != null ? source.BaseCoreBuildingPrefab.name : default
+            };
+            var factions = source.Factions.Select(faction => new InitialUnitsFactionSpawnEntry
+            {
+                FactionId = checked((byte)faction.FactionId),
+                SpawnCell = new int2(faction.SpawnCell.x, faction.SpawnCell.y)
+            }).ToArray();
+            return SkirmishPresetRuntimeProjection.FromNativePreset(
+                initial, factions, preset.reinforcementInfantryTarget, preset.attackSquadSize);
+        }
+
         public static void SuppressUnselectedStartupConfigs(EntityManager em)
         {
-            using var session=em.CreateEntityQuery(typeof(SkirmishMatchState));
-            if(session.IsEmptyIgnoreFilter)return;
-            using var expanded=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
-            bool authoredRoster = expanded.CalculateEntityCount() == 1 &&
-                expanded.GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy == 0;
-            // A streamed SubScene may arrive after managed startup has projected
-            // the selected preset. Keep its rendering registry, but never let its
-            // legacy spawner add a second force, fuel seed, or blocker churn.
-            // Expanded missions author both armies themselves, so the selected
-            // legacy spawn config must also be suppressed.
-            using var query=em.CreateEntityQuery(new EntityQueryDesc{
-                All=new[]{ComponentType.ReadOnly<InitialUnitsSpawnConfig>()},
-                None=authoredRoster ? System.Array.Empty<ComponentType>() :
-                    new[]{ComponentType.ReadOnly<CustomGameStartupStateComponent>()}});
-            using var entities=query.ToEntityArray(Allocator.Temp);
-            foreach(var entity in entities)
-            {
-                em.RemoveComponent<InitialUnitsSpawnConfig>(entity);
-                if(em.HasComponent<InitialUsableFuelStorageSeedPending>(entity))em.RemoveComponent<InitialUsableFuelStorageSeedPending>(entity);
-                if(em.HasComponent<InitialUnitsBlockerChurnConfig>(entity))em.RemoveComponent<InitialUnitsBlockerChurnConfig>(entity);
-            }
+            SkirmishStartupConfigSuppression.SuppressUnselectedStartupConfigs(em);
         }
 
         public static void NormalizeScenery(EntityManager em)
@@ -60,15 +75,16 @@ namespace Game.Runtime
         public static void SeedSupplyAndAnchors(EntityManager em)
         {
             var preset=SkirmishPresetResolver.Load(em);
+            SkirmishPresetRuntimeValues values = ProjectNativePreset(preset);
             using(var query=em.CreateEntityQuery(typeof(AIBuildPlan)))
             {
                 using var entities=query.ToEntityArray(Allocator.Temp);
                 foreach(var entity in entities)
                 {
                     var plan=em.GetComponentData<AIBuildPlan>(entity);
-                    foreach(var faction in preset.buildingPlacement.InitialUnitsConfig.Factions)
+                    foreach(var faction in values.Factions)
                         if(faction.FactionId==plan.FactionId)
-                            plan.BaseCenterCell=new int2(faction.SpawnCell.x,faction.SpawnCell.y);
+                            plan.BaseCenterCell=faction.SpawnCell;
                     em.SetComponentData(entity,plan);
                 }
             }
@@ -79,7 +95,7 @@ namespace Game.Runtime
                 {
                     var plan=em.GetComponentData<AIProductionPlan>(entity);
                     if(plan.FactionId!=2)continue;
-                    plan.TargetProducedUnits=preset.reinforcementInfantryTarget;
+                    plan.TargetProducedUnits=values.ReinforcementInfantryTarget;
                     em.SetComponentData(entity,plan);
                 }
             }
@@ -92,7 +108,7 @@ namespace Game.Runtime
                     if(plan.FactionId!=2)continue;
                     // Assemble a meaningful wave instead of feeding four recruits
                     // at a time into the player's complete starting defense.
-                    plan.MinUnits=plan.MaxUnits=math.clamp(preset.attackSquadSize,4,8);
+                    plan.MinUnits=plan.MaxUnits=math.clamp(values.AttackSquadSize,4,8);
                     em.SetComponentData(entity,plan);
                 }
             }
@@ -110,8 +126,9 @@ namespace Game.Runtime
         public static void UseTacticalResources(EntityManager em)
         {
             var preset=SkirmishPresetResolver.Load(em);
-            var initial=preset.buildingPlacement.InitialUnitsConfig;
-            FactionTacticalMaterialsStartupSystemHelper.ApplyInitialResourceTotals(em,new InitialUnitsSpawnConfig
+            SkirmishPresetRuntimeValues values = ProjectNativePreset(preset);
+            var initial=values.InitialUnits;
+            FactionTacticalMaterialsStartupSystemHelper.ApplyInitialResourceTotalsFromSource(em,new InitialUnitsSpawnConfig
             {InitialMaterials=initial.InitialMaterials,MaterialsCapacity=initial.MaterialsCapacity,InitialAiMaterials=initial.InitialAiMaterials,AiMaterialsCapacity=initial.AiMaterialsCapacity});
             using var query=em.CreateEntityQuery(typeof(FactionEconomy));
             using var entities=query.ToEntityArray(Allocator.Temp);

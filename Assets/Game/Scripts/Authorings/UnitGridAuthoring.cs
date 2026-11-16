@@ -14,6 +14,7 @@ namespace Game.Authoring
     public partial class UnitGridAuthoring : MonoBehaviour
     {
         [SerializeField] private UnitGridAuthoringConfig config;
+        public UnitGridAuthoringConfig AuthoringConfig => config;
         [Header("Visual Roots")]
         [SerializeField] private Transform modelRoot;
         [SerializeField] private Transform destroyedRoot;
@@ -272,6 +273,25 @@ namespace Game.Authoring
         public IReadOnlyList<UnitAnimationKind> AnimationOrder => animationOrder;
         public Vector2Int GetConfiguredFootprintCells() => footprintCells;
 
+        public UnitProductionMetadataScalarSource CaptureProductionMetadataScalarSource()
+        {
+            return new UnitProductionMetadataScalarSource(
+                config != null,
+                false,
+                isAirUnit,
+                config != null && config.IsAirUnit,
+                productionTransportRequiresAirportRunway,
+                config != null && config.ProductionTransportRequiresAirportRunway,
+                productionTransportUsesRunwayLanding,
+                config != null && config.ProductionTransportUsesRunwayLanding,
+                productionDurationSeconds,
+                productionTransportArrivalSeconds,
+                productionTransportHoldForNextReadySeconds,
+                productionTransportMaxConcurrent,
+                footprintCells.x,
+                footprintCells.y);
+        }
+
         [BakingVersion("WarlineCapture", 2)]
         private partial class UnitGridBaker : Baker<UnitGridAuthoring>
         {
@@ -284,8 +304,20 @@ namespace Game.Authoring
                 var entity = GetEntity(TransformUsageFlags.Dynamic);
                 Bounds modelBounds;
                 bool hasModelBounds = TryGetModelLocalBounds(authoring, out modelBounds);
-                int2 footprint = ResolveFootprint(authoring, hasModelBounds, modelBounds);
-                UnitVehicleMovement vehicleMovement = ResolveVehicleMovement(authoring, footprint, hasModelBounds, modelBounds);
+                UnitMoveAuthoringProjection movement = UnitMoveAuthoringProjection.FromAuthoredMovement(
+                    authoring.speed,
+                    authoring.walkSpeed,
+                    authoring.roadSpeedMultiplier,
+                    authoring.arriveDistance,
+                    authoring.footprintCells.x,
+                    authoring.footprintCells.y,
+                    authoring.autoCalculateFootprint,
+                    authoring.UsesVehicleMotion,
+                    authoring.allowIdleWander,
+                    hasModelBounds,
+                    modelBounds.size.x,
+                    modelBounds.size.z);
+                int2 footprint = movement.Footprint.Size;
 
                 AddComponent(entity, new UnitGrid
                 {
@@ -294,12 +326,12 @@ namespace Game.Authoring
 
                 AddComponent(entity, new UnitMove
                 {
-                    Speed = authoring.speed,
-                    WalkSpeed = math.min(math.max(0.01f, authoring.walkSpeed), math.max(0.01f, authoring.speed)),
-                    RoadSpeedMultiplier = authoring.roadSpeedMultiplier,
-                    ArriveDistance = authoring.arriveDistance
+                    Speed = movement.Speed,
+                    WalkSpeed = movement.WalkSpeed,
+                    RoadSpeedMultiplier = movement.RoadSpeedMultiplier,
+                    ArriveDistance = movement.ArriveDistance
                 });
-                AddComponent(entity, new UnitFootprint { Size = footprint });
+                AddComponent(entity, movement.Footprint);
                 if (hasModelBounds)
                 {
                     AddComponent(entity, new UnitSelectionHitbox
@@ -308,11 +340,7 @@ namespace Game.Authoring
                         Extents = new float3(modelBounds.extents.x, modelBounds.extents.y, modelBounds.extents.z)
                     });
                 }
-                AddComponent(entity, new UnitMovementBehavior
-                {
-                    AllowIdleWander = (byte)(authoring.allowIdleWander ? 1 : 0),
-                    UsesVehicleMotion = (byte)(authoring.UsesVehicleMotion ? 1 : 0)
-                });
+                AddComponent(entity, movement.MovementBehavior);
                 float groundFuelPerCell = math.max(0f, authoring.GroundFuelPerCell);
                 float airFuelPerCell = math.max(0f, authoring.AirFuelPerCell);
                 if ((authoring.UsesVehicleMotion || authoring.IsAirUnit) && (groundFuelPerCell > 0f || airFuelPerCell > 0f))
@@ -329,16 +357,18 @@ namespace Game.Authoring
                         Initialized = 0
                     });
                 }
-                AddComponent(entity, vehicleMovement);
-                AddComponent(entity, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
+                AddComponent(entity, movement.VehicleMovement);
+                AddComponent(entity, movement.VehicleKinematics);
+                UnitSurfaceAuthoringProjection surface = UnitSurfaceAuthoringProjection.FromAuthoredHeight(
+                    authoring.transform.position.y);
                 AddComponent(entity, new UnitSurfaceComponent
                 {
-                    SurfaceId = -1,
-                    LayerId = 0,
-                    LastSampledHeight = authoring.transform.position.y,
-                    LastSampledNormal = new float3(0f, 1f, 0f),
-                    HasSurface = 0,
-                    IsGrounded = 0
+                    SurfaceId = surface.SurfaceId,
+                    LayerId = surface.LayerId,
+                    LastSampledHeight = surface.LastSampledHeight,
+                    LastSampledNormal = surface.LastSampledNormal,
+                    HasSurface = surface.HasSurface,
+                    IsGrounded = surface.IsGrounded
                 });
                 if (authoring.UsesVehicleMotion && !authoring.IsAirUnit)
                 {
@@ -421,13 +451,12 @@ namespace Game.Authoring
                     ? operationMapOwnership.FactionId
                     : FactionIdentity.NeutralFactionId;
                 AddComponent(entity, new Faction { Id = bakedFactionId });
-                AddComponent(entity, new UnitCombat
-                {
-                    AggroRangeCells = authoring.ConfiguredAggroRangeCells,
-                    ChaseBreakDistance = authoring.ConfiguredChaseBreakDistance,
-                    CanAttack = (byte)(authoring.ConfiguredCanAttack ? 1 : 0),
-                    AutoEngage = (byte)(authoring.ConfiguredAllowAutoEngage ? 1 : 0)
-                });
+                UnitCombat combat = UnitCombatHealthAuthoringProjection.FromConfiguredCombatValues(
+                    authoring.ConfiguredAggroRangeCells,
+                    authoring.ConfiguredChaseBreakDistance,
+                    authoring.ConfiguredCanAttack,
+                    authoring.ConfiguredAllowAutoEngage);
+                AddComponent(entity, combat);
                 ThreatDetectionKind threatDetectionKind = authoring.config != null
                     ? authoring.config.ThreatDetectionKind
                     : authoring.threatDetectionKind;
@@ -452,20 +481,21 @@ namespace Game.Authoring
                 float traceScrollSpeed = authoring.config != null ? authoring.config.AttackTraceScrollSpeed : authoring.attackTraceScrollSpeed;
                 float traceDashDensity = authoring.config != null ? authoring.config.AttackTraceDashDensity : authoring.attackTraceDashDensity;
                 float traceVisibleSeconds = authoring.config != null ? authoring.config.AttackTraceVisibleSeconds : authoring.attackTraceVisibleSeconds;
-                AddComponent(entity, new UnitAttack
-                {
-                    Range = authoring.ConfiguredAttackRange,
-                    CooldownSeconds = authoring.ConfiguredAttackCooldownSeconds,
-                    Damage = authoring.ConfiguredAttackDamage,
-                    TraceColor = new float4(traceColor.r, traceColor.g, traceColor.b, traceColor.a),
-                    TraceWidth = math.max(0.01f, traceWidth),
-                    TraceScrollSpeed = math.max(0.1f, traceScrollSpeed),
-                    TraceDashDensity = math.max(1f, traceDashDensity),
-                    TraceVisibleSeconds = math.max(0.01f, traceVisibleSeconds),
-                    TracerEveryNthShot = math.max(1, authoring.config != null
+                AddComponent(entity, UnitAttackAuthoringProjection.FromConfiguredValues(
+                    authoring.ConfiguredAttackRange,
+                    authoring.ConfiguredAttackCooldownSeconds,
+                    authoring.ConfiguredAttackDamage,
+                    traceColor.r,
+                    traceColor.g,
+                    traceColor.b,
+                    traceColor.a,
+                    traceWidth,
+                    traceScrollSpeed,
+                    traceDashDensity,
+                    traceVisibleSeconds,
+                    authoring.config != null
                         ? authoring.config.AttackTracerEveryNthShot
-                        : authoring.attackTracerEveryNthShot)
-                });
+                        : authoring.attackTracerEveryNthShot));
                 if (ShouldUseDualSideAttackTrace(authoring))
                 {
                     float lateralOffset = ResolveDualSideAttackTraceLateralOffset(authoring);
@@ -477,8 +507,8 @@ namespace Game.Authoring
                     });
                 }
 
-                int maxHp = authoring.ConfiguredMaxHealth;
-                AddComponent(entity, new UnitHealth { Current = maxHp, Max = maxHp });
+                AddComponent(entity, UnitCombatHealthAuthoringProjection.FromConfiguredMaxHealth(
+                    authoring.ConfiguredMaxHealth));
                 AddComponent(entity, new UnitAttackCooldownComponent { CooldownRemaining = 0f });
                 AddComponent(entity, new UnitAttackTraceComponent { TimeRemaining = 0f, Phase = 0f });
                 AddComponent(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
@@ -492,21 +522,12 @@ namespace Game.Authoring
                 AddComponent(entity, new UnitPrevWorldPos { Value = authoring.transform.position });
                 AddComponent(entity, new UnitMoveVisualComponent { IsMoving = 0, StillSeconds = 0f });
                 AddBuffer<UnitTransportHiddenVisualScale>(entity);
-                AddComponent(entity, new UnitAnimationSettings
-                {
-                    IdleDelayMinSeconds = math.max(0f, authoring.idleDelayMinSeconds),
-                    IdleDelayMaxSeconds = math.max(authoring.idleDelayMinSeconds, authoring.idleDelayMaxSeconds),
-                    IdleWanderDistanceMin = math.max(0f, authoring.idleWanderDistanceMin),
-                    IdleWanderDistanceMax = math.max(authoring.idleWanderDistanceMin, authoring.idleWanderDistanceMax),
-                    AttackAnimationSeconds = math.max(0.01f, authoring.attackAnimationSeconds),
-                    DeathAnimationSeconds = math.max(0.01f, authoring.deathAnimationSeconds)
-                });
-                AddComponent(entity, new UnitIdleWanderComponent
-                {
-                    RandomState = math.max(1u, math.hash(new int4(footprint.x, footprint.y, authoring.gameObject.name.GetHashCode(), 0x45d9f3b))),
-                    RetrySeconds = 0f,
-                    CurrentIdleDelaySeconds = 0f
-                });
+                AddComponent(entity, UnitAnimationAuthoringProjection.FromConfiguredValues(
+                    authoring.idleDelayMinSeconds, authoring.idleDelayMaxSeconds,
+                    authoring.idleWanderDistanceMin, authoring.idleWanderDistanceMax,
+                    authoring.attackAnimationSeconds, authoring.deathAnimationSeconds));
+                AddComponent(entity, UnitIdleWanderAuthoringProjection.FromAuthoredIdentity(
+                    footprint.x, footprint.y, authoring.gameObject.name));
                 AddComponent(entity, new UnitAttackAnimationComponent { TimeRemaining = 0f });
                 AddComponent(entity, new UnitResolvedAnimationIndex { Value = byte.MaxValue });
                 DynamicBuffer<UnitAnimationOrderEntry> animationOrderBuffer = AddBuffer<UnitAnimationOrderEntry>(entity);

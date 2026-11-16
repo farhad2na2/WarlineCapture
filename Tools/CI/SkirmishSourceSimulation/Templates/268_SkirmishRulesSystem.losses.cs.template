@@ -1,0 +1,3 @@
+using Game.Components;using Unity.Entities;using Unity.Collections;namespace Game.Runtime{public partial struct SkirmishRulesSystem{/*SOURCE:method_0*/
+private static bool Alive(EntityManager em,Entity entity)=>/*SOURCE:expression_1*/;
+}}

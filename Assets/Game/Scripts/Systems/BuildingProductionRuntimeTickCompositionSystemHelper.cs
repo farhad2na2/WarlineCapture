@@ -104,12 +104,18 @@ namespace Game.Runtime
                     return false;
 
                 uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.BeginTick(context, randomState, "ProcessPendingProductions");
+#endif
                 bool hasActiveTransport = context.ProductionUpdateSystem.UpdatePendingProductions(
                     context.ProductionUpdateContext,
                     UnityEngine.Time.time,
                     UnityEngine.Time.deltaTime,
                     ref randomState);
                 context.SetRandomState?.Invoke(randomState);
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.EndTick(randomState, hasActiveTransport);
+#endif
                 return hasActiveTransport;
             }
         }
@@ -128,12 +134,18 @@ namespace Game.Runtime
                     return false;
 
                 uint randomState = context.GetRandomState != null ? context.GetRandomState() : 0u;
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.BeginTick(context, randomState, "UpdateActiveProductionTransports");
+#endif
                 bool hasActiveTransport = context.ProductionUpdateSystem.UpdateActiveProductionTransports(
                     context.ProductionUpdateContext,
                     UnityEngine.Time.time,
                     UnityEngine.Time.deltaTime,
                     ref randomState);
                 context.SetRandomState?.Invoke(randomState);
+#if UNITY_EDITOR
+                S073NativeProductionDeliveryObserver.EndTick(randomState, hasActiveTransport);
+#endif
 #if UNITY_EDITOR
                 allocationProbeHasActiveTransport = hasActiveTransport;
 #endif

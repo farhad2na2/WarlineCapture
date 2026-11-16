@@ -68,6 +68,10 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            if (!WorldSchedulingKernel.ShouldRunAttack(SystemAPI.TryGetSingleton<SkirmishMatchState>(out var skirmish),
+                skirmish.Phase == SkirmishPhase.Finished))
+                return;
+
             // Same-frame effect helpers inspect optional component sets through EntityManager,
             // and ECB playback must observe their writes. Keep this completion explicit until
             // those helper contracts become lookup-based.

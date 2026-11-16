@@ -25,6 +25,68 @@ namespace Game.Editor
         static string ground30MemorySystems;
         static int ground30MemorySequence;
 
+        // One-mission source-only probe against the separately pinned current-grid
+        // recapture. This intentionally does not alter the full 30/90/4 collector.
+        public static void RunGroundObjective30CurrentGridMissionSourceDiagnostic()
+        {
+            Require(!EditorApplication.isPlayingOrWillChangePlaymode && ground30MemoryWriter == null,
+                "Idle unowned current-grid source diagnostic required");
+            string id=Environment.GetEnvironmentVariable("WARLINE_GROUND30_DIAGNOSTIC_MISSION");
+            string output=Environment.GetEnvironmentVariable("WARLINE_GROUND30_DIAGNOSTIC_OUTPUT");
+            Require(Ground30Ids.Contains(id),"Exact canonical mission selector required");
+            string allowed=Path.GetFullPath(Path.Combine(Application.dataPath,"..","Logs","SkirmishProduction"))+Path.DirectorySeparatorChar;
+            Require(!string.IsNullOrWhiteSpace(output)&&Path.IsPathRooted(output)&&
+                Path.GetFullPath(output).StartsWith(allowed,StringComparison.OrdinalIgnoreCase)&&!File.Exists(output),
+                "Exclusive persistent diagnostic output required");
+            bool completed=false;
+            RunCurrentGridBytesAuthoringControls("ground30-one-mission-source-only",()=>
+            {
+                var input=ReadGround30Envelope(); // validates complete canonical 30 mission envelope
+                var mission=((JArray)input["missions"]).OfType<JObject>().Single(m=>(string)m["catalog_id"]==id);
+                var pin=(JObject)mission["source_candidate"];
+                var before=CaptureMaterializationWorldCensus();var defaultBefore=World.DefaultGameObjectInjectionWorld;
+                int scenes=UnityEngine.SceneManagement.SceneManager.sceneCount;
+                int previews=UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount;
+                var sceneOwnership=Ground30SceneOwnership();
+                var report=new JObject{["schema"]=1,["scope"]="OneMissionCurrentGridSourceOnlyDiagnostic",
+                    ["missionId"]=id,["inputPath"]=CurrentGridBytesGround30,["inputSha256"]=Hash(CurrentGridBytesGround30),
+                    ["sourcePins"]=pin.DeepClone(),["sourceFitCertified"]=false,["playerReady"]=false,
+                    ["normalMissionReadiness"]="Pending",["sources"]=new JArray(),["result"]="FailedDiagnostic"};
+                Exception failure=null;
+                try
+                {
+                    var sourceRow=new JObject{["sourcePath"]=pin["sourcePath"],["missions"]=new JArray()};
+                    ((JArray)report["sources"]).Add(sourceRow);
+                    CollectGround30Source(new[]{mission},sourceRow);
+                    var rows=((JArray)sourceRow["missions"]).OfType<JObject>().ToArray();
+                    Require(rows.Length==1&&(string)rows[0]["catalogId"]==id&&
+                        ((JArray)rows[0]["sizes"]).Count==3,"Exactly one mission and its three canonical sizes required");
+                    int collectionErrors=rows.Count(row=>row["error"]!=null)+
+                        rows.Sum(row=>((JArray)row["sizes"]).OfType<JObject>().Count(size=>size["error"]!=null));
+                    Require(collectionErrors==0,"One-mission collection errors retained; normal compiler rejection remains independent");
+                    report["result"]="CollectedUnqualified";
+                }
+                catch(Exception error){failure=error;report["error"]=error.ToString();}
+                bool restored=before.SequenceEqual(CaptureMaterializationWorldCensus())&&
+                    ReferenceEquals(defaultBefore,World.DefaultGameObjectInjectionWorld)&&
+                    scenes==UnityEngine.SceneManagement.SceneManager.sceneCount&&
+                    previews==UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount&&
+                    JToken.DeepEquals(sceneOwnership,Ground30SceneOwnership());
+                report["cleanupRestored"]=restored;
+                if(!restored){report["result"]="FailedDiagnostic";report["cleanupError"]="World/default/scene/preview ownership census changed";}
+                Directory.CreateDirectory(Path.GetDirectoryName(output));
+                using(var stream=new FileStream(output,FileMode.CreateNew,FileAccess.Write,FileShare.Read))
+                using(var writer=new StreamWriter(stream,new System.Text.UTF8Encoding(false)))
+                    writer.Write(report.ToString(Newtonsoft.Json.Formatting.Indented));
+                if(failure!=null)throw new InvalidOperationException("One-mission source diagnostic failed; raw receipt preserved: "+output,failure);
+                Require(restored,"Diagnostic cleanup census changed; receipt preserved: "+output);
+                completed=true;
+            });
+            Require(completed,"Current-grid selector returned without a complete source-only receipt");
+            Debug.Log("[SkirmishGroundObjective30CurrentGridMissionSourceDiagnostic] result=CollectedUnqualified mission="+id+
+                " missions=1 sizeRows=3 sourceFitCertified=0 playerReady=0 output="+output);
+        }
+
         // Explicit owned diagnostic only. No full30 entry, no implicit default mission/stage.
         public static void RunGroundObjective30MemoryDiagnostic()
         {
@@ -63,7 +125,7 @@ namespace Game.Editor
                     var systems = new JArray();
                     foreach (var system in Ground30DiagnosticSystems())
                         systems.Add(TypeManager.GetSystemName(system).ToString());
-                    Ground30MemoryCheckpoint("DiagnosticStarted",new JObject{["mission"]=id,["size"]=size,["stage"]=stage,["systemSelector"]=selector,["companionPrewarm"]=companionPrewarm,["inputSha256"]=Hash(GroundObjective30Inputs),["sourcePins"]=pin.DeepClone(),["streamingSystems"]=systems});
+                    Ground30MemoryCheckpoint("DiagnosticStarted",new JObject{["mission"]=id,["size"]=size,["stage"]=stage,["systemSelector"]=selector,["companionPrewarm"]=companionPrewarm,["inputSha256"]=Hash(SelectedGroundObjective30Inputs),["sourcePins"]=pin.DeepClone(),["streamingSystems"]=systems});
                     if (stage=="OneSize")
                     {
                         var report = new JObject{["sourcePath"]=pin["sourcePath"],["missions"]=new JArray()};

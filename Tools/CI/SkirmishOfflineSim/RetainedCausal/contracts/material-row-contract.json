@@ -1,0 +1,336 @@
+{
+  "revision": "v8-material-subsystem-v2-source-order",
+  "status": "FrozenSourceDerivedWireContract_ParentTypedAuthorAligned",
+  "base_diagnostic_revision": "aggregate-2MiB-record-timing-v1",
+  "base_source_commit": "440d670aa18fafc4d826831abf7d59b86d44b1db",
+  "unchanged_caps": {
+    "work": 1500000,
+    "aggregate_bytes": 2097152,
+    "events": 131072,
+    "sourcewriter_facts": 512,
+    "root_reserved_rows": 40
+  },
+  "source_pins": {
+    "Assets/Game/Scripts/Systems/MaterialFabricationSystem.cs": "49c2dec1faf41350439544433a7aee05f64f6dafc4d5640ce3c49f2925041aac",
+    "Assets/Game/Scripts/Systems/MaterialFabricationCommandUtilitySystemHelper.cs": "b5d7b8ed60c6e505bc1b142abf84ddbbce331b86d9c9ef8db4e82236a5d1f162",
+    "Assets/Game/Scripts/Systems/MaterialFabricationTelemetrySystemHelper.cs": "2497aeb7d94c99806c36acb5f298fe85ea205b4c3bc38b46017b4280e9a6a1e9",
+    "Assets/Game/Scripts/Components/MaterialFabricationComponents.cs": "cf953942ab496ab6cba6e8909ff879defb59956e04dae1a6c2a19affa36d8b2f",
+    "Assets/Game/Scripts/Components/FactionTacticalMaterialsComponents.cs": "d62d73d7c12a48592150abc7c79e4b852df4817e88e20b0b02fcd96a026008fb",
+    "Assets/Game/Scripts/Components/FactionAIComponents.cs": "7ceb43eca68cbed12dcb7bf5409dc84810b04863f91c6472bc7213e36108bb34",
+    "Assets/Game/Scripts/Systems/S002PhysicalStartupObservation.cs": "d94ce68ac72b02100ca2ee942e2f5f7244674fc54b5e0b9c8d7f2ff61a62e2e0",
+    "Assets/Game/Scripts/Editor/Skirmish/S002ContinuousCausalWindowCapture.cs": "e3a71c0b79dfefd4379e844b0b9ad655c1f9a0432df03380a15836e0ff4dc9c9"
+  },
+  "window_policy": {
+    "start": "Retain first-observed S002 BEFORE resource-production. Source material updates BEFORE that boundary are outside prefix and are not derived. No historical/prelude material writes are replayed against a later seeded bank.",
+    "seed": "At first production BEFORE boundary, after initial51store identity/profile domain known and before original ApplyStorageQuery, emit initial-material-subsystem from current EM. This is one genuine synchronous BEFORE input for all subsequent included material writes; first production BEFORE remains initialbank input at same frontier.",
+    "private_clock": "Initialize original elapsed once from FIRST included MaterialFabricationSystem.OnUpdate BEFORE its ProcessProductionRequests. If it follows firstcaller, component seed is already present and firstcaller compares it; the material core may bind that retained state with initial clock when first update is reached. No material callback/write between seed and first observed update may be omitted.",
+    "earlier_material_before_start": "Ignored/outside prefix; native seed carries their result as genuine initial input. No claim earlier startup/supply/material history derived.",
+    "no_reseed": "Later Fab/material/storage/buffer/result/telemetry/event snapshots assertions ONLY; raw firstcaller must compare existing seeded/computed Fabrication, never unconditional Add."
+  },
+  "limits": {
+    "material_updates": 128,
+    "fabrication_entities": 18,
+    "tactical_material_entities": 16,
+    "request_ingress_events": 128,
+    "requests_per_owner": 8,
+    "results_per_owner": 8,
+    "economy_events_per_material_owner": 16,
+    "initial_domain_changes": "birth/despawn/Entity-version/presence changes unsupported; reject, do not fabricate empty/present components",
+    "all_cartesian_maxima_fit": false,
+    "admission": "Full counts before ToEntityArray/ToArray/JSON allocation, charge scalar reads and actual arrays/copies. Existing global work/byte/event guards remain authoritative and may reject a legitimate oversized diagnostic. No blanket readiness from cap."
+  },
+  "encoding": "Existing StorageBits: each public source field, float->uint32 bit pattern, integral/byte/enum exact source width, Entity(index/version). Arrays explicit dense order. Null denotes actual absence; empty buffer differs from absent. No camera/private geometry included.",
+  "initial_fabrication_row": [
+    "entity",
+    "fabrication_bits",
+    "input_tag_present",
+    "health_bits_or_null",
+    "disabled_present",
+    "death_animation_present",
+    "command_queue_bits_or_null",
+    "request_buffer_or_null",
+    "result_buffer_or_null"
+  ],
+  "initial_material_row": [
+    "entity",
+    "tactical_materials_bits",
+    "faction_economy_faction_id_or_null",
+    "disabled_present",
+    "fabrication_telemetry_bits_or_null",
+    "economy_event_queue_bits_or_null",
+    "economy_event_buffer_or_null"
+  ],
+  "events": {
+    "initial-material-subsystem": {
+      "once": true,
+      "fields": [
+        "fabrication_rows",
+        "material_rows"
+      ],
+      "roles": "All component/buffer states initial inputs once; storage remains existing SAME canonical bank. Include request-only fabrication members; complete allMaterialFabrication component and allTacticalMaterials domains IncludeDisabledEntities for seed identity only, not actual source order. Reject actualtickstorage owners outside51bank."
+    },
+    "material-update-before": {
+      "fields": [
+        "material_update_id",
+        "system_handle_same_source_guard",
+        "frame",
+        "elapsed_before_bits",
+        "elapsed_role"
+      ],
+      "roles": "Elapsed first includedupdate only initial-private-input; later assertion. NO future singleton/delta read before original requestprocessing.",
+      "exact_literals": {
+        "elapsed_role_first": "initial-private-input",
+        "elapsed_role_later": "assertion-only-carried-private"
+      }
+    },
+    "material-request-owner-before": {
+      "fields": [
+        "material_update_id",
+        "request_query_index",
+        "entity",
+        "fabrication_assertion",
+        "requests_assertion",
+        "results_assertion"
+      ],
+      "roles": "Exact original ProcessProductionRequests IncludeDisabled source iterator entity order before EACH owner, NOT a replacement query approximation. Buffers are retained initial+true ingress state, native snapshots assertions."
+    },
+    "material-request-owner-after": {
+      "fields": [
+        "material_update_id",
+        "request_query_index",
+        "entity",
+        "fabrication_assertion",
+        "requests_assertion",
+        "results_assertion"
+      ],
+      "roles": "Original request processing outputs assertions; no snapshot publication to bank."
+    },
+    "material-requests-complete": {
+      "fields": [
+        "material_update_id",
+        "request_owner_count",
+        "simulation_active"
+      ],
+      "roles": "Actual iterator exhausted count, then actual original singleton read; simulation_active exactbyte input emitted at that original readpoint after requests. No early singleton read."
+    },
+    "material-lookup-row": {
+      "fields": [
+        "material_update_id",
+        "lookup_query_index",
+        "entity",
+        "faction_economy_faction_id",
+        "tactical_materials_assertion"
+      ],
+      "roles": "Original RebuildFactionMaterialsLookup source order/default query exactly; mismatchFaction entries INCLUDED. Original saturating count/firstowner computed; no native lookup count as operand."
+    },
+    "material-lookup-complete": {
+      "fields": [
+        "material_update_id",
+        "lookup_owner_count"
+      ],
+      "roles": "Only emitted if original threshold reached/rebuild actually called; no invented empty query on early return."
+    },
+    "material-tick-before": {
+      "fields": [
+        "material_update_id",
+        "tick_query_index",
+        "entity",
+        "fabrication_assertion",
+        "storage_assertion",
+        "health_current_input",
+        "disabled_input",
+        "death_animation_input",
+        "building_operational_assertion",
+        "selected_material_entity_assertion_or_null",
+        "material_owner_count_assertion",
+        "tactical_materials_assertion_or_null"
+      ],
+      "roles": "Exact original Fab+Storage+Health+InputTag IncludeDisabled iterator. Operational prerequisite health/tags initially seeded then retained or source-modeled updates; any unsupported change rejects, not silently native-seeded. Count/selected material owner derive from actual fulllookup. Unavailable default only original count!=1 branch; null indicates unavailable local state, distinguish from actualFaction defaultvalue.",
+      "types": {
+        "health_current_input": "int32 exact",
+        "selected_material_entity_assertion_or_null": "actual selectedEntity if count==1, null for Entity.Null/unavailablecount; independent of materials component availability"
+      }
+    },
+    "material-tick-after": {
+      "fields": [
+        "material_update_id",
+        "tick_query_index",
+        "entity",
+        "fabrication_assertion",
+        "storage_assertion",
+        "selected_material_entity_assertion_or_null",
+        "tactical_materials_assertion_or_null",
+        "tick_result_assertion",
+        "telemetry_assertion_or_null",
+        "economy_event_queue_assertion_or_null",
+        "economy_event_buffer_assertion_or_null",
+        "tick_applied_assertion"
+      ],
+      "roles": "Emit after original ApplyTick/materials/telemetry/events and original continue branches; all resulting state assertions, never operands. Exact same51store authority. Preserve actual earlybranch/no-write semantics. Explicit tick_applied assertion distinguishes unavailable-count branch ApplyTick with defaultlocal, selectedmissing branch noApply/nochange, and normal selectedowner. Preserve continue/noevent branches.",
+      "types": {
+        "tick_result_assertion": "null if no ApplyTick (selectedmissing); otherwise exact TickResult publicfields/rawfloatbits including real defaultresult",
+        "tick_applied_assertion": "boolean actual ApplyTick branch"
+      }
+    },
+    "material-ticks-complete": {
+      "fields": [
+        "material_update_id",
+        "tick_owner_count"
+      ],
+      "roles": "Original tick iterator exhausted. Only on threshold, cannot stand in for omitted/failed frame."
+    },
+    "material-update-after": {
+      "fields": [
+        "material_update_id",
+        "frame",
+        "elapsed_after_bits",
+        "completed_normally",
+        "request_owner_count",
+        "lookup_reached_assertion",
+        "tick_owner_count"
+      ],
+      "roles": "Exactly closed all normal returns including inactive reset and underthreshold. Actual exception makes capture failed/incomplete, never certified normal-complete."
+    },
+    "material-request-ingress-before": {
+      "fields": [
+        "ingress_id",
+        "entity",
+        "requester_faction_id",
+        "production_enabled",
+        "queue_before_assertion_or_null",
+        "requests_before_assertion_or_null",
+        "results_presence_assertion",
+        "entity_exists_assertion",
+        "fabrication_present_assertion"
+      ],
+      "roles": "Original TryEnqueueProductionRequest args at genuine producer entry whilewindowactive. Initial queue state seeded once; later snapshots assertions. No wholebuffer reseed. Exact presence predicates observed read-only, needed to retain genuine invalidtarget returns; initial completeFabrication domain still mustmatch actualfabpresence, unknown unrelatedentityscope remains typedconsumer gate."
+    },
+    "material-request-ingress-after": {
+      "fields": [
+        "ingress_id",
+        "entity",
+        "success_assertion",
+        "request_id_assertion",
+        "queue_after_assertion_or_null",
+        "requests_after_assertion_or_null"
+      ],
+      "roles": "Host original commandproducer or exact source append/wrap/drop logic derives from args+carriedqueue. Producedrequest ID/queue/buffer outputs assertions. Preserve failure/nochange, no native ID inferred from downstream results."
+    },
+    "terminal-material-subsystem-assertion": {
+      "fields": [
+        "root_exit_ordinal",
+        "assertion_only_never_reseed",
+        "fabrication_rows",
+        "material_rows"
+      ],
+      "roles": "At SAME synchronous ROOT EXIT frontier, read fullinitialmaterial domains and exactpresence. All states assertions, not a new bank; precedes existing terminalstoragebank/header. Newreader explicitly accepts this pinned extension order, originalR7 remains frozen/rejects."
+    },
+    "material-delta-input": {
+      "fields": [
+        "material_update_id",
+        "delta_time_bits"
+      ],
+      "roles": "Only original activepath source delta read, before original elapsed arithmetic; no synthetic delta on inactive return."
+    }
+  },
+  "callback_rules": {
+    "passive": "UNITY_EDITOR-only source hooks; no commands, requestcounter changes, mutation, getters with sideeffects, ECB jobs or component writes. Original shipping source afterpreprocessing byteexact. Capture reads must be admitted before facts/copies; no unbounded pre-admission DynamicBuffer or query copies.",
+    "order": "Shared ONE ordinal stream, no independent metadata cursor. Material request ingress cannot interleave original singlethreaded update except true source order. No native callbacks invoked for counts.",
+    "source_iterations": "Entity projections for query identification may be Editor-only WithEntityAccess; nonEditor original query byteexact. Query counts from actual callbacks/explicitcomplete marker, not guessed order from fresh parallelqueries.",
+    "late_exception": "Close flag false/failure, no swallowing sourceexceptions; diagnosticcallbacks must not alter original source controlflow."
+  },
+  "byte_work_design_requirement": {
+    "existing_root_hold": 327680,
+    "existing_end_hold": 16384,
+    "terminal_material_extra_reservation": 208896,
+    "row_bounds": {
+      "fabrication_snapshot_max": 4096,
+      "material_snapshot_max": 8192,
+      "combined_framing_allowance": 4096,
+      "combined_seed_terminal_record_allowance": 208896,
+      "initial_and_terminal_both_charged": true,
+      "inside_shared_2MiB": true
+    }
+  },
+  "acceptance_gates": {
+    "source_projection": false,
+    "focused_controls": false,
+    "owning_assembly_compile": false,
+    "independent_review": false,
+    "actual_native_capture": false,
+    "actual_numeric_replay": false,
+    "full_frame": false,
+    "full_mission": false,
+    "normal_mission_acceptance": false
+  },
+  "author_alignment": "Parent relayed typedauthor accepts material seed at firstproductionbefore and elapsedinitial firstobservedOnUpdate with no intervening mutator proof; exact requests/results/telemetry/events fields agreed.",
+  "side_state_fields": {
+    "command_queue": [
+      "LastRequestId"
+    ],
+    "request": [
+      "RequestId",
+      "RequesterFactionId",
+      "ProductionEnabled",
+      "Kind"
+    ],
+    "result": [
+      "RequestId",
+      "Accepted",
+      "ProductionEnabled",
+      "Code",
+      "FabricationVersion"
+    ],
+    "telemetry": [
+      "FactionId",
+      "ActiveSeconds",
+      "NoOilInputBlockedSeconds",
+      "MaterialsCapacityFullBlockedSeconds",
+      "NoOilRouteBlockedSeconds",
+      "ProductionDisabledSeconds",
+      "BuildingDisabledSeconds",
+      "Version"
+    ],
+    "event_queue": [
+      "LastEventId",
+      "Version"
+    ],
+    "event": [
+      "EventId",
+      "RuntimeBuildingId",
+      "FactionId",
+      "EventKind",
+      "Status",
+      "BlockReason",
+      "CompletedCycles",
+      "OilConsumedBarrels",
+      "MaterialsProduced"
+    ]
+  },
+  "top_level_additions": {
+    "material_extension_revision": "exact v8-material-subsystem-v2-source-order",
+    "terminal_material_reserved_bytes": 208896,
+    "terminal_material_done": "bool",
+    "material_updates": "int32 count<=128",
+    "material_ingress_events": "int32 count<=128",
+    "initial_material_fabrication_count": "int32<=18",
+    "initial_material_owner_count": "int32<=16"
+  },
+  "window_end_additions": {
+    "terminal_material_ordinal": "int64 link to terminal material event before existing terminal storage event"
+  },
+  "seed_order": "windowstart,initial-broadroots,initial-material-subsystem,productionbefore,productionafter; no original productionwrite between initiallegacybank snapshot and materialseed. Terminal ROOTEXIT,terminal-material-subsystem-assertion,terminal-full-bank-assertion,window-end.",
+  "candidate_partition_extension": "ProductionEnabled excluded from legacy unmodeled-static candidate guard ONLY because captured original material command flow now derives it; every later native fabrication snapshot remains assertion. Recipe/owner/health/tags remain exact guards.",
+  "candidate_partition_exact_literals": {
+    "candidate_static": "all fields except listed state paths; fabrication recipe/owner exact guard; profile constants exact guard; storage metadata exact guard",
+    "candidate_state_assertions": [
+      "storage.Stored*/Reserved*/CivilianFuelReserve/ReceivedHaulerFuel/Version",
+      "production_profile.FuelBatchProgressSeconds",
+      "fabrication.ProductionEnabled/CycleProgressSeconds/Status/BlockReason/Version"
+    ]
+  },
+  "capture_work_policy": {
+    "source_transport_admission_per_callback": 768,
+    "roles": "Conservative logical scalar initialization/copy/borrowed-read allowance before material facts; every actual source query iteration remains separately recorded/charged. JSONnode/nativebuffer snapshots additionally charged by existing Record."
+  }
+}

@@ -1,0 +1,11 @@
+// Generated-response replacement for adapter 050 in one isolated S004 run.
+// Only the validated authored LayoutValues instance can replay pinned native bytes.
+using System;
+namespace UnityEngine
+{
+    public static class JsonUtility
+    {
+        public static string ToJson(object value) => S004LayoutCaptureReplaySourceBinding.DiagnosticToJson(value);
+        public static T FromJson<T>(string json) => throw new NotSupportedException("S004 diagnostic JsonUtility rejects all FromJson calls");
+    }
+}

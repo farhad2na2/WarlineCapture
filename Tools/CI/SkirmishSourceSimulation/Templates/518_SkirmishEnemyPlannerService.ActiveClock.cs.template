@@ -1,0 +1,4 @@
+using Game.Components;using Game.Skirmish.Contracts;using Unity.Entities;namespace Game.Runtime {public static class SkirmishEnemyPlannerService {
+public static bool TryReadActiveClock(EntityManager em, Entity session, out float elapsed)
+        {/*SOURCE:body_0*/}
+}}

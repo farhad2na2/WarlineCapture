@@ -113,19 +113,19 @@ namespace Game.Runtime
 
         public void ResetForGameplayStart()
         {
-            WriteGameplayState(state =>
-            {
-                state.PlayRequested = 1;
-                state.SimulationActive = 0;
-                state.SelectionModeActive = 0;
-                state.BuildModeActive = 0;
-                state.FullscreenMapOpen = 0;
-                state.FullscreenMapIsoMode = 0;
-                state.SuppressNextWorldClick = 1;
-                return state;
-            });
-            WriteCameraInput(_ => default);
-            WriteCameraFocusRequest(_ => default);
+            if (!TryGetWorld(out World world))
+                return;
+
+            ResetForGameplayStart(world.EntityManager);
+        }
+
+        // Shared source-owned gameplay start transition for the game composition
+        // and same-world source hosts. It preserves the legacy singleton-creation
+        // behavior while allowing callers that already own the EntityManager to
+        // use the exact same state mutation.
+        internal static void ResetForGameplayStart(EntityManager entityManager)
+        {
+            RuntimeGameplayStartTransition.ResetForGameplayStart(entityManager);
         }
 
         public void ResetForMatchShutdown()

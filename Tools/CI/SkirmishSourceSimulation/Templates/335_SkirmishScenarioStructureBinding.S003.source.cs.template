@@ -1,0 +1,9 @@
+using Game.Configs;
+using Game.Components; using Game.Skirmish.Contracts; using Unity.Entities; using Unity.Collections; namespace Game.Runtime { public partial struct SkirmishScenarioSpawnSystem {
+/*SOURCE:structure_0*/
+/*SOURCE:structure_1*/
+/*SOURCE:structure_2*/
+#if !WARLINE_S004_SOURCE_OUTER
+/*SOURCE:logical_commit*/
+#endif
+}}

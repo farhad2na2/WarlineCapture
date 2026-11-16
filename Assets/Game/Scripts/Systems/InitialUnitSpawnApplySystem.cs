@@ -57,5 +57,23 @@ namespace Game.Runtime
             else
                 ecb.AddComponent(instance, component);
         }
+
+        // FixedString is represented by a managed value in the finite headless
+        // ECS shim. Keep the native component write path identical without
+        // requiring that shim-specific layout to satisfy the generic unmanaged
+        // constraint used by ordinary value components.
+        private static void SetOrAddComponent(
+            EntityManager em,
+            EntityCommandBuffer ecb,
+            Entity instance,
+            Entity prefab,
+            bool hasPrefab,
+            UnitSourcePrefabKey component)
+        {
+            if (hasPrefab && em.HasComponent<UnitSourcePrefabKey>(prefab))
+                ecb.SetComponent(instance, component);
+            else
+                ecb.AddComponent(instance, component);
+        }
     }
 }

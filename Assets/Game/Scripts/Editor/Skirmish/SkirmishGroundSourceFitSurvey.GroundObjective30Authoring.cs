@@ -19,8 +19,8 @@ namespace Game.Editor
         public static void RunGroundObjective30AuthoringControls()
         {
             Require(!EditorApplication.isPlayingOrWillChangePlaymode,"Idle logical authoring control required");
-            Require(Hash(GroundObjective30Inputs)==GroundObjective30InputsSha,"Exact thirty-mission envelope required");
-            var rows=(JArray)JObject.Parse(File.ReadAllText(GroundObjective30Inputs))["missions"];
+            Require(Hash(SelectedGroundObjective30Inputs)==SelectedGroundObjective30InputsSha,"Exact thirty-mission envelope required");
+            var rows=(JArray)JObject.Parse(File.ReadAllText(SelectedGroundObjective30Inputs))["missions"];
             Require(rows.Count==30,"All thirty rows required");
             var worlds=CaptureMaterializationWorldCensus();var defaultWorld=Unity.Entities.World.DefaultGameObjectInjectionWorld;
             int scenes=UnityEngine.SceneManagement.SceneManager.sceneCount,previews=UnityEditor.SceneManagement.EditorSceneManager.previewSceneCount;
@@ -89,8 +89,8 @@ namespace Game.Editor
             owner=null;error=null;var created=new GroundObjective30CandidateOwner();
             try
             {
-                Require(Hash(GroundObjective30Inputs)==GroundObjective30InputsSha,"Exact reviewed thirty-mission authoring envelope required");
-                var envelope=JObject.Parse(File.ReadAllText(GroundObjective30Inputs));
+                Require(Hash(SelectedGroundObjective30Inputs)==SelectedGroundObjective30InputsSha,"Exact reviewed thirty-mission authoring envelope required");
+                var envelope=JObject.Parse(File.ReadAllText(SelectedGroundObjective30Inputs));
                 var matches=((JArray)envelope["missions"]).OfType<JObject>().Where(v=>(string)v["catalog_id"]==(string)mission?["catalog_id"]).ToArray();
                 Require(matches.Length==1&&JToken.DeepEquals(matches[0],mission),"Exact immutable mission row required, not caller-authored geometry/budgets");
                 Require((bool?)mission["publication_enabled"]==false&&source!=null&&!EditorUtility.IsDirty(source),"Unpublished candidate on a clean existing source required");

@@ -1,0 +1,255 @@
+// Original S002 setup compilation export. Data-only; does not create a World.
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
+using UnityEngine;
+using Game.Components;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+internal static class S002CurrentSetupProviderSourceBinding
+{
+    const string ScenarioPath = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002/SkirmishScenario_S002.asset";
+    const string CatalogPath = "Assets/Game/Resources/SkirmishExpansionCatalog.asset";
+    const string MapPath = "Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset";
+
+    static string Hash(byte[] bytes)
+    {
+        using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+    }
+
+    static void Require(bool condition, string message)
+    {
+        if (!condition) throw new InvalidDataException(message);
+    }
+
+    static void RunScalarPolicyControls()
+    {
+        var configured = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(true, 11, 28, 15, 12, 13, 17f,
+                1200, -4, -8, float.NegativeInfinity));
+        Require(configured.MaxHealth == 1200 && configured.FootprintWidth == 28 &&
+                configured.FootprintDepth == 15 && configured.Price == 0 &&
+                configured.MaterialsCost == 0 && configured.ProductionDurationSeconds == 0.01f,
+                "Config precedence/clamp control failed.");
+
+        var prefabOnly = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(false, -3, -5, 0, -9, -10, float.PositiveInfinity,
+                99, 99, 99, 0f));
+        Require(prefabOnly.MaxHealth == -3 && prefabOnly.FootprintWidth == -5 &&
+                prefabOnly.FootprintDepth == 0 && prefabOnly.Price == 0 &&
+                prefabOnly.MaterialsCost == 0 && float.IsPositiveInfinity(prefabOnly.ProductionDurationSeconds),
+                "No-config prefab scalar control failed.");
+
+        var prefabDurationFloor = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(false, 1, 2, 3, 4, 5, 0.001f,
+                7, 8, 9, 30f));
+        Require(prefabDurationFloor.ProductionDurationSeconds == 0.01f,
+                "No-config duration floor control failed.");
+
+        float configNaNExpected = Mathf.Max(0.01f, Mathf.Max(0.01f, float.NaN));
+        var configNaN = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(true, 1, 2, 3, 4, 5, 6f,
+                7, 8, 9, float.NaN));
+        Require(configNaN.ProductionDurationSeconds.Equals(configNaNExpected),
+                "Config NaN duration behavior differs from the original two Mathf clamps.");
+
+        float prefabNaNExpected = Mathf.Max(0.01f, float.NaN);
+        var prefabNaN = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(false, 1, 2, 3, 4, 5, float.NaN,
+                7, 8, 9, float.PositiveInfinity));
+        Require(prefabNaN.ProductionDurationSeconds.Equals(prefabNaNExpected),
+                "Prefab NaN duration behavior differs from the original authoring getter.");
+
+        var configPositiveInfinity = BuildingDefinitionAuthoringScalarProjection.Project(
+            new BuildingDefinitionAuthoringScalarSource(true, 1, 2, 3, 4, 5, 6f,
+                7, 8, 9, float.PositiveInfinity));
+        Require(float.IsPositiveInfinity(configPositiveInfinity.ProductionDurationSeconds),
+                "Positive infinity duration must remain positive infinity.");
+    }
+
+    static void RunUnitProductionMetadataPolicyControls()
+    {
+        var noConfig = UnitProductionMetadataScalarPolicy.Project(
+            new UnitProductionMetadataScalarSource(false, false, true, false, true, false, true, false,
+                float.NaN, float.PositiveInfinity, float.NegativeInfinity, 0, -2, 0));
+        Require(noConfig.IsAirUnit && noConfig.ProductionTransportRequiresAirportRunway &&
+                noConfig.ProductionTransportUsesRunwayLanding &&
+                FloatBits(noConfig.ProductionDurationSeconds) == FloatBits(Mathf.Max(0.01f, float.NaN)) &&
+                FloatBits(noConfig.ProductionTransportArrivalSeconds) == FloatBits(Mathf.Max(0.01f, float.PositiveInfinity)) &&
+                FloatBits(noConfig.ProductionTransportHoldForNextReadySeconds) == FloatBits(Mathf.Max(0.01f, float.NegativeInfinity)) &&
+                noConfig.ProductionTransportMaxConcurrent == 1 &&
+                noConfig.FootprintWidth == -2 && noConfig.FootprintDepth == 0,
+                "No-config unit metadata scalar policy control failed.");
+
+        var configured = UnitProductionMetadataScalarPolicy.Project(
+            new UnitProductionMetadataScalarSource(true, false, false, true, false, true, true, false,
+                float.NegativeInfinity, float.NaN, float.PositiveInfinity, -3, 3, 4));
+        Require(configured.IsAirUnit && configured.ProductionTransportRequiresAirportRunway &&
+                !configured.ProductionTransportUsesRunwayLanding &&
+                FloatBits(configured.ProductionDurationSeconds) == FloatBits(Mathf.Max(0.01f, float.NegativeInfinity)) &&
+                FloatBits(configured.ProductionTransportArrivalSeconds) == FloatBits(Mathf.Max(0.01f, float.NaN)) &&
+                FloatBits(configured.ProductionTransportHoldForNextReadySeconds) == FloatBits(Mathf.Max(0.01f, float.PositiveInfinity)) &&
+                configured.ProductionTransportMaxConcurrent == 1 &&
+                configured.FootprintWidth == 3 && configured.FootprintDepth == 4,
+                "Configured unit metadata precedence/edge control failed.");
+
+        float nanPayload = BitConverter.ToSingle(BitConverter.GetBytes(unchecked((int)0x7fc01234)), 0);
+        var resolved = UnitProductionMetadataScalarPolicy.Project(
+            new UnitProductionMetadataScalarSource(false, true, true, false, true, false, true, false,
+                nanPayload, -0f, float.PositiveInfinity, 2, 5, 6));
+        Require(FloatBits(resolved.ProductionDurationSeconds) == FloatBits(nanPayload) &&
+                FloatBits(resolved.ProductionTransportArrivalSeconds) == FloatBits(-0f) &&
+                FloatBits(resolved.ProductionTransportHoldForNextReadySeconds) == FloatBits(float.PositiveInfinity),
+                "Resolved getter snapshot must preserve every source IEEE bit without re-normalizing.");
+    }
+
+    static int FloatBits(float value)
+    {
+        return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+    }
+
+    static JObject ProjectBuildingMetadataScalars(string inputPath)
+    {
+        RunScalarPolicyControls();
+        JObject input = JObject.Parse(File.ReadAllText(Path.GetFullPath(inputPath)));
+        if ((string)input["kind"] != "S002BuildingDefinitionScalarMetadataInputs" ||
+            (bool?)input["world_allocated"] != false || (bool?)input["factory_execution"] != false ||
+            (bool?)input["mission_ready"] != false)
+            throw new InvalidDataException("Exact source-only scalar input contract required.");
+        JArray sourceRows = input["rows"] as JArray ?? throw new InvalidDataException("Scalar input rows required.");
+        if (sourceRows.Count == 0 || sourceRows.Count > 32)
+            throw new InvalidDataException("Bounded nonempty scalar source rows required.");
+        var rows = new JArray();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        foreach (JObject row in sourceRows.OfType<JObject>())
+        {
+            string key = (string)row["key"];
+            if (String.IsNullOrWhiteSpace(key) || !seen.Add(key))
+                throw new InvalidDataException("Unique exact scalar source key required.");
+            var source = new BuildingDefinitionAuthoringScalarSource(
+                (bool)row["has_config"], (int)row["prefab_max_health"],
+                (int)row["prefab_footprint_width"], (int)row["prefab_footprint_depth"],
+                (int)row["prefab_price"], (int)row["prefab_materials_cost"],
+                (float)row["prefab_production_duration_seconds"],
+                (int)row["config_max_health"], (int)row["config_raw_price"],
+                (int)row["config_raw_materials_cost"], (float)row["config_raw_production_duration_seconds"]);
+            BuildingDefinitionAuthoringScalarMetadata result = BuildingDefinitionAuthoringScalarProjection.Project(source);
+            rows.Add(new JObject {
+                ["key"] = key, ["max_health"] = result.MaxHealth,
+                ["footprint_width"] = result.FootprintWidth, ["footprint_depth"] = result.FootprintDepth,
+                ["price"] = result.Price, ["materials_cost"] = result.MaterialsCost,
+                ["production_duration_seconds"] = result.ProductionDurationSeconds,
+                ["has_config"] = source.HasConfig
+            });
+        }
+        if (rows.Count != sourceRows.Count)
+            throw new InvalidDataException("Every scalar source row must be a mapping.");
+        return new JObject {
+            ["kind"] = "S002BuildingDefinitionScalarMetadataSourceProjection",
+            ["status"] = "PassedSourceOnlyScalarPolicy", ["rows"] = rows,
+            ["policy_controls_passed"] = true, ["world_allocated"] = false,
+            ["factory_execution"] = false, ["unity_effective_prefab_state_verified"] = false,
+            ["source_fit_verified"] = false, ["mission_ready"] = false,
+            ["scope"] = "Shared original metadata scalar policy only; no Unity prefab import/effective override, factory, runtime definition, geometry, or readiness claim."
+        };
+    }
+
+    static int Main(string[] args)
+    {
+        try
+        {
+            if (args != null && args.Length == 2 && args[0] == "--project-building-metadata-scalars")
+            {
+                Console.WriteLine(ProjectBuildingMetadataScalars(args[1]).ToString(Formatting.None));
+                return 0;
+            }
+            if (args != null && args.Length == 1 && args[0] == "--unit-production-metadata-policy-controls")
+            {
+                RunUnitProductionMetadataPolicyControls();
+                Console.WriteLine("[S002UnitProductionMetadataScalarPolicy] result=Passed scope=SharedScalarPolicyControls noWorld=true noFactory=true sourceFitVerified=false missionReady=false");
+                return 0;
+            }
+            if (args == null || args.Length != 4) throw new InvalidDataException("Expected graph path, graph SHA-256, matrix path, and seed.");
+            string graphPath = Path.GetFullPath(args[0]);
+            string matrixPath = Path.GetFullPath(args[2]);
+            string graphSha = args[1];
+            int seed = Int32.Parse(args[3], System.Globalization.CultureInfo.InvariantCulture);
+            if (seed < 0 || graphSha.Length != 64) throw new InvalidDataException("Bounded current setup identity required.");
+            JObject graph = JObject.Parse(File.ReadAllText(graphPath));
+            if ((int?)graph["schema_version"] != 1 || (string)graph["authority"] != "AuthoredConfigAssets" ||
+                (string)graph["definition_path"] != ScenarioPath || (string)graph["catalog_path"] != CatalogPath ||
+                (bool?)graph["compiled_setup"] != false || (bool?)graph["world_initialized"] != false ||
+                (bool?)graph["native_world_state_used"] != false || Hash(File.ReadAllBytes(graphPath)) != graphSha)
+                throw new InvalidDataException("Exact pinned current S002 authored graph required.");
+            JObject matrix = graph["setup_matrix"] as JObject ?? throw new InvalidDataException("Graph-owned setup matrix required.");
+            if (Path.GetFullPath((string)matrix["path"]) != matrixPath || !File.Exists(matrixPath) ||
+                Hash(File.ReadAllBytes(matrixPath)) != (string)matrix["sha256"])
+                throw new InvalidDataException("Exact graph-owned setup matrix required.");
+            foreach (var pin in ((JObject)graph["source_pins"]).Properties())
+                if (!File.Exists(pin.Name) || Hash(File.ReadAllBytes(pin.Name)) != (string)pin.Value)
+                    throw new InvalidDataException("Current S002 graph pin changed: " + pin.Name);
+            var map = ((JArray)graph["nodes"]).OfType<JObject>().SingleOrDefault(x => (string)x["source_path"] == MapPath)
+                ?? throw new InvalidDataException("Selected S002 map config missing from graph.");
+            if ((string)map["fields"]?["operationMapId"] != "opmap.skirmish.desert_base_01")
+                throw new InvalidDataException("Selected S002 map identity changed.");
+
+            var materializer = new SourceConfigMaterializer(graph);
+            var definition = materializer.ByPath<SkirmishScenarioDefinitionConfig>(ScenarioPath);
+            var catalog = materializer.ByPath<SkirmishExpansionCatalogConfig>(CatalogPath);
+            byte[] matrixBytes = File.ReadAllBytes(matrixPath);
+            UnityEngine.Resources.BindSourceResources(new Dictionary<string, object> {
+                { SkirmishExpansionCatalogConfig.ResourceName, catalog },
+                { SkirmishSetupMatrixTable.PackagedResourceName, new UnityEngine.TextAsset(Encoding.UTF8.GetString(matrixBytes)) }
+            });
+            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> rows, out string error))
+                throw new InvalidDataException("Original setup matrix parser rejected current bytes: " + error);
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds ?? Array.Empty<string>() };
+            if (!SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard,
+                    seed, manifest, rows, out SkirmishResolvedSetup setup, out List<SkirmishCompileReason> reasons))
+                throw new InvalidDataException("Original S002 Standard compiler rejected: " + String.Join(" | ", reasons.Select(x => x.ToString())));
+            if (setup == null || setup.CatalogId != "S002" || setup.DefinitionId != definition.DefinitionId ||
+                setup.Seed != seed || setup.SizeId != SkirmishSizeId.Standard || setup.DifficultyId != SkirmishDifficultyId.Regular ||
+                setup.Forces == null || setup.Structures == null || setup.Forces.Length == 0 || setup.Structures.Length == 0)
+                throw new InvalidDataException("Original compiler returned a different or incomplete S002 setup.");
+
+            var forceRows = new JArray(setup.Forces.Select((force, index) => new JObject {
+                ["index"] = index, ["faction_id"] = force.FactionId, ["role_id"] = force.RoleId,
+                ["role_kind"] = force.RoleKind.ToString(), ["runtime_prefab_key"] = force.RuntimePrefabKey,
+                ["source_config_path"] = force.SourceConfigPath, ["quantity"] = force.Quantity,
+                ["supply_cost"] = force.SupplyCost
+            }));
+            var structureRows = new JArray(setup.Structures.Select((structure, index) => new JObject {
+                ["index"] = index, ["faction_id"] = structure.FactionId, ["structure_id"] = structure.StructureId,
+                ["visual_key"] = SkirmishStructureIds.VisualKey(structure.StructureId),
+                ["spawn_anchor_id"] = structure.SpawnAnchorId, ["designated_base"] = structure.DesignatedBase
+            }));
+            var result = new JObject {
+                ["kind"] = "S002CurrentSetupProviderSourceResult", ["status"] = "Compiled",
+                ["setup"] = new JObject { ["catalog_id"] = setup.CatalogId, ["definition_id"] = setup.DefinitionId,
+                    ["scenario_setup_id"] = setup.ScenarioSetupId, ["content_version"] = setup.ContentVersion,
+                    ["content_hash"] = setup.ContentHash, ["seed"] = setup.Seed, ["setup_hash"] = setup.SetupHash,
+                    ["size_id"] = setup.SizeId.ToString(), ["difficulty_id"] = setup.DifficultyId.ToString(),
+                    ["operation_map_id"] = setup.OperationMapId },
+                ["source_graph_sha256"] = graphSha, ["setup_matrix_sha256"] = (string)matrix["sha256"],
+                ["force_rows"] = forceRows, ["structure_rows"] = structureRows,
+                ["world_allocated"] = false, ["geometry_materialized"] = false,
+                ["factory_execution_claimed"] = false, ["native_acceptance"] = false,
+                ["source_fit_verified"] = false, ["mission_ready"] = false,
+                ["scope"] = "Original S002 setup compiler output joined to current serialized provider identities only; no metadata factory execution, World, geometry materialization, source-fit, or readiness."
+            };
+            Console.WriteLine(result.ToString(Formatting.None));
+            return 0;
+        }
+        catch (Exception error)
+        {
+            Console.Error.WriteLine("[S002CurrentSetupProviderSourceBinding] result=Failed " + error);
+            return 1;
+        }
+    }
+}

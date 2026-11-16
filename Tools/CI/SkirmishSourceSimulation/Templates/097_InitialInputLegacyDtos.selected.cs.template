@@ -1,0 +1,2 @@
+using Unity.Entities;using Unity.Collections;using Unity.Mathematics;using UnityEngine;namespace Game.Components{/*SOURCE:type_0*/
+/*SOURCE:type_1*/}

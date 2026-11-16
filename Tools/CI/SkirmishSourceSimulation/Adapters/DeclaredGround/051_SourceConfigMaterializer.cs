@@ -1,0 +1,5 @@
+using System;using Newtonsoft.Json.Linq;
+public sealed class SourceConfigMaterializer : AuthoredSourceConfigGraphMaterializer {
+ static readonly string[] AllowedSourceTypes={"SkirmishMissionViewProfile","SkirmishScenarioDefinitionConfig","SkirmishBattleCatalogConfig","SkirmishObjectiveConfig","SkirmishArmyProfileConfig","SkirmishStartPackageConfig","SkirmishEconomyConfig","SkirmishUpgradeConfig","SkirmishIntelConfig","SkirmishRoleCatalogConfig","SkirmishMapLayoutConfig","SkirmishExpansionCatalogConfig","SkirmishSizeConfig","SkirmishDifficultyConfig","SkirmishPublicationConfig","SkirmishGroundStagingConfig","SkirmishRoleOverlayCatalog","OperationMapDefinition","MapBuildingPlacementConfig","MapSurfaceDataAsset","GridAuthoringSceneConfigAsset" };
+ public SourceConfigMaterializer(JObject graph):base(graph,AllowedSourceTypes){}
+}

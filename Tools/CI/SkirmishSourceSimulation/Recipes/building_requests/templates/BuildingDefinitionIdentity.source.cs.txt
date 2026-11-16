@@ -1,0 +1,4 @@
+using BuildingDefinition = Game.Runtime.RuntimeDefinition; namespace Game.Runtime {
+internal static partial class BuildingDefinitionPrefabSystemHelper { @@RuntimeDefinitionMatchesId@@ }
+internal static partial class BuildingBarrierUtilitySystemHelper { @@IsWallGateDefinition@@ }
+}

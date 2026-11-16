@@ -1,0 +1,15 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime {public partial class MaterialFabricationSystem {
+void ApplyRow(TickRow row){var entity=row.Entity;var materialsLookup=new ComponentLookup<FactionTacticalMaterialsComponent>(em);var eventQueueLookup=new ComponentLookup<MaterialFabricationEconomyEventQueueComponent>(em);var telemetryLookup=new ComponentLookup<FactionMaterialFabricationTelemetryComponent>(em);var eventBufferLookup=new BufferLookup<MaterialFabricationEconomyEventElement>(events);var disabledLookup=new PresenceLookup(row.Entity,row.Disabled);var deathAnimationLookup=new PresenceLookup(row.Entity,row.DeathAnimation);
+                MaterialFabricationComponent fabrication = em.GetComponentData<MaterialFabricationComponent>(entity);
+            try {
+                ref BuildingResourceStorageComponent storage = ref bank.Storage[slots[entity]];
+@@SOURCE_0@@                                           row.HealthCurrent > 0;
+@@SOURCE_1@@                    TickResult unavailableResult = ApplyTick(
+@@SOURCE_2@@                    RecordTick(entity,Entity.Null,factionId,true,unavailableResult);
+                    return;
+@@SOURCE_3@@                { RecordTick(entity,materialsEntity,factionId,false,default); return; }
+@@SOURCE_4@@                RecordTick(entity,materialsEntity,factionId,true,result);
+@@SOURCE_5@@                    return;
+@@SOURCE_6@@            } finally { em.SetComponentData(entity,fabrication); }
+}
+}}

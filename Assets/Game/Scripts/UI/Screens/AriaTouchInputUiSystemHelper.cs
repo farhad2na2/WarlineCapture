@@ -50,7 +50,7 @@ namespace Game.UI.Runtime
         {
             get
             {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || WARLINE_VALIDATION_PLAYER
                 return Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION") == "1";
 #else
                 return false;

@@ -1,0 +1,69 @@
+using System;using System.Collections.Generic;using Game.Components;using Unity.Entities;using Unity.Mathematics;
+namespace Unity.Entities {
+ public interface IBufferElementData{} [AttributeUsage(AttributeTargets.Struct)]public sealed class InternalBufferCapacityAttribute:Attribute{public InternalBufferCapacityAttribute(int n){}}
+ public sealed class DynamicBuffer<T>{readonly List<T> rows;internal DynamicBuffer(T[] initial){rows=new List<T>(initial);}public int Length=>rows.Count;public T this[int i]=>rows[i];public void Add(T x){rows.Add(x);}public void RemoveAt(int i){rows.RemoveAt(i);}public void Clear(){rows.Clear();}internal T[] Copy()=>rows.ToArray();}
+ public struct ComponentLookup<T>{ readonly EntityManager em;internal ComponentLookup(EntityManager x){em=x;}public bool HasComponent(Entity e)=>em.HasComponent<T>(e);public T this[Entity e]{get=>em.GetComponentData<T>(e);set=>em.SetComponentData(e,value);}}
+ public struct BufferLookup<T>{readonly Dictionary<Entity,DynamicBuffer<T>> rows;internal BufferLookup(Dictionary<Entity,DynamicBuffer<T>> x){rows=x;}public bool HasBuffer(Entity e)=>rows.ContainsKey(e);public DynamicBuffer<T> this[Entity e]=>rows[e];}
+}
+namespace Game.Runtime {
+// This adapter admits fixed complete component domains. It is not an ECS query discovery engine.
+public partial class MaterialFabricationSystem {
+ internal sealed class FabSeed {internal Entity Entity;internal MaterialFabricationComponent Fabrication;internal bool InputTag,HasHealth;internal int? HealthCurrent;internal bool Disabled,DeathAnimation;internal MaterialFabricationCommandQueueComponent? CommandQueue;internal MaterialFabricationRequestComponent[] Requests;internal MaterialFabricationResultComponent[] Results;}
+ internal sealed class MaterialsSeed {internal Entity Entity;internal FactionTacticalMaterialsComponent Materials;internal byte? EconomyFaction;internal bool Disabled;internal FactionMaterialFabricationTelemetryComponent? Telemetry;internal MaterialFabricationEconomyEventQueueComponent? EventQueue;internal MaterialFabricationEconomyEventElement[] Events;}
+ internal sealed class Ingress {internal Entity Entity;internal bool SourceComputedOrGenuineExternalRequestArguments;internal MaterialFabricationRequestComponent[] Appended;}
+ internal struct TickRow {internal Entity Entity;internal int HealthCurrent;internal bool Disabled,DeathAnimation;}
+ internal sealed class ThresholdQueries {internal bool CompleteLookup,CompleteTick;internal Entity[] LookupOrder;internal TickRow[] TickOrder;}
+ static readonly System.Runtime.CompilerServices.ConditionalWeakTable<EntityManager,object> bound=new System.Runtime.CompilerServices.ConditionalWeakTable<EntityManager,object>();
+ internal readonly struct TickTrace {internal readonly Entity Entity,SelectedMaterials;internal readonly byte OwnerCount;internal readonly bool TickApplied;internal readonly TickResult Result;internal TickTrace(Entity e,Entity selected,byte count,bool applied,TickResult result){Entity=e;SelectedMaterials=selected;OwnerCount=count;TickApplied=applied;Result=result;}}
+ readonly List<TickTrace> lastTicks=new List<TickTrace>();internal TickTrace[] LastTicks=>lastTicks.ToArray();
+ readonly EntityManager em;readonly CanonicalStorageBank bank;readonly Dictionary<Entity,int> slots=new Dictionary<Entity,int>();
+ readonly HashSet<Entity> requestDomain=new HashSet<Entity>(),tickDomain=new HashSet<Entity>(),lookupDomain=new HashSet<Entity>();
+ readonly Dictionary<Entity,TickRow> initialOperational=new Dictionary<Entity,TickRow>();
+ readonly Dictionary<Entity,byte> economy=new Dictionary<Entity,byte>();
+ readonly Dictionary<Entity,DynamicBuffer<MaterialFabricationRequestComponent>> requests=new Dictionary<Entity,DynamicBuffer<MaterialFabricationRequestComponent>>();
+ readonly Dictionary<Entity,DynamicBuffer<MaterialFabricationResultComponent>> results=new Dictionary<Entity,DynamicBuffer<MaterialFabricationResultComponent>>();
+ readonly Dictionary<Entity,DynamicBuffer<MaterialFabricationEconomyEventElement>> events=new Dictionary<Entity,DynamicBuffer<MaterialFabricationEconomyEventElement>>();
+ readonly Entity[] _materialsEntityByFaction=new Entity[256];readonly byte[] _materialsEntityCountByFaction=new byte[256];
+ float _elapsedSeconds,fabricationDeltaTime;bool poisoned,clockBound;
+ internal float ElapsedSeconds=>_elapsedSeconds;internal bool Poisoned=>poisoned;
+ internal MaterialFabricationRequestComponent[] Requests(Entity e)=>requests[e].Copy();internal MaterialFabricationResultComponent[] Results(Entity e)=>results[e].Copy();internal MaterialFabricationEconomyEventElement[] Events(Entity e)=>events[e].Copy();
+ static void Require(bool ok,string why){if(!ok)throw new NotSupportedException(why);}
+ static void Identity(Entity e){Require(e.Index>0&&e.Version>0,"Exact positive Entity/version required");}
+ static void Bounds<T>(T[] a,int max){Require(a==null||a.Length<=max,"Buffer admission bound");}
+ static void CompareExisting<T>(EntityManager em,Entity e,T value)where T:struct{if(em.HasComponent<T>(e))Require(CanonicalStorageBank.Same(em.GetComponentData<T>(e),value),"Raw initial component differs from already computed retained state: "+typeof(T).Name);}
+ static void Seed<T>(EntityManager em,Entity e,T value)where T:struct{if(!em.HasComponent<T>(e))em.AddComponentData(e,value);}
+ internal MaterialFabricationSystem(EntityManager manager,CanonicalStorageBank canonical,FabSeed[] fabs,MaterialsSeed[] mats,float initialElapsed,bool completeFabDomain,bool completeMaterialsDomain,bool elapsedFirstObservedNoInterveningWriter):this(manager,canonical,fabs,mats,completeFabDomain,completeMaterialsDomain){BindInitialClock(initialElapsed,elapsedFirstObservedNoInterveningWriter);}
+ internal MaterialFabricationSystem(EntityManager manager,CanonicalStorageBank canonical,FabSeed[] fabs,MaterialsSeed[] mats,bool completeFabDomain,bool completeMaterialsDomain){
+ Require(Type.GetType("Mono.Runtime")!=null,"Installed Mono required");Require(manager!=null&&canonical!=null&&manager.BankBound,"Already bound SAME canonical manager required");Require(fabs!=null&&mats!=null&&fabs.Length<=4096&&mats.Length<=4096,"Bounded initial domains required");Require(completeFabDomain&&completeMaterialsDomain,"Genuine complete initial domains/private elapsed provenance required");
+ Require(Object.ReferenceEquals(typeof(EntityManager).GetField("bank",System.Reflection.BindingFlags.NonPublic|System.Reflection.BindingFlags.Instance).GetValue(manager),canonical),"Manager must reference this exact canonical bank");
+ em=manager;bank=canonical;var seen=new HashSet<Entity>();int total=0;
+ foreach(var f in fabs){Require(f!=null,"Missing fabrication seed");Identity(f.Entity);Require(seen.Add(f.Entity),"Duplicate fabrication Entity");Require(f.HasHealth==f.HealthCurrent.HasValue,"Explicit initial health presence/current required");Bounds(f.Requests,4096);Bounds(f.Results,4096);total=checked(total+(f.Requests?.Length??0)+(f.Results?.Length??0));Require(f.InputTag||!em.HasComponent<MaterialFabricationInputTag>(f.Entity),"Initial input-tag absence mismatch");CompareExisting(em,f.Entity,f.Fabrication);if(f.CommandQueue.HasValue)CompareExisting(em,f.Entity,f.CommandQueue.Value);else Require(!em.HasComponent<MaterialFabricationCommandQueueComponent>(f.Entity),"Initial command queue absence mismatch");}
+ seen.Clear();foreach(var m in mats){Require(m!=null,"Missing materials seed");Identity(m.Entity);Require(seen.Add(m.Entity),"Duplicate materials Entity");Bounds(m.Events,4096);total=checked(total+(m.Events?.Length??0));CompareExisting(em,m.Entity,m.Materials);Require(m.Telemetry.HasValue||!em.HasComponent<FactionMaterialFabricationTelemetryComponent>(m.Entity),"Telemetry initial presence mismatch");Require(m.EventQueue.HasValue||!em.HasComponent<MaterialFabricationEconomyEventQueueComponent>(m.Entity),"Event queue initial presence mismatch");if(m.Telemetry.HasValue)CompareExisting(em,m.Entity,m.Telemetry.Value);if(m.EventQueue.HasValue)CompareExisting(em,m.Entity,m.EventQueue.Value);}
+ Require(total<=16384,"Aggregate initial buffer budget");
+ lock(bound){object existing;Require(!bound.TryGetValue(em,out existing),"Material system binds once; no elapsed/buffer reseed");bound.Add(em,new object());}
+ for(int i=0;i<bank.EntityIds.Length;i++){var a=bank.EntityIds[i].Split(':');slots.Add(new Entity{Index=int.Parse(a[0]),Version=int.Parse(a[1])},i);}
+ foreach(var f in fabs){Seed(em,f.Entity,f.Fabrication);if(f.InputTag)Seed(em,f.Entity,new MaterialFabricationInputTag());if(f.CommandQueue.HasValue)Seed(em,f.Entity,f.CommandQueue.Value);if(f.Requests!=null)requests.Add(f.Entity,new DynamicBuffer<MaterialFabricationRequestComponent>(f.Requests));if(f.Results!=null)results.Add(f.Entity,new DynamicBuffer<MaterialFabricationResultComponent>(f.Results));if(f.InputTag&&f.Requests!=null&&f.Results!=null)requestDomain.Add(f.Entity);if(f.InputTag&&f.HasHealth&&slots.ContainsKey(f.Entity)){tickDomain.Add(f.Entity);initialOperational.Add(f.Entity,new TickRow{Entity=f.Entity,HealthCurrent=f.HealthCurrent.Value,Disabled=f.Disabled,DeathAnimation=f.DeathAnimation});}}
+ foreach(var m in mats){Seed(em,m.Entity,m.Materials);if(m.EconomyFaction.HasValue){economy.Add(m.Entity,m.EconomyFaction.Value);if(!m.Disabled)lookupDomain.Add(m.Entity);}if(m.Telemetry.HasValue)Seed(em,m.Entity,m.Telemetry.Value);if(m.EventQueue.HasValue)Seed(em,m.Entity,m.EventQueue.Value);if(m.Events!=null)events.Add(m.Entity,new DynamicBuffer<MaterialFabricationEconomyEventElement>(m.Events));}
+ }
+ internal void BindInitialClock(float initialElapsed,bool firstIncludedUpdateNoInterveningPrivateMutator){Require(!poisoned&&!clockBound&&firstIncludedUpdateNoInterveningPrivateMutator,"Genuine initial clock binds once at first included update");_elapsedSeconds=initialElapsed;clockBound=true;}
+ static void Complete(Entity[] order,HashSet<Entity> domain,bool proof,string name){Require(proof&&order!=null&&order.Length==domain.Count,"Missing complete "+name+" query proof/order");var seen=new HashSet<Entity>();foreach(var e in order)Require(domain.Contains(e)&&seen.Add(e),"Unknown/duplicate/version-changed "+name+" member");}
+ void Append(Ingress[] ingress){Require(ingress!=null&&ingress.Length<=4096,"Explicit bounded ingress required, empty is explicit no-new-command");var seen=new HashSet<Entity>();int n=0;foreach(var x in ingress){Require(x!=null&&x.SourceComputedOrGenuineExternalRequestArguments&&x.Appended!=null&&x.Appended.Length<=4096&&requests.ContainsKey(x.Entity)&&seen.Add(x.Entity),"Unknown/duplicate/missing ingress");n=checked(n+x.Appended.Length);Require(requests[x.Entity].Length<=4096-x.Appended.Length,"Pending command buffer budget");}Require(n<=4096,"Aggregate ingress budget");foreach(var x in ingress)foreach(var row in x.Appended)requests[x.Entity].Add(row);}
+ // Only new source-derived/observed commands may append; retained buffers have no replacement API.
+ internal void Step(byte simulationActive,float deltaTime,Entity[] requestOrder,bool completeRequestQuery,Ingress[] ingress,ThresholdQueries threshold){
+ Require(!poisoned,"Failed call is terminal; preserve partial evidence");lastTicks.Clear();try{Require(clockBound,"First included update must bind genuine private elapsed");
+ Complete(requestOrder,requestDomain,completeRequestQuery,"request");Append(ingress);
+ ProcessProductionRequests(requestOrder);
+ @@SOURCE_CLOCK_0@@
+ @@SOURCE_CLOCK_1@@
+ @@SOURCE_CLOCK_2@@
+ @@SOURCE_CLOCK_3@@
+ Require(threshold!=null,"Threshold actual lookup/tick queries required");Complete(threshold.LookupOrder,lookupDomain,threshold.CompleteLookup,"materials lookup");Require(threshold.TickOrder!=null&&threshold.TickOrder.Length<=4096,"Bounded tick query required");var tickIds=new Entity[threshold.TickOrder.Length];for(int i=0;i<tickIds.Length;i++)tickIds[i]=threshold.TickOrder[i].Entity;Complete(tickIds,tickDomain,threshold.CompleteTick,"fabrication tick");
+ foreach(var row in threshold.TickOrder){var known=initialOperational[row.Entity];Require(row.HealthCurrent==known.HealthCurrent&&row.Disabled==known.Disabled&&row.DeathAnimation==known.DeathAnimation,"Operational prerequisite changed: missing original health/tag writer; native before snapshot is not a reseed");}
+ RebuildFactionMaterialsLookup(threshold.LookupOrder);foreach(var row in threshold.TickOrder)ApplyRow(row);
+ }catch{poisoned=true;throw;}}
+ void ProcessProductionRequests(Entity[] order){foreach(var entity in order){var fabrication=em.GetComponentData<MaterialFabricationComponent>(entity);var rq=requests[entity];var rs=results[entity];try{for(int i=0;i<rq.Length;i++){while(rs.Length>=MaterialFabricationCommandQueueComponent.Capacity)rs.RemoveAt(0);rs.Add(ApplyProductionRequest(ref fabrication,rq[i]));}rq.Clear();}finally{em.SetComponentData(entity,fabrication);}}}
+ void RebuildFactionMaterialsLookup(Entity[] order){for(int i=0;i<FactionCapacity;i++){_materialsEntityByFaction[i]=Entity.Null;_materialsEntityCountByFaction[i]=0;}foreach(var entity in order){byte factionId=economy[entity];if(em.GetComponentData<FactionTacticalMaterialsComponent>(entity).FactionId!=factionId)continue;byte count=_materialsEntityCountByFaction[factionId];_materialsEntityCountByFaction[factionId]=count==byte.MaxValue?byte.MaxValue:(byte)(count+1);if(count==0)_materialsEntityByFaction[factionId]=entity;}}
+ void RecordTick(Entity entity,Entity selected,byte faction,bool applied,TickResult result){Require(lastTicks.Count<4096,"Tick trace bound");lastTicks.Add(new TickTrace(entity,selected,_materialsEntityCountByFaction[faction],applied,result));}
+ struct PresenceLookup {readonly Entity e;readonly bool present;internal PresenceLookup(Entity x,bool p){e=x;present=p;}internal bool HasComponent(Entity x)=>x==e&&present;}
+ }
+}

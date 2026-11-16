@@ -73,7 +73,7 @@ namespace Game.UI.Runtime
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Mathf.Clamp01(elapsed / duration);
                 canvasGroup.alpha = t < 0.70f ? 1f : Mathf.Lerp(1f, 0f, (t - 0.70f) / 0.30f);
                 motionRoot.localScale = baseScale * Mathf.Lerp(0.86f, 1.16f, Mathf.Sin(t * Mathf.PI));

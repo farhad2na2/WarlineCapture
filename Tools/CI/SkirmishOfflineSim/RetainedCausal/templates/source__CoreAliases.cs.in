@@ -1,0 +1,16 @@
+extern alias ActualCore;
+global using Vector3 = ActualCore::UnityEngine.Vector3;
+global using Vector2Int = ActualCore::UnityEngine.Vector2Int;
+namespace Unity.Burst{[System.AttributeUsage(System.AttributeTargets.Struct|System.AttributeTargets.Method)]public sealed class BurstCompileAttribute:System.Attribute{}}
+namespace Unity.Entities{
+ public interface ISystem{} public struct SystemState{public bool Enabled;} public sealed class SimulationSystemGroup{}
+ [System.AttributeUsage(System.AttributeTargets.Struct)]public sealed class DisableAutoCreationAttribute:System.Attribute{}
+ [System.AttributeUsage(System.AttributeTargets.Struct)]public sealed class UpdateInGroupAttribute:System.Attribute{public UpdateInGroupAttribute(System.Type type){}}
+}
+namespace UnityEngine{public static class Mathf{
+ public static float Max(float a,float b)=>ActualCore::UnityEngine.Mathf.Max(a,b);
+ public static int Max(int a,int b)=>ActualCore::UnityEngine.Mathf.Max(a,b);
+ public static int Min(int a,int b)=>ActualCore::UnityEngine.Mathf.Min(a,b);
+ public static int FloorToInt(float f)=>ActualCore::UnityEngine.Mathf.FloorToInt(f);
+ public static int RoundToInt(float f)=>ActualCore::UnityEngine.Mathf.RoundToInt(f);
+}}

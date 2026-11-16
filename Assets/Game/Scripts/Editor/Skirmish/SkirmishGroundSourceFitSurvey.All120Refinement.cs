@@ -29,7 +29,7 @@ namespace Game.Editor
             var authority=((JArray)ReadAll120RefinementIndex()["missions"]).OfType<JObject>().SingleOrDefault(r=>(string)r["catalog_id"]==id);
             Require(authority!=null,"One exact Full120 catalog ID required");
             var report=new JObject{["schema"]=1,["catalogId"]=id,["scope"]="NormalAllocatorLogicalAuthoring_NotMissionAcceptance",
-                ["fullIndexSha256"]=All120RefinementIndexSha,["sourceFitCertified"]=false,["cameraAccepted"]=false,
+                ["fullIndexSha256"]=SelectedAll120RefinementIndexSha,["sourceFitCertified"]=false,["cameraAccepted"]=false,
                 ["normalMissionReady"]=false,["result"]="Incomplete"};
             if(recordedFacilityEgressInput!=null){report["scope"]="RecordedCompleteFacilities_EgressEdgesOnly";report["historicalReport"]=recordedFacilityEgressInput["sourceReport"].DeepClone();report["facilityMeasurements"]=0;report["fullRoutesMeasured"]=false;}
             try

@@ -256,23 +256,7 @@ namespace Game.Runtime
                 bool foundOverlap = false;
                 ForEachRoadWorldFootprint(state, entry.Key, entry.Value, (worldMin, worldMax) =>
                 {
-                    GetGridBounds(grid, worldMin, worldMax, out int minX, out int minY, out int maxX, out int maxY);
-
-                    bool overlaps = false;
-                    for (int y = minY; y < maxY && !overlaps; y++)
-                    {
-                        for (int x = minX; x < maxX; x++)
-                        {
-                            if (!IsGridCellCenterInsideBounds(grid, x, y, worldMin, worldMax))
-                                continue;
-
-                            if (x < buildingMinX || y < buildingMinY || x >= buildingMaxX || y >= buildingMaxY)
-                                continue;
-
-                            overlaps = true;
-                            break;
-                        }
-                    }
+                    bool overlaps = RoadFootprintCellCoverage.Overlaps(grid, worldMin, worldMax, originCell, footprintCells);
 
                     if (!overlaps)
                         return true;

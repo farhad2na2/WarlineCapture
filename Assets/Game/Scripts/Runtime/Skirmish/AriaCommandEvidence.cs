@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Game.Skirmish.Contracts;
 
 namespace Game.Runtime
 {
@@ -12,6 +13,26 @@ namespace Game.Runtime
     public static class AriaCommandEvidence
     {
         private static readonly HashSet<uint> issued = new();
+        private static readonly Dictionary<uint,SkirmishPublicArmyOrderGoal> publicGoals = new();
+        private static SkirmishPublicArmyOrderGoal currentPublicGoal;
+        public static SkirmishPublicArmyOrderGoal CurrentPublicGoal => currentPublicGoal;
+        public const int MaximumLiveGoalReceipts=64;
+        public static void RetirePublicGoals(string sessionId,ulong worldSequenceNumber)
+        {
+            var remove=new List<uint>();foreach(var pair in publicGoals)if(pair.Value.SessionId==sessionId&&pair.Value.WorldSequenceNumber==worldSequenceNumber)remove.Add(pair.Key);
+            foreach(var id in remove){publicGoals.Remove(id);issued.Remove(id);if(pendingReceipt==id)pendingReceipt=0;}
+            if(currentPublicGoal.SessionId==sessionId&&currentPublicGoal.WorldSequenceNumber==worldSequenceNumber)currentPublicGoal=default;
+        }
+        public static void RetainCurrentPublicSession(ulong worldSequenceNumber,string currentSession)
+        {
+            var remove=new List<uint>();foreach(var pair in publicGoals)if(pair.Value.WorldSequenceNumber==worldSequenceNumber&&pair.Value.SessionId!=currentSession)remove.Add(pair.Key);
+            foreach(var id in remove){publicGoals.Remove(id);issued.Remove(id);if(pendingReceipt==id)pendingReceipt=0;}
+            if(currentPublicGoal.WorldSequenceNumber==worldSequenceNumber&&currentPublicGoal.SessionId!=currentSession)currentPublicGoal=default;
+        }
+        static void BoundPublicGoals()
+        {
+            while(publicGoals.Count>MaximumLiveGoalReceipts){uint oldest=uint.MaxValue;foreach(var id in publicGoals.Keys)if(id<oldest)oldest=id;publicGoals.Remove(oldest);issued.Remove(oldest);if(pendingReceipt==oldest)pendingReceipt=0;}
+        }
         private static uint nextReceipt, pendingReceipt, currentReceipt;
         private static int releaseFrame;
         private static Vector2 releasePosition;
@@ -39,6 +60,7 @@ namespace Game.Runtime
             pendingReceipt = currentReceipt = 0;
             CompletedTouches = AcceptedCommands = Violations = 0;
             issued.Clear();
+            publicGoals.Clear(); currentPublicGoal=default;
         }
 
         public static void End()
@@ -46,20 +68,26 @@ namespace Game.Runtime
             Active = false;
             pendingReceipt = currentReceipt = 0;
             issued.Clear();
+            publicGoals.Clear(); currentPublicGoal=default;
         }
 
-        public static void ObserveRelease(int frame, Vector2 position)
+        public static void ObserveRelease(int frame, Vector2 position) => ObserveRelease(frame,position,default);
+        public static void ObserveRelease(int frame, Vector2 position, in SkirmishPublicArmyOrderGoal goal)
         {
-            if (!Active) return;
+            if(pendingReceipt!=0)publicGoals.Remove(pendingReceipt);
+            pendingReceipt=0;
+            if (!Active && !goal.Known) return;
             releaseFrame = frame;
             releasePosition = position;
-            pendingReceipt = ++nextReceipt;
-            CompletedTouches++;
+            pendingReceipt = checked(++nextReceipt);
+            if(goal.Known){publicGoals[pendingReceipt]=goal;BoundPublicGoals();}
+            if(Active)CompletedTouches++;
         }
 
         public static uint ClaimRelease(int frame, Vector2? position = null)
         {
-            if (!Active || pendingReceipt == 0 || frame < releaseFrame || frame - releaseFrame > 2 ||
+            if(pendingReceipt!=0&&frame>=releaseFrame&&frame-releaseFrame>2){publicGoals.Remove(pendingReceipt);pendingReceipt=0;}
+            if (pendingReceipt == 0 || frame < releaseFrame || frame - releaseFrame > 2 ||
                 (position.HasValue && Vector2.SqrMagnitude(position.Value - releasePosition) > 4f)) return 0;
             uint receipt = pendingReceipt;
             pendingReceipt = 0;
@@ -68,6 +96,14 @@ namespace Game.Runtime
         }
 
         public static Scope Enter(uint receipt) => new(receipt);
+        // Logical CLI dispatch has its own explicit request/receipt domain.
+        public static LogicalGoalScope EnterLogicalGoal(string requestId,in SkirmishPublicArmyOrderGoal goal)=>new(requestId,goal);
+        public readonly struct LogicalGoalScope:IDisposable
+        {
+            readonly SkirmishPublicArmyOrderGoal previous;
+            internal LogicalGoalScope(string requestId,SkirmishPublicArmyOrderGoal goal){if(string.IsNullOrEmpty(requestId))throw new ArgumentException("Actual logical dispatch request required");previous=currentPublicGoal;currentPublicGoal=goal;}
+            public void Dispose(){currentPublicGoal=previous;}
+        }
 
         public static void Accepted(string operation, byte faction)
         {
@@ -81,12 +117,16 @@ namespace Game.Runtime
         public readonly struct Scope : IDisposable
         {
             private readonly uint previous;
+            private readonly SkirmishPublicArmyOrderGoal previousGoal;
             internal Scope(uint receipt)
             {
-                previous = currentReceipt;
-                currentReceipt = Active && receipt != 0 && issued.Remove(receipt) ? receipt : 0;
+                previous = currentReceipt;previousGoal=currentPublicGoal;
+                currentReceipt = receipt != 0 && issued.Remove(receipt) ? receipt : 0;
+                currentPublicGoal=default;
+                if(currentReceipt!=0&&publicGoals.TryGetValue(currentReceipt,out var goal)){currentPublicGoal=goal;publicGoals.Remove(currentReceipt);}
+                if(receipt!=0&&currentReceipt==0)publicGoals.Remove(receipt);
             }
-            public void Dispose() { currentReceipt = previous; }
+            public void Dispose() { currentReceipt = previous;currentPublicGoal=previousGoal; }
         }
     }
 }

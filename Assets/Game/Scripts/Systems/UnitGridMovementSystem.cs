@@ -6,6 +6,8 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using Game.Components;
+using Game.Runtime.Movement;
+using Game.Runtime.Pathfinding;
 
 namespace Game.Runtime
 {
@@ -13,16 +15,24 @@ namespace Game.Runtime
     [WithNone(
         typeof(EngageTarget),
         typeof(UnitDeathAnimationComponent),
+        typeof(VehicleWreckComponent),
         typeof(UnitAirMovement),
         typeof(CampaignMissionStationaryUnitTag))]
     public partial struct UnitGridMoveJob : IJobEntity
     {
         private const int VehicleOccupancyPaddingCells = 1;
         private const int SoftBlockerDisplacementSearchRadius = 4;
-        private const float InfantryOccupiedRepathDelaySeconds = 0.35f;
+        private const float InfantryOccupiedRepathDelaySeconds = GridPathMovementKernel.InfantryOccupiedRepathDelaySeconds;
         private const float VehicleTurnInPlaceRepathDelaySeconds = 1.25f;
-        private const float InfantryGroupFinalStopDistanceCells = 1.25f;
-        private const int InfantryMaxWaypointAdvancesPerFrame = 8;
+        private const float InfantryGroupFinalStopDistanceCells = GridPathMovementKernel.InfantryGroupFinalStopDistanceCells;
+        private const int InfantryMaxWaypointAdvancesPerFrame = GridPathMovementKernel.InfantryMaxWaypointAdvancesPerFrame;
+#if UNITY_EDITOR
+        // Optional observer allocation. Disabled safety only avoids treating this
+        // unrelated trace buffer as a gameplay dependency; ownership is external.
+        [Unity.Collections.LowLevel.Unsafe.NativeDisableContainerSafetyRestriction]
+        [Unity.Collections.NativeDisableParallelForRestriction]
+        internal NativeArray<S002PhysicalStartupObservation.ForwardVehicleStep> ForwardTrace;
+#endif
         public float DeltaTime;
         public GridConfig Grid;
         public EntityCommandBuffer.ParallelWriter Ecb;
@@ -59,16 +69,25 @@ namespace Game.Runtime
             in UnitVehicleMovement vehicleMovement,
             in Faction faction)
         {
-            if (range.Length <= 0)
+#if UNITY_EDITOR
+            // Query index is identity/order evidence, never parallel execution order.
+            if (ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length)
+                ForwardTrace[sortKey] = new S002PhysicalStartupObservation.ForwardVehicleStep
+                    { Seen = 1, Entity = entity, QueryIndex = sortKey };
+#endif
+            if (!UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior))
+            {
+                MoveSharedInfantry(sortKey, entity, ref transform, ref unitGrid, ref follow,
+                    ref vehicleKinematics, move, range, footprint, faction);
+                return;
+            }
+
+            var rangeDecision = GridPathMovementKernel.EvaluateRange(range.Start, range.Length, follow.PathIndex, Pool.Length);
+            if (rangeDecision == GridPathRangeDecision.NoWork)
                 return;
 
-            if ((uint)follow.PathIndex >= (uint)range.Length)
-                return;
-
-            // A resumed unit can retain a range after the shared pool changes.
-            // Checking only the current waypoint leaves the final waypoint read
-            // below out of bounds. Rebuild the path to the original destination.
-            if (range.Start < 0 || range.Start > Pool.Length || range.Length > Pool.Length - range.Start)
+            // A resumed range must still fit the current shared pool before final-node reads.
+            if (rangeDecision == GridPathRangeDecision.InvalidRange)
             {
                 vehicleKinematics.CurrentSpeed = 0f;
                 vehicleKinematics.StallSeconds = 0f;
@@ -129,15 +148,9 @@ namespace Game.Runtime
 
                 if (!targetOverlapsCurrentFootprint && targetBlockedByOccupant)
                 {
-                    if (!isVehicle)
-                    {
-                        vehicleKinematics.CurrentSpeed = 0f;
-                        vehicleKinematics.StallSeconds += DeltaTime;
-                        if (vehicleKinematics.StallSeconds < InfantryOccupiedRepathDelaySeconds)
-                            return;
-
-                        vehicleKinematics.StallSeconds = 0f;
-                    }
+                    if (GridPathMovementKernel.AdvanceOccupiedStall(isVehicle, DeltaTime,
+                        ref vehicleKinematics.CurrentSpeed, ref vehicleKinematics.StallSeconds) == GridPathOccupancyDecision.Wait)
+                        return;
 
                     RequestRepath(sortKey, entity);
                     return;
@@ -217,6 +230,18 @@ namespace Game.Runtime
 
                 float3 oldPosition = transform.Position;
                 float turnThresholdRadians = math.radians(finalPathStep ? 18f : 10f);
+#if UNITY_EDITOR
+                S002PhysicalStartupObservation.ForwardVehicleStep forwardStep = default;
+                bool traceStep = ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length;
+                if (traceStep)
+                {
+                    forwardStep = ForwardTrace[sortKey]; forwardStep.Called = 1;
+                    forwardStep.Before = transform; forwardStep.KinematicsBefore = vehicleKinematics;
+                    forwardStep.Movement = vehicleMovement; forwardStep.Direction = dir;
+                    forwardStep.Threshold = turnThresholdRadians; forwardStep.Speed = speed;
+                    forwardStep.DeltaTime = DeltaTime; forwardStep.MaxDistance = math.length(toTarget);
+                }
+#endif
                 bool moved = UnitVehicleMovementUtility.MoveVehicle(
                     ref transform,
                     ref vehicleKinematics,
@@ -226,6 +251,13 @@ namespace Game.Runtime
                     speed,
                     DeltaTime,
                     math.length(toTarget));
+#if UNITY_EDITOR
+                if (traceStep)
+                {
+                    forwardStep.After = transform; forwardStep.KinematicsAfter = vehicleKinematics;
+                    forwardStep.Moved = (byte)(moved ? 1 : 0); ForwardTrace[sortKey] = forwardStep;
+                }
+#endif
 
                 if (!moved)
                 {
@@ -292,94 +324,121 @@ namespace Game.Runtime
             vehicleKinematics.CurrentSpeed = 0f;
             vehicleKinematics.StallSeconds = 0f;
 
-            float remainingDistance = math.max(0f, speed * DeltaTime);
-            float arriveDistance = move.ArriveDistance;
-            float arriveDistSq = arriveDistance * arriveDistance;
-            float groupedFinalStopDistance = math.max(move.ArriveDistance, Grid.CellSize * InfantryGroupFinalStopDistanceCells);
-            float groupedFinalStopDistSq = groupedFinalStopDistance * groupedFinalStopDistance;
-
-            for (int i = 0; i < InfantryMaxWaypointAdvancesPerFrame && remainingDistance > 0f; i++)
+            var state = new InfantryPathState
             {
-                if ((uint)follow.PathIndex >= (uint)range.Length)
-                    return;
-
-                int poolIndex = range.Start + follow.PathIndex;
-                if ((uint)poolIndex >= (uint)Pool.Length)
-                    return;
-
-                int2 targetCell = Pool[poolIndex];
-                bool finalPathStep = follow.PathIndex >= (range.Length - 1);
+                X = transform.Position.x, Y = transform.Position.y, Z = transform.Position.z,
+                CellX = unitGrid.Cell.x, CellZ = unitGrid.Cell.y, PathIndex = follow.PathIndex,
+                RemainingDistance = GridPathMovementKernel.BeginInfantryDistance(speed, DeltaTime)
+            };
+            for (int i = 0; i < GridPathMovementKernel.InfantryMaxWaypointAdvancesPerFrame && state.RemainingDistance > 0f; i++)
+            {
+                if ((uint)state.PathIndex >= (uint)range.Length) return;
+                int poolIndex = range.Start + state.PathIndex;
+                if ((uint)poolIndex >= (uint)Pool.Length) return;
                 int finalPoolIndex = range.Start + range.Length - 1;
-                if ((uint)finalPoolIndex >= (uint)Pool.Length)
-                    return;
-
-                int2 finalCell = Pool[finalPoolIndex];
-                float3 finalTargetPos = GridUtils.CellToWorldCenter(Grid, finalCell);
-                finalTargetPos.y = transform.Position.y;
-                float3 toFinalTarget = finalTargetPos - transform.Position;
-                toFinalTarget.y = 0f;
-
-                if (groupedManualMove && finalPathStep && math.lengthsq(toFinalTarget) <= groupedFinalStopDistSq)
+                if ((uint)finalPoolIndex >= (uint)Pool.Length) return;
+                int2 targetCell = Pool[poolIndex];
+                float3 targetPos = GridUtils.CellToWorldCenter(Grid, targetCell);
+                float3 finalTargetPos = GridUtils.CellToWorldCenter(Grid, Pool[finalPoolIndex]);
+                var result = GridPathMovementKernel.StepInfantryWaypoint(state, new InfantryWaypointInput
                 {
-                    follow.PathIndex = range.Length;
+                    PathLength = range.Length, PoolIndexValid = true, FinalPoolIndexValid = true,
+                    TargetCellX = targetCell.x, TargetCellZ = targetCell.y,
+                    TargetX = targetPos.x, TargetZ = targetPos.z,
+                    FinalTargetX = finalTargetPos.x, FinalTargetZ = finalTargetPos.z,
+                    ArriveDistance = move.ArriveDistance, CellSize = Grid.CellSize, GroupedManualMove = groupedManualMove
+                });
+                state = result.State;
+                transform.Position = new float3(state.X, state.Y, state.Z);
+                unitGrid.Cell = new int2(state.CellX, state.CellZ);
+                follow.PathIndex = state.PathIndex;
+                if (result.WriteFacing)
+                    transform.Rotation = quaternion.LookRotationSafe(new float3(result.DirectionX, result.DirectionY, result.DirectionZ), math.up());
+                if (result.SettleCurrentCell)
+                {
                     int2 settledCell = GridUtils.WorldToCell(Grid, transform.Position);
                     if (GridUtils.InBounds(settledCell, Grid.Width, Grid.Height) && !settledCell.Equals(unitGrid.Cell))
                         unitGrid.Cell = settledCell;
-                    return;
                 }
-
-                float3 targetPos = GridUtils.CellToWorldCenter(Grid, targetCell);
-                targetPos.y = transform.Position.y;
-                float3 toTarget = targetPos - transform.Position;
-                toTarget.y = 0f;
-                float distSq = math.lengthsq(toTarget);
-                if (distSq <= arriveDistSq)
-                {
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                float dist = math.sqrt(distSq);
-                if (dist <= 0.0001f)
-                {
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                float3 dir = toTarget / dist;
-                if (remainingDistance >= dist)
-                {
-                    transform.Position = targetPos;
-                    transform.Rotation = quaternion.LookRotationSafe(dir, math.up());
-                    remainingDistance -= dist;
-                    unitGrid.Cell = targetCell;
-                    follow.PathIndex++;
-                    continue;
-                }
-
-                transform.Position += dir * remainingDistance;
-                transform.Rotation = quaternion.LookRotationSafe(dir, math.up());
-                remainingDistance = 0f;
+                if (result.Action == InfantryWaypointAction.Stop || result.Action == InfantryWaypointAction.GroupedStop) return;
             }
         }
 
         internal static bool ShouldBlockPathCell(bool campaignGuidedMove, bool cellBlocked) =>
-            !campaignGuidedMove && cellBlocked;
+            GridPathMovementKernel.ShouldBlockPathCell(campaignGuidedMove, cellBlocked);
 
         private void RequestRepath(int sortKey, Entity entity)
         {
             bool hasLongDistanceMove = LongDistanceMoveLookup.HasComponent(entity);
-            if (!hasLongDistanceMove && !UnitTargetLookup.HasComponent(entity))
-                return;
-
-            int2 goal = hasLongDistanceMove
-                ? LongDistanceMoveLookup[entity].FinalGoal
-                : UnitTargetLookup[entity].Cell;
+            bool hasTarget = UnitTargetLookup.HasComponent(entity);
+            var intent = InfantryPathLifecycleKernel.Repath(hasLongDistanceMove,
+                hasLongDistanceMove ? Cell(LongDistanceMoveLookup[entity].FinalGoal) : default,
+                hasTarget, !hasLongDistanceMove && hasTarget ? Cell(UnitTargetLookup[entity].Cell) : default);
+            if (!intent.Requested) return;
             Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
             Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-            Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = goal });
+            Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = IntCell(intent.Goal) });
+        }
+
+        private static PlacementCell Cell(int2 value) => new PlacementCell(value.x, value.y);
+        private static int2 IntCell(PlacementCell value) => new int2(value.x, value.y);
+        private static PlacementIdentity Identity(Entity value) => new PlacementIdentity(value.Index, value.Version);
+
+        private struct InfantryContext : IInfantryPathContext
+        {
+            public UnitGridMoveJob Job;
+            public int Width => Job.Grid.Width;
+            public int Height => Job.Grid.Height;
+            public int PoolLength => Job.Pool.Length;
+            public bool HasDynamicBlocked => Job.DynamicBlocked.IsCreated;
+            public bool HasOccupied => Job.Occupied.IsCreated;
+            public bool HasFriendlyPass => Job.FriendlyPassFactionIds.IsCreated;
+            public int FriendlyPassLength => Job.FriendlyPassFactionIds.Length;
+            public int UnitCount => Job.LiveUnitEntities.Length;
+            public int ManualGroupCount => UnitCount;
+            public byte Walkable(int index) => Job.Walkable[index].Value;
+            public bool DynamicBlocked(int index) => Job.DynamicBlocked.IsSet(index);
+            public bool Occupied(int index) => Job.Occupied.IsSet(index);
+            public byte FriendlyPass(int index) => Job.FriendlyPassFactionIds[index];
+            public PlacementIdentity UnitEntity(int index) => Identity(Job.LiveUnitEntities[index]);
+            public PlacementCell UnitCell(int index) => Cell(Job.LiveUnitGrids[index].Cell);
+            public PlacementCell UnitSize(int index) => Cell(Job.LiveUnitFootprints[index].Size);
+            public byte ManualGroup(int index) => Job.ManualMoveGroupLookup.HasComponent(Job.LiveUnitEntities[index]) ? (byte)1 : (byte)0;
+            public PlacementCell PathCell(int index) => Cell(Job.Pool[index]);
+            public PlacementCell WorldToCell(float x, float y, float z) => Cell(GridUtils.WorldToCell(Job.Grid, new float3(x,y,z)));
+            public void CellToWorld(PlacementCell cell, out float x, out float z)
+            { var point = GridUtils.CellToWorldCenter(Job.Grid, IntCell(cell)); x = point.x; z = point.z; }
+            public byte Sidewalk(int index) => Job.Sidewalks[index].Value;
+            public bool BoardingTransportOccupies(PlacementIdentity passenger, int cellIndex) =>
+                Job.IsBoardingTransportOccupancyCell(new Entity { Index = passenger.Index, Version = passenger.Version }, cellIndex);
+        }
+
+        private void MoveSharedInfantry(int sortKey, Entity entity, ref LocalTransform transform,
+            ref UnitGrid unitGrid, ref UnitPathFollow follow, ref UnitVehicleKinematics kinematics,
+            in UnitMove move, in UnitPathRange range, in UnitFootprint footprint, in Faction faction)
+        {
+            var context = new InfantryContext { Job = this };
+            var state = new InfantryPathLifecycleState
+            {
+                Path = new InfantryPathState { X = transform.Position.x, Y = transform.Position.y, Z = transform.Position.z,
+                    CellX = unitGrid.Cell.x, CellZ = unitGrid.Cell.y, PathIndex = follow.PathIndex },
+                CurrentSpeed = kinematics.CurrentSpeed, StallSeconds = kinematics.StallSeconds
+            };
+            var result = InfantryPathLifecycleKernel.Step(ref context, new InfantryPathLifecycleInput
+            {
+                Entity = Identity(entity), Footprint = Cell(footprint.Size), PathStart = range.Start, PathLength = range.Length,
+                Faction = faction.Id, DeltaTime = DeltaTime, CellSize = Grid.CellSize, Speed = move.Speed,
+                WalkSpeed = move.WalkSpeed, RoadSpeedMultiplier = move.RoadSpeedMultiplier, ArriveDistance = move.ArriveDistance,
+                AutoWander = AutoWanderLookup.HasComponent(entity), CampaignGuided = CampaignGuidedMoveLookup.HasComponent(entity),
+                ManualGroupMember = ManualMoveGroupLookup.HasComponent(entity), HasBoardingTarget = BoardingTargetLookup.HasComponent(entity)
+            }, ref state);
+            transform.Position = new float3(state.Path.X, state.Path.Y, state.Path.Z);
+            unitGrid.Cell = new int2(state.Path.CellX, state.Path.CellZ);
+            follow.PathIndex = state.Path.PathIndex;
+            kinematics.CurrentSpeed = state.CurrentSpeed; kinematics.StallSeconds = state.StallSeconds;
+            if (result.WriteFacing)
+                transform.Rotation = quaternion.LookRotationSafe(new float3(result.DirectionX, result.DirectionY, result.DirectionZ), math.up());
+            if (result.RequestRepath) RequestRepath(sortKey, entity);
         }
 
         private bool IsVehicleSoftOccupiedTarget(int cellIndex)
@@ -435,21 +494,8 @@ namespace Game.Runtime
 
         private bool IsOnlySelfOccupyingCell(Entity entity, int cellIndex)
         {
-            int2 cell = GridUtils.IndexToCell(cellIndex, Grid.Width);
-            bool foundSelf = false;
-            for (int i = 0; i < LiveUnitEntities.Length; i++)
-            {
-                int2 otherSize = LiveUnitFootprints[i].Size;
-                if (!UnitFootprintUtility.ContainsCell(LiveUnitGrids[i].Cell, otherSize, cell))
-                    continue;
-
-                if (LiveUnitEntities[i] != entity)
-                    return false;
-
-                foundSelf = true;
-            }
-
-            return foundSelf;
+            var context = new InfantryContext { Job = this };
+            return InfantryPathLifecycleKernel.IsOnlySelfOccupyingCell(ref context, Identity(entity), cellIndex);
         }
 
         private bool CanVehicleOccupyCell(Entity entity, int2 candidateCell, int2 candidateSize, int2 currentCell, byte factionId, int sortKey)
@@ -612,9 +658,14 @@ namespace Game.Runtime
     }
 
     [BurstCompile]
-    [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(UnitAirMovement))]
+    [WithNone(typeof(EngageTarget), typeof(UnitDeathAnimationComponent), typeof(VehicleWreckComponent), typeof(UnitAirMovement))]
     public partial struct UnitPathFollowCleanupJob : IJobEntity
     {
+#if UNITY_EDITOR
+        [Unity.Collections.LowLevel.Unsafe.NativeDisableContainerSafetyRestriction]
+        [Unity.Collections.NativeDisableParallelForRestriction]
+        internal NativeArray<S002PhysicalStartupObservation.ForwardCleanupStep> ForwardTrace;
+#endif
         public EntityCommandBuffer.ParallelWriter Ecb;
         [ReadOnly] public ComponentLookup<UnitGrid> UnitGridLookup;
         [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
@@ -623,40 +674,39 @@ namespace Game.Runtime
 
         public void Execute([EntityIndexInQuery] int sortKey, Entity entity, ref UnitVehicleKinematics vehicleKinematics, in UnitPathFollow follow, in UnitPathRange range)
         {
-            if (range.Length <= 0 || (uint)follow.PathIndex >= (uint)range.Length)
+#if UNITY_EDITOR
+            if (ForwardTrace.IsCreated && (uint)sortKey < (uint)ForwardTrace.Length)
+                ForwardTrace[sortKey] = new S002PhysicalStartupObservation.ForwardCleanupStep
+                    { Seen = 1, Entity = entity, QueryIndex = sortKey };
+#endif
+            bool hasLongDistance = LongDistanceMoveLookup.HasComponent(entity);
+            bool hasGrid = UnitGridLookup.HasComponent(entity);
+            var longMove = hasLongDistance ? LongDistanceMoveLookup[entity] : default;
+            var current = hasGrid ? UnitGridLookup[entity].Cell : default;
+            var intent = InfantryPathLifecycleKernel.Complete(range.Length, follow.PathIndex,
+                CampaignGuidedMoveLookup.HasComponent(entity), hasLongDistance, hasGrid,
+                new PlacementCell(current.x,current.y), new PlacementCell(longMove.FinalGoal.x,longMove.FinalGoal.y),
+                longMove.ManualMove, ManualMoveLookup.HasComponent(entity));
+            if (!intent.Complete) return;
+            vehicleKinematics.CurrentSpeed = 0f;
+            vehicleKinematics.StallSeconds = 0f;
+            Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
+            Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
+            Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
+            if (intent.RemoveGuided) Ecb.RemoveComponent<CampaignMissionGuidedMoveInProgressTag>(sortKey, entity);
+            if (intent.ContinueLongDistance)
             {
-                vehicleKinematics.CurrentSpeed = 0f;
-                vehicleKinematics.StallSeconds = 0f;
-                Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
-                Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
-                Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey, entity);
-                if (CampaignGuidedMoveLookup.HasComponent(entity))
-                    Ecb.RemoveComponent<CampaignMissionGuidedMoveInProgressTag>(sortKey, entity);
-
-                if (LongDistanceMoveLookup.HasComponent(entity) && UnitGridLookup.HasComponent(entity))
-                {
-                    int2 currentCell = UnitGridLookup[entity].Cell;
-                    UnitLongDistanceMove longDistanceMove = LongDistanceMoveLookup[entity];
-                    int2 finalGoal = longDistanceMove.FinalGoal;
-                    if (!currentCell.Equals(finalGoal))
-                    {
-                        Ecb.RemoveComponent<UnitTarget>(sortKey, entity);
-                        Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = finalGoal });
-                        Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = finalGoal });
-                        bool hasManualMove = ManualMoveLookup.HasComponent(entity);
-                        if (longDistanceMove.ManualMove != 0 && !hasManualMove)
-                            Ecb.AddComponent<ManualMoveOrderTag>(sortKey, entity);
-                        else if (longDistanceMove.ManualMove == 0 && hasManualMove)
-                            Ecb.RemoveComponent<ManualMoveOrderTag>(sortKey, entity);
-                        return;
-                    }
-
-                    Ecb.RemoveComponent<UnitLongDistanceMove>(sortKey, entity);
-                }
-
-                Ecb.RemoveComponent<ManualMoveOrderTag>(sortKey, entity);
+                var goal = new int2(intent.Goal.x, intent.Goal.y);
                 Ecb.RemoveComponent<UnitTarget>(sortKey, entity);
+                Ecb.AddComponent(sortKey, entity, new UnitTarget { Cell = goal });
+                Ecb.AddComponent(sortKey, entity, new UnitPathRequest { Goal = goal });
+                if (intent.AddManual) Ecb.AddComponent<ManualMoveOrderTag>(sortKey, entity);
+                else if (intent.RemoveManual) Ecb.RemoveComponent<ManualMoveOrderTag>(sortKey, entity);
+                return;
             }
+            if (intent.RemoveLongDistance) Ecb.RemoveComponent<UnitLongDistanceMove>(sortKey, entity);
+            Ecb.RemoveComponent<ManualMoveOrderTag>(sortKey, entity);
+            Ecb.RemoveComponent<UnitTarget>(sortKey, entity);
         }
 
     }
@@ -716,9 +766,10 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             // Paused updates must not change facing, path state, or vehicle kinematics.
+            // Keep the native short circuit: a zero-delta tick never queries gameplay.
             if (SystemAPI.Time.DeltaTime <= 0f ||
-                (SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
-                 gameplay.SimulationActive == 0))
+                !WorldSchedulingKernel.ShouldRunGridMovement(SystemAPI.Time.DeltaTime,
+                    SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay), gameplay.SimulationActive))
                 return;
 
             double startTime = Time.realtimeSinceStartupAsDouble;
@@ -749,8 +800,20 @@ namespace Game.Runtime
                 var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
                 var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
+#if UNITY_EDITOR
+                var forwardTrace = S002PhysicalStartupObservation.BeginGridInterval != null
+                    ? S002PhysicalStartupObservation.BeginGridInterval(state.EntityManager, SystemAPI.Time.DeltaTime,
+                        new S002PhysicalStartupObservation.ForwardGridFacts { Grid = grid, Pool = poolArray,
+                            Walkable = walkable, DynamicBlocked = dynamicBlocked, FriendlyPass = friendlyPassFactionIds,
+                            Occupied = occupied, Roads = roads, Sidewalks = sidewalks, DirtRoads = dirtRoads,
+                            LiveEntities = liveUnitEntities.AsArray(), LiveGrids = liveUnitGrids.AsArray(), LiveFootprints = liveUnitFootprints.AsArray() })
+                    : default;
+#endif
                 var moveHandle = new UnitGridMoveJob
                 {
+#if UNITY_EDITOR
+                    ForwardTrace = forwardTrace.Movement,
+#endif
                     DeltaTime = SystemAPI.Time.DeltaTime,
                     Grid = grid,
                     Ecb = ecb,
@@ -776,6 +839,9 @@ namespace Game.Runtime
 
                 var cleanupHandle = new UnitPathFollowCleanupJob
                 {
+#if UNITY_EDITOR
+                    ForwardTrace = forwardTrace.Cleanup,
+#endif
                     Ecb = ecb,
                     UnitGridLookup = SystemAPI.GetComponentLookup<UnitGrid>(true),
                     LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),

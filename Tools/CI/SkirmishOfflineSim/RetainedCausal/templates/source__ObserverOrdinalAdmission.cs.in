@@ -1,0 +1,15 @@
+using System;
+namespace Game.Runtime {
+// Immutable typed authority. Raw schema, source pins, actual-clock provenance and
+// full native event-domain/budget proof remain mandatory canonical-host admission.
+// Work, event IDs and provider row counts are deliberately separate domains.
+internal sealed class ObserverOrdinalAdmission {
+ internal int Version{get;}internal long MaxExclusive{get;}internal bool IsCanonicalV8{get;}
+ ObserverOrdinalAdmission(int version,long maxExclusive,bool canonical){Version=version;MaxExclusive=maxExclusive;IsCanonicalV8=canonical;}
+ internal static ObserverOrdinalAdmission Legacy4096()=>new ObserverOrdinalAdmission(7,4096,false);
+ internal static ObserverOrdinalAdmission TrustedCanonicalV8(int version,long maxExclusive,bool canonicalAdmissionVerified){
+ if(version!=8||maxExclusive!=131072||!canonicalAdmissionVerified)throw new NotSupportedException("Exact admitted canonical V8 event domain version8/maxExclusive131072 required");return new ObserverOrdinalAdmission(version,maxExclusive,true);
+ }
+ internal bool Contains(long ordinal)=>ordinal>=0&&ordinal<MaxExclusive;
+}
+}

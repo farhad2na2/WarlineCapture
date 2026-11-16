@@ -61,15 +61,13 @@ namespace Game.Runtime
 
         public bool IsCompleteFor(MapBuildingPlacementConfig config, Transform authoringRoot)
         {
-            if (config == null || !config.SpawnOnMatchStart)
-                return true;
-
-            bool authoringHidden =
-                !config.HideAuthoringVisualsAfterSpawn ||
-                authoringRoot == null ||
-                _authoringHidden ||
-                !authoringRoot.gameObject.activeInHierarchy;
-            return _queued && authoringHidden;
+            return GameplayStartCompletionPredicate.MapPlacementOwnerComplete(
+                config == null || !config.SpawnOnMatchStart,
+                config != null && config.HideAuthoringVisualsAfterSpawn,
+                authoringRoot != null,
+                _authoringHidden,
+                authoringRoot != null && !authoringRoot.gameObject.activeInHierarchy,
+                _queued);
         }
 
         public void Update(Context context)

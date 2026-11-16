@@ -3,6 +3,7 @@ using System;
 using Game.UI.Contracts;
 using Game.UI.Shell.Ecs;
 using Game.UI.Shell.Contracts.Ecs;
+using Game.Simulation;
 namespace Game.Editor
 {
     public static class AriaSkirmishPlanValidation
@@ -82,6 +83,51 @@ namespace Game.Editor
             Reset();t.Phase=AriaPlayPhase.Manual;Step();
             Check(p.PrecisionStage==0,"Manual does not start precision");
             UnityEngine.Debug.Log($"[PublicPrecisionAttackControls] result=Passed checks={checks} nativeBehaviorProved=0 missionReady=0");
+        }
+
+        private static int RunBurstCompatibilityControls()
+        {
+            int checks=0;
+            void Check(bool valid,string name){if(!valid)throw new InvalidOperationException(name);checks++;}
+            Check(Unity.Collections.LowLevel.Unsafe.UnsafeUtility.IsUnmanaged<AriaS002Observation>(),
+                "S002 policy observation remains unmanaged for Burst");
+            var history=new AriaS002GroupHistory();
+            for(uint i=1;i<=AriaS002GroupHistory.Maximum;i++)
+                Check(history.TryAdd(i),"fixed history accepts every in-capacity item");
+            Check(history.Length==AriaS002GroupHistory.Maximum&&
+                !history.TryAdd(999)&&history.Length==AriaS002GroupHistory.Maximum,
+                "fixed history rejects overflow without changing prior entries");
+            Check(history.TryGet(0,out var first)&&first==1&&
+                history.TryGet(history.Length-1,out var last)&&last==AriaS002GroupHistory.Maximum&&
+                !history.TryGet(history.Length,out _),"fixed history bounds are explicit and nonthrowing");
+
+            var rejected=new AriaS002Observation{Scope=AriaS002Scope.None,SourceScenarioIndex=4,
+                ExpandedSession=true,ExpandedBaseAssault=true};
+            var plan=new AriaS002PlanState{Intent=AriaS002Intent.Advance,Slot=2};
+            var touch=new AriaS002ContactState{Phase=AriaS002ContactPhase.Observing,Actions=3};
+            Check(!AriaS002Policy.TryStep(rejected,ref plan,ref touch,out var noDecision)&&
+                noDecision.Kind==default&&plan.Intent==AriaS002Intent.Advance&&plan.Slot==2&&
+                touch.Phase==AriaS002ContactPhase.Observing&&touch.Actions==3,
+                "unadmitted S002 scope rejects without mutating state");
+            bool explicitScopeException=false;
+            try{AriaS002Policy.Step(rejected,ref plan,ref touch,out _);}
+            catch(ArgumentException ex) when(ex.Message=="Explicit source observation scope required")
+            {explicitScopeException=true;}
+            Check(explicitScopeException,"managed policy preserves explicit-scope exception contract");
+            var wrongProfile=rejected;wrongProfile.Scope=AriaS002Scope.NativeRendered;
+            wrongProfile.SourceScenarioIndex=3;
+            bool profileException=false;
+            try{AriaS002Policy.Step(wrongProfile,ref plan,ref touch,out _);}
+            catch(NotSupportedException ex) when(ex.Message=="Only current source S002 ground BaseAssault data profile")
+            {profileException=true;}
+            Check(profileException,"managed policy preserves unsupported-profile exception contract");
+
+            var admitted=new AriaS002Observation{Scope=AriaS002Scope.NativeRendered,SourceScenarioIndex=4,
+                ExpandedSession=true,ExpandedBaseAssault=true,Finished=true};
+            Check(AriaS002Policy.TryStep(admitted,ref plan,ref touch,out var finished)&&
+                finished.Kind==AriaS002DecisionKind.Finished&&plan.Intent==AriaS002Intent.Handback,
+                "admitted S002 policy returns its ordinary finished decision through status API");
+            return checks;
         }
 
         public static void RunPublicAssaultFocusValidation()
@@ -274,6 +320,215 @@ namespace Game.Editor
             Step(110, 127.9f);
             Check(touch.LastObjectiveProgressAt == 110 && plan.AssaultIssued == 1,
                 "existing completed-sweep eligibility works even on a page with no current assault mask");
+
+            void PartialPage()
+            {
+                Reset(31);
+                view.ExpandedPageIndex = 2;
+                view.ExpandedPageCount = 5;
+                view.ExpandedTotalGroups = 21;
+                view.ExpandedAssaultMask = 31;
+                view.ExpandedSelectedMask = 31;
+                view.ExpandedSelectedGroups = 5;
+                view.AssaultDistanceVisible = false;
+                plan.AssaultPageSeen = 3;
+                plan.PagesOrdered = 3;
+                plan.StructureOrdered = 0;
+            }
+            void MapStep(float time, bool open, bool distanceVisible, float distance)
+            {
+                view.Time = time;
+                view.Frame++;
+                view.MapOpen = open;
+                view.AssaultDistanceVisible = distanceVisible;
+                view.NearestFriendlyObjectiveDistance = distance;
+                view.AssaultMap = new AriaAssaultMapObservation {
+                    Identity = open ? 22 : 11, ExpectedIdentity = true, Complete = true,
+                    ProjectionValid = true, FullMap = open,
+                    MarkerRevision = (uint)view.Frame, MarkerFrame = view.Frame,
+                    MarkerTime = time, ObjectiveHudIdentity = 77,
+                    ObjectiveWorld = UnityEngine.Vector3.zero,
+                    OpenMap = new AriaTouchTarget { Available = !open, Id = -20010 }
+                };
+                view.CloseMap = new AriaTouchTarget { Available = open, Id = -20012 };
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            }
+            PartialPage(); MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010 &&
+                plan.AssaultIssued == 0 && plan.PagesOrdered == 3,
+                "accepted same-roster five-page partial sweep can request normal map inspection");
+            NoProgress("normal map request is not objective progress");
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(111, true, false, 0);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectMapIdentity == 22,
+                "partial inspection retains owned open across later frames");
+            MapStep(112, true, true, 178.4f);
+            Check(plan.AssaultDistanceObserved == 1 && plan.BestAssaultDistance == 178.4f &&
+                output.TargetId == -20012,
+                "fresh actually presented full-map sample sets baseline and uses normal close");
+            NoProgress("first full-map sample and normal close request earn no credit");
+            touch.Actions++;
+            touch.TargetId = -20012;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(113, false, false, 0);
+            Check(plan.AssaultInspectStage == 0 && plan.AssaultInspectReadyAt == 125,
+                "actual normal close clears the operation and starts existing cooldown");
+            MapStep(124, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "cooldown cannot reopen early");
+            NoProgress("close and cooldown earn no objective progress");
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(125, false, false, 0);
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010,
+                "later missing compact contacts request a second owned normal open");
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(126, true, false, 0);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectOpenedFrame == view.Frame,
+                "second actual open establishes its own new marker boundary");
+            MapStep(127, true, true, 175.9f);
+            Check(plan.LastProgressAt == 127 && touch.LastObjectiveProgressAt == 127 &&
+                plan.AssaultIssued == 0 && plan.PagesOrdered == 3 && output.TargetId == -20012,
+                "only second genuinely closer presented sample renews progress and normally closes");
+            PartialPage(); MapStep(110, false, false, 0);
+            touch.Actions++;
+            touch.TargetId = -20010;
+            touch.Phase = AriaPlayPhase.Observing;
+            MapStep(111, true, false, 0);
+            view.ExpandedAssaultMask = 0;
+            MapStep(112, true, false, 0);
+            Check(plan.AssaultInspectStage == 3 && output.TargetId == -20012 &&
+                plan.AssaultDistanceObserved == 0,
+                "loss of accepted masks during an owned open requests close without progress");
+            NoProgress("suppressed or lost page projection earns no baseline or progress");
+            PartialPage(); view.ExpandedAttackOrderMask = 15;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "partially accepted page cannot interrupt selection");
+            PartialPage(); view.ExpandedRosterRevision++;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "changed roster cannot borrow accepted-page inspection");
+            PartialPage(); view.AttackMode = true;
+            MapStep(110, false, false, 0);
+            Check(plan.AssaultInspectStage == 0, "armed command mode cannot be interrupted by inspection");
+            PartialPage();
+            plan.LastProgressAt = 62.142464f;
+            touch.LastProgressAt = 62.142464f;
+            touch.LastObjectiveProgressAt = 62.142464f;
+            MapStep(239.547409f, false, false, 0);
+            Check(touch.Phase != AriaPlayPhase.Blocked && plan.LastProgressAt == 62.142464f,
+                "captured prior177.405seconds remains below the unchanged watchdog");
+            MapStep(242.241562f, false, false, 0);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0 &&
+                plan.LastProgressAt == 62.142464f && touch.LastObjectiveProgressAt == 62.142464f,
+                "exact captured FA180.099seconds boundary still blocks without real progress");
+            PartialPage();
+            MapStep(281, false, false, 0);
+            Check(touch.Phase == AriaPlayPhase.Blocked && touch.GestureRequested == 0 &&
+                plan.LastProgressAt == 100 && touch.LastObjectiveProgressAt == 100,
+                "five-page acceptance and map availability do not weaken180second watchdog");
+
+            // Actual Plan -> Decision ordering, with the completed-input receipt shape
+            // sampled at EN64776 input line77. DueAt/Pressed/GestureRequested are not
+            // traced: fixture values follow AriaPlayInputSystem's completed-touch API.
+            void CompletedPage()
+            {
+                PartialPage();
+                view.Frame = 445;
+                plan.AssaultSelecting = 2;
+                plan.SelectionResetPage = 2;
+                touch.Phase = AriaPlayPhase.Verifying;
+                touch.Actions = 43;
+                touch.TargetId = 1073741835;
+                touch.LastCompletedTargetId = 1073741835;
+                touch.LastCompletedFrame = 445;
+                touch.DueAt = 123.15753f; // fixture: completion122.50753 + existing .65s cooldown
+                touch.Pressed = 0;
+                touch.GestureRequested = 0;
+                touch.GoalId = 10000;
+                touch.ObjectiveWatchdogInitialized = 1;
+                touch.VisitedGoalMask = 1UL << (10000 & 63);
+            }
+            void Pipeline(float time, bool open = false, bool visible = false, float distance = 0)
+            {
+                MapStep(time, open, visible, distance);
+                AriaPlayDecisionSystem.Step(output, ref touch);
+            }
+            void RefuseCompletedBoundary(string name, Action change)
+            {
+                CompletedPage(); change(); Pipeline(123.3f);
+                Check(plan.AssaultInspectStage == 0, name);
+            }
+            RefuseCompletedBoundary("aiming remains owned by the current target", () => touch.Phase = AriaPlayPhase.Aiming);
+            RefuseCompletedBoundary("touching cannot be interrupted", () => touch.Phase = AriaPlayPhase.Touching);
+            RefuseCompletedBoundary("pressed completed-looking receipt refuses inspection", () => touch.Pressed = 1);
+            RefuseCompletedBoundary("pending gesture refuses inspection", () => touch.GestureRequested = 1);
+            RefuseCompletedBoundary("no completed action refuses inspection", () => touch.Actions = 0);
+            RefuseCompletedBoundary("wrong completed target refuses inspection", () => touch.LastCompletedTargetId--);
+            RefuseCompletedBoundary("missing completion frame refuses inspection", () => touch.LastCompletedFrame = 0);
+            RefuseCompletedBoundary("same-frame completion waits for a later planner frame", () => touch.LastCompletedFrame = 446);
+            RefuseCompletedBoundary("future completion frame refuses inspection", () => touch.LastCompletedFrame = 447);
+            RefuseCompletedBoundary("completed touch cooldown is preserved", () => touch.DueAt = 123.4f);
+            RefuseCompletedBoundary("incomplete page acknowledgement refuses inspection", () => view.ExpandedAttackOrderMask = 15);
+            RefuseCompletedBoundary("inspection cooldown still refuses early restart", () => plan.AssaultInspectReadyAt = 123.4f);
+            RefuseCompletedBoundary("foreign command presentation still refuses inspection", () => view.AttackMode = true);
+
+            CompletedPage();
+            Pipeline(123.3f);
+            // This is the red assertion on the unchanged R8 planner: it excludes
+            // Verifying and Decision immediately resumes an ordinary card/page aim.
+            Check(plan.AssaultInspectStage == 1 && output.TargetId == -20010 &&
+                touch.TargetId == -20010 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.GestureRequested == 0 && touch.DueAt == 123.3f + .9f,
+                "completed Verifying Plan->Decision must normally aim the owned map open");
+            Check(touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100 &&
+                plan.PagesOrdered == 3 && plan.AssaultIssued == 0,
+                "inspection entry neither renews objective progress nor finishes pending pages");
+            Pipeline(124.3f);
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1 &&
+                touch.TargetId == -20010, "normal Decision delay must submit the map gesture");
+            // Explicit input-owner completion fixture, not a hardware-input claim.
+            void CompleteRequestedGesture(float time)
+            {
+                Check(touch.Phase == AriaPlayPhase.Touching && touch.GestureRequested == 1,
+                    "fixture only acknowledges a real Decision gesture request");
+                touch.GestureRequested = 0;
+                touch.Pressed = 0;
+                touch.Actions++;
+                touch.LastCompletedTargetId = touch.TargetId;
+                touch.LastCompletedFrame = view.Frame;
+                touch.Phase = AriaPlayPhase.Verifying;
+                touch.DueAt = time + .65f;
+            }
+            CompleteRequestedGesture(124.3f);
+            Pipeline(125.1f, true);
+            Check(plan.AssaultInspectStage == 2 && plan.AssaultInspectOpenedFrame == view.Frame &&
+                plan.AssaultDistanceObserved == 0,
+                "actual open acknowledgement waits for a later rendered marker");
+            Pipeline(125.2f, true, true, 178.4f);
+            Check(plan.AssaultInspectStage == 3 && plan.AssaultDistanceObserved == 1 &&
+                output.TargetId == -20012 && touch.Phase == AriaPlayPhase.Aiming &&
+                touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100,
+                "fresh marker establishes baseline and normally aims close without progress credit");
+            Pipeline(126.2f, true, true, 178.4f);
+            Check(touch.Phase == AriaPlayPhase.Touching && touch.TargetId == -20012 &&
+                touch.GestureRequested == 1, "normal Decision delay must submit close gesture");
+            CompleteRequestedGesture(126.2f);
+            Pipeline(126.3f);
+            Check(plan.AssaultInspectStage == 0 && plan.AssaultInspectReadyAt == 126.3f + 12 &&
+                touch.LastObjectiveProgressAt == 100 && plan.LastProgressAt == 100,
+                "acknowledged normal close retains watchdog and existing inspection cooldown");
+            view.ExpandedSelectedGroups = 0;
+            view.ExpandedSelectedMask = 0;
+            view.SelectedCount = 0;
+            view.SelectionVisible = false;
+            view.NextSquadPage = new AriaTouchTarget { Available = true, Id = -268468306 };
+            Pipeline(127);
+            Check(output.TargetId == -268468306 && touch.TargetId == -268468306 &&
+                touch.Phase == AriaPlayPhase.Aiming && plan.PagesOrdered == 3 &&
+                plan.AssaultIssued == 0 && touch.LastObjectiveProgressAt == 100,
+                "after close normal pending-page input resumes without sweep or progress credit");
             return checks;
         }
 
@@ -766,6 +1021,7 @@ namespace Game.Editor
                     "unselected in-flight assault observes battle instead of exhausting Hold retries");
             }
             checks += RunPublicApproachProgressControls();
+            checks += RunBurstCompatibilityControls();
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

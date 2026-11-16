@@ -1,12 +1,12 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Game.Components;
+using Game.Runtime.Spawning;
 
 namespace Game.Runtime
 {
     public readonly struct MapSurfaceSpawnGrounding
     {
-        private const float MaxInfantrySupportLift = 1.5f;
 
         public bool TryGroundCellCenter(
             EntityManager entityManager,
@@ -24,8 +24,7 @@ namespace Game.Runtime
             }
 
             if (TryGetHighestInfantrySupport(surface, cell, sample, out MapSurfaceSample supportSample) &&
-                supportSample.Height > sample.Height &&
-                supportSample.Height - sample.Height <= MaxInfantrySupportLift)
+                SpawnGroundingKernel.ShouldLiftToSupport(sample.Height, supportSample.Height))
             {
                 sample = supportSample;
             }
@@ -39,14 +38,14 @@ namespace Game.Runtime
                 for(int i=0;i<overlays.Length;i++)
                 {
                     var overlay=overlays[i];
-                    if((overlay.MovementMask & MapSurfaceMovementMask.AllGroundUnits)==0 ||
-                        !MapSurfaceSceneOverlaySampling.TrySample(overlay,worldPosition,triangles,instances,out float height,out float3 normal) || height<=bestHeight)continue;
-                    bestHeight=height;sample.Height=height;sample.Normal=normal;
+                    if(!SpawnGroundingKernel.CanSampleOverlay((ushort)overlay.MovementMask) ||
+                        !MapSurfaceSceneOverlaySampling.TrySample(overlay,worldPosition,triangles,instances,out float height,out float3 normal) || !SpawnGroundingKernel.AcceptOverlayHeight(height,ref bestHeight))continue;
+                    sample.Height=height;sample.Normal=normal;
                     sample.LayerId=overlay.LayerId;sample.SurfaceType=overlay.SurfaceType;
                     sample.Flags=overlay.Flags;sample.MovementMask=overlay.MovementMask;
                 }
             }
-            worldPosition.y = sample.Height + groundOffset;
+            worldPosition.y = SpawnGroundingKernel.FinalHeight(sample.Height, groundOffset);
             return true;
         }
 
@@ -96,51 +95,21 @@ namespace Game.Runtime
             MapSurfaceSample anchor,
             out MapSurfaceSample supportSample)
         {
-            supportSample = anchor;
-            bool found = false;
-            float bestHeight = anchor.Height;
+            var context = new SupportSamples { Surface = surface };
+            return SpawnGroundingKernel.TryGetHighestInfantrySupport<SupportSamples, MapSurfaceSample>(
+                ref context, centerCell.x, centerCell.y, anchor, out supportSample);
+        }
 
-            for (int y = -1; y <= 1; y++)
+        private struct SupportSamples : ISpawnGroundingSamples<MapSurfaceSample>
+        {
+            public MapSurfaceComponent Surface;
+            public bool TryGetSample(int x, int z, out MapSurfaceSample sample)
+                => new MapSurfaceSpawnGrounding().TryGetSample(Surface, new int2(x, z), out sample);
+            public SpawnGroundingFacts Facts(MapSurfaceSample sample) => new SpawnGroundingFacts
             {
-                for (int x = -1; x <= 1; x++)
-                {
-                    int2 cell = centerCell + new int2(x, y);
-                    if (!TryGetSample(surface, cell, out MapSurfaceSample candidate))
-                        continue;
-                    if (!CanUseInfantrySupportSample(anchor, candidate))
-                        continue;
-                    if (found && candidate.Height <= bestHeight)
-                        continue;
-
-                    supportSample = candidate;
-                    bestHeight = candidate.Height;
-                    found = true;
-                }
-            }
-
-            return found;
-        }
-
-        private static bool CanUseInfantrySupportSample(MapSurfaceSample anchor, MapSurfaceSample candidate)
-        {
-            if ((candidate.MovementMask & MapSurfaceMovementMask.Infantry) == 0)
-                return false;
-            if (candidate.LayerId != anchor.LayerId)
-                return false;
-
-            bool anchorRoadLike = IsRoadLikeSurface(anchor.SurfaceType, anchor.Flags);
-            bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
-            return anchorRoadLike == candidateRoadLike;
-        }
-
-        private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags)
-        {
-            return surfaceType == MapSurfaceType.Road ||
-                   surfaceType == MapSurfaceType.DirtRoad ||
-                   surfaceType == MapSurfaceType.Highway ||
-                   surfaceType == MapSurfaceType.BridgeDeck ||
-                   surfaceType == MapSurfaceType.Ramp ||
-                   (flags & MapSurfaceFlags.Road) != 0;
+                Height = sample.Height, LayerId = sample.LayerId, SurfaceType = (byte)sample.SurfaceType,
+                Flags = (ushort)sample.Flags, MovementMask = (ushort)sample.MovementMask
+            };
         }
     }
 }

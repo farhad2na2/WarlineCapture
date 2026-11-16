@@ -1,0 +1,33 @@
+using System;using Unity.Mathematics;namespace Game.Simulation{public static class SharedSidewalkGeometryKernel{public struct MeshName{public bool Known,Present;public string Name;}public struct Footprint{public float4x4 WorldToLocal;public float3 LocalMin,LocalMax,WorldMin,WorldMax;}
+        static bool Finite(float4x4 m) => math.all(math.isfinite(m.c0)) && math.all(math.isfinite(m.c1)) && math.all(math.isfinite(m.c2)) && math.all(math.isfinite(m.c3));
+
+        static void Range(Footprint footprint,int width,int height,float cellSize,float3 origin,out int2 min,out int2 max)
+        {
+            if(!Finite(footprint.WorldToLocal)||!math.all(math.isfinite(footprint.WorldMin))||!math.all(math.isfinite(footprint.WorldMax))||
+                !math.all(math.isfinite(footprint.LocalMin))||!math.all(math.isfinite(footprint.LocalMax))||math.any(footprint.WorldMax<footprint.WorldMin)||math.any(footprint.LocalMax<footprint.LocalMin))throw new ArgumentException("Complete finite source footprint required");
+            // Clamp in floating point before int conversion; geometry can be outside this gameplay grid.
+            min=(int2)math.clamp(math.floor((footprint.WorldMin.xz-origin.xz)/cellSize),0,new float2(width,height));
+            max=(int2)math.clamp(math.ceil((footprint.WorldMax.xz-origin.xz)/cellSize),0,new float2(width,height));
+        }
+        public static bool[] BuildMask(Footprint[] footprints,int width,int height,float cellSize,float3 origin)
+        {
+            long cells=(long)width*height;
+            if(footprints==null||footprints.Length>262144||width<1||height<1||cells>4194304||!(cellSize>0)||!math.isfinite(cellSize)||!math.all(math.isfinite(origin)))throw new ArgumentException("Complete finite grid and footprint domain required");
+            long work=0;
+            foreach(var footprint in footprints){Range(footprint,width,height,cellSize,origin,out var min,out var max);work+=(long)(max.x-min.x)*(max.y-min.y);if(work>67108864)throw new ArgumentException("Sidewalk raster work exceeds finite admission before allocation");}
+            var target=new bool[(int)cells];
+            foreach(var footprint in footprints)
+            {
+                Range(footprint,width,height,cellSize,origin,out var min,out var max);
+                // Preserve the original RoadCache WorldToLocal -> inverse roundtrip.
+                var toWorld=math.inverse(footprint.WorldToLocal);
+                if(!Finite(toWorld))throw new NotSupportedException("Unsupported inverse footprint");
+                AppendCells(target,toWorld,footprint.LocalMin,footprint.LocalMax,min.x,max.x,min.y,max.y,width,cellSize,origin);
+            }
+            return target;
+        }
+        // Callers admit the target/range first; native RoadCache already owns that
+        // admission, while BuildMask performs bounded admission for typed data.
+public static void AppendCells(bool[] sidewalkMask,float4x4 toWorld,float3 localMin,float3 localMax,int x0,int x1,int y0,int y1,int gridWidth,float gridCellSize,float3 gridOrigin){/*SOURCE:sidewalk*/}
+/*SOURCE:axis*/
+}}

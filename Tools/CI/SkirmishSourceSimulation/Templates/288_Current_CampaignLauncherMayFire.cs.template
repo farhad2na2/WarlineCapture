@@ -1,0 +1,4 @@
+using Unity.Entities;using Game.Components;namespace Game.Runtime{public static partial class CampaignSplitFrontLauncherSafety{
+        public static bool MayFire(EntityManager em,Entity launcher,Entity target)=>/*SOURCE:may_fire*/;
+private static bool IsSafe(EntityManager em,Entity launcher,Entity target)=>throw new System.NotSupportedException("Active SplitFront launcher state is outside the admitted generated S002 profile; original MayFire first branch must short-circuit");
+}}

@@ -179,12 +179,16 @@ namespace Game.Configs
 
         public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup, SkirmishMapLayoutConfig layout = null)
         {
-            return setup != null &&
+            return setup != null && layout?.DeclaredConfiguration == null &&
                    new SkirmishCatalogId(setup.CatalogId).IsValid &&
                    setup.OperationMapId == DesertBaseMapId &&
                    setup.LayoutId == DesertBaseLayoutId &&
-                   ((setup.DifficultyId == SkirmishDifficultyId.Regular &&
-                   setup.SizeId == SkirmishSizeId.Standard) ||
+                   ((setup.SizeId == SkirmishSizeId.Standard &&
+                   (setup.DifficultyId == SkirmishDifficultyId.Regular ||
+                    ((setup.CatalogId == "S004" || setup.CatalogId == "S003") &&
+                     (setup.DifficultyId == SkirmishDifficultyId.Recruit ||
+                      setup.DifficultyId == SkirmishDifficultyId.Veteran ||
+                      setup.DifficultyId == SkirmishDifficultyId.Commander)))) ||
                     (layout != null && layout.WorldBinding.HasMeasuredDeployments && layout.WorldBinding.BindAllConfigurations));
         }
 
@@ -305,6 +309,7 @@ namespace Game.Configs
                     setup.Structures[i] = structure;
                 }
             }
+            SkirmishStructureInstanceBinding.TryApply(layout, setup, reasons);
         }
 
         /// <summary>

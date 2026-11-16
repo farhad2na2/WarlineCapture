@@ -21,9 +21,32 @@ namespace Game.Configs
         public static string ComputeLayoutSemanticFingerprint(SkirmishMapLayoutConfig layout)
         {
             if (layout == null) throw new ArgumentNullException(nameof(layout));
+            if(layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2)return SkirmishBindingCanonicalValues.LayoutFingerprint(layout);
+            if(layout.BindingValueFormat!=SkirmishBindingValueFormat.NativeJsonV1)throw new NotSupportedException("Unsupported binding value format.");
+            if (SkirmishLegacyLayoutValueContract.TryGetCompatibilityFingerprint(layout, out string compatibilityFingerprint)) return SkirmishStructureInstanceBinding.AppendLayoutFingerprint(compatibilityFingerprint,layout);
             using var hash = SHA256.Create();
-            return BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout))))).Replace("-", "").ToLowerInvariant();
+            return SkirmishStructureInstanceBinding.AppendLayoutFingerprint(BitConverter.ToString(hash.ComputeHash(Encoding.UTF8.GetBytes(JsonUtility.ToJson(LayoutValues.From(layout))))).Replace("-", "").ToLowerInvariant(),layout);
         }
+        public static bool MatchesExactCompilerSelectedMeasuredLayout(SkirmishMapLayoutConfig layout,
+            OperationMapDefinition source, string expectedFingerprint)
+        {
+            if (layout == null || source == null || string.IsNullOrEmpty(expectedFingerprint) ||
+                layout.BindingValueFormat != SkirmishBindingValueFormat.CanonicalBinaryV2 ||
+                !layout.HasWorldBinding || !layout.WorldBinding.HasMeasuredDeployments ||
+                !layout.WorldBinding.BindAllConfigurations || layout.OperationMapId != source.OperationMapId ||
+                layout.WorldBinding.SourceHash != source.ContentHash)
+                return false;
+            try
+            {
+                return string.Equals(ComputeLayoutSemanticFingerprint(layout), expectedFingerprint,
+                    StringComparison.Ordinal);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static bool PreservesPackagedLegacyBinding(SkirmishResolvedSetup setup, SkirmishScenarioDefinitionConfig definition,
             string reviewedLayoutSemanticFingerprint)
         {
@@ -77,8 +100,15 @@ namespace Game.Configs
                     if (placement == null || (placement.BuildingPrefab != null && string.IsNullOrEmpty(placement.SourcePath)))
                         Add(reasons, "additionalBuildingPlacements", "Each prefab dependency needs its authored stable SourcePath.");
             var frame = layout.WorldBinding;
-            if (!layout.HasWorldBinding || !frame.HasMeasuredDeployments || !frame.BindAllConfigurations ||
-                frame.SourceHash != source.ContentHash)
+            bool hasDeclaration=layout.DeclaredConfiguration!=null;
+            bool declaredContext=SkirmishStructureInstanceBinding.TryDeclaredContext(layout,setup,reasons,out var declaredPlayer,out var declaredEnemy);
+            // A logical map alias carries its physical Campaign source hash in
+            // SourceBinding; the layout frame is pinned to that physical source.
+            string physicalSourceHash = source.SourceBinding.IsConfigured
+                ? source.SourceBinding.SourceContentHash : source.ContentHash;
+
+            if (!layout.HasWorldBinding || (hasDeclaration ? !declaredContext : (!frame.HasMeasuredDeployments || !frame.BindAllConfigurations)) ||
+                frame.SourceHash != physicalSourceHash)
                 Add(reasons, "worldBinding", "An all-configuration frame pinned to this exact source is required.");
             if (!Positive(layout.WorldWidthMetres) || !Positive(layout.WorldDepthMetres) || !Positive(layout.CellSize) ||
                 !Finite(layout.OriginX) || !Finite(layout.OriginZ) || !Finite(frame.OriginX) || !Finite(frame.OriginZ) ||
@@ -109,8 +139,8 @@ namespace Game.Configs
                     !layout.TryProjectToMap(anchor.NormalizedU, anchor.NormalizedV, out float x, out float z) || !Inside(source, x, z))
                     Add(reasons, anchor.AnchorId, "Anchor local/normalized/world-frame declaration is inconsistent or out of source bounds.");
             }
-            ValidateDeployment(layout, source, "base.player", frame.PlayerAnchorId, frame.PlayerDeployment, reasons);
-            ValidateDeployment(layout, source, "base.enemy", frame.EnemyAnchorId, frame.EnemyDeployment, reasons);
+            ValidateDeployment(layout, source, "base.player", frame.PlayerAnchorId, hasDeclaration?declaredPlayer:frame.PlayerDeployment, reasons);
+            ValidateDeployment(layout, source, "base.enemy", frame.EnemyAnchorId, hasDeclaration?declaredEnemy:frame.EnemyDeployment, reasons);
 
             var padIds = new HashSet<string>(StringComparer.Ordinal);
             var padKinds = new HashSet<string>(StringComparer.Ordinal);
@@ -138,7 +168,8 @@ namespace Game.Configs
                         !defenseRoles.Add(pad.RoleId)||!layout.TryGetAnchor(pad.RoleId,out var defenseAnchor)||defenseAnchor.AnchorId!=pad.AnchorId)
                         Add(reasons,pad.PadId,"Defense approaches require unique exact faction2 mode-owned anchors/pads.");
                 }
-                else if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind))
+                else if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind) &&
+                    !(declaredContext && SkirmishStructureInstanceBinding.IsExplicitInstanceOnlyPad(layout,setup,pad)))
                     Add(reasons, pad.PadId, "Ambiguous faction/kind pad lookup.");
                 foreach (int dx in new[] { -1, 1 }) foreach (int dz in new[] { -1, 1 })
                     if (!layout.TryProjectLocalToMap(pad.CenterX + dx * pad.WidthMetres * .5f,
@@ -186,6 +217,9 @@ namespace Game.Configs
                 if (!Inside(source, x, z)) Add(reasons, structure.StructureId, "Facility center after compiled frame offset leaves source bounds.");
                 structure.SpawnWorldX = x; structure.SpawnWorldZ = z; structures[i] = structure;
             }
+            var instanceScope=new SkirmishResolvedSetup{SizeId=setup.SizeId,DifficultyId=setup.DifficultyId,Structures=structures};
+            if(!SkirmishStructureInstanceBinding.TryApply(layout,instanceScope,reasons))return false;
+            structures=instanceScope.Structures;
             if (reasons.Count != start) return false;
 
             // The actual native placement owner still validates real facility footprints,
@@ -294,7 +328,7 @@ namespace Game.Configs
             public SkirmishResolvedStructureEntry[] Structures;
         }
         [Serializable]
-        private sealed class StableReference
+        internal sealed class StableReference
         {
             public string Guid;
             public string SubObjectName;
@@ -302,7 +336,7 @@ namespace Game.Configs
                 new StableReference { Guid = value.AssetGUID, SubObjectName = value.SubObjectName };
         }
         [Serializable]
-        private sealed class PlacementValue
+        internal sealed class PlacementValue
         {
             // SourcePath is the authored dependency identity. Never hash a prefab instance ID.
             public string SourcePath;
@@ -322,7 +356,7 @@ namespace Game.Configs
             };
         }
         [Serializable]
-        private sealed class PlacementValues
+        internal sealed class PlacementValues
         {
             public bool SpawnOnMatchStart, HideAuthoringVisualsAfterSpawn, UseExistingStaticPresentationWhenAuthoringVisualMissing;
             public PlacementValue[] Placements;
@@ -340,7 +374,7 @@ namespace Game.Configs
             }
         }
         [Serializable]
-        private sealed class SourceValues
+        internal sealed class SourceValues
         {
             public string OperationMapId, SourceIdentityHash, ContentHash, GeneratedMetadataHash, PlanningCameraId, BattleCameraId;
             public int SchemaVersion, ContentVersion;
@@ -371,7 +405,7 @@ namespace Game.Configs
             };
         }
         [Serializable]
-        private sealed class LayoutValues
+        internal sealed class LayoutValues
         {
             public string Id, OperationMapId, ContentHash;
             public int Version;
@@ -387,6 +421,8 @@ namespace Game.Configs
                 CellSize = source.CellSize, Frame = source.WorldBinding, Anchors = source.Anchors, Routes = source.Routes, Pads = source.Pads
             };
         }
+        internal static SourceValues CanonicalSourceValueSnapshot(OperationMapDefinition source) => SourceValues.From(source);
+
         private static string Fingerprint(OperationMapDefinition source, SkirmishMapLayoutConfig layout,
             SkirmishResolvedForceEntry[] forces, SkirmishResolvedStructureEntry[] structures)
         {
@@ -394,10 +430,13 @@ namespace Game.Configs
             // a deterministic layout/source dependency fingerprint for generic setup hashing.
             // The projections contain only strings, scalars, vectors, value structs and arrays.
             // Do not serialize ScriptableObjects, prefab refs or Addressables cached state.
+            if(layout.BindingValueFormat==SkirmishBindingValueFormat.CanonicalBinaryV2)
+                return SkirmishBindingCanonicalValues.LayoutBindingFingerprint(source,layout,forces,structures);
+            if(layout.BindingValueFormat!=SkirmishBindingValueFormat.NativeJsonV1)throw new NotSupportedException("Unsupported binding value format.");
             string text = "generic-layout-v1|" + JsonUtility.ToJson(SourceValues.From(source)) + "|" + JsonUtility.ToJson(LayoutValues.From(layout)) + "|" +
                 JsonUtility.ToJson(new ProjectedActors { Forces = forces, Structures = structures });
             using (var sha = SHA256.Create())
-                return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-", "").ToLowerInvariant();
+                return SkirmishStructureInstanceBinding.AppendLayoutFingerprint(BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(text))).Replace("-", "").ToLowerInvariant(),layout);
         }
     }
 }

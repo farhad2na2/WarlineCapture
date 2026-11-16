@@ -1,0 +1,188 @@
+// Source-only adapter around the original compiler binding. It exports only the
+// compiler's Standard setup and does not create Unity objects or a runtime world.
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
+using Game.Configs;
+using Game.Skirmish.Contracts;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+internal static class S004StandardSetupExportSourceBinding
+{
+    private static Type layoutProjectionType;
+    private static object validatedLayoutProjection;
+    private static string validatedLayoutJson;
+    private const BindingFlags PublicFields = BindingFlags.Instance | BindingFlags.Public;
+
+    public static int Main(string[] args)
+    {
+        try
+        {
+            if (args == null || args.Length != 6) throw new InvalidDataException("Expected graph, matrix, seed, original compiler result, validated layout bytes, and native Standard hash");
+            JObject graph = JObject.Parse(File.ReadAllText(args[0]));
+            string matrixText = File.ReadAllText(args[1]);
+            int seed = Int32.Parse(args[2], System.Globalization.CultureInfo.InvariantCulture);
+            uint nativeStandardHash = UInt32.Parse(args[5], System.Globalization.CultureInfo.InvariantCulture);
+            JObject originalResult = JObject.Parse(File.ReadAllText(args[3]));
+            if ((string)originalResult["kind"] != "S004OriginalCompilerSourceOnlyResult" ||
+                (bool?)originalResult["world_initialized"] != false)
+                throw new InvalidDataException("Original source-only compiler result required");
+
+            var materializer = new SourceConfigMaterializer(graph);
+            var catalog = materializer.ByPath<SkirmishExpansionCatalogConfig>((string)graph["catalog_path"]);
+            var definition = materializer.ByPath<SkirmishScenarioDefinitionConfig>((string)graph["definition_path"]);
+            if (definition == null || catalog == null || definition.CatalogId != "S004" ||
+                !catalog.TryGetDefinition("S004", definition.ContentVersion, out var catalogDefinition) ||
+                !Object.ReferenceEquals(definition, catalogDefinition))
+                throw new InvalidDataException("Exact authored S004 catalog definition identity required");
+            if (!SkirmishSetupMatrixTable.TryLoadFromText(matrixText, out List<SkirmishSetupMatrixRow> rows, out string matrixError))
+                throw new InvalidDataException("Original matrix parser rejected pinned bytes: " + matrixError);
+            const string operationMapPath = "Assets/Game/Resources/SkirmishS004OperationMap.asset";
+            if (!((JArray)graph["nodes"]).OfType<JObject>().Any(x => (string)x["source_path"] == operationMapPath &&
+                    (string)x["source_type"] == "OperationMapDefinition"))
+                throw new InvalidDataException("Exact authored S004 operation map node required");
+            var operationMap = materializer.ByPath<OperationMapDefinition>(operationMapPath);
+            if (operationMap == null || operationMap.OperationMapId != definition.MapLayout.OperationMapId)
+                throw new InvalidDataException("Source operation map identity differs from S004 layout");
+            UnityEngine.Resources.BindSourceResources(new Dictionary<string, object>
+                { [SkirmishExpansionCatalogConfig.ResourceName] = catalog, ["SkirmishS004OperationMap"] = operationMap });
+
+            // The shared hardened replay runner validated these exact captured bytes
+            // against the authored graph, reflected field order, and float32 values.
+            // This finite adapter replays only that one LayoutValues object.
+            validatedLayoutJson = File.ReadAllText(args[4], new UTF8Encoding(false));
+            layoutProjectionType = typeof(SkirmishMeasuredLayoutBinder).GetNestedType("LayoutValues", BindingFlags.NonPublic);
+            MethodInfo layoutFrom = layoutProjectionType?.GetMethod("From", BindingFlags.Public | BindingFlags.Static);
+            if (layoutFrom == null) throw new InvalidDataException("Original LayoutValues projection unavailable");
+            validatedLayoutProjection = layoutFrom.Invoke(null, new object[] { definition.MapLayout });
+            object captured = JsonConvert.DeserializeObject(validatedLayoutJson, layoutProjectionType);
+            if (!SchemaMatches(layoutProjectionType, JObject.Parse(validatedLayoutJson)) ||
+                !TypedEqual(validatedLayoutProjection, captured, layoutProjectionType))
+                throw new InvalidDataException("Previously validated raw bytes do not represent the exact authored LayoutValues");
+
+            // Re-enter the unchanged strict source-only compiler binding now that
+            // its single JsonUtility dependency is source-bound to the reviewed bytes.
+            JObject adaptedCompilerResult = S004OriginalCompilerSourceBinding.Compile(graph, matrixText, seed);
+            if ((bool?)adaptedCompilerResult["compiled"] != true || (string)adaptedCompilerResult["status"] != "Compiled")
+                throw new InvalidDataException("Original compiler with exact layout replay did not compile all authored S004 matrix rows");
+            JObject adaptedStandard = ((JArray)adaptedCompilerResult["setups"]).OfType<JObject>()
+                .SingleOrDefault(x => (string)x["size_id"] == "Standard");
+            if (adaptedStandard == null || (string)adaptedStandard["setup_hash"] != args[5])
+                throw new InvalidDataException("Source-bound original compiler Standard hash differs from native capture");
+
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
+            if (!SkirmishSetupCompiler.TryCompile(definition, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard,
+                    seed, manifest, rows, out SkirmishResolvedSetup setup, out List<SkirmishCompileReason> reasons))
+                throw new InvalidDataException("Original Standard compiler rejected with validated layout replay: " + String.Join(" | ", reasons.Select(x => x.ToString())));
+            JArray originalRows = originalResult["s004_rows"] as JArray;
+            JObject originalStandard = originalRows?.OfType<JObject>().SingleOrDefault(x => (string)x["size_id"] == "Standard");
+            if (originalStandard == null || ((bool?)originalStandard["compiled"] != true &&
+                (string)originalStandard["source_host_boundary"] == null))
+                throw new InvalidDataException("Original compiler result lacks explicit Standard row or boundary");
+            if (setup == null || setup.CatalogId != "S004" || setup.DefinitionId != "skirmish.s004" ||
+                setup.SizeId != SkirmishSizeId.Standard || setup.Seed != seed ||
+                setup.SetupHash != nativeStandardHash)
+                throw new InvalidDataException("Exported setup identity/hash differs from original compiler result");
+
+            string fullSetup = JsonConvert.SerializeObject(setup, Formatting.None);
+            JObject setupJson = JObject.Parse(fullSetup);
+            JArray forceRows = setupJson["Forces"] as JArray ?? throw new InvalidDataException("Compiled force array missing");
+            JArray structureRows = setupJson["Structures"] as JArray ?? throw new InvalidDataException("Compiled structure array missing");
+            JArray roleRows = setupJson["RoleOverlays"] as JArray ?? new JArray();
+            if (forceRows.Count == 0 || structureRows.Count == 0)
+                throw new InvalidDataException("Actual compiled force/structure roster is empty");
+
+            // This is the exact compiled opening-force demand by authored role and faction.
+            // It does not claim queue/runtime production decisions or future demand.
+            var demand = new JArray(forceRows.OfType<JObject>()
+                .GroupBy(x => ((int?)x["FactionId"] ?? -1).ToString() + "|" + ((string)x["RoleId"] ?? ""))
+                .OrderBy(x => x.Key, StringComparer.Ordinal)
+                .Select(group => {
+                    JObject first = group.First();
+                    return new JObject { ["faction_id"] = (int?)first["FactionId"], ["role_id"] = (string)first["RoleId"],
+                        ["role_kind"] = first["RoleKind"], ["runtime_prefab_key"] = (string)first["RuntimePrefabKey"],
+                        ["source_config_paths"] = new JArray(group.Select(x => (string)x["SourceConfigPath"]).Distinct().OrderBy(x => x, StringComparer.Ordinal)),
+                        ["starting_quantity"] = group.Sum(x => (int?)x["Quantity"] ?? 0),
+                        ["starting_supply_cost"] = group.Sum(x => ((int?)x["SupplyCost"] ?? 0) * ((int?)x["Quantity"] ?? 0)) };
+                }));
+            var result = new JObject {
+                ["kind"] = "S004StandardCompiledSetupSourceExport", ["status"] = "Passed",
+                ["identity"] = new JObject { ["catalog_id"] = setup.CatalogId, ["definition_id"] = setup.DefinitionId,
+                    ["scenario_setup_id"] = setup.ScenarioSetupId, ["content_version"] = setup.ContentVersion,
+                    ["content_hash"] = setup.ContentHash, ["operation_map_id"] = setup.OperationMapId,
+                    ["layout_id"] = setup.LayoutId, ["difficulty_id"] = setup.DifficultyId.ToString(),
+                    ["size_id"] = setup.SizeId.ToString(), ["seed"] = setup.Seed, ["setup_hash"] = setup.SetupHash,
+                    ["measured_layout_bound"] = setup.MeasuredLayoutBound,
+                    ["layout_binding_fingerprint"] = setup.LayoutBindingFingerprint },
+                ["authored_provenance"] = new JObject { ["authority"] = "AuthoredConfigAssets",
+                    ["definition_path"] = (string)graph["definition_path"], ["catalog_path"] = (string)graph["catalog_path"],
+                    ["source_pins"] = graph["source_pins"].DeepClone(), ["setup_matrix"] = graph["setup_matrix"].DeepClone(),
+                    ["manifest_feature_source"] = "AuthoredDefinition.RequiredFeatureIds",
+                    ["native_world_state_used"] = false },
+                ["original_compiler_result"] = originalResult.DeepClone(),
+                ["source_bound_compiler_result"] = adaptedCompilerResult,
+                ["validated_layout_replay"] = new JObject { ["raw_json_sha256"] = Hash(Encoding.UTF8.GetBytes(validatedLayoutJson)),
+                    ["adapter_scope"] = "Exact S004 LayoutValues projection only; replays shared-runner-validated native bytes" },
+                ["compiled_setup"] = setupJson,
+                ["production_needs"] = new JObject { ["basis"] = "Compiled opening forces grouped by authored role/faction",
+                    ["scope"] = "Starting force demand only; excludes production queue orders and future runtime decisions",
+                    ["starting_force_demand"] = demand, ["role_overlays"] = roleRows.DeepClone() },
+                ["world_initialized"] = false, ["physical_source_fit_verified"] = false,
+                ["mission_readiness"] = false };
+            Console.WriteLine(result.ToString(Formatting.None));
+            return 0;
+        }
+        catch (Exception e) { Console.Error.WriteLine("[S004StandardSetupExportSourceOnly] result=Failed " + e); return 1; }
+    }
+
+    internal static string DiagnosticToJson(object value)
+    {
+        if (layoutProjectionType == null || value == null || value.GetType() != layoutProjectionType ||
+            !TypedEqual(value, validatedLayoutProjection, layoutProjectionType))
+            throw new NotSupportedException("S004 Standard adapter rejects all JsonUtility values except the exact authored LayoutValues projection");
+        return validatedLayoutJson;
+    }
+
+    private static bool SchemaMatches(Type type, JObject value)
+    {
+        var fields = type.GetFields(PublicFields | BindingFlags.DeclaredOnly).OrderBy(x => x.MetadataToken).ToArray();
+        if (!value.Properties().Select(x => x.Name).SequenceEqual(fields.Select(x => x.Name))) return false;
+        foreach (var field in fields)
+        {
+            JToken child = value[field.Name]; if (child == null) return false;
+            Type childType = field.FieldType;
+            if (childType.IsArray && child.Type == JTokenType.Array && childType.GetElementType() != typeof(string))
+                foreach (JToken item in (JArray)child) if (!SchemaMatches(childType.GetElementType(), (JObject)item)) return false;
+            else if (!childType.IsArray && childType.IsValueType && !childType.IsPrimitive && !childType.IsEnum && child.Type == JTokenType.Object)
+                if (!SchemaMatches(childType, (JObject)child)) return false;
+        }
+        return true;
+    }
+
+    private static bool TypedEqual(object left, object right, Type type)
+    {
+        if (left == null || right == null) return left == right;
+        if (type.IsArray)
+        {
+            Array a = (Array)left, b = (Array)right; if (a.Length != b.Length) return false;
+            Type itemType = type.GetElementType();
+            for (int i = 0; i < a.Length; i++) if (!TypedEqual(a.GetValue(i), b.GetValue(i), itemType)) return false;
+            return true;
+        }
+        if (type == typeof(float)) return BitConverter.ToInt32(BitConverter.GetBytes((float)left), 0) == BitConverter.ToInt32(BitConverter.GetBytes((float)right), 0);
+        if (type.IsPrimitive || type.IsEnum || type == typeof(string)) return left.Equals(right);
+        foreach (FieldInfo field in type.GetFields(PublicFields | BindingFlags.DeclaredOnly).OrderBy(x => x.MetadataToken))
+            if (!TypedEqual(field.GetValue(left), field.GetValue(right), field.FieldType)) return false;
+        return true;
+    }
+
+    private static string Hash(byte[] bytes)
+    {
+        using (var sha = SHA256.Create()) return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+    }
+}

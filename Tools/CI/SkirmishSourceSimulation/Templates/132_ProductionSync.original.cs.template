@@ -1,0 +1,5 @@
+using System;using Game.Components;using Unity.Entities;namespace Game.Runtime{internal sealed class BuildingProductionTickCompositionSystemHelper{
+        internal static void SyncBuildingResourceStorageFromEcs(
+            EntityManager entityManager,
+            RuntimeBuildingEntity building)
+        {/*SOURCE:body_0*/}}}

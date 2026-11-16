@@ -124,7 +124,7 @@ namespace Game.Editor
                     if ((bool)row["groundFootprintValid"]) row["groundFootprintXZ"] = R(footprint);
                 }
                 if (Read(em, out TacticalFollowCameraPoseComponent follow)) row["followPose"] = Data(follow);
-                if (Read(em, out ActiveOperationMapBoundsComponent bounds)) row["authoredBounds"] = Data(bounds);
+                if (Read(em, out OperationMapBoundsComponent bounds)) row["authoredBounds"] = Data(bounds);
                 if (Read(em, out ActiveOperationMapComponent map)) row["map"] = new JObject {
                     ["id"] = map.OperationMapId.ToString(), ["generation"] = map.Generation,
                     ["contentVersion"] = map.ContentVersion, ["mission"] = map.MissionId.ToString() };

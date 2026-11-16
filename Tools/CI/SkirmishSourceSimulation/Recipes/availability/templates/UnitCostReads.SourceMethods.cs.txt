@@ -1,0 +1,21 @@
+using System;using System.Collections.Generic;using UnityEngine;using GameObject=Game.Runtime.SourceUnitPrefab;namespace Game.Runtime{internal sealed class SourceCampUnitCostReads{@@member36@@internal delegate bool TryGetUnitDefinitionMetadataDelegate(SourceUnitPrefab prefab,out UnitDefinitionMetadata metadata);readonly TryGetUnitDefinitionMetadataDelegate _tryGetUnitDefinitionMetadata;readonly Dictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe> unitRecipes;readonly SourceUnitGameplayRequestMetadataStore gameplayMetadata;internal SourceCampUnitCostReads(SourceUnitGameplayRequestMetadataStore gameplayMetadata,IReadOnlyDictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe> actualConfiguredRecipes,bool sourceRecipeDomainKnown){if(gameplayMetadata==null||!sourceRecipeDomainKnown||actualConfiguredRecipes==null)throw new NotSupportedException("Exact source gameplay request metadata and recipe domain required");this.gameplayMetadata=gameplayMetadata;unitRecipes=new Dictionary<SourceUnitPrefab,Game.Configs.BuildingProductionRecipe>(actualConfiguredRecipes);_tryGetUnitDefinitionMetadata=ReadRawMetadata;}private bool ReadRawMetadata(
+            GameObject prefab,
+            out UnitDefinitionMetadata metadata)
+        {
+            metadata = default;
+            if (prefab == null || !gameplayMetadata.TryGet(prefab,out var authoring))
+                return false;
+
+            metadata = new UnitDefinitionMetadata
+            {
+                CanRequest = authoring.CanRequest,
+                Price = authoring.MaterialsCost,
+                CreditsCost = authoring.Price
+            };
+            return true;
+        }
+        internal bool TryGetConfiguredUnitRequestMetadata(SourceUnitPrefab prefab,out UnitDefinitionMetadata metadata)
+        {
+            metadata=default;
+            return TryGetUnitDefinitionMetadata(prefab,out metadata);
+        }@@member37@@@@member38@@}}

@@ -28,7 +28,7 @@ namespace Game.Editor
             var warm=Ground30PrewarmCompanions();var scenes=Ground30SceneOwnership();var worlds=CaptureMaterializationWorldCensus();
             var defaultWorld=Unity.Entities.World.DefaultGameObjectInjectionWorld;
             var report=new JObject{["schema"]=1,["scope"]="NormalAllocatorSimultaneousLogicalAuthoring_NotMissionAcceptance",
-                ["inputSha256"]=Hash(GroundObjective30Inputs),["catalogId"]=id,["missions"]=new JArray(),["companionPrewarm"]=warm,["refinementOutputPrefix"]=output+".authoring",
+                ["inputSha256"]=Hash(SelectedGroundObjective30Inputs),["catalogId"]=id,["missions"]=new JArray(),["companionPrewarm"]=warm,["refinementOutputPrefix"]=output+".authoring",
                 ["sourceFitCertified"]=false,["cameraAccepted"]=false,["result"]="Incomplete"};
             try
             {
@@ -256,7 +256,21 @@ namespace Game.Editor
                         break;
                     }
                     if(!TryApplyRefinementHulls(owner.Layout,sizes,grid,out string hullError))
-                    {output["unresolved"]=hullError;break;}
+                    {
+                        // Discovery can find legal facilities whose symmetric typed-pad hull
+                        // exceeds this trial frame. Try the next reviewed logical frame;
+                        // do not mark the failed frame measured or alter physical geometry.
+                        if(discovery&&refinementLogicalFrameSearchRequested&&
+                            TryNextRefinementLogicalFrame(originalLogicalFrame,originalCompounds,compoundAttempt+1,
+                                owner.Layout,source,grid,out var nextFrameCompounds,out string frameError))
+                        {
+                            output["priorLogicalHullRefusal"]=hullError;
+                            compoundAttempt++;activeCompounds=nextFrameCompounds;
+                            output["boundedCompoundSearchStatus"]="RetryingAfterLogicalHullRefusalWithinExplicitFramePolicy";
+                            continue;
+                        }
+                        output["unresolved"]=hullError;break;
+                    }
                     discoveryPending=false;
                     if(!discovery&&++strictPasses>=2)break;
                 }

@@ -1,0 +1,8 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime { internal static class SkirmishPopulationPolicy {
+        internal static bool ReleasesProductionSlot(EntityManager em, Entity unit)
+        {/*SOURCE:body_0*/}
+
+        private static string PopulationKey(string name)
+        {/*SOURCE:body_1*/}
+
+}}

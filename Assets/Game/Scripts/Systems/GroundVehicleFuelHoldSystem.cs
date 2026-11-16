@@ -35,6 +35,7 @@ namespace Game.Runtime
                 typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
                 typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
             bool hasExpanded = expanded.CalculateEntityCount() == 1;
+            hasExpanded = hasExpanded && !state.EntityManager.HasComponent<SkirmishSharedSupplyInitialized>(expanded.GetSingletonEntity());
             SkirmishResolvedSetupComponent setup = default;
             SkirmishExpandedSessionComponent session = default;
             if (hasExpanded)

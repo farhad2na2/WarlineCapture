@@ -1,0 +1,15 @@
+using Game.UI.Contracts;
+using Unity.Entities;using Unity.Collections;using Unity.Mathematics;
+namespace Game.Components{
+/*SOURCE:type_0*/
+/*SOURCE:type_1*/
+/*SOURCE:type_2*/
+/*SOURCE:type_3*/
+/*SOURCE:type_4*/
+}
+namespace Game.UI.Contracts{
+/*SOURCE:type_5*/
+}
+namespace Game.UI.Shell.Contracts.Ecs{
+/*SOURCE:type_6*/
+}

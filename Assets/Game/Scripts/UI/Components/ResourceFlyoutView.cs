@@ -67,7 +67,7 @@ namespace Game.UI.Runtime
             Vector2 control = (start + end) * 0.5f + new Vector2(0f, -72f);
             while (elapsed < flightSeconds)
             {
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Game.Runtime.SkirmishValidationClock.DeltaOrOriginal(Time.unscaledDeltaTime);
                 float t = Mathf.Clamp01(elapsed / flightSeconds);
                 float eased = t * t * (3f - 2f * t);
                 Vector2 a = Vector2.LerpUnclamped(start, control, eased);

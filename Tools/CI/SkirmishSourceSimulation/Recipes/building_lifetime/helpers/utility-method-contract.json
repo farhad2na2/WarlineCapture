@@ -1,0 +1,88 @@
+{
+  "method_headers": [
+    {
+      "name": "TryMarkDestroyed",
+      "signature_tokens": "publicboolTryMarkDestroyed(IRuntimeBuildingbuilding,floatnow,floatdestroyedLifetimeSeconds)"
+    },
+    {
+      "name": "TryResolveBaseBreachedAudioEvent",
+      "signature_tokens": "internalstaticboolTryResolveBaseBreachedAudioEvent(RuntimeBuildingEntitybuilding,outstringeventId,outuinteventHash,outAudioPlaybackPrioritypriority,outfloatcooldownSeconds)"
+    },
+    {
+      "name": "TryEmitBaseBreachedAudio",
+      "signature_tokens": "internalstaticboolTryEmitBaseBreachedAudio(EntityManagerem,RuntimeBuildingEntitybuilding,floatrequestedAt)"
+    },
+    {
+      "name": "IsPlayerOwnedBaseBarrier",
+      "signature_tokens": "privatestaticboolIsPlayerOwnedBaseBarrier(RuntimeBuildingEntitybuilding)"
+    },
+    {
+      "name": "CollectDestroyedCleanupIds",
+      "signature_tokens": "publicList<int>CollectDestroyedCleanupIds<TBuilding>(IReadOnlyDictionary<int,TBuilding>buildings,floatnow)whereTBuilding:class,IRuntimeBuilding"
+    },
+    {
+      "name": "CollectDestroyedCleanupIds",
+      "signature_tokens": "publicList<int>CollectDestroyedCleanupIds<TBuilding>(Dictionary<int,TBuilding>buildings,floatnow)whereTBuilding:class,IRuntimeBuilding"
+    },
+    {
+      "name": "ResolveRuntimeCombatState",
+      "signature_tokens": "publicRuntimeCombatStateResolveRuntimeCombatState(IRuntimeBuildingbuilding,EntityManagerentityManager)"
+    },
+    {
+      "name": "DestroyBlockerEntity",
+      "signature_tokens": "publicvoidDestroyBlockerEntity(IRuntimeBuildingbuilding,EntityManagerentityManager)"
+    },
+    {
+      "name": "UpdateDestroyedBuildings",
+      "signature_tokens": "publicvoidUpdateDestroyedBuildings<TBuilding>(Context<TBuilding>context,floatnow)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "CollectDestroyedCleanupIds",
+      "signature_tokens": "privatestaticvoidCollectDestroyedCleanupIds<TBuilding>(IReadOnlyDictionary<int,TBuilding>buildings,floatnow,List<int>cleanupIds)whereTBuilding:class,IRuntimeBuilding"
+    },
+    {
+      "name": "CollectDestroyedCleanupIds",
+      "signature_tokens": "privatestaticvoidCollectDestroyedCleanupIds<TBuilding>(Dictionary<int,TBuilding>buildings,floatnow,List<int>cleanupIds)whereTBuilding:class,IRuntimeBuilding"
+    },
+    {
+      "name": "AddDestroyedCleanupId",
+      "signature_tokens": "privatestaticvoidAddDestroyedCleanupId<TBuilding>(KeyValuePair<int,TBuilding>entry,floatnow,List<int>cleanupIds)whereTBuilding:class,IRuntimeBuilding"
+    },
+    {
+      "name": "SyncDestroyedRuntimeBuildingCombatEntities",
+      "signature_tokens": "publicvoidSyncDestroyedRuntimeBuildingCombatEntities<TBuilding>(Context<TBuilding>context,floatnow,floatdestroyedLifetimeSeconds)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "SyncDestroyedRuntimeBuildingCombatEntity",
+      "signature_tokens": "privatevoidSyncDestroyedRuntimeBuildingCombatEntity<TBuilding>(Context<TBuilding>context,TBuildingbuilding,EntityManagerem,floatnow,floatdestroyedLifetimeSeconds)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "BeginDestroyedBuildingState",
+      "signature_tokens": "publicboolBeginDestroyedBuildingState<TBuilding>(Context<TBuilding>context,TBuildingbuilding,floatnow,floatdestroyedLifetimeSeconds,boolemitBaseBreachedAudio=false)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "TryResolveBuildingWorldPosition",
+      "signature_tokens": "privatestaticboolTryResolveBuildingWorldPosition<TBuilding>(EntityManagerem,TBuildingbuilding,outfloat3position)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "DestroyRuntimeBuildingBlockerEntity",
+      "signature_tokens": "publicvoidDestroyRuntimeBuildingBlockerEntity<TBuilding>(Context<TBuilding>context,TBuildingbuilding)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "FinalizeDestroyedBuilding",
+      "signature_tokens": "publicvoidFinalizeDestroyedBuilding<TBuilding>(Context<TBuilding>context,intbuildingId)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "DestroyRuntimeBuildingEntities",
+      "signature_tokens": "privatestaticvoidDestroyRuntimeBuildingEntities<TBuilding>(Context<TBuilding>context,TBuildingbuilding)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "DestroyEntity",
+      "signature_tokens": "privatestaticvoidDestroyEntity<TBuilding>(Context<TBuilding>context,Entityentity)whereTBuilding:class,IRuntimeBuildingVisualState"
+    },
+    {
+      "name": "DestroyRuntimeBuildingObject",
+      "signature_tokens": "privatestaticvoidDestroyRuntimeBuildingObject<TBuilding>(Context<TBuilding>context,Objecttarget)whereTBuilding:class,IRuntimeBuildingVisualState"
+    }
+  ]
+}

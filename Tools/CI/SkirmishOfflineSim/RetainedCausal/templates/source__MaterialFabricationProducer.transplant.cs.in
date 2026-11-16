@@ -1,0 +1,17 @@
+using Game.Components;using Unity.Entities;namespace Game.Runtime {public partial class MaterialFabricationSystem {
+        internal bool TryEnqueueProductionRequest(
+@@SOURCE_0@@            Require(!poisoned,"Failed material call is terminal");
+@@SOURCE_1@@                !em.Exists(fabricationEntity) ||
+                !em.HasComponent<MaterialFabricationComponent>(fabricationEntity) ||
+                !em.HasComponent<MaterialFabricationCommandQueueComponent>(fabricationEntity) ||
+                !requests.ContainsKey(fabricationEntity) ||
+                !results.ContainsKey(fabricationEntity))
+@@SOURCE_2@@                em.GetComponentData<MaterialFabricationCommandQueueComponent>(fabricationEntity);
+@@SOURCE_3@@            em.SetComponentData(fabricationEntity, queue);
+
+            DynamicBuffer<MaterialFabricationRequestComponent> pending =
+                requests[fabricationEntity];
+            while (pending.Length >= MaterialFabricationCommandQueueComponent.Capacity)
+                pending.RemoveAt(0);
+            pending.Add(new MaterialFabricationRequestComponent
+@@SOURCE_4@@}}

@@ -1,0 +1,5 @@
+using System;using System.Collections.Generic;using Game.Components;using Game.Configs;using Game.Skirmish.Contracts;using Unity.Entities;using UnityEngine;using GameObject=Game.Runtime.SourceUnitPrefab;using BuildingDefinition=Game.Runtime.RuntimeDefinition;using SkirmishProductionCatalog=Game.Runtime.SourceCampCatalogNames;namespace Game.Runtime{internal static partial class SourceCampNativeProduction{
+@@member22@@
+@@member23@@
+@@member24@@
+}}

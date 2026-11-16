@@ -139,13 +139,13 @@ namespace Game.UI.Runtime
                             bannerMode,
                             view.ResolveCommandIconSprite(bannerMode),
                             textResolver),
-                        Time.unscaledTime,
+                        Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime),
                         SuccessFeedbackDurationSeconds);
                 }
 
                 MatchHudCommandFeedbackModel feedbackModel = BuildCommandResultFeedback(result, view.RuntimeFeedbackState, textResolver);
                 if (feedbackModel.Visible)
-                    view.ApplyTransientCommandFeedback(feedbackModel, Time.unscaledTime);
+                    view.ApplyTransientCommandFeedback(feedbackModel, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace Game.UI.Runtime
             view.ShowInvalidCommand(reason);
             view.ApplyTransientCommandFeedback(
                 MatchHudCommandFeedbackModel.ShowTransient(reason, CommandFeedbackSeverity.Error, ErrorFeedbackDurationSeconds),
-                Time.unscaledTime);
+                Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(Time.unscaledTime));
         }
 
         public static void TickFeedbackLifetime(IBattleHudRuntimeFeedbackView view, float now)

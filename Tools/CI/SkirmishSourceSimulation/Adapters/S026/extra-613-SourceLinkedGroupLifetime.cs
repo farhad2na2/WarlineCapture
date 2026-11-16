@@ -1,0 +1,30 @@
+using System;using System.Linq;using System.Collections.Generic;using Unity.Entities;
+namespace Game.Runtime{internal static class SourceLinkedDestroyPlan{
+ internal static Entity[] Build(Entity[] requested,Func<Entity,bool> exists,Func<Entity,Entity[]> linked,Func<Entity,bool> canonical,Func<Entity,bool> unsupportedCleanup,IEnumerable<KeyValuePair<Entity,Entity>> parents){if(requested==null||requested.Length>65536)throw new NotSupportedException("Finite complete source destruction batch required");if(!requested.Any(e=>exists(e)&&linked(e)!=null))return(Entity[])requested.Clone();var ordered=new List<Entity>();var set=new HashSet<Entity>();var owner=new Dictionary<Entity,Entity>();foreach(var e in requested)if(exists(e)&&set.Add(e))ordered.Add(e);for(int at=0;at<ordered.Count;at++){var root=ordered[at];var group=linked(root);if(group==null)continue;if(group.Length<1||group.Length>1024||group[0]!=root||group.Distinct().Count()!=group.Length)throw new NotSupportedException("Complete ordered same-root linked destruction required");foreach(var e in group){if(e==Entity.Null||!exists(e))throw new NotSupportedException("Missing linked destruction member");if(e!=root&&linked(e)!=null)throw new NotSupportedException("Nested linked root outside admitted actor graph");if(owner.TryGetValue(e,out var prior)&&prior!=root)throw new NotSupportedException("Overlapping linked roots");owner[e]=root;if(set.Add(e))ordered.Add(e);}}foreach(var e in ordered){if(canonical(e))throw new NotSupportedException("Mixed linked/canonical destruction ownership");if(unsupportedCleanup(e))throw new NotSupportedException("Unsupported native cleanup retirement");}foreach(var p in parents)if(!set.Contains(p.Key)&&set.Contains(p.Value))throw new NotSupportedException("External child prevents atomic linked destruction");return ordered.ToArray();}
+}}
+namespace Unity.Entities{public sealed partial class EntityManager{
+ bool SourceUnsupportedCleanup(Entity e){
+ var unsupported=ComponentTypes(e).Where(t=>(typeof(ICleanupComponentData).IsAssignableFrom(t)||typeof(ICleanupBufferElementData).IsAssignableFrom(t))&&t!=typeof(Unity.Transforms.Child)&&t!=typeof(Unity.Transforms.PreviousParent)&&t!=typeof(Game.Components.StaticBlockerPrevBounds)).Select(t=>t.FullName).ToArray();
+ if(unsupported.Length!=0)throw new NotSupportedException("Unsupported native cleanup entity="+e+" types="+string.Join(",",unsupported));
+ if(HasComponent<Game.Components.StaticBlockerPrevBounds>(e))ValidateSourceStaticWreckHistory(e);
+ return false;
+ }
+ void ValidateSourceStaticWreckHistory(Entity e){
+ if(!HasBuffer<LinkedEntityGroup>(e)||!HasComponent<Game.Components.VehicleWreckComponent>(e)||!HasComponent<Game.Components.UnitHealth>(e)||GetComponentData<Game.Components.UnitHealth>(e).Current>0||!float.IsFinite(GetComponentData<Game.Components.VehicleWreckComponent>(e).TimeRemaining)||GetComponentData<Game.Components.VehicleWreckComponent>(e).TimeRemaining>0||!HasComponent<Game.Components.StaticGridBlocker>(e)||!HasComponent<Game.Components.UnitGrid>(e)||!HasComponent<Game.Components.GridBlockerSize>(e))throw new NotSupportedException("Exact expired linked ground wreck required for static cleanup: "+e);
+ var previous=GetComponentData<Game.Components.StaticBlockerPrevBounds>(e);
+ using var query=CreateEntityQuery(typeof(Game.Components.GridConfig),typeof(Game.Components.DynamicBlockerComponent));
+ if(query.CalculateEntityCount()!=1||query.GetSingletonEntity()!=previous.AppliedGrid)throw new NotSupportedException("Foreign/missing static cleanup grid: "+e);
+ var owner=GetComponentData<Game.Components.DynamicBlockerComponent>(previous.AppliedGrid);
+ if(previous.StorageEpoch==0||previous.StorageEpoch!=owner.StorageEpoch||owner.WriteInProgress!=0)throw new NotSupportedException("Changed static cleanup storage epoch: "+e);
+ var cell=GetComponentData<Game.Components.UnitGrid>(e).Cell;var size=GetComponentData<Game.Components.GridBlockerSize>(e).Size;
+ if(size.x<=0||size.y<=0||!HasComponent<Game.Components.UnitFootprint>(e)||!GetComponentData<Game.Components.UnitFootprint>(e).Size.Equals(size))throw new NotSupportedException("Changed authored wreck footprint: "+e);
+ var bounds=Game.Components.StaticBlockerKernel.Bounds(cell.x,cell.y,size.x,size.y);
+ if(previous.Min.x!=bounds.MinX||previous.Min.y!=bounds.MinZ||previous.Max.x!=bounds.MaxX||previous.Max.y!=bounds.MaxZ)throw new NotSupportedException("Changed original wreck bounds: "+e);
+ }
+ void DestroySourceEntityBatch(Entity[] requested){if(requested==null||requested.Length>65536)throw new NotSupportedException("Finite complete source destruction batch required");if(!requested.Any(e=>Exists(e)&&HasBuffer<LinkedEntityGroup>(e))){if(SourceFiniteHierarchyMode&&requested.Any(e=>Exists(e)&&(HasBuffer<Unity.Transforms.Child>(e)||HasComponent<Unity.Transforms.PreviousParent>(e))))throw new NotSupportedException("Partial finite hierarchy scalar/array destruction is not admitted");foreach(var e in requested)DestroyEntityCore(e);return;}
+ var parents=new List<KeyValuePair<Entity,Entity>>();using(var query=CreateEntityQuery(new EntityQueryDesc{All=new[]{ComponentType.ReadOnly<Unity.Transforms.Parent>()},Options=EntityQueryOptions.IncludeDisabledEntities|EntityQueryOptions.IncludePrefab})){using var rows=query.ToEntityArray(Unity.Collections.Allocator.Temp);foreach(var child in rows)parents.Add(new KeyValuePair<Entity,Entity>(child,GetComponentData<Unity.Transforms.Parent>(child).Value));}
+ var plan=Game.Runtime.SourceLinkedDestroyPlan.Build(requested,Exists,e=>HasBuffer<LinkedEntityGroup>(e)?GetBuffer<LinkedEntityGroup>(e).Select(x=>x.Value).ToArray():null,e=>bank!=null&&bank.Contains(e),SourceUnsupportedCleanup,parents);
+ var destroySet=new HashSet<Entity>(plan);if(SourceFiniteHierarchyMode)foreach(var e in plan)if(HasComponent<Unity.Transforms.PreviousParent>(e)){var parent=GetComponentData<Unity.Transforms.PreviousParent>(e).Value;if(Exists(parent)&&!destroySet.Contains(parent))throw new NotSupportedException("Live previous parent outside complete destruction batch");}
+ foreach(var e in plan)DestroySourceLinkedMember(e);
+ }
+}}

@@ -199,7 +199,7 @@ namespace Game.Editor
                 "One exact counterpart ID and fresh durable output required");
             var authority=GroundBa10Rows().Single(r=>(string)r["catalog_id"]==id);
             var report=new JObject{["catalogId"]=id,["scope"]="ExpandedCounterpartLogicalAuthoring",
-                ["fullIndexSha256"]=All120RefinementIndexSha,["practiceBindingPreserved"]=authority["protected_binding"].DeepClone(),
+                ["fullIndexSha256"]=SelectedAll120RefinementIndexSha,["practiceBindingPreserved"]=authority["protected_binding"].DeepClone(),
                 ["legacyWinTransfer"]=false,["mainCatalogChanged"]=false,["sourceFitCertified"]=false,["normalMissionReady"]=false,["result"]="Incomplete"};
             try
             {

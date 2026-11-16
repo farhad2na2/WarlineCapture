@@ -1,0 +1,1 @@
+using System; namespace UnityEngine {public static class JsonUtility{public static string ToJson(object value)=>Game.Runtime.SourceValidatedLayoutJson.ToJson(value);public static T FromJson<T>(string json)=>throw new NotSupportedException("Generic Unity JsonUtility metadata clone is unsupported in initial BaseAssault profile");}}

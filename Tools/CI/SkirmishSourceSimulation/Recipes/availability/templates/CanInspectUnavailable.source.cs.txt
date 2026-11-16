@@ -1,0 +1,1 @@
+using Game.UI.Contracts;namespace Game.Runtime{internal static class SourceCampInspection{@@member18@@}}

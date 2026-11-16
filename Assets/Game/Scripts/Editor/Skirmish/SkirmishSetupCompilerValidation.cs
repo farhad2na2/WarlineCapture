@@ -19,9 +19,17 @@ namespace Game.Editor
                 throw new InvalidOperationException(error);
 
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionCatalogConfig packagedCatalog = SkirmishExpansionCatalogConfig.Load();
+            if (packagedCatalog == null || !packagedCatalog.TryGetDefinition("S002", 2, out SkirmishScenarioDefinitionConfig packagedS002) ||
+                packagedS002 == null || packagedS002.CampaignMap != null || packagedS002.MapLayout == null)
+                throw new InvalidOperationException("Packaged S002 v2 legacy definition and layout are required.");
+
+            // S002's coded legacy binding is validated against its packaged definition.
+            // Keep the other definitions from the in-memory authored set for catalog coverage.
+            authored.DefinitionS002 = packagedS002;
             var manifest = new SkirmishContentManifest
             {
-                RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds
+                RequiredFeatureIds = packagedS002.RequiredFeatureIds
             };
 
             SkirmishSizeId[] sizes =
@@ -43,6 +51,9 @@ namespace Game.Editor
                     throw new InvalidOperationException("S002 " + sizes[i] + " failed: " + Format(reasons));
                 if (setup.CatalogId != "S002")
                     throw new InvalidOperationException("Compiled catalog id drifted.");
+                if (setup.ContentVersion != 2 || setup.OperationMapId != packagedS002.OperationMapId ||
+                    setup.LayoutId != packagedS002.MapLayout.LayoutId)
+                    throw new InvalidOperationException("S002 must retain the packaged v2 Desert Base legacy binding.");
                 if (sizes[i] == SkirmishSizeId.Standard && !setup.MeasuredLayoutBound)
                     throw new InvalidOperationException("Regular Standard must bind the measured Desert Base layout.");
                 compiled++;

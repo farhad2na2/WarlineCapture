@@ -1,5 +1,4 @@
 using Game.Components;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -36,15 +35,8 @@ namespace Game.Runtime
                 return false;
 
             ref OperationMapBlob metadata = ref metadataComponent.Blob.Value;
-            FixedString64Bytes cameraId = usePlanningPose
-                ? metadata.PlanningCameraId
-                : metadata.BattleCameraId;
-            if (cameraId.IsEmpty ||
-                !OperationMapMetadataUtility.TryFindCamera(ref metadata, in cameraId, out OperationMapCameraBlob pose) ||
-                !IsFinite(in pose))
-            {
+            if (!OperationMapCameraPoseSelectionData.TryResolve(ref metadata, usePlanningPose, out OperationMapCameraBlob pose))
                 return false;
-            }
 
             Transform cameraTransform = worldCamera.transform;
             cameraTransform.SetPositionAndRotation(ToVector3(pose.Position), ToQuaternion(pose.Rotation));
@@ -55,12 +47,6 @@ namespace Game.Runtime
                 worldCamera.fieldOfView = pose.FieldOfView;
             return true;
         }
-
-        private static bool IsFinite(in OperationMapCameraBlob pose) =>
-            math.all(math.isfinite(pose.Position)) &&
-            math.all(math.isfinite(pose.Rotation.value)) &&
-            math.isfinite(pose.FieldOfView) && pose.FieldOfView > 0f &&
-            math.isfinite(pose.OrthographicSize) && pose.OrthographicSize > 0f;
 
         private static Vector3 ToVector3(float3 value) => new(value.x, value.y, value.z);
 

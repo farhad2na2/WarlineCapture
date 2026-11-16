@@ -6,9 +6,7 @@ namespace Game.Runtime
     // Unowned Campaign actors retain their existing visibility/input contracts.
     public static class SkirmishFogConsumerUtility
     {
-        public static bool PlayerVisible(EntityManager em, Entity contact) => em.Exists(contact) &&
-            (!em.HasComponent<SkirmishAttemptOwnedComponent>(contact) ||
-             SkirmishFogService.IsVisibleToFaction(em, contact, 1));
+        public static bool PlayerVisible(EntityManager em, Entity contact) => SkirmishPublicObjectiveProjection.PlayerVisible(em, contact);
 
         public static bool PlayerImpactVisible(EntityManager em, Entity source, Entity target,
             Unity.Mathematics.float3 observedImpactPosition, byte detectorDomain)

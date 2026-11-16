@@ -1,0 +1,21 @@
+using System;using System.Collections.Generic;using Game.Components;using Unity.Entities;using UnityEngine;
+namespace Game.Runtime {
+// Parsed finalR7 schema2 only. Canonical raw JSON/hash/duplicate admission is Mac-owned.
+// Rows supply scoped provider RETURNS, never a selected route, amount or journal request.
+internal sealed class FirstSelectionProviderBoundary {
+ internal sealed class Row {internal long ObserverOrdinal;internal string Kind,Callsite;internal Entity Unit;internal int RuntimeBuildingId;internal uint[] PositionBits;internal byte Faction;internal bool ResolverPresent,HasInput;internal BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput Input;internal bool? ResultAssertion;}
+ readonly Row[] rows;readonly EntityManager em;int at;readonly Entity scopeUnit;
+ static void Need(bool ok,string why){if(!ok)throw new NotSupportedException(why);}
+ static readonly HashSet<string> FocusSites=new HashSet<string>{"automatic-route.focus-0","automatic-route.focus-1","automatic-route.focus-2","automatic-route.focus-3","automatic-route.focus-4"};
+ static float Float(uint bits){float x=BitConverter.ToSingle(BitConverter.GetBytes(bits),0);Need(!float.IsNaN(x)&&!float.IsInfinity(x),"Finite actual focus provider return required");return x;}
+ internal FirstSelectionProviderBoundary(int schemaVersion,bool complete,EntityManager manager,Row[] captured,int candidateCount){Need(schemaVersion==2&&complete,"FinalR7 schema2 complete provider boundary required");Need(manager!=null&&captured!=null&&captured.Length>=2&&captured.Length<=Math.Min(256,4*candidateCount+5),"Bounded complete first-selection provider rows required");rows=captured;em=manager;long previous=-1;foreach(var r in rows){Need(r!=null&&r.ObserverOrdinal>previous,"Ordered actual provider return ordinal required");previous=r.ObserverOrdinal;}Need(rows[0].Kind=="selection-entry"&&rows[0].Callsite=="TryAssignAutomaticHaulerOrder"&&rows[rows.Length-1].Kind=="selection-exit","Exact first-selection provider scope required");scopeUnit=rows[0].Unit;foreach(var r in rows)Need(r.Unit==scopeUnit,"Mixed provider unit scope");at=1;}
+ Row Next(string kind){Need(at<rows.Length-1&&rows[at].Kind==kind,"Actual provider return order/kind missing: "+kind);var r=rows[at++];Need(em.CurrentHauler==scopeUnit,"Computed selector escaped recorded first-selection unit scope");return r;}
+ internal void Install(BuildingResourceHaulerBridgeCompositionSystemHelper.Context context,bool actualResolverPresent){
+ if(actualResolverPresent)context.TryResolveFactionAIOilAllocationInput=(EntityManager manager,byte faction,out BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput input)=>{var r=Next("ai-resolver-return");Need(r.Callsite=="TryResolveCachedInput.actual-resolver-expression"&&r.ResolverPresent&&r.Faction==faction,"Actual AI provider identity/presence differs");input=r.Input;return r.HasInput;};
+ else context.TryResolveFactionAIOilAllocationInput=null;
+ context.ResolveBuildingFocusWorldPosition=b=>{if(at<rows.Length-1&&rows[at].Kind=="ai-resolver-return"&&!actualResolverPresent){var absent=Next("ai-resolver-return");Need(!absent.ResolverPresent&&!absent.HasInput&&absent.Faction==em.GetComponentData<Faction>(scopeUnit).Id,"Absent actual resolver assertion differs");}var r=Next("focus-return");Need(FocusSites.Contains(r.Callsite)&&r.RuntimeBuildingId==b.Id&&r.PositionBits!=null&&r.PositionBits.Length==3,"Actual focus provider target/callsite differs");return new Vector3(Float(r.PositionBits[0]),Float(r.PositionBits[1]),Float(r.PositionBits[2]));};
+ }
+ internal void AssertAtPairFrontier(PairRequestEmitted request){Need(request!=null&&request.Unit==scopeUnit&&at==rows.Length-1,"Computed firstpair did not consume exactly the captured provider-return prefix");/* ResultAssertion belongs to later caller AFTER boundary and is deliberately unread. */}
+ internal int ProviderReturnsConsumed=>at-1;
+}
+}

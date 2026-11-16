@@ -24,7 +24,7 @@ namespace Game.UI.Shell.Ecs
                 !valid?(fa?"پیاده شدن سربازها تأیید نشد.":"Soldier dismount could not be verified."):
                 model.UnloadScopeCompleted?(fa?"سربازهای این نفربر پیاده شدند.":"Soldiers from this carrier dismounted."):
                 (fa?"در حال پیاده شدن ":"UNLOADING ")+complete+" / "+row.Ids.Length;
-            if((!valid||pending==0)&&UnityEngine.Time.unscaledTime-row.BeganAt>4)model.UnloadStatus=null;
+            if((!valid||pending==0)&&Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime)-row.BeganAt>4)model.UnloadStatus=null;
             if(model.Order.Action==Game.UI.Contracts.AriaObjectiveAction.Unload&&model.Order.RequestId==row.RequestId&&model.Order.Frame==row.Frame)
                 model.Order.Accepted&=row.ScopeAccepted&&valid;
         }

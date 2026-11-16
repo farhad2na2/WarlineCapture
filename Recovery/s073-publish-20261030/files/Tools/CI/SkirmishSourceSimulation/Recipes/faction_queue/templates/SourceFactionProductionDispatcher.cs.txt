@@ -1,0 +1,69 @@
+using System;
+using Game.Components;
+using Unity.Collections;
+using Unity.Entities;
+namespace Game.Runtime
+{
+    internal sealed partial class SourceFactionProductionDispatcher
+    {
+        readonly EntityManager em;readonly Entity boundary;readonly SourceProductionDeliveryOwner owner;
+        readonly Func<CatalogPublicFacts,IDisposable> openReadScope;readonly SourceCampAvailabilityKernel requestSystem;
+        readonly SourceCampAvailabilityKernel.Context context;readonly SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate requiredConfiguredRead;readonly GeneratedUnitProductionMetadata requiredS073Metadata;readonly SourceFactionProductionReadModels readModels=new SourceFactionProductionReadModels();
+        @@IdleProbeConstant@@
+        float _nextProductionRequestProbeAt;bool _forcePublishNextUpdate;
+        internal bool Poisoned{get;private set;}
+        internal bool ForcePublishNextUpdate=>_forcePublishNextUpdate;
+        internal float NextProbeAt=>_nextProductionRequestProbeAt;
+        internal SourceFactionProductionDispatcher(EntityManager em,Entity boundary,SourceProductionDeliveryOwner owner,SourceCampAvailability availability,SourceCampAvailabilityKernel system,SourceCampAvailabilityKernel.Context context)
+            :this(em,boundary,owner,facts=>availability?.OpenFactionReadScope(facts),system,context)
+        {if(availability==null)throw new ArgumentNullException(nameof(availability));}
+        private SourceFactionProductionDispatcher(EntityManager em,Entity boundary,SourceProductionDeliveryOwner owner,Func<CatalogPublicFacts,IDisposable> openReadScope,SourceCampAvailabilityKernel system,SourceCampAvailabilityKernel.Context context,SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate requiredConfiguredRead=null,GeneratedUnitProductionMetadata requiredS073Metadata=null)
+        {this.em=em;this.boundary=boundary;this.owner=owner;this.openReadScope=openReadScope??throw new ArgumentNullException(nameof(openReadScope));requestSystem=system??throw new ArgumentNullException(nameof(system));this.context=context??throw new ArgumentNullException(nameof(context));this.requiredConfiguredRead=requiredConfiguredRead;this.requiredS073Metadata=requiredS073Metadata;if(owner==null||!ReferenceEquals(owner.World.Em,em)||!ReferenceEquals(owner.Production,context.ProductionSystem)||!owner.QueueContext.Equals(context.ProductionQueueContext))throw new InvalidOperationException("Dispatcher must use the same retained paid-queue world/context");if(!em.Exists(boundary)||!em.HasComponent<BuildingRuntimeStateTag>(boundary))throw new NotSupportedException("Actual runtime production boundary required");}
+        internal static SourceFactionProductionDispatcher CreateS073Legacy(EntityManager em,Entity boundary,SourceProductionDeliveryOwner owner,GeneratedUnitProductionMetadata metadata,SourceCampAvailabilityKernel system,SourceCampAvailabilityKernel.Context context)
+        {
+            if(em==default||owner==null||boundary==Entity.Null||!ReferenceEquals(owner.World.Em,em)||owner.World.Boundary!=boundary||metadata==null||!metadata.FactoryDomainQualified||metadata.Ordered==null||metadata.Ordered.Count!=3||context?.TryGetConfiguredUnitReadModel==null||context.CountPendingProductionsForFaction==null||context.CountRuntimeProducedUnitsForFaction==null||context.RuntimeBuildings==null||!ReferenceEquals(context.RuntimeBuildings,owner.World.Buildings)||context.UnitSpawnPrefabs==null||context.UnitSpawnPrefabs.Count!=3||context.UnitSpawnPrefabsByKey==null||context.UnitSpawnPrefabsByKey.Count!=3||context.ProductionQueueContext.UnitSpawnPrefabs!=context.UnitSpawnPrefabs||context.ProductionQueueContext.UnitSpawnPrefabsByKey!=context.UnitSpawnPrefabsByKey||context.ProductionQueueContext.ProductionSlotSystem==null||context.ProductionQueueContext.TryGetPrefabLocalBounds==null||context.ProductionQueueContext.TryGetRuntimeBoundaryEntity==null||!context.ProductionQueueContext.TryGetRuntimeBoundaryEntity(em,out var sourceBoundary)||sourceBoundary!=boundary)
+                throw new NotSupportedException("Complete exact S073 legacy production read domain required");
+            for(int i=0;i<metadata.Ordered.Count;i++)if(metadata.Ordered[i]?.Prefab==null||!ReferenceEquals(metadata.Ordered[i].Prefab,context.UnitSpawnPrefabs[i])||!context.UnitSpawnPrefabsByKey.TryGetValue(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(metadata.Ordered[i].Prefab.name),out var token)||!ReferenceEquals(token,metadata.Ordered[i].Prefab))throw new NotSupportedException("S073 queue registry differs from exact ordered source metadata");
+            var guardedRead=CreateS073LegacyConfiguredUnitReadModel(metadata,context.TryGetConfiguredUnitReadModel);
+            var dispatcher=new SourceFactionProductionDispatcher(em,boundary,owner,_=>new SourceS073LegacyCatalogScope(em,metadata),system,context,guardedRead,metadata);
+            context.ProductionSystem.BindSourceFactionQueueOwner(owner);
+            context.TryGetConfiguredUnitReadModel=guardedRead;
+            return dispatcher;
+        }
+        internal static SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate CreateS073LegacyConfiguredUnitReadModel(GeneratedUnitProductionMetadata metadata,SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate sourceConfiguredRead)
+        {
+            if(metadata==null||!metadata.FactoryDomainQualified||metadata.Ordered==null||metadata.Ordered.Count!=3||sourceConfiguredRead==null)throw new NotSupportedException("Exact three-entry S073 configured-unit source domain required");
+            SourceCampAvailabilityKernel.TryGetConfiguredUnitReadModelDelegate guardedRead=(int index,out SourceUnitPrefab prefab,out string displayName,out int price,out bool canRequest,out bool isVehicle)=>
+            {
+                prefab=null;displayName=string.Empty;price=0;canRequest=false;isVehicle=false;
+                if(index<0||index>=metadata.Ordered.Count)throw new NotSupportedException("S073 configured-unit index outside exact source registry");
+                if(!sourceConfiguredRead(index,out prefab,out displayName,out price,out canRequest,out isVehicle))throw new NotSupportedException("S073 configured-unit callback failed for a source-known index");
+                var row=metadata.Ordered[index];var definition=row.Definition;
+                string expectedName=string.IsNullOrWhiteSpace(definition.DisplayName)?row.Prefab.name:definition.DisplayName;
+                bool expectedVehicle=definition.FootprintCells.x>1||definition.FootprintCells.y>1||row.Prefab.name.IndexOf("Veh",StringComparison.OrdinalIgnoreCase)>=0;
+                if(!ReferenceEquals(prefab,row.Prefab)||!string.Equals(displayName,expectedName,StringComparison.Ordinal)||price!=definition.Price||canRequest!=definition.CanRequest||isVehicle!=expectedVehicle)throw new NotSupportedException("S073 configured-unit callback differs from qualified original metadata");
+                return true;
+            };
+            for(int i=0;i<metadata.Ordered.Count;i++)guardedRead(i,out _,out _,out _,out _,out _);
+            return guardedRead;
+        }
+        internal void Step(float now,CatalogPublicFacts facts)
+        {
+            if(Poisoned||owner.Poisoned)throw new InvalidOperationException("Faction dispatcher/queue poisoned");
+            if(requiredConfiguredRead!=null&&!ReferenceEquals(context.TryGetConfiguredUnitReadModel,requiredConfiguredRead))throw new NotSupportedException("S073 original configured-unit read guard was replaced after dispatcher admission");
+            if(requiredS073Metadata!=null)RequireS073LegacyReadDomain();
+            if(float.IsNaN(now)||float.IsInfinity(now))throw new ArgumentException("Finite original production clock required");
+            @@CurrentProbeGuard@@
+            var requests=EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em,boundary);
+            try{using(var scope=openReadScope(facts))ProcessProductionRequests(requestSystem,context,readModels,context,em,boundary,now);}
+            catch{Poisoned=true;owner.Poisoned=true;throw;}
+        }
+        void RequireS073LegacyReadDomain()
+        {
+            if(!ReferenceEquals(owner.World.Em,em)||owner.World.Boundary!=boundary||!ReferenceEquals(owner.World.Buildings,context.RuntimeBuildings)||!ReferenceEquals(owner.Production,context.ProductionSystem)||!owner.QueueContext.Equals(context.ProductionQueueContext)||context.UnitSpawnPrefabs==null||context.UnitSpawnPrefabs.Count!=requiredS073Metadata.Ordered.Count||context.UnitSpawnPrefabsByKey==null||context.UnitSpawnPrefabsByKey.Count!=requiredS073Metadata.Ordered.Count||!ReferenceEquals(context.UnitSpawnPrefabs,context.ProductionQueueContext.UnitSpawnPrefabs)||!ReferenceEquals(context.UnitSpawnPrefabsByKey,context.ProductionQueueContext.UnitSpawnPrefabsByKey)||context.ProductionQueueContext.ProductionSlotSystem==null||context.ProductionQueueContext.TryGetPrefabLocalBounds==null||context.ProductionQueueContext.TryGetRuntimeBoundaryEntity==null||!context.ProductionQueueContext.TryGetRuntimeBoundaryEntity(em,out var actualBoundary)||actualBoundary!=boundary)throw new NotSupportedException("S073 same-world queue context was replaced after admission");
+            for(int i=0;i<requiredS073Metadata.Ordered.Count;i++){var prefab=requiredS073Metadata.Ordered[i]?.Prefab;if(prefab==null||!ReferenceEquals(context.UnitSpawnPrefabs[i],prefab)||!context.UnitSpawnPrefabsByKey.TryGetValue(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name),out var token)||!ReferenceEquals(token,prefab))throw new NotSupportedException("S073 source-configured unit collection changed after admission");}
+        }
+        static DynamicBuffer<T> EnsureBoundaryBuffer<T>(EntityManager em,Entity entity)where T:struct
+            =>em.HasBuffer<T>(entity)?em.GetBuffer<T>(entity):em.AddBuffer<T>(entity);
+    }
+}

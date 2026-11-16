@@ -1,0 +1,666 @@
+{
+  "source": "/Volumes/T7/Projects/WarlineCapture-s073-publish-20261030",
+  "head": "fde85e0d2546fa65825a0a36bdf1e4c2357f42b8",
+  "branch": "codex/s073-legacy-startup-20261030",
+  "captured_at_unix": 1794853262.75046,
+  "changed_files": [
+    {
+      "path": "Assets/DefaultVolumeProfile.asset",
+      "sha256": "70e9ed4656132bf185009cb47db521fdeece0b1f4d464a73cb9d0bd04fe3bda5",
+      "bytes": 497
+    },
+    {
+      "path": "Assets/DefaultVolumeProfile.asset.meta",
+      "sha256": "bfb614f190335280782367e8d1b82f889f11547e77152a8f51d0727a89e8bb2c",
+      "bytes": 189
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S073PrepareMapBoundaryObserver.cs",
+      "sha256": "152902dc35b96e85552a1eef5f72fc2c88f5e949789d42cc36b4e583f47ebcd8",
+      "bytes": 9899
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S073PrepareMapBoundaryObserver.cs.meta",
+      "sha256": "75bb14fd4faa4c9ebf4c061361864170b4e082dda02cb51b21f794c2adaf205e",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S073PrepareMapCensusObserver.cs",
+      "sha256": "27452162302e89d293ce0d2482b955c3f1b6e61c5789ee0596c3e3f9c4e5382c",
+      "bytes": 8191
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/S073PrepareMapCensusObserver.cs.meta",
+      "sha256": "df1cb13284d8059e0e53c50eb67cd8cdb4a8c67984ce77e51fe019abe8102f84",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.S073ProductionCameraReference.cs",
+      "sha256": "5cbcb595c0bc07ac8a8621f039a0ab8704c9bfceee33fb96a660ec1697040fa3",
+      "bytes": 14980
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.S073ProductionCameraReference.cs.meta",
+      "sha256": "90d801b1823b848bd9dc7deb95d6d061907f661ff0818ae4989907d026ccff07",
+      "bytes": 60
+    },
+    {
+      "path": "Assets/Game/Scripts/Simulation/LegacyInitialSpawnData.cs.meta",
+      "sha256": "af219cf6c19498d7c7823b96a37dd416292c45c52a21a8ee09f649dd2ba08327",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSequenceKernel.cs.meta",
+      "sha256": "40f58e5a326c9400b1025191b5208314c1073dc767454ae922f2469aba653c93",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.DataOnly.cs.meta",
+      "sha256": "3043694c5a5fd43c32b2c77c382acc38b5c1809ba311c5355ba0ac9b942f98a3",
+      "bytes": 59
+    },
+    {
+      "path": "Assets/UniversalRenderPipelineGlobalSettings.asset",
+      "sha256": "0aee69929f2f677d7f9eae0cd13d786d0dd2f12590beb21342dce90fb6fe01f6",
+      "bytes": 26759
+    },
+    {
+      "path": "Assets/UniversalRenderPipelineGlobalSettings.asset.meta",
+      "sha256": "ba4b3bd436b6356a958237a311a6242146719aeb9200c34e370fdaa59649862d",
+      "bytes": 189
+    },
+    {
+      "path": "Assets/_Recovery/0 (3).unity",
+      "sha256": "d2d4209b6caa6f830f9711945053ed65877867e33c7d3232092319bbb9b55a93",
+      "bytes": 202369
+    },
+    {
+      "path": "Assets/_Recovery/0 (3).unity.meta",
+      "sha256": "1107f8c59257bb94396d2c7c70ac6f2827ac574b3d9d832b131af79e2d2ebf55",
+      "bytes": 155
+    },
+    {
+      "path": "Assets/_Recovery/0 (4).unity",
+      "sha256": "d2d4209b6caa6f830f9711945053ed65877867e33c7d3232092319bbb9b55a93",
+      "bytes": 202369
+    },
+    {
+      "path": "Assets/_Recovery/0 (4).unity.meta",
+      "sha256": "f61af07bfb542737f6a3d11efe3438f61f39117bb8d01767c8fa46648e551bc9",
+      "bytes": 155
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishAircraftRotorGeometry_V1.asset.before",
+      "sha256": "0eb796b92051e4ac6d16e09769a227cf687b0fbc38b8f1f79517ce151e1bcf5d",
+      "bytes": 21656
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishAircraftRotorGeometry_V1.asset.meta.before",
+      "sha256": "bcbae4fd31fd4cfe0d11e61ef7a6f84cd7389649f23ce76ba58cf97501c34394",
+      "bytes": 189
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishCanonicalAircraftGeometry_V1.asset.before",
+      "sha256": "5028f5eea8aef4d31caee2d1a730cd8704c29a6a020f97784ae3e9533edfcb80",
+      "bytes": 88756
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishCanonicalAircraftGeometry_V1.asset.meta.before",
+      "sha256": "ddfcc5a0b285833d72d8b8837507e97122245fee3eedf656b1bc272663e6780f",
+      "bytes": 189
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishRigidAircraftGeometry_Transport.asset.before",
+      "sha256": "3903e2a1a93af11e7254bbd3bf5a1dcf9849b83e403505f8ae19450daa54b9ae",
+      "bytes": 22278
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/SkirmishRigidAircraftGeometry_Transport.asset.meta.before",
+      "sha256": "688cb44c10b88ffd62541007b249ce77bdf158431794d7b316676cad7f20920b",
+      "bytes": 189
+    },
+    {
+      "path": "Design/AgentReports/SkirmishBattleLibrary/2026-10-20/normal-input/cache-stamp-preparation/receipt.json",
+      "sha256": "8407ce55237fa722977e174cc1f68784a7f4fe56cdc73a1848338a7fb65d7e3f",
+      "bytes": 191
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/5c6a88bc18cd6d7ab1bed55a3ed0aad9ce1daec5c9cbcc4c9240851378814a5a/runs.csv",
+      "sha256": "c8aef85d99d73b1177e0ba5300f1546e9552704a7a0cd644dcab9851087c795e",
+      "bytes": 651
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/5c6a88bc18cd6d7ab1bed55a3ed0aad9ce1daec5c9cbcc4c9240851378814a5a/s073-aria-rs-104731-en-1-log.txt",
+      "sha256": "a046a33292b17b1ccbfe1a6ffea1539b383a4dcb58c8848f9f970bc4a56510bf",
+      "bytes": 485
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/5c6a88bc18cd6d7ab1bed55a3ed0aad9ce1daec5c9cbcc4c9240851378814a5a/s073-aria-rs-104731-en-1.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/5c6a88bc18cd6d7ab1bed55a3ed0aad9ce1daec5c9cbcc4c9240851378814a5a/s073-aria-rs-104731-en-1.jsonl.touch.jsonl",
+      "sha256": "1160f567ae637d1d0d1f72b9ca54a27a4b2b2dd332732b9b241440451b5c5615",
+      "bytes": 960
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/cf4475c0378d0b4ded4df3e911c476ab2a96f074ba1e7f731a544a7c1ad9f064/runs.csv",
+      "sha256": "95494d82096bed7ee31560ccce2ed514337be4d7afe30fe0437d94f9f28e06d2",
+      "bytes": 651
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/cf4475c0378d0b4ded4df3e911c476ab2a96f074ba1e7f731a544a7c1ad9f064/s073-aria-rs-104731-en-1-log.txt",
+      "sha256": "77993dd111d9dd0b1bf586297f347d7c30c97d8f0cb91d0910c725e26209741d",
+      "bytes": 485
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/candidates/cf4475c0378d0b4ded4df3e911c476ab2a96f074ba1e7f731a544a7c1ad9f064/s073-aria-rs-104731-en-1.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-182662b297cc4fd4a9feb1103b06dea2.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-20a637886e194455bcaf724baf8967ed.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-3623ea282b3f4794bc04008c92d39364.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-67a144ce2a5545e597e723fbf77ff7d5.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-7a1631bfec89494186955913a732ff42.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-7f3108a6a8044afda96f682505eaf6e4.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-cd22bf86f9e04c63b062101b5992b5fa.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-cd22bf86f9e04c63b062101b5992b5fa.jsonl.menu-selection-diagnostic.png",
+      "sha256": "b4e9dae5fea740c78c7de05de4188941161055b72153e521ad1aee4f0ed3d620",
+      "bytes": 2671917
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-cd22bf86f9e04c63b062101b5992b5fa.jsonl.touch.jsonl",
+      "sha256": "1160f567ae637d1d0d1f72b9ca54a27a4b2b2dd332732b9b241440451b5c5615",
+      "bytes": 960
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-cf114c02b47345b5a04007b9ac3a52f9.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "Design/AgentReports/SkirmishExpansion/S002/_Evidence/s073-aria-live-104731-en-f12c5038466b47e987a9888e812a4dd9.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "ProjectSettings/ProjectAuditorSettings.asset",
+      "sha256": "22c699d7b424bd59053e552e6c358d9cca02d0663c276ec46ea0d0bd96651d85",
+      "bytes": 1036
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Recipes/regenerate_s073_ai_startup.py",
+      "sha256": "1de68fac0265670488646efa2cea26e8e87aab8f0ab0184062df1dc4b04cb46f",
+      "bytes": 8192
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/MapBuildingPlacementSequenceKernelHarness",
+      "sha256": "a4fd7d1c24e1ebea56a97838bffb9e3e72a56152c8afef956f75da642de8235b",
+      "bytes": 106792
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/MapBuildingPlacementSequenceKernelHarness.deps.json",
+      "sha256": "3240e91319b382bbecc56bad39ee30af6feba6eb2bd17ef410ec72d74380c7d1",
+      "bytes": 493
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/MapBuildingPlacementSequenceKernelHarness.dll",
+      "sha256": "17760a1eb65db83eee000906619bba353926e633f43a98220b09c04bd737a661",
+      "bytes": 14848
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/MapBuildingPlacementSequenceKernelHarness.runtimeconfig.json",
+      "sha256": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
+      "bytes": 328
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/RuntimeGridBlockerOwnershipKernelHarness",
+      "sha256": "7ebde2cda4978a0815cc2901e4f01ae32e64fd63b041c5f7d61541e795cfb599",
+      "bytes": 106792
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/RuntimeGridBlockerOwnershipKernelHarness.deps.json",
+      "sha256": "507ac47fec0e378168c71adfced40400dbdf49e775dd90efeafdcfcca4942bfe",
+      "bytes": 490
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/RuntimeGridBlockerOwnershipKernelHarness.dll",
+      "sha256": "124d85c0535947c7fdeadd61f6215e08e49750cde0a38b848dbc8509a1aa0c4b",
+      "bytes": 12288
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/bin/Release/net8.0/RuntimeGridBlockerOwnershipKernelHarness.runtimeconfig.json",
+      "sha256": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
+      "bytes": 328
+    },
+    {
+      "path": "Tools/CI/prepare_s026_authoring_input.py",
+      "sha256": "a489ab32b6c8867d967d07eea382d98c71c3b2129e810d4b23d1c69e5853e916",
+      "bytes": 15192
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails.meta",
+      "sha256": "0cf5f26e40dd8bbb69ce07c340c290221187d0e37390a26092468cbdc4ace75c",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Landscape.meta",
+      "sha256": "56d457b4ffc738186a5d1bf34e57f1f6726be214f5136615094cd51e87935690",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement.meta",
+      "sha256": "227f807164ee566f18f7d8d3b02999cf94c7e7ebc0ac0d9e14fd5299be2b18be",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Ground.meta",
+      "sha256": "d70f78ad106515bc6b122a92dcac3d7f36fc8e38725fb448108393e58cccbeb6",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Roofs.meta",
+      "sha256": "7e8a73c60e573f9c34fed79817fb3b86482ddc874232a753df86c6996fe2d948",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/Water.meta",
+      "sha256": "b35e3953d46c9ea80ec2e908745118bba99ef46207b524a9e8a9bd26387f2ce3",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Refinement/WaterMeshes.meta",
+      "sha256": "188e78de3336a330e93f08d44069d79e745977b6b209019000db1219fdb25e3a",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualDetails/Roads.meta",
+      "sha256": "6d24a01a6bb5efe03e659d78f156d85f546cc8a72aead09c5c9d3b54dd9732cd",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011.meta",
+      "sha256": "2a246d7c64ce78a5edf24964f4103d02e3573cda64acde8d969c403b156165fe",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CanalEndsV2.meta",
+      "sha256": "513391b757e8c1ed5ac8a09e5530d83821ddb3053ef312b62dd2326f46ffecff",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/Civic.meta",
+      "sha256": "d4199f437388ddc0955a9204c1986c14d0af46ec75237128422ce5ce0470a098",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/CurbsV3.meta",
+      "sha256": "8a385b29380e090848e4e7cf6ef3d19b0b8c930e84728eb744d9edb815920a4d",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/DestinationPads.meta",
+      "sha256": "570997c26572a09098fcf9303b6219fa5056133250e8267a1971a2dbac3cb057",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/RoadEndsV2.meta",
+      "sha256": "896fefa9ee3a2e5c2db5387108986b5bda8a32b2316cf3ae4b865fb412a542d1",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/RoadEntries.meta",
+      "sha256": "0ad15bb40b8cc33baab720304d88cc4d410e629317d56842c66be07ae4eb3dbf",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/RoadGround.meta",
+      "sha256": "d1fd3b23c0bf818f2f116c69cfd6e39a9b71db2baf04014db6d8179363a0807e",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/RunwayGround.meta",
+      "sha256": "9436a7b96f894a9d5fdd5db2d08e8b87f34c6433b94b7145120ff5245aff1baf",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/RunwayMaterials.meta",
+      "sha256": "98ac437b6caccd4c4de11dbe45b47895dfc786561e415cec249cc8a4f9b89d52",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/Runways.meta",
+      "sha256": "efbef353ed8797b2bf3a3bbd768cda541391bb8be0bc4876747ef02f94f63bee",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261011/TerminalCurbs.meta",
+      "sha256": "f91519bac55cae5bf2e6b034f63b629505851cf0614feb3bdf960d60c84e6a93",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261016.meta",
+      "sha256": "fd67d5065db0679a9c3ed212299bd0fc29009b2d4dfb59bc4f96eb6def864d5c",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261016/BridgeSurfaces.meta",
+      "sha256": "f7137251541919303797a7520933c0fd95d799e3e6c0e738241739429e76e76d",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/CampaignVisualFixes20261016/JoinMaterials.meta",
+      "sha256": "acc2eb6a4561fb7a3b089875d02ae54e0df497e683bf9dc378df6e36a263c6c6",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Art/MapBeautify/DenseCity.meta",
+      "sha256": "d167a0e48bfe631ddc733f336facd23e6c70a7e1e8bb68e88d924bac4cf11a6a",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/BakedMeshes/ProBuilder.meta",
+      "sha256": "1184c7fa09064b776f5739d864651b26eea1de2d9458175e39405186c068da52",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation.meta",
+      "sha256": "7dc0bf2f47460322436741cf1160aeecfb4f16301ace7819f2d40a65bdd7e97e",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity.meta",
+      "sha256": "53e29eac48505bc33321896b970a76287bda863663eaca8aa646f58a089a6b89",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/PhysicsFreeBuildingDefinitions.meta",
+      "sha256": "ffd762f21dd895c39daa3af62a12fe8a01ee9b87d340d30695b043b3545415ba",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/PhysicsFreePrefabDefinitions.meta",
+      "sha256": "f8824d4bcec8fd5c2b97eaa3efc3a7be3f2e2b29ed24cca9bd3b61328d90bbdd",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01.meta",
+      "sha256": "bd28fd4e857edb0df2cf83f53ed6d3e5d373457c184221bf05bc9ca05e2df022",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate.meta",
+      "sha256": "29076ccee6fad1a670feab2fded01615c4fb8c817e1afcc429312392fc5bc159",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/DenseCity/opmap.skirmish.desert_base_01/Candidate/SharedMaterials.meta",
+      "sha256": "ef37d491c4fb1ab85f89b33e46cd744f0809cfdb9d1d16d52c4baff7a1ac2099",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding.meta",
+      "sha256": "180f27beb674dc0a6454f33e356f1b1dbded556a9ad287728175a7de5c31bbe5",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01.meta",
+      "sha256": "f4d1de60b0c517091f9f64688c9a93c9f364ea5409d7b92c0062b843adb30986",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps.meta",
+      "sha256": "7829571740bd5ff8f2baa3ee37f2192f8fd68d07ac11dbcb3b8614bb62db9e29",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap.meta",
+      "sha256": "1c9f9554a4adda93353a2a9a0c67be4bf6ea8abffa4b04c50a9889ed1cf4265f",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish.meta",
+      "sha256": "fa9ef8b5a21915ec533b863d91995877c3ef55f2f53f3b5235f426df8c5612c6",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/GeneratedStaticMapPresentation/OperationMaps/opmap/skirmish/dense_city_building_materials.meta",
+      "sha256": "dd420c46b74625b23a3c32acc14259101ca290b7fea3de900ec257f4a0f4ac30",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/CharactersBaked.meta",
+      "sha256": "249913345e842a030e710a371c0c6fdb353eaa00b0d19f59fa49fe03cf206754",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Generated/MidLOD.meta",
+      "sha256": "2b9752b053c416fee1dfbd52af93cd1dfeae6093602a8e7f02762c704bcba241",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Roads/Road_Asphalt_With_Sidewalk.meta",
+      "sha256": "a33da062efe19153290ba8d3c1d61e507bc2c89e24e115350df02cbc7b69c840",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Narrative.meta",
+      "sha256": "bfe9b06f0bd86b22a209fa0bd33f00f0d60b89f47aabe2fd5c23a411b21260ff",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Narrative/FirstLaunch.meta",
+      "sha256": "c191a3a176df6a261ee0d3158e76874b6c0edf608ff2ba767fd8d8be2624f7b1",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell.meta",
+      "sha256": "816aca94633bed20571988acda619250e600abcd79d8a3169d43136eae98c513",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Prefabs/Vehicles/DestroyedVisuals.meta",
+      "sha256": "5b9b44d1c77df92f424a7262480b3e7efddf463992e693cb22f71b873859bdaf",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishAircraftRotorGeometry_V1.asset",
+      "sha256": "3c2a3f9b6b3c6e15b4164038f56aaa26c7a4b1329acbff859d0ad337ae9ae0d9",
+      "bytes": 21656
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishCanonicalAircraftGeometry_V1.asset",
+      "sha256": "f8a00c494aec924cee9fcc9de6154f0393ef777bd3cabc5b0e0f7d7e0db78353",
+      "bytes": 88756
+    },
+    {
+      "path": "Assets/Game/Resources/SkirmishRigidAircraftGeometry_Transport.asset",
+      "sha256": "186c72a0ed0b6c3dbeba06015463b9d9e9c761b6e68b861a8d48daa69a614f4b",
+      "bytes": 22278
+    },
+    {
+      "path": "Assets/Game/Scripts/Composition/SkirmishLaunchProjection.cs",
+      "sha256": "d6979412d5b7cea4bdf4c573f20c4198930cbdcb4e599dda0c110137c594bbec",
+      "bytes": 24617
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
+      "sha256": "e66504eb6bbc638f74fba42fd4fbb782f678b908fa69630cbfc95e7656f27721",
+      "bytes": 1847
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/Skirmish/SkirmishBakedActorSnapshotExporter.BuildingData.cs",
+      "sha256": "bc9416d1f0d251f64bfa14640f2243ad75e5ab50863823dc2a277219c65bda3d",
+      "bytes": 21212
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs",
+      "sha256": "5ee400460467cf8464763a0127b5f0e9adef8880da6ee1c737909f88f35b056e",
+      "bytes": 82876
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat",
+      "sha256": "59bd78979fd05fe791a2abca557fe449248e4966927f3f36f4f8817047576397",
+      "bytes": 3960
+    },
+    {
+      "path": "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_03_C.mat",
+      "sha256": "1a3c68710ae86ffaf0bfea0a8856aab8ff64cfcf56a907a5a8923e58c2292c0c",
+      "bytes": 3960
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/Environment.meta",
+      "sha256": "2ea3cb7f85d2aaf3023f786b60f948c21a30267b7379632d2752cf120d06c25b",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/Generic.meta",
+      "sha256": "4873ce81ba15b8937e1bbae0621855c73cc4d407aaa7e712f08492ff05a23879",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/Props.meta",
+      "sha256": "db99f838fc8cfea46a5b82e989fa5c90de8b084c998c9ae25ca6438afba6dbf5",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/Props/Military.meta",
+      "sha256": "4c9b41218f80dc0baf88ff1472d4e0c30c9b2384c0adb88514fe96fddb216665",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/PolygonMilitary/Prefabs/Props/Rugs.meta",
+      "sha256": "15e55448ac1b5356695ef77e74cd779e0591b79976eebdfc76fa30589f487a92",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale.meta",
+      "sha256": "05cae1015bdee0b0a43b3c7d1506ee4e477c309c8ed890741e0ebad75f6fb9ed",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Materials.meta",
+      "sha256": "ed2d3a3271a0c5af5305182fa144f35db9c5a8d4364f1915e2f9f666e34841b9",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Models.meta",
+      "sha256": "02ffad8600d9a8d7aa3d9b360fa34bf584bf882a57c011726040418666c1d3d8",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs.meta",
+      "sha256": "95ab6f9b8ce86269fed274ad8a3b3d3689f4198a000d43f65cc44b04e426262b",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments.meta",
+      "sha256": "8eddf8220cfa9ae2a93acf024ed3ceed90cb1367c4f5ddb33b20e9ba2b81ee00",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric.meta",
+      "sha256": "86d12838b01a17f2ebabcf54c7a77ee4729c913971c3ed0d711bdf0dd7cfc686",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Models.meta",
+      "sha256": "77ef4bd26611fc1a7b8c53a458d06d0529eaec2235f348f59256de461121f84d",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Prefabs.meta",
+      "sha256": "86597306aa1a7db24aa6fc0154b6d03f48ba107065a9b849acf2e17963c9c26f",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Prefabs/Environment.meta",
+      "sha256": "4c13ba3dfcdcf619bc93da19bdee1758de0bb3ded15f4513074f97b2dfb98e9d",
+      "bytes": 172
+    },
+    {
+      "path": "Assets/_Recovery/0 (1).unity",
+      "sha256": "88d982efc4bb44f04fb40b07085c55bc6a6028ebed0954d70d8ff2b13e0cde85",
+      "bytes": 202343
+    },
+    {
+      "path": "Assets/_Recovery/0 (1).unity.meta",
+      "sha256": "99f93e138d26421fe6aae0acd070eb4b8c457e127ed66ab9a2f1974b4c4ae008",
+      "bytes": 155
+    },
+    {
+      "path": "Assets/_Recovery/0 (2).unity",
+      "sha256": "d2d4209b6caa6f830f9711945053ed65877867e33c7d3232092319bbb9b55a93",
+      "bytes": 202369
+    },
+    {
+      "path": "Assets/_Recovery/0 (2).unity.meta",
+      "sha256": "f43700e6e1dbd72f1728343e999477b4b32b963ba834f0060372164cfefb4371",
+      "bytes": 155
+    },
+    {
+      "path": "Assets/_Recovery/0.unity",
+      "sha256": "88d982efc4bb44f04fb40b07085c55bc6a6028ebed0954d70d8ff2b13e0cde85",
+      "bytes": 202343
+    },
+    {
+      "path": "Assets/_Recovery/0.unity.meta",
+      "sha256": "ba5558a2f7f3f3251f28fcc99588379a372d8d23e81a1a7a15dc71eaa0e9ca65",
+      "bytes": 155
+    },
+    {
+      "path": "ProjectSettings/GraphicsSettings.asset",
+      "sha256": "19d5d7159a07d7ae5f4c1be23398211824db9ff274a4a32318f6edba96cd7b3a",
+      "bytes": 3099
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Recipes/faction_queue/templates/SourceFactionProductionDispatcher.cs.txt",
+      "sha256": "13fa57f4e13d0d2f55908ed895bd555ea0903bd2521066a84b11bd4a56625564",
+      "bytes": 9891
+    },
+    {
+      "path": "Tools/CI/SkirmishSourceSimulation/Tests/S073LegacyPlacementOwnerHarness.cs",
+      "sha256": "36db699b1ca08407a78edd08d59c7a19abd3af8d3c593341cba240d04f3dc865",
+      "bytes": 201931
+    }
+  ],
+  "preserved_directories": [
+    ".codex-work",
+    "Logs",
+    "UserSettings",
+    ".vscode"
+  ],
+  "excluded": "Unity Library and generated root project files; Git branch remains in shared repository",
+  "scope": "Recovery snapshot; not merged into active source"
+}

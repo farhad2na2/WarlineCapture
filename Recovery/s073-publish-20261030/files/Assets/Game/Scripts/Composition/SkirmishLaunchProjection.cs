@@ -1,0 +1,459 @@
+using System;
+using System.Collections.Generic;
+using Game.Components;
+using Game.Configs;
+using Game.Missions.Contracts;
+using Game.Skirmish.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+namespace Game.Composition
+{
+    internal sealed class SkirmishLaunchSnapshot : IComponentData
+    {
+        public QuickGameConfig Configuration;
+    }
+
+    internal static class SkirmishLaunchProjection
+    {
+#if UNITY_EDITOR
+        // Optional editor-only observation; it must never change launch behavior.
+        internal static Action<EntityManager, bool> PrepareMapObserver;
+        private static void ObservePrepareMap(EntityManager em, bool after)
+        {
+            try { PrepareMapObserver?.Invoke(em, after); }
+            catch (Exception error) { Debug.LogException(error); }
+        }
+#endif
+        public const string MissionId = "skirmish.base_assault";
+        public const string ScenarioId = "scenario.skirmish.desert_base_standard";
+        public const string OperationMapId = "opmap.skirmish.desert_base_01";
+
+        public static bool TryQueueSelected(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
+        {
+            // Reject unsupported size identities before mutating launch boundaries.
+            if (!TryResolveSelectedMissionSize(selected, out _)) return false;
+            // Existing callers and old saves retain ordinary practice defaults.
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.Unspecified)
+                return string.IsNullOrEmpty(selected.CatalogId)&&string.IsNullOrEmpty(selected.DefinitionId)&&selected.ContentVersion==0&&TryQueue(em,config);
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.PracticePreset)
+            {
+                if(!SkirmishMissionDispatch.IsExpandedCounterpart(selected.CatalogId)||selected.ContentVersion!=0||
+                    !string.IsNullOrEmpty(selected.DefinitionId)||!SkirmishMissionDispatch.TryGetLegacyIndex(selected.CatalogId,out int index)||index!=config.ScenarioIndex)return false;
+                var catalog=SkirmishBattleCatalogConfig.Load();int matches=0;
+                if(catalog?.Entries==null)return false;
+                foreach(var row in catalog.Entries)if(row.ScenarioId==selected.CatalogId&&row.IsPlayable&&row.PlayableScenarioIndex==index&&
+                    row.ContentVersion==0&&string.IsNullOrEmpty(row.DefinitionId))matches++;
+                return matches==1&&TryQueue(em,config);
+            }
+            if(selected.Kind!=UiSkirmishLibraryLaunchKind.ExpandedDefinition||
+                !SkirmishMissionDispatch.TryGetSelectedExpanded(SkirmishBattleCatalogConfig.Load(),selected.CatalogId,selected.DefinitionId,
+                    selected.ContentVersion,config.ScenarioIndex,out _)||config.MapSeed<=0)return false;
+            return TryQueueCore(em,config,selected);
+        }
+
+        private static bool TryResolveSelectedMissionSize(UiSkirmishLibrarySelection selected, out SkirmishSizeId size)
+        {
+            size = SkirmishSizeId.Standard;
+            switch (selected.MissionSize)
+            {
+                case UiSkirmishMissionSize.Unspecified:
+                case UiSkirmishMissionSize.Standard: return true;
+                case UiSkirmishMissionSize.War: size = SkirmishSizeId.War; break;
+                case UiSkirmishMissionSize.LargeWar: size = SkirmishSizeId.LargeWar; break;
+                default: return false;
+            }
+            // Practice presets and legacy/config-only callers keep coded defaults.
+            return selected.Kind == UiSkirmishLibraryLaunchKind.ExpandedDefinition &&
+                SkirmishBattleCatalogConfig.IsMissionSizeSelectionAvailable(selected.CatalogId,selected.DefinitionId,selected.ContentVersion,size);
+        }
+
+        public static bool TryQueue(EntityManager em, QuickGameConfig config)
+            => TryQueueCore(em,config,default);
+
+        private static bool TryQueueCore(EntityManager em,QuickGameConfig config,UiSkirmishLibrarySelection selected)
+        {
+            bool generic = config.ScenarioIndex > 7;
+            SkirmishBattleCatalogEntry genericEntry = default;
+            if (generic && !SkirmishMissionDispatch.TryGetGenericByIndex(SkirmishBattleCatalogConfig.Load(), config.ScenarioIndex, out genericEntry)) return false;
+            if (config.ScenarioIndex < 0) return false;
+            string canonicalId = generic ? genericEntry.DefinitionId : config.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "skirmish.s025" :
+                config.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "skirmish.s073" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ? "skirmish.s002" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ? "skirmish.s003" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex ? "skirmish.s004" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex ? "skirmish.s005" : "skirmish.s001";
+            if (Game.Runtime.ContentAccessRuntime.Evaluate(canonicalId) != ContentAccessState.Allowed) return false;
+            using var campaign = em.CreateEntityQuery(typeof(CampaignMissionLaunchRequestElement));
+            using var roots = campaign.ToEntityArray(Allocator.Temp);
+            foreach (var root in roots)
+                if (em.GetBuffer<CampaignMissionLaunchRequestElement>(root).Length != 0) return false;
+            using var query = em.CreateEntityQuery(typeof(SkirmishMatchState));
+            if (!query.IsEmptyIgnoreFilter) return false;
+            // The start boundary survives scene unloads. A retry/replay must not
+            // inherit the previous attempt's Failed or Started status.
+            using (var starts = em.CreateEntityQuery(typeof(MatchStartQueueComponent)))
+            {
+                using var boundaries = starts.ToEntityArray(Allocator.Temp);
+                foreach (var boundary in boundaries)
+                    if (em.GetComponentData<MatchStartQueueComponent>(boundary).IsStartPending != 0) return false;
+                foreach (var boundary in boundaries)
+                {
+                    int sequence = em.GetComponentData<MatchStartQueueComponent>(boundary).LastRequestId;
+                    em.SetComponentData(boundary, new MatchStartQueueComponent { LastRequestId = sequence });
+                    if (em.HasBuffer<MatchStartRequestElement>(boundary)) em.GetBuffer<MatchStartRequestElement>(boundary).Clear();
+                    if (em.HasBuffer<MatchStartResultElement>(boundary)) em.GetBuffer<MatchStartResultElement>(boundary).Clear();
+                    if (em.HasComponent<MatchStartProgressComponent>(boundary)) em.SetComponentData(boundary, default(MatchStartProgressComponent));
+                }
+            }
+            config = config.NormalizeForBaseAssault();
+            if(selected.Kind==UiSkirmishLibraryLaunchKind.ExpandedDefinition)
+            {
+                if (!TryResolveSelectedMissionSize(selected, out var selectedSize)) return false;
+                return TryQueueExpanded(em,selected.CatalogId,config.MapSeed,selected.DefinitionId,selected.ContentVersion,selectedSize);
+            }
+            if (generic) return TryQueueExpanded(em, genericEntry.ScenarioId, config.MapSeed);
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId, config.MapSeed);
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileEstablishedScenarioIndex)
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseAirMobileEstablishedScenarioId, config.MapSeed);
+
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseCombinedArmsFieldScenarioIndex)
+                return TryQueueExpanded(em, "S005", config.MapSeed);
+
+            var entity = em.CreateEntity(typeof(SkirmishMatchState));
+            em.SetName(entity, "SkirmishSession");
+            em.SetComponentData(entity, new SkirmishMatchState
+            {
+                SessionId = new FixedString64Bytes(Guid.NewGuid().ToString("N")),
+                Seed = config.MapSeed,
+                ScenarioIndex = config.ScenarioIndex,
+                Phase = SkirmishPhase.Queued
+            });
+            em.AddBuffer<SkirmishActionRequest>(entity);
+            em.AddBuffer<SkirmishTrackedUnit>(entity);
+            em.AddComponentObject(entity, new SkirmishLaunchSnapshot { Configuration = config });
+            return true;
+        }
+
+        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed,string expectedDefinition=null,int expectedVersion=0,SkirmishSizeId missionSize=SkirmishSizeId.Standard)
+        {
+            // Packaged content only: a standalone player cannot read the repository
+            // Design directory, and the authored definition asset is the source of truth.
+            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))
+            {
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " matrix=" + error);
+                return false;
+            }
+
+            SkirmishExpansionCatalogConfig catalog = SkirmishExpansionCatalogConfig.Load();
+            if (catalog == null)
+            {
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId +
+                    " missing Resources/" + SkirmishExpansionCatalogConfig.ResourceName);
+                return false;
+            }
+
+            SkirmishScenarioDefinitionConfig definition;
+            bool found = expectedVersion > 0
+                ? catalog.TryGetDefinition(catalogId, expectedVersion, out definition)
+                : catalog.TryGetDefinition(catalogId, out definition);
+            if (!found ||
+                definition == null || (expectedDefinition!=null&&(definition.DefinitionId!=expectedDefinition||definition.ContentVersion!=expectedVersion)))
+            {
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " definition=missing");
+                return false;
+            }
+
+            SkirmishExpansionAuthoredSet authored = catalog.ToAuthoredSet();
+            var manifest = new SkirmishContentManifest
+            {
+                RequiredFeatureIds = definition.RequiredFeatureIds ?? Array.Empty<string>()
+            };
+            SkirmishPresetConfig mapPreset = SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseScenarioIndex);
+            UnitPrefabRegistryAuthoringConfig registry = mapPreset != null && mapPreset.buildingPlacement != null
+                ? mapPreset.buildingPlacement.UnitPrefabRegistryConfig
+                : null;
+            if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                    em,
+                    catalogId,
+                    SkirmishDifficultyId.Regular,
+                    missionSize,
+                    seed,
+                    authored,
+                    matrix,
+                    manifest,
+                    out SkirmishResolvedSetup setup,
+                    out _,
+                    out List<SkirmishCompileReason> reasons,
+                    registry, definition.ContentVersion))
+            {
+                string detail = reasons == null || reasons.Count == 0 ? "compile failed" : reasons[0].ToString();
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " " + detail);
+                return false;
+            }
+
+            Debug.Log(
+                "[SkirmishLaunch] queued expanded catalog=" + setup.CatalogId +
+                " definition=" + setup.DefinitionId +
+                " start=" + setup.StartPackageId +
+                " difficulty=" + setup.DifficultyId +
+                " size=" + setup.SizeId +
+                " seed=" + setup.Seed +
+                " mapHint=" + SkirmishPresetConfig.DesertBaseScenarioIndex);
+            return true;
+        }
+
+        public static bool TryGet(EntityManager em, out Entity entity, out SkirmishMatchState state)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishMatchState));
+            entity = Entity.Null; state = default;
+            if (query.CalculateEntityCount() != 1) return false;
+            entity = query.GetSingletonEntity(); state = em.GetComponentData<SkirmishMatchState>(entity);
+            return true;
+        }
+
+        public static void PrepareMap(EntityManager em)
+        {
+            if (!TryGet(em, out var session, out var match) || match.Phase != SkirmishPhase.Queued) return;
+#if UNITY_EDITOR
+            ObservePrepareMap(em, false);
+#endif
+            // The shared map's authored ownership belongs to campaign scenarios. Only
+            // this preset's newly spawned force and supply buildings belong to its sides.
+            using var query = em.CreateEntityQuery(typeof(OperationMapBuildingComponent), typeof(Faction));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                em.SetComponentData(entity, new Faction { Id = 0 });
+                if (em.HasComponent<RuntimeBuildingCombatInfo>(entity))
+                {
+                    var info = em.GetComponentData<RuntimeBuildingCombatInfo>(entity); info.OwnerFactionId = 0;
+                    em.SetComponentData(entity, info);
+                }
+                if (em.HasComponent<BuildingResourceStorageComponent>(entity))
+                {
+                    var storage = em.GetComponentData<BuildingResourceStorageComponent>(entity); storage.OwnerFactionId = 0;
+                    em.SetComponentData(entity, storage);
+                }
+                if (em.HasComponent<AIControlledTag>(entity)) em.RemoveComponent<AIControlledTag>(entity);
+            }
+            match.Phase = SkirmishPhase.Preparing; em.SetComponentData(session, match);
+#if UNITY_EDITOR
+            ObservePrepareMap(em, true);
+#endif
+        }
+
+        public static void ApplySeed(EntityManager em)
+        {
+            if (!TryGet(em, out var session, out var state)) return;
+            if (em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0)
+            {
+                Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
+                return;
+            }
+            Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
+            using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
+            if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("Skirmish requires one initial spawn configuration.");
+            var config = query.GetSingleton<InitialUnitsSpawnConfig>(); config.RandomSeed = (uint)state.Seed;
+            em.SetComponentData(query.GetSingletonEntity(), config);
+        }
+
+        public static bool IsShellReadyToEnterMatch(EntityManager em)
+        {
+            if (!TryGetShell(em, out var boundary, out var shell)) return false;
+            if (shell.IsTransitionRunning != 0) return false;
+            if (em.HasComponent<UiShellStartupDispositionComponent>(boundary))
+            {
+                var disposition = em.GetComponentData<UiShellStartupDispositionComponent>(boundary).Value;
+                if (disposition == UiShellStartupDisposition.Pending ||
+                    disposition == UiShellStartupDisposition.FirstLaunch)
+                    return false;
+            }
+            return shell.CurrentMode == UiShellMode.MainMenu;
+        }
+
+        public static bool TryEnterMatch(EntityManager em)
+        {
+            if (!TryGetShell(em, out var boundary, out var shell)) return false;
+            if (shell.ActiveRoute == UIRoute.Match) return true;
+            var routes = em.GetBuffer<UiShellRouteRequestComponent>(boundary);
+            for (int i = 0; i < routes.Length; i++)
+                if (routes[i].Intent == UiShellRouteIntent.EnterMatch) return true;
+            routes.Add(new UiShellRouteRequestComponent
+            {
+                Intent = UiShellRouteIntent.EnterMatch,
+                Route = UIRoute.Match,
+                PushHistory = 0
+            });
+            return true;
+        }
+
+        public static bool TryRequestPlay(EntityManager em)
+        {
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1) return false;
+            var entity = gameplay.GetSingletonEntity();
+            var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            if (state.PlayRequested != 0) return true;
+            state.PlayRequested = 1;
+            em.SetComponentData(entity, state);
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " playRequested=1");
+            return true;
+        }
+
+        /// <summary>
+        /// Expanded S002 can reach Playing via spawn while SimulationActive is still 0.
+        /// After gameplay bootstrap finishes (or fails), arm simulation so the objective
+        /// clock and engagement systems advance. Does not bypass an intentional pause.
+        /// </summary>
+        public static bool TryArmExpandedSimulation(EntityManager em)
+        {
+            if (!TryGet(em, out Entity session, out SkirmishMatchState match))
+                return false;
+            if (match.Phase < SkirmishPhase.Playing)
+                return false;
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0)
+                return false;
+
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1)
+                return false;
+            Entity entity = gameplay.GetSingletonEntity();
+            var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            if (state.SimulationActive != 0)
+                return true;
+            if (state.PlayRequested == 0)
+                return false;
+
+            var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            if (scene == null || !scene.GameplayStartRequested)
+                return false;
+            if (!scene.GameplayStartComplete && !scene.GameplayStartFailed)
+                return false;
+
+            state.SimulationActive = 1;
+            em.SetComponentData(entity, state);
+            Debug.Log("[SkirmishLaunch] expandedSimulationActive=1");
+            return true;
+        }
+
+        public static bool IsSimulationActive(EntityManager em)
+        {
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1)
+                return false;
+            return em.GetComponentData<RuntimeGameplayStateComponent>(gameplay.GetSingletonEntity()).SimulationActive != 0;
+        }
+
+        public static float ReadMatchElapsedSeconds(EntityManager em, Entity session, in SkirmishMatchState match)
+        {
+            if (session != Entity.Null &&
+                em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                return em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+            return match.ElapsedSeconds;
+        }
+
+        public static bool TryActivateStressSimulation(EntityManager em)
+        {
+            if (!TryGet(em, out var session, out var match)) return false;
+            if (match.ScenarioIndex != SkirmishPresetConfig.StressScaleProbeScenarioIndex) return false;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Content) return false;
+            if (match.Phase != SkirmishPhase.Preparing) return false;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Timeout)
+            {
+                match.StartupFailure = SkirmishStartupFailureCode.None;
+                em.SetComponentData(session, match);
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " cleared timeout so Playing can start");
+            }
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1) return false;
+            var entity = gameplay.GetSingletonEntity();
+            var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            bool changed = false;
+            if (state.PlayRequested == 0)
+            {
+                state.PlayRequested = 1;
+                changed = true;
+            }
+            if (state.SimulationActive == 0)
+            {
+                state.SimulationActive = 1;
+                changed = true;
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " simulationActive=1 preparing barracks="
+                    + (HasBothFactionBarracks(em) ? 1 : 0));
+            }
+            if (changed)
+                em.SetComponentData(entity, state);
+            return true;
+        }
+
+        public static bool TryBeginGameplayIfLoaded()
+        {
+            var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            if (scene == null) return false;
+            if (!scene.GameplayStartRequested)
+                scene.BeginGameplay();
+            return scene.GameplayStartRequested;
+        }
+
+        public static bool DriveStressLaunch(EntityManager em)
+        {
+            if (!TryGet(em, out _, out var match)) return false;
+            if (match.ScenarioIndex != SkirmishPresetConfig.StressScaleProbeScenarioIndex) return false;
+            if (match.Phase >= SkirmishPhase.Playing)
+                return match.Phase == SkirmishPhase.Playing;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Content)
+                return false;
+            if (match.Phase == SkirmishPhase.Queued &&
+                (IsShellReadyToEnterMatch(em) || (TryGetShell(em, out _, out var shell) && shell.ActiveRoute == UIRoute.Match)))
+                TryEnterMatch(em);
+            TryBeginGameplayIfLoaded();
+            TryRequestPlay(em);
+            TryActivateStressSimulation(em);
+            return true;
+        }
+
+        private static bool TryGetShell(EntityManager em, out Entity boundary, out UiShellStateComponent shell)
+        {
+            boundary = Entity.Null;
+            shell = default;
+            using var query = em.CreateEntityQuery(
+                ComponentType.ReadOnly<UiShellRootComponent>(),
+                ComponentType.ReadWrite<UiShellStateComponent>(),
+                ComponentType.ReadWrite<UiShellRouteRequestComponent>());
+            if (query.IsEmptyIgnoreFilter || query.CalculateEntityCount() != 1) return false;
+            boundary = query.GetSingletonEntity();
+            shell = em.GetComponentData<UiShellStateComponent>(boundary);
+            return true;
+        }
+
+        private static bool HasBothFactionBarracks(EntityManager em)
+        {
+            bool player = false;
+            bool enemy = false;
+            using var query = em.CreateEntityQuery(
+                typeof(RuntimeBuildingCombatTag), typeof(UnitSourcePrefabKey), typeof(Faction), typeof(UnitHealth));
+            using var buildings = query.ToEntityArray(Allocator.Temp);
+            foreach (var building in buildings)
+            {
+                if (em.HasComponent<OperationMapBuildingComponent>(building)) continue;
+                if (em.GetComponentData<UnitHealth>(building).Current <= 0) continue;
+                if (!em.GetComponentData<UnitSourcePrefabKey>(building).Value.ToString().ToLowerInvariant()
+                        .Contains("building_barrack"))
+                    continue;
+                byte faction = em.GetComponentData<Faction>(building).Id;
+                if (faction == 1) player = true;
+                if (faction == 2) enemy = true;
+            }
+            return player && enemy;
+        }
+    }
+}

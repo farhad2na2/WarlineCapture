@@ -1,0 +1,1740 @@
+using System;
+using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+using Game.Components;
+using static Game.Runtime.BuildingRuntimeBoundaryBuffers;
+using RuntimeSignature = Game.Runtime.BuildingRuntimeSignatureUtility;
+
+namespace Game.Runtime
+{
+    public sealed partial class BuildingRuntimeProcessingCompositionSystemHelper
+    {
+#if UNITY_EDITOR
+        public static Action<EntityManager, Entity, BuildingFactionUnitProductionRequest, float> EditorBeforeProductionRequest;
+#endif
+        private const float PublishIntervalSeconds = 0.125f;
+        private const float IdleRequestProbeIntervalSeconds = 0.1f;
+        private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
+
+        private readonly List<byte> _factionIds = new();
+        private readonly List<int> _pendingSpawnRequestIndices = new();
+        private readonly Dictionary<GameObject, FixedString128Bytes> _boundaryIdsByPrefab = new();
+        private readonly Dictionary<string, FixedString128Bytes> _boundaryIdsByFallback = new();
+        private readonly Dictionary<ProductionSummaryKey, ProductionSummaryCounts> _productionSummaryCountsScratch = new();
+        private readonly HashSet<int> _producedReadModelBuildingIdsScratch = new();
+        private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
+        private readonly BuildingPlacementAuthoredRoadCache _skirmishRoads = new();
+        private readonly BuildingPlacementAuthoredBuildingCache _skirmishBuildings = new();
+        private float _nextPublishAt;
+        private bool _forcePublishNextUpdate;
+        private bool _configuredReadModelsPublished;
+        private int _lastPublishedFactionSummarySignature = int.MinValue;
+        private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
+        private int _lastPublishedOwnedBuildingSummarySignature = int.MinValue;
+        private int _lastPublishedUnitProductionSummarySignature = int.MinValue;
+        private float _nextResourceSellProbeAt;
+        private float _nextProductionRequestProbeAt;
+        private float _nextRuntimeSpawnRequestProbeAt;
+        private PublishPhase _nextPublishPhase = PublishPhase.FactionSummaries;
+        private Unity.Entities.World _cachedBoundaryWorld;
+        private Entity _cachedBoundaryEntity;
+
+        private enum PublishPhase : byte
+        {
+            FactionSummaries = 0,
+            OwnedBuildingSummaries = 1,
+            UnitProductionSummaries = 2,
+            BuildingSetReadModels = 3
+        }
+
+        private readonly struct ProductionSummaryKey : IEquatable<ProductionSummaryKey>
+        {
+            public readonly byte FactionId;
+            public readonly FixedString128Bytes UnitId;
+
+            public ProductionSummaryKey(byte factionId, FixedString128Bytes unitId)
+            {
+                FactionId = factionId;
+                UnitId = unitId;
+            }
+
+            public bool Equals(ProductionSummaryKey other)
+            {
+                return FactionId == other.FactionId && UnitId.Equals(other.UnitId);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is ProductionSummaryKey other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return (FactionId * 397) ^ UnitId.GetHashCode();
+                }
+            }
+        }
+
+        private struct ProductionSummaryCounts
+        {
+            public int ProducedCount;
+            public int QueuedCount;
+        }
+
+        internal void Update(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            BuildingProductionRequestSystemHelper.Context productionRequestContext,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            EntityQuery boundaryQuery,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            float now,
+            int frameCount)
+        {
+            if (definitionSystem == null ||
+                runtimeSpawnSystem == null ||
+                productionRequestSystem == null ||
+                runtimeQuerySystem == null ||
+                factionResourceSystem == null ||
+                runtimeBuildings == null)
+            {
+                return;
+            }
+
+            if (!TryGetBoundaryEntity(em, boundaryQuery, out Entity boundaryEntity))
+                return;
+
+            ProcessRequests(
+                definitionSystem,
+                runtimeSpawnSystem,
+                runtimeSpawnContext,
+                productionRequestSystem,
+                productionRequestContext,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                factionResourceSystem,
+                runtimeBuildings,
+                em,
+                boundaryEntity,
+                now,
+                frameCount);
+            PublishReadModelIfDue(
+                definitionSystem,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                factionResourceSystem,
+                em,
+                boundaryEntity,
+                runtimeBuildings,
+                now);
+        }
+
+        private void ProcessRequests(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            BuildingProductionRequestSystemHelper.Context productionRequestContext,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            EntityManager em,
+            Entity boundaryEntity,
+            float now,
+            int frameCount)
+        {
+            _deleteCommandProcessor.Process(_delete, em, boundaryEntity,_cleanup);
+            ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity, now);
+            ProcessUiProductionRequests(productionRequestSystem, productionRequestContext, em, frameCount, now);
+            ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
+            productionRequestSystem.ProcessReadyOperationMapProductions(
+                productionRequestContext,
+                em,
+                now,
+                productionRequestContext.LogWarning,
+                out _);
+            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now);
+        }
+
+        internal void ProcessRuntimeSpawnRequestsForBoundary(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
+            EntityManager em,
+            Entity boundaryEntity)
+        {
+            if (definitionSystem == null ||
+                runtimeSpawnSystem == null ||
+                boundaryEntity == Entity.Null ||
+                !em.Exists(boundaryEntity))
+            {
+                return;
+            }
+
+            ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity, now: 0f, forceScan: true);
+        }
+
+        private static void ProcessUiProductionRequests(
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            BuildingProductionRequestSystemHelper.Context productionRequestContext,
+            EntityManager em,
+            int frameCount,
+            float now)
+        {
+            productionRequestSystem.ProcessPendingUiProductionCommandsIfPresent(
+                em,
+                productionRequestContext,
+                frameCount,
+                now);
+            productionRequestSystem.ProcessPendingUiCampItemCommandsIfPresent(
+                em,
+                productionRequestContext,
+                frameCount);
+        }
+
+        private void ProcessResourceSellRequests(
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            EntityManager em,
+            Entity boundaryEntity,
+            float now)
+        {
+            if (now < _nextResourceSellProbeAt)
+                return;
+
+            DynamicBuffer<BuildingFactionResourceSellRequest> sellRequests =
+                EnsureBoundaryBuffer<BuildingFactionResourceSellRequest>(em, boundaryEntity);
+            bool foundPending = false;
+            for (int i = 0; i < sellRequests.Length; i++)
+            {
+                BuildingFactionResourceSellRequest request = sellRequests[i];
+                if (request.Status != BuildingFactionResourceSellRequest.Pending)
+                    continue;
+
+                foundPending = true;
+                float soldOil = factionResourceSystem.DrainFactionResource(
+                    em,
+                    runtimeBuildings,
+                    request.FactionId,
+                    Mathf.Max(0f, request.RequestedOilBarrels),
+                    ResourceKind.Oil);
+                float soldFuel = factionResourceSystem.DrainFactionResource(
+                    em,
+                    runtimeBuildings,
+                    request.FactionId,
+                    Mathf.Max(0f, request.RequestedFuelBarrels),
+                    ResourceKind.Fuel);
+                request.Status = BuildingFactionResourceSellRequest.Succeeded;
+                request.ResultCode = soldOil > 0f || soldFuel > 0f
+                    ? (byte)0
+                    : BuildingFactionResourceSellRequest.NoneSold;
+                request.SoldOilBarrels = soldOil;
+                request.SoldFuelBarrels = soldFuel;
+                sellRequests[i] = request;
+            }
+
+            _nextResourceSellProbeAt = foundPending
+                ? now
+                : now + IdleRequestProbeIntervalSeconds;
+        }
+
+        private void ProcessProductionRequests(
+            BuildingProductionRequestSystemHelper productionRequestSystem,
+            BuildingProductionRequestSystemHelper.Context productionRequestContext,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity,
+            float now)
+        {
+            if (now < _nextProductionRequestProbeAt)
+                return;
+
+            DynamicBuffer<BuildingFactionUnitProductionRequest> productionRequests =
+                EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em, boundaryEntity);
+            bool foundPending = false;
+            for (int i = 0; i < productionRequests.Length; i++)
+            {
+                BuildingFactionUnitProductionRequest request = productionRequests[i];
+                if (request.Status != BuildingFactionUnitProductionRequest.Pending)
+                    continue;
+
+#if UNITY_EDITOR
+                EditorBeforeProductionRequest?.Invoke(em, boundaryEntity, request, now);
+#endif
+                foundPending = true;
+                string unitId = productionRequestSystem.GetCachedUnitIdString(request.UnitId);
+                bool queued = productionRequestSystem.QueueFactionUnitProductionRequest(
+                    productionRequestContext,
+                    request.FactionId,
+                    unitId,
+                    em,
+                    now,
+                    ref request,
+                    unitIdIsNormalized: true);
+                if (queued)
+                    _forcePublishNextUpdate = true;
+                request.Status = queued
+                    ? BuildingFactionUnitProductionRequest.Succeeded
+                    : BuildingFactionUnitProductionRequest.Failed;
+                if (request.ResultCode != BuildingFactionUnitProductionRequest.MissingUnitConfig)
+                {
+                    request.QueueCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, request.FactionId, unitId);
+                    request.ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, request.FactionId, unitId);
+                }
+                productionRequests = em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+                productionRequests[i] = request;
+            }
+
+            _nextProductionRequestProbeAt = foundPending
+                ? now
+                : now + IdleRequestProbeIntervalSeconds;
+        }
+
+        private void ProcessRuntimeSpawnRequests(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper runtimeSpawnSystem,
+            BuildingRuntimeSpawnCompositionSystemHelper.Context runtimeSpawnContext,
+            EntityManager em,
+            Entity boundaryEntity,
+            float now,
+            bool forceScan = false)
+        {
+            if (!forceScan && now < _nextRuntimeSpawnRequestProbeAt)
+                return;
+
+            _pendingSpawnRequestIndices.Clear();
+            DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
+                EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
+            for (int i = 0; i < spawnRequests.Length; i++)
+            {
+                if (spawnRequests[i].Status == BuildingRuntimeSpawnRequest.Pending)
+                    _pendingSpawnRequestIndices.Add(i);
+            }
+
+            int processedRequests = 0;
+            if (_pendingSpawnRequestIndices.Count == 0)
+            {
+                if (!forceScan)
+                    _nextRuntimeSpawnRequestProbeAt = now + IdleRequestProbeIntervalSeconds;
+                return;
+            }
+
+            for (int pendingIndex = 0; pendingIndex < _pendingSpawnRequestIndices.Count; pendingIndex++)
+            {
+                if (processedRequests >= MaxRuntimeSpawnRequestsPerUpdate)
+                    break;
+
+                int i = _pendingSpawnRequestIndices[pendingIndex];
+                spawnRequests = EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
+                if ((uint)i >= (uint)spawnRequests.Length)
+                    continue;
+
+                BuildingRuntimeSpawnRequest request = spawnRequests[i];
+                if (request.Status != BuildingRuntimeSpawnRequest.Pending)
+                    continue;
+
+                bool enemyConstruction = SkirmishEnemyConstructionAdapter.IsConstructionRequest(request);
+                if (enemyConstruction && !SkirmishEnemyConstructionAdapter.CanProcess(em, request, out bool deferConstruction))
+                {
+                    if (deferConstruction) continue;
+                    processedRequests++;
+                    request.Status=BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode=BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em,boundaryEntity,i,request);
+                    continue;
+                }
+
+                if (!TryResolveConfiguredBuildingDefinition(definitionSystem, request.BuildingId.ToString(), out BuildingDefinition definition))
+                {
+                    if (definitionSystem.ConfiguredSpawnableCount == 0)
+                        continue;
+
+                    processedRequests++;
+                    request.Status = BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
+                    WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                    continue;
+                }
+
+                processedRequests++;
+                bool missionObstruction=request.RequestKind==BuildingRuntimeSpawnRequest.KindMissionRoadObstruction;
+                if(missionObstruction && !IsRegisteredMissionRoadObstruction(em,in request,definition,runtimeSpawnContext))
+                {
+                    request.Status=BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode=BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em,boundaryEntity,i,request);
+                    continue;
+                }
+                if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
+                    spawnable = BuildingDefinitionPrefabSystemHelper.BuildConfiguredSpawnableEntry(definition);
+                bool startingGrant = request.AuthoredStartingGrant != 0 &&
+                    request.PlanEntity != Entity.Null && em.Exists(request.PlanEntity) &&
+                    em.HasComponent<BuildingStartingGrantOwner>(request.PlanEntity);
+                if (request.AuthoredStartingGrant != 0 && !startingGrant)
+                {
+                    request.Status = BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                    continue;
+                }
+                bool authoredEnemy = request.AllowNonBuildableEnemy != 0 && request.HasOwnerFaction != 0 &&
+                    request.FactionId != FactionIdentity.PlayerFactionId;
+                if (spawnable.Prefab == null || (!spawnable.CanRequest && !authoredEnemy && !startingGrant))
+                {
+                    request.Status = BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
+                    WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                    continue;
+                }
+
+                var requestSpawnContext = runtimeSpawnContext;
+                int grantBuildingRejected = 0, grantSurfaceRejected = 0, grantSidewalkRejected = 0, grantOriginalRejected = 0;
+                if ((startingGrant || enemyConstruction) && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
+                {
+                    using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                    if (grantSurfaces.CalculateEntityCount() != 1) continue;
+                    _skirmishRoads.Ensure(em, grantSurfaces, grantGrid);
+                    _skirmishBuildings.Ensure(em, grantGrid);
+                    using var grantSkirmish = em.CreateEntityQuery(typeof(SkirmishMatchState));
+                    if (!grantSkirmish.IsEmptyIgnoreFilter && !_skirmishBuildings.IsReady) continue;
+                    // Apply authored road/water/sidewalk rules to every relocation candidate,
+                    // even before the Build drawer has initialized its own cache.
+                    var originalContext = runtimeSpawnContext;
+                    bool citywideDiagnostic=em.HasComponent<CampaignMissionRuntimeComponent>(request.PlanEntity)&&
+                        em.GetComponentData<CampaignMissionRuntimeComponent>(request.PlanEntity).MissionId.ToString()==Game.Missions.Contracts.CampaignMissionSequence.CitywideAlert;
+                    requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
+                    {
+                        var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        if (enemyConstruction && !SkirmishEnemyConstructionAdapter.NativeRectFits(em,request,
+                            new int2(rect.x,rect.y),new int2(rect.width,rect.height))) { grantOriginalRejected++;return false; }
+                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; return false; }
+                        bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
+                        if(authoredRoad||water)
+                        {grantSurfaceRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
+                        var sidewalks = _skirmishRoads.GetSidewalks();
+                        for (int y = rect.yMin; y < rect.yMax; y++)
+                            for (int x = rect.xMin; x < rect.xMax; x++)
+                                if (x < 0 || y < 0 || x >= g.Width || y >= g.Height ||
+                                    sidewalks != null && sidewalks[y * g.Width + x])
+                                {grantSidewalkRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
+                        bool valid=originalContext.IsPlacementValid(d,origin,footprint,rotated,g,roads,blockers);
+                        if (!valid) grantOriginalRejected++;
+                        if(!valid&&citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=original-placement-context rect={rect}");
+                        return valid;
+                    });
+                }
+
+                // Initial scenario requests can arrive before the Build drawer has
+                // initialized its placement cache. Validate authored roads here too.
+                using (var skirmish = em.CreateEntityQuery(typeof(SkirmishMatchState)))
+                {
+                    if (!skirmish.IsEmptyIgnoreFilter && request.RequirePreferredOrigin != 0 &&
+                        runtimeSpawnContext.TryGetGridData(out _, out var skirmishGrid, out _, out _))
+                    {
+                        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                        if (surfaces.CalculateEntityCount() != 1) continue;
+                        _skirmishRoads.Ensure(em, surfaces, skirmishGrid);
+                        var rect = runtimeSpawnContext.GetEffectivePlacementRect(definition,
+                            new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y), skirmishGrid, request.RotateVertical != 0);
+                        bool authoredRoadOverlap = _skirmishRoads.Overlaps(skirmishGrid, rect.position, rect.size);
+                        bool waterOverlap = _skirmishRoads.OverlapsWater(skirmishGrid, rect.position, rect.size);
+                        bool roadOverlap = authoredRoadOverlap || waterOverlap;
+                        Vector2Int rejectedSidewalkCell = new(-1, -1);
+                        var sidewalks = _skirmishRoads.GetSidewalks();
+                        for (int y = rect.yMin; !roadOverlap && y < rect.yMax; y++)
+                            for (int x = rect.xMin; x < rect.xMax; x++)
+                                if (x < 0 || y < 0 || x >= skirmishGrid.Width || y >= skirmishGrid.Height ||
+                                    sidewalks != null && sidewalks[y * skirmishGrid.Width + x]) { roadOverlap = true; rejectedSidewalkCell = new(x, y); break; }
+                        if (roadOverlap)
+                        {
+                            UnityEngine.Debug.LogWarning($"[ExactBuildingPlacement] failed building={request.BuildingId} origin={request.PreferredOrigin} configured={definition.FootprintCells} rect={rect} road={authoredRoadOverlap} water={waterOverlap} sidewalkOrBounds={rejectedSidewalkCell}");
+                            request.Status = BuildingRuntimeSpawnRequest.Failed;
+                            request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                            WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                            continue;
+                        }
+                    }
+                }
+
+#if UNITY_EDITOR
+                if (startingGrant) S002PhysicalStartupObservation.BeforePlacement?.Invoke(em, request, definition, requestSpawnContext, _skirmishBuildings, _skirmishRoads);
+#endif
+                // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
+                bool placed;
+                BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult result = default;
+                if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallRun)
+                {
+                    int spawned = runtimeSpawnSystem.TrySpawnRuntimeWallRun(
+                        runtimeSpawnContext,
+                        spawnable.Prefab,
+                        new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                        new Vector2Int(request.EndOrigin.x, request.EndOrigin.y),
+                        ResolveOwnerFaction(request));
+                    placed = spawned > 0;
+                    request.SpawnedCount = spawned;
+                }
+                else if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment)
+                {
+                    Vector2Int requestedOrigin = new(request.PreferredOrigin.x, request.PreferredOrigin.y);
+                    Vector2Int wallFootprint = default;
+                    bool resolvedFootprint = runtimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
+                        runtimeSpawnContext,
+                        spawnable.Prefab,
+                        request.RotateVertical != 0,
+                        out wallFootprint);
+                    placed = runtimeSpawnSystem.TrySpawnRuntimeWallSegment(
+                        runtimeSpawnContext,
+                        spawnable.Prefab,
+                        requestedOrigin,
+                        request.RotateVertical != 0,
+                        ResolveOwnerFaction(request),
+                        request.AllowExistingWallOverlap != 0);
+                    request.SpawnedCount = placed ? 1 : 0;
+                    if (placed && resolvedFootprint)
+                        result = new BuildingRuntimeSpawnCompositionSystemHelper.SpawnRuntimeBuildingResult(0, requestedOrigin, wallFootprint);
+                }
+                else
+                {
+                    placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
+                        requestSpawnContext.WithBirthRequest(em, request),
+                        spawnable.Prefab,
+                        new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                        spawnable.DisplayName,
+                        spawnable.Description,
+                        null,
+                        500,
+                        false,
+                        ResolveOwnerFaction(request),
+                        request.RotateVertical != 0,
+                        out result, request.RequirePreferredOrigin != 0, missionObstruction);
+                    request.SpawnedCount = placed ? 1 : 0;
+                }
+
+                request.Status = placed
+                    ? BuildingRuntimeSpawnRequest.Succeeded
+                    : BuildingRuntimeSpawnRequest.Failed;
+                if (!placed && startingGrant)
+                    UnityEngine.Debug.LogWarning($"[StartingGrantPlacement] failed building={request.BuildingId} faction={request.FactionId} sourceBuildings={grantBuildingRejected} roadOrWater={grantSurfaceRejected} sidewalkOrBounds={grantSidewalkRejected} originalContext={grantOriginalRejected}");
+                if (placed)
+                    _forcePublishNextUpdate = true;
+                request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;
+                request.BuildingRuntimeId = placed ? result.BuildingId : 0;
+                request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
+                request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
+                WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+#if UNITY_EDITOR
+                if (startingGrant) S002PhysicalStartupObservation.AfterPlacement?.Invoke(em, request);
+#endif
+                if (enemyConstruction && placed)
+                {
+                    SkirmishEnemyConstructionAdapter.RecordNativeResult(em, request);
+                    // Binding/adoption adds ECS components. Reacquire boundary data
+                    // before any later native row access, just as after placement.
+                    spawnRequests=EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em,boundaryEntity);
+                }
+            }
+
+            if (!forceScan)
+            {
+                _nextRuntimeSpawnRequestProbeAt = processedRequests >= MaxRuntimeSpawnRequestsPerUpdate
+                    ? now
+                    : now + IdleRequestProbeIntervalSeconds;
+            }
+        }
+
+        private static byte? ResolveOwnerFaction(BuildingRuntimeSpawnRequest request)
+        {
+            return request.HasOwnerFaction != 0 ? request.FactionId : null;
+        }
+
+        private static void WriteRuntimeSpawnRequest(
+            EntityManager em,
+            Entity boundaryEntity,
+            int index,
+            BuildingRuntimeSpawnRequest request)
+        {
+            DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
+                EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
+            if ((uint)index >= (uint)spawnRequests.Length)
+                return;
+
+            spawnRequests[index] = request;
+        }
+
+        private void PublishReadModelIfDue(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            float now)
+        {
+            var publishDecision = Game.Simulation.BuildingReadModelPublishCadenceKernel.Begin(
+                now, PublishIntervalSeconds, _configuredReadModelsPublished,
+                ref _forcePublishNextUpdate, ref _nextPublishAt);
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Skip)
+                return;
+
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Initial)
+            {
+                PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
+                PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
+                PublishProductionSlotsReadModel(definitionSystem, em, boundaryEntity);
+                _configuredReadModelsPublished = true;
+                PublishAllDynamicReadModels(
+                    definitionSystem,
+                    runtimeQuerySystem,
+                    runtimeQueryContext,
+                    factionResourceSystem,
+                    em,
+                    boundaryEntity,
+                    runtimeBuildings);
+                _lastPublishedFactionSummarySignature =
+                    ComputeFactionSummarySignature(em, runtimeBuildings);
+                _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
+                _lastPublishedUnitProductionSummarySignature =
+                    ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
+                _nextPublishPhase = PublishPhase.FactionSummaries;
+                return;
+            }
+
+            if (publishDecision == Game.Simulation.BuildingReadModelPublishDecision.Forced)
+            {
+                PublishAllDynamicReadModels(
+                    definitionSystem,
+                    runtimeQuerySystem,
+                    runtimeQueryContext,
+                    factionResourceSystem,
+                    em,
+                    boundaryEntity,
+                    runtimeBuildings);
+                _lastPublishedFactionSummarySignature =
+                    ComputeFactionSummarySignature(em, runtimeBuildings);
+                _lastPublishedRuntimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                _lastPublishedOwnedBuildingSummarySignature = _lastPublishedRuntimeBuildingSignature;
+                _lastPublishedUnitProductionSummarySignature =
+                    ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
+                _nextPublishPhase = PublishPhase.FactionSummaries;
+                return;
+            }
+
+            PublishNextDynamicReadModelPhase(
+                definitionSystem,
+                runtimeQuerySystem,
+                runtimeQueryContext,
+                factionResourceSystem,
+                em,
+                boundaryEntity,
+                runtimeBuildings);
+        }
+
+        private void PublishAllDynamicReadModels(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+            PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
+            PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+            PublishBuildingSetReadModels(em, boundaryEntity, runtimeBuildings);
+        }
+
+        private void PublishNextDynamicReadModelPhase(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            switch (_nextPublishPhase)
+            {
+                case PublishPhase.FactionSummaries:
+                    int factionSummarySignature = ComputeFactionSummarySignature(em, runtimeBuildings);
+                    if (factionSummarySignature != _lastPublishedFactionSummarySignature)
+                    {
+                        PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+                        _lastPublishedFactionSummarySignature = factionSummarySignature;
+                    }
+
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
+                    break;
+                case PublishPhase.OwnedBuildingSummaries:
+                    int ownedBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                    if (ownedBuildingSignature != _lastPublishedOwnedBuildingSummarySignature)
+                    {
+                        PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
+                        _lastPublishedOwnedBuildingSummarySignature = ownedBuildingSignature;
+                    }
+
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
+                    break;
+                case PublishPhase.UnitProductionSummaries:
+                    int unitProductionSummarySignature = ComputeUnitProductionSummarySignature(runtimeQueryContext, em, boundaryEntity);
+                    if (unitProductionSummarySignature != _lastPublishedUnitProductionSummarySignature)
+                    {
+                        PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+                        _lastPublishedUnitProductionSummarySignature = unitProductionSummarySignature;
+                    }
+
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
+                    break;
+                default:
+                    int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+                    runtimeBuildingSignature ^= OperationMapRunwayReadModelUtility.ResolveGenerationSignature(em);
+                    if (runtimeBuildingSignature != _lastPublishedRuntimeBuildingSignature)
+                    {
+                        PublishBuildingSetReadModels(em, boundaryEntity, runtimeBuildings);
+                        _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
+                    }
+
+                    _nextPublishPhase = (PublishPhase)Game.Simulation.BuildingReadModelPublishCadenceKernel.NextPhase((byte)_nextPublishPhase);
+                    break;
+            }
+        }
+
+        private void PublishBuildingSetReadModels(
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
+            PublishFactionRunwaysReadModel(em, boundaryEntity, runtimeBuildings);
+            _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
+        }
+
+        internal void PublishConfiguredSpawnablesReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
+        {
+            DynamicBuffer<BuildingConfiguredSpawnableReadModel> buffer =
+                EnsureBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(em, boundaryEntity);
+            buffer.Clear();
+
+            for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
+            {
+                if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition definition))
+                    continue;
+
+                if (!definitionSystem.TryGetConfiguredSpawnable(i, out var entry))
+                    continue;
+                if (entry.Prefab == null)
+                    continue;
+
+                buffer.Add(new BuildingConfiguredSpawnableReadModel
+                {
+                    BuildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
+                    DisplayName = ToFixedString128(entry.DisplayName),
+                    Price = Mathf.Max(0, definition.CreditsCost),
+                    MaterialsCost = Mathf.Max(0, definition.MaterialsCost),
+                    FootprintCells = new int2(
+                        Mathf.Max(1, definition.FootprintCells.x),
+                        Mathf.Max(1, definition.FootprintCells.y)),
+                    CanRequest = entry.CanRequest ? (byte)1 : (byte)0
+                });
+            }
+        }
+
+        private void PublishConfiguredUnitsReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
+        {
+            DynamicBuffer<BuildingConfiguredUnitReadModel> buffer =
+                EnsureBoundaryBuffer<BuildingConfiguredUnitReadModel>(em, boundaryEntity);
+            buffer.Clear();
+
+            for (int i = 0; i < definitionSystem.ConfiguredUnitCount; i++)
+            {
+                if (!definitionSystem.TryGetConfiguredUnitReadModel(
+                        i,
+                        out GameObject prefab,
+                        out string displayName,
+                        out int price,
+                        out bool canRequest,
+                        out bool isVehicle) ||
+                    prefab == null)
+                {
+                    continue;
+                }
+
+                definitionSystem.TryResolveConfiguredUnitResourceCosts(prefab, price, out int creditsCost, out int materialsCost);
+                BuildingRuntimeReadModelProjection.AddConfiguredUnit(
+                    buffer,
+                    ResolveBoundaryId(prefab, displayName),
+                    ToFixedString128(displayName),
+                    materialsCost,
+                    creditsCost,
+                    canRequest,
+                    isVehicle);
+            }
+        }
+
+        private void PublishProductionSlotsReadModel(BuildingDefinitionPrefabSystemHelper definitionSystem, EntityManager em, Entity boundaryEntity)
+        {
+            DynamicBuffer<BuildingProductionSlotReadModel> buffer =
+                EnsureBoundaryBuffer<BuildingProductionSlotReadModel>(em, boundaryEntity);
+            buffer.Clear();
+
+            IReadOnlyList<BuildingDefinition> definitions = definitionSystem.ConfiguredSpawnableDefinitions;
+            for (int i = 0; i < definitions.Count; i++)
+            {
+                BuildingDefinition definition = definitions[i];
+                if (definition == null || definition.Prefab == null)
+                    continue;
+
+                FixedString128Bytes buildingId = ResolveBoundaryId(definition.Prefab, definition.DisplayName);
+                int productionCount = BuildingDefinitionPrefabSystemHelper.GetProductionCount(definition);
+                for (int slotIndex = 0; slotIndex < productionCount; slotIndex++)
+                {
+                    GameObject unitPrefab = BuildingDefinitionPrefabSystemHelper.GetProductionPrefab(definition, slotIndex);
+                    if (unitPrefab == null)
+                        continue;
+
+                    buffer.Add(new BuildingProductionSlotReadModel
+                    {
+                        BuildingId = buildingId,
+                        SlotIndex = slotIndex,
+                        UnitSourceKey = ToUnitSourceKey(unitPrefab),
+                        UnitId = ResolveBoundaryId(unitPrefab, unitPrefab.name)
+                    });
+                }
+            }
+        }
+
+        private void PublishRuntimeFactionSummaries(
+            FactionResourceCompositionSystemHelper factionResourceSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper runtimeQuerySystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            RefreshFactionIds(runtimeBuildings);
+            EnsureBoundaryBuffer<BuildingRuntimeFactionSummary>(em, boundaryEntity);
+            var usableFuelBuffer = EnsureBoundaryBuffer<BuildingRuntimeFactionUsableFuelSummary>(em, boundaryEntity);
+            var buffer = em.GetBuffer<BuildingRuntimeFactionSummary>(boundaryEntity);
+            buffer.Clear();
+            usableFuelBuffer.Clear();
+
+            for (int i = 0; i < _factionIds.Count; i++)
+            {
+                byte factionId = _factionIds[i];
+                factionResourceSystem.TryGetFactionResourceEconomy(
+                    em,
+                    runtimeBuildings,
+                    factionId,
+                    out FactionResourceCompositionSystemHelper.ResourceEconomySnapshot economy);
+                BuildingRuntimeReadModelProjection.AddFactionSummary(
+                    buffer,
+                    factionId,
+                    runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId),
+                    economy);
+
+                if (factionResourceSystem.TryGetFactionUsableStorageSummary(
+                        em,
+                        runtimeBuildings,
+                        factionId,
+                        out FactionResourceCompositionSystemHelper.UsableStorageSnapshot usableStorage))
+                {
+                    usableFuelBuffer.Add(new BuildingRuntimeFactionUsableFuelSummary
+                    {
+                        FactionId = factionId,
+                        StoredOilBarrels = usableStorage.StoredOilBarrels,
+                        StoredFuelBarrels = usableStorage.StoredFuelBarrels,
+                        CurrentFuelBarrels = usableStorage.CurrentFuelBarrels,
+                        FuelProducedBarrels = usableStorage.FuelProducedBarrels,
+                        FuelDeliveredBarrels = usableStorage.FuelDeliveredBarrels,
+                        FuelSpentBarrels = usableStorage.FuelSpentBarrels,
+                        OilStorageCapacity = usableStorage.OilStorageCapacity,
+                        FuelStorageCapacity = usableStorage.FuelStorageCapacity,
+                        Version = usableStorage.Version
+                    });
+                }
+            }
+        }
+
+        private void PublishRuntimeOwnedBuildingSummaries(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            EntityManager em,
+            Entity boundaryEntity)
+        {
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer =
+                EnsureBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(em, boundaryEntity);
+            BuildingRuntimeReadModelProjection.PublishOwnedBuildingSummaries(
+                buffer, runtimeBuildings,
+                building => ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName));
+
+            for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
+            {
+                byte factionId = _factionIds[factionIndex];
+                for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
+                {
+                    if (!definitionSystem.TryGetConfiguredSpawnable(i, out var entry))
+                        continue;
+                    if (entry.Prefab == null)
+                        continue;
+
+                    FixedString128Bytes buildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
+                    AddOrIncrementOwnedBuildingSummary(buffer, factionId, buildingId, 0);
+                }
+            }
+        }
+
+        private static void AddOrIncrementOwnedBuildingSummary(
+            DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
+            byte factionId,
+            FixedString128Bytes buildingId,
+            int countDelta)
+        {
+            BuildingRuntimeReadModelProjection.AddOrIncrementOwnedBuildingSummary(
+                buffer, factionId, buildingId, countDelta);
+        }
+
+        private void PublishRuntimeUnitProductionSummaries(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity)
+        {
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer =
+                EnsureBoundaryBuffer<BuildingRuntimeUnitProductionSummary>(em, boundaryEntity);
+            buffer.Clear();
+            PublishConfiguredUnitProductionSummaryRows(definitionSystem, buffer);
+
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
+            if (runtimeBuildings == null)
+                return;
+
+            _productionSummaryCountsScratch.Clear();
+            _producedReadModelBuildingIdsScratch.Clear();
+
+            EntityManager producedUnitEntityManager = default;
+            bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
+                                    runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows = default;
+            bool hasProducedUnitRows = em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity);
+            if (hasProducedUnitRows)
+                producedUnitRows = em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+
+            if (hasEntityManager && hasProducedUnitRows)
+            {
+                AccumulateProducedUnitReadModelSummaries(
+                    runtimeBuildings,
+                    producedUnitRows,
+                    producedUnitEntityManager);
+            }
+
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                    AccumulateRuntimeUnitProductionSummaryForBuilding(
+                        runtimeQueryContext,
+                        producedUnitEntityManager,
+                        hasEntityManager,
+                        pair.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                    AccumulateRuntimeUnitProductionSummaryForBuilding(
+                        runtimeQueryContext,
+                        producedUnitEntityManager,
+                        hasEntityManager,
+                        pair.Value);
+            }
+
+            PublishAccumulatedProductionSummaries(buffer);
+        }
+
+        private void AccumulateRuntimeUnitProductionSummaryForBuilding(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager producedUnitEntityManager,
+            bool hasEntityManager,
+            RuntimeBuildingEntity building)
+        {
+            if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
+                return;
+
+            byte factionId = building.OwnerFactionId;
+            if (building.PendingProductions != null)
+            {
+                for (int i = 0; i < building.PendingProductions.Count; i++)
+                {
+                    RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+                    if (pending?.Prefab == null)
+                        continue;
+
+                    FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
+                    AddProductionSummaryCount(factionId, unitId, producedDelta: 0, queuedDelta: 1);
+                }
+            }
+
+            if (_producedReadModelBuildingIdsScratch.Contains(building.Id))
+                return;
+
+            if (!hasEntityManager || building.ProducedUnits == null)
+                return;
+
+            runtimeQueryContext.ProductionSystem?.PruneProducedUnits(
+                building.ProducedUnits,
+                building.ProducedUnitSlots,
+                building.ProducedUnitPrefabs,
+                producedUnitEntityManager,
+                building.ProducedUnitSourceKeys);
+            for (int i = 0; i < building.ProducedUnits.Count; i++)
+            {
+                Entity unit = building.ProducedUnits[i];
+                if (producedUnitEntityManager.HasComponent<Faction>(unit) &&
+                    producedUnitEntityManager.GetComponentData<Faction>(unit).Id != factionId)
+                {
+                    continue;
+                }
+
+                if (!TryResolveProducedUnitId(building, unit, producedUnitEntityManager, out FixedString128Bytes unitId))
+                    continue;
+
+                AddProductionSummaryCount(factionId, unitId, producedDelta: 1, queuedDelta: 0);
+            }
+        }
+
+        private void AccumulateProducedUnitReadModelSummaries(
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows,
+            EntityManager em)
+        {
+            for (int i = 0; i < producedUnitRows.Length; i++)
+            {
+                BuildingProducedUnitReadModel producedUnit = producedUnitRows[i];
+                _producedReadModelBuildingIdsScratch.Add(producedUnit.BuildingRuntimeId);
+                if (!TryGetRuntimeBuilding(runtimeBuildings, producedUnit.BuildingRuntimeId, out RuntimeBuildingEntity building) ||
+                    building == null ||
+                    building.IsDestroyed ||
+                    !building.HasOwnerFaction)
+                {
+                    continue;
+                }
+
+                byte factionId = building.OwnerFactionId;
+                if (producedUnit.HasOwnerFaction == 0 ||
+                    producedUnit.OwnerFactionId != factionId ||
+                    !IsProducedUnitAlive(producedUnit.Unit, em) ||
+                    !TryResolveProducedReadModelUnitId(producedUnit, em, out FixedString128Bytes unitId))
+                {
+                    continue;
+                }
+
+                AddProductionSummaryCount(factionId, unitId, producedDelta: 1, queuedDelta: 0);
+            }
+        }
+
+        private static bool TryGetRuntimeBuilding(
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings,
+            int buildingRuntimeId,
+            out RuntimeBuildingEntity building)
+        {
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                return runtimeBuildingMap.TryGetValue(buildingRuntimeId, out building);
+
+            foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+            {
+                if (pair.Key != buildingRuntimeId)
+                    continue;
+
+                building = pair.Value;
+                return true;
+            }
+
+            building = null;
+            return false;
+        }
+
+        private void PublishConfiguredUnitProductionSummaryRows(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer)
+        {
+            for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
+            {
+                byte factionId = _factionIds[factionIndex];
+                for (int i = 0; i < definitionSystem.ConfiguredUnitCount; i++)
+                {
+                    if (!definitionSystem.TryGetConfiguredUnitReadModel(
+                            i,
+                            out GameObject prefab,
+                            out string displayName,
+                            out _,
+                            out _,
+                            out _) ||
+                        prefab == null)
+                    {
+                        continue;
+                    }
+
+                    buffer.Add(new BuildingRuntimeUnitProductionSummary
+                    {
+                        FactionId = factionId,
+                        UnitId = ResolveBoundaryId(prefab, displayName),
+                        ProducedCount = 0,
+                        QueuedCount = 0
+                    });
+                }
+            }
+        }
+
+        private void AddProductionSummaryCount(
+            byte factionId,
+            FixedString128Bytes unitId,
+            int producedDelta,
+            int queuedDelta)
+        {
+            if (unitId.Length == 0 || (producedDelta == 0 && queuedDelta == 0))
+                return;
+
+            ProductionSummaryKey key = new(factionId, unitId);
+            _productionSummaryCountsScratch.TryGetValue(key, out ProductionSummaryCounts counts);
+            counts.ProducedCount += producedDelta;
+            counts.QueuedCount += queuedDelta;
+            _productionSummaryCountsScratch[key] = counts;
+        }
+
+        private void PublishAccumulatedProductionSummaries(
+            DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer)
+        {
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                BuildingRuntimeUnitProductionSummary summary = buffer[i];
+                ProductionSummaryKey key = new(summary.FactionId, summary.UnitId);
+                if (!_productionSummaryCountsScratch.TryGetValue(key, out ProductionSummaryCounts counts))
+                    continue;
+
+                summary.ProducedCount += counts.ProducedCount;
+                summary.QueuedCount += counts.QueuedCount;
+                buffer[i] = summary;
+                _productionSummaryCountsScratch.Remove(key);
+            }
+
+            _productionSummaryCountsScratch.Clear();
+        }
+
+        private bool TryResolveProducedUnitId(
+            RuntimeBuildingEntity building,
+            Entity unit,
+            EntityManager em,
+            out FixedString128Bytes unitId)
+        {
+            if (building?.ProducedUnitSourceKeys != null &&
+                building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKeyFromBuilding) &&
+                sourceKeyFromBuilding.Length > 0)
+            {
+                unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(sourceKeyFromBuilding.ToString()));
+                return unitId.Length > 0;
+            }
+
+            if (building?.ProducedUnitPrefabs != null &&
+                building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
+                prefab != null)
+            {
+                unitId = ResolveBoundaryId(prefab, prefab.name);
+                return true;
+            }
+
+            if (unit != Entity.Null &&
+                em.Exists(unit) &&
+                em.HasComponent<UnitSourcePrefabKey>(unit))
+            {
+                unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
+                    em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString()));
+                return unitId.Length > 0;
+            }
+
+            unitId = default;
+            return false;
+        }
+
+        private static bool TryResolveProducedReadModelUnitId(
+            BuildingProducedUnitReadModel producedUnit,
+            EntityManager em,
+            out FixedString128Bytes unitId)
+        {
+            if (producedUnit.UnitSourceKey.Length > 0)
+            {
+                unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(producedUnit.UnitSourceKey.ToString()));
+                return unitId.Length > 0;
+            }
+
+            if (producedUnit.Unit != Entity.Null &&
+                em.Exists(producedUnit.Unit) &&
+                em.HasComponent<UnitSourcePrefabKey>(producedUnit.Unit))
+            {
+                unitId = ToFixedString128(BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(
+                    em.GetComponentData<UnitSourcePrefabKey>(producedUnit.Unit).Value.ToString()));
+                return unitId.Length > 0;
+            }
+
+            unitId = default;
+            return false;
+        }
+
+        private static bool IsProducedUnitAlive(Entity unit, EntityManager em)
+        {
+            if (unit == Entity.Null || !em.Exists(unit))
+                return false;
+
+            return !em.HasComponent<UnitHealth>(unit) ||
+                   em.GetComponentData<UnitHealth>(unit).Current > 0;
+        }
+
+        private void PublishFactionProductionSpawnPointsReadModel(
+            EntityManager em,
+            Entity boundary,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> items)
+        {
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer =
+                EnsureBoundaryBuffer<BuildingFactionProductionSpawnPointReadModel>(em, boundary);
+            buffer.Clear();
+
+            if (!TryGetGridConfig(em, out GridConfig grid))
+                return;
+
+            if (items is Dictionary<int, RuntimeBuildingEntity> map)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in map)
+                    PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in items)
+                    PublishFactionProductionSpawnPointsForBuilding(buffer, grid, entry.Value);
+            }
+
+            OperationMapHelipadReadModelUtility.Bind(em, buffer, in grid);
+        }
+
+        private void PublishFactionProductionSpawnPointsForBuilding(
+            DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer,
+            GridConfig grid,
+            RuntimeBuildingEntity building)
+        {
+            if (building == null ||
+                building.IsDestroyed ||
+                !building.HasOwnerFaction ||
+                building.Instance == null ||
+                building.Definition == null ||
+                building.Definition.Prefab == null ||
+                building.ProductionSpawnLocalPositions == null ||
+                building.ProductionSpawnLocalPositions.Length == 0)
+            {
+                return;
+            }
+
+            FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
+            for (int i = 0; i < building.ProductionSpawnLocalPositions.Length; i++)
+            {
+                Vector3 world = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
+                int2 cell = GridUtils.WorldToCell(grid, world);
+                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
+                    continue;
+
+                buffer.Add(new BuildingFactionProductionSpawnPointReadModel
+                {
+                    FactionId = building.OwnerFactionId,
+                    BuildingId = buildingId,
+                    BuildingRuntimeId = building.Id,
+                    SlotIndex = i,
+                    Cell = cell,
+                    WorldPosition = new float3(world.x, world.y, world.z)
+                });
+            }
+        }
+
+        private void PublishFactionRunwaysReadModel(
+            EntityManager em,
+            Entity boundaryEntity,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            DynamicBuffer<BuildingFactionRunwayReadModel> buffer =
+                EnsureBoundaryBuffer<BuildingFactionRunwayReadModel>(em, boundaryEntity);
+            buffer.Clear();
+
+            if (!TryGetGridConfig(em, out GridConfig grid))
+                return;
+
+            if (!OperationMapRunwayReadModelUtility.TryAppendRunways(
+                    em, buffer, in grid, out var mapFactions, out _, out _))
+                return;
+            int mapCount = buffer.Length;
+
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildingMap)
+                    PublishFactionRunwayForBuilding(buffer, grid, entry.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> entry in runtimeBuildings)
+                    PublishFactionRunwayForBuilding(buffer, grid, entry.Value);
+            }
+
+            OperationMapRunwayReadModelUtility.RemoveBuildingFallbacks(buffer, mapCount, in mapFactions);
+        }
+
+        private void PublishFactionRunwayForBuilding(
+            DynamicBuffer<BuildingFactionRunwayReadModel> buffer,
+            GridConfig grid,
+            RuntimeBuildingEntity building)
+        {
+            if (building == null ||
+                building.IsDestroyed ||
+                !building.HasOwnerFaction ||
+                building.Instance == null ||
+                building.Definition == null ||
+                building.Definition.Prefab == null ||
+                !building.Definition.HasRunway)
+            {
+                return;
+            }
+
+            if (!BuildingRunwaySystem.TryResolveRuntimeRunwayWorldData(
+                    building,
+                    out Vector3 center,
+                    out Quaternion rotation,
+                    out Vector3 scaledHalfExtents))
+            {
+                return;
+            }
+
+            Vector3 direction = rotation * Vector3.forward;
+            direction.y = 0f;
+            if (direction.sqrMagnitude <= 0.0001f)
+                direction = Vector3.forward;
+            direction.Normalize();
+
+            float halfWidth = Mathf.Max(1f, Mathf.Abs(scaledHalfExtents.x));
+            float halfLength = Mathf.Max(8f, Mathf.Abs(scaledHalfExtents.z));
+            Vector3 takeoffPosition = center - direction * halfLength;
+            Vector3 landingPosition = center + direction * halfLength;
+            takeoffPosition.y = center.y;
+            landingPosition.y = center.y;
+
+            int2 takeoffCell = GridUtils.WorldToCell(grid, new float3(takeoffPosition.x, takeoffPosition.y, takeoffPosition.z));
+            int2 landingCell = GridUtils.WorldToCell(grid, new float3(landingPosition.x, landingPosition.y, landingPosition.z));
+            if (!GridUtils.InBounds(takeoffCell, grid.Width, grid.Height) ||
+                !GridUtils.InBounds(landingCell, grid.Width, grid.Height))
+            {
+                return;
+            }
+
+            buffer.Add(new BuildingFactionRunwayReadModel
+            {
+                FactionId = building.OwnerFactionId,
+                BuildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName),
+                BuildingRuntimeId = building.Id,
+                TakeoffCell = takeoffCell,
+                LandingCell = landingCell,
+                TakeoffPosition = new float3(takeoffPosition.x, takeoffPosition.y, takeoffPosition.z),
+                LandingPosition = new float3(landingPosition.x, landingPosition.y, landingPosition.z),
+                Center = new float3(center.x, center.y, center.z),
+                Direction = new float3(direction.x, direction.y, direction.z),
+                HalfExtents = new float2(halfWidth, halfLength)
+            });
+        }
+
+        private static bool TryResolveConfiguredBuildingDefinition(
+            BuildingDefinitionPrefabSystemHelper definitionSystem,
+            string buildingId,
+            out BuildingDefinition definition)
+        {
+            definition = null;
+            if (definitionSystem == null)
+                return false;
+
+            if (definitionSystem.TryResolveConfiguredSpawnablePrefab(buildingId, out GameObject prefab) &&
+                definitionSystem.TryGetConfiguredDefinition(prefab, out definition))
+            {
+                return true;
+            }
+
+            string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(buildingId);
+            for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
+            {
+                if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition candidate))
+                    continue;
+
+                if (!BuildingDefinitionPrefabSystemHelper.RuntimeDefinitionMatchesId(candidate, normalized))
+                    continue;
+
+                definition = candidate;
+                return true;
+            }
+
+            return false;
+        }
+
+        private void RefreshFactionIds(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            _factionIds.Clear();
+            if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                    AddFactionIdForBuilding(pair.Value);
+            }
+            else
+            {
+                foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                    AddFactionIdForBuilding(pair.Value);
+            }
+        }
+
+        private void AddFactionIdForBuilding(RuntimeBuildingEntity building)
+        {
+            if (building == null || !building.HasOwnerFaction)
+                return;
+
+            AddFactionId(building.OwnerFactionId);
+        }
+
+        private void AddFactionId(byte factionId)
+        {
+            for (int i = 0; i < _factionIds.Count; i++)
+            {
+                if (_factionIds[i] == factionId)
+                    return;
+            }
+
+            _factionIds.Add(factionId);
+        }
+
+        private static int ComputeRuntimeBuildingSignature(IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            if (runtimeBuildings == null)
+                return 0;
+
+            unchecked
+            {
+                int hash = 17;
+                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                        hash = AddRuntimeBuildingSignature(hash, pair.Key, pair.Value);
+                }
+                else
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                        hash = AddRuntimeBuildingSignature(hash, pair.Key, pair.Value);
+                }
+
+                return hash;
+            }
+        }
+
+        private static int AddRuntimeBuildingSignature(int hash, int key, RuntimeBuildingEntity building)
+        {
+            hash = (hash * 31) + key;
+            if (building == null)
+                return hash;
+
+            hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+            hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            hash = (hash * 31) + (building.ProductionSpawnLocalPositions?.Length ?? 0);
+            return hash;
+        }
+
+        private static int ComputeFactionSummarySignature(
+            EntityManager em,
+            IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings)
+        {
+            if (runtimeBuildings == null)
+                return 0;
+
+            unchecked
+            {
+                int hash = 17;
+                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                        hash = AddFactionSummarySignature(em, hash, pair.Key, pair.Value);
+                }
+                else
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                        hash = AddFactionSummarySignature(em, hash, pair.Key, pair.Value);
+                }
+
+                return hash;
+            }
+        }
+
+        private static int AddFactionSummarySignature(
+            EntityManager em,
+            int hash,
+            int key,
+            RuntimeBuildingEntity building)
+        {
+            hash = (hash * 31) + key;
+            if (building == null)
+                return hash;
+
+            float storedOilBarrels = building.StoredOilBarrels;
+            float storedFuelBarrels = building.StoredFuelBarrels;
+            uint storageVersion = 0;
+            if (TryGetBuildingResourceStorage(em, building, out BuildingResourceStorageComponent storage))
+            {
+                storedOilBarrels = storage.StoredOilBarrels;
+                storedFuelBarrels = storage.StoredFuelBarrels;
+                storageVersion = storage.Version;
+            }
+
+            hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+            hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            hash = (hash * 31) + Mathf.Max(0, building.OilStorageCapacity);
+            hash = (hash * 31) + Mathf.Max(0, building.FuelStorageCapacity);
+            hash = RuntimeSignature.AddFloat(hash, storedOilBarrels);
+            hash = RuntimeSignature.AddFloat(hash, storedFuelBarrels);
+            hash = RuntimeSignature.AddFloat(hash, building.OilBarrelsPerDay);
+            hash = RuntimeSignature.AddFloat(hash, building.FuelBarrelsPerDay);
+            hash = (hash * 31) + unchecked((int)storageVersion);
+            return hash;
+        }
+
+        private static bool TryGetBuildingResourceStorage(
+            EntityManager em,
+            RuntimeBuildingEntity building,
+            out BuildingResourceStorageComponent storage)
+        {
+            storage = default;
+            if (building.CombatEntity == Entity.Null ||
+                !em.Exists(building.CombatEntity) ||
+                !em.HasComponent<BuildingResourceStorageComponent>(building.CombatEntity))
+            {
+                return false;
+            }
+
+            storage = em.GetComponentData<BuildingResourceStorageComponent>(building.CombatEntity);
+            return true;
+        }
+
+        private static int ComputeUnitProductionSummarySignature(
+            BuildingRuntimeReadModelCompositionSystemHelper.Context runtimeQueryContext,
+            EntityManager em,
+            Entity boundaryEntity)
+        {
+            unchecked
+            {
+                int hash = 17;
+                IReadOnlyDictionary<int, RuntimeBuildingEntity> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
+                EntityManager producedUnitEntityManager = default;
+                bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
+                                        runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
+
+                if (runtimeBuildings is Dictionary<int, RuntimeBuildingEntity> runtimeBuildingMap)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildingMap)
+                        hash = AddUnitProductionSummarySignature(hash, pair.Key, pair.Value, producedUnitEntityManager, hasEntityManager);
+                }
+                else if (runtimeBuildings != null)
+                {
+                    foreach (KeyValuePair<int, RuntimeBuildingEntity> pair in runtimeBuildings)
+                        hash = AddUnitProductionSummarySignature(hash, pair.Key, pair.Value, producedUnitEntityManager, hasEntityManager);
+                }
+
+                if (boundaryEntity != Entity.Null &&
+                    em.Exists(boundaryEntity) &&
+                    em.HasBuffer<BuildingProducedUnitReadModel>(boundaryEntity))
+                {
+                    DynamicBuffer<BuildingProducedUnitReadModel> producedUnitRows =
+                        em.GetBuffer<BuildingProducedUnitReadModel>(boundaryEntity, true);
+                    hash = (hash * 31) + producedUnitRows.Length;
+                    for (int i = 0; i < producedUnitRows.Length; i++)
+                    {
+                        BuildingProducedUnitReadModel row = producedUnitRows[i];
+                        hash = (hash * 31) + row.BuildingRuntimeId;
+                        hash = (hash * 31) + row.ProductionSlotBuildingRuntimeId;
+                        hash = (hash * 31) + row.ProductionIndex;
+                        hash = (hash * 31) + row.ProductionSlotIndex;
+                        hash = (hash * 31) + row.OwnerFactionId;
+                        hash = (hash * 31) + row.HasOwnerFaction;
+                        hash = RuntimeSignature.AddEntity(hash, row.Unit);
+                        hash = (hash * 31) + row.UnitSourceKey.GetHashCode();
+                        if (hasEntityManager)
+                            hash = AddProducedUnitAliveSignature(hash, row.Unit, producedUnitEntityManager);
+                    }
+                }
+
+                return hash;
+            }
+        }
+
+        private static int AddUnitProductionSummarySignature(
+            int hash,
+            int key,
+            RuntimeBuildingEntity building,
+            EntityManager producedUnitEntityManager,
+            bool hasEntityManager)
+        {
+            hash = (hash * 31) + key;
+            if (building == null)
+                return hash;
+
+            hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+            hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+            if (building.PendingProductions != null)
+            {
+                hash = (hash * 31) + building.PendingProductions.Count;
+                for (int i = 0; i < building.PendingProductions.Count; i++)
+                {
+                    RuntimeBuildingEntity.PendingProduction pending = building.PendingProductions[i];
+                    hash = (hash * 31) + (pending?.ProductionIndex ?? -1);
+                    hash = RuntimeSignature.AddUnityObject(hash, pending?.Prefab);
+                    hash = (hash * 31) + (pending?.ReservedProductionSlotIndex ?? -1);
+                }
+            }
+            else
+            {
+                hash = (hash * 31);
+            }
+
+            if (building.ProducedUnits != null)
+            {
+                hash = (hash * 31) + building.ProducedUnits.Count;
+                for (int i = 0; i < building.ProducedUnits.Count; i++)
+                {
+                    Entity unit = building.ProducedUnits[i];
+                    hash = RuntimeSignature.AddEntity(hash, unit);
+                    if (hasEntityManager)
+                        hash = AddProducedUnitAliveSignature(hash, unit, producedUnitEntityManager);
+                    if (building.ProducedUnitSourceKeys != null &&
+                        building.ProducedUnitSourceKeys.TryGetValue(unit, out FixedString64Bytes sourceKey))
+                    {
+                        hash = (hash * 31) + sourceKey.GetHashCode();
+                    }
+                    else if (building.ProducedUnitPrefabs != null &&
+                             building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
+                             prefab != null)
+                    {
+                        hash = RuntimeSignature.AddUnityObject(hash, prefab);
+                    }
+                }
+            }
+            else
+            {
+                hash = (hash * 31);
+            }
+
+            return hash;
+        }
+
+        private static int AddProducedUnitAliveSignature(int hash, Entity unit, EntityManager em)
+        {
+            if (unit == Entity.Null || !em.Exists(unit))
+                return (hash * 31);
+
+            hash = (hash * 31) + 1;
+            if (em.HasComponent<UnitHealth>(unit))
+                hash = RuntimeSignature.AddFloat(hash, em.GetComponentData<UnitHealth>(unit).Current);
+            return hash;
+        }
+
+        private bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)
+        {
+            boundaryEntity = Entity.Null;
+            Unity.Entities.World world = em.World;
+            if (world == null || !world.IsCreated)
+            {
+                _cachedBoundaryWorld = null;
+                _cachedBoundaryEntity = Entity.Null;
+                return false;
+            }
+
+            if (_cachedBoundaryWorld == world &&
+                _cachedBoundaryEntity != Entity.Null &&
+                em.Exists(_cachedBoundaryEntity))
+            {
+                boundaryEntity = _cachedBoundaryEntity;
+                return true;
+            }
+
+            if (!boundaryQuery.IsEmptyIgnoreFilter)
+                boundaryEntity = boundaryQuery.GetSingletonEntity();
+
+            bool valid = boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+            _cachedBoundaryWorld = valid ? world : null;
+            _cachedBoundaryEntity = valid ? boundaryEntity : Entity.Null;
+            return valid;
+        }
+
+        private static bool TryGetGridConfig(EntityManager em, out GridConfig grid)
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+            EntityTypeHandle entityType = em.GetEntityTypeHandle();
+            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
+            Entity gridEntity = Entity.Null;
+            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            {
+                NativeArray<Entity> gridEntities = chunks[chunkIndex].GetNativeArray(entityType);
+                for (int i = 0; i < gridEntities.Length; i++)
+                {
+                    Entity candidate = gridEntities[i];
+                    if (gridEntity == Entity.Null)
+                        gridEntity = candidate;
+                    if (!em.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
+                    {
+                        gridEntity = candidate;
+                        break;
+                    }
+                }
+
+                if (gridEntity != Entity.Null && !em.HasComponent<RuntimeGridBootstrapGridTag>(gridEntity))
+                    break;
+            }
+
+            if (gridEntity == Entity.Null)
+            {
+                grid = default;
+                return false;
+            }
+
+            grid = em.GetComponentData<GridConfig>(gridEntity);
+            return true;
+        }
+
+        private FixedString128Bytes ResolveBoundaryId(GameObject prefab, string fallback)
+        {
+            if (prefab != null)
+            {
+                if (_boundaryIdsByPrefab.TryGetValue(prefab, out FixedString128Bytes cached))
+                    return cached;
+
+                string normalized = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefab.name);
+                FixedString128Bytes resolved = ToFixedString128(string.IsNullOrEmpty(normalized) ? fallback : normalized);
+                _boundaryIdsByPrefab[prefab] = resolved;
+                return resolved;
+            }
+
+            string fallbackKey = fallback ?? string.Empty;
+            if (_boundaryIdsByFallback.TryGetValue(fallbackKey, out FixedString128Bytes fallbackCached))
+                return fallbackCached;
+
+            string normalizedFallback = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(fallback);
+            FixedString128Bytes fallbackResolved = ToFixedString128(string.IsNullOrEmpty(normalizedFallback) ? fallback : normalizedFallback);
+            _boundaryIdsByFallback[fallbackKey] = fallbackResolved;
+            return fallbackResolved;
+        }
+
+    }
+}

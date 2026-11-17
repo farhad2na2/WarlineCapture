@@ -49,3 +49,12 @@ Nothing here blocks production.
   side. Default taken: keep all 12 size and difficulty variants and keep the startup check; allow
   same-kind pads only when each belongs to one specific building. The alternative (Standard size
   only, no rule change) was rejected because the plan certifies the other sizes per layout later.
+
+## 2026-11-17 — owner decisions ("Yes, send all"), full text in `daily/2026-11-17-directive.md`
+- Gate 2 time band is 20–70% of the deadline (was 40–70%).
+- Gate 4 checkpoint applies only where the game offers Save.
+- Base Assault template gets a guard tower at the player base (starting forces, no unit-stat change).
+- Unity lane priority: S026 start and S002/S004 acceptance before all other lane work.
+- Certify by family: full run set for the first mission of each objective type / family; siblings need 1 English win plus automated checks.
+- Operations production starts once the first authored Skirmish mission of each objective type is accepted (was: after all 120). Codex read-only Operations readiness survey now.
+- Open for the owner: is a Windows PC available as a second Unity lane?

@@ -117,7 +117,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
             if (StepIntercept(view, ref plan, ref touch, ref output)) return;
-            if (StepRadarOrder(view, ref plan, ref touch, ref output)) return;
+            if (StepSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             // A home threat does not sit out the passive post-order observe window.
             if (!(view.PublicHomeThreat && plan.AdvanceNavigation == 0) &&
@@ -438,8 +438,9 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             bool otherOwner = touch.Phase == AriaS002ContactPhase.Manual || view.AttackMode || view.InspectionOpen ||
                 view.PlacementOpen || view.PublicHomeThreat || plan.HomeDefenseStage != 0 || plan.PrecisionStage != 0 ||
                 plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 || plan.PadStage != 0 ||
-                plan.RadarStage is >= 1 and <= 3 || plan.BreacherStage == 1;
-            int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0);
+                plan.SupportStage != 0 || plan.BreacherStage == 1;
+            int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0) |
+                (view.RecruitApcHeavy.Admitted ? 8 : 0) | (view.RecruitDrone.Admitted ? 16 : 0) | (view.RecruitTransportHeli.Admitted ? 32 : 0);
             var facts = new Game.Simulation.AriaCoverageView {
                 AssaultIssued = plan.AssaultIssued != 0 && plan.StructureOrdered != 0,
                 BreacherSettled = plan.BreacherStage == 2,
@@ -458,8 +459,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             if (action == Game.Simulation.AriaCoverageAction.Recruit)
             {
                 plan.Intent = AriaS002Intent.Recruit;
-                Target(kind == Game.Simulation.AriaCoverageKind.Marksman ? view.RecruitMarksman
-                    : kind == Game.Simulation.AriaCoverageKind.ApcFast ? view.RecruitApcFast : view.RecruitRadar, false, ref output);
+                Target(CoverageTarget(view, kind), false, ref output);
                 return true;
             }
             if (action == Game.Simulation.AriaCoverageAction.Waiting)
@@ -467,40 +467,61 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             return false;
         }
 
-        // The fielded radar (not an assault role) gets one ordinary order: its card on the
-        // current roster page, Attack, then clear ground behind the presented column.
-        private static bool StepRadarOrder(in AriaS002Observation view,
+        // Fielded support units (radar, drone, transport heli; not assault roles) get one ordinary
+        // order each: their roster card, then Move behind the column or Scan ahead of it.
+        private static bool StepSupportOrder(in AriaS002Observation view,
             ref AriaS002PlanState plan, ref AriaS002ContactState touch,
             ref AriaS002Decision output)
         {
             if (view.AirProfile || view.CombinedArmsField) return false;
-            var facts=new Game.Simulation.AriaRadarView {
-                RadarFielded=(view.CoverageFieldedMask&4)!=0,
+            var facts=new Game.Simulation.AriaSupportView {
+                FieldedMask=SupportFielded(view.CoverageFieldedMask),
                 Busy=touch.Phase==AriaS002ContactPhase.Manual||view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||
                     view.PublicHomeThreat||plan.HomeDefenseStage!=0||plan.PrecisionStage!=0||plan.AdvanceNavigation!=0||
                     plan.AssaultInspectStage!=0||plan.PadStage!=0||plan.InterceptStage!=0||plan.AssaultFocusStage==1||
                     plan.BreacherStage==1||plan.CoverageCurrent!=0,
                 ArmyMoving=plan.AssaultIssued!=0,EnemyAlive=view.EnemyDesignatedAlive,
-                AttackMode=view.AttackMode,ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
-                RearAvailable=view.RearGround.Admitted,RadarMask=view.ExpandedRadarMask,
+                Mode=view.AttackMode?Game.Simulation.AriaSupportMode.Attack:view.MoveMode?Game.Simulation.AriaSupportMode.Move:
+                    view.ScanMode?Game.Simulation.AriaSupportMode.Scan:Game.Simulation.AriaSupportMode.None,
+                ToggleAvailable=view.SelectedSquadToToggle.Admitted,MoveAvailable=view.Move.Admitted,AttackAvailable=view.Attack.Admitted,
+                ScanAvailable=view.Scan.Admitted,RearAvailable=view.RearGround.Admitted,FrontAvailable=view.FrontGround.Admitted,
+                SupportSlots=view.ExpandedSupportSlots,
                 SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,SelectedOffPage=view.ExpandedSelectedOffPage,
                 CompletedContacts=touch.Actions,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
-            var state=new Game.Simulation.AriaRadarState {Stage=plan.RadarStage,Attempts=plan.RadarAttempts,Slot=plan.RadarSlot,Actions=plan.RadarActions,
-                Deadline=plan.RadarDeadline,ReadyAt=plan.RadarReadyAt};
-            bool handled=Game.Simulation.AriaRadarOrderPolicy.Step(facts,ref state,out var decision);
-            plan.RadarStage=state.Stage;plan.RadarAttempts=state.Attempts;plan.RadarSlot=state.Slot;plan.RadarActions=state.Actions;
-            plan.RadarDeadline=state.Deadline;plan.RadarReadyAt=state.ReadyAt;
+            var state=new Game.Simulation.AriaSupportState {Stage=plan.SupportStage,Kind=plan.SupportKind,Tried=plan.SupportTried,Done=plan.SupportDone,
+                Slot=plan.SupportSlot,Actions=plan.SupportActions,Deadline=plan.SupportDeadline,ReadyAt=plan.SupportReadyAt};
+            bool handled=Game.Simulation.AriaSupportOrderPolicy.Step(facts,ref state,out var decision);
+            plan.SupportStage=state.Stage;plan.SupportKind=state.Kind;plan.SupportTried=state.Tried;plan.SupportDone=state.Done;
+            plan.SupportSlot=state.Slot;plan.SupportActions=state.Actions;plan.SupportDeadline=state.Deadline;plan.SupportReadyAt=state.ReadyAt;
             if(!handled)return false;
             switch(decision.Action){
-                case Game.Simulation.AriaRadarAction.ToggleSelected:plan.Intent=AriaS002Intent.SelectSquad;Target(view.SelectedSquadToToggle,false,ref output);break;
-                case Game.Simulation.AriaRadarAction.SelectSlot:plan.Intent=AriaS002Intent.SelectSquad;Target(view.Squad(decision.Slot),false,ref output);break;
-                case Game.Simulation.AriaRadarAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
-                case Game.Simulation.AriaRadarAction.TargetRear:plan.Intent=AriaS002Intent.Advance;Target(view.RearGround,true,ref output);break;
+                case Game.Simulation.AriaSupportAction.ToggleSelected:plan.Intent=AriaS002Intent.SelectSquad;Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaSupportAction.SelectSlot:plan.Intent=AriaS002Intent.SelectSquad;Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaSupportAction.ArmMove:plan.Intent=AriaS002Intent.Advance;Target(view.Move,false,ref output);break;
+                case Game.Simulation.AriaSupportAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
+                case Game.Simulation.AriaSupportAction.ArmScan:plan.Intent=AriaS002Intent.Scout;Target(view.Scan,false,ref output);break;
+                case Game.Simulation.AriaSupportAction.TargetRear:plan.Intent=AriaS002Intent.Advance;Target(view.RearGround,true,ref output);break;
+                case Game.Simulation.AriaSupportAction.TargetFront:plan.Intent=AriaS002Intent.Scout;Target(view.FrontGround,true,ref output);break;
                 default:plan.Intent=AriaS002Intent.Advance;output.Kind=AriaS002DecisionKind.Waiting;break;
             }
             return true;
         }
+
+        private static AriaS002ActionTarget CoverageTarget(in AriaS002Observation view, Game.Simulation.AriaCoverageKind kind) => kind switch
+        {
+            Game.Simulation.AriaCoverageKind.Marksman => view.RecruitMarksman,
+            Game.Simulation.AriaCoverageKind.ApcFast => view.RecruitApcFast,
+            Game.Simulation.AriaCoverageKind.Radar => view.RecruitRadar,
+            Game.Simulation.AriaCoverageKind.ApcHeavy => view.RecruitApcHeavy,
+            Game.Simulation.AriaCoverageKind.Drone => view.RecruitDrone,
+            Game.Simulation.AriaCoverageKind.TransportHeli => view.RecruitTransportHeli,
+            _ => default
+        };
+
+        // Coverage bits (4 radar, 16 drone, 32 transport heli) -> support kind bits (1, 2, 4).
+        internal static int SupportFielded(int coverageFielded)=>
+            ((coverageFielded&4)!=0?1:0)|((coverageFielded&16)!=0?2:0)|((coverageFielded&32)!=0?4:0);
 
         // Gate-3 coverage: one breacher squad after the first assault order, through the
         // visible Build button and catalog card; the roster sweep then orders it.

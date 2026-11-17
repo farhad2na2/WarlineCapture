@@ -886,6 +886,7 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
+            if (StepGenericSupportOrder(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             if (StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
@@ -920,6 +921,9 @@ namespace Game.UI.Shell.Ecs
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitLogisticsTruck){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitLogisticsTruck,false,ref output);return;}
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
+            // Gate-3 coverage: one breacher, then one of each other available kind, after the first assault.
+            if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return;
+            if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)

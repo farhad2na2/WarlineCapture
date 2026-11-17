@@ -98,7 +98,7 @@ namespace Game.UI.Shell.Ecs
             using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
             if (query.CalculateEntityCount() != 1) { tracedBreacherStage = 0; tracedBreacherPending = tracedBreacherFielded = false; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             string state = tracedBreacherStage == 0 && p.BreacherStage == 1 ? "buying"
                 : tracedBreacherStage == 1 && p.BreacherStage == 2 ? "done"
@@ -111,22 +111,24 @@ namespace Game.UI.Shell.Ecs
             Debug.Log($"[AriaS002Trace] event=breacher state={state} reason={reason} stage={p.BreacherStage} pending={v.BreacherRecruitPending} fielded={v.BreacherFielded} canAfford={v.CanAffordBreacher} cardOffered={v.RecruitBreacher.Available} drawer={v.DrawerOpen} structureUnits={v.OwnStructureAttackUnits} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
         }
         private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
-        private byte tracedRadarStage;
-        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar" };
-        // Evidence only: coverage purchases (event=coverage kind=marksman|apc_fast|radar
-        // state=buying|done|gave_up|pending|fielded) and the radar's one order
-        // (event=radar_order state=selecting|arming|tapping|ordered|released|gave_up).
+        private byte tracedSupportStage, tracedSupportDone;
+        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli" };
+        private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli" };
+        // Evidence only, every expanded base assault (S002 native and generic planners):
+        // coverage purchases (event=coverage kind=... state=buying|done|gave_up|pending|fielded) and each
+        // support unit's one order (event=support_order kind=radar|drone|transport_heli
+        // state=selecting|arming|tapping|ordered|released|gave_up).
         private void TraceCoverage()
         {
             if (!AriaCommandEvidence.Active) return;
             using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
             if (query.CalculateEntityCount() != 1)
-            { tracedCoverageCurrent = tracedRadarStage = 0; tracedCoveragePending = tracedCoverageFielded = 0; return; }
+            { tracedCoverageCurrent = tracedSupportStage = tracedSupportDone = 0; tracedCoveragePending = tracedCoverageFielded = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
-            for (int k = 1; k <= 3; k++)
+            for (int k = 1; k < CoverageKindNames.Length; k++)
             {
                 int bit = 1 << (k - 1);
                 string state = tracedCoverageCurrent != k && p.CoverageCurrent == k ? "buying"
@@ -134,18 +136,18 @@ namespace Game.UI.Shell.Ecs
                     : (tracedCoveragePending & bit) == 0 && (v.CoveragePendingMask & bit) != 0 ? "pending"
                     : (tracedCoverageFielded & bit) == 0 && (v.CoverageFieldedMask & bit) != 0 ? "fielded" : null;
                 if (state == null) continue;
-                Debug.Log($"[AriaS002Trace] event=coverage kind={CoverageKindNames[k]} state={state} done={p.CoverageDone} affordMask={v.CoverageAffordMask} pendingMask={v.CoveragePendingMask} fieldedMask={v.CoverageFieldedMask} drawer={v.DrawerOpen} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+                Debug.Log($"[AriaS002Trace] event=coverage kind={CoverageKindNames[k]} state={state} scenario={v.SourceScenarioIndex} done={p.CoverageDone} affordMask={v.CoverageAffordMask} pendingMask={v.CoveragePendingMask} fieldedMask={v.CoverageFieldedMask} drawer={v.DrawerOpen} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
             }
             tracedCoverageCurrent = p.CoverageCurrent;
             tracedCoveragePending = v.CoveragePendingMask; tracedCoverageFielded = v.CoverageFieldedMask;
-            if (p.RadarStage != tracedRadarStage)
+            if (p.SupportStage != tracedSupportStage || p.SupportDone != tracedSupportDone)
             {
-                string radar = p.RadarStage switch {
-                    1 => "selecting", 2 => "arming", 3 => "tapping",
-                    4 => tracedRadarStage == 3 ? "ordered" : "gave_up",
-                    _ => "released" };
-                Debug.Log($"[AriaS002Trace] event=radar_order state={radar} attempts={p.RadarAttempts} slot={p.RadarSlot} page={v.ExpandedPageIndex} radarMask={v.ExpandedRadarMask} selectedMask={v.ExpandedSelectedMask} attackMode={v.AttackMode} rear={v.RearGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
-                tracedRadarStage = p.RadarStage;
+                bool newlyDone = (p.SupportDone & ~tracedSupportDone) != 0;
+                string state = newlyDone ? (tracedSupportStage == 3 ? "ordered" : "gave_up")
+                    : p.SupportStage switch { 1 => "selecting", 2 => "arming", 3 => "tapping", _ => "released" };
+                int kind = p.SupportKind < SupportKindNames.Length ? p.SupportKind : 0;
+                Debug.Log($"[AriaS002Trace] event=support_order kind={SupportKindNames[kind]} state={state} scenario={v.SourceScenarioIndex} done={p.SupportDone} tried={p.SupportTried} slot={p.SupportSlot} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} selectedMask={v.ExpandedSelectedMask} move={v.MoveMode} attack={v.AttackMode} scan={v.ScanMode} rear={v.RearGround.Available} front={v.FrontGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+                tracedSupportStage = p.SupportStage; tracedSupportDone = p.SupportDone;
             }
         }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}

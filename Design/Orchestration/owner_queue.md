@@ -58,3 +58,4 @@ Nothing here blocks production.
 - Certify by family: full run set for the first mission of each objective type / family; siblings need 1 English win plus automated checks.
 - Operations production starts once the first authored Skirmish mission of each objective type is accepted (was: after all 120). Codex read-only Operations readiness survey now.
 - Open for the owner: is a Windows PC available as a second Unity lane?
+- Answered 2026-11-17: a Windows PC is available as a second Unity lane. Lead prepares WINDOWS_LANE_PROMPT.md and a git-based job queue; the owner starts one session on the Windows checkout.

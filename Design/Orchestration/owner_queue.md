@@ -21,3 +21,13 @@ Nothing here blocks production.
 - **2026-11-16 — S004.** The audit said S004 had never won with ARIA. That was wrong: `runs.csv` under
   `Design/AgentReports/SkirmishExpansion/S004` records 45 ARIA wins on 3–4 October (27 English,
   18 Farsi) alongside 3 defeats and 22 aborts. S073 is still a draw with no win.
+
+## Decisions taken by default — 2026-11-17
+
+- **Git background maintenance is off for this repository** (`maintenance.auto=false`, `gc.auto=0`).
+  Each commit had started a full repack of the 30 GB history; eleven ran at once and left 183 GB of
+  temp files, which took free disk from 208 GB to 25 GB and paused Unity for six hours. The temp
+  files were deleted on your instruction (06:29); the real pack files are intact. To compact the
+  repository later, run one `git gc` by hand while nothing else is running.
+- **Still on disk, your call:** `Logs/private-candidates` (50 GB) and `T Logs/SkirmishProduction`
+  (32 GB), the old simulator logs. Not needed by this program; not deleted.

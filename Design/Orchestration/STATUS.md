@@ -10,11 +10,11 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Shift lead | Sonnet | `directives/2026-11-17.md` (merge, compile, S002 queue, S006) | Stopped: disk below 30 GB |
-| Unity lane | — | One Editor at a time, owned by the shift lead | Idle (paused: disk) |
+| Shift lead | Sonnet | Shift 2: run S002 + S006 with trace logging, apply Codex batch 2, author S026/S049/S050 | Starting 06:35; report in `daily/shift-2026-11-17b.md` |
+| Unity lane | — | One Editor at a time | Free; shift lead starts queue2 |
 | Authoring workers | Opus | Harness queue, authoring entry | Finished, merged |
-| Codex | gpt-6.1-terra | 4 tasks in parallel: why ARIA loses S002 (high), result-screen return failure (high), slow Editor exit (high), 15 Base Assault drafts for 3 maps (medium) | Running since 23:58; each ends with a patch and a report in the briefs folder |
-| Orchestrator | Fable | Daily review at 08:33; reviews the Codex patches when the batch ends | Idle |
+| Codex | gpt-6.1-terra | Batch 2: queue jobs (007), layout gaps (008), regression hunt (009), batch authoring (010) | Starting 06:35 |
+| Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
 
@@ -41,3 +41,6 @@ record is `missions.csv`.
 - 2026-11-17 00:21 shift lead: compile check with 4 Codex patches PASSED (compile-2.log), test_drafts PASS (16). Next: queue S002,130365,en + S006,130370,en. Disk free 48 GB.
 - 2026-11-17 00:27 shift lead: patches committed (d4b932e). Tool cannot pair S006 with seed 130370 (cartesian), so queue file written by hand; first launch of tool killed within seconds (my own Editor, no run). Starting queue2 S002,130365,en + S006,130370,en; disk 46 GB.
 - 2026-11-17 00:47 shift lead: Unity runs paused: disk below 30 GB (29 GB free, falling about 1 GB/min from git repack tmp packs). Stopped my own Editor (PID 40297, started 00:27, queue2 S002+S006) while it was still in the 20-minute start fingerprint; no run executed. S002/S006 trace capture NOT done. Shift ending.
+- 2026-11-17 00:50 orchestrator: shift ended. Unity runs PAUSED: free disk 25 GB and falling about 1 GB per minute (11 git repack processes, 155 GB of temp files). Waiting for the owner to approve stopping them. Next run when disk is back: queue2 (S002 + S006) with the new trace logging.
+- 2026-11-17 06:29 cleanup worker: no git maintenance processes were running (none stopped), 183 GB of temp packs deleted (10 tmp_pack_* files), free disk now 239 GB.
+- 2026-11-17 06:35 orchestrator: disk verified at 239 GB free (the repacks had ended on their own at 01:16; their 183 GB of leftover temp files are deleted, real packs intact, branch heads unchanged). Unity lane unblocked. Starting Codex batch 2 (4 tasks) and shift 2.

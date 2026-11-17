@@ -45,3 +45,5 @@ Both hosts are reused when their source inputs are unchanged. Mission/trace edit
 For a Skirmish budget experiment, copy the full setup CSV, edit the desired rows and run `rtk proxy python3 Tools/Missions/quickcheck.py --missions S002,S026,S050,S074,S098 --sizes Standard --skirmish-matrix path/to/candidate.csv`. The summary records the exact file digest and field changes for each selected row. This verifies CSV selection. The objective probes exercise supplied facts, while a compiler result or a battle snapshot provides separate evidence that the game used the edited roster.
 
 Run the end-to-end controls with `rtk proxy python3 -B Tools/Missions/test_quickcheck.py -v`.
+
+Run an explicit ARIA queue: `python3 Tools/Missions/run_aria_queue.py --jobs S002:130365:en,S006:130370:en --log-dir /tmp/aria-queue --dry-run`.

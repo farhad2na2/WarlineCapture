@@ -32,6 +32,13 @@ def main():
                 raise ValueError('catalog_id does not identify a BA mission')
             if row['map_id'] not in SOURCES or draft['campaign_source'] != SOURCES[row['map_id']]:
                 raise ValueError('campaign_source does not match map')
+            # An air-return pad alone can describe a helipad; require an explicitly
+            # identified Airport role, which the authoring entry accepts under air.*.
+            if ('-air-' in path.name or '-combined-' in path.name) and not any(
+                role.startswith('air.') and 'airport' in role.lower().split('.')
+                for role in draft['pads']
+            ):
+                print(f'WARNING: {path.name}: no Airport pad')
         except (OSError, ValueError, TypeError, KeyError) as exc:
             errors.append(f'{path.name}: {exc}')
     if errors:

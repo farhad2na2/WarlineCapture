@@ -1,8 +1,17 @@
 {
   "catalog_id": "S075",
   "campaign_source": "Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset",
-  "notes": "S074 logical binding supplies no layout coordinates; source identity is from the binding. Layout is incomplete.",
-  "anchors": {},
+  "notes": "Partial S073 deployment anchors only; source map anchors identify faction deployments, not base/staging, legal pads, or measured routes. Layout incomplete.",
+  "anchors": {
+    "candidate.deployment.player": [
+      800,
+      600
+    ],
+    "candidate.deployment.enemy": [
+      930,
+      470
+    ]
+  },
   "pads": {},
   "routes": []
 }

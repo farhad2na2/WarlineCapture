@@ -42,6 +42,49 @@ class QueueTests(unittest.TestCase):
         runner.write_queue(queue, jobs)
         self.assertEqual(queue.read_bytes(), b'S002,1,en\nS002,1,fa-IR\nS002,2,en\nS002,2,fa-IR\nS003,1,en\nS003,1,fa-IR\nS003,2,en\nS003,2,fa-IR\n')
 
+    def test_explicit_jobs_and_dry_run_order(self):
+        spec = 'S002:130365:en,S006:130370:en,S002:130365:fa-IR'
+        jobs = [('S002', '130365', 'en'), ('S006', '130370', 'en'),
+                ('S002', '130365', 'fa-IR')]
+        self.assertEqual(runner.explicit_jobs(spec), jobs)
+        logs = self.root / 'logs'
+        proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)),
+                               '--jobs', spec, '--log-dir', str(logs), '--dry-run'],
+                              capture_output=True, text=True)
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        expected = 'S002,130365,en\nS006,130370,en\nS002,130365,fa-IR\n'
+        self.assertEqual(proc.stdout, expected)
+        self.assertEqual((logs / 'queue.csv').read_text(), expected)
+
+    def test_invalid_job_forms_fail_before_creating_log_dir(self):
+        cases = [('S002:1', 'fields'), ('S002:1:en:extra', 'fields'),
+                 ('S002::en', 'fields'), ('S002:abc:en', 'integer seed'),
+                 ('S002:1:en,S002:1:en', 'Duplicate job')]
+        for spec, error in cases:
+            with self.subTest(spec=spec):
+                logs = self.root / 'logs'
+                proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)),
+                                       '--jobs', spec, '--log-dir', str(logs), '--dry-run'],
+                                      capture_output=True, text=True)
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertIn(error, proc.stderr)
+                self.assertFalse(logs.exists())
+
+    def test_job_forms_are_mutually_exclusive_and_required(self):
+        cases = [[], ['--missions', 'S002'],
+                 ['--jobs', 'S002:1:en', '--missions', 'S002'],
+                 ['--jobs', 'S002:1:en', '--seeds', '1'],
+                 ['--jobs', 'S002:1:en', '--locales', 'en']]
+        for args in cases:
+            with self.subTest(args=args):
+                logs = self.root / 'logs'
+                proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)),
+                                       *args, '--log-dir', str(logs), '--dry-run'],
+                                      capture_output=True, text=True)
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertIn('error:', proc.stderr)
+                self.assertFalse(logs.exists())
+
     def test_log_parser_ignores_noise(self):
         jobs, completed = runner.parse_log(FIXTURE)
         self.assertEqual(len(jobs), 6)

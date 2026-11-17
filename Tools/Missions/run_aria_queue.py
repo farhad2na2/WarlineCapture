@@ -158,17 +158,42 @@ def comma_list(value):
     return items
 
 
+def explicit_jobs(value):
+    jobs, seen = [], set()
+    for item in value.split(','):
+        fields = [field.strip() for field in item.split(':')]
+        if len(fields) != 3 or not all(fields):
+            raise argparse.ArgumentTypeError('Each job must have nonempty CATALOG:SEED:LOCALE fields')
+        mission, seed, locale = fields
+        try:
+            numeric_seed = int(seed)
+        except ValueError:
+            raise argparse.ArgumentTypeError(f'Invalid integer seed in job: {item}')
+        key = (mission, numeric_seed, locale)
+        if key in seen:
+            raise argparse.ArgumentTypeError(f'Duplicate job: {item}')
+        seen.add(key)
+        jobs.append((mission, seed, locale))
+    return jobs
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--missions', type=comma_list, required=True)
-    parser.add_argument('--seeds', type=comma_list, required=True)
-    parser.add_argument('--locales', type=comma_list, required=True)
+    parser.add_argument('--jobs', type=explicit_jobs)
+    parser.add_argument('--missions', type=comma_list)
+    parser.add_argument('--seeds', type=comma_list)
+    parser.add_argument('--locales', type=comma_list)
     parser.add_argument('--log-dir', type=Path, required=True)
     parser.add_argument('--timeout', type=int, default=7200)
     parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--table', type=Path, default=Path('Design/Orchestration/missions.csv'))
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args(argv)
+    trio = (args.missions, args.seeds, args.locales)
+    if args.jobs is not None and any(value is not None for value in trio):
+        parser.error('--jobs cannot be combined with --missions, --seeds or --locales')
+    if args.jobs is None and not all(value is not None for value in trio):
+        parser.error('Specify --jobs or all of --missions, --seeds and --locales')
     repo, log_dir = args.repo.resolve(), args.log_dir.resolve()
     try:
         if os.path.commonpath((str(repo), str(log_dir))) == str(repo):
@@ -177,8 +202,11 @@ def main(argv=None):
             raise ValueError('Timeout must be positive')
         log_dir.mkdir(parents=True, exist_ok=True)
         queue, log = log_dir / 'queue.csv', log_dir / 'unity.log'
-        jobs = job_list(args.missions, args.seeds, args.locales)
+        jobs = args.jobs if args.jobs is not None else job_list(args.missions, args.seeds, args.locales)
         write_queue(queue, jobs)
+        if args.jobs is not None and args.dry_run:
+            csv.writer(sys.stdout, lineterminator='\n').writerows(jobs)
+            return 0
         if not args.dry_run:
             check_editor_and_hub(repo)
             log.unlink(missing_ok=True)

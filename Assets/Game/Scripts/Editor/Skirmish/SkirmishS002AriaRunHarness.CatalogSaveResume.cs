@@ -3,7 +3,7 @@
 // RunCatalogSaveResumeAndExit - generic gate-4 (checkpoint and recovery) journey for any catalog
 // that the product itself lets the player save, driven through the real native UI by Touch:
 //   generic dispatch (RunFocusedAriaAndExit) -> ARIA plays -> after WARLINE_SAVE_RESUME_AFTER_SECONDS
-//   (default 60) of match time: Pause -> Save & Exit -> setup screen -> Continue -> verify -> ARIA
+//   (default 60) of match time: stop ARIA through its visible control (AriaInstantStop), then Pause -> Save & Exit -> setup screen -> Continue -> verify -> ARIA
 //   continues to the result -> terminal probe (return to menu).
 //
 //   WARLINE_SKIRMISH_CATALOG=S026 WARLINE_S002_SEED=<seed> WARLINE_S002_LOCALE=en \
@@ -47,10 +47,19 @@ namespace Game.Editor
         private const int CatalogSaveResumeBuildingTolerance = 1;
         private const float CatalogSaveResumeBaseHpFraction = .03f; // plus 1 hp
         private const float CatalogSaveResumeClockSlackSeconds = 10f;
+        // Bounded retries. ARIA's own touchscreen presses while it plays; a press that lands while this probe's touchscreen
+        // is listening is seen as a physical takeover and stops it (sr26/sr26b: physicalTakeover, no gesture ever started).
+        private const int CatalogSaveResumeMaxInterruptions = 8;
+        private const int CatalogSaveResumeMaxPauseTaps = 10;
+        private const int CatalogSaveResumeMaxStopTaps = 6;
+        private const double CatalogSaveResumeStopVisibleSeconds = 25d;
+        private const double CatalogSaveResumePauseVisibleSeconds = 25d;
+        private const double CatalogSaveResumePopupVisibleSeconds = 30d;
 
         private static bool catalogSaveResumeActive, catalogSaveResumeDone;
-        private static int catalogSaveResumeStep = 1, catalogSaveResumeLoggedStep;
-        private static double catalogSaveResumeDeadline, catalogSaveResumeStartedAt;
+        private static int catalogSaveResumeStep, catalogSaveResumeLoggedStep, catalogSaveResumeStopTaps;
+        private static double catalogSaveResumeDeadline, catalogSaveResumeStartedAt, catalogSaveResumeStepSince;
+        private static int catalogSaveResumeInterruptions, catalogSaveResumePauseTaps, catalogSaveResumeTapStep;
         private static string catalogSaveResumeSessionId;
         private static float catalogSaveResumeSavedElapsed;
         private static CatalogSaveResumeCounts catalogSaveResumeSaved;
@@ -104,15 +113,18 @@ namespace Game.Editor
             if (elapsed < after || !UiShellRuntimeGateway.ReadAriaPlay().Active) return false;
 
             catalogSaveResumeActive = true;
-            catalogSaveResumeStep = 1; catalogSaveResumeLoggedStep = -1;
+            catalogSaveResumeStep = 0; catalogSaveResumeLoggedStep = -1; catalogSaveResumeStopTaps = 0; // step 0: stop ARIA first
             catalogSaveResumeSessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString();
             catalogSaveResumeDeadline = now + 420d;
             catalogSaveResumeStartedAt = now;
             playerResumeDue = now + 1d;
             playerResumeDiagnosticDue = 0d;
             playerResumeContinueStableAt = playerResumeContinueAttemptAt = 0d;
+            // Created idle: the touchscreen is only added around one gesture (CatalogSaveResumeTap), so ARIA's own
+            // presses are never mistaken for a player takeover of this probe.
             playerResumeTouch = new AriaTouchInputUiSystemHelper();
-            if (!playerResumeTouch.Start()) throw new InvalidOperationException("Catalog Save/Resume Touch unavailable.");
+            catalogSaveResumeInterruptions = catalogSaveResumePauseTaps = catalogSaveResumeTapStep = 0;
+            catalogSaveResumeStepSince = now;
             var runner = new GameObject("CatalogSaveResumeInputProbe");
             UnityEngine.Object.DontDestroyOnLoad(runner);
             runner.AddComponent<SkirmishCatalogSaveResumeFrame>();
@@ -157,6 +169,26 @@ namespace Game.Editor
             return null;
         }
 
+        // One gesture: add the touchscreen, press, and let the frame tick remove it once the gesture is done.
+        // A false return means nothing was pressed (control not presented, or a foreign contact is down): try again later.
+        private static bool CatalogSaveResumeTap(Button button)
+        {
+            if (!playerResumeTouch.IsRunning && !playerResumeTouch.Start()) return false;
+            bool started = PlayerResumeTap(button);
+            if (!started && !playerResumeTouch.IsBusy) playerResumeTouch.Stop();
+            if (started) catalogSaveResumeTapStep = catalogSaveResumeStep;
+            return started;
+        }
+
+        private static string CatalogSaveResumeButtonsLike(string fragment)
+        {
+            var names = new List<string>();
+            foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (button.name.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0)
+                    names.Add(button.name + "(active=" + button.IsActive() + ",interactable=" + button.IsInteractable() + ")");
+            return names.Count == 0 ? "none" : string.Join(",", names);
+        }
+
         internal static void TickCatalogSaveResumeFrame()
         {
             if (!catalogSaveResumeActive) return;
@@ -167,27 +199,74 @@ namespace Game.Editor
                 if (catalogSaveResumeLoggedStep != catalogSaveResumeStep)
                 {
                     catalogSaveResumeLoggedStep = catalogSaveResumeStep;
+                    catalogSaveResumeStepSince = now;
                     Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=Input step=" + catalogSaveResumeStep);
                     ScreenCapture.CaptureScreenshot(LiveTracePath() + ".catalog-save-step-" + catalogSaveResumeStep + ".png");
                 }
                 if (now > catalogSaveResumeDeadline) throw new InvalidOperationException("timeout at step=" + catalogSaveResumeStep);
                 playerResumeTouch.Tick(Time.unscaledTime);
-                if (playerResumeTouch.PlayerInterrupted || playerResumeTouch.UnexpectedSamples != 0) throw new InvalidOperationException("Save/Resume input interrupted.");
-                if (playerResumeTouch.IsBusy || now < playerResumeDue) return;
                 var world = World.DefaultGameObjectInjectionWorld;
                 if (world == null || !world.IsCreated) return;
                 var em = world.EntityManager;
                 bool hasSession = SkirmishLaunchProjection.TryGet(em, out Entity session, out var match);
+                if (playerResumeTouch.PlayerInterrupted || playerResumeTouch.UnexpectedSamples != 0)
+                {
+                    // A foreign contact (ARIA's driver) hit while our touchscreen was listening. Retry with a fresh helper.
+                    catalogSaveResumeInterruptions++;
+                    string detail = "interrupted by a foreign touch contact at step=" + catalogSaveResumeStep + " lastInterruption=" +
+                        playerResumeTouch.LastInterruption + " interventions=" + playerResumeTouch.PhysicalInterventions +
+                        " unexpectedSamples=" + playerResumeTouch.UnexpectedSamples + " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase;
+                    if (catalogSaveResumeInterruptions > CatalogSaveResumeMaxInterruptions)
+                        throw new InvalidOperationException("touchInterrupted: " + detail + "; gave up after " + CatalogSaveResumeMaxInterruptions + " retries");
+                    Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=InputRetry " + detail + " retry=" + catalogSaveResumeInterruptions);
+                    playerResumeTouch.Dispose();
+                    playerResumeTouch = new AriaTouchInputUiSystemHelper();
+                    // A canceled Save & Exit tap leaves the match running: go back and press it again.
+                    if (catalogSaveResumeStep == 3 && catalogSaveResumeTapStep == 2 && hasSession) catalogSaveResumeStep = 2;
+                    playerResumeDue = now + .5d;
+                    return;
+                }
+                if (playerResumeTouch.IsRunning && !playerResumeTouch.IsBusy) playerResumeTouch.Stop(); // never idle as a listening touchscreen
+                if (playerResumeTouch.IsBusy || now < playerResumeDue) return;
 
+                if (catalogSaveResumeStep == 0) // stop ARIA through its visible control so its touches cannot collide with ours
+                {
+                    if (!UiShellRuntimeGateway.ReadAriaPlay().Active)
+                    {
+                        Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=AriaStopped taps=" + catalogSaveResumeStopTaps +
+                            " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase + " interruptions=" + catalogSaveResumeInterruptions);
+                        catalogSaveResumeStep = 1;
+                        playerResumeDue = now + .5d;
+                        return;
+                    }
+                    if (catalogSaveResumeStopTaps >= CatalogSaveResumeMaxStopTaps)
+                        throw new InvalidOperationException("ariaStopFailed: " + catalogSaveResumeStopTaps + " taps on the ARIA stop control left ARIA " +
+                            UiShellRuntimeGateway.ReadAriaPlay().Phase + " (interruptions=" + catalogSaveResumeInterruptions + ")");
+                    Button stop = null;
+                    foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    {
+                        if (button.name == "AriaInstantStop") { stop = button; break; }
+                        if (button.name == "WatchAriaPlay") stop = button; // the Play control toggles to Stop while ARIA plays
+                    }
+                    if (stop != null)
+                    {
+                        if (CatalogSaveResumeTap(stop)) { catalogSaveResumeStopTaps++; Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=AriaStopTap n=" + catalogSaveResumeStopTaps + " button=" + stop.name); }
+                        return;
+                    }
+                    if (now - catalogSaveResumeStepSince > CatalogSaveResumeStopVisibleSeconds)
+                        throw new InvalidOperationException("ariaStopNotPresented: no AriaInstantStop/WatchAriaPlay control after " + CatalogSaveResumeStopVisibleSeconds +
+                            " s; Aria-like buttons: " + CatalogSaveResumeButtonsLike("aria"));
+                    return;
+                }
                 if (catalogSaveResumeStep == 1) // Pause
                 {
                     if (!hasSession) throw new InvalidOperationException("session lost before Pause");
                     var drawer = UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
-                    if (drawer != null && drawer.IsOpen) { PlayerResumeTap(drawer.CloseButton); return; }
+                    if (drawer != null && drawer.IsOpen) { CatalogSaveResumeTap(drawer.CloseButton); return; }
                     if (!UiShellRuntimeGateway.TryReadSkirmish(out var model)) return;
                     if (model.Finished || match.Phase == SkirmishPhase.Finished) throw new InvalidOperationException("mission ended before Pause (outcome " + match.Outcome + ")");
                     var fullMap = UnityEngine.Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
-                    if (fullMap != null && fullMap.IsOpen) { PlayerResumeTap(fullMap.CloseAction); return; }
+                    if (fullMap != null && fullMap.IsOpen) { CatalogSaveResumeTap(fullMap.CloseAction); return; }
                     if (model.Paused)
                     {
                         // Freeze the baseline at the same paused state that Save & Exit captures.
@@ -206,7 +285,17 @@ namespace Game.Editor
                         return;
                     }
                     foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                        if (button.name == "PauseButton" && PlayerResumeTap(button)) return;
+                        if (button.name == "PauseButton")
+                        {
+                            if (catalogSaveResumePauseTaps >= CatalogSaveResumeMaxPauseTaps)
+                                throw new InvalidOperationException("pauseNotReached: " + catalogSaveResumePauseTaps + " Pause taps did not pause the match (aria=" +
+                                    UiShellRuntimeGateway.ReadAriaPlay().Phase + ", interruptions=" + catalogSaveResumeInterruptions + ")");
+                            if (CatalogSaveResumeTap(button)) { catalogSaveResumePauseTaps++; Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=PauseTap n=" + catalogSaveResumePauseTaps + " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase); }
+                            return;
+                        }
+                    if (now - catalogSaveResumeStepSince > CatalogSaveResumePauseVisibleSeconds)
+                        throw new InvalidOperationException("pauseNotPresented: no active PauseButton in the HUD after " + CatalogSaveResumePauseVisibleSeconds +
+                            " s; Pause-like buttons: " + CatalogSaveResumeButtonsLike("pause"));
                     return;
                 }
                 if (catalogSaveResumeStep == 2) // Save & Exit
@@ -219,9 +308,14 @@ namespace Game.Editor
                         throw new InvalidOperationException("paused clock advanced");
                     if (model.SaveFailed) throw new InvalidOperationException("native capture rejected");
                     var pause = UnityEngine.Object.FindAnyObjectByType<PauseOptionsV3PopupView>();
-                    if (pause == null) return;
+                    if (pause == null)
+                    {
+                        if (now - catalogSaveResumeStepSince > CatalogSaveResumePopupVisibleSeconds)
+                            throw new InvalidOperationException("pausePopupMissing: match is paused but PauseOptionsV3PopupView never appeared");
+                        return;
+                    }
                     ScreenCapture.CaptureScreenshot(LiveTracePath() + ".catalog-save-pause.png");
-                    if (PlayerResumeTap(pause.RestartButton)) catalogSaveResumeStep = 3;
+                    if (CatalogSaveResumeTap(pause.RestartButton)) catalogSaveResumeStep = 3;
                     return;
                 }
                 if (catalogSaveResumeStep == 3) // setup screen: Continue
@@ -256,7 +350,7 @@ namespace Game.Editor
                             { playerResumeContinuePoint = point; playerResumeContinueStableAt = now; return; }
                             if (now - playerResumeContinueStableAt < .5) return;
                             ScreenCapture.CaptureScreenshot(LiveTracePath() + ".catalog-continue-setup.png");
-                            if (PlayerResumeTap(button)) { playerResumeContinueAttemptAt = now; catalogSaveResumeStep = 4; }
+                            if (CatalogSaveResumeTap(button)) { playerResumeContinueAttemptAt = now; catalogSaveResumeStep = 4; }
                             return;
                         }
                     }
@@ -296,7 +390,7 @@ namespace Game.Editor
                     " savedElapsed=" + catalogSaveResumeSavedElapsed.ToString("0.###", CultureInfo.InvariantCulture) +
                     " resumedElapsed=" + resumedElapsed.ToString("0.###", CultureInfo.InvariantCulture) +
                     " saved{" + catalogSaveResumeSaved + "} resumed{" + resumed + "} oldPhysicalGone=" + catalogSaveResumeOldEntities.Count +
-                    " ariaAfterResume=" + (ariaAfter ? "Active" : "Stopped") + " ariaMatchContinues=Pending ariaLedgerCountable=0");
+                    " ariaStoppedBeforePause=1 ariaAfterResume=" + (ariaAfter ? "Active" : "Stopped") + " ariaMatchContinues=Pending ariaLedgerCountable=0");
                 ScreenCapture.CaptureScreenshot(LiveTracePath() + ".catalog-resumed.png");
                 catalogSaveResumeActive = false; catalogSaveResumeDone = true;
                 playerResumeTouch.Dispose(); playerResumeTouch = null;

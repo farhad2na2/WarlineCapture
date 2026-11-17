@@ -21,7 +21,7 @@ jobs: S004:104733:en,S002:130365:en
 note: pull first: the runner now passes -releaseCodeOptimization (Mac compiles in Release; Windows ran in Debug). Expect a script recompile at launch, never a Library rebuild — if the log shows a Library rebuild, stop. Report per job the [FrameRateDiag] fps/cpuMain mean (target ≥ 20 fps), result lines and the Bee .dag name used. Results do not count; this is a performance check.
 
 ## Batch 4 — fps re-check after the owner's Windows settings (2026-11-17)
-status: READY
+status: DONE (2026-11-17-1741.md: 16–18 fps; S002 130365 en and 155923 fa-IR lost at ~96.6 s to the lone tank, home defence saw no threat)
 jobs: S004:104733:en,S002:155923:fa-IR,S002:130365:en
 note: owner set power plan Best performance, Bitdefender exclusions and update pause. Pull first. First two jobs are warm-ups (S004, then a distinct S002 job so S002's scene re-bakes before the measured job); neither counts. Report per job [FrameRateDiag] fps and cpuMain means (target ≥ 20 fps), result lines, terminal-frozen result, and the S002 130365 en seconds vs the Mac (~260 s). Results do not count yet.
 

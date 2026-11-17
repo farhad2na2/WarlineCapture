@@ -178,5 +178,50 @@ namespace Game.Tests.Editor
             while ((at = projection.IndexOf(roleQuery, at, System.StringComparison.Ordinal)) >= 0) { roleQueries++; at++; }
             Assert.AreEqual(1, roleQueries, "the unit-role query is created once per World (UnitRoleQuery)");
         }
+
+        // Lane 10 S026 won at 181 s with apc_heavy, drone, radar and transport heli unbought:
+        // two kinds per drawer visit, the gap applies between visits.
+        [Test]
+        public void SecondCoverageKindIsBoughtInTheSameDrawerVisit()
+        {
+            var plan = new AriaCoverageState();
+            var view = new AriaCoverageView { AssaultIssued = true, BreacherSettled = true, EnemyAlive = true,
+                AffordMask = AriaCoverageRecruitPolicy.All, CardMask = AriaCoverageRecruitPolicy.All, Time = 90f, CompletedContacts = 10 };
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out var kind));
+            Assert.AreEqual(AriaCoverageKind.Marksman, kind);
+            view.DrawerOpen = true; view.PendingMask = 1; view.Time = 96f; view.CompletedContacts = 13;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind), "same visit");
+            Assert.AreEqual(AriaCoverageKind.ApcFast, kind);
+            view.PendingMask = 3; view.Time = 100f; view.CompletedContacts = 15;
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "at most two per visit");
+            Assert.AreEqual(0, plan.Current);
+            view.PendingMask = 0; view.FieldedMask = 3; view.DrawerOpen = false; view.Time = 110f;
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "gap between visits");
+            view.Time = 100f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
+            Assert.AreEqual(AriaCoverageKind.Radar, kind);
+        }
+
+        // Lane 10 S050/S006: after each roster change the sweep cleared the selection and selected the
+        // same unordered card again until Blocked 115. Such a selection is kept and Attack is armed.
+        [Test]
+        public void SelectionOfThePendingAssaultGroupIsKept()
+        {
+            var plan = new AriaGroundColumnState { PagedToAssault = 1 };
+            var view = Page(184f); view.ExpandedPageCount = 1; view.NextAvailable = view.PreviousAvailable = view.ExpandedCanNextPage = false;
+            view.ExpandedAssaultMask = 0b11001; view.ExpandedAttackOrderMask = 0b00001; view.ExpandedStructureMask = 0b01000;
+            view.ExpandedSelectedMask = 0b01000; view.ExpandedSelectedGroups = 1; view.AvailableSquadMask = 31;
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref plan, out var d));
+            Assert.AreEqual(AriaGroundAction.SelectSlot, d.Action, "selects the other pending group, does not clear");
+            Assert.AreEqual(4, d.Slot);
+            view.ExpandedSelectedMask = 0b11000; view.ExpandedSelectedGroups = 2;
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref plan, out d));
+            Assert.AreEqual(AriaGroundAction.ArmAttack, d.Action);
+
+            var foreign = new AriaGroundColumnState { PagedToAssault = 1 };
+            view.ExpandedSelectedMask = 0b00001; view.ExpandedSelectedGroups = 1; // an already-ordered group is selected
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref foreign, out d));
+            Assert.AreEqual(AriaGroundAction.ToggleSelected, d.Action, "a foreign selection is still cleared");
+        }
 }
 }

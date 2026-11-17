@@ -353,6 +353,7 @@ public int FindBaseGiveUps;
 public int CoverageActions;
 public float CoverageStarted;
 public byte CoverageAssaultSeen;
+public byte CoverageBatch;
 }
 public struct AriaS002ContactState {
 public AriaS002ContactPhase Phase;

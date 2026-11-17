@@ -935,6 +935,7 @@ namespace Game.UI.Shell.Ecs
             if(preparationAction==Game.Simulation.AriaPreparationAction.RecruitTanker){plan.Intent=AriaSkirmishIntent.Recruit;Target(view.RecruitTanker,false,ref output);return;}
             if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             // Gate-3 coverage: one breacher, then one of each other available kind, after the first assault.
+            if (StepGenericStructureReplacement(view, ref plan, ref output)) return;
             if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;

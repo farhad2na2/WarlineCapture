@@ -475,13 +475,14 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 EnemyAlive = view.EnemyDesignatedAlive,
                 OtherRecruitPending = view.RifleRecruitPending || view.RocketeerRecruitPending || view.BreacherRecruitPending,
                 AffordMask = view.CoverageAffordMask, PendingMask = view.CoveragePendingMask,
-                FieldedMask = view.CoverageFieldedMask, CardMask = cards, CompletedContacts = touch.Actions, Time = view.Time };
+                FieldedMask = view.CoverageFieldedMask, CardMask = cards, CompletedContacts = touch.Actions,
+                DrawerOpen = view.CatalogOpen, Time = view.Time };
             var state = new Game.Simulation.AriaCoverageState { Done = plan.CoverageDone, Current = plan.CoverageCurrent, Deadline = plan.CoverageDeadline,
-                Started = plan.CoverageStarted, Actions = plan.CoverageActions };
+                Started = plan.CoverageStarted, Actions = plan.CoverageActions, Batch = plan.CoverageBatch };
             byte before = plan.CoverageCurrent;
             var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
             plan.CoverageDone = state.Done; plan.CoverageCurrent = state.Current; plan.CoverageDeadline = state.Deadline;
-            plan.CoverageStarted = state.Started; plan.CoverageActions = state.Actions;
+            plan.CoverageStarted = state.Started; plan.CoverageActions = state.Actions; plan.CoverageBatch = state.Batch;
             // Done buying: hand the open drawer to the ordinary close step, not to a rifle burst.
             if (before != 0 && state.Current == 0) plan.Intent = AriaS002Intent.Inspect;
             if (action == Game.Simulation.AriaCoverageAction.Recruit)

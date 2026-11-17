@@ -297,9 +297,55 @@ namespace Game.Editor
                         " title=" + (title == null ? "<missing>" : title.text) +
                         " titleActive=" + (title != null && title.isActiveAndEnabled) +
                         " titleCulled=" + (title != null && title.canvasRenderer.cull));
+                    LogTerminalMenuCardDetail(button, title);
+                    try { ScreenCapture.CaptureScreenshot(LiveTracePath() + ".terminal-timeout.png"); } catch (Exception) { }
                 }
             }
             catch (Exception error) { Debug.LogWarning("[SkirmishTerminalTimeoutState] diagnosticError=" + error); }
+        }
+
+        // Diagnostic only: explains which presented/rendered condition the menu card fails.
+        private static void LogTerminalMenuCardDetail(Button button, TMPro.TMP_Text title)
+        {
+            static string PathOf(Transform t) => t == null ? "<null>" : t.parent == null ? t.name : PathOf(t.parent) + "/" + t.name;
+            var sb = new System.Text.StringBuilder("[SkirmishTerminalMenuCardDetail]");
+            sb.Append(" active=").Append(button.IsActive()).Append(" interactable=").Append(button.IsInteractable())
+              .Append(" eventSystem=").Append(UnityEngine.EventSystems.EventSystem.current != null)
+              .Append(" safeArea=").Append(Screen.safeArea).Append(" screen=").Append(Screen.width).Append('x').Append(Screen.height)
+              .Append(" timeScale=").Append(Time.timeScale);
+            var rect = (RectTransform)button.transform;
+            var canvas = button.GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            var point = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            sb.Append(" point=").Append(point).Append(" rect=").Append(rect.rect.size);
+            foreach (var group in button.GetComponentsInParent<CanvasGroup>(true))
+                if (group.alpha <= .99f || !group.interactable || !group.blocksRaycasts)
+                    sb.Append(" group=").Append(PathOf(group.transform)).Append(":a").Append(group.alpha.ToString("F2"))
+                      .Append(":i").Append(group.interactable).Append(":b").Append(group.blocksRaycasts).Append(":ign").Append(group.ignoreParentGroups);
+            if (UnityEngine.EventSystems.EventSystem.current != null)
+            {
+                var hits = new List<UnityEngine.EventSystems.RaycastResult>();
+                UnityEngine.EventSystems.EventSystem.current.RaycastAll(
+                    new UnityEngine.EventSystems.PointerEventData(UnityEngine.EventSystems.EventSystem.current) { position = point }, hits);
+                sb.Append(" hits=").Append(hits.Count);
+                for (int i = 0; i < hits.Count && i < 4; i++)
+                    sb.Append(" hit").Append(i).Append('=').Append(PathOf(hits[i].gameObject.transform))
+                      .Append("@").Append(hits[i].sortingOrder).Append('/').Append(hits[i].depth);
+            }
+            if (title != null)
+            {
+                int visible = 0;
+                if (title.textInfo != null)
+                    for (int i = 0; i < title.textInfo.characterCount; i++) if (title.textInfo.characterInfo[i].isVisible) visible++;
+                var corners = new Vector3[4]; title.rectTransform.GetWorldCorners(corners);
+                sb.Append(" titleAlpha=").Append(title.color.a.ToString("F2")).Append(" titleChars=")
+                  .Append(title.textInfo == null ? -1 : title.textInfo.characterCount).Append(" titleVisibleGlyphs=").Append(visible)
+                  .Append(" titleLow=").Append(RectTransformUtility.WorldToScreenPoint(camera, corners[0]))
+                  .Append(" titleHigh=").Append(RectTransformUtility.WorldToScreenPoint(camera, corners[2]));
+                foreach (var group in title.GetComponentsInParent<CanvasGroup>())
+                    if (group.alpha <= .01f) sb.Append(" titleHiddenBy=").Append(PathOf(group.transform));
+            }
+            Debug.Log(sb.ToString());
         }
     }
 

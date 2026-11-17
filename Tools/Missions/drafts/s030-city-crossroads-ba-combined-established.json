@@ -218,10 +218,6 @@
     "candidate.route.tank.west_refined.waypoint.09": [
       1094.5,
       409.5
-    ],
-    "s030.f1.guard_tower": [
-      979.0,
-      721.0
     ]
   },
   "pads": {
@@ -440,20 +436,6 @@
         10.0
       ],
       "anchor": "candidate.structure.standard.16"
-    },
-    {
-      "id": "s030.f1.guard_tower",
-      "kind": "Service",
-      "faction": 1,
-      "at": [
-        979.0,
-        721.0
-      ],
-      "size": [
-        3,
-        4
-      ],
-      "anchor": "s030.f1.guard_tower"
     },
     {
       "id": "candidate.structure.standard.18",

@@ -71,31 +71,6 @@ class DraftChecks(unittest.TestCase):
                 self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
         self.assertIn('matrix', [r for r, _ in checker.check(self.example, self.catalog, [])])
 
-    def test_ba_drafts_carry_the_player_guard_tower_pad(self):
-        # Owner decision 2026-11-17: BA players start with one extra building.watchtower. The planner hands
-        # faction-1 Service pads out in draft order (watchtower, approach, dish, then the guard tower), so the
-        # needed-th Service pad must exist and sit within 60 m of the player base anchor.
-        import math
-        paths = sorted((checker.ROOT / 'Tools/Missions/drafts').glob('*.json')) + [
-            checker.ROOT / 'Tools/Missions/examples/s006-desert-base-ba-combined-established.json']
-        seen = 0
-        for path in paths:
-            d = json.loads(path.read_text())
-            if 'instance_pads' not in d:
-                continue
-            row = next(r for r in self.matrix if r['catalog_id'] == d['catalog_id'] and r['size_id'] == 'Standard')
-            if row['objective_id'] != 'BA':
-                continue
-            needed = 4 if row['start_profile'] == 'E' else 2
-            service = [p for p in d['instance_pads'] if p['faction'] == 1 and p['kind'] == 'Service']
-            with self.subTest(draft=path.name):
-                self.assertGreaterEqual(len(service), needed)
-                base = d['anchors']['base.player']
-                at = service[needed - 1]['at']
-                self.assertLessEqual(math.hypot(at[0] - base[0], at[1] - base[1]), 60.0)
-            seen += 1
-        self.assertGreaterEqual(seen, 11)
-
     def test_pad_slack_accepted(self):
         for value in (0, 12, 12.5, 64):
             draft = copy.deepcopy(self.example)

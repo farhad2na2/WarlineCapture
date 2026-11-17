@@ -163,10 +163,6 @@
       1423.0,
       363.5
     ],
-    "s006.f1.guard_tower": [
-      939.5,
-      655.0
-    ],
     "s006.f2.barracks": [
       1430.0,
       463.5
@@ -608,20 +604,6 @@
         4
       ],
       "anchor": "s006.f1.watchtower.approach"
-    },
-    {
-      "id": "s006.f1.guard_tower",
-      "kind": "Service",
-      "faction": 1,
-      "at": [
-        939.5,
-        655.0
-      ],
-      "size": [
-        3,
-        4
-      ],
-      "anchor": "s006.f1.guard_tower"
     },
     {
       "id": "s006.f1.helipad",

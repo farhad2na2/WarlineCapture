@@ -84,7 +84,7 @@ namespace Game.Editor
                 1, manifest, matrix, out var setup, out var compileReasons))
                 throw new InvalidOperationException("Original S005 compiler rejected packaged inputs: " +
                     string.Join(";", compileReasons.Select(item => item.ToString())));
-            if (setup.CatalogId != "S005" || setup.Seed != 1 || setup.SetupHash != 1865447784u || setup.Structures == null || setup.Structures.Length != 15) throw new InvalidDataException("Exact native S005 Standard setup required");
+            if (setup.CatalogId != "S005" || setup.Seed != 1 || setup.SetupHash != 1865447784u || setup.Structures == null || setup.Structures.Length != 14) throw new InvalidDataException("Exact native S005 Standard setup required");
             var structureKeys = new SortedDictionary<string, string>(StringComparer.Ordinal);
             foreach (var row in setup.Structures ?? Array.Empty<SkirmishResolvedStructureEntry>())
             {

@@ -130,10 +130,6 @@
     "s050.provisional.route.infantry.1": [
       1188.5,
       416.5
-    ],
-    "s053.f1.guard_tower": [
-      923.5,
-      454.0
     ]
   },
   "pads": {
@@ -412,20 +408,6 @@
         4
       ],
       "anchor": "service.player"
-    },
-    {
-      "id": "s053.f1.guard_tower",
-      "kind": "Service",
-      "faction": 1,
-      "at": [
-        923.5,
-        454.0
-      ],
-      "size": [
-        3,
-        4
-      ],
-      "anchor": "s053.f1.guard_tower"
     },
     {
       "id": "s050.f1.watchtower.approach",

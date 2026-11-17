@@ -133,6 +133,10 @@ namespace Game.Simulation {
                 // One camera re-centre on home, with Attack off, before arming it again.
                 if (view.CompletedContacts <= plan.HomeDefenseRecoveryAction && view.FocusPlayer.Available)
                 { Target(view.FocusPlayer, false, ref output); return true; }
+                // Let the camera settle on home before deciding that no defence target exists
+                // (Windows lane, 17 fps: the decision came in the frame the focus tap completed).
+                if (!DefenseTarget(view).Available && view.Time < plan.HomeDefenseObserveUntil)
+                { output.Action = AriaHomeDefenseAction.Waiting; return true; }
                 plan.HomeDefenseStage = 4;
             }
             if (plan.HomeDefenseStage == 4)
@@ -161,6 +165,7 @@ namespace Game.Simulation {
                         }
                         plan.HomeDefenseRecovery |= RecoveryRecentred;
                         plan.HomeDefenseRecoveryAction = view.CompletedContacts;
+                        plan.HomeDefenseObserveUntil = view.Time + RecentreSeconds;
                         plan.HomeDefenseStage = StageRecentre;
                         Target(view.FocusPlayer, false, ref output);
                         return true;
@@ -239,7 +244,7 @@ namespace Game.Simulation {
         }
  public const int ReasonNone=0,ReasonMinimap=1,ReasonBaseDamage=2;
  public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8;
- public const float SingleDefenderObserveSeconds=20f,RetrySeconds=4f,DisarmSeconds=3f;
+ public const float SingleDefenderObserveSeconds=20f,RetrySeconds=4f,DisarmSeconds=3f,RecentreSeconds=4f;
  // A presented contact is fought where it is; base damage alone sends defenders onto the home ground.
  // When the preferred ground is not offered, any other offered defence target is used.
  public static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view){

@@ -2,9 +2,9 @@
   "schema": 1,
   "cycle_active": false,
   "cycle_owner": "",
-  "cycle_started": "2026-11-17T17:51:15+01:00",
+  "cycle_started": "2026-11-17T18:10:00+01:00",
   "unity_lane": "idle",
-  "phase": "lane worker 9 done: merges compiled; S026 save/resume failed (Pause not interactable); airport dumps 0 candidates (see daily/lane-probes9)",
+  "phase": "lane worker 10 done: coverage-5 applied; S002 3/4; S026 win; S050/S049/S006 ariaStopped:Blocked (daily/lane-integration10)",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

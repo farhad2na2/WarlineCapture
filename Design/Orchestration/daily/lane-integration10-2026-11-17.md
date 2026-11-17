@@ -1,0 +1,7 @@
+# Lane worker 10 (integration shift 10) 2026-11-17
+Logs: /Volumes/T7/Projects/WarlineCapture-program-logs/2026-11-17/lane10 (deadline 1080 s)
+- 1 Reverted 8883197b9, merged aria-coverage-5 (6e90c4818) --no-ff. Python 84/84 OK. Compile Passed (compile.log:1845, 0 error CS).
+- 2 S006 author Passed (author/unity.log:695); containment Passed failures=0 rows=268 (cont-S006/unity.log:759). Commit b4ae5009c.
+- 3 Queue A (qa/unity.log): S004 warm-up Victory 237.4 s (not counted). S002 155923 en Victory 278.3 s 25.8% unused empty (:644844); 130365 en Victory 281.0 s 26.0% empty (:813502); 104731 en Victory 286.0 s 26.5% empty (:953728); 130365 fa-IR Defeat 137.6 s 12.7% unused=apc_fast;breacher;marksman;radar (:995387). TerminalFrozen Passed on all. BlockAllocator 0, consent flow 0.
+- 4 Queue B (qb/unity.log): S026 en Victory 181.4 s 16.8% unused=apc_heavy;drone;radar;siege;transport_heli (:77822). S050 en Abort 192.0 s ariaStopped:Blocked (:168208), no gate line. S049 en Abort 351.1 s ariaStopped:Blocked (:1007714). S006 en Abort 225.5 s ariaStopped:Blocked (:1127430); startup succeeded (no BlockedSpawn, StartingForce failed 0). BlockAllocator 0, consent flow 0.
+- 5 Versus lane 6 (S002 4/4; S026, S050 wins): S002 3/4 (fa-IR lost) = worse; S026 win = equal; S050 Abort = worse. Net: worse than lane 6 on S002 and S050. Versus lane 8: better (S002 3/4 vs 2/3+abort, no BlockAllocator/consent errors, S006 now starts).

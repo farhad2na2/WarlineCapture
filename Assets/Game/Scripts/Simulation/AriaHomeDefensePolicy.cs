@@ -228,19 +228,24 @@ namespace Game.Simulation {
  // controls only; bounded by a deadline and done once per session.
  public enum AriaHomeGuardPostAction:byte{None,Waiting,PreviousPage,ToggleSelected,SelectGuard,ArmAttack,TargetHomeGround,InspectHome}
  public struct AriaHomeGuardPostView {
-  public uint Guard;public int GuardMask,PageIndex,SelectedMask,SelectedGroups,AttackOrderMask;public float Time;
+  public uint Guard;public int GuardMask,PageIndex,SelectedMask,SelectedGroups,CompletedContacts;public float Time;
   public bool UiBusy,AttackMode,PreviousAvailable,ToggleAvailable,AttackAvailable,HomeGroundAvailable,FocusAvailable;
  }
  public static class AriaHomeGuardPostPolicy {
   public const float DeadlineSeconds=30f;
-  // Stage: 0 not started, 1 posting, 2 finished (posted, given up or no guard).
-  public static AriaHomeGuardPostAction Step(in AriaHomeGuardPostView view,ref byte stage,ref float deadline){
-   if(stage>=2)return AriaHomeGuardPostAction.None;
+  // Stage: 0 not started, 1 posting, 3 home-ground touch issued, 2 finished
+  // (posted, given up or no guard). A terrain attack-move does not set the
+  // roster's objective AttackOrdered flag, so completion is the finished touch.
+  public static AriaHomeGuardPostAction Step(in AriaHomeGuardPostView view,ref byte stage,ref float deadline,ref int actions){
+   if(stage==2)return AriaHomeGuardPostAction.None;
    if(view.Guard==0){stage=2;return AriaHomeGuardPostAction.None;}
    if(stage==0){stage=1;deadline=view.Time+DeadlineSeconds;}
    if(view.Time>deadline){stage=2;return AriaHomeGuardPostAction.None;}
+   if(stage==3){
+    if(view.CompletedContacts>actions){stage=2;return AriaHomeGuardPostAction.None;}
+    return view.HomeGroundAvailable?AriaHomeGuardPostAction.TargetHomeGround:AriaHomeGuardPostAction.Waiting;
+   }
    if(view.UiBusy)return AriaHomeGuardPostAction.None;
-   if(view.GuardMask!=0&&(view.AttackOrderMask&view.GuardMask)!=0&&!view.AttackMode){stage=2;return AriaHomeGuardPostAction.None;}
    if(view.GuardMask==0){
     if(view.PageIndex>0&&view.PreviousAvailable)return AriaHomeGuardPostAction.PreviousPage;
     stage=2;return AriaHomeGuardPostAction.None;
@@ -249,8 +254,10 @@ namespace Game.Simulation {
     return view.ToggleAvailable?AriaHomeGuardPostAction.ToggleSelected:AriaHomeGuardPostAction.Waiting;
    if((view.SelectedMask&view.GuardMask)==0)return AriaHomeGuardPostAction.SelectGuard;
    if(!view.AttackMode)return view.AttackAvailable?AriaHomeGuardPostAction.ArmAttack:AriaHomeGuardPostAction.Waiting;
-   if(view.HomeGroundAvailable)return AriaHomeGuardPostAction.TargetHomeGround;
-   return view.FocusAvailable?AriaHomeGuardPostAction.InspectHome:AriaHomeGuardPostAction.Waiting;
+   // No camera fallback: an unchanged focus touch is not verifiable feedback.
+   if(!view.HomeGroundAvailable)return AriaHomeGuardPostAction.Waiting;
+   stage=3;actions=view.CompletedContacts;
+   return AriaHomeGuardPostAction.TargetHomeGround;
   }
  }
  public static class AriaPublicHomeThreatPolicy {

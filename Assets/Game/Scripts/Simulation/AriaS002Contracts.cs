@@ -272,6 +272,7 @@ public uint HomeGuardGroup;
 public byte HomeGuardChosen;
 public byte HomeGuardPostStage;
 public float HomeGuardPostDeadline;
+public int HomeGuardPostActions;
 public byte AssaultDistanceObserved;
 public float BestAssaultDistance;
 public int AssaultObjectiveHudIdentity;

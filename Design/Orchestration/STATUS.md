@@ -4,7 +4,7 @@ Open this file to see what is running right now. Every agent appends one line wh
 finishes a step. Newest at the bottom. Times are local. Results here are progress notes; the gate
 record is `missions.csv`.
 
-**Accepted: 0 of 180.** S002 has 3 counted ARIA wins today on current code (seed 130365 in English and Farsi, seed 104731 in English) and 1 real loss (seed 155923). It is not accepted until all seeds win.
+**Accepted: 0 of 180.** S002 won 4 of 4 gate runs at 10:00 (3 seeds in English, 1 in Farsi; 256–273 s), but the new intercept rule did not fire, so seed 155923 is still a matter of luck; the 40–70% time band (wins at 24–25% of 1080 s) waits on a decision. Next: S006, S026, S049, S050 re-authored and played.
 
 ## Who is working
 
@@ -169,3 +169,4 @@ record is `missions.csv`.
 - 2026-11-17 09:40 lane worker: step1 done: cherry-picked 3b4c598eb,c8d92c7ef, merged aria-intercept, unittests OK (fixed stale bounds test 1c6d75408), compile pass lane-compile2 (marker Passed, 0 error CS)
 - 2026-11-17 09:50 lane worker: step3 footprints filled in S006/S026/S049/S050 drafts from lane-s002gate/unity.log; check_draft PASS x4, unittests OK
 - 2026-11-17 10:00 lane worker: step2 S002 gate queue 4/4 Victory (272.8/266.7/256.2/261.1 s; intercept events 4/6/6/4), lane-s002gate/unity.log lines 1614115-1614160
+- 2026-11-17 10:01 program lead: S002 gate checked in the log (lane-s002gate, lines 1614115–1614160): 155923 en Victory 272.8 s, 130365 en 266.7 s, 104731 en 256.2 s, 130365 fa-IR 261.1 s, all countedWin=1 — the first 3-of-3 English + 1 Farsi set on current code. Caveat: the new intercept rule never fired (20 trace lines, all offered=False); 155923 was won by the column killing the tank, as on 104731 this morning, so its reliability is not shown. aria-intercept is fixing the admission; next gate repeats 155923. S002 is not accepted: wins are 24–25% of the 1080 s deadline (gate 2 band, pending decision), gates 3–4 not yet checked.

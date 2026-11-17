@@ -26,7 +26,9 @@ against a 1080 s deadline (22–25%). How should Base Assault missions meet the 
 3. Change gate 2 for BA: measure the band against a per-layout target time (e.g. 40–70% of a
    measured ARIA median) instead of the hard deadline, which stays a safety limit.
 
-**Recommendation.** Decide after S002 wins 3 of 3 (aria-intercept worker, running now). Option 3
+**Update 10:00.** S002 won 3 of 3 English + 1 Farsi at 272.8, 266.7, 256.2, 261.1 s (`program-logs/2026-11-17/lane-s002gate/unity.log` 1614115–1614160): 24–25% of 1080 s.
+
+**Recommendation.** Decide once S002 wins reliably (the 155923 save is not yet by design) (aria-intercept worker, running now). Option 3
 changes the fewest shared values and keeps the published 18-minute rule; option 2 if the band
 must stay tied to the deadline.
 

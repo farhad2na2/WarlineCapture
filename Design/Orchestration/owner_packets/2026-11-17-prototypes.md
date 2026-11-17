@@ -27,6 +27,13 @@ candidate commit, marks the lane as held for you, and starts no agent Unity run 
 - **Please judge:** is the mission's purpose clear from the start; are the objectives readable on screen; does the pacing
   feel right for you (a human is expected at roughly 1.5–2× ARIA's time); is it fair (e.g. can you stop the lone tank).
 
+## 1b. Base Assault on a second map — S026 (City Crossroads, Ground Maneuver, Established Base)
+- **Commit:** `51cd502bb` (made visible in the real catalog for internal acceptance only).
+- **Menu path:** Main menu → Skirmish hotspot → Battle Library (scroll to the City Crossroads Base Assault card) → Launch Mission.
+- **Known:** ARIA wins it in about 150 s of match time (14% of the deadline) — faster than the 20% target, so the enemy is
+  probably too weak; some unit types (drone, heavy APC, transport helicopter, siege) are not yet used by ARIA.
+- **Please judge:** same questions as S002; also whether City Crossroads feels too easy.
+
 ## 2. Frontline Control — not ready (areas need a Unity measurement run; S007 candidate draft exists)
 ## 3. Breakthrough — not ready (S013 candidate draft; same measurement step)
 ## 4. Convoy Escort — not ready (S019 candidate draft; same measurement step)

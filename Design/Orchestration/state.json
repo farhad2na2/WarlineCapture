@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "cycle_active": false,
-  "cycle_owner": "",
-  "cycle_started": "2026-11-17T21:41:00+01:00",
-  "unity_lane": "idle",
-  "phase": "lane worker 15 done: S002 155923 repro 0/2 losses (Victory, Abort Blocked)",
+  "cycle_active": true,
+  "cycle_owner": "OWNER (manual review; no agent Unity runs until the owner says done)",
+  "cycle_started": "2026-11-17T22:34:51+01:00",
+  "unity_lane": "held",
+  "phase": "held for the owner's prototype review (S002, S026) on the Mac Editor; resume after the owner says done",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

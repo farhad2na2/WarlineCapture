@@ -162,6 +162,10 @@
     "s006.f2.watchtower.approach": [
       1279.0,
       723.5
+    ],
+    "s006.f1.guard_tower": [
+      939.5,
+      655.0
     ]
   },
   "pads": {
@@ -418,6 +422,20 @@
         4
       ],
       "anchor": "s006.f1.watchtower.approach"
+    },
+    {
+      "id": "s006.f1.guard_tower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        939.5,
+        655.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s006.f1.guard_tower"
     },
     {
       "id": "s006.f2.refinery",

@@ -426,7 +426,7 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(120, setup.OilEach);
             Assert.AreEqual(350, setup.UsableFuelEach);
             Assert.AreEqual(1080, setup.DeadlineSeconds);
-            Assert.AreEqual(7, setup.PlayerStartingStructures);
+            Assert.AreEqual(8, setup.PlayerStartingStructures);
             Assert.AreEqual(seed, payload.Seed);
             Assert.IsTrue(setup.MeasuredLayoutBound);
             Assert.AreEqual(949f, setup.PlayerBaseWorldX, 0.5f);
@@ -616,7 +616,7 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(240, setup.OilEach);
             Assert.AreEqual(700, setup.UsableFuelEach);
             Assert.AreEqual(1080, setup.DeadlineSeconds);
-            Assert.AreEqual(10, setup.PlayerStartingStructures);
+            Assert.AreEqual(11, setup.PlayerStartingStructures);
             Assert.AreEqual(2, setup.InfantryQueuesEach);
             Assert.AreEqual(1, setup.VehicleQueuesEach);
             Assert.AreEqual(seed, payload.Seed);
@@ -634,7 +634,7 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(540f + (((462.6f - 135f) / 420f) - 0.5f) * 160f, pad.SpawnWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 2, SkirmishStructureIds.Helipad, out _));
             Assert.IsFalse(HasStructure(setup, SkirmishStructureIds.Airport, false));
-            Assert.AreEqual(20, setup.Structures.Length);
+            Assert.AreEqual(21, setup.Structures.Length);
             Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.TransportHeli, out SkirmishResolvedForceEntry transport));
             Assert.AreEqual("Unit_Veh_Helicopter_Transport", transport.RuntimePrefabKey);
             Assert.AreEqual(pad.SpawnWorldX, transport.SpawnWorldX, 0.2f);
@@ -650,7 +650,7 @@ public sealed class SkirmishExpandedDefinitionTests
 
         CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup ground, out _);
         Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.Helipad, false));
-        Assert.AreEqual(18, ground.Structures.Length);
+        Assert.AreEqual(19, ground.Structures.Length);
         CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup field, out _);
         Assert.IsFalse(HasStructure(field, SkirmishStructureIds.Helipad, false));
         Assert.AreEqual(0, field.PlayerAir);
@@ -661,9 +661,9 @@ public sealed class SkirmishExpandedDefinitionTests
     public void FieldAndEstablishedBackboneMatchesMatrix()
     {
         CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup field, out _);
-        Assert.AreEqual(7, field.PlayerStartingStructures);
-        Assert.AreEqual(14, field.Structures.Length);
-        Assert.AreEqual(7, CountStructures(field, 1));
+        Assert.AreEqual(8, field.PlayerStartingStructures);
+        Assert.AreEqual(15, field.Structures.Length);
+        Assert.AreEqual(8, CountStructures(field, 1));
         Assert.AreEqual(7, CountStructures(field, 2));
         Assert.AreEqual(1, CountDesignated(field, 1));
         Assert.IsTrue(HasStructure(field, SkirmishStructureIds.OilPump, false));
@@ -681,24 +681,24 @@ public sealed class SkirmishExpandedDefinitionTests
         AssertSeparated(field);
 
         CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup ground, out _);
-        Assert.AreEqual(10, ground.PlayerStartingStructures);
-        Assert.AreEqual(18, ground.Structures.Length);
+        Assert.AreEqual(11, ground.PlayerStartingStructures);
+        Assert.AreEqual(19, ground.Structures.Length);
         Assert.IsTrue(HasStructure(ground, SkirmishStructureIds.SatelliteDish, false));
         Assert.IsTrue(HasStructure(ground, SkirmishStructureIds.WatchtowerApproach, false));
         Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.Helipad, false));
         Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.RefineryModule, false));
 
         CompileS004(SkirmishSizeId.Standard, SkirmishS004FirstVisit.SeedA, out SkirmishResolvedSetup established, out _);
-        Assert.AreEqual(10, established.PlayerStartingStructures);
-        Assert.AreEqual(20, established.Structures.Length);
+        Assert.AreEqual(11, established.PlayerStartingStructures);
+        Assert.AreEqual(21, established.Structures.Length);
         Assert.IsTrue(HasStructure(established, SkirmishStructureIds.Helipad, false));
         Assert.IsTrue(HasStructure(established, SkirmishStructureIds.SatelliteDish, false));
         Assert.IsFalse(HasStructure(established, SkirmishStructureIds.RefineryModule, false));
         Assert.AreEqual(1, CountDesignated(established, 1));
 
         CompileS004(SkirmishSizeId.War, 393245, out SkirmishResolvedSetup war, out _);
-        Assert.AreEqual(11, war.PlayerStartingStructures);
-        Assert.AreEqual(22, war.Structures.Length);
+        Assert.AreEqual(12, war.PlayerStartingStructures);
+        Assert.AreEqual(23, war.Structures.Length);
         Assert.IsTrue(HasStructure(war, SkirmishStructureIds.RefineryModule, false));
         Assert.IsTrue(HasStructure(war, SkirmishStructureIds.Helipad, false));
     }
@@ -714,7 +714,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(2, Count(war, 1, SkirmishRoleKind.TransportHeli));
         Assert.AreEqual(2, war.PlayerAir);
         Assert.AreEqual(0, Count(war, 1, SkirmishRoleKind.Tank));
-        Assert.AreEqual(11, war.PlayerStartingStructures);
+        Assert.AreEqual(12, war.PlayerStartingStructures);
         Assert.AreEqual(1800, large.DeadlineSeconds);
         Assert.AreEqual(1800, large.MaterialsEach);
         Assert.AreEqual(3, Count(large, 1, SkirmishRoleKind.AntiAir));

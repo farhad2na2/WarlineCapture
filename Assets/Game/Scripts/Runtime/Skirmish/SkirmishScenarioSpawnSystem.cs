@@ -372,7 +372,7 @@ namespace Game.Runtime
                 {
                     if (string.IsNullOrEmpty(SkirmishStructureIds.VisualKey(setup.Structures[i].StructureId)))
                         startingSetBound = false;
-                    CreateStructure(em, sessionId, setup.Structures[i]);
+                    CreateStructure(em, sessionId, setup.Structures[i], StructureOrdinal(setup.Structures, i));
                 }
             }
 
@@ -692,23 +692,41 @@ namespace Game.Runtime
                 em.AddComponentData(entity, component);
         }
 
+        // Zero-based position of structures[index] among the setup's entries with the same structure id and faction.
+        // Two starting structures of one id and faction (the Base Assault guard tower beside the HQ is a second
+        // building.watchtower) must not share one stable id: the native checkpoint rejects duplicates and recovery
+        // matches saved ids to freshly rebuilt actors.
+        public static int StructureOrdinal(SkirmishResolvedStructureEntry[] structures, int index)
+        {
+            int ordinal = 0;
+            for (int i = 0; i < index; i++)
+                if (structures[i].FactionId == structures[index].FactionId && structures[i].StructureId == structures[index].StructureId) ordinal++;
+            return ordinal;
+        }
+
+        // The first structure keeps the historical "<structure>.<faction>" id (existing saves stay valid);
+        // later ones of the same id and faction append ".<ordinal + 1>".
+        public static string StableStructureId(SkirmishResolvedStructureEntry structure, int ordinal = 0) =>
+            structure.StructureId + "." + structure.FactionId + (ordinal > 0 ? "." + (ordinal + 1) : string.Empty);
+
         public static Entity CreateStructure(
             EntityManager em,
             FixedString64Bytes sessionId,
-            SkirmishResolvedStructureEntry structure)
+            SkirmishResolvedStructureEntry structure,
+            int ordinal = 0)
         {
             var owned = em.CreateEntity();
-            BindStructure(em, owned, sessionId, structure);
+            BindStructure(em, owned, sessionId, structure, ordinal);
             return owned;
         }
 
         public static void BindStructure(EntityManager em, Entity owned, FixedString64Bytes sessionId,
-            SkirmishResolvedStructureEntry structure)
+            SkirmishResolvedStructureEntry structure, int ordinal = 0)
         {
             SetOrAdd(em, owned, new SkirmishAttemptOwnedComponent
             {
                 SessionId = sessionId,
-                StableObjectId = new FixedString64Bytes(structure.StructureId + "." + structure.FactionId),
+                StableObjectId = new FixedString64Bytes(StableStructureId(structure, ordinal)),
                 FactionId = structure.FactionId,
                 IsStructure = 1
             });

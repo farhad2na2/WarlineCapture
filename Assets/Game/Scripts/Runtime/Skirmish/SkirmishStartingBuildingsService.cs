@@ -122,7 +122,8 @@ namespace Game.Runtime
                         if (building == Entity.Null) { complete = false; continue; }
                         var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
                         RuntimeActorBirthContext.VerifyBuildingAdoption(em, building, result);
-                        SkirmishScenarioSpawnSystem.BindStructure(em, building, id, setup.Structures[item.StructureIndex]);
+                        SkirmishScenarioSpawnSystem.BindStructure(em, building, id, setup.Structures[item.StructureIndex],
+                            SkirmishScenarioSpawnSystem.StructureOrdinal(setup.Structures, item.StructureIndex));
                         em.AddComponentData(building, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
                         em.AddComponent<SkirmishSharedActorTag>(building);
                         item.BoundEntity = building;

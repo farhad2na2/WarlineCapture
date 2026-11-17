@@ -96,3 +96,4 @@ record is `missions.csv`.
 - 2026-11-17 07:25 shift lead: compile-3 PASSED (010,012,018 + home-defense merge). Authoring S026,S049,S050 via AuthorFromDraftList.
 - 2026-11-17 07:26 shift lead: authored S026,S049,S050 (Passed) and committed. Launching queue3: S002,S026,S049,S050 seed 130365 en via run_aria_queue.py
 - 2026-11-17 07:33 shift lead: queue3 finished
+- 2026-11-17 07:33 shift lead: shift finished; state idle; report daily/shift-2026-11-17b.md

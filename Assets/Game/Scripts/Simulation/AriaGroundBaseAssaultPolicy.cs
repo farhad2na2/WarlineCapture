@@ -116,6 +116,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 }
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
+            if (StepIntercept(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             // A home threat does not sit out the passive post-order observe window.
             if (!(view.PublicHomeThreat && plan.AdvanceNavigation == 0) &&
@@ -374,6 +375,40 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             }
             plan.Intent = AriaS002Intent.ObserveBattle;
             output.Kind = AriaS002DecisionKind.Waiting;
+        }
+
+        // Finish what slips past: a visible hostile vehicle behind the advancing column
+        // is attacked by one group through the normal card / Attack / tap controls.
+        private static bool StepIntercept(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            var facts=new Game.Simulation.AriaInterceptView {
+                ThreatAvailable=view.InterceptThreat.Admitted,
+                Busy=touch.Phase==AriaS002ContactPhase.Manual||!view.EnemyDesignatedAlive||view.AssaultAtBase||
+                    view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||view.PublicHomeThreat||
+                    plan.HomeDefenseStage!=0||plan.PrecisionStage!=0||plan.AdvanceNavigation!=0||
+                    plan.AssaultInspectStage!=0||plan.PadStage!=0||plan.AssaultFocusStage==1,
+                ArmyMoving=view.ExpandedAttackOrderMask!=0||plan.AssaultIssued!=0||plan.PagesOrdered>0,
+                AttackMode=view.AttackMode,ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
+                SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,SelectedOffPage=view.ExpandedSelectedOffPage,
+                StructureMask=view.ExpandedStructureMask,AssaultMask=view.ExpandedAssaultMask,AirMask=view.ExpandedAirMask,
+                CompletedContacts=touch.Actions,Time=view.Time };
+            for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
+            var state=new Game.Simulation.AriaInterceptState {Stage=plan.InterceptStage,Count=plan.InterceptCount,Slot=plan.InterceptSlot,Actions=plan.InterceptActions,
+                Deadline=plan.InterceptDeadline,LastSeenAt=plan.InterceptLastSeenAt,ReadyAt=plan.InterceptReadyAt};
+            bool handled=Game.Simulation.AriaInterceptPolicy.Step(facts,ref state,out var decision);
+            plan.InterceptStage=state.Stage;plan.InterceptCount=state.Count;plan.InterceptSlot=state.Slot;plan.InterceptActions=state.Actions;
+            plan.InterceptDeadline=state.Deadline;plan.InterceptLastSeenAt=state.LastSeenAt;plan.InterceptReadyAt=state.ReadyAt;
+            if(!handled)return false;
+            switch(decision.Action){
+                case Game.Simulation.AriaInterceptAction.ToggleSelected:plan.Intent=AriaS002Intent.SelectSquad;Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaInterceptAction.SelectSlot:plan.Intent=AriaS002Intent.SelectSquad;Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaInterceptAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
+                case Game.Simulation.AriaInterceptAction.TargetThreat:plan.Intent=AriaS002Intent.TargetThreat;Target(view.InterceptThreat,true,ref output);break;
+                default:plan.Intent=AriaS002Intent.TargetThreat;output.Kind=AriaS002DecisionKind.Waiting;break;
+            }
+            return true;
         }
 
         private static bool StepPresentedHomeDefense(in AriaS002Observation view,

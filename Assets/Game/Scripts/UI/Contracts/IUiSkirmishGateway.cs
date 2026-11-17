@@ -24,6 +24,8 @@ namespace Game.UI.Contracts
         public int OwnDefenseTowers;
         public bool AntiAirCommitted;
         public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
+        public bool SlippingHostile;
+        public float SlippingHostileX, SlippingHostileY, SlippingHostileZ;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
         public byte ResultStars;
         public string ResultElapsed;

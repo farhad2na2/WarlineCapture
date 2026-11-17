@@ -4,7 +4,7 @@ Open this file to see what is running right now. Every agent appends one line wh
 finishes a step. Newest at the bottom. Times are local. Results here are progress notes; the gate
 record is `missions.csv`.
 
-**Accepted: 0 of 180.** S002 won 4 of 4 gate runs at 10:00 (3 seeds in English, 1 in Farsi; 256–273 s), but the new intercept rule did not fire, so seed 155923 is still a matter of luck; the 40–70% time band (wins at 24–25% of 1080 s) waits on a decision. Next: S006, S026, S049, S050 re-authored and played.
+**Accepted: 0 of 180.** Owner directive 2026-11-17 applied (gate 2 band 20–70%, checkpoint only where Save is offered, guard tower at the player base in the BA template, certify by family; `daily/2026-11-17-directive.md`). S002: gates 1, 2 (3 English + 1 Farsi wins at 22–25%) and 4 (result + return; checkpoint not offered) have log paths; gate 3 fails (marksman, breacher, apc_fast, radar never used) and gate 2 must be re-run after the guard tower. S006/S026/S049/S050 authored with measured pads; all four still abort at startup on the main-base barracks; S026 is next on the Unity lane.
 
 ## Who is working
 
@@ -287,3 +287,6 @@ record is `missions.csv`.
 - 2026-11-17 14:45 aria-unit-coverage: warm-up S002:130365:en Defeat 148s (uncounted; enemy at base t=67, home defence from t=67.5; tray_page 0->1->2->1->0 page-1 ordered; breacher buying t=67.3 pre-empted by home defence); counted queue starting
 - 2026-11-17 14:45 orchestrator: owner approved gate and priority changes; directive in daily/2026-11-17-directive.md sent to the program lead
 - 2026-11-17 14:46 program lead: owner directive applied (`daily/2026-11-17-directive.md`): gate 2 band 20–70% (S002's 22–25% wins now inside it); checkpoint only where Save is offered (S002: not offered); guard tower at the player base in the BA template, no more intercept work; certify by family (type-first / family-first / sibling); lane priority = S026 start + S002/S004 acceptance; Operations start after the first accepted mission of each objective type. MISSION_PLAN, ORCHESTRATOR_PROMPT, PROGRAM_LEAD_PROMPT updated; both pending decisions marked decided.
+- 2026-11-17 14:47 guard-tower worker: started (worktree WarlineCapture-wt/guardtower, branch missions/ba-guard-tower)
+- 2026-11-17 14:47 program lead: guard-tower worker started (Sonnet, code/data only, branch `missions/ba-guard-tower` in a new sparse worktree): +1 player guard tower at the main base in the BA template, both matrix copies, pads for authored drafts from the layout dumps. Codex 028 (Operations readiness survey, read-only) started.
+- 2026-11-17 14:47 program lead: orchestrator's directive message received; already applied at 14:45 (3efe12f5f); STATUS header updated.

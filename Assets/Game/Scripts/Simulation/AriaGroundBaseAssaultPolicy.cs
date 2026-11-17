@@ -194,6 +194,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 var objectiveContact=Game.Simulation.AriaGroundObjectivePolicy.Contact(view.EnemyBase.Admitted,view.AdvanceGround.Admitted);
                 if (objectiveContact==Game.Simulation.AriaObjectiveContact.VisibleEnemyTarget)
                 {
+                    ClearFindBase(ref plan);
                     plan.Intent = AriaS002Intent.TargetBase;
                     Target(view.EnemyBase, true, ref output);
                 }
@@ -202,12 +203,32 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                     // The labelled objective is public; a hidden base is not a precision target.
                     // Offer the already presented terrain approach for a separate normal Attack Move touch.
                     // Camera focus alone cannot reveal a contact and must never issue this order.
+                    ClearFindBase(ref plan);
                     plan.Intent = AriaS002Intent.Advance;
                     Target(view.AdvanceGround, true, ref output);
                 }
                 else
                 {
+                    bool continuing = plan.Intent == AriaS002Intent.FindBase;
                     plan.Intent = AriaS002Intent.FindBase;
+                    bool navigate = view.FocusAdvance.Admitted && (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011);
+                    var find = new Game.Simulation.AriaFindBaseState { Active = plan.FindBaseActive, Taps = plan.FindBaseTaps,
+                        Run = plan.FindBaseRun, Actions = plan.FindBaseActions, LastTarget = plan.FindBaseLastTarget };
+                    bool giveUp = Game.Simulation.AriaFindBasePolicy.GiveUp(ref find, touch.Actions, navigate ? 0 : view.FocusEnemy.Id, continuing);
+                    plan.FindBaseActive = find.Active; plan.FindBaseTaps = find.Taps; plan.FindBaseRun = find.Run;
+                    plan.FindBaseActions = find.Actions; plan.FindBaseLastTarget = find.LastTarget;
+                    if (giveUp)
+                    {
+                        // Bounded search: turn Attack off, keep the orders already accepted, and let the
+                        // other steps act instead of searching with Attack armed indefinitely.
+                        Game.Simulation.AriaFindBasePolicy.LatchGivenUp(ref plan.ColumnSkipKeyA, ref plan.ColumnSkipKeyB, ref plan.ColumnSkips,
+                            view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
+                        plan.AssaultIssued = 1; plan.StructureOrdered = 1; plan.FindBaseGiveUps++;
+                        ClearFindBase(ref plan);
+                        plan.Intent = AriaS002Intent.Inspect;
+                        Target(view.Attack, false, ref output);
+                        return;
+                    }
                     if (view.FocusAdvance.Admitted &&
                         (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011))
                     {
@@ -316,7 +337,9 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 return;
             }
             if (plan.AssaultIssued != 0 &&
-                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) != 0)
+                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) != 0 &&
+                !Game.Simulation.AriaGroundColumnPolicy.Skipped(plan.ColumnSkipKeyA, plan.ColumnSkipKeyB,
+                    view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask))
             {
                 plan.AssaultIssued = 0;
                 plan.PagesOrdered = 0;
@@ -441,19 +464,24 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 plan.SupportStage != 0 || plan.BreacherStage == 1;
             int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0) |
                 (view.RecruitApcHeavy.Admitted ? 8 : 0) | (view.RecruitDrone.Admitted ? 16 : 0) | (view.RecruitTransportHeli.Admitted ? 32 : 0);
+            // The first accepted assault is latched: a later re-sweep (new roster revision, a skipped
+            // page, a bounded search) must not hold the coverage recruits back for the rest of the match.
+            if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0) plan.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
-                AssaultIssued = plan.AssaultIssued != 0 && plan.StructureOrdered != 0,
+                AssaultIssued = plan.CoverageAssaultSeen != 0,
                 BreacherSettled = plan.BreacherStage == 2,
                 // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
                 Busy = otherOwner || (plan.CoverageCurrent == 0 && view.CatalogOpen),
                 EnemyAlive = view.EnemyDesignatedAlive,
                 OtherRecruitPending = view.RifleRecruitPending || view.RocketeerRecruitPending || view.BreacherRecruitPending,
                 AffordMask = view.CoverageAffordMask, PendingMask = view.CoveragePendingMask,
-                FieldedMask = view.CoverageFieldedMask, CardMask = cards, Time = view.Time };
-            var state = new Game.Simulation.AriaCoverageState { Done = plan.CoverageDone, Current = plan.CoverageCurrent, Deadline = plan.CoverageDeadline };
+                FieldedMask = view.CoverageFieldedMask, CardMask = cards, CompletedContacts = touch.Actions, Time = view.Time };
+            var state = new Game.Simulation.AriaCoverageState { Done = plan.CoverageDone, Current = plan.CoverageCurrent, Deadline = plan.CoverageDeadline,
+                Started = plan.CoverageStarted, Actions = plan.CoverageActions };
             byte before = plan.CoverageCurrent;
             var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
             plan.CoverageDone = state.Done; plan.CoverageCurrent = state.Current; plan.CoverageDeadline = state.Deadline;
+            plan.CoverageStarted = state.Started; plan.CoverageActions = state.Actions;
             // Done buying: hand the open drawer to the ordinary close step, not to a rifle burst.
             if (before != 0 && state.Current == 0) plan.Intent = AriaS002Intent.Inspect;
             if (action == Game.Simulation.AriaCoverageAction.Recruit)
@@ -519,6 +547,9 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             _ => default
         };
 
+        private static void ClearFindBase(ref AriaS002PlanState plan)
+        { plan.FindBaseActive = 0; plan.FindBaseTaps = 0; plan.FindBaseRun = 0; plan.FindBaseLastTarget = 0; }
+
         // Coverage bits (4 radar, 16 drone, 32 transport heli) -> support kind bits (1, 2, 4).
         internal static int SupportFielded(int coverageFielded)=>
             ((coverageFielded&4)!=0?1:0)|((coverageFielded&16)!=0?2:0)|((coverageFielded&32)!=0?4:0);
@@ -572,10 +603,12 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
             var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
                 HomeDefenseReason=plan.HomeDefenseReason,HomeDefenseSlot=plan.HomeDefenseSlot,HomeDefenseScope=plan.HomeDefenseScope,HomeDefenseRounds=plan.HomeDefenseRounds,
+                HomeDefenseRecovery=plan.HomeDefenseRecovery,HomeDefenseRecoveryAction=plan.HomeDefenseRecoveryAction,
                 Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
             bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
             plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
             plan.HomeDefenseReason=state.HomeDefenseReason;plan.HomeDefenseSlot=state.HomeDefenseSlot;plan.HomeDefenseScope=state.HomeDefenseScope;plan.HomeDefenseRounds=state.HomeDefenseRounds;
+            plan.HomeDefenseRecovery=state.HomeDefenseRecovery;plan.HomeDefenseRecoveryAction=state.HomeDefenseRecoveryAction;
             plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
             if(decision.Defend)plan.Intent=AriaS002Intent.DefendBase;
             switch(decision.Action){
@@ -965,16 +998,20 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 ExpandedAttackOrderMask=view.ExpandedAttackOrderMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
                 ExpandedStructureMask=view.ExpandedStructureMask,
                 PreviousAvailable=view.PreviousSquadPage.Admitted,NextAvailable=view.NextSquadPage.Admitted,
-                ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted };
+                ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
             var state = new Game.Simulation.AriaGroundColumnState {
                 PagesOrdered=plan.PagesOrdered,SelectionResetPage=plan.SelectionResetPage,AssaultPageSeen=plan.AssaultPageSeen,
                 AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,
-                PagedToAssault=plan.PagedToAssault,AssaultIssued=plan.AssaultIssued };
+                PagedToAssault=plan.PagedToAssault,AssaultIssued=plan.AssaultIssued,
+                StallKey=plan.ColumnStallKey,StallSince=plan.ColumnStallSince,Skips=plan.ColumnSkips,
+                SkipKeyA=plan.ColumnSkipKeyA,SkipKeyB=plan.ColumnSkipKeyB };
             bool handled=Game.Simulation.AriaGroundColumnPolicy.StepGroundAssault(facts,ref state,out var decision);
             plan.PagesOrdered=state.PagesOrdered;plan.SelectionResetPage=state.SelectionResetPage;plan.AssaultPageSeen=state.AssaultPageSeen;
             plan.AssaultSelecting=state.AssaultSelecting;plan.StructureOrdered=state.StructureOrdered;
             plan.PagedToAssault=state.PagedToAssault;plan.AssaultIssued=state.AssaultIssued;
+            plan.ColumnStallKey=state.StallKey;plan.ColumnStallSince=state.StallSince;plan.ColumnSkips=state.Skips;
+            plan.ColumnSkipKeyA=state.SkipKeyA;plan.ColumnSkipKeyB=state.SkipKeyB;
             switch(decision.Intent) {
                 case Game.Simulation.AriaGroundIntent.Inspect:plan.Intent=AriaS002Intent.Inspect;break;
                 case Game.Simulation.AriaGroundIntent.SelectSquad:plan.Intent=AriaS002Intent.SelectSquad;break;

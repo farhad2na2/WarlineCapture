@@ -97,12 +97,16 @@ namespace Game.Simulation {
   public bool AssaultIssued,BreacherSettled,Busy,EnemyAlive,OtherRecruitPending;
   // Per kind bit: affordable now, queued, alive on the field, catalog target offered.
   public int AffordMask,PendingMask,FieldedMask,CardMask;
+  // Completed touches: a purchase that keeps landing taps (Build, category, scroll, card,
+  // produce) is still progressing and gets more time, up to MaxBuySeconds.
+  public int CompletedContacts;
   public float Time;
  }
  // Done: kinds covered or given up for this match. Current: kind being bought (0 none).
- public struct AriaCoverageState {public byte Done,Current;public float Deadline;}
+ public struct AriaCoverageState {public byte Done,Current;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
-  public const int Kinds=6,All=(1<<Kinds)-1;public const float BuySeconds=10f;
+  // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
+  public const int Kinds=6,All=(1<<Kinds)-1;public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f;
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -111,6 +115,10 @@ namespace Game.Simulation {
    if(plan.Current!=0){
     int bit=Bit(kind);
     if((plan.Done&bit)!=0){plan.Current=0;return AriaCoverageAction.None;}
+    if(view.CompletedContacts>plan.Actions){
+     plan.Actions=view.CompletedContacts;
+     plan.Deadline=System.Math.Min(plan.Started+MaxBuySeconds,System.Math.Max(plan.Deadline,view.Time+StepSeconds));
+    }
     // Bounded: a purchase that does not appear in time is not retried this match.
     if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;return AriaCoverageAction.None;}
     return (view.CardMask&bit)!=0?AriaCoverageAction.Recruit:AriaCoverageAction.Waiting;
@@ -122,7 +130,7 @@ namespace Game.Simulation {
     int bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
     if((plan.Done&bit)!=0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
-    plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;kind=(AriaCoverageKind)k;
+    plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;plan.Started=view.Time;plan.Actions=view.CompletedContacts;kind=(AriaCoverageKind)k;
     return AriaCoverageAction.Recruit;
    }
    return AriaCoverageAction.None;

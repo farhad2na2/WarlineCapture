@@ -12,8 +12,8 @@ record is `missions.csv`.
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
-| Binding worker | Sonnet | Authoring writes one exact pad per starting building for all 12 variants; branch `missions/generic-binding` | Running (code only; Unity confirms later) |
-| Codex | gpt-6.1-terra | Batch 6 done (14 tasks today) | Idle: patch 020 waits for the Unity lane; next batch after the ARIA and binding results |
+| Binding worker | Sonnet | Per-building pads in authoring; branch `missions/generic-binding` (3 commits, merges cleanly) | Finished; uncompiled, waits for the Unity lane |
+| Codex | gpt-6.1-terra | Task 021: log every building footprint at match start, so drafts can state measured footprints | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -123,3 +123,7 @@ record is `missions.csv`.
 - 2026-11-17 08:19 orchestrator: decision on authored-mission startup: keep all 12 size and difficulty variants and do not relax the startup check. The layout binder gets one narrow exemption (pads that belong to a single building may share a kind), and authoring writes one pad per starting building, from the measured pads that the City Crossroads and Mountain Pass drafts used to carry. A new worker is building it; the cause is still to be confirmed by the diagnostic run.
 - 2026-11-17 08:19 binding worker: started instance-pad authoring work in worktree authoring (branch missions/generic-binding)
 - 2026-11-17 08:19 orchestrator: Codex batch 6 reviewed. 019 (traces): the enemy tank starts with 420 health and crosses ARIA's advancing army at about 55 s. On seed 104731 the army kills it there (dead at 59 s); on seed 155923 it escapes with 86 health, reaches the base at 67 s and destroys it by 95.5 s. The group ARIA sent home was 4 riflemen, 170–190 units away, needing 24–29 s just to arrive. So the fix must be a guard at home or finishing the tank when it passes, not a faster recall; the ARIA worker has this report. 020: result screen now forwards the real end reason for the other three objectives; proposed English and Farsi wording is in the patch for owner review. Not compiled.
+- 2026-11-17 08:23 aria worker: committed opening home guard + faster defence; launching queue S002:155923:en,S002:130365:en
+- 2026-11-17 08:23 aria worker: aria-guard1 queue running (startup ok)
+- 2026-11-17 08:30 binding worker: finished on branch missions/generic-binding (binder exemption, instance_pads schema, authoring entry rows, tests); not compiled, Unity run pending
+- 2026-11-17 08:31 orchestrator: binding branch reviewed (22 files, merges cleanly, not compiled). Binder exemption, a pad planner with tests, authoring writes per-building pads, and the 11 City Crossroads and Mountain Pass drafts carry their measured pads again (20 each; offline checks pass). Open: buildings without a measured pad need a footprint the Editor cannot read (all of S006; the extra refinery in the larger sizes of S026 and S050), so those would fail authoring until footprints are measured. Codex 021 adds a log line that prints every building footprint in the next Unity run.

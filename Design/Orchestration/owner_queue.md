@@ -24,6 +24,8 @@ Nothing here blocks production.
 
 ## Decisions taken by default — 2026-11-17
 
+- **Windows second lane (2026-11-17).** Owner skipped the Windows system settings for now. Windows ARIA runs reach 13.8 fps in Release (Mac ~30), so they are not gate evidence; the Windows lane stays on hold for counted runs. Re-test when power plan High performance, Bitdefender exclusions (`D:\Projects\WarlineCapture`, the logs folder, `Unity.exe`) and an update pause are in place.
+
 - **Git background maintenance is off for this repository** (`maintenance.auto=false`, `gc.auto=0`).
   Each commit had started a full repack of the 30 GB history; eleven ran at once and left 183 GB of
   temp files, which took free disk from 208 GB to 25 GB and paused Unity for six hours. The temp

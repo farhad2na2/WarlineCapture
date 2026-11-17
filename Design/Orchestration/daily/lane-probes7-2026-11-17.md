@@ -1,0 +1,7 @@
+# Lane worker 7 (probes 7) 2026-11-17
+Logs: /Volumes/T7/Projects/WarlineCapture-program-logs/2026-11-17/lane7/ (air26, air50, sr26, sr26b)
+- 1 Airport probe S026 (air26/unity.log): exit 2, no sites.json. Game started (S003Startup shared buildings 21, units 53); first error line :2863 `InvalidOperationException: Read-only Airport source-fit has no native definition/grid.` thrown at AirportPlacement.cs:599 (TickReadOnlyS005AirportSourceFit via CaptureNativeReview). Then `[SkirmishS003Startup] result=Failed reason=exception`.
+- 1 Airport probe S050 (air50/unity.log): exit 2, same error at :2855. No `[SkirmishReadOnlyAirSourceFit]` line in either run. Likely the scan still resolves the native definition/grid only through the S004 path (see notes/airport-probe-2026-11-17.md); code fix needed (not done: no code changes this shift).
+- 2 Pad suggestions for s027-s030 / s051-s054: none, no sites.json (print-only step skipped).
+- 3 Save/resume S026, attempt 1 (sr26/unity.log:6009) and attempt 2 (sr26b/unity.log:6220): both `[SkirmishSaveResume] catalog=S026 result=Failed step=1 reason=Save/Resume input interrupted.` at match 60.2/60.7 s, ARIA Active; thrown at CatalogSaveResume.cs:175 (playerResumeTouch.PlayerInterrupted || UnexpectedSamples != 0). ARIA row Abort catalogSaveResume=..., 100.5 s, countedWin=0. Deterministic, so the Save button probably was not reached; no match result line. S050 not run (S026 did not pass).
+- Lane returned idle. No code, draft, deadline, force or stat changes.

@@ -36,12 +36,12 @@
       365.0
     ],
     "air.player": [
-      905.21,
-      694.8
+      825.5,
+      680.0
     ],
     "air.enemy": [
-      1417.59,
-      605.2
+      1592.0,
+      489.5
     ],
     "supply.expansion.a": [
       1077.99,
@@ -595,6 +595,20 @@
       "anchor": "s006.f1.guard_tower"
     },
     {
+      "id": "s006.f1.helipad",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        825.5,
+        680.0
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.player"
+    },
+    {
       "id": "s006.f2.barracks",
       "kind": "BaseBarracks",
       "faction": 2,
@@ -719,6 +733,20 @@
         10
       ],
       "anchor": "s006.f2.satellite_dish"
+    },
+    {
+      "id": "s006.f2.helipad",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        1592.0,
+        489.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.enemy"
     }
   ],
   "pad_slack_m": 12

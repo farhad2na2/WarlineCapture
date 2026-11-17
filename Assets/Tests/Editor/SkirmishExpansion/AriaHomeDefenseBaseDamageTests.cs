@@ -129,5 +129,82 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
             Assert.AreEqual(1, decision.Slot, "every unselected assault slot is selected");
         }
-    }
+    
+        // Windows lane, S002 130365 fa-IR (2026-11-17): base damage at t=71.8, one defender selected,
+        // Attack armed, home ground never offered; Focus was pressed four times with Attack armed
+        // and ARIA stopped Blocked (115). Simulated here: every press completes, the ground stays
+        // unavailable. No control may be pressed three times in a row and Attack ends disarmed.
+        [Test]
+        public void HomeGroundNeverOfferedNeverRepeatsAControlAndDisarmsAttack()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(71.8f); view.HomeGroundAvailable = false; view.ThreatGroundAvailable = false; view.ThreatVisibleAvailable = false;
+            var last = AriaHomeDefenseAction.None; int lastSlot = -1, streak = 0, longest = 0, presses = 0, focus = 0;
+            for (int i = 0; i < 400; i++)
+            {
+                var decision = Step(view, ref plan, out bool handled);
+                Assert.IsTrue(handled, "home defence keeps the controls while the base is attacked");
+                view.Time += .3f;
+                if (decision.Action <= AriaHomeDefenseAction.Unavailable) continue;
+                // Each step that names a press is one completed touch.
+                presses++; view.CompletedContacts++;
+                // Same control = same action on the same slot (cards differ per slot).
+                streak = decision.Action == last && decision.Slot == lastSlot ? streak + 1 : 1;
+                last = decision.Action; lastSlot = decision.Slot; if (streak > longest) longest = streak;
+                if (decision.Action == AriaHomeDefenseAction.InspectHome) focus++;
+                if (decision.Action == AriaHomeDefenseAction.ArmAttack) view.AttackMode = !view.AttackMode;
+                if (decision.Action == AriaHomeDefenseAction.SelectSlot) { view.ExpandedSelectedMask |= 1 << decision.Slot; view.ExpandedSelectedGroups++; }
+                if (decision.Action == AriaHomeDefenseAction.ToggleSelected) { view.ExpandedSelectedMask = 0; view.ExpandedSelectedGroups = 0; }
+            }
+            Assert.Less(longest, 3, "never three presses of one control in a row (reason 115 needs a fourth)");
+            Assert.Greater(presses, 0);
+            Assert.Greater(focus, 1, "rounds keep re-checking the home view, spaced by other controls");
+            Assert.IsFalse(view.AttackMode, "Attack is not left armed for the next owner");
+        }
+
+        [Test]
+        public void AttackArmedWithoutGroundTogglesItOffBeforeOneRecentre()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(80f); view.HomeGroundAvailable = false; view.ThreatGroundAvailable = false;
+            plan.HomeDefenseStage = 4; plan.HomeDefenseScope = 1; plan.HomeDefenseSlot = 1;
+            view.ExpandedSelectedMask = 1; view.ExpandedSelectedGroups = 1; view.AttackMode = true; view.CompletedContacts = 31;
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, Step(view, ref plan, out _).Action, "disarm first: a focus with Attack armed does not move the camera");
+            view.AttackMode = false; view.CompletedContacts = 32;
+            Assert.AreEqual(AriaHomeDefenseAction.InspectHome, Step(view, ref plan, out _).Action, "one re-centre with Attack off");
+            Assert.AreEqual(AriaHomeDefensePolicy.StageRecentre, plan.HomeDefenseStage);
+            view.CompletedContacts = 33; view.HomeGroundAvailable = true;
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, Step(view, ref plan, out _).Action, "ground offered after the re-centre: arm and defend");
+            view.AttackMode = true; view.CompletedContacts = 34;
+            Assert.AreEqual(AriaHomeDefenseAction.AttackHomeTerrain, Step(view, ref plan, out _).Action);
+        }
+
+        [Test]
+        public void MissingHomeGroundFallsBackToAnOfferedThreat()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(80f); view.HomeGroundAvailable = false; view.ThreatGroundAvailable = false; view.ThreatVisibleAvailable = true;
+            plan.HomeDefenseStage = 4; plan.HomeDefenseScope = 1; plan.HomeDefenseSlot = 1;
+            view.ExpandedSelectedMask = 1; view.ExpandedSelectedGroups = 1; view.AttackMode = true;
+            Assert.AreEqual(AriaHomeDefenseAction.AttackThreatVisible, Step(view, ref plan, out _).Action, "the raider on screen is attacked");
+        }
+
+        [Test]
+        public void GroundTapLeavingAttackArmedIsRepeatedOnceThenGivenUp()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(80f);
+            plan.HomeDefenseStage = 4; plan.HomeDefenseScope = 1; plan.HomeDefenseSlot = 1;
+            view.ExpandedSelectedMask = 1; view.ExpandedSelectedGroups = 1; view.AttackMode = true; view.CompletedContacts = 10;
+            Assert.AreEqual(AriaHomeDefenseAction.AttackHomeTerrain, Step(view, ref plan, out _).Action);
+            view.CompletedContacts = 11; // tap completed, Attack still armed
+            Assert.AreEqual(AriaHomeDefenseAction.AttackHomeTerrain, Step(view, ref plan, out _).Action, "repeated once");
+            view.CompletedContacts = 12;
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, Step(view, ref plan, out _).Action, "then Attack is toggled off, not a third ground tap");
+            Assert.AreEqual(AriaHomeDefensePolicy.StageDisarm, plan.HomeDefenseStage);
+            view.AttackMode = false; view.CompletedContacts = 13;
+            Assert.IsTrue(AriaHomeDefensePolicy.Step(view, ref plan, out _));
+            Assert.AreEqual(8, plan.HomeDefenseStage, "observe briefly, then a new round");
+        }
+}
 }

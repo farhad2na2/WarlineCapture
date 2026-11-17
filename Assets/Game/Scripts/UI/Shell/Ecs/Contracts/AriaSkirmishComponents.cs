@@ -35,6 +35,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int HomeDefenseStage, HomeDefenseAction, HomeDefensePage;
         public float HomeDefenseObserveUntil;
         public int HomeDefenseReason, HomeDefenseSlot, HomeDefenseScope, HomeDefenseRounds;
+        // AriaHomeDefensePolicy recovery bits (re-centre once, re-tap once, last press was focus, disarmed once).
+        public int HomeDefenseRecovery, HomeDefenseRecoveryAction;
         public float HomeHealthSeen, HomeHealthPeak, HomeDamageAt;
         public byte AssaultDistanceObserved;
         public float BestAssaultDistance;
@@ -63,6 +65,15 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte SupportStage, SupportKind, SupportTried, SupportDone;
         public int SupportSlot, SupportActions;
         public float SupportDeadline, SupportReadyAt;
+        // AriaGroundColumnPolicy stall guard (pages given up) and AriaFindBasePolicy (bounded base search).
+        public int ColumnStallKey, ColumnSkips, ColumnSkipKeyA, ColumnSkipKeyB;
+        public float ColumnStallSince;
+        public byte FindBaseActive, FindBaseTaps, FindBaseRun;
+        public int FindBaseActions, FindBaseLastTarget, FindBaseGiveUps;
+        // AriaCoverageRecruitPolicy progress (taps completed, purchase start) and the latched first assault.
+        public int CoverageActions;
+        public float CoverageStarted;
+        public byte CoverageAssaultSeen;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

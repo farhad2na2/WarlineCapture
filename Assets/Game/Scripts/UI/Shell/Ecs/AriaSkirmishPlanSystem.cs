@@ -931,6 +931,7 @@ namespace Game.UI.Shell.Ecs
                 var objectiveContact=Game.Simulation.AriaGroundObjectivePolicy.Contact(view.EnemyBase.Available,view.AdvanceGround.Available);
                 if (objectiveContact==Game.Simulation.AriaObjectiveContact.VisibleEnemyTarget)
                 {
+                    ClearFindBase(ref plan);
                     plan.Intent = AriaSkirmishIntent.TargetBase;
                     Target(view.EnemyBase, true, ref output);
                 }
@@ -939,12 +940,32 @@ namespace Game.UI.Shell.Ecs
                     // The labelled objective is public; a hidden base is not a precision target.
                     // Offer the already presented terrain approach for a separate normal Attack Move touch.
                     // Camera focus alone cannot reveal a contact and must never issue this order.
+                    ClearFindBase(ref plan);
                     plan.Intent = AriaSkirmishIntent.Advance;
                     Target(view.AdvanceGround, true, ref output);
                 }
                 else
                 {
+                    bool continuing = plan.Intent == AriaSkirmishIntent.FindBase;
                     plan.Intent = AriaSkirmishIntent.FindBase;
+                    bool navigate = view.FocusAdvance.Available && (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011);
+                    var find = new Game.Simulation.AriaFindBaseState { Active = plan.FindBaseActive, Taps = plan.FindBaseTaps,
+                        Run = plan.FindBaseRun, Actions = plan.FindBaseActions, LastTarget = plan.FindBaseLastTarget };
+                    bool giveUp = Game.Simulation.AriaFindBasePolicy.GiveUp(ref find, touch.Actions, navigate ? 0 : view.FocusEnemy.Id, continuing);
+                    plan.FindBaseActive = find.Active; plan.FindBaseTaps = find.Taps; plan.FindBaseRun = find.Run;
+                    plan.FindBaseActions = find.Actions; plan.FindBaseLastTarget = find.LastTarget;
+                    if (giveUp)
+                    {
+                        // Bounded search: turn Attack off, keep the orders already accepted, and let the
+                        // other steps act instead of searching with Attack armed indefinitely.
+                        Game.Simulation.AriaFindBasePolicy.LatchGivenUp(ref plan.ColumnSkipKeyA, ref plan.ColumnSkipKeyB, ref plan.ColumnSkips,
+                            view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
+                        plan.AssaultIssued = 1; plan.StructureOrdered = 1; plan.FindBaseGiveUps++;
+                        ClearFindBase(ref plan);
+                        plan.Intent = AriaSkirmishIntent.Inspect;
+                        Target(view.Attack, false, ref output);
+                        return;
+                    }
                     if (view.FocusAdvance.Available &&
                         (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011))
                     {
@@ -1049,7 +1070,9 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             if (plan.AssaultIssued != 0 &&
-                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) != 0)
+                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) != 0 &&
+                !Game.Simulation.AriaGroundColumnPolicy.Skipped(plan.ColumnSkipKeyA, plan.ColumnSkipKeyB,
+                    view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask))
             {
                 plan.AssaultIssued = 0;
                 plan.PagesOrdered = 0;
@@ -1141,9 +1164,11 @@ namespace Game.UI.Shell.Ecs
                 CompletedContacts=touch.Actions,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Available)facts.AvailableSquadMask|=1<<slot;
             var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
+                HomeDefenseRecovery=plan.HomeDefenseRecovery,HomeDefenseRecoveryAction=plan.HomeDefenseRecoveryAction,
                 Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
             bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
             plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
+            plan.HomeDefenseRecovery=state.HomeDefenseRecovery;plan.HomeDefenseRecoveryAction=state.HomeDefenseRecoveryAction;
             plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
             if(decision.Defend)plan.Intent=AriaSkirmishIntent.DefendBase;
             switch(decision.Action){
@@ -1366,16 +1391,20 @@ namespace Game.UI.Shell.Ecs
                 ExpandedAttackOrderMask=view.ExpandedAttackOrderMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
                 ExpandedStructureMask=view.ExpandedStructureMask,
                 PreviousAvailable=view.PreviousSquadPage.Available,NextAvailable=view.NextSquadPage.Available,
-                ToggleAvailable=view.SelectedSquadToToggle.Available,AttackAvailable=view.Attack.Available };
+                ToggleAvailable=view.SelectedSquadToToggle.Available,AttackAvailable=view.Attack.Available,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Available)facts.AvailableSquadMask|=1<<slot;
             var state = new Game.Simulation.AriaGroundColumnState {
                 PagesOrdered=plan.PagesOrdered,SelectionResetPage=plan.SelectionResetPage,AssaultPageSeen=plan.AssaultPageSeen,
                 AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,
-                PagedToAssault=plan.PagedToAssault,AssaultIssued=plan.AssaultIssued };
+                PagedToAssault=plan.PagedToAssault,AssaultIssued=plan.AssaultIssued,
+                StallKey=plan.ColumnStallKey,StallSince=plan.ColumnStallSince,Skips=plan.ColumnSkips,
+                SkipKeyA=plan.ColumnSkipKeyA,SkipKeyB=plan.ColumnSkipKeyB };
             bool handled=Game.Simulation.AriaGroundColumnPolicy.StepGroundAssault(facts,ref state,out var decision);
             plan.PagesOrdered=state.PagesOrdered;plan.SelectionResetPage=state.SelectionResetPage;plan.AssaultPageSeen=state.AssaultPageSeen;
             plan.AssaultSelecting=state.AssaultSelecting;plan.StructureOrdered=state.StructureOrdered;
             plan.PagedToAssault=state.PagedToAssault;plan.AssaultIssued=state.AssaultIssued;
+            plan.ColumnStallKey=state.StallKey;plan.ColumnStallSince=state.StallSince;plan.ColumnSkips=state.Skips;
+            plan.ColumnSkipKeyA=state.SkipKeyA;plan.ColumnSkipKeyB=state.SkipKeyB;
             switch(decision.Intent) {
                 case Game.Simulation.AriaGroundIntent.Inspect:plan.Intent=AriaSkirmishIntent.Inspect;break;
                 case Game.Simulation.AriaGroundIntent.SelectSquad:plan.Intent=AriaSkirmishIntent.SelectSquad;break;

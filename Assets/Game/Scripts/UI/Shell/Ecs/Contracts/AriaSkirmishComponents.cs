@@ -34,6 +34,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int ObservedPageIndex;
         public int HomeDefenseStage, HomeDefenseAction, HomeDefensePage;
         public float HomeDefenseObserveUntil;
+        public int HomeDefenseReason, HomeDefenseSlot, HomeDefenseScope, HomeDefenseRounds;
+        public float HomeHealthSeen, HomeHealthPeak, HomeDamageAt;
         public byte AssaultDistanceObserved;
         public float BestAssaultDistance;
         public int AssaultObjectiveHudIdentity;

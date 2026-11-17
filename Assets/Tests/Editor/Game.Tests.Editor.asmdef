@@ -15,6 +15,7 @@
         "Game.Rendering",
         "Game.Rendering.Contracts",
         "Game.Skirmish.Contracts",
+        "Game.Simulation",
         "Game.Simulation.Mathematics",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",

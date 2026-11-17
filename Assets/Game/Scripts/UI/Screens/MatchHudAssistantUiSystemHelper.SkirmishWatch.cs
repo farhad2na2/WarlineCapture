@@ -674,6 +674,15 @@ namespace Game.UI.Runtime
             int frontCount = Mathf.Min(4, friendlies);
             for (int i = 0; i < frontCount; i++) armyCenter += watchFront[i];
             armyCenter /= frontCount;
+            if (watchSkirmish != null)
+            {
+                // Public home ground for defenders when the HUD base-health label
+                // falls without a presented contact. Same -20006 attack-ground control.
+                var home = watchSkirmish.PlayerBaseObjectivePosition;
+                var homeApproach = armyCenter - home;
+                if (homeApproach.sqrMagnitude < 1) homeApproach = objective - home;
+                view.HomeGround = ObserveClearAttackGround(home, homeApproach, -20006, 25f);
+            }
             MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
             float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;
             float trackedDistance = 12 * 12;

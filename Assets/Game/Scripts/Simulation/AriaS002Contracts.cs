@@ -125,6 +125,10 @@ public AriaS002ActionTarget PadSite2;
 public AriaS002ActionTarget PadSite3;
 public AriaS002ActionTarget AdvanceGround;
 public AriaS002ActionTarget ThreatGround;
+// Public attack-move ground beside the labelled home objective.
+public AriaS002ActionTarget HomeGround;
+// Policy-derived each step from the HUD base-health readout; never set by adapters.
+public bool BaseDamageHomeThreat;
 public AriaS002ActionTarget FocusAdvance;
 public AriaS002ActionTarget DefenseBuild;
 public AriaS002ActionTarget PlacementConfirm;
@@ -252,6 +256,13 @@ public int HomeDefenseStage;
 public int HomeDefenseAction;
 public int HomeDefensePage;
 public float HomeDefenseObserveUntil;
+public int HomeDefenseReason;
+public int HomeDefenseSlot;
+public int HomeDefenseScope;
+public int HomeDefenseRounds;
+public float HomeHealthSeen;
+public float HomeHealthPeak;
+public float HomeDamageAt;
 public byte AssaultDistanceObserved;
 public float BestAssaultDistance;
 public int AssaultObjectiveHudIdentity;

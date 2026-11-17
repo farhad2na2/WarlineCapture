@@ -39,6 +39,15 @@ namespace Game.UI.Contracts
         public bool EnemyBaseKnowledgeKnown;
         public byte EnemyBaseKnowledge;
         public float EnemyBaseLastSeenAgeSeconds;
+        // Base under fire (public only): own base position, the latest attacker only while it is
+        // fog-visible to the player, and the nearest own ground squad to the base.
+        public bool PlayerBaseWorldKnown;
+        public UnityEngine.Vector3 PlayerBaseWorld;
+        public bool PlayerBaseRecentlyHit;
+        public bool BaseAttackerVisible;
+        public UnityEngine.Vector3 BaseAttackerWorld;
+        public uint BaseDefenderGroupId;
+        public string BaseDefenderLabel;
     }
     public struct UiExpandedPrecisionAttackResult
     {

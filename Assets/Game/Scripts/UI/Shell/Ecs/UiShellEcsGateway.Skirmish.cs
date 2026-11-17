@@ -189,6 +189,7 @@ namespace Game.UI.Shell.Ecs
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };
+            if (expanded) ReadBaseThreat(em, session, match, ref model);
             if (expanded && em.HasComponent<SkirmishResolvedSetupRecord>(session))
             {
                 var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;

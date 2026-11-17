@@ -1,0 +1,146 @@
+using Game.UI.Contracts;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Game.UI.Runtime
+{
+    /// <summary>
+    /// Base-under-fire cue (owner designer playtest 2026-11-17, S002). Additive and
+    /// non-blocking: a compact alert row under the base strip, a direction arrow toward
+    /// the attacker when the player can see it (otherwise toward the base), and a pulsing
+    /// outline on the nearest own squad card. The alert tap only frames the base
+    /// (camera); the defender tap only pages the tray. Neither selects nor orders troops.
+    /// </summary>
+    public sealed partial class SkirmishMatchView
+    {
+        private SkirmishBaseFireTracker baseFire;
+        private RectTransform baseFireRow, baseFireArrow;
+        private Button baseFireFocus, baseFireDefender;
+        private HudDirectionArrowGraphic baseFireArrowGraphic;
+        private MatchHudSquadTrayView baseFireTray;
+        private string baseFireDefenderShown, baseFireFocusShown;
+        private uint baseFireDefenderGroup;
+        private static readonly Color BaseFireRed = new(.91f, .23f, .12f, 1f);
+        private static readonly Color BaseFireAmber = new(1f, .65f, .1f, 1f);
+
+        public bool BaseUnderFirePresented => baseFireRow != null && baseFireRow.gameObject.activeSelf;
+        public Button BaseUnderFireFocusButton => baseFireFocus;
+        public Button BaseUnderFireDefenderButton => baseFireDefender;
+
+        private void RefreshBaseUnderFire(in UiSkirmishModel model)
+        {
+            bool live = hud != null && hud.activeSelf && !model.Finished && !model.StartupFailed && model.Expanded;
+            if (!live)
+            {
+                if (model.Finished || model.StartupFailed) baseFire.Reset();
+                SetBaseFireVisible(false);
+                return;
+            }
+            float now = Time.time; // scaled: pausing freezes the quiet timer as it freezes damage.
+            baseFire.Observe(model.PlayerHealth, now);
+            bool active = baseFire.UnderFire || model.PlayerBaseRecentlyHit && model.PlayerHealth > 0;
+            if (!active || model.PlayerHealth <= 0)
+            {
+                SetBaseFireVisible(false);
+                return;
+            }
+            if (baseFireRow == null) BuildBaseUnderFire();
+            SetBaseFireVisible(true);
+            PositionBaseFireRow();
+
+            bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            string focusSignature = (model.BaseAttackerVisible ? "seen" : "base") + fa;
+            if (baseFireFocusShown != focusSignature)
+            {
+                baseFireFocusShown = focusSignature;
+                HudIconButtonView.Apply(baseFireFocus, HudButtonIcon.Alert, HudButtonRole.Alert,
+                    model.BaseAttackerVisible ? "BASE UNDER FIRE · ATTACKER IN SIGHT" : "BASE UNDER FIRE · VIEW BASE",
+                    model.BaseAttackerVisible ? "پایگاه زیر آتش · مهاجم در دید" : "پایگاه زیر آتش · دیدن پایگاه");
+            }
+
+            baseFireDefenderGroup = model.BaseDefenderGroupId;
+            bool haveDefender = baseFireDefenderGroup != 0 && !string.IsNullOrEmpty(model.BaseDefenderLabel);
+            baseFireDefender.gameObject.SetActive(haveDefender);
+            if (haveDefender && baseFireDefenderShown != model.BaseDefenderLabel + fa)
+            {
+                baseFireDefenderShown = model.BaseDefenderLabel + fa;
+                HudIconButtonView.Apply(baseFireDefender, HudButtonIcon.Team, HudButtonRole.Navigation,
+                    "NEAREST · " + model.BaseDefenderLabel, "نزدیک‌ترین · " + model.BaseDefenderLabel);
+            }
+            if (baseFireTray == null) baseFireTray = FindAnyObjectByType<MatchHudSquadTrayView>();
+            if (baseFireTray != null) baseFireTray.SetDefenderHighlight(haveDefender ? baseFireDefenderGroup : 0);
+
+            PresentBaseFireArrow(model);
+        }
+
+        private void SetBaseFireVisible(bool visible)
+        {
+            if (baseFireRow != null && baseFireRow.gameObject.activeSelf != visible) baseFireRow.gameObject.SetActive(visible);
+            if (baseFireArrow != null && !visible && baseFireArrow.gameObject.activeSelf) baseFireArrow.gameObject.SetActive(false);
+            if (!visible && baseFireTray != null) baseFireTray.SetDefenderHighlight(0);
+        }
+
+        private void BuildBaseUnderFire()
+        {
+            baseFireRow = Panel("BaseUnderFire", transform, false);
+            baseFireRow.anchorMin = baseFireRow.anchorMax = new Vector2(.5f, 1f);
+            baseFireRow.pivot = new Vector2(.5f, 1f);
+            baseFireRow.sizeDelta = new Vector2(820, 62);
+            var row = baseFireRow.gameObject.AddComponent<HorizontalLayoutGroup>();
+            row.spacing = 8; row.childControlWidth = row.childControlHeight = true; row.childForceExpandWidth = false;
+            var focusLabel = Button(baseFireRow, "", () => Send(UiSkirmishAction.FocusPlayer));
+            baseFireFocus = focusLabel.GetComponentInParent<Button>();
+            focusLabel.transform.parent.GetComponent<LayoutElement>().preferredWidth = 470;
+            var defenderLabel = Button(baseFireRow, "", RevealBaseDefender);
+            baseFireDefender = defenderLabel.GetComponentInParent<Button>();
+            defenderLabel.transform.parent.GetComponent<LayoutElement>().preferredWidth = 330;
+
+            baseFireArrow = Panel("BaseUnderFireDirection", transform, false);
+            baseFireArrow.sizeDelta = new Vector2(64, 52);
+            baseFireArrow.pivot = new Vector2(.5f, .5f);
+            baseFireArrowGraphic = baseFireArrow.gameObject.AddComponent<HudDirectionArrowGraphic>();
+            baseFireArrowGraphic.color = BaseFireRed;
+        }
+
+        // Player-requested only. Pages the tray to the card; never selects the squad.
+        private void RevealBaseDefender()
+        {
+            if (baseFireTray == null) baseFireTray = FindAnyObjectByType<MatchHudSquadTrayView>();
+            if (baseFireTray != null) baseFireTray.TryRevealGroup(baseFireDefenderGroup);
+        }
+
+        private void PositionBaseFireRow()
+        {
+            var strip = (RectTransform)hud.transform;
+            // The strip is top-anchored; its bottom edge sits at offsetMin.y below the top.
+            baseFireRow.anchoredPosition = new Vector2(0, strip.offsetMin.y - 10);
+        }
+
+        private void PresentBaseFireArrow(in UiSkirmishModel model)
+        {
+            var camera = Camera.main;
+            bool targetKnown = model.BaseAttackerVisible || model.PlayerBaseWorldKnown;
+            if (camera == null || !targetKnown) { baseFireArrow.gameObject.SetActive(false); return; }
+            Vector3 world = model.BaseAttackerVisible ? model.BaseAttackerWorld : model.PlayerBaseWorld;
+            Vector3 screen = camera.WorldToScreenPoint(world);
+            Rect area = Screen.safeArea;
+            Vector2 centre = area.center;
+            float degrees = SkirmishBaseThreatPolicy.ArrowDegrees(screen, centre);
+            Vector2 direction = new(Mathf.Cos(degrees * Mathf.Deg2Rad), Mathf.Sin(degrees * Mathf.Deg2Rad));
+            Vector2 position;
+            if (SkirmishBaseThreatPolicy.OnScreen(screen, area))
+                position = (Vector2)screen - direction * 70f; // Sit just short of the target, pointing at it.
+            else
+            {
+                // Clamp to an inset ellipse so the arrow rides the screen edge toward the target.
+                float rx = area.width * .5f - 70f, ry = area.height * .5f - 120f;
+                float scale = 1f / Mathf.Sqrt(direction.x * direction.x / (rx * rx) + direction.y * direction.y / (ry * ry));
+                position = centre + direction * scale;
+            }
+            baseFireArrow.gameObject.SetActive(true);
+            baseFireArrow.position = position;
+            baseFireArrow.localRotation = Quaternion.Euler(0, 0, degrees);
+            baseFireArrowGraphic.color = model.BaseAttackerVisible ? BaseFireRed : BaseFireAmber;
+        }
+    }
+}

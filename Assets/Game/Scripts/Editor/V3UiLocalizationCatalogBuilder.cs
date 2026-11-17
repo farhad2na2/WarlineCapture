@@ -946,6 +946,8 @@ namespace Game.Editor
             AddRuntimeText("ui.skirmish.aggression", "Aggression", "تهاجم");
             AddRuntimeText("ui.skirmish.fog_of_war", "FOG OF WAR", "مه جنگ");
             AddRuntimeText("ui.skirmish.intel_reveal", "INTEL REVEAL", "افشای اطلاعات");
+            AddRuntimeText("ui.skirmish.base_threat.perimeter", "ENEMY AT YOUR BASE", "دشمن در پایگاه شماست");
+            AddRuntimeText("ui.skirmish.base_threat.damage", "YOUR BASE IS UNDER FIRE", "پایگاه شما زیر آتش است");
             AddRuntimeText("ui.skirmish.base_not_in_sight", "NOT IN SIGHT", "خارج از دید");
             AddRuntimeText("ui.skirmish.base_last_seen_health", "SEEN {0}/{1}", "دیده‌شده {0}/{1}");
             AddRuntimeText("ui.skirmish.marker.enemy_base", "ENEMY BASE", "پایگاه دشمن");

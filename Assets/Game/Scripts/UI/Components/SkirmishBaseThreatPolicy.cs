@@ -63,6 +63,38 @@ namespace Game.UI.Runtime
             return best;
         }
 
+        /// <summary>Squads within this distance of the base centre count as its home guard.</summary>
+        public const float HomeZoneMinimumMetres = 120f;
+
+        public static float HomeZoneRadius(float perimeterRadius) => Mathf.Max(HomeZoneMinimumMetres, perimeterRadius * 2f);
+
+        /// <summary>
+        /// The defender the HUD names when the base is threatened. Inside the home zone an
+        /// anti-armour squad is preferred (it can hurt the S002 tank), then the nearest squad;
+        /// both are labelled Home Guard. With nobody home, the nearest squad anywhere.
+        /// Inputs are the player's own squads only.
+        /// </summary>
+        public static int PickDefender(Vector2 basePoint, Vector2[] centers, bool[] antiArmour, float homeZoneRadius, out bool homeGuard)
+        {
+            homeGuard = false;
+            if (centers == null || centers.Length == 0) return -1;
+            float zone = homeZoneRadius * homeZoneRadius;
+            int bestHome = -1, bestArmour = -1, bestAny = -1;
+            float home = float.MaxValue, armour = float.MaxValue, any = float.MaxValue;
+            for (int i = 0; i < centers.Length; i++)
+            {
+                float distance = (centers[i] - basePoint).sqrMagnitude;
+                if (distance < any) { any = distance; bestAny = i; }
+                if (distance > zone) continue;
+                if (distance < home) { home = distance; bestHome = i; }
+                bool armourCapable = antiArmour != null && i < antiArmour.Length && antiArmour[i];
+                if (armourCapable && distance < armour) { armour = distance; bestArmour = i; }
+            }
+            if (bestArmour >= 0) { homeGuard = true; return bestArmour; }
+            if (bestHome >= 0) { homeGuard = true; return bestHome; }
+            return bestAny;
+        }
+
         /// <summary>True when a projected point is in front of the camera and inside the screen rect.</summary>
         public static bool OnScreen(Vector3 screen, Rect area) =>
             screen.z > 0 && area.Contains(new Vector2(screen.x, screen.y));

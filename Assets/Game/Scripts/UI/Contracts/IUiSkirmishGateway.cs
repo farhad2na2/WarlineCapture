@@ -48,6 +48,13 @@ namespace Game.UI.Contracts
         public UnityEngine.Vector3 BaseAttackerWorld;
         public uint BaseDefenderGroupId;
         public string BaseDefenderLabel;
+        public bool BaseDefenderIsHomeGuard;
+        // Raised by SkirmishBaseThreatAlertSystem: revision increments on perimeter entry (reason 1)
+        // and on the first damage of an attack (reason 2). The perimeter equals the base reveal radius.
+        public int BaseThreatRevision;
+        public byte BaseThreatReason;
+        public float BasePerimeterRadius;
+        public bool BaseIntruderInside;
     }
     public struct UiExpandedPrecisionAttackResult
     {

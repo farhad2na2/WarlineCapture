@@ -25,12 +25,28 @@ namespace Game.UI.Shell.Ecs
             if (!SkirmishPublicObjectiveProjection.TryReadFocusPosition(em, home, out var homePosition)) return;
             model.PlayerBaseWorldKnown = true;
             model.PlayerBaseWorld = homePosition;
+            float now = (float)em.WorldUnmanaged.Time.ElapsedTime;
+            bool alerted = false;
+            if (em.HasComponent<SkirmishBaseThreatAlertState>(session))
+            {
+                var alert = em.GetComponentData<SkirmishBaseThreatAlertState>(session);
+                model.BaseThreatRevision = alert.Revision;
+                model.BaseThreatReason = (byte)alert.Reason;
+                model.BasePerimeterRadius = alert.PerimeterRadius;
+                model.BaseIntruderInside = alert.IntruderInside != 0;
+                // The perimeter equals the base reveal radius and the system admits only
+                // faction-1-visible hostiles, so this position is public by construction.
+                if (model.BaseIntruderInside) { model.BaseAttackerVisible = true; model.BaseAttackerWorld = alert.IntruderPosition; }
+                alerted = model.BaseIntruderInside || alert.Revision > 0 && now - alert.RaisedAt <= BaseThreatRecentSeconds;
+            }
 
             using var queues = em.CreateEntityQuery(typeof(CombatDamageObservationQueueComponent));
-            if (queues.CalculateEntityCount() != 1) return;
+            if (queues.CalculateEntityCount() != 1 || !em.HasBuffer<CombatDamageObservationElement>(queues.GetSingletonEntity()))
+            {
+                if (alerted) ReadNearestDefender(em, session, homePosition, model.BasePerimeterRadius, ref model);
+                return;
+            }
             Entity queue = queues.GetSingletonEntity();
-            if (!em.HasBuffer<CombatDamageObservationElement>(queue)) return;
-            float now = (float)em.WorldUnmanaged.Time.ElapsedTime;
             var observations = em.GetBuffer<CombatDamageObservationElement>(queue, true);
             int latest = -1;
             for (int i = 0; i < observations.Length; i++)
@@ -40,21 +56,25 @@ namespace Game.UI.Shell.Ecs
                 if (now - observation.ObservedAt > BaseThreatRecentSeconds) continue;
                 if (latest < 0 || observation.EventId > observations[latest].EventId) latest = i;
             }
-            if (latest < 0) return;
+            if (latest < 0)
+            {
+                if (alerted) ReadNearestDefender(em, session, homePosition, model.BasePerimeterRadius, ref model);
+                return;
+            }
             model.PlayerBaseRecentlyHit = true;
 
             Entity source = observations[latest].SourceEntity;
-            if (source != Entity.Null && em.Exists(source) && em.HasComponent<LocalTransform>(source) &&
+            if (!model.BaseAttackerVisible && source != Entity.Null && em.Exists(source) && em.HasComponent<LocalTransform>(source) &&
                 !em.HasComponent<Parent>(source) && SkirmishFogService.IsVisibleToFaction(em, source, 1))
             {
                 model.BaseAttackerVisible = true;
                 model.BaseAttackerWorld = em.GetComponentData<LocalTransform>(source).Position;
             }
 
-            ReadNearestDefender(em, session, homePosition, ref model);
+            ReadNearestDefender(em, session, homePosition, model.BasePerimeterRadius, ref model);
         }
 
-        private static void ReadNearestDefender(EntityManager em, Entity session, Vector3 home, ref UiSkirmishModel model)
+        private static void ReadNearestDefender(EntityManager em, Entity session, Vector3 home, float perimeterRadius, ref UiSkirmishModel model)
         {
             if (!em.HasBuffer<SkirmishArmyGroupRecord>(session) || !em.HasComponent<SkirmishExpandedSessionComponent>(session)) return;
             var attempt = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
@@ -87,18 +107,22 @@ namespace Game.UI.Shell.Ecs
             if (counts.Count == 0) return;
             var ids = new uint[counts.Count];
             var centers = new Vector2[counts.Count];
+            var antiArmour = new bool[counts.Count];
             int index = 0;
             foreach (var pair in counts)
             {
                 Vector3 center = sums[pair.Key] / pair.Value;
                 ids[index] = pair.Key;
+                antiArmour[index] = candidates[pair.Key].Role == SkirmishRoleKind.Rocketeer;
                 centers[index++] = new Vector2(center.x, center.z);
             }
-            int nearest = SkirmishBaseThreatPolicy.NearestGroup(new Vector2(home.x, home.z), centers);
-            if (nearest < 0) return;
-            model.BaseDefenderGroupId = ids[nearest];
-            model.BaseDefenderLabel = SkirmishSetupBriefing.RoleLabel(candidates[ids[nearest]].Role, GameLocalization.IsRightToLeft) +
-                                      " (" + counts[ids[nearest]] + ")";
+            int pick = SkirmishBaseThreatPolicy.PickDefender(new Vector2(home.x, home.z), centers, antiArmour,
+                SkirmishBaseThreatPolicy.HomeZoneRadius(perimeterRadius), out bool homeGuard);
+            if (pick < 0) return;
+            model.BaseDefenderGroupId = ids[pick];
+            model.BaseDefenderIsHomeGuard = homeGuard;
+            model.BaseDefenderLabel = SkirmishSetupBriefing.RoleLabel(candidates[ids[pick]].Role, GameLocalization.IsRightToLeft) +
+                                      " (" + counts[ids[pick]] + ")";
         }
     }
 }

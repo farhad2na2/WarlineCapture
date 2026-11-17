@@ -17,6 +17,7 @@ namespace Game.Runtime
 
             EntityManager entityManager = world.EntityManager;
             if (TryPresentDefense(entityManager, matchUi, now)) return;
+            PresentSkirmishBaseThreat(entityManager, matchUi, now);
             EntityQuery query = _queryCache.Get(entityManager);
             if (matchUi == null ||
                 !ThreatWarningRuntimeState.TryRead(
@@ -42,6 +43,8 @@ namespace Game.Runtime
             _defenseQuery.Dispose();
             _defenseQuery = new WorldScopedComponentQueryCache<CampaignMissionRootComponent>(readOnly: true);
             _defenseVisible = false;
+            _skirmishBaseRevision = -1;
+            _skirmishBaseSession = default;
             _queryCache = new WorldScopedComponentQueryCache<ThreatWarningRuntimeStateComponent>(readOnly: false);
         }
 

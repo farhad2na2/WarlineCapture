@@ -22,6 +22,9 @@ namespace Game.UI.Runtime
         private uint baseFireDefenderGroup;
         private static readonly Color BaseFireRed = new(.91f, .23f, .12f, 1f);
         private static readonly Color BaseFireAmber = new(1f, .65f, .1f, 1f);
+        private RectTransform baseFirePing;
+        private V3GradientGraphic baseFirePingGraphic;
+        private MatchHudMinimapView baseFireMinimap;
 
         public bool BaseUnderFirePresented => baseFireRow != null && baseFireRow.gameObject.activeSelf;
         public Button BaseUnderFireFocusButton => baseFireFocus;
@@ -38,7 +41,7 @@ namespace Game.UI.Runtime
             }
             float now = Time.time; // scaled: pausing freezes the quiet timer as it freezes damage.
             baseFire.Observe(model.PlayerHealth, now);
-            bool active = baseFire.UnderFire || model.PlayerBaseRecentlyHit && model.PlayerHealth > 0;
+            bool active = baseFire.UnderFire || model.BaseIntruderInside || model.PlayerBaseRecentlyHit && model.PlayerHealth > 0;
             if (!active || model.PlayerHealth <= 0)
             {
                 SetBaseFireVisible(false);
@@ -61,22 +64,52 @@ namespace Game.UI.Runtime
             baseFireDefenderGroup = model.BaseDefenderGroupId;
             bool haveDefender = baseFireDefenderGroup != 0 && !string.IsNullOrEmpty(model.BaseDefenderLabel);
             baseFireDefender.gameObject.SetActive(haveDefender);
-            if (haveDefender && baseFireDefenderShown != model.BaseDefenderLabel + fa)
+            if (haveDefender && baseFireDefenderShown != model.BaseDefenderLabel + fa + model.BaseDefenderIsHomeGuard)
             {
-                baseFireDefenderShown = model.BaseDefenderLabel + fa;
+                baseFireDefenderShown = model.BaseDefenderLabel + fa + model.BaseDefenderIsHomeGuard;
                 HudIconButtonView.Apply(baseFireDefender, HudButtonIcon.Team, HudButtonRole.Navigation,
-                    "NEAREST · " + model.BaseDefenderLabel, "نزدیک‌ترین · " + model.BaseDefenderLabel);
+                    (model.BaseDefenderIsHomeGuard ? "HOME GUARD · " : "NEAREST · ") + model.BaseDefenderLabel,
+                    (model.BaseDefenderIsHomeGuard ? "نگهبان پایگاه · " : "نزدیک‌ترین · ") + model.BaseDefenderLabel);
             }
             if (baseFireTray == null) baseFireTray = FindAnyObjectByType<MatchHudSquadTrayView>();
             if (baseFireTray != null) baseFireTray.SetDefenderHighlight(haveDefender ? baseFireDefenderGroup : 0);
 
             PresentBaseFireArrow(model);
+            PresentBaseFirePing(model);
+        }
+
+        // Minimap ping: a pulsing outline on the small map at the base while it is threatened.
+        private void PresentBaseFirePing(in UiSkirmishModel model)
+        {
+            if (!model.PlayerBaseWorldKnown) { if (baseFirePing != null) baseFirePing.gameObject.SetActive(false); return; }
+            if (baseFireMinimap == null || !baseFireMinimap.isActiveAndEnabled)
+            {
+                baseFireMinimap = null;
+                foreach (var map in FindObjectsByType<MatchHudMinimapView>(FindObjectsSortMode.None))
+                    if (map.isActiveAndEnabled && (fullMap == null || !map.transform.IsChildOf(fullMap.transform))) { baseFireMinimap = map; break; }
+            }
+            if (baseFireMinimap == null || !baseFireMinimap.TryGetPresentedMapPoint(model.PlayerBaseWorld, null, out var point))
+            { if (baseFirePing != null) baseFirePing.gameObject.SetActive(false); return; }
+            if (baseFirePing == null)
+            {
+                baseFirePing = Panel("BaseUnderFireMinimapPing", transform, false);
+                baseFirePing.pivot = new Vector2(.5f, .5f);
+                baseFirePingGraphic = baseFirePing.gameObject.AddComponent<V3GradientGraphic>();
+                baseFirePingGraphic.Configure(Color.clear, Color.clear, BaseFireRed, 3f);
+                baseFirePingGraphic.raycastTarget = false;
+            }
+            float phase = Mathf.Repeat(Time.unscaledTime, 1.2f) / 1.2f;
+            baseFirePing.gameObject.SetActive(true);
+            baseFirePing.position = point;
+            baseFirePing.sizeDelta = Vector2.one * Mathf.Lerp(18f, 54f, phase);
+            baseFirePingGraphic.color = new Color(1f, 1f, 1f, 1f - phase);
         }
 
         private void SetBaseFireVisible(bool visible)
         {
             if (baseFireRow != null && baseFireRow.gameObject.activeSelf != visible) baseFireRow.gameObject.SetActive(visible);
             if (baseFireArrow != null && !visible && baseFireArrow.gameObject.activeSelf) baseFireArrow.gameObject.SetActive(false);
+            if (baseFirePing != null && !visible && baseFirePing.gameObject.activeSelf) baseFirePing.gameObject.SetActive(false);
             if (!visible && baseFireTray != null) baseFireTray.SetDefenderHighlight(0);
         }
 

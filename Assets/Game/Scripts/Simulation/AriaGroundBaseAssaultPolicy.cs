@@ -398,10 +398,10 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 StructureMask=view.ExpandedStructureMask,AssaultMask=view.ExpandedAssaultMask,AirMask=view.ExpandedAirMask,
                 CompletedContacts=touch.Actions,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
-            var state=new Game.Simulation.AriaInterceptState {Stage=plan.InterceptStage,Count=plan.InterceptCount,Slot=plan.InterceptSlot,Actions=plan.InterceptActions,
+            var state=new Game.Simulation.AriaInterceptState {Stage=plan.InterceptStage,Count=plan.InterceptCount,Pans=plan.InterceptPans,Slot=plan.InterceptSlot,Actions=plan.InterceptActions,
                 Deadline=plan.InterceptDeadline,LastSeenAt=plan.InterceptLastSeenAt,ReadyAt=plan.InterceptReadyAt};
             bool handled=Game.Simulation.AriaInterceptPolicy.Step(facts,ref state,out var decision);
-            plan.InterceptStage=state.Stage;plan.InterceptCount=state.Count;plan.InterceptSlot=state.Slot;plan.InterceptActions=state.Actions;
+            plan.InterceptStage=state.Stage;plan.InterceptCount=state.Count;plan.InterceptPans=state.Pans;plan.InterceptSlot=state.Slot;plan.InterceptActions=state.Actions;
             plan.InterceptDeadline=state.Deadline;plan.InterceptLastSeenAt=state.LastSeenAt;plan.InterceptReadyAt=state.ReadyAt;
             if(!handled)return false;
             switch(decision.Action){

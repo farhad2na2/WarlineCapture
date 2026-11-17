@@ -53,7 +53,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int AirCycleStage, AirCycleAction, AirCycleCount;
         public float AirSortieObservedAt, AirCycleDeadline, AirServiceReadyAt;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
-        public byte InterceptStage, InterceptCount;
+        public byte InterceptStage, InterceptCount, InterceptPans;
         public int InterceptSlot, InterceptActions;
         public float InterceptDeadline, InterceptLastSeenAt, InterceptReadyAt;
     }

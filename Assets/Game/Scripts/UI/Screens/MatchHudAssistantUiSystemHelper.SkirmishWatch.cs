@@ -663,8 +663,10 @@ namespace Game.UI.Runtime
             var safe = Screen.safeArea;
             // Clear of the squad tray and command buttons at the bottom and the top bar.
             var centre = new Vector2(safe.x + safe.width * .5f, safe.y + safe.height * .55f);
+            // Only a contact one drag away is offered: farther contacts cannot be brought into
+            // view inside their short visibility window (aria-intercept-q1: about 2.8 screens).
             if (!Game.Simulation.AriaInterceptPolicy.PanDelta(point.x, point.y, centre.x, centre.y,
-                    safe.width * .38f, safe.height * .28f, out float dx, out float dy)) return;
+                    safe.width * .38f, safe.height * .28f, out float dx, out float dy, out bool single) || !single) return;
             var end = centre + new Vector2(dx, dy);
             view.InterceptPan = new AriaTouchTarget { Id = -20015, Position = centre, Drag = true, DragEnd = end,
                 Available = WatchTargetIsReachable(centre, -20015, true) && safe.Contains(end) };

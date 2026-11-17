@@ -181,11 +181,83 @@ namespace Game.Tests.Editor
         public void PanDeltaMovesTheContactTowardTheCentreWithinLimits()
         {
             // Contact below-left of the view (Unity screen y grows upward): drag right and up.
-            Assert.IsTrue(AriaInterceptPolicy.PanDelta(-400f, -300f, 960f, 594f, 730f, 302f, out float dx, out float dy));
+            Assert.IsTrue(AriaInterceptPolicy.PanDelta(-400f, -300f, 960f, 594f, 730f, 302f, out float dx, out float dy, out bool single));
+            Assert.IsFalse(single, "farther than one drag");
             Assert.IsTrue(dx > 0f && dy > 0f);
             Assert.IsTrue(dx <= 730f + .01f && dy <= 302f + .01f, "clamped to the clear drag area");
             Assert.AreEqual(894.0 / 1360.0, dy / dx, 1e-3, "direction is preserved");
-            Assert.IsFalse(AriaInterceptPolicy.PanDelta(965f, 590f, 960f, 594f, 730f, 302f, out _, out _), "already centred");
+            Assert.IsFalse(AriaInterceptPolicy.PanDelta(965f, 590f, 960f, 594f, 730f, 302f, out _, out _, out _), "already centred");
+            Assert.IsTrue(AriaInterceptPolicy.PanDelta(1500f, 1200f, 960f, 594f, 730f, 302f, out _, out _, out single));
+            Assert.IsFalse(single, "y 1200 needs 606 px > 302 px");
+            Assert.IsTrue(AriaInterceptPolicy.PanDelta(1500f, 800f, 960f, 594f, 730f, 302f, out _, out _, out single));
+            Assert.IsTrue(single, "just off the right edge: one drag");
+            // aria-intercept-q1, 155923 fa-IR t=54.05: tank projected at (-311, 3032), 2.8 screens away.
+            Assert.IsTrue(AriaInterceptPolicy.PanDelta(-311f, 3032f, 960f, 594f, 730f, 302f, out _, out _, out single));
+            Assert.IsFalse(single);
+        }
+
+        // aria-intercept-q1: the tank crossing the column at t=54-56 projected about 2.8
+        // screens off view. It is fog-visible (known) but neither tappable nor one drag
+        // away, so no intercept starts and the column is not disturbed.
+        [Test]
+        public void KnownButFarOffScreenContactStartsNothing()
+        {
+            var plan = default(AriaInterceptState);
+            var view = View(54.05f);
+            view.ThreatAvailable = false; view.PanAvailable = false;
+            view.SelectedMask = 0b00111; view.SelectedGroups = 3;
+            Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _));
+            Assert.AreEqual(AriaInterceptPolicy.StageIdle, plan.Stage);
+            Assert.AreEqual(0, plan.Count);
+        }
+
+        // aria-intercept-q1, 130365 en: an intercept released at t=180.42 with Attack still
+        // armed; the next owner (FindBase) aimed it at a focus control three times and ARIA
+        // stopped Blocked (115). Attack is now toggled off before the controls are handed back.
+        [Test]
+        public void LostContactWithAttackArmedTogglesAttackOffBeforeRelease()
+        {
+            var plan = default(AriaInterceptState);
+            var view = View(170.51f);
+            view.SelectedMask = 0b00001; view.SelectedGroups = 1; view.CompletedContacts = 40;
+            Assert.AreEqual(AriaInterceptAction.ArmAttack, Step(view, ref plan, out _).Action);
+            view.AttackMode = true; view.CompletedContacts = 41; view.Time = 172f;
+            Assert.AreEqual(AriaInterceptAction.TargetThreat, Step(view, ref plan, out _).Action);
+            view.ThreatKnown = false; view.ThreatAvailable = false; view.Time = 172f + AriaInterceptPolicy.LostSeconds + .1f;
+            var decision = Step(view, ref plan, out bool handled);
+            Assert.IsTrue(handled, "not handed back while Attack is armed");
+            Assert.AreEqual(AriaInterceptAction.ArmAttack, decision.Action, "the Attack toggle disarms it");
+            Assert.AreEqual(AriaInterceptPolicy.StageDisarm, plan.Stage);
+            view.Time += .5f;
+            Assert.AreEqual(AriaInterceptAction.ArmAttack, Step(view, ref plan, out _).Action, "same toggle until it completes");
+            view.AttackMode = false; view.CompletedContacts = 42; view.Time += 1f;
+            decision = Step(view, ref plan, out handled);
+            Assert.IsFalse(handled);
+            Assert.AreEqual(3, decision.Trace);
+            Assert.AreEqual(AriaInterceptPolicy.StageIdle, plan.Stage);
+
+            // A disarm that cannot complete is still bounded.
+            var stuck = new AriaInterceptState { Stage = AriaInterceptPolicy.StageDisarm, Actions = 50, Deadline = 10f };
+            var armed = View(10.1f); armed.AttackMode = true; armed.CompletedContacts = 50;
+            Assert.IsFalse(AriaInterceptPolicy.Step(armed, ref stuck, out _));
+            Assert.AreEqual(AriaInterceptPolicy.StageIdle, stuck.Stage);
+        }
+
+        // aria-intercept-q1, 155923 fa-IR t=122-131: three drags on the same control counted
+        // as touch retries (attempts 1-3). One drag per intercept; then wait or release.
+        [Test]
+        public void AtMostOneDragPerIntercept()
+        {
+            var plan = default(AriaInterceptState);
+            var view = View(120f);
+            view.ThreatAvailable = false; view.PanAvailable = true; view.AttackMode = true;
+            view.SelectedMask = 0b00001; view.SelectedGroups = 1; view.CompletedContacts = 10;
+            Assert.AreEqual(AriaInterceptAction.PanToThreat, Step(view, ref plan, out _).Action);
+            view.CompletedContacts = 11; view.Time = 121.5f; // drag done, still not in view
+            Assert.AreEqual(AriaInterceptAction.Waiting, Step(view, ref plan, out _).Action, "no second drag");
+            Assert.AreEqual(1, plan.Pans);
+            view.ThreatAvailable = true; view.Time = 122f;
+            Assert.AreEqual(AriaInterceptAction.TargetThreat, Step(view, ref plan, out _).Action);
         }
     }
 }

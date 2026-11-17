@@ -12,7 +12,8 @@ namespace Game.Simulation {
   public bool ThreatKnown;
   // That vehicle is on screen and tappable (no HUD over it).
   public bool ThreatAvailable;
-  // A clear world drag that brings the vehicle toward the view centre is available.
+  // One clear world drag brings the vehicle into the view (never offered for contacts
+  // farther away: those cannot be reached inside the short visibility window).
   public bool PanAvailable;
   // Another owner holds the controls or the moment: open drawer/map/placement,
   // home defence already running, precision attack, camera navigation, army at the enemy base.
@@ -24,15 +25,19 @@ namespace Game.Simulation {
   public float Time;
  }
  // Stage: 0 idle, 1 select, 2 arm Attack, 3 tap the contact, 4 let the group fight,
- // 5 a camera drag toward the contact is in flight (Attack stays armed).
+ // 5 a camera drag toward the contact is in flight (Attack stays armed),
+ // 6 Attack is toggled off before the controls are handed back (no tap landed).
  // Slot: roster slot on the current page, or KeepSelection when the visible
  // selection already holds an anti-armour (structure-capable) group.
- public struct AriaInterceptState {public byte Stage,Count;public int Slot,Actions;public float Deadline,LastSeenAt,ReadyAt;}
+ public struct AriaInterceptState {public byte Stage,Count,Pans;public int Slot,Actions;public float Deadline,LastSeenAt,ReadyAt;}
  // Trace: 0 none, 1 triggered, 2 ordered, 3 released.
  public struct AriaInterceptDecision {public AriaInterceptAction Action;public int Slot;public byte Trace;}
  public static class AriaInterceptPolicy {
   public const int KeepSelection=5,MaxIntercepts=3;
-  public const byte StageIdle=0,StageSelect=1,StageArm=2,StageTap=3,StageFight=4,StagePan=5;
+  public const byte StageIdle=0,StageSelect=1,StageArm=2,StageTap=3,StageFight=4,StagePan=5,StageDisarm=6;
+  // One drag per intercept: repeated drags on one control are touch retries.
+  public const int MaxPans=1;
+  public const float DisarmSeconds=4f;
   // Order: the whole select/Attack/pan/tap sequence. Hold: the group fights before the
   // ordinary assault sweep re-issues its base order. Lost: contact gone (dead or fog).
   // HoldLost: a chased contact may leave sight briefly; give the ordered group a moment.
@@ -48,16 +53,22 @@ namespace Game.Simulation {
     if(!view.ThreatKnown||!(view.ThreatAvailable||view.PanAvailable)||view.Busy||!view.ArmyMoving||
        plan.Count>=MaxIntercepts||view.Time<plan.ReadyAt)return false;
     int slot=ChooseSlot(view);if(slot<0)return false;
-    plan.Stage=slot==KeepSelection?StageArm:StageSelect;plan.Slot=slot;plan.Count++;
+    plan.Stage=slot==KeepSelection?StageArm:StageSelect;plan.Slot=slot;plan.Count++;plan.Pans=0;
     plan.Deadline=view.Time+OrderSeconds;plan.LastSeenAt=view.Time;plan.Actions=view.CompletedContacts;
     output.Trace=1;
    }
+   if(plan.Stage==StageDisarm){
+    // Never hand back an armed Attack: the next owner would aim it elsewhere.
+    if(!view.AttackMode||view.CompletedContacts>plan.Actions||view.Time>plan.Deadline||!view.AttackAvailable)
+    {Release(ref plan,view.Time,ref output);return false;}
+    output.Action=AriaInterceptAction.ArmAttack;return true;
+   }
    if(view.ThreatKnown)plan.LastSeenAt=view.Time;
    if(plan.Stage==StageFight){
-    if(view.Busy||view.Time-plan.LastSeenAt>HoldLostSeconds||view.Time>plan.Deadline){Release(ref plan,view.Time,ref output);return false;}
+    if(view.Busy||view.Time-plan.LastSeenAt>HoldLostSeconds||view.Time>plan.Deadline)return Finish(view,ref plan,ref output);
     output.Action=AriaInterceptAction.Waiting;return true;
    }
-   if(view.Busy||view.Time-plan.LastSeenAt>LostSeconds||view.Time>plan.Deadline){Release(ref plan,view.Time,ref output);return false;}
+   if(view.Busy||view.Time-plan.LastSeenAt>LostSeconds||view.Time>plan.Deadline)return Finish(view,ref plan,ref output);
    if(plan.Stage==StageSelect){
     int desired=1<<plan.Slot;
     bool exact=view.SelectedGroups==1&&view.SelectedOffPage==0&&view.SelectedMask==desired;
@@ -86,7 +97,7 @@ namespace Game.Simulation {
    // Stage 3: one tap on the moving contact; the touch owner refreshes its position.
    if(view.CompletedContacts<=plan.Actions){
     if(view.ThreatAvailable){output.Action=AriaInterceptAction.TargetThreat;return true;}
-    if(view.PanAvailable){plan.Stage=StagePan;output.Action=AriaInterceptAction.PanToThreat;return true;}
+    if(view.PanAvailable&&plan.Pans<MaxPans){plan.Stage=StagePan;plan.Pans++;output.Action=AriaInterceptAction.PanToThreat;return true;}
     output.Action=AriaInterceptAction.Waiting;return true;
    }
    plan.Stage=StageFight;plan.Deadline=view.Time+HoldSeconds;output.Trace=2;output.Action=AriaInterceptAction.Waiting;return true;
@@ -102,6 +113,14 @@ namespace Game.Simulation {
    int bit=0;while((pick&1)==0){pick>>=1;bit++;}
    return bit;
   }
+  // End of an intercept: toggle Attack off first when it is still armed (stage 6).
+  static bool Finish(in AriaInterceptView view,ref AriaInterceptState plan,ref AriaInterceptDecision output){
+   if(view.AttackMode&&view.AttackAvailable&&plan.Stage!=StageFight){
+    plan.Stage=StageDisarm;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+DisarmSeconds;
+    output.Action=AriaInterceptAction.ArmAttack;return true;
+   }
+   Release(ref plan,view.Time,ref output);return false;
+  }
   static void Release(ref AriaInterceptState plan,float time,ref AriaInterceptDecision output){
    plan.Stage=StageIdle;plan.Slot=0;plan.ReadyAt=time+CooldownSeconds;output.Trace=3;output.Action=AriaInterceptAction.None;
   }
@@ -116,11 +135,13 @@ namespace Game.Simulation {
   // Camera drag (screen pixels) from a fixed clear start: the scene follows the finger,
   // so dragging by (centre - contact) moves the contact toward the centre. The drag is
   // clamped to maxX/maxY; repeated drags close any remaining distance.
-  public static bool PanDelta(float contactX,float contactY,float centreX,float centreY,float maxX,float maxY,out float dx,out float dy){
+  // single: the whole offset fits in one drag (the contact can be in view after it).
+  public static bool PanDelta(float contactX,float contactY,float centreX,float centreY,float maxX,float maxY,out float dx,out float dy,out bool single){
    dx=centreX-contactX;dy=centreY-contactY;
    float scale=1f;
    if(dx>maxX||dx<-maxX)scale=System.Math.Min(scale,maxX/System.Math.Abs(dx));
    if(dy>maxY||dy<-maxY)scale=System.Math.Min(scale,maxY/System.Math.Abs(dy));
+   single=scale>=1f;
    dx*=scale;dy*=scale;
    return dx*dx+dy*dy>=20f*20f;
   }

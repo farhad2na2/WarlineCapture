@@ -65,13 +65,14 @@ namespace Game.UI.Shell.Ecs
             string state = prior == 0 && p.InterceptStage != 0 ? "triggered"
                 : prior != 4 && p.InterceptStage == 4 ? "ordered"
                 : prior != 5 && p.InterceptStage == 5 ? "pan"
+                : prior != 6 && p.InterceptStage == 6 ? "disarm"
                 : prior != 0 && p.InterceptStage == 0 ? "released"
                 : known != tracedInterceptKnown || offered != tracedInterceptOffered || pan != tracedInterceptPan ? "contact" : null;
             tracedInterceptStage = p.InterceptStage; tracedInterceptKnown = known; tracedInterceptOffered = offered; tracedInterceptPan = pan;
             if (state == null) return;
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
             string slot = p.InterceptSlot == Game.Simulation.AriaInterceptPolicy.KeepSelection ? "selection" : p.InterceptSlot.ToString();
-            Debug.Log($"[AriaS002Trace] event=intercept state={state} known={known} offered={offered} pan={pan} screen=({v.InterceptScreen.x:F0},{v.InterceptScreen.y:F0},{v.InterceptScreen.z:F1}) safe={Screen.safeArea} stage={p.InterceptStage} count={p.InterceptCount} slot={slot} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} atBase={v.AssaultAtBase} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            Debug.Log($"[AriaS002Trace] event=intercept state={state} known={known} offered={offered} pan={pan} screen=({v.InterceptScreen.x:F0},{v.InterceptScreen.y:F0},{v.InterceptScreen.z:F1}) safe={Screen.safeArea} stage={p.InterceptStage} count={p.InterceptCount} pans={p.InterceptPans} slot={slot} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} atBase={v.AssaultAtBase} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
         }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)

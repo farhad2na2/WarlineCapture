@@ -297,6 +297,7 @@ public float AirCycleDeadline;
 public float AirServiceReadyAt;
 public byte InterceptStage;
 public byte InterceptCount;
+public byte InterceptPans;
 public int InterceptSlot;
 public int InterceptActions;
 public float InterceptDeadline;

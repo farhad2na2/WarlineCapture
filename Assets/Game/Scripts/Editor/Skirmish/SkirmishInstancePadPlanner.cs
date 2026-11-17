@@ -79,6 +79,29 @@ namespace Game.Editor
 
     public static class SkirmishInstancePadPlanner
     {
+        // Safety slack for float rounding at touching edges.
+        public const float EnvelopeEpsilonMetres = 0.05f;
+
+        /// <summary>
+        /// A world-aligned footprint (width x depth metres) stored on a pad whose axes are the layout frame
+        /// (width along forward, depth along across; forward/across are map-plane vectors as (x, z)) must be
+        /// stored as its enclosing extent along those axes: |f.x|*W + |f.z|*D and |a.x|*W + |a.z|*D.
+        /// The runtime snaps the preferred origin to whole cells (floor to cell, then minus footprint/2 with
+        /// integer division), which moves the effective rectangle's centre by strictly less than one cell on each
+        /// world axis (even footprints shift by (-1, 0] cell, odd by (-0.5, +0.5] cell). One cell is therefore
+        /// added on each side of each world axis (W + 2*cell, D + 2*cell) before projecting, plus a tiny epsilon.
+        /// The pad centre is unchanged.
+        /// </summary>
+        public static void EncloseWorldAlignedFootprint(float forwardX, float forwardZ, float acrossX, float acrossZ,
+            float footprintWidth, float footprintDepth, float cellSize, out float padWidth, out float padDepth)
+        {
+            float cell = cellSize > 0f ? cellSize : 1f;
+            float w = footprintWidth + 2f * cell + EnvelopeEpsilonMetres;
+            float d = footprintDepth + 2f * cell + EnvelopeEpsilonMetres;
+            padWidth = Math.Abs(forwardX) * w + Math.Abs(forwardZ) * d;
+            padDepth = Math.Abs(acrossX) * w + Math.Abs(acrossZ) * d;
+        }
+
         public delegate bool FootprintResolver(string structureId, out float widthMetres, out float depthMetres);
 
         public static bool IsInstancePadKind(SkirmishLegalPadKind kind) =>

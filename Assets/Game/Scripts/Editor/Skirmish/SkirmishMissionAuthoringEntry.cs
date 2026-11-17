@@ -872,10 +872,14 @@ namespace Game.Editor
                             });
                         }
                         var c = local(new Vector2(planned.X, planned.Z));
+                        // Draft sizes are world-aligned footprints; the pad lives in the rotated layout frame, so
+                        // store the frame-axis envelope (plus the one-cell grid-snap margin) of that rectangle.
+                        SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(forward.x, forward.y, across.x, across.y,
+                            planned.Width, planned.Depth, source.GridMetadata.CellSize, out float padWidth, out float padDepth);
                         instancePads.Add(new SkirmishLegalPadConfig
                         {
                             PadId = padId, AnchorId = padAnchor, RoleId = "instance." + (planned.Measured ? planned.MeasuredId : planned.Slug),
-                            Kind = planned.Kind, CenterX = c.x, CenterZ = c.y, WidthMetres = planned.Width, DepthMetres = planned.Depth, FactionId = planned.Faction
+                            Kind = planned.Kind, CenterX = c.x, CenterZ = c.y, WidthMetres = padWidth, DepthMetres = padDepth, FactionId = planned.Faction
                         });
                         padKeys.Add(planned.Key, (padId, padAnchor));
                     }

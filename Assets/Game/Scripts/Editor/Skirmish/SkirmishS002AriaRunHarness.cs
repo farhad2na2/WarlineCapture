@@ -787,7 +787,7 @@ namespace Game.Editor
 
                     ConfigureBackgroundInput();
                     SessionState.SetString(StartedKey, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
-                    if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") != "1") AriaCommandEvidence.Begin();
+                    if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") != "1") { AriaCommandEvidence.Begin(); BeginGateUnits(em, session); }
                     stage = 2;
                     next = now + 1d;
                     return;

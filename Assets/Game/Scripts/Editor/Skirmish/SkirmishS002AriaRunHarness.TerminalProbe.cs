@@ -35,6 +35,7 @@ namespace Game.Editor
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
+            EmitGateUnitsUsed(em);
             RecordProductionResolvedSnapshot(em, session, in match, SkirmishLaunchProjection.IsSimulationActive(em), elapsed, "TerminalSnapshot");
             StopS004ManualProbe();
             terminalSnapshotValid = terminalProbeActive = true;

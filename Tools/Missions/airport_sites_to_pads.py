@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 """Turn a measured Airport source-fit scan into per-side Airport pads for a mission draft.
 
-Input: the <trace>.airport-source-fit.json written by
-Game.Editor.SkirmishS002AriaRunHarness.RunCatalogAirportSourceFitAndExit (native placement validator,
-coarse stride, read-only) and a draft from Tools/Missions/drafts. For each side (player faction 1,
+Input: a draft from Tools/Missions/drafts and ONE measured site list:
+  --sites  the <trace>.airport-source-fit.json written by RunCatalogAirportSourceFitAndExit (S004-bound lookup), or
+  --dump   a layout-dump JSON from RunCatalogLayoutDumpAndExit with WARLINE_LAYOUT_DUMP_KINDS=airport (any
+           catalog): its airport candidates already passed the starting-placement predicates (inside logical
+           playable bounds, no cached-invalid cell, no authored map building, road, water or sidewalk) and the native
+           IsPlacementValid. Candidates on non-level ground are dropped (the validator enforces level ground while a
+           match is Playing). A dump with no Airport definition or no airport candidate exits 1 with the reason.
+Both feed the same per-side selection. For each side (player faction 1,
 enemy faction 2) this picks a native-valid, inside-playable site that does not overlap the draft's
 other pads or routes, nearest to that side's base anchor, with the two sites not overlapping each other.
 It never invents a site: no valid site means exit 1 with the reason.
@@ -50,6 +55,71 @@ def load_sites(data, catalog_id=None):
         except (KeyError, TypeError, ValueError) as exc:
             raise SiteError('site %d is malformed: %s' % (i, exc))
     return sites, float(cell)
+
+
+def load_dump_sites(data, catalog_id=None):
+    """Return (sites, cell_size, info) from a layout dump. info = report lines. Never invents a site."""
+    if not isinstance(data, dict) or not isinstance(data.get('candidates'), list):
+        raise SiteError('layout dump has no candidates list')
+    scan_catalog = data.get('catalog')
+    if catalog_id and scan_catalog and scan_catalog != catalog_id:
+        raise SiteError('dump is for catalog %s, draft is %s' % (scan_catalog, catalog_id))
+    cell = data.get('cellSize')
+    if not isinstance(cell, (int, float)) or isinstance(cell, bool) or cell <= 0:
+        raise SiteError('layout dump has no cellSize')
+    airport_defs = [d for d in data.get('definitions') or [] if isinstance(d, dict) and 'airport' in str(d.get('name', '')).lower()]
+    missing = [k for k in str(data.get('missingKinds') or '').split(',') if k]
+    if 'airport' in missing or (not airport_defs and 'definitions' in data):
+        fallback = str(data.get('airportAssetFallback') or '')
+        raise SiteError('this session configures no Airport building definition (dump definitions: %s)%s; an airport scan '
+                        'has nothing to place, so no site was measured' %
+                        (', '.join(str(d.get('name')) for d in data.get('definitions') or []) or 'none',
+                         ' and the asset fallback did not load one (%s)' % fallback if fallback else
+                         ' (a dump from a harness without the asset fallback; rerun with the current one)'))
+    if airport_defs and not any(d.get('scanned') for d in airport_defs):
+        raise SiteError('the Airport definition was not scanned; rerun with WARLINE_LAYOUT_DUMP_KINDS=airport')
+    origin, lo, hi = data.get('gridOrigin') or {}, data.get('playableMin'), data.get('playableMax')
+    sites, not_level, outside, total, unvalidated, asset = [], 0, 0, 0, 0, 0
+    for i, c in enumerate(data['candidates']):
+        if not isinstance(c, dict) or c.get('kind') != 'airport':
+            continue
+        total += 1
+        try:
+            w, h = float(c['rectW']) * cell, float(c['rectH']) * cell
+            x, z = float(c['centreX']), float(c['centreZ'])
+            if c.get('level') is False:
+                not_level += 1
+                continue
+            playable = True
+            if lo and hi and origin:
+                x0, z0 = float(origin['x']) + float(c['rectX']) * cell, float(origin['z']) + float(c['rectZ']) * cell
+                playable = (x0 >= float(lo['x']) - 1e-3 and z0 >= float(lo['z']) - 1e-3 and
+                            x0 + w <= float(hi['x']) + 1e-3 and z0 + h <= float(hi['z']) + 1e-3)
+            if not playable:
+                outside += 1
+            native = c.get('nativeValidated') is not False
+            from_asset = c.get('definitionSource') == 'asset'
+            unvalidated += 0 if native else 1
+            asset += 1 if from_asset else 0
+            sites.append({'index': i, 'x': x, 'z': z, 'w': w, 'h': h, 'rotated': bool(c.get('rotated')), 'playable': playable,
+                          'native': native, 'asset': from_asset})
+        except (KeyError, TypeError, ValueError) as exc:
+            raise SiteError('dump candidate %d is malformed: %s' % (i, exc))
+    info = ['dump: %d airport candidates (stride %s), %d on non-level ground dropped, %d outside playable%s'
+            % (total, data.get('stride', '?'), not_level, outside,
+               '; CANDIDATE LIST TRUNCATED (scan order is low z first, picks may be biased; use a larger stride)'
+               if data.get('candidatesTruncated') else '')]
+    if asset:
+        info.append('airport definition built from the prefab asset, not the session list (definitionSource=asset)')
+    if unvalidated:
+        info.append('WARNING nativeValidated=0 for %d candidate(s): the native IsPlacementValid could not take the asset '
+                    'definition (%s); only the starting-placement predicates were applied'
+                    % (unvalidated, data.get('nativeValidationFailure') or 'no reason recorded'))
+    if not sites:
+        counters = ', '.join('%s=%s' % (k, data[k]) for k in ('tested', 'rejectedCachedInvalid', 'rejectedBuilding', 'rejectedRoad',
+                                                              'rejectedWater', 'rejectedSidewalk', 'rejectedNative') if k in data)
+        raise SiteError('no airport candidate in the dump (%s%s)' % (info[0], '; ' + counters if counters else ''))
+    return sites, float(cell), info
 
 
 def rect_of(x, z, w, h):
@@ -196,6 +266,11 @@ def apply_picks(draft, picks, measured_from):
     footprints['building.airport'] = [round2(max(picks[s]['w'] for s, _ in SIDES)),
                                       round2(max(picks[s]['h'] for s, _ in SIDES))]
     note = 'airport measured_from=%s' % measured_from
+    chosen = [picks[side] for side, _ in SIDES]
+    if any(site.get('asset') for site in chosen):
+        note += ' definitionSource=asset'
+    if any(site.get('native') is False for site in chosen):
+        note += ' nativeValidated=0'
     notes = draft.get('notes') or ''
     draft['notes'] = (notes + ' | ' if notes else '') + note
     return draft
@@ -203,18 +278,26 @@ def apply_picks(draft, picks, measured_from):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--sites', required=True, help='<trace>.airport-source-fit.json (or WARLINE_AIRPORT_SITES_OUT copy)')
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument('--sites', help='<trace>.airport-source-fit.json (or WARLINE_AIRPORT_SITES_OUT copy)')
+    source.add_argument('--dump', help='layout dump JSON (RunCatalogLayoutDumpAndExit, WARLINE_LAYOUT_DUMP_KINDS=airport)')
     parser.add_argument('--draft', required=True, help='draft JSON from Tools/Missions/drafts')
     parser.add_argument('--clearance', type=float, default=4.0, help='metres kept clear of other pads/routes (default 4)')
-    parser.add_argument('--measured-from', help='path recorded in the draft note (default: absolute --sites path)')
+    parser.add_argument('--measured-from', help='path recorded in the draft note (default: absolute --sites/--dump path)')
     parser.add_argument('--write', action='store_true', help='update the draft (in place unless --out)')
     parser.add_argument('--out', help='write the updated draft here instead of in place')
     args = parser.parse_args(argv)
     try:
         draft = json.loads(Path(args.draft).read_text(encoding='utf-8'))
-        sites_path = Path(args.sites)
-        sites, _ = load_sites(json.loads(sites_path.read_text(encoding='utf-8')), draft.get('catalog_id'))
+        sites_path = Path(args.dump or args.sites)
+        data = json.loads(sites_path.read_text(encoding='utf-8'))
+        info = []
+        if args.dump:
+            sites, _, info = load_dump_sites(data, draft.get('catalog_id'))
+        else:
+            sites, _ = load_sites(data, draft.get('catalog_id'))
         picks, report = pick(draft, sites, args.clearance)
+        report = info + report
     except (OSError, ValueError) as exc:
         print('airport_sites_to_pads: ' + str(exc), file=sys.stderr)
         return 1

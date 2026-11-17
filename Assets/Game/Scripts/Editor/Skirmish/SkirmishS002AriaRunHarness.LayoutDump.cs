@@ -38,12 +38,12 @@ namespace Game.Editor
         private const double LayoutDumpMaxWaitSeconds = 240d, LayoutDumpHardTimeoutSeconds = 1650d, LayoutDumpExitGraceSeconds = 25d;
 
         [Serializable] private sealed class LayoutDumpPoint { public string role; public int faction; public float x, z; }
-        [Serializable] private sealed class LayoutDumpDefinition { public string name, kind; public int footprintX, footprintY; public bool scanned; }
+        [Serializable] private sealed class LayoutDumpDefinition { public string name, kind; public int footprintX, footprintY; public bool scanned; public string source = "configured"; }
         [Serializable]
         private sealed class LayoutDumpCandidate
         {
-            public string kind, definition;
-            public bool rotated, level = true;
+            public string kind, definition, definitionSource = "configured";
+            public bool rotated, level = true, nativeValidated = true;
             public int originX, originZ, rectX, rectZ, rectW, rectH;
             public float centreX, centreZ;
         }
@@ -56,6 +56,12 @@ namespace Game.Editor
             public string predicate = "candidate accepted only if: inside logical playable bounds and grid; not cached-invalid; no authored map building/scenery overlap (AuthoredBuildings.Overlaps = StartingGrant _skirmishBuildings.Overlaps); no road (RoadSurfaces.Overlaps) or water (OverlapsWater); no sidewalk cell and inside grid; then the native IsPlacementValid. Same caches and order as the starting-grant validator.";
             public string sourceOperationMapId = "", boundsSource = "OperationMapBoundsComponent", sessionFailure = "none", sessionPhase = "";
             public string missionResult = "NotRecorded";
+            // Requested WARLINE_LAYOUT_DUMP_KINDS with no configured building definition in this session (nothing to scan).
+            public string missingKinds = "";
+            // Airport fallback: the session configures no Airport, so the definition is built read-only from the S004 air mission's
+            // prefab asset (BuildingDefinitionPrefabSystemHelper.CreateDefinition, not registered anywhere). Empty when not used.
+            public string airportAssetFallback = "", nativeValidationFailure = "";
+            public int candidatesNotNativeValidated;
             public bool surfaceLevelEnforcedByValidator, authoredBuildingsReady, roadSurfacesReady, waterMaskKnown;
             public int rejectedCachedInvalid, rejectedBuilding, rejectedRoad, rejectedWater, rejectedSidewalk, rejectedNative, candidatesNotLevel;
             public bool previewMutated, physicalSourceModified, playerReady, candidatesTruncated;
@@ -90,6 +96,9 @@ namespace Game.Editor
         private static bool layoutDumpSawPlay, layoutDumpDeadlineExtended;
         private static string layoutDumpWaitReason = string.Empty;
         private static readonly List<(string kind, BuildingDefinition definition)> layoutTargets = new();
+        private static readonly HashSet<BuildingDefinition> layoutAssetDefinitions = new();
+        private static bool layoutAssetNativeBroken;
+        private const string LayoutAirportPrefabPath = "Assets/Game/Prefabs/Buildings/Building_Airport.prefab";
 
         /// <summary>
         /// Layout dump for ANY authored catalog named by WARLINE_SKIRMISH_CATALOG (generic dispatch, legacy S002
@@ -122,6 +131,8 @@ namespace Game.Editor
             layoutDumpSawPlay = layoutDumpDeadlineExtended = false;
             layoutDumpWaitReason = string.Empty;
             layoutTargets.Clear();
+            layoutAssetDefinitions.Clear();
+            layoutAssetNativeBroken = false;
             EditorApplication.update -= LayoutDumpWatchdogTick;
             if (!armed) return;
             layoutDumpArmedAt = EditorApplication.timeSinceStartup;
@@ -395,9 +406,27 @@ namespace Game.Editor
                     if (cache.RoadSurfaces.Overlaps(grid, rect.position, rect.size)) { dump.rejectedRoad++; continue; }
                     if (cache.RoadSurfaces.OverlapsWater(grid, rect.position, rect.size)) { dump.rejectedWater++; continue; }
                     if (LayoutRectHasSidewalkOrLeavesGrid(sidewalks, grid, rect)) { dump.rejectedSidewalk++; continue; }
-                    if (!source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(source, definition,
-                        origin, definition.FootprintCells, rotated, grid, roads, blockers, AirportEffectiveRect, AirportOverlapsOccupant))
-                    { dump.rejectedNative++; continue; }
+                    bool fromAsset = layoutAssetDefinitions.Contains(definition);
+                    bool nativeRan = !(fromAsset && layoutAssetNativeBroken), nativeOk = true;
+                    if (nativeRan)
+                    {
+                        try
+                        {
+                            nativeOk = source.BuildingPlacementAdapterCompositionSystemHelper.IsPlacementValid(source, definition,
+                                origin, definition.FootprintCells, rotated, grid, roads, blockers, AirportEffectiveRect, AirportOverlapsOccupant);
+                        }
+                        catch (Exception exception) when (fromAsset)
+                        {
+                            // The validator cannot take the asset-built definition: keep the other predicates only and say so.
+                            layoutAssetNativeBroken = true;
+                            nativeRan = false;
+                            nativeOk = true;
+                            dump.nativeValidationFailure = exception.GetType().Name + ": " + exception.Message;
+                            Debug.LogWarning("[SkirmishLayoutDump] native IsPlacementValid cannot take the asset-built definition; continuing with the other predicates only (nativeValidated=0): " + dump.nativeValidationFailure);
+                        }
+                    }
+                    if (nativeRan && !nativeOk) { dump.rejectedNative++; continue; }
+                    if (!nativeRan) dump.candidatesNotNativeValidated++;
                     dump.valid++;
                     if (layoutTargetCandidates >= LayoutMaxCandidatesPerDefinition) { dump.candidatesTruncated = true; continue; }
                     layoutTargetCandidates++;
@@ -408,7 +437,8 @@ namespace Game.Editor
                         source.BuildingPlacementStartupSystemHelper.BuildPlaneY);
                     dump.candidates.Add(new LayoutDumpCandidate
                     {
-                        kind = kind, definition = definition.DisplayName, rotated = rotated, level = level, originX = origin.x, originZ = origin.y,
+                        kind = kind, definition = definition.DisplayName, definitionSource = fromAsset ? "asset" : "configured", nativeValidated = nativeRan,
+                        rotated = rotated, level = level, originX = origin.x, originZ = origin.y,
                         rectX = rect.x, rectZ = rect.y, rectW = rect.width, rectH = rect.height, centreX = centre.x, centreZ = centre.z
                     });
                 }
@@ -436,13 +466,44 @@ namespace Game.Editor
                 " rejectedCachedInvalid=" + dump.rejectedCachedInvalid + " rejectedBuilding=" + dump.rejectedBuilding +
                 " rejectedRoad=" + dump.rejectedRoad + " rejectedWater=" + dump.rejectedWater +
                 " rejectedSidewalk=" + dump.rejectedSidewalk + " rejectedNative=" + dump.rejectedNative +
-                " candidatesNotLevel=" + dump.candidatesNotLevel + " source=" + dump.sourceOperationMapId +
+                " candidatesNotLevel=" + dump.candidatesNotLevel + " missingKinds=" + (dump.missingKinds.Length > 0 ? dump.missingKinds : "none") + " airportAsset=" +
+                (dump.airportAssetFallback.Length > 0 ? dump.airportAssetFallback.Replace(' ', '_') : "notUsed") + " notNativeValidated=" + dump.candidatesNotNativeValidated + " source=" + dump.sourceOperationMapId +
                 " sessionPhase=" + dump.sessionPhase + " sessionFailure=" + dump.sessionFailure +
                 " frames=" + dump.frames + " previewMutated=0 physicalSourceModified=0 playerReady=0 missionResult=NotRecorded path=" + path);
             Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", null);
             layoutDumpDone = true;
             layoutDumpOutcome = 0;
             return true;
+        }
+
+        /// <summary>
+        /// Ground missions do not configure the Airport, yet the air drafts need an Airport pad. Build the definition read-only
+        /// from the same prefab and definition metadata the S004 air mission uses. CreateDefinition does not register the
+        /// result in any configured list; it is used only as the scan target and flagged definitionSource=asset.
+        /// </summary>
+        private static void TryAddAirportDefinitionFromAsset(BuildingGameplaySourceCompositionSystemHelper source, LayoutDump dump)
+        {
+            try
+            {
+                var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(LayoutAirportPrefabPath);
+                if (prefab == null) { dump.airportAssetFallback = "FailedPrefabNotFound:" + LayoutAirportPrefabPath; return; }
+                var definition = source.BuildingDefinitionPrefabSystemHelper.CreateDefinition(prefab, "Airport", "Operational building.", 500,
+                    null, null, null, source.BuildingRunwaySystem);
+                if (definition == null || definition.FootprintCells.x <= 0 || definition.FootprintCells.y <= 0)
+                { dump.airportAssetFallback = "FailedEmptyDefinition"; return; }
+                layoutAssetDefinitions.Add(definition);
+                layoutTargets.Add(("airport", definition));
+                dump.definitions.Add(new LayoutDumpDefinition { name = definition.DisplayName, kind = "airport", source = "asset",
+                    footprintX = definition.FootprintCells.x, footprintY = definition.FootprintCells.y, scanned = true });
+                dump.airportAssetFallback = "Used:" + LayoutAirportPrefabPath + " hasRunway=" + (definition.HasRunway ? 1 : 0);
+                Debug.Log("[SkirmishLayoutDump] airport definition built from asset " + LayoutAirportPrefabPath + " footprint=" +
+                    definition.FootprintCells + " hasRunway=" + definition.HasRunway + " (not in the session's configured list)");
+            }
+            catch (Exception exception)
+            {
+                dump.airportAssetFallback = "Failed:" + exception.GetType().Name + ": " + exception.Message;
+                Debug.LogWarning("[SkirmishLayoutDump] airport asset definition could not be built: " + dump.airportAssetFallback);
+            }
         }
 
         private static void CollectLayoutDumpContext(EntityManager em, BuildingGameplaySourceCompositionSystemHelper source, LayoutDump dump)
@@ -505,6 +566,21 @@ namespace Game.Editor
                     footprintX = definition.FootprintCells.x, footprintY = definition.FootprintCells.y, scanned = scan });
                 if (scan) layoutTargets.Add((matched, definition));
             }
+            if (filter != null && filter.Contains("airport"))
+            {
+                bool hasAirport = false;
+                foreach (var target in layoutTargets) hasAirport |= target.kind == "airport";
+                if (!hasAirport) TryAddAirportDefinitionFromAsset(source, dump);
+            }
+            if (filter != null)
+                foreach (var requested in filter)
+                {
+                    bool found = false;
+                    foreach (var target in layoutTargets) found |= target.kind == requested;
+                    if (found || string.IsNullOrEmpty(requested)) continue;
+                    dump.missingKinds += (dump.missingKinds.Length > 0 ? "," : "") + requested;
+                    Debug.LogWarning("[SkirmishLayoutDump] requested kind '" + requested + "' has no configured building definition in this session; nothing was scanned for it.");
+                }
         }
     }
 }

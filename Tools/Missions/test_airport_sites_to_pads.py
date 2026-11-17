@@ -98,5 +98,182 @@ class AirportSites(unittest.TestCase):
             self.assertEqual(1, tool.main(['--sites', str(sites), '--draft', str(DRAFT)]))
 
 
+def cand(x, z, w=20, h=10, level=True, rotated=False, kind='airport'):
+    # cellSize 1, gridOrigin 0: rect is cell coordinates, centre is the footprint centre (harness shape).
+    return {'kind': kind, 'definition': 'Airport', 'rotated': rotated, 'level': level, 'originX': int(x - w / 2), 'originZ': int(z - h / 2),
+            'rectX': int(x - w / 2), 'rectZ': int(z - h / 2), 'rectW': w, 'rectH': h, 'centreX': float(x), 'centreZ': float(z)}
+
+
+def dump(candidates, catalog='S027', cell=1.0, definitions=None, **extra):
+    data = {'catalog': catalog, 'cellSize': cell, 'stride': 8, 'gridOrigin': {'x': 0.0, 'y': 0.0, 'z': 0.0},
+            'playableMin': {'x': 0.0, 'y': 0.0, 'z': 0.0}, 'playableMax': {'x': 2048.0, 'y': 40.0, 'z': 1024.0},
+            'definitions': definitions if definitions is not None else [
+                {'name': 'Barracks', 'kind': 'barracks', 'scanned': False},
+                {'name': 'Airport', 'kind': 'airport', 'footprintX': 20, 'footprintY': 10, 'scanned': True}],
+            'candidates': candidates}
+    data.update(extra)
+    return data
+
+
+class AirportDump(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.draft = json.loads(DRAFT.read_text())
+
+    def test_picks_nearest_per_side_from_dump_candidates(self):
+        data = dump([cand(1400, 760), cand(1200, 760), cand(1400, 300), cand(1240, 400), cand(1210, 770, kind='helipad')])
+        sites, cell, info = tool.load_dump_sites(data, 'S027')
+        picks, report = tool.pick(self.draft, sites)
+        self.assertEqual((1200, 760), (picks['player']['x'], picks['player']['z']))
+        self.assertEqual((1240, 400), (picks['enemy']['x'], picks['enemy']['z']))
+        self.assertEqual(1.0, cell)
+        self.assertIn('4 airport candidates (stride 8)', info[0])  # the helipad candidate is not an airport site
+
+    def test_non_level_candidates_are_dropped_never_used(self):
+        data = dump([cand(1200, 760, level=False), cand(1400, 760), cand(1240, 400)])
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertEqual(2, len(sites))
+        self.assertIn('1 on non-level ground dropped', info[0])
+        picks, _ = tool.pick(self.draft, sites)
+        self.assertEqual(1400, picks['player']['x'])
+
+    def test_candidate_outside_playable_bounds_is_never_used(self):
+        data = dump([cand(1200, 760), cand(1240, 400)], playableMin={'x': 1230.0, 'y': 0.0, 'z': 0.0})
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertIn('1 outside playable', info[0])  # the 1200 rect starts at x=1190 < 1230; the 1240 rect starts at 1230
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.pick(self.draft, sites)
+        self.assertIn('1 outside playable', str(ctx.exception))  # one usable site left, both sides need a distinct one
+
+    def test_no_airport_definition_is_a_clear_error_not_a_guess(self):
+        data = dump([], definitions=[{'name': 'Barracks', 'kind': 'barracks', 'scanned': False},
+                                     {'name': 'Helipad', 'kind': 'helipad', 'scanned': True}])
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('no Airport building definition', str(ctx.exception))
+        self.assertIn('Barracks, Helipad', str(ctx.exception))
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(dump([], missingKinds='airport'), 'S027')
+        self.assertIn('no Airport building definition', str(ctx.exception))
+
+    def test_unscanned_airport_definition_says_how_to_rerun(self):
+        data = dump([cand(1200, 760)], definitions=[{'name': 'Airport', 'kind': 'airport', 'scanned': False}])
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('WARLINE_LAYOUT_DUMP_KINDS=airport', str(ctx.exception))
+
+    def test_no_airport_candidate_and_catalog_mismatch(self):
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(dump([cand(1200, 760, kind='helipad')]), 'S027')
+        self.assertIn('no airport candidate', str(ctx.exception))
+        with self.assertRaises(tool.SiteError):
+            tool.load_dump_sites(dump([cand(1200, 760)], catalog='S051'), 'S027')
+        with self.assertRaises(tool.SiteError):
+            tool.load_dump_sites({'catalog': 'S027', 'cellSize': 1.0}, 'S027')
+
+    def test_truncated_dump_is_flagged_in_the_report(self):
+        _, _, info = tool.load_dump_sites(dump([cand(1200, 760)], candidatesTruncated=True), 'S027')
+        self.assertIn('TRUNCATED', info[0])
+
+    def test_cell_size_scales_a_rotated_210_by_55_footprint(self):
+        data = dump([cand(1200, 760, w=55, h=210, rotated=True)], cell=1.0)
+        sites, _, _ = tool.load_dump_sites(data, 'S027')
+        self.assertEqual((55.0, 210.0, True), (sites[0]['w'], sites[0]['h'], sites[0]['rotated']))
+
+    def test_cli_dump_writes_draft_and_rejects_bad_arguments(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dump_path, out = Path(tmp) / 'dump.json', Path(tmp) / 'draft.json'
+            dump_path.write_text(json.dumps(dump([cand(1200, 760), cand(1240, 400)])))
+            self.assertEqual(0, tool.main(['--dump', str(dump_path), '--draft', str(DRAFT), '--out', str(out)]))
+            written = json.loads(out.read_text())
+            self.assertEqual([1200, 760], written['anchors']['air.player'])
+            self.assertEqual([1240, 400], written['anchors']['air.enemy'])
+            self.assertIn('airport measured_from=' + str(dump_path.resolve()), written['notes'])
+            dump_path.write_text(json.dumps(dump([], missingKinds='airport')))
+            self.assertEqual(1, tool.main(['--dump', str(dump_path), '--draft', str(DRAFT)]))
+            with self.assertRaises(SystemExit):  # --sites and --dump are exclusive
+                tool.main(['--dump', str(dump_path), '--sites', str(dump_path), '--draft', str(DRAFT)])
+
+    def test_dump_picks_keep_the_checker_clean(self):
+        sites, _, _ = tool.load_dump_sites(dump([cand(1200, 760), cand(1240, 400)]), 'S027')
+        picks, _ = tool.pick(self.draft, sites)
+        updated = tool.apply_picks(copy.deepcopy(self.draft), picks, '/logs/dump.json')
+        catalog = checker.rows('Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv')
+        matrix = checker.rows('Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv')
+        self.assertEqual(set(), set(checker.check(updated, catalog, matrix)) - set(checker.check(self.draft, catalog, matrix)))
+
+
+class DumpHarnessContract(unittest.TestCase):
+    """Pins the C# fields the --dump path reads (the harness cannot be compiled in this lane)."""
+
+    def test_layout_dump_exposes_missing_kinds_and_airport_keyword(self):
+        text = (checker.ROOT / 'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LayoutDump.cs').read_text(encoding='utf-8')
+        self.assertIn('public string missingKinds', text)
+        self.assertIn('("airport", new[] { "airport" })', text)
+        self.assertIn('" missingKinds="', text)
+
+
+class AirportDumpAssetFallback(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.draft = json.loads(DRAFT.read_text())
+
+    def asset_dump(self, candidates, **extra):
+        return dump(candidates, definitions=[{'name': 'Airport', 'kind': 'airport', 'scanned': True, 'source': 'asset'}],
+                    airportAssetFallback='Used:Assets/Game/Prefabs/Buildings/Building_Airport.prefab hasRunway=1', **extra)
+
+    def test_asset_source_is_reported_and_noted(self):
+        data = self.asset_dump([dict(cand(1200, 760), definitionSource='asset'), dict(cand(1240, 400), definitionSource='asset')])
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertTrue(any('definitionSource=asset' in line for line in info))
+        picks, _ = tool.pick(self.draft, sites)
+        updated = tool.apply_picks(copy.deepcopy(self.draft), picks, '/logs/dump.json')
+        self.assertIn('airport measured_from=/logs/dump.json definitionSource=asset', updated['notes'])
+        self.assertNotIn('nativeValidated=0', updated['notes'])
+
+    def test_unvalidated_candidates_are_marked_loudly_not_hidden(self):
+        data = self.asset_dump([dict(cand(1200, 760), definitionSource='asset', nativeValidated=False),
+                                dict(cand(1240, 400), definitionSource='asset', nativeValidated=False)],
+                               nativeValidationFailure='NullReferenceException: x')
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertTrue(any('nativeValidated=0 for 2 candidate(s)' in line and 'NullReferenceException' in line for line in info))
+        picks, _ = tool.pick(self.draft, sites)
+        updated = tool.apply_picks(copy.deepcopy(self.draft), picks, '/logs/dump.json')
+        self.assertIn('definitionSource=asset nativeValidated=0', updated['notes'])
+
+    def test_old_candidates_default_to_native_validated_configured(self):
+        sites, _, info = tool.load_dump_sites(dump([cand(1200, 760), cand(1240, 400)]), 'S027')
+        self.assertTrue(all(s['native'] and not s['asset'] for s in sites))
+        self.assertEqual(1, len(info))
+
+    def test_failed_asset_fallback_is_named_in_the_error(self):
+        data = dump([], definitions=[{'name': 'Barracks', 'kind': 'barracks', 'scanned': False}], missingKinds='airport',
+                    airportAssetFallback='FailedPrefabNotFound:Assets/x.prefab')
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('asset fallback did not load one (FailedPrefabNotFound', str(ctx.exception))
+
+    def test_zero_candidates_shows_the_reject_counters(self):
+        data = self.asset_dump([], tested=900, rejectedBuilding=300, rejectedNative=600)
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('rejectedNative=600', str(ctx.exception))
+
+
+class AssetFallbackHarnessContract(unittest.TestCase):
+    """Pins the C# asset fallback (the harness cannot be compiled in this lane)."""
+
+    def test_fallback_is_read_only_and_marks_candidates(self):
+        text = (checker.ROOT / 'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LayoutDump.cs').read_text(encoding='utf-8')
+        self.assertIn('Assets/Game/Prefabs/Buildings/Building_Airport.prefab', text)
+        self.assertIn('BuildingDefinitionPrefabSystemHelper.CreateDefinition(prefab, "Airport"', text)
+        self.assertIn('source.BuildingRunwaySystem', text)  # runway data drives the 210x55 effective rect
+        self.assertNotIn('RebuildConfiguredSpawnableDefinitions', text)  # never registers into the session list
+        self.assertIn('definitionSource = fromAsset ? "asset" : "configured"', text)
+        self.assertIn('nativeValidated = nativeRan', text)
+        self.assertIn('catch (Exception exception) when (fromAsset)', text)  # native failure only tolerated for the asset definition
+        self.assertIn('" notNativeValidated="', text)
+
+
 if __name__ == '__main__':
     unittest.main()

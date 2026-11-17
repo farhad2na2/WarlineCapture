@@ -572,10 +572,12 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
             var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
                 HomeDefenseReason=plan.HomeDefenseReason,HomeDefenseSlot=plan.HomeDefenseSlot,HomeDefenseScope=plan.HomeDefenseScope,HomeDefenseRounds=plan.HomeDefenseRounds,
+                HomeDefenseRecovery=plan.HomeDefenseRecovery,HomeDefenseRecoveryAction=plan.HomeDefenseRecoveryAction,
                 Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
             bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
             plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
             plan.HomeDefenseReason=state.HomeDefenseReason;plan.HomeDefenseSlot=state.HomeDefenseSlot;plan.HomeDefenseScope=state.HomeDefenseScope;plan.HomeDefenseRounds=state.HomeDefenseRounds;
+            plan.HomeDefenseRecovery=state.HomeDefenseRecovery;plan.HomeDefenseRecoveryAction=state.HomeDefenseRecoveryAction;
             plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
             if(decision.Defend)plan.Intent=AriaS002Intent.DefendBase;
             switch(decision.Action){

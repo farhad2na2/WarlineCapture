@@ -947,7 +947,7 @@ namespace Game.Editor
             AddRuntimeText("ui.skirmish.fog_of_war", "FOG OF WAR", "مه جنگ");
             AddRuntimeText("ui.skirmish.intel_reveal", "INTEL REVEAL", "افشای اطلاعات");
             AddRuntimeText("skirmish.s026.first_order", "Advance your infantry along the main avenue to the crossroads.", "پیاده‌نظام را از خیابان اصلی تا چهارراه پیش ببر.");
-            AddRuntimeText("skirmish.s026.rendezvous", "RENDEZVOUS · CROSSROADS", "محل تجمع · چهارراه");
+            AddRuntimeText("skirmish.s026.rendezvous", "RENDEZVOUS", "محل تجمع");
             AddRuntimeText("ui.skirmish.result.star_rule", "Stars need a win. Gold criteria were met and count when you win.", "ستاره فقط با پیروزی به دست می‌آید. معیارهای طلایی انجام شده‌اند و با پیروزی حساب می‌شوند.");
             AddRuntimeText("ui.skirmish.base_threat.perimeter", "ENEMY AT YOUR BASE", "دشمن در پایگاه شماست");
             AddRuntimeText("ui.skirmish.base_threat.damage", "YOUR BASE IS UNDER FIRE", "پایگاه شما زیر آتش است");

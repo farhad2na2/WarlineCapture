@@ -32,14 +32,16 @@ namespace Game.Configs
         public const float FirstOrderSeconds = 45f;
 
         // S026 City Crossroads: brief "advance infantry along the main avenue to the
-        // crossroads". Rendezvous = midpoint waypoint of the authored main route
-        // (route.skirmish.s026.main, waypoint 03 of 00-06, ~197 m along 394.6 m), an existing
-        // layout anchor. Pending lead/owner confirmation that this is the crossroads.
+        // crossroads". City Crossroads reuses the Desert Base source and its draft layout has no
+        // junction anchor, so the rendezvous sits on the main-route midpoint
+        // (route.skirmish.s026.main, waypoint 03 of 00-06, ~197 m of 394.6 m) and is labelled
+        // RENDEZVOUS only. Move RendezvousAnchorId (and the label) here once a road junction
+        // anchor is verified; no code change is needed.
         private static readonly SkirmishMissionHudGuidance[] Rows =
         {
             new("S026", "skirmish.s026.first_order", "Advance your infantry along the main avenue to the crossroads.",
                 "anchor.skirmish.s026.candidate_route_tank_primary_waypoint_03",
-                "skirmish.s026.rendezvous", "RENDEZVOUS · CROSSROADS"),
+                "skirmish.s026.rendezvous", "RENDEZVOUS"),
         };
 
         public static bool TryGet(string catalogId, out SkirmishMissionHudGuidance guidance)

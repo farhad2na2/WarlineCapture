@@ -224,6 +224,7 @@ namespace Game.Runtime
 
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
+            if (actingFaction == 2) SkirmishEnemyTrace.Order(em, session, groupId, order, target, destination, record);
             AriaCommandEvidence.Accepted("GroupOrder", actingFaction);
             return true;
         }

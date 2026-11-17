@@ -75,7 +75,9 @@ namespace Game.Runtime
                 Entity victim = structure != Entity.Null ? structure : combatant;
                 if (victim != Entity.Null && intent.Cooldown <= 0f)
                 {
+                    int before = em.HasComponent<UnitHealth>(victim) ? em.GetComponentData<UnitHealth>(victim).Current : 0;
                     ApplyShot(em, victim, overlay.Damage);
+                    if (em.HasComponent<UnitHealth>(victim)) Combat.CombatDamageObservationUtility.TraceSkirmishBaseDamage(em, unit, victim, "Overlay", before, em.GetComponentData<UnitHealth>(victim).Current);
                     intent.Cooldown = ShotIntervalSeconds;
                     shots++;
                 }

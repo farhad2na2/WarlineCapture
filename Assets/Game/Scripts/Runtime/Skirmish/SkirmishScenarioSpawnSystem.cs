@@ -145,6 +145,7 @@ namespace Game.Runtime
                 {var clock=em.GetComponentData<SkirmishObjectiveClockComponent>(entity);clock.Playing=0;em.SetComponentData(entity,clock);}
                 return;
             }
+            SkirmishEnemyTrace.InitialWorld(em, entity);
             SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
 #if UNITY_EDITOR
             S002InitialWorldBoundaryWitness.RecordSpawnComplete(em, entity);

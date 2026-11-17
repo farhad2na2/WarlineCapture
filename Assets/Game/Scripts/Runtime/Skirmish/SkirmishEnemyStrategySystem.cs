@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
@@ -385,6 +386,85 @@ namespace Game.Runtime
 
             return 0;
         }
+    }
+
+    // Diagnostics only; keys include the match identity and do not affect orders or damage.
+    internal static class SkirmishEnemyTrace
+    {
+        private static readonly Dictionary<string, string> Orders = new();
+
+        internal static void InitialWorld(EntityManager em, Entity session)
+        {
+            var match = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            if (match.IsLegacy != 0) return;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            var parts = new List<string>();
+            for (byte faction = 1; faction <= 2; faction++)
+            {
+                Entity baseEntity = Entity.Null;
+                var roles = new SortedDictionary<string, int>();
+                foreach (var actor in entities)
+                {
+                    var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                    if (!own.SessionId.Equals(match.SessionId) || own.FactionId != faction) continue;
+                    if (own.IsStructure == 0 && SkirmishArmyGroupSystem.IsAlive(em, actor))
+                        Add(roles, em.HasComponent<SkirmishUnitRoleComponent>(actor) ? em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role.ToString() : "unknown");
+                    if (em.HasComponent<SkirmishObjectiveRoleComponent>(actor))
+                    {
+                        var role = em.GetComponentData<SkirmishObjectiveRoleComponent>(actor).Role;
+                        if ((faction == 1 && role == SkirmishObjectiveRoleKind.PlayerBase) ||
+                            (faction == 2 && role == SkirmishObjectiveRoleKind.EnemyBase)) baseEntity = actor;
+                    }
+                }
+                var defenses = new SortedDictionary<string, int>();
+                var garrison = new SortedDictionary<string, int>();
+                string position = "unknown", health = "unknown";
+                if (baseEntity != Entity.Null)
+                {
+                    if (em.HasComponent<UnitHealth>(baseEntity)) { var hp = em.GetComponentData<UnitHealth>(baseEntity); health = hp.Current + "/" + hp.Max; }
+                    if (em.HasComponent<LocalTransform>(baseEntity))
+                    {
+                        float3 origin = em.GetComponentData<LocalTransform>(baseEntity).Position;
+                        position = Pos(origin);
+                        foreach (var actor in entities)
+                        {
+                            var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                            if (!own.SessionId.Equals(match.SessionId) || own.FactionId != faction || actor == baseEntity ||
+                                !em.HasComponent<LocalTransform>(actor) || !SkirmishArmyGroupSystem.IsAlive(em, actor) ||
+                                math.distancesq(origin.xz, em.GetComponentData<LocalTransform>(actor).Position.xz) > 90f * 90f) continue;
+                            if (own.IsStructure == 0)
+                                Add(garrison, em.HasComponent<SkirmishUnitRoleComponent>(actor) ? em.GetComponentData<SkirmishUnitRoleComponent>(actor).Role.ToString() : "unknown");
+                            else if (em.HasComponent<BuildingDefenseWeapon>(actor) || em.HasComponent<UnitAttack>(actor))
+                                Add(defenses, em.HasComponent<SkirmishStructureIdentityComponent>(actor) ? em.GetComponentData<SkirmishStructureIdentityComponent>(actor).StructureId.ToString() : "unknown");
+                        }
+                    }
+                }
+                parts.Add("faction" + faction + "_units=" + Counts(roles) + " faction" + faction + "_base_position=" + position + " faction" + faction + "_base_health=" + health + " faction" + faction + "_defenses=" + Counts(defenses) + " faction" + faction + "_garrison=" + Counts(garrison));
+            }
+            UnityEngine.Debug.Log("[SkirmishEnemyTrace] event=initial_world session=" + match.SessionId + " radius=90 " + string.Join(" ", parts));
+        }
+        private static void Add(SortedDictionary<string, int> counts, string key) { counts.TryGetValue(key, out int value); counts[key] = value + 1; }
+        private static string Counts(SortedDictionary<string, int> counts) { var values = new List<string>(); foreach (var pair in counts) values.Add(pair.Key + ":" + pair.Value); return "[" + string.Join(",", values) + "]"; }
+        private static string Pos(float3 p) => "(" + p.x.ToString("F1") + "," + p.y.ToString("F1") + "," + p.z.ToString("F1") + ")";
+
+        internal static void Order(EntityManager em, Entity session, uint group, SkirmishGroupOrderKind order, Entity target, float3 destination, SkirmishArmyGroupRecord record)
+        {
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session)) return;
+            var match = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            if (match.IsLegacy != 0 || match.Phase != SkirmishSessionPhase.Playing) return;
+            if (order == SkirmishGroupOrderKind.Attack && target != Entity.Null && em.Exists(target) && em.HasComponent<LocalTransform>(target)) destination = em.GetComponentData<LocalTransform>(target).Position;
+            string key = match.SessionId + ":" + group;
+            string signature = order + ":" + target.Index + ":" + target.Version + ":" + (order == SkirmishGroupOrderKind.Move ? Pos(destination) : "");
+            if (Orders.TryGetValue(key, out var previous) && previous == signature) return;
+            Orders[key] = signature;
+            string stack = new System.Diagnostics.StackTrace().ToString();
+            string source = stack.Contains("SkirmishEnemyCapabilityService") ? "capability" : stack.Contains("SkirmishEnemyVehicleRepairPolicy") ? "repair" : stack.Contains("SkirmishEnemyObjectiveCommanderService") ? "objective_commander" : stack.Contains("SkirmishEnemyCommanderService") ? "commander" : stack.Contains("SkirmishEnemyStrategySystem") ? "legacy_strategy" : "other";
+            float now = em.HasComponent<SkirmishObjectiveClockComponent>(session) ? em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds : 0f;
+            UnityEngine.Debug.Log("[SkirmishEnemyTrace] event=enemy_order session=" + match.SessionId + " source=" + source + " group=" + group + " roles=[" + record.Role + ":" + record.AliveCount + "] count=" + record.AliveCount + " order=" + order + " destination=" + Pos(destination) + " target=" + target + " time=" + now.ToString("F2"));
+        }
+
+
     }
 
 }

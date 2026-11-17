@@ -1,4 +1,7 @@
+using System.Collections.Generic;
 using Game.Components;
+using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -24,6 +27,34 @@ namespace Game.Runtime.Combat
     public static class CombatDamageObservationUtility
     {
         public const int Capacity = 64;
+        private static readonly Dictionary<string, float> DamageTimes = new();
+
+        public static void TraceSkirmishBaseDamage(EntityManager em, Entity source, Entity target, string kind, int before, int after)
+        {
+            if (before <= after || !em.Exists(target) || !em.HasComponent<SkirmishAttemptOwnedComponent>(target) || !em.HasComponent<SkirmishObjectiveRoleComponent>(target)) return;
+            var targetRole = em.GetComponentData<SkirmishObjectiveRoleComponent>(target).Role;
+            if (targetRole != SkirmishObjectiveRoleKind.PlayerBase && targetRole != SkirmishObjectiveRoleKind.EnemyBase) return;
+            var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+            using var query = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishObjectiveClockComponent));
+            using var sessions = query.ToEntityArray(Allocator.Temp);
+            foreach (var session in sessions)
+            {
+                var match = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if (match.IsLegacy != 0 || match.Phase != SkirmishSessionPhase.Playing || !match.SessionId.Equals(owner.SessionId)) continue;
+                float now = em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+                string key = match.SessionId + ":" + target.Index + ":" + target.Version + ":" + source.Index + ":" + source.Version;
+                if (DamageTimes.TryGetValue(key, out float last) && now >= last && now - last < 5f) return;
+                DamageTimes[key] = now;
+                string role = "unknown", faction = "unknown", stable = "unknown";
+                if (source != Entity.Null && em.Exists(source))
+                {
+                    if (em.HasComponent<SkirmishUnitRoleComponent>(source)) role = em.GetComponentData<SkirmishUnitRoleComponent>(source).Role.ToString();
+                    if (em.HasComponent<SkirmishAttemptOwnedComponent>(source)) { var own = em.GetComponentData<SkirmishAttemptOwnedComponent>(source); faction = own.FactionId.ToString(); stable = own.StableObjectId.ToString(); }
+                }
+                UnityEngine.Debug.Log("[SkirmishEnemyTrace] event=base_damage session=" + match.SessionId + " base=" + targetRole + " attacker=" + source + " attacker_id=" + stable + " role=" + role + " faction=" + faction + " damage_source=" + kind + " damage=" + (before - after) + " health_after=" + after + " time=" + now.ToString("F2"));
+                return;
+            }
+        }
 
         public static Entity EnsureQueue(EntityManager entityManager, EntityQuery queueQuery)
         {
@@ -73,6 +104,7 @@ namespace Game.Runtime.Combat
             float3 targetWorldPosition)
         {
             int damageApplied = math.max(0, previousHealth - currentHealth);
+            TraceSkirmishBaseDamage(entityManager, sourceEntity, targetEntity, sourceKind.ToString(), previousHealth, currentHealth);
             // Passive cancellation fact in the shared Components boundary;
             // Combat must not depend on the higher-level Runtime repair service.
             if(damageApplied>0&&entityManager.Exists(targetEntity)&&entityManager.HasComponent<VehicleRepairStateComponent>(targetEntity))

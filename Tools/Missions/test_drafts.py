@@ -11,6 +11,7 @@ SOURCES = {
     'CC': 'Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset',
     'MP': 'Assets/Game/GeneratedOperationMaps/CH05M01CitywideAlert/Definition.asset',
     'IB': 'Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset',
+    'DB': 'Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset',
 }
 
 
@@ -27,10 +28,19 @@ def main():
             draft = json.loads(path.read_text())
             # instance_pads and structure_footprints are optional (per-building pads, see check_draft.py).
             optional = {'instance_pads', 'structure_footprints'}
+            # FC/BT/CE candidates (-candidate.json) are unmeasured: typed areas but no area_measurement yet.
+            candidate = path.name.endswith('-candidate.json')
+            if candidate:
+                optional |= {'objective_areas'}
             if not isinstance(draft, dict) or set(draft) - optional != set(example):
                 raise ValueError('top-level keys differ from example')
             row = catalog.get(draft['catalog_id'])
-            if row is None or row['objective_id'] != 'BA':
+            if candidate:
+                if row is None or row['objective_id'] not in ('FC', 'BT', 'CE'):
+                    raise ValueError('candidate catalog_id does not identify an FC/BT/CE mission')
+                if 'candidate=1, unmeasured' not in draft['notes']:
+                    raise ValueError('candidate draft must be marked candidate=1, unmeasured in notes')
+            elif row is None or row['objective_id'] != 'BA':
                 raise ValueError('catalog_id does not identify a BA mission')
             if row['map_id'] not in SOURCES or draft['campaign_source'] != SOURCES[row['map_id']]:
                 raise ValueError('campaign_source does not match map')

@@ -313,7 +313,7 @@ namespace Game.Editor
                     if(actualWidth!=width || actualHeight!=height)
                         throw new InvalidOperationException("Native map capture dimensions differ from requested dimensions.");
                     if (Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
-                        !TickReadOnlyS005AirportSourceFit())
+                        !(areaMeasurementActive ? TickAreaMeasurement() : TickReadOnlyS005AirportSourceFit()))
                     { next = now + .01d; return false; }
                     if (catalogId == "S005") CaptureS005NativeCheckpointStaging(prefix);
                     Debug.Log("[SkirmishNativeMapReview] result=Captured playerReady=0 path="+path);

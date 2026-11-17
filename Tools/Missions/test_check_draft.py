@@ -109,7 +109,7 @@ class DraftChecks(unittest.TestCase):
                 self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
 
 
-BOUNDS = (900.0, 260.0, 1300.0, 875.0)  # Desert Base playableMin/Max (read from the asset when present)
+BOUNDS = (900.0, 260.0, 1300.0, 875.0)  # test-only bounds around the example's mid-map coordinates
 
 
 class ObjectiveDrafts(unittest.TestCase):
@@ -207,7 +207,17 @@ class ObjectiveDrafts(unittest.TestCase):
     def test_playable_bounds_from_asset(self):
         bounds = checker.playable_bounds(self.example)
         if bounds is not None:  # the asset is outside some sparse checkouts
-            self.assertEqual((900.0, 260.0, 1300.0, 875.0), bounds)
+            self.assertEqual((0.0, 0.0, 2048.0, 1024.0), bounds)
+
+    def test_candidate_drafts_fail_only_for_missing_measurement(self):
+        for name in ('s007-desert-base-fc', 's013-desert-base-bt', 's019-desert-base-ce'):
+            with self.subTest(draft=name):
+                path = checker.ROOT / 'Tools/Missions/drafts' / (name + '-ground-field-candidate.json')
+                d = json.loads(path.read_text())
+                self.assertIn('candidate=1, unmeasured', d['notes'])
+                self.assertEqual(['area.measurement'], self.run_check(d, (0.0, 0.0, 2048.0, 1024.0)))
+                d['area_measurement'] = {'artifact': 'Design/AgentReports/SkirmishExpansion/test/area-measurement.json'}
+                self.assertEqual([], self.run_check(d, (0.0, 0.0, 2048.0, 1024.0)))
 
     def test_ba_rejects_objective_fields(self):
         d = copy.deepcopy(self.example)

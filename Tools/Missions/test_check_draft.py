@@ -28,7 +28,7 @@ class DraftChecks(unittest.TestCase):
         def bad_pad_anchor(d): d['pads']['rally.player'] = {'at': [1, 2], 'anchor': 'missing'}
         def bad_pad_size(d): d['pads']['rally.player'] = {'at': [1, 2], 'size': [0, 2]}
         def duplicate_pad(d): d['anchors']['base.extra.player'] = [1, 2]
-        def missing_pad(d): del d['pads']['rally.player']
+        def missing_pad(d): d['pads'].pop('rally.player', None); d['anchors'].pop('rally.player', None)
         def bad_route_count(d): d['routes'] = []
         def bad_route_type(d): d['routes'][0] = None
         def bad_route_kind(d): d['routes'][0]['kind'] = 'bogus'

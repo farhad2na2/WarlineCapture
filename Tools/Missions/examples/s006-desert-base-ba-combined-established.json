@@ -124,8 +124,8 @@
       699.5
     ],
     "s006.f1.oil_pump": [
-      967.5,
-      578.0
+      919.5,
+      674.0
     ],
     "s006.f1.watchtower": [
       945.5,
@@ -286,29 +286,62 @@
     "basemove.route.3.waypoint.07": [
       1414.0,
       462.0
+    ],
+    "spawn.vehicle.player": [
+      926.0,
+      651.5
+    ],
+    "spawn.infantry.player": [
+      876.0,
+      623.5
+    ],
+    "rally.player": [
+      958.0,
+      579.5
     ]
   },
   "pads": {
-    "spawn.infantry.player": [
-      956.85,
-      635.0
-    ],
+    "spawn.infantry.player": {
+      "at": [
+        876.0,
+        623.5
+      ],
+      "anchor": "spawn.infantry.player",
+      "size": [
+        16,
+        12
+      ]
+    },
     "spawn.infantry.enemy": [
       1452.5,
       487.5
     ],
-    "spawn.vehicle.player": [
-      914.5,
-      650.5
-    ],
+    "spawn.vehicle.player": {
+      "at": [
+        926.0,
+        651.5
+      ],
+      "anchor": "spawn.vehicle.player",
+      "size": [
+        14,
+        12
+      ]
+    },
     "spawn.vehicle.enemy": [
       1423.5,
       470.0
     ],
-    "rally.player": [
-      1014.44,
-      650.0
-    ],
+    "rally.player": {
+      "at": [
+        958.0,
+        579.5
+      ],
+      "anchor": "rally.player",
+      "size": [
+        10,
+        8
+      ]
+    },
     "rally.enemy": [
       1447.5,
       470.0
@@ -543,8 +576,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        967.5,
-        578.0
+        919.5,
+        674.0
       ],
       "size": [
         15,

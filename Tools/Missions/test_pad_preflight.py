@@ -17,8 +17,8 @@ def dump(flags=0):
                 bitmapRuns=[flags, 96])
 
 
-def instance(kind='Supply', at=(118, -6), size=(4, 4), name='a'):
-    return dict(id=name, kind=kind, at=at, size=size)
+def instance(kind='Supply', at=(118, -6), size=(4, 4), name='a', faction=1):
+    return dict(id=name, kind=kind, at=at, size=size, faction=faction)
 
 
 def draft(*pads, **overrides):
@@ -57,6 +57,7 @@ class PadPreflightTests(unittest.TestCase):
                 self.assertEqual(4, len(rows))
                 self.assertEqual(rows['spawn.vehicle.enemy'].pad.footprint, tool.Rect(129, -14, 143, -2))
                 self.assertTrue(all((r.blocked == 0) == passable for r in rows.values()))
+                self.assertTrue(all(r.passed == passable for r in rows.values()))
 
     def test_diagonal_spawn_tests_the_footprint_inside_its_bounding_box(self):
         d = draft(instance(at=(114, 6), size=(1, 1)), anchors={'base.enemy': [132, 12]},
@@ -71,7 +72,7 @@ class PadPreflightTests(unittest.TestCase):
         self.assertEqual(spawn.blocked, 1)
         self.assertEqual(spawn.overlaps, ['a'])
 
-    def test_ring_uses_only_the_surrounding_blocks_and_checks_playable_edge(self):
+    def test_ring_warns_about_surrounding_blocks_and_playable_edge(self):
         data = dump()
         d = draft(instance('BaseBarracks'))
         # A diagonal scenery block immediately outside the HQ footprint.
@@ -79,7 +80,8 @@ class PadPreflightTests(unittest.TestCase):
         hq, = tool.preflight(d, data)
         self.assertEqual(hq.blocked, 0)
         self.assertEqual(hq.ring_counts, {0: 7, 4: 1})
-        self.assertFalse(hq.passed)
+        self.assertFalse(hq.ring_clear)
+        self.assertTrue(hq.passed)
         data = dump()
         self.assertTrue(tool.preflight(d, data)[0].ring_clear)
         # The last bitmap block is only partially playable.
@@ -87,29 +89,61 @@ class PadPreflightTests(unittest.TestCase):
         edge, = tool.preflight(draft(instance('BaseBarracks', at=(142, -6))), data)
         self.assertTrue(edge.inside)
         self.assertFalse(edge.ring_inside)
-        self.assertFalse(edge.passed)
+        self.assertTrue(edge.passed)
 
     def test_ring_occupied_by_a_neighbor_without_overlapping_footprints(self):
         hq, other = tool.preflight(draft(instance('BaseBarracks'), instance(at=(122, -6), name='b')), dump())
         self.assertFalse(hq.overlaps)
         self.assertFalse(hq.ring_clear)
         self.assertEqual(hq.ring_neighbors, ['b'])
+        self.assertTrue(hq.passed)
         self.assertTrue(other.passed)
 
-    def test_bounds_slack_and_symmetric_pair_reporting(self):
+    def test_only_authored_footprint_overlap_with_same_faction_fails(self):
         d = draft(instance(at=(108, -4)), instance(at=(118, -4), name='b'),
-                  pads={'rally.player': {'at': [144, 8], 'size': [8, 8]}})
+                  instance(at=(118, -4), name='enemy', faction=2),
+                  pads={'rally.player': {'at': [118, -4], 'size': [2, 2]}})
         del d['pad_slack_m']
-        a, b, rally = tool.preflight(d, dump())
+        a, b, enemy, rally = tool.preflight(d, dump())
         self.assertEqual(a.pad.slack, 12)
-        self.assertFalse(a.inside)
-        self.assertTrue(b.inside)
+        self.assertTrue(all(row.passed for row in (a, b, enemy, rally)))
+        d['instance_pads'][1]['at'] = (111, -4)
+        a, b, enemy, rally = tool.preflight(d, dump(), 0)
         self.assertEqual((a.overlaps, b.overlaps), (['b'], ['a']))
+        self.assertFalse(a.passed)
+        self.assertFalse(b.passed)
+        self.assertTrue(enemy.passed)
         self.assertTrue(rally.passed)
-        # The two padded footprints just touch at 3 metres per side.
-        d['pad_slack_m'] = 3
-        self.assertTrue(all(r.passed for r in tool.preflight(d, dump())))
-        self.assertFalse(tool.preflight(d, dump(), 3.01)[0].passed)
+
+    def test_construction_search_stays_within_slack_and_reports_best_origin(self):
+        data = dump()
+        data['bitmapRuns'] = [0, 40, tool.layout.FLAG_ROAD, 1, 0, 55]
+        d = draft(instance())
+        tight, = tool.preflight(d, data, .5)
+        self.assertFalse(tight.passed)
+        self.assertEqual((tight.footprint, tight.blocked), (tool.Rect(116, -8, 120, -4), 1))
+        moved, = tool.preflight(d, data, 4)
+        self.assertEqual((moved.footprint, moved.blocked), (tool.Rect(116, -12, 120, -8), 0))
+        self.assertTrue(moved.passed)
+
+    def test_construction_ignores_level_flag_during_startup(self):
+        level, = tool.preflight(draft(instance()), dump(tool.layout.FLAG_NOT_LEVEL))
+        self.assertEqual(level.blocked, 0)
+        self.assertEqual(tool.flags_text(level.counts), 'not-level=1')
+        self.assertTrue(level.passed)
+
+    def test_spawn_needs_a_passable_block_centred_inside_its_footprint(self):
+        data = dump(tool.layout.FLAG_SCENERY)
+        data['bitmapRuns'] = [tool.layout.FLAG_SCENERY, 39, 0, 1, tool.layout.FLAG_SCENERY, 56]
+        d = draft(pads={'spawn.infantry.player': {'at': [120, -6], 'size': [10, 4]}})
+        edge, = tool.preflight(d, data)
+        self.assertEqual(edge.counts[0], 1)
+        self.assertEqual(edge.passable, 0)
+        self.assertFalse(edge.passed)
+        d['pads']['spawn.infantry.player']['at'][0] = 119
+        inside, = tool.preflight(d, data)
+        self.assertEqual(inside.passable, 1)
+        self.assertTrue(inside.passed)
 
     def test_partial_blocks_and_missing_bitmap_coverage(self):
         data = dump()
@@ -127,6 +161,12 @@ class PadPreflightTests(unittest.TestCase):
             status, out, _ = cli(*args, '--pad-slack', 'auto')
             self.assertEqual(status, 0)
             self.assertIn('PREFLIGHT PASS', out.splitlines())
+            data = dump()
+            data['bitmapRuns'] = [0, 27, 4, 1, 0, 68]
+            m.write_text(json.dumps(data))
+            status, out, _ = cli(*args)
+            self.assertEqual(status, 0)
+            self.assertIn('WARN scenery=1', out)
             for value in ('nan', '-1', '65'):
                 self.assertEqual(cli(*args, '--pad-slack', value)[0], 1)
             m.write_text(json.dumps(dump(flags=1)))
@@ -146,48 +186,77 @@ class PadPreflightTests(unittest.TestCase):
             tool.preflight(draft(instance(), campaign_source=next(iter(tool.SOURCES))), dump())
 
 
-class HistoricalS026Tests(unittest.TestCase):
-    """Integration against the exact saved dump and both complete historical drafts."""
+class UnityCalibrationTests(unittest.TestCase):
+    paths = {
+        'S006': 'examples/s006-desert-base-ba-combined-established.json',
+        'S026': 'drafts/s026-city-crossroads-ba-ground-established.json',
+        'S049': 'drafts/s049-mountain-pass-ba-ground-field.json',
+        'S050': 'drafts/s050-mountain-pass-ba-ground-established.json',
+    }
+
     @classmethod
     def setUpClass(cls):
         cls.repo = Path('/Volumes/T7/Projects/WarlineCapture')
-        cls.dump_path = tool.DUMP_ROOT / 'lane4-dump-S026/dump.json'
-        if not (cls.repo / '.git').exists() or not cls.dump_path.exists():
-            raise unittest.SkipTest('requires the WarlineCapture history and saved lane4 S026 dump')
-        cls.data = json.loads(cls.dump_path.read_text())
+        if not (cls.repo / '.git').exists():
+            raise unittest.SkipTest('requires the WarlineCapture history')
 
-    def historical(self, revision):
-        path = 'Tools/Missions/drafts/s026-city-crossroads-ba-ground-established.json'
-        return json.loads(subprocess.check_output(['git', '-C', self.repo, 'show', revision + ':' + path]))
+    def fixture(self, catalog_id, revision='3b910318a'):
+        path = 'Tools/Missions/' + self.paths[catalog_id]
+        d = json.loads(subprocess.check_output(['git', '-C', self.repo, 'show', f'{revision}:{path}']))
+        source = tool.SOURCES[d['campaign_source']]
+        dump_path = tool.DUMP_ROOT / f'lane4-dump-{source[0]}' / 'dump.json'
+        if not dump_path.exists():
+            self.skipTest(f'requires {dump_path}')
+        return d, json.loads(dump_path.read_text()), dump_path
 
-    def test_parent_fails_on_both_hq_roads(self):
-        rows = tool.preflight(self.historical('21345188d^'), self.data)
-        hqs = [r for r in rows if r.pad.kind == 'BaseBarracks']
-        self.assertEqual([(r.blocked, sum(r.counts.values())) for r in hqs], [(26, 35), (20, 35)])
-        self.assertEqual([sum(n for mask, n in r.counts.items() if mask & 1) for r in hqs], [26, 20])
-        self.assertTrue(all(not r.passed for r in hqs))
-
-    def test_repair_passes_both_hq_footprints_but_full_draft_fails_ring_and_spawn(self):
-        d = self.historical('21345188d')
-        rows = tool.preflight(d, self.data)
-        hqs = [r for r in rows if r.pad.kind == 'BaseBarracks']
-        candidates = {(c['centreX'], c['centreZ'], c['rectW'], c['rectH']) for c in self.data['candidates']
-                      if c['kind'] == 'barracks'}
-        for p in d['instance_pads']:
-            if p['kind'] == 'BaseBarracks':
-                self.assertIn((*p['at'], *p['size']), candidates)
-        self.assertEqual([(r.blocked, sum(r.counts.values())) for r in hqs], [(0, 28), (0, 28)])
-        self.assertEqual(tool.flags_text(hqs[0].ring_counts), 'scenery=5')
-        self.assertEqual(tool.flags_text(hqs[1].ring_counts), 'road=12,sidewalk=8')
+    def test_current_s026_starts_with_hq_warnings_and_partial_spawn(self):
+        d, data, dump_path = self.fixture('S026')
+        rows = tool.preflight(d, data)
+        self.assertEqual(len(rows), 27)
+        self.assertEqual([r.pad.name for r in rows if not r.passed], [])
+        self.assertTrue(all(not r.ring_clear for r in rows if r.pad.kind == 'BaseBarracks'))
         spawn = next(r for r in rows if r.pad.name == 'spawn.infantry.player')
-        self.assertEqual((spawn.blocked, sum(spawn.counts.values())), (14, 16))
+        self.assertEqual((spawn.blocked, spawn.passable), (14, 2))
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / 's026.json'
             path.write_text(json.dumps(d))
             status, out, _ = cli('--draft', path)  # auto-select by campaign_source
-            self.assertEqual(status, 1)
-            self.assertIn(str(self.dump_path), out)
-            self.assertIn('PREFLIGHT FAIL', out)
+            self.assertEqual(status, 0)
+            self.assertIn(str(dump_path), out)
+            self.assertIn('PREFLIGHT PASS', out.splitlines())
+
+    def test_current_s049_starts(self):
+        d, data, _ = self.fixture('S049')
+        self.assertEqual([r.pad.name for r in tool.preflight(d, data) if not r.passed], [])
+
+    def test_current_s050_starts(self):
+        d, data, _ = self.fixture('S050')
+        self.assertEqual([r.pad.name for r in tool.preflight(d, data) if not r.passed], [])
+
+    def test_s026_parent_fails_even_with_relocation(self):
+        d, data, _ = self.fixture('S026', '21345188d^')
+        preferred = [r for r in tool.preflight(d, data, 0) if r.pad.kind == 'BaseBarracks']
+        self.assertEqual([tool.flags_text(row.counts) for row in preferred], ['road=26', 'road=20,scenery=4'])
+        hqs = [r for r in tool.preflight(d, data) if r.pad.kind == 'BaseBarracks']
+        self.assertEqual([(r.blocked, sum(r.counts.values())) for r in hqs], [(12, 28), (0, 28)])
+        self.assertFalse(hqs[0].passed)  # Unity logged the player HQ rejection.
+        self.assertTrue(hqs[1].passed)  # The dump admits a relocated enemy HQ.
+
+    def test_s006_blocked_enemy_barracks_matches_unity_rejection(self):
+        d, data, _ = self.fixture('S006', '81c4fa26e')
+        rows = tool.preflight(d, data)
+        hq = next(r for r in rows if r.pad.name == 's006.f2.barracks')
+        self.assertEqual(hq.blocked, 0)  # The bitmap misses the native rejection.
+        self.assertEqual(tool.flags_text(hq.ring_counts), 'scenery=3')
+        self.assertIn('sourceBuildings', hq.ring_failure)
+        self.assertFalse(hq.passed)
+
+    def test_s006_blocked_player_infantry_spawn_has_no_passable_centres(self):
+        d, data, _ = self.fixture('S006', '1f7da50b4')
+        rows = tool.preflight(d, data)
+        spawn = next(r for r in rows if r.pad.name == 'spawn.infantry.player')
+        self.assertEqual(spawn.passable, 0)
+        self.assertFalse(spawn.passed)
 
 
 if __name__ == '__main__':

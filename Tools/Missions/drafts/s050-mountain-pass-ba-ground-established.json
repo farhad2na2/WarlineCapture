@@ -115,10 +115,6 @@
       1207.5,
       363.0
     ],
-    "s050.f1.guard_tower": [
-      1020.0,
-      387.5
-    ],
     "basemove.route.1.waypoint.00": [
       1022.0,
       362.0
@@ -456,20 +452,6 @@
         10
       ],
       "anchor": "s050.f1.satellite_dish"
-    },
-    {
-      "id": "s050.f1.guard_tower",
-      "kind": "Service",
-      "faction": 1,
-      "at": [
-        1020.0,
-        387.5
-      ],
-      "size": [
-        3,
-        4
-      ],
-      "anchor": "s050.f1.guard_tower"
     },
     {
       "id": "s050.f1.helipad",

@@ -197,7 +197,7 @@ namespace Game.Tests.Editor
                     }
                     Assert.AreEqual(setup.PlayerStartingStructures, player, size.ToString());
                     Assert.AreEqual(setup.EnemyStartingStructures, enemy, size.ToString());
-                    Assert.AreEqual(size == SkirmishSizeId.Standard ? 11 : 12, player);
+                    Assert.AreEqual(size == SkirmishSizeId.Standard ? 10 : 11, player);
                     Assert.AreEqual(2, helipads);
                 }
                 // Only logical in-memory configs were created. This test establishes

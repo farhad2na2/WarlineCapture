@@ -182,7 +182,7 @@ def setup(row,size):
         out.update({side+'_'+k:v for k,v in t.items()})
         out[side+'_logistics_support']=support
         out[side+'_objective_trucks']=3 if obj=='CE' and side=='player' else 0
-        out[side+'_starting_structures']=structures+(2 if obj in ('BT','CE') and side=='enemy' else 0)+(1 if obj=='BA' and side=='player' else 0)  # owner 2026-11-17: BA player guard tower
+        out[side+'_starting_structures']=structures+(2 if obj in ('BT','CE') and side=='enemy' else 0)
         out[side+'_designated_rifles']=12 if obj=='BT' and side=='player' else 0
     out.update(dict(materials_each=stock[0],oil_each=stock[1],usable_fuel_each=stock[2],materials_capacity_each=stock[3],
         oil_capacity_each=stock[4],fuel_capacity_each=stock[5],infantry_queues_each=1 if st=='F' and size=='Standard' else 2,

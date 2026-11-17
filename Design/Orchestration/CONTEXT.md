@@ -28,6 +28,12 @@ Updated 2026-11-16. Keep under 60 lines. Detail: `ORCHESTRATOR_PROMPT.md`, the m
   fixed to Standard / Regular in this entry point.
 - The run appends a row to `Design/AgentReports/SkirmishExpansion/<ID>/runs.csv` and writes a trace
   under `_Evidence/` there. Those are the receipts `missions.csv` points to.
+- **Startup check (2026-11-17):** within 3 minutes of every launch the log must contain
+  `Library Redirect Path`. If it does not, the Editor is sitting on a startup dialog: report it at
+  once, do not wait for the timeout, and do not kill it. Never kill an Editor during its first
+  3 minutes: that leaves the marker `Library/LibraryInitializing` behind and the next launch stops
+  on "Corrupted Library Detected" (the answer is always "Don't rebuild Library"; only the owner can
+  click it or remove the marker). Before each launch check the marker does not exist.
 - Source-hash guard: the harness hashes sources at start and end (about 30 s each). Any change under
   `Assets`, `Packages` or `ProjectSettings` during a run aborts it (`candidateSourceChangedDuringRun`).
   **No worker may write to the main checkout while the Unity lane is busy.** Workers use worktrees.

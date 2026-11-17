@@ -10,10 +10,10 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Shift lead | Sonnet | Shift 2: run S002 + S006 with trace logging, apply Codex batch 2, author S026/S049/S050 | Starting 06:35; report in `daily/shift-2026-11-17b.md` |
-| Unity lane | — | One Editor at a time | Free; shift lead starts queue2 |
-| Authoring workers | Opus | Harness queue, authoring entry | Finished, merged |
-| Codex | gpt-6.1-terra | Batch 2: queue jobs (007), layout gaps (008), regression hunt (009), batch authoring (010) | Starting 06:35 |
+| Shift lead | Sonnet | Shift 2: S002 + S006 trace run, apply Codex patches, author S026/S049/S050 | Applying script-only patches; Unity run waits on the dialog |
+| Unity lane | — | One Editor at a time | **BLOCKED: needs the owner to click "Don't rebuild Library" in the Unity dialog** |
+| ARIA worker | Opus | Home-defence fix for S002 on branch `missions/aria-home-defense` (no Unity needed) | Running |
+| Codex | gpt-6.1-terra | Batch 4: readiness of the three other objectives (015), offline draft checker (016) | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -53,3 +53,22 @@ record is `missions.csv`.
 - 2026-11-17 06:32 codex: codex-007-queue-jobs finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-007-queue-jobs.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-007-queue-jobs-report.txt (not yet verified or merged)
 - 2026-11-17 06:33 codex: codex-008-ib-layout-airport finished: exit 0, 6 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-008-ib-layout-airport.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-008-ib-layout-airport-report.txt (not yet verified or merged)
 - 2026-11-17 06:34 orchestrator: disk guard installed (`Tools/Missions/disk_guard.sh`): it cleans git temp packs and finished Codex copies, keeps git auto maintenance off, and writes here when free space drops below 80 GB. A watcher checks every 5 minutes; the Codex launcher and every Unity launch run it first. Free now: 239 GB.
+- 2026-11-17 06:34 shift lead: acknowledged disk rule; will run disk_guard.sh before each launch and after commits
+- 2026-11-17 06:34 codex: codex-009-regression-hunt finished: exit 0, 1 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-009-regression-hunt.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-009-regression-hunt-report.txt (not yet verified or merged)
+- 2026-11-17 06:34 codex: batch finished: codex-007-queue-jobs:medium:30 codex-008-ib-layout-airport:high:45 codex-009-regression-hunt:high:55 codex-010-batch-authoring:high:40
+- 2026-11-17 06:36 orchestrator: Codex batch 2 reviewed. 007 (queue jobs) and 010 (batch authoring) delivered patches; 008 found no measured layout or Airport data for S074–S078 beyond two anchors; 009 made no code change but found from the traces that ARIA's army is NOT idle: it marches out on one attack order, and a single damaged enemy tank then destroys the undefended player base in 28 s. Patches wait for the shift lead (Unity run in progress).
+- 2026-11-17 06:36 orchestrator: Codex batch 3 started: ARIA home defence fix, enemy-side trace, Airport site finder for Unity, layout measuring entry.
+- 2026-11-17 06:37 codex: codex-014-layout-measure started (effort high, limit 60 min)
+- 2026-11-17 06:37 codex: codex-013-airport-site-finder started (effort high, limit 55 min)
+- 2026-11-17 06:37 codex: codex-012-enemy-trace started (effort high, limit 50 min)
+- 2026-11-17 06:37 codex: codex-011-aria-home-defense started (effort high, limit 55 min)
+- 2026-11-17 06:39 codex: codex-014-layout-measure finished: exit 0, 1 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-014-layout-measure.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-014-layout-measure-report.txt (not yet verified or merged)
+- 2026-11-17 06:39 codex: codex-011-aria-home-defense finished: exit 0, 1 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-011-aria-home-defense.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-011-aria-home-defense-report.txt (not yet verified or merged)
+- 2026-11-17 06:40 codex: codex-012-enemy-trace finished: exit 0, 5 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-012-enemy-trace.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-012-enemy-trace-report.txt (not yet verified or merged)
+- 2026-11-17 06:40 codex: codex-013-airport-site-finder finished: exit 0, 1 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-013-airport-site-finder.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-013-airport-site-finder-report.txt (not yet verified or merged)
+- 2026-11-17 06:40 codex: batch finished: codex-011-aria-home-defense:high:55 codex-012-enemy-trace:high:50 codex-013-airport-site-finder:high:55 codex-014-layout-measure:high:60
+- 2026-11-17 06:55 orchestrator: BLOCKED on one owner click. The Unity run started at 06:31 never began: the Editor (PID 66682) is waiting on Unity's "Corrupted Library Detected" dialog. Cause: an Editor killed seconds after launch at 00:27 left the marker `Library/LibraryInitializing` (last night's "20-minute fingerprint" was this same dialog). Needed: click "Don't rebuild Library". Agents may not click it or touch Library. Codex and code work continue meanwhile.
+- 2026-11-17 06:55 shift lead: applied+committed Codex 007 (unittest OK) and 008 (test_drafts OK; S074-S078 lack Airport pads/base anchors). 009 skipped, 010-012 held until queue2 Editor ends. Waiting on startup dialog.
+- 2026-11-17 06:56 aria worker: started S002 home-defense fix on missions/aria-home-defense (authoring worktree)
+- 2026-11-17 06:56 orchestrator: Codex batch 3 reviewed. 011: ARIA home defence exists but needs an enemy minimap contact near the base and never saw one (trace only, no fix). 012: enemy trace added; one tank at 28 damage per second explains the base loss. 013 and 014: could not measure Airport sites or layouts without a running match; not applied. Behaviour fixes are no longer routed to Codex (four misses); an Opus worker now owns the home-defence fix.
+- 2026-11-17 06:56 orchestrator: Codex batch 4 started (015, 016).

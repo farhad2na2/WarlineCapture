@@ -232,6 +232,29 @@ namespace Game.Simulation
   public static void LatchGivenUp(ref int skipKeyA,ref int skipKeyB,ref int skips,int page,int unorderedAssault)
   {skipKeyB=skipKeyA;skipKeyA=AriaGroundColumnPolicy.SkipKey(page,unorderedAssault);skips++;}
  }
+ // Closing the owned full map: Close presses that complete while the map stays open are counted.
+ // After two, the popup's "center on HQ" control is pressed once, so the next Close is a fresh
+ // press of a different control sequence; after MaxCloses nothing more is pressed (the caller's
+ // inspection deadline decides). Lane 8 S026: Close pressed three times, Blocked 115.
+ public enum AriaMapCloseAction:byte {Close,CenterHome,Wait}
+ public static class AriaMapCloseRecovery
+ {
+  public const int ClosesBeforeCentre=2,MaxCloses=4;
+  // centered: 0 unused, 1 pressed (in flight), 2 completed. lastActions: completed touches seen (0 = not started).
+  public static AriaMapCloseAction Step(ref byte closes,ref byte centered,ref int lastActions,int completedActions,bool centerAvailable)
+  {
+   if(lastActions==0)lastActions=completedActions;
+   else if(completedActions>lastActions)
+   {
+    if(centered==1)centered=2;else closes++;
+    lastActions=completedActions;
+   }
+   if(centered==1)return AriaMapCloseAction.CenterHome;
+   if(closes>=ClosesBeforeCentre&&centered==0&&centerAvailable){centered=1;return AriaMapCloseAction.CenterHome;}
+   if(closes>=MaxCloses)return AriaMapCloseAction.Wait;
+   return AriaMapCloseAction.Close;
+  }
+ }
  public struct AriaGroundProgressState{public float LastProgressAt;public float EnemyHealth,PlayerHealth;public int Infantry;}
  public static class AriaGroundProgressPolicy
  {

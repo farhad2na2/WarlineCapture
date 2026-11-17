@@ -106,7 +106,8 @@ namespace Game.Simulation {
  public struct AriaCoverageState {public byte Done,Current;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
-  public const int Kinds=6,All=(1<<Kinds)-1;public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f;
+  // GapSeconds: one coverage purchase at a time, spaced so each new group joins the column before the next.
+  public const int Kinds=6,All=(1<<Kinds)-1;public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=25f;
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -114,18 +115,19 @@ namespace Game.Simulation {
    kind=(AriaCoverageKind)plan.Current;
    if(plan.Current!=0){
     int bit=Bit(kind);
-    if((plan.Done&bit)!=0){plan.Current=0;return AriaCoverageAction.None;}
+    if((plan.Done&bit)!=0){plan.Current=0;plan.Deadline=view.Time+GapSeconds;return AriaCoverageAction.None;}
     if(view.CompletedContacts>plan.Actions){
      plan.Actions=view.CompletedContacts;
      plan.Deadline=System.Math.Min(plan.Started+MaxBuySeconds,System.Math.Max(plan.Deadline,view.Time+StepSeconds));
     }
     // Bounded: a purchase that does not appear in time is not retried this match.
-    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;return AriaCoverageAction.None;}
+    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;plan.Deadline=view.Time+GapSeconds;return AriaCoverageAction.None;}
     return (view.CardMask&bit)!=0?AriaCoverageAction.Recruit:AriaCoverageAction.Waiting;
    }
    kind=AriaCoverageKind.None;
+   // Deadline doubles as the earliest next start after a purchase (GapSeconds).
    if(!view.AssaultIssued||!view.BreacherSettled||view.Busy||!view.EnemyAlive||view.OtherRecruitPending||
-      (view.PendingMask&All)!=0)return AriaCoverageAction.None;
+      (view.PendingMask&All)!=0||view.Time<plan.Deadline)return AriaCoverageAction.None;
    for(int k=1;k<=Kinds;k++){
     int bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
@@ -154,7 +156,8 @@ namespace Game.Simulation {
   public int SupportSlots,SelectedMask,SelectedGroups,SelectedOffPage,AvailableSquadMask,CompletedContacts;
   public float Time;
  }
- // Stage: 0 idle, 1 select, 2 arm the command, 3 tap the ground. Done: kinds ordered or given up.
+ // Stage: 0 idle, 1 select, 2 arm the command, 3 tap the ground, 5 toggle the armed mode off before
+ // a release (lane 8 S050: the radar order released with Move still armed). Done: kinds ordered or given up.
  // Tried: kinds released once; a second release gives the kind up (MaxAttempts=2 per kind).
  public struct AriaSupportState {public byte Stage,Kind,Tried,Done;public int Slot,Actions;public float Deadline,ReadyAt;}
  // Trace: 0 none, 1 triggered, 2 ordered, 3 released, 4 given up.
@@ -181,7 +184,15 @@ namespace Game.Simulation {
     output.Trace=1;
    }
    output.Kind=(AriaSupportKind)plan.Kind;
-   if(view.Busy||view.Time>plan.Deadline||!view.EnemyAlive){Release(ref plan,view.Time,ref output);return false;}
+   if(plan.Stage==StageDisarm){
+    // One toggle of the armed mode; then the release completes.
+    if(view.Mode==AriaSupportMode.None||view.CompletedContacts>plan.Actions||view.Time>plan.Deadline)
+    {Release(ref plan,view.Time,ref output);return false;}
+    output.Action=ToggleFor(view.Mode,view);
+    if(output.Action==AriaSupportAction.Waiting){Release(ref plan,view.Time,ref output);return false;}
+    return true;
+   }
+   if(view.Busy||view.Time>plan.Deadline||!view.EnemyAlive)return ReleaseArmed(view,ref plan,ref output);
    int desired=1<<plan.Slot;bool drone=plan.Kind==(byte)AriaSupportKind.Drone;
    if(plan.Stage==1){
     // The page moved under us: the slot no longer shows this support unit.
@@ -210,6 +221,20 @@ namespace Game.Simulation {
    plan.Done|=(byte)KindBit((AriaSupportKind)plan.Kind);plan.Stage=0;plan.ReadyAt=view.Time+CooldownSeconds;
    output.Trace=2;output.Action=AriaSupportAction.None;return false;
   }
+  public const byte StageDisarm=5;public const float DisarmSeconds=3f;
+  // Never hand back a mode this policy armed: toggle it off first (one press, bounded).
+  static bool ReleaseArmed(in AriaSupportView view,ref AriaSupportState plan,ref AriaSupportDecision output){
+   if(plan.Stage>=2&&view.Mode!=AriaSupportMode.None&&ToggleFor(view.Mode,view)!=AriaSupportAction.Waiting){
+    plan.Stage=StageDisarm;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+DisarmSeconds;
+    output.Action=ToggleFor(view.Mode,view);return true;
+   }
+   Release(ref plan,view.Time,ref output);return false;
+  }
+  static AriaSupportAction ToggleFor(AriaSupportMode mode,in AriaSupportView view)=>mode switch{
+   AriaSupportMode.Move=>view.MoveAvailable?AriaSupportAction.ArmMove:AriaSupportAction.Waiting,
+   AriaSupportMode.Attack=>view.AttackAvailable?AriaSupportAction.ArmAttack:AriaSupportAction.Waiting,
+   AriaSupportMode.Scan=>view.ScanAvailable?AriaSupportAction.ArmScan:AriaSupportAction.Waiting,
+   _=>AriaSupportAction.Waiting};
   static void Release(ref AriaSupportState plan,float time,ref AriaSupportDecision output){
    int bit=KindBit((AriaSupportKind)plan.Kind);bool giveUp=(plan.Tried&bit)!=0;
    if(giveUp)plan.Done|=(byte)bit;else plan.Tried|=(byte)bit;

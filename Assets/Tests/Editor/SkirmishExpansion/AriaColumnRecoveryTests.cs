@@ -121,5 +121,62 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0, plan.Current, "capped at MaxBuySeconds even while taps land");
             Assert.AreEqual(7, plan.Done);
         }
-    }
+    
+        // Lane 8 S050: the radar order released (rear ground never offered) with Move still armed.
+        [Test]
+        public void SupportReleaseTogglesItsArmedModeOff()
+        {
+            var plan = new AriaSupportState { Stage = 3, Kind = (byte)AriaSupportKind.Radar, Slot = 1, Actions = 40, Deadline = 279f };
+            var view = new AriaSupportView { FieldedMask = 1, ArmyMoving = true, EnemyAlive = true, MoveAvailable = true, AttackAvailable = true,
+                Mode = AriaSupportMode.Move, RearAvailable = false, SelectedGroups = 1, SelectedMask = 2,
+                SupportSlots = AriaSupportOrderPolicy.Slots(AriaSupportKind.None, AriaSupportKind.Radar, AriaSupportKind.None, AriaSupportKind.None, AriaSupportKind.None),
+                AvailableSquadMask = 31, CompletedContacts = 40, Time = 279.5f };
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
+            Assert.AreEqual(AriaSupportAction.ArmMove, d.Action, "the Move toggle disarms it");
+            Assert.AreEqual(AriaSupportOrderPolicy.StageDisarm, plan.Stage);
+            view.Time = 280f;
+            Assert.AreEqual(AriaSupportAction.ArmMove, (AriaSupportOrderPolicy.Step(view, ref plan, out d), d.Action).Item2, "same toggle in flight");
+            view.Mode = AriaSupportMode.None; view.CompletedContacts = 41; view.Time = 281f;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(3, d.Trace, "released with nothing armed");
+            Assert.AreEqual(0, plan.Stage);
+        }
+
+        // Lane 8 S026: the full map's Close was pressed three times while the map stayed open.
+        [Test]
+        public void MapCloseVariesTheControlAndNeverPressesCloseThreeTimesInARow()
+        {
+            byte closes = 0, centered = 0; int last = 0;
+            var pressed = new System.Collections.Generic.List<AriaMapCloseAction>();
+            int completed = 24;
+            for (int i = 0; i < 8; i++)
+            {
+                var a = AriaMapCloseRecovery.Step(ref closes, ref centered, ref last, completed, true);
+                pressed.Add(a);
+                if (a != AriaMapCloseAction.Wait) completed++; // each press completes, the map stays open
+            }
+            int run = 0, longest = 0; AriaMapCloseAction prev = AriaMapCloseAction.Wait;
+            foreach (var a in pressed) { if (a == AriaMapCloseAction.Wait) continue; run = a == prev ? run + 1 : 1; prev = a; if (run > longest) longest = run; }
+            Assert.Less(longest, 3);
+            Assert.Contains(AriaMapCloseAction.CenterHome, pressed);
+            Assert.AreEqual(AriaMapCloseAction.Wait, pressed[pressed.Count - 1], "bounded: nothing more after MaxCloses");
+        }
+
+        static string ThisFile([System.Runtime.CompilerServices.CallerFilePath] string path = "") => path;
+
+        // Lane 8 S050 BlockAllocator budget: ARIA's per-frame reads use queries created once.
+        [Test]
+        public void AriaInputSystemCreatesNoQueryOutsideOnCreate()
+        {
+            var here = ThisFile();
+            var root = System.IO.Path.GetFullPath(System.IO.Path.Combine(System.IO.Path.GetDirectoryName(here), "..", "..", "..", ".."));
+            var input = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Assets/Game/Scripts/UI/Shell/Ecs/AriaPlayInputSystem.cs"));
+            Assert.AreEqual(-1, input.IndexOf("CreateEntityQuery", System.StringComparison.Ordinal), "use the system-owned queries from OnCreate");
+            var projection = System.IO.File.ReadAllText(System.IO.Path.Combine(root, "Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs"));
+            int roleQueries = 0, at = 0;
+            const string roleQuery = "CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent))";
+            while ((at = projection.IndexOf(roleQuery, at, System.StringComparison.Ordinal)) >= 0) { roleQueries++; at++; }
+            Assert.AreEqual(1, roleQueries, "the unit-role query is created once per World (UnitRoleQuery)");
+        }
+}
 }

@@ -20,7 +20,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceS002(string eventName, in AriaPlaySessionComponent session, in AriaPlayObservationComponent observation)
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) return;
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
@@ -32,7 +32,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceHomeDefense()
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (!v.ExpandedBaseAssault) return;
@@ -43,7 +43,7 @@ namespace Game.UI.Shell.Ecs
                 : priorStage != 5 && p.HomeDefenseStage == 5 ? "ordered"
                 : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageRecentre && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageRecentre ? "recentre"
                 : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageDisarm && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageDisarm ? "gave_up_disarm"
-                : priorStage == 4 && p.HomeDefenseStage == 8 ? "gave_up"
+                : (priorStage == 4 || priorStage == Game.Simulation.AriaHomeDefensePolicy.StageRecentre) && p.HomeDefenseStage == 8 ? "gave_up"
                 : priorReason != 0 && p.HomeDefenseReason == 0 ? "cleared" : null;
             if (state == null) return;
             int reasonCode = p.HomeDefenseReason != 0 ? p.HomeDefenseReason : priorReason;
@@ -58,7 +58,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceIntercept()
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) { tracedInterceptStage = 0; tracedInterceptKnown = tracedInterceptOffered = false; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
@@ -81,7 +81,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceTrayPage(in AriaPlaySessionComponent session)
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>());
+            var query = ariaObservationQuery;
             if (query.CalculateEntityCount() != 1) { tracedTrayPage = tracedTrayRoster = -1; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault || v.ExpandedPageCount <= 0) return;
@@ -98,7 +98,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceBreacher()
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) { tracedBreacherStage = 0; tracedBreacherPending = tracedBreacherFielded = false; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
@@ -124,7 +124,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceCoverage()
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1)
             { tracedCoverageCurrent = tracedSupportStage = tracedSupportDone = 0; tracedCoveragePending = tracedCoverageFielded = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
@@ -147,7 +147,7 @@ namespace Game.UI.Shell.Ecs
             {
                 bool newlyDone = (p.SupportDone & ~tracedSupportDone) != 0;
                 string state = newlyDone ? (tracedSupportStage == 3 ? "ordered" : "gave_up")
-                    : p.SupportStage switch { 1 => "selecting", 2 => "arming", 3 => "tapping", _ => "released" };
+                    : p.SupportStage switch { 1 => "selecting", 2 => "arming", 3 => "tapping", 5 => "disarming", _ => "released" };
                 int kind = p.SupportKind < SupportKindNames.Length ? p.SupportKind : 0;
                 Debug.Log($"[AriaS002Trace] event=support_order kind={SupportKindNames[kind]} state={state} scenario={v.SourceScenarioIndex} done={p.SupportDone} tried={p.SupportTried} slot={p.SupportSlot} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} selectedMask={v.ExpandedSelectedMask} move={v.MoveMode} attack={v.AttackMode} scan={v.ScanMode} rear={v.RearGround.Available} front={v.FrontGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
                 tracedSupportStage = p.SupportStage; tracedSupportDone = p.SupportDone;
@@ -159,7 +159,7 @@ namespace Game.UI.Shell.Ecs
         private void TraceColumnRecovery()
         {
             if (!AriaCommandEvidence.Active) return;
-            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query = ariaStateQuery;
             if (query.CalculateEntityCount() != 1) { tracedColumnSkips = tracedFindBaseGiveUps = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
@@ -176,7 +176,7 @@ namespace Game.UI.Shell.Ecs
         private void CaptureGoal(int targetId)
         {
             gestureGoal=default;
-            using var query=EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(),ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            var query=ariaStateQuery;
             if(query.CalculateEntityCount()!=1)return;
             var view=query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             var plan=query.GetSingleton<AriaSkirmishPlanComponent>();
@@ -188,11 +188,15 @@ namespace Game.UI.Shell.Ecs
             if(gestureGoal.Known){goalSession=gestureGoal.SessionId;goalWorld=gestureGoal.WorldSequenceNumber;}
         }
         private EntityQuery missionQuery, skirmishQuery, operationsQuery;
+        // Created once in OnCreate (system-owned): traces and goal capture read these every frame.
+        private EntityQuery ariaStateQuery, ariaObservationQuery;
         protected override void OnCreate()
         {
             touch = new AriaTouchInputUiSystemHelper();
             AriaTouchInputUiSystemHelper.Evidence += ObserveTouchEvidence;
             skirmishQuery = GetEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
+            ariaStateQuery = GetEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            ariaObservationQuery = GetEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>());
             missionQuery = GetEntityQuery(ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
             operationsQuery = GetEntityQuery(ComponentType.ReadOnly<OperationsReconMissionComponent>());
         }

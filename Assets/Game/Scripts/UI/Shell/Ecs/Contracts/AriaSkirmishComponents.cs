@@ -43,6 +43,10 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int AssaultObjectiveHudIdentity;
         public UnityEngine.Vector3 AssaultObjectiveWorld;
         public byte AssaultInspectStage;
+        // Close presses completed while the full map stayed open, and the one "center on HQ" press
+        // used to vary the control before closing again (lane 8 S026: Close pressed 3x, Blocked 115).
+        public byte AssaultInspectCloses, AssaultInspectCentered;
+        public int AssaultInspectCloseActions;
         public int AssaultInspectActions, AssaultInspectOpenTarget, AssaultInspectMapIdentity, AssaultInspectOpenedFrame;
         public uint AssaultInspectRevision;
         public float AssaultInspectDeadline, AssaultInspectReadyAt;

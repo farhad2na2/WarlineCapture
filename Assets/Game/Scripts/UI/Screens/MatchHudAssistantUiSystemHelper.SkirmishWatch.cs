@@ -685,7 +685,11 @@ namespace Game.UI.Runtime
             if (watchFullMap == null) watchFullMap = Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
             view.MapOpen = watchFullMap != null && watchFullMap.IsOpen;
             ResolveAssaultObservationMap(view.MapOpen);
-            if (view.MapOpen) view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction);
+            if (view.MapOpen)
+            {
+                view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction);
+                view.MapCenterHome = ObserveWatchButton(watchFullMap.CenterOnHqAction);
+            }
             ObserveAssaultMap(ref view);
             view.HomeGroundRefusal = 8; // not evaluated (no presented map, camera or friendly contact)
             if (watchMap == null || !watchMap.isActiveAndEnabled || Camera.main == null) return;

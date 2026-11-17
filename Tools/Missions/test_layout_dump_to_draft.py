@@ -133,6 +133,73 @@ class LayoutDump(unittest.TestCase):
             src.write_text('{}')
             self.assertEqual(1, tool.main(['--dump', str(src)]))
 
+    def test_sidewalk_block_is_travelable_not_blocked(self):
+        self.assertFalse(tool.is_blocked(tool.FLAG_SIDEWALK))
+        self.assertFalse(tool.is_blocked(tool.FLAG_SIDEWALK | tool.FLAG_ROAD))
+        self.assertTrue(tool.is_blocked(tool.FLAG_SIDEWALK | tool.FLAG_SCENERY))
+
+    def test_startup_failure_dump_is_recorded_in_notes(self):
+        data = dump()
+        data.update({'sessionFailure': 'BlockedSpawn', 'sourceOperationMapId': 'map.x', 'authoredBuildingsReady': True,
+                     'roadSurfacesReady': True})
+        draft, needs = tool.build(data, None, 'a', 'x')
+        self.assertIn('startup failure BlockedSpawn', draft['notes'])
+        self.assertIn('source=map.x', draft['notes'])
+        self.assertFalse(any('NOT trustworthy' in n for n in needs))
+
+    def test_not_ready_caches_are_flagged_not_trusted(self):
+        data = dump()
+        data['authoredBuildingsReady'] = False
+        _, needs = tool.build(data, None, 'a', 'x')
+        self.assertTrue(any('NOT trustworthy' in n for n in needs))
+
+    def test_empty_candidates_report_the_reject_counters(self):
+        data = dump(candidates=[])
+        data.update({'rejectedBuilding': 7, 'rejectedRoad': 5})
+        _, needs = tool.build(data, None, 'a', 'x')
+        self.assertTrue(any('no candidates' in n and 'buildings=7' in n and 'road=5' in n for n in needs))
+
+
+class CSharpContract(unittest.TestCase):
+    """The harness cannot be compiled here; pin the properties the lead asked for in its source text."""
+
+    @classmethod
+    def setUpClass(cls):
+        root = Path(__file__).resolve().parents[2] / 'Assets/Game/Scripts/Editor/Skirmish'
+        cls.dump_src = (root / 'SkirmishS002AriaRunHarness.LayoutDump.cs').read_text(encoding='utf-8')
+        cls.main_src = (root / 'SkirmishS002AriaRunHarness.cs').read_text(encoding='utf-8')
+        cls.airport_src = (root / 'SkirmishS002AriaRunHarness.AirportPlacement.cs').read_text(encoding='utf-8')
+
+    def test_map_comes_from_the_loaded_runtime_map_not_the_s004_environment(self):
+        self.assertIn('OperationMapBoundsComponent', self.dump_src)
+        self.assertNotIn('LoadMapForSession', self.dump_src)
+
+    def test_candidates_use_the_starting_grant_predicates_in_order(self):
+        order = ['AuthoredBuildings.Overlaps(grid, rect.position, rect.size)) { dump.rejectedBuilding',
+                 'RoadSurfaces.Overlaps(grid, rect.position, rect.size)) { dump.rejectedRoad',
+                 'RoadSurfaces.OverlapsWater(grid, rect.position, rect.size)) { dump.rejectedWater',
+                 'LayoutRectHasSidewalkOrLeavesGrid(sidewalks, grid, rect)) { dump.rejectedSidewalk',
+                 'IsPlacementValid(source, definition,']
+        positions = [self.dump_src.rindex(item) for item in order]
+        self.assertEqual(sorted(positions), positions)
+
+    def test_never_samples_before_the_authored_caches_are_ready(self):
+        self.assertIn('!cache.AuthoredBuildings.IsReady || !cache.RoadSurfaces.IsReady', self.dump_src)
+
+    def test_startup_failure_hook_runs_before_the_startup_failure_finish(self):
+        hook = self.main_src.index('TickLayoutDumpAfterStartupFailure(em)')
+        finish = self.main_src.index('"expandedStartupFailure="')
+        self.assertLess(hook, finish)
+
+    def test_watchdog_quits_the_editor_and_records_no_mission_result(self):
+        self.assertIn('EditorApplication.Exit(code)', self.dump_src)
+        self.assertIn('missionResult=NotRecorded', self.dump_src)
+        self.assertIn('watchdogExit=1', self.dump_src)
+
+    def test_catalog_dispatch_no_longer_forces_the_s004_seed(self):
+        self.assertIn('if (launch == null)', self.airport_src)
+        self.assertNotIn('launch == null || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_SEED"))', self.airport_src)
+
 
 if __name__ == '__main__':
     unittest.main()

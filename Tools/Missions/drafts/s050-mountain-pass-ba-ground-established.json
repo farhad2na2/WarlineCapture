@@ -16,20 +16,20 @@
       363.5
     ],
     "s050.f1.fabrication_depot": [
-      1021.5,
-      388.0
+      1093.5,
+      364.0
     ],
     "economy.player": [
-      1043.5,
-      406.0
+      1019.5,
+      334.0
     ],
     "s050.f1.refinery": [
-      1024.5,
-      339.5
+      1072.5,
+      387.5
     ],
     "s050.f1.fuel_bladder": [
-      1091.0,
-      361.0
+      1043.0,
+      337.0
     ],
     "staging.player": [
       1019.0,
@@ -40,35 +40,35 @@
       387.5
     ],
     "service.player": [
-      1024.5,
-      363.5
+      1043.0,
+      407.5
     ],
     "s050.f1.watchtower.approach": [
-      1043.0,
-      337.0
+      1067.0,
+      407.5
     ],
     "air.player": [
-      1068.0,
-      387.5
+      1020.0,
+      459.5
     ],
     "s050.f2.barracks": [
       1218.0,
       387.5
     ],
     "s050.f2.fabrication_depot": [
-      1165.5,
-      364.0
+      1141.5,
+      388.0
     ],
     "economy.enemy": [
       1187.5,
       406.0
     ],
     "s050.f2.refinery": [
-      1192.5,
+      1168.5,
       339.5
     ],
     "s050.f2.fuel_bladder": [
-      1139.0,
+      1115.0,
       385.0
     ],
     "staging.enemy": [
@@ -77,7 +77,7 @@
     ],
     "s050.f2.satellite_dish": [
       1140.0,
-      363.5
+      459.5
     ],
     "service.enemy": [
       1163.0,
@@ -88,36 +88,36 @@
       455.5
     ],
     "air.enemy": [
-      1164.0,
-      339.5
+      1140.0,
+      363.5
     ],
     "spawn.infantry.player": [
-      938.5,
-      416.5
+      1024.5,
+      363.5
     ],
     "spawn.infantry.enemy": [
-      1188.5,
-      416.5
+      1170.0,
+      363.5
     ],
     "spawn.vehicle.player": [
-      932.5,
-      427.0
+      1019.5,
+      346.0
     ],
     "spawn.vehicle.enemy": [
-      1178.5,
-      427.0
+      1189.5,
+      340.0
     ],
     "rally.player": [
-      938.5,
-      416.5
+      1019.5,
+      382.0
     ],
     "rally.enemy": [
-      1188.5,
-      416.5
+      1207.5,
+      363.0
     ],
     "s050.f1.guard_tower": [
-      1019.0,
-      361.0
+      1020.0,
+      387.5
     ],
     "basemove.route.1.waypoint.00": [
       1022.0,
@@ -166,8 +166,8 @@
     },
     "economy.player": {
       "at": [
-        910.5,
-        440.0
+        1019.5,
+        334.0
       ],
       "anchor": "economy.player",
       "size": [
@@ -177,8 +177,8 @@
     },
     "staging.player": {
       "at": [
-        915.0,
-        470.5
+        1019.0,
+        407.5
       ],
       "anchor": "staging.player",
       "size": [
@@ -188,8 +188,8 @@
     },
     "service.player": {
       "at": [
-        919.5,
-        452.0
+        1043.0,
+        407.5
       ],
       "anchor": "service.player",
       "size": [
@@ -199,8 +199,8 @@
     },
     "air.player": {
       "at": [
-        947.0,
-        495.5
+        1020.0,
+        459.5
       ],
       "anchor": "air.player",
       "size": [
@@ -221,8 +221,8 @@
     },
     "economy.enemy": {
       "at": [
-        1209.5,
-        441.0
+        1187.5,
+        406.0
       ],
       "anchor": "economy.enemy",
       "size": [
@@ -232,8 +232,8 @@
     },
     "staging.enemy": {
       "at": [
-        1246.0,
-        463.5
+        1211.0,
+        407.5
       ],
       "anchor": "staging.enemy",
       "size": [
@@ -243,8 +243,8 @@
     },
     "service.enemy": {
       "at": [
-        1208.5,
-        461.0
+        1163.0,
+        407.5
       ],
       "anchor": "service.enemy",
       "size": [
@@ -254,8 +254,8 @@
     },
     "air.enemy": {
       "at": [
-        1261.0,
-        467.5
+        1140.0,
+        363.5
       ],
       "anchor": "air.enemy",
       "size": [
@@ -265,8 +265,8 @@
     },
     "spawn.infantry.player": {
       "at": [
-        938.5,
-        416.5
+        1024.5,
+        363.5
       ],
       "anchor": "spawn.infantry.player",
       "size": [
@@ -276,8 +276,8 @@
     },
     "spawn.infantry.enemy": {
       "at": [
-        1188.5,
-        416.5
+        1170.0,
+        363.5
       ],
       "anchor": "spawn.infantry.enemy",
       "size": [
@@ -287,8 +287,8 @@
     },
     "spawn.vehicle.player": {
       "at": [
-        932.5,
-        427.0
+        1019.5,
+        346.0
       ],
       "anchor": "spawn.vehicle.player",
       "size": [
@@ -298,8 +298,8 @@
     },
     "spawn.vehicle.enemy": {
       "at": [
-        1178.5,
-        427.0
+        1189.5,
+        340.0
       ],
       "anchor": "spawn.vehicle.enemy",
       "size": [
@@ -309,8 +309,8 @@
     },
     "rally.player": {
       "at": [
-        938.5,
-        416.5
+        1019.5,
+        382.0
       ],
       "anchor": "rally.player",
       "size": [
@@ -320,8 +320,8 @@
     },
     "rally.enemy": {
       "at": [
-        1188.5,
-        416.5
+        1207.5,
+        363.0
       ],
       "anchor": "rally.enemy",
       "size": [
@@ -364,8 +364,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        1043.5,
-        406.0
+        1019.5,
+        334.0
       ],
       "size": [
         15,
@@ -378,8 +378,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        1024.5,
-        339.5
+        1072.5,
+        387.5
       ],
       "size": [
         25,
@@ -392,8 +392,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        1091.0,
-        361.0
+        1043.0,
+        337.0
       ],
       "size": [
         14,
@@ -406,8 +406,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        1021.5,
-        388.0
+        1093.5,
+        364.0
       ],
       "size": [
         19,
@@ -420,8 +420,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1024.5,
-        363.5
+        1043.0,
+        407.5
       ],
       "size": [
         3,
@@ -434,8 +434,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1043.0,
-        337.0
+        1067.0,
+        407.5
       ],
       "size": [
         3,
@@ -462,8 +462,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1019.0,
-        361.0
+        1020.0,
+        387.5
       ],
       "size": [
         3,
@@ -476,8 +476,8 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        1068.0,
-        387.5
+        1020.0,
+        459.5
       ],
       "size": [
         16,
@@ -532,7 +532,7 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1192.5,
+        1168.5,
         339.5
       ],
       "size": [
@@ -546,7 +546,7 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1139.0,
+        1115.0,
         385.0
       ],
       "size": [
@@ -560,8 +560,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1165.5,
-        364.0
+        1141.5,
+        388.0
       ],
       "size": [
         19,
@@ -603,7 +603,7 @@
       "faction": 2,
       "at": [
         1140.0,
-        363.5
+        459.5
       ],
       "size": [
         10,
@@ -616,8 +616,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1164.0,
-        339.5
+        1140.0,
+        363.5
       ],
       "size": [
         16,

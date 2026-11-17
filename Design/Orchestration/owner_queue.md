@@ -61,3 +61,4 @@ Nothing here blocks production.
 - Operations production starts once the first authored Skirmish mission of each objective type is accepted (was: after all 120). Codex read-only Operations readiness survey now.
 - Open for the owner: is a Windows PC available as a second Unity lane?
 - Answered 2026-11-17: a Windows PC is available as a second Unity lane. Lead prepares WINDOWS_LANE_PROMPT.md and a git-based job queue; the owner starts one session on the Windows checkout.
+- Decided 2026-11-17 (owner: "Yes, internal only"): authored missions may be made visible in the real Skirmish catalog on an internal candidate (missions/* branches only) so acceptance runs through the real menu. Never on main, never in a player-facing build; a mission that fails acceptance goes back to Planned. Replaces the earlier default that the harness uses a temporary library only.

@@ -3,9 +3,10 @@
 import argparse
 import csv
 from collections import Counter, defaultdict
-from datetime import date
+from datetime import date, datetime, timezone
 import io
 import math
+import json
 import os
 from pathlib import Path
 import re
@@ -365,6 +366,61 @@ def check_editor_and_hub(repo):
         raise RuntimeError('Unity Hub is not running')
 
 
+REQUEST_RELATIVE_PATH = Path('Temp/aria-queue/request.json')  # mirrors SkirmishAriaQueueRequest.RelativePath
+REUSE_EVIDENCE_SUFFIXES = ('', '.exit', '.dispatch.json', '.dispatch.cs')  # the wrapper's --reuse refuses any existing one
+
+
+def check_hub():
+    if not matching_processes('[U]nity Hub.app/Contents/MacOS/Unity Hub'):
+        raise RuntimeError('Unity Hub is not running')
+
+
+def check_reuse_log_is_new(log):
+    existing = [str(log) + suffix for suffix in REUSE_EVIDENCE_SUFFIXES if Path(str(log) + suffix).exists()]
+    if existing:
+        raise ValueError('--reuse needs a new log directory; refusing to touch prior evidence: ' + ', '.join(existing))
+
+
+def write_reuse_request(repo, queue, menu_journey, validation_library, now=None, request_id=None):
+    """Write the request an open Editor's RunAriaQueueAndExit reads (environment variables cannot reach it).
+
+    Atomic (temp file + replace) so the Editor never reads a half-written file. Returns (path, request_id)."""
+    import uuid
+    now = now or datetime.now(timezone.utc)
+    request_id = request_id or now.strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
+    request = {
+        'version': 1,
+        'requestId': request_id,
+        'project': str(repo),
+        'queue': str(queue),
+        'menuJourney': bool(menu_journey),
+        'validationLibrary': bool(validation_library),
+        'createdUtc': now.strftime('%Y-%m-%dT%H:%M:%SZ'),
+    }
+    path = repo / REQUEST_RELATIVE_PATH
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temp = path.with_name(path.name + '.tmp')
+    temp.write_text(json.dumps(request, indent=2) + '\n', encoding='utf-8')
+    os.replace(temp, path)
+    return path, request_id
+
+
+def drop_unconsumed_request(path, request_id):
+    """After the run: a request the Editor never consumed must not linger to be replayed. Returns True when removed."""
+    try:
+        if json.loads(path.read_text(encoding='utf-8')).get('requestId') != request_id:
+            return False
+        path.unlink()
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def reuse_command(repo, log, timeout):
+    return [str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--reuse', '--timeout', str(timeout), '--log', str(log),
+            '--', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit']
+
+
 def windows_command(repo, log, timeout, gui_licensing):
     version_file = repo / 'ProjectSettings/ProjectVersion.txt'
     match = re.search(r'^m_EditorVersion:\s*(\S+)', version_file.read_text(encoding='utf-8'), re.MULTILINE)
@@ -494,6 +550,14 @@ def main(argv=None):
     parser.add_argument('--gui-licensing', action='store_true',
                         help='kept for compatibility; Windows ARIA queues always pass -GuiLicensing')
     parser.add_argument('--no-table', action='store_true', help='Print results without writing the table')
+    parser.add_argument('--reuse', action='store_true',
+                        help='drive the project\'s already open Editor through the checked wrapper (invoke_unity_macos.sh --reuse) '
+                             'instead of launching one: the queue and --menu-journey/--validation-library travel in '
+                             'Temp/aria-queue/request.json, which RunAriaQueueAndExit reads. macOS only; needs a new --log-dir')
+    parser.add_argument('--validation-library', action='store_true',
+                        help='Editor-only: present Planned authored missions as launchable [VALIDATION] cards so --menu-journey '
+                             'can start them before publication (sets WARLINE_VALIDATION_LIBRARY=1; nothing is published; '
+                             'log line [SkirmishValidationLibrary] enabled=1 planned=<ids>)')
     parser.add_argument('--menu-journey', action='store_true',
                         help='start every job from the main menu through presented touch controls (sets WARLINE_MENU_JOURNEY=1); '
                              'the log shows [SkirmishMenuJourney] catalog=<id> result=Passed|Failed. Without the flag the '
@@ -519,6 +583,8 @@ def main(argv=None):
         parser.error('--jobs cannot be combined with --missions, --seeds or --locales')
     if args.jobs is None and not all(value is not None for value in trio):
         parser.error('Specify --jobs or all of --missions, --seeds and --locales')
+    if args.reuse and args.launcher != 'macos':
+        parser.error('--reuse is macOS only (it drives invoke_unity_macos.sh --reuse)')
     repo, log_dir = args.repo.resolve(), args.log_dir.resolve()
     try:
         try:
@@ -540,14 +606,30 @@ def main(argv=None):
         if not args.dry_run:
             if args.launcher == 'windows':
                 print('Windows Editor ownership check skipped; ensure this project is not open in Unity.', file=sys.stderr)
+            elif args.reuse:
+                check_hub()  # the open Editor itself is checked by the wrapper's dispatch; it never launches one
+                check_reuse_log_is_new(log)
             else:
                 check_editor_and_hub(repo)
-            log.unlink(missing_ok=True)
+            if not args.reuse:  # --reuse must keep any prior evidence; the wrapper itself refuses an existing log
+                log.unlink(missing_ok=True)
             env = os.environ.copy()
-            env['WARLINE_ARIA_QUEUE'] = str(queue)
-            if args.menu_journey:
-                env['WARLINE_MENU_JOURNEY'] = '1'
-            if args.launcher == 'windows':
+            if not args.reuse:  # environment cannot reach an open Editor; --reuse sends these in the request file
+                env['WARLINE_ARIA_QUEUE'] = str(queue)
+                if args.menu_journey:
+                    env['WARLINE_MENU_JOURNEY'] = '1'
+                if args.validation_library:
+                    env['WARLINE_VALIDATION_LIBRARY'] = '1'
+            if args.reuse:
+                request_path, request_id = write_reuse_request(repo, queue, args.menu_journey, args.validation_library)
+                try:
+                    result = subprocess.run(reuse_command(repo, log, args.timeout), env=env, cwd=repo)
+                finally:
+                    if drop_unconsumed_request(request_path, request_id):
+                        print(f'Editor never consumed {REQUEST_RELATIVE_PATH}; removed it', file=sys.stderr)
+                if result.returncode != 0:
+                    print(f'Reuse wrapper exited with code {result.returncode}', file=sys.stderr)
+            elif args.launcher == 'windows':
                 result = subprocess.run(windows_command(repo, log, args.timeout, args.gui_licensing), env=env, cwd=repo)
                 launch_failed = result.returncode != 0
                 if launch_failed:

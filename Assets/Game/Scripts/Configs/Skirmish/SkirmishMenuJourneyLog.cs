@@ -50,9 +50,12 @@ namespace Game.Configs
             return mismatches.Count == 0 ? null : "setupMismatch:" + string.Join(",", mismatches);
         }
 
-        public static string FormatPassed(string catalogId, IReadOnlyList<string> pathControls, int seed, string size, string difficulty) =>
+        /// <summary>validationCandidate marks a card that only the Editor validation library presented (still Planned in the shipped catalog).</summary>
+        public static string FormatPassed(string catalogId, IReadOnlyList<string> pathControls, int seed, string size, string difficulty,
+            bool validationCandidate = false) =>
             Marker + " catalog=" + catalogId + " result=Passed path=" + string.Join(">", pathControls) +
-            " seed=" + seed + " size=" + size + " difficulty=" + difficulty + " input=Touch matchStartedFromMenu=1";
+            " seed=" + seed + " size=" + size + " difficulty=" + difficulty + " input=Touch matchStartedFromMenu=1" +
+            (validationCandidate ? " validationCandidate=1 published=0" : "");
 
         public static string FormatFailed(string catalogId, int step, string reason) =>
             Marker + " catalog=" + catalogId + " result=Failed step=" + step + " reason=" + reason;

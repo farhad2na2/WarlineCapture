@@ -260,9 +260,11 @@ namespace Game.Editor
                 foreach (string variable in AriaQueueRefusedDiagnostics)
                     if (Environment.GetEnvironmentVariable(variable) == "1")
                         throw new InvalidOperationException("ARIA queue refuses diagnostic mode " + variable + "=1 (no ARIA rows).");
-                string path = Environment.GetEnvironmentVariable("WARLINE_ARIA_QUEUE");
+                // WARLINE_ARIA_QUEUE wins; otherwise the --reuse request file (also carries the menu-journey/validation flags).
+                string path = ResolveAriaQueuePath();
                 if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
-                    throw new FileNotFoundException("WARLINE_ARIA_QUEUE must name an existing queue file.", path);
+                    throw new FileNotFoundException("WARLINE_ARIA_QUEUE must name an existing queue file, or " +
+                        SkirmishAriaQueueRequest.RelativePath + " must request one.", path);
                 path = Path.GetFullPath(path);
                 List<string> jobs = ParseAriaQueue(File.ReadAllLines(path));
                 if (jobs.Count < 1 || jobs.Count > AriaQueueMaximumJobs)
@@ -290,6 +292,8 @@ namespace Game.Editor
                 SessionState.SetBool(AriaQueueInFlightKey, false);
                 SessionState.SetBool(AriaQueuePendingKey, true);
                 SessionState.SetBool(AriaQueueActiveKey, true);
+                // Reused Editor only (ExistingEditorValidation.IsRunning): no domain reload, refresh suspended.
+                SuspendRefreshForReusedQueue();
                 Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT", "1");
                 AppendAriaQueueResult("job,catalog,seed,locale,result,recorded,counted_win,seconds", true);
                 Debug.Log(AriaQueueLog + " result=Started jobs=" + jobs.Count + " queue=" + path + " sha256=" + sourceHash);
@@ -301,7 +305,17 @@ namespace Game.Editor
             {
                 Debug.LogError(AriaQueueLog + " result=Failed reason=startup error=" + error);
                 SessionState.SetBool(AriaQueueActiveKey, false);
-                if (!EditorApplication.isPlayingOrWillChangePlaymode) { QueuePhase("exit"); EditorApplication.Exit(2); }
+                ClearAriaQueueRequestEnvironment();
+                RestoreReusedQueueEditorOptions();
+                DisposeHarnessGenericLibrary();
+                SkirmishValidationLibrary.Disable();
+                if (!EditorApplication.isPlayingOrWillChangePlaymode)
+                {
+                    QueuePhase("exit");
+                    // A reused Editor belongs to the user: report the failure, never close it.
+                    if (ExistingEditorValidation.IsRunning) MissionEditorValidationExit.Complete(false);
+                    else EditorApplication.Exit(2);
+                }
             }
         }
 
@@ -355,6 +369,7 @@ namespace Game.Editor
             {
                 EditorApplication.update -= AriaQueueUpdate;
                 DisposeHarnessGenericLibrary();
+                SkirmishValidationLibrary.Disable();
                 return;
             }
             bool idle = !EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isCompiling &&
@@ -404,6 +419,8 @@ namespace Game.Editor
                 " seed=" + fields[1] + " locale=" + fields[2]);
             try
             {
+                EnsureReusedQueueEditorOptions();
+                EnsureValidationLibrary("queueDispatch");
                 int jobSeed = int.Parse(fields[1], NumberStyles.Integer, CultureInfo.InvariantCulture);
                 // Validate before touching Editor state; an unsupported job is an Abort, not a queue stop.
                 if (!TryCreateSelectedPayload(fields[0], jobSeed, fields[2], out _, out string payloadError))
@@ -492,6 +509,11 @@ namespace Game.Editor
             SessionState.SetBool(AriaQueuePendingKey, false);
             SessionState.SetBool(AriaQueueInFlightKey, false);
             EditorApplication.update -= AriaQueueUpdate;
+            // AriaQueueUpdate is unhooked above, so release the Editor catalog slots here: a reused Editor must not keep them.
+            DisposeHarnessGenericLibrary();
+            SkirmishValidationLibrary.Disable();
+            ClearAriaQueueRequestEnvironment();
+            RestoreReusedQueueEditorOptions();
             string endHash = string.Empty;
             try
             {

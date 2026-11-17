@@ -29,8 +29,19 @@ namespace Game.Configs
         public int ContentVersion;
         public string ReadinessManifestId;
 
+        /// <summary>
+        /// ReadinessManifestId prefix of a row that is visible only so the real menu path can be exercised while the
+        /// mission is under acceptance (internal missions/* branches; nothing ships from them). Such a row is playable
+        /// but is not a published mission: it does not count toward the published playable total.
+        /// </summary>
+        public const string ValidationVisiblePrefix = "validation.visible.";
+
         public bool IsPlayable =>
             Status == SkirmishBattleCatalogStatus.Playable && PlayableScenarioIndex >= 0;
+
+        public bool IsValidationVisible =>
+            IsPlayable && ReadinessManifestId != null &&
+            ReadinessManifestId.StartsWith(ValidationVisiblePrefix, StringComparison.Ordinal);
     }
 
     [CreateAssetMenu(menuName = "Game/Skirmish/Battle Catalog")]
@@ -120,6 +131,16 @@ namespace Game.Configs
             int count = 0;
             for (int i = 0; i < entries.Length; i++)
                 if (entries[i].IsPlayable)
+                    count++;
+            return count;
+        }
+
+        /// <summary>Playable rows that are published missions: validation-visible rows are excluded (see IsValidationVisible).</summary>
+        public int CountPublishedPlayable()
+        {
+            int count = 0;
+            for (int i = 0; i < entries.Length; i++)
+                if (entries[i].IsPlayable && !entries[i].IsValidationVisible)
                     count++;
             return count;
         }

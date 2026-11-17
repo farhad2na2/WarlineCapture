@@ -555,6 +555,7 @@ namespace Game.Editor
             SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
             if (GenericMenuJourney) ResetMenuJourneyState();
+            EnsureValidationLibrary("launchCatalog");
             finishingEvidence = false;
             terminalSnapshotValid = terminalProbeActive = false;
             terminalInterventions = terminalUnexpectedSamples = 0;
@@ -777,6 +778,7 @@ namespace Game.Editor
                     {
                         playingSince = now;
                         SessionState.SetFloat(PlayingSinceKey, (float)playingSince);
+                        LogMatchSceneInventory(); // once per match (playingSince is reset in LaunchCatalog)
                     }
 
                     // Expanded spawn marks Playing before LoadingGate arms simulation.

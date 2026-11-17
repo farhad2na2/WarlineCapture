@@ -216,7 +216,7 @@ namespace Game.Editor
                 "Legacy fixed Scenario1 control must be removed.");
             var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(
                 SkirmishBattleCatalogBuilder.AssetPath);
-            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 6,
+            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPublishedPlayable() == 6,
                 "Battle catalog must keep 120 entries with six player playables.");
             Check(catalog.TryGet(SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, out var s002) &&
                   s002.IsPlayable &&

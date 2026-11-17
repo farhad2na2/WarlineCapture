@@ -125,7 +125,9 @@ namespace Game.UI.Runtime
                 button.gameObject.SetActive(true);
                 SkirmishBattleCatalogEntry entry = _visibleEntries[i];
                 bool isSelected = string.Equals(entry.ScenarioId, _selectedScenarioId, StringComparison.Ordinal);
-                string status = entry.IsPlayable
+                string status = entry.IsValidationVisible
+                    ? (isSelected ? "VALIDATION · SELECTED" : "VALIDATION CANDIDATE")
+                    : entry.IsPlayable
                     ? (isSelected
                         ? (fa ? "آماده · انتخاب‌شده" : "SELECTED")
                         : (fa ? "آماده · انتخاب" : "AVAILABLE"))

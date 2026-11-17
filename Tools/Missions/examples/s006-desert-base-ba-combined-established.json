@@ -98,6 +98,62 @@
     "sweep.east": [
       1316.31,
       598.8
+    ],
+    "s006.f1.refinery": [
+      924.5,
+      607.5
+    ],
+    "s006.f1.fabrication_depot": [
+      969.5,
+      728.0
+    ],
+    "s006.f1.fuel_bladder": [
+      967.0,
+      677.0
+    ],
+    "s006.f1.satellite_dish": [
+      945.5,
+      608.0
+    ],
+    "s006.f1.ground_staging": [
+      943.0,
+      699.5
+    ],
+    "s006.f1.oil_pump": [
+      967.5,
+      578.0
+    ],
+    "s006.f1.watchtower": [
+      847.0,
+      629.0
+    ],
+    "s006.f1.watchtower.approach": [
+      847.0,
+      603.5
+    ],
+    "s006.f2.refinery": [
+      1428.5,
+      607.5
+    ],
+    "s006.f2.fuel_bladder": [
+      1375.0,
+      677.0
+    ],
+    "s006.f2.ground_staging": [
+      1279.0,
+      603.5
+    ],
+    "s006.f2.oil_pump": [
+      1519.5,
+      674.0
+    ],
+    "s006.f2.watchtower": [
+      1279.0,
+      581.0
+    ],
+    "s006.f2.watchtower.approach": [
+      1279.0,
+      723.5
     ]
   },
   "pads": {
@@ -227,5 +283,204 @@
       3.0,
       4.0
     ]
-  }
+  },
+  "instance_pads": [
+    {
+      "id": "s006.f1.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        943.0,
+        699.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "s006.f1.ground_staging"
+    },
+    {
+      "id": "s006.f1.oil_pump",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        967.5,
+        578.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "s006.f1.oil_pump"
+    },
+    {
+      "id": "s006.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        924.5,
+        607.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s006.f1.refinery"
+    },
+    {
+      "id": "s006.f1.fuel_bladder",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        967.0,
+        677.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s006.f1.fuel_bladder"
+    },
+    {
+      "id": "s006.f1.fabrication_depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        969.5,
+        728.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s006.f1.fabrication_depot"
+    },
+    {
+      "id": "s006.f1.watchtower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        847.0,
+        629.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s006.f1.watchtower"
+    },
+    {
+      "id": "s006.f1.watchtower.approach",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        847.0,
+        603.5
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s006.f1.watchtower.approach"
+    },
+    {
+      "id": "s006.f1.satellite_dish",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        945.5,
+        608.0
+      ],
+      "size": [
+        10,
+        10
+      ],
+      "anchor": "s006.f1.satellite_dish"
+    },
+    {
+      "id": "s006.f2.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        1279.0,
+        603.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "s006.f2.ground_staging"
+    },
+    {
+      "id": "s006.f2.oil_pump",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1519.5,
+        674.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "s006.f2.oil_pump"
+    },
+    {
+      "id": "s006.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1428.5,
+        607.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s006.f2.refinery"
+    },
+    {
+      "id": "s006.f2.fuel_bladder",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1375.0,
+        677.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s006.f2.fuel_bladder"
+    },
+    {
+      "id": "s006.f2.watchtower",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1279.0,
+        581.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s006.f2.watchtower"
+    },
+    {
+      "id": "s006.f2.watchtower.approach",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1279.0,
+        723.5
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s006.f2.watchtower.approach"
+    }
+  ],
+  "pad_slack_m": 12
 }

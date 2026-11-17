@@ -13,11 +13,1803 @@ MonoBehaviour:
   m_Name: SkirmishLayout_S026
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMapLayoutConfig
   declaredConfigurations: []
-  structureInstancePads: []
+  structureInstancePads:
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 1
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 1
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 1
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 1
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 2
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 2
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 2
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 2
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 3
+    DifficultyId: 1
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 3
+    DifficultyId: 2
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 3
+    DifficultyId: 3
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    PadId: pad.skirmish.s026.d_1_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_player
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.barracks
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fabrication_depot
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.fuel_bladder
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.ground_staging
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.helipad
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.air_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.oil_pump
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.refinery
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.refinery.module
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    PadId: pad.skirmish.s026.d_2_refinery_module_0
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.satellite_dish
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.service_enemy
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 2
+    StructureId: building.watchtower.approach
+    InstanceOrdinal: 0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    PadId: pad.skirmish.s026.i_candidate_structure_standard_15
   layoutId: layout.skirmish.s026
   operationMapId: opmap.skirmish.city_crossroads
   contentVersion: 1
-  contentHash: authored.s026.b381942d7b6646ac
+  contentHash: authored.s026.aeb92e52b37bb341
   worldWidthMetres: 501.1962
   worldDepthMetres: 209.03108
   originX: -538.0491
@@ -348,6 +2140,18 @@ MonoBehaviour:
     NormalizedV: 0.6609647
     WorldX: -470.25784
     WorldZ: 1131.2258
+  - AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    RoleId: instance.d_1_refinery_module_0
+    NormalizedU: 0.16644445
+    NormalizedV: 0.60386765
+    WorldX: -454.62775
+    WorldZ: 1119.2908
+  - AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    RoleId: instance.d_2_refinery_module_0
+    NormalizedU: 0.8832839
+    NormalizedV: 0.7164634
+    WorldX: -95.35055
+    WorldZ: 1142.8268
   routes:
   - RouteId: route.skirmish.s026.main
     WaypointAnchorIds:
@@ -537,6 +2341,204 @@ MonoBehaviour:
     WidthMetres: 20
     DepthMetres: 14
     FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_0
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_0
+    RoleId: instance.candidate.structure.standard.0
+    Kind: 1
+    CenterX: -446.52698
+    CenterZ: 1109.389
+    WidthMetres: 28
+    DepthMetres: 15
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_1
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_1
+    RoleId: instance.candidate.structure.standard.1
+    Kind: 1
+    CenterX: -107.749725
+    CenterZ: 1150.9458
+    WidthMetres: 28
+    DepthMetres: 15
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_2
+    AnchorId: anchor.skirmish.s026.staging_player
+    RoleId: instance.candidate.structure.standard.2
+    Kind: 2
+    CenterX: -470.25784
+    CenterZ: 1131.2258
+    WidthMetres: 14
+    DepthMetres: 7
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_3
+    AnchorId: anchor.skirmish.s026.staging_enemy
+    RoleId: instance.candidate.structure.standard.3
+    Kind: 2
+    CenterX: -97.86188
+    CenterZ: 1117.912
+    WidthMetres: 14
+    DepthMetres: 7
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_4
+    AnchorId: anchor.skirmish.s026.economy_player
+    RoleId: instance.candidate.structure.standard.4
+    Kind: 7
+    CenterX: -478.6277
+    CenterZ: 1119.2908
+    WidthMetres: 15
+    DepthMetres: 4
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_5
+    AnchorId: anchor.skirmish.s026.economy_enemy
+    RoleId: instance.candidate.structure.standard.5
+    Kind: 7
+    CenterX: -119.35055
+    CenterZ: 1142.8267
+    WidthMetres: 15
+    DepthMetres: 4
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_6
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_6
+    RoleId: instance.candidate.structure.standard.6
+    Kind: 7
+    CenterX: -459.20016
+    CenterZ: 1130.237
+    WidthMetres: 25
+    DepthMetres: 15
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_7
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_7
+    RoleId: instance.candidate.structure.standard.7
+    Kind: 7
+    CenterX: -111.70487
+    CenterZ: 1124.6664
+    WidthMetres: 25
+    DepthMetres: 15
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_8
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_8
+    RoleId: instance.candidate.structure.standard.8
+    Kind: 7
+    CenterX: -459.1584
+    CenterZ: 1110.2246
+    WidthMetres: 14
+    DepthMetres: 10
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_9
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_9
+    RoleId: instance.candidate.structure.standard.9
+    Kind: 7
+    CenterX: -90.327614
+    CenterZ: 1153.1184
+    WidthMetres: 14
+    DepthMetres: 10
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_10
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_10
+    RoleId: instance.candidate.structure.standard.10
+    Kind: 7
+    CenterX: -442.7529
+    CenterZ: 1132.6324
+    WidthMetres: 19
+    DepthMetres: 16
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_11
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_11
+    RoleId: instance.candidate.structure.standard.11
+    Kind: 7
+    CenterX: -86.678856
+    CenterZ: 1110.7399
+    WidthMetres: 19
+    DepthMetres: 16
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_12
+    AnchorId: anchor.skirmish.s026.service_player
+    RoleId: instance.candidate.structure.standard.12
+    Kind: 8
+    CenterX: -471.1352
+    CenterZ: 1120.6555
+    WidthMetres: 3
+    DepthMetres: 4
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_13
+    AnchorId: anchor.skirmish.s026.service_enemy
+    RoleId: instance.candidate.structure.standard.13
+    Kind: 8
+    CenterX: -98.37716
+    CenterZ: 1149.3164
+    WidthMetres: 3
+    DepthMetres: 4
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_14
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_14
+    RoleId: instance.candidate.structure.standard.14
+    Kind: 8
+    CenterX: -466.23306
+    CenterZ: 1142.1024
+    WidthMetres: 3
+    DepthMetres: 4
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_15
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_15
+    RoleId: instance.candidate.structure.standard.15
+    Kind: 8
+    CenterX: -102.22089
+    CenterZ: 1123.5244
+    WidthMetres: 3
+    DepthMetres: 4
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_16
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_16
+    RoleId: instance.candidate.structure.standard.16
+    Kind: 8
+    CenterX: -431.08246
+    CenterZ: 1125.3489
+    WidthMetres: 10
+    DepthMetres: 10
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_17
+    AnchorId: anchor.skirmish.s026.candidate_structure_standard_17
+    RoleId: instance.candidate.structure.standard.17
+    Kind: 8
+    CenterX: -68.852875
+    CenterZ: 1134.8746
+    WidthMetres: 10
+    DepthMetres: 10
+    FactionId: 2
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_18
+    AnchorId: anchor.skirmish.s026.air_player
+    RoleId: instance.candidate.structure.standard.18
+    Kind: 6
+    CenterX: -475.68918
+    CenterZ: 1147.8541
+    WidthMetres: 16
+    DepthMetres: 15
+    FactionId: 1
+  - PadId: pad.skirmish.s026.i_candidate_structure_standard_19
+    AnchorId: anchor.skirmish.s026.air_enemy
+    RoleId: instance.candidate.structure.standard.19
+    Kind: 6
+    CenterX: -127.99893
+    CenterZ: 1120.6974
+    WidthMetres: 16
+    DepthMetres: 15
+    FactionId: 2
+  - PadId: pad.skirmish.s026.d_1_refinery_module_0
+    AnchorId: anchor.skirmish.s026.instance_d_1_refinery_module_0
+    RoleId: instance.d_1_refinery_module_0
+    Kind: 7
+    CenterX: -454.62775
+    CenterZ: 1119.2908
+    WidthMetres: 25
+    DepthMetres: 15
+    FactionId: 1
+  - PadId: pad.skirmish.s026.d_2_refinery_module_0
+    AnchorId: anchor.skirmish.s026.instance_d_2_refinery_module_0
+    RoleId: instance.d_2_refinery_module_0
+    Kind: 7
+    CenterX: -95.35055
+    CenterZ: 1142.8268
+    WidthMetres: 25
+    DepthMetres: 15
+    FactionId: 2
   worldBinding:
     OriginX: 950.0938
     OriginZ: 769.0896

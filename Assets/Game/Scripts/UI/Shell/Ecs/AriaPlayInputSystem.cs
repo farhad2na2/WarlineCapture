@@ -27,6 +27,28 @@ namespace Game.UI.Shell.Ecs
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             Debug.Log($"[AriaS002Trace] event={eventName} frame={v.Frame} time={v.Time} phase={session.Phase} reason={session.StopReason} intent={p.Intent} kind={observation.Kind} target={session.TargetId} offered={observation.TargetId} goal={observation.GoalId} attempts={session.Attempts} actions={session.Actions} screen={session.Target} drag={session.Drag} dragEnd={session.DragEnd} lastProgress={session.LastProgressAt} objectiveProgress={session.LastObjectiveProgressAt} planProgress={p.LastProgressAt} infantry={v.Infantry} playerHealth={v.PlayerHealth} enemyHealth={v.EnemyHealth} distanceKnown={v.AssaultDistanceVisible} distance={v.NearestFriendlyObjectiveDistance} selected={v.SelectedCount} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} groups={v.ExpandedTotalGroups} group0={v.ExpandedGroup0} group1={v.ExpandedGroup1} group2={v.ExpandedGroup2} group3={v.ExpandedGroup3} group4={v.ExpandedGroup4} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} inspectStage={p.AssaultInspectStage} mapOpen={v.MapOpen} mapOwned={v.AssaultMap.ExpectedIdentity} mapId={v.AssaultMap.Identity} expectedMapId={p.AssaultInspectMapIdentity} closeAvailable={v.CloseMap.Available} precisionStage={p.PrecisionStage} precisionGroup={p.PrecisionGroup} precisionAttempts={p.PrecisionAttempts} receiptPresented={v.PrecisionAttack.Presented} receiptGroup={v.PrecisionAttack.GroupId} receiptAccepted={v.PrecisionAttack.AcceptedMembers} receiptSource={v.PrecisionAttack.SourceMembers} goalKind={gestureGoal.Kind} goalKnown={gestureGoal.Known} goalX={gestureGoal.ObjectiveX} goalZ={gestureGoal.ObjectiveZ}");
         }
+        private int tracedHomeDefenseStage, tracedHomeDefenseReason;
+        // Evidence only: reports home-defence transitions of the planner state.
+        private void TraceHomeDefense()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = 0; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (!v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            int priorStage = tracedHomeDefenseStage, priorReason = tracedHomeDefenseReason;
+            tracedHomeDefenseStage = p.HomeDefenseStage; tracedHomeDefenseReason = p.HomeDefenseReason;
+            string state = priorStage == 0 && p.HomeDefenseStage != 0 ? "triggered"
+                : priorStage != 5 && p.HomeDefenseStage == 5 ? "ordered"
+                : priorReason != 0 && p.HomeDefenseReason == 0 ? "cleared" : null;
+            if (state == null) return;
+            int reasonCode = p.HomeDefenseReason != 0 ? p.HomeDefenseReason : priorReason;
+            string reason = reasonCode == 2 ? "baseDamage" : reasonCode == 1 ? "minimap" : "none";
+            string group = p.HomeDefenseReason == 0 ? "none" : p.HomeDefenseScope == 1 ? (p.HomeDefenseSlot - 1).ToString() : "all";
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} t={matchSeconds:F2}");
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -86,6 +108,7 @@ namespace Game.UI.Shell.Ecs
         protected override void OnUpdate()
         {
             bool found = false;
+            TraceHomeDefense();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

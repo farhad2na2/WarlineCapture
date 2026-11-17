@@ -58,6 +58,8 @@ namespace Game.UI.Contracts
         public int TankersCommitted;
         public bool CombinedArmsField, RocketeerRecruitPending;
         public bool PresentedHomeThreat;
+        // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
+        public AriaTouchTarget HomeGround;
         public int OwnStructureAttackUnits;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;

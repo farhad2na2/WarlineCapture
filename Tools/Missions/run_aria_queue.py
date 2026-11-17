@@ -237,6 +237,25 @@ def check_editor_and_hub(repo):
         raise RuntimeError('Unity Hub is not running')
 
 
+def windows_command(repo, log, timeout, gui_licensing):
+    version_file = repo / 'ProjectSettings/ProjectVersion.txt'
+    match = re.search(r'^m_EditorVersion:\s*(\S+)', version_file.read_text(encoding='utf-8'), re.MULTILINE)
+    if not match:
+        raise ValueError('ProjectVersion.txt has no m_EditorVersion')
+    powershell = ['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File']
+    resolved = subprocess.run(powershell + [str(repo / 'Tools/CI/ResolveUnityEditor.ps1'),
+                              '-UnityVersion', match.group(1)], capture_output=True, text=True)
+    if resolved.returncode or not resolved.stdout.strip():
+        raise RuntimeError(f'Unity Editor resolution failed: {resolved.stderr.strip()}')
+    command = powershell + [str(repo / 'Tools/CI/InvokeUnity.ps1'), '-UnityExe', resolved.stdout.strip(),
+                            '-ProjectPath', str(repo), '-LogFile', str(log),
+                            '-TimeoutSeconds', str(timeout)]
+    # ARIA plays through the real UI and cannot run headless; InvokeUnity.ps1 adds -batchmode unless
+    # -GuiLicensing is passed, so ARIA queues always use GUI mode (gui_licensing kept for compatibility).
+    command.append('-GuiLicensing')
+    return command + ['-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit']
+
+
 def comma_list(value):
     items = [item.strip() for item in value.split(',')]
     if not all(items):
@@ -276,6 +295,11 @@ def main(argv=None):
     parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--table', type=Path, default=Path('Design/Orchestration/missions.csv'))
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--launcher', choices=('macos', 'windows'),
+                        default='windows' if sys.platform == 'win32' else 'macos')
+    parser.add_argument('--gui-licensing', action='store_true',
+                        help='kept for compatibility; Windows ARIA queues always pass -GuiLicensing')
+    parser.add_argument('--no-table', action='store_true', help='Print results without writing the table')
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
     if args.rescan:
@@ -290,7 +314,7 @@ def main(argv=None):
             for (number, total), entry in evidence.items():
                 print(f"job={number}/{total} catalog={entry['mission']} seed={entry['seed']} locale={entry['locale']} " +
                       ' '.join(f"{key}={entry[key]}" for key in COLUMNS[-4:]))
-            if args.write:
+            if args.write and not args.no_table:
                 expected = [(e['mission'], e['seed'], e['locale']) for e in evidence.values()]
                 lookup = {(e['mission'], e['seed'], e['locale']): e for e in evidence.values()}
                 update_table(repo / args.table, parsed, expected, args.rescan, evidence=lookup)
@@ -309,7 +333,11 @@ def main(argv=None):
         parser.error('Specify --jobs or all of --missions, --seeds and --locales')
     repo, log_dir = args.repo.resolve(), args.log_dir.resolve()
     try:
-        if os.path.commonpath((str(repo), str(log_dir))) == str(repo):
+        try:
+            common = os.path.commonpath((str(repo), str(log_dir)))
+        except ValueError:  # Different Windows drives cannot share a directory.
+            common = None
+        if common is not None and os.path.normcase(common) == os.path.normcase(str(repo)):
             raise ValueError('Log directory must be outside the repository')
         if args.timeout <= 0:
             raise ValueError('Timeout must be positive')
@@ -320,12 +348,22 @@ def main(argv=None):
         if args.jobs is not None and args.dry_run:
             csv.writer(sys.stdout, lineterminator='\n').writerows(jobs)
             return 0
+        launch_failed = False
         if not args.dry_run:
-            check_editor_and_hub(repo)
+            if args.launcher == 'windows':
+                print('Windows Editor ownership check skipped; ensure this project is not open in Unity.', file=sys.stderr)
+            else:
+                check_editor_and_hub(repo)
             log.unlink(missing_ok=True)
             env = os.environ.copy()
             env['WARLINE_ARIA_QUEUE'] = str(queue)
-            subprocess.run([str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--timeout', str(args.timeout),
+            if args.launcher == 'windows':
+                result = subprocess.run(windows_command(repo, log, args.timeout, args.gui_licensing), env=env, cwd=repo)
+                launch_failed = result.returncode != 0
+                if launch_failed:
+                    print(f'Windows Unity wrapper failed with exit code {result.returncode}', file=sys.stderr)
+            else:
+                subprocess.run([str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--timeout', str(args.timeout),
                             '--log', str(log), '--', '-executeMethod',
                             'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'], env=env, cwd=repo)
         with log.open(encoding='utf-8', errors='replace') as stream:
@@ -333,14 +371,19 @@ def main(argv=None):
         with log.open(encoding='utf-8', errors='replace') as stream:
             parsed, completed = parse_log_stream(stream)
         lookup = {(e['mission'], e['seed'], e['locale']): e for e in evidence.values()}
-        changed = update_table(repo / args.table, parsed, jobs, log, evidence=lookup)
+        if args.no_table:
+            for mission, seed, locale, result, seconds in parsed:
+                print(f'catalog={mission} seed={seed} locale={locale} result={result} seconds={seconds}')
+            changed = 0
+        else:
+            changed = update_table(repo / args.table, parsed, jobs, log, evidence=lookup)
         print(f'Queue: {len(jobs)} jobs; parsed: {len(parsed)}; missions updated: {changed}')
         if completed:
             total, recorded, wins = completed
             print(f'Completed: jobs={total} recorded={recorded} wins={wins}')
         else:
             print('Completed marker missing')
-        return 0 if completed and completed[0] == completed[1] else 1
+        return 0 if not launch_failed and completed and completed[0] == completed[1] else 1
     except (OSError, ValueError, csv.Error, RuntimeError) as exc:
         print(f'Error: {exc}', file=sys.stderr)
         return 1

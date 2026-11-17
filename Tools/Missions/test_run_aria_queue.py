@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 from Tools.Missions import run_aria_queue as runner
 
@@ -28,7 +29,7 @@ class QueueTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
 
     def test_job_order_and_queue_contents(self):
         jobs = runner.job_list(['S002', 'S003'], ['1', '2'], ['en', 'fa-IR'])
@@ -41,6 +42,75 @@ class QueueTests(unittest.TestCase):
         queue = self.root / 'queue.csv'
         runner.write_queue(queue, jobs)
         self.assertEqual(queue.read_bytes(), b'S002,1,en\nS002,1,fa-IR\nS002,2,en\nS002,2,fa-IR\nS003,1,en\nS003,1,fa-IR\nS003,2,en\nS003,2,fa-IR\n')
+
+    def test_launcher_commands_and_no_table(self):
+        repo = self.root / 'repo'
+        (repo / 'ProjectSettings').mkdir(parents=True)
+        (repo / 'ProjectSettings/ProjectVersion.txt').write_text('m_EditorVersion: 6000.5.2f1\n')
+        logs = self.root / 'logs'
+        table = repo / 'missions.csv'
+        table.write_text('unchanged')
+        common = ['--jobs', 'S002:1:en,S002:2:en', '--repo', str(repo),
+                  '--log-dir', str(logs), '--table', 'missions.csv', '--no-table', '--timeout', '123']
+        fixture = ('[SkirmishAriaQueue] job=1/2 catalog=S002 seed=1 locale=en result=Victory seconds=5\n'
+                   '[SkirmishAriaQueue] result=Completed jobs=2 recorded=2 wins=2\n')
+        for launcher in ('macos', 'windows'):
+            calls = []
+            def run(command, **kwargs):
+                calls.append((command, kwargs))
+                if 'ResolveUnityEditor.ps1' in command[5]:
+                    return subprocess.CompletedProcess(command, 0, 'C:\\Unity\\Unity.exe\n', '')
+                (logs / 'unity.log').write_text(fixture)
+                return subprocess.CompletedProcess(command, 0)
+            with self.subTest(launcher=launcher), mock.patch.object(runner.subprocess, 'run', side_effect=run), \
+                 mock.patch.object(runner, 'check_editor_and_hub'), mock.patch('sys.stdout', new_callable=io.StringIO) as out:
+                self.assertEqual(runner.main(common + ['--launcher', launcher] +
+                                             (['--gui-licensing'] if launcher == 'windows' else [])), 0)
+                self.assertIn('catalog=S002 seed=1 locale=en result=Victory', out.getvalue())
+            self.assertEqual(table.read_text(), 'unchanged')
+            command, kwargs = calls[-1]
+            self.assertEqual(kwargs['env']['WARLINE_ARIA_QUEUE'], str(logs / 'queue.csv'))
+            self.assertEqual(kwargs['cwd'], repo)
+            if launcher == 'macos':
+                self.assertEqual(command, [str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--timeout', '123',
+                    '--log', str(logs / 'unity.log'), '--', '-executeMethod',
+                    'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'])
+            else:
+                self.assertEqual(calls[0][0], ['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+                    str(repo / 'Tools/CI/ResolveUnityEditor.ps1'), '-UnityVersion', '6000.5.2f1'])
+                self.assertEqual(command, ['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
+                    str(repo / 'Tools/CI/InvokeUnity.ps1'), '-UnityExe', 'C:\\Unity\\Unity.exe',
+                    '-ProjectPath', str(repo), '-LogFile', str(logs / 'unity.log'), '-TimeoutSeconds', '123',
+                    '-GuiLicensing', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'])
+
+    def test_windows_failures_and_always_gui(self):
+        repo = self.root / 'repo'
+        (repo / 'ProjectSettings').mkdir(parents=True)
+        (repo / 'ProjectSettings/ProjectVersion.txt').write_text('m_EditorVersion: 6000.5.2f1\n')
+        logs = self.root / 'logs'
+        def run(command, **kwargs):
+            if 'ResolveUnityEditor.ps1' in command[5]:
+                return subprocess.CompletedProcess(command, 0, 'editor.exe\n', '')
+            self.assertIn('-GuiLicensing', command)  # ARIA never runs headless
+            (logs / 'unity.log').write_text('[SkirmishAriaQueue] result=Completed jobs=1 recorded=1 wins=1\n')
+            return subprocess.CompletedProcess(command, 124)
+        with mock.patch.object(runner.subprocess, 'run', side_effect=run):
+            self.assertEqual(runner.main(['--launcher', 'windows', '--jobs', 'S002:1:en', '--repo', str(repo),
+                                          '--log-dir', str(logs), '--no-table']), 1)
+
+        def missing_marker(command, **kwargs):
+            if 'ResolveUnityEditor.ps1' in command[5]:
+                return subprocess.CompletedProcess(command, 0, 'editor.exe\n', '')
+            (logs / 'unity.log').write_text('no completion marker\n')
+            return subprocess.CompletedProcess(command, 0)
+        with mock.patch.object(runner.subprocess, 'run', side_effect=missing_marker):
+            self.assertEqual(runner.main(['--launcher', 'windows', '--jobs', 'S002:1:en', '--repo', str(repo),
+                                          '--log-dir', str(logs), '--no-table']), 1)
+
+    def test_log_directory_on_another_drive(self):
+        with mock.patch.object(runner.os.path, 'commonpath', side_effect=ValueError('different drives')):
+            self.assertEqual(runner.main(['--jobs', 'S002:1:en', '--repo', str(self.root / 'repo'),
+                                          '--log-dir', str(self.root / 'logs'), '--dry-run']), 0)
 
     def test_explicit_jobs_and_dry_run_order(self):
         spec = 'S002:130365:en,S006:130370:en,S002:130365:fa-IR'
@@ -170,6 +240,8 @@ class QueueTests(unittest.TestCase):
         table.write_text(original)
         args = [sys.executable, '-B', str(Path(runner.__file__)), '--rescan', str(log), '--repo', str(self.root), '--table', 'missions.csv']
         self.assertEqual(subprocess.run(args, capture_output=True).returncode, 0)
+        self.assertEqual(table.read_text(), original)
+        self.assertEqual(subprocess.run(args + ['--write', '--no-table'], capture_output=True).returncode, 0)
         self.assertEqual(table.read_text(), original)
         self.assertEqual(subprocess.run(args + ['--write'], capture_output=True).returncode, 0)
         with table.open() as stream:

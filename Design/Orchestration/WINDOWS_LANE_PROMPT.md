@@ -32,7 +32,7 @@ Licensing recovery ladder. Do not declare the lane blocked because licensing fai
 3. If that fails, stop only the verified stale `Unity.Licensing.Client` process. First re-check its executable path, start time and command line, and that no Unity Editor is active. Do not restart Hub, Package Manager or other processes.
 4. After each step, rerun the same wrapper with its explicit log and timeout. Never weaken the pass-marker check.
 5. If it still fails, search current official Unity documentation, release notes and support for one narrow workaround. Record the sources and the exact action.
-6. If Hub is healthy but the Editor's generic pipe still refuses it, rerun the same wrapper without `-GuiLicensing`.
+6. If Hub is healthy but the Editor's generic pipe still refuses it, rerun the same wrapper without `-GuiLicensing` — for the compile check ONLY. ARIA queues can never run without `-GuiLicensing`: without it `InvokeUnity.ps1` adds `-batchmode`, and ARIA cannot play headless. If an ARIA queue cannot license in GUI mode, stop and report.
 Never launch `Unity.Licensing.Client` by hand from an elevated shell. Never invoke the Unity executable directly.
 
 Disk: keep at least 30 GB free on the drive that holds the repository and Unity cache. Below 30 GB, start nothing. Below 80 GB, find what is growing before the next run. If the system drive is full, confirm no Editor owns the project, then list sizes. Remove only verified rebuildable caches (for example `Library/Bee`) or obsolete build output. Keep source, packages, evidence and unrelated changes. Rerun with the original marker and timeout.
@@ -42,7 +42,8 @@ Disk: keep at least 30 GB free on the drive that holds the repository and Unity 
 Command:
 `python Tools/Missions/run_aria_queue.py --launcher windows --jobs <CATALOG:SEED:LOCALE,...> --log-dir D:\Projects\WarlineCapture-program-logs\<date>\<run> --timeout 7200 --no-table`
 
-- The flags `--launcher windows` and `--no-table` are being added. After you pull, run `python Tools/Missions/run_aria_queue.py --help`. If either flag is missing, do not run jobs. Write that in the result file and stop.
+- The runner always passes `-GuiLicensing` on Windows (ARIA plays through the real UI; `InvokeUnity.ps1` would otherwise add `-batchmode`).
+- The flags `--launcher windows` and `--no-table` exist from commit `missions/integration` of 2026-11-17. After you pull, run `python Tools/Missions/run_aria_queue.py --help`. If either flag is missing, do not run jobs. Write that in the result file and stop.
 - Before each launch, check that `Library/LibraryInitializing` does not exist.
 - Within 3 minutes of launch, the log must contain `Library Redirect Path`. If it does not, the Editor is probably on a startup dialog. Report it in the result file at once. Do not end the Editor inside those 3 minutes. Stop the batch.
 - Results come only from harness log lines:

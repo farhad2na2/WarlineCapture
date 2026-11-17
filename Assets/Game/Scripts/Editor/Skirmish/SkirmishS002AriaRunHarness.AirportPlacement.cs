@@ -440,8 +440,9 @@ namespace Game.Editor
                 "ReadOnlyLogicalPlayableCoarseNativeValidatorViaGenericCatalogDispatch");
         }
 
-        private static void RunExistingCampaignAirfieldSourceFit(bool logicalPlayableOnly, Action launch = null, string scopeOverride = null)
+        private static void RunExistingCampaignAirfieldSourceFit(bool logicalPlayableOnly, Action launch = null, string scopeOverride = null, bool layoutDumpMode = false)
         {
+            ResetLayoutDump(layoutDumpMode);
             // Observe S004's existing Campaign airfield binding before making
             // any S005 logical-source change. No Campaign asset is modified.
             SessionState.SetBool("S004EditorJourney.OptionsSaved", true);
@@ -482,6 +483,7 @@ namespace Game.Editor
 
         private static bool TickReadOnlyS005AirportSourceFit()
         {
+            if (layoutDump != null) return TickLayoutDump();
             var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
             var source = FindAirportPlacementSource(scene?.MatchBootstrap.BuildingUiCommandContext.CanConfirmBuildingPlacement,
                 new HashSet<object>(), 0);

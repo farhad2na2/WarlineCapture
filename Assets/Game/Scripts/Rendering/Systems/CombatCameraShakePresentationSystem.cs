@@ -14,6 +14,10 @@ namespace Game.Rendering
 
         private EntityQuery _audioRequestQuery;
         private EntityQuery _finalKillQuery;
+        private EntityQuery _damageQuery;
+        private int _lastSeenDamageEventId = -1;
+        private bool _firstContactSeen;
+        private float _nextBaseHitTime;
         private int _lastSeenRequestId = -1;
         private bool _finalKillKicked;
         private float _trauma;
@@ -30,6 +34,9 @@ namespace Game.Rendering
                 ComponentType.ReadOnly<AudioPlaybackRequestQueueComponent>(),
                 ComponentType.ReadOnly<AudioPlaybackRequestElement>());
             _finalKillQuery = GetEntityQuery(ComponentType.ReadOnly<CampaignMissionFinalKillCinematicComponent>());
+            _damageQuery = GetEntityQuery(
+                ComponentType.ReadOnly<CombatDamageObservationQueueComponent>(),
+                ComponentType.ReadOnly<CombatDamageObservationElement>());
             RenderPipelineManager.beginCameraRendering += OnBeginCameraRendering;
             RenderPipelineManager.endCameraRendering += OnEndCameraRendering;
         }
@@ -57,6 +64,7 @@ namespace Game.Rendering
             Vector3 cameraPosition = camera.transform.position;
             ConsumeExplosionRequests(new float3(cameraPosition.x, cameraPosition.y, cameraPosition.z), cameraPosition.y);
             ConsumeFinalKill();
+            ConsumeContactAndBaseDamage(new float3(cameraPosition.x, cameraPosition.y, cameraPosition.z), cameraPosition.y);
             _trauma = _reducedMotion ? 0f : CombatCameraShakeHelper.Decay(_trauma, deltaTime);
             _time += deltaTime;
         }
@@ -97,6 +105,65 @@ namespace Game.Rendering
 
             _lastSeenRequestId = lastRequestId;
         }
+
+        // First contact and main-base damage reuse the existing render-only shake. The camera transform
+        // is never changed outside the render callbacks, so framing and picking are unaffected.
+        private void ConsumeContactAndBaseDamage(float3 cameraPosition, float cameraHeight)
+        {
+            if (_damageQuery.CalculateEntityCount() != 1)
+                return;
+
+            Entity queueEntity = _damageQuery.GetSingletonEntity();
+            int lastEventId = EntityManager.GetComponentData<CombatDamageObservationQueueComponent>(queueEntity).LastEventId;
+            if (_lastSeenDamageEventId < 0 || lastEventId < _lastSeenDamageEventId)
+            {
+                // New attempt (or first frame): do not replay old events, re-arm first contact.
+                _lastSeenDamageEventId = lastEventId;
+                _firstContactSeen = false;
+                return;
+            }
+
+            if (lastEventId == _lastSeenDamageEventId)
+                return;
+
+            float now = UnityEngine.Time.unscaledTime;
+            DynamicBuffer<CombatDamageObservationElement> events =
+                EntityManager.GetBuffer<CombatDamageObservationElement>(queueEntity, true);
+            for (int i = 0; i < events.Length; i++)
+            {
+                CombatDamageObservationElement hit = events[i];
+                if (hit.EventId <= _lastSeenDamageEventId)
+                    continue;
+
+                byte sourceFaction = FactionOf(hit.SourceEntity);
+                byte targetFaction = FactionOf(hit.TargetEntity);
+                bool exchange = CombatCameraShakeHelper.IsPlayerEnemyExchange(sourceFaction, targetFaction);
+                bool firstContact = exchange && !_firstContactSeen;
+                if (exchange)
+                    _firstContactSeen = true;
+
+                bool mainBaseHit = exchange && now >= _nextBaseHitTime && IsMainBase(hit.TargetEntity);
+                float trauma = CombatCameraShakeHelper.ResolveContactTrauma(
+                    firstContact, mainBaseHit, hit.DamageApplied, hit.TargetMaxHealth);
+                if (trauma <= 0f)
+                    continue;
+
+                if (mainBaseHit)
+                    _nextBaseHitTime = now + CombatCameraShakeHelper.MainBaseHitCooldownSeconds;
+                float distance = math.distance(cameraPosition, hit.TargetWorldPosition);
+                _trauma = math.min(1f, _trauma + CombatCameraShakeHelper.Attenuate(trauma, distance, cameraHeight));
+            }
+
+            _lastSeenDamageEventId = lastEventId;
+        }
+
+        private byte FactionOf(Entity entity) =>
+            entity != Entity.Null && EntityManager.Exists(entity) && EntityManager.HasComponent<Faction>(entity)
+                ? EntityManager.GetComponentData<Faction>(entity).Id
+                : (byte)0;
+
+        private bool IsMainBase(Entity entity) =>
+            entity != Entity.Null && EntityManager.Exists(entity) && EntityManager.HasComponent<SkirmishMainBase>(entity);
 
         private void ConsumeFinalKill()
         {

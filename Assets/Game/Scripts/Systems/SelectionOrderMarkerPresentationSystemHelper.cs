@@ -21,6 +21,8 @@ namespace Game.Runtime
         private Renderer[] _moveOrderMarkerRenderers;
         private MaterialPropertyBlock _moveOrderMarkerPropertyBlock;
         private float _moveOrderMarkerHideTime = -1f;
+        private float _moveOrderMarkerShownAt = -1f;
+        private float _attackOrderMarkerShownAt = -1f;
         private GameObject _attackOrderMarker;
         private Renderer[] _attackOrderMarkerRenderers;
         private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
@@ -224,7 +226,10 @@ namespace Game.Runtime
                 return;
 
             if (UnityEngine.Time.time < _moveOrderMarkerHideTime)
+            {
+                ApplyAcceptancePop(_moveOrderMarker, _moveOrderMarkerShownAt, MoveOrderMarkerHorizontalScale);
                 return;
+            }
 
             _moveOrderMarker.SetActive(false);
             _moveOrderMarkerHideTime = -1f;
@@ -242,7 +247,12 @@ namespace Game.Runtime
                 (_queryWorld != null && _queryWorld.IsCreated &&
                  IsAttackMarkerTargetAlive(_queryWorld.EntityManager, _attackMarkerTarget));
             if (targetAlive && UnityEngine.Time.time < _attackOrderMarkerHideTime)
+            {
+                // Location (reported-position) attack marker only; target markers keep their fitted size.
+                if (_attackMarkerTarget == Entity.Null)
+                    ApplyAcceptancePop(_attackOrderMarker, _attackOrderMarkerShownAt, AttackOrderMarkerHorizontalScale);
                 return;
+            }
 
             if (_attackOrderMarker != null)
                 _attackOrderMarker.SetActive(false);
@@ -253,6 +263,16 @@ namespace Game.Runtime
             _attackOrderMarkerHideTime = -1f;
             if (_moveOrderMarkerHideTime < 0f && _scanOrderMarkerHideTime < 0f)
                 setHudWorldMarkersVisible?.Invoke(false);
+        }
+
+        // Brief pop so the accepted destination reads at a glance; resting scale is unchanged.
+        private static void ApplyAcceptancePop(GameObject marker, float shownAt, float restingScale)
+        {
+            if (marker == null || shownAt < 0f || !marker.activeSelf)
+                return;
+
+            float scale = restingScale * OrderMarkerPopMotion.Scale(UnityEngine.Time.time - shownAt);
+            marker.transform.localScale = new Vector3(scale, 1f, scale);
         }
 
         internal static bool IsAttackMarkerTargetAlive(EntityManager em, Entity target) =>
@@ -323,6 +343,7 @@ namespace Game.Runtime
             }
 
             _moveOrderMarkerHideTime = UnityEngine.Time.time + _orderMarkerVisibleSeconds;
+            _moveOrderMarkerShownAt = UnityEngine.Time.time;
         }
 
         public void ShowAttackOrderMarker(EntityManager em, Vector3 worldPoint, float visibleSeconds = -1f)
@@ -382,6 +403,7 @@ namespace Game.Runtime
             }
 
             _attackOrderMarkerHideTime = UnityEngine.Time.time + (visibleSeconds > 0f ? visibleSeconds : _orderMarkerVisibleSeconds);
+            _attackOrderMarkerShownAt = UnityEngine.Time.time;
         }
 
         private bool ShowAttackTargetSelectionMarker(
@@ -1382,6 +1404,24 @@ namespace Game.Runtime
                 return false;
 
             return isValidTarget(em, source, target);
+        }
+    }
+}
+
+namespace Game.Runtime
+{
+    /// <summary>Pure pop-in curve for accepted-order markers: starts enlarged and settles to 1.</summary>
+    public static class OrderMarkerPopMotion
+    {
+        public const float DurationSeconds = 0.3f;
+        public const float PeakScale = 1.6f;
+
+        public static float Scale(float ageSeconds)
+        {
+            if (ageSeconds < 0f || ageSeconds >= DurationSeconds)
+                return 1f;
+            float remaining = 1f - ageSeconds / DurationSeconds;
+            return 1f + (PeakScale - 1f) * remaining * remaining;
         }
     }
 }

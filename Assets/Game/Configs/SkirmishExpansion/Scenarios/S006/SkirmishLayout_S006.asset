@@ -1893,7 +1893,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s006
   operationMapId: opmap.skirmish.desert_base_01
   contentVersion: 1
-  contentHash: authored.s006.cd7185ad96fbe130
+  contentHash: authored.s006.cf0afd714f07901f
   worldWidthMetres: 851.6796
   worldDepthMetres: 351.0282
   originX: 540.2224
@@ -2110,6 +2110,12 @@ MonoBehaviour:
     NormalizedV: 0.36546272
     WorldX: 1228.6929
     WorldZ: 898.03674
+  - AnchorId: anchor.skirmish.s006.rally_player
+    RoleId: rally.player
+    NormalizedU: 0.22219206
+    NormalizedV: 0.22689693
+    WorldX: 729.45886
+    WorldZ: 849.39624
   - AnchorId: anchor.skirmish.s006.ruins_east
     RoleId: ruins.east
     NormalizedU: 0.49837002
@@ -2172,10 +2178,10 @@ MonoBehaviour:
     WorldZ: 915.3595
   - AnchorId: anchor.skirmish.s006.s006_f1_oil_pump
     RoleId: s006.f1.oil_pump
-    NormalizedU: 0.2333394
-    NormalizedV: 0.23127806
-    WorldX: 738.9528
-    WorldZ: 850.93414
+    NormalizedU: 0.1446342
+    NormalizedV: 0.4484668
+    WorldX: 663.4044
+    WorldZ: 927.1735
   - AnchorId: anchor.skirmish.s006.s006_f1_refinery
     RoleId: s006.f1.refinery
     NormalizedU: 0.18416668
@@ -2272,12 +2278,24 @@ MonoBehaviour:
     NormalizedV: 0.41727185
     WorldX: 1227.9851
     WorldZ: 916.2232
+  - AnchorId: anchor.skirmish.s006.spawn_infantry_player
+    RoleId: spawn.infantry.player
+    NormalizedU: 0.11460099
+    NormalizedV: 0.2731288
+    WorldX: 637.82574
+    WorldZ: 865.62494
   - AnchorId: anchor.skirmish.s006.spawn_vehicle_enemy
     RoleId: spawn.vehicle.enemy
     NormalizedU: 0.78159404
     NormalizedV: 0.34413743
     WorldX: 1205.8901
     WorldZ: 890.55096
+  - AnchorId: anchor.skirmish.s006.spawn_vehicle_player
+    RoleId: spawn.vehicle.player
+    NormalizedU: 0.16012548
+    NormalizedV: 0.39334258
+    WorldX: 676.598
+    WorldZ: 907.82336
   - AnchorId: anchor.skirmish.s006.staging_enemy
     RoleId: staging.enemy
     NormalizedU: 0.63058287
@@ -2486,11 +2504,11 @@ MonoBehaviour:
     DepthMetres: 8
     FactionId: 2
   - PadId: pad.skirmish.s006.rally_player
-    AnchorId: anchor.skirmish.s006.staging_player
+    AnchorId: anchor.skirmish.s006.rally_player
     RoleId: rally.player
     Kind: 5
-    CenterX: 761.0939
-    CenterZ: 933.98315
+    CenterX: 729.45886
+    CenterZ: 849.39624
     WidthMetres: 10
     DepthMetres: 8
     FactionId: 1
@@ -2522,13 +2540,13 @@ MonoBehaviour:
     DepthMetres: 10
     FactionId: 2
   - PadId: pad.skirmish.s006.spawn_infantry_player
-    AnchorId: anchor.skirmish.s006.staging_player
+    AnchorId: anchor.skirmish.s006.spawn_infantry_player
     RoleId: spawn.infantry.player
     Kind: 3
-    CenterX: 711.0554
-    CenterZ: 901.7688
-    WidthMetres: 12
-    DepthMetres: 10
+    CenterX: 637.82574
+    CenterZ: 865.62494
+    WidthMetres: 16
+    DepthMetres: 12
     FactionId: 1
   - PadId: pad.skirmish.s006.spawn_vehicle_enemy
     AnchorId: anchor.skirmish.s006.spawn_vehicle_enemy
@@ -2540,11 +2558,11 @@ MonoBehaviour:
     DepthMetres: 12
     FactionId: 2
   - PadId: pad.skirmish.s006.spawn_vehicle_player
-    AnchorId: anchor.skirmish.s006.staging_player
+    AnchorId: anchor.skirmish.s006.spawn_vehicle_player
     RoleId: spawn.vehicle.player
     Kind: 4
-    CenterX: 665.98364
-    CenterZ: 903.2863
+    CenterX: 676.598
+    CenterZ: 907.82336
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 1
@@ -2678,8 +2696,8 @@ MonoBehaviour:
     AnchorId: anchor.skirmish.s006.s006_f1_oil_pump
     RoleId: instance.s006.f1.oil_pump
     Kind: 7
-    CenterX: 738.9528
-    CenterZ: 850.93414
+    CenterX: 663.4044
+    CenterZ: 927.1735
     WidthMetres: 48.374905
     DepthMetres: 41.354626
     FactionId: 1

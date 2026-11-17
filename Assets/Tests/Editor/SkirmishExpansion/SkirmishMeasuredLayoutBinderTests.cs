@@ -329,6 +329,64 @@ namespace Game.Tests.Editor
             Assert.GreaterOrEqual(source,0);pads.InsertArrayElementAtIndex(source);pads.GetArrayElementAtIndex(source).FindPropertyRelative("PadId").stringValue="duplicate.ground";
             data.ApplyModifiedPropertiesWithoutUndo();Assert.IsFalse(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,new List<SkirmishCompileReason>(),out _));Assert.AreEqual(before,JsonUtility.ToJson(setup));
         }
+        // Gives every compiled structure instance (Standard/Regular fixture) its own new pad and anchor of the structure's
+        // pad kind, centred on that faction/kind's existing pad, and one StructureInstancePads row per instance.
+        private static void AddOwnInstancePadRows(SkirmishMapLayoutConfig layout, SkirmishResolvedSetup setup)
+        {
+            var anchors = new List<SkirmishLayoutAnchorConfig>(layout.Anchors);
+            var pads = new List<SkirmishLegalPadConfig>(layout.Pads);
+            var rows = new List<SkirmishStructureInstancePadBinding>();
+            var seen = new Dictionary<string, int>();
+            for (int i = 0; i < setup.Structures.Length; i++)
+            {
+                var structure = setup.Structures[i];
+                string stem = structure.FactionId + "/" + structure.StructureId;
+                seen.TryGetValue(stem, out int ordinal); seen[stem] = ordinal + 1;
+                var kind = SkirmishMapLayoutBuilder.PadKindForStructure(structure.StructureId);
+                Assert.IsTrue(layout.TryGetPad(structure.FactionId, kind, out var template), stem);
+                string id = "test.instance." + i;
+                anchors.Add(new SkirmishLayoutAnchorConfig
+                {
+                    AnchorId = id, RoleId = id, WorldX = template.CenterX, WorldZ = template.CenterZ,
+                    NormalizedU = (template.CenterX - layout.OriginX) / layout.WorldWidthMetres,
+                    NormalizedV = (template.CenterZ - layout.OriginZ) / layout.WorldDepthMetres
+                });
+                pads.Add(new SkirmishLegalPadConfig
+                {
+                    PadId = id, AnchorId = id, RoleId = id, Kind = kind, FactionId = structure.FactionId,
+                    CenterX = template.CenterX, CenterZ = template.CenterZ, WidthMetres = template.WidthMetres, DepthMetres = template.DepthMetres
+                });
+                rows.Add(new SkirmishStructureInstancePadBinding
+                {
+                    SizeId = setup.SizeId, DifficultyId = setup.DifficultyId, FactionId = structure.FactionId,
+                    StructureId = structure.StructureId, InstanceOrdinal = ordinal, AnchorId = id, PadId = id
+                });
+            }
+            layout.GetType().GetField("anchors", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(layout, anchors.ToArray());
+            layout.GetType().GetField("pads", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).SetValue(layout, pads.ToArray());
+            layout.BindStructureInstancePads(rows.ToArray());
+        }
+        [Test] public void SameKindPadsReferencedByInstanceRowsAreExemptFromAmbiguousKindRule()
+        {
+            var definition=Fixture(ArmorBreakPath,out var setup);
+            AddOwnInstancePadRows(definition.MapLayout,setup);
+            var reasons=new List<SkirmishCompileReason>();
+            Assert.IsTrue(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,reasons,out _),Format(reasons));
+            Assert.IsTrue(setup.MeasuredLayoutBound);
+        }
+        [Test] public void UnreferencedSameKindPadStillFailsWithExistingMessageEvenWithInstanceRows()
+        {
+            var definition=Fixture(ArmorBreakPath,out var setup);
+            AddOwnInstancePadRows(definition.MapLayout,setup);
+            var layout=definition.MapLayout;Assert.IsTrue(layout.TryGetPad(1,SkirmishLegalPadKind.GroundStaging,out var template));
+            template.PadId="test.unreferenced.ground";template.RoleId="test.unreferenced.ground";
+            var padsField=layout.GetType().GetField("pads",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic);
+            padsField.SetValue(layout,new List<SkirmishLegalPadConfig>(layout.Pads){template}.ToArray());
+            string before=JsonUtility.ToJson(setup);var reasons=new List<SkirmishCompileReason>();
+            Assert.IsFalse(SkirmishMeasuredLayoutBinder.TryBind(setup,definition,reasons,out _));
+            Assert.IsTrue(reasons.Exists(r=>r.Field=="test.unreferenced.ground"&&r.Detail=="Ambiguous faction/kind pad lookup."),Format(reasons));
+            Assert.AreEqual(before,JsonUtility.ToJson(setup));
+        }
         public static void RunFocusedValidation()
         {
             var suite = new SkirmishMeasuredLayoutBinderTests();
@@ -342,11 +400,13 @@ namespace Game.Tests.Editor
                 suite.InvalidRouteKindLengthAndTimingFailBeforeSetupMutation,
                 suite.ExactThreeRoleAddressedConvoyBaysBindWithoutAmbiguousKindLookup,
                 suite.InvalidOrPartialConvoyRoleBaysFailBeforeSetupMutation,
-                suite.DuplicateOrdinaryFactionKindPadsRemainRejected };
+                suite.DuplicateOrdinaryFactionKindPadsRemainRejected,
+                suite.SameKindPadsReferencedByInstanceRowsAreExemptFromAmbiguousKindRule,
+                suite.UnreferencedSameKindPadStillFailsWithExistingMessageEvenWithInstanceRows };
             try
             {
                 foreach (var test in tests) { try { test(); } finally { suite.Cleanup(); } }
-                Debug.Log("[SkirmishMeasuredLayoutBinderTests] result=Passed tests=11");
+                Debug.Log("[SkirmishMeasuredLayoutBinderTests] result=Passed tests=13");
             }
             catch (Exception e) { Debug.LogError("[SkirmishMeasuredLayoutBinderTests] result=Failed\n" + e); throw; }
         }

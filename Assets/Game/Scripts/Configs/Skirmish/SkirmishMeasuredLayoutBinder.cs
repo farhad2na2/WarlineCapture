@@ -169,7 +169,8 @@ namespace Game.Configs
                         Add(reasons,pad.PadId,"Defense approaches require unique exact faction2 mode-owned anchors/pads.");
                 }
                 else if (pad.FactionId != 0 && !padKinds.Add(pad.FactionId + "/" + pad.Kind) &&
-                    !(declaredContext && SkirmishStructureInstanceBinding.IsExplicitInstanceOnlyPad(layout,setup,pad)))
+                    !(declaredContext && SkirmishStructureInstanceBinding.IsExplicitInstanceOnlyPad(layout,setup,pad)) &&
+                    !IsReferencedInstancePad(layout, pad))
                     Add(reasons, pad.PadId, "Ambiguous faction/kind pad lookup.");
                 foreach (int dx in new[] { -1, 1 }) foreach (int dz in new[] { -1, 1 })
                     if (!layout.TryProjectLocalToMap(pad.CenterX + dx * pad.WidthMetres * .5f,
@@ -307,6 +308,19 @@ namespace Game.Configs
             }
             if (paths.Count < 2 || selected == null) Add(reasons, "routes", "Two distinct declared approaches and a ground-vehicle route required.");
             return selected;
+        }
+
+        // A pad that a StructureInstancePads row names (same pad, anchor and faction, and the pad kind
+        // that row's structure needs) is explicitly instance-only: structures resolve it through the
+        // exact row, never through the nonunique faction/kind lookup. Any other pad keeps the rule.
+        private static bool IsReferencedInstancePad(SkirmishMapLayoutConfig layout, SkirmishLegalPadConfig pad)
+        {
+            foreach (var row in layout.StructureInstancePads)
+                if (row.FactionId == pad.FactionId && row.PadId == pad.PadId && row.AnchorId == pad.AnchorId &&
+                    !string.IsNullOrEmpty(row.StructureId) &&
+                    SkirmishMapLayoutBuilder.PadKindForStructure(row.StructureId) == pad.Kind)
+                    return true;
+            return false;
         }
 
         private static bool Project(SkirmishMapLayoutConfig layout, SkirmishLegalPadConfig pad, out Vector2 point)

@@ -286,6 +286,8 @@ public int HomeDefenseReason;
 public int HomeDefenseSlot;
 public int HomeDefenseScope;
 public int HomeDefenseRounds;
+public int HomeDefenseRecovery;
+public int HomeDefenseRecoveryAction;
 public float HomeHealthSeen;
 public float HomeHealthPeak;
 public float HomeDamageAt;

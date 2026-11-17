@@ -41,13 +41,16 @@ namespace Game.UI.Shell.Ecs
             tracedHomeDefenseStage = p.HomeDefenseStage; tracedHomeDefenseReason = p.HomeDefenseReason;
             string state = priorStage == 0 && p.HomeDefenseStage != 0 ? "triggered"
                 : priorStage != 5 && p.HomeDefenseStage == 5 ? "ordered"
+                : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageRecentre && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageRecentre ? "recentre"
+                : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageDisarm && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageDisarm ? "gave_up_disarm"
+                : priorStage == 4 && p.HomeDefenseStage == 8 ? "gave_up"
                 : priorReason != 0 && p.HomeDefenseReason == 0 ? "cleared" : null;
             if (state == null) return;
             int reasonCode = p.HomeDefenseReason != 0 ? p.HomeDefenseReason : priorReason;
             string reason = reasonCode == 2 ? "baseDamage" : reasonCode == 1 ? "minimap" : "none";
             string group = p.HomeDefenseReason == 0 ? "none" : p.HomeDefenseScope == 1 ? (p.HomeDefenseSlot - 1).ToString() : "all";
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
-            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} t={matchSeconds:F2}");
+            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} recovery={p.HomeDefenseRecovery} attackMode={v.AttackMode} homeGround={v.HomeGround.Available} threatGround={v.ThreatGround.Available} threat={v.Threat.Available} focus={v.FocusPlayer.Available} t={matchSeconds:F2}");
         }
         private int tracedInterceptStage; private bool tracedInterceptKnown, tracedInterceptOffered;
         // Evidence only: reports intercept transitions ("finish what slips past") of the

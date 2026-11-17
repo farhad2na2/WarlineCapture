@@ -134,3 +134,4 @@ record is `missions.csv`.
 - 2026-11-17 08:38 aria worker: aria-guard1 done: 155923 en Victory (countedWin=1), 130365 en Defeat (enemy rocketeer raid at t=233 beat the idle guard); committed guard posting onto home approach
 - 2026-11-17 08:44 aria worker: aria-guard2 done: both Abort ariaStopped:Blocked (guard post completion check wrong); fixed, launching aria-guard3 S002:155923:en,S002:130365:en
 - 2026-11-17 08:55 aria worker: aria-guard3 done: both Defeat (post step handed back mid-touch; guard sent to enemy base); fixed; launching full gate aria-gate1 (3 seeds x en/fa-IR)
+- 2026-11-17 09:14 aria worker: aria-gate1 done: wins=1/6 (guard post unreliable, delays column; posted guard never engages the fogged tank). Reverted the 4 guard/post commits to baseline ARIA. Next: generic-binding merge + codex 020/021 patches, compile check, S006/S026 queue

@@ -81,7 +81,7 @@ class QueueTests(unittest.TestCase):
                 self.assertEqual(command, ['powershell.exe', '-NoProfile', '-ExecutionPolicy', 'Bypass', '-File',
                     str(repo / 'Tools/CI/InvokeUnity.ps1'), '-UnityExe', 'C:\\Unity\\Unity.exe',
                     '-ProjectPath', str(repo), '-LogFile', str(logs / 'unity.log'), '-TimeoutSeconds', '123',
-                    '-GuiLicensing', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'])
+                    '-GuiLicensing', '-releaseCodeOptimization', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'])
 
     def test_windows_failures_and_always_gui(self):
         repo = self.root / 'repo'

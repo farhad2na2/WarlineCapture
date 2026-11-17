@@ -25,6 +25,14 @@
 //                                               // only pads NOT centred on a same-role anchor
 //                                               // (spawn.infantry.*, spawn.vehicle.*, rally.*)
 //                                               // or overrides; null = at the same-role anchor
+//   "instance_pads": [ {"id":"s050.f1.refinery","kind":"Supply","faction":1,"at":[x,z],"size":[w,d],
+//                       "anchor":"<anchor role>"}, ... ],   // optional measured per-building pads. kind is
+//                                               // BaseBarracks|GroundStaging|AirReturn|Supply|Service, faction 1|2,
+//                                               // the anchor role must sit exactly on "at". For every size x difficulty each
+//                                               // starting structure takes the first unused entry of its faction and kind
+//                                               // (draft order), else a pad derived at its compiled position (needs
+//                                               // "structure_footprints"); only pads some variant uses are written.
+//   "structure_footprints": { "<structure id>": [w, d] },   // optional Unity-verified footprints (metres) for derived pads
 //   "routes":  [ {"kind":"MainHighway|FlankNorthRuins|FlankSouthSweep",
 //                 "via":["staging.player", ..., "staging.enemy"],
 //                 "width":12, "vehicles":true, "aircraft":true}, ... ],  // >=2 distinct, 1 main
@@ -66,7 +74,7 @@ namespace Game.Editor
         private const string ScenarioCatalogCsv = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
         private const float FrameMarginMetres = 32f;
         private const int AuthoringSeed = 1;
-        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes" };
+        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes", "instance_pads", "structure_footprints" };
         private static readonly SkirmishSizeId[] Sizes = { SkirmishSizeId.Standard, SkirmishSizeId.War, SkirmishSizeId.LargeWar };
         private static readonly SkirmishDifficultyId[] Difficulties =
             { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
@@ -216,7 +224,7 @@ namespace Game.Editor
             var layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);
             bool newLayout = layout == null;
             if (newLayout) layout = ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
-            LayoutGeometry.Apply(draft, source, catalogId, layout);
+            LayoutGeometry.Apply(draft, source, catalogId, layout, null);
             if (newLayout) AssetDatabase.CreateAsset(layout, layoutPath); else EditorUtility.SetDirty(layout);
             outcome.LayoutId = layout.LayoutId;
 
@@ -231,9 +239,48 @@ namespace Game.Editor
             if (newDefinition) AssetDatabase.CreateAsset(definition, definitionPath); else EditorUtility.SetDirty(definition);
             outcome.DefinitionId = definition.DefinitionId;
 
-            // --- compile every size x difficulty without a binding; capture logical inputs ----
+            // --- per-building structure pads --------------------------------------------------
+            // Generic missions require one exact StructureInstancePads row per starting structure
+            // (SkirmishStartingBuildingsService / SkirmishStartingGrantPlacementConstraint.TryResolvePad).
+            // Compile every variant against the pad-less layout, plan the rows, then re-apply the layout.
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = definition.RequiredFeatureIds };
+            var plannedSizes = new HashSet<SkirmishSizeId>();
+            {
+                var measuredPads = LayoutGeometry.ReadMeasured(draft, catalogId);
+                var plannerVariants = new List<InstancePadVariant>();
+                foreach (var size in Sizes)
+                {
+                    var sizeRows = new List<InstancePadVariant>();
+                    foreach (var difficulty in Difficulties)
+                    {
+                        if (!SkirmishSetupCompiler.TryCompile(definition, difficulty, size, AuthoringSeed, manifest, matrix, out var plain, out _) ||
+                            plain?.Structures == null) { sizeRows = null; break; }
+                        sizeRows.Add(new InstancePadVariant { Size = size, Difficulty = difficulty, Structures = (SkirmishResolvedStructureEntry[])plain.Structures.Clone() });
+                    }
+                    if (sizeRows == null) continue;   // the compile loop below reports or skips this size
+                    plannerVariants.AddRange(sizeRows); plannedSizes.Add(size);
+                }
+                if (plannerVariants.Count > 0)
+                {
+                    InstancePadPlan plan;
+                    try
+                    {
+                        plan = SkirmishInstancePadPlanner.Plan(plannerVariants, measuredPads,
+                            (string structureId, out float width, out float depth) => LayoutGeometry.TryFootprint(draft, structureId, out width, out depth));
+                    }
+                    catch (InstancePadPlanException failure) { throw new AuthoringFailure("instancePads", failure.Message); }
+                    LayoutGeometry.Apply(draft, source, catalogId, layout, plan);
+                    EditorUtility.SetDirty(layout);
+                    int measuredRows = plan.Rows.Count(row => plan.Pads.First(pad => pad.Key == row.PadKey).Measured);
+                    Debug.Log(Tag + " instancePads catalog=" + catalogId + " rows=" + plan.Rows.Count + " measured=" + measuredRows +
+                        " derived=" + (plan.Rows.Count - measuredRows) + " pads=" + plan.Pads.Count + " unusedMeasuredPads=" + plan.UnusedMeasured +
+                        " variants=" + plannerVariants.Count);
+                }
+            }
+
+            // --- compile every size x difficulty without a binding; capture logical inputs ----
             var compiled = new List<Compiled>();
+            var skippedSizes = new Dictionary<SkirmishSizeId, string>();
             foreach (var size in Sizes)
             {
                 var rows = new List<Compiled>();
@@ -249,8 +296,12 @@ namespace Game.Editor
                 }
                 if (sizeFailure == null) { compiled.AddRange(rows); continue; }
                 if (size == SkirmishSizeId.Standard) throw new AuthoringFailure(sizeFailure.Substring(0, sizeFailure.IndexOf(':')), sizeFailure.Substring(sizeFailure.IndexOf(':') + 2));
+                skippedSizes[size] = sizeFailure;
                 Debug.LogWarning(Tag + " size=" + size + " skipped (no logical variant) first=" + sizeFailure);
             }
+            foreach (var size in plannedSizes)
+                if (skippedSizes.TryGetValue(size, out string withRows))
+                    throw new AuthoringFailure("instancePads", size + " compiled without per-building pads but not with them: " + withRows);
             if (!compiled.Any(x => x.Size == recommended))
             {
                 Debug.LogWarning(Tag + " recommendedSize=" + recommended + " has no compiling variant; using Standard.");
@@ -476,9 +527,8 @@ namespace Game.Editor
                 public SkirmishBindingValueFormat bindingValueFormat = SkirmishBindingValueFormat.NativeJsonV1;
             }
 
-            public static void Apply(JObject draft, OperationMapDefinition source, string catalogId, SkirmishMapLayoutConfig layout)
+            private static Dictionary<string, Vector2> ReadPoints(JObject draft)
             {
-                string token = catalogId.ToLowerInvariant();
                 var anchorObject = draft["anchors"] as JObject ?? throw new AuthoringFailure("draft.anchors", "Object of role -> [x,z] required.");
                 var points = new Dictionary<string, Vector2>(StringComparer.Ordinal);
                 foreach (var property in anchorObject.Properties())
@@ -487,6 +537,64 @@ namespace Game.Editor
                         throw new AuthoringFailure("draft.anchors", "Invalid role '" + property.Name + "'.");
                     points.Add(property.Name, Point(property.Value, "anchors." + property.Name));
                 }
+                return points;
+            }
+
+            // Optional measured per-building pads. Positions are used exactly as written.
+            public static List<MeasuredInstancePad> ReadMeasured(JObject draft, string catalogId)
+            {
+                var result = new List<MeasuredInstancePad>();
+                var token = draft["instance_pads"];
+                if (token == null) return result;
+                var array = token as JArray ?? throw new AuthoringFailure("draft.instance_pads", "Array of pad objects required.");
+                var points = ReadPoints(draft);
+                var ids = new HashSet<string>(StringComparer.Ordinal);
+                string[] allowed = { "id", "kind", "faction", "at", "size", "anchor" };
+                for (int i = 0; i < array.Count; i++)
+                {
+                    string label = "instance_pads[" + i.ToString(CultureInfo.InvariantCulture) + "]";
+                    var item = array[i] as JObject ?? throw new AuthoringFailure("draft.instance_pads", label + " must be an object.");
+                    foreach (var property in item.Properties())
+                        if (!allowed.Contains(property.Name)) throw new AuthoringFailure("draft.instance_pads", label + " unknown key '" + property.Name + "'.");
+                    string id = (string)item["id"];
+                    if (string.IsNullOrWhiteSpace(id) || id.Any(char.IsWhiteSpace)) throw new AuthoringFailure("draft.instance_pads", label + " needs a nonempty id without spaces.");
+                    if (!ids.Add(id)) throw new AuthoringFailure("draft.instance_pads", "Duplicate id '" + id + "'.");
+                    if (("pad.skirmish." + catalogId.ToLowerInvariant() + ".i_" + id.Replace('.', '_')).Length > 61)
+                        throw new AuthoringFailure("draft.instance_pads", label + " id '" + id + "' makes a pad id longer than 61 characters.");
+                    if (points.ContainsKey("instance." + id) || (item["id"].Type != JTokenType.String))
+                        throw new AuthoringFailure("draft.instance_pads", label + " id '" + id + "' collides with an anchor role.");
+                    if (!Enum.TryParse((string)item["kind"], false, out SkirmishLegalPadKind kind) || !SkirmishInstancePadPlanner.IsInstancePadKind(kind))
+                        throw new AuthoringFailure("draft.instance_pads", label + " kind must be BaseBarracks, GroundStaging, AirReturn, Supply or Service.");
+                    if (item["faction"] == null || item["faction"].Type != JTokenType.Integer || ((int)item["faction"] != 1 && (int)item["faction"] != 2))
+                        throw new AuthoringFailure("draft.instance_pads", label + " faction must be 1 or 2.");
+                    Vector2 at = Point(item["at"], label + ".at"), size = Point(item["size"], label + ".size");
+                    if (!(size.x > 0) || !(size.y > 0)) throw new AuthoringFailure("draft.instance_pads", label + " size must be positive.");
+                    string anchor = (string)item["anchor"];
+                    if (anchor == null || !points.TryGetValue(anchor, out var anchorPoint))
+                        throw new AuthoringFailure("draft.instance_pads", label + " anchor must name a role in anchors{}.");
+                    if (Mathf.Abs(anchorPoint.x - at.x) > .001f || Mathf.Abs(anchorPoint.y - at.y) > .001f)
+                        throw new AuthoringFailure("draft.instance_pads", label + " anchor '" + anchor + "' must sit exactly on the pad centre.");
+                    result.Add(new MeasuredInstancePad { Id = id, Kind = kind, Faction = (byte)(int)item["faction"], X = anchorPoint.x, Z = anchorPoint.y, Width = size.x, Depth = size.y, AnchorRole = anchor });
+                }
+                return result;
+            }
+
+            // Footprints a derived pad may use; only what the draft states (measured in Unity), never a guess.
+            public static bool TryFootprint(JObject draft, string structureId, out float width, out float depth)
+            {
+                width = depth = 0f;
+                var table = draft["structure_footprints"] as JObject;
+                var entry = table?[structureId];
+                if (entry == null) return false;
+                var value = Point(entry, "structure_footprints." + structureId);
+                width = value.x; depth = value.y;
+                return width > 0 && depth > 0;
+            }
+
+            public static void Apply(JObject draft, OperationMapDefinition source, string catalogId, SkirmishMapLayoutConfig layout, InstancePadPlan plan = null)
+            {
+                string token = catalogId.ToLowerInvariant();
+                var points = ReadPoints(draft);
                 foreach (string required in new[] { "base.player", "base.enemy", "staging.player", "staging.enemy" })
                     if (!points.ContainsKey(required)) throw new AuthoringFailure("draft.anchors", "Missing required role " + required + ".");
 
@@ -523,7 +631,8 @@ namespace Game.Editor
                 Vector2 delta = enemy - player;
                 if (delta.magnitude < 1f) throw new AuthoringFailure("draft.anchors", "Player and enemy bases coincide.");
                 Vector2 forward = delta / delta.magnitude, across = new Vector2(-forward.y, forward.x);
-                var all = points.Values.Concat(padSpecs.Values.Select(x => x.at)).ToArray();
+                var all = points.Values.Concat(padSpecs.Values.Select(x => x.at))
+                    .Concat(plan == null ? Enumerable.Empty<Vector2>() : plan.Pads.Where(p => !p.Measured).Select(p => new Vector2(p.X, p.Z))).ToArray();
                 float fMin = all.Min(p => Vector2.Dot(p - player, forward)), fMax = all.Max(p => Vector2.Dot(p - player, forward));
                 float aMin = all.Min(p => Vector2.Dot(p - player, across)), aMax = all.Max(p => Vector2.Dot(p - player, across));
                 float forwardMetres = fMax - fMin + 2 * FrameMarginMetres, acrossMetres = aMax - aMin + 2 * FrameMarginMetres;
@@ -552,6 +661,49 @@ namespace Game.Editor
                         WidthMetres = pair.Value.size.x, DepthMetres = pair.Value.size.y, FactionId = Faction(pair.Key)
                     };
                 }).ToArray();
+                var rows = Array.Empty<SkirmishStructureInstancePadBinding>();
+                if (plan != null)
+                {
+                    // Measured entries reuse their draft anchor; derived pads get a new anchor at the same centre.
+                    // Instance pads come after the kind pads, so first-match kind lookups keep their pad.
+                    var padKeys = new Dictionary<string, (string padId, string anchorId)>(StringComparer.Ordinal);
+                    var instanceAnchors = new List<SkirmishLayoutAnchorConfig>();
+                    var instancePads = new List<SkirmishLegalPadConfig>();
+                    foreach (var planned in plan.Pads)
+                    {
+                        string slug = planned.Measured ? planned.MeasuredId.Replace('.', '_') : planned.Slug;
+                        string padId = "pad.skirmish." + token + "." + (planned.Measured ? "i_" : "") + slug;
+                        string padAnchor;
+                        if (planned.Measured) padAnchor = anchorId(planned.AnchorRole);
+                        else
+                        {
+                            if (points.ContainsKey("instance." + planned.Slug)) throw new AuthoringFailure("instancePads", "Anchor role instance." + planned.Slug + " already exists.");
+                            padAnchor = anchorId("instance." + planned.Slug);
+                            var l = local(new Vector2(planned.X, planned.Z));
+                            instanceAnchors.Add(new SkirmishLayoutAnchorConfig
+                            {
+                                AnchorId = padAnchor, RoleId = "instance." + planned.Slug,
+                                NormalizedU = (l.x - localOriginX) / forwardMetres, NormalizedV = (l.y - localOriginZ) / acrossMetres,
+                                WorldX = l.x, WorldZ = l.y
+                            });
+                        }
+                        var c = local(new Vector2(planned.X, planned.Z));
+                        instancePads.Add(new SkirmishLegalPadConfig
+                        {
+                            PadId = padId, AnchorId = padAnchor, RoleId = "instance." + (planned.Measured ? planned.MeasuredId : planned.Slug),
+                            Kind = planned.Kind, CenterX = c.x, CenterZ = c.y, WidthMetres = planned.Width, DepthMetres = planned.Depth, FactionId = planned.Faction
+                        });
+                        padKeys.Add(planned.Key, (padId, padAnchor));
+                    }
+                    anchors = anchors.Concat(instanceAnchors).ToArray();
+                    pads = pads.Concat(instancePads).ToArray();
+                    rows = plan.Rows.OrderBy(r => (int)r.Size).ThenBy(r => (int)r.Difficulty).ThenBy(r => r.Faction)
+                        .ThenBy(r => r.StructureId, StringComparer.Ordinal).ThenBy(r => r.Ordinal).Select(r => new SkirmishStructureInstancePadBinding
+                        {
+                            SizeId = r.Size, DifficultyId = r.Difficulty, FactionId = r.Faction, StructureId = r.StructureId, InstanceOrdinal = r.Ordinal,
+                            PadId = padKeys[r.PadKey].padId, AnchorId = padKeys[r.PadKey].anchorId
+                        }).ToArray();
+                }
                 var routes = Routes(draft["routes"] as JArray, points, anchorId, token);
 
                 string physicalHash = source.SourceBinding.IsConfigured ? source.SourceBinding.SourceContentHash : source.ContentHash;
@@ -559,7 +711,7 @@ namespace Game.Editor
                 {
                     layoutId = "layout.skirmish." + token, operationMapId = source.OperationMapId, contentHash = string.Empty,
                     worldWidthMetres = forwardMetres, worldDepthMetres = acrossMetres, originX = localOriginX, originZ = localOriginZ,
-                    cellSize = source.GridMetadata.CellSize, anchors = anchors, routes = routes, pads = pads,
+                    cellSize = source.GridMetadata.CellSize, anchors = anchors, routes = routes, pads = pads, structureInstancePads = rows,
                     worldBinding = new SkirmishLayoutWorldBindingConfig
                     {
                         OriginX = origin.x, OriginZ = origin.y, ForwardX = forward.x, ForwardZ = forward.y,

@@ -128,7 +128,7 @@ namespace Game.UI.Runtime
                 view.ExpandedGroup0=page.Group0;view.ExpandedGroup1=page.Group1;view.ExpandedGroup2=page.Group2;
                 view.ExpandedGroup3=page.Group3;view.ExpandedGroup4=page.Group4;view.PrecisionAttack=page.PrecisionAttack;
                 view.ExpandedAirMask = page.AirMask;
-                view.ExpandedRadarMask = page.RadarMask;
+                view.ExpandedSupportSlots = page.SupportSlots;
                 view.ExpandedCanPreviousPage = page.PreviousPage;
                 view.ExpandedCanNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
@@ -172,7 +172,8 @@ namespace Game.UI.Runtime
                     else view.OpenAircraftActions = ObserveWatchButton(wheel.OpenButton);
                 }
             }
-            if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) { view.AttackMode = command.ActiveCommandMode == TacticalCommandMode.Attack; view.SelectionMode = command.ActiveCommandMode == TacticalCommandMode.Select; }
+            if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) { view.AttackMode = command.ActiveCommandMode == TacticalCommandMode.Attack; view.SelectionMode = command.ActiveCommandMode == TacticalCommandMode.Select;
+                view.MoveMode = command.ActiveCommandMode == TacticalCommandMode.Move; view.ScanMode = command.ActiveCommandMode == TacticalCommandMode.Scan; }
             view.Infantry = model.InfantryCount;
             view.PlayerHealth = model.PlayerHealth; view.EnemyHealth = model.EnemyHealth;
             view.Squad0 = MatchHudSquadTouchNavigation.SlotTarget(watchSquads, 0);
@@ -185,6 +186,8 @@ namespace Game.UI.Runtime
             view.FocusEnemy = ObserveWatchButton(watchSkirmish?.EnemyFocusButton);
             view.Attack = ObserveWatchButton(_commandControlsView?.AttackButton);
             view.Hold = ObserveWatchButton(_commandControlsView?.HoldButton);
+            view.Move = ObserveWatchButton(_commandControlsView?.MoveButton);
+            view.Scan = ObserveWatchButton(_commandControlsView?.ScanButton);
             view.Recruit = ObserveWatchButton(_highlightPresentationSystem.ResolveProductionTutorialControl(out _));
             view.CloseDrawer = ObserveWatchButton(watchBuild?.CloseButton);
             if (model.Expanded)
@@ -231,6 +234,9 @@ namespace Game.UI.Runtime
                 view.RecruitMarksman = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Female_01") : openBuild;
                 view.RecruitApcFast = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_APC_Fast") : openBuild;
                 view.RecruitRadar = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Radar_Tank") : openBuild;
+                view.RecruitApcHeavy = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_APC_Heavy") : openBuild;
+                view.RecruitDrone = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Drone") : openBuild;
+                view.RecruitTransportHeli = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Transport") : openBuild;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;
@@ -705,10 +711,15 @@ namespace Game.UI.Runtime
                 var homeApproach = armyCenter - home;
                 if (homeApproach.sqrMagnitude < 1) homeApproach = objective - home;
                 view.HomeGround = ObserveClearAttackGround(home, homeApproach, -20006, 25f);
-                // Radar order ground: clear public ground 40 units behind the presented front, toward
-                // home. Only resolved while a radar is fielded (AriaRadarOrderPolicy).
-                if ((view.CoverageFieldedMask & 4) != 0 && !view.MapOpen && !view.DrawerOpen)
+                // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:
+                // clear public ground 40 units behind the presented front toward home (radar and
+                // transport heli Move), and 60 units ahead of it toward the enemy objective (drone Scan).
+                if ((view.CoverageFieldedMask & (4 | 16 | 32)) != 0 && !view.MapOpen && !view.DrawerOpen)
+                {
                     view.RearGround = ObserveClearAttackGround(armyCenter, home - armyCenter, -20016, 40f);
+                    if ((view.CoverageFieldedMask & 16) != 0 && (objective - armyCenter).sqrMagnitude > 1)
+                        view.FrontGround = ObserveClearAttackGround(armyCenter, objective - armyCenter, -20017, 60f);
+                }
             }
             MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
             float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;

@@ -7,10 +7,12 @@ namespace Game.Tests.Editor
     // one at a time through the visible drawer; the radar then gets one ordinary order.
     public sealed class AriaCoverageRecruitTests
     {
+        // S002's catalog offers marksman, apc_fast and radar (bits 1/2/4); apc_heavy, drone and transport heli
+        // are not in it, so they are never affordable there.
         static AriaCoverageView Ready(float time) => new AriaCoverageView
         {
             AssaultIssued = true, BreacherSettled = true, EnemyAlive = true,
-            AffordMask = AriaCoverageRecruitPolicy.All, CardMask = AriaCoverageRecruitPolicy.All, Time = time
+            AffordMask = 7, CardMask = AriaCoverageRecruitPolicy.All, Time = time
         };
 
         [Test]
@@ -38,7 +40,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaCoverageKind.Radar, kind);
             view.FieldedMask = 7; view.Time = 110f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
-            Assert.AreEqual(AriaCoverageRecruitPolicy.All, plan.Done);
+            Assert.AreEqual(7, plan.Done);
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "each kind once per match");
         }
 
@@ -68,7 +70,7 @@ namespace Game.Tests.Editor
             view.CardMask = 0; view.Time = 80f + AriaCoverageRecruitPolicy.BuySeconds + 1f;
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "bounded: no endless drawer taps");
             Assert.AreEqual(2, plan.Done, "apc_fast is not retried this match");
-            view.CardMask = AriaCoverageRecruitPolicy.All; view.AffordMask = AriaCoverageRecruitPolicy.All; view.Time = 95f;
+            view.CardMask = AriaCoverageRecruitPolicy.All; view.AffordMask = 7; view.Time = 95f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.Marksman, kind, "the marksman is bought once affordable");
             view.Busy = true; view.Time = 96f;
@@ -76,65 +78,114 @@ namespace Game.Tests.Editor
             Assert.AreEqual(3, plan.Done);
         }
 
-        static AriaRadarView Radar(float time) => new AriaRadarView
+        [Test]
+        public void S026KindsFollowAfterTheS002KindsOneAtATime()
         {
-            RadarFielded = true, ArmyMoving = true, EnemyAlive = true, ToggleAvailable = true, AttackAvailable = true,
-            RearAvailable = true, RadarMask = 0b00100, AvailableSquadMask = 0b11111, Time = time
+            var plan = new AriaCoverageState { Done = 7 }; // marksman, apc_fast, radar covered
+            var view = Ready(120f); view.AffordMask = AriaCoverageRecruitPolicy.All; view.FieldedMask = 7;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out var kind));
+            Assert.AreEqual(AriaCoverageKind.ApcHeavy, kind);
+            view.PendingMask = 8; view.Time = 122f;
+            AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "one recruit at a time");
+            view.PendingMask = 0; view.FieldedMask = 15; view.Time = 130f;
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
+            Assert.AreEqual(AriaCoverageKind.Drone, kind);
+            view.FieldedMask = 31; view.Time = 140f;
+            AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
+            Assert.AreEqual(AriaCoverageKind.TransportHeli, kind);
+        }
+
+        static AriaSupportView Support(float time, AriaSupportKind kind = AriaSupportKind.Radar) => new AriaSupportView
+        {
+            FieldedMask = AriaSupportOrderPolicy.KindBit(kind), ArmyMoving = true, EnemyAlive = true, ToggleAvailable = true,
+            MoveAvailable = true, AttackAvailable = true, ScanAvailable = true, RearAvailable = true, FrontAvailable = true,
+            SupportSlots = AriaSupportOrderPolicy.Slots(AriaSupportKind.None, AriaSupportKind.None, kind, AriaSupportKind.None, AriaSupportKind.None),
+            AvailableSquadMask = 0b11111, Time = time
         };
 
         [Test]
-        public void RadarCardAttackThenRearGroundOnce()
+        public void RadarCardMoveThenRearGroundOnce()
         {
-            var plan = default(AriaRadarState);
-            var view = Radar(120f);
-            Assert.IsTrue(AriaRadarOrderPolicy.Step(view, ref plan, out var d));
+            var plan = default(AriaSupportState);
+            var view = Support(120f);
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
             Assert.AreEqual(1, d.Trace);
-            Assert.AreEqual(AriaRadarAction.SelectSlot, d.Action);
+            Assert.AreEqual(AriaSupportAction.SelectSlot, d.Action);
             Assert.AreEqual(2, d.Slot);
             view.SelectedMask = 0b00100; view.SelectedGroups = 1; view.CompletedContacts = 1; view.Time = 122f;
-            Assert.IsTrue(AriaRadarOrderPolicy.Step(view, ref plan, out d));
-            Assert.AreEqual(AriaRadarAction.ArmAttack, d.Action);
-            view.AttackMode = true; view.CompletedContacts = 2; view.Time = 124f;
-            Assert.IsTrue(AriaRadarOrderPolicy.Step(view, ref plan, out d));
-            Assert.AreEqual(AriaRadarAction.TargetRear, d.Action);
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.ArmMove, d.Action, "an unarmed radar gets an ordinary Move");
+            view.Mode = AriaSupportMode.Move; view.CompletedContacts = 2; view.Time = 124f;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.TargetRear, d.Action);
             view.RearAvailable = false; view.Time = 125f;
-            Assert.AreEqual(AriaRadarAction.Waiting, (AriaRadarOrderPolicy.Step(view, ref plan, out d), d.Action).Item2, "off-screen rear ground: wait, never tap blind");
-            view.RearAvailable = true; view.AttackMode = false; view.CompletedContacts = 3; view.Time = 127f;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out d));
+            AriaSupportOrderPolicy.Step(view, ref plan, out d);
+            Assert.AreEqual(AriaSupportAction.Waiting, d.Action, "off-screen rear ground: wait, never tap blind");
+            view.RearAvailable = true; view.Mode = AriaSupportMode.None; view.CompletedContacts = 3; view.Time = 127f;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out d));
             Assert.AreEqual(2, d.Trace, "ordered");
-            Assert.AreEqual(4, plan.Stage);
+            Assert.AreEqual(1, plan.Done);
             view.Time = 200f; view.SelectedGroups = 0; view.SelectedMask = 0;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "one order per match");
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "one order per kind per match");
         }
 
         [Test]
-        public void RadarYieldsToSelectionsOwnersAndPagingAndIsBounded()
+        public void MoveFallsBackToAttackAndDroneScansAhead()
         {
-            var plan = default(AriaRadarState);
-            var view = Radar(120f); view.SelectedGroups = 2; view.SelectedMask = 3;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "never cuts into a roster sweep selection");
-            view = Radar(120f); view.Busy = true;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "home defence and other owners first");
-            view = Radar(120f); view.RadarMask = 0;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "the radar card is on another page");
-            view = Radar(120f); view.ArmyMoving = false;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "only after the column has its order");
+            var plan = default(AriaSupportState);
+            var view = Support(120f, AriaSupportKind.TransportHeli); view.MoveAvailable = false;
+            view.SelectedMask = 0b00100; view.SelectedGroups = 1;
+            // A selection is visible: the step never starts on top of it.
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _));
+            view.SelectedMask = 0; view.SelectedGroups = 0;
+            AriaSupportOrderPolicy.Step(view, ref plan, out _);
+            view.SelectedMask = 0b00100; view.SelectedGroups = 1; view.CompletedContacts = 1;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
+            Assert.AreEqual(AriaSupportAction.ArmAttack, d.Action, "no Move button presented: Attack Move");
+
+            plan = default;
+            view = Support(150f, AriaSupportKind.Drone);
+            AriaSupportOrderPolicy.Step(view, ref plan, out d);
+            Assert.AreEqual(AriaSupportKind.Drone, d.Kind);
+            view.SelectedMask = 0b00100; view.SelectedGroups = 1; view.CompletedContacts = 1;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.ArmScan, d.Action);
+            view.Mode = AriaSupportMode.Scan; view.CompletedContacts = 2;
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(AriaSupportAction.TargetFront, d.Action, "the drone scans ahead of the column");
+        }
+
+        [Test]
+        public void SupportYieldsToOwnersAndPagingAndIsBoundedPerKind()
+        {
+            var plan = default(AriaSupportState);
+            var view = Support(120f); view.Busy = true;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "home defence and other owners first");
+            view = Support(120f); view.SupportSlots = 0;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "the card is on another page");
+            view = Support(120f); view.ArmyMoving = false;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "only after the column has its order");
+            view = Support(120f); view.Mode = AriaSupportMode.Attack;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "never while a command mode is armed");
             Assert.AreEqual(0, plan.Stage);
 
-            view = Radar(120f);
-            Assert.IsTrue(AriaRadarOrderPolicy.Step(view, ref plan, out _));
-            view.RadarMask = 0; view.Time = 121f; // the sweep paged away before the card was tapped
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out var d));
+            view = Support(120f);
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out _));
+            view.SupportSlots = 0; view.Time = 121f; // the sweep paged away before the card was tapped
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out var d));
             Assert.AreEqual(3, d.Trace);
-            Assert.AreEqual(0, plan.Stage);
-            view = Radar(121.5f);
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out _), "cooldown after a release");
+            view = Support(121.5f);
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "cooldown after a release");
             view.Time = plan.ReadyAt + .1f;
-            Assert.IsTrue(AriaRadarOrderPolicy.Step(view, ref plan, out _));
-            view.Time += AriaRadarOrderPolicy.OrderSeconds + 1f;
-            Assert.IsFalse(AriaRadarOrderPolicy.Step(view, ref plan, out d));
-            Assert.AreEqual(4, d.Trace, "given up after MaxAttempts");
-            Assert.AreEqual(4, plan.Stage);
+            Assert.IsTrue(AriaSupportOrderPolicy.Step(view, ref plan, out _));
+            view.Time += AriaSupportOrderPolicy.OrderSeconds + 1f;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out d));
+            Assert.AreEqual(4, d.Trace, "given up after the second release of this kind");
+            Assert.AreEqual(1, plan.Done);
+            view.Time = plan.ReadyAt + 1f;
+            Assert.IsFalse(AriaSupportOrderPolicy.Step(view, ref plan, out _), "a given-up kind is not retried");
         }
     }
 }

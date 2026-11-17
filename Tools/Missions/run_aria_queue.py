@@ -253,6 +253,9 @@ def windows_command(repo, log, timeout, gui_licensing):
     # ARIA plays through the real UI and cannot run headless; InvokeUnity.ps1 adds -batchmode unless
     # -GuiLicensing is passed, so ARIA queues always use GUI mode (gui_licensing kept for compatibility).
     command.append('-GuiLicensing')
+    # Match the Mac lane: it compiles in Release code optimization (Library/Bee/200b0aE.dag, /optimize+); a
+    # Windows Editor left in Debug ran ARIA matches at 3-4 fps vs ~30 fps (2026-11-17). Session-only flag.
+    command.append('-releaseCodeOptimization')
     return command + ['-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit']
 
 

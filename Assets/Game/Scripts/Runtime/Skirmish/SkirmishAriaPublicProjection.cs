@@ -184,7 +184,8 @@ namespace Game.Runtime
 
         // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
         private static readonly SkirmishRoleKind[] CoverageRoles =
-            { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar };
+            { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar,
+              SkirmishRoleKind.ApcHeavy, SkirmishRoleKind.Drone, SkirmishRoleKind.TransportHeli };
 
         private static int PendingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
         {

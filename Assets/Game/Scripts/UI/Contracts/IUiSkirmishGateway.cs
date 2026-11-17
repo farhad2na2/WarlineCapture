@@ -26,6 +26,8 @@ namespace Game.UI.Contracts
         public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
         public bool SlippingHostile;
         public float SlippingHostileX, SlippingHostileY, SlippingHostileZ;
+        public bool ColumnKnown;
+        public float ColumnX, ColumnY, ColumnZ;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
         public byte ResultStars;
         public string ResultElapsed;

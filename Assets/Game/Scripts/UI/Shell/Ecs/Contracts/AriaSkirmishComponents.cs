@@ -54,6 +54,10 @@ namespace Game.UI.Shell.Contracts.Ecs
         public float AirSortieObservedAt, AirCycleDeadline, AirServiceReadyAt;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount, InterceptPans;
+        // AriaColumnCameraPolicy: Home once, then re-centre the marching column.
+        public byte ColumnStage, ColumnHomeDone, ColumnDone, ColumnPans, ColumnRefinds, ColumnRefindSeen;
+        public int ColumnActions;
+        public float ColumnDeadline, ColumnReadyAt;
         public int InterceptSlot, InterceptActions;
         public float InterceptDeadline, InterceptLastSeenAt, InterceptReadyAt;
     }

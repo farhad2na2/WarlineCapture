@@ -149,6 +149,10 @@ public AriaS002ActionTarget InterceptThreat;
 // The same vehicle is publicly known (fog-visible); a clear camera drag toward it.
 public bool InterceptKnown;
 public AriaS002ActionTarget InterceptPan;
+// Marching column camera (AriaColumnCameraPolicy).
+public bool ColumnKnown;
+public bool ColumnCentred;
+public AriaS002ActionTarget ColumnPan;
 public AriaS002ActionTarget FocusThreat;
 public AriaS002ActionTarget FocusGroup;
 public AriaS002ActionTarget CloseMap;
@@ -298,6 +302,15 @@ public float AirServiceReadyAt;
 public byte InterceptStage;
 public byte InterceptCount;
 public byte InterceptPans;
+public byte ColumnStage;
+public byte ColumnHomeDone;
+public byte ColumnDone;
+public byte ColumnPans;
+public byte ColumnRefinds;
+public byte ColumnRefindSeen;
+public int ColumnActions;
+public float ColumnDeadline;
+public float ColumnReadyAt;
 public int InterceptSlot;
 public int InterceptActions;
 public float InterceptDeadline;

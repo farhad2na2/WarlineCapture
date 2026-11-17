@@ -146,4 +146,64 @@ namespace Game.Simulation {
    return dx*dx+dy*dy>=20f*20f;
   }
  }
+
+ public enum AriaColumnCameraAction:byte {None,Home,Recentre}
+ // Watching the march: after the visible page's assault groups are ordered, the player
+ // taps the HUD Home button once (the Advance point sits in front of the enemy base, far
+ // from the column) and then keeps the marching column framed with ordinary camera drags,
+ // re-centring only when it leaves the middle third of the view. Own-unit positions are
+ // public to their player; no minimap, no hidden state, no orders.
+ public struct AriaColumnCameraView {
+  // Assault ordered for at least one group, the army not yet at the enemy base.
+  public bool Marching,AtBase,EnemyAlive;
+  // Every assault group on the visible roster page carries its order.
+  public bool PageOrdered;
+  // Any other owner holds the controls or the camera: open drawer/map/placement, Attack
+  // armed, intercept/home defence/precision/navigation/inspection/pad in progress.
+  public bool Busy;
+  // The base-assault step is re-finding the Advance point (map navigation).
+  public bool Refinding;
+  public bool ColumnKnown,ColumnCentred,HomeAvailable,PanAvailable;
+  public int CompletedContacts;public float Time;
+ }
+ // Stage: 0 idle, 1 Home tap pending, 2 re-centring drag pending.
+ public struct AriaColumnCameraState {public byte Stage,HomeDone,Done,Pans,Refinds,RefindSeen;public int Actions;public float Deadline,ReadyAt;}
+ // Trace: 0 none, 1 home, 2 recentre, 3 done.
+ public struct AriaColumnCameraDecision {public AriaColumnCameraAction Action;public byte Trace;public int PanId;}
+ public static class AriaColumnCameraPolicy {
+  // Pace: one camera action at most every IntervalSeconds. Bounds: MaxPans drags per match;
+  // after MaxRefinds Advance-point re-finds the rule stops (today's behaviour).
+  public const float IntervalSeconds=2.5f,ActionSeconds=4f;
+  public const int MaxPans=12,MaxRefinds=2;
+  // Alternate drag controls: consecutive drags are separate targets, never touch retries.
+  public const int PanIdA=-20016,PanIdB=-20017;
+  public static bool Step(in AriaColumnCameraView view,ref AriaColumnCameraState plan,out AriaColumnCameraDecision output){
+   output=default;
+   if(plan.Done!=0)return false;
+   if(view.Refinding&&plan.HomeDone!=0&&plan.RefindSeen==0){plan.RefindSeen=1;plan.Refinds++;}
+   if(!view.Refinding)plan.RefindSeen=0;
+   if(view.AtBase||!view.EnemyAlive||plan.Refinds>=MaxRefinds){plan.Done=1;plan.Stage=0;output.Trace=3;return false;}
+   if(plan.Stage!=0){
+    if(view.Busy||view.CompletedContacts>plan.Actions||view.Time>plan.Deadline){plan.Stage=0;plan.ReadyAt=view.Time+IntervalSeconds;return false;}
+    if(plan.Stage==1){if(!view.HomeAvailable){plan.Stage=0;plan.ReadyAt=view.Time+IntervalSeconds;return false;}output.Action=AriaColumnCameraAction.Home;return true;}
+    if(!view.PanAvailable){plan.Stage=0;plan.ReadyAt=view.Time+IntervalSeconds;return false;}
+    output.Action=AriaColumnCameraAction.Recentre;output.PanId=PanId(plan.Pans);return true;
+   }
+   if(view.Busy||!view.Marching||!view.ColumnKnown||view.Time<plan.ReadyAt)return false;
+   if(plan.HomeDone==0){
+    if(!view.PageOrdered)return false;
+    plan.HomeDone=1;
+    if(view.ColumnCentred||!view.HomeAvailable)return false; // Already watching the column.
+    plan.Stage=1;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+ActionSeconds;
+    output.Action=AriaColumnCameraAction.Home;output.Trace=1;return true;
+   }
+   if(view.ColumnCentred||!view.PanAvailable||plan.Pans>=MaxPans)return false;
+   plan.Stage=2;plan.Pans++;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+ActionSeconds;
+   output.Action=AriaColumnCameraAction.Recentre;output.PanId=PanId(plan.Pans);output.Trace=2;return true;
+  }
+  public static int PanId(int pans)=>(pans&1)!=0?PanIdA:PanIdB;
+  // Middle third of the view (screen pixels, any origin).
+  public static bool Centred(float x,float y,float left,float bottom,float width,float height)=>
+   x>=left+width/3f&&x<=left+width*2f/3f&&y>=bottom+height/3f&&y<=bottom+height*2f/3f;
+ }
 }

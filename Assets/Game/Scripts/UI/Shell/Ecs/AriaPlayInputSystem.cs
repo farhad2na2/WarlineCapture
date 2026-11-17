@@ -74,6 +74,29 @@ namespace Game.UI.Shell.Ecs
             string slot = p.InterceptSlot == Game.Simulation.AriaInterceptPolicy.KeepSelection ? "selection" : p.InterceptSlot.ToString();
             Debug.Log($"[AriaS002Trace] event=intercept state={state} known={known} offered={offered} pan={pan} screen=({v.InterceptScreen.x:F0},{v.InterceptScreen.y:F0},{v.InterceptScreen.z:F1}) safe={Screen.safeArea} stage={p.InterceptStage} count={p.InterceptCount} pans={p.InterceptPans} slot={slot} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} atBase={v.AssaultAtBase} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
         }
+        private int tracedColumnStage, tracedColumnPans, tracedColumnRefinds; private bool tracedColumnHome, tracedColumnDone;
+        // Evidence only: each Home tap and re-centring drag of the march camera, each
+        // Advance-point re-find it caused, and when it stops.
+        private void TraceColumnCamera()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1) { tracedColumnStage = tracedColumnPans = tracedColumnRefinds = 0; tracedColumnHome = tracedColumnDone = false; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            bool home = p.ColumnHomeDone != 0, done = p.ColumnDone != 0;
+            string state = !tracedColumnHome && home ? (p.ColumnStage == 1 ? "home" : "home_skipped")
+                : p.ColumnPans != tracedColumnPans ? "recentre"
+                : p.ColumnRefinds != tracedColumnRefinds ? "refind"
+                : !tracedColumnDone && done ? "done"
+                : tracedColumnStage != 0 && p.ColumnStage == 0 ? "settled" : null;
+            tracedColumnStage = p.ColumnStage; tracedColumnPans = p.ColumnPans; tracedColumnRefinds = p.ColumnRefinds;
+            tracedColumnHome = home; tracedColumnDone = done;
+            if (state == null) return;
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            Debug.Log($"[AriaS002Trace] event=column_camera state={state} stage={p.ColumnStage} pans={p.ColumnPans} refinds={p.ColumnRefinds} known={v.ColumnKnown} centred={v.ColumnCentred} panOffered={v.ColumnPan.Available} screen=({v.ColumnScreen.x:F0},{v.ColumnScreen.y:F0},{v.ColumnScreen.z:F1}) homeOffered={v.FocusPlayer.Available} attackMode={v.AttackMode} atBase={v.AssaultAtBase} page={v.ExpandedPageIndex} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -135,6 +158,7 @@ namespace Game.UI.Shell.Ecs
             bool found = false;
             TraceHomeDefense();
             TraceIntercept();
+            TraceColumnCamera();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

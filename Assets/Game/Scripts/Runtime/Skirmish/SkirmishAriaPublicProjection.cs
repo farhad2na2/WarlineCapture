@@ -265,6 +265,8 @@ namespace Game.Runtime
         // Public fog view only: a hostile vehicle the player can currently see that is
         // crossing the player's column or has slipped past its nearest own unit toward the
         // player's base (AriaInterceptPolicy.Candidate). Hidden contacts are never considered.
+        private const float ColumnLeftBaseDistance = 40f;
+        private const int ColumnMinimumUnits = 3;
         private static void ObserveSlippingHostile(EntityManager em, Entity session, ref SkirmishAriaPublicView view)
         {
             if (!view.Playing || !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
@@ -281,6 +283,7 @@ namespace Game.Runtime
             using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(Unity.Transforms.LocalTransform));
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             using var own = new NativeList<Unity.Mathematics.float2>(Allocator.Temp);
+            Unity.Mathematics.float3 columnSum = default; int columnCount = 0;
             using var hostiles = new NativeList<Unity.Mathematics.float3>(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
@@ -289,16 +292,27 @@ namespace Game.Runtime
                 if (!owned.SessionId.Equals(sessionId) || owned.IsStructure != 0 ||
                     !em.HasComponent<SkirmishUnitRoleComponent>(unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
                     continue;
-                SkirmishPopulationCategory category = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Category;
+                var roleInfo = em.GetComponentData<SkirmishUnitRoleComponent>(unit);
+                SkirmishPopulationCategory category = roleInfo.Category;
                 var position = em.GetComponentData<Unity.Transforms.LocalTransform>(unit).Position;
                 if (owned.FactionId == 1 &&
                     (category == SkirmishPopulationCategory.Infantry || category == SkirmishPopulationCategory.Ground))
                 {
                     own.Add(position.xz);
+                    // Supply vehicles shuttle away from the column; frame the fighting units.
+                    if (roleInfo.Role != SkirmishRoleKind.LogisticsTruck && roleInfo.Role != SkirmishRoleKind.Tanker &&
+                        Unity.Mathematics.math.distance(position.xz, homeXZ) > ColumnLeftBaseDistance)
+                    { columnSum += position; columnCount++; }
                 }
                 else if (owned.FactionId == 2 && category == SkirmishPopulationCategory.Ground &&
                     SkirmishFogService.IsVisibleToFaction(em, unit, 1))
                     hostiles.Add(position);
+            }
+            if (columnCount >= ColumnMinimumUnits)
+            {
+                var column = columnSum / columnCount;
+                view.ColumnKnown = true;
+                view.ColumnX = column.x; view.ColumnY = column.y; view.ColumnZ = column.z;
             }
             if (own.Length == 0 || hostiles.Length == 0)
                 return;

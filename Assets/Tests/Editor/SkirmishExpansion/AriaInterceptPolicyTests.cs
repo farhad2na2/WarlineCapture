@@ -259,5 +259,95 @@ namespace Game.Tests.Editor
             view.ThreatAvailable = true; view.Time = 122f;
             Assert.AreEqual(AriaInterceptAction.TargetThreat, Step(view, ref plan, out _).Action);
         }
+
+        static AriaColumnCameraView March(float time) => new AriaColumnCameraView
+        {
+            Marching = true, EnemyAlive = true, PageOrdered = true, ColumnKnown = true,
+            HomeAvailable = true, PanAvailable = true, Time = time
+        };
+
+        // The Advance point sits 25 units in front of the enemy base, about 600 world units
+        // from the column; one Home tap brings the camera back, then drags keep it framed.
+        [Test]
+        public void HomeOnceThenPacedAlternatingRecentringDrags()
+        {
+            var plan = default(AriaColumnCameraState);
+            var view = March(50f); view.PageOrdered = false;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "the page still needs its Advance order");
+            view.PageOrdered = true; view.CompletedContacts = 20;
+            Assert.IsTrue(AriaColumnCameraPolicy.Step(view, ref plan, out var decision));
+            Assert.AreEqual(AriaColumnCameraAction.Home, decision.Action);
+            Assert.AreEqual(1, decision.Trace);
+            view.Time = 50.5f;
+            Assert.AreEqual(AriaColumnCameraAction.Home, Step(view, ref plan).Action, "same Home tap until it completes");
+            view.CompletedContacts = 21; view.Time = 51f;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _));
+            Assert.AreEqual(51f + AriaColumnCameraPolicy.IntervalSeconds, plan.ReadyAt, 1e-4);
+            view.Time = 52f;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "human pace between camera actions");
+            view.Time = 53.6f;
+            Assert.IsTrue(AriaColumnCameraPolicy.Step(view, ref plan, out decision));
+            Assert.AreEqual(AriaColumnCameraAction.Recentre, decision.Action);
+            int first = decision.PanId;
+            view.CompletedContacts = 22; view.Time = 54f;
+            AriaColumnCameraPolicy.Step(view, ref plan, out _);
+            view.Time = 57f;
+            Assert.IsTrue(AriaColumnCameraPolicy.Step(view, ref plan, out decision));
+            Assert.AreNotEqual(first, decision.PanId, "consecutive drags use alternate controls, never touch retries");
+            Assert.AreEqual(1, plan.HomeDone);
+        }
+
+        static AriaColumnCameraDecision Step(in AriaColumnCameraView view, ref AriaColumnCameraState plan)
+        { AriaColumnCameraPolicy.Step(view, ref plan, out var decision); return decision; }
+
+        [Test]
+        public void ColumnCameraYieldsAndStaysQuietWhenFramed()
+        {
+            var plan = default(AriaColumnCameraState);
+            var view = March(50f); view.Busy = true;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "another owner holds the controls");
+            view.Busy = false; view.ColumnCentred = true;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "already watching the column: no Home tap");
+            Assert.AreEqual(1, plan.HomeDone);
+            view.Time = 60f;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "inside the middle third: no drag");
+
+            view.ColumnCentred = false; view.CompletedContacts = 5;
+            Assert.IsTrue(AriaColumnCameraPolicy.Step(view, ref plan, out _));
+            view.Busy = true; view.Time = 60.2f; // e.g. the intercept or home defence starts
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "a pending drag yields at once");
+            Assert.AreEqual(0, plan.Stage);
+        }
+
+        [Test]
+        public void ColumnCameraStopsAtTheBaseAfterRefindsAndWithinItsBudget()
+        {
+            var plan = default(AriaColumnCameraState);
+            var view = March(50f); view.AtBase = true;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out var decision));
+            Assert.AreEqual(3, decision.Trace);
+            view.AtBase = false; view.Time = 99f;
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "done for this match");
+
+            // Each Advance-point re-find after the Home tap counts once; two end the rule.
+            plan = new AriaColumnCameraState { HomeDone = 1 };
+            view = March(60f); view.Refinding = true; view.Busy = true;
+            AriaColumnCameraPolicy.Step(view, ref plan, out _);
+            AriaColumnCameraPolicy.Step(view, ref plan, out _);
+            Assert.AreEqual(1, plan.Refinds, "one navigation counts once");
+            view.Refinding = false; view.Busy = false; view.Time = 61f;
+            AriaColumnCameraPolicy.Step(view, ref plan, out _);
+            view.Refinding = true; view.Busy = true;
+            AriaColumnCameraPolicy.Step(view, ref plan, out _);
+            Assert.AreEqual(1, plan.Done, "falls back to today's behaviour");
+
+            plan = new AriaColumnCameraState { HomeDone = 1, Pans = (byte)AriaColumnCameraPolicy.MaxPans };
+            view = March(70f);
+            Assert.IsFalse(AriaColumnCameraPolicy.Step(view, ref plan, out _), "drag budget per match");
+
+            Assert.IsTrue(AriaColumnCameraPolicy.Centred(960f, 540f, 0f, 0f, 1920f, 1080f));
+            Assert.IsFalse(AriaColumnCameraPolicy.Centred(500f, 540f, 0f, 0f, 1920f, 1080f));
+            Assert.IsFalse(AriaColumnCameraPolicy.Centred(960f, 3037f, 0f, 0f, 1920f, 1080f));
+        }
     }
 }

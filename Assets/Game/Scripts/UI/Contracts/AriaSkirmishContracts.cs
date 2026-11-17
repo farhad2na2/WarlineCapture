@@ -66,6 +66,11 @@ namespace Game.UI.Contracts
         public AriaTouchTarget InterceptPan;
         // Evidence only: projected screen point of the known vehicle (z = depth).
         public UnityEngine.Vector3 InterceptScreen;
+        // Marching column (own units out of the base): known, inside the middle third of the
+        // view, and an ordinary camera drag on clear ground that re-centres it.
+        public bool ColumnKnown, ColumnCentred;
+        public AriaTouchTarget ColumnPan;
+        public UnityEngine.Vector3 ColumnScreen;
         // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
         public AriaTouchTarget HomeGround;
         public int OwnStructureAttackUnits;

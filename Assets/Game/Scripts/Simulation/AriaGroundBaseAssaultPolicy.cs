@@ -117,6 +117,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
             if (StepIntercept(view, ref plan, ref touch, ref output)) return;
+            if (StepColumnCamera(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             // A home threat does not sit out the passive post-order observe window.
             if (!(view.PublicHomeThreat && plan.AdvanceNavigation == 0) &&
@@ -412,6 +413,34 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 case Game.Simulation.AriaInterceptAction.PanToThreat:plan.Intent=AriaS002Intent.FindThreat;Target(view.InterceptPan,false,ref output);break;
                 default:plan.Intent=AriaS002Intent.TargetThreat;output.Kind=AriaS002DecisionKind.Waiting;break;
             }
+            return true;
+        }
+
+        // Watch the march: one Home tap once the visible page and the anti-armour groups carry
+        // their order, then ordinary drags keep the column in the middle third of the view.
+        private static bool StepColumnCamera(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            var facts=new Game.Simulation.AriaColumnCameraView {
+                Marching=view.ExpandedAttackOrderMask!=0||plan.AssaultIssued!=0||plan.PagesOrdered>0,
+                AtBase=view.AssaultAtBase,EnemyAlive=view.EnemyDesignatedAlive,
+                PageOrdered=plan.StructureOrdered!=0&&view.ExpandedAssaultMask!=0&&(view.ExpandedAssaultMask&~view.ExpandedAttackOrderMask)==0,
+                Busy=touch.Phase==AriaS002ContactPhase.Manual||view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||view.AttackMode||
+                    view.PublicHomeThreat||plan.HomeDefenseStage!=0||plan.PrecisionStage!=0||plan.AdvanceNavigation!=0||
+                    plan.MapNavigationStage!=0||plan.AssaultInspectStage!=0||plan.PadStage!=0||plan.InterceptStage!=0||plan.AssaultFocusStage==1,
+                Refinding=plan.AdvanceNavigation!=0,
+                ColumnKnown=view.ColumnKnown,ColumnCentred=view.ColumnCentred,HomeAvailable=view.FocusPlayer.Admitted,PanAvailable=view.ColumnKnown&&view.ColumnPan.Admitted,
+                CompletedContacts=touch.Actions,Time=view.Time };
+            var state=new Game.Simulation.AriaColumnCameraState {Stage=plan.ColumnStage,HomeDone=plan.ColumnHomeDone,Done=plan.ColumnDone,Pans=plan.ColumnPans,
+                Refinds=plan.ColumnRefinds,RefindSeen=plan.ColumnRefindSeen,Actions=plan.ColumnActions,Deadline=plan.ColumnDeadline,ReadyAt=plan.ColumnReadyAt};
+            bool handled=Game.Simulation.AriaColumnCameraPolicy.Step(facts,ref state,out var decision);
+            plan.ColumnStage=state.Stage;plan.ColumnHomeDone=state.HomeDone;plan.ColumnDone=state.Done;plan.ColumnPans=state.Pans;
+            plan.ColumnRefinds=state.Refinds;plan.ColumnRefindSeen=state.RefindSeen;plan.ColumnActions=state.Actions;plan.ColumnDeadline=state.Deadline;plan.ColumnReadyAt=state.ReadyAt;
+            if(!handled)return false;
+            plan.Intent=AriaS002Intent.ObserveBattle;
+            if(decision.Action==Game.Simulation.AriaColumnCameraAction.Home)Target(view.FocusPlayer,false,ref output);
+            else{Target(view.ColumnPan,false,ref output);output.TargetId=decision.PanId;}
             return true;
         }
 

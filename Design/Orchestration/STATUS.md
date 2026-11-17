@@ -12,7 +12,7 @@ record is `missions.csv`.
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
-| Dispatch worker | Sonnet | Authoring writes one measured pad per starting building (branch `missions/generic-binding`) | Running |
+| Binding worker | Sonnet | Authoring writes one exact pad per starting building for all 12 variants; branch `missions/generic-binding` | Running (code only; Unity confirms later) |
 | Codex | gpt-6.1-terra | Batch 6: why seed 155923 is lost (019), result screen shows the real end reason (020) | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
@@ -116,3 +116,8 @@ record is `missions.csv`.
 - 2026-11-17 08:16 dispatch worker: generic-binding done; diagnostic commit + design question reported
 - 2026-11-17 08:17 codex: codex-020-hud-end-reasons finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-020-hud-end-reasons.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-020-hud-end-reasons-report.txt (not yet verified or merged)
 - 2026-11-17 08:17 orchestrator: authored missions abort at startup most likely because every starting building needs its own exact pad and the authoring entry writes none (inferred from code, not yet proven by a log). Decision: confirm with a diagnostic run at the end of the current Unity task, and build the fix now in parallel: authoring writes one pad per building, from measured pads where the draft has them. The startup check is not relaxed. S006, S026, S049 and S050 will need re-authoring.
+- 2026-11-17 08:17 dispatch worker: started option A (instance pads) on missions/generic-binding
+- 2026-11-17 08:18 dispatch worker: option A stopped at written plan (binder rule + schema decision needed); no new commit
+- 2026-11-17 08:18 codex: codex-019-seed-loss-analysis finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-019-seed-loss-analysis.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-019-seed-loss-analysis-report.txt (not yet verified or merged)
+- 2026-11-17 08:18 codex: batch finished: codex-019-seed-loss-analysis:high:45 codex-020-hud-end-reasons:high:40
+- 2026-11-17 08:19 orchestrator: decision on authored-mission startup: keep all 12 size and difficulty variants and do not relax the startup check. The layout binder gets one narrow exemption (pads that belong to a single building may share a kind), and authoring writes one pad per starting building, from the measured pads that the City Crossroads and Mountain Pass drafts used to carry. A new worker is building it; the cause is still to be confirmed by the diagnostic run.

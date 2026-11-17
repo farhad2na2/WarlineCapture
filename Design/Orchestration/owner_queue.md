@@ -43,3 +43,9 @@ Nothing here blocks production.
   mission stays hidden ("Planned" in the Skirmish library) while it is being validated; the test
   harness plays it through a temporary library of its own. Making a mission visible in the game is
   a separate publication step that waits for the acceptance gates.
+
+- **Layout binder rule change (2026-11-17).** Authored missions could not start because each starting
+  building needs its own exact pad, and the layout binder refused two pads of the same kind for one
+  side. Default taken: keep all 12 size and difficulty variants and keep the startup check; allow
+  same-kind pads only when each belongs to one specific building. The alternative (Standard size
+  only, no rule change) was rejected because the plan certifies the other sizes per layout later.

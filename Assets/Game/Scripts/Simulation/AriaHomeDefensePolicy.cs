@@ -229,10 +229,10 @@ namespace Game.Simulation {
  public enum AriaHomeGuardPostAction:byte{None,Waiting,PreviousPage,ToggleSelected,SelectGuard,ArmAttack,TargetHomeGround,InspectHome}
  public struct AriaHomeGuardPostView {
   public uint Guard;public int GuardMask,PageIndex,SelectedMask,SelectedGroups,CompletedContacts;public float Time;
-  public bool HomeGroundTouched,UiBusy,AttackMode,PreviousAvailable,ToggleAvailable,AttackAvailable,HomeGroundAvailable,FocusAvailable;
+  public bool UiBusy,AttackMode,PreviousAvailable,ToggleAvailable,AttackAvailable,HomeGroundAvailable,FocusAvailable;
  }
  public static class AriaHomeGuardPostPolicy {
-  public const float DeadlineSeconds=30f,ReleaseSeconds=10f;
+  public const float DeadlineSeconds=30f;
   // Stage: 0 not started, 1 posting, 3 home-ground touch issued, 2 finished
   // (posted, given up or no guard). A terrain attack-move does not set the
   // roster's objective AttackOrdered flag, so completion is the finished touch.
@@ -240,15 +240,9 @@ namespace Game.Simulation {
    if(stage==2)return AriaHomeGuardPostAction.None;
    if(view.Guard==0){stage=2;return AriaHomeGuardPostAction.None;}
    if(stage==0){stage=1;deadline=view.Time+DeadlineSeconds;}
-   if(view.Time>deadline){
-    // Never leave the guard selected in Attack mode: the next ordinary
-    // objective order would send it away. Deselect it, then hand back.
-    if(view.GuardMask!=0&&(view.SelectedMask&view.GuardMask)!=0&&view.Time<=deadline+ReleaseSeconds&&!view.UiBusy)
-     return view.ToggleAvailable?AriaHomeGuardPostAction.ToggleSelected:AriaHomeGuardPostAction.Waiting;
-    stage=2;return AriaHomeGuardPostAction.None;
-   }
+   if(view.Time>deadline){stage=2;return AriaHomeGuardPostAction.None;}
    if(stage==3){
-    if(view.CompletedContacts>actions&&view.HomeGroundTouched&&!view.AttackMode){stage=2;return AriaHomeGuardPostAction.None;}
+    if(view.CompletedContacts>actions){stage=2;return AriaHomeGuardPostAction.None;}
     return view.HomeGroundAvailable?AriaHomeGuardPostAction.TargetHomeGround:AriaHomeGuardPostAction.Waiting;
    }
    if(view.UiBusy)return AriaHomeGuardPostAction.None;

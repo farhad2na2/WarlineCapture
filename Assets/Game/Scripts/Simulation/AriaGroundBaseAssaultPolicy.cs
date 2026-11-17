@@ -439,10 +439,10 @@ static Game.Simulation.AriaHomeGuardView GuardView(in AriaS002Observation v)=>ne
         private static bool StepHomeGuardPost(in AriaS002Observation view,
             ref AriaS002PlanState plan, ref AriaS002ContactState touch, ref AriaS002Decision output)
         {
-            if (plan.HomeGuardPostStage == 2 || plan.HomeGuardChosen == 0) return false;
+            if (plan.HomeGuardPostStage >= 2 || plan.HomeGuardChosen == 0) return false;
             var facts = new Game.Simulation.AriaHomeGuardPostView {
                 Guard=plan.HomeGuardGroup,GuardMask=view.HomeGuardMask,PageIndex=view.ExpandedPageIndex,
-                SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,CompletedContacts=touch.Actions,HomeGroundTouched=touch.LastCompletedTargetId==-20006,Time=view.Time,
+                SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,CompletedContacts=touch.Actions,Time=view.Time,
                 UiBusy=view.CatalogOpen||view.PlacementOpen||view.InspectionOpen,AttackMode=view.AttackMode,
                 PreviousAvailable=view.PreviousSquadPage.Admitted,ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
                 HomeGroundAvailable=view.HomeGround.Admitted,FocusAvailable=view.FocusPlayer.Admitted };

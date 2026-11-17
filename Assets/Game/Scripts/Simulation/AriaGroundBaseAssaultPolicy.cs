@@ -19,7 +19,10 @@ private static void StepCore(in AriaS002Observation view,ref AriaS002PlanState p
  var health=new AriaHomeDefenseState{HomeHealthSeen=plan.HomeHealthSeen,HomeHealthPeak=plan.HomeHealthPeak,HomeDamageAt=plan.HomeDamageAt};
  bool baseDamaged=!view.Finished&&AriaBaseDamagePolicy.Observe(view.Time,view.PlayerHealth,ref health);
  plan.HomeHealthSeen=health.HomeHealthSeen;plan.HomeHealthPeak=health.HomeHealthPeak;plan.HomeDamageAt=health.HomeDamageAt;
- if(baseDamaged&&!view.PublicHomeThreat){var observed=view;observed.PublicHomeThreat=true;observed.BaseDamageHomeThreat=true;StepCoreObserved(observed,ref plan,ref touch,ref output);return;}
+ // The HUD base-under-attack warning (perimeter entry or first damage) is the same public trigger:
+ // the defence starts on the frame the player is warned, not when the readout first drops.
+ bool alerted=!view.Finished&&view.BaseAlertPresented;
+ if((baseDamaged||alerted)&&!view.PublicHomeThreat){var observed=view;observed.PublicHomeThreat=true;observed.BaseDamageHomeThreat=true;StepCoreObserved(observed,ref plan,ref touch,ref output);return;}
  StepCoreObserved(view,ref plan,ref touch,ref output);
 }
 private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002PlanState plan,ref AriaS002ContactState touch,ref AriaS002Decision output){
@@ -102,6 +105,9 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             {touch.LastProgressAt=view.Time;touch.LastObjectiveProgressAt=view.Time;}
             plan.LastProgressAt=progress.LastProgressAt;plan.EnemyHealth=progress.EnemyHealth;plan.PlayerHealth=progress.PlayerHealth;plan.Infantry=progress.Infantry;
             if(blocked){touch.Phase=AriaS002ContactPhase.Blocked;touch.GestureRequested=0;return;}
+            // A new home threat takes the next touch: drop an unfinished map navigation or assault
+            // inspection (their map is closed by the defence) instead of finishing them first.
+            if (view.PublicHomeThreat && plan.HomeDefenseStage == 0) YieldToHomeDefense(view, ref plan);
             if (plan.PrecisionStage != 0)
             {
                 // Actual home defence may interrupt; accepted group history is retained.
@@ -662,17 +668,21 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 BaseDamageOnly=view.BaseDamageHomeThreat,ProportionateDefense=true,HomeGroundAvailable=view.HomeGround.Admitted,
                 AttackerVisibleAvailable=view.HomeAttacker.Admitted,AttackerGroundAvailable=view.HomeAttackerGround.Admitted,
                 HomeGroundFarAvailable=view.HomeGroundFar.Admitted,AntiArmorMask=view.ExpandedAntiArmorMask,
+                BaseAlert=view.BaseAlertPresented,HighlightedDefender=view.HomeDefenderHighlight,DefenderKnown=view.HomeDefenderKnown,
+                DefenderPageAvailable=view.HomeDefenderPage.Admitted,
                 BaseCritical=Game.Simulation.AriaBaseDamagePolicy.Critical(plan.HomeHealthPeak,view.PlayerHealth),
                 ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
                 CompletedContacts=touch.Actions,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
             var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,
                 HomeDefenseReason=plan.HomeDefenseReason,HomeDefenseSlot=plan.HomeDefenseSlot,HomeDefenseScope=plan.HomeDefenseScope,HomeDefenseRounds=plan.HomeDefenseRounds,
+                HomeDefenseMask=plan.HomeDefenseMask,
                 HomeDefenseRecovery=plan.HomeDefenseRecovery,HomeDefenseRecoveryAction=plan.HomeDefenseRecoveryAction,
                 Column=new Game.Simulation.AriaGroundColumnState {AssaultIssued=plan.AssaultIssued,PagedToAssault=plan.PagedToAssault,AssaultSelecting=plan.AssaultSelecting,StructureOrdered=plan.StructureOrdered,PagesOrdered=plan.PagesOrdered,AssaultPageSeen=plan.AssaultPageSeen,SelectionResetPage=plan.SelectionResetPage}};
             bool handled=Game.Simulation.AriaHomeDefensePolicy.Step(facts,ref state,out var decision);
             plan.HomeDefenseStage=state.HomeDefenseStage;plan.HomeDefenseAction=state.HomeDefenseAction;plan.HomeDefensePage=state.HomeDefensePage;plan.DefenseStage=state.DefenseStage;plan.HomeDefenseObserveUntil=state.HomeDefenseObserveUntil;
             plan.HomeDefenseReason=state.HomeDefenseReason;plan.HomeDefenseSlot=state.HomeDefenseSlot;plan.HomeDefenseScope=state.HomeDefenseScope;plan.HomeDefenseRounds=state.HomeDefenseRounds;
+            plan.HomeDefenseMask=state.HomeDefenseMask;
             plan.HomeDefenseRecovery=state.HomeDefenseRecovery;plan.HomeDefenseRecoveryAction=state.HomeDefenseRecoveryAction;
             plan.AssaultIssued=state.Column.AssaultIssued;plan.PagedToAssault=state.Column.PagedToAssault;plan.AssaultSelecting=state.Column.AssaultSelecting;plan.StructureOrdered=state.Column.StructureOrdered;plan.PagesOrdered=state.Column.PagesOrdered;plan.AssaultPageSeen=state.Column.AssaultPageSeen;plan.SelectionResetPage=state.Column.SelectionResetPage;
             if(decision.Defend)plan.Intent=AriaS002Intent.DefendBase;
@@ -694,6 +704,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 case Game.Simulation.AriaHomeDefenseAction.AttackAttackerVisible:Target(view.HomeAttacker,true,ref output);break;
                 case Game.Simulation.AriaHomeDefenseAction.AttackAttackerTerrain:Target(view.HomeAttackerGround,true,ref output);break;
                 case Game.Simulation.AriaHomeDefenseAction.AttackHomeFarTerrain:Target(view.HomeGroundFar,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.PageToDefender:Target(view.HomeDefenderPage,false,ref output);break;
             }
             return handled;
         }
@@ -740,6 +751,15 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             return true;
         }
 
+        static void YieldToHomeDefense(in AriaS002Observation view, ref AriaS002PlanState plan)
+        {
+            if (plan.AdvanceNavigation != 0)
+            {
+                plan.AdvanceNavigation = 0; plan.MapNavigationStage = 0; plan.MapOpenedAt = 0;
+                plan.MapNavigationReadyAt = view.Time + 6;
+            }
+            if (plan.AssaultInspectStage != 0) ClearAssaultMapInspection(ref plan);
+        }
         static void ClearAssaultMapInspection(ref AriaS002PlanState plan)
         {
             plan.AssaultInspectStage = 0; plan.AssaultInspectActions = 0; plan.AssaultInspectOpenTarget = 0;

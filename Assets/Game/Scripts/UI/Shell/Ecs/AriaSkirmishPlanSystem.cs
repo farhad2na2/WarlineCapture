@@ -527,18 +527,18 @@ namespace Game.UI.Shell.Ecs
             {
                 if (view.Time < plan.PadReadyAt) return;
                 if (view.PlacementOpen) { plan.PadStage = 8; Target(view.PlacementCancel, false, ref output); return; }
-                if (!view.AirPad.Available) return;
+                if (!PadCard(view, plan).Available) return;
                 plan.PadAction = touch.Actions;
-                plan.PadTargetId = view.AirPad.Id;
+                plan.PadTargetId = PadCard(view, plan).Id;
                 plan.PadStage = 10;
-                Target(view.AirPad, false, ref output);
+                Target(PadCard(view, plan), false, ref output);
                 return;
             }
             if (plan.PadStage == 10)
             {
                 if (touch.Actions <= plan.PadAction)
                 {
-                    if (view.AirPad.Id == plan.PadTargetId) Target(view.AirPad, false, ref output);
+                    if (PadCard(view, plan).Id == plan.PadTargetId) Target(PadCard(view, plan), false, ref output);
                     return;
                 }
                 if (touch.TargetId != plan.PadTargetId) { plan.PadStage = 8; return; }
@@ -602,7 +602,9 @@ namespace Game.UI.Shell.Ecs
             {
                 if (touch.Actions <= plan.PadAction)
                 { Target(view.PlacementConfirm, false, ref output); return; }
-                if (!view.PlacementOpen && !view.PadPresent) plan.PadStage = 8;
+                // Building coverage: a confirmed preview that closed is the placed building.
+                if (plan.BuildCurrent != 0) { if (!view.PlacementOpen) plan.PadStage = BuildingPlaced; }
+                else if (!view.PlacementOpen && !view.PadPresent) plan.PadStage = 8;
             }
             if (plan.PadStage == 9)
             {
@@ -908,7 +910,9 @@ namespace Game.UI.Shell.Ecs
             // skirmishes after the first reinforcement squad arrives.
             if (view.AirProfile && plan.AssaultStarted == 0 &&
                 OpeningDefense(view, ref plan, ref touch, ref output)) return;
-            if (view.PadPresent) plan.PadStage = 0;
+            // Producer buildings the mission offers (gate 3), once each, through the same pad placement.
+            if (StepGenericBuilding(view, ref plan, ref touch, ref output)) return;
+            if (view.PadPresent && plan.BuildCurrent == 0) plan.PadStage = 0;
             if (plan.PadStage != 0)
             {
                 StepHomePadPlacement(view, ref plan, ref touch, ref output);
@@ -938,6 +942,7 @@ namespace Game.UI.Shell.Ecs
             if (StepGenericStructureReplacement(view, ref plan, ref output)) return;
             if (StepGenericBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepGenericCoverageRecruit(view, ref plan, ref touch, ref output)) return;
+            if (StepGenericResearch(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)

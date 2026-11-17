@@ -115,7 +115,7 @@ namespace Game.UI.Shell.Ecs
         }
         private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
         private byte tracedSupportStage, tracedSupportDone;
-        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank" };
+        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank", "siege" };
         private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli" };
         // Evidence only, every expanded base assault (S002 native and generic planners):
         // coverage purchases (event=coverage kind=... state=buying|done|gave_up|pending|fielded) and each
@@ -152,6 +152,34 @@ namespace Game.UI.Shell.Ecs
                 Debug.Log($"[AriaS002Trace] event=support_order kind={SupportKindNames[kind]} state={state} scenario={v.SourceScenarioIndex} done={p.SupportDone} tried={p.SupportTried} slot={p.SupportSlot} page={v.ExpandedPageIndex} supportSlots={v.ExpandedSupportSlots} selectedMask={v.ExpandedSelectedMask} move={v.MoveMode} attack={v.AttackMode} scan={v.ScanMode} rear={v.RearGround.Available} front={v.FrontGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
                 tracedSupportStage = p.SupportStage; tracedSupportDone = p.SupportDone;
             }
+        }
+        private byte tracedResearchCurrent, tracedResearchTried, tracedResearchDone, tracedBuildCurrent, tracedBuildTried, tracedBuildDone;
+        private static readonly string[] BuildingNames = { "none", "helipad", "satellite_dish" };
+        // Evidence only: readiness research (event=research state=started|queued|released|gave_up) and producer
+        // buildings (event=build kind=helipad|satellite_dish state=started|built|released|gave_up).
+        private void TraceResearchAndBuild()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            var query = ariaStateQuery;
+            if (query.CalculateEntityCount() != 1)
+            { tracedResearchCurrent = tracedResearchTried = tracedResearchDone = tracedBuildCurrent = tracedBuildTried = tracedBuildDone = 0; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            string research = tracedResearchCurrent == 0 && p.ResearchCurrent != 0 ? "started"
+                : (p.ResearchDone & ~tracedResearchDone) != 0 ? (p.ResearchTried & (p.ResearchDone & ~tracedResearchDone)) != 0 && !v.ResearchInProgress ? "gave_up" : "queued"
+                : (p.ResearchTried & ~tracedResearchTried) != 0 ? "released" : null;
+            if (research != null)
+                Debug.Log($"[AriaS002Trace] event=research state={research} scenario={v.SourceScenarioIndex} stage={v.ReadinessStage} cost={v.ResearchCost} materials={v.OwnMaterials} need={v.ResearchNeedMask} inProgress={v.ResearchInProgress} canUpgrade={v.CanUpgradeReadiness} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            int kind = p.BuildCurrent != 0 ? p.BuildCurrent : tracedBuildCurrent;
+            string build = tracedBuildCurrent == 0 && p.BuildCurrent != 0 ? "started"
+                : tracedBuildCurrent != 0 && (p.BuildDone & ~tracedBuildDone) != 0 ? (p.BuildTried & (p.BuildDone & ~tracedBuildDone)) != 0 ? "gave_up" : "built"
+                : (p.BuildTried & ~tracedBuildTried) != 0 ? "released" : null;
+            if (build != null)
+                Debug.Log($"[AriaS002Trace] event=build kind={BuildingNames[kind < BuildingNames.Length ? kind : 0]} state={build} scenario={v.SourceScenarioIndex} need={v.BuildingNeedMask} present={v.BuildingPresentMask} afford={v.BuildingAffordMask} padStage={p.PadStage} placement={v.PlacementOpen} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            tracedResearchCurrent = p.ResearchCurrent; tracedResearchTried = p.ResearchTried; tracedResearchDone = p.ResearchDone;
+            tracedBuildCurrent = p.BuildCurrent; tracedBuildTried = p.BuildTried; tracedBuildDone = p.BuildDone;
         }
         private int tracedColumnSkips, tracedFindBaseGiveUps;
         // Evidence only: a roster page given up by the column stall guard (card never offered, or an
@@ -240,6 +268,7 @@ namespace Game.UI.Shell.Ecs
             TraceBreacher();
             TraceCoverage();
             TraceColumnRecovery();
+            TraceResearchAndBuild();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

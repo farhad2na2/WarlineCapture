@@ -91,6 +91,9 @@ namespace Game.Skirmish.Contracts
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar): affordable, queued, alive.
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
+        // Research and producer buildings: kinds/buildings unlocked by more readiness (coverage bits, buildings
+        // shifted past them), producer buildings needed / present / affordable above the reserve (1 helipad, 2 dish).
+        public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask;
         public int OwnStructureAttackUnits;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;

@@ -239,6 +239,12 @@ namespace Game.UI.Runtime
                 view.RecruitTransportHeli = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Transport") : openBuild;
                 view.RecruitGunner = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_01") : openBuild;
                 view.RecruitTank = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Tank_USA") : openBuild;
+                view.RecruitSiege = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Ground") : openBuild;
+                view.BuildDish = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Satelite_Dish") : openBuild;
+                view.ResearchNeedMask = model.ResearchNeedMask;
+                view.BuildingNeedMask = model.BuildingNeedMask;
+                view.BuildingPresentMask = model.BuildingPresentMask;
+                view.BuildingAffordMask = model.BuildingAffordMask;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;
@@ -246,6 +252,9 @@ namespace Game.UI.Runtime
                 if (UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness))
                 {
                     view.CanUpgradeReadiness = readiness.CanUpgrade;
+                    view.ReadinessStage = readiness.Stage;
+                    view.ResearchInProgress = readiness.InProgress;
+                    view.ResearchCost = readiness.MaterialsCost;
                     view.UpgradeReadiness = view.DrawerOpen ? ObserveWatchButton(watchBuild?.ReadinessButton) : openBuild;
                 }
             }

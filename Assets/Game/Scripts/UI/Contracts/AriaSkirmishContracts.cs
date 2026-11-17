@@ -74,7 +74,12 @@ namespace Game.UI.Contracts
         // and their Build -> catalog card targets.
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
         public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar, RecruitApcHeavy, RecruitDrone, RecruitTransportHeli,
-            RecruitGunner, RecruitTank;
+            RecruitGunner, RecruitTank, RecruitSiege;
+        // Research and producer buildings (see SkirmishAriaPublicView); readiness from the HUD readiness model.
+        public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask, ReadinessStage, ResearchCost;
+        public bool ResearchInProgress;
+        // The satellite dish build card (the helipad card is AirPad).
+        public AriaTouchTarget BuildDish;
         // Support orders: clear public ground behind the presented column toward home (-20016, radar and
         // transport heli Move) and ahead of it toward the enemy objective (-20017, drone Scan).
         public AriaTouchTarget RearGround, FrontGround;

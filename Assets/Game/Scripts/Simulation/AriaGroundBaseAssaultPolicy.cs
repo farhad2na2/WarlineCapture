@@ -187,6 +187,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             }
             if (StepBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepCoverageRecruit(view, ref plan, ref touch, ref output)) return;
+            if (StepResearch(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
@@ -461,10 +462,10 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             bool otherOwner = touch.Phase == AriaS002ContactPhase.Manual || view.AttackMode || view.InspectionOpen ||
                 view.PlacementOpen || view.PublicHomeThreat || plan.HomeDefenseStage != 0 || plan.PrecisionStage != 0 ||
                 plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 || plan.PadStage != 0 ||
-                plan.SupportStage != 0 || plan.BreacherStage == 1;
+                plan.SupportStage != 0 || plan.BreacherStage == 1 || plan.ResearchCurrent != 0;
             int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0) |
                 (view.RecruitApcHeavy.Admitted ? 8 : 0) | (view.RecruitDrone.Admitted ? 16 : 0) | (view.RecruitTransportHeli.Admitted ? 32 : 0) |
-                (view.RecruitGunner.Admitted ? 64 : 0) | (view.RecruitTank.Admitted ? 128 : 0);
+                (view.RecruitGunner.Admitted ? 64 : 0) | (view.RecruitTank.Admitted ? 128 : 0) | (view.RecruitSiege.Admitted ? 256 : 0);
             // The first accepted assault is latched: a later re-sweep (new roster revision, a skipped
             // page, a bounded search) must not hold the coverage recruits back for the rest of the match.
             if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0) plan.CoverageAssaultSeen = 1;
@@ -548,8 +549,44 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             Game.Simulation.AriaCoverageKind.TransportHeli => view.RecruitTransportHeli,
             Game.Simulation.AriaCoverageKind.Gunner => view.RecruitGunner,
             Game.Simulation.AriaCoverageKind.Tank => view.RecruitTank,
+            Game.Simulation.AriaCoverageKind.Siege => view.RecruitSiege,
             _ => default
         };
+
+        // One readiness research per stage when it unlocks an unused kind (siege at Full Arsenal), after
+        // the possible coverage purchases, above the materials reserve; through the drawer readiness button.
+        private static bool StepResearch(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            if (view.AirProfile || view.CombinedArmsField) return false;
+            bool otherOwner = touch.Phase == AriaS002ContactPhase.Manual || view.AttackMode || view.MoveMode || view.ScanMode ||
+                view.InspectionOpen || view.PlacementOpen || view.PublicHomeThreat || plan.HomeDefenseStage != 0 ||
+                plan.PrecisionStage != 0 || plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 ||
+                plan.PadStage != 0 || plan.SupportStage != 0 || plan.BreacherStage == 1 || plan.CoverageCurrent != 0;
+            var facts = new Game.Simulation.AriaResearchView {
+                AssaultSeen = plan.CoverageAssaultSeen != 0,
+                Busy = otherOwner || (plan.ResearchCurrent == 0 && view.CatalogOpen),
+                EnemyAlive = view.EnemyDesignatedAlive,
+                CoverageIdle = Game.Simulation.AriaCoverageProgress.Idle(plan.CoverageDone, plan.CoverageCurrent, view.CoverageAffordMask, view.CoveragePendingMask),
+                InProgress = view.ResearchInProgress, CanUpgrade = view.CanUpgradeReadiness, UpgradeAvailable = view.UpgradeReadiness.Admitted,
+                Stage = view.ReadinessStage, Cost = view.ResearchCost, Materials = view.OwnMaterials,
+                Reserve = Game.Simulation.AriaResearchPolicy.Reserve, NeedMask = view.ResearchNeedMask,
+                CompletedContacts = touch.Actions, Time = view.Time };
+            var state = new Game.Simulation.AriaResearchState { Current = plan.ResearchCurrent, Tried = plan.ResearchTried, Done = plan.ResearchDone,
+                Actions = plan.ResearchActions, Deadline = plan.ResearchDeadline };
+            byte before = plan.ResearchCurrent;
+            bool handled = Game.Simulation.AriaResearchPolicy.Step(facts, ref state, out var decision);
+            plan.ResearchCurrent = state.Current; plan.ResearchTried = state.Tried; plan.ResearchDone = state.Done;
+            plan.ResearchActions = state.Actions; plan.ResearchDeadline = state.Deadline;
+            if (before != 0 && state.Current == 0) plan.Intent = AriaS002Intent.Inspect; // close the drawer
+            if (!handled) return false;
+            // Recruit keeps the drawer open between the Build tap and the readiness button.
+            plan.Intent = AriaS002Intent.Recruit;
+            if (decision.Action == Game.Simulation.AriaResearchAction.Upgrade) Target(view.UpgradeReadiness, false, ref output);
+            else output.Kind = AriaS002DecisionKind.Waiting;
+            return true;
+        }
 
         private static void ClearFindBase(ref AriaS002PlanState plan)
         { plan.FindBaseActive = 0; plan.FindBaseTaps = 0; plan.FindBaseRun = 0; plan.FindBaseLastTarget = 0; }

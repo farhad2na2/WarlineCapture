@@ -1,7 +1,7 @@
 {
   "catalog_id": "S007",
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
-  "notes": "candidate=1, unmeasured. Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value; nothing is measured. Needs area_measurement (SkirmishS002AriaRunHarness.RunCatalogAreaMeasurementAndExit output) before check_draft passes. S007 Frontline Control: A = north-flank strip (ruins.west..ruins.east x, ruins.own..ruins.north z); B = centre block (highway.near..far x, service.enemy..service.player z); C = south-flank strip (sweep.west..east x, sweep.south..sweep.own z). structure_footprints copied from the S006 example (map-independent native footprints).",
+  "notes": "candidate=1, measured 2026-11-18 (areas inside playable, infantry reachable from both bases; geometry still a candidate). Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value. S007 Frontline Control: A = north-flank strip (ruins.west..ruins.east x, ruins.own..ruins.north z); B = centre block (highway.near..far x, service.enemy..service.player z); C = south-flank strip (sweep.west..east x, sweep.south..sweep.own z). structure_footprints copied from the S006 example (map-independent native footprints).",
   "anchors": {
     "base.player": [
       935.0,
@@ -257,5 +257,8 @@
       3.0,
       4.0
     ]
+  },
+  "area_measurement": {
+    "artifact": "Design/AgentReports/SkirmishExpansion/S007/area-measurement.json"
   }
 }

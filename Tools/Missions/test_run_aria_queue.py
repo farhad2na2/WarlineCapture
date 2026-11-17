@@ -2,6 +2,7 @@
 import csv
 from datetime import date
 import io
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -127,6 +128,89 @@ class QueueTests(unittest.TestCase):
             env = calls[-1]['env']
             self.assertEqual('1' if flag else None, env.get('WARLINE_VALIDATION_LIBRARY'))
             self.assertEqual('1', env.get('WARLINE_MENU_JOURNEY'))
+
+    def _reuse_fixture(self):
+        repo = self.root / 'repo'
+        (repo / 'ProjectSettings').mkdir(parents=True)
+        logs = self.root / 'logs'
+        fixture = ('[SkirmishAriaQueue] job=1/1 catalog=S026 seed=1 locale=en result=Victory seconds=5\n'
+                   '[SkirmishAriaQueue] result=Completed jobs=1 recorded=1 wins=1\n')
+        common = ['--jobs', 'S026:1:en', '--repo', str(repo), '--log-dir', str(logs), '--no-table', '--launcher', 'macos',
+                  '--reuse', '--menu-journey', '--validation-library']
+        return repo, logs, fixture, common
+
+    def test_reuse_writes_the_request_file_and_drives_the_wrapper_in_reuse_mode_without_environment_flags(self):
+        repo, logs, fixture, common = self._reuse_fixture()
+        seen = {}
+        def run(command, **kwargs):
+            seen['command'], seen['env'] = command, kwargs['env']
+            seen['request'] = json.loads((repo / 'Temp/aria-queue/request.json').read_text())
+            (logs / 'unity.log').write_text(fixture)
+            return subprocess.CompletedProcess(command, 0)
+        env = {k: v for k, v in runner.os.environ.items() if not k.startswith('WARLINE_')}
+        with mock.patch.object(runner.subprocess, 'run', side_effect=run), \
+             mock.patch.object(runner, 'check_editor_and_hub') as editor_check, mock.patch.object(runner, 'check_hub') as hub_check, \
+             mock.patch('sys.stdout', new_callable=io.StringIO), mock.patch.dict(runner.os.environ, env, clear=True):
+            self.assertEqual(runner.main(common), 0)
+        editor_check.assert_not_called()  # an open Editor is the point of --reuse
+        hub_check.assert_called_once()
+        self.assertEqual([str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--reuse', '--timeout', '7200', '--log', str(logs / 'unity.log'),
+                          '--', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'], seen['command'])
+        request = seen['request']
+        self.assertEqual(1, request['version'])
+        self.assertEqual(str(repo.resolve()), request['project'])
+        self.assertEqual(str(logs.resolve() / 'queue.csv'), request['queue'])
+        self.assertTrue(request['menuJourney'] and request['validationLibrary'])
+        self.assertRegex(request['createdUtc'], r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$')
+        self.assertTrue(request['requestId'])
+        for name in ('WARLINE_ARIA_QUEUE', 'WARLINE_MENU_JOURNEY', 'WARLINE_VALIDATION_LIBRARY'):
+            self.assertNotIn(name, seen['env'])  # environment cannot reach an open Editor
+        self.assertEqual('S026,1,en\n', (logs / 'queue.csv').read_text())
+        # The mocked Editor never consumed the request, so the runner removed it instead of leaving it to be replayed.
+        self.assertFalse((repo / 'Temp/aria-queue/request.json').exists())
+
+    def test_reuse_flags_are_false_in_the_request_unless_asked(self):
+        repo = self.root / 'repo'
+        path, request_id = runner.write_reuse_request(repo, self.root / 'q.csv', False, False)
+        request = json.loads(path.read_text())
+        self.assertEqual(request_id, request['requestId'])
+        self.assertFalse(request['menuJourney'])
+        self.assertFalse(request['validationLibrary'])
+        self.assertFalse(path.with_name(path.name + '.tmp').exists(), 'written atomically')
+
+    def test_reuse_removes_only_its_own_unconsumed_request(self):
+        repo = self.root / 'repo'
+        path, request_id = runner.write_reuse_request(repo, self.root / 'q.csv', True, False)
+        self.assertFalse(runner.drop_unconsumed_request(path, 'someone-elses-request'))
+        self.assertTrue(path.exists())
+        self.assertTrue(runner.drop_unconsumed_request(path, request_id))
+        self.assertFalse(path.exists())
+        self.assertFalse(runner.drop_unconsumed_request(path, request_id), 'already consumed by the Editor')
+
+    def test_reuse_refuses_a_log_directory_with_prior_evidence(self):
+        repo, logs, fixture, common = self._reuse_fixture()
+        logs.mkdir()
+        (logs / 'unity.log.exit').write_text('0')
+        with mock.patch.object(runner.subprocess, 'run') as run, mock.patch.object(runner, 'check_hub'), \
+             mock.patch('sys.stderr', new_callable=io.StringIO) as err:
+            self.assertEqual(1, runner.main(common))
+        run.assert_not_called()
+        self.assertIn('prior evidence', err.getvalue())
+        self.assertFalse((repo / 'Temp/aria-queue/request.json').exists(), 'no request is written for a refused run')
+
+    def test_reuse_is_macos_only(self):
+        repo, logs, fixture, common = self._reuse_fixture()
+        common[common.index('macos')] = 'windows'
+        with mock.patch('sys.stderr', new_callable=io.StringIO), self.assertRaises(SystemExit) as raised:
+            runner.main(common)
+        self.assertEqual(2, raised.exception.code)
+
+    def test_reuse_dry_run_writes_no_request_and_launches_nothing(self):
+        repo, logs, fixture, common = self._reuse_fixture()
+        with mock.patch.object(runner.subprocess, 'run') as run, mock.patch('sys.stdout', new_callable=io.StringIO):
+            self.assertEqual(0, runner.main(common + ['--dry-run']))
+        run.assert_not_called()
+        self.assertFalse((repo / 'Temp').exists())
 
     def test_menu_journey_flag_is_accepted_in_dry_run_and_does_not_touch_the_queue_file(self):
         logs = self.root / 'logs'

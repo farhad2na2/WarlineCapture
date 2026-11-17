@@ -787,7 +787,7 @@ namespace Game.Editor
 
                     ConfigureBackgroundInput();
                     SessionState.SetString(StartedKey, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
-                    if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") != "1") AriaCommandEvidence.Begin();
+                    if (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") != "1") { AriaCommandEvidence.Begin(); BeginGateUnits(em, session); }
                     stage = 2;
                     next = now + 1d;
                     return;
@@ -847,7 +847,7 @@ namespace Game.Editor
                         // Live combat may destroy actors while this observational scan yields;
                         // those normal lifecycle changes are not failed opening initialization.
                         if (Environment.GetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT") == "1" &&
-                            airportSourceFitScan != null && airportSourceFitScan.frames > 0)
+                            (airportSourceFitScan != null && airportSourceFitScan.frames > 0 || LayoutDumpHasStarted()))
                         {
                             if (!CaptureNativeReview(now)) return;
                             Finish(false, "readOnlyAirportSourceFit");

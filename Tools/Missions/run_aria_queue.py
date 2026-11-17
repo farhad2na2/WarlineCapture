@@ -15,7 +15,19 @@ import sys
 
 JOB = re.compile(r'^\[SkirmishAriaQueue\] job=(\d+)/(\d+) catalog=(\S+) seed=(\S+) locale=(\S+) result=(Victory|Defeat|Draw|Abort) seconds=((?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?)(?: recorded=\d+ countedWin=\d+)?$')
 COMPLETED = re.compile(r'^\[SkirmishAriaQueue\] result=Completed jobs=(\d+) recorded=(\d+) wins=(\d+)(?: .*)?$')
-COLUMNS = ('aria_en', 'aria_fa', 'aria_time_s', 'unity_result', 'last_log', 'updated')
+COLUMNS = ('aria_en', 'aria_fa', 'aria_time_s', 'unity_result', 'last_log', 'updated',
+           'units_available', 'units_used_by_aria', 'result_return_ok', 'checkpoint_ok')
+DISPATCH = re.compile(r'^\[SkirmishAriaQueue\] dispatch job=(\d+)/(\d+) catalog=(\S+) seed=(\S+) locale=(\S+)$')
+TERMINAL = re.compile(r'^\[SkirmishTerminalProbe\] result=(Passed|Failed) reason=(.*?) completed=\d+ interventions=\d+$')
+GATE_AVAILABLE = re.compile(r'^\[SkirmishGateUnits\] event=available catalog=(\S+) session=(\S+) types=(\S*)$')
+GATE_USED = re.compile(r'^\[SkirmishGateUnits\] event=used catalog=(\S+) session=(\S+) types=(\S*) unused=(\S*)$')
+
+
+def unit_set(value):
+    items = value.split(';') if value else []
+    if any(not item for item in items) or items != sorted(set(items)):
+        raise ValueError('Invalid gate unit list')
+    return set(items)
 
 
 def job_list(missions, seeds, locales):
@@ -29,8 +41,13 @@ def write_queue(path, jobs):
 
 
 def parse_log(log):
+    return parse_log_stream(log.splitlines())
+
+
+def parse_log_stream(lines):
     jobs, completed = [], None
-    for line in log.splitlines():
+    for line in lines:
+        line = line.rstrip('\r\n')
         match = JOB.fullmatch(line)
         if match:
             number, total, catalog, seed, locale, result, seconds = match.groups()
@@ -40,6 +57,68 @@ def parse_log(log):
             completed = tuple(map(int, match.groups()))
     return jobs, completed
 
+
+
+def scan_evidence(lines):
+    """Attribute probe output to dispatch boundaries; summaries are emitted later."""
+    evidence, current = {}, None
+    for raw in lines:
+        line = raw.rstrip('\r\n')
+        dispatch = DISPATCH.fullmatch(line)
+        if dispatch:
+            number, total, mission, seed, locale = dispatch.groups()
+            key = (int(number), int(total))
+            if key in evidence:
+                raise ValueError('Duplicate queue dispatch')
+            current = {'mission': mission, 'seed': seed, 'locale': locale,
+                       'units_available': 'unproven', 'units_used_by_aria': 'unproven',
+                       'result_return_ok': 'unproven', 'checkpoint_ok': 'unproven'}
+            evidence[key] = current
+        available = GATE_AVAILABLE.fullmatch(line)
+        used = GATE_USED.fullmatch(line)
+        if current is not None and (available or used):
+            match = available or used
+            catalog, session, types = match.groups()[:3]
+            if catalog != current['mission']:
+                raise ValueError('Gate units catalog does not match dispatch')
+            parsed = unit_set(types)
+            if available:
+                if '_unit_session' in current:
+                    raise ValueError('Duplicate gate units available')
+                current['_unit_session'] = session
+                current['units_available'] = types
+            else:
+                if current.get('_unit_session') != session or '_units_used_seen' in current:
+                    raise ValueError('Gate units session mismatch or duplicate used')
+                unused = unit_set(match.group(4))
+                if unused != unit_set(current['units_available']) - parsed:
+                    raise ValueError('Gate units unused list is inconsistent')
+                current['_units_used_seen'] = True
+                current['units_used_by_aria'] = types
+        terminal = TERMINAL.fullmatch(line)
+        if current is not None and terminal:
+            result, reason = terminal.groups()
+            if result == 'Failed':
+                current['result_return_ok'] = 'no'
+            elif reason == 'frozenResultAnd:MAIN MENU' and current['result_return_ok'] != 'no':
+                current['result_return_ok'] = 'yes'
+    return evidence
+
+
+def aggregate_evidence(observed, evidence):
+    """A mission passes only when every recorded job has the corresponding proof."""
+    entries = [evidence.get((job[0], job[1], job[2])) for job in observed]
+    values = {'units_available': 'unproven', 'units_used_by_aria': 'unproven'}
+    for column in ('units_available', 'units_used_by_aria'):
+        if entries and all(entry and entry[column] != 'unproven' for entry in entries):
+            sets = [unit_set(entry[column]) for entry in entries]
+            # Available is the union; used is restricted to types observed in every run.
+            combined = set.union(*sets) if column == 'units_available' else set.intersection(*sets)
+            values[column] = ';'.join(sorted(combined))
+    for column in ('result_return_ok', 'checkpoint_ok'):
+        results = [entry[column] if entry else 'unproven' for entry in entries]
+        values[column] = 'no' if 'no' in results else 'yes' if results and all(x == 'yes' for x in results) else 'unproven'
+    return values
 
 def field_spans(record):
     """Find CSV field spans while retaining original quoting and line endings."""
@@ -66,7 +145,7 @@ def encode_field(value):
     return buffer.getvalue()[:-1]
 
 
-def update_table(path, jobs, expected, log_path, today=None):
+def update_table(path, jobs, expected, log_path, today=None, evidence=None):
     by_mission = defaultdict(list)
     for job in jobs:
         by_mission[job[0]].append(job)
@@ -96,7 +175,12 @@ def update_table(path, jobs, expected, log_path, today=None):
         if not observed:
             output.append(raw)
             continue
-        values = {}
+        values = aggregate_evidence(observed, evidence or {})
+        if Counter((job[1], job[2]) for job in observed) != expected_jobs[mission]:
+            values['units_available'] = values['units_used_by_aria'] = 'unproven'
+            for column in ('result_return_ok', 'checkpoint_ok'):
+                if values[column] == 'yes':
+                    values[column] = 'unproven'
         for locale, column in (('en', 'aria_en'), ('fa-IR', 'aria_fa')):
             results = [job[3] for job in observed if job[2] == locale]
             if results:
@@ -183,12 +267,39 @@ def main(argv=None):
     parser.add_argument('--missions', type=comma_list)
     parser.add_argument('--seeds', type=comma_list)
     parser.add_argument('--locales', type=comma_list)
-    parser.add_argument('--log-dir', type=Path, required=True)
+    parser.add_argument('--log-dir', type=Path)
+    parser.add_argument('--rescan', type=Path)
+    parser.add_argument('--write', action='store_true', help='Write rescan results to the table')
     parser.add_argument('--timeout', type=int, default=7200)
     parser.add_argument('--repo', type=Path, default=Path(__file__).resolve().parents[2])
     parser.add_argument('--table', type=Path, default=Path('Design/Orchestration/missions.csv'))
     parser.add_argument('--dry-run', action='store_true')
     args = parser.parse_args(argv)
+    repo = args.repo.resolve()
+    if args.rescan:
+        if args.jobs or args.missions or args.seeds or args.locales or args.log_dir or args.dry_run:
+            parser.error('--rescan cannot be combined with queue or dry-run options')
+        try:
+            with args.rescan.open(encoding='utf-8', errors='replace') as stream:
+                evidence = scan_evidence(stream)
+            # Result summaries occur after all dispatches; retain the existing parser's semantics.
+            with args.rescan.open(encoding='utf-8', errors='replace') as stream:
+                parsed, completed = parse_log_stream(stream)
+            for (number, total), entry in evidence.items():
+                print(f"job={number}/{total} catalog={entry['mission']} seed={entry['seed']} locale={entry['locale']} " +
+                      ' '.join(f"{key}={entry[key]}" for key in COLUMNS[-4:]))
+            if args.write:
+                expected = [(e['mission'], e['seed'], e['locale']) for e in evidence.values()]
+                lookup = {(e['mission'], e['seed'], e['locale']): e for e in evidence.values()}
+                update_table(repo / args.table, parsed, expected, args.rescan, evidence=lookup)
+            return 0 if evidence else 1
+        except (OSError, ValueError, csv.Error) as exc:
+            print(f'Error: {exc}', file=sys.stderr)
+            return 1
+    if args.write:
+        parser.error('--write requires --rescan')
+    if args.log_dir is None:
+        parser.error('--log-dir is required for a queue run')
     trio = (args.missions, args.seeds, args.locales)
     if args.jobs is not None and any(value is not None for value in trio):
         parser.error('--jobs cannot be combined with --missions, --seeds or --locales')
@@ -215,8 +326,12 @@ def main(argv=None):
             subprocess.run([str(repo / 'Tools/CI/invoke_unity_macos.sh'), '--timeout', str(args.timeout),
                             '--log', str(log), '--', '-executeMethod',
                             'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'], env=env, cwd=repo)
-        parsed, completed = parse_log(log.read_text(encoding='utf-8', errors='replace'))
-        changed = update_table(repo / args.table, parsed, jobs, log)
+        with log.open(encoding='utf-8', errors='replace') as stream:
+            evidence = scan_evidence(stream)
+        with log.open(encoding='utf-8', errors='replace') as stream:
+            parsed, completed = parse_log_stream(stream)
+        lookup = {(e['mission'], e['seed'], e['locale']): e for e in evidence.values()}
+        changed = update_table(repo / args.table, parsed, jobs, log, evidence=lookup)
         print(f'Queue: {len(jobs)} jobs; parsed: {len(parsed)}; missions updated: {changed}')
         if completed:
             total, recorded, wins = completed

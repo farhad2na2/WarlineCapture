@@ -1193,7 +1193,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s049
   operationMapId: opmap.ch05.citywide_alert
   contentVersion: 1
-  contentHash: authored.s049.6bf40fd37d2f16ee
+  contentHash: authored.s049.06b95a599162e4d6
   worldWidthMetres: 424
   worldDepthMetres: 143
   originX: 869
@@ -1574,8 +1574,8 @@ MonoBehaviour:
     Kind: 1
     CenterX: 904
     CenterZ: 449.5
-    WidthMetres: 28
-    DepthMetres: 15
+    WidthMetres: 54.05
+    DepthMetres: 41.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s050_f2_barracks
     AnchorId: anchor.skirmish.s049.s050_f2_barracks
@@ -1583,8 +1583,8 @@ MonoBehaviour:
     Kind: 1
     CenterX: 1221
     CenterZ: 493.5
-    WidthMetres: 28
-    DepthMetres: 15
+    WidthMetres: 49.55
+    DepthMetres: 36.55
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s049_f1_ground_staging
     AnchorId: anchor.skirmish.s049.staging_player
@@ -1592,8 +1592,8 @@ MonoBehaviour:
     Kind: 2
     CenterX: 915
     CenterZ: 470.5
-    WidthMetres: 14
-    DepthMetres: 7
+    WidthMetres: 40.05
+    DepthMetres: 33.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s049_f2_ground_staging
     AnchorId: anchor.skirmish.s049.staging_enemy
@@ -1601,8 +1601,8 @@ MonoBehaviour:
     Kind: 2
     CenterX: 1246
     CenterZ: 463.5
-    WidthMetres: 14
-    DepthMetres: 7
+    WidthMetres: 40.05
+    DepthMetres: 33.05
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s049_f1_oil_pump
     AnchorId: anchor.skirmish.s049.economy_player
@@ -1610,8 +1610,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 910.5
     CenterZ: 440
-    WidthMetres: 15
-    DepthMetres: 4
+    WidthMetres: 41.05
+    DepthMetres: 30.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s049_f2_oil_pump
     AnchorId: anchor.skirmish.s049.economy_enemy
@@ -1619,8 +1619,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 1209.5
     CenterZ: 441
-    WidthMetres: 15
-    DepthMetres: 4
+    WidthMetres: 41.05
+    DepthMetres: 30.05
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s050_f1_refinery
     AnchorId: anchor.skirmish.s049.s050_f1_refinery
@@ -1628,8 +1628,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 959.5
     CenterZ: 445.5
-    WidthMetres: 25
-    DepthMetres: 15
+    WidthMetres: 51.05
+    DepthMetres: 41.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s050_f2_refinery
     AnchorId: anchor.skirmish.s049.s050_f2_refinery
@@ -1637,8 +1637,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 1257.5
     CenterZ: 447.5
-    WidthMetres: 25
-    DepthMetres: 15
+    WidthMetres: 51.05
+    DepthMetres: 41.05
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s050_f1_fuel_bladder
     AnchorId: anchor.skirmish.s049.s050_f1_fuel_bladder
@@ -1646,8 +1646,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 901
     CenterZ: 472
-    WidthMetres: 14
-    DepthMetres: 10
+    WidthMetres: 40.05
+    DepthMetres: 36.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s050_f2_fuel_bladder
     AnchorId: anchor.skirmish.s049.s050_f2_fuel_bladder
@@ -1655,8 +1655,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 1226
     CenterZ: 473
-    WidthMetres: 14
-    DepthMetres: 10
+    WidthMetres: 40.05
+    DepthMetres: 36.05
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s050_f1_fabrication_depot
     AnchorId: anchor.skirmish.s049.s050_f1_fabrication_depot
@@ -1664,8 +1664,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 937.5
     CenterZ: 446
-    WidthMetres: 19
-    DepthMetres: 16
+    WidthMetres: 45.05
+    DepthMetres: 42.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s050_f2_fabrication_depot
     AnchorId: anchor.skirmish.s049.s050_f2_fabrication_depot
@@ -1673,8 +1673,8 @@ MonoBehaviour:
     Kind: 7
     CenterX: 1207.5
     CenterZ: 451
-    WidthMetres: 19
-    DepthMetres: 16
+    WidthMetres: 45.05
+    DepthMetres: 42.05
     FactionId: 2
   - PadId: pad.skirmish.s049.i_s049_f1_watchtower
     AnchorId: anchor.skirmish.s049.service_player
@@ -1682,8 +1682,8 @@ MonoBehaviour:
     Kind: 8
     CenterX: 919.5
     CenterZ: 452
-    WidthMetres: 3
-    DepthMetres: 4
+    WidthMetres: 29.05
+    DepthMetres: 30.05
     FactionId: 1
   - PadId: pad.skirmish.s049.i_s049_f2_watchtower
     AnchorId: anchor.skirmish.s049.service_enemy
@@ -1691,8 +1691,8 @@ MonoBehaviour:
     Kind: 8
     CenterX: 1208.5
     CenterZ: 461
-    WidthMetres: 3
-    DepthMetres: 4
+    WidthMetres: 29.05
+    DepthMetres: 30.05
     FactionId: 2
   worldBinding:
     OriginX: 869

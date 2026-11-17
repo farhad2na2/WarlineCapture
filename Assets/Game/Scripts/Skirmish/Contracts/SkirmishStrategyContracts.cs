@@ -89,6 +89,8 @@ namespace Game.Skirmish.Contracts
         public bool RocketeerRecruitPending;
         // Breacher coverage (structure-capable infantry, Barracks).
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
+        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar): affordable, queued, alive.
+        public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
         public int OwnStructureAttackUnits;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;

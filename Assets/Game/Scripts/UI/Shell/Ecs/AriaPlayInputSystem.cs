@@ -110,6 +110,44 @@ namespace Game.UI.Shell.Ecs
             string reason = v.OwnStructureAttackUnits == 0 ? "replacement" : "coverage";
             Debug.Log($"[AriaS002Trace] event=breacher state={state} reason={reason} stage={p.BreacherStage} pending={v.BreacherRecruitPending} fielded={v.BreacherFielded} canAfford={v.CanAffordBreacher} cardOffered={v.RecruitBreacher.Available} drawer={v.DrawerOpen} structureUnits={v.OwnStructureAttackUnits} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
         }
+        private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
+        private byte tracedRadarStage;
+        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar" };
+        // Evidence only: coverage purchases (event=coverage kind=marksman|apc_fast|radar
+        // state=buying|done|gave_up|pending|fielded) and the radar's one order
+        // (event=radar_order state=selecting|arming|tapping|ordered|released|gave_up).
+        private void TraceCoverage()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1)
+            { tracedCoverageCurrent = tracedRadarStage = 0; tracedCoveragePending = tracedCoverageFielded = 0; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            for (int k = 1; k <= 3; k++)
+            {
+                int bit = 1 << (k - 1);
+                string state = tracedCoverageCurrent != k && p.CoverageCurrent == k ? "buying"
+                    : tracedCoverageCurrent == k && p.CoverageCurrent != k ? ((v.CoveragePendingMask | v.CoverageFieldedMask) & bit) != 0 ? "done" : "gave_up"
+                    : (tracedCoveragePending & bit) == 0 && (v.CoveragePendingMask & bit) != 0 ? "pending"
+                    : (tracedCoverageFielded & bit) == 0 && (v.CoverageFieldedMask & bit) != 0 ? "fielded" : null;
+                if (state == null) continue;
+                Debug.Log($"[AriaS002Trace] event=coverage kind={CoverageKindNames[k]} state={state} done={p.CoverageDone} affordMask={v.CoverageAffordMask} pendingMask={v.CoveragePendingMask} fieldedMask={v.CoverageFieldedMask} drawer={v.DrawerOpen} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            }
+            tracedCoverageCurrent = p.CoverageCurrent;
+            tracedCoveragePending = v.CoveragePendingMask; tracedCoverageFielded = v.CoverageFieldedMask;
+            if (p.RadarStage != tracedRadarStage)
+            {
+                string radar = p.RadarStage switch {
+                    1 => "selecting", 2 => "arming", 3 => "tapping",
+                    4 => tracedRadarStage == 3 ? "ordered" : "gave_up",
+                    _ => "released" };
+                Debug.Log($"[AriaS002Trace] event=radar_order state={radar} attempts={p.RadarAttempts} slot={p.RadarSlot} page={v.ExpandedPageIndex} radarMask={v.ExpandedRadarMask} selectedMask={v.ExpandedSelectedMask} attackMode={v.AttackMode} rear={v.RearGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+                tracedRadarStage = p.RadarStage;
+            }
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -172,6 +210,7 @@ namespace Game.UI.Shell.Ecs
             TraceHomeDefense();
             TraceIntercept();
             TraceBreacher();
+            TraceCoverage();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

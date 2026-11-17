@@ -49,3 +49,36 @@ time, only after `AssaultIssued`, so the opening and the first assault are not d
   the base, watchdog stop). It now continues inside the drawer it opened.
   Trace: `[AriaS002Trace] event=breacher state=buying|done|pending|fielded reason=coverage|replacement ...`.
 - Note: PageTarget is shared by all ARIA skirmishes, so every roster paging now taps the chevron when one is shown.
+
+## 4. Lane result for section 3 (merge d67e1c650, gate log `.../2026-11-17/aria-unit-coverage/gate/unity.log`)
+Counted 3/3 wins (130365 en 267.9 s, 104731 en 262.5 s, 130365 fa-IR 261.4 s; baseline 2/3). 155923 en: enemy base 0 at
+t=233.2 but recorded Abort `terminal:terminalNotFrozen` (uncounted). Chevron paging reached and ordered page 1 in all 4 jobs;
+breacher bought ~t=72, fielded ~t=77 in all 4. Gate units unused: apc_fast, marksman, radar.
+
+## 5. Marksman, apc_fast, radar (branch missions/aria-unit-coverage-2)
+- Radar is producible in S002: start package `SkirmishStart_Established.asset` sets `readiness: 2` (Established), the
+  level `SkirmishProductionEligibility.RequiredReadiness(Radar)` needs (the starting tank needs the same); army profile G
+  (`SkirmishArmy_GroundManeuver.asset`) lists `role.radar`; its producer, Ground Staging, is a starting structure (the
+  gate's available line lists no `building.*`); `TryAfford` caps ground at 8 and S002 starts with 3 ground vehicles.
+  The gate-3 model is correct and unchanged.
+- `AriaCoverageRecruitPolicy`: after the breacher step settles and the first assault is issued, one marksman squad, one
+  apc_fast and one radar (in that order, an unaffordable kind waits and the next goes first), one recruit at a time (no rifle,
+  rocketeer, breacher or coverage purchase pending), through Build then the catalog card (`ResolveCatalogTarget` switches to the
+  Vehicles tab), yielding to every other owner, 10 s per purchase, each kind once per match.
+  Trace: `[AriaS002Trace] event=coverage kind=marksman|apc_fast|radar state=buying|done|gave_up|pending|fielded ...`.
+- The roster sweep orders marksman and apc_fast (both assault roles). The radar is not, so `AriaRadarOrderPolicy` gives it one
+  ordinary order once the column has its assault order: only with no visible selection and no other owner, select the radar
+  card on the current page, arm Attack, tap clear ground 40 units behind the presented front toward home (`RearGround`,
+  -20016, never goal-bound to the assault approach). Off-screen rear ground waits; paging away or a timeout releases; two
+  attempts, one order per match. Trace: `event=radar_order state=selecting|arming|tapping|ordered|released|gave_up ...`.
+- Data: three role bitmasks (afford/pending/fielded, bits 1 marksman, 2 apc_fast, 4 radar) through the public projection,
+  UI model, observation and adapter, plus a per-page `RadarMask`. No stat, rule, enemy or force changes.
+
+## 6. 155923 `terminal:terminalNotFrozen` (facts for the separate analysis)
+The match ended at t=233.26 with the enemy base taken from 140 to 0 by `role.rocketeer.1.2.3` (8 damage, t=233.23); the player
+base was never damaged. `[SkirmishTerminalProbe] result=Failed reason=terminalNotFrozen` follows `StartTerminalProbe` 6 log
+lines later, i.e. on the first check after `terminalDue`. That check (`TerminalProbe.cs` ~95–101) folds six conditions into one
+reason: phase/outcome, terminal attempt, elapsed within 0.05 s, player base HP, enemy base HP, simulation inactive. In both
+passing 130365 runs the last logged base hit left 140 HP before Victory, so 155923 is the run whose kill came from a logged
+direct-fire hit reaching 0; a late HP write or elapsed tick after Finished would fit, but the log cannot say which condition
+failed. Suggested first step: log the failing condition and both values in that reason.

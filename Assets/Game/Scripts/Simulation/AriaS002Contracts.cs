@@ -2,7 +2,7 @@ using Game.Skirmish.Contracts;
 using System;
 namespace Game.Simulation {
 public enum AriaS002Scope:byte {None,NativeRendered,LogicalPublicData}
-public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview,RecruitBreacher}
+public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview,RecruitBreacher,RecruitMarksman,RecruitApcFast,RecruitRadar}
 public readonly struct AriaS002Point {public readonly float X,Y;public AriaS002Point(float x,float y){X=x;Y=y;}}
 public enum AriaS002Intent : byte
     {
@@ -80,6 +80,10 @@ public int OwnStructureAttackUnits;
 public bool CanAffordBreacher;
 public bool BreacherRecruitPending;
 public bool BreacherFielded;
+// Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar).
+public int CoverageAffordMask;
+public int CoveragePendingMask;
+public int CoverageFieldedMask;
 public bool CanBuildAirPad;
 public bool AirRecruitPending;
 public bool SelectedAircraft;
@@ -162,6 +166,11 @@ public AriaS002ActionTarget RecruitLogisticsTruck;
 public AriaS002ActionTarget RecruitTanker;
 public AriaS002ActionTarget RecruitRocketeer;
 public AriaS002ActionTarget RecruitBreacher;
+public AriaS002ActionTarget RecruitMarksman;
+public AriaS002ActionTarget RecruitApcFast;
+public AriaS002ActionTarget RecruitRadar;
+// Clear public ground behind the presented column (AriaRadarOrderPolicy).
+public AriaS002ActionTarget RearGround;
 public int ExpandedAssaultMask;
 public int ExpandedSelectedMask;
 public int ExpandedStructureMask;
@@ -175,6 +184,7 @@ public uint ExpandedGroup3;
 public uint ExpandedGroup4;
 public AriaS002CommandReceipt PrecisionAttack;
 public int ExpandedAirMask;
+public int ExpandedRadarMask;
 public bool ExpandedCanPreviousPage;
 public bool ExpandedCanNextPage;
 public int ExpandedPageIndex;
@@ -306,6 +316,15 @@ public float InterceptReadyAt;
 public byte BreacherStage;
 public int BreacherActions;
 public float BreacherDeadline;
+public byte CoverageDone;
+public byte CoverageCurrent;
+public float CoverageDeadline;
+public byte RadarStage;
+public byte RadarAttempts;
+public int RadarSlot;
+public int RadarActions;
+public float RadarDeadline;
+public float RadarReadyAt;
 }
 public struct AriaS002ContactState {
 public AriaS002ContactPhase Phase;

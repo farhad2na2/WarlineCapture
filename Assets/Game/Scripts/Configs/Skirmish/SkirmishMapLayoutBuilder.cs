@@ -403,6 +403,13 @@ namespace Game.Configs
                     pad.Kind==SkirmishLegalPadKind.DefenseApproach&&layout.TryGetAnchor(role,out var anchor)&&anchor.AnchorId==pad.AnchorId&&
                     structure.SpawnAnchorId==anchor.AnchorId;
             }
+            // BA guard tower (owner 2026-11-17): the player's extra watchtower is anchored on base.player, so it
+            // sits beside the HQ (BaseBarracks pad + frame offset) rather than on the shared Service pad.
+            if (structure.StructureId == SkirmishStructureIds.Watchtower && structure.FactionId == 1 &&
+                layout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig guardBase) &&
+                structure.SpawnAnchorId == guardBase.AnchorId &&
+                layout.TryGetPad(1, SkirmishLegalPadKind.BaseBarracks, out pad))
+                return true;
             return layout.TryGetPad(structure.FactionId, PadKindForStructure(structure.StructureId), out pad);
         }
 

@@ -130,6 +130,10 @@
     "s050.provisional.route.infantry.1": [
       1188.5,
       416.5
+    ],
+    "s054.f1.guard_tower": [
+      923.5,
+      454.0
     ]
   },
   "pads": {
@@ -436,6 +440,20 @@
         10
       ],
       "anchor": "s050.f1.satellite_dish"
+    },
+    {
+      "id": "s054.f1.guard_tower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        923.5,
+        454.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s054.f1.guard_tower"
     },
     {
       "id": "s054.f1.helipad",

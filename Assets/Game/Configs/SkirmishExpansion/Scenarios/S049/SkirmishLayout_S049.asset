@@ -65,6 +65,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 1
     DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 1
+    DifficultyId: 1
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -163,6 +170,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 1
     DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 1
+    DifficultyId: 2
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -261,6 +275,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 1
     DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 1
+    DifficultyId: 3
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -359,6 +380,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 1
     DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 1
+    DifficultyId: 4
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -457,6 +485,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 2
     DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 2
+    DifficultyId: 1
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -555,6 +590,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 2
     DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 2
+    DifficultyId: 2
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -653,6 +695,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 2
     DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 2
+    DifficultyId: 3
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -751,6 +800,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 2
     DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 2
+    DifficultyId: 4
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -849,6 +905,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 3
     DifficultyId: 1
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 3
+    DifficultyId: 1
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -947,6 +1010,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 3
     DifficultyId: 2
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 3
+    DifficultyId: 2
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -1045,6 +1115,13 @@ MonoBehaviour:
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
   - SizeId: 3
     DifficultyId: 3
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+  - SizeId: 3
+    DifficultyId: 3
     FactionId: 2
     StructureId: building.barracks
     InstanceOrdinal: 0
@@ -1141,6 +1218,13 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s049.service_player
     PadId: pad.skirmish.s049.i_s049_f1_watchtower
+  - SizeId: 3
+    DifficultyId: 4
+    FactionId: 1
+    StructureId: building.watchtower
+    InstanceOrdinal: 1
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    PadId: pad.skirmish.s049.i_s049_f1_guard_tower
   - SizeId: 3
     DifficultyId: 4
     FactionId: 2
@@ -1193,7 +1277,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s049
   operationMapId: opmap.ch05.citywide_alert
   contentVersion: 1
-  contentHash: authored.s049.0026394198e65236
+  contentHash: authored.s049.23cb56379733cf2c
   worldWidthMetres: 425.5
   worldDepthMetres: 198.5
   originX: 867.5
@@ -1248,6 +1332,12 @@ MonoBehaviour:
     NormalizedV: 0.44080603
     WorldX: 938.5
     WorldZ: 416.5
+  - AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    RoleId: s049.f1.guard_tower
+    NormalizedU: 0.13160987
+    NormalizedV: 0.6297229
+    WorldX: 923.5
+    WorldZ: 454
   - AnchorId: anchor.skirmish.s049.s050_f1_barracks
     RoleId: s050.f1.barracks
     NormalizedU: 0.08578143
@@ -1694,6 +1784,15 @@ MonoBehaviour:
     WidthMetres: 29.05
     DepthMetres: 30.05
     FactionId: 2
+  - PadId: pad.skirmish.s049.i_s049_f1_guard_tower
+    AnchorId: anchor.skirmish.s049.s049_f1_guard_tower
+    RoleId: instance.s049.f1.guard_tower
+    Kind: 8
+    CenterX: 923.5
+    CenterZ: 454
+    WidthMetres: 29.05
+    DepthMetres: 30.05
+    FactionId: 1
   worldBinding:
     OriginX: 867.5
     OriginZ: 428.25

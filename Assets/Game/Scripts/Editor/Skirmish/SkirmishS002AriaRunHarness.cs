@@ -778,6 +778,7 @@ namespace Game.Editor
                     {
                         playingSince = now;
                         SessionState.SetFloat(PlayingSinceKey, (float)playingSince);
+                        LogMatchSceneInventory(); // once per match (playingSince is reset in LaunchCatalog)
                     }
 
                     // Expanded spawn marks Playing before LoadingGate arms simulation.

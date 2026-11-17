@@ -58,8 +58,16 @@ namespace Game.Simulation
             }
             if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0)
             {
-                plan.SelectionResetPage = view.ExpandedPageIndex;
-                plan.AssaultSelecting = 2;
+                // A selection made only of this page's unordered assault groups is exactly what the
+                // sweep would select next: keep it. Clearing and re-selecting the same card after every
+                // roster change (new recruits arriving) pressed one card until Blocked 115 (lane 10
+                // S050 and S006).
+                if (SelectionIsPendingAssault(view)) plan.AssaultSelecting = 1;
+                else
+                {
+                    plan.SelectionResetPage = view.ExpandedPageIndex;
+                    plan.AssaultSelecting = 2;
+                }
             }
             if (plan.AssaultSelecting == 2)
             {
@@ -197,6 +205,14 @@ namespace Game.Simulation
    if(view.Time<=0f)return false;
    if(plan.StallKey!=key){plan.StallKey=key;plan.StallSince=view.Time;return false;}
    return view.Time-plan.StallSince>=seconds;
+  }
+  public static bool SelectionIsPendingAssault(in AriaGroundColumnView view)
+  {
+   int pendingAssault=view.ExpandedAssaultMask&~view.ExpandedAttackOrderMask;
+   int selected=view.ExpandedSelectedMask;
+   if(selected==0||(selected&~pendingAssault)!=0)return false;
+   int onPage=0;for(int bits=selected;bits!=0;bits&=bits-1)onPage++;
+   return onPage==view.ExpandedSelectedGroups; // nothing selected off this page
   }
   static bool TryDeselectSquads(in AriaGroundColumnView view,ref AriaGroundDecision output)
   {if(view.ExpandedSelectedGroups<=0)return false;output.Action=view.ToggleAvailable?AriaGroundAction.ToggleSelected:AriaGroundAction.Wait;return true;}

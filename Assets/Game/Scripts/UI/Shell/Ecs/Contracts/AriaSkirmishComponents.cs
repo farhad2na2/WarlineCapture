@@ -77,7 +77,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         // AriaCoverageRecruitPolicy progress (taps completed, purchase start) and the latched first assault.
         public int CoverageActions;
         public float CoverageStarted;
-        public byte CoverageAssaultSeen;
+        public byte CoverageAssaultSeen, CoverageBatch;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

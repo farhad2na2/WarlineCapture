@@ -95,7 +95,9 @@ namespace Game.Simulation {
   // BreacherSettled: the breacher step finished (bought, timed out or not needed).
   // OtherRecruitPending: a rifle, rocketeer or breacher purchase is still queued.
   public bool AssaultIssued,BreacherSettled,Busy,EnemyAlive,OtherRecruitPending;
-  // Per kind bit: affordable now, queued, alive on the field, catalog target offered.
+  // The build drawer is open (this purchase's visit): a second kind may be bought in the same visit.
+  public bool DrawerOpen;
+  // Per kind bit: affordable now (above the materials reserve), queued, alive, catalog target offered.
   public int AffordMask,PendingMask,FieldedMask,CardMask;
   // Completed touches: a purchase that keeps landing taps (Build, category, scroll, card,
   // produce) is still progressing and gets more time, up to MaxBuySeconds.
@@ -103,11 +105,14 @@ namespace Game.Simulation {
   public float Time;
  }
  // Done: kinds covered or given up for this match. Current: kind being bought (0 none).
- public struct AriaCoverageState {public byte Done,Current;public float Deadline,Started;public int Actions;}
+ // Batch: 1 while the second purchase of one drawer visit is allowed or in flight.
+ public struct AriaCoverageState {public byte Done,Current,Batch;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
-  // GapSeconds: one coverage purchase at a time, spaced so each new group joins the column before the next.
-  public const int Kinds=6,All=(1<<Kinds)-1;public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=25f;
+  // GapSeconds: between drawer visits, so new groups join the column before the next purchase (lane 8 S050).
+  // PerVisit: two kinds per drawer visit (lane 10 S026 won at 181 s with four kinds still unbought).
+  public const int Kinds=6,All=(1<<Kinds)-1,PerVisit=2;
+  public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=25f;
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -115,28 +120,42 @@ namespace Game.Simulation {
    kind=(AriaCoverageKind)plan.Current;
    if(plan.Current!=0){
     int bit=Bit(kind);
-    if((plan.Done&bit)!=0){plan.Current=0;plan.Deadline=view.Time+GapSeconds;return AriaCoverageAction.None;}
+    if((plan.Done&bit)!=0){
+     plan.Current=0;
+     // Landed. The drawer is still open: buy the next affordable kind in the same visit.
+     if(plan.Batch==0&&view.DrawerOpen&&!view.Busy&&view.EnemyAlive){
+      plan.Batch=1;
+      if(TryStart(view,ref plan,out kind))return AriaCoverageAction.Recruit;
+     }
+     EndVisit(ref plan,view.Time);return AriaCoverageAction.None;
+    }
     if(view.CompletedContacts>plan.Actions){
      plan.Actions=view.CompletedContacts;
      plan.Deadline=System.Math.Min(plan.Started+MaxBuySeconds,System.Math.Max(plan.Deadline,view.Time+StepSeconds));
     }
     // Bounded: a purchase that does not appear in time is not retried this match.
-    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;plan.Deadline=view.Time+GapSeconds;return AriaCoverageAction.None;}
+    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;EndVisit(ref plan,view.Time);return AriaCoverageAction.None;}
     return (view.CardMask&bit)!=0?AriaCoverageAction.Recruit:AriaCoverageAction.Waiting;
    }
    kind=AriaCoverageKind.None;
-   // Deadline doubles as the earliest next start after a purchase (GapSeconds).
+   // Deadline doubles as the earliest next visit after a purchase (GapSeconds).
    if(!view.AssaultIssued||!view.BreacherSettled||view.Busy||!view.EnemyAlive||view.OtherRecruitPending||
       (view.PendingMask&All)!=0||view.Time<plan.Deadline)return AriaCoverageAction.None;
+   plan.Batch=0;
+   return TryStart(view,ref plan,out kind)?AriaCoverageAction.Recruit:AriaCoverageAction.None;
+  }
+  static bool TryStart(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
+   kind=AriaCoverageKind.None;
    for(int k=1;k<=Kinds;k++){
     int bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
     if((plan.Done&bit)!=0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
     plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;plan.Started=view.Time;plan.Actions=view.CompletedContacts;kind=(AriaCoverageKind)k;
-    return AriaCoverageAction.Recruit;
+    return true;
    }
-   return AriaCoverageAction.None;
+   return false;
   }
+  static void EndVisit(ref AriaCoverageState plan,float time){plan.Batch=0;plan.Deadline=time+GapSeconds;}
  }
 
  // Support units are not assault roles, so the roster sweep never orders them. Once one is

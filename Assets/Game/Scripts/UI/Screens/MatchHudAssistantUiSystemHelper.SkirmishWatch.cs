@@ -605,6 +605,32 @@ namespace Game.UI.Runtime
                 view.FocusAdvanceDragEnd = (start - point).sqrMagnitude > 25 ? point : point + Vector2.up * 12;
             }
         }
+        private AriaTouchTarget ObserveHomeGroundScreenRing(Vector3 home, Vector3 homeScreen)
+        {
+            var ground = new Plane(Vector3.up, home);
+            float unit = Mathf.Min(Screen.width, Screen.height);
+            for (int ring = 0; ring < 3; ring++)
+            for (int step = 0; step < 12; step++)
+            {
+                float radius = unit * (.14f + ring * .07f), angle = (step * 30f + ring * 15f) * Mathf.Deg2Rad;
+                var point = new Vector2(homeScreen.x + Mathf.Cos(angle) * radius, homeScreen.y + Mathf.Sin(angle) * radius);
+                if (!Screen.safeArea.Contains(point)) { watchGroundRefusal |= GroundRefusedOffScreen; continue; }
+                var ray = Camera.main.ScreenPointToRay(point);
+                if (!ground.Raycast(ray, out float enter)) { watchGroundRefusal |= GroundRefusedOffScreen; continue; }
+                var world = ray.GetPoint(enter);
+                bool clear = true;
+                foreach (var contact in watchMap.PresentedContacts)
+                {
+                    float clearance = contact.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Enemy ? 15 : 4;
+                    if ((contact.Model.Position - world).sqrMagnitude < clearance * clearance) { clear = false; break; }
+                }
+                if (!clear) { watchGroundRefusal |= GroundRefusedCrowded; continue; }
+                if (!WatchTargetIsReachable(point, -20006, true)) { watchGroundRefusal |= GroundRefusedCovered; continue; }
+                return new AriaTouchTarget { Id = -20006, Position = point, Available = true };
+            }
+            return default;
+        }
+
         // Why the last clear-ground search offered nothing (bits): 1 near a presented contact,
         // 2 off screen, 4 covered by a HUD control. Evidence only.
         private const int GroundRefusedCrowded = 1, GroundRefusedOffScreen = 2, GroundRefusedCovered = 4;
@@ -733,6 +759,10 @@ namespace Game.UI.Runtime
                     var forward = homeApproach; forward.y = 0;
                     for (int turn = 1; turn < 8 && !view.HomeGround.Available; turn++)
                         view.HomeGround = ObserveClearAttackGround(home, Quaternion.Euler(0, turn * 45f, 0) * forward, -20006, 25f);
+                    // Lane 10 S002 130365 fa-IR: after the Home focus every world candidate was refused
+                    // (homeGroundRefusal=7: crowded, off screen and covered). Sample the screen around the
+                    // shown HQ instead and use the ground under the first free, uncovered point.
+                    if (!view.HomeGround.Available) view.HomeGround = ObserveHomeGroundScreenRing(home, homeScreen);
                 }
                 view.HomeGroundRefusal = view.HomeGround.Available ? 0 : watchGroundRefusal;
                 // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:

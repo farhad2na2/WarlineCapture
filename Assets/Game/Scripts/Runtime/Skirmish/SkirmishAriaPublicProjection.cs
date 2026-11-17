@@ -94,12 +94,23 @@ namespace Game.Runtime
                     SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
                 // Coverage is affordable only above a materials reserve (lane 8 S050: five coverage
                 // purchases took materials 900 -> 20 and the assault stalled for ~130 s).
-                var coveragePerception = perception;
-                coveragePerception.OwnMaterials = System.Math.Max(0, perception.OwnMaterials - CoverageReserveMaterials);
-                for (int i = 0; i < CoverageRoles.Length; i++)
-                    if (SkirmishStrategyScoring.TryAfford(army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays,
-                            coveragePerception, SkirmishRoleIds.ToId(CoverageRoles[i]), CoverageRoles[i]))
-                        view.CoverageAffordMask |= 1 << i;
+                // The real production check (readiness, every producer incl. Intel Station and Helipad, caps,
+                // stocks): lane 10 S026 never bought a drone because the scoring helper assumes only Barracks
+                // and Ground Staging exist.
+                // Quoted at most once per second (each quote checks every producer).
+                double now = em.World.Time.ElapsedTime;
+                if (s_coverageQuoteSession != session || now < s_coverageQuoteAt || now - s_coverageQuoteAt >= 1d)
+                {
+                    int mask = 0;
+                    for (int i = 0; i < CoverageRoles.Length; i++)
+                    {
+                        var quote = SkirmishProductionService.EvaluateQueue(em, session, SkirmishRoleIds.ToId(CoverageRoles[i]), 1, army, 1);
+                        if (quote.Accepted && view.OwnMaterials - quote.MaterialsCost >= CoverageReserveMaterials)
+                            mask |= 1 << i;
+                    }
+                    s_coverageQuoteMask = mask; s_coverageQuoteAt = now; s_coverageQuoteSession = session;
+                }
+                view.CoverageAffordMask = s_coverageQuoteMask;
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
@@ -200,6 +211,9 @@ namespace Game.Runtime
         }
 
         public const int CoverageReserveMaterials = 250;
+        private static Entity s_coverageQuoteSession;
+        private static double s_coverageQuoteAt;
+        private static int s_coverageQuoteMask;
 
         // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
         private static readonly SkirmishRoleKind[] CoverageRoles =

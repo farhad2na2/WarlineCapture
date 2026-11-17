@@ -24,6 +24,33 @@ namespace Game.UI.Shell.Ecs
             v.PresentedHomeThreat || p.HomeDefenseStage != 0 || p.PrecisionStage != 0 || p.AdvanceNavigation != 0 ||
             p.AssaultInspectStage != 0 || p.InterceptStage != 0 || p.PadStage != 0 || p.SupportStage != 0;
 
+        // The whole structure-capable force is gone (lane 10 S049: no tank, rocketeer or breacher left,
+        // the base untouched, ARIA idle until the progress watchdog): rebuild it through the drawer,
+        // breachers first, rocketeers as the fallback, exactly like the S002 adapter.
+        static bool StepGenericStructureReplacement(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p,
+            ref AriaPlayObservationComponent o)
+        {
+            // Only after the first accepted assault: never delays the opening.
+            if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
+            if (!CoverageEligible(v) || p.CoverageAssaultSeen == 0 || !v.EnemyDesignatedAlive || v.OwnStructureAttackUnits != 0 || v.MapOpen || v.AttackMode ||
+                v.PresentedHomeThreat || p.HomeDefenseStage != 0 || (v.DrawerOpen && p.Intent != AriaSkirmishIntent.Recruit))
+                return false;
+            var replacement = Game.Simulation.AriaStructureReplacementPolicy.Choose(
+                v.BreacherRecruitPending, v.RocketeerRecruitPending,
+                v.CanAffordBreacher, v.RecruitBreacher.Available,
+                v.CanAffordRocketeer, v.RecruitRocketeer.Available);
+            switch (replacement)
+            {
+                case Game.Simulation.AriaStructureReplacement.Wait:
+                    p.Intent = AriaSkirmishIntent.ObserveBattle; o.Kind = AriaPlayObservationKind.Waiting; return true;
+                case Game.Simulation.AriaStructureReplacement.RecruitBreacher:
+                    p.Intent = AriaSkirmishIntent.Recruit; Target(v.RecruitBreacher, false, ref o); return true;
+                case Game.Simulation.AriaStructureReplacement.RecruitRocketeer:
+                    p.Intent = AriaSkirmishIntent.Recruit; Target(v.RecruitRocketeer, false, ref o); return true;
+                default: return false;
+            }
+        }
+
         static bool StepGenericBreacherCoverage(in AriaSkirmishObservation v, ref AriaSkirmishPlanComponent p,
             ref AriaPlaySessionComponent t, ref AriaPlayObservationComponent o)
         {
@@ -65,13 +92,14 @@ namespace Game.UI.Shell.Ecs
                 EnemyAlive = v.EnemyDesignatedAlive,
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
                 AffordMask = v.CoverageAffordMask, PendingMask = v.CoveragePendingMask,
-                FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions, Time = v.Time };
+                FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions,
+                DrawerOpen = v.DrawerOpen, Time = v.Time };
             var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline,
-                Started = p.CoverageStarted, Actions = p.CoverageActions };
+                Started = p.CoverageStarted, Actions = p.CoverageActions, Batch = p.CoverageBatch };
             byte before = p.CoverageCurrent;
             var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
             p.CoverageDone = state.Done; p.CoverageCurrent = state.Current; p.CoverageDeadline = state.Deadline;
-            p.CoverageStarted = state.Started; p.CoverageActions = state.Actions;
+            p.CoverageStarted = state.Started; p.CoverageActions = state.Actions; p.CoverageBatch = state.Batch;
             if (before != 0 && state.Current == 0) p.Intent = AriaSkirmishIntent.Inspect;
             if (action == Game.Simulation.AriaCoverageAction.Recruit)
             { p.Intent = AriaSkirmishIntent.Recruit; Target(CoverageTarget(v, kind), false, ref o); return true; }

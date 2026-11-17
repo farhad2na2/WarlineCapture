@@ -108,6 +108,10 @@ namespace Game.Skirmish.Contracts
         // reach of an own unit (AriaInterceptPolicy.Slipping). World position, public view only.
         public bool SlippingHostile;
         public float SlippingHostileX, SlippingHostileY, SlippingHostileZ;
+        // Centroid of the player's own mobile units that have left the base (the marching
+        // column). Own units are always public to their player.
+        public bool ColumnKnown;
+        public float ColumnX, ColumnY, ColumnZ;
         public int OwnInfantry;
         public int OwnMaterials;
         public int FailedAttempts;

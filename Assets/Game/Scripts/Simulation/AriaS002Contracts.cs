@@ -146,9 +146,6 @@ public AriaS002ActionTarget CloseDrawer;
 public AriaS002ActionTarget Threat;
 // Fog-visible hostile vehicle slipping behind the advancing army (AriaInterceptPolicy).
 public AriaS002ActionTarget InterceptThreat;
-// The same vehicle is publicly known (fog-visible); a clear camera drag toward it.
-public bool InterceptKnown;
-public AriaS002ActionTarget InterceptPan;
 public AriaS002ActionTarget FocusThreat;
 public AriaS002ActionTarget FocusGroup;
 public AriaS002ActionTarget CloseMap;

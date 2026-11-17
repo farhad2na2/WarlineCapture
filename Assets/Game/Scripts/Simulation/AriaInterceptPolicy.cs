@@ -1,21 +1,16 @@
 namespace Game.Simulation {
- public enum AriaInterceptAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmAttack,TargetThreat,PanToThreat}
- // "Finish what slips past": a visible hostile vehicle crossing the advancing column,
- // or slipping past it toward the player's base, is attacked by one roster group
- // through the normal card / Attack / tap controls, exactly as a player taps a
- // damaged tank driving through a column. When the vehicle is visible but outside
- // the camera view, the player drags the view onto it while Attack is armed (the
- // game pans and issues no order on a drag). Only fog-visible contacts are known
- // (ThreatKnown); this policy never reads hidden state and issues no order itself.
+ public enum AriaInterceptAction:byte {None,Waiting,ToggleSelected,SelectSlot,ArmAttack,TargetThreat}
+ // "Finish what slips past": a visible hostile vehicle that is behind most of the
+ // advancing army (closer to the player's base) and still within reach of an own
+ // unit is attacked by one roster group through the normal card / Attack / tap
+ // controls, exactly as a player taps a damaged tank driving through a column.
+ // Only fog-visible, on-screen contacts are offered (ThreatAvailable); this policy
+ // never reads hidden state and issues no order of its own.
  public struct AriaInterceptView {
-  // A fog-visible hostile vehicle crossing or slipping past the column (public view).
-  public bool ThreatKnown;
-  // That vehicle is on screen and tappable (no HUD over it).
+  // A visible, reachable on-screen hostile vehicle slipping past the column.
   public bool ThreatAvailable;
-  // A clear world drag that brings the vehicle toward the view centre is available.
-  public bool PanAvailable;
   // Another owner holds the controls or the moment: open drawer/map/placement,
-  // home defence already running, precision attack, camera navigation, army at the enemy base.
+  // home defence, precision attack, camera navigation, army at the enemy base.
   public bool Busy;
   // At least one roster group already carries the accepted assault order.
   public bool ArmyMoving;
@@ -23,8 +18,7 @@ namespace Game.Simulation {
   public int SelectedMask,SelectedGroups,SelectedOffPage,StructureMask,AssaultMask,AirMask,AvailableSquadMask,CompletedContacts;
   public float Time;
  }
- // Stage: 0 idle, 1 select, 2 arm Attack, 3 tap the contact, 4 let the group fight,
- // 5 a camera drag toward the contact is in flight (Attack stays armed).
+ // Stage: 0 idle, 1 select, 2 arm Attack, 3 tap the contact, 4 let the group fight.
  // Slot: roster slot on the current page, or KeepSelection when the visible
  // selection already holds an anti-armour (structure-capable) group.
  public struct AriaInterceptState {public byte Stage,Count;public int Slot,Actions;public float Deadline,LastSeenAt,ReadyAt;}
@@ -32,64 +26,53 @@ namespace Game.Simulation {
  public struct AriaInterceptDecision {public AriaInterceptAction Action;public int Slot;public byte Trace;}
  public static class AriaInterceptPolicy {
   public const int KeepSelection=5,MaxIntercepts=3;
-  public const byte StageIdle=0,StageSelect=1,StageArm=2,StageTap=3,StageFight=4,StagePan=5;
-  // Order: the whole select/Attack/pan/tap sequence. Hold: the group fights before the
+  // Order: the whole select/Attack/tap sequence. Hold: the group fights before the
   // ordinary assault sweep re-issues its base order. Lost: contact gone (dead or fog).
   // HoldLost: a chased contact may leave sight briefly; give the ordered group a moment.
-  public const float OrderSeconds=12f,HoldSeconds=12f,LostSeconds=2f,HoldLostSeconds=4f,CooldownSeconds=6f;
+  public const float OrderSeconds=10f,HoldSeconds=12f,LostSeconds=2f,HoldLostSeconds=4f,CooldownSeconds=6f;
   // Public projection geometry (world units). A visible vehicle crossing the column
-  // (ContactReach of an own mobile unit), or within Reach of an own unit and closer to
-  // the player's base than that nearest own unit by SlipMargin (it has passed it).
-  // Vehicles near the enemy base belong to the base assault, not to this rule.
-  public const float SlipMargin=5f,Reach=60f,ContactReach=40f,EnemyBaseRadius=60f;
+  // (ContactReach of an own mobile unit), or behind the army's median distance to home
+  // by SlipMargin and within Reach of an own unit. Vehicles near the enemy base belong
+  // to the base assault, not to this rule.
+  public const float SlipMargin=8f,Reach=60f,ContactReach=40f,EnemyBaseRadius=60f;
   public static bool Step(in AriaInterceptView view,ref AriaInterceptState plan,out AriaInterceptDecision output){
    output=default;
-   if(plan.Stage==StageIdle){
-    if(!view.ThreatKnown||!(view.ThreatAvailable||view.PanAvailable)||view.Busy||!view.ArmyMoving||
-       plan.Count>=MaxIntercepts||view.Time<plan.ReadyAt)return false;
+   if(plan.Stage==0){
+    if(!view.ThreatAvailable||view.Busy||!view.ArmyMoving||plan.Count>=MaxIntercepts||view.Time<plan.ReadyAt)return false;
     int slot=ChooseSlot(view);if(slot<0)return false;
-    plan.Stage=slot==KeepSelection?StageArm:StageSelect;plan.Slot=slot;plan.Count++;
+    plan.Stage=(byte)(slot==KeepSelection?2:1);plan.Slot=slot;plan.Count++;
     plan.Deadline=view.Time+OrderSeconds;plan.LastSeenAt=view.Time;plan.Actions=view.CompletedContacts;
     output.Trace=1;
    }
-   if(view.ThreatKnown)plan.LastSeenAt=view.Time;
-   if(plan.Stage==StageFight){
+   if(view.ThreatAvailable)plan.LastSeenAt=view.Time;
+   bool lost=view.Time-plan.LastSeenAt>LostSeconds;
+   if(plan.Stage==4){
     if(view.Busy||view.Time-plan.LastSeenAt>HoldLostSeconds||view.Time>plan.Deadline){Release(ref plan,view.Time,ref output);return false;}
     output.Action=AriaInterceptAction.Waiting;return true;
    }
-   if(view.Busy||view.Time-plan.LastSeenAt>LostSeconds||view.Time>plan.Deadline){Release(ref plan,view.Time,ref output);return false;}
-   if(plan.Stage==StageSelect){
+   if(view.Busy||lost||view.Time>plan.Deadline){Release(ref plan,view.Time,ref output);return false;}
+   if(plan.Stage==1){
     int desired=1<<plan.Slot;
     bool exact=view.SelectedGroups==1&&view.SelectedOffPage==0&&view.SelectedMask==desired;
     if(!exact){
      if(view.SelectedGroups>0){
-      output.Action=view.ToggleAvailable?AriaInterceptAction.ToggleSelected:AriaInterceptAction.Waiting;
+      if(view.ToggleAvailable)output.Action=AriaInterceptAction.ToggleSelected;else output.Action=AriaInterceptAction.Waiting;
       return true;
      }
      if((view.AvailableSquadMask&desired)==0){Release(ref plan,view.Time,ref output);return false;}
      output.Action=AriaInterceptAction.SelectSlot;output.Slot=plan.Slot;return true;
     }
-    plan.Stage=StageArm;
+    plan.Stage=2;
    }
-   if(plan.Stage==StagePan){
-    // The drag is a completed contact of its own, never the attack tap.
-    if(view.CompletedContacts>plan.Actions){plan.Actions=view.CompletedContacts;plan.Stage=view.AttackMode?StageTap:StageArm;}
-    else if(!view.ThreatAvailable){
-     output.Action=view.PanAvailable?AriaInterceptAction.PanToThreat:AriaInterceptAction.Waiting;return true;
-    }
-    else plan.Stage=StageTap; // In view before the drag began: tap instead.
-   }
-   if(plan.Stage==StageArm){
+   if(plan.Stage==2){
     if(!view.AttackMode){output.Action=view.AttackAvailable?AriaInterceptAction.ArmAttack:AriaInterceptAction.Waiting;return true;}
-    plan.Stage=StageTap;plan.Actions=view.CompletedContacts;
+    plan.Stage=3;plan.Actions=view.CompletedContacts;
    }
    // Stage 3: one tap on the moving contact; the touch owner refreshes its position.
    if(view.CompletedContacts<=plan.Actions){
-    if(view.ThreatAvailable){output.Action=AriaInterceptAction.TargetThreat;return true;}
-    if(view.PanAvailable){plan.Stage=StagePan;output.Action=AriaInterceptAction.PanToThreat;return true;}
-    output.Action=AriaInterceptAction.Waiting;return true;
+    output.Action=view.ThreatAvailable?AriaInterceptAction.TargetThreat:AriaInterceptAction.Waiting;return true;
    }
-   plan.Stage=StageFight;plan.Deadline=view.Time+HoldSeconds;output.Trace=2;output.Action=AriaInterceptAction.Waiting;return true;
+   plan.Stage=4;plan.Deadline=view.Time+HoldSeconds;output.Trace=2;output.Action=AriaInterceptAction.Waiting;return true;
   }
   // Prefer the visible anti-armour selection, then an anti-armour card on this page,
   // then any assault card on this page. Aircraft are never sent.
@@ -103,26 +86,15 @@ namespace Game.Simulation {
    return bit;
   }
   static void Release(ref AriaInterceptState plan,float time,ref AriaInterceptDecision output){
-   plan.Stage=StageIdle;plan.Slot=0;plan.ReadyAt=time+CooldownSeconds;output.Trace=3;output.Action=AriaInterceptAction.None;
+   plan.Stage=0;plan.Slot=0;plan.ReadyAt=time+CooldownSeconds;output.Trace=3;output.Action=AriaInterceptAction.None;
   }
-  // Public projection helper for one fog-visible hostile vehicle: its distance to the
-  // player's base, to its nearest own mobile unit, that unit's distance to the
-  // player's base, and the vehicle's distance to the enemy base.
-  public static bool Candidate(float homeDistance,float nearestOwnDistance,float nearestOwnHomeDistance,float enemyBaseDistance){
-   if(enemyBaseDistance<EnemyBaseRadius||nearestOwnDistance>Reach)return false;
+  // Public projection helper for one fog-visible hostile vehicle: distances to the
+  // player's base, to the nearest own mobile unit and to the enemy base, against the
+  // median own-unit distance to the player's base.
+  public static bool Candidate(float homeDistance,float armyMedianHomeDistance,float nearestOwnDistance,float enemyBaseDistance){
+   if(enemyBaseDistance<EnemyBaseRadius)return false;
    if(nearestOwnDistance<=ContactReach)return true;
-   return homeDistance+SlipMargin<nearestOwnHomeDistance;
-  }
-  // Camera drag (screen pixels) from a fixed clear start: the scene follows the finger,
-  // so dragging by (centre - contact) moves the contact toward the centre. The drag is
-  // clamped to maxX/maxY; repeated drags close any remaining distance.
-  public static bool PanDelta(float contactX,float contactY,float centreX,float centreY,float maxX,float maxY,out float dx,out float dy){
-   dx=centreX-contactX;dy=centreY-contactY;
-   float scale=1f;
-   if(dx>maxX||dx<-maxX)scale=System.Math.Min(scale,maxX/System.Math.Abs(dx));
-   if(dy>maxY||dy<-maxY)scale=System.Math.Min(scale,maxY/System.Math.Abs(dy));
-   dx*=scale;dy*=scale;
-   return dx*dx+dy*dy>=20f*20f;
+   return homeDistance+SlipMargin<armyMedianHomeDistance&&nearestOwnDistance<=Reach;
   }
  }
 }

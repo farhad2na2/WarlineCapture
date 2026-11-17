@@ -46,13 +46,30 @@ def extract(lines):
     return {key: [float(v) for v in values[key][0]] for key in sorted(values)}
 
 
+# SkirmishStructureIds.VisualKey (SkirmishRosterContracts.cs:286-303): these ids share the model of the measured id.
+ALIASES = {
+    "building.refinery.module": "building.refinery",
+    "building.watchtower.approach": "building.watchtower",
+    "building.watchtower.defense_approach_a": "building.watchtower",
+    "building.watchtower.defense_approach_b": "building.watchtower",
+}
+
+
+def with_aliases(footprints):
+    result = dict(footprints)
+    for alias, source in ALIASES.items():
+        if alias not in result and source in result:
+            result[alias] = list(result[source])
+    return {key: result[key] for key in sorted(result)}
+
+
 def main():
     if len(sys.argv) != 2:
         print(f"usage: {sys.argv[0]} <unity.log>", file=sys.stderr)
         return 1
     try:
         with Path(sys.argv[1]).open(encoding="utf-8", errors="replace") as log:
-            footprints = extract(log)
+            footprints = with_aliases(extract(log))
         print(json.dumps(footprints, indent=2, sort_keys=True, allow_nan=False))
     except (OSError, ValueError, OverflowError) as exc:
         print(f"error: {exc}", file=sys.stderr)

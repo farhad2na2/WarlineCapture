@@ -85,11 +85,56 @@ namespace Game.Editor
         public static void AuthorFromDraft()
         {
             bool quit = Environment.GetCommandLineArgs().Contains("-quit");
-            var outcome = new Outcome();
+            bool passed = AuthorDraft(Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT"), out _);
+            if (quit) EditorApplication.Exit(passed ? 0 : 2);
+        }
+
+        public static void AuthorFromDraftList()
+        {
+            bool quit = Environment.GetCommandLineArgs().Contains("-quit");
+            string[] drafts;
+            try
+            {
+                string listArgument = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT_LIST");
+                if (string.IsNullOrWhiteSpace(listArgument))
+                    throw new AuthoringFailure("list", "WARLINE_MISSION_DRAFT_LIST is not set.");
+                string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+                string listPath = Path.GetFullPath(Path.IsPathRooted(listArgument) ? listArgument : Path.Combine(project, listArgument));
+                if (!File.Exists(listPath)) throw new AuthoringFailure("list", "File not found: " + listPath);
+                drafts = File.ReadAllLines(listPath, Encoding.UTF8).Select(line => line.Trim())
+                    .Where(line => line.Length > 0 && !line.StartsWith("#", StringComparison.Ordinal)).ToArray();
+                if (drafts.Length == 0) throw new AuthoringFailure("list", "No draft paths in: " + listPath);
+            }
+            catch (Exception error)
+            {
+                Debug.LogError("[SkirmishMissionAuthoringBatch] result=Failed reason=" + error.Message);
+                if (quit) EditorApplication.Exit(2);
+                return;
+            }
+
+            int passedCount = 0;
+            for (int i = 0; i < drafts.Length; i++)
+            {
+                var timer = System.Diagnostics.Stopwatch.StartNew();
+                bool passed = AuthorDraft(drafts[i], out var outcome);
+                timer.Stop();
+                if (passed) passedCount++;
+                Debug.Log("[SkirmishMissionAuthoringBatch] draft=" + (i + 1) + "/" + drafts.Length + " path=" + drafts[i] +
+                    " catalog=" + outcome.CatalogId + " result=" + (passed ? "Passed" : "Failed") +
+                    " seconds=" + timer.Elapsed.TotalSeconds.ToString("F3", CultureInfo.InvariantCulture));
+            }
+            int failedCount = drafts.Length - passedCount;
+            Debug.Log("[SkirmishMissionAuthoringBatch] result=Completed drafts=" + drafts.Length + " passed=" + passedCount + " failed=" + failedCount);
+            if (quit) EditorApplication.Exit(failedCount == 0 ? 0 : 2);
+        }
+
+        private static bool AuthorDraft(string draftArgument, out Outcome outcome)
+        {
+            outcome = new Outcome();
             bool passed = false;
             try
             {
-                Author(Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT"), outcome);
+                Author(draftArgument, outcome);
                 passed = true;
                 Debug.Log(Tag + " result=Passed catalog=" + outcome.CatalogId + " definition=" + outcome.DefinitionId +
                     " layout=" + outcome.LayoutId + " source=" + outcome.SourceId + " variants=" + outcome.Variants +
@@ -104,7 +149,7 @@ namespace Game.Editor
                 Debug.LogError(Tag + " result=Failed catalog=" + outcome.CatalogId + " reason=exception: " + error.GetType().Name + ": " + error.Message);
                 Debug.LogException(error);
             }
-            if (quit) EditorApplication.Exit(passed ? 0 : 2);
+            return passed;
         }
 
         private static void Author(string draftArgument, Outcome outcome)

@@ -310,6 +310,288 @@
       ]
     }
   },
+  "instance_pads": [
+    {
+      "id": "s050.f1.barracks",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        904.0,
+        449.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s050.f1.barracks"
+    },
+    {
+      "id": "s052.f1.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        915.0,
+        470.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "s052.f1.oil_pump",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        910.5,
+        440.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "s050.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        959.5,
+        445.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s050.f1.refinery"
+    },
+    {
+      "id": "s050.f1.fuel_bladder",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        901.0,
+        472.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s050.f1.fuel_bladder"
+    },
+    {
+      "id": "s050.f1.fabrication_depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        937.5,
+        446.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s050.f1.fabrication_depot"
+    },
+    {
+      "id": "s052.f1.watchtower",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        919.5,
+        452.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "s050.f1.watchtower.approach",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        919.5,
+        448.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s050.f1.watchtower.approach"
+    },
+    {
+      "id": "s050.f1.satellite_dish",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        904.0,
+        462.0
+      ],
+      "size": [
+        10,
+        10
+      ],
+      "anchor": "s050.f1.satellite_dish"
+    },
+    {
+      "id": "s052.f1.helipad",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        947.0,
+        495.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.player"
+    },
+    {
+      "id": "s050.f2.barracks",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        1221.0,
+        493.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s050.f2.barracks"
+    },
+    {
+      "id": "s052.f2.ground_staging",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        1246.0,
+        463.5
+      ],
+      "size": [
+        14,
+        7
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "s052.f2.oil_pump",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1209.5,
+        441.0
+      ],
+      "size": [
+        15,
+        4
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "s050.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1257.5,
+        447.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s050.f2.refinery"
+    },
+    {
+      "id": "s050.f2.fuel_bladder",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1226.0,
+        473.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s050.f2.fuel_bladder"
+    },
+    {
+      "id": "s050.f2.fabrication_depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1207.5,
+        451.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s050.f2.fabrication_depot"
+    },
+    {
+      "id": "s052.f2.watchtower",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1208.5,
+        461.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "service.enemy"
+    },
+    {
+      "id": "s050.f2.watchtower.approach",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1211.5,
+        461.0
+      ],
+      "size": [
+        3,
+        4
+      ],
+      "anchor": "s050.f2.watchtower.approach"
+    },
+    {
+      "id": "s050.f2.satellite_dish",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1173.0,
+        447.0
+      ],
+      "size": [
+        10,
+        10
+      ],
+      "anchor": "s050.f2.satellite_dish"
+    },
+    {
+      "id": "s052.f2.helipad",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        1261.0,
+        467.5
+      ],
+      "size": [
+        16,
+        15
+      ],
+      "anchor": "air.enemy"
+    }
+  ],
   "routes": [
     {
       "kind": "MainHighway",

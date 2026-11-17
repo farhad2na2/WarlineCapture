@@ -11,6 +11,14 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 ENTRY = 'Assets/Game/Scripts/Editor/Skirmish/SkirmishMissionAuthoringEntry.cs'
 BINDER = 'Assets/Game/Scripts/Configs/Skirmish/SkirmishMeasuredLayoutBinder.cs'
+# SkirmishInstancePadPlanner.IsInstancePadKind and SkirmishMapLayoutBuilder.PadKindForStructure.
+INSTANCE_KINDS = ('BaseBarracks', 'GroundStaging', 'AirReturn', 'Supply', 'Service')
+# SkirmishStructureIds (SkirmishRosterContracts.cs:270-284), the structures that use a per-building pad.
+STRUCTURES = ('building.barracks', 'building.ground_staging', 'building.helipad', 'building.airport',
+              'building.oil_pump', 'building.refinery', 'building.refinery.module', 'building.fuel_bladder',
+              'building.fabrication_depot', 'building.watchtower', 'building.watchtower.approach',
+              'building.satellite_dish')
+FRAME_MARGIN = 32.0  # SkirmishMissionAuthoringEntry.FrameMarginMetres
 NEEDS_UNITY = ('source asset/metadata, map bounds and terrain, placement and navigation, '
                'shared profiles, compilation, fingerprints, registration and native play')
 
@@ -20,6 +28,87 @@ def rows(path):
         return list(csv.DictReader(f))
 
 
+def check_instance_pads(draft, points, pads, point, fail):
+    """Optional measured per-building pads (LayoutGeometry.ReadMeasured) and derived-pad footprints."""
+    table = draft.get('structure_footprints')
+    if table is not None:
+        if not isinstance(table, dict):
+            fail('instance.footprint', 'structure_footprints must be an object')
+        else:
+            for structure, value in table.items():
+                if structure not in STRUCTURES:
+                    fail('instance.footprint', 'unknown structure ' + repr(structure))
+                size = point(value, 'structure_footprints.' + structure)
+                if size is not None and (size[0] <= 0 or size[1] <= 0):
+                    fail('instance.footprint', structure + ' footprint must be positive')
+    raw = draft.get('instance_pads')
+    if raw is None:
+        return
+    if not isinstance(raw, list):
+        fail('instance.type', 'instance_pads must be an array')
+        return
+    seen, anchor_use, entries = set(), {}, []
+    for i, item in enumerate(raw):
+        label = 'instance_pads[' + str(i) + ']'
+        if not isinstance(item, dict):
+            fail('instance.type', label + ' must be an object')
+            continue
+        for key in item.keys() - {'id', 'kind', 'faction', 'at', 'size', 'anchor'}:
+            fail('instance.type', label + ' unknown key ' + key)
+        pad_id = item.get('id')
+        if not isinstance(pad_id, str) or not pad_id or any(c.isspace() for c in pad_id):
+            fail('instance.id', label + ' needs a nonempty id without spaces')
+            continue
+        if pad_id in seen:
+            fail('instance.id', 'duplicate id ' + pad_id)
+        seen.add(pad_id)
+        # Generated pad id is pad.skirmish.<sNNN>.i_<id with dots as underscores> (cap 61, enemy policy).
+        if len('pad.skirmish.sNNN.i_' + pad_id.replace('.', '_')) > 61:
+            fail('instance.id', pad_id + ' makes a pad id longer than 61 characters')
+        # No collision with a kind pad's role (hence its generated id) or an instance anchor role.
+        if pad_id in pads or 'instance.' + pad_id in points:
+            fail('instance.duplicate', pad_id + ' duplicates a kind pad role or an instance anchor role')
+        if item.get('kind') not in INSTANCE_KINDS:
+            fail('instance.kind', label + ' kind must be one of ' + ', '.join(INSTANCE_KINDS))
+        faction = item.get('faction')
+        if isinstance(faction, bool) or faction not in (1, 2):
+            fail('instance.faction', label + ' faction must be 1 or 2')
+        at = point(item.get('at'), label + '.at')
+        size = point(item.get('size'), label + '.size')
+        if size is not None and (size[0] <= 0 or size[1] <= 0):
+            fail('instance.size', label + ' size must be positive')
+        anchor = item.get('anchor')
+        if not isinstance(anchor, str) or anchor not in points:
+            fail('instance.anchor', label + ' anchor must name a role in anchors{}')
+        elif at is not None:
+            if abs(points[anchor][0] - at[0]) > .001 or abs(points[anchor][1] - at[1]) > .001:
+                fail('instance.anchor', label + ' anchor must sit exactly on the pad centre')
+            if anchor in anchor_use:
+                fail('instance.anchor', label + ' shares anchor ' + anchor + ' with ' + anchor_use[anchor])
+            anchor_use[anchor] = pad_id
+        if at is not None and size is not None:
+            entries.append((label, at, size))
+    # SkirmishMissionAuthoringEntry.cs frame: axis player base -> enemy base, anchors and pads plus a 32 m margin.
+    if entries and 'base.player' in points and 'base.enemy' in points:
+        px, pz = points['base.player']
+        dx, dz = points['base.enemy'][0] - px, points['base.enemy'][1] - pz
+        length = math.hypot(dx, dz)
+        if length < 1:
+            return
+        fx, fz = dx / length, dz / length
+        ax, az = -fz, fx
+        def local(x, z):
+            return ((x - px) * fx + (z - pz) * fz, (x - px) * ax + (z - pz) * az)
+        every = [local(*p) for p in points.values()] + [local(*p[0]) for p in pads.values()]
+        low = [min(v[k] for v in every) - FRAME_MARGIN for k in (0, 1)]
+        high = [max(v[k] for v in every) + FRAME_MARGIN for k in (0, 1)]
+        for label, at, size in entries:
+            c = local(*at)
+            hx, hz = size[0] / 2, size[1] / 2
+            if c[0] - hx < low[0] or c[0] + hx > high[0] or c[1] - hz < low[1] or c[1] + hz > high[1]:
+                fail('instance.bounds', label + ' leaves the draft frame')
+
+
 def check(draft, catalog, matrix):
     errors = []
     def fail(rule, message):
@@ -27,7 +116,8 @@ def check(draft, catalog, matrix):
     # SkirmishMissionAuthoringEntry.cs:119-126 (JObject and allowed top-level keys).
     if not isinstance(draft, dict):
         return [('draft', 'JSON root must be an object')]
-    for key in draft.keys() - {'catalog_id', 'campaign_source', 'anchors', 'pads', 'routes', 'notes'}:
+    for key in draft.keys() - {'catalog_id', 'campaign_source', 'anchors', 'pads', 'routes', 'notes',
+                               'instance_pads', 'structure_footprints'}:
         fail('draft', 'unknown key ' + key)
     # SkirmishMissionDispatch.cs:61-72; SkirmishMissionAuthoringEntry.cs:128-135.
     cid = draft.get('catalog_id')
@@ -123,6 +213,7 @@ def check(draft, catalog, matrix):
                 fail('pad.size', role + ' size must be positive')
             if at is not None and size is not None and isinstance(anchor, str) and anchor in points:
                 pads[role] = (at, anchor, size)
+    check_instance_pads(draft, points, pads, point, fail)
     # SkirmishMeasuredLayoutBinder.cs:155-185, 198-207; SkirmishMapLayoutBuilder.cs:367-433.
     kinds = {}
     for role in pads:

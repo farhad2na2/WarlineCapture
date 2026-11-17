@@ -310,6 +310,288 @@
       ]
     }
   },
+  "instance_pads": [
+    {
+      "id": "candidate.structure.standard.0",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        982.0,
+        682.5
+      ],
+      "size": [
+        28.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.0"
+    },
+    {
+      "id": "candidate.structure.standard.2",
+      "kind": "GroundStaging",
+      "faction": 1,
+      "at": [
+        998.0,
+        710.5
+      ],
+      "size": [
+        14.0,
+        7.0
+      ],
+      "anchor": "staging.player"
+    },
+    {
+      "id": "candidate.structure.standard.4",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        984.5,
+        716.0
+      ],
+      "size": [
+        15.0,
+        4.0
+      ],
+      "anchor": "economy.player"
+    },
+    {
+      "id": "candidate.structure.standard.6",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        999.5,
+        699.5
+      ],
+      "size": [
+        25.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.6"
+    },
+    {
+      "id": "candidate.structure.standard.8",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        980.0,
+        695.0
+      ],
+      "size": [
+        14.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.8"
+    },
+    {
+      "id": "candidate.structure.standard.10",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        1005.5,
+        684.0
+      ],
+      "size": [
+        19.0,
+        16.0
+      ],
+      "anchor": "candidate.structure.standard.10"
+    },
+    {
+      "id": "candidate.structure.standard.12",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        987.5,
+        709.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.player"
+    },
+    {
+      "id": "candidate.structure.standard.14",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        1009.5,
+        709.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "candidate.structure.standard.14"
+    },
+    {
+      "id": "candidate.structure.standard.16",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        1001.0,
+        671.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.16"
+    },
+    {
+      "id": "candidate.structure.standard.18",
+      "kind": "AirReturn",
+      "faction": 1,
+      "at": [
+        1013.0,
+        719.5
+      ],
+      "size": [
+        16.0,
+        15.0
+      ],
+      "anchor": "air.player"
+    },
+    {
+      "id": "candidate.structure.standard.1",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        1098.0,
+        361.5
+      ],
+      "size": [
+        28.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.1"
+    },
+    {
+      "id": "candidate.structure.standard.3",
+      "kind": "GroundStaging",
+      "faction": 2,
+      "at": [
+        1068.0,
+        344.5
+      ],
+      "size": [
+        14.0,
+        7.0
+      ],
+      "anchor": "staging.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.5",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1087.5,
+        371.0
+      ],
+      "size": [
+        15.0,
+        4.0
+      ],
+      "anchor": "economy.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.7",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1071.5,
+        359.5
+      ],
+      "size": [
+        25.0,
+        15.0
+      ],
+      "anchor": "candidate.structure.standard.7"
+    },
+    {
+      "id": "candidate.structure.standard.9",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1104.0,
+        345.0
+      ],
+      "size": [
+        14.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.9"
+    },
+    {
+      "id": "candidate.structure.standard.11",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1063.5,
+        332.0
+      ],
+      "size": [
+        19.0,
+        16.0
+      ],
+      "anchor": "candidate.structure.standard.11"
+    },
+    {
+      "id": "candidate.structure.standard.13",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1098.5,
+        352.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "service.enemy"
+    },
+    {
+      "id": "candidate.structure.standard.15",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1072.5,
+        350.0
+      ],
+      "size": [
+        3.0,
+        4.0
+      ],
+      "anchor": "candidate.structure.standard.15"
+    },
+    {
+      "id": "candidate.structure.standard.17",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1091.0,
+        320.0
+      ],
+      "size": [
+        10.0,
+        10.0
+      ],
+      "anchor": "candidate.structure.standard.17"
+    },
+    {
+      "id": "candidate.structure.standard.19",
+      "kind": "AirReturn",
+      "faction": 2,
+      "at": [
+        1064.0,
+        374.5
+      ],
+      "size": [
+        16.0,
+        15.0
+      ],
+      "anchor": "air.enemy"
+    }
+  ],
   "routes": [
     {
       "kind": "MainHighway",

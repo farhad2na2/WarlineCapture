@@ -38,16 +38,21 @@ namespace Game.Runtime
                     if (!em.HasComponent<SkirmishLaunchDefinitionRecord>(session) ||
                         !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
                         !em.HasComponent<SkirmishResolvedSetupRecord>(session))
-                    { reason = SkirmishReasonCode.MissingReference; return false; }
+                    { UnityEngine.Debug.LogError("[SkirmishStartingBuildings] MissingReference reason=componentMissing catalog=" + setup.CatalogId); reason = SkirmishReasonCode.MissingReference; return false; }
                     var launch = em.GetComponentObject<SkirmishLaunchDefinitionRecord>(session);
                     var native = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
                     if (launch?.Definition == null || !launch.Matches(setup, native) ||
                         !ReferenceEquals(em.GetComponentObject<SkirmishResolvedSetupRecord>(session)?.Setup, setup))
-                    { reason = SkirmishReasonCode.MissingReference; return false; }
+                    { UnityEngine.Debug.LogError("[SkirmishStartingBuildings] MissingReference reason=launchRecordMismatch catalog=" + setup.CatalogId); reason = SkirmishReasonCode.MissingReference; return false; }
                     boundLayout = launch.Definition.MapLayout;
                     for (int i = 0; i < (setup.Structures?.Length ?? 0); i++)
                         if (!SkirmishStartingGrantPlacementConstraint.TryResolvePad(boundLayout, setup, i, out _))
-                        { reason = SkirmishReasonCode.MissingReference; return false; }
+                        {
+                            UnityEngine.Debug.LogError("[SkirmishStartingBuildings] MissingReference reason=noExactStructurePad catalog=" + setup.CatalogId +
+                                " structure=" + setup.Structures[i].StructureId + " anchor=" + setup.Structures[i].SpawnAnchorId +
+                                " instancePadRows=" + (boundLayout?.StructureInstancePads.Length ?? -1));
+                            reason = SkirmishReasonCode.MissingReference; return false;
+                        }
                 }
                 // Preflight all keys before submitting any grants.
                 var definitions = em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundary);

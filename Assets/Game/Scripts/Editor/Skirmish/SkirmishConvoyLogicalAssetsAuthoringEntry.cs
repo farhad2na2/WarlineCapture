@@ -39,9 +39,9 @@ namespace Game.Editor
             const string prefab="Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Tray.prefab";
             Require(AssetDatabase.GetAssetPath(actual.ChassisPrefab)==prefab&&
                 AssetDatabase.GetAssetPath(actual.ChassisConfig)==SkirmishConvoyTruckDefinition.ExistingConfigPath&&
-                actual.ChassisPrefabGuid==AssetDatabase.AssetPathToGUID(prefab)&&actual.ChassisPrefabSha256==Sha(prefab)&&
+                actual.ChassisPrefabGuid==AssetDatabase.AssetPathToGUID(prefab)&&PinMatches("prefab",actual.ChassisPrefabSha256,prefab)&&
                 actual.ChassisConfigGuid==AssetDatabase.AssetPathToGUID(SkirmishConvoyTruckDefinition.ExistingConfigPath)&&
-                actual.ChassisConfigSha256==Sha(SkirmishConvoyTruckDefinition.ExistingConfigPath),"Existing chassis/config pins differ; do not overwrite.");
+                PinMatches("config",actual.ChassisConfigSha256,SkirmishConvoyTruckDefinition.ExistingConfigPath),"Existing chassis/config pins differ; do not overwrite.");
             Require(basis.Roles!=null&&roles.Roles!=null&&roles.CatalogId=="skirmish.roles.convoy.v1"&&
                 roles.ContentVersion==basis.ContentVersion&&roles.Roles.Length==basis.Roles.Length+1,"Existing role catalog shape differs.");
             Require(basis.Roles.All(row=>row.RoleId!=SkirmishRoleIds.ConvoyLogic&&row.Kind!=SkirmishRoleKind.ConvoyLogic),"Shared basis unexpectedly contains convoy role.");
@@ -52,9 +52,40 @@ namespace Game.Editor
             Require(roles.TryGet(SkirmishRoleIds.ConvoyLogic,out var objective)&&
                 JsonUtility.ToJson(objective)==JsonUtility.ToJson(actual.RoleBinding()),"Existing mode-owned convoy binding differs.");
         }
+        // The pins were written on a CRLF checkout; this repository's .gitattributes keeps LF (* text=auto eol=lf), so the same
+        // content hashes differently per checkout. Accept a pin that equals the raw, LF-normalised or CRLF-normalised hash. Any
+        // real content change matches none of them and still fails: nothing is re-pinned or overwritten here.
+        private static bool PinMatches(string what,string pinned,string path)
+        {
+            string match=SkirmishConvoyPinMatch.Match(pinned,File.ReadAllBytes(path));
+            if(match==null)return false;
+            if(match!="raw")Debug.Log("[SkirmishConvoyLogicalAssets] pin="+what+" match="+match+" lineEndingNormalized=1 pinned="+pinned+" raw="+Sha(path)+" contentChanged=0");
+            return true;
+        }
         private static string Sha(string path)
         {using var hash=SHA256.Create();return BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(path))).Replace("-","").ToLowerInvariant();}
         private static void Require(bool value,string error){if(!value)throw new InvalidOperationException(error);}
+    }
+}
+
+namespace Game.Editor
+{
+    // Pure pin comparison, separately testable: which line-ending form of the file bytes hashes to the pin.
+    public static class SkirmishConvoyPinMatch
+    {
+        public static string Match(string pinned,byte[] bytes)
+        {
+            if(string.IsNullOrEmpty(pinned)||bytes==null)return null;
+            if(Hash(bytes)==pinned)return "raw";
+            var lf=new System.Collections.Generic.List<byte>(bytes.Length);
+            for(int i=0;i<bytes.Length;i++)if(!(bytes[i]==13&&i+1<bytes.Length&&bytes[i+1]==10))lf.Add(bytes[i]);
+            byte[] lfBytes=lf.ToArray();
+            if(Hash(lfBytes)==pinned)return "lf";
+            var crlf=new System.Collections.Generic.List<byte>(lfBytes.Length+lfBytes.Length/16);
+            foreach(byte b in lfBytes){if(b==10)crlf.Add(13);crlf.Add(b);}
+            return Hash(crlf.ToArray())==pinned?"crlf":null;
+        }
+        public static string Hash(byte[] bytes){using var hash=System.Security.Cryptography.SHA256.Create();return System.BitConverter.ToString(hash.ComputeHash(bytes)).Replace("-","").ToLowerInvariant();}
     }
 }
 #endif

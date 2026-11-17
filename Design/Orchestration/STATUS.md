@@ -10,8 +10,8 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Shift lead | Sonnet | Shift 2: S002 + S006 trace run, apply Codex patches, author S026/S049/S050 | Applying script-only patches; Unity run waits on the dialog |
-| Unity lane | — | One Editor at a time | **BLOCKED: needs the owner to click "Don't rebuild Library" in the Unity dialog** |
+| Shift lead | Sonnet | Shift 2: extract queue2 traces, merge ARIA fix + patches 010/012/018, compile, rerun S002 | Working |
+| Unity lane | — | One Editor at a time | Free again; shift lead integrates the ARIA fix and C# patches, then reruns S002 |
 | ARIA worker | Opus | Home-defence fix on branch `missions/aria-home-defense` (bd18a8176) | Finished 07:07; uncompiled, waits for the Unity lane |
 | Codex | gpt-6.1-terra | Batches 2–5 done (12 tasks today) | Paused: four C# patches (010, 011, 012, 018) wait for a compile, which needs the Unity lane |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
@@ -91,3 +91,4 @@ record is `missions.csv`.
 - 2026-11-17 07:08 orchestrator: ARIA home-defence branch reviewed (11 files, merges cleanly). Cause found: the base building gives no vision, so the tank never became a minimap contact and home defence never fired; a player would only have seen the base-health number fall. Fix: falling base health now counts as a threat, one group is sent home, the whole army only if the base is below 40% or the threat lasts. Not compiled, not run. Shift lead merges it with patches 010, 012, 018 after the Unity dialog is cleared; patch 011 dropped as superseded.
 - 2026-11-17 07:08 shift lead: noted plan after run: merge aria-home-defense, apply 010/012/018 (drop 011), one compile, then S002 130365 en home_defense trace run.
 - 2026-11-17 07:21 shift lead: step 1 done. S002 130365 en: Abort countedWin=0 (match Victory at 236 s, enemy base destroyed, player base 800 throughout; terminal probe playerFrameTimeout). S006: launchFailed, no playable dispatch. Report in daily/shift-2026-11-17b.md.
+- 2026-11-17 07:22 orchestrator: owner clicked "Don't rebuild Library"; the Editor loaded with the existing Library (marker gone, no rebuild) and ran queue2 to the end. Results from the log: S002 seed 130365 en = Abort after 313.4 s (not a win); S006 did not launch: "Catalog S006 has no playable generic library dispatch matching definition skirmish.s006 v2". End source check took 36 s (the long waits were the dialog, not the check). Shift lead is extracting the traces.

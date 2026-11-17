@@ -198,7 +198,9 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
             Assert.AreEqual(3, stage);
             Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "same target until the touch completes");
-            view.AttackMode = false; view.CompletedContacts = 4;
+            view.CompletedContacts = 4;
+            Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "a completed Attack touch is not the ground order");
+            view.AttackMode = false; view.CompletedContacts = 5; view.HomeGroundTouched = true;
             Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
             Assert.AreEqual(2, stage, "posted once");
             Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(Post(6f), ref stage, ref deadline, ref actions));
@@ -216,6 +218,11 @@ namespace Game.Tests.Editor
             view = Post(5f + AriaHomeGuardPostPolicy.DeadlineSeconds + 1f);
             Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
             Assert.AreEqual(2, stage, "gives up after the deadline");
+            stage = 3; view = Post(5f + AriaHomeGuardPostPolicy.DeadlineSeconds + 1f); view.SelectedGroups = 1; view.SelectedMask = 0b00001; view.AttackMode = true;
+            Assert.AreEqual(AriaHomeGuardPostAction.ToggleSelected, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "release the guard's selection before handing back");
+            view.SelectedGroups = 0; view.SelectedMask = 0;
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
+            Assert.AreEqual(2, stage);
             stage = 0; view = Post(5f); view.UiBusy = true;
             Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "open drawers/maps are left to the normal flow");
         }

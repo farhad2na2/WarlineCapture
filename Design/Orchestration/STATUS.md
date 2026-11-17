@@ -14,7 +14,8 @@ record is `missions.csv`.
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
 | Binding worker | Sonnet | Per-building pads in authoring; branch `missions/generic-binding` (3 commits, merges cleanly) | Finished; uncompiled, waits for the Unity lane |
 | Codex | gpt-6.1-terra | 15 tasks today | Idle: patches 020 and 021 wait for the Unity lane |
-| Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
+| Orchestrator | Fable | Daily review at 08:33 and hard decisions only (owner rule) | Idle until the daily cycle |
+| Program lead | Opus | Runs the live loop in its own session: `PROGRAM_LEAD_PROMPT.md` | Started 09:20 |
 
 ## Log
 
@@ -135,3 +136,5 @@ record is `missions.csv`.
 - 2026-11-17 08:44 aria worker: aria-guard2 done: both Abort ariaStopped:Blocked (guard post completion check wrong); fixed, launching aria-guard3 S002:155923:en,S002:130365:en
 - 2026-11-17 08:55 aria worker: aria-guard3 done: both Defeat (post step handed back mid-touch; guard sent to enemy base); fixed; launching full gate aria-gate1 (3 seeds x en/fa-IR)
 - 2026-11-17 09:14 aria worker: aria-gate1 done: wins=1/6 (guard post unreliable, delays column; posted guard never engages the fogged tank). Reverted the 4 guard/post commits to baseline ARIA. Next: generic-binding merge + codex 020/021 patches, compile check, S006/S026 queue
+- 2026-11-17 09:15 aria worker: merged generic-binding (no-ff), applied Codex 020/021 (unittest 4 OK); compile check launching
+- 2026-11-17 09:19 orchestrator: owner rule applied: Fable now works once a day on hard decisions only. The live loop is handed to an Opus program lead in its own session ("Mission program lead"); it delegates to Sonnet, Codex and Haiku and writes `daily/lead-YYYY-MM-DD.md`. Hard decisions wait in `decisions_pending.md` for the daily cycle. The ARIA worker finishes its current task and leaves its report in `daily/aria-worker-2026-11-17.md`.

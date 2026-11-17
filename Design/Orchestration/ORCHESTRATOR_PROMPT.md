@@ -64,16 +64,20 @@ Run this cycle until the goal is met or a circuit breaker trips.
    10 or more missions per session, normal speed and normal input.
 6. **Record.** Update `missions.csv` from harness log output only. Write the daily review. Commit.
 
-**Cadence (owner rule, 2026-11-16): the orchestrator runs once a day, not continuously**, because
-it is the most expensive model. One scheduled cycle per day: review, verify, write the next
-directive in `Design/Orchestration/directives/YYYY-MM-DD.md`, start the shift, stop.
+**Cadence (owner rule, 2026-11-16, restated 2026-11-17): the orchestrator (Fable) works once a
+day, or when the owner asks it a quick question, and only on hard decisions.** It never runs the
+live loop and never reviews individual worker or Codex results.
 
-Between cycles a **Sonnet shift lead** executes the directive: it merges worker branches that pass
-their check, owns the Unity lane, runs the queue batches, updates the table through
-`Tools/Missions/run_aria_queue.py`, and writes `Design/Orchestration/daily/shift-YYYY-MM-DD.md`.
-The shift lead never makes gate or design decisions; it records blockers and moves on. Codex does
-the bulk mechanical work in parallel. Set Codex reasoning effort per brief: low or medium for
-mechanical tasks, high only for scoped C#.
+Between daily cycles an **Opus program lead** runs the loop above in its own session
+(`Design/Orchestration/PROGRAM_LEAD_PROMPT.md`): it dispatches Sonnet workers and shift leads, Codex
+batches and Haiku helpers, verifies and merges their work, owns the Unity lane schedule, records
+gates, and writes `daily/lead-YYYY-MM-DD.md`. Hard decisions it cannot take under the defaults go to
+`Design/Orchestration/decisions_pending.md` for the daily cycle.
+
+The daily cycle: read `daily/lead-*.md`, `decisions_pending.md`, `missions.csv` deltas and the
+`STATUS.md` header; decide the pending items; write `daily/YYYY-MM-DD.md` and the next directive;
+make sure a program-lead session is running (start one with `start_session`, model Opus, shared
+checkout, then detach it so its turns do not wake this session); stop.
 
 ## Workers and cost tiers
 
@@ -83,7 +87,8 @@ mechanical tasks, high only for scoped C#.
 | Sonnet | Mission layout and config authoring on existing maps, tests, tuning runs, scoped bug fixes, batch result analysis | Cross-system redesign |
 | Opus | ARIA skills (aircraft, Airport, new objective types), ECS and pathfinding bugs, pacing redesign | Mechanical work |
 | Codex | Scoped, mechanical, well-specified tasks with a file list and a pass/fail check: config generation from a template, test scaffolding, repetitive refactors | Open-ended goals, design, anything with a heartbeat |
-| You | Planning, briefs, verification, merges, gate decisions | Bulk edits |
+| Program lead (Opus) | Planning, briefs, verification, merges, gate bookkeeping | Bulk edits |
+| You (Fable, daily) | Hard decisions, the daily review, auditing a sample of accepted rows | Anything a cheaper tier can do |
 
 Every brief names: the files, the single deliverable, the time and token budget, the acceptance check
 and the do-not-touch list. Workers report in 10 lines or fewer plus a path to the evidence. Give paths

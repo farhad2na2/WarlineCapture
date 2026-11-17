@@ -339,6 +339,20 @@ public int SupportSlot;
 public int SupportActions;
 public float SupportDeadline;
 public float SupportReadyAt;
+public int ColumnStallKey;
+public float ColumnStallSince;
+public int ColumnSkips;
+public int ColumnSkipKeyA;
+public int ColumnSkipKeyB;
+public byte FindBaseActive;
+public byte FindBaseTaps;
+public byte FindBaseRun;
+public int FindBaseActions;
+public int FindBaseLastTarget;
+public int FindBaseGiveUps;
+public int CoverageActions;
+public float CoverageStarted;
+public byte CoverageAssaultSeen;
 }
 public struct AriaS002ContactState {
 public AriaS002ContactPhase Phase;

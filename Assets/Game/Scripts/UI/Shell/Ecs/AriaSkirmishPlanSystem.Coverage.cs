@@ -13,6 +13,9 @@ namespace Game.UI.Shell.Ecs
     // affordable and are skipped. Visible controls only; no gameplay state is written.
     public partial struct AriaSkirmishPlanSystem
     {
+        static void ClearFindBase(ref AriaSkirmishPlanComponent p)
+        { p.FindBaseActive = 0; p.FindBaseTaps = 0; p.FindBaseRun = 0; p.FindBaseLastTarget = 0; }
+
         static bool CoverageEligible(in AriaSkirmishObservation v) =>
             v.ExpandedSession && v.ExpandedBaseAssault && !v.AirProfile && !v.CombinedArmsField && !v.PublicObjective.Applicable;
 
@@ -53,18 +56,22 @@ namespace Game.UI.Shell.Ecs
             if (!CoverageEligible(v)) return false;
             int cards = (v.RecruitMarksman.Available ? 1 : 0) | (v.RecruitApcFast.Available ? 2 : 0) | (v.RecruitRadar.Available ? 4 : 0) |
                 (v.RecruitApcHeavy.Available ? 8 : 0) | (v.RecruitDrone.Available ? 16 : 0) | (v.RecruitTransportHeli.Available ? 32 : 0);
+            // The first accepted assault is latched (see the S002 adapter).
+            if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
-                AssaultIssued = p.AssaultIssued != 0 && p.StructureOrdered != 0,
+                AssaultIssued = p.CoverageAssaultSeen != 0,
                 BreacherSettled = p.BreacherStage == 2,
                 Busy = CoverageOtherOwner(v, p, t) || p.BreacherStage == 1 || (p.CoverageCurrent == 0 && v.DrawerOpen),
                 EnemyAlive = v.EnemyDesignatedAlive,
                 OtherRecruitPending = v.RifleRecruitPending || v.RocketeerRecruitPending || v.BreacherRecruitPending,
                 AffordMask = v.CoverageAffordMask, PendingMask = v.CoveragePendingMask,
-                FieldedMask = v.CoverageFieldedMask, CardMask = cards, Time = v.Time };
-            var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline };
+                FieldedMask = v.CoverageFieldedMask, CardMask = cards, CompletedContacts = t.Actions, Time = v.Time };
+            var state = new Game.Simulation.AriaCoverageState { Done = p.CoverageDone, Current = p.CoverageCurrent, Deadline = p.CoverageDeadline,
+                Started = p.CoverageStarted, Actions = p.CoverageActions };
             byte before = p.CoverageCurrent;
             var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
             p.CoverageDone = state.Done; p.CoverageCurrent = state.Current; p.CoverageDeadline = state.Deadline;
+            p.CoverageStarted = state.Started; p.CoverageActions = state.Actions;
             if (before != 0 && state.Current == 0) p.Intent = AriaSkirmishIntent.Inspect;
             if (action == Game.Simulation.AriaCoverageAction.Recruit)
             { p.Intent = AriaSkirmishIntent.Recruit; Target(CoverageTarget(v, kind), false, ref o); return true; }

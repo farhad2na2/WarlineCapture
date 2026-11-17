@@ -65,6 +65,15 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte SupportStage, SupportKind, SupportTried, SupportDone;
         public int SupportSlot, SupportActions;
         public float SupportDeadline, SupportReadyAt;
+        // AriaGroundColumnPolicy stall guard (pages given up) and AriaFindBasePolicy (bounded base search).
+        public int ColumnStallKey, ColumnSkips, ColumnSkipKeyA, ColumnSkipKeyB;
+        public float ColumnStallSince;
+        public byte FindBaseActive, FindBaseTaps, FindBaseRun;
+        public int FindBaseActions, FindBaseLastTarget, FindBaseGiveUps;
+        // AriaCoverageRecruitPolicy progress (taps completed, purchase start) and the latched first assault.
+        public int CoverageActions;
+        public float CoverageStarted;
+        public byte CoverageAssaultSeen;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

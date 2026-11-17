@@ -55,6 +55,7 @@ namespace Game.Editor
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
+            NoteLongSessionTerminal(em, session, in match, elapsed);
             EmitGateUnitsUsed(em);
             RecordProductionResolvedSnapshot(em, session, in match, SkirmishLaunchProjection.IsSimulationActive(em), elapsed, "TerminalSnapshot");
             StopS004ManualProbe();
@@ -288,6 +289,9 @@ namespace Game.Editor
             { passed = false; reason = "terminalPresentationLost"; }
             Debug.Log("[SkirmishTerminalProbe] result=" + (passed ? "Passed" : "Failed") + " reason=" + reason +
                 " completed=" + (terminalTouch?.CompletedGestures ?? 0) + " interventions=" + (terminalTouch?.PhysicalInterventions ?? 0));
+            NoteLongSessionReturn(
+                SkirmishTerminalPresentationObservation.AcceptResult(terminalResultPresentation, terminalAttempt.ToString(), terminalMatch.Outcome),
+                passed && terminalAction == "MAIN MENU");
             RecordProductionTerminalReturn(passed, reason);
             terminalProbeActive = false;
             terminalTouch?.Dispose(); terminalTouch = null;

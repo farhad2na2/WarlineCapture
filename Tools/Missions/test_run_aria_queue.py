@@ -566,5 +566,40 @@ S026-aria-rs-1-en-2,S026,more fields
         self.assertEqual((row['aria_en'], row['aria_time_s'], row['unity_result']), ('W0 L1 A0', '', 'loss'))
 
 
+class LongSessionTests(unittest.TestCase):
+    PASSED = ('[SkirmishLongSessionRegression] catalog=S026 seed=104729 result=Passed allocatorErrors=0 exceptions=0 errors=2 '
+              'resultScreen=1 returnToMenu=1 expiry=1 outcome=Defeat endReason=TimeLimit elapsed=1080.2 purchases=21 '
+              'purchaseFailures=3 archetypes=4100 queryShapes=1720 queryBlocks=301/2048 abort=none firstError=none')
+
+    def test_passed_marker(self):
+        markers = runner.read_long_session(['noise', self.PASSED + '\n'])
+        self.assertEqual(1, len(markers))
+        self.assertTrue(markers[0]['passed'])
+        self.assertEqual('1080.2', markers[0]['elapsed'])
+        self.assertEqual(0, runner.long_session_exit(markers))
+
+    def test_allocator_error_or_missing_return_fails(self):
+        bad = self.PASSED.replace('allocatorErrors=0', 'allocatorErrors=3')
+        self.assertFalse(runner.read_long_session([bad])[0]['passed'], 'a Passed claim is re-checked')
+        bad = self.PASSED.replace('result=Passed', 'result=Failed').replace('returnToMenu=1', 'returnToMenu=0')
+        self.assertEqual(1, runner.long_session_exit(runner.read_long_session([bad])))
+
+    def test_inconclusive_missing_and_duplicate_fail(self):
+        early = self.PASSED.replace('result=Passed', 'result=Inconclusive').replace('expiry=1', 'expiry=0')
+        self.assertEqual(1, runner.long_session_exit(runner.read_long_session([early])))
+        self.assertEqual(1, runner.long_session_exit([]))
+        self.assertEqual(1, runner.long_session_exit(runner.read_long_session([self.PASSED, self.PASSED])))
+        truncated = '[SkirmishLongSessionRegression] catalog=S026 result=Passed'
+        self.assertEqual([], runner.read_long_session([truncated]))
+
+    def test_long_session_rejects_reuse_and_multiple_jobs(self):
+        with self.assertRaises(SystemExit):
+            runner.main(['--long-session', '--reuse', '--jobs', 'S026:104729:en', '--log-dir', '/tmp/x-long'])
+        with tempfile.TemporaryDirectory() as directory:
+            code = runner.main(['--long-session', '--jobs', 'S026:104729:en,S026:104730:en',
+                                '--log-dir', directory, '--dry-run'])
+            self.assertEqual(1, code)
+
+
 if __name__ == '__main__':
     unittest.main()

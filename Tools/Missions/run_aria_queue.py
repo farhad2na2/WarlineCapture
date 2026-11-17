@@ -31,6 +31,9 @@ ATTEMPT = re.compile(r'\battempt=expanded-([a-z0-9]+)-(-?\d+)-([^\s}]+)')
 ELAPSED = re.compile(rf'\belapsed=({NUMBER})(?=\s|$)')
 CANDIDATE = re.compile(r'\bsha256=([0-9a-fA-F]{64})(?=\s|$)')
 RUN_ID = re.compile(r'^([A-Za-z0-9]+-aria-[^,\s]+),')
+LONG_SESSION = re.compile(r'^\[SkirmishLongSessionRegression\] (.*)$')
+LONG_SESSION_REQUIRED = ('catalog', 'result', 'allocatorErrors', 'exceptions', 'resultScreen', 'returnToMenu',
+                         'expiry', 'elapsed')
 
 
 class Job(NamedTuple):
@@ -469,6 +472,30 @@ def explicit_jobs(value):
     return jobs
 
 
+def read_long_session(lines):
+    """Long-session regression markers ([SkirmishLongSessionRegression] key=value ...), in log order.
+
+    A marker is accepted only with every required key; result=Passed is re-checked against its own fields."""
+    markers = []
+    for line in lines:
+        match = LONG_SESSION.match(line.rstrip('\r\n'))
+        if not match:
+            continue
+        fields = dict(part.split('=', 1) for part in match.group(1).split() if '=' in part)
+        if any(key not in fields for key in LONG_SESSION_REQUIRED):
+            continue
+        consistent = (fields['allocatorErrors'] == '0' and fields['exceptions'] == '0' and fields['resultScreen'] == '1'
+                      and fields['returnToMenu'] == '1' and fields['expiry'] == '1')
+        fields['passed'] = fields['result'] == 'Passed' and consistent
+        markers.append(fields)
+    return markers
+
+
+def long_session_exit(markers):
+    """0 only when exactly one marker was logged and it passed."""
+    return 0 if len(markers) == 1 and markers[0]['passed'] else 1
+
+
 def read_queue_log(path, repo):
     with path.open(encoding='utf-8', errors='replace') as stream:
         return scan_queue(stream, repo)
@@ -558,6 +585,11 @@ def main(argv=None):
                         help='Editor-only: present Planned authored missions as launchable [VALIDATION] cards so --menu-journey '
                              'can start them before publication (sets WARLINE_VALIDATION_LIBRARY=1; nothing is published; '
                              'log line [SkirmishValidationLibrary] enabled=1 planned=<ids>)')
+    parser.add_argument('--long-session', action='store_true',
+                        help='long-session runtime regression (once per runtime candidate): no ARIA; periodic infantry '
+                             'purchases through presented touch controls until the deadline, then result screen and MAIN MENU '
+                             '(sets WARLINE_LONG_SESSION=1). Exactly one job; implies --no-table; exit 0 only when '
+                             '[SkirmishLongSessionRegression] reports result=Passed')
     parser.add_argument('--menu-journey', action='store_true',
                         help='start every job from the main menu through presented touch controls (sets WARLINE_MENU_JOURNEY=1); '
                              'the log shows [SkirmishMenuJourney] catalog=<id> result=Passed|Failed. Without the flag the '
@@ -583,6 +615,10 @@ def main(argv=None):
         parser.error('--jobs cannot be combined with --missions, --seeds or --locales')
     if args.jobs is None and not all(value is not None for value in trio):
         parser.error('Specify --jobs or all of --missions, --seeds and --locales')
+    if args.long_session:
+        if args.reuse:
+            parser.error('--long-session uses a launched Editor (environment); --reuse is not supported')
+        args.no_table = True
     if args.reuse and args.launcher != 'macos':
         parser.error('--reuse is macOS only (it drives invoke_unity_macos.sh --reuse)')
     repo, log_dir = args.repo.resolve(), args.log_dir.resolve()
@@ -598,6 +634,8 @@ def main(argv=None):
         log_dir.mkdir(parents=True, exist_ok=True)
         queue, log = log_dir / 'queue.csv', log_dir / 'unity.log'
         jobs = args.jobs if args.jobs is not None else job_list(args.missions, args.seeds, args.locales)
+        if args.long_session and len(jobs) != 1:
+            raise ValueError('--long-session runs exactly one job')
         write_queue(queue, jobs)
         if args.jobs is not None and args.dry_run:
             csv.writer(sys.stdout, lineterminator='\n').writerows(jobs)
@@ -620,6 +658,8 @@ def main(argv=None):
                     env['WARLINE_MENU_JOURNEY'] = '1'
                 if args.validation_library:
                     env['WARLINE_VALIDATION_LIBRARY'] = '1'
+                if args.long_session:
+                    env['WARLINE_LONG_SESSION'] = '1'
             if args.reuse:
                 request_path, request_id = write_reuse_request(repo, queue, args.menu_journey, args.validation_library)
                 try:
@@ -651,6 +691,14 @@ def main(argv=None):
             print(f'Completed: jobs={total} recorded={recorded} wins={wins}')
         else:
             print('Completed marker missing')
+        if args.long_session:
+            with open(log, encoding='utf-8', errors='replace') as handle:
+                markers = read_long_session(handle)
+            for marker in markers:
+                print('Long session: ' + ' '.join(f'{key}={value}' for key, value in marker.items()))
+            if not markers:
+                print('Long session marker missing')
+            return 1 if launch_failed else long_session_exit(markers)
         return 0 if not launch_failed and completed and completed[0] == completed[1] else 1
     except (OSError, ValueError, csv.Error, RuntimeError) as exc:
         print(f'Error: {exc}', file=sys.stderr)

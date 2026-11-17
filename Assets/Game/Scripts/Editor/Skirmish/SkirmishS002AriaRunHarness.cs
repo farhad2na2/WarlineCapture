@@ -674,7 +674,7 @@ namespace Game.Editor
             if (deadline == 0d)
                 deadline = now + (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1"
                     ? (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC")) ? 120d : 360d)
-                    : WallClockBudgetSeconds);
+                    : LongSessionRequested ? SkirmishLongSessionRegressionLog.WallClockBudgetSeconds : WallClockBudgetSeconds);
             // The layout dump spans startup plus a long read-only scan; its own watchdog owns the hard timeout.
             if (layoutDump != null && !layoutDumpDone && !layoutDumpDeadlineExtended)
             {
@@ -961,6 +961,14 @@ namespace Game.Editor
                     }
                     if (Environment.GetEnvironmentVariable("WARLINE_S005_PLAYER_RESUME_PROBE") == "1" && !playerResumeProbeDone)
                     { StartPlayerResumeProbe(em, session); return; }
+                    if (LongSessionRequested)
+                    {
+                        StartLongSessionDriver();
+                        ScreenCapture.CaptureScreenshot(LiveTracePath() + ".opening.png");
+                        stage = 3;
+                        next = now + 1d;
+                        return;
+                    }
                     if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") == "1")
                     {
                         StartS004ManualProbe();
@@ -1004,7 +1012,7 @@ namespace Game.Editor
                 // A stopped/blocked driver is failed evidence. The harness must
                 // never silently consent again or override a player's Stop.
                 AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
-                if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") != "1" &&
+                if (Environment.GetEnvironmentVariable("WARLINE_S004_MANUAL_PROBE") != "1" && !LongSessionRequested &&
                     (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked))
                 {
                     Finish(abort: true, abortReason: "ariaStopped:" + aria.Phase);
@@ -1916,6 +1924,7 @@ namespace Game.Editor
             StopS005GuardObservation();
             if (finishingEvidence) return;
             finishingEvidence = true;
+            EmitLongSessionRegression(abort, abortReason);
             try { OwnedDiagnosticTraceIo.CloseOwned("Finish"); }
             catch (Exception ioError) when (!(ioError is OutOfMemoryException))
             { abort = true; abortReason = "diagnosticAppendClose:" + ioError.GetType().Name; Debug.LogError(ioError); }

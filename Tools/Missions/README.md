@@ -47,3 +47,12 @@ For a Skirmish budget experiment, copy the full setup CSV, edit the desired rows
 Run the end-to-end controls with `rtk proxy python3 -B Tools/Missions/test_quickcheck.py -v`.
 
 Run an explicit ARIA queue: `python3 Tools/Missions/run_aria_queue.py --jobs S002:130365:en,S006:130370:en --log-dir /tmp/aria-queue --dry-run`.
+
+Long-session runtime regression (required once per runtime candidate before mission rows are accepted): S026 Regular/Standard seed 104729 from the real menu, ARIA off, one infantry purchase every 30 s through presented touch controls, no troop orders, until the 18-minute deadline; then the result screen and MAIN MENU. Needs a fresh `--log-dir` outside the repository; about 22–26 minutes wall clock.
+
+```sh
+rtk proxy python3 -B Tools/Missions/run_aria_queue.py --jobs S026:104729:en --menu-journey --validation-library \
+  --long-session --timeout 2400 --log-dir /Volumes/T7/Projects/WarlineCapture-program-logs/<date>/long-session-<candidate>
+```
+
+Exit 0 only for one `[SkirmishLongSessionRegression] catalog=S026 seed=104729 result=Passed allocatorErrors=0 exceptions=0 … resultScreen=1 returnToMenu=1 expiry=1` line. `result=Inconclusive` means a clean run whose base fell after 10+ minutes (no deadline); rerun. `[EcsQueryBudget]` lines report the World's query block allocator (archetypes, query shapes, blocks used/budget) every minute and a `toggles=` census of structurally toggled components at the end.

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
@@ -392,6 +393,7 @@ namespace Game.Runtime
     internal static class SkirmishEnemyTrace
     {
         private static readonly Dictionary<string, string> Orders = new();
+        private static readonly HashSet<string> FootprintSessions = new();
 
         internal static void InitialWorld(EntityManager em, Entity session)
         {
@@ -443,6 +445,45 @@ namespace Game.Runtime
                 parts.Add("faction" + faction + "_units=" + Counts(roles) + " faction" + faction + "_base_position=" + position + " faction" + faction + "_base_health=" + health + " faction" + faction + "_defenses=" + Counts(defenses) + " faction" + faction + "_garrison=" + Counts(garrison));
             }
             UnityEngine.Debug.Log("[SkirmishEnemyTrace] event=initial_world session=" + match.SessionId + " radius=90 " + string.Join(" ", parts));
+            LogFootprints(em, match.SessionId.ToString());
+        }
+        private static void LogFootprints(EntityManager em, string sessionId)
+        {
+            if (FootprintSessions.Contains(sessionId)) return;
+            using var boundaries = em.CreateEntityQuery(typeof(BuildingRuntimeStateTag), typeof(BuildingConfiguredSpawnableReadModel));
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (boundaries.CalculateEntityCount() != 1 || grids.CalculateEntityCount() != 1) return;
+            float cellSize = grids.GetSingleton<GridConfig>().CellSize;
+            if (!math.isfinite(cellSize) || cellSize <= 0f) return;
+            var definitions = em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaries.GetSingletonEntity(), true);
+            if (definitions.Length == 0) return;
+            var lines = new List<(string id, string line)>();
+            foreach (var definition in definitions)
+            {
+                string key = definition.BuildingId.ToString();
+                string id = FootprintStructureId(key);
+                string width = (definition.FootprintCells.x * cellSize).ToString("F3", CultureInfo.InvariantCulture);
+                string depth = (definition.FootprintCells.y * cellSize).ToString("F3", CultureInfo.InvariantCulture);
+                // The placement lifecycle accepts rotation for every definition; walls use drag orientation.
+                lines.Add((id, "[SkirmishFootprintTrace] structure=" + id + " width=" + width +
+                    " depth=" + depth + " rotatable=1 source=BuildingConfiguredSpawnableReadModel"));
+            }
+            lines.Sort((a, b) => System.StringComparer.Ordinal.Compare(a.id, b.id));
+            FootprintSessions.Add(sessionId);
+            foreach (var line in lines) UnityEngine.Debug.Log(line.line);
+            UnityEngine.Debug.Log("[SkirmishFootprintTrace] result=Completed count=" + lines.Count);
+        }
+        private static string FootprintStructureId(string key)
+        {
+            // The read-model ID is a normalized prefab key, not a Skirmish structure ID.
+            string[] ids = { SkirmishStructureIds.Barracks, SkirmishStructureIds.GroundStaging,
+                SkirmishStructureIds.Helipad, SkirmishStructureIds.Airport, SkirmishStructureIds.OilPump,
+                SkirmishStructureIds.Refinery, SkirmishStructureIds.FuelBladder, SkirmishStructureIds.FabricationDepot,
+                SkirmishStructureIds.Watchtower, SkirmishStructureIds.SatelliteDish };
+            foreach (string id in ids)
+                if (BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(SkirmishStructureIds.VisualKey(id)) == key)
+                    return id;
+            return key;
         }
         private static void Add(SortedDictionary<string, int> counts, string key) { counts.TryGetValue(key, out int value); counts[key] = value + 1; }
         private static string Counts(SortedDictionary<string, int> counts) { var values = new List<string>(); foreach (var pair in counts) values.Add(pair.Key + ":" + pair.Value); return "[" + string.Join(",", values) + "]"; }

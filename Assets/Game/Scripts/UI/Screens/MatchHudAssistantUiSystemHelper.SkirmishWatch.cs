@@ -128,6 +128,9 @@ namespace Game.UI.Runtime
                 view.ExpandedGroup0=page.Group0;view.ExpandedGroup1=page.Group1;view.ExpandedGroup2=page.Group2;
                 view.ExpandedGroup3=page.Group3;view.ExpandedGroup4=page.Group4;view.PrecisionAttack=page.PrecisionAttack;
                 view.ExpandedAirMask = page.AirMask;
+                view.ExpandedInfantryMask = page.InfantryMask;
+                view.ExpandedAlive0 = page.Alive0; view.ExpandedAlive1 = page.Alive1; view.ExpandedAlive2 = page.Alive2;
+                view.ExpandedAlive3 = page.Alive3; view.ExpandedAlive4 = page.Alive4;
                 view.ExpandedCanPreviousPage = page.PreviousPage;
                 view.ExpandedCanNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;

@@ -169,6 +169,11 @@ public uint ExpandedGroup3;
 public uint ExpandedGroup4;
 public AriaS002CommandReceipt PrecisionAttack;
 public int ExpandedAirMask;
+// Public roster card facts for the opening home guard.
+public int ExpandedInfantryMask;
+public int ExpandedAlive0,ExpandedAlive1,ExpandedAlive2,ExpandedAlive3,ExpandedAlive4;
+// Policy-internal: the opening home guard's card on this page (never set by adapters).
+public int HomeGuardMask;
 public bool ExpandedCanPreviousPage;
 public bool ExpandedCanNextPage;
 public int ExpandedPageIndex;
@@ -263,6 +268,8 @@ public int HomeDefenseRounds;
 public float HomeHealthSeen;
 public float HomeHealthPeak;
 public float HomeDamageAt;
+public uint HomeGuardGroup;
+public byte HomeGuardChosen;
 public byte AssaultDistanceObserved;
 public float BestAssaultDistance;
 public int AssaultObjectiveHudIdentity;

@@ -43,7 +43,8 @@ namespace Game.Tests.Editor
             Assert.IsFalse(AriaBaseDamagePolicy.Observe(60f, 800f, ref plan));
             Assert.IsTrue(AriaBaseDamagePolicy.Observe(61f, 772f, ref plan));
             Assert.IsTrue(AriaBaseDamagePolicy.Observe(65f, 772f, ref plan), "damage is remembered briefly");
-            var decision = Step(View(65f), ref plan, out bool handled);
+            var offScreen = View(65f); offScreen.HomeGroundAvailable = false;
+            var decision = Step(offScreen, ref plan, out bool handled);
             Assert.IsTrue(handled);
             Assert.IsTrue(decision.Defend);
             Assert.AreEqual(AriaHomeDefenseAction.InspectHome, decision.Action);
@@ -56,9 +57,9 @@ namespace Game.Tests.Editor
         public void ProportionateDefenderIsOneGroupOnHomeGround()
         {
             var plan = default(AriaHomeDefenseState);
-            var view = View(70f);
+            var view = View(70f); view.HomeGroundAvailable = false;
             Assert.AreEqual(AriaHomeDefenseAction.InspectHome, Step(view, ref plan, out _).Action);
-            view.CompletedContacts = 1;
+            view.CompletedContacts = 1; view.HomeGroundAvailable = true;
             var decision = Step(view, ref plan, out _);
             Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
             Assert.AreEqual(0, decision.Slot);
@@ -82,7 +83,7 @@ namespace Game.Tests.Editor
         {
             var plan = new AriaHomeDefenseState { HomeDefenseStage = 8, HomeDefenseScope = 1, HomeDefenseRounds = 1,
                 HomeDefenseReason = AriaHomeDefensePolicy.ReasonBaseDamage, HomeDefenseObserveUntil = 100f };
-            var view = View(80f); view.BaseCritical = true;
+            var view = View(80f); view.BaseCritical = true; view.HomeGroundAvailable = false;
             Step(view, ref plan, out bool handled);
             Assert.IsTrue(handled);
             Assert.AreEqual(0, plan.HomeDefenseStage);
@@ -114,6 +115,63 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0, plan.HomeDefenseRounds);
             Assert.AreEqual(0, plan.Column.AssaultIssued, "the enemy-base sweep is reissued");
             Assert.AreEqual(0, plan.Column.PagesOrdered);
+        }
+
+        [Test]
+        public void ShownDefenceTargetSkipsTheCameraStep()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(67f); view.CompletedContacts = 30;
+            var decision = Step(view, ref plan, out bool handled);
+            Assert.IsTrue(handled);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action, "home ground already on screen: select the defender at once");
+            Assert.AreEqual(0, decision.Slot);
+            Assert.AreEqual(1, plan.HomeDefenseRounds);
+        }
+
+        [Test]
+        public void HomeGuardIsThePreferredSingleDefender()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(67f); view.PreferredSlotMask = 0b00010; view.CompletedContacts = 5;
+            var decision = Step(view, ref plan, out _);
+            Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
+            Assert.AreEqual(1, decision.Slot, "the guard is already home");
+            Assert.AreEqual(2, plan.HomeDefenseSlot);
+        }
+
+        static AriaHomeGuardView Roster() => new AriaHomeGuardView
+        {
+            // Rifle x12, Gunner x4, Rocketeer x4 (structure), Car x1, Apc x1.
+            PageIndex = 0, TotalGroups = 8, AssaultMask = 0b11111, StructureMask = 0b00100, InfantryMask = 0b00111,
+            Alive0 = 12, Alive1 = 4, Alive2 = 4, Alive3 = 1, Alive4 = 1,
+            Group0 = 1, Group1 = 2, Group2 = 3, Group3 = 4, Group4 = 5
+        };
+
+        [Test]
+        public void GuardIsTheSmallestInfantrySquadThatCannotHitTheBase()
+        {
+            var roster = Roster();
+            Assert.AreEqual(2u, AriaHomeGuardPolicy.Choose(roster), "gunners stay; rifles and every base-damaging squad go");
+            Assert.AreEqual(0b00010, AriaHomeGuardPolicy.SlotMask(2u, roster));
+            roster.Group1 = 7;
+            Assert.AreEqual(0, AriaHomeGuardPolicy.SlotMask(2u, roster), "guard card not on this page");
+            Assert.AreEqual(0, AriaHomeGuardPolicy.SlotMask(0u, roster));
+        }
+
+        [Test]
+        public void NoGuardWhenItWouldStripTheAssault()
+        {
+            var roster = Roster(); roster.InfantryMask = 0b00100;
+            Assert.AreEqual(0u, AriaHomeGuardPolicy.Choose(roster), "structure squads always join the assault");
+            roster = Roster(); roster.AirMask = 0b00011; roster.InfantryMask = 0b00011;
+            Assert.AreEqual(0u, AriaHomeGuardPolicy.Choose(roster), "air squads are not guards");
+            roster = Roster(); roster.AssaultMask = 0b00010;
+            Assert.AreEqual(0u, AriaHomeGuardPolicy.Choose(roster), "a lone squad goes with the assault");
+            roster = Roster(); roster.TotalGroups = 2;
+            Assert.AreEqual(0u, AriaHomeGuardPolicy.Choose(roster));
+            roster = Roster(); roster.PageIndex = 1;
+            Assert.AreEqual(0u, AriaHomeGuardPolicy.Choose(roster), "chosen from the first roster page only");
         }
 
         [Test]

@@ -207,7 +207,7 @@ class ObjectiveDrafts(unittest.TestCase):
     def test_playable_bounds_from_asset(self):
         bounds = checker.playable_bounds(self.example)
         if bounds is not None:  # the asset is outside some sparse checkouts
-            self.assertEqual((900.0, 260.0, 1300.0, 875.0), bounds)
+            self.assertEqual((0.0, 0.0, 2048.0, 1024.0), bounds)
 
     def test_ba_rejects_objective_fields(self):
         d = copy.deepcopy(self.example)

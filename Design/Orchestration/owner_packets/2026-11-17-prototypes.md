@@ -4,16 +4,16 @@ You asked to play the first prototype of each objective type early (owner sampli
 automated gate, and it does not replace gates 1–4). Each entry is added when that prototype starts from the real menu
 and can be played to a result with normal input.
 
-## How to open (Windows PC, `D:\Projects\WarlineCapture`)
-1. Make sure no Unity Editor has the project open, then in a terminal in `D:\Projects\WarlineCapture`:
-   `git fetch origin` and `git switch missions/integration` (or `git merge origin/missions/integration` if you stay on
-   `missions/windows-lane`). Then `git pull`.
-2. Open the project in Unity 6000.5.8f1 from Unity Hub (existing Library; no rebuild).
-3. Open the start scene, press Play, then follow the menu path given per mission.
-Tip: switch ARIA off (the ARIA Play/Stop control in the match HUD) so you play yourself.
+## How to open (Mac, `/Volumes/T7/Projects/WarlineCapture`; owner choice 2026-11-17)
+The Mac checkout is already on `missions/integration`, compiled by the last agent run. When STATUS.md says
+"lane held for the owner", no agent will start Unity on this project.
+1. Open Unity Hub and open the project `/Volumes/T7/Projects/WarlineCapture` (Unity 6000.5.8f1; existing Library, no rebuild).
+2. Open the start scene and press Play, then follow the menu path given per mission.
+3. In the match, switch ARIA off (the ARIA Play/Stop control in the match HUD) so you play yourself.
+4. When you are done, close the Editor (or tell the program lead) so agent runs can resume.
 
 ## 1. Base Assault — S002 (Desert Base, Ground Maneuver, Established Base)
-- **Commit:** `e8ad30c10` on `missions/integration` (or any later commit).
+- **Commit:** the current `missions/integration` head on the Mac (contains `e8ad30c10`).
 - **Menu path:** Main menu → Skirmish → Skirmish library → "Desert Base · Base Assault · Ground Maneuver · Established
   Base" → Standard size, Regular difficulty → Launch. (On a fresh profile the Skirmish entry appears only after Campaign
   Chapter 1.)

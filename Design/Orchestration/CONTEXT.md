@@ -44,6 +44,10 @@ Updated 2026-11-16. Keep under 60 lines. Detail: `ORCHESTRATOR_PROMPT.md`, the m
 - `--reuse` (persistent Editor) cannot pass environment variables to the open Editor, so catalog, seed
   and locale cannot be chosen per run through it today.
 
+- After any change to authored scenario assets, the first match of the next Editor may re-import the
+  SubScene for ~300 s and abort with `startupFailure=Timeout` (Codex 027, 2026-11-17). Put a throwaway
+  warm-up job (e.g. `S002:130365:en`) first in a counted queue after authoring; it does not count.
+
 ## Disk (agents manage it; never ask the owner)
 
 - `Tools/Missions/disk_guard.sh` before every Unity launch, Codex batch and after commits. Exit 2

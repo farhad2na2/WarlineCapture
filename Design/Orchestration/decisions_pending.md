@@ -5,6 +5,9 @@ options, evidence, recommendation, what runs meanwhile.
 
 ## 2026-11-17 — S002 seed 155923: one enemy tank can end the match at ~95 s
 
+**DECIDED 2026-11-17 (owner via orchestrator):** guard tower at the player base in the Base Assault
+template; no more ARIA intercept work. See `daily/2026-11-17-directive.md`.
+
 **Question.** On seed 155923 the enemy's lone tank (420 HP) crosses ARIA's advancing column at ~55 s; when the
 column does not kill it, it destroys the 800-HP player base in ~28 s (first hit ~67 s, base dead ~95 s). Is this
 an ARIA skill problem to keep working on, or a pacing problem for the budget?
@@ -29,11 +32,18 @@ one seed; today's baseline record per seed: 155923 1W 1L, 104731 2W 1L, 130365 e
    90 s). The last three attempts each broke the baseline.
 4. Accept seed variance: replace 155923 in the acceptance seed set. Changes the gate → orchestrator/owner.
 
+**Update 13:15.** The 104731 loss at 127.9 s has an ARIA input cause: the roster-tray swipe overshot page 1 and
+looped, so the tank/car/APC page was never ordered (`aria-unit-coverage` notes). A paging fix is being built; re-judge
+the pacing question after it runs.
+
 **Recommendation.** Option 1 with a guard tower at the player base in the BA template (fewest shared values,
 same mechanism the other objectives use), re-run the three BA missions that start today. **Meanwhile:** no
 tuning; ARIA stays on the 4/4 baseline; S002 is recorded with blocker "155923 lone-tank loss (variance)".
 
 ## 2026-11-17 — Gate 2 time band versus the Base Assault deadline (S002 first)
+
+**DECIDED 2026-11-17 (owner via orchestrator):** gate 2 band is 20–70% of the deadline; no deadline
+change. See `daily/2026-11-17-directive.md`.
 
 **Question.** Gate 2 requires time-to-win at 40–70% of the deadline. S002 wins in about 236–268 s
 against a 1080 s deadline (22–25%). How should Base Assault missions meet the band?

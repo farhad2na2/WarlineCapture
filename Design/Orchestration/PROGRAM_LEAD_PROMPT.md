@@ -53,6 +53,9 @@ as "needs one owner click", and work that needs no Unity continues.
   a gate or the definition of done, unit stats or game rules, pacing changes that alter a shared
   value for many missions, map policy, publishing missions to players, anything outside the
   standing authorizations, a circuit breaker.
+- Owner direction of 2026-11-17 (`daily/2026-11-17-directive.md`): gate 2 band 20–70%; checkpoint only
+  where Save is offered; certify by family; lane priority S026 start + S002/S004 acceptance first;
+  Operations start after the first accepted mission of each objective type.
 - Mark a row `auto-accepted` only when gates 1–4 of the definition of done are each backed by a
   harness log path in the row. Never write `owner-accepted`.
 

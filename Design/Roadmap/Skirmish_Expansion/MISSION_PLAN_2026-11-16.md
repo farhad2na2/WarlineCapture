@@ -37,7 +37,8 @@ Each change edits the authoritative design doc, `INITIAL_SETUP_MATRIX.csv` and t
 Record old and new values, as the map reuse policy requires.
 
 **D1. Base Assault pacing.** Recorded ARIA wins end at 99–297 s against an 18-minute deadline; the design
-target is 12–18 minutes. Target: ARIA wins at 40–70% of the deadline. Levers, in order: place the two
+target is 12–18 minutes. Target: ARIA wins at 20–70% of the deadline (owner, 2026-11-17: ARIA is
+about 1.5–2× faster than a human; see `Design/Orchestration/daily/2026-11-17-directive.md`). Levers, in order: place the two
 bases farther apart on the existing map, give both sides more starting defences, move budget from the
 starting army into production. Do not change unit stats.
 
@@ -78,14 +79,23 @@ Break geography. Internal `MP` IDs do not change.
 ## Definition of done (per mission, all required)
 
 1. Scenario assets exist under `Assets` and load from the Skirmish menu.
-2. ARIA wins 3 of 3 runs in English and 1 of 1 in Farsi, from mission start, normal input, at Standard
-   size and Regular difficulty, with time-to-win at 40–70% of the deadline. A Farsi-only failure is a
-   UI or localization defect.
+2. ARIA wins at Standard size and Regular difficulty, from mission start, normal input, with
+   time-to-win at 20–70% of the deadline (owner, 2026-11-17). Run count by family (see "Certify by
+   family"): type-first 3 English seeds + 1 Farsi; family-first 3 English seeds; sibling 1 English
+   win. A Farsi-only failure is a UI or localization defect.
 3. ARIA uses every unit type the mission makes available, including aircraft and the Airport.
    Record `units_available` and `units_used_by_aria`. An unused unit type is a defect.
-4. Result screen shows, return to menu works, checkpoint and recovery pass.
+4. Result screen shows and return to menu works; checkpoint and recovery pass where the game offers
+   Save (otherwise the row records "checkpoint: not offered").
 5. Native UI screenshots sent for owner review.
 6. Owner manual win: one mission per layout (20 layouts), recorded separately, never inferred.
+
+**Certify by family (owner, 2026-11-17).** A family is the missions sharing one map source and one
+objective type. Type-first (first accepted mission of an objective type): 3 English seeds + 1 Farsi.
+Family-first (first mission of each further family): 3 English seeds. Sibling: 1 English win with the
+gate-3 trace and result/return in that run, plus the offline draft check, containment and startup
+markers; a sibling that loses gets the full 3-seed set after the fix. Each row records the rule used
+and the family mission it relies on; reopening a family-first mission reopens its siblings.
 
 Other sizes (War, Large War) and difficulties (Recruit, Veteran, Commander) are certified once per
 layout, not per mission. This replaces the 13-run ARIA matrix in each scenario brief.
@@ -130,7 +140,11 @@ Rows are filled only from harness log output. Never type a result by hand.
 4. ARIA skills: aircraft, Airport, then one skill per new objective type.
 5. Base Assault on all 5 maps, then the three other objectives on the remaining layouts (D4).
 6. Per-layout certification of other sizes and difficulties.
-7. Operations, only after all 120 Skirmish rows are done.
+7. Operations production starts once the first authored Skirmish mission of each objective type is
+   accepted (owner, 2026-11-17).
+
+Lane priority until one authored mission starts and plays to a result (S026 first): only what that
+mission needs to start, and S002/S004 acceptance runs. Everything else on the lane waits.
 
 ## Honesty rules
 

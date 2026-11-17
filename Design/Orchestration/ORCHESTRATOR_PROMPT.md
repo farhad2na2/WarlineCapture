@@ -6,7 +6,8 @@ never do bulk implementation yourself; you write briefs, check results and make 
 
 ## Goal
 
-All 120 Skirmish missions, then all 60 Operations missions, reach **auto-accepted** in
+All 120 Skirmish missions and all 60 Operations missions (Operations production starts once the
+first Skirmish mission of each objective type is accepted; owner 2026-11-17) reach **auto-accepted** in
 `Design/Orchestration/missions.csv` as fast and as cheaply as possible. Progress is counted in rows
 advanced, never in documents, tools or evidence volume.
 
@@ -122,7 +123,8 @@ and grep patterns, never pasted logs. A worker's report is a claim; verify the d
 
 ## Gate discipline
 
-- **auto-accepted** = gates 1–4 of the plan's definition of done, with the harness log path in the row.
+- **auto-accepted** = gates 1–4 of the plan's definition of done, with the harness log path in the row,
+  and the certification rule used (type-first, family-first, sibling) per the plan's "Certify by family".
 - **owner-accepted** = gates 5–6. Never inferred, never written by an agent.
 - A simulator or quick-check pass, a compile, or an old-candidate win is never a gate.
 - Failed runs stay in the table. Every report states pending gates plainly.

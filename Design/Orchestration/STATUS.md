@@ -10,12 +10,13 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
-| Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
-| Binding worker | Sonnet | Per-building pads in authoring; branch `missions/generic-binding` (3 commits, merges cleanly) | Finished; uncompiled, waits for the Unity lane |
-| Codex | gpt-6.1-terra | 15 tasks today | Idle: patches 020 and 021 wait for the Unity lane |
-| Orchestrator | Fable | Daily review at 08:33 and hard decisions only (owner rule) | Idle until the daily cycle |
-| Program lead | Opus | Runs the live loop in its own session: `PROGRAM_LEAD_PROMPT.md` | Started 09:20 |
+| Unity lane | Opus (ARIA worker, earlier session) | Last step: merge generic-binding + Codex 020/021, compile, S006/S026 diagnostic | Compile run 09:15 hit CS0117 (`SkirmishInstancePadPlanner.cs:128`); fix committed on `missions/generic-binding` 5a56c2dfe; Editor waits for wrapper timeout (~09:30) |
+| aria-intercept | Opus | S002 seed 155923: finish enemies that slip past the army; branch `missions/aria-intercept` (worktree `wt/aria`) | Coding; gets the lane after the current owner |
+| airport-probe | Sonnet | Live Airport-site probe for any authored catalog + pads script; IB/AP layout probe design; branch `missions/airport-probe` (worktree `wt/harness`) | Coding, no Unity |
+| objective-authoring | Sonnet | Typed objective areas and defence/convoy pads in authoring (FC/BT/CE); branch `missions/objective-authoring` (worktree `wt/objectives`) | Coding, no Unity |
+| Codex | gpt-6.1-terra | 022 deadline data for gate 2 (read-only) | Running |
+| Orchestrator | Fable | Daily review and hard decisions only (owner rule) | Idle until the daily cycle |
+| Program lead | Opus | Live loop (`PROGRAM_LEAD_PROMPT.md`) | Running since 09:20 |
 
 ## Log
 
@@ -138,3 +139,11 @@ record is `missions.csv`.
 - 2026-11-17 09:14 aria worker: aria-gate1 done: wins=1/6 (guard post unreliable, delays column; posted guard never engages the fogged tank). Reverted the 4 guard/post commits to baseline ARIA. Next: generic-binding merge + codex 020/021 patches, compile check, S006/S026 queue
 - 2026-11-17 09:15 aria worker: merged generic-binding (no-ff), applied Codex 020/021 (unittest 4 OK); compile check launching
 - 2026-11-17 09:19 orchestrator: owner rule applied: Fable now works once a day on hard decisions only. The live loop is handed to an Opus program lead in its own session ("Mission program lead"); it delegates to Sonnet, Codex and Haiku and writes `daily/lead-YYYY-MM-DD.md`. Hard decisions wait in `decisions_pending.md` for the daily cycle. The ARIA worker finishes its current task and leaves its report in `daily/aria-worker-2026-11-17.md`.
+- 2026-11-17 09:22 airport-probe worker: started (branch missions/airport-probe in harness worktree)
+- 2026-11-17 09:23 codex: codex-022-deadline-gate2-data started (effort high, limit 40 min)
+- 2026-11-17 09:23 codex: codex-022-deadline-gate2-data started (effort high, limit 40 min)
+- 2026-11-17 09:23 objective-authoring worker: started (FC/BT/CE authoring entry + draft checker)
+- 2026-11-17 09:24 program lead: started. Lane still owned by the ARIA worker: its compile run (generic-compile) failed with CS0117 `SkirmishMapLayoutBuilder.PadKindForStructure` at `SkirmishInstancePadPlanner.cs:128` (the Editor-namespace builder shadows `Game.Configs`); one-line fix committed on `missions/generic-binding` as 5a56c2dfe — merge it before the next compile. Started workers aria-intercept (Opus), airport-probe (Sonnet), objective-authoring (Sonnet) in sparse worktrees, and Codex 022 (deadline data for gate 2).
+- 2026-11-17 09:25 codex: codex-022-deadline-gate2-data finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data-report.txt (not yet verified or merged)
+- 2026-11-17 09:25 codex: batch finished: codex-022-deadline-gate2-data:high:40
+- 2026-11-17 09:25 aria-intercept worker: started; reading S002 base-assault policy in worktree WarlineCapture-wt/aria (branch missions/aria-intercept)

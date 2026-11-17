@@ -303,6 +303,10 @@ def main(argv=None):
     parser.add_argument('--gui-licensing', action='store_true',
                         help='kept for compatibility; Windows ARIA queues always pass -GuiLicensing')
     parser.add_argument('--no-table', action='store_true', help='Print results without writing the table')
+    parser.add_argument('--menu-journey', action='store_true',
+                        help='start every job from the main menu through presented touch controls (sets WARLINE_MENU_JOURNEY=1); '
+                             'the log shows [SkirmishMenuJourney] catalog=<id> result=Passed|Failed. Without the flag the '
+                             'caller environment is left unchanged')
     args = parser.parse_args(argv)
     repo = args.repo.resolve()
     if args.rescan:
@@ -360,6 +364,8 @@ def main(argv=None):
             log.unlink(missing_ok=True)
             env = os.environ.copy()
             env['WARLINE_ARIA_QUEUE'] = str(queue)
+            if args.menu_journey:
+                env['WARLINE_MENU_JOURNEY'] = '1'
             if args.launcher == 'windows':
                 result = subprocess.run(windows_command(repo, log, args.timeout, args.gui_licensing), env=env, cwd=repo)
                 launch_failed = result.returncode != 0

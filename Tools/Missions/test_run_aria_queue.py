@@ -83,6 +83,36 @@ class QueueTests(unittest.TestCase):
                     '-ProjectPath', str(repo), '-LogFile', str(logs / 'unity.log'), '-TimeoutSeconds', '123',
                     '-GuiLicensing', '-releaseCodeOptimization', '-executeMethod', 'Game.Editor.SkirmishS002AriaRunHarness.RunAriaQueueAndExit'])
 
+    def test_menu_journey_flag_sets_the_environment_only_when_asked(self):
+        repo = self.root / 'repo'
+        (repo / 'ProjectSettings').mkdir(parents=True)
+        logs = self.root / 'logs'
+        fixture = ('[SkirmishAriaQueue] job=1/1 catalog=S002 seed=1 locale=en result=Victory seconds=5\n'
+                   '[SkirmishAriaQueue] result=Completed jobs=1 recorded=1 wins=1\n')
+        common = ['--jobs', 'S002:1:en', '--repo', str(repo), '--log-dir', str(logs), '--no-table', '--launcher', 'macos']
+        for flag in (False, True):
+            calls = []
+            def run(command, **kwargs):
+                calls.append(kwargs)
+                (logs / 'unity.log').write_text(fixture)
+                return subprocess.CompletedProcess(command, 0)
+            with self.subTest(menu_journey=flag), mock.patch.object(runner.subprocess, 'run', side_effect=run), \
+                 mock.patch.object(runner, 'check_editor_and_hub'), mock.patch('sys.stdout', new_callable=io.StringIO), \
+                 mock.patch.dict(runner.os.environ, {}, clear=False):
+                runner.os.environ.pop('WARLINE_MENU_JOURNEY', None)
+                self.assertEqual(runner.main(common + (['--menu-journey'] if flag else [])), 0)
+            env = calls[-1]['env']
+            self.assertEqual('1' if flag else None, env.get('WARLINE_MENU_JOURNEY'))
+            self.assertEqual(str(logs / 'queue.csv'), env['WARLINE_ARIA_QUEUE'])
+
+    def test_menu_journey_flag_is_accepted_in_dry_run_and_does_not_touch_the_queue_file(self):
+        logs = self.root / 'logs'
+        proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)), '--jobs', 'S002:1:en', '--log-dir', str(logs),
+                               '--dry-run', '--menu-journey'], capture_output=True, text=True)
+        self.assertEqual(0, proc.returncode, proc.stderr)
+        self.assertEqual('S002,1,en\n', proc.stdout)
+        self.assertEqual(b'S002,1,en\n', (logs / 'queue.csv').read_bytes())
+
     def test_windows_failures_and_always_gui(self):
         repo = self.root / 'repo'
         (repo / 'ProjectSettings').mkdir(parents=True)

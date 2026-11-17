@@ -108,15 +108,7 @@ namespace Game.Runtime
                     : result.Outcome == SkirmishOutcomeKind.Draw
                         ? SkirmishOutcome.Draw
                         : SkirmishOutcome.None;
-            match.Reason = result.Reason == SkirmishEndReasonKind.Surrender
-                ? SkirmishEndReason.Surrender
-                : result.Reason == SkirmishEndReasonKind.TimeLimit
-                    ? SkirmishEndReason.TimeLimit
-                    : result.Reason == SkirmishEndReasonKind.BothBasesDestroyed
-                        ? SkirmishEndReason.BothBasesDestroyed
-                        : result.Reason == SkirmishEndReasonKind.MainBaseDestroyed
-                            ? SkirmishEndReason.MainBaseDestroyed
-                            : SkirmishEndReason.None;
+            match.Reason = ProjectEndReason(result.Reason);
             if (result.SaveAcknowledged != 0)
                 match.ResultSaved = 1;
             if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
@@ -130,6 +122,28 @@ namespace Game.Runtime
                 match.ElapsedSeconds = clock.ElapsedSeconds;
             }
             em.SetComponentData(session, match);
+        }
+
+        public static SkirmishEndReason ProjectEndReason(SkirmishEndReasonKind reason)
+        {
+            switch (reason)
+            {
+                case SkirmishEndReasonKind.MainBaseDestroyed: return SkirmishEndReason.MainBaseDestroyed;
+                case SkirmishEndReasonKind.BothBasesDestroyed: return SkirmishEndReason.BothBasesDestroyed;
+                case SkirmishEndReasonKind.TimeLimit: return SkirmishEndReason.TimeLimit;
+                case SkirmishEndReasonKind.Surrender: return SkirmishEndReason.Surrender;
+                case SkirmishEndReasonKind.TicketsDepleted: return SkirmishEndReason.TicketsDepleted;
+                case SkirmishEndReasonKind.TicketsAtDeadline: return SkirmishEndReason.TicketsAtDeadline;
+                case SkirmishEndReasonKind.BreakthroughEvacuated: return SkirmishEndReason.BreakthroughEvacuated;
+                case SkirmishEndReasonKind.BreakthroughImpossible: return SkirmishEndReason.BreakthroughImpossible;
+                case SkirmishEndReasonKind.ConvoyDelivered: return SkirmishEndReason.ConvoyDelivered;
+                case SkirmishEndReasonKind.ConvoyImpossible: return SkirmishEndReason.ConvoyImpossible;
+                case SkirmishEndReasonKind.ObjectiveDeadline: return SkirmishEndReason.ObjectiveDeadline;
+                case SkirmishEndReasonKind.StartupFailure: return SkirmishEndReason.StartupFailure;
+                case SkirmishEndReasonKind.ContentFailure: return SkirmishEndReason.ContentFailure;
+                case SkirmishEndReasonKind.CheckpointFailure: return SkirmishEndReason.CheckpointFailure;
+                default: return SkirmishEndReason.None;
+            }
         }
 
         private static bool IsExpandedPlaying(EntityManager em, Entity session)

@@ -201,6 +201,13 @@ namespace Game.Configs
 
             if (!TryResultKey(setup, outcome, reason, out string resultKey, out string english))
                 return false;
+            // Non-base results must never fall back to base-destruction copy.
+            if (setup.ObjectiveKind != SkirmishObjectiveKind.None &&
+                setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
+                reason != SkirmishEndReasonKind.MainBaseDestroyed &&
+                reason != SkirmishEndReasonKind.BothBasesDestroyed &&
+                reason != SkirmishEndReasonKind.Surrender)
+                english = Resolve("ui.skirmish.result.match_complete", locale, "MATCH COMPLETE");
             copy = new SkirmishHudCopy(objectiveKey, resultKey, objective, Resolve(resultKey, locale, english));
             return true;
         }
@@ -212,6 +219,21 @@ namespace Game.Configs
             out string key,
             out string english)
         {
+            if (setup != null && setup.ObjectiveKind != SkirmishObjectiveKind.None &&
+                setup.ObjectiveKind != SkirmishObjectiveKind.BaseAssault &&
+                reason != SkirmishEndReasonKind.MainBaseDestroyed &&
+                reason != SkirmishEndReasonKind.BothBasesDestroyed &&
+                reason != SkirmishEndReasonKind.Surrender)
+            {
+                // The legacy HUD currently supplies None for new reasons. Use neutral
+                // copy in that case, and reason keys when it can forward the reason.
+                key = reason == SkirmishEndReasonKind.None
+                    ? "ui.skirmish.result.match_complete"
+                    : "ui.skirmish.reason." + reason.ToString().ToLowerInvariant();
+                english = "MATCH COMPLETE";
+                return outcome != SkirmishOutcomeKind.None;
+            }
+
             if (setup != null && !IsExpandedS002(setup.CatalogId))
             {
                 string prefix = "skirmish." + setup.CatalogId.ToLowerInvariant();

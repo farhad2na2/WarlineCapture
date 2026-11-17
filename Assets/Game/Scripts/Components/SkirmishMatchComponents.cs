@@ -6,7 +6,12 @@ namespace Game.Components
     public enum SkirmishPhase : byte { Queued, Preparing, Playing, Finished }
     public enum SkirmishStartupFailureCode : byte { None, BuildingPlacement, Content, Timeout }
     public enum SkirmishOutcome : byte { None, Victory, Defeat, Draw }
-    public enum SkirmishEndReason : byte { None, MainBaseDestroyed, BothBasesDestroyed, TimeLimit, Surrender }
+    public enum SkirmishEndReason : byte
+    {
+        None, MainBaseDestroyed, BothBasesDestroyed, TimeLimit, Surrender,
+        TicketsDepleted, TicketsAtDeadline, BreakthroughEvacuated, BreakthroughImpossible,
+        ConvoyDelivered, ConvoyImpossible, ObjectiveDeadline, StartupFailure, ContentFailure, CheckpointFailure
+    }
 
     public struct SkirmishMatchState : IComponentData
     {

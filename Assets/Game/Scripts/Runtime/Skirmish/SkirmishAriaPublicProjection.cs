@@ -263,10 +263,8 @@ namespace Game.Runtime
         }
 
         // Public fog view only: a hostile vehicle the player can currently see that is
-        // crossing the player's column or has slipped past its nearest own unit toward the
+        // crossing the player's column or has slipped behind most of it toward the
         // player's base (AriaInterceptPolicy.Candidate). Hidden contacts are never considered.
-        private const float ColumnLeftBaseDistance = 40f;
-        private const int ColumnMinimumUnits = 3;
         private static void ObserveSlippingHostile(EntityManager em, Entity session, ref SkirmishAriaPublicView view)
         {
             if (!view.Playing || !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
@@ -283,7 +281,7 @@ namespace Game.Runtime
             using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(Unity.Transforms.LocalTransform));
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             using var own = new NativeList<Unity.Mathematics.float2>(Allocator.Temp);
-            Unity.Mathematics.float3 columnSum = default; int columnCount = 0;
+            using var ownHome = new NativeList<float>(Allocator.Temp);
             using var hostiles = new NativeList<Unity.Mathematics.float3>(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
@@ -292,44 +290,32 @@ namespace Game.Runtime
                 if (!owned.SessionId.Equals(sessionId) || owned.IsStructure != 0 ||
                     !em.HasComponent<SkirmishUnitRoleComponent>(unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
                     continue;
-                var roleInfo = em.GetComponentData<SkirmishUnitRoleComponent>(unit);
-                SkirmishPopulationCategory category = roleInfo.Category;
+                SkirmishPopulationCategory category = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Category;
                 var position = em.GetComponentData<Unity.Transforms.LocalTransform>(unit).Position;
                 if (owned.FactionId == 1 &&
                     (category == SkirmishPopulationCategory.Infantry || category == SkirmishPopulationCategory.Ground))
                 {
                     own.Add(position.xz);
-                    // Supply vehicles shuttle away from the column; frame the fighting units.
-                    if (roleInfo.Role != SkirmishRoleKind.LogisticsTruck && roleInfo.Role != SkirmishRoleKind.Tanker &&
-                        Unity.Mathematics.math.distance(position.xz, homeXZ) > ColumnLeftBaseDistance)
-                    { columnSum += position; columnCount++; }
+                    ownHome.Add(Unity.Mathematics.math.distance(position.xz, homeXZ));
                 }
                 else if (owned.FactionId == 2 && category == SkirmishPopulationCategory.Ground &&
                     SkirmishFogService.IsVisibleToFaction(em, unit, 1))
                     hostiles.Add(position);
             }
-            if (columnCount >= ColumnMinimumUnits)
-            {
-                var column = columnSum / columnCount;
-                view.ColumnKnown = true;
-                view.ColumnX = column.x; view.ColumnY = column.y; view.ColumnZ = column.z;
-            }
             if (own.Length == 0 || hostiles.Length == 0)
                 return;
+            ownHome.Sort();
+            float median = ownHome[ownHome.Length / 2];
             float best = float.MaxValue;
             for (int h = 0; h < hostiles.Length; h++)
             {
                 var hostile = hostiles[h];
                 float homeDistance = Unity.Mathematics.math.distance(hostile.xz, homeXZ);
-                float nearest = float.MaxValue; int nearestIndex = -1;
+                float nearest = float.MaxValue;
                 for (int o = 0; o < own.Length; o++)
-                {
-                    float d = Unity.Mathematics.math.distance(own[o], hostile.xz);
-                    if (d < nearest) { nearest = d; nearestIndex = o; }
-                }
-                float nearestHome = nearestIndex >= 0 ? Unity.Mathematics.math.distance(own[nearestIndex], homeXZ) : 0f;
+                    nearest = Unity.Mathematics.math.min(nearest, Unity.Mathematics.math.distance(own[o], hostile.xz));
                 float enemyDistance = enemyBaseKnown ? Unity.Mathematics.math.distance(hostile.xz, enemyXZ) : float.MaxValue;
-                if (!Game.Simulation.AriaInterceptPolicy.Candidate(homeDistance, nearest, nearestHome, enemyDistance) || homeDistance >= best)
+                if (!Game.Simulation.AriaInterceptPolicy.Candidate(homeDistance, median, nearest, enemyDistance) || homeDistance >= best)
                     continue;
                 best = homeDistance;
                 view.SlippingHostile = true;

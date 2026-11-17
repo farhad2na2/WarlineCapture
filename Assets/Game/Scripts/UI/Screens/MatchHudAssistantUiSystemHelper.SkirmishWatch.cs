@@ -267,7 +267,6 @@ namespace Game.UI.Runtime
 
             ObserveMapThreat(ref view);
             ObserveIntercept(ref view, model);
-            ObserveColumnCamera(ref view, model);
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
             ObserveAcceptedAssaultGoal(ref view);
@@ -647,56 +646,16 @@ namespace Game.UI.Runtime
             view.GroupEnd = new AriaTouchTarget { Id = -20005, Position = end, Available = true };
             return true;
         }
-        // Public fog view: the projection reports a visible hostile vehicle crossing or
-        // slipping past the advancing army. Offer a tap on the vehicle itself only while it
-        // is on screen and reachable (the touch owner refreshes a moving position before
-        // release). Otherwise offer an ordinary camera drag on clear ground from the view
-        // centre that moves the vehicle toward it; in Attack mode a drag pans, never orders.
-        // Watching the march: where the player's own marching column sits in the view. A
-        // re-centring drag is offered only while it is outside the middle third.
-        private void ObserveColumnCamera(ref AriaSkirmishObservation view, UiSkirmishModel model)
-        {
-            view.ColumnKnown = model.ColumnKnown;
-            if (!model.ColumnKnown || view.MapOpen || view.DrawerOpen || Camera.main == null) return;
-            var point = Camera.main.WorldToScreenPoint(new Vector3(model.ColumnX, model.ColumnY, model.ColumnZ));
-            view.ColumnScreen = point;
-            var safe = Screen.safeArea;
-            view.ColumnCentred = point.z > 0 && Game.Simulation.AriaColumnCameraPolicy.Centred(point.x, point.y, safe.x, safe.y, safe.width, safe.height);
-            if (view.ColumnCentred || point.z <= 0) return;
-            TryCameraDrag(point, Game.Simulation.AriaColumnCameraPolicy.PanIdA, out view.ColumnPan, out _);
-        }
-        // An ordinary camera drag on clear ground that moves a world point toward the view
-        // centre (the scene follows the finger; in Attack mode a drag pans and never orders).
-        // The drag starts on the far side of the centre, clear of the squad tray and the top
-        // bar, so one drag can cover most of the view. The start is fixed per direction so the
-        // hand's target stays stable; repeated drags close any remaining distance.
-        private bool TryCameraDrag(Vector3 point, int id, out AriaTouchTarget drag, out bool single)
-        {
-            drag = default; single = false;
-            var safe = Screen.safeArea;
-            var centre = new Vector2(safe.x + safe.width * .5f, safe.y + safe.height * .55f);
-            float sx = point.x < centre.x ? -1f : 1f, sy = point.y < centre.y ? -1f : 1f;
-            // Contact left of centre: drag rightward from the left side (and so on).
-            var start = new Vector2(centre.x + sx * safe.width * .3f, centre.y + sy * safe.height * .22f);
-            if (!Game.Simulation.AriaInterceptPolicy.PanDelta(point.x, point.y, centre.x, centre.y,
-                    safe.width * .6f, safe.height * .44f, out float dx, out float dy, out single)) return false;
-            var end = start + new Vector2(dx, dy);
-            drag = new AriaTouchTarget { Id = id, Position = start, Drag = true, DragEnd = end,
-                Available = safe.Contains(start) && safe.Contains(end) && WatchTargetIsReachable(start, id, true) };
-            return drag.Available;
-        }
+        // Public fog view: the projection reports a visible hostile vehicle slipping behind
+        // the advancing army. Offer a tap on the vehicle itself only while it is on screen
+        // and reachable; the touch owner refreshes a moving position before release.
         private void ObserveIntercept(ref AriaSkirmishObservation view, UiSkirmishModel model)
         {
             view.InterceptKnown = model.SlippingHostile;
             if (!model.SlippingHostile || view.MapOpen || view.DrawerOpen || Camera.main == null) return;
             var point = Camera.main.WorldToScreenPoint(new Vector3(model.SlippingHostileX, model.SlippingHostileY, model.SlippingHostileZ) + Vector3.up);
-            view.InterceptScreen = point;
             view.InterceptThreat = new AriaTouchTarget { Id = -20002, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20002, true) };
-            if (view.InterceptThreat.Available || point.z <= 0) return;
-            // Only a contact one drag away is offered: farther contacts cannot be brought into
-            // view inside their short visibility window (aria-intercept-q1: about 2.8 screens).
-            if (TryCameraDrag(point, -20015, out var pan, out bool single) && single) view.InterceptPan = pan;
         }
         private void ObserveMapThreat(ref AriaSkirmishObservation view)
         {

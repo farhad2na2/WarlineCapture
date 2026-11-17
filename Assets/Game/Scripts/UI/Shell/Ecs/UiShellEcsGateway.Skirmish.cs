@@ -229,10 +229,6 @@ namespace Game.UI.Shell.Ecs
                     model.SlippingHostileX = publicView.SlippingHostileX;
                     model.SlippingHostileY = publicView.SlippingHostileY;
                     model.SlippingHostileZ = publicView.SlippingHostileZ;
-                    model.ColumnKnown = publicView.ColumnKnown;
-                    model.ColumnX = publicView.ColumnX;
-                    model.ColumnY = publicView.ColumnY;
-                    model.ColumnZ = publicView.ColumnZ;
                 }
             }
             return true;

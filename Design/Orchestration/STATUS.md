@@ -12,7 +12,7 @@ record is `missions.csv`.
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2: S002 + S006 trace run, apply Codex patches, author S026/S049/S050 | Applying script-only patches; Unity run waits on the dialog |
 | Unity lane | — | One Editor at a time | **BLOCKED: needs the owner to click "Don't rebuild Library" in the Unity dialog** |
-| ARIA worker | Opus | Home-defence fix for S002 on branch `missions/aria-home-defense` (no Unity needed) | Running |
+| ARIA worker | Opus | Home-defence fix on branch `missions/aria-home-defense` (bd18a8176) | Finished 07:07; uncompiled, waits for the Unity lane |
 | Codex | gpt-6.1-terra | Batches 2–5 done (12 tasks today) | Paused: four C# patches (010, 011, 012, 018) wait for a compile, which needs the Unity lane |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
@@ -86,3 +86,6 @@ record is `missions.csv`.
 - 2026-11-17 07:04 codex: codex-018-objective-end-reasons finished: exit 0, 4 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-018-objective-end-reasons.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-018-objective-end-reasons-report.txt (not yet verified or merged)
 - 2026-11-17 07:04 codex: batch finished: codex-017-fix-ba-drafts:high:40 codex-018-objective-end-reasons:high:55
 - 2026-11-17 07:04 orchestrator: Codex batch 5 reviewed. 017: the 11 City Crossroads and Mountain Pass drafts now pass the offline checker (duplicate pads removed, no coordinate changed). 018: real end reasons for the three other objectives reach the run log; result-screen wording still falls back to neutral text and 10 localisation keys are missing (owner queue). No further Codex batch until the Unity lane can compile the four waiting C# patches.
+- 2026-11-17 07:04 shift lead: applied+committed Codex 017 drafts only; check_draft PASS S026-S030,S049-S054; FAIL S074-S078. 018 joins 010-012 compile after Unity run.
+- 2026-11-17 07:08 aria worker: finished S002 home-defense fix, commit bd18a8176 on missions/aria-home-defense (uncompiled, needs Unity run)
+- 2026-11-17 07:08 orchestrator: ARIA home-defence branch reviewed (11 files, merges cleanly). Cause found: the base building gives no vision, so the tank never became a minimap contact and home defence never fired; a player would only have seen the base-health number fall. Fix: falling base health now counts as a threat, one group is sent home, the whole army only if the base is below 40% or the threat lasts. Not compiled, not run. Shift lead merges it with patches 010, 012, 018 after the Unity dialog is cleared; patch 011 dropped as superseded.

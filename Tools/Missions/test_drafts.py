@@ -32,7 +32,7 @@ def main():
             candidate = path.name.endswith('-candidate.json')
             if candidate:
                 optional |= {'objective_areas'}
-            if not isinstance(draft, dict) or set(draft) - optional != set(example):
+            if not isinstance(draft, dict) or set(draft) - optional != set(example) - optional:
                 raise ValueError('top-level keys differ from example')
             row = catalog.get(draft['catalog_id'])
             if candidate:

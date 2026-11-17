@@ -107,6 +107,7 @@ namespace Game.UI.Runtime
             SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);RefreshClock(model.Clock);
             AlignBaseHealth(playerHealth); AlignBaseHealth(enemyHealth);
             RefreshPublicObjectiveHud(model);
+            RefreshMissionGuidance(model);
             RefreshBaseUnderFire(model);
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);

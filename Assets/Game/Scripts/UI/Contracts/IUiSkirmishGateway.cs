@@ -55,6 +55,12 @@ namespace Game.UI.Contracts
         public byte BaseThreatReason;
         public float BasePerimeterRadius;
         public bool BaseIntruderInside;
+        // Per-mission guidance (SkirmishMissionHudGuidanceCatalog): first-order prompt during the
+        // opening seconds and a rendezvous marker on an existing layout anchor.
+        public string FirstOrderText;
+        public bool RendezvousKnown;
+        public UnityEngine.Vector3 RendezvousWorld;
+        public string RendezvousLabel;
     }
     public struct UiExpandedPrecisionAttackResult
     {

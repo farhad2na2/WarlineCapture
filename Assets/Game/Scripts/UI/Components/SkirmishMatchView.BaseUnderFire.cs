@@ -146,7 +146,7 @@ namespace Game.UI.Runtime
         {
             var strip = (RectTransform)hud.transform;
             // The strip is top-anchored; its bottom edge sits at offsetMin.y below the top.
-            baseFireRow.anchoredPosition = new Vector2(0, strip.offsetMin.y - 10);
+            baseFireRow.anchoredPosition = new Vector2(0, strip.offsetMin.y - 10 - GuidanceStackOffset);
         }
 
         private void PresentBaseFireArrow(in UiSkirmishModel model)

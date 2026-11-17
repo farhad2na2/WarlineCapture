@@ -4,16 +4,16 @@ Open this file to see what is running right now. Every agent appends one line wh
 finishes a step. Newest at the bottom. Times are local. Results here are progress notes; the gate
 record is `missions.csv`.
 
-**Accepted: 0 of 180.** S002 is now WON by ARIA on current code (twice today, about 236 s), but the run is not counted yet: the harness check of the return to the menu fails after the victory.
+**Accepted: 0 of 180.** S002 has 3 counted ARIA wins today on current code (seed 130365 in English and Farsi, seed 104731 in English) and 1 real loss (seed 155923). It is not accepted until all seeds win.
 
 ## Who is working
 
 | Worker | Model | Job | State |
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
-| Unity lane | Opus (probe worker) | Fix the return-to-menu check after victory, then S002 in English and Farsi, 3 seeds | Running |
-| Dispatch worker | Sonnet | Authored missions launchable by the queue; branch `missions/generic-dispatch` (2836d15fe) | Finished; uncompiled, the probe worker merges and tests it after the S002 runs |
-| Codex | gpt-6.1-terra | Batches 2–5 done (12 tasks today) | Paused: four C# patches (010, 011, 012, 018) wait for a compile, which needs the Unity lane |
+| Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
+| Dispatch worker | Sonnet | Why authored missions abort at startup ("source binding missing or changed"); branch `missions/generic-binding` | Running |
+| Codex | gpt-6.1-terra | Batch 6: why seed 155923 is lost (019), result screen shows the real end reason (020) | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -108,3 +108,5 @@ record is `missions.csv`.
 - 2026-11-17 08:08 probe worker: step 4 done (probe-seeds1: 104731 en Victory countedWin=1; 155923 en Defeat MainBaseDestroyed 95.5s countedWin=0); step 5 merge generic-dispatch starting
 - 2026-11-17 08:10 probe worker: merged generic-dispatch (d070978d5), compile check Passed; queue probe-generic1 S006+S026 launching
 - 2026-11-17 08:12 probe worker: step 5 done (probe-generic1: S006 and S026 Abort expandedStartupFailure=MissingReference, 'Exact authored generic mission/source binding missing or changed'); probe worker finished, lane idle
+- 2026-11-17 08:15 dispatch worker: started generic-binding investigation
+- 2026-11-17 08:15 orchestrator: probe worker's results checked in the logs. The return-to-menu failure was a test-profile fault, not a game fault: the menu's Skirmish card only appears after Chapter 1 of the campaign, and test runs used a blank profile. With that fixed: S002 130365 en Victory countedWin=1, 130365 fa-IR Victory countedWin=1, 104731 en Victory countedWin=1, 155923 en Defeat at 95.5 s (the enemy tank kills the base; home defence fired at 67 s but its order came 8.5 s later and too far away). Authored missions now dispatch but S006 and S026 abort at startup ("source binding missing or changed"). Three workers started on these.

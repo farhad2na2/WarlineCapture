@@ -260,7 +260,7 @@ namespace Game.Runtime
                 float bestScore = float.MaxValue;
                 Entity best = Entity.Null;
 
-                if (RecentAttackerLookup.HasComponent(entity))
+                if (RecentAttackerLookup.HasComponent(entity) && RecentAttackerLookup.IsComponentEnabled(entity))
                 {
                     RecentAttacker recent = RecentAttackerLookup[entity];
                     bool movementBlocksCombat = hasActiveManualMove && !scanning;
@@ -281,7 +281,7 @@ namespace Game.Runtime
                                 Position = recentPos,
                                 IsCommanded = 0
                             });
-                            Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
+                            Ecb.SetComponentEnabled<RecentAttacker>(sortKey, entity, false);
                             Ecb.RemoveComponent<UnitPathFollow>(sortKey, entity);
                             Ecb.RemoveComponent<UnitPathRange>(sortKey, entity);
                             Ecb.RemoveComponent<UnitPathRequest>(sortKey, entity);
@@ -290,7 +290,7 @@ namespace Game.Runtime
                         }
                     }
 
-                    Ecb.RemoveComponent<RecentAttacker>(sortKey, entity);
+                    Ecb.SetComponentEnabled<RecentAttacker>(sortKey, entity, false);
                 }
 
                 if (hasActiveManualMove && !scanning)

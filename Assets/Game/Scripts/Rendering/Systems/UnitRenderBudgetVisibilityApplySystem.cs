@@ -111,11 +111,12 @@ namespace Game.Rendering
                 if (farImpostorUnitRequests.Contains(unit))
                     continue;
 
+                // Enableable: disable instead of removing, so camera movement creates no archetypes.
                 if (Exists(em, lookups, unit, useLookups) &&
                     HasCulledUnitTag(em, lookups, unit, useLookups) &&
                     scheduledCulledUnitRemoves.Add(unit))
                 {
-                    renderStateEcb.RemoveComponent<UnitRenderBudgetCulledUnitTag>(unit);
+                    renderStateEcb.SetComponentEnabled<UnitRenderBudgetCulledUnitTag>(unit, false);
                 }
             }
 
@@ -126,7 +127,11 @@ namespace Game.Rendering
                     !HasCulledUnitTag(em, lookups, unit, useLookups) &&
                     scheduledCulledUnitAdds.Add(unit))
                 {
-                    renderStateEcb.AddComponent<UnitRenderBudgetCulledUnitTag>(unit);
+                    // Present but disabled after its first far period: re-enable; otherwise add it once (enabled).
+                    if (PresentCulledUnitTag(em, lookups, unit, useLookups))
+                        renderStateEcb.SetComponentEnabled<UnitRenderBudgetCulledUnitTag>(unit, true);
+                    else
+                        renderStateEcb.AddComponent<UnitRenderBudgetCulledUnitTag>(unit);
                 }
             }
 
@@ -169,6 +174,13 @@ namespace Game.Rendering
         }
 
         private static bool HasCulledUnitTag(EntityManager em, Lookups lookups, Entity entity, bool useLookups)
+        {
+            return useLookups
+                ? lookups.CulledUnitLookup.IsCulled(entity)
+                : UnitRenderBudgetCulledUnitTagState.IsCulled(em, entity);
+        }
+
+        private static bool PresentCulledUnitTag(EntityManager em, Lookups lookups, Entity entity, bool useLookups)
         {
             return useLookups
                 ? lookups.CulledUnitLookup.HasComponent(entity)

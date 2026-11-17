@@ -79,8 +79,9 @@ namespace Game.Runtime
                                        PrefabReferenceLookup.HasComponent(entity);
                 bool shouldShow = canOwnHealthBar &&
                                   RecentDamageLookup.HasComponent(entity) &&
+                                  RecentDamageLookup.IsComponentEnabled(entity) &&
                                   !PassengerLookup.HasComponent(entity) &&
-                                  !CulledLookup.HasComponent(entity);
+                                  !CulledLookup.IsCulled(entity);
                 bool hasReference = InstanceReferenceLookup.HasComponent(entity);
                 bool hasInstance = hasReference &&
                                    EntityStorageInfoLookup.Exists(InstanceReferenceLookup[entity].Instance);

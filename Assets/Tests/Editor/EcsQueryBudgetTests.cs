@@ -58,6 +58,26 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void TemporarySwitchOffLeavesTheBudgetUnchanged()
+        {
+            var world = new World("EcsQueryBudgetSwitchOff");
+            bool previous = EcsQueryBudget.TemporaryHeadroomEnabled;
+            try
+            {
+                EcsQueryBudget.TemporaryHeadroomEnabled = false;
+                Assert.IsFalse(EcsQueryBudget.TryEnsureHeadroom(world, EcsQueryBudget.HeadroomBudgetBytes, out string detail));
+                Assert.AreEqual("switchOff", detail);
+                Assert.IsTrue(EcsQueryBudget.TryRead(world, out var snapshot));
+                Assert.AreEqual(EcsQueryBudgetMath.DefaultBudgetBytes / EcsQueryBudgetMath.BlockBytes, snapshot.BudgetBlocks);
+            }
+            finally
+            {
+                EcsQueryBudget.TemporaryHeadroomEnabled = previous;
+                world.Dispose();
+            }
+        }
+
+        [Test]
         public void HeadroomWidensAnEmptyWorldAndTheWorldStillDisposes()
         {
             var world = new World("EcsQueryBudgetTests");

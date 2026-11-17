@@ -27,6 +27,16 @@ namespace Game.Runtime
     {
         public const int HeadroomBudgetBytes = 128 * 1024 * 1024;
 
+        /// <summary>
+        /// TEMPORARY MITIGATION SWITCH (program lead, 2026-11-17), default on. The 128 MiB swap only buys time; it is not
+        /// the fix. TODO(runtime-allocator): remove once normal play creates no new archetypes after the opening minutes,
+        /// i.e. once per-event and per-order structural toggles on units are enableable components (first batch, done:
+        /// RecentAttacker, RecentDamageHealthBarVisibility, UnitRenderBudgetCulledUnitTag; still open: path/engage/order
+        /// tags, selection, child render culling) and the long-session gate's [EcsQueryBudget] line stays under 16 MiB
+        /// (legacy16MiBpct &lt; 100) with this switch off.
+        /// </summary>
+        public static bool TemporaryHeadroomEnabled = true;
+
         public struct Snapshot
         {
             public bool Valid;
@@ -90,6 +100,7 @@ namespace Game.Runtime
             ReleaseRetiredAllocators();
             if (world == null || !world.IsCreated) { detail = "worldMissing"; return false; }
             if (s_widened.Contains(world)) { detail = "alreadyApplied"; return true; }
+            if (!TemporaryHeadroomEnabled) { detail = "switchOff"; return false; }
             byte* manager = QueryManager(world.EntityManager);
             if (manager == null) { detail = "layout:" + s_layoutError; return false; }
             var layout = s_layout;

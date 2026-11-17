@@ -1535,8 +1535,8 @@ public sealed partial class UnitRenderBudgetSystemTests
 
         Assert.AreEqual(1, result.Shown);
         Assert.AreEqual(1, result.Hidden);
-        Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledUnitTag>(detailedUnit));
-        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledUnitTag>(farUnit));
+        Assert.IsFalse(UnitRenderBudgetCulledUnitTagState.IsCulled(em, detailedUnit)); // enableable: disabled, kept
+        Assert.IsTrue(UnitRenderBudgetCulledUnitTagState.IsCulled(em, farUnit));
         Assert.IsFalse(em.HasComponent<Disabled>(entityToShow));
         Assert.IsFalse(em.HasComponent<DisableRendering>(entityToShow));
         Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledTag>(entityToShow));
@@ -1578,8 +1578,8 @@ public sealed partial class UnitRenderBudgetSystemTests
 
         Assert.AreEqual(1, result.Shown);
         Assert.AreEqual(1, result.Hidden);
-        Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledUnitTag>(detailedUnit));
-        Assert.IsTrue(em.HasComponent<UnitRenderBudgetCulledUnitTag>(farUnit));
+        Assert.IsFalse(UnitRenderBudgetCulledUnitTagState.IsCulled(em, detailedUnit)); // enableable: disabled, kept
+        Assert.IsTrue(UnitRenderBudgetCulledUnitTagState.IsCulled(em, farUnit));
         Assert.IsFalse(em.HasComponent<Disabled>(entityToShow));
         Assert.IsFalse(em.HasComponent<DisableRendering>(entityToShow));
         Assert.IsFalse(em.HasComponent<UnitRenderBudgetCulledTag>(entityToShow));

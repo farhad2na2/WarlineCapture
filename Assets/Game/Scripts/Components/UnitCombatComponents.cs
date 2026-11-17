@@ -177,7 +177,9 @@ namespace Game.Components
         public byte IsCommanded;
     }
 
-    public struct RecentAttacker : IComponentData
+    /// <summary>Per-hit state. Enableable (2026-11-17 allocator fix): added once on the first hit, then only
+    /// enabled/disabled, so combat creates no new archetypes. Read it as present only when enabled.</summary>
+    public struct RecentAttacker : IComponentData, IEnableableComponent
     {
         public Entity Attacker;
         public int2 Cell;

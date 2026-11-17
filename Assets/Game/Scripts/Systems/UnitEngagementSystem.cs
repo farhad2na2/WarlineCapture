@@ -230,11 +230,11 @@ namespace Game.Runtime
                 var result=TargetAcquisitionKernel.AcquireFromReadOnlyFacts(ref context,input);
                 // Preserve the original deferred command sequence: invalid recent removal
                 // precedes normal acquisition; retaliation adds Engage before recent removal.
-                if(result.RemoveRecentAttacker&&!result.Retaliation)Ecb.RemoveComponent<RecentAttacker>(sortKey,entity);
+                if(result.RemoveRecentAttacker&&!result.Retaliation)Ecb.SetComponentEnabled<RecentAttacker>(sortKey,entity,false);
                 if(!result.Acquired)return;
                 Ecb.AddComponent(sortKey,entity,new EngageTarget{Target=EntityOf(result.Target),Cell=new int2(result.Cell.X,result.Cell.Z),
                     Position=new float3(result.Position.X,result.Position.Y,result.Position.Z),IsCommanded=0});
-                if(result.Retaliation)Ecb.RemoveComponent<RecentAttacker>(sortKey,entity);
+                if(result.Retaliation)Ecb.SetComponentEnabled<RecentAttacker>(sortKey,entity,false);
                 Ecb.RemoveComponent<UnitPathFollow>(sortKey,entity);Ecb.RemoveComponent<UnitPathRange>(sortKey,entity);
                 Ecb.RemoveComponent<UnitPathRequest>(sortKey,entity);Ecb.RemoveComponent<AutoWanderMoveTag>(sortKey,entity);
             }
@@ -262,7 +262,7 @@ namespace Game.Runtime
                         RadiusCells=value.RadiusCells,HasStarted=value.HasStarted,EngageDetectedTargets=value.EngageDetectedTargets};return true;
                 }
                 public bool TryReadRecent(out TargetIdentity target)
-                {target=default;if(!Job.RecentAttackerLookup.HasComponent(Source))return false;target=Identity(Job.RecentAttackerLookup[Source].Attacker);return true;}
+                {target=default;if(!Job.RecentAttackerLookup.HasComponent(Source)||!Job.RecentAttackerLookup.IsComponentEnabled(Source))return false;target=Identity(Job.RecentAttackerLookup[Source].Attacker);return true;}
                 public bool BeginCell(int key,out TargetIdentity candidate)
                 {bool found=Job.SpatialMap.TryGetFirstValue(key,out Entity value,out iterator);candidate=Identity(value);return found;}
                 public bool NextCell(out TargetIdentity candidate)

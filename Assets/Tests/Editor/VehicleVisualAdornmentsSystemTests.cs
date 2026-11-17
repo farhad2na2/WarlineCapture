@@ -899,7 +899,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
         endSimulationEcbSystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
-        Assert.IsFalse(em.HasComponent<RecentDamageHealthBarVisibility>(unit));
+        // Enableable since the 2026-11-17 allocator fix: expiry disables the window and keeps the archetype.
+        Assert.IsTrue(em.HasComponent<RecentDamageHealthBarVisibility>(unit));
+        Assert.IsFalse(em.IsComponentEnabled<RecentDamageHealthBarVisibility>(unit));
         Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(healthBar).Scale, 0.001f);
         Assert.AreEqual(0.5f, em.GetComponentData<HealthBarFill>(healthBar).Value, 0.001f);
     }

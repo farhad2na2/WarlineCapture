@@ -183,41 +183,39 @@ namespace Game.Tests.Editor
         [Test]
         public void GuardIsPostedOntoHomeGroundWithOrdinaryControls()
         {
-            byte stage = 0; float deadline = 0f; int actions = 0;
+            byte stage = 0; float deadline = 0f;
             var view = Post(5f); view.SelectedGroups = 1; view.SelectedMask = 0b00100;
-            Assert.AreEqual(AriaHomeGuardPostAction.ToggleSelected, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "clear another selection first");
+            Assert.AreEqual(AriaHomeGuardPostAction.ToggleSelected, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline), "clear another selection first");
             Assert.AreEqual(1, stage);
             Assert.AreEqual(5f + AriaHomeGuardPostPolicy.DeadlineSeconds, deadline, 1e-4f);
-            view.SelectedGroups = 0; view.SelectedMask = 0; view.CompletedContacts = 1;
-            Assert.AreEqual(AriaHomeGuardPostAction.SelectGuard, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
-            view.SelectedGroups = 1; view.SelectedMask = 0b00001; view.CompletedContacts = 2;
-            Assert.AreEqual(AriaHomeGuardPostAction.ArmAttack, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
-            view.AttackMode = true; view.HomeGroundAvailable = false; view.CompletedContacts = 3;
-            Assert.AreEqual(AriaHomeGuardPostAction.Waiting, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "no camera touch, no order elsewhere");
+            view.SelectedGroups = 0; view.SelectedMask = 0;
+            Assert.AreEqual(AriaHomeGuardPostAction.SelectGuard, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
+            view.SelectedGroups = 1; view.SelectedMask = 0b00001;
+            Assert.AreEqual(AriaHomeGuardPostAction.ArmAttack, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
+            view.AttackMode = true; view.HomeGroundAvailable = false;
+            Assert.AreEqual(AriaHomeGuardPostAction.InspectHome, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline), "camera only, never an order");
             view.HomeGroundAvailable = true;
-            Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
-            Assert.AreEqual(3, stage);
-            Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "same target until the touch completes");
-            view.AttackMode = false; view.CompletedContacts = 4;
-            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
+            Assert.AreEqual(AriaHomeGuardPostAction.TargetHomeGround, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
+            view.AttackMode = false; view.AttackOrderMask = 0b00001;
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
             Assert.AreEqual(2, stage, "posted once");
-            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(Post(6f), ref stage, ref deadline, ref actions));
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(Post(6f), ref stage, ref deadline));
         }
 
         [Test]
         public void GuardPostIsBoundedAndNeedsAGuard()
         {
-            byte stage = 0; float deadline = 0f; int actions = 0;
+            byte stage = 0; float deadline = 0f;
             var view = Post(5f); view.Guard = 0;
-            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
             Assert.AreEqual(2, stage);
             stage = 0; view = Post(5f); view.GuardMask = 0; view.PageIndex = 1;
-            Assert.AreEqual(AriaHomeGuardPostAction.PreviousPage, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "the guard card is on the first page");
+            Assert.AreEqual(AriaHomeGuardPostAction.PreviousPage, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline), "the guard card is on the first page");
             view = Post(5f + AriaHomeGuardPostPolicy.DeadlineSeconds + 1f);
-            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions));
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline));
             Assert.AreEqual(2, stage, "gives up after the deadline");
             stage = 0; view = Post(5f); view.UiBusy = true;
-            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline, ref actions), "open drawers/maps are left to the normal flow");
+            Assert.AreEqual(AriaHomeGuardPostAction.None, AriaHomeGuardPostPolicy.Step(view, ref stage, ref deadline), "open drawers/maps are left to the normal flow");
         }
 
         [Test]

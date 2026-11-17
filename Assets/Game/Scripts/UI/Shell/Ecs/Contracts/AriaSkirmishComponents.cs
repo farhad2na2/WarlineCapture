@@ -39,7 +39,6 @@ namespace Game.UI.Shell.Contracts.Ecs
         public uint HomeGuardGroup;
         public byte HomeGuardChosen, HomeGuardPostStage;
         public float HomeGuardPostDeadline;
-        public int HomeGuardPostActions;
         public byte AssaultDistanceObserved;
         public float BestAssaultDistance;
         public int AssaultObjectiveHudIdentity;

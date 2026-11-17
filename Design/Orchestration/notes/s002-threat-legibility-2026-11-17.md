@@ -52,4 +52,10 @@ HUD worker, 2026-11-17. The orchestrator requested a code and log diagnosis befo
 - The "easy to reach" defender must come from **own** group positions only. Highlight its card; do not auto-select it.
 - If fog proves the tank was hidden at its firing position, the HUD alone cannot give the player a shot to aim at. That pushes the decision toward the owner's guard-tower or vision option, which the orchestrator is asking the owner about.
 
-An implementation following these rules is on branch `missions/hud-base-threat`. Per the orchestrator ruling it stays unmerged until the owner chooses the order.
+## Outcome (2026-11-18)
+
+The orchestrator chose legibility first. It is implemented on `missions/hud-base-threat` in `080fca838` and `d9e5beaad`.
+
+- **Base vision.** Both factions' designated bases see out to `SkirmishBaseVisionPolicy.RevealRadius`: 50 m (Battle Tank `attackRange`, `Unit_Veh_Tank_USA.prefab`), plus 1 cell for the tank's 3×3 combat radius, plus the base's own combat radius, plus 0.25 cell. This is the same test `UnitAttackSystem.cs:267-275` uses to decide that a tank can fire, so a tank that can hit the base is always visible.
+- **Lead's 66 m figure.** The 66 m in the lead's brief is the tank's *staging* Move destination (log:2346). It **fired from 26.5 m** (log:2463 `cell=(1001,277)` against the base at (1001, 303.5)). Both are covered.
+- **Alert perimeter.** The perimeter is the same radius, with 15 m exit hysteresis and a 10 s re-arm. Front-line contact cannot raise it. The bases are about 712 m apart on S002 (log:2107), and only a hostile already within firing reach of the HQ crosses it. Because the perimeter equals the reveal radius, the alert never reports a hidden unit.

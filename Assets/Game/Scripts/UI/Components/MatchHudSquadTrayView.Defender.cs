@@ -36,6 +36,16 @@ namespace Game.UI.Runtime
             return false;
         }
 
+        /// <summary>Slot 0-4 of the group's card on the visible roster page, or -1 (other page / unknown).</summary>
+        public int VisibleSlotOf(uint groupId)
+        {
+            if (!_rosterActive || groupId == 0) return -1;
+            for (int i = 0; i < _rosterModels.Count; i++)
+                if (_rosterModels[i].GroupId == groupId)
+                    return i / 5 == _logicalPage ? i % 5 : -1;
+            return -1;
+        }
+
         private void RefreshDefenderHighlight()
         {
             Button card = null;

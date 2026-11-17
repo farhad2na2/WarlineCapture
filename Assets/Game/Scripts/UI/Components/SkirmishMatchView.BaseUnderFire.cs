@@ -11,7 +11,7 @@ namespace Game.UI.Runtime
     /// outline on the nearest own squad card. The alert tap only frames the base
     /// (camera); the defender tap only pages the tray. Neither selects nor orders troops.
     /// </summary>
-    public sealed partial class SkirmishMatchView
+    public sealed partial class SkirmishMatchView : ISkirmishBaseAlertPresentation
     {
         private SkirmishBaseFireTracker baseFire;
         private RectTransform baseFireRow, baseFireArrow;
@@ -25,6 +25,20 @@ namespace Game.UI.Runtime
         private RectTransform baseFirePing;
         private V3GradientGraphic baseFirePingGraphic;
         private MatchHudMinimapView baseFireMinimap;
+
+        // ISkirmishBaseAlertPresentation: exactly what the player is shown (ARIA reads only this).
+        private int baseAlertSequence, baseAlertSeenRevision = -1;
+        private byte baseAlertReason;
+        private bool baseAlertAttackerShown;
+        private Vector3 baseAlertAttackerWorld;
+        public bool BaseAlertPresented => BaseUnderFirePresented;
+        public byte BaseAlertReason => BaseUnderFirePresented ? baseAlertReason : (byte)0;
+        public int BaseAlertSequence => baseAlertSequence;
+        public bool BaseAlertAttackerShown => BaseUnderFirePresented && baseAlertAttackerShown;
+        public Vector3 BaseAlertAttackerWorld => baseAlertAttackerWorld;
+        public bool BaseAlertDefenderKnown => BaseUnderFirePresented && baseFireDefender != null && baseFireDefender.gameObject.activeSelf && baseFireDefenderGroup != 0;
+        public int BaseAlertDefenderSlot => BaseAlertDefenderKnown && baseFireTray != null ? baseFireTray.VisibleSlotOf(baseFireDefenderGroup) : -1;
+        public Button BaseAlertDefenderButton => BaseAlertDefenderKnown ? baseFireDefender : null;
 
         public bool BaseUnderFirePresented => baseFireRow != null && baseFireRow.gameObject.activeSelf;
         public Button BaseUnderFireFocusButton => baseFireFocus;
@@ -40,7 +54,7 @@ namespace Game.UI.Runtime
                 return;
             }
             float now = Time.time; // scaled: pausing freezes the quiet timer as it freezes damage.
-            baseFire.Observe(model.PlayerHealth, now);
+            bool firstHit = baseFire.Observe(model.PlayerHealth, now);
             bool active = baseFire.UnderFire || model.BaseIntruderInside || model.PlayerBaseRecentlyHit && model.PlayerHealth > 0;
             if (!active || model.PlayerHealth <= 0)
             {
@@ -48,6 +62,18 @@ namespace Game.UI.Runtime
                 return;
             }
             if (baseFireRow == null) BuildBaseUnderFire();
+            bool onset = !baseFireRow.gameObject.activeSelf;
+            // A new alert revision (perimeter entry, then first hit) is a new warning onset even
+            // while the row is already up; so is a first hit seen by the HUD's own health tracker.
+            bool newRevision = baseAlertSeenRevision >= 0 && model.BaseThreatRevision != baseAlertSeenRevision;
+            if (onset || newRevision || firstHit && model.BaseThreatRevision == 0)
+            {
+                baseAlertSequence++;
+                baseAlertReason = model.BaseThreatReason != 0 && (onset || newRevision) ? model.BaseThreatReason : (byte)2;
+            }
+            baseAlertSeenRevision = model.BaseThreatRevision;
+            baseAlertAttackerShown = model.BaseAttackerVisible;
+            baseAlertAttackerWorld = model.BaseAttackerVisible ? model.BaseAttackerWorld : Vector3.zero;
             SetBaseFireVisible(true);
             PositionBaseFireRow();
 
@@ -57,8 +83,8 @@ namespace Game.UI.Runtime
             {
                 baseFireFocusShown = focusSignature;
                 HudIconButtonView.Apply(baseFireFocus, HudButtonIcon.Alert, HudButtonRole.Alert,
-                    model.BaseAttackerVisible ? "BASE UNDER FIRE · ATTACKER IN SIGHT" : "BASE UNDER FIRE · VIEW BASE",
-                    model.BaseAttackerVisible ? "پایگاه زیر آتش · مهاجم در دید" : "پایگاه زیر آتش · دیدن پایگاه");
+                    model.BaseAttackerVisible ? "BASE UNDER FIRE · ATTACKER IN SIGHT" : "BASE UNDER FIRE · SOURCE UNKNOWN",
+                    model.BaseAttackerVisible ? "پایگاه زیر آتش · مهاجم در دید" : "پایگاه زیر آتش · منبع نامعلوم");
             }
 
             baseFireDefenderGroup = model.BaseDefenderGroupId;

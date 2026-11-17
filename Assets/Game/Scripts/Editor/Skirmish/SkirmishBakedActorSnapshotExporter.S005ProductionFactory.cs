@@ -37,7 +37,7 @@ namespace Game.Editor
             var manifest = new SkirmishContentManifest { RequiredFeatureIds = scenario.RequiredFeatureIds ?? Array.Empty<string>() };
             if (!SkirmishSetupCompiler.TryCompile(scenario, SkirmishDifficultyId.Regular, SkirmishSizeId.Standard, 1, manifest, matrix, out var setup, out var reasons))
                 throw new InvalidOperationException("Original S005 compiler rejected inputs: " + string.Join(";", reasons.Select(x => x.ToString())));
-            if (setup.CatalogId != "S005" || setup.Seed != 1 || setup.SetupHash != 1865447784u || setup.Structures == null || setup.Structures.Length != 14) throw new InvalidDataException("Exact native S005 Standard setup required");
+            if (setup.CatalogId != "S005" || setup.Seed != 1 || setup.SetupHash != 1865447784u || setup.Structures == null || setup.Structures.Length != 15) throw new InvalidDataException("Exact native S005 Standard setup required");
             string[] keys = setup.Structures.Select(row => SkirmishStructureIds.VisualKey(row.StructureId)).Distinct(StringComparer.Ordinal).OrderBy(key => key, StringComparer.Ordinal).ToArray();
             if (keys.Length != 7 || keys.Any(string.IsNullOrEmpty)) throw new InvalidDataException("Exact seven setup building keys required");
             var profile = SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId);

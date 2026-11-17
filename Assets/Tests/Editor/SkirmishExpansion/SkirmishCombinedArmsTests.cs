@@ -53,7 +53,7 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(SkirmishArmyProfileId.CombinedArms, setup.ArmyProfileId);
                 Assert.AreEqual(SkirmishStartPackageId.FieldBase, setup.StartPackageId);
                 Assert.AreEqual(1, (int)setup.Readiness);
-                Assert.AreEqual(7, setup.Structures.Count(s => s.FactionId == 1));
+                Assert.AreEqual(8, setup.Structures.Count(s => s.FactionId == 1));
                 Assert.AreEqual(7, setup.Structures.Count(s => s.FactionId == 2));
                 Assert.IsFalse(setup.Structures.Any(s => s.StructureId == SkirmishStructureIds.Helipad));
                 Assert.IsFalse(setup.Forces.Any(f => f.RoleKind == SkirmishRoleKind.Tank || f.RoleKind == SkirmishRoleKind.AttackHeli));

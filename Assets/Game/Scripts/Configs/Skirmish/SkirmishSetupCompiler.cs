@@ -592,6 +592,20 @@ namespace Game.Configs
             if (vector.RefineryModulesEach >= 2)
                 AddMirrored(structures, definition, SkirmishStructureIds.RefineryModule, "economy.player", "economy.enemy", 0f, 24f);
 
+            // Owner decision 2026-11-17: Base Assault gives the PLAYER (only) one extra guard tower beside the
+            // main base so a lone enemy tank cannot delete the undefended HQ. Matrix player_starting_structures
+            // is +1 for BA (Field 8, Established 11, War/Large Established 12). It is appended last so the
+            // per-building pad planner hands it a later Service pad; legacy kind pads use the frame offset.
+            // The offset (10, 10) is clear of the watchtower (-10, 0), approach tower (10, 0) and dish (0, 14).
+            if (definition.ObjectiveConfig != null && definition.ObjectiveConfig.Kind == SkirmishObjectiveKind.BaseAssault)
+            {
+                string guardAnchor = definition.MapLayout != null &&
+                                     definition.MapLayout.TryGetAnchor("service.player", out SkirmishLayoutAnchorConfig guardService)
+                    ? guardService.AnchorId
+                    : "service.player";
+                structures.Add(Structure(1, SkirmishStructureIds.Watchtower, guardAnchor, string.Empty, false, 10f, 10f));
+            }
+
             // MATCH_SETUP canonical BT/CE defenders have two EXTRA approach
             // towers. Established's mirrored service tower is independent.
             if(definition.ObjectiveConfig.Kind==SkirmishObjectiveKind.Breakthrough||

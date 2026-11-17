@@ -33,6 +33,9 @@
 //                                               // (draft order), else a pad derived at its compiled position (needs
 //                                               // "structure_footprints"); only pads some variant uses are written.
 //   "structure_footprints": { "<structure id>": [w, d] },   // optional Unity-verified footprints (metres) for derived pads
+//   "pad_slack_m": 12,                          // optional relocation slack (metres per side, 0..64, default 12) added to every
+//                                               // instance pad around its unchanged centre, so the shared placement search can move
+//                                               // a building off road/water/map buildings; capped per pad to the playable bounds
 //   "routes":  [ {"kind":"MainHighway|FlankNorthRuins|FlankSouthSweep",
 //                 "via":["staging.player", ..., "staging.enemy"],
 //                 "width":12, "vehicles":true, "aircraft":true}, ... ],  // >=2 distinct, 1 main
@@ -86,7 +89,7 @@ namespace Game.Editor
         private const string ScenarioCatalogCsv = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
         private const float FrameMarginMetres = 32f;
         private const int AuthoringSeed = 1;
-        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes", "instance_pads", "structure_footprints", "objective_areas", "area_measurement" };
+        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes", "instance_pads", "structure_footprints", "pad_slack_m", "objective_areas", "area_measurement" };
         private static readonly SkirmishSizeId[] Sizes = { SkirmishSizeId.Standard, SkirmishSizeId.War, SkirmishSizeId.LargeWar };
         private static readonly SkirmishDifficultyId[] Difficulties =
             { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
@@ -775,6 +778,19 @@ namespace Game.Editor
                 return width > 0 && depth > 0;
             }
 
+            // Optional draft key pad_slack_m: metres of relocation slack per side on every instance pad.
+            public static float ReadPadSlack(JObject draft)
+            {
+                var token = draft["pad_slack_m"];
+                if (token == null || token.Type == JTokenType.Null) return SkirmishInstancePadPlanner.DefaultPadSlackMetres;
+                if (token.Type != JTokenType.Integer && token.Type != JTokenType.Float)
+                    throw new AuthoringFailure("draft.pad_slack_m", "A number of metres is required.");
+                float value = (float)token;
+                if (float.IsNaN(value) || float.IsInfinity(value) || value < 0f || value > SkirmishInstancePadPlanner.MaxPadSlackMetres)
+                    throw new AuthoringFailure("draft.pad_slack_m", "Must be between 0 and " + SkirmishInstancePadPlanner.MaxPadSlackMetres.ToString(CultureInfo.InvariantCulture) + " metres.");
+                return value;
+            }
+
             public static void Apply(JObject draft, OperationMapDefinition source, string catalogId, SkirmishMapLayoutConfig layout, InstancePadPlan plan = null)
             {
                 string token = catalogId.ToLowerInvariant();
@@ -853,6 +869,8 @@ namespace Game.Editor
                     var padKeys = new Dictionary<string, (string padId, string anchorId)>(StringComparer.Ordinal);
                     var instanceAnchors = new List<SkirmishLayoutAnchorConfig>();
                     var instancePads = new List<SkirmishLegalPadConfig>();
+                    float requestedSlack = ReadPadSlack(draft);
+                    float slackMin = float.MaxValue, slackMax = 0f; int slackCapped = 0;
                     foreach (var planned in plan.Pads)
                     {
                         string slug = planned.Measured ? planned.MeasuredId.Replace('.', '_') : planned.Slug;
@@ -874,8 +892,15 @@ namespace Game.Editor
                         var c = local(new Vector2(planned.X, planned.Z));
                         // Draft sizes are world-aligned footprints; the pad lives in the rotated layout frame, so
                         // store the frame-axis envelope (plus the one-cell grid-snap margin) of that rectangle.
+                        float appliedSlack = requestedSlack > 0f
+                            ? SkirmishInstancePadPlanner.CapSlackToBounds(planned.X, planned.Z, forward.x, forward.y, across.x, across.y,
+                                planned.Width, planned.Depth, source.GridMetadata.CellSize, requestedSlack,
+                                source.Bounds.PlayableMin.x, source.Bounds.PlayableMin.z, source.Bounds.PlayableMax.x, source.Bounds.PlayableMax.z)
+                            : 0f;
+                        slackMin = Mathf.Min(slackMin, appliedSlack); slackMax = Mathf.Max(slackMax, appliedSlack);
+                        if (appliedSlack < requestedSlack) slackCapped++;
                         SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(forward.x, forward.y, across.x, across.y,
-                            planned.Width, planned.Depth, source.GridMetadata.CellSize, out float padWidth, out float padDepth);
+                            planned.Width, planned.Depth, source.GridMetadata.CellSize, out float padWidth, out float padDepth, appliedSlack);
                         instancePads.Add(new SkirmishLegalPadConfig
                         {
                             PadId = padId, AnchorId = padAnchor, RoleId = "instance." + (planned.Measured ? planned.MeasuredId : planned.Slug),
@@ -883,6 +908,10 @@ namespace Game.Editor
                         });
                         padKeys.Add(planned.Key, (padId, padAnchor));
                     }
+                    Debug.Log("[SkirmishAuthoringPadSlack] catalog=" + catalogId + " requested=" + requestedSlack.ToString("F2", CultureInfo.InvariantCulture) +
+                        " appliedMin=" + (instancePads.Count == 0 ? 0f : slackMin).ToString("F2", CultureInfo.InvariantCulture) +
+                        " appliedMax=" + slackMax.ToString("F2", CultureInfo.InvariantCulture) + " cappedByPlayableBounds=" + slackCapped +
+                        " instancePads=" + instancePads.Count);
                     anchors = anchors.Concat(instanceAnchors).ToArray();
                     pads = pads.Concat(instancePads).ToArray();
                     rows = plan.Rows.OrderBy(r => (int)r.Size).ThenBy(r => (int)r.Difficulty).ThenBy(r => r.Faction)

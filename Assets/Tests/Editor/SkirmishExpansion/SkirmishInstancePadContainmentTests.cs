@@ -66,7 +66,9 @@ namespace Game.Tests.Editor
             test.RotatedFramePadEnclosesGridRectangleAtPreferredOrigin();
             test.UnconvertedWorldAlignedSizeCannotContainRotatedRectangle();
             test.EnvelopeCoversEveryCellSnapOffset();
-            Debug.Log("[SkirmishInstancePadContainmentTests] result=Passed cases=3");
+            test.SlackGrowsPadAroundUnchangedCentreAndAdmitsManyOrigins();
+            test.SlackIsCappedToPlayableBounds();
+            Debug.Log("[SkirmishInstancePadContainmentTests] result=Passed cases=5");
         }
 
         [Test]
@@ -111,21 +113,79 @@ namespace Game.Tests.Editor
             }
         }
 
+        /// <summary>Grid origins whose rectangle the exact pad contains (pure mirror of the runtime constraint's pad test).</summary>
+        public static int CountAdmittedOrigins(Vector2 center, Vector2 forward, Vector2 across, float padWidth, float padDepth,
+            int w, int d, float cellSize, Vector2 gridOrigin, int radiusCells)
+        {
+            int cx = (int)Math.Floor((center.x - gridOrigin.x) / cellSize), cz = (int)Math.Floor((center.y - gridOrigin.y) / cellSize);
+            int count = 0;
+            for (int ox = cx - radiusCells; ox <= cx + radiusCells; ox++)
+                for (int oz = cz - radiusCells; oz <= cz + radiusCells; oz++)
+                    if (PadContainsRect(center, forward, across, padWidth, padDepth, new RectInt(ox, oz, w, d), cellSize, gridOrigin)) count++;
+            return count;
+        }
+
+        [Test]
+        public void SlackGrowsPadAroundUnchangedCentreAndAdmitsManyOrigins()
+        {
+            // The BlockedSpawn finding: the one-cell snap margin alone admits only a 3x3 block of origins (9 on the
+            // S026 pads); 12 m of slack per side admits hundreds, so the shared search can step off blocked ground.
+            foreach (var c in Cases)
+            {
+                SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(Forward.x, Forward.y, Across.x, Across.y, c.W, c.D, 1f,
+                    out float w0, out float d0);
+                SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(Forward.x, Forward.y, Across.x, Across.y, c.W, c.D, 1f,
+                    out float w12, out float d12, SkirmishInstancePadPlanner.DefaultPadSlackMetres);
+                Assert.AreEqual(2f * 12f * (Mathf.Abs(Forward.x) + Mathf.Abs(Forward.y)), w12 - w0, 1e-3f, c.Name + " width grows by 2*slack on both world axes");
+                Assert.AreEqual(2f * 12f * (Mathf.Abs(Across.x) + Mathf.Abs(Across.y)), d12 - d0, 1e-3f, c.Name + " depth grows by 2*slack on both world axes");
+                int before = CountAdmittedOrigins(c.Center, Forward, Across, w0, d0, c.W, c.D, 1f, Vector2.zero, 60);
+                int after = CountAdmittedOrigins(c.Center, Forward, Across, w12, d12, c.W, c.D, 1f, Vector2.zero, 60);
+                Assert.That(before, Is.InRange(4, 16), c.Name + " without slack only a small block of origins is admitted");
+                Assert.Greater(after, 400, c.Name + " with slack many origins are admitted");
+                var rect = PreferredRect(c.Center, c.W, c.D, 1f, Vector2.zero);
+                Assert.IsTrue(PadContainsRect(c.Center, Forward, Across, w12, d12, rect, 1f, Vector2.zero), c.Name + " preferred origin stays inside");
+            }
+            SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(Forward.x, Forward.y, Across.x, Across.y, 28, 15, 1f, out float wNeg, out float dNeg, -5f);
+            SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(Forward.x, Forward.y, Across.x, Across.y, 28, 15, 1f, out float wZero, out float dZero);
+            Assert.AreEqual(wZero, wNeg); Assert.AreEqual(dZero, dNeg);
+        }
+
+        [Test]
+        public void SlackIsCappedToPlayableBounds()
+        {
+            var c = Cases[0];
+            float full = SkirmishInstancePadPlanner.CapSlackToBounds(c.Center.x, c.Center.y, Forward.x, Forward.y, Across.x, Across.y,
+                c.W, c.D, 1f, 12f, 0f, 0f, 2000f, 1000f);
+            Assert.AreEqual(12f, full, "open ground keeps the requested slack");
+            // Bounds that leave 6 m beyond the zero-slack pad: the cap must shrink and the capped pad must fit.
+            SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(Forward.x, Forward.y, Across.x, Across.y, c.W, c.D, 1f, out float w0, out float d0);
+            float halfX = (Mathf.Abs(Forward.x) * w0 + Mathf.Abs(Across.x) * d0) * .5f + 6f;
+            float capped = SkirmishInstancePadPlanner.CapSlackToBounds(c.Center.x, c.Center.y, Forward.x, Forward.y, Across.x, Across.y,
+                c.W, c.D, 1f, 12f, c.Center.x - halfX, 0f, c.Center.x + halfX, 2000f);
+            Assert.Less(capped, 12f); Assert.GreaterOrEqual(capped, 0f);
+            // Already outside without slack: no slack.
+            Assert.AreEqual(0f, SkirmishInstancePadPlanner.CapSlackToBounds(c.Center.x, c.Center.y, Forward.x, Forward.y, Across.x, Across.y,
+                c.W, c.D, 1f, 12f, c.Center.x + 1f, 0f, c.Center.x + 2f, 2000f));
+        }
+
         // -------------------------------------------------------------------------------------------------
         // executeMethod: Game.Tests.Editor.SkirmishInstancePadContainmentTests.RunAuthoredLayoutValidation
-        // Env: WARLINE_SKIRMISH_CATALOG = S026 | S050 | S049 ...
+        // Env: WARLINE_SKIRMISH_CATALOG = S026 | S050 | S049 ... (optional when WARLINE_MISSION_DRAFT is set)
+        //      WARLINE_MISSION_DRAFT   = explicit draft path (absolute or repo-relative), e.g. the S006 example draft
+        //      WARLINE_MIN_ADMITTED_ORIGINS = minimum admitted grid origins per pad (default 25; the snap margin alone gives 9)
         // Footprints come from the mission draft's structure_footprints (the cells the authoring used).
         // -------------------------------------------------------------------------------------------------
         public static void RunAuthoredLayoutValidation()
         {
             bool quit = Environment.GetCommandLineArgs().Contains("-quit");
             string catalog = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG") ?? string.Empty;
+            string explicitDraft = Environment.GetEnvironmentVariable("WARLINE_MISSION_DRAFT");
             int failures = 0, checkedRows = 0;
             void Fail(string text) { failures++; Debug.LogError("[SkirmishInstancePadContainment] catalog=" + catalog + " failure " + text); }
             try
             {
-                if (string.IsNullOrWhiteSpace(catalog)) { Fail("WARLINE_SKIRMISH_CATALOG is not set."); }
-                else Validate(catalog, Fail, ref checkedRows);
+                if (string.IsNullOrWhiteSpace(catalog) && string.IsNullOrWhiteSpace(explicitDraft)) { Fail("WARLINE_SKIRMISH_CATALOG or WARLINE_MISSION_DRAFT is not set."); }
+                else Validate(catalog, explicitDraft, Fail, ref checkedRows, ref catalog);
             }
             catch (Exception error) { Fail("exception " + error); }
             string result = failures == 0 && checkedRows > 0 ? "Passed" : "Failed";
@@ -136,16 +196,28 @@ namespace Game.Tests.Editor
             if (quit) EditorApplication.Exit(result == "Passed" ? 0 : 2);
         }
 
-        private static void Validate(string catalog, Action<string> fail, ref int checkedRows)
+        private static void Validate(string catalogArgument, string explicitDraft, Action<string> fail, ref int checkedRows, ref string catalog)
         {
+            catalog = catalogArgument;
             string project = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            JObject draft = null;
+            if (!string.IsNullOrWhiteSpace(explicitDraft))
+            {
+                string draftPath = Path.IsPathRooted(explicitDraft) ? explicitDraft : Path.Combine(project, explicitDraft);
+                if (!File.Exists(draftPath)) { fail("WARLINE_MISSION_DRAFT not found: " + draftPath); return; }
+                try { draft = JObject.Parse(File.ReadAllText(draftPath, Encoding.UTF8)); }
+                catch (Exception error) { fail("WARLINE_MISSION_DRAFT is not valid JSON: " + error.Message); return; }
+                string draftCatalog = (string)draft["catalog_id"] ?? string.Empty;
+                if (string.IsNullOrEmpty(catalog)) catalog = draftCatalog;
+                else if (!string.Equals(catalog, draftCatalog, StringComparison.OrdinalIgnoreCase))
+                { fail("WARLINE_SKIRMISH_CATALOG " + catalog + " differs from the draft catalog_id " + draftCatalog); return; }
+            }
             string layoutPath = "Assets/Game/Configs/SkirmishExpansion/Scenarios/" + catalog + "/SkirmishLayout_" + catalog + ".asset";
             var layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);
             if (layout == null) { fail("missing layout asset " + layoutPath); return; }
 
-            JObject draft = null;
             string draftDir = Path.Combine(project, "Tools", "Missions", "drafts");
-            if (Directory.Exists(draftDir))
+            if (draft == null && Directory.Exists(draftDir))
                 foreach (string file in Directory.GetFiles(draftDir, "*.json"))
                 {
                     JObject candidate;
@@ -165,6 +237,9 @@ namespace Game.Tests.Editor
             var f = new Vector2(layout.WorldBinding.ForwardX, layout.WorldBinding.ForwardZ);
             var a = new Vector2(layout.WorldBinding.AcrossX, layout.WorldBinding.AcrossZ);
             var reported = new HashSet<string>(StringComparer.Ordinal);
+            var admittedByPad = new Dictionary<string, int>(StringComparer.Ordinal);
+            int minAdmitted = int.TryParse(Environment.GetEnvironmentVariable("WARLINE_MIN_ADMITTED_ORIGINS"), NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedMin)
+                ? parsedMin : 25;
 
             foreach (var row in layout.StructureInstancePads)
             {
@@ -180,6 +255,17 @@ namespace Game.Tests.Editor
                 // Same formula as SkirmishStartingBuildingsService: floor cell of the world centre minus footprint/2 (integer).
                 int cellX = (int)Math.Floor((cx - grid.Origin.x) / cell), cellZ = (int)Math.Floor((cz - grid.Origin.z) / cell);
                 var rect = new RectInt(cellX - w / 2, cellZ - d / 2, w, d);
+                if (admittedByPad.TryGetValue(row.PadId + "|" + w + "x" + d, out int knownAdmitted) == false)
+                {
+                    knownAdmitted = CountAdmitted(layout, pad, grid, bounds, w, d);
+                    admittedByPad[row.PadId + "|" + w + "x" + d] = knownAdmitted;
+                    Debug.Log("[SkirmishInstancePadContainment] catalog=" + catalog + " pad=" + row.PadId + " structure=" + row.StructureId +
+                        " footprint=" + w + "x" + d + " pad=" + pad.WidthMetres.ToString("F2", CultureInfo.InvariantCulture) + "x" +
+                        pad.DepthMetres.ToString("F2", CultureInfo.InvariantCulture) + " admittedOrigins=" + knownAdmitted +
+                        " preferredInside=" + (SkirmishStartingGrantPlacementConstraint.ContainsFootprint(layout, pad, grid, bounds, rect) ? 1 : 0));
+                    if (knownAdmitted < minAdmitted)
+                        fail(label + " admits only " + knownAdmitted + " origins (< " + minAdmitted + "): the shared search cannot relocate this building (pad_slack_m too small, or pad at the playable edge)");
+                }
                 if (SkirmishStartingGrantPlacementConstraint.ContainsFootprint(layout, pad, grid, bounds, rect)) continue;
                 SkirmishInstancePadPlanner.EncloseWorldAlignedFootprint(f.x, f.y, a.x, a.y, w * cell, d * cell, cell, out float needW, out float needD);
                 string key = row.StructureId + "|" + row.PadId;
@@ -188,6 +274,26 @@ namespace Game.Tests.Editor
                         " needed>=" + needW.ToString("F2", CultureInfo.InvariantCulture) + "x" + needD.ToString("F2", CultureInfo.InvariantCulture) +
                         " footprint=" + w + "x" + d + " preferredOrigin=(" + rect.x + "," + rect.y + ") (outside pad, frame, or playable bounds)");
             }
+        }
+
+        // Grid origins (lower-left cell of a w x d cell rectangle) the typed-pad constraint admits: the same
+        // ContainsFootprint the runtime applies, scanned over the pad's bounding box in cells.
+        private static int CountAdmitted(SkirmishMapLayoutConfig layout, SkirmishLegalPadConfig pad, GridConfig grid, OperationMapBoundsConfig bounds, int w, int d)
+        {
+            float minX = float.MaxValue, minZ = float.MaxValue, maxX = float.MinValue, maxZ = float.MinValue;
+            foreach (float sx in new[] { -.5f, .5f })
+                foreach (float sz in new[] { -.5f, .5f })
+                {
+                    if (!layout.TryProjectLocalToMap(pad.CenterX + sx * pad.WidthMetres, pad.CenterZ + sz * pad.DepthMetres, out float x, out float z)) return 0;
+                    minX = Mathf.Min(minX, x); maxX = Mathf.Max(maxX, x); minZ = Mathf.Min(minZ, z); maxZ = Mathf.Max(maxZ, z);
+                }
+            int x0 = Mathf.FloorToInt((minX - grid.Origin.x) / grid.CellSize) - 1, x1 = Mathf.CeilToInt((maxX - grid.Origin.x) / grid.CellSize) + 1;
+            int z0 = Mathf.FloorToInt((minZ - grid.Origin.z) / grid.CellSize) - 1, z1 = Mathf.CeilToInt((maxZ - grid.Origin.z) / grid.CellSize) + 1;
+            int count = 0;
+            for (int ox = x0; ox <= x1; ox++)
+                for (int oz = z0; oz <= z1; oz++)
+                    if (SkirmishStartingGrantPlacementConstraint.ContainsFootprint(layout, pad, grid, bounds, new RectInt(ox, oz, w, d))) count++;
+            return count;
         }
     }
 }

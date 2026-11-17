@@ -3,6 +3,34 @@
 Hard decisions the program lead cannot take under the defaults. Newest first. Each item: question,
 options, evidence, recommendation, what runs meanwhile.
 
+## 2026-11-17 — S002 seed 155923: one enemy tank can end the match at ~95 s
+
+**Question.** On seed 155923 the enemy's lone tank (420 HP) crosses ARIA's advancing column at ~55 s; when the
+column does not kill it, it destroys the 800-HP player base in ~28 s (first hit ~67 s, base dead ~95 s). Is this
+an ARIA skill problem to keep working on, or a pacing problem for the budget?
+
+**Evidence.** Baseline ARIA on current code: 155923 en lost at 95.5 s (`program-logs/2026-11-17/probe-seeds1`),
+won at 272.8 s (`lane-s002gate` 1614115), so roughly a coin flip decided by whether the column kills the tank
+in passing (Codex 019: `briefs/codex-019-seed-loss-analysis-report.txt`). Four ARIA attempts, all worse than
+baseline and reverted: opening home guard 1/6 (`aria-gate1`); intercept v1 never fired (`lane-s002gate`);
+intercept v2 1 win + 2 Blocked (`aria-intercept-q1`); column camera + intercept 3/5, intercept never fired
+(`aria-intercept-q2`). Reasons (`daily/aria-intercept-2026-11-17.md`, `daily/aria-worker-2026-11-17.md`): the
+tank is in fog except ~4.5 s at the crossing; ARIA's camera is ~600 units away at that moment; a recall
+after the first base hit needs 24–29 s. A human might also lose this seed. Time spent: ~4 h (over the 2 h rule).
+
+**Options.**
+1. Starting forces (2026-11-06 authorization): give the player base one starting defence (e.g. a guard
+   tower, as BT/CE already use) or remove the enemy's lone opening tank in the BA-G-E budget. Shared template
+   → re-run every mission that consumes it.
+2. Raise player base HP or lower the tank's damage — unit/structure stats: not authorized.
+3. One more ARIA attempt with a different idea (e.g. keep the anti-armour group as rearguard for the first
+   90 s). The last three attempts each broke the baseline.
+4. Accept seed variance: replace 155923 in the acceptance seed set. Changes the gate → orchestrator/owner.
+
+**Recommendation.** Option 1 with a guard tower at the player base in the BA template (fewest shared values,
+same mechanism the other objectives use), re-run the three BA missions that start today. **Meanwhile:** no
+tuning; ARIA stays on the 4/4 baseline; S002 is recorded with blocker "155923 lone-tank loss (variance)".
+
 ## 2026-11-17 — Gate 2 time band versus the Base Assault deadline (S002 first)
 
 **Question.** Gate 2 requires time-to-win at 40–70% of the deadline. S002 wins in about 236–268 s

@@ -92,3 +92,7 @@ record is `missions.csv`.
 - 2026-11-17 07:08 shift lead: noted plan after run: merge aria-home-defense, apply 010/012/018 (drop 011), one compile, then S002 130365 en home_defense trace run.
 - 2026-11-17 07:21 shift lead: step 1 done. S002 130365 en: Abort countedWin=0 (match Victory at 236 s, enemy base destroyed, player base 800 throughout; terminal probe playerFrameTimeout). S006: launchFailed, no playable dispatch. Report in daily/shift-2026-11-17b.md.
 - 2026-11-17 07:22 orchestrator: owner clicked "Don't rebuild Library"; the Editor loaded with the existing Library (marker gone, no rebuild) and ran queue2 to the end. Results from the log: S002 seed 130365 en = Abort after 313.4 s (not a win); S006 did not launch: "Catalog S006 has no playable generic library dispatch matching definition skirmish.s006 v2". End source check took 36 s (the long waits were the dialog, not the check). Shift lead is extracting the traces.
+- 2026-11-17 07:22 shift lead: merged aria-home-defense; applied 010,012,018 (011 dropped); compile check launching
+- 2026-11-17 07:25 shift lead: compile-3 PASSED (010,012,018 + home-defense merge). Authoring S026,S049,S050 via AuthorFromDraftList.
+- 2026-11-17 07:26 shift lead: authored S026,S049,S050 (Passed) and committed. Launching queue3: S002,S026,S049,S050 seed 130365 en via run_aria_queue.py
+- 2026-11-17 07:33 shift lead: queue3 finished

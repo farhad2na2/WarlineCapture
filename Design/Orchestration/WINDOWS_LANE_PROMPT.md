@@ -77,7 +77,15 @@ Write one file per batch: `Design/Orchestration/windows_lane_results/YYYY-MM-DD-
 
 Failed, aborted and timed-out jobs go in the same list. If a job has no result line, write "no harness result line". Add at most one line of interpretation per job. Do not add other commentary.
 
-## 7. Loop
+## 7. One-batch mode (Codex or any one-shot agent)
+
+If you run as a one-shot agent (for example `codex exec` started in `D:\Projects\WarlineCapture` with this
+file as the prompt), do exactly one pass: step 1 below, run the first batch whose status is `READY`
+(skip batches whose result file already exists in `windows_lane_results/`), write its result file, commit,
+push, and exit. Do not poll or loop. The owner (or a scheduled task) starts the next pass. Never do code
+fixes, authoring or other Codex work from this prompt.
+
+## 8. Loop (long-running agent session)
 
 1. `git fetch origin`, then merge `origin/missions/integration`.
 2. Read `windows_lane_queue.md`. Run only a batch whose status is `READY`.

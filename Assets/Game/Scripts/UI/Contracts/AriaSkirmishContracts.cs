@@ -62,10 +62,6 @@ namespace Game.UI.Contracts
         // (InterceptKnown), and its on-screen attack tap when reachable (InterceptThreat, -20002).
         public bool InterceptKnown;
         public AriaTouchTarget InterceptThreat;
-        // Camera drag on clear ground (-20015) that moves the known vehicle toward the view centre.
-        public AriaTouchTarget InterceptPan;
-        // Evidence only: projected screen point of the known vehicle (z = depth).
-        public UnityEngine.Vector3 InterceptScreen;
         // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
         public AriaTouchTarget HomeGround;
         public int OwnStructureAttackUnits;

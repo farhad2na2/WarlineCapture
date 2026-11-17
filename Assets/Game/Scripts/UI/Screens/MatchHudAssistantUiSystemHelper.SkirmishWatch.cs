@@ -646,28 +646,16 @@ namespace Game.UI.Runtime
             view.GroupEnd = new AriaTouchTarget { Id = -20005, Position = end, Available = true };
             return true;
         }
-        // Public fog view: the projection reports a visible hostile vehicle crossing or
-        // slipping past the advancing army. Offer a tap on the vehicle itself only while it
-        // is on screen and reachable (the touch owner refreshes a moving position before
-        // release). Otherwise offer an ordinary camera drag on clear ground from the view
-        // centre that moves the vehicle toward it; in Attack mode a drag pans, never orders.
+        // Public fog view: the projection reports a visible hostile vehicle slipping behind
+        // the advancing army. Offer a tap on the vehicle itself only while it is on screen
+        // and reachable; the touch owner refreshes a moving position before release.
         private void ObserveIntercept(ref AriaSkirmishObservation view, UiSkirmishModel model)
         {
             view.InterceptKnown = model.SlippingHostile;
             if (!model.SlippingHostile || view.MapOpen || view.DrawerOpen || Camera.main == null) return;
             var point = Camera.main.WorldToScreenPoint(new Vector3(model.SlippingHostileX, model.SlippingHostileY, model.SlippingHostileZ) + Vector3.up);
-            view.InterceptScreen = point;
             view.InterceptThreat = new AriaTouchTarget { Id = -20002, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20002, true) };
-            if (view.InterceptThreat.Available || point.z <= 0) return;
-            var safe = Screen.safeArea;
-            // Clear of the squad tray and command buttons at the bottom and the top bar.
-            var centre = new Vector2(safe.x + safe.width * .5f, safe.y + safe.height * .55f);
-            if (!Game.Simulation.AriaInterceptPolicy.PanDelta(point.x, point.y, centre.x, centre.y,
-                    safe.width * .38f, safe.height * .28f, out float dx, out float dy)) return;
-            var end = centre + new Vector2(dx, dy);
-            view.InterceptPan = new AriaTouchTarget { Id = -20015, Position = centre, Drag = true, DragEnd = end,
-                Available = WatchTargetIsReachable(centre, -20015, true) && safe.Contains(end) };
         }
         private void ObserveMapThreat(ref AriaSkirmishObservation view)
         {

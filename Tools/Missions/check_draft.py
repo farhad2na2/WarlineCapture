@@ -19,6 +19,17 @@ STRUCTURES = ('building.barracks', 'building.ground_staging', 'building.helipad'
               'building.fabrication_depot', 'building.watchtower', 'building.watchtower.approach',
               'building.satellite_dish')
 FRAME_MARGIN = 32.0  # SkirmishMissionAuthoringEntry.FrameMarginMetres
+OBJECTIVES = ('BA', 'FC', 'BT', 'CE')
+# SkirmishObjectiveAreaCompiler.RequiredRoles: exact role set per objective (BA takes none).
+AREA_ROLES = {
+    'FC': ('FrontlineA', 'FrontlineB', 'FrontlineC'),
+    'BT': ('BreakthroughCorridorA', 'BreakthroughCorridorB', 'BreakthroughExit'),
+    'CE': ('ConvoyDestination',),
+}
+ALL_AREA_ROLES = tuple(r for roles in AREA_ROLES.values() for r in roles)
+# SkirmishMeasuredLayoutBinder.cs:155-170: exact mode-owned pads (faction 1 truck bays, faction 2 towers).
+CONVOY_ROLES = ('convoy.origin.1', 'convoy.origin.2', 'convoy.origin.3')
+DEFENSE_ROLES = ('defense.approach.a', 'defense.approach.b')
 NEEDS_UNITY = ('source asset/metadata, map bounds and terrain, placement and navigation, '
                'shared profiles, compilation, fingerprints, registration and native play')
 
@@ -26,6 +37,179 @@ NEEDS_UNITY = ('source asset/metadata, map bounds and terrain, placement and nav
 def rows(path):
     with (ROOT / path).open(newline='', encoding='utf-8-sig') as f:
         return list(csv.DictReader(f))
+
+
+def playable_bounds(draft):
+    """(minx, minz, maxx, maxz) of the campaign source's playableMin/Max, or None when the asset is not readable."""
+    source = draft.get('campaign_source') if isinstance(draft, dict) else None
+    if not isinstance(source, str) or not source:
+        return None
+    try:
+        text = (ROOT / source).read_text(encoding='utf-8')
+    except (OSError, ValueError):
+        return None
+    number = r'(-?[0-9.]+(?:[eE][-+]?[0-9]+)?)'
+    low = re.search(r'playableMin: \{x: ' + number + r', y: \S+, z: ' + number + r'\}', text)
+    high = re.search(r'playableMax: \{x: ' + number + r', y: \S+, z: ' + number + r'\}', text)
+    if not low or not high:
+        return None
+    return (float(low.group(1)), float(low.group(2)), float(high.group(1)), float(high.group(2)))
+
+
+def cross(a, b, c):
+    return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
+
+
+def on_segment(a, b, p):
+    return (cross(a, b, p) == 0 and min(a[0], b[0]) <= p[0] <= max(a[0], b[0]) and
+            min(a[1], b[1]) <= p[1] <= max(a[1], b[1]))
+
+
+def segments_touch(a, b, c, d):
+    """SkirmishObjectiveAreaCompiler.Intersects (touching counts)."""
+    ab_c, ab_d, cd_a, cd_b = cross(a, b, c), cross(a, b, d), cross(c, d, a), cross(c, d, b)
+    return ((ab_c == 0 and on_segment(a, b, c)) or (ab_d == 0 and on_segment(a, b, d)) or
+            (cd_a == 0 and on_segment(c, d, a)) or (cd_b == 0 and on_segment(c, d, b)) or
+            ((ab_c > 0) != (ab_d > 0) and (cd_a > 0) != (cd_b > 0)))
+
+
+def perimeter(shape, pts):
+    """Canonical-comparable perimeter of an area (SkirmishObjectiveAreaCompiler.Perimeter/SamePerimeter)."""
+    if shape == 'rectangle':
+        (x0, z0), (x1, z1) = pts
+        ring = [(x0, z0), (x1, z0), (x1, z1), (x0, z1)]
+    else:
+        ring = list(pts)
+    for i in range(len(ring) - 1, -1, -1):
+        if len(ring) > 3 and cross(ring[i - 1], ring[i], ring[(i + 1) % len(ring)]) == 0:
+            ring.pop(i)
+    forms = []
+    for seq in (ring, ring[::-1]):
+        for start in range(len(seq)):
+            forms.append(tuple(seq[start:] + seq[:start]))
+    return min(forms)
+
+
+def check_areas(draft, objective, point, fail, bounds):
+    """Typed objective areas (SkirmishObjectiveAreaConfig) and their measured-evidence pointer."""
+    raw = draft.get('objective_areas')
+    required = AREA_ROLES.get(objective, ())
+    if not required:
+        if raw is not None:
+            fail('area.unexpected', 'objective_areas applies to FC/BT/CE drafts only')
+        if draft.get('area_measurement') is not None:
+            fail('area.unexpected', 'area_measurement applies to FC/BT/CE drafts only')
+        return
+    if not isinstance(raw, dict):
+        fail('area.required', objective + ' needs objective_areas{} with ' + ', '.join(required))
+        raw = {}
+    for role in raw.keys() - set(required):
+        fail('area.role', 'objective_areas role ' + repr(role) + ' is not one of ' + ', '.join(required))
+    for role in required:
+        if role not in raw:
+            fail('area.required', 'missing objective area ' + role)
+    perimeters = {}
+    for role in required:
+        spec = raw.get(role)
+        if spec is None:
+            continue
+        label = 'objective_areas.' + role
+        if not isinstance(spec, dict) or len(spec) != 1 or next(iter(spec)) not in ('rectangle', 'polygon'):
+            fail('area.type', label + ' needs exactly one of rectangle:[[minX,minZ],[maxX,maxZ]] or polygon:[[x,z],...]')
+            continue
+        shape, value = next(iter(spec.items()))
+        if not isinstance(value, list):
+            fail('area.type', label + '.' + shape + ' must be an array of [x,z] points')
+            continue
+        pts = [point(v, label + '.' + shape + '[' + str(i) + ']') for i, v in enumerate(value)]
+        if any(p is None for p in pts):
+            continue
+        if shape == 'rectangle':
+            if len(pts) != 2 or not (pts[0][0] < pts[1][0] and pts[0][1] < pts[1][1]):
+                fail('area.geometry', label + ' rectangle needs [minimum XZ, maximum XZ] with min < max on both axes')
+                continue
+        else:
+            if len(pts) < 3 or not polygon_ok(pts):
+                fail('area.geometry', label + ' polygon must be simple (no repeats, zero-area, backtracks or self-intersections), 3+ points')
+                continue
+        if bounds is not None and any(not (bounds[0] <= p[0] <= bounds[2] and bounds[1] <= p[1] <= bounds[3]) for p in pts):
+            fail('area.bounds', label + ' leaves the source playable bounds ' + str(bounds))
+        key = perimeter(shape, pts)
+        if key in perimeters:
+            fail('area.distinct', label + ' has the same perimeter as ' + perimeters[key])
+        perimeters[key] = role
+    evidence = draft.get('area_measurement')
+    if (not isinstance(evidence, dict) or evidence.keys() != {'artifact'} or not isinstance(evidence.get('artifact'), str) or
+            not evidence['artifact'] or evidence['artifact'].startswith('/') or '..' in evidence['artifact'].split('/') or
+            any(c.isspace() for c in evidence['artifact'])):
+        fail('area.measurement', 'area_measurement {"artifact": "<repo-relative path of the native measurement file>"} required; '
+             'the entry binds its SHA-256 (SkirmishObjectiveAreaCompiler needs measured proof)')
+
+
+def polygon_ok(pts):
+    n = len(pts)
+    twice = 0.0
+    for i in range(n):
+        nxt = (i + 1) % n
+        if pts[i] == pts[nxt]:
+            return False
+        prev = pts[i - 1]
+        if cross(prev, pts[i], pts[nxt]) == 0 and ((pts[i][0] - prev[0]) * (pts[nxt][0] - pts[i][0]) +
+                                                     (pts[i][1] - prev[1]) * (pts[nxt][1] - pts[i][1])) <= 0:
+            return False
+        twice += pts[i][0] * pts[nxt][1] - pts[nxt][0] * pts[i][1]
+        for j in range(i + 1, n):
+            other = (j + 1) % n
+            if nxt == j or other == i:
+                continue
+            if segments_touch(pts[i], pts[nxt], pts[j], pts[other]):
+                return False
+    return twice != 0
+
+
+def check_objective_pads(draft, objective, points, pads, explicit, local, fail):
+    """Objective-owned pads: faction-2 defense towers (BT/CE) and faction-1 truck bays (CE)."""
+    anchored = lambda roles: [r for r in roles if r in points]
+    if objective in ('BT', 'CE'):
+        for role in DEFENSE_ROLES:
+            if role not in points:
+                fail('pad.required', 'missing ' + role + ' anchor (enemy approach tower)')
+    else:
+        for role in anchored(DEFENSE_ROLES):
+            fail('pad.objective', role + ' is only valid for BT/CE (the binder rejects defense approaches elsewhere)')
+    if objective == 'CE':
+        for role in CONVOY_ROLES:
+            if role not in points:
+                fail('pad.required', 'missing ' + role + ' anchor (objective truck bay)')
+    else:
+        for role in anchored(CONVOY_ROLES):
+            fail('pad.objective', role + ' is only valid for CE')
+    for role in anchored(DEFENSE_ROLES + CONVOY_ROLES):
+        if role not in explicit:
+            fail('pad.size_required', role + ' needs pads{} with an explicit measured size; no default is guessed')
+    # SkirmishConvoyTruckDefinition.TryAppendForces: no two bays may overlap in the layout frame.
+    bays = [(r, pads[r]) for r in CONVOY_ROLES if r in pads and r in explicit and local]
+    for i in range(len(bays)):
+        for j in range(i):
+            (ra, (at_a, _, sa)), (rb, (at_b, _, sb)) = bays[i], bays[j]
+            ca, cb = local(*at_a), local(*at_b)
+            if abs(ca[0] - cb[0]) < (sa[0] + sb[0]) / 2 and abs(ca[1] - cb[1]) < (sa[1] + sb[1]) / 2:
+                fail('pad.convoy_overlap', ra + ' overlaps ' + rb)
+
+
+def check_convoy_routes(routes, points, fail):
+    """CE needs two vehicle routes whose middle segments differ (distinct truck holding pockets)."""
+    middles = set()
+    for route in routes if isinstance(routes, list) else []:
+        if not isinstance(route, dict) or route.get('vehicles', True) is False:
+            continue
+        via = route.get('via')
+        if not isinstance(via, list) or len(via) < 3 or any(not isinstance(x, str) or x not in points for x in via):
+            continue
+        middle = tuple(points[x] for x in via[1:-1])
+        middles.add(min(middle, middle[::-1]))
+    if len(middles) < 2:
+        fail('route.convoy', 'CE needs two vehicle routes with different non-empty middle waypoints (via[1:-1])')
 
 
 def check_instance_pads(draft, points, pads, point, fail):
@@ -109,15 +293,18 @@ def check_instance_pads(draft, points, pads, point, fail):
                 fail('instance.bounds', label + ' leaves the draft frame')
 
 
-def check(draft, catalog, matrix):
+def check(draft, catalog, matrix, bounds='auto'):
     errors = []
+    if bounds == 'auto':
+        bounds = playable_bounds(draft)
     def fail(rule, message):
         errors.append((rule, message))
     # SkirmishMissionAuthoringEntry.cs:119-126 (JObject and allowed top-level keys).
     if not isinstance(draft, dict):
         return [('draft', 'JSON root must be an object')]
     for key in draft.keys() - {'catalog_id', 'campaign_source', 'anchors', 'pads', 'routes', 'notes',
-                               'instance_pads', 'structure_footprints'}:
+                               'instance_pads', 'structure_footprints',
+                               'objective_areas', 'area_measurement'}:
         fail('draft', 'unknown key ' + key)
     # SkirmishMissionDispatch.cs:61-72; SkirmishMissionAuthoringEntry.cs:128-135.
     cid = draft.get('catalog_id')
@@ -130,8 +317,9 @@ def check(draft, catalog, matrix):
     row = next((r for r in matrix if r['catalog_id'] == cid and r['size_id'] == 'Standard'), None)
     if canonical and row is None:
         fail('matrix', 'no Standard matrix row')
-    if row and row['objective_id'] != 'BA':
-        fail('objective', 'authoring supports Base Assault only')
+    objective = row['objective_id'] if row else None
+    if row and objective not in OBJECTIVES:
+        fail('objective', 'authoring supports BA, FC, BT and CE; got ' + repr(objective))
     # SkirmishMissionAuthoringEntry.cs:146-148: source loading itself needs Unity.
     if not isinstance(draft.get('campaign_source'), str) or not draft['campaign_source']:
         fail('campaign_source', 'source asset path required')
@@ -182,10 +370,15 @@ def check(draft, catalog, matrix):
                 ('economy.', 'supply', (14, 12)), ('service.', 'service', (12, 10)),
                 ('supply.expansion.', 'expansion', (14, 12))]
     def kind(role):
+        if role in CONVOY_ROLES:
+            return ('convoy', (14, 12))
+        if role in DEFENSE_ROLES:
+            return ('defense', (14, 12))
         return next(((k, size) for prefix, k, size in prefixes if role.startswith(prefix)), (None, None))
     pads = {role: (p, role, kind(role)[1]) for role, p in points.items() if kind(role)[0]}
     # SkirmishMissionAuthoringEntry.cs:449-474. Non-object pads are ignored by C#.
     rawpads = draft.get('pads')
+    explicit = set()  # pads whose size the draft states itself
     if isinstance(rawpads, dict):
         for role, spec in rawpads.items():
             k, size = kind(role)
@@ -205,6 +398,7 @@ def check(draft, catalog, matrix):
                     anchor = spec['anchor']
                 if spec.get('size') is not None:
                     size = point(spec['size'], 'pads.' + role + '.size')
+                    explicit.add(role)
             else:
                 at = point(spec, 'pads.' + role)
             if not isinstance(anchor, str) or anchor not in points:
@@ -214,9 +408,21 @@ def check(draft, catalog, matrix):
             if at is not None and size is not None and isinstance(anchor, str) and anchor in points:
                 pads[role] = (at, anchor, size)
     check_instance_pads(draft, points, pads, point, fail)
+    # Typed objective areas and objective-owned pads (FC/BT/CE; a BA draft is untouched unless it adds them).
+    check_areas(draft, objective, point, fail, bounds)
+    local = None
+    if 'base.player' in points and 'base.enemy' in points:
+        px, pz = points['base.player']
+        length = math.dist(points['base.player'], points['base.enemy'])
+        if length >= 1:
+            fx, fz = (points['base.enemy'][0] - px) / length, (points['base.enemy'][1] - pz) / length
+            local = lambda x, z: ((x - px) * fx + (z - pz) * fz, (x - px) * -fz + (z - pz) * fx)
+    check_objective_pads(draft, objective, points, pads, explicit, local, fail)
     # SkirmishMeasuredLayoutBinder.cs:155-185, 198-207; SkirmishMapLayoutBuilder.cs:367-433.
     kinds = {}
     for role in pads:
+        if role in CONVOY_ROLES or role in DEFENSE_ROLES:
+            continue  # exact mode-owned roles, resolved by role rather than faction/kind
         faction = 'player' if role.endswith('.player') else 'enemy' if role.endswith('.enemy') else None
         if faction:
             key = (faction, kind(role)[0])
@@ -280,6 +486,8 @@ def check(draft, catalog, matrix):
         fail('route.distinct', 'two distinct approaches required')
     if mains != 1:
         fail('route.main', 'exactly one vehicle-enabled main route required')
+    if objective == 'CE':
+        check_convoy_routes(routes, points, fail)
     return errors
 
 

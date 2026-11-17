@@ -9,7 +9,7 @@
     ],
     "base.enemy": [
       1430.0,
-      487.5
+      463.5
     ],
     "staging.player": [
       970.75,
@@ -40,8 +40,8 @@
       680.0
     ],
     "air.enemy": [
-      1592.0,
-      489.5
+      1425.5,
+      608.0
     ],
     "supply.expansion.a": [
       1077.99,
@@ -140,28 +140,28 @@
       391.5
     ],
     "s006.f2.fabrication_depot": [
-      1425.5,
-      608.0
+      1449.5,
+      368.0
     ],
     "s006.f2.fuel_bladder": [
       1471.0,
       389.0
     ],
     "s006.f2.ground_staging": [
-      1423.0,
-      459.5
-    ],
-    "s006.f2.oil_pump": [
-      1447.5,
-      458.0
-    ],
-    "s006.f2.watchtower": [
       1519.0,
       459.5
     ],
+    "s006.f2.oil_pump": [
+      1423.5,
+      410.0
+    ],
+    "s006.f2.watchtower": [
+      1419.5,
+      487.0
+    ],
     "s006.f2.watchtower.approach": [
-      1449.5,
-      368.0
+      1423.0,
+      363.5
     ],
     "s006.f1.guard_tower": [
       939.5,
@@ -169,19 +169,15 @@
     ],
     "s006.f2.barracks": [
       1430.0,
-      487.5
+      463.5
     ],
     "spawn.vehicle.enemy": [
-      1423.5,
-      470.0
-    ],
-    "spawn.infantry.enemy": [
-      1452.5,
+      1430.0,
       487.5
     ],
-    "rally.enemy": [
-      1447.5,
-      470.0
+    "spawn.infantry.enemy": [
+      1447.0,
+      485.0
     ],
     "s006.f2.satellite_dish": [
       1449.5,
@@ -200,16 +196,16 @@
       562.0
     ],
     "basemove.route.1.waypoint.03": [
-      1238.0,
-      558.0
+      1242.0,
+      554.0
     ],
     "basemove.route.1.waypoint.04": [
-      1278.0,
+      1370.0,
       554.0
     ],
     "basemove.route.1.waypoint.05": [
-      1370.0,
-      554.0
+      1378.0,
+      550.0
     ],
     "basemove.route.1.waypoint.06": [
       1394.0,
@@ -221,10 +217,6 @@
     ],
     "basemove.route.1.waypoint.08": [
       1398.0,
-      462.0
-    ],
-    "basemove.route.1.waypoint.09": [
-      1414.0,
       462.0
     ],
     "basemove.route.2.waypoint.00": [
@@ -249,10 +241,6 @@
     ],
     "basemove.route.2.waypoint.05": [
       1398.0,
-      462.0
-    ],
-    "basemove.route.2.waypoint.06": [
-      1414.0,
       462.0
     ],
     "basemove.route.3.waypoint.00": [
@@ -283,10 +271,6 @@
       1398.0,
       462.0
     ],
-    "basemove.route.3.waypoint.07": [
-      1414.0,
-      462.0
-    ],
     "spawn.vehicle.player": [
       926.0,
       651.5
@@ -298,6 +282,10 @@
     "rally.player": [
       958.0,
       579.5
+    ],
+    "rally.enemy": [
+      1418.0,
+      449.5
     ]
   },
   "pads": {
@@ -313,8 +301,8 @@
       ]
     },
     "spawn.infantry.enemy": [
-      1452.5,
-      487.5
+      1447.0,
+      485.0
     ],
     "spawn.vehicle.player": {
       "at": [
@@ -328,8 +316,8 @@
       ]
     },
     "spawn.vehicle.enemy": [
-      1423.5,
-      470.0
+      1430.0,
+      487.5
     ],
     "rally.player": {
       "at": [
@@ -342,10 +330,17 @@
         8
       ]
     },
-    "rally.enemy": [
-      1447.5,
-      470.0
-    ],
+    "rally.enemy": {
+      "at": [
+        1418.0,
+        449.5
+      ],
+      "anchor": "rally.enemy",
+      "size": [
+        10,
+        8
+      ]
+    },
     "staging.enemy": [
       1286.0,
       463.5
@@ -357,6 +352,10 @@
     "service.enemy": [
       1471.0,
       365.0
+    ],
+    "air.enemy": [
+      1425.5,
+      608.0
     ]
   },
   "routes": [
@@ -376,7 +375,6 @@
         "basemove.route.1.waypoint.06",
         "basemove.route.1.waypoint.07",
         "basemove.route.1.waypoint.08",
-        "basemove.route.1.waypoint.09",
         "base.enemy"
       ],
       "width": 12,
@@ -398,7 +396,6 @@
         "basemove.route.2.waypoint.03",
         "basemove.route.2.waypoint.04",
         "basemove.route.2.waypoint.05",
-        "basemove.route.2.waypoint.06",
         "base.enemy"
       ],
       "width": 6,
@@ -420,7 +417,6 @@
         "basemove.route.3.waypoint.04",
         "basemove.route.3.waypoint.05",
         "basemove.route.3.waypoint.06",
-        "basemove.route.3.waypoint.07",
         "base.enemy"
       ],
       "width": 12,
@@ -647,7 +643,7 @@
       "faction": 2,
       "at": [
         1430.0,
-        487.5
+        463.5
       ],
       "size": [
         28,
@@ -674,8 +670,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1425.5,
-        608.0
+        1449.5,
+        368.0
       ],
       "size": [
         19,
@@ -702,7 +698,7 @@
       "kind": "GroundStaging",
       "faction": 2,
       "at": [
-        1423.0,
+        1519.0,
         459.5
       ],
       "size": [
@@ -716,8 +712,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1447.5,
-        458.0
+        1423.5,
+        410.0
       ],
       "size": [
         15,
@@ -730,8 +726,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1519.0,
-        459.5
+        1419.5,
+        487.0
       ],
       "size": [
         3,
@@ -744,8 +740,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1449.5,
-        368.0
+        1423.0,
+        363.5
       ],
       "size": [
         3,
@@ -772,8 +768,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1592.0,
-        489.5
+        1425.5,
+        608.0
       ],
       "size": [
         16,

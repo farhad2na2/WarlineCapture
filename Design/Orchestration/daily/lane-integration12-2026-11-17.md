@@ -1,0 +1,6 @@
+# Lane worker 12 (integration shift 12) 2026-11-17
+Logs: /Volumes/T7/Projects/WarlineCapture-program-logs/2026-11-17/lane12 (deadline 1080 s)
+- 1 Merged missions/aria-coverage-6 (947ffe255) --no-ff as 15b571a9a. Python 84/84 OK. Compile Passed (compile.log:1718, 0 error CS). No new metas.
+- 2 Queue A (qa/unity.log): S004 warm-up Victory 227.1 s (not counted). S002 155923 en Victory 271.6 s 25.1% unused empty (:933305); 130365 en Victory 265.0 s 24.5% empty (:1276938); 104731 en Victory 259.4 s 24.0% empty (:1740270); 130365 fa-IR Victory 260.7 s 24.1% empty (:2155595). TerminalFrozen Passed on all. BlockAllocator 0, consent flow 0.
+- 3 Queue B (qb/unity.log): S026 Victory 218.3 s 20.2% unused=apc_fast;apc_heavy;drone;radar;siege;transport_heli (:38869), frozen Passed. S050 Abort 430.2 s ariaStopped:Blocked (:81641), no gate line. S049 Victory 287.8 s 26.6% unused=helipad;satellite_dish;apc_heavy;drone;gunner;radar;siege;tank;transport_heli (:129826), frozen Passed. S006 Abort 112.4 s expandedStartupFailure=BlockedSpawn (:131056); no event=blocked lines.
+- 4 Versus lane 10: S002 4/4 Victory with gate 3 empty (fa-IR loss fixed) = better; S026 win = equal (drone still unused); S049 Blocked -> Victory = better; S050 Blocked -> Blocked = equal; S006 started then Blocked -> BlockedSpawn startup abort = worse.

@@ -132,3 +132,4 @@ record is `missions.csv`.
 - 2026-11-17 08:37 codex: batch finished: codex-021-footprint-trace:high:40
 - 2026-11-17 08:37 orchestrator: Codex 021 reviewed (additions only): a match-start log line prints every building footprint, and a script turns the log into the values drafts need. Not compiled. The ARIA worker applies 020 and 021 with the binding branch in its last step.
 - 2026-11-17 08:38 aria worker: aria-guard1 done: 155923 en Victory (countedWin=1), 130365 en Defeat (enemy rocketeer raid at t=233 beat the idle guard); committed guard posting onto home approach
+- 2026-11-17 08:44 aria worker: aria-guard2 done: both Abort ariaStopped:Blocked (guard post completion check wrong); fixed, launching aria-guard3 S002:155923:en,S002:130365:en

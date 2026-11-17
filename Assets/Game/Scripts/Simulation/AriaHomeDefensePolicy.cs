@@ -1,6 +1,6 @@
 using System;
 namespace Game.Simulation {
- public enum AriaHomeDefenseAction:byte {None,Waiting,Unavailable,CancelPlacement,CloseDrawer,CloseMap,InspectHome,PreviousPage,NextPage,ToggleSelected,SelectSlot,ArmAttack,AttackThreatTerrain,AttackThreatVisible,AttackHomeTerrain}
+ public enum AriaHomeDefenseAction:byte {None,Waiting,Unavailable,CancelPlacement,CloseDrawer,CloseMap,InspectHome,PreviousPage,NextPage,ToggleSelected,SelectSlot,ArmAttack,AttackThreatTerrain,AttackThreatVisible,AttackHomeTerrain,AttackAttackerVisible,AttackAttackerTerrain,AttackHomeFarTerrain}
  public readonly struct AriaStrategyTarget {public readonly bool Available;public readonly AriaHomeDefenseAction Action;public readonly int Slot;public AriaStrategyTarget(bool available,AriaHomeDefenseAction action,int slot=-1){Available=available;Action=action;Slot=slot;}}
  public struct AriaHomeDefenseView {
   public bool PresentedHomeThreat,PlacementOpen,DrawerOpen,MapOpen,AttackMode;
@@ -11,6 +11,13 @@ namespace Game.Simulation {
   // ProportionateDefense: send one roster group first; BaseCritical escalates.
   // Callers that leave these false keep the original all-group sweep unchanged.
   public bool BaseDamageOnly,ProportionateDefense,BaseCritical,HomeGroundAvailable;
+  // Ranged raid (lane 14 S002 155923: a tank shelled the HQ from ~66 units and no contact was presented
+  // inside the home radius). The public attacker is the nearest presented enemy marker near home, a
+  // fog-visible unit or its last-seen minimap ghost: AttackerVisible is that unit on screen, AttackerGround
+  // the clear ground next to it. HomeGroundFar is clear ground on the far side of home from the column,
+  // used when no attacker is presented and the column-side ground already failed once.
+  // AntiArmorMask: roster cards on this page whose presented role fights armour (rocketeer, tank, siege).
+  public bool AttackerVisibleAvailable,AttackerGroundAvailable,HomeGroundFarAvailable;public int AntiArmorMask;
   public AriaStrategyTarget PlacementCancel=>new AriaStrategyTarget(CancelAvailable,AriaHomeDefenseAction.CancelPlacement);
   public AriaStrategyTarget CloseDrawer=>new AriaStrategyTarget(CloseDrawerAvailable,AriaHomeDefenseAction.CloseDrawer);
   public AriaStrategyTarget CloseMap=>new AriaStrategyTarget(CloseMapAvailable,AriaHomeDefenseAction.CloseMap);
@@ -22,6 +29,9 @@ namespace Game.Simulation {
   public AriaStrategyTarget ThreatGround=>new AriaStrategyTarget(ThreatGroundAvailable,AriaHomeDefenseAction.AttackThreatTerrain);
   public AriaStrategyTarget Threat=>new AriaStrategyTarget(ThreatVisibleAvailable,AriaHomeDefenseAction.AttackThreatVisible);
   public AriaStrategyTarget HomeGround=>new AriaStrategyTarget(HomeGroundAvailable,AriaHomeDefenseAction.AttackHomeTerrain);
+  public AriaStrategyTarget Attacker=>new AriaStrategyTarget(AttackerVisibleAvailable,AriaHomeDefenseAction.AttackAttackerVisible);
+  public AriaStrategyTarget AttackerGround=>new AriaStrategyTarget(AttackerGroundAvailable,AriaHomeDefenseAction.AttackAttackerTerrain);
+  public AriaStrategyTarget HomeGroundFar=>new AriaStrategyTarget(HomeGroundFarAvailable,AriaHomeDefenseAction.AttackHomeFarTerrain);
   public AriaStrategyTarget Squad(int slot)=>new AriaStrategyTarget(slot>=0&&slot<5&&(AvailableSquadMask&(1<<slot))!=0,AriaHomeDefenseAction.SelectSlot,slot);
  }
  public struct AriaHomeDefenseState {public int HomeDefenseStage,HomeDefenseAction,HomeDefensePage,DefenseStage;public float HomeDefenseObserveUntil;public AriaGroundColumnState Column;
@@ -30,7 +40,8 @@ namespace Game.Simulation {
   public int HomeDefenseReason,HomeDefenseSlot,HomeDefenseScope,HomeDefenseRounds;
   // Recovery bits: 1 the camera was re-centred once this round, 2 the ground tap was repeated once this round,
   // 4 (kept across rounds) the last new press of this policy was the home focus control,
-  // 8 Attack was toggled off once for the re-centre this round.
+  // 8 Attack was toggled off once for the re-centre this round,
+  // 16 (fast sweep) the squads already selected on this roster page were ordered first.
   // RecoveryAction: completed-contact count when the recovery touch was issued.
   public int HomeDefenseRecovery,HomeDefenseRecoveryAction;
   // Public HUD base-health history (see AriaBaseDamagePolicy).
@@ -76,16 +87,23 @@ namespace Game.Simulation {
                 plan.DefenseStage = 4;
                 plan.HomeDefenseRecovery &= RecoveryLastFocus;
                 plan.HomeDefenseStage = 1;
-                if ((plan.HomeDefenseRecovery & RecoveryLastFocus) == 0)
+                // The defence ground is already on screen: a Home tap would only cost ~2 s of a raid.
+                // It stays allowed as the one re-centre if the ground is lost later in this round.
+                if (FastSweep(view) && DefenseTarget(view, plan.HomeDefenseRounds).Available)
+                    plan.HomeDefenseAction = view.CompletedContacts - 1;
+                else
                 {
-                    plan.HomeDefenseAction = view.CompletedContacts;
-                    Target(view.FocusPlayer, false, ref output);
-                    return true;
+                    if ((plan.HomeDefenseRecovery & RecoveryLastFocus) == 0)
+                    {
+                        plan.HomeDefenseAction = view.CompletedContacts;
+                        Target(view.FocusPlayer, false, ref output);
+                        return true;
+                    }
+                    // The last press was already this focus (a round given up without a target):
+                    // the camera is on home; do not press the same control again.
+                    plan.HomeDefenseRecovery |= RecoveryRecentred;
+                    plan.HomeDefenseAction = view.CompletedContacts - 1;
                 }
-                // The last press was already this focus (a round given up without a target):
-                // the camera is on home; do not press the same control again.
-                plan.HomeDefenseRecovery |= RecoveryRecentred;
-                plan.HomeDefenseAction = view.CompletedContacts - 1;
             }
             if (plan.HomeDefenseStage == 1)
             {
@@ -98,7 +116,11 @@ namespace Game.Simulation {
             }
             if (plan.HomeDefenseStage == 2)
             {
-                if (TryDeselectSquads(view, ref output)) return true;
+                // An all-group sweep orders every assault squad to the same target: keep a selection
+                // (here or on an earlier page) instead of spending a tap per card to clear it.
+                bool keep = FastSweep(view) && plan.HomeDefenseScope == 0 &&
+                    (view.ExpandedSelectedMask & ~view.ExpandedAssaultMask) == 0;
+                if (!keep && TryDeselectSquads(view, ref output)) return true;
                 // Deselecting an off-screen squad may have moved the roster.
                 // Restore this sweep's window, including later defense windows.
                 if (view.ExpandedPageIndex != plan.HomeDefensePage)
@@ -114,16 +136,27 @@ namespace Game.Simulation {
                 if (view.ExpandedAssaultMask == 0) plan.HomeDefenseScope = 0;
                 else
                 {
-                    int slot = LowestSetBit(view.ExpandedAssaultMask);
+                    int slot = PreferredDefender(view);
                     plan.HomeDefenseSlot = slot + 1;
                     if ((view.ExpandedSelectedMask & (1 << slot)) == 0)
                     { Target(view.Squad(slot), false, ref output); return true; }
                     plan.HomeDefenseStage = 4;
                 }
             }
+            if (plan.HomeDefenseStage == 3 && FastSweep(view) && (plan.HomeDefenseRecovery & RecoveryPageOrdered) == 0 &&
+                view.ExpandedAssaultMask != 0)
+            {
+                // Order first, then add: the squads already selected (or one anti-armour card) get the
+                // order now; the rest of the page is selected and ordered right after.
+                if ((view.ExpandedSelectedMask & view.ExpandedAssaultMask) == 0)
+                { Target(view.Squad(PreferredDefender(view)), false, ref output); return true; }
+                plan.HomeDefenseRecovery |= RecoveryPageOrdered;
+                plan.HomeDefenseStage = 4;
+            }
             if (plan.HomeDefenseStage == 3)
             {
                 int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
+                if (FastSweep(view) && (pending & view.AvailableSquadMask) != 0) pending &= view.AvailableSquadMask;
                 if (pending != 0)
                 { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
                 plan.HomeDefenseStage = view.ExpandedAssaultMask == 0 ? 6 : 4;
@@ -135,13 +168,13 @@ namespace Game.Simulation {
                 { Target(view.FocusPlayer, false, ref output); return true; }
                 // Let the camera settle on home before deciding that no defence target exists
                 // (Windows lane, 17 fps: the decision came in the frame the focus tap completed).
-                if (!DefenseTarget(view).Available && view.Time < plan.HomeDefenseObserveUntil)
+                if (!DefenseTarget(view, plan.HomeDefenseRounds).Available && view.Time < plan.HomeDefenseObserveUntil)
                 { output.Action = AriaHomeDefenseAction.Waiting; return true; }
                 plan.HomeDefenseStage = 4;
             }
             if (plan.HomeDefenseStage == 4)
             {
-                var threat = DefenseTarget(view);
+                var threat = DefenseTarget(view, plan.HomeDefenseRounds);
                 if (!threat.Available)
                 {
                     // A focus control pressed with Attack armed does not move the camera
@@ -181,12 +214,12 @@ namespace Game.Simulation {
             if (plan.HomeDefenseStage == 5)
             {
                 if (view.CompletedContacts <= plan.HomeDefenseAction)
-                { Target(DefenseTarget(view), true, ref output); return true; }
+                { Target(DefenseTarget(view, plan.HomeDefenseRounds), true, ref output); return true; }
                 if (view.AttackMode)
                 {
                     // The ground tap completed but Attack stayed armed: repeat it once, then
                     // give the round up rather than pressing the same ground a third time.
-                    var again = DefenseTarget(view);
+                    var again = DefenseTarget(view, plan.HomeDefenseRounds);
                     if ((plan.HomeDefenseRecovery & RecoveryRetapped) == 0 && again.Available)
                     {
                         plan.HomeDefenseRecovery |= RecoveryRetapped;
@@ -215,6 +248,13 @@ namespace Game.Simulation {
                 plan.HomeDefenseStage = 8;
                 return true;
             }
+            if (plan.HomeDefenseStage == 6 && FastSweep(view) &&
+                (view.ExpandedAssaultMask & ~view.ExpandedSelectedMask & view.AvailableSquadMask) != 0)
+            {
+                // The first order on this page went out; now select and order the rest of the page.
+                plan.HomeDefenseStage = 3;
+                return true;
+            }
             if (plan.HomeDefenseStage == 6)
             {
                 if (view.NextSquadPage.Available)
@@ -234,6 +274,7 @@ namespace Game.Simulation {
                 else
                 {
                     plan.HomeDefensePage = view.ExpandedPageIndex;
+                    plan.HomeDefenseRecovery &= ~RecoveryPageOrdered;
                     plan.HomeDefenseStage = 2;
                 }
                 return true;
@@ -243,14 +284,29 @@ namespace Game.Simulation {
             return true;
         }
  public const int ReasonNone=0,ReasonMinimap=1,ReasonBaseDamage=2;
- public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8;
+ public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8,RecoveryPageOrdered=16;
  public const float SingleDefenderObserveSeconds=20f,RetrySeconds=4f,DisarmSeconds=3f,RecentreSeconds=4f;
  // A presented contact is fought where it is; base damage alone sends defenders onto the home ground.
  // When the preferred ground is not offered, any other offered defence target is used.
- public static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view){
-  if(view.BaseDamageOnly)return view.HomeGround.Available?view.HomeGround:view.ThreatGround.Available?view.ThreatGround:view.Threat.Available?view.Threat:view.HomeGround;
+ public static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view)=>DefenseTarget(view,1);
+ // Base damage with a presented attacker near home: fight that attacker (the unit, else the ground beside it).
+ // Without one, the column-side home ground first; from the second round the far side of home is tried first,
+ // since the column-side ground already failed to stop the damage.
+ public static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view,int round){
+  if(view.BaseDamageOnly){
+   if(view.Attacker.Available)return view.Attacker;
+   if(view.AttackerGround.Available)return view.AttackerGround;
+   if(round>=2&&view.HomeGroundFar.Available)return view.HomeGroundFar;
+   return view.HomeGround.Available?view.HomeGround:view.HomeGroundFar.Available?view.HomeGroundFar:view.ThreatGround.Available?view.ThreatGround:view.Threat.Available?view.Threat:view.HomeGround;
+  }
   return view.ThreatGround.Available?view.ThreatGround:view.Threat.Available?view.Threat:view.HomeGround;
  }
+ // Fast sweep is the S002 proportionate defence (the generic planner keeps its original sweep).
+ static bool FastSweep(in AriaHomeDefenseView view)=>view.ProportionateDefense;
+ // Anti-armour card first (a tank shelling the HQ), else the first assault card.
+ static int PreferredDefender(in AriaHomeDefenseView view){
+  int assault=view.ExpandedAssaultMask,offered=assault&view.AvailableSquadMask,armour=offered&view.AntiArmorMask;
+  return LowestSetBit(armour!=0?armour:offered!=0?offered:assault);}
  // No defence target after the one re-centre (or a ground tap that left Attack armed twice):
  // toggle Attack off, observe briefly, then a new round starts from the home focus. Different
  // controls alternate, so no control is pressed three times in a row and ARIA keeps playing.
@@ -263,7 +319,7 @@ namespace Game.Simulation {
   plan.HomeDefenseObserveUntil=view.Time+RetrySeconds;plan.HomeDefenseStage=8;output.Action=AriaHomeDefenseAction.Waiting;return true;
  }
  static bool TryDeselectSquads(in AriaHomeDefenseView view,ref AriaHomeDefenseDecision output){if(view.ExpandedSelectedGroups<=0)return false;if(view.SelectedSquadToToggle.Available)Target(view.SelectedSquadToToggle,false,ref output);else output.Action=AriaHomeDefenseAction.Waiting;return true;}
- static int LowestSetBit(int mask){int bit=0,value=mask;while((value&1)==0){value>>=1;bit++;}return bit;}
+ static int LowestSetBit(int mask){if(mask==0)return 0;int bit=0,value=mask;while((value&1)==0){value>>=1;bit++;}return bit;}
  static void Target(AriaStrategyTarget target,bool world,ref AriaHomeDefenseDecision output){if(!target.Available){output.Action=AriaHomeDefenseAction.Unavailable;return;}output.Action=target.Action;output.Slot=target.Slot;}
  }
  // Public HUD base-health readout only. Any drop is the same signal a player
@@ -283,6 +339,16 @@ namespace Game.Simulation {
  public static class AriaPublicHomeThreatPolicy {
   public const float RadiusSquared=120f*120f;
   public static bool Consider(AriaGroundPosition eligiblePublicHostile,AriaGroundPosition publicHome,ref float closestSquared){float distance=AriaGroundApproachPolicy.SquaredDistance(eligiblePublicHostile,publicHome);if(distance<closestSquared){closestSquared=distance;return true;}return false;}
+  // Ranged raid search radius around home (covers a tank's weapon reach of the HQ; config attackRange 120).
+  public const float RangedRadiusSquared=130f*130f;
+  // Sight: 1 fog-visible marker, 2 last-seen ghost. A visible unit beats a ghost; then the nearer to home.
+  // bestDistance starts at RangedRadiusSquared, so nothing farther is ever chosen.
+  public static bool PreferAttacker(int sight,float squaredDistance,int bestSight,float bestDistance){
+   if(sight<1||sight>2||!(squaredDistance<=RangedRadiusSquared))return false;
+   if(bestSight==0)return squaredDistance<=bestDistance;
+   if(sight!=bestSight)return sight<bestSight;
+   return squaredDistance<bestDistance;
+  }
  }
 
 }

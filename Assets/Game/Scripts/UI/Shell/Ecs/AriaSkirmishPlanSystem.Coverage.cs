@@ -16,6 +16,22 @@ namespace Game.UI.Shell.Ecs
         static void ClearFindBase(ref AriaSkirmishPlanComponent p)
         { p.FindBaseActive = 0; p.FindBaseTaps = 0; p.FindBaseRun = 0; p.FindBaseLastTarget = 0; }
 
+        // After a given-up base search (AriaFindBasePolicy.Recover): Attack off through its own control
+        // (bounded), otherwise wait; true while recovering, so no search control is pressed again.
+        static bool StepFindBaseRecovery(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            var recovery = new Game.Simulation.AriaFindBaseRecovery { RetryAt = plan.FindBaseRetryAt, DisarmAt = plan.FindBaseDisarmAt,
+                DisarmActions = plan.FindBaseDisarmActions, Disarms = plan.FindBaseDisarms };
+            var step = Game.Simulation.AriaFindBasePolicy.Recover(ref recovery, view.Time, touch.Actions, view.AttackMode, view.Attack.Available);
+            plan.FindBaseRetryAt = recovery.RetryAt; plan.FindBaseDisarmAt = recovery.DisarmAt;
+            plan.FindBaseDisarmActions = recovery.DisarmActions; plan.FindBaseDisarms = recovery.Disarms;
+            if (step == Game.Simulation.AriaFindBaseFallback.Search) return false;
+            if (step == Game.Simulation.AriaFindBaseFallback.Disarm)
+            { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.Attack, false, ref output); return true; }
+            plan.Intent = AriaSkirmishIntent.ObserveBattle; output.Kind = AriaPlayObservationKind.Waiting; return true;
+        }
+
         static bool CoverageEligible(in AriaSkirmishObservation v) =>
             v.ExpandedSession && v.ExpandedBaseAssault && !v.AirProfile && !v.CombinedArmsField && !v.PublicObjective.Applicable;
 

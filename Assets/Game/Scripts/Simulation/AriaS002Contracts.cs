@@ -134,6 +134,11 @@ public AriaS002ActionTarget AdvanceGround;
 public AriaS002ActionTarget ThreatGround;
 // Public attack-move ground beside the labelled home objective.
 public AriaS002ActionTarget HomeGround;
+// Ranged raid: the presented attacker near home (unit tap, ground beside it) and the far-side home ground.
+public AriaS002ActionTarget HomeAttacker;
+public AriaS002ActionTarget HomeAttackerGround;
+public AriaS002ActionTarget HomeGroundFar;
+public int HomeAttackerSight;
 // Policy-derived each step from the HUD base-health readout; never set by adapters.
 public bool BaseDamageHomeThreat;
 public AriaS002ActionTarget FocusAdvance;
@@ -202,6 +207,7 @@ public AriaS002CommandReceipt PrecisionAttack;
 public int ExpandedAirMask;
 // Support unit kind per roster slot on this page (2 bits per slot: 1 radar, 2 drone, 3 transport heli).
 public int ExpandedSupportSlots;
+public int ExpandedAntiArmorMask;
 public bool ExpandedCanPreviousPage;
 public bool ExpandedCanNextPage;
 public int ExpandedPageIndex;
@@ -357,6 +363,10 @@ public byte FindBaseRun;
 public int FindBaseActions;
 public int FindBaseLastTarget;
 public int FindBaseGiveUps;
+public float FindBaseRetryAt;
+public float FindBaseDisarmAt;
+public int FindBaseDisarmActions;
+public byte FindBaseDisarms;
 public int CoverageActions;
 public float CoverageStarted;
 public byte CoverageAssaultSeen;

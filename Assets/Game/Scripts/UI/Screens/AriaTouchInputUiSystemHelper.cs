@@ -244,11 +244,42 @@ namespace Game.UI.Runtime
             return false;
         }
 
+        // ARIA's own synthetic touchscreens (this driver, or another driver such as a consent probe) are not
+        // physical input: a contact still settling on one must not refuse a start.
+        private const string DemonstrationDeviceName = "AriaDemonstrationTouch";
+        private static bool IsDemonstrationDevice(InputDevice device) =>
+            device is Touchscreen && device.name != null && device.name.StartsWith(DemonstrationDeviceName, StringComparison.Ordinal);
+
+        // Evidence only: which enabled devices currently hold a press (demonstration devices marked).
+        public static string DescribePressedDevices()
+        {
+            var text = new System.Text.StringBuilder();
+            foreach (var device in InputSystem.devices)
+            {
+                if (!device.enabled || !DeviceHoldsPress(device)) continue;
+                if (text.Length > 0) text.Append(';');
+                text.Append(device.name).Append(IsDemonstrationDevice(device) ? "(aria)" : "");
+            }
+            return text.Length == 0 ? "none" : text.ToString();
+        }
+
+        private static bool DeviceHoldsPress(InputDevice device)
+        {
+            if (device is Touchscreen touch)
+            {
+                foreach (var contact in touch.touches) if (contact.press.isPressed) return true;
+                return false;
+            }
+            if (device is Mouse mouse) return mouse.leftButton.isPressed || mouse.rightButton.isPressed;
+            if (device is Keyboard keyboard) return keyboard.anyKey.isPressed;
+            return false;
+        }
+
         private static bool AnyPhysicalButtonPressed()
         {
             foreach (var device in InputSystem.devices)
             {
-                if (!device.enabled) continue;
+                if (!device.enabled || IsDemonstrationDevice(device)) continue;
                 if (device is Touchscreen touch)
                 {
                     foreach (var contact in touch.touches) if (contact.press.isPressed) return true;

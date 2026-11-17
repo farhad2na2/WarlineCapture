@@ -75,6 +75,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public float ColumnStallSince;
         public byte FindBaseActive, FindBaseTaps, FindBaseRun;
         public int FindBaseActions, FindBaseLastTarget, FindBaseGiveUps;
+        // AriaFindBaseRecovery after a given-up search (retry time, bounded Attack disarm).
+        public float FindBaseRetryAt, FindBaseDisarmAt; public int FindBaseDisarmActions; public byte FindBaseDisarms;
         // AriaCoverageRecruitPolicy progress (taps completed, purchase start) and the latched first assault.
         public int CoverageActions;
         public float CoverageStarted;

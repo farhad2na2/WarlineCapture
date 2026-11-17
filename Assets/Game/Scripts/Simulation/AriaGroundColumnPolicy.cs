@@ -226,9 +226,40 @@ namespace Game.Simulation
  // looped for 50+ s with Attack armed, so the column never latched and nothing else could act;
  // q1: the enemy focus pressed three times with Attack armed stopped ARIA (115). Bounded here.
  public struct AriaFindBaseState {public byte Active,Taps,Run;public int Actions,LastTarget;}
+ // ARIA start (Starting phase): the touch driver start is retried while the observation is stale or a
+ // press is still held, for GraceSeconds after the start was due; only then is it a coded stop
+ // (4 stale observation, 117 start refused). It was 3 s with no code (lane 15 r2 S004 stopped at match 12.5 s).
+ public static class AriaStartPolicy
+ {
+  public const float GraceSeconds=15f;
+  public const byte StaleObservation=4,StartRefused=117;
+  public static byte Decide(float waitedSeconds,bool stale)=>!(waitedSeconds>GraceSeconds)?(byte)0:stale?StaleObservation:StartRefused;
+ }
+ public enum AriaFindBaseFallback:byte {Search,Disarm,Wait}
+ // After a search gives up: Attack is toggled off through its own control (at most MaxDisarms completed
+ // presses, the second only after the first has settled), otherwise ARIA waits; the search may resume after
+ // RetrySeconds. Lane 15 r2 S002 155923: the give-up's Attack press never went out (Attack not offered),
+ // the search restarted from a fresh count and pressed the same focus control a third and fourth time,
+ // and the input layer stopped ARIA (Blocked 115).
+ public struct AriaFindBaseRecovery {public float RetryAt,DisarmAt;public int DisarmActions;public byte Disarms;}
  public static class AriaFindBasePolicy
  {
-  public const int MaxTaps=4,MaxSameControl=2;
+  public const int MaxTaps=4,MaxSameControl=2,MaxSameAttempts=2,MaxDisarms=2;
+  public const float RetrySeconds=20f,DisarmSettleSeconds=1.5f;
+  // The input layer refuses a fourth consecutive press of one target (115). A search never asks for a third.
+  public static bool SameControlExhausted(int sessionTarget,int sessionAttempts,int nextTarget)
+   =>nextTarget!=0&&nextTarget==sessionTarget&&sessionAttempts>=MaxSameAttempts;
+  public static void BeginRecovery(ref AriaFindBaseRecovery r,float time){r.RetryAt=time+RetrySeconds;r.Disarms=0;r.DisarmActions=0;r.DisarmAt=0;}
+  public static AriaFindBaseFallback Recover(ref AriaFindBaseRecovery r,float time,int completedActions,bool attackMode,bool attackAvailable)
+  {
+   // DisarmActions: completed-touch count + 1 when the disarm press was requested (0 = none in flight).
+   if(r.DisarmActions!=0&&completedActions>=r.DisarmActions){r.Disarms++;r.DisarmActions=0;r.DisarmAt=time;}
+   if(r.DisarmActions!=0)return attackMode&&attackAvailable?AriaFindBaseFallback.Disarm:AriaFindBaseFallback.Wait;
+   if(!(time<r.RetryAt))return AriaFindBaseFallback.Search;
+   if(attackMode&&attackAvailable&&r.Disarms<MaxDisarms&&(r.Disarms==0||time-r.DisarmAt>=DisarmSettleSeconds))
+   {r.DisarmActions=completedActions+1;return AriaFindBaseFallback.Disarm;}
+   return AriaFindBaseFallback.Wait;
+  }
   public static void Reset(ref AriaFindBaseState s){s=default;}
   // Called each step the search branch is taken. nextTarget: the control the branch would press
   // (0 for map navigation). continuing: the previous step was this search (or its map navigation);

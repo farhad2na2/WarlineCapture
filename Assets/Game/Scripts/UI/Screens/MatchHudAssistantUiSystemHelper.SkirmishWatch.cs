@@ -129,6 +129,7 @@ namespace Game.UI.Runtime
                 view.ExpandedGroup3=page.Group3;view.ExpandedGroup4=page.Group4;view.PrecisionAttack=page.PrecisionAttack;
                 view.ExpandedAirMask = page.AirMask;
                 view.ExpandedSupportSlots = page.SupportSlots;
+                view.ExpandedAntiArmorMask = page.AntiArmorMask;
                 view.ExpandedCanPreviousPage = page.PreviousPage;
                 view.ExpandedCanNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
@@ -674,6 +675,25 @@ namespace Game.UI.Runtime
             return default;
         }
 
+        // Public ranged raid: the presented attacker near home. A fog-visible unit offers a direct attack
+        // tap; either kind offers clear ground beside its marker for an attack-move.
+        private void ObserveHomeAttacker(ref AriaSkirmishObservation view, in MatchHudMinimapView.PresentedMapContact attacker, int sight, float squaredDistance)
+        {
+            var position = attacker.Model.Position;
+            var home = watchSkirmish.PlayerBaseObjectivePosition;
+            view.HomeAttackerSight = sight;
+            view.HomeAttackerDistance = Mathf.Sqrt(squaredDistance);
+            if (sight == 1)
+            {
+                var point = Camera.main.WorldToScreenPoint(position + Vector3.up);
+                view.HomeAttacker = new AriaTouchTarget { Id = -20002, Position = point,
+                    Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20002, true) };
+            }
+            var toward = home - position;
+            if (toward.sqrMagnitude < 1) toward = Vector3.forward;
+            view.HomeAttackerGround = ObserveClearAttackGround(position, toward, -20006, 18f);
+        }
+
         private void ObserveGroupRectangle(ref AriaSkirmishObservation view)
         {
             if (watchMap == null || view.MapOpen || view.DrawerOpen || Camera.main == null) return;
@@ -776,6 +796,9 @@ namespace Game.UI.Runtime
                     if (!view.HomeGround.Available) view.HomeGround = ObserveHomeGroundScreenRing(home, homeScreen);
                 }
                 view.HomeGroundRefusal = view.HomeGround.Available ? 0 : watchGroundRefusal;
+                // Far-side home ground (away from the column), for a raid that the column-side ground did not stop.
+                if (homeScreen.z > 0 && Screen.safeArea.Contains(homeScreen) && !view.MapOpen && !view.DrawerOpen)
+                    view.HomeGroundFar = ObserveClearAttackGround(home, -homeApproach, -20006, 35f);
                 // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:
                 // clear public ground 40 units behind the presented front toward home (radar and
                 // transport heli Move), and 60 units ahead of it toward the enemy objective (drone Scan).
@@ -786,12 +809,26 @@ namespace Game.UI.Runtime
                         view.FrontGround = ObserveClearAttackGround(armyCenter, objective - armyCenter, -20017, 60f);
                 }
             }
-            MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
+            MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default, attacker = default;
             float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;
+            float attackerDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RangedRadiusSquared; int attackerSight = 0;
             float trackedDistance = 12 * 12;
             foreach (var enemy in watchMap.PresentedContacts)
             {
-                if (enemy.Model.LastSeen || enemy.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Enemy || !enemy.Marker.gameObject.activeInHierarchy) continue;
+                if (enemy.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Enemy || !enemy.Marker.gameObject.activeInHierarchy) continue;
+                // Ranged raid candidate: any presented enemy marker near home, a fog-visible unit before a
+                // last-seen ghost (lane 14 S002 155923: a tank shelled the HQ from ~66 units).
+                if (watchSkirmish != null)
+                {
+                    var markerPosition = enemy.Model.Position; var homePosition = watchSkirmish.PlayerBaseObjectivePosition;
+                    int markerSight = enemy.Model.LastSeen ? 2 : 1;
+                    float markerHomeSquared = Game.Simulation.AriaGroundApproachPolicy.SquaredDistance(
+                        new Game.Simulation.AriaGroundPosition(markerPosition.x, markerPosition.y, markerPosition.z),
+                        new Game.Simulation.AriaGroundPosition(homePosition.x, homePosition.y, homePosition.z));
+                    if (Game.Simulation.AriaPublicHomeThreatPolicy.PreferAttacker(markerSight, markerHomeSquared, attackerSight, attackerDistance))
+                    { attacker = enemy; attackerSight = markerSight; attackerDistance = markerHomeSquared; }
+                }
+                if (enemy.Model.LastSeen) continue;
                 // The labelled base is an objective, not an intervening defender.
                 // Fight the contacts in front of the army before ordering it past them.
                 var groundPoint = Camera.main.WorldToScreenPoint(enemy.Model.Position);
@@ -825,6 +862,8 @@ namespace Game.UI.Runtime
             // over the outgoing column. Only presented minimap contacts are read.
             view.PresentedHomeThreat = homeThreat.Marker != null;
             if (view.PresentedHomeThreat) chosen = homeThreat;
+            if (!view.PresentedHomeThreat && attacker.Marker != null && !view.MapOpen && !view.DrawerOpen)
+                ObserveHomeAttacker(ref view, attacker, attackerSight, attackerDistance);
             watchThreatTracked = chosen.Marker != null;
             if (watchThreatTracked) watchThreatPosition = chosen.Model.Position;
             if (chosen.Marker == null || watchRaycast == null || UnityEngine.EventSystems.EventSystem.current == null) return;

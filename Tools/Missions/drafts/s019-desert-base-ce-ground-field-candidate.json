@@ -115,11 +115,11 @@
   "pads": {
     "spawn.infantry.player": [
       956.85,
-      635.0
+      637.0
     ],
     "spawn.infantry.enemy": [
       1365.95,
-      665.0
+      663.0
     ],
     "spawn.vehicle.player": [
       914.5,

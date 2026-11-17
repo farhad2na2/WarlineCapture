@@ -88,6 +88,43 @@ namespace Game.Runtime
             return true;
         }
 
+        /// <summary>
+        /// Diagnostic only (log text): the first ContainsFootprint test that rejects the candidate, or "none".
+        /// Mirrors ContainsFootprint's order; it never decides placement.
+        /// </summary>
+        public static string DescribeFirstReject(SkirmishMapLayoutConfig layout, SkirmishLegalPadConfig pad,
+            GridConfig grid, OperationMapBoundsConfig sourceBounds, RectInt candidate)
+        {
+            if (layout == null || grid.Width <= 0 || grid.Height <= 0 || !Finite(grid.CellSize) || grid.CellSize <= 0 ||
+                !sourceBounds.TryValidate(out _)) return "invalidInputs";
+            if (candidate.width <= 0 || candidate.height <= 0 || candidate.x < 0 || candidate.y < 0 ||
+                candidate.xMax > grid.Width || candidate.yMax > grid.Height) return "gridBounds";
+            float hx = pad.WidthMetres * .5f, hz = pad.DepthMetres * .5f;
+            Vector2[] local = { new(pad.CenterX - hx, pad.CenterZ - hz), new(pad.CenterX + hx, pad.CenterZ - hz),
+                new(pad.CenterX + hx, pad.CenterZ + hz), new(pad.CenterX - hx, pad.CenterZ + hz) };
+            var quad = new Vector2[4];
+            for (int i = 0; i < 4; i++)
+                if (!layout.TryProjectLocalToMap(local[i].x, local[i].y, out float x, out float z)) return "padProjection";
+                else quad[i] = new Vector2(x, z);
+            float frameMaxX = layout.OriginX + layout.WorldWidthMetres, frameMaxZ = layout.OriginZ + layout.WorldDepthMetres;
+            Vector2[] frameLocal = { new(layout.OriginX, layout.OriginZ), new(frameMaxX, layout.OriginZ),
+                new(frameMaxX, frameMaxZ), new(layout.OriginX, frameMaxZ) };
+            var frame = new Vector2[4];
+            for (int i = 0; i < 4; i++)
+                if (!layout.TryProjectLocalToMap(frameLocal[i].x, frameLocal[i].y, out float x, out float z)) return "frameProjection";
+                else frame[i] = new Vector2(x, z);
+            float minX = grid.Origin.x + candidate.x * grid.CellSize, minZ = grid.Origin.z + candidate.y * grid.CellSize;
+            float maxX = minX + candidate.width * grid.CellSize, maxZ = minZ + candidate.height * grid.CellSize;
+            if (minX < sourceBounds.PlayableMin.x || minZ < sourceBounds.PlayableMin.z ||
+                maxX > sourceBounds.PlayableMax.x || maxZ > sourceBounds.PlayableMax.z) return "playableBounds";
+            foreach (var corner in new[] { new Vector2(minX, minZ), new Vector2(maxX, minZ), new Vector2(maxX, maxZ), new Vector2(minX, maxZ) })
+            {
+                if (!InsideOrEdge(frame, corner)) return "layoutFrame";
+                if (!InsideOrEdge(quad, corner)) return "pad";
+            }
+            return "none";
+        }
+
         public static bool RequiresTypedConstraint(bool authoredStartingGrant, bool explicitBoundLaunch) =>
             authoredStartingGrant && explicitBoundLaunch;
 

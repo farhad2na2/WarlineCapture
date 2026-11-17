@@ -232,7 +232,7 @@ class ObjectiveDrafts(unittest.TestCase):
         # Both routes keep the same middle waypoints (and one reversed): not two distinct truck routes.
         d['routes'] = [d['routes'][0], copy.deepcopy(d['routes'][0])]
         d['routes'][1]['kind'] = 'FlankSouthSweep'
-        d['routes'][1]['via'] = ['staging.player', 'highway.near', 'highway.mid', 'highway.far', 'staging.enemy'][::-1]
+        d['routes'][1]['via'] = list(d['routes'][0]['via'])[::-1]
         self.assertIn('route.convoy', self.run_check(d))
         d = self.make('CE')
         d['routes'][1]['vehicles'] = False

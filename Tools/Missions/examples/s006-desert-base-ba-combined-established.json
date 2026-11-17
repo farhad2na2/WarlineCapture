@@ -8,8 +8,8 @@
       650.0
     ],
     "base.enemy": [
-      1387.8,
-      650.0
+      1430.0,
+      487.5
     ],
     "staging.player": [
       970.75,
@@ -137,35 +137,143 @@
     ],
     "s006.f2.refinery": [
       1428.5,
-      607.5
+      463.5
     ],
     "s006.f2.fabrication_depot": [
       1425.5,
-      488.0
+      392.0
     ],
     "s006.f2.fuel_bladder": [
-      1375.0,
-      677.0
+      1447.0,
+      389.0
     ],
     "s006.f2.ground_staging": [
-      1279.0,
-      603.5
+      1519.0,
+      459.5
     ],
     "s006.f2.oil_pump": [
-      1519.5,
-      674.0
+      1423.5,
+      410.0
     ],
     "s006.f2.watchtower": [
-      1279.0,
-      581.0
+      1449.5,
+      464.0
     ],
     "s006.f2.watchtower.approach": [
-      1279.0,
-      723.5
+      1471.0,
+      389.0
     ],
     "s006.f1.guard_tower": [
       939.5,
       655.0
+    ],
+    "s006.f2.barracks": [
+      1430.0,
+      487.5
+    ],
+    "s006.f2.satellite_dish": [
+      1452.5,
+      487.5
+    ],
+    "basemove.route.1.waypoint.00": [
+      1242.0,
+      638.0
+    ],
+    "basemove.route.1.waypoint.01": [
+      1230.0,
+      622.0
+    ],
+    "basemove.route.1.waypoint.02": [
+      1234.0,
+      562.0
+    ],
+    "basemove.route.1.waypoint.03": [
+      1238.0,
+      558.0
+    ],
+    "basemove.route.1.waypoint.04": [
+      1278.0,
+      554.0
+    ],
+    "basemove.route.1.waypoint.05": [
+      1370.0,
+      554.0
+    ],
+    "basemove.route.1.waypoint.06": [
+      1394.0,
+      534.0
+    ],
+    "basemove.route.1.waypoint.07": [
+      1394.0,
+      466.0
+    ],
+    "basemove.route.1.waypoint.08": [
+      1398.0,
+      462.0
+    ],
+    "basemove.route.1.waypoint.09": [
+      1414.0,
+      462.0
+    ],
+    "basemove.route.2.waypoint.00": [
+      1354.0,
+      682.0
+    ],
+    "basemove.route.2.waypoint.01": [
+      1354.0,
+      654.0
+    ],
+    "basemove.route.2.waypoint.02": [
+      1370.0,
+      638.0
+    ],
+    "basemove.route.2.waypoint.03": [
+      1390.0,
+      634.0
+    ],
+    "basemove.route.2.waypoint.04": [
+      1394.0,
+      466.0
+    ],
+    "basemove.route.2.waypoint.05": [
+      1398.0,
+      462.0
+    ],
+    "basemove.route.2.waypoint.06": [
+      1414.0,
+      462.0
+    ],
+    "basemove.route.3.waypoint.00": [
+      1294.0,
+      586.0
+    ],
+    "basemove.route.3.waypoint.01": [
+      1298.0,
+      554.0
+    ],
+    "basemove.route.3.waypoint.02": [
+      1370.0,
+      554.0
+    ],
+    "basemove.route.3.waypoint.03": [
+      1378.0,
+      550.0
+    ],
+    "basemove.route.3.waypoint.04": [
+      1394.0,
+      534.0
+    ],
+    "basemove.route.3.waypoint.05": [
+      1394.0,
+      466.0
+    ],
+    "basemove.route.3.waypoint.06": [
+      1398.0,
+      462.0
+    ],
+    "basemove.route.3.waypoint.07": [
+      1414.0,
+      462.0
     ]
   },
   "pads": {
@@ -202,7 +310,17 @@
         "highway.near",
         "highway.mid",
         "highway.far",
-        "staging.enemy"
+        "basemove.route.1.waypoint.00",
+        "basemove.route.1.waypoint.01",
+        "basemove.route.1.waypoint.02",
+        "basemove.route.1.waypoint.03",
+        "basemove.route.1.waypoint.04",
+        "basemove.route.1.waypoint.05",
+        "basemove.route.1.waypoint.06",
+        "basemove.route.1.waypoint.07",
+        "basemove.route.1.waypoint.08",
+        "basemove.route.1.waypoint.09",
+        "base.enemy"
       ],
       "width": 12,
       "vehicles": true,
@@ -217,7 +335,14 @@
         "ruins.north",
         "ruins.east",
         "ruins.far",
-        "staging.enemy"
+        "basemove.route.2.waypoint.00",
+        "basemove.route.2.waypoint.01",
+        "basemove.route.2.waypoint.02",
+        "basemove.route.2.waypoint.03",
+        "basemove.route.2.waypoint.04",
+        "basemove.route.2.waypoint.05",
+        "basemove.route.2.waypoint.06",
+        "base.enemy"
       ],
       "width": 6,
       "vehicles": true,
@@ -231,7 +356,15 @@
         "sweep.west",
         "sweep.south",
         "sweep.east",
-        "staging.enemy"
+        "basemove.route.3.waypoint.00",
+        "basemove.route.3.waypoint.01",
+        "basemove.route.3.waypoint.02",
+        "basemove.route.3.waypoint.03",
+        "basemove.route.3.waypoint.04",
+        "basemove.route.3.waypoint.05",
+        "basemove.route.3.waypoint.06",
+        "basemove.route.3.waypoint.07",
+        "base.enemy"
       ],
       "width": 12,
       "vehicles": true,
@@ -438,12 +571,26 @@
       "anchor": "s006.f1.guard_tower"
     },
     {
+      "id": "s006.f2.barracks",
+      "kind": "BaseBarracks",
+      "faction": 2,
+      "at": [
+        1430.0,
+        487.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s006.f2.barracks"
+    },
+    {
       "id": "s006.f2.refinery",
       "kind": "Supply",
       "faction": 2,
       "at": [
         1428.5,
-        607.5
+        463.5
       ],
       "size": [
         25,
@@ -457,7 +604,7 @@
       "faction": 2,
       "at": [
         1425.5,
-        488.0
+        392.0
       ],
       "size": [
         19,
@@ -470,8 +617,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1375.0,
-        677.0
+        1447.0,
+        389.0
       ],
       "size": [
         14,
@@ -484,8 +631,8 @@
       "kind": "GroundStaging",
       "faction": 2,
       "at": [
-        1279.0,
-        603.5
+        1519.0,
+        459.5
       ],
       "size": [
         14,
@@ -498,8 +645,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1519.5,
-        674.0
+        1423.5,
+        410.0
       ],
       "size": [
         15,
@@ -512,8 +659,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1279.0,
-        581.0
+        1449.5,
+        464.0
       ],
       "size": [
         3,
@@ -526,14 +673,28 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1279.0,
-        723.5
+        1471.0,
+        389.0
       ],
       "size": [
         3,
         4
       ],
       "anchor": "s006.f2.watchtower.approach"
+    },
+    {
+      "id": "s006.f2.satellite_dish",
+      "kind": "Service",
+      "faction": 2,
+      "at": [
+        1452.5,
+        487.5
+      ],
+      "size": [
+        10,
+        10
+      ],
+      "anchor": "s006.f2.satellite_dish"
     }
   ],
   "pad_slack_m": 12

@@ -229,7 +229,11 @@ namespace Game.UI.Runtime
                 Performance2Value = model.EnemyUnitsLost.ToString(),
                 Performance3 = Text("buildings", "BUILDINGS LOST / DESTROYED"),
                 Performance3Value = model.PlayerBuildingsLost + " / " + model.EnemyBuildingsLost,
-                Summary = string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail,
+                // Answers "why is a criterion I met not a star?": stars need a victory.
+                Summary = (string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail) +
+                          (!victory && (criteria.MetMask & 6) != 0
+                              ? "\n" + Text("star_rule", "Stars need a win. Gold criteria were met and count when you win.")
+                              : string.Empty),
                 LeaveLabel = "MAIN MENU",
                 ShowAdjust = true,
                 ActionsEnabled = true,

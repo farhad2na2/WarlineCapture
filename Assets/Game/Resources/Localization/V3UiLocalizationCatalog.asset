@@ -7298,6 +7298,8 @@ MonoBehaviour:
       value: SKIRMISH
     - key: ui.skirmish.result.protect_base
       value: Protect your main base
+    - key: ui.skirmish.result.star_rule
+      value: "Stars need a win. Gold criteria were met and count when you win."
     - key: ui.skirmish.result.startup_failed
       value: MATCH DID NOT START
     - key: ui.skirmish.result.units_defeated
@@ -22548,6 +22550,8 @@ MonoBehaviour:
     - key: ui.skirmish.result.protect_base
       value: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC
         \u062E\u0648\u062F \u062F\u0641\u0627\u0639 \u06A9\u0646"
+    - key: ui.skirmish.result.star_rule
+      value: "\u0633\u062A\u0627\u0631\u0647 \u0641\u0642\u0637 \u0628\u0627 \u067E\u06CC\u0631\u0648\u0632\u06CC \u0628\u0647 \u062F\u0633\u062A \u0645\u06CC\u200C\u0622\u06CC\u062F. \u0645\u0639\u06CC\u0627\u0631\u0647\u0627\u06CC \u0637\u0644\u0627\u06CC\u06CC \u0627\u0646\u062C\u0627\u0645 \u0634\u062F\u0647\u200C\u0627\u0646\u062F \u0648 \u0628\u0627 \u067E\u06CC\u0631\u0648\u0632\u06CC \u062D\u0633\u0627\u0628 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F."
     - key: ui.skirmish.result.startup_failed
       value: "\u0646\u0628\u0631\u062F \u0622\u063A\u0627\u0632 \u0646\u0634\u062F"
     - key: ui.skirmish.result.units_defeated

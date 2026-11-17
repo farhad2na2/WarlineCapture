@@ -68,11 +68,16 @@ namespace Game.UI.Contracts
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public AriaTouchTarget RecruitBreacher;
-        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar) and their Build -> catalog card targets.
+        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli)
+        // and their Build -> catalog card targets.
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
-        public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar;
-        // Clear public ground behind the presented column, toward home (-20016): the radar order.
-        public AriaTouchTarget RearGround;
+        public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar, RecruitApcHeavy, RecruitDrone, RecruitTransportHeli;
+        // Support orders: clear public ground behind the presented column toward home (-20016, radar and
+        // transport heli Move) and ahead of it toward the enemy objective (-20017, drone Scan).
+        public AriaTouchTarget RearGround, FrontGround;
+        // Ordinary Move and Scan command buttons and their armed modes.
+        public AriaTouchTarget Move, Scan;
+        public bool MoveMode, ScanMode;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
@@ -107,7 +112,8 @@ public SkirmishPublicArmyOrderGoal CurrentAssaultGoal, AdvanceOrderGoal, Visible
         public uint ExpandedGroup(int slot) => slot switch {
             0=>ExpandedGroup0,1=>ExpandedGroup1,2=>ExpandedGroup2,3=>ExpandedGroup3,4=>ExpandedGroup4,_=>0 };
         public int ExpandedAirMask;
-        public int ExpandedRadarMask;
+        // Support unit kind per roster slot on this page (2 bits per slot: 1 radar, 2 drone, 3 transport heli).
+        public int ExpandedSupportSlots;
         public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;
         public int ExpandedPageCount, ExpandedTotalGroups, ExpandedSelectedGroups, ExpandedSelectedOffPage;

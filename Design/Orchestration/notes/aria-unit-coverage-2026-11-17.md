@@ -82,3 +82,39 @@ reason: phase/outcome, terminal attempt, elapsed within 0.05 s, player base HP, 
 passing 130365 runs the last logged base hit left 140 HP before Victory, so 155923 is the run whose kill came from a logged
 direct-fire hit reaching 0; a late HP write or elapsed tick after Finished would fit, but the log cannot say which condition
 failed. Suggested first step: log the failing condition and both values in that reason.
+
+## 7. S026 coverage (branch missions/aria-unit-coverage-3)
+Evidence: `.../2026-11-17/lane5-play/unity.log` (S026 130365 en, Victory 172.6 s). Available: apc_armored, apc_fast, apc_heavy,
+breacher, car, drone, gunner, logistics_truck, marksman, radar, rifle, rocketeer, siege, tank, tanker, transport_heli. Used:
+apc_armored, car, gunner, rifle, rocketeer, tank (+ trucks automatic). Unused: apc_fast, apc_heavy, breacher, drone, marksman,
+radar, siege, transport_heli.
+- Why breacher/marksman/apc_fast/radar were unused although d67e1c650 and 428bf4559 cover them: those steps run only in the
+  S002 native adapter (`AriaS002NativeAdapter.CanHandle`: `SourceScenarioIndex==4`). S026 (same profile G, same Established
+  start, `SkirmishStart_Established.asset` readiness 2) is played by the generic `AriaSkirmishPlanSystem.StepExpandedBaseAssault`,
+  which had no coverage step; the S026 log has no `[AriaS002Trace]` line at all.
+- S026's catalog also offers apc_heavy (Established, GroundStaging, assault role), drone (Established, Intel Station, unarmed,
+  Scan only), transport_heli (Established, Helipad, unarmed) and siege (FullArsenal). The S026 layout has a helipad and a
+  satellite dish, and the gate's available line lists no missing producer.
+- Implemented:
+  - `AriaCoverageRecruitPolicy` now covers six kinds in order: marksman, apc_fast, radar, apc_heavy, drone, transport_heli
+    (bits 1..32). A kind the mission catalog does not offer is never affordable (`TryAfford` fails on the missing overlay),
+    so S002 is unchanged.
+  - The generic planner (`AriaSkirmishPlanSystem.Coverage.cs`) runs the same pure policies as the S002 adapter: breacher, then
+    the coverage recruits, one at a time after the first assault order, same yields and bounds. It affects every generic
+    expanded ground base assault (not air, Combined Arms Field or public-objective missions).
+  - `AriaSupportOrderPolicy` replaces the radar-only order: each fielded support unit (radar, drone, transport heli; none are
+    assault roles, so the sweep never orders them) gets one ordinary order through its roster card. Radar and transport heli:
+    Move (Attack Move only if no Move button is presented) to clear ground 40 units behind the presented front (-20016). Drone:
+    Scan (the HUD Scan button) on clear ground 60 units ahead of the front toward the enemy objective (-20017). Starts only with
+    no visible selection or armed mode and no other owner; two attempts per kind; one order per kind per match.
+  - Correction to 428bf4559: its radar order armed Attack. Radar has no weapon (overlay 0 damage, 0 range), so its Attack Move
+    may be rejected; Move is now preferred.
+  - Traces now cover every expanded base assault (not only S002): `event=breacher`, `event=coverage kind=...`,
+    `event=support_order kind=radar|drone|transport_heli state=selecting|arming|tapping|ordered|released|gave_up`.
+- Not implemented, plan: siege needs readiness Full Arsenal (`RequiredReadiness(Siege)`; S026 starts Established). A player
+  would research it (Build drawer readiness button, 480 materials, 60 s; `SkirmishResearchCosts`) and then buy one siege
+  (420 materials). That is ~900 materials and a minute of research on top of the coverage recruits, a pacing-level spend, so it
+  is left as a plan: after the coverage recruits, if materials stay above the research cost plus a rifle reserve, tap the
+  readiness upgrade once, then queue one siege when the readiness reaches Full Arsenal; the sweep orders it (assault and
+  structure role). The gate-3 model lists siege because it does not model readiness (`readinessGating=0`); siege is
+  reachable in-match, so the listing is correct.

@@ -30,6 +30,8 @@ have airfields already (S004 uses one).
 
 **DECIDED 2026-11-17 (owner via orchestrator):** guard tower at the player base in the Base Assault
 template; no more ARIA intercept work. See `daily/2026-11-17-directive.md`.
+**RE-DECIDED 2026-11-17 late (orchestrator, owner-delegated):** legibility first, measured counterplay second, guard
+tower only if the measurement fails (directive updated). The tower is removed from the template for the measurement.
 
 **Question.** On seed 155923 the enemy's lone tank (420 HP) crosses ARIA's advancing column at ~55 s; when the
 column does not kill it, it destroys the 800-HP player base in ~28 s (first hit ~67 s, base dead ~95 s). Is this

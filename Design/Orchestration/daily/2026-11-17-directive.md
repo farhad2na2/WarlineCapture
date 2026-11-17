@@ -12,7 +12,11 @@ the two entries in `decisions_pending.md` as decided with a pointer to this file
   plan's early-win rule; a win above 70% still triggers easing.
 - **Gate 4 checkpoint/recovery applies only to missions where the game offers Save.** For the
   others the row records "checkpoint: not offered" and gate 4 is result screen + return.
-- **Lone-tank base loss: add a guard tower at the player base in the Base Assault template**
+- ~~**Lone-tank base loss: add a guard tower at the player base in the Base Assault template**~~ **Replaced
+  (orchestrator, owner-delegated, 2026-11-17 late):** threat legibility first (base vision through fog, "base under attack"
+  warning EN/FA, camera jump without orders, ARIA gets nothing extra), then measure counterplay on 155923 and two
+  other tank-reaches-base seeds (ARIA saves the base in 3 of 3 reruns of 155923 using only that information), and add
+  the guard tower only if that measurement fails. Original line:
   (the lead's option 1). Starting forces only; no unit-stat change. No more ARIA intercept work
   for this. Re-run the Base Assault missions that start today after the change.
 - Gate 3 is unchanged: a row needs the `[SkirmishGateUnits]` evidence from a finished run.

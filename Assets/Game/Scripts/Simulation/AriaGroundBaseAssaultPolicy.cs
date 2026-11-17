@@ -117,6 +117,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             }
             if (StepIntercept(view, ref plan, ref touch, ref output)) return;
+            if (StepRadarOrder(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultMapInspection(view, ref plan, ref touch, ref output)) return;
             // A home threat does not sit out the passive post-order observe window.
             if (!(view.PublicHomeThreat && plan.AdvanceNavigation == 0) &&
@@ -185,6 +186,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 }
             }
             if (StepBreacherCoverage(view, ref plan, ref touch, ref output)) return;
+            if (StepCoverageRecruit(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
@@ -422,6 +424,80 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 case Game.Simulation.AriaInterceptAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
                 case Game.Simulation.AriaInterceptAction.TargetThreat:plan.Intent=AriaS002Intent.TargetThreat;Target(view.InterceptThreat,true,ref output);break;
                 default:plan.Intent=AriaS002Intent.TargetThreat;output.Kind=AriaS002DecisionKind.Waiting;break;
+            }
+            return true;
+        }
+
+        // Gate-3 coverage after the breacher: one marksman squad, one apc_fast and one radar,
+        // one recruit at a time, through the visible Build button and catalog card.
+        private static bool StepCoverageRecruit(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            if (view.AirProfile || view.CombinedArmsField) return false;
+            bool otherOwner = touch.Phase == AriaS002ContactPhase.Manual || view.AttackMode || view.InspectionOpen ||
+                view.PlacementOpen || view.PublicHomeThreat || plan.HomeDefenseStage != 0 || plan.PrecisionStage != 0 ||
+                plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 || plan.PadStage != 0 ||
+                plan.RadarStage is >= 1 and <= 3 || plan.BreacherStage == 1;
+            int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0);
+            var facts = new Game.Simulation.AriaCoverageView {
+                AssaultIssued = plan.AssaultIssued != 0 && plan.StructureOrdered != 0,
+                BreacherSettled = plan.BreacherStage == 2,
+                // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
+                Busy = otherOwner || (plan.CoverageCurrent == 0 && view.CatalogOpen),
+                EnemyAlive = view.EnemyDesignatedAlive,
+                OtherRecruitPending = view.RifleRecruitPending || view.RocketeerRecruitPending || view.BreacherRecruitPending,
+                AffordMask = view.CoverageAffordMask, PendingMask = view.CoveragePendingMask,
+                FieldedMask = view.CoverageFieldedMask, CardMask = cards, Time = view.Time };
+            var state = new Game.Simulation.AriaCoverageState { Done = plan.CoverageDone, Current = plan.CoverageCurrent, Deadline = plan.CoverageDeadline };
+            byte before = plan.CoverageCurrent;
+            var action = Game.Simulation.AriaCoverageRecruitPolicy.Step(facts, ref state, out var kind);
+            plan.CoverageDone = state.Done; plan.CoverageCurrent = state.Current; plan.CoverageDeadline = state.Deadline;
+            // Done buying: hand the open drawer to the ordinary close step, not to a rifle burst.
+            if (before != 0 && state.Current == 0) plan.Intent = AriaS002Intent.Inspect;
+            if (action == Game.Simulation.AriaCoverageAction.Recruit)
+            {
+                plan.Intent = AriaS002Intent.Recruit;
+                Target(kind == Game.Simulation.AriaCoverageKind.Marksman ? view.RecruitMarksman
+                    : kind == Game.Simulation.AriaCoverageKind.ApcFast ? view.RecruitApcFast : view.RecruitRadar, false, ref output);
+                return true;
+            }
+            if (action == Game.Simulation.AriaCoverageAction.Waiting)
+            { plan.Intent = AriaS002Intent.Recruit; output.Kind = AriaS002DecisionKind.Waiting; return true; }
+            return false;
+        }
+
+        // The fielded radar (not an assault role) gets one ordinary order: its card on the
+        // current roster page, Attack, then clear ground behind the presented column.
+        private static bool StepRadarOrder(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            if (view.AirProfile || view.CombinedArmsField) return false;
+            var facts=new Game.Simulation.AriaRadarView {
+                RadarFielded=(view.CoverageFieldedMask&4)!=0,
+                Busy=touch.Phase==AriaS002ContactPhase.Manual||view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||
+                    view.PublicHomeThreat||plan.HomeDefenseStage!=0||plan.PrecisionStage!=0||plan.AdvanceNavigation!=0||
+                    plan.AssaultInspectStage!=0||plan.PadStage!=0||plan.InterceptStage!=0||plan.AssaultFocusStage==1||
+                    plan.BreacherStage==1||plan.CoverageCurrent!=0,
+                ArmyMoving=plan.AssaultIssued!=0,EnemyAlive=view.EnemyDesignatedAlive,
+                AttackMode=view.AttackMode,ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
+                RearAvailable=view.RearGround.Admitted,RadarMask=view.ExpandedRadarMask,
+                SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,SelectedOffPage=view.ExpandedSelectedOffPage,
+                CompletedContacts=touch.Actions,Time=view.Time };
+            for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
+            var state=new Game.Simulation.AriaRadarState {Stage=plan.RadarStage,Attempts=plan.RadarAttempts,Slot=plan.RadarSlot,Actions=plan.RadarActions,
+                Deadline=plan.RadarDeadline,ReadyAt=plan.RadarReadyAt};
+            bool handled=Game.Simulation.AriaRadarOrderPolicy.Step(facts,ref state,out var decision);
+            plan.RadarStage=state.Stage;plan.RadarAttempts=state.Attempts;plan.RadarSlot=state.Slot;plan.RadarActions=state.Actions;
+            plan.RadarDeadline=state.Deadline;plan.RadarReadyAt=state.ReadyAt;
+            if(!handled)return false;
+            switch(decision.Action){
+                case Game.Simulation.AriaRadarAction.ToggleSelected:plan.Intent=AriaS002Intent.SelectSquad;Target(view.SelectedSquadToToggle,false,ref output);break;
+                case Game.Simulation.AriaRadarAction.SelectSlot:plan.Intent=AriaS002Intent.SelectSquad;Target(view.Squad(decision.Slot),false,ref output);break;
+                case Game.Simulation.AriaRadarAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
+                case Game.Simulation.AriaRadarAction.TargetRear:plan.Intent=AriaS002Intent.Advance;Target(view.RearGround,true,ref output);break;
+                default:plan.Intent=AriaS002Intent.Advance;output.Kind=AriaS002DecisionKind.Waiting;break;
             }
             return true;
         }

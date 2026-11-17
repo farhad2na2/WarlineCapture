@@ -207,6 +207,9 @@ namespace Game.UI.Shell.Ecs
                     model.CanAffordBreacher = publicView.CanAffordBreacher;
                     model.BreacherRecruitPending = publicView.BreacherRecruitPending;
                     model.BreacherFielded = publicView.BreacherFielded;
+                    model.CoverageAffordMask = publicView.CoverageAffordMask;
+                    model.CoveragePendingMask = publicView.CoveragePendingMask;
+                    model.CoverageFieldedMask = publicView.CoverageFieldedMask;
                     model.OwnStructureAttackUnits = publicView.OwnStructureAttackUnits;
                     model.CanAffordAntiAir = publicView.CanAffordAntiAir;
                     model.CanAffordLogisticsTruck = publicView.CanAffordLogisticsTruck;

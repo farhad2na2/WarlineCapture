@@ -128,6 +128,7 @@ namespace Game.UI.Runtime
                 view.ExpandedGroup0=page.Group0;view.ExpandedGroup1=page.Group1;view.ExpandedGroup2=page.Group2;
                 view.ExpandedGroup3=page.Group3;view.ExpandedGroup4=page.Group4;view.PrecisionAttack=page.PrecisionAttack;
                 view.ExpandedAirMask = page.AirMask;
+                view.ExpandedRadarMask = page.RadarMask;
                 view.ExpandedCanPreviousPage = page.PreviousPage;
                 view.ExpandedCanNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
@@ -196,6 +197,9 @@ namespace Game.UI.Runtime
                 view.CanAffordBreacher = model.CanAffordBreacher;
                 view.BreacherRecruitPending = model.BreacherRecruitPending;
                 view.BreacherFielded = model.BreacherFielded;
+                view.CoverageAffordMask = model.CoverageAffordMask;
+                view.CoveragePendingMask = model.CoveragePendingMask;
+                view.CoverageFieldedMask = model.CoverageFieldedMask;
                 view.OwnStructureAttackUnits = model.OwnStructureAttackUnits;
                 view.CanAffordAntiAir = model.CanAffordAntiAir;
                 view.CanAffordLogisticsTruck = model.CanAffordLogisticsTruck;
@@ -224,6 +228,9 @@ namespace Game.UI.Runtime
                 view.RecruitRocketeer = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Ghillie_Male_01") : openBuild;
                 view.RecruitBreacher = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Female_02_Alt_02") : openBuild;
                 view.RecruitAntiAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Air") : openBuild;
+                view.RecruitMarksman = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Female_01") : openBuild;
+                view.RecruitApcFast = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_APC_Fast") : openBuild;
+                view.RecruitRadar = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Radar_Tank") : openBuild;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;
@@ -698,6 +705,10 @@ namespace Game.UI.Runtime
                 var homeApproach = armyCenter - home;
                 if (homeApproach.sqrMagnitude < 1) homeApproach = objective - home;
                 view.HomeGround = ObserveClearAttackGround(home, homeApproach, -20006, 25f);
+                // Radar order ground: clear public ground 40 units behind the presented front, toward
+                // home. Only resolved while a radar is fielded (AriaRadarOrderPolicy).
+                if ((view.CoverageFieldedMask & 4) != 0 && !view.MapOpen && !view.DrawerOpen)
+                    view.RearGround = ObserveClearAttackGround(armyCenter, home - armyCenter, -20016, 40f);
             }
             MatchHudMinimapView.PresentedMapContact chosen = default, visible = default, tracked = default, homeThreat = default;
             float homeDistance = Game.Simulation.AriaPublicHomeThreatPolicy.RadiusSquared;

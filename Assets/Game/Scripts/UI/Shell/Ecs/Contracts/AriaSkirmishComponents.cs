@@ -56,6 +56,13 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte BreacherStage;
         public int BreacherActions;
         public float BreacherDeadline;
+        // AriaCoverageRecruitPolicy: marksman, apc_fast, radar (bits 1/2/4), one at a time.
+        public byte CoverageDone, CoverageCurrent;
+        public float CoverageDeadline;
+        // AriaRadarOrderPolicy: one ordinary order for the fielded radar.
+        public byte RadarStage, RadarAttempts;
+        public int RadarSlot, RadarActions;
+        public float RadarDeadline, RadarReadyAt;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

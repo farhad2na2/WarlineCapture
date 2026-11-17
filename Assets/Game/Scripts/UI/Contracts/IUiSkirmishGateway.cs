@@ -15,6 +15,7 @@ namespace Game.UI.Contracts
         public bool CanAffordRifle, CanAffordAntiAir, PadPresent, ReadinessEligible, CanQueueAir;
         public bool CombinedArmsField, CanAffordRocketeer, RocketeerRecruitPending;
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
+        public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
         public int OwnStructureAttackUnits;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
         public bool CanAffordTanker;
@@ -56,6 +57,8 @@ namespace Game.UI.Contracts
         public UiExpandedPrecisionAttackResult PrecisionAttack;
         public uint Group(int slot) => slot switch { 0=>Group0,1=>Group1,2=>Group2,3=>Group3,4=>Group4,_=>0 };
         public int AirMask;
+        // Radar cards on this page (not an assault role; ordered by AriaRadarOrderPolicy).
+        public int RadarMask;
         public bool NextPage;
     }
 

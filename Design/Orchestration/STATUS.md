@@ -106,3 +106,5 @@ record is `missions.csv`.
 - 2026-11-17 07:48 probe worker: step 1 done (cause: Skirmish card hidden by Chapter 1 disclosure on fresh harness profile); step 3 run probe-fix1 S002 130365 en+fa-IR launching
 - 2026-11-17 07:59 probe worker: step 3 done (probe-fix1 en+fa-IR both Victory countedWin=1); step 4 run probe-seeds1 S002 104731/155923 en launching
 - 2026-11-17 08:08 probe worker: step 4 done (probe-seeds1: 104731 en Victory countedWin=1; 155923 en Defeat MainBaseDestroyed 95.5s countedWin=0); step 5 merge generic-dispatch starting
+- 2026-11-17 08:10 probe worker: merged generic-dispatch (d070978d5), compile check Passed; queue probe-generic1 S006+S026 launching
+- 2026-11-17 08:12 probe worker: step 5 done (probe-generic1: S006 and S026 Abort expandedStartupFailure=MissingReference, 'Exact authored generic mission/source binding missing or changed'); probe worker finished, lane idle

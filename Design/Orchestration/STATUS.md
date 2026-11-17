@@ -13,7 +13,7 @@ record is `missions.csv`.
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
 | Binding worker | Sonnet | Per-building pads in authoring; branch `missions/generic-binding` (3 commits, merges cleanly) | Finished; uncompiled, waits for the Unity lane |
-| Codex | gpt-6.1-terra | Task 021: log every building footprint at match start, so drafts can state measured footprints | Running |
+| Codex | gpt-6.1-terra | 15 tasks today | Idle: patches 020 and 021 wait for the Unity lane |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -127,3 +127,7 @@ record is `missions.csv`.
 - 2026-11-17 08:23 aria worker: aria-guard1 queue running (startup ok)
 - 2026-11-17 08:30 binding worker: finished on branch missions/generic-binding (binder exemption, instance_pads schema, authoring entry rows, tests); not compiled, Unity run pending
 - 2026-11-17 08:31 orchestrator: binding branch reviewed (22 files, merges cleanly, not compiled). Binder exemption, a pad planner with tests, authoring writes per-building pads, and the 11 City Crossroads and Mountain Pass drafts carry their measured pads again (20 each; offline checks pass). Open: buildings without a measured pad need a footprint the Editor cannot read (all of S006; the extra refinery in the larger sizes of S026 and S050), so those would fail authoring until footprints are measured. Codex 021 adds a log line that prints every building footprint in the next Unity run.
+- 2026-11-17 08:31 codex: codex-021-footprint-trace started (effort high, limit 40 min)
+- 2026-11-17 08:37 codex: codex-021-footprint-trace finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-021-footprint-trace.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-021-footprint-trace-report.txt (not yet verified or merged)
+- 2026-11-17 08:37 codex: batch finished: codex-021-footprint-trace:high:40
+- 2026-11-17 08:37 orchestrator: Codex 021 reviewed (additions only): a match-start log line prints every building footprint, and a script turns the log into the values drafts need. Not compiled. The ARIA worker applies 020 and 021 with the binding branch in its last step.

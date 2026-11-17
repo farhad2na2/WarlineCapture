@@ -3,6 +3,29 @@
 Hard decisions the program lead cannot take under the defaults. Newest first. Each item: question,
 options, evidence, recommendation, what runs meanwhile.
 
+## 2026-11-17 — No legal Airport site on City Crossroads or Mountain Pass
+
+**Question.** Gate 3 requires ARIA to use "aircraft and the Airport" where the mission makes them available. The
+air and combined Base Assault drafts on City Crossroads (S027–S030) and Mountain Pass (S051–S054) need a legal
+Airport (210×55 cells, with runway). How should these eight missions handle aircraft?
+
+**Evidence.** Airport-only layout dumps with the game's own placement checks and the Airport definition from
+`Building_Airport.prefab` (lane9, `program-logs/2026-11-17/lane9/`, notes `daily/lane-probes9-2026-11-17.md`):
+City Crossroads tested 3 948 positions, 3 946 rejected by existing map buildings, 2 by roads → 0 legal; Mountain
+Pass tested 513, 508 rejected by buildings, 5 by roads → 0 legal. Desert Base and the AP map (CityEdgeAirfield)
+have airfields already (S004 uses one).
+
+**Options.**
+1. Map reuse policy default: try the next existing Campaign source for these eight missions (e.g. move the air
+   variants of the City/Mountain families onto a source with an airfield). Changes which map they use.
+2. Keep the maps; on City Crossroads and Mountain Pass the air profile uses helipads and helicopters only (no
+   Airport, no fixed-wing); gate 3 then lists only what the mission makes available. Changes the army profile for
+   these maps.
+3. Mark the eight rows `source-fit unresolved` and continue with the other 112.
+
+**Recommendation.** Option 2 (fewest shared values; helipads are already measured on these maps; no new map).
+**Meanwhile:** the eight drafts stay unauthored; work continues on ground missions.
+
 ## 2026-11-17 — S002 seed 155923: one enemy tank can end the match at ~95 s
 
 **DECIDED 2026-11-17 (owner via orchestrator):** guard tower at the player base in the Base Assault

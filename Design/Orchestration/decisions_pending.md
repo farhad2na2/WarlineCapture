@@ -112,7 +112,10 @@ against the named logs before relying on them.
    seed reproduced on unchanged inputs before another matrix; guard tower directive applied or not.
 3. **Real-menu publication.** Authored rows stay Planned, the menu preflight rejects Planned, and
    publication waits on acceptance (circular). Proposal: run acceptance through the real catalog on
-   an internal candidate. Waits on the owner (asked 2026-11-17).
+   an internal candidate. **DECIDED 2026-11-17 (owner: "Yes, internal only"):** authored missions under
+   acceptance may be visible in the real Skirmish catalog on `missions/*` branches only; each row records the
+   commit that made it visible; a failed mission goes back to Planned; gates unchanged. Checked: the only build
+   pipeline (`Jenkinsfile.groovy:61`) clones `--branch main`, so nothing player-facing is built from `missions/*`.
 4. **Early owner sampling** of the first BA, FC, BT, CE prototypes. Waits on the owner saying when
    and on which device.
 5. **Metrics to review:** accepted missions per week, Unity minutes per accepted sibling, time to

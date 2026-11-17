@@ -45,7 +45,9 @@ class DraftChecks(unittest.TestCase):
         cases = [
             ('draft', lambda d: d.update({'extra': 1})),
             ('catalog_id', lambda d: d.update(catalog_id='S001')),
-            ('objective', lambda d: d.update(catalog_id='S007')),
+            ('area.required', lambda d: d.update(catalog_id='S007')),
+            ('area.unexpected', lambda d: d.update(objective_areas={})),
+            ('pad.objective', lambda d: d['anchors'].update({'defense.approach.a': [1, 2]})),
             ('campaign_source', lambda d: d.update(campaign_source='')),
             ('draft.anchors', lambda d: d.update(anchors=None)),
             ('draft.point', bad_point), ('anchor.required', missing_anchor),
@@ -105,6 +107,113 @@ class DraftChecks(unittest.TestCase):
                 draft = copy.deepcopy(base)
                 mutate(draft)
                 self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
+
+
+BOUNDS = (900.0, 260.0, 1300.0, 875.0)  # Desert Base playableMin/Max (read from the asset when present)
+
+
+class ObjectiveDrafts(unittest.TestCase):
+    """FC (S007), BT (S013) and CE (S019) drafts on the Desert Base example; geometry here is test data only."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.example = json.loads((checker.ROOT / 'Tools/Missions/examples/s006-desert-base-ba-combined-established.json').read_text())
+        cls.catalog = checker.rows('Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv')
+        cls.matrix = checker.rows('Assets/Game/Resources/SkirmishExpansion/InitialSetupMatrix.csv')
+
+    def rect(self, x, z):
+        return {'rectangle': [[x, z], [x + 20, z + 20]]}
+
+    def make(self, code):
+        d = copy.deepcopy(self.example)
+        d['catalog_id'] = {'FC': 'S007', 'BT': 'S013', 'CE': 'S019'}[code]
+        d['area_measurement'] = {'artifact': 'Design/AgentReports/SkirmishExpansion/test/area-measurement.json'}
+        a = d['anchors']
+        if code == 'FC':
+            d['objective_areas'] = {'FrontlineA': self.rect(1000, 300), 'FrontlineB': self.rect(1000, 500),
+                                    'FrontlineC': {'polygon': [[1100, 300], [1140, 300], [1140, 340], [1100, 320]]}}
+        if code == 'BT':
+            d['objective_areas'] = {'BreakthroughCorridorA': self.rect(1000, 300), 'BreakthroughCorridorB': self.rect(1000, 500),
+                                    'BreakthroughExit': self.rect(1200, 400)}
+        if code == 'CE':
+            d['objective_areas'] = {'ConvoyDestination': self.rect(1200, 400)}
+            for i in range(3):
+                a['convoy.origin.%d' % (i + 1)] = [920 + i * 20, 300]
+                d['pads']['convoy.origin.%d' % (i + 1)] = {'size': [10, 8]}
+        if code in ('BT', 'CE'):
+            a['defense.approach.a'] = [1150, 320]
+            a['defense.approach.b'] = [1150, 560]
+            d['pads']['defense.approach.a'] = {'size': [12, 12]}
+            d['pads']['defense.approach.b'] = {'size': [12, 12]}
+        return d
+
+    def run_check(self, d, bounds=BOUNDS):
+        return [r for r, _ in checker.check(d, self.catalog, self.matrix, bounds)]
+
+    def test_valid_drafts(self):
+        for code in ('FC', 'BT', 'CE'):
+            with self.subTest(code=code):
+                d = self.make(code)
+                self.assertEqual([], checker.check(d, self.catalog, self.matrix, BOUNDS))
+
+    def test_mutations(self):
+        def drop(role): return lambda d: d['objective_areas'].pop(role)
+        def polygon(points): return lambda d: d['objective_areas'].update(FrontlineC={'polygon': points})
+        cases = [
+            ('FC', 'area.required', lambda d: d.pop('objective_areas')),
+            ('FC', 'area.required', drop('FrontlineB')),
+            ('FC', 'area.role', lambda d: d['objective_areas'].update(BreakthroughExit=self.rect(1, 1))),
+            ('FC', 'area.type', lambda d: d['objective_areas'].update(FrontlineA={'circle': [1, 2, 3]})),
+            ('FC', 'area.type', lambda d: d['objective_areas'].update(FrontlineA={'rectangle': 5})),
+            ('FC', 'draft.point', lambda d: d['objective_areas'].update(FrontlineA={'rectangle': [[1, 'x'], [2, 3]]})),
+            ('FC', 'area.geometry', lambda d: d['objective_areas'].update(FrontlineA={'rectangle': [[10, 10], [5, 20]]})),
+            ('FC', 'area.geometry', polygon([[1000, 300], [1100, 300]])),
+            ('FC', 'area.geometry', polygon([[1000, 300], [1100, 400], [1100, 300], [1000, 400]])),  # bow tie
+            ('FC', 'area.geometry', polygon([[1000, 300], [1100, 300], [1200, 300]])),  # zero area
+            ('FC', 'area.bounds', lambda d: d['objective_areas'].update(FrontlineA=self.rect(1290, 300))),
+            ('FC', 'area.distinct', lambda d: d['objective_areas'].update(FrontlineB=d['objective_areas']['FrontlineA'])),
+            ('FC', 'area.measurement', lambda d: d.pop('area_measurement')),
+            ('FC', 'area.measurement', lambda d: d['area_measurement'].update(artifact='/etc/passwd')),
+            ('FC', 'pad.objective', lambda d: d['anchors'].update({'defense.approach.a': [1150, 320]})),
+            ('BT', 'area.required', drop('BreakthroughExit')),
+            ('BT', 'pad.required', lambda d: d['anchors'].pop('defense.approach.b')),
+            ('BT', 'pad.size_required', lambda d: d['pads'].pop('defense.approach.a')),
+            ('BT', 'pad.objective', lambda d: d['anchors'].update({'convoy.origin.1': [920, 300]})),
+            ('CE', 'area.required', lambda d: d.update(objective_areas={'FrontlineA': self.rect(1000, 300)})),
+            ('CE', 'pad.required', lambda d: d['anchors'].pop('convoy.origin.3')),
+            ('CE', 'pad.size_required', lambda d: d['pads'].pop('convoy.origin.2')),
+            ('CE', 'pad.convoy_overlap', lambda d: d['anchors'].update({'convoy.origin.2': [925, 300]})),
+            ('CE', 'pad.required', lambda d: d['anchors'].pop('defense.approach.a')),
+            ('CE', 'route.convoy', lambda d: d.update(routes=d['routes'][:1])),
+        ]
+        for code, rule, mutate in cases:
+            with self.subTest(code=code, rule=rule):
+                d = self.make(code)
+                mutate(d)
+                self.assertIn(rule, self.run_check(d))
+
+    def test_ce_routes_need_distinct_middles(self):
+        d = self.make('CE')
+        # Both routes keep the same middle waypoints (and one reversed): not two distinct truck routes.
+        d['routes'] = [d['routes'][0], copy.deepcopy(d['routes'][0])]
+        d['routes'][1]['kind'] = 'FlankSouthSweep'
+        d['routes'][1]['via'] = ['staging.player', 'highway.near', 'highway.mid', 'highway.far', 'staging.enemy'][::-1]
+        self.assertIn('route.convoy', self.run_check(d))
+        d = self.make('CE')
+        d['routes'][1]['vehicles'] = False
+        d['routes'][2]['vehicles'] = False
+        self.assertIn('route.convoy', self.run_check(d))
+
+    def test_playable_bounds_from_asset(self):
+        bounds = checker.playable_bounds(self.example)
+        if bounds is not None:  # the asset is outside some sparse checkouts
+            self.assertEqual((900.0, 260.0, 1300.0, 875.0), bounds)
+
+    def test_ba_rejects_objective_fields(self):
+        d = copy.deepcopy(self.example)
+        d['objective_areas'] = {'FrontlineA': self.rect(1000, 300)}
+        d['area_measurement'] = {'artifact': 'x'}
+        self.assertEqual({'area.unexpected'}, set(self.run_check(d)))
 
 
 if __name__ == '__main__':

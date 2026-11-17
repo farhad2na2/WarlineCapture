@@ -31,4 +31,17 @@ Before: 155923 en loses at 95.5 s (enemy lone tank slips past the column ~55 s, 
 - On winning seeds the rule may fire on the same tank crossing; cost ~3–4 gestures plus a short hold.
 
 ## Lane runs
-(pending — waiting for "lane is yours")
+### lane-s002gate (run by the lane worker, 1ae08e59a merged) — gate 0, not counted in my 3
+Log `/Volumes/T7/Projects/WarlineCapture-program-logs/2026-11-17/lane-s002gate/unity.log`, summary 1614115–1614160:
+155923 en Victory 272.8 s; 130365 en Victory 266.7 s; 104731 en Victory 256.2 s; 130365 fa-IR Victory 261.1 s (all countedWin=1).
+The rule never fired: 20 `event=intercept` lines, all `state=contact ... offered=False stage=0`. Known windows: t=53.97–56.88
+(43075/44995), 54.77–58.28 (457461/460102), 54.44–56.93 (809897/811745), 54.03–57.40 (1227543/1229934). 155923 was won by
+the column killing the tank, not by the rule.
+
+Cause: (1) the tap point was never on screen — the camera sits on the advance point ahead of the column; (2) the median-based
+"behind" test ended the known window after ~3 s; (3) at 56.88 the same tank was a presented home threat, which was Busy.
+
+Fix e8b2b94b2: with Attack armed, a normal camera drag from the clear view centre toward the known vehicle (-20015; in Attack
+mode a drag pans and never orders), then the tap; candidate = fog-visible vehicle within 60 of an own unit and within 40
+(crossing) or closer to home than that nearest unit; presented home threat no longer blocks it (home defence already running
+still does). Trace adds `pan=`, `screen=(x,y,z)`, `safe=`, `state=pan`. 8 policy tests pass standalone.

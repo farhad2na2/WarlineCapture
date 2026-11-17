@@ -53,7 +53,12 @@ namespace Game.UI.Runtime
                 {
                     approvedAtlasBound=true;
                     approvedSkirmishAtlas.Back=()=> {if(LibraryLevel==SkirmishLibraryLevel.Battlefield)OnLibraryTheater();else UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute,UIRoute.MainMenu,false);};
-                    approvedSkirmishAtlas.Secondary=()=> {if(LibraryLevel==SkirmishLibraryLevel.Battlefield)OnLibraryTheater();else OnLibraryQuickBattle();};
+                    approvedSkirmishAtlas.Secondary=()=>
+                    {
+                        if(LibraryLevel!=SkirmishLibraryLevel.Battlefield) OnLibraryQuickBattle();
+                        else if(_savedMatchAvailable) ResetToDefaults();
+                        else OnLibraryTheater();
+                    };
                     approvedSkirmishAtlas.Primary=()=> {if(LibraryLevel==SkirmishLibraryLevel.Battlefield)LaunchMatch();else OpenAtlasMap(atlasBrowseMap??LibraryMapId);};
                     approvedSkirmishAtlas.Navigate=i=>
                     {
@@ -107,7 +112,7 @@ namespace Game.UI.Runtime
                     {
                         Id=SkirmishLibraryControlNames.BattleCard(card.ScenarioId),Title=AtlasMissionName(card.ObjectiveId,slot),
                         Subtitle=card.ScenarioId+"\n"+AtlasArmy(card.ArmyProfile,fa)+" · "+AtlasStart(card.StartProfile,fa),
-                        Medals=ready?(int)card.Medals:-1,Dimmed=!ready,
+                        Medals=ready&&!validation?(int)card.Medals:-1,Dimmed=!ready,
                         Status=validation?AtlasWords.Get("validation_candidate","VALIDATION CANDIDATE","نسخهٔ آزمایشی"):
                             ready?"":card.Access==SkirmishCardAccess.NotOwned?AtlasWords.Get("store","GET IN STORE","دریافت از فروشگاه"):SkirmishBattleLibraryArt.ComingSoon(fa),
                         Texture=AtlasPreview(card.PreviewSpriteKey,card.ScenarioId,card.MapId),Selected=card.IsSelected,
@@ -132,7 +137,12 @@ namespace Game.UI.Runtime
                 if((purpose.StartsWith("Objective for ",StringComparison.OrdinalIgnoreCase)||purpose.StartsWith("هدف ",StringComparison.Ordinal)) )
                     purpose=AtlasObjectivePurpose(field.SelectedObjectiveId);
                 if(briefing.Access!=SkirmishCardAccess.Playable)purpose=AtlasText(briefing.LockedReasonLocKey,SkirmishBattleLibraryArt.ComingSoon(fa));
-                approvedSkirmishAtlas.Present(new MissionAtlasPresentation {Missions=missions,Skirmish=true,Heading=missions?(fa?"درگیری / ":"SKIRMISH / ")+mapTitle:(fa?"درگیری / انتخاب نقشه":"SKIRMISH / SELECT MAP"),Navigation=navigation,MissionsOnMap=items,RegionTitles=titles,RegionSummaries=summaries,SelectedRegion=objective,SummaryRows=missions?Array.Empty<MissionAtlasSummaryRow>():rows,SummaryHeading=AtlasWords.Get("objective_progress","OBJECTIVE PROGRESS","پیشرفت هدف‌ها"),Overview=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey),Map=plate,DetailTitle=missions?AtlasMissionName(field.SelectedObjectiveId,Array.FindIndex(field.GridCards,c=>c.ScenarioId==briefing.ScenarioId)%6):mapTitle,DetailSubtitle=missions?briefing.ScenarioId+" · "+AtlasText(briefing.ObjectiveLocKey):AtlasWords.Released(selectedMap.PublishedCount,Mathf.Max(0,24-selectedMap.PublishedCount)),Purpose=missions?purpose:AtlasWords.Brief(geography,100),Objectives=string.Empty,Preview=missions?preview:plate,Primary=missions?(_savedMatchAvailable?(fa?"ادامه نبرد":"CONTINUE BATTLE"):(fa?"آغاز نبرد":"START BATTLE")):(fa?"انتخاب ماموریت‌ها":"CHOOSE MISSIONS"),Secondary=missions?(fa?"نقشه‌ها":"MAPS"):(fa?"نبرد سریع":"QUICK BATTLE"),CanLaunch=missions?briefing.CanLaunch:mapVisible});
+                string secondary = fa ? "نبرد سریع" : "QUICK BATTLE";
+                if (missions)
+                    secondary = _savedMatchAvailable
+                        ? (fa ? "نبرد جدید" : "NEW MATCH")
+                        : (fa ? "نقشه‌ها" : "MAPS");
+                approvedSkirmishAtlas.Present(new MissionAtlasPresentation {Missions=missions,Skirmish=true,Heading=missions?(fa?"درگیری / ":"SKIRMISH / ")+mapTitle:(fa?"درگیری / انتخاب نقشه":"SKIRMISH / SELECT MAP"),Navigation=navigation,MissionsOnMap=items,RegionTitles=titles,RegionSummaries=summaries,SelectedRegion=objective,SummaryRows=missions?Array.Empty<MissionAtlasSummaryRow>():rows,SummaryHeading=AtlasWords.Get("objective_progress","OBJECTIVE PROGRESS","پیشرفت هدف‌ها"),Overview=SkirmishLibraryPreviewAssets.Load(SkirmishLibraryPreviewAssets.TheatreBaseKey),Map=plate,DetailTitle=missions?AtlasMissionName(field.SelectedObjectiveId,Array.FindIndex(field.GridCards,c=>c.ScenarioId==briefing.ScenarioId)%6):mapTitle,DetailSubtitle=missions?briefing.ScenarioId+" · "+AtlasText(briefing.ObjectiveLocKey):AtlasWords.Released(selectedMap.PublishedCount,Mathf.Max(0,24-selectedMap.PublishedCount)),Purpose=missions?purpose:AtlasWords.Brief(geography,100),Objectives=string.Empty,Preview=missions?preview:plate,Primary=missions?(_savedMatchAvailable?(fa?"ادامه نبرد":"CONTINUE BATTLE"):(fa?"آغاز نبرد":"START BATTLE")):(fa?"انتخاب ماموریت‌ها":"CHOOSE MISSIONS"),Secondary=secondary,CanLaunch=missions?briefing.CanLaunch:mapVisible});
                 bool[] allowed=new bool[4];for(int i=0;i<4;i++)allowed[i]=Array.IndexOf(briefing.AvailableDifficulties??Array.Empty<SkirmishDifficultyId>(),(SkirmishDifficultyId)(i+1))>=0;
                 approvedSkirmishAtlas.SetDifficulties(fa?new[]{"تازه‌کار","معمولی","کهنه‌کار","فرمانده"}:new[]{"RECRUIT","REGULAR","VETERAN","COMMANDER"},(int)briefing.SelectedDifficulty-1,allowed);
                 if(missionSizeSegmented!=null && missionSizeSegmented.transform.parent==approvedSkirmishAtlas.ExtraControls)

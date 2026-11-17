@@ -137,7 +137,6 @@ static Game.Simulation.AriaHomeGuardView GuardView(in AriaS002Observation v)=>ne
             if (!(view.PublicHomeThreat && plan.AdvanceNavigation == 0) &&
                 StepExpandedAdvanceNavigation(view, ref plan, ref touch, ref output)) return;
             if (StepPresentedHomeDefense(view, ref plan, ref touch, ref output)) return;
-            if (StepHomeGuardPost(view, ref plan, ref output)) return;
             // An air-capable starting force cannot leave its base undefended.
             // Reuse the visible, bounded construction sequence used by legacy
             // skirmishes after the first reinforcement squad arrives.
@@ -434,32 +433,6 @@ static Game.Simulation.AriaHomeGuardView GuardView(in AriaS002Observation v)=>ne
                 case Game.Simulation.AriaHomeDefenseAction.AttackHomeTerrain:Target(view.HomeGround,true,ref output);break;
             }
             return handled;
-        }
-
-        private static bool StepHomeGuardPost(in AriaS002Observation view,
-            ref AriaS002PlanState plan, ref AriaS002Decision output)
-        {
-            if (plan.HomeGuardPostStage >= 2 || plan.HomeGuardChosen == 0) return false;
-            var facts = new Game.Simulation.AriaHomeGuardPostView {
-                Guard=plan.HomeGuardGroup,GuardMask=view.HomeGuardMask,PageIndex=view.ExpandedPageIndex,
-                SelectedMask=view.ExpandedSelectedMask,SelectedGroups=view.ExpandedSelectedGroups,AttackOrderMask=view.ExpandedAttackOrderMask,Time=view.Time,
-                UiBusy=view.CatalogOpen||view.PlacementOpen||view.InspectionOpen,AttackMode=view.AttackMode,
-                PreviousAvailable=view.PreviousSquadPage.Admitted,ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
-                HomeGroundAvailable=view.HomeGround.Admitted,FocusAvailable=view.FocusPlayer.Admitted };
-            var action = Game.Simulation.AriaHomeGuardPostPolicy.Step(facts, ref plan.HomeGuardPostStage, ref plan.HomeGuardPostDeadline);
-            if (action == Game.Simulation.AriaHomeGuardPostAction.None) return false;
-            plan.Intent = AriaS002Intent.DefendBase;
-            int slot = view.HomeGuardMask != 0 ? LowestSetBit(view.HomeGuardMask) : 0;
-            switch (action) {
-                case Game.Simulation.AriaHomeGuardPostAction.Waiting: output.Kind = AriaS002DecisionKind.Waiting; break;
-                case Game.Simulation.AriaHomeGuardPostAction.PreviousPage: Target(view.PreviousSquadPage, false, ref output); break;
-                case Game.Simulation.AriaHomeGuardPostAction.ToggleSelected: Target(view.SelectedSquadToToggle, false, ref output); break;
-                case Game.Simulation.AriaHomeGuardPostAction.SelectGuard: Target(view.Squad(slot), false, ref output); break;
-                case Game.Simulation.AriaHomeGuardPostAction.ArmAttack: Target(view.Attack, false, ref output); break;
-                case Game.Simulation.AriaHomeGuardPostAction.TargetHomeGround: Target(view.HomeGround, true, ref output); break;
-                case Game.Simulation.AriaHomeGuardPostAction.InspectHome: Target(view.FocusPlayer, false, ref output); break;
-            }
-            return true;
         }
 
         private static bool StepExpandedAdvanceNavigation(in AriaS002Observation view,

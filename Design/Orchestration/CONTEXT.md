@@ -38,6 +38,12 @@ Updated 2026-11-16. Keep under 60 lines. Detail: `ORCHESTRATOR_PROMPT.md`, the m
 - `--reuse` (persistent Editor) cannot pass environment variables to the open Editor, so catalog, seed
   and locale cannot be chosen per run through it today.
 
+## Disk (agents manage it; never ask the owner)
+
+- `Tools/Missions/disk_guard.sh` before every Unity launch, Codex batch and after commits. Exit 2
+  (below 30 GB free) = start nothing; exit 1 (below 80 GB) = find and fix what is growing.
+- Git auto maintenance stays off (`maintenance.auto=false`, `gc.auto=0`); no `git gc`/`repack` by agents.
+
 ## Measured costs
 
 - Editor launch to quit: median 64 s. Focused ARIA run, whole Editor lifetime: 128–390 s.

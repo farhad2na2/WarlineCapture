@@ -50,6 +50,12 @@ run_one() {
   note "$name finished: exit $code, $files files changed, patch $patch, report $report (not yet verified or merged)"
 }
 
+# Disk guard (owner rule, 2026-11-17): clean temp files first; start nothing when space is critical.
+"$REPO/Tools/Missions/disk_guard.sh" --quiet
+if [ $? -eq 2 ]; then note "batch not started: free disk below the stop limit (see disk guard line)"; exit 2; fi
+
 for spec in "$@"; do run_one "$spec" & done
 wait
 note "batch finished: $*"
+"$REPO/Tools/Missions/disk_guard.sh" --quiet
+exit 0

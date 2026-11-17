@@ -44,3 +44,12 @@ record is `missions.csv`.
 - 2026-11-17 00:50 orchestrator: shift ended. Unity runs PAUSED: free disk 25 GB and falling about 1 GB per minute (11 git repack processes, 155 GB of temp files). Waiting for the owner to approve stopping them. Next run when disk is back: queue2 (S002 + S006) with the new trace logging.
 - 2026-11-17 06:29 cleanup worker: no git maintenance processes were running (none stopped), 183 GB of temp packs deleted (10 tmp_pack_* files), free disk now 239 GB.
 - 2026-11-17 06:35 orchestrator: disk verified at 239 GB free (the repacks had ended on their own at 01:16; their 183 GB of leftover temp files are deleted, real packs intact, branch heads unchanged). Unity lane unblocked. Starting Codex batch 2 (4 tasks) and shift 2.
+- 2026-11-17 06:31 shift lead: step 1 start: queue2 S002,130365,en + S006,130370,en with trace logging
+- 2026-11-17 06:31 codex: codex-010-batch-authoring started (effort high, limit 40 min)
+- 2026-11-17 06:31 codex: codex-007-queue-jobs started (effort medium, limit 30 min)
+- 2026-11-17 06:31 codex: codex-008-ib-layout-airport started (effort high, limit 45 min)
+- 2026-11-17 06:31 codex: codex-009-regression-hunt started (effort high, limit 55 min)
+- 2026-11-17 06:32 codex: codex-010-batch-authoring finished: exit 0, 1 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-010-batch-authoring.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-010-batch-authoring-report.txt (not yet verified or merged)
+- 2026-11-17 06:32 codex: codex-007-queue-jobs finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-007-queue-jobs.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-007-queue-jobs-report.txt (not yet verified or merged)
+- 2026-11-17 06:33 codex: codex-008-ib-layout-airport finished: exit 0, 6 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-008-ib-layout-airport.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-008-ib-layout-airport-report.txt (not yet verified or merged)
+- 2026-11-17 06:34 orchestrator: disk guard installed (`Tools/Missions/disk_guard.sh`): it cleans git temp packs and finished Codex copies, keeps git auto maintenance off, and writes here when free space drops below 80 GB. A watcher checks every 5 minutes; the Codex launcher and every Unity launch run it first. Free now: 239 GB.

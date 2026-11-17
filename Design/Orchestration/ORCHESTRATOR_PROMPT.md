@@ -131,7 +131,22 @@ and grep patterns, never pasted logs. A worker's report is a claim; verify the d
 - ARIA Abort or Blocked: treat as a defect and brief a fix. Never tune around it.
 - A design question the plan does not answer: choose the option that changes the fewest shared values,
   record it in `owner_queue.md`, continue.
-- Disk below 30 GB free: prune your own logs first, then pause Unity runs and record it.
+- Disk: see "Disk management". Never wait for the owner to free space.
+
+## Disk management (owner rule, 2026-11-17)
+
+Agents keep the T7 volume healthy themselves; the owner must never have to free space or be asked to.
+
+- `Tools/Missions/disk_guard.sh` turns git background maintenance off, deletes leftover git temp
+  packs and finished Codex scratch copies, and writes to `STATUS.md` when space is low. A watcher
+  (`--watch 1440`, detached) is started at every daily cycle and every shift; a second start is a no-op.
+- Run the guard before every Unity launch, before every Codex batch and after every commit batch.
+  Exit 1 (below 80 GB): find what is growing and fix the cause in the same hour. Exit 2 (below
+  30 GB): start no Unity run and no Codex batch until the guard reports space is back.
+- Never leave git auto maintenance on, never run `git gc` or `git repack` while agents are working,
+  and never create a second project copy, a git worktree with assets, or a new `Library`.
+- Every worker deletes its own scratch output when its result is saved. Logs follow the retention
+  rule below. Report free space in every shift report and daily review.
 
 ## Log retention
 

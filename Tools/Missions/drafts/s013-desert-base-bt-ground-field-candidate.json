@@ -1,7 +1,7 @@
 {
   "catalog_id": "S013",
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
-  "notes": "candidate=1, unmeasured. Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value; nothing is measured. Needs area_measurement (SkirmishS002AriaRunHarness.RunCatalogAreaMeasurementAndExit output) before check_draft passes. S013 Breakthrough: corridors = the two flank strips of S007; exit = rectangle staging.enemy..base.enemy x, service.enemy..base.enemy z. defense.approach.a/b sit on the defender-side second-last waypoints of the north/south flank routes (ruins.far, sweep.east); pad size [12,10] is the existing service-pad footprint used as a placeholder for the guard tower (to be compared with the native footprint).",
+  "notes": "candidate=1, unmeasured. Desert Base host geometry only: anchors, pads and routes are copied from Tools/Missions/examples/s006-desert-base-ba-combined-established.json (air.* dropped: Ground Maneuver). Every objective-area coordinate is an existing anchor/pad x or z value; nothing is measured. Needs area_measurement (SkirmishS002AriaRunHarness.RunCatalogAreaMeasurementAndExit output) before check_draft passes. S013 Breakthrough: corridors = the two flank strips of S007; exit = rectangle staging.enemy..base.enemy x, service.enemy..base.enemy z. defense.approach.a/b sit on the defender-side second-last waypoints of the north/south flank routes (ruins.far, sweep.east); tower pad size [10,10] follows the ground-survey refinement rule 2*(max(tower footprint 3x4)+1) cells at a 1 m cell (the area-measurement probe compares it with the native footprint). structure_footprints copied from the S006 example (map-independent native footprints).",
   "anchors": {
     "base.player": [
       935.0,
@@ -127,13 +127,13 @@
     ],
     "defense.approach.a": {
       "size": [
-        12,
+        10,
         10
       ]
     },
     "defense.approach.b": {
       "size": [
-        12,
+        10,
         10
       ]
     }
@@ -219,5 +219,63 @@
         ]
       ]
     }
+  },
+  "structure_footprints": {
+    "building.airport": [
+      210.0,
+      55.0
+    ],
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
   }
 }

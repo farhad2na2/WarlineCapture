@@ -27,7 +27,7 @@ def main():
         try:
             draft = json.loads(path.read_text())
             # instance_pads and structure_footprints are optional (per-building pads, see check_draft.py).
-            optional = {'instance_pads', 'structure_footprints'}
+            optional = {'instance_pads', 'structure_footprints', 'pad_slack_m'}
             # FC/BT/CE candidates (-candidate.json) are unmeasured: typed areas but no area_measurement yet.
             candidate = path.name.endswith('-candidate.json')
             if candidate:

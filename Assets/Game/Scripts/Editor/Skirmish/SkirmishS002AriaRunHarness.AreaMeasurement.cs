@@ -146,8 +146,17 @@ namespace Game.Editor
             var surface = em.GetComponentData<MapSurfaceComponent>(surfaces.GetSingletonEntity());
             if (!blockers.Blocked.IsCreated || grid.CellSize <= 0f || !surface.SurfaceBlob.IsCreated)
                 throw new InvalidOperationException("Live blocker bits or surface blob unavailable.");
-            var map = Game.Runtime.SkirmishS004Environment.LoadMapForSession(em);
-            if (map == null) throw new InvalidOperationException("No launched logical map (playable bounds).");
+            // Coded hosts (S002) carry no expansion-catalog definition, so the session may expose no logical map; the draft's own
+            // campaign_source then supplies the playable bounds. Either way the host must run the draft's source.
+            OperationMapDefinition map = null;
+            string mapOrigin = "session logical map";
+            try { map = Game.Runtime.SkirmishS004Environment.LoadMapForSession(em); }
+            catch (Exception loadError) { mapOrigin = "draft campaign_source (session map unavailable: " + loadError.Message + ")"; }
+            var draftMap = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>((string)draft["campaign_source"]);
+            if (map == null) { map = draftMap; if (mapOrigin == "session logical map") mapOrigin = "draft campaign_source (host session has no logical map)"; }
+            if (map == null) throw new InvalidOperationException("No playable bounds: neither the host session nor the draft campaign_source resolves to an OperationMapDefinition.");
+            if (draftMap != null && map != draftMap && map.OperationMapId != draftMap.OperationMapId)
+                throw new InvalidOperationException("Host map " + map.OperationMapId + " differs from the draft's campaign_source " + draftMap.OperationMapId + "; host a mission on the draft's map.");
 
             var anchors = new Dictionary<string, Vector2>(StringComparer.Ordinal);
             foreach (var property in ((JObject)draft["anchors"]).Properties())
@@ -161,6 +170,7 @@ namespace Game.Editor
                 ["draftCatalog"] = (string)draft["catalog_id"],
                 ["campaignSource"] = (string)draft["campaign_source"],
                 ["scope"] = "ReadOnlyStartupOnlyGridMeasurement_NoTruckDriven_NoOrders",
+                ["boundsSource"] = mapOrigin,
                 ["limitation"] = "Measures passability, footprints and static route lengths on the host's source; it does not certify native source fit, ARIA play, a winnable mission or readiness. " +
                     "Live unit occupancy is ignored; reachability is a flood fill over the logical playable window using the native passability rules.",
                 ["cellSize"] = grid.CellSize, ["gridWidth"] = grid.Width, ["gridHeight"] = grid.Height,

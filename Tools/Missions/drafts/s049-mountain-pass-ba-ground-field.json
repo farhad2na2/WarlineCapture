@@ -4,68 +4,68 @@
   "notes": "Provisional Standard/Regular layout from S050 salvage referenced layout; verify profile-specific placements and source fit.",
   "anchors": {
     "base.player": [
-      906,
-      450
+      1002.0,
+      363.5
     ],
     "base.enemy": [
-      1206,
-      450
+      1218.0,
+      387.5
     ],
     "s050.f1.barracks": [
-      904.0,
-      449.5
+      1002.0,
+      363.5
     ],
     "s050.f1.fabrication_depot": [
-      997.5,
-      364.0
+      1021.5,
+      388.0
     ],
     "economy.player": [
-      899.5,
-      478.0
+      1043.5,
+      406.0
     ],
     "s050.f1.refinery": [
       1024.5,
-      459.5
+      339.5
     ],
     "s050.f1.fuel_bladder": [
-      1019.0,
+      1091.0,
       361.0
     ],
     "staging.player": [
       1019.0,
-      479.5
+      407.5
     ],
     "s050.f1.satellite_dish": [
-      1044.0,
-      459.5
+      1092.0,
+      387.5
     ],
     "service.player": [
-      1019.0,
-      407.5
+      1024.5,
+      363.5
     ],
     "s050.f1.watchtower.approach": [
       1043.0,
-      407.5
+      337.0
     ],
     "air.player": [
-      1020.0,
+      1068.0,
       387.5
     ],
     "s050.f2.barracks": [
-      1221.0,
-      493.5
+      1218.0,
+      387.5
     ],
     "s050.f2.fabrication_depot": [
-      1117.5,
-      460.0
+      1165.5,
+      364.0
     ],
     "economy.enemy": [
-      1211.5,
+      1187.5,
       406.0
     ],
     "s050.f2.refinery": [
-      1216.5,
-      387.5
+      1192.5,
+      339.5
     ],
     "s050.f2.fuel_bladder": [
       1139.0,
@@ -73,23 +73,23 @@
     ],
     "staging.enemy": [
       1211.0,
-      455.5
-    ],
-    "s050.f2.satellite_dish": [
-      1098.0,
-      459.5
-    ],
-    "service.enemy": [
-      1187.0,
       407.5
     ],
-    "s050.f2.watchtower.approach": [
+    "s050.f2.satellite_dish": [
+      1140.0,
+      363.5
+    ],
+    "service.enemy": [
       1163.0,
       407.5
     ],
+    "s050.f2.watchtower.approach": [
+      1211.0,
+      455.5
+    ],
     "air.enemy": [
-      1140.0,
-      459.5
+      1164.0,
+      339.5
     ],
     "spawn.infantry.player": [
       938.5,
@@ -115,32 +115,48 @@
       1188.5,
       416.5
     ],
-    "s050.provisional.route.vehicle.0": [
-      932.5,
-      426.5
-    ],
-    "s050.provisional.route.vehicle.1": [
-      1178.5,
-      426.5
-    ],
-    "s050.provisional.route.infantry.0": [
-      938.5,
-      416.5
-    ],
-    "s050.provisional.route.infantry.1": [
-      1188.5,
-      416.5
-    ],
     "s049.f1.guard_tower": [
-      923.5,
-      454.0
+      1019.0,
+      361.0
+    ],
+    "basemove.route.1.waypoint.00": [
+      1022.0,
+      362.0
+    ],
+    "basemove.route.1.waypoint.01": [
+      1034.0,
+      350.0
+    ],
+    "basemove.route.1.waypoint.02": [
+      1046.0,
+      350.0
+    ],
+    "basemove.route.1.waypoint.03": [
+      1046.0,
+      354.0
+    ],
+    "basemove.route.1.waypoint.04": [
+      1186.0,
+      354.0
+    ],
+    "basemove.route.2.waypoint.00": [
+      998.0,
+      386.0
+    ],
+    "basemove.route.2.waypoint.01": [
+      1010.0,
+      398.0
+    ],
+    "basemove.route.2.waypoint.02": [
+      1202.0,
+      398.0
     ]
   },
   "pads": {
     "base.player": {
       "at": [
-        904.0,
-        449.5
+        1002.0,
+        363.5
       ],
       "anchor": "s050.f1.barracks",
       "size": [
@@ -194,8 +210,8 @@
     },
     "base.enemy": {
       "at": [
-        1221.0,
-        493.5
+        1218.0,
+        387.5
       ],
       "anchor": "s050.f2.barracks",
       "size": [
@@ -320,8 +336,8 @@
       "kind": "BaseBarracks",
       "faction": 1,
       "at": [
-        904.0,
-        449.5
+        1002.0,
+        363.5
       ],
       "size": [
         28,
@@ -335,7 +351,7 @@
       "faction": 1,
       "at": [
         1019.0,
-        479.5
+        407.5
       ],
       "size": [
         14,
@@ -348,8 +364,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        899.5,
-        478.0
+        1043.5,
+        406.0
       ],
       "size": [
         15,
@@ -363,7 +379,7 @@
       "faction": 1,
       "at": [
         1024.5,
-        459.5
+        339.5
       ],
       "size": [
         25,
@@ -376,7 +392,7 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        1019.0,
+        1091.0,
         361.0
       ],
       "size": [
@@ -390,8 +406,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        997.5,
-        364.0
+        1021.5,
+        388.0
       ],
       "size": [
         19,
@@ -404,8 +420,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1019.0,
-        407.5
+        1024.5,
+        363.5
       ],
       "size": [
         3,
@@ -418,8 +434,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        923.5,
-        454.0
+        1019.0,
+        361.0
       ],
       "size": [
         3,
@@ -433,7 +449,7 @@
       "faction": 1,
       "at": [
         1043.0,
-        407.5
+        337.0
       ],
       "size": [
         3,
@@ -446,8 +462,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1044.0,
-        459.5
+        1092.0,
+        387.5
       ],
       "size": [
         10,
@@ -460,7 +476,7 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        1020.0,
+        1068.0,
         387.5
       ],
       "size": [
@@ -474,8 +490,8 @@
       "kind": "BaseBarracks",
       "faction": 2,
       "at": [
-        1221.0,
-        493.5
+        1218.0,
+        387.5
       ],
       "size": [
         28,
@@ -489,7 +505,7 @@
       "faction": 2,
       "at": [
         1211.0,
-        455.5
+        407.5
       ],
       "size": [
         14,
@@ -502,7 +518,7 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1211.5,
+        1187.5,
         406.0
       ],
       "size": [
@@ -516,8 +532,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1216.5,
-        387.5
+        1192.5,
+        339.5
       ],
       "size": [
         25,
@@ -544,8 +560,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1117.5,
-        460.0
+        1165.5,
+        364.0
       ],
       "size": [
         19,
@@ -558,7 +574,7 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1187.0,
+        1163.0,
         407.5
       ],
       "size": [
@@ -572,8 +588,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1163.0,
-        407.5
+        1211.0,
+        455.5
       ],
       "size": [
         3,
@@ -586,8 +602,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1098.0,
-        459.5
+        1140.0,
+        363.5
       ],
       "size": [
         10,
@@ -600,8 +616,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1140.0,
-        459.5
+        1164.0,
+        339.5
       ],
       "size": [
         16,
@@ -614,8 +630,13 @@
     {
       "kind": "MainHighway",
       "via": [
-        "s050.provisional.route.vehicle.0",
-        "s050.provisional.route.vehicle.1"
+        "base.player",
+        "basemove.route.1.waypoint.00",
+        "basemove.route.1.waypoint.01",
+        "basemove.route.1.waypoint.02",
+        "basemove.route.1.waypoint.03",
+        "basemove.route.1.waypoint.04",
+        "base.enemy"
       ],
       "width": 3.0,
       "vehicles": true,
@@ -624,8 +645,11 @@
     {
       "kind": "FlankNorthRuins",
       "via": [
-        "s050.provisional.route.infantry.0",
-        "s050.provisional.route.infantry.1"
+        "base.player",
+        "basemove.route.2.waypoint.00",
+        "basemove.route.2.waypoint.01",
+        "basemove.route.2.waypoint.02",
+        "base.enemy"
       ],
       "width": 1.0,
       "vehicles": false,

@@ -15,8 +15,9 @@ candidate commit, marks the lane as held for you, and starts no agent Unity run 
 
 ## 1. Base Assault — S002 (Desert Base, Ground Maneuver, Established Base)
 - **Commit:** the current `missions/integration` head on the Mac (contains `e8ad30c10`).
-- **Menu path:** Main menu → Skirmish → Skirmish library → "Desert Base · Base Assault · Ground Maneuver · Established
-  Base" → Standard size, Regular difficulty → Launch. (On a fresh profile the Skirmish entry appears only after Campaign
+- **Menu path** (the one the automated menu journey used, lane14/qa:371735): Main menu → Skirmish hotspot → Battle Library
+  (scroll to "Desert Base · Base Assault · Ground Maneuver · Established Base") → that mission card → Launch Mission
+  (Standard size, Regular difficulty are the defaults). (On a fresh profile the Skirmish entry appears only after Campaign
   Chapter 1.)
 - **What the automated runs show:** ARIA wins most runs in about 230 s of match time (about 21% of the 18-minute deadline),
   through the real menu (`program-logs/2026-11-17/lane14/qa`). It uses every unit type the mission offers.

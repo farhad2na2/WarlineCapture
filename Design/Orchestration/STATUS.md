@@ -10,9 +10,9 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Unity lane | Opus (ARIA worker, earlier session) | Last step: merge generic-binding + Codex 020/021, compile, S006/S026 diagnostic | Compile run 09:15 hit CS0117 (`SkirmishInstancePadPlanner.cs:128`); fix committed on `missions/generic-binding` 5a56c2dfe; Editor waits for wrapper timeout (~09:30) |
+| Unity lane | Opus (ARIA worker, earlier session) | Last step: merge generic-binding + Codex 020/021, compile, S006/S026 diagnostic | CS0117 fixed in place at 09:28 (same one-line qualification as 5a56c2dfe); S006/S026 queue running |
 | aria-intercept | Opus | S002 seed 155923: finish enemies that slip past the army; branch `missions/aria-intercept` (worktree `wt/aria`) | Coding; gets the lane after the current owner |
-| airport-probe | Sonnet | Live Airport-site probe for any authored catalog + pads script; IB/AP layout probe design; branch `missions/airport-probe` (worktree `wt/harness`) | Coding, no Unity |
+| airport-probe | Sonnet | Airport probe done (3b4c598eb, not compiled); now building the layout dump for Industrial Basin / AP | Coding, no Unity |
 | objective-authoring | Sonnet | Typed objective areas and defence/convoy pads in authoring (FC/BT/CE); branch `missions/objective-authoring` (worktree `wt/objectives`) | Coding, no Unity |
 | Codex | gpt-6.1-terra | 022 deadline data for gate 2 (read-only) | Running |
 | Orchestrator | Fable | Daily review and hard decisions only (owner rule) | Idle until the daily cycle |
@@ -147,3 +147,14 @@ record is `missions.csv`.
 - 2026-11-17 09:25 codex: codex-022-deadline-gate2-data finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data-report.txt (not yet verified or merged)
 - 2026-11-17 09:25 codex: batch finished: codex-022-deadline-gate2-data:high:40
 - 2026-11-17 09:25 aria-intercept worker: started; reading S002 base-assault policy in worktree WarlineCapture-wt/aria (branch missions/aria-intercept)
+- 2026-11-17 09:26 program lead: Codex 022 checked: S002's 1080 s deadline is the shared BA objective asset (S002–S006, S026, S049, S050); the ±40% tuning floor (648 s) still puts a 236 s win at 36%. Gate 2 vs BA deadline parked in `decisions_pending.md`; no tuning made. CONTEXT.md corrected: today's runs.csv rows are under `_Evidence/candidates/<hash>/`.
+- 2026-11-17 09:26 codex: codex-022-deadline-gate2-data finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-022-deadline-gate2-data-report.txt (not yet verified or merged)
+- 2026-11-17 09:26 codex: batch finished: codex-022-deadline-gate2-data:high:40
+- 2026-11-17 09:28 airport-probe worker: done. missions/airport-probe 3b4c598eb (RunCatalogAirportSourceFitAndExit + airport_sites_to_pads.py, 8 unittests OK, C# not compiled). Notes: Design/Orchestration/notes/airport-probe-2026-11-17.md
+- 2026-11-17 09:28 aria worker: compile check failed (1 error CS0117, name shadowing in SkirmishInstancePadPlanner.cs:128), fixed by qualification; launching S006/S026 queue (compiles on start)
+- 2026-11-17 09:29 airport-probe worker: started layout dump (Part B item 4) on missions/airport-probe
+- 2026-11-17 09:29 program lead: airport-probe 3b4c598eb reviewed (additive harness entry `RunCatalogAirportSourceFitAndExit` + `airport_sites_to_pads.py`, 8 tests): accepted pending compile; runs on S026/S050 once they start. Its finding: AP opens today through S004's binding; Industrial Basin only through legacy S073. Worker now builds a read-only layout dump for both.
+- 2026-11-17 09:29 objective-authoring worker: done; c8d92c7ef on missions/objective-authoring (checker+8 tests OK, existing drafts unchanged, C# uncompiled); note objective-authoring-2026-11-17.md
+- 2026-11-17 09:30 program lead: objective-authoring c8d92c7ef reviewed (authoring entry + checker for FC/BT/CE areas and defence/convoy pads; BA path keeps its shared objective; FC/BT/CE get per-scenario objective assets with matrix deadlines; 8 tests): accepted pending compile. Worker now builds the area-measurement probe and candidate S007/S013/S019 Desert Base drafts.
+- 2026-11-17 09:30 objective-authoring worker: started area-measurement probe + S007/S013/S019 candidate drafts
+- 2026-11-17 09:32 aria worker: finished, report in daily/aria-worker-2026-11-17.md

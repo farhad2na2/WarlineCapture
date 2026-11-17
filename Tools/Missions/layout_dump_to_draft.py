@@ -18,7 +18,7 @@ import math
 from pathlib import Path
 import sys
 
-FLAG_ROAD, FLAG_WATER, FLAG_SCENERY, FLAG_INVALID, FLAG_NOT_LEVEL = 1, 2, 4, 8, 16
+FLAG_ROAD, FLAG_WATER, FLAG_SCENERY, FLAG_INVALID, FLAG_NOT_LEVEL, FLAG_SIDEWALK = 1, 2, 4, 8, 16, 32
 SIDES = ('player', 'enemy')
 # dump kind -> draft role prefix (check_draft.py role prefixes); air picks airport else helipad.
 ROLE_KINDS = (('staging', 'staging'), ('economy', 'supply'), ('service', 'service'))
@@ -67,7 +67,8 @@ def world_to_block(data, x, z):
 
 
 def is_blocked(flags):
-    # Roads are placement-invalid but travelable; a cached-invalid cell that is not a road stays blocked.
+    # Roads and sidewalks are placement-invalid but travelable (a sidewalk-only block is not blocked);
+    # a cached-invalid cell that is not a road stays blocked.
     return bool(flags & (FLAG_WATER | FLAG_SCENERY | FLAG_NOT_LEVEL)) or (bool(flags & FLAG_INVALID) and not flags & FLAG_ROAD)
 
 
@@ -218,6 +219,17 @@ def build(data, catalog_id, campaign_source, measured_from, apron=4, separation=
         needs.append('routes: %d route(s) through unblocked bitmap cells, two distinct approaches required' % len(paths))
     draft['notes'] = ('layout skeleton measured_from=%s; catalog=%s stride=%s; coarse native-validator candidates, '
                       'not a capacity or route certificate' % (measured_from, data.get('catalog'), data.get('stride')))
+    failure = data.get('sessionFailure')
+    if failure and failure != 'none':
+        draft['notes'] += '; dump taken after session startup failure %s (bases from the resolved setup)' % failure
+    if data.get('sourceOperationMapId'):
+        draft['notes'] += '; source=%s' % data['sourceOperationMapId']
+    if data.get('authoredBuildingsReady') is False or data.get('roadSurfacesReady') is False:
+        needs.append('dump was taken before the authored building/road caches were ready: candidates are NOT trustworthy, rerun')
+    if not data.get('candidates'):
+        needs.append('the dump has no candidates (rejected: buildings=%s road=%s water=%s sidewalk=%s native=%s)' % (
+            data.get('rejectedBuilding'), data.get('rejectedRoad'), data.get('rejectedWater'),
+            data.get('rejectedSidewalk'), data.get('rejectedNative')))
     return draft, needs
 
 

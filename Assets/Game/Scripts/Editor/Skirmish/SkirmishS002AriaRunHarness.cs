@@ -673,6 +673,12 @@ namespace Game.Editor
                 deadline = now + (Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY") == "1"
                     ? (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_NATIVE_RECOVERY_DIAGNOSTIC")) ? 120d : 360d)
                     : WallClockBudgetSeconds);
+            // The layout dump spans startup plus a long read-only scan; its own watchdog owns the hard timeout.
+            if (layoutDump != null && !layoutDumpDone && !layoutDumpDeadlineExtended)
+            {
+                deadline = Math.Max(deadline, now + 1500d);
+                layoutDumpDeadlineExtended = true;
+            }
             if (now > deadline)
             {
                 Finish(abort: true, abortReason: "timeout");
@@ -697,6 +703,8 @@ namespace Game.Editor
                         Finish(true, "operationMapFailure=" + view.OperationMapContentFailureCode);
                         return;
                     }
+                // Layout dump on a session that failed to start (BlockedSpawn): scan the loaded map, then finish.
+                if (TickLayoutDumpAfterStartupFailure(em)) return;
                 using (var expanded = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)))
                 {
                     if (expanded.CalculateEntityCount() == 1)

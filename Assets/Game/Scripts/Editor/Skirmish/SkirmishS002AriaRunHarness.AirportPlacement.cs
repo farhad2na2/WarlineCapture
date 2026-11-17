@@ -462,7 +462,9 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", "1");
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
             Environment.SetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY", null);
-            if (launch == null || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_SEED")))
+            // Only the S004 route needs its fixed seed. A catalog dispatch (launch != null) keeps the caller's seed, or
+            // RunFocusedAriaAndExit picks the catalog default; 104733 is invalid for S002 ('First-visit ARIA seed must be ...').
+            if (launch == null)
                 Environment.SetEnvironmentVariable("WARLINE_S002_SEED", "104733");
             Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", "en");
             try { (launch ?? new Action(RunS004AriaAndExit))(); }

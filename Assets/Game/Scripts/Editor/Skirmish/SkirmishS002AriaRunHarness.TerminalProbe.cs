@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Game.Components;
 using Game.Composition;
+using Game.Configs;
 using Game.Runtime;
 using Unity.Collections;
 using Game.UI.Contracts;
@@ -32,6 +33,25 @@ namespace Game.Editor
         private static AriaTouchInputUiSystemHelper terminalTouch;
         private static int terminalInterventions, terminalUnexpectedSamples;
         private static readonly List<Entity> terminalOldBattlefield = new();
+        private static SkirmishTerminalFrozenState.Sample terminalInitialSample;
+
+        private static SkirmishTerminalFrozenState.Sample ReadTerminalFreezeSample(EntityManager em, Entity session, in SkirmishMatchState match, float elapsed)
+        {
+            var sample = new SkirmishTerminalFrozenState.Sample
+            {
+                Found = true, Session = session.Index + ":" + session.Version, Phase = match.Phase.ToString(),
+                Outcome = match.Outcome.ToString(), Attempt = ReadProductionTerminalAttempt(em, session, in match).ToString(), Elapsed = elapsed,
+                PlayerBaseHp = DesignatedBaseHp(em, session, 1), EnemyBaseHp = DesignatedBaseHp(em, session, 2),
+                SimulationActive = SkirmishLaunchProjection.IsSimulationActive(em), ClockPlaying = -1, ClockPaused = -1
+            };
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+            {
+                var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                sample.ClockPlaying = clock.Playing;
+                sample.ClockPaused = clock.Paused;
+            }
+            return sample;
+        }
 
         private static void StartTerminalProbe(EntityManager em, Entity session, SkirmishMatchState match, float elapsed)
         {
@@ -63,6 +83,7 @@ namespace Game.Editor
             terminalTimeScale = Time.timeScale;
             terminalPlayerHp = DesignatedBaseHp(em, session, 1);
             terminalEnemyHp = DesignatedBaseHp(em, session, 2);
+            terminalInitialSample = ReadTerminalFreezeSample(em, session, in match, elapsed);
             terminalStep = 0;
             terminalLastPlayerFrame = EditorApplication.timeSinceStartup;
             terminalDestinationVisibleSince = 0d;
@@ -92,19 +113,24 @@ namespace Game.Editor
                 string prefix = LiveTracePath() + ".terminal";
                 if (terminalStep == 0)
                 {
-                    if (!SkirmishLaunchProjection.TryGet(em, out var session, out var match) || session != terminalSession ||
-                        match.Phase != SkirmishPhase.Finished || match.Outcome != terminalMatch.Outcome ||
-                        !ReadProductionTerminalAttempt(em,session,in match).Equals(terminalAttempt) ||
-                        Mathf.Abs(SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match) - terminalElapsed) > .05f ||
-                        DesignatedBaseHp(em, session, 1) != terminalPlayerHp || DesignatedBaseHp(em, session, 2) != terminalEnemyHp ||
-                        SkirmishLaunchProjection.IsSimulationActive(em))
-                    { EndTerminalProbe(false, "terminalNotFrozen"); return; }
-                    if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                    // Every predicate's initial and delayed value is logged below. A destroyed base (<= 0 HP at the freeze
+                    // start) later reading -1 because cleanup removed its entity is the same destroyed state.
+                    bool found = SkirmishLaunchProjection.TryGet(em, out var session, out var match);
+                    bool sameSession = found && session == terminalSession;
+                    var delayedSample = new SkirmishTerminalFrozenState.Sample { Found = sameSession, ClockPlaying = -1, ClockPaused = -1 };
+                    bool attemptMatches = false;
+                    if (sameSession)
                     {
-                        var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
-                        if (clock.Playing != 0 || clock.Paused == 0)
-                        { EndTerminalProbe(false, "terminalClockNotFrozen"); return; }
+                        attemptMatches = ReadProductionTerminalAttempt(em, session, in match).Equals(terminalAttempt);
+                        delayedSample = ReadTerminalFreezeSample(em, session, in match,
+                            SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match));
                     }
+                    var frozenViolations = SkirmishTerminalFrozenState.Violations(terminalInitialSample, delayedSample, attemptMatches);
+                    bool clockFrozen = !delayedSample.Found || SkirmishTerminalFrozenState.ClockFrozen(delayedSample);
+                    string frozenLine = SkirmishTerminalFrozenState.Format(terminalInitialSample, delayedSample, frozenViolations, clockFrozen);
+                    if (frozenViolations.Count == 0 && clockFrozen) Debug.Log(frozenLine); else Debug.LogError(frozenLine);
+                    if (frozenViolations.Count > 0) { EndTerminalProbe(false, "terminalNotFrozen"); return; }
+                    if (!clockFrozen) { EndTerminalProbe(false, "terminalClockNotFrozen"); return; }
                     if (productionCanary?.Request.IsLegacyPreset == true)
                     {
                         if (!SkirmishLegacyProductionIdentity.ReadSavedResultMatches(in match,out _)) return;

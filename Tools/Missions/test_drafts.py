@@ -25,7 +25,9 @@ def main():
     for path in files:
         try:
             draft = json.loads(path.read_text())
-            if not isinstance(draft, dict) or set(draft) != set(example):
+            # instance_pads and structure_footprints are optional (per-building pads, see check_draft.py).
+            optional = {'instance_pads', 'structure_footprints'}
+            if not isinstance(draft, dict) or set(draft) - optional != set(example):
                 raise ValueError('top-level keys differ from example')
             row = catalog.get(draft['catalog_id'])
             if row is None or row['objective_id'] != 'BA':

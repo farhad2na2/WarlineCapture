@@ -65,6 +65,47 @@ class DraftChecks(unittest.TestCase):
                 self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
         self.assertIn('matrix', [r for r, _ in checker.check(self.example, self.catalog, [])])
 
+    def with_instance_pads(self):
+        draft = copy.deepcopy(self.example)
+        a = draft['anchors']
+        draft['instance_pads'] = [
+            {'id': 'p.supply', 'kind': 'Supply', 'faction': 1, 'at': a['economy.player'], 'size': [15, 4], 'anchor': 'economy.player'},
+            {'id': 'p.service', 'kind': 'Service', 'faction': 1, 'at': a['service.player'], 'size': [3, 4], 'anchor': 'service.player'},
+        ]
+        draft['structure_footprints'] = {'building.refinery.module': [25, 15]}
+        return draft
+
+    def test_instance_pads(self):
+        base = self.with_instance_pads()
+        self.assertEqual([], checker.check(base, self.catalog, self.matrix))
+        def second(d, **change): d['instance_pads'][1].update(change)
+        cases = [
+            ('instance.type', lambda d: d.update(instance_pads={})),
+            ('instance.type', lambda d: d['instance_pads'].append(None)),
+            ('instance.type', lambda d: second(d, extra=1)),
+            ('instance.id', lambda d: second(d, id='')),
+            ('instance.id', lambda d: second(d, id='p.supply')),
+            ('instance.id', lambda d: second(d, id='x' * 60)),
+            ('instance.duplicate', lambda d: second(d, id='rally.player')),
+            ('instance.kind', lambda d: second(d, kind='Rally')),
+            ('instance.faction', lambda d: second(d, faction=3)),
+            ('instance.faction', lambda d: second(d, faction=True)),
+            ('draft.point', lambda d: second(d, at=[1])),
+            ('instance.size', lambda d: second(d, size=[0, 4])),
+            ('instance.anchor', lambda d: second(d, anchor='missing')),
+            ('instance.anchor', lambda d: second(d, at=[d['anchors']['service.player'][0] + 1, d['anchors']['service.player'][1]])),
+            ('instance.anchor', lambda d: second(d, at=d['anchors']['economy.player'], anchor='economy.player')),
+            ('instance.bounds', lambda d: second(d, size=[100000, 4])),
+            ('instance.footprint', lambda d: d['structure_footprints'].update({'building.nope': [1, 1]})),
+            ('instance.footprint', lambda d: d['structure_footprints'].update({'building.refinery': [0, 1]})),
+            ('instance.footprint', lambda d: d.update(structure_footprints=[])),
+        ]
+        for rule, mutate in cases:
+            with self.subTest(rule=rule):
+                draft = copy.deepcopy(base)
+                mutate(draft)
+                self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
+
 
 if __name__ == '__main__':
     unittest.main()

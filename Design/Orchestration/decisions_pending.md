@@ -122,3 +122,22 @@ against the named logs before relying on them.
    the first accepted sibling after S026.
 6. The standalone battle host / quick simulator stays parked (Unity-first), so the owner goal of a
    99%-accurate quick check replacing Unity is deferred, not dropped.
+
+## 2026-11-17 — Codex designer playtest (S002, S026): shared P0 for the next daily review
+
+Source: `Design/Orchestration/owner_packets/2026-11-17-s002-s026-designer-playtest.md`. Claims as
+reported, to be verified from logs. Recorded as designer play only: no owner manual win, no device
+acceptance.
+
+- **P0 (runtime, all missions).** Real-menu S026, Regular/Standard, seed 104729, ARIA off, normal
+  reinforcement purchases and attrition: at about 9:36 a 16 MiB ECS allocator error in production
+  actor adoption; at 18:00 (the deadline) the settlement system threw and the result never opened.
+  The automated win at 2:32 never reaches this path.
+- **Orchestrator ruling (2026-11-17):** no row is marked auto-accepted on a runtime candidate until
+  one long-session regression passes on it: play past reinforcement purchases to deadline expiry,
+  no allocator error, result screen opens and return works. Once per candidate, not per mission.
+  Also: a focused data preflight per candidate; a separate phone playtest per objective family is
+  an owner/device gate, recorded separately.
+- **S002:** lost to one tank at 1:35 with zero troop losses. The review says fix threat legibility
+  and verify counterplay before balance changes. This conflicts in order with the guard tower in
+  the 2026-11-17 directive; waits on the owner (asked).

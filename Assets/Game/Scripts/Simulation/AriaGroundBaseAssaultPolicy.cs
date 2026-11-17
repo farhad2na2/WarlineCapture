@@ -384,9 +384,12 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             ref AriaS002Decision output)
         {
             var facts=new Game.Simulation.AriaInterceptView {
-                ThreatAvailable=view.InterceptThreat.Admitted,
+                ThreatKnown=view.InterceptKnown,ThreatAvailable=view.InterceptKnown&&view.InterceptThreat.Admitted,
+                PanAvailable=view.InterceptKnown&&view.InterceptPan.Admitted,
+                // A presented home threat is often this same vehicle; the nearby column
+                // answers it first. Home defence that already started keeps the controls.
                 Busy=touch.Phase==AriaS002ContactPhase.Manual||!view.EnemyDesignatedAlive||view.AssaultAtBase||
-                    view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||view.PublicHomeThreat||
+                    view.CatalogOpen||view.PlacementOpen||view.InspectionOpen||
                     plan.HomeDefenseStage!=0||plan.PrecisionStage!=0||plan.AdvanceNavigation!=0||
                     plan.AssaultInspectStage!=0||plan.PadStage!=0||plan.AssaultFocusStage==1,
                 ArmyMoving=view.ExpandedAttackOrderMask!=0||plan.AssaultIssued!=0||plan.PagesOrdered>0,
@@ -406,6 +409,7 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 case Game.Simulation.AriaInterceptAction.SelectSlot:plan.Intent=AriaS002Intent.SelectSquad;Target(view.Squad(decision.Slot),false,ref output);break;
                 case Game.Simulation.AriaInterceptAction.ArmAttack:plan.Intent=AriaS002Intent.Attack;Target(view.Attack,false,ref output);break;
                 case Game.Simulation.AriaInterceptAction.TargetThreat:plan.Intent=AriaS002Intent.TargetThreat;Target(view.InterceptThreat,true,ref output);break;
+                case Game.Simulation.AriaInterceptAction.PanToThreat:plan.Intent=AriaS002Intent.FindThreat;Target(view.InterceptPan,false,ref output);break;
                 default:plan.Intent=AriaS002Intent.TargetThreat;output.Kind=AriaS002DecisionKind.Waiting;break;
             }
             return true;

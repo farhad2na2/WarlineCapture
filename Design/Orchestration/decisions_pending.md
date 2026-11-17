@@ -96,3 +96,26 @@ changes the fewest shared values and keeps the published 18-minute rule; option 
 must stay tied to the deadline.
 
 **Meanwhile.** No deadline, force or resource change is made. Wins are recorded with their times.
+
+## 2026-11-17 — For the orchestrator next daily review: Codex independent review (owner-shared)
+
+The lead already has this handoff and owns execution. Figures below are the review claims; verify
+against the named logs before relying on them.
+
+1. **Corrected clock.** `run_aria_queue.py` writes whole Editor job time to `aria_time_s`; the gate
+   needs the match clock (`runs.csv duration_seconds`). Claimed: `lane12/qb/unity.log` S026 won at
+   147.868 s (line 38901), S049 at 194.951 s (line 129843), both under the 216 s floor (20% of
+   1080 s); S002 lane12 wins 230–232 s (in band). Check: ledger rescored, failures kept, warm-ups /
+   save probes / counted runs separated. Note: the 20% floor approved today was argued from
+   whole-job times (256–273 s); S002 is at 21% on the match clock, so the margin is thin.
+2. **Seed 155923** lost again at 95.777 s in the lane14 real-menu set (3 of 4). Check: one failing
+   seed reproduced on unchanged inputs before another matrix; guard tower directive applied or not.
+3. **Real-menu publication.** Authored rows stay Planned, the menu preflight rejects Planned, and
+   publication waits on acceptance (circular). Proposal: run acceptance through the real catalog on
+   an internal candidate. Waits on the owner (asked 2026-11-17).
+4. **Early owner sampling** of the first BA, FC, BT, CE prototypes. Waits on the owner saying when
+   and on which device.
+5. **Metrics to review:** accepted missions per week, Unity minutes per accepted sibling, time to
+   the first accepted sibling after S026.
+6. The standalone battle host / quick simulator stays parked (Unity-first), so the owner goal of a
+   99%-accurate quick check replacing Unity is deferred, not dropped.

@@ -80,13 +80,6 @@ MonoBehaviour:
   - SizeId: 1
     DifficultyId: 1
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 1
-    DifficultyId: 1
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -224,13 +217,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 1
-    DifficultyId: 2
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 1
     DifficultyId: 2
     FactionId: 1
@@ -374,13 +360,6 @@ MonoBehaviour:
   - SizeId: 1
     DifficultyId: 3
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 1
-    DifficultyId: 3
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -518,13 +497,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 1
-    DifficultyId: 4
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 1
     DifficultyId: 4
     FactionId: 1
@@ -672,13 +644,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 2
-    DifficultyId: 1
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 2
     DifficultyId: 1
     FactionId: 1
@@ -836,13 +801,6 @@ MonoBehaviour:
   - SizeId: 2
     DifficultyId: 2
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 2
-    DifficultyId: 2
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -994,13 +952,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 2
-    DifficultyId: 3
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 2
     DifficultyId: 3
     FactionId: 1
@@ -1158,13 +1109,6 @@ MonoBehaviour:
   - SizeId: 2
     DifficultyId: 4
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 2
-    DifficultyId: 4
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -1316,13 +1260,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 3
-    DifficultyId: 1
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 3
     DifficultyId: 1
     FactionId: 1
@@ -1480,13 +1417,6 @@ MonoBehaviour:
   - SizeId: 3
     DifficultyId: 2
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 3
-    DifficultyId: 2
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -1641,13 +1571,6 @@ MonoBehaviour:
   - SizeId: 3
     DifficultyId: 3
     FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-  - SizeId: 3
-    DifficultyId: 3
-    FactionId: 1
     StructureId: building.watchtower.approach
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.s050_f1_watchtower_approach
@@ -1799,13 +1722,6 @@ MonoBehaviour:
     InstanceOrdinal: 0
     AnchorId: anchor.skirmish.s050.service_player
     PadId: pad.skirmish.s050.i_s050_f1_watchtower
-  - SizeId: 3
-    DifficultyId: 4
-    FactionId: 1
-    StructureId: building.watchtower
-    InstanceOrdinal: 1
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    PadId: pad.skirmish.s050.i_s050_f1_guard_tower
   - SizeId: 3
     DifficultyId: 4
     FactionId: 1
@@ -1893,7 +1809,7 @@ MonoBehaviour:
   layoutId: layout.skirmish.s050
   operationMapId: opmap.ch05.citywide_alert
   contentVersion: 1
-  contentHash: authored.s050.790d09c85fa6f2e4
+  contentHash: authored.s050.b533ac57d073e2d3
   worldWidthMetres: 283.37222
   worldDepthMetres: 201.48724
   originX: 1002.5225
@@ -2014,12 +1930,6 @@ MonoBehaviour:
     NormalizedV: 0.22431476
     WorldX: 1073.8362
     WorldZ: 219.75873
-  - AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    RoleId: s050.f1.guard_tower
-    NormalizedU: 0.19067171
-    NormalizedV: 0.48602387
-    WorldX: 1056.5536
-    WorldZ: 272.48978
   - AnchorId: anchor.skirmish.s050.s050_f1_refinery
     RoleId: s050.f1.refinery
     NormalizedU: 0.37480745
@@ -2498,15 +2408,6 @@ MonoBehaviour:
     WidthMetres: 46.326023
     DepthMetres: 45.442574
     FactionId: 2
-  - PadId: pad.skirmish.s050.i_s050_f1_guard_tower
-    AnchorId: anchor.skirmish.s050.s050_f1_guard_tower
-    RoleId: instance.s050.f1.guard_tower
-    Kind: 8
-    CenterX: 1056.5536
-    CenterZ: 272.48978
-    WidthMetres: 32.19079
-    DepthMetres: 33.07424
-    FactionId: 1
   - PadId: pad.skirmish.s050.d_1_refinery_module_0
     AnchorId: anchor.skirmish.s050.instance_d_1_refinery_module_0
     RoleId: instance.d_1_refinery_module_0

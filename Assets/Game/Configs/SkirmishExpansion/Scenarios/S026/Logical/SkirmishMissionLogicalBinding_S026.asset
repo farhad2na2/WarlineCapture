@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3763411107263187537
+--- !u!114 &-6817256238663690178
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28,7 +28,7 @@ MonoBehaviour:
   CatalogId: S026
   DefinitionId: skirmish.s026
   CampaignSourceContentHash: 400075d3e32a2ce1964b386152ebd05721757b008b622ef2904d82af8a25b286
-  LayoutContentHash: authored.s026.1577d04a83fdb5e9
+  LayoutContentHash: authored.s026.190ecd8bc5372b35
   MinHeight: 6.68918
   MaxHeight: 14.68918
   NormalHeight: 12.68918
@@ -68,7 +68,7 @@ MonoBehaviour:
   SourceContentHash: 400075d3e32a2ce1964b386152ebd05721757b008b622ef2904d82af8a25b286
   SourceSemanticFingerprint: 1ff6369f5910873d6c3d3ba66ef80e3e9a00c35f56d68365f99b562eca853717
   LayoutId: layout.skirmish.s026
-  ReviewedLayoutSemanticFingerprint: 3bdadfd00e4eb39b9162e1a318f91553206d8a6f5398abfbc8cca77f4c7be214
+  ReviewedLayoutSemanticFingerprint: 30edc2815b8451438f3a224deb947be636143dbfbdf0c90d5ebd1cc4edc4d5b6
   ObjectiveKind: 1
   Variants:
   - Size: 1
@@ -77,7 +77,7 @@ MonoBehaviour:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -244,14 +244,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 1
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -418,14 +418,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 1
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -592,14 +592,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 1
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -766,14 +766,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 2
     Difficulty: 1
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -940,14 +940,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 2
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1114,14 +1114,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 2
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1288,14 +1288,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 2
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1462,14 +1462,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 3
     Difficulty: 1
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1636,14 +1636,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 3
     Difficulty: 2
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1810,14 +1810,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 3
     Difficulty: 3
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -1984,14 +1984,14 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   - Size: 3
     Difficulty: 4
     Areas:
       rid: -2
     ReviewedAreaLogicalFingerprint: 
     ReviewedGeometryFingerprint: 
-    View: {fileID: -3763411107263187537}
+    View: {fileID: -6817256238663690178}
     OpeningFocusRole: 1
     OpeningFocusStableActorId: role.rifle.1.0.0
     OpeningFocusSmoothSeconds: 2.25
@@ -2158,7 +2158,7 @@ MonoBehaviour:
       MinimumSubjectElevation: -5.31082
       MaximumSubjectElevation: 17.199179
       Evidence: 15
-    ReviewedViewFingerprint: fe1a59e4319089ded6a11fa008bdcd01bd6ead6a0a857f84f4f86889e1ff2c72
+    ReviewedViewFingerprint: d225b86654d748edb3cadfb1ef6efb7c58234a6f1526c67bc68af7ed234a2783
   references:
     version: 2
     RefIds:

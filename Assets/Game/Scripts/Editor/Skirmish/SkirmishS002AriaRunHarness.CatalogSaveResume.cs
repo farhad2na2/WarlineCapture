@@ -3,7 +3,7 @@
 // RunCatalogSaveResumeAndExit - generic gate-4 (checkpoint and recovery) journey for any catalog
 // that the product itself lets the player save, driven through the real native UI by Touch:
 //   generic dispatch (RunFocusedAriaAndExit) -> ARIA plays -> after WARLINE_SAVE_RESUME_AFTER_SECONDS
-//   (default 60) of match time: Pause -> Save & Exit -> setup screen -> Continue -> verify -> ARIA
+//   (default 60) of match time: stop ARIA through its visible control (AriaInstantStop), then Pause -> Save & Exit -> setup screen -> Continue -> verify -> ARIA
 //   continues to the result -> terminal probe (return to menu).
 //
 //   WARLINE_SKIRMISH_CATALOG=S026 WARLINE_S002_SEED=<seed> WARLINE_S002_LOCALE=en \
@@ -51,11 +51,13 @@ namespace Game.Editor
         // is listening is seen as a physical takeover and stops it (sr26/sr26b: physicalTakeover, no gesture ever started).
         private const int CatalogSaveResumeMaxInterruptions = 8;
         private const int CatalogSaveResumeMaxPauseTaps = 10;
+        private const int CatalogSaveResumeMaxStopTaps = 6;
+        private const double CatalogSaveResumeStopVisibleSeconds = 25d;
         private const double CatalogSaveResumePauseVisibleSeconds = 25d;
         private const double CatalogSaveResumePopupVisibleSeconds = 30d;
 
         private static bool catalogSaveResumeActive, catalogSaveResumeDone;
-        private static int catalogSaveResumeStep = 1, catalogSaveResumeLoggedStep;
+        private static int catalogSaveResumeStep, catalogSaveResumeLoggedStep, catalogSaveResumeStopTaps;
         private static double catalogSaveResumeDeadline, catalogSaveResumeStartedAt, catalogSaveResumeStepSince;
         private static int catalogSaveResumeInterruptions, catalogSaveResumePauseTaps, catalogSaveResumeTapStep;
         private static string catalogSaveResumeSessionId;
@@ -111,7 +113,7 @@ namespace Game.Editor
             if (elapsed < after || !UiShellRuntimeGateway.ReadAriaPlay().Active) return false;
 
             catalogSaveResumeActive = true;
-            catalogSaveResumeStep = 1; catalogSaveResumeLoggedStep = -1;
+            catalogSaveResumeStep = 0; catalogSaveResumeLoggedStep = -1; catalogSaveResumeStopTaps = 0; // step 0: stop ARIA first
             catalogSaveResumeSessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString();
             catalogSaveResumeDeadline = now + 420d;
             catalogSaveResumeStartedAt = now;
@@ -227,6 +229,35 @@ namespace Game.Editor
                 if (playerResumeTouch.IsRunning && !playerResumeTouch.IsBusy) playerResumeTouch.Stop(); // never idle as a listening touchscreen
                 if (playerResumeTouch.IsBusy || now < playerResumeDue) return;
 
+                if (catalogSaveResumeStep == 0) // stop ARIA through its visible control so its touches cannot collide with ours
+                {
+                    if (!UiShellRuntimeGateway.ReadAriaPlay().Active)
+                    {
+                        Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=AriaStopped taps=" + catalogSaveResumeStopTaps +
+                            " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase + " interruptions=" + catalogSaveResumeInterruptions);
+                        catalogSaveResumeStep = 1;
+                        playerResumeDue = now + .5d;
+                        return;
+                    }
+                    if (catalogSaveResumeStopTaps >= CatalogSaveResumeMaxStopTaps)
+                        throw new InvalidOperationException("ariaStopFailed: " + catalogSaveResumeStopTaps + " taps on the ARIA stop control left ARIA " +
+                            UiShellRuntimeGateway.ReadAriaPlay().Phase + " (interruptions=" + catalogSaveResumeInterruptions + ")");
+                    Button stop = null;
+                    foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    {
+                        if (button.name == "AriaInstantStop") { stop = button; break; }
+                        if (button.name == "WatchAriaPlay") stop = button; // the Play control toggles to Stop while ARIA plays
+                    }
+                    if (stop != null)
+                    {
+                        if (CatalogSaveResumeTap(stop)) { catalogSaveResumeStopTaps++; Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=AriaStopTap n=" + catalogSaveResumeStopTaps + " button=" + stop.name); }
+                        return;
+                    }
+                    if (now - catalogSaveResumeStepSince > CatalogSaveResumeStopVisibleSeconds)
+                        throw new InvalidOperationException("ariaStopNotPresented: no AriaInstantStop/WatchAriaPlay control after " + CatalogSaveResumeStopVisibleSeconds +
+                            " s; Aria-like buttons: " + CatalogSaveResumeButtonsLike("aria"));
+                    return;
+                }
                 if (catalogSaveResumeStep == 1) // Pause
                 {
                     if (!hasSession) throw new InvalidOperationException("session lost before Pause");
@@ -359,7 +390,7 @@ namespace Game.Editor
                     " savedElapsed=" + catalogSaveResumeSavedElapsed.ToString("0.###", CultureInfo.InvariantCulture) +
                     " resumedElapsed=" + resumedElapsed.ToString("0.###", CultureInfo.InvariantCulture) +
                     " saved{" + catalogSaveResumeSaved + "} resumed{" + resumed + "} oldPhysicalGone=" + catalogSaveResumeOldEntities.Count +
-                    " ariaAfterResume=" + (ariaAfter ? "Active" : "Stopped") + " ariaMatchContinues=Pending ariaLedgerCountable=0");
+                    " ariaStoppedBeforePause=1 ariaAfterResume=" + (ariaAfter ? "Active" : "Stopped") + " ariaMatchContinues=Pending ariaLedgerCountable=0");
                 ScreenCapture.CaptureScreenshot(LiveTracePath() + ".catalog-resumed.png");
                 catalogSaveResumeActive = false; catalogSaveResumeDone = true;
                 playerResumeTouch.Dispose(); playerResumeTouch = null;

@@ -225,6 +225,10 @@ namespace Game.UI.Shell.Ecs
                     model.OwnAirFuel = publicView.OwnAirFuel;
                     model.VisibleHostileCombat = publicView.VisibleHostileCombat;
                     model.VisibleHostileAir = publicView.VisibleHostileAir;
+                    model.SlippingHostile = publicView.SlippingHostile;
+                    model.SlippingHostileX = publicView.SlippingHostileX;
+                    model.SlippingHostileY = publicView.SlippingHostileY;
+                    model.SlippingHostileZ = publicView.SlippingHostileZ;
                 }
             }
             return true;

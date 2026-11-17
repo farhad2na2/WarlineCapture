@@ -58,6 +58,10 @@ namespace Game.UI.Contracts
         public int TankersCommitted;
         public bool CombinedArmsField, RocketeerRecruitPending;
         public bool PresentedHomeThreat;
+        // Public fog view: a visible hostile vehicle slipping behind the advancing army
+        // (InterceptKnown), and its on-screen attack tap when reachable (InterceptThreat, -20002).
+        public bool InterceptKnown;
+        public AriaTouchTarget InterceptThreat;
         // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
         public AriaTouchTarget HomeGround;
         public int OwnStructureAttackUnits;

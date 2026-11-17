@@ -110,6 +110,7 @@ namespace Game.Runtime
 
             view.VisibleHostileCombat = CountVisibleHostileCombat(em, session);
             view.VisibleHostileAir = CountVisibleHostileAir(em, session);
+            ObserveSlippingHostile(em, session, ref view);
             view.RecruitControlAvailable = true;
             view.AttackControlAvailable = true;
             view.HoldControlAvailable = true;
@@ -259,6 +260,67 @@ namespace Game.Runtime
             }
 
             return visible;
+        }
+
+        // Public fog view only: a hostile vehicle the player can currently see that is
+        // crossing the player's column or has slipped behind most of it toward the
+        // player's base (AriaInterceptPolicy.Candidate). Hidden contacts are never considered.
+        private static void ObserveSlippingHostile(EntityManager em, Entity session, ref SkirmishAriaPublicView view)
+        {
+            if (!view.Playing || !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                !em.HasComponent<SkirmishMatchState>(session))
+                return;
+            var match = em.GetComponentData<SkirmishMatchState>(session);
+            Entity home = match.PlayerMainBase, enemyBase = match.EnemyMainBase;
+            if (home == Entity.Null || !em.Exists(home) || !em.HasComponent<Unity.Transforms.LocalTransform>(home))
+                return;
+            Unity.Mathematics.float2 homeXZ = em.GetComponentData<Unity.Transforms.LocalTransform>(home).Position.xz;
+            bool enemyBaseKnown = enemyBase != Entity.Null && em.Exists(enemyBase) && em.HasComponent<Unity.Transforms.LocalTransform>(enemyBase);
+            Unity.Mathematics.float2 enemyXZ = enemyBaseKnown ? em.GetComponentData<Unity.Transforms.LocalTransform>(enemyBase).Position.xz : default;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(Unity.Transforms.LocalTransform));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            using var own = new NativeList<Unity.Mathematics.float2>(Allocator.Temp);
+            using var ownHome = new NativeList<float>(Allocator.Temp);
+            using var hostiles = new NativeList<Unity.Mathematics.float3>(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (!owned.SessionId.Equals(sessionId) || owned.IsStructure != 0 ||
+                    !em.HasComponent<SkirmishUnitRoleComponent>(unit) || !SkirmishArmyGroupSystem.IsAlive(em, unit))
+                    continue;
+                SkirmishPopulationCategory category = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Category;
+                var position = em.GetComponentData<Unity.Transforms.LocalTransform>(unit).Position;
+                if (owned.FactionId == 1 &&
+                    (category == SkirmishPopulationCategory.Infantry || category == SkirmishPopulationCategory.Ground))
+                {
+                    own.Add(position.xz);
+                    ownHome.Add(Unity.Mathematics.math.distance(position.xz, homeXZ));
+                }
+                else if (owned.FactionId == 2 && category == SkirmishPopulationCategory.Ground &&
+                    SkirmishFogService.IsVisibleToFaction(em, unit, 1))
+                    hostiles.Add(position);
+            }
+            if (own.Length == 0 || hostiles.Length == 0)
+                return;
+            ownHome.Sort();
+            float median = ownHome[ownHome.Length / 2];
+            float best = float.MaxValue;
+            for (int h = 0; h < hostiles.Length; h++)
+            {
+                var hostile = hostiles[h];
+                float homeDistance = Unity.Mathematics.math.distance(hostile.xz, homeXZ);
+                float nearest = float.MaxValue;
+                for (int o = 0; o < own.Length; o++)
+                    nearest = Unity.Mathematics.math.min(nearest, Unity.Mathematics.math.distance(own[o], hostile.xz));
+                float enemyDistance = enemyBaseKnown ? Unity.Mathematics.math.distance(hostile.xz, enemyXZ) : float.MaxValue;
+                if (!Game.Simulation.AriaInterceptPolicy.Candidate(homeDistance, median, nearest, enemyDistance) || homeDistance >= best)
+                    continue;
+                best = homeDistance;
+                view.SlippingHostile = true;
+                view.SlippingHostileX = hostile.x; view.SlippingHostileY = hostile.y; view.SlippingHostileZ = hostile.z;
+            }
         }
 
         private static int CountVisibleHostileAir(EntityManager em, Entity session)

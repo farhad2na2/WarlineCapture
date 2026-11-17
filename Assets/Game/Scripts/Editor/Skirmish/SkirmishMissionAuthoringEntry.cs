@@ -36,8 +36,20 @@
 //   "routes":  [ {"kind":"MainHighway|FlankNorthRuins|FlankSouthSweep",
 //                 "via":["staging.player", ..., "staging.enemy"],
 //                 "width":12, "vehicles":true, "aircraft":true}, ... ],  // >=2 distinct, 1 main
+//   "objective_areas": { "<FrontlineA|FrontlineB|FrontlineC|BreakthroughCorridorA|BreakthroughCorridorB|
+//                          BreakthroughExit|ConvoyDestination>": {"rectangle":[[minX,minZ],[maxX,maxZ]]} |
+//                          {"polygon":[[x,z],...]} },   // FC needs FrontlineA/B/C, BT the two corridors + exit,
+//                                               // CE the destination; Base Assault takes none (world X/Z metres)
+//   "area_measurement": {"artifact":"<repo-relative file>"},   // FC/BT/CE: the native-measurement file; the entry
+//                                               // binds its SHA-256 (SkirmishObjectiveAreaCompiler requires measured proof)
 //   "notes": "free text, ignored"
 // }
+// FC/BT/CE also need (anchors with a pads{} entry that states "size": measured, never defaulted):
+//   BT, CE: "defense.approach.a" and "defense.approach.b" (faction 2 enemy approach towers);
+//   CE:     "convoy.origin.1", ".2", ".3" (faction 1 truck bays; roles convoy.1/.2/.3 are derived) and at least two
+//           vehicle routes whose middle waypoints differ. CE needs the pinned convoy logical assets
+//           (SkirmishConvoyLogicalAssetsAuthoringEntry.EnsurePinnedLogicalAssets) first.
+// A per-scenario SkirmishObjective_<id>.asset (kind + the matrix deadlines) is created for FC/BT/CE.
 // DERIVED, never typed: objective/army/start (packaged InitialSetupMatrix row), recommended
 // size (Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv when present), Shared profile
 // assets, feature ids, anchor/pad/route ids, pad kind/faction/default size, the layout
@@ -74,7 +86,7 @@ namespace Game.Editor
         private const string ScenarioCatalogCsv = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
         private const float FrameMarginMetres = 32f;
         private const int AuthoringSeed = 1;
-        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes", "instance_pads", "structure_footprints" };
+        private static readonly string[] DraftKeys = { "catalog_id", "campaign_source", "anchors", "pads", "routes", "notes", "instance_pads", "structure_footprints", "objective_areas", "area_measurement" };
         private static readonly SkirmishSizeId[] Sizes = { SkirmishSizeId.Standard, SkirmishSizeId.War, SkirmishSizeId.LargeWar };
         private static readonly SkirmishDifficultyId[] Difficulties =
             { SkirmishDifficultyId.Recruit, SkirmishDifficultyId.Regular, SkirmishDifficultyId.Veteran, SkirmishDifficultyId.Commander };
@@ -185,9 +197,8 @@ namespace Game.Editor
             if (!SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string matrixError)) throw new AuthoringFailure("matrix", matrixError);
             if (!SkirmishSetupMatrixTable.TryFind(matrix, catalogId, SkirmishSizeId.Standard, out var tuple))
                 throw new AuthoringFailure("matrix", "No Standard row for " + catalogId + ".");
-            if (tuple.ObjectiveKind != SkirmishObjectiveKind.BaseAssault)
-                throw new AuthoringFailure("objective", tuple.ObjectiveKind + " needs typed objective areas (Variants[].Areas + area/geometry " +
-                    "fingerprints) and a Shared objective config; this entry authors Base Assault only.");
+            // Typed areas, defense/convoy pads and measured evidence for FC/BT/CE; null for Base Assault.
+            var areaDraft = ObjectiveDraft.Read(draft, tuple.ObjectiveKind, catalogId, project);
 
             // --- Campaign source -------------------------------------------------------------
             string sourcePath = (string)draft["campaign_source"];
@@ -210,7 +221,10 @@ namespace Game.Editor
             var upgrades = CatalogReference<SkirmishUpgradeConfig>(catalogObject, "upgrades");
             var intel = CatalogReference<SkirmishIntelConfig>(catalogObject, "intel");
             var roles = CatalogReference<SkirmishRoleCatalogConfig>(catalogObject, "roles");
-            var objective = SharedByKind<SkirmishObjectiveConfig>(x => x.Kind == tuple.ObjectiveKind, "objective " + tuple.ObjectiveKind);
+            // Base Assault keeps its Shared objective; FC/BT/CE get a per-scenario one once the folder exists.
+            var objective = tuple.ObjectiveKind == SkirmishObjectiveKind.BaseAssault
+                ? SharedByKind<SkirmishObjectiveConfig>(x => x.Kind == tuple.ObjectiveKind, "objective " + tuple.ObjectiveKind) : null;
+            if (tuple.ObjectiveKind == SkirmishObjectiveKind.ConvoyEscort) roles = ConvoyRoleCatalog();
             var army = SharedByKind<SkirmishArmyProfileConfig>(x => x.Kind == tuple.ArmyProfile, "army " + tuple.ArmyProfile);
             var start = SharedByKind<SkirmishStartPackageConfig>(x => x.Kind == tuple.StartProfile, "start " + tuple.StartProfile);
             string[] features = tuple.ArmyProfile == SkirmishArmyProfileId.AirMobile ? (string[])SkirmishS003FirstVisit.RequiredFeatureIds.Clone() :
@@ -220,6 +234,7 @@ namespace Game.Editor
             // --- layout ----------------------------------------------------------------------
             string folder = ScenarioRoot + catalogId;
             EnsureFolder(folder);
+            if (objective == null) objective = ScenarioObjective(catalogId, tuple.ObjectiveKind, matrix, folder);
             string layoutPath = folder + "/SkirmishLayout_" + catalogId + ".asset";
             var layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(layoutPath);
             bool newLayout = layout == null;
@@ -315,7 +330,7 @@ namespace Game.Editor
             view.name = "SkirmishMissionViewProfile_" + catalogId;
             if (!view.IsValid || !view.Matches(primary.Setup, definition))
                 throw new AuthoringFailure("view", "Engineering view profile is invalid or does not match the compiled setup.");
-            var variants = compiled.Select(x => BuildVariant(x, view)).ToArray();
+            var variants = compiled.Select(x => BuildVariant(x, view, areaDraft)).ToArray();
 
             var binding = ScriptableObject.CreateInstance<SkirmishMissionLogicalBindingConfig>();
             binding.name = "SkirmishMissionLogicalBinding_" + catalogId;
@@ -371,7 +386,7 @@ namespace Game.Editor
         }
 
         // Framing rows, opening focus and pins follow Tools/CI/SkirmishMissionLogicalBindingAuthor.cs:89-133.
-        private static SkirmishMissionLogicalVariant BuildVariant(Compiled row, SkirmishMissionViewProfile view)
+        private static SkirmishMissionLogicalVariant BuildVariant(Compiled row, SkirmishMissionViewProfile view, AreaDraft areaDraft)
         {
             var setup = row.Setup; var inputs = row.Inputs;
             var framing = inputs.RequiredFramingRoles.Select(role =>
@@ -412,10 +427,55 @@ namespace Game.Editor
                 SourceMinimumElevation = inputs.SourceMinimumElevation, SourceMaximumElevation = inputs.SourceMaximumElevation,
                 Framing = framing
             };
+            if (areaDraft != null)
+            {
+                // FC/BT/CE: typed areas pinned to this variant's actual source/layout binding.
+                var areas = ObjectiveDraft.Compile(areaDraft, row, out var areaConfig);
+                variant.Areas = areaConfig;
+                variant.ReviewedAreaLogicalFingerprint = areas.LogicalFingerprint;
+                variant.ReviewedGeometryFingerprint = areas.GeometryFingerprint;
+            }
             variant.ReviewedViewFingerprint = SkirmishMissionLogicalBindingCompiler.ViewFingerprint(variant);
             if (!SkirmishMissionLogicalBindingCompiler.ValidateFraming(variant, setup, out string error))
                 throw new AuthoringFailure("framing." + row.Size + "." + row.Difficulty, error);
             return variant;
+        }
+
+        // Per-scenario objective config for FC/BT/CE: kind from the matrix tuple, deadlines copied from the
+        // packaged matrix rows (the compiler compares them), nothing invented. Re-runs update the same asset.
+        private static SkirmishObjectiveConfig ScenarioObjective(string catalogId, SkirmishObjectiveKind kind,
+            List<SkirmishSetupMatrixRow> matrix, string folder)
+        {
+            string path = folder + "/SkirmishObjective_" + catalogId + ".asset";
+            var asset = AssetDatabase.LoadAssetAtPath<SkirmishObjectiveConfig>(path);
+            if (asset == null)
+            {
+                asset = ScriptableObject.CreateInstance<SkirmishObjectiveConfig>();
+                AssetDatabase.CreateAsset(asset, path);
+            }
+            var serialized = new SerializedObject(asset);
+            serialized.FindProperty("objectiveId").stringValue = SkirmishObjectiveIds.ToCode(kind);
+            serialized.FindProperty("kind").intValue = (int)kind;
+            foreach (var pair in new[] { (SkirmishSizeId.Standard, "standardDeadlineSeconds"), (SkirmishSizeId.War, "warDeadlineSeconds"),
+                (SkirmishSizeId.LargeWar, "largeWarDeadlineSeconds") })
+            {
+                if (!SkirmishSetupMatrixTable.TryFind(matrix, catalogId, pair.Item1, out var row))
+                    throw new AuthoringFailure("matrix", "No " + pair.Item1 + " row for " + catalogId + " (objective deadline).");
+                serialized.FindProperty(pair.Item2).intValue = row.DeadlineSeconds;
+            }
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(asset);
+            return asset;
+        }
+
+        // CE uses the explicit role catalog that adds the mode-owned Cargo Truck role; the definition must be pinned first.
+        private static SkirmishRoleCatalogConfig ConvoyRoleCatalog()
+        {
+            var truck = SkirmishConvoyTruckDefinition.Load();
+            var catalog = AssetDatabase.LoadAssetAtPath<SkirmishRoleCatalogConfig>(SkirmishConvoyTruckAuthoring.RoleCatalogPath);
+            if (truck == null || !truck.IsValid || catalog == null)
+                throw new AuthoringFailure("convoy", "Pinned convoy logical assets missing; run SkirmishConvoyLogicalAssetsAuthoringEntry.EnsurePinnedLogicalAssets first.");
+            return catalog;
         }
 
         private static void Register(SerializedObject catalogObject, SkirmishScenarioDefinitionConfig definition)
@@ -505,6 +565,130 @@ namespace Game.Editor
             string parent = Path.GetDirectoryName(path).Replace('\\', '/');
             EnsureFolder(parent);
             AssetDatabase.CreateFolder(parent, Path.GetFileName(path));
+        }
+
+        private sealed class AreaDraft
+        {
+            public SkirmishObjectiveKind Kind;
+            public SkirmishObjectiveArea[] Areas;
+            public string Artifact, ArtifactSha256;
+        }
+
+        // Objective-specific draft rules for FC/BT/CE. Base Assault passes through untouched (Read returns null).
+        // Geometry validity and playable-bounds containment are enforced by SkirmishObjectiveAreaCompiler per variant.
+        private static class ObjectiveDraft
+        {
+            private static readonly string[] ConvoyRoles = { "convoy.origin.1", "convoy.origin.2", "convoy.origin.3" };
+            private static readonly string[] DefenseRoles = { "defense.approach.a", "defense.approach.b" };
+
+            // Same exact sets as SkirmishObjectiveAreaCompiler.RequiredRoles (private there).
+            private static SkirmishObjectiveAreaRole[] RequiredAreaRoles(SkirmishObjectiveKind kind)
+            {
+                switch (kind)
+                {
+                    case SkirmishObjectiveKind.FrontlineControl:
+                        return new[] { SkirmishObjectiveAreaRole.FrontlineA, SkirmishObjectiveAreaRole.FrontlineB, SkirmishObjectiveAreaRole.FrontlineC };
+                    case SkirmishObjectiveKind.Breakthrough:
+                        return new[] { SkirmishObjectiveAreaRole.BreakthroughCorridorA, SkirmishObjectiveAreaRole.BreakthroughCorridorB, SkirmishObjectiveAreaRole.BreakthroughExit };
+                    case SkirmishObjectiveKind.ConvoyEscort:
+                        return new[] { SkirmishObjectiveAreaRole.ConvoyDestination };
+                    default: return Array.Empty<SkirmishObjectiveAreaRole>();
+                }
+            }
+
+            public static AreaDraft Read(JObject draft, SkirmishObjectiveKind kind, string catalogId, string project)
+            {
+                var required = RequiredAreaRoles(kind);
+                var anchors = draft["anchors"] as JObject;
+                var pads = draft["pads"] as JObject;
+                if (required.Length == 0 && kind != SkirmishObjectiveKind.BaseAssault)
+                    throw new AuthoringFailure("objective", "Unsupported objective " + kind + ".");
+                CheckObjectivePads(anchors, pads, DefenseRoles, kind == SkirmishObjectiveKind.Breakthrough || kind == SkirmishObjectiveKind.ConvoyEscort, "BT/CE");
+                CheckObjectivePads(anchors, pads, ConvoyRoles, kind == SkirmishObjectiveKind.ConvoyEscort, "CE");
+                if (required.Length == 0)
+                {
+                    if (draft["objective_areas"] != null || draft["area_measurement"] != null)
+                        throw new AuthoringFailure("draft.objective_areas", "objective_areas/area_measurement apply to FC/BT/CE drafts, not Base Assault.");
+                    return null;
+                }
+
+                var raw = draft["objective_areas"] as JObject ?? throw new AuthoringFailure("draft.objective_areas",
+                    kind + " needs objective_areas{} with " + string.Join(", ", required) + ".");
+                foreach (var property in raw.Properties())
+                    if (!Enum.IsDefined(typeof(SkirmishObjectiveAreaRole), property.Name) ||
+                        Array.IndexOf(required, (SkirmishObjectiveAreaRole)Enum.Parse(typeof(SkirmishObjectiveAreaRole), property.Name)) < 0)
+                        throw new AuthoringFailure("draft.objective_areas", "Role '" + property.Name + "' is not one of " + string.Join(", ", required) + " for " + kind + ".");
+                var areas = new List<SkirmishObjectiveArea>();
+                foreach (var role in required)
+                {
+                    string label = "objective_areas." + role;
+                    var spec = raw[role.ToString()] as JObject ?? throw new AuthoringFailure("draft.objective_areas", "Missing area " + role + ".");
+                    if (spec.Count != 1) throw new AuthoringFailure("draft.objective_areas", label + " needs exactly one of rectangle or polygon.");
+                    SkirmishObjectiveAreaShape shape;
+                    JToken token;
+                    if (spec["rectangle"] != null) { shape = SkirmishObjectiveAreaShape.AxisAlignedRectangle; token = spec["rectangle"]; }
+                    else if (spec["polygon"] != null) { shape = SkirmishObjectiveAreaShape.Polygon; token = spec["polygon"]; }
+                    else throw new AuthoringFailure("draft.objective_areas", label + " needs rectangle or polygon.");
+                    var array = token as JArray ?? throw new AuthoringFailure("draft.objective_areas", label + " needs an array of [x, z] points.");
+                    var points = new SkirmishObjectiveAreaPoint[array.Count];
+                    for (int i = 0; i < points.Length; i++)
+                    {
+                        Vector2 value = LayoutGeometry.Point(array[i], label + "[" + i.ToString(CultureInfo.InvariantCulture) + "]");
+                        points[i] = new SkirmishObjectiveAreaPoint(value.x, value.y);
+                    }
+                    areas.Add(new SkirmishObjectiveArea
+                    {
+                        StableAreaId = "area.skirmish." + catalogId.ToLowerInvariant() + "." + role.ToString().ToLowerInvariant(),
+                        Role = role, Shape = shape, Points = points
+                    });
+                }
+
+                // The measured artifact is evidence from a native run; it must exist and its bytes are pinned.
+                var evidence = draft["area_measurement"] as JObject;
+                string artifact = evidence != null && evidence.Count == 1 ? (string)evidence["artifact"] : null;
+                if (string.IsNullOrWhiteSpace(artifact) || Path.IsPathRooted(artifact) || artifact.Split('/', '\\').Contains(".."))
+                    throw new AuthoringFailure("draft.area_measurement", "area_measurement {\"artifact\": \"<repo-relative measurement file>\"} required for " + kind + ".");
+                string full = Path.GetFullPath(Path.Combine(project, artifact));
+                if (!File.Exists(full)) throw new AuthoringFailure("draft.area_measurement", "Measurement file not found: " + artifact);
+                string sha;
+                using (var hash = SHA256.Create()) sha = BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(full))).Replace("-", "").ToLowerInvariant();
+                return new AreaDraft { Kind = kind, Areas = areas.ToArray(), Artifact = artifact.Replace('\\', '/'), ArtifactSha256 = sha };
+            }
+
+            // The binder accepts defense approaches and truck bays only as exact mode-owned roles; each needs an anchor and
+            // a pads{} entry with an explicit measured size (no default is guessed), and is refused where the mode forbids it.
+            private static void CheckObjectivePads(JObject anchors, JObject pads, string[] roles, bool allowed, string modes)
+            {
+                foreach (string role in roles)
+                {
+                    bool present = anchors != null && anchors[role] != null;
+                    if (present && !allowed) throw new AuthoringFailure("draft.anchors", role + " is only valid for " + modes + " drafts.");
+                    if (!allowed) continue;
+                    if (!present) throw new AuthoringFailure("draft.anchors", "Missing required role " + role + ".");
+                    if (!(pads?[role] is JObject spec) || spec["size"] == null)
+                        throw new AuthoringFailure("draft.pads", role + " needs a pads{} entry with an explicit \"size\": [w, d] (measured).");
+                }
+            }
+
+            public static SkirmishCompiledObjectiveAreas Compile(AreaDraft draft, Compiled row, out SkirmishObjectiveAreaConfig config)
+            {
+                if (!row.Inputs.HasActualAreaBinding)
+                    throw new AuthoringFailure("areas." + row.Size + "." + row.Difficulty, "Layout binding format carries no typed-area binding.");
+                config = new SkirmishObjectiveAreaConfig
+                {
+                    AreaSetId = ("areas." + row.Setup.DefinitionId + "." + row.Size + "." + row.Difficulty).ToLowerInvariant(),
+                    ObjectiveKind = draft.Kind, Binding = row.Inputs.ActualAreaBinding,
+                    Areas = draft.Areas.Select(area => { area.Points = (SkirmishObjectiveAreaPoint[])area.Points.Clone(); return area; }).ToArray()
+                };
+                config.Measurement = new SkirmishObjectiveAreaEvidence
+                {
+                    ArtifactId = draft.Artifact, ArtifactSha256 = draft.ArtifactSha256,
+                    GeometryFingerprint = SkirmishObjectiveAreaCompiler.ComputeGeometryFingerprint(config)
+                };
+                if (!SkirmishObjectiveAreaCompiler.TryCompile(config, config.Binding, draft.Kind, out var compiled, out string error))
+                    throw new AuthoringFailure("areas." + row.Size + "." + row.Difficulty, error);
+                return compiled;
+            }
         }
 
         // Builds the SkirmishMapLayoutConfig serialized values from draft points in the
@@ -780,6 +964,9 @@ namespace Game.Editor
                 if (role.StartsWith("economy.", StringComparison.Ordinal)) return SkirmishLegalPadKind.Supply;
                 if (role.StartsWith("service.", StringComparison.Ordinal)) return SkirmishLegalPadKind.Service;
                 if (role.StartsWith("supply.expansion.", StringComparison.Ordinal)) return SkirmishLegalPadKind.SupplyExpansion;
+                // Mode-owned exact roles (SkirmishMeasuredLayoutBinder): faction 1 truck bays, faction 2 approach towers.
+                if (role == "convoy.origin.1" || role == "convoy.origin.2" || role == "convoy.origin.3") return SkirmishLegalPadKind.ObjectiveTruckSpawn;
+                if (role == "defense.approach.a" || role == "defense.approach.b") return SkirmishLegalPadKind.DefenseApproach;
                 return SkirmishLegalPadKind.None;
             }
 
@@ -791,7 +978,9 @@ namespace Game.Editor
             }
 
             private static byte Faction(string role) => role.EndsWith(".player", StringComparison.Ordinal) ? (byte)1 :
-                role.EndsWith(".enemy", StringComparison.Ordinal) ? (byte)2 : (byte)0;
+                role.EndsWith(".enemy", StringComparison.Ordinal) ? (byte)2 :
+                PadKind(role) == SkirmishLegalPadKind.ObjectiveTruckSpawn ? (byte)1 :
+                PadKind(role) == SkirmishLegalPadKind.DefenseApproach ? (byte)2 : (byte)0;
 
             // Footprints of the existing measured Desert Base pads (SkirmishLayout_S005).
             private static Vector2 DefaultSize(SkirmishLegalPadKind kind)
@@ -809,7 +998,7 @@ namespace Game.Editor
                 }
             }
 
-            private static Vector2 Point(JToken token, string what)
+            public static Vector2 Point(JToken token, string what)
             {
                 var array = token as JArray;
                 if (array == null || array.Count != 2 || array.Any(x => x.Type != JTokenType.Integer && x.Type != JTokenType.Float))

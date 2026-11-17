@@ -26,8 +26,8 @@ Updated 2026-11-16. Keep under 60 lines. Detail: `ORCHESTRATOR_PROMPT.md`, the m
   Pass = exit 0 and `[SkirmishS002AriaRun] appended=1 countedWin=1`. Exit 2 = loss or abort.
   Seeds used historically: 104731, 130365, 155923. Locales: `en`, `fa-IR`. Size and difficulty are
   fixed to Standard / Regular in this entry point.
-- The run appends a row to `Design/AgentReports/SkirmishExpansion/<ID>/runs.csv` and writes a trace
-  under `_Evidence/` there. Those are the receipts `missions.csv` points to.
+- The run appends a row to `Design/AgentReports/SkirmishExpansion/<ID>/_Evidence/candidates/<source hash>/runs.csv`
+  (the top-level `<ID>/runs.csv` is the September record) and writes a trace under `_Evidence/`.
 - **Startup check (2026-11-17):** within 3 minutes of every launch the log must contain
   `Library Redirect Path`. If it does not, the Editor is sitting on a startup dialog: report it at
   once, do not wait for the timeout, and do not kill it. Never kill an Editor during its first

@@ -16,7 +16,13 @@ namespace Game.UI.Shell.Ecs
         private AriaTouchInputUiSystemHelper touch;
         private Game.Skirmish.Contracts.SkirmishPublicArmyOrderGoal gestureGoal;
         private string goalSession; private ulong goalWorld;
-        private bool reportedBlocked;
+        private bool reportedBlocked; private int startRefusals;
+        // Evidence only: the planner intent at a stop, from the cached state query.
+        private string ReadPlanIntent()
+        {
+            var query = ariaStateQuery;
+            return query.CalculateEntityCount() == 1 ? query.GetSingleton<AriaSkirmishPlanComponent>().Intent.ToString() : "none";
+        }
         private void TraceS002(string eventName, in AriaPlaySessionComponent session, in AriaPlayObservationComponent observation)
         {
             if (!AriaCommandEvidence.Active) return;
@@ -283,7 +289,12 @@ namespace Game.UI.Shell.Ecs
                 ref var current = ref session.ValueRW;
                 TraceTrayPage(current);
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
-                { if (current.Phase == AriaPlayPhase.Blocked && !reportedBlocked) { TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true; }
+                { if (current.Phase == AriaPlayPhase.Blocked && !reportedBlocked)
+                  {
+                      // Every scenario: the stop code, intent and target (TraceS002 adds detail for S002 only).
+                      Debug.LogWarning($"[AriaBlocked] reason={current.StopReason} target={current.TargetId} attempts={current.Attempts} actions={current.Actions} kind={observation.ValueRO.Kind} offered={observation.ValueRO.TargetId} goal={observation.ValueRO.GoalId} intent={ReadPlanIntent()} frame={UnityEngine.Time.frameCount}");
+                      TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true;
+                  }
                   if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
                 reportedBlocked = false;
                 if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match ||
@@ -302,15 +313,20 @@ namespace Game.UI.Shell.Ecs
                 }
                 if (current.Phase == AriaPlayPhase.Starting)
                 {
-                    if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime) < current.DueAt) continue;
-                    if (UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5)
+                    float startNow = Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime);
+                    if (startNow < current.DueAt) continue;
+                    // Lane 15 r2 S004: ARIA stopped while still Starting 4 s after consent, with no touch and no
+                    // stop code. A match-start hitch (stale observation) or a contact still held on another
+                    // device must not end the run: retry for AriaStartPolicy.GraceSeconds, then stop with a code.
+                    bool stale = UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5;
+                    if (!stale && touch.Start()) { current.Phase = AriaPlayPhase.Observing; startRefusals = 0; continue; }
+                    startRefusals++;
+                    var start = Game.Simulation.AriaStartPolicy.Decide(startNow - current.DueAt, stale);
+                    if (start != 0)
                     {
-                        if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime) - current.DueAt > 3)
-                        { current.Phase = AriaPlayPhase.Blocked; current.StopReason = 4; }
-                        continue;
+                        current.Phase = AriaPlayPhase.Blocked; current.StopReason = start;
+                        Debug.LogWarning($"[AriaStartBlocked] reason={start} stale={stale} refusals={startRefusals} waited={startNow - current.DueAt:F1} observationFrame={observation.ValueRO.Frame} frame={UnityEngine.Time.frameCount} physical={AriaTouchInputUiSystemHelper.DescribePressedDevices()}");
                     }
-                    if (touch.Start()) current.Phase = AriaPlayPhase.Observing;
-                    else if (Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime) - current.DueAt > 3) current.Phase = AriaPlayPhase.Blocked;
                     continue;
                 }
                 if (!touch.IsRunning) { ClearGoalContext(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0; current.StopReason = touch.LastInterruption != 0 ? touch.LastInterruption : (byte)6; continue; }

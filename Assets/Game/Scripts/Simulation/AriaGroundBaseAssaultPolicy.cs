@@ -213,9 +213,13 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                     bool continuing = plan.Intent == AriaS002Intent.FindBase;
                     plan.Intent = AriaS002Intent.FindBase;
                     bool navigate = view.FocusAdvance.Admitted && (view.FocusAdvance.Id == -20010 || view.FocusAdvance.Id == -20011);
+                    // A given-up search first recovers: Attack off through its control (bounded), else wait.
+                    if (StepFindBaseRecovery(view, ref plan, ref touch, ref output)) return;
+                    int nextFind = navigate ? 0 : view.FocusEnemy.Id;
                     var find = new Game.Simulation.AriaFindBaseState { Active = plan.FindBaseActive, Taps = plan.FindBaseTaps,
                         Run = plan.FindBaseRun, Actions = plan.FindBaseActions, LastTarget = plan.FindBaseLastTarget };
-                    bool giveUp = Game.Simulation.AriaFindBasePolicy.GiveUp(ref find, touch.Actions, navigate ? 0 : view.FocusEnemy.Id, continuing);
+                    bool giveUp = Game.Simulation.AriaFindBasePolicy.GiveUp(ref find, touch.Actions, nextFind, continuing) ||
+                        Game.Simulation.AriaFindBasePolicy.SameControlExhausted(touch.TargetId, touch.Attempts, nextFind);
                     plan.FindBaseActive = find.Active; plan.FindBaseTaps = find.Taps; plan.FindBaseRun = find.Run;
                     plan.FindBaseActions = find.Actions; plan.FindBaseLastTarget = find.LastTarget;
                     if (giveUp)
@@ -226,8 +230,10 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                             view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
                         plan.AssaultIssued = 1; plan.StructureOrdered = 1; plan.FindBaseGiveUps++;
                         ClearFindBase(ref plan);
-                        plan.Intent = AriaS002Intent.Inspect;
-                        Target(view.Attack, false, ref output);
+                        var recovery = new Game.Simulation.AriaFindBaseRecovery();
+                        Game.Simulation.AriaFindBasePolicy.BeginRecovery(ref recovery, view.Time);
+                        plan.FindBaseRetryAt = recovery.RetryAt; plan.FindBaseDisarms = 0; plan.FindBaseDisarmActions = 0; plan.FindBaseDisarmAt = 0;
+                        StepFindBaseRecovery(view, ref plan, ref touch, ref output);
                         return;
                     }
                     if (view.FocusAdvance.Admitted &&
@@ -590,6 +596,22 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
 
         private static void ClearFindBase(ref AriaS002PlanState plan)
         { plan.FindBaseActive = 0; plan.FindBaseTaps = 0; plan.FindBaseRun = 0; plan.FindBaseLastTarget = 0; }
+
+        // After a given-up base search (AriaFindBasePolicy.Recover): Attack off through its own control
+        // (bounded), otherwise wait; true while recovering, so no search control is pressed again.
+        private static bool StepFindBaseRecovery(in AriaS002Observation view, ref AriaS002PlanState plan,
+            ref AriaS002ContactState touch, ref AriaS002Decision output)
+        {
+            var recovery = new Game.Simulation.AriaFindBaseRecovery { RetryAt = plan.FindBaseRetryAt, DisarmAt = plan.FindBaseDisarmAt,
+                DisarmActions = plan.FindBaseDisarmActions, Disarms = plan.FindBaseDisarms };
+            var step = Game.Simulation.AriaFindBasePolicy.Recover(ref recovery, view.Time, touch.Actions, view.AttackMode, view.Attack.Admitted);
+            plan.FindBaseRetryAt = recovery.RetryAt; plan.FindBaseDisarmAt = recovery.DisarmAt;
+            plan.FindBaseDisarmActions = recovery.DisarmActions; plan.FindBaseDisarms = recovery.Disarms;
+            if (step == Game.Simulation.AriaFindBaseFallback.Search) return false;
+            if (step == Game.Simulation.AriaFindBaseFallback.Disarm)
+            { plan.Intent = AriaS002Intent.Inspect; Target(view.Attack, false, ref output); return true; }
+            plan.Intent = AriaS002Intent.ObserveBattle; output.Kind = AriaS002DecisionKind.Waiting; return true;
+        }
 
         // Coverage bits (4 radar, 16 drone, 32 transport heli) -> support kind bits (1, 2, 4).
         internal static int SupportFielded(int coverageFielded)=>

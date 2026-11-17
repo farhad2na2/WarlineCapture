@@ -171,6 +171,10 @@
     }
   ],
   "structure_footprints": {
+    "building.airport": [
+      210.0,
+      55.0
+    ],
     "building.barracks": [
       28.0,
       15.0
@@ -186,6 +190,10 @@
     "building.ground_staging": [
       14.0,
       7.0
+    ],
+    "building.helipad": [
+      16.0,
+      15.0
     ],
     "building.oil_pump": [
       15.0,

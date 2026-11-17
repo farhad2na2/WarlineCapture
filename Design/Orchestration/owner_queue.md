@@ -31,3 +31,10 @@ Nothing here blocks production.
   repository later, run one `git gc` by hand while nothing else is running.
 - **Still on disk, your call:** `Logs/private-candidates` (50 GB) and `T Logs/SkirmishProduction`
   (32 GB), the old simulator logs. Not needed by this program; not deleted.
+
+- **Result-screen wording for the three other objectives (2026-11-17).** Ten end-reason texts do not
+  exist yet in English or Farsi (`ui.skirmish.reason.` + ticketsdepleted, ticketsatdeadline,
+  breakthroughevacuated, breakthroughimpossible, convoydelivered, convoyimpossible,
+  objectivedeadline, startupfailure, contentfailure, checkpointfailure). Default taken: show the
+  existing neutral result text until wording is written; agents will draft both languages for your
+  review in the first milestone packet.

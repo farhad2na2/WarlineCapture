@@ -13,7 +13,7 @@ record is `missions.csv`.
 | Shift lead | Sonnet | Shift 2: S002 + S006 trace run, apply Codex patches, author S026/S049/S050 | Applying script-only patches; Unity run waits on the dialog |
 | Unity lane | — | One Editor at a time | **BLOCKED: needs the owner to click "Don't rebuild Library" in the Unity dialog** |
 | ARIA worker | Opus | Home-defence fix for S002 on branch `missions/aria-home-defense` (no Unity needed) | Running |
-| Codex | gpt-6.1-terra | Batch 5: fix duplicate pads in 11 drafts (017), real end reasons for the three other objectives (018) | Running |
+| Codex | gpt-6.1-terra | Batches 2–5 done (12 tasks today) | Paused: four C# patches (010, 011, 012, 018) wait for a compile, which needs the Unity lane |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -79,3 +79,10 @@ record is `missions.csv`.
 - 2026-11-17 06:59 codex: batch finished: codex-015-objective-readiness:high:50 codex-016-draft-checker:high:50
 - 2026-11-17 07:00 orchestrator: Codex batch 4 reviewed. 016: offline draft checker written (partial port); it passes the S006 example and FAILS all 16 drafts: 11 (S026–S030, S049–S054) for duplicate pads, 5 (S074–S078) for missing layout. So S026/S049/S050 are not ready to author. 015: survey saved in `notes/objective-readiness-2026-11-17.md`: reducers, HUD and enemy/ARIA policy exist for the three other objectives; missing are draft areas, real end reasons and any play.
 - 2026-11-17 07:00 orchestrator: Codex batch 5 started (017, 018). Unity lane still waits on the owner's click.
+- 2026-11-17 07:01 codex: codex-017-fix-ba-drafts started (effort high, limit 40 min)
+- 2026-11-17 07:01 codex: codex-018-objective-end-reasons started (effort high, limit 55 min)
+- 2026-11-17 07:01 shift lead: applied+committed Codex 016 (check_draft tests OK, S006 example passes). All 16 current drafts FAIL check_draft (pad.ambiguous S026-S030/S049-S054; anchor.required S074-S078); step 3 authoring deferred until 017 fixes drafts.
+- 2026-11-17 07:02 codex: codex-017-fix-ba-drafts finished: exit 0, 13 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-017-fix-ba-drafts.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-017-fix-ba-drafts-report.txt (not yet verified or merged)
+- 2026-11-17 07:04 codex: codex-018-objective-end-reasons finished: exit 0, 4 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-018-objective-end-reasons.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-018-objective-end-reasons-report.txt (not yet verified or merged)
+- 2026-11-17 07:04 codex: batch finished: codex-017-fix-ba-drafts:high:40 codex-018-objective-end-reasons:high:55
+- 2026-11-17 07:04 orchestrator: Codex batch 5 reviewed. 017: the 11 City Crossroads and Mountain Pass drafts now pass the offline checker (duplicate pads removed, no coordinate changed). 018: real end reasons for the three other objectives reach the run log; result-screen wording still falls back to neutral text and 10 localisation keys are missing (owner queue). No further Codex batch until the Unity lane can compile the four waiting C# patches.

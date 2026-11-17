@@ -20,76 +20,76 @@
       361.5
     ],
     "staging.player": [
-      998.0,
-      710.5
+      931.0,
+      671.5
     ],
     "staging.enemy": [
-      1068.0,
-      344.5
-    ],
-    "economy.player": [
-      984.5,
-      716.0
-    ],
-    "economy.enemy": [
-      1087.5,
-      371.0
-    ],
-    "candidate.structure.standard.6": [
-      999.5,
-      699.5
-    ],
-    "candidate.structure.standard.7": [
-      1071.5,
+      1027.0,
       359.5
     ],
+    "economy.player": [
+      1003.5,
+      718.0
+    ],
+    "economy.enemy": [
+      1051.5,
+      406.0
+    ],
+    "candidate.structure.standard.6": [
+      960.5,
+      723.5
+    ],
+    "candidate.structure.standard.7": [
+      1128.5,
+      387.5
+    ],
     "candidate.structure.standard.8": [
-      980.0,
-      695.0
+      1027.0,
+      721.0
     ],
     "candidate.structure.standard.9": [
-      1104.0,
-      345.0
+      1099.0,
+      385.0
     ],
     "candidate.structure.standard.10": [
       1005.5,
-      684.0
+      652.0
     ],
     "candidate.structure.standard.11": [
-      1063.5,
-      332.0
+      1029.5,
+      340.0
     ],
     "service.player": [
-      987.5,
-      709.0
+      933.5,
+      652.0
     ],
     "service.enemy": [
-      1098.5,
-      352.0
+      1099.0,
+      407.5
     ],
     "candidate.structure.standard.14": [
-      1009.5,
-      709.0
+      1052.0,
+      627.5
     ],
     "candidate.structure.standard.15": [
-      1072.5,
-      350.0
+      1051.0,
+      289.0
     ],
     "candidate.structure.standard.16": [
-      1001.0,
-      671.0
+      981.5,
+      724.0
     ],
     "candidate.structure.standard.17": [
-      1091.0,
-      320.0
+      1034.0,
+      291.5
     ],
     "air.player": [
-      1013.0,
-      719.5
+      1052.0,
+      651.5
     ],
     "air.enemy": [
-      1064.0,
-      374.5
+      1028.0,
+      315.5
     ],
     "candidate.route.shared.waypoint.00": [
       1004.5,
@@ -330,8 +330,8 @@
       "kind": "GroundStaging",
       "faction": 1,
       "at": [
-        998.0,
-        710.5
+        931.0,
+        671.5
       ],
       "size": [
         14.0,
@@ -344,8 +344,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        984.5,
-        716.0
+        1003.5,
+        718.0
       ],
       "size": [
         15.0,
@@ -358,8 +358,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        999.5,
-        699.5
+        960.5,
+        723.5
       ],
       "size": [
         25.0,
@@ -372,8 +372,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        980.0,
-        695.0
+        1027.0,
+        721.0
       ],
       "size": [
         14.0,
@@ -387,7 +387,7 @@
       "faction": 1,
       "at": [
         1005.5,
-        684.0
+        652.0
       ],
       "size": [
         19.0,
@@ -400,8 +400,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        987.5,
-        709.0
+        933.5,
+        652.0
       ],
       "size": [
         3.0,
@@ -414,8 +414,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1009.5,
-        709.0
+        1052.0,
+        627.5
       ],
       "size": [
         3.0,
@@ -428,8 +428,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1001.0,
-        671.0
+        981.5,
+        724.0
       ],
       "size": [
         10.0,
@@ -442,8 +442,8 @@
       "kind": "AirReturn",
       "faction": 1,
       "at": [
-        1013.0,
-        719.5
+        1052.0,
+        651.5
       ],
       "size": [
         16.0,
@@ -470,8 +470,8 @@
       "kind": "GroundStaging",
       "faction": 2,
       "at": [
-        1068.0,
-        344.5
+        1027.0,
+        359.5
       ],
       "size": [
         14.0,
@@ -484,8 +484,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1087.5,
-        371.0
+        1051.5,
+        406.0
       ],
       "size": [
         15.0,
@@ -498,8 +498,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1071.5,
-        359.5
+        1128.5,
+        387.5
       ],
       "size": [
         25.0,
@@ -512,8 +512,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1104.0,
-        345.0
+        1099.0,
+        385.0
       ],
       "size": [
         14.0,
@@ -526,8 +526,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1063.5,
-        332.0
+        1029.5,
+        340.0
       ],
       "size": [
         19.0,
@@ -540,8 +540,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1098.5,
-        352.0
+        1099.0,
+        407.5
       ],
       "size": [
         3.0,
@@ -554,8 +554,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1072.5,
-        350.0
+        1051.0,
+        289.0
       ],
       "size": [
         3.0,
@@ -568,8 +568,8 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1091.0,
-        320.0
+        1034.0,
+        291.5
       ],
       "size": [
         10.0,
@@ -582,8 +582,8 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1064.0,
-        374.5
+        1028.0,
+        315.5
       ],
       "size": [
         16.0,

@@ -11,9 +11,6 @@ namespace Game.Simulation {
   // ProportionateDefense: send one roster group first; BaseCritical escalates.
   // Callers that leave these false keep the original all-group sweep unchanged.
   public bool BaseDamageOnly,ProportionateDefense,BaseCritical,HomeGroundAvailable;
-  // PreferredSlotMask: the opening home guard's card on this page. A single
-  // proportionate defender is that guard when it is shown (it is already home).
-  public int PreferredSlotMask;
   public AriaStrategyTarget PlacementCancel=>new AriaStrategyTarget(CancelAvailable,AriaHomeDefenseAction.CancelPlacement);
   public AriaStrategyTarget CloseDrawer=>new AriaStrategyTarget(CloseDrawerAvailable,AriaHomeDefenseAction.CloseDrawer);
   public AriaStrategyTarget CloseMap=>new AriaStrategyTarget(CloseMapAvailable,AriaHomeDefenseAction.CloseMap);
@@ -57,10 +54,7 @@ namespace Game.Simulation {
             if (view.MapOpen) { Target(view.CloseMap, false, ref output); return true; }
             if (plan.HomeDefenseStage == 0)
             {
-                // The camera step only makes the defence target touchable. When that
-                // target is already on screen a player orders at once (base is burning).
-                bool targetShown = view.ProportionateDefense && DefenseTarget(view).Available;
-                if (!view.FocusPlayer.Available && !targetShown) return true;
+                if (!view.FocusPlayer.Available) return true;
                 plan.HomeDefenseRounds++;
                 plan.HomeDefenseReason = view.BaseDamageOnly ? ReasonBaseDamage : ReasonMinimap;
                 plan.HomeDefenseSlot = 0;
@@ -68,14 +62,10 @@ namespace Game.Simulation {
                 // the base is about to fall or a first defender did not stop it.
                 plan.HomeDefenseScope = view.ProportionateDefense && !view.BaseCritical && plan.HomeDefenseRounds <= 1 ? 1 : 0;
                 plan.DefenseStage = 4;
+                plan.HomeDefenseAction = view.CompletedContacts;
                 plan.HomeDefenseStage = 1;
-                if (!targetShown)
-                {
-                    plan.HomeDefenseAction = view.CompletedContacts;
-                    Target(view.FocusPlayer, false, ref output);
-                    return true;
-                }
-                plan.HomeDefenseAction = view.CompletedContacts - 1;
+                Target(view.FocusPlayer, false, ref output);
+                return true;
             }
             if (plan.HomeDefenseStage == 1)
             {
@@ -104,8 +94,7 @@ namespace Game.Simulation {
                 if (view.ExpandedAssaultMask == 0) plan.HomeDefenseScope = 0;
                 else
                 {
-                    int preferred = view.PreferredSlotMask & view.ExpandedAssaultMask;
-                    int slot = LowestSetBit(preferred != 0 ? preferred : view.ExpandedAssaultMask);
+                    int slot = LowestSetBit(view.ExpandedAssaultMask);
                     plan.HomeDefenseSlot = slot + 1;
                     if ((view.ExpandedSelectedMask & (1 << slot)) == 0)
                     { Target(view.Squad(slot), false, ref output); return true; }
@@ -190,37 +179,6 @@ namespace Game.Simulation {
    return plan.HomeDamageAt>0f&&time>=plan.HomeDamageAt&&time-plan.HomeDamageAt<=MemorySeconds;
   }
   public static bool Critical(float peak,float baseHealth)=>peak>0f&&baseHealth>0f&&baseHealth<=peak*CriticalFraction;
- }
- // Opening home guard for a ground Base Assault. A player who sees that the
- // enemy can reach an undefended base keeps one squad home: the smallest
- // infantry squad on the first roster page that cannot damage the designated
- // base, so every base-damaging squad still joins the assault. Public roster
- // card facts only (role category, structure capability, alive count).
- public struct AriaHomeGuardView {
-  public int PageIndex,TotalGroups,AssaultMask,StructureMask,AirMask,InfantryMask;
-  public int Alive0,Alive1,Alive2,Alive3,Alive4;
-  public uint Group0,Group1,Group2,Group3,Group4;
-  public int Alive(int slot)=>slot switch{0=>Alive0,1=>Alive1,2=>Alive2,3=>Alive3,4=>Alive4,_=>0};
-  public uint Group(int slot)=>slot switch{0=>Group0,1=>Group1,2=>Group2,3=>Group3,4=>Group4,_=>0};
- }
- public static class AriaHomeGuardPolicy {
-  public const int MinimumGroups=3;
-  public static uint Choose(in AriaHomeGuardView view){
-   if(view.PageIndex!=0||view.TotalGroups<MinimumGroups)return 0;
-   int candidates=view.AssaultMask&view.InfantryMask&~view.StructureMask&~view.AirMask;
-   int best=-1;
-   for(int slot=0;slot<5;slot++){
-    if((candidates&(1<<slot))==0||view.Group(slot)==0||view.Alive(slot)<=0)continue;
-    if(best<0||view.Alive(slot)<view.Alive(best))best=slot;
-   }
-   if(best<0||(view.AssaultMask&~(1<<best))==0)return 0;
-   return view.Group(best);
-  }
-  public static int SlotMask(uint guard,in AriaHomeGuardView view){
-   if(guard==0)return 0;
-   for(int slot=0;slot<5;slot++)if(view.Group(slot)==guard)return 1<<slot;
-   return 0;
-  }
  }
  public static class AriaPublicHomeThreatPolicy {
   public const float RadiusSquared=120f*120f;

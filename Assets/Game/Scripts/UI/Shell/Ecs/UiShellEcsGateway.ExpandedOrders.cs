@@ -54,9 +54,6 @@ namespace Game.UI.Shell.Ecs
                     SourceMembers=receipt.SourceMembers,ScreenPosition=new UnityEngine.Vector2(receipt.ScreenPosition.x,receipt.ScreenPosition.y)};
             }
             page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3) | AirBit(slot4, 4);
-            page.InfantryMask = InfantryBit(slot0, 0) | InfantryBit(slot1, 1) | InfantryBit(slot2, 2) | InfantryBit(slot3, 3) | InfantryBit(slot4, 4);
-            page.Alive0 = slot0.Occupied ? slot0.Alive : 0; page.Alive1 = slot1.Occupied ? slot1.Alive : 0; page.Alive2 = slot2.Occupied ? slot2.Alive : 0;
-            page.Alive3 = slot3.Occupied ? slot3.Alive : 0; page.Alive4 = slot4.Occupied ? slot4.Alive : 0;
             return true;
         }
 
@@ -103,12 +100,6 @@ namespace Game.UI.Shell.Ecs
         private static int OrderBit(in SkirmishPresentedSlot slot, int index)
         {
             return slot.Occupied && slot.AttackOrdered ? 1 << index : 0;
-        }
-
-        private static int InfantryBit(in SkirmishPresentedSlot slot, int index)
-        {
-            return slot.Occupied &&
-                Game.Skirmish.Contracts.SkirmishRoleIds.Category(slot.Role) == Game.Skirmish.Contracts.SkirmishPopulationCategory.Infantry ? 1 << index : 0;
         }
 
         private static int AirBit(in SkirmishPresentedSlot slot, int index)

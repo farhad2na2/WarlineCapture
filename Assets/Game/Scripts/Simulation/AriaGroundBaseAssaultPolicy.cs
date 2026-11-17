@@ -32,24 +32,8 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
   if(plan.SweepRosterRevision!=0&&plan.SweepRosterRevision!=view.ExpandedRosterRevision){plan.PagedToAssault=0;plan.AssaultSelecting=0;plan.AssaultIssued=0;plan.StructureOrdered=0;plan.AssaultPageSeen=0;plan.PagesOrdered=0;}
   plan.SweepRosterRevision=view.ExpandedRosterRevision;
  }
- // Opening home guard: chosen once from the first roster page before any
- // assault order, then kept out of the enemy-base sweep. Home defence still
- // sees it, and prefers it as the single defender (it is already home).
- var guardView=GuardView(view);
- if(plan.HomeGuardChosen==0&&view.ExpandedBaseAssault&&!view.AirProfile&&view.ExpandedTotalGroups>0&&
-    view.ExpandedPageIndex==0&&plan.AssaultIssued==0&&plan.PagesOrdered==0&&view.ExpandedAttackOrderMask==0&&
-    touch.Phase!=AriaS002ContactPhase.Touching)
- {plan.HomeGuardGroup=Game.Simulation.AriaHomeGuardPolicy.Choose(guardView);plan.HomeGuardChosen=1;}
- int guardMask=Game.Simulation.AriaHomeGuardPolicy.SlotMask(plan.HomeGuardGroup,guardView)&view.ExpandedAssaultMask;
- if(guardMask!=0){var assault=view;assault.ExpandedAssaultMask&=~guardMask;assault.HomeGuardMask=guardMask;
-  StepExpandedBaseAssault(assault,ref plan,ref touch,ref output);output.Intent=plan.Intent;return;}
  StepExpandedBaseAssault(view,ref plan,ref touch,ref output);output.Intent=plan.Intent;
 }
-static Game.Simulation.AriaHomeGuardView GuardView(in AriaS002Observation v)=>new Game.Simulation.AriaHomeGuardView{
- PageIndex=v.ExpandedPageIndex,TotalGroups=v.ExpandedTotalGroups,AssaultMask=v.ExpandedAssaultMask,StructureMask=v.ExpandedStructureMask,
- AirMask=v.ExpandedAirMask,InfantryMask=v.ExpandedInfantryMask,Alive0=v.ExpandedAlive0,Alive1=v.ExpandedAlive1,Alive2=v.ExpandedAlive2,
- Alive3=v.ExpandedAlive3,Alive4=v.ExpandedAlive4,Group0=v.ExpandedGroup0,Group1=v.ExpandedGroup1,Group2=v.ExpandedGroup2,
- Group3=v.ExpandedGroup3,Group4=v.ExpandedGroup4};
 
         private static void StepExpandedBaseAssault(in AriaS002Observation view,
             ref AriaS002PlanState plan, ref AriaS002ContactState touch,
@@ -403,9 +387,8 @@ static Game.Simulation.AriaHomeGuardView GuardView(in AriaS002Observation v)=>ne
                 ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
                 ThreatGroundAvailable=view.ThreatGround.Admitted,ThreatVisibleAvailable=view.Threat.Admitted,
                 BaseDamageOnly=view.BaseDamageHomeThreat,ProportionateDefense=true,HomeGroundAvailable=view.HomeGround.Admitted,
-                PreferredSlotMask=view.HomeGuardMask,
                 BaseCritical=Game.Simulation.AriaBaseDamagePolicy.Critical(plan.HomeHealthPeak,view.PlayerHealth),
-                ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask|view.HomeGuardMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
+                ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
                 CompletedContacts=touch.Actions,Time=view.Time };
             for(int slot=0;slot<5;slot++)if(view.Squad(slot).Admitted)facts.AvailableSquadMask|=1<<slot;
             var state=new Game.Simulation.AriaHomeDefenseState {HomeDefenseStage=plan.HomeDefenseStage,HomeDefenseAction=plan.HomeDefenseAction,HomeDefensePage=plan.HomeDefensePage,DefenseStage=plan.DefenseStage,HomeDefenseObserveUntil=plan.HomeDefenseObserveUntil,

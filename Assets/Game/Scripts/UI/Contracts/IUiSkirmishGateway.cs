@@ -54,8 +54,6 @@ namespace Game.UI.Contracts
         public uint Group(int slot) => slot switch { 0=>Group0,1=>Group1,2=>Group2,3=>Group3,4=>Group4,_=>0 };
         public int AirMask;
         public bool NextPage;
-        public int InfantryMask;
-        public int Alive0, Alive1, Alive2, Alive3, Alive4;
     }
 
     public struct UiSkirmishReadinessModel

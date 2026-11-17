@@ -27,25 +27,16 @@ namespace Game.UI.Shell.Ecs
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
             Debug.Log($"[AriaS002Trace] event={eventName} frame={v.Frame} time={v.Time} phase={session.Phase} reason={session.StopReason} intent={p.Intent} kind={observation.Kind} target={session.TargetId} offered={observation.TargetId} goal={observation.GoalId} attempts={session.Attempts} actions={session.Actions} screen={session.Target} drag={session.Drag} dragEnd={session.DragEnd} lastProgress={session.LastProgressAt} objectiveProgress={session.LastObjectiveProgressAt} planProgress={p.LastProgressAt} infantry={v.Infantry} playerHealth={v.PlayerHealth} enemyHealth={v.EnemyHealth} distanceKnown={v.AssaultDistanceVisible} distance={v.NearestFriendlyObjectiveDistance} selected={v.SelectedCount} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} groups={v.ExpandedTotalGroups} group0={v.ExpandedGroup0} group1={v.ExpandedGroup1} group2={v.ExpandedGroup2} group3={v.ExpandedGroup3} group4={v.ExpandedGroup4} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} inspectStage={p.AssaultInspectStage} mapOpen={v.MapOpen} mapOwned={v.AssaultMap.ExpectedIdentity} mapId={v.AssaultMap.Identity} expectedMapId={p.AssaultInspectMapIdentity} closeAvailable={v.CloseMap.Available} precisionStage={p.PrecisionStage} precisionGroup={p.PrecisionGroup} precisionAttempts={p.PrecisionAttempts} receiptPresented={v.PrecisionAttack.Presented} receiptGroup={v.PrecisionAttack.GroupId} receiptAccepted={v.PrecisionAttack.AcceptedMembers} receiptSource={v.PrecisionAttack.SourceMembers} goalKind={gestureGoal.Kind} goalKnown={gestureGoal.Known} goalX={gestureGoal.ObjectiveX} goalZ={gestureGoal.ObjectiveZ}");
         }
-        private int tracedHomeDefenseStage, tracedHomeDefenseReason, tracedHomeGuardChosen;
+        private int tracedHomeDefenseStage, tracedHomeDefenseReason;
         // Evidence only: reports home-defence transitions of the planner state.
         private void TraceHomeDefense()
         {
             if (!AriaCommandEvidence.Active) return;
             using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
-            if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = tracedHomeGuardChosen = 0; return; }
+            if (query.CalculateEntityCount() != 1) { tracedHomeDefenseStage = tracedHomeDefenseReason = 0; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
             if (!v.ExpandedBaseAssault) return;
             var p = query.GetSingleton<AriaSkirmishPlanComponent>();
-            if (p.HomeGuardChosen != tracedHomeGuardChosen)
-            {
-                tracedHomeGuardChosen = p.HomeGuardChosen;
-                if (p.HomeGuardChosen != 0)
-                {
-                    float guardSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
-                    Debug.Log($"[AriaS002Trace] event=home_guard group={p.HomeGuardGroup} page={v.ExpandedPageIndex} assaultMask={v.ExpandedAssaultMask} structureMask={v.ExpandedStructureMask} infantryMask={v.ExpandedInfantryMask} alive={v.ExpandedAlive0},{v.ExpandedAlive1},{v.ExpandedAlive2},{v.ExpandedAlive3},{v.ExpandedAlive4} t={guardSeconds:F2}");
-                }
-            }
             int priorStage = tracedHomeDefenseStage, priorReason = tracedHomeDefenseReason;
             tracedHomeDefenseStage = p.HomeDefenseStage; tracedHomeDefenseReason = p.HomeDefenseReason;
             string state = priorStage == 0 && p.HomeDefenseStage != 0 ? "triggered"

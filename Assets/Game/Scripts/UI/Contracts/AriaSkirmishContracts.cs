@@ -95,8 +95,6 @@ public SkirmishPublicArmyOrderGoal CurrentAssaultGoal, AdvanceOrderGoal, Visible
         public uint ExpandedGroup(int slot) => slot switch {
             0=>ExpandedGroup0,1=>ExpandedGroup1,2=>ExpandedGroup2,3=>ExpandedGroup3,4=>ExpandedGroup4,_=>0 };
         public int ExpandedAirMask;
-        public int ExpandedInfantryMask;
-        public int ExpandedAlive0, ExpandedAlive1, ExpandedAlive2, ExpandedAlive3, ExpandedAlive4;
         public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;
         public int ExpandedPageCount, ExpandedTotalGroups, ExpandedSelectedGroups, ExpandedSelectedOffPage;

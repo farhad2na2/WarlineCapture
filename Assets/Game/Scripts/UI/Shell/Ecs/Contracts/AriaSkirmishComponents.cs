@@ -63,7 +63,8 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int BreacherActions;
         public float BreacherDeadline;
         // AriaCoverageRecruitPolicy: marksman, apc_fast, radar, apc_heavy, drone, transport heli (bits 1..32), one at a time.
-        public byte CoverageDone, CoverageCurrent;
+        public int CoverageDone;
+        public byte CoverageCurrent;
         public float CoverageDeadline;
         // AriaSupportOrderPolicy: one ordinary order per fielded support kind (radar, drone, transport heli).
         public byte SupportStage, SupportKind, SupportTried, SupportDone;
@@ -78,6 +79,12 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int CoverageActions;
         public float CoverageStarted;
         public byte CoverageAssaultSeen, CoverageBatch;
+        // AriaResearchPolicy (readiness research, one per stage) and AriaBuildingPolicy (producer buildings once).
+        public byte ResearchCurrent, ResearchTried, ResearchDone;
+        public int ResearchActions;
+        public float ResearchDeadline;
+        public byte BuildCurrent, BuildTried, BuildDone;
+        public float BuildDeadline;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

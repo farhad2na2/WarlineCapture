@@ -193,13 +193,16 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind), "same visit");
             Assert.AreEqual(AriaCoverageKind.ApcFast, kind);
             view.PendingMask = 3; view.Time = 100f; view.CompletedContacts = 15;
-            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "at most two per visit");
+            Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind), "third kind, same visit");
+            Assert.AreEqual(AriaCoverageKind.Gunner, kind, "combat kinds before support kinds");
+            view.PendingMask = 67; view.Time = 104f; view.CompletedContacts = 17;
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "at most PerVisit per visit");
             Assert.AreEqual(0, plan.Current);
-            view.PendingMask = 0; view.FieldedMask = 3; view.DrawerOpen = false; view.Time = 110f;
+            view.PendingMask = 0; view.FieldedMask = 67; view.DrawerOpen = false; view.Time = 110f;
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "gap between visits");
-            view.Time = 100f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
+            view.Time = 104f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
-            Assert.AreEqual(AriaCoverageKind.Radar, kind);
+            Assert.AreEqual(AriaCoverageKind.Tank, kind);
         }
 
         // Lane 10 S050/S006: after each roster change the sweep cleared the selection and selected the
@@ -222,6 +225,26 @@ namespace Game.Tests.Editor
             view.ExpandedSelectedMask = 0b00001; view.ExpandedSelectedGroups = 1; // an already-ordered group is selected
             Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref foreign, out d));
             Assert.AreEqual(AriaGroundAction.ToggleSelected, d.Action, "a foreign selection is still cleared");
+        }
+
+        // Lane 12 S050: a stale selection on page 1 made page 0 page forward to deselect it, and page 1
+        // paged back because page 0 was not yet counted; the column flipped pages until the watchdog.
+        [Test]
+        public void StaleSelectionOnALaterPageIsClearedBeforeReturning()
+        {
+            var plan = new AriaGroundColumnState { PagedToAssault = 1, AssaultSelecting = 2, SelectionResetPage = 0, PagesOrdered = 0 };
+            var view = Page(250f); view.ExpandedPageCount = 2; view.ExpandedPageIndex = 1; view.NextAvailable = false;
+            view.ExpandedAssaultMask = 28; view.ExpandedSelectedMask = 4; view.ExpandedSelectedGroups = 1; view.AvailableSquadMask = 31;
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref plan, out var d));
+            Assert.AreEqual(AriaGroundAction.ToggleSelected, d.Action, "deselect here, not page back first");
+            view.ExpandedSelectedMask = 0; view.ExpandedSelectedGroups = 0; view.Time = 252f;
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(view, ref plan, out d));
+            Assert.AreEqual(AriaGroundAction.PreviousPage, d.Action, "then return to the page the sweep was on");
+            var page0 = Page(254f); page0.ExpandedPageCount = 2; page0.ExpandedPageIndex = 0;
+            page0.ExpandedAssaultMask = 15; page0.ExpandedAttackOrderMask = 15; page0.AvailableSquadMask = 31;
+            Assert.IsTrue(AriaGroundColumnPolicy.StepGroundAssault(page0, ref plan, out d));
+            Assert.AreEqual(AriaGroundAction.NextPage, d.Action, "page 0 counts, the sweep moves on");
+            Assert.AreEqual(1, plan.PagesOrdered);
         }
 }
 }

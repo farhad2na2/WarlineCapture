@@ -86,16 +86,17 @@ namespace Game.Tests.Editor
         public void S026KindsFollowAfterTheS002KindsOneAtATime()
         {
             var plan = new AriaCoverageState { Done = 7 }; // marksman, apc_fast, radar covered
-            var view = Ready(120f); view.AffordMask = AriaCoverageRecruitPolicy.All; view.FieldedMask = 7;
+            // S026 starts with a gunner and a tank (bits 64, 128).
+            var view = Ready(120f); view.AffordMask = AriaCoverageRecruitPolicy.All; view.FieldedMask = 7 | 64 | 128;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out var kind));
             Assert.AreEqual(AriaCoverageKind.ApcHeavy, kind);
             view.PendingMask = 8; view.Time = 122f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "one recruit at a time");
-            view.PendingMask = 0; view.FieldedMask = 15; view.Time = 122f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
+            view.PendingMask = 0; view.FieldedMask = 15 | 64 | 128; view.Time = 122f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.Drone, kind);
-            view.FieldedMask = 31; view.Time += 10f;
+            view.FieldedMask = 31 | 64 | 128; view.Time += 10f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
             view.Time += AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));

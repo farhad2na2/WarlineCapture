@@ -101,16 +101,38 @@ namespace Game.Runtime
                 double now = em.World.Time.ElapsedTime;
                 if (s_coverageQuoteSession != session || now < s_coverageQuoteAt || now - s_coverageQuoteAt >= 1d)
                 {
-                    int mask = 0;
+                    int mask = 0, research = 0, buildingNeed = 0, buildingPresent = 0;
                     for (int i = 0; i < CoverageRoles.Length; i++)
                     {
-                        var quote = SkirmishProductionService.EvaluateQueue(em, session, SkirmishRoleIds.ToId(CoverageRoles[i]), 1, army, 1);
+                        string id = SkirmishRoleIds.ToId(CoverageRoles[i]);
+                        var quote = SkirmishProductionService.EvaluateQueue(em, session, id, 1, army, 1);
                         if (quote.Accepted && view.OwnMaterials - quote.MaterialsCost >= CoverageReserveMaterials)
                             mask |= 1 << i;
+                        // What more readiness (up to Full Arsenal) would unlock, and which producer
+                        // buildings the mission offers: the game's own production rules, no duplicate table.
+                        var full = SkirmishProductionService.EvaluateQueueAtReadiness(em, session, id, 1, army, 1, SkirmishReadinessStage.FullArsenal);
+                        if (quote.Reason == SkirmishReasonCode.MissingReadiness && full.Reason != SkirmishReasonCode.MissingReadiness &&
+                            full.Reason != SkirmishReasonCode.UnsupportedRole) research |= 1 << i;
+                        if (full.Reason == SkirmishReasonCode.UnsupportedRole) continue;
+                        bool helipadRole = CoverageRoles[i] == SkirmishRoleKind.TransportHeli, dishRole = CoverageRoles[i] == SkirmishRoleKind.Drone;
+                        bool missingProducer = full.Reason == SkirmishReasonCode.MissingProducer;
+                        if (helipadRole) { if (missingProducer && full.Field == "producer.helipad") buildingNeed |= 1; else buildingPresent |= 1; }
+                        if (dishRole) { if (missingProducer && full.Field == "producer.intel_station") buildingNeed |= 2; else buildingPresent |= 2; }
                     }
+                    int buildingAfford = 0;
+                    int buildMaterials = view.OwnMaterials - CoverageReserveMaterials;
+                    if ((buildingNeed & 1) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad), buildMaterials)) buildingAfford |= 1;
+                    if ((buildingNeed & 2) != 0 && CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.SatelliteDish), buildMaterials)) buildingAfford |= 2;
+                    // Producer buildings below Established also need research before they can be placed.
+                    if (buildingNeed != 0 && LiveReadiness(em, session, setup.Readiness) < SkirmishReadinessStage.Established) research |= buildingNeed << CoverageRoles.Length;
                     s_coverageQuoteMask = mask; s_coverageQuoteAt = now; s_coverageQuoteSession = session;
+                    s_researchNeedMask = research; s_buildingNeedMask = buildingNeed; s_buildingPresentMask = buildingPresent; s_buildingAffordMask = buildingAfford;
                 }
                 view.CoverageAffordMask = s_coverageQuoteMask;
+                view.ResearchNeedMask = s_researchNeedMask;
+                view.BuildingNeedMask = s_buildingNeedMask;
+                view.BuildingPresentMask = s_buildingPresentMask;
+                view.BuildingAffordMask = s_buildingAffordMask;
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
@@ -213,12 +235,13 @@ namespace Game.Runtime
         public const int CoverageReserveMaterials = 250;
         private static Entity s_coverageQuoteSession;
         private static double s_coverageQuoteAt;
-        private static int s_coverageQuoteMask;
+        private static int s_coverageQuoteMask, s_researchNeedMask, s_buildingNeedMask, s_buildingPresentMask, s_buildingAffordMask;
 
         // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
         private static readonly SkirmishRoleKind[] CoverageRoles =
             { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar,
-              SkirmishRoleKind.ApcHeavy, SkirmishRoleKind.Drone, SkirmishRoleKind.TransportHeli };
+              SkirmishRoleKind.ApcHeavy, SkirmishRoleKind.Drone, SkirmishRoleKind.TransportHeli,
+              SkirmishRoleKind.Gunner, SkirmishRoleKind.Tank, SkirmishRoleKind.Siege };
 
         private static int PendingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
         {

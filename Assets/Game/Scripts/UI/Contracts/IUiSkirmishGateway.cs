@@ -16,6 +16,7 @@ namespace Game.UI.Contracts
         public bool CombinedArmsField, CanAffordRocketeer, RocketeerRecruitPending;
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
+        public int ResearchNeedMask, BuildingNeedMask, BuildingPresentMask, BuildingAffordMask;
         public int OwnStructureAttackUnits;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
         public bool CanAffordTanker;

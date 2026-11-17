@@ -88,7 +88,10 @@ namespace Game.Simulation {
  // at a time, through the visible Build button and catalog card. A kind the mission's
  // catalog does not offer is never affordable and is skipped.
  // Kind bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli.
- public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli}
+ // Gunner and Tank (bits 64, 128): producible in some catalogs without being in the starting force
+ // (lane 12 S049 never fielded either).
+ // Siege (bit 256) needs Full Arsenal; it is offered once the research step has unlocked it.
+ public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli,Gunner,Tank,Siege}
  public enum AriaCoverageAction:byte {None,Waiting,Recruit}
  public struct AriaCoverageView {
   // AssaultIssued: the first assault and structure orders were accepted.
@@ -105,26 +108,30 @@ namespace Game.Simulation {
   public float Time;
  }
  // Done: kinds covered or given up for this match. Current: kind being bought (0 none).
- // Batch: 1 while the second purchase of one drawer visit is allowed or in flight.
- public struct AriaCoverageState {public byte Done,Current,Batch;public float Deadline,Started;public int Actions;}
+ // Batch: purchases already made in this drawer visit beyond the first (0 = first purchase).
+ public struct AriaCoverageState {public int Done;public byte Current,Batch;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
   // GapSeconds: between drawer visits, so new groups join the column before the next purchase (lane 8 S050).
-  // PerVisit: two kinds per drawer visit (lane 10 S026 won at 181 s with four kinds still unbought).
-  public const int Kinds=6,All=(1<<Kinds)-1,PerVisit=2;
-  public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=25f;
+  // PerVisit: kinds per drawer visit (lane 12 S026 won at 218 s with six kinds still unbought).
+  public const int Kinds=9,All=(1<<Kinds)-1,PerVisit=3;
+  public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=12f;
+  // Purchase order: combat kinds first, then support kinds.
+  static readonly byte[] Order={(byte)AriaCoverageKind.Marksman,(byte)AriaCoverageKind.ApcFast,(byte)AriaCoverageKind.Gunner,
+   (byte)AriaCoverageKind.Tank,(byte)AriaCoverageKind.Radar,(byte)AriaCoverageKind.ApcHeavy,(byte)AriaCoverageKind.Drone,
+   (byte)AriaCoverageKind.TransportHeli,(byte)AriaCoverageKind.Siege};
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
-   plan.Done|=(byte)((view.PendingMask|view.FieldedMask)&All);
+   plan.Done|=(view.PendingMask|view.FieldedMask)&All;
    kind=(AriaCoverageKind)plan.Current;
    if(plan.Current!=0){
     int bit=Bit(kind);
     if((plan.Done&bit)!=0){
      plan.Current=0;
      // Landed. The drawer is still open: buy the next affordable kind in the same visit.
-     if(plan.Batch==0&&view.DrawerOpen&&!view.Busy&&view.EnemyAlive){
-      plan.Batch=1;
+     if(plan.Batch<PerVisit-1&&view.DrawerOpen&&!view.Busy&&view.EnemyAlive){
+      plan.Batch++;
       if(TryStart(view,ref plan,out kind))return AriaCoverageAction.Recruit;
      }
      EndVisit(ref plan,view.Time);return AriaCoverageAction.None;
@@ -134,7 +141,7 @@ namespace Game.Simulation {
      plan.Deadline=System.Math.Min(plan.Started+MaxBuySeconds,System.Math.Max(plan.Deadline,view.Time+StepSeconds));
     }
     // Bounded: a purchase that does not appear in time is not retried this match.
-    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=(byte)bit;plan.Current=0;EndVisit(ref plan,view.Time);return AriaCoverageAction.None;}
+    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Done|=bit;plan.Current=0;EndVisit(ref plan,view.Time);return AriaCoverageAction.None;}
     return (view.CardMask&bit)!=0?AriaCoverageAction.Recruit:AriaCoverageAction.Waiting;
    }
    kind=AriaCoverageKind.None;
@@ -146,8 +153,8 @@ namespace Game.Simulation {
   }
   static bool TryStart(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    kind=AriaCoverageKind.None;
-   for(int k=1;k<=Kinds;k++){
-    int bit=1<<(k-1);
+   for(int i=0;i<Order.Length;i++){
+    int k=Order[i],bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
     if((plan.Done&bit)!=0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
     plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;plan.Started=view.Time;plan.Actions=view.CompletedContacts;kind=(AriaCoverageKind)k;
@@ -156,6 +163,96 @@ namespace Game.Simulation {
    return false;
   }
   static void EndVisit(ref AriaCoverageState plan,float time){plan.Batch=0;plan.Deadline=time+GapSeconds;}
+ }
+
+ // Coverage purchases currently possible are finished: nothing in flight or queued, and every kind
+ // affordable now is covered. Research and buildings wait for this (one purchase at a time).
+ public static class AriaCoverageProgress {
+  public static bool Idle(int done,byte current,int affordMask,int pendingMask)=>
+   current==0&&(pendingMask&AriaCoverageRecruitPolicy.All)==0&&(affordMask&~done&AriaCoverageRecruitPolicy.All)==0;
+ }
+
+ // One readiness research per stage, through the HUD's ordinary upgrade control (Build drawer readiness
+ // button), only when it unlocks something the mission offers and ARIA has not yet used (a coverage
+ // kind such as siege, or a producer building), after the first assault and the possible coverage
+ // purchases, and only while materials exceed the research cost plus the reserve. Yields to every
+ // other owner; two attempts per stage; at most up to Full Arsenal.
+ public enum AriaResearchAction:byte {None,Waiting,Upgrade}
+ public struct AriaResearchView {
+  public bool AssaultSeen,Busy,EnemyAlive,CoverageIdle,InProgress,CanUpgrade,UpgradeAvailable;
+  // Stage: current readiness (1 Field, 2 Established, 3 Full Arsenal). NeedMask: anything unlocked by more readiness.
+  public int Stage,Cost,Materials,Reserve,NeedMask,CompletedContacts;
+  public float Time;
+ }
+ // Current: 1 while the upgrade taps are in flight. Tried/Done: bits per stage (1 << stage).
+ public struct AriaResearchState {public byte Current,Tried,Done;public int Actions;public float Deadline;}
+ // Trace: 0 none, 1 started, 2 queued (research running), 3 released, 4 given up.
+ public struct AriaResearchDecision {public AriaResearchAction Action;public byte Trace;}
+ public static class AriaResearchPolicy {
+  public const float TapSeconds=10f;public const int MaxStage=3,Reserve=250;
+  public static bool Step(in AriaResearchView view,ref AriaResearchState plan,out AriaResearchDecision output){
+   output=default;int bit=1<<System.Math.Max(0,System.Math.Min(7,view.Stage));
+   if(view.InProgress){
+    if(plan.Current!=0){plan.Current=0;plan.Done|=(byte)bit;output.Trace=2;}
+    return false;
+   }
+   if(plan.Current!=0){
+    if(view.Busy||!view.EnemyAlive||view.Time>plan.Deadline){
+     plan.Current=0;
+     if((plan.Tried&bit)!=0){plan.Done|=(byte)bit;output.Trace=4;}else{plan.Tried|=(byte)bit;output.Trace=3;}
+     return false;
+    }
+    output.Action=view.UpgradeAvailable?AriaResearchAction.Upgrade:AriaResearchAction.Waiting;return true;
+   }
+   if(view.Stage>=MaxStage||(plan.Done&bit)!=0||!view.AssaultSeen||view.Busy||!view.EnemyAlive||!view.CoverageIdle||
+      view.NeedMask==0||!view.CanUpgrade||!view.UpgradeAvailable||view.Materials<view.Cost+view.Reserve)return false;
+   plan.Current=1;plan.Deadline=view.Time+TapSeconds;plan.Actions=view.CompletedContacts;
+   output.Trace=1;output.Action=AriaResearchAction.Upgrade;return true;
+  }
+ }
+
+ // Producer buildings the mission offers that the player does not start with (bits: 1 helipad,
+ // 2 satellite dish) are built once each, after the first assault and the possible coverage
+ // purchases, through the ordinary Build drawer and a legal home placement (the existing pad-site
+ // placement steps). Two attempts per building; a placement with no legal site gives up cleanly.
+ public enum AriaBuildingAction:byte {None,Start,Continue,Cancel}
+ public struct AriaBuildingView {
+  public bool AssaultSeen,Busy,EnemyAlive,CoverageIdle,ResearchIdle,PlacementOpen,PlacementGaveUp;
+  // Need: offered by the mission and not present. Afford: affordable above the reserve now.
+  // Present: built. Card: the build card (or the Build button) is offered.
+  public int NeedMask,AffordMask,PresentMask,CardMask;
+  public float Time;
+ }
+ // Current: building being placed (1 helipad, 2 dish; 0 none). Tried/Done: per building bit.
+ public struct AriaBuildingState {public byte Current,Tried,Done;public float Deadline;}
+ // Trace: 0 none, 1 started, 2 built, 3 released, 4 given up.
+ public struct AriaBuildingDecision {public AriaBuildingAction Action;public byte Kind,Trace;}
+ public static class AriaBuildingPolicy {
+  public const float PlaceSeconds=50f;
+  public static int Bit(byte kind)=>kind==0?0:1<<(kind-1);
+  public static bool Step(in AriaBuildingView view,ref AriaBuildingState plan,out AriaBuildingDecision output){
+   output=default;
+   plan.Done|=(byte)(view.PresentMask&3);
+   if(plan.Current!=0){
+    int bit=Bit(plan.Current);output.Kind=plan.Current;
+    if((plan.Done&bit)!=0){plan.Current=0;output.Trace=2;return false;}
+    if(view.Busy||!view.EnemyAlive||view.PlacementGaveUp||view.Time>plan.Deadline){
+     // Never leave a placement preview open for the next owner.
+     if(view.PlacementOpen){output.Action=AriaBuildingAction.Cancel;return true;}
+     if((plan.Tried&bit)!=0){plan.Done|=(byte)bit;output.Trace=4;}else{plan.Tried|=(byte)bit;output.Trace=3;}
+     plan.Current=0;return false;
+    }
+    output.Action=AriaBuildingAction.Continue;return true;
+   }
+   if(!view.AssaultSeen||view.Busy||!view.EnemyAlive||!view.CoverageIdle||!view.ResearchIdle||view.PlacementOpen)return false;
+   for(byte k=1;k<=2;k++){
+    int bit=Bit(k);
+    if((plan.Done&bit)!=0||(view.NeedMask&bit)==0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
+    plan.Current=k;plan.Deadline=view.Time+PlaceSeconds;output.Kind=k;output.Trace=1;output.Action=AriaBuildingAction.Start;
+    return true;
+   }
+   return false;
+  }
  }
 
  // Support units are not assault roles, so the roster sweep never orders them. Once one is

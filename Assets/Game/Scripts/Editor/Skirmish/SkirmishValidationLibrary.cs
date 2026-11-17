@@ -25,7 +25,14 @@ namespace Game.Editor
 
         public static bool Active => libraryScope != null;
 
-        public static bool IsCandidate(string catalogId) => libraryScope != null && catalogId != null && plannedIds.Contains(catalogId);
+        /// <summary>True for a card that is visible only for validation: presented by this scope, or a real-catalog row carrying the marker.</summary>
+        public static bool IsCandidate(string catalogId)
+        {
+            if (catalogId == null) return false;
+            if (libraryScope != null && plannedIds.Contains(catalogId)) return true;
+            var library = SkirmishBattleCatalogConfig.Load();
+            return library != null && library.TryGet(catalogId, out var row) && row.IsValidationVisible;
+        }
 
         /// <summary>Idempotent. False when the library could not be installed (the reason is logged, never thrown).</summary>
         public static bool Enable(string trigger)

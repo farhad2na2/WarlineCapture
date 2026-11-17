@@ -38,11 +38,29 @@ namespace Game.Tests.Editor
             Assert.AreEqual(1026, row.PlayableScenarioIndex);
             Assert.AreEqual(DefinitionIdOf("S026"), row.DefinitionId);
             Assert.AreEqual(3, row.ContentVersion);
+            Assert.IsTrue(row.IsValidationVisible, "marked as not published");
+            Assert.AreEqual("validation.visible." + DefinitionIdOf("S026"), row.ReadinessManifestId);
             StringAssert.StartsWith("[VALIDATION] ", row.TitleEnglish);
             StringAssert.EndsWith("Mountain Pass", row.TitleEnglish);
             Assert.AreEqual(string.Empty, row.TitleKey, "a localization key would hide the badge");
             StringAssert.StartsWith("Validation candidate, not published.", row.DescriptionEnglish);
             StringAssert.StartsWith("Validation candidate, not published.", row.DescriptionFarsi);
+        }
+
+        [Test]
+        public void ValidationVisibleRowsAreNotPublishedPlayables()
+        {
+            var plan = SkirmishValidationLibraryPlan.Build(new List<SkirmishBattleCatalogEntry> { Playable("S002", 4), Planned("S026") },
+                new[] { Source("S026") });
+            var catalog = UnityEngine.ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
+            try
+            {
+                catalog.Configure(plan.Rows);
+                Assert.AreEqual(2, catalog.CountPlayable());
+                Assert.AreEqual(1, catalog.CountPublishedPlayable());
+                Assert.IsFalse(plan.Rows[0].IsValidationVisible, "a shipped playable is never validation-visible");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(catalog); }
         }
 
         [Test]

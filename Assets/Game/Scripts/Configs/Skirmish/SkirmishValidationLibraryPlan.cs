@@ -89,6 +89,8 @@ namespace Game.Configs
                 row.PlayableScenarioIndex = index;
                 row.DefinitionId = source.DefinitionId;
                 row.ContentVersion = source.ContentVersion;
+                // Same marker the real-catalog tool (set_library_visibility.py) writes: playable but not a published mission.
+                row.ReadinessManifestId = SkirmishBattleCatalogEntry.ValidationVisiblePrefix + source.DefinitionId;
                 // The card shows it is a validation candidate. A localization key would hide the English badge, so
                 // the key is cleared and the English title carries the badge in every locale.
                 string title = string.IsNullOrEmpty(row.TitleEnglish) ? id : row.TitleEnglish;

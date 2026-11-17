@@ -16,8 +16,8 @@
       449.5
     ],
     "s050.f1.fabrication_depot": [
-      877.5,
-      460.0
+      997.5,
+      364.0
     ],
     "economy.player": [
       899.5,
@@ -28,23 +28,23 @@
       459.5
     ],
     "s050.f1.fuel_bladder": [
-      875.0,
-      481.0
+      1019.0,
+      361.0
     ],
     "staging.player": [
-      995.0,
-      503.5
-    ],
-    "s050.f1.satellite_dish": [
-      996.0,
-      363.5
-    ],
-    "service.player": [
       1019.0,
       479.5
     ],
-    "s050.f1.watchtower.approach": [
+    "s050.f1.satellite_dish": [
+      1044.0,
+      459.5
+    ],
+    "service.player": [
       1019.0,
+      407.5
+    ],
+    "s050.f1.watchtower.approach": [
+      1043.0,
       407.5
     ],
     "air.player": [
@@ -68,15 +68,15 @@
       387.5
     ],
     "s050.f2.fuel_bladder": [
-      1283.0,
-      505.0
+      1139.0,
+      385.0
     ],
     "staging.enemy": [
       1211.0,
       455.5
     ],
     "s050.f2.satellite_dish": [
-      1140.0,
+      1098.0,
       459.5
     ],
     "service.enemy": [
@@ -88,7 +88,7 @@
       407.5
     ],
     "air.enemy": [
-      1284.0,
+      1140.0,
       459.5
     ],
     "spawn.infantry.player": [
@@ -330,8 +330,8 @@
       "kind": "GroundStaging",
       "faction": 1,
       "at": [
-        995.0,
-        503.5
+        1019.0,
+        479.5
       ],
       "size": [
         14,
@@ -372,8 +372,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        875.0,
-        481.0
+        1019.0,
+        361.0
       ],
       "size": [
         14,
@@ -386,8 +386,8 @@
       "kind": "Supply",
       "faction": 1,
       "at": [
-        877.5,
-        460.0
+        997.5,
+        364.0
       ],
       "size": [
         19,
@@ -401,7 +401,7 @@
       "faction": 1,
       "at": [
         1019.0,
-        479.5
+        407.5
       ],
       "size": [
         3,
@@ -414,7 +414,7 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        1019.0,
+        1043.0,
         407.5
       ],
       "size": [
@@ -428,8 +428,8 @@
       "kind": "Service",
       "faction": 1,
       "at": [
-        996.0,
-        363.5
+        1044.0,
+        459.5
       ],
       "size": [
         10,
@@ -512,8 +512,8 @@
       "kind": "Supply",
       "faction": 2,
       "at": [
-        1283.0,
-        505.0
+        1139.0,
+        385.0
       ],
       "size": [
         14,
@@ -568,7 +568,7 @@
       "kind": "Service",
       "faction": 2,
       "at": [
-        1140.0,
+        1098.0,
         459.5
       ],
       "size": [
@@ -582,7 +582,7 @@
       "kind": "AirReturn",
       "faction": 2,
       "at": [
-        1284.0,
+        1140.0,
         459.5
       ],
       "size": [

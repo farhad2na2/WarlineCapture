@@ -124,3 +124,15 @@ fired on base damage at t=70 and the base fell at 98.75 s. Worse than the 4/4 ba
 integration Assets equal ecaf17a07 again (rule 1ae08e59a only).
 Next, if a third iteration is allowed: tap Home only after the whole sweep is done (`AssaultIssued`), never mid-sweep;
 reject projected points with z below the near plane or far outside the screen before treating them as drag targets.
+
+## Summary (track closed by the program lead, 2026-11-17)
+1. Goal: S002 wins on 155923/130365/104731 en and 130365 fa-IR; 155923 en was lost at 95.5 s to the lone enemy tank slipping past the column at about 55 s.
+2. Attempt 1 (1ae08e59a): intercept a visible vehicle slipping past the column; tap it with anti-armour. Gate lane-s002gate 4/4, but the rule never fired (`known=True offered=False`): the tank was never on screen.
+3. Attempt 2 (e8b2b94b2): camera drags toward the off-screen tank, nearest-unit geometry, home threat no longer blocking. q1: 1 win, 2 Blocked, 1 interrupted (manual Editor close at the pause). 6 triggered, 0 ordered.
+4. Why it failed: the tank was about 2.8 screens away, so clamped drags could not reach it. Releases left Attack armed, so FindBase then aimed it three times and ARIA stopped (Blocked 115). Repeated drags counted as touch retries.
+5. Attempt 3 (e3387c8ae, code only): disarm Attack before hand-back; offer only tappable or one-drag contacts. Safe, but it can never order at the crossing because ARIA's camera sits near the enemy base.
+6. Attempt 4 (481eacbac): one Home tap, then paced re-centring drags to watch the column. q2: 3/5 (155923 en and 130365 en Defeat at about 98 s). Intercept 0 triggered.
+7. Why it failed: Home fired mid-sweep (t=27.5); projected points behind the camera gave bad drags; an Advance re-find at t=55.2 moved the camera away at the crossing; the camera work delayed the column.
+8. Root constraint: ARIA's Advance point is 25 units in front of the enemy base, about 600 world units from the column. The tank is visible about 4.5 s. Any camera move costs 3 gestures (map) or many drags (0.05 world units per pixel).
+9. Integration state: both merges reverted (3e9c744b7, 88d29f828); ARIA code equals the 4/4 baseline. Branch missions/aria-intercept kept at 481eacbac; 14 pure policy tests.
+10. Next idea if reopened: issue the column's Advance order to an intermediate public waypoint near the column, on the same screen (a human's leap-frog march), so the camera naturally stays with the army. Then the existing intercept (tap when on screen, Attack disarm) can work with no extra camera gestures.

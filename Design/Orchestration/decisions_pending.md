@@ -16,7 +16,9 @@ baseline and reverted: opening home guard 1/6 (`aria-gate1`); intercept v1 never
 intercept v2 1 win + 2 Blocked (`aria-intercept-q1`); column camera + intercept 3/5, intercept never fired
 (`aria-intercept-q2`). Reasons (`daily/aria-intercept-2026-11-17.md`, `daily/aria-worker-2026-11-17.md`): the
 tank is in fog except ~4.5 s at the crossing; ARIA's camera is ~600 units away at that moment; a recall
-after the first base hit needs 24–29 s. A human might also lose this seed. Time spent: ~4 h (over the 2 h rule).
+after the first base hit needs 24–29 s. Baseline re-run 12:45 (`lead-s002-gate3`): 155923 en Abort startupFailure=Timeout (harness), 130365 en Victory 275.9 s,
+104731 en **Defeat 127.9 s** (won twice earlier today), 130365 fa-IR Victory 256.9 s — so early losses are not limited to
+one seed; today's baseline record per seed: 155923 1W 1L, 104731 2W 1L, 130365 en 3W. A human might also lose this seed. Time spent: ~4 h (over the 2 h rule).
 
 **Options.**
 1. Starting forces (2026-11-06 authorization): give the player base one starting defence (e.g. a guard

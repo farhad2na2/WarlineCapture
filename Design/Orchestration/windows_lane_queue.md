@@ -15,6 +15,10 @@ status: READY
 jobs: S004:104733:en,S002:155923:en,S002:130365:en,S002:104731:en,S002:130365:fa-IR
 note: pull origin/missions/integration first (same commit as the Mac acceptance run lane5-s002). First job S004 is the warm-up and does not count. In the result file also give, per S002 job, the defeat/victory reason line, final base HP for both sides, and counts of `event=tray_page` and `[SkirmishGateUnits] event=used` with its unused= value. Mention any `result=Failed` cache or source-dependency lines.
 
+## HOLD — no ARIA batches (2026-11-17)
+status: HOLD
+note: Windows ARIA matches run at 3–4 fps vs ~30 fps on the Mac (CPU-main-bound). No ARIA batch runs until the cause is found and fixed; read-only diagnosis only.
+
 ## Next batches
 
 Template (not a batch; do not run):

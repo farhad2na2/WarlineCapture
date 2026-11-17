@@ -10,7 +10,7 @@ namespace Game.Tests.Editor
     {
         static AriaInterceptView View(float time) => new AriaInterceptView
         {
-            ThreatAvailable = true, ArmyMoving = true, AttackAvailable = true, ToggleAvailable = true,
+            ThreatKnown = true, ThreatAvailable = true, ArmyMoving = true, AttackAvailable = true, ToggleAvailable = true,
             AssaultMask = 0b00111, StructureMask = 0b00111, AvailableSquadMask = 0b00111, Time = time
         };
 
@@ -48,7 +48,7 @@ namespace Game.Tests.Editor
 
             view.Time = 60f;
             Assert.IsTrue(AriaInterceptPolicy.Step(view, ref plan, out _));
-            view.ThreatAvailable = false; view.Time = 60f + AriaInterceptPolicy.LostSeconds + .1f;
+            view.ThreatKnown = false; view.ThreatAvailable = false; view.Time = 60f + AriaInterceptPolicy.LostSeconds + .1f;
             Assert.IsTrue(AriaInterceptPolicy.Step(view, ref plan, out _), "a chased contact may leave sight briefly");
             view.Time = 60f + AriaInterceptPolicy.HoldLostSeconds + .1f;
             decision = Step(view, ref plan, out handled);
@@ -84,8 +84,10 @@ namespace Game.Tests.Editor
             Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _), "home defence, open map or precision own the controls");
             view = View(55f); view.ArmyMoving = false;
             Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _), "no column has been ordered yet");
-            view = View(55f); view.ThreatAvailable = false;
-            Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _), "a hidden or off-screen contact is never chased");
+            view = View(55f); view.ThreatKnown = false;
+            Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _), "a hidden contact is never chased");
+            view = View(55f); view.ThreatAvailable = false; view.PanAvailable = false;
+            Assert.IsFalse(AriaInterceptPolicy.Step(view, ref plan, out _), "no tap and no clear camera drag");
             Assert.AreEqual(0, plan.Stage);
             Assert.AreEqual(0, plan.Count);
         }
@@ -123,11 +125,67 @@ namespace Game.Tests.Editor
             view.AssaultMask = 0b00001;
             Assert.AreEqual(-1, AriaInterceptPolicy.ChooseSlot(view));
 
-            Assert.IsTrue(AriaInterceptPolicy.Candidate(82f, 122f, 50f, 600f), "behind the column and in reach");
-            Assert.IsTrue(AriaInterceptPolicy.Candidate(111f, 105f, 10f, 600f), "crossing the column");
-            Assert.IsFalse(AriaInterceptPolicy.Candidate(130f, 105f, 50f, 600f), "ahead of the column and not in contact");
-            Assert.IsFalse(AriaInterceptPolicy.Candidate(82f, 122f, AriaInterceptPolicy.Reach + 1f, 600f), "too far from any own unit");
-            Assert.IsFalse(AriaInterceptPolicy.Candidate(600f, 580f, 10f, 30f), "defenders at the enemy base belong to the assault");
+            // (home distance, nearest own unit distance, that unit's home distance, enemy-base distance)
+            Assert.IsTrue(AriaInterceptPolicy.Candidate(111f, 10f, 105f, 600f), "crossing the column");
+            Assert.IsTrue(AriaInterceptPolicy.Candidate(82f, 50f, 100f, 600f), "passed its nearest own unit toward home");
+            Assert.IsFalse(AriaInterceptPolicy.Candidate(130f, 50f, 105f, 600f), "ahead of the column and not in contact");
+            Assert.IsFalse(AriaInterceptPolicy.Candidate(82f, AriaInterceptPolicy.Reach + 1f, 150f, 600f), "too far from any own unit");
+            Assert.IsFalse(AriaInterceptPolicy.Candidate(600f, 10f, 580f, 30f), "defenders at the enemy base belong to the assault");
+        }
+
+        // Seed 155923, gate run lane-s002gate: at t=53.97 the tank crossing the column is
+        // known (fog-visible) while the rocketeer page is selected with Attack armed, but
+        // it is outside the camera view and the same tank is also a presented home threat.
+        [Test]
+        public void OffScreenCrossingTankIsPannedIntoViewThenTapped()
+        {
+            var plan = default(AriaInterceptState);
+            var view = View(53.97f);
+            view.ThreatAvailable = false; view.PanAvailable = true; view.AttackMode = true;
+            view.SelectedMask = 0b00111; view.SelectedGroups = 3; view.CompletedContacts = 22;
+            var decision = Step(view, ref plan, out bool handled);
+            Assert.IsTrue(handled, "known but off screen still starts the intercept");
+            Assert.AreEqual(1, decision.Trace);
+            Assert.AreEqual(AriaInterceptAction.PanToThreat, decision.Action, "Attack is already armed: drag the view onto the tank");
+            Assert.AreEqual(AriaInterceptPolicy.StagePan, plan.Stage);
+
+            view.Time = 55f;
+            Assert.AreEqual(AriaInterceptAction.PanToThreat, Step(view, ref plan, out _).Action, "same drag until it completes");
+            view.CompletedContacts = 23; view.Time = 56f; // drag finished; tank now in view
+            view.ThreatAvailable = true; view.PanAvailable = false;
+            decision = Step(view, ref plan, out handled);
+            Assert.AreEqual(AriaInterceptAction.TargetThreat, decision.Action, "a completed drag is not the attack tap");
+            Assert.AreEqual(AriaInterceptPolicy.StageTap, plan.Stage);
+            view.CompletedContacts = 24; view.AttackMode = false; view.Time = 57.8f;
+            decision = Step(view, ref plan, out handled);
+            Assert.IsTrue(handled);
+            Assert.AreEqual(2, decision.Trace);
+            Assert.AreEqual(AriaInterceptPolicy.StageFight, plan.Stage);
+        }
+
+        [Test]
+        public void DragThatDropsAttackModeReArmsBeforeTheTap()
+        {
+            var plan = default(AriaInterceptState);
+            var view = View(54f);
+            view.ThreatAvailable = false; view.PanAvailable = true; view.AttackMode = true;
+            view.SelectedMask = 0b00100; view.SelectedGroups = 1; view.CompletedContacts = 5;
+            Assert.AreEqual(AriaInterceptAction.PanToThreat, Step(view, ref plan, out _).Action);
+            view.CompletedContacts = 6; view.AttackMode = false; view.Time = 55.5f;
+            Assert.AreEqual(AriaInterceptAction.ArmAttack, Step(view, ref plan, out _).Action);
+            view.CompletedContacts = 7; view.AttackMode = true; view.ThreatAvailable = true; view.Time = 57f;
+            Assert.AreEqual(AriaInterceptAction.TargetThreat, Step(view, ref plan, out _).Action);
+        }
+
+        [Test]
+        public void PanDeltaMovesTheContactTowardTheCentreWithinLimits()
+        {
+            // Contact below-left of the view (Unity screen y grows upward): drag right and up.
+            Assert.IsTrue(AriaInterceptPolicy.PanDelta(-400f, -300f, 960f, 594f, 730f, 302f, out float dx, out float dy));
+            Assert.IsTrue(dx > 0f && dy > 0f);
+            Assert.IsTrue(dx <= 730f + .01f && dy <= 302f + .01f, "clamped to the clear drag area");
+            Assert.AreEqual(894.0 / 1360.0, dy / dx, 1e-3, "direction is preserved");
+            Assert.IsFalse(AriaInterceptPolicy.PanDelta(965f, 590f, 960f, 594f, 730f, 302f, out _, out _), "already centred");
         }
     }
 }

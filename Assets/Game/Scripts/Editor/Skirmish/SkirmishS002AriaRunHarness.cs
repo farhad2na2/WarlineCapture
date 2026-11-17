@@ -581,7 +581,12 @@ namespace Game.Editor
             var profile = save.LoadProfile();
             profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
             profile.firstLaunchWatched = true;
-            if (Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1")
+            // Skirmish is disclosed on the main menu only after Chapter 1 (Card_Skirmish
+            // MainMenuDisclosureView mask 0x1f). Every Skirmish run, direct launch included,
+            // ends by returning to that menu and the terminal probe requires the presented
+            // Card_Skirmish, so the isolated profile must be one that could reach Skirmish.
+            // Without it the card stays at alpha 0 / non-interactable and the return never
+            // certifies (queue3 2026-11-17: playerFrameTimeout after Victory).
             {
                 // Isolated test profile satisfies the existing Chapter 1 mode unlock.
                 profile.campaignMissionProgress = new CampaignMissionProgressSaveData[5];

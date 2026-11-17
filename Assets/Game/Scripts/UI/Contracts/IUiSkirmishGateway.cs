@@ -14,6 +14,7 @@ namespace Game.UI.Contracts
         public bool Expanded, PlayerDesignatedAlive, EnemyDesignatedAlive;
         public bool CanAffordRifle, CanAffordAntiAir, PadPresent, ReadinessEligible, CanQueueAir;
         public bool CombinedArmsField, CanAffordRocketeer, RocketeerRecruitPending;
+        public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public int OwnStructureAttackUnits;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
         public bool CanAffordTanker;

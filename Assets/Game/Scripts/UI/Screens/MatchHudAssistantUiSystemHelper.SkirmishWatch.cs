@@ -193,6 +193,9 @@ namespace Game.UI.Runtime
                 view.CombinedArmsField = model.CombinedArmsField;
                 view.CanAffordRocketeer = model.CanAffordRocketeer;
                 view.RocketeerRecruitPending = model.RocketeerRecruitPending;
+                view.CanAffordBreacher = model.CanAffordBreacher;
+                view.BreacherRecruitPending = model.BreacherRecruitPending;
+                view.BreacherFielded = model.BreacherFielded;
                 view.OwnStructureAttackUnits = model.OwnStructureAttackUnits;
                 view.CanAffordAntiAir = model.CanAffordAntiAir;
                 view.CanAffordLogisticsTruck = model.CanAffordLogisticsTruck;
@@ -219,6 +222,7 @@ namespace Game.UI.Runtime
                 var openBuild = ObserveWatchButton(_commandControlsView?.BuildButton);
                 view.Recruit = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_02_Alt_04") : openBuild;
                 view.RecruitRocketeer = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Ghillie_Male_01") : openBuild;
+                view.RecruitBreacher = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Female_02_Alt_02") : openBuild;
                 view.RecruitAntiAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Air") : openBuild;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;

@@ -20,7 +20,8 @@ COLUMNS = ('aria_en', 'aria_fa', 'aria_time_s', 'unity_result', 'last_log', 'upd
 DISPATCH = re.compile(r'^\[SkirmishAriaQueue\] dispatch job=(\d+)/(\d+) catalog=(\S+) seed=(\S+) locale=(\S+)$')
 TERMINAL = re.compile(r'^\[SkirmishTerminalProbe\] result=(Passed|Failed) reason=(.*?) completed=\d+ interventions=\d+$')
 GATE_AVAILABLE = re.compile(r'^\[SkirmishGateUnits\] event=available catalog=(\S+) session=(\S+) types=(\S*)$')
-GATE_USED = re.compile(r'^\[SkirmishGateUnits\] event=used catalog=(\S+) session=(\S+) types=(\S*) unused=(\S*)$')
+# automatic= (support roles that hauled on their own) is optional for older logs.
+GATE_USED = re.compile(r'^\[SkirmishGateUnits\] event=used catalog=(\S+) session=(\S+) types=(\S*)(?: automatic=(\S*))? unused=(\S*)$')
 
 
 def unit_set(value):
@@ -90,8 +91,9 @@ def scan_evidence(lines):
             else:
                 if current.get('_unit_session') != session or '_units_used_seen' in current:
                     raise ValueError('Gate units session mismatch or duplicate used')
-                unused = unit_set(match.group(4))
-                if unused != unit_set(current['units_available']) - parsed:
+                automatic = unit_set(match.group(4) or '')
+                unused = unit_set(match.group(5))
+                if unused != unit_set(current['units_available']) - parsed - automatic:
                     raise ValueError('Gate units unused list is inconsistent')
                 current['_units_used_seen'] = True
                 current['units_used_by_aria'] = types

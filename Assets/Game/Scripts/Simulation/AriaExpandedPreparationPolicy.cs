@@ -40,4 +40,46 @@ namespace Game.Simulation {
   }
  }
 
+ public enum AriaBreacherAction:byte {None,Waiting,Recruit}
+ // Breacher coverage (gate 3: every available unit type is used). Breachers are
+ // structure-capable infantry from the Barracks. One squad joins the assault once the
+ // first assault is issued; the existing roster sweep then orders it at the base.
+ // Through the visible drawer only (Build, then the catalog card); no delay to the
+ // opening or the first assault; yields to every other owner.
+ public struct AriaBreacherView {
+  public bool AssaultIssued,Busy,EnemyAlive;
+  public bool CanAffordBreacher,BreacherPending,BreacherFielded,RecruitAvailable;
+  public bool RifleRecruitPending,RocketeerRecruitPending;
+  public int CompletedContacts;public float Time;
+ }
+ // Stage: 0 idle, 1 buying (drawer taps in flight), 2 done for the match.
+ public struct AriaBreacherState {public byte Stage;public int Actions;public float Deadline;}
+ public static class AriaBreacherPolicy {
+  public const float BuySeconds=10f;
+  public static AriaBreacherAction Step(in AriaBreacherView view,ref AriaBreacherState plan){
+   if(plan.Stage==2)return AriaBreacherAction.None;
+   if(view.BreacherPending||view.BreacherFielded){plan.Stage=2;return AriaBreacherAction.None;}
+   if(plan.Stage==1){
+    // Bounded: a purchase that does not appear in time is not retried this match.
+    if(view.Time>plan.Deadline||view.Busy||!view.EnemyAlive){plan.Stage=2;return AriaBreacherAction.None;}
+    return view.RecruitAvailable?AriaBreacherAction.Recruit:AriaBreacherAction.Waiting;
+   }
+   if(!view.AssaultIssued||view.Busy||!view.EnemyAlive||view.RifleRecruitPending||view.RocketeerRecruitPending||
+      !view.CanAffordBreacher||!view.RecruitAvailable)return AriaBreacherAction.None;
+   plan.Stage=1;plan.Actions=view.CompletedContacts;plan.Deadline=view.Time+BuySeconds;
+   return AriaBreacherAction.Recruit;
+  }
+ }
+ public enum AriaStructureReplacement:byte {None,Wait,RecruitBreacher,RecruitRocketeer}
+ public static class AriaStructureReplacementPolicy {
+  // The whole structure-capable force is gone: rebuild it through the drawer. Breachers are
+  // structure-capable infantry and are preferred; rocketeers remain the fallback.
+  public static AriaStructureReplacement Choose(bool breacherPending,bool rocketeerPending,
+   bool canAffordBreacher,bool breacherAvailable,bool canAffordRocketeer,bool rocketeerAvailable){
+   if(breacherPending||rocketeerPending)return AriaStructureReplacement.Wait;
+   if(canAffordBreacher&&breacherAvailable)return AriaStructureReplacement.RecruitBreacher;
+   if(canAffordRocketeer&&rocketeerAvailable)return AriaStructureReplacement.RecruitRocketeer;
+   return AriaStructureReplacement.None;
+  }
+ }
 }

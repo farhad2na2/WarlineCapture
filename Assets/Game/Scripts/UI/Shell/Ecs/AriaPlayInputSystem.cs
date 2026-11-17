@@ -72,6 +72,44 @@ namespace Game.UI.Shell.Ecs
             string slot = p.InterceptSlot == Game.Simulation.AriaInterceptPolicy.KeepSelection ? "selection" : p.InterceptSlot.ToString();
             Debug.Log($"[AriaS002Trace] event=intercept state={state} known={known} offered={offered} stage={p.InterceptStage} count={p.InterceptCount} slot={slot} selectedMask={v.ExpandedSelectedMask} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} page={v.ExpandedPageIndex} attackMode={v.AttackMode} homeThreat={v.PresentedHomeThreat} atBase={v.AssaultAtBase} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
         }
+        private int tracedTrayPage = -1, tracedTrayRoster = -1, lastGestureTarget; private bool lastGestureDrag;
+        // Evidence only: every visible roster page change with the gesture that preceded it
+        // (tap = page chevron, swipe = tray drag). A skipped page shows as |to-from|>1.
+        private void TraceTrayPage(in AriaPlaySessionComponent session)
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>());
+            if (query.CalculateEntityCount() != 1) { tracedTrayPage = tracedTrayRoster = -1; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault || v.ExpandedPageCount <= 0) return;
+            int page = v.ExpandedPageIndex; int roster = (int)v.ExpandedRosterRevision;
+            if (tracedTrayPage < 0 || roster != tracedTrayRoster) { tracedTrayPage = page; tracedTrayRoster = roster; return; }
+            if (page == tracedTrayPage) return;
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            Debug.Log($"[AriaS002Trace] event=tray_page from={tracedTrayPage} to={page} gesture={(lastGestureDrag ? "swipe" : "tap")} target={lastGestureTarget} skipped={(System.Math.Abs(page - tracedTrayPage) > 1 ? 1 : 0)} pages={v.ExpandedPageCount} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            tracedTrayPage = page;
+        }
+        private int tracedBreacherStage; private bool tracedBreacherPending, tracedBreacherFielded;
+        // Evidence only: the breacher coverage purchase (state=buying|done) and every breacher
+        // order reaching the queue (state=pending, reason=coverage|replacement) or the field.
+        private void TraceBreacher()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1) { tracedBreacherStage = 0; tracedBreacherPending = tracedBreacherFielded = false; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            string state = tracedBreacherStage == 0 && p.BreacherStage == 1 ? "buying"
+                : tracedBreacherStage == 1 && p.BreacherStage == 2 ? "done"
+                : !tracedBreacherPending && v.BreacherRecruitPending ? "pending"
+                : !tracedBreacherFielded && v.BreacherFielded ? "fielded" : null;
+            tracedBreacherStage = p.BreacherStage; tracedBreacherPending = v.BreacherRecruitPending; tracedBreacherFielded = v.BreacherFielded;
+            if (state == null) return;
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            string reason = v.OwnStructureAttackUnits == 0 ? "replacement" : "coverage";
+            Debug.Log($"[AriaS002Trace] event=breacher state={state} reason={reason} stage={p.BreacherStage} pending={v.BreacherRecruitPending} fielded={v.BreacherFielded} canAfford={v.CanAffordBreacher} cardOffered={v.RecruitBreacher.Available} drawer={v.DrawerOpen} structureUnits={v.OwnStructureAttackUnits} materials={v.OwnMaterials} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -133,6 +171,7 @@ namespace Game.UI.Shell.Ecs
             bool found = false;
             TraceHomeDefense();
             TraceIntercept();
+            TraceBreacher();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;
@@ -145,6 +184,7 @@ namespace Game.UI.Shell.Ecs
             {
                 found = true;
                 ref var current = ref session.ValueRW;
+                TraceTrayPage(current);
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
                 { if (current.Phase == AriaPlayPhase.Blocked && !reportedBlocked) { TraceS002("blocked", current, observation.ValueRO); reportedBlocked = true; }
                   if (touch.IsRunning) touch.Stop();ClearGoalContext(); current.Pressed = 0; continue; }
@@ -181,6 +221,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     current.GestureRequested = 0;
                     CaptureGoal(current.TargetId);
+                    lastGestureDrag = current.Drag != 0; lastGestureTarget = current.TargetId;
                     TraceS002("gesture", current, observation.ValueRO);
                     if (!touch.TryGesture(current.Target, current.Drag != 0 ? current.DragEnd : current.Target,
                         current.Drag != 0 ? .5f : hasSkirmish ? .15f : .08f, current.Drag != 0 ? .9f : 0, Game.Runtime.SkirmishValidationClock.UnscaledOrOriginal(UnityEngine.Time.unscaledTime)))

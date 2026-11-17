@@ -156,20 +156,35 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             // Replace a completely lost ground structure force before a page sweep
             // can consume every decision. Offered controls remain the authority.
             if (!view.AirProfile && !view.CombinedArmsField && view.EnemyDesignatedAlive &&
-                view.OwnStructureAttackUnits == 0 && !view.InspectionOpen && !view.CatalogOpen && !view.AttackMode)
+                view.OwnStructureAttackUnits == 0 && !view.InspectionOpen && !view.AttackMode &&
+                // The first tap opens the drawer (Build); continue inside it to the catalog card.
+                // Previously an open drawer skipped this step, and the drawer step closed it or bought rifles.
+                (!view.CatalogOpen || plan.Intent == AriaS002Intent.Recruit))
             {
-                if (view.RocketeerRecruitPending)
+                // Breachers are structure-capable infantry and are preferred; rocketeers remain the fallback.
+                var replacement = Game.Simulation.AriaStructureReplacementPolicy.Choose(
+                    view.BreacherRecruitPending, view.RocketeerRecruitPending,
+                    view.CanAffordBreacher, view.RecruitBreacher.Admitted,
+                    view.CanAffordRocketeer, view.RecruitRocketeer.Admitted);
+                if (replacement == Game.Simulation.AriaStructureReplacement.Wait)
                 {
                     plan.Intent = AriaS002Intent.ObserveBattle;
                     return;
                 }
-                if (view.CanAffordRocketeer && view.RecruitRocketeer.Admitted)
+                if (replacement == Game.Simulation.AriaStructureReplacement.RecruitBreacher)
+                {
+                    plan.Intent = AriaS002Intent.Recruit;
+                    Target(view.RecruitBreacher, false, ref output);
+                    return;
+                }
+                if (replacement == Game.Simulation.AriaStructureReplacement.RecruitRocketeer)
                 {
                     plan.Intent = AriaS002Intent.Recruit;
                     Target(view.RecruitRocketeer, false, ref output);
                     return;
                 }
             }
+            if (StepBreacherCoverage(view, ref plan, ref touch, ref output)) return;
             if (StepAssaultObjectiveFocus(view, ref plan, ref touch, ref output)) return;
             if (StepPrecisionAttack(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
@@ -409,6 +424,38 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 default:plan.Intent=AriaS002Intent.TargetThreat;output.Kind=AriaS002DecisionKind.Waiting;break;
             }
             return true;
+        }
+
+        // Gate-3 coverage: one breacher squad after the first assault order, through the
+        // visible Build button and catalog card; the roster sweep then orders it.
+        private static bool StepBreacherCoverage(in AriaS002Observation view,
+            ref AriaS002PlanState plan, ref AriaS002ContactState touch,
+            ref AriaS002Decision output)
+        {
+            if (view.AirProfile || view.CombinedArmsField) return false;
+            bool otherOwner = touch.Phase == AriaS002ContactPhase.Manual || view.AttackMode || view.InspectionOpen ||
+                view.PlacementOpen || view.PublicHomeThreat || plan.HomeDefenseStage != 0 || plan.PrecisionStage != 0 ||
+                plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 || plan.PadStage != 0;
+            var facts = new Game.Simulation.AriaBreacherView {
+                AssaultIssued = plan.AssaultIssued != 0 && plan.StructureOrdered != 0,
+                // A drawer opened by this purchase is ours; any other open drawer belongs to another step.
+                Busy = otherOwner || (plan.BreacherStage == 0 && view.CatalogOpen),
+                EnemyAlive = view.EnemyDesignatedAlive,
+                CanAffordBreacher = view.CanAffordBreacher, BreacherPending = view.BreacherRecruitPending,
+                BreacherFielded = view.BreacherFielded, RecruitAvailable = view.RecruitBreacher.Admitted,
+                RifleRecruitPending = view.RifleRecruitPending, RocketeerRecruitPending = view.RocketeerRecruitPending,
+                CompletedContacts = touch.Actions, Time = view.Time };
+            var state = new Game.Simulation.AriaBreacherState { Stage = plan.BreacherStage, Actions = plan.BreacherActions, Deadline = plan.BreacherDeadline };
+            byte before = plan.BreacherStage;
+            var action = Game.Simulation.AriaBreacherPolicy.Step(facts, ref state);
+            plan.BreacherStage = state.Stage; plan.BreacherActions = state.Actions; plan.BreacherDeadline = state.Deadline;
+            // Done buying: hand the open drawer to the ordinary close step, not to a rifle burst.
+            if (before == 1 && state.Stage == 2) plan.Intent = AriaS002Intent.Inspect;
+            if (action == Game.Simulation.AriaBreacherAction.Recruit)
+            { plan.Intent = AriaS002Intent.Recruit; Target(view.RecruitBreacher, false, ref output); return true; }
+            if (action == Game.Simulation.AriaBreacherAction.Waiting)
+            { plan.Intent = AriaS002Intent.Recruit; output.Kind = AriaS002DecisionKind.Waiting; return true; }
+            return false;
         }
 
         private static bool StepPresentedHomeDefense(in AriaS002Observation view,

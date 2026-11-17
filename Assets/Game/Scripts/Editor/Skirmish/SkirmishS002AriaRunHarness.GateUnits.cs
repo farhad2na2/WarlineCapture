@@ -24,6 +24,14 @@ namespace Game.Editor
     /// producer), plus each producer structure those roles need that the player does NOT start with (it must
     /// be placed: building.helipad, building.airport, ...). Types are role ids (role.*) and structure ids (building.*).
     /// Not modelled: readiness gating (roles stay listed before research unlocks them) and stocks/caps.
+    /// Roles sharing one runtime prefab key (role.convoy_logic and role.logistics_truck both use
+    /// Unit_Veh_Truck_Tray) are resolved by the catalog overlay's own RoleKind, so a role the army
+    /// profile does not allow is never listed through another role's prefab.
+    ///
+    /// Support (LogisticsSupport: role.logistics_truck, role.tanker) haul Oil/Fuel automatically once
+    /// fielded; they count as automatic when a player unit of that role carries a haul order
+    /// (UnitResourceHaulOrder, sampled every 2 s). They are reported separately (automatic=) and are not
+    /// "unused" when they worked; ARIA-input use of them is still listed under types= if it happens.
     ///
     /// Used: a type counts when ARIA input produced an accepted order for a unit of that role (Move/AttackMove/
     /// ReturnToBase: selected, ManualMoveOrderTag units; Group/Selection/Army orders: role of each group whose
@@ -44,12 +52,23 @@ namespace Game.Editor
             public readonly SortedSet<string> Used = new(StringComparer.Ordinal);
             public readonly HashSet<Entity> SeenStructures = new();
             public readonly Dictionary<uint, ulong> GroupSequences = new();
+            public readonly SortedSet<string> Support = new(StringComparer.Ordinal);
+            public readonly SortedSet<string> Automatic = new(StringComparer.Ordinal);
+            public double NextSupportPoll;
             public uint LastReservation;
             public bool ArmyPending, PlacementPending;
             public double PlacementUntil;
         }
 
         private static GateUnitsState gateUnits;
+
+        /// <summary>A role is producible only through its own catalog overlay; a shared runtime prefab
+        /// key (convoy logic and logistics truck) never lists the other role.</summary>
+        public static bool GateCatalogListsRole(SkirmishRoleKind kind, SkirmishRoleKind overlayKind) => kind == overlayKind;
+
+        /// <summary>Support roles haul Oil/Fuel on their own once fielded.</summary>
+        public static bool GateSupportRole(SkirmishRoleKind kind) =>
+            SkirmishRoleIds.Category(kind) == SkirmishPopulationCategory.LogisticsSupport;
 
         private static string GateProducerStructure(SkirmishProducerKind producer) => producer switch
         {
@@ -102,12 +121,17 @@ namespace Game.Editor
                     try { prefabKey = SkirmishRoleCatalogConfig.RuntimePrefabKey(kind); }
                     catch (Exception) { continue; }
                     if (string.IsNullOrEmpty(prefabKey) || !catalog.TryRole(prefabKey, out var overlay)) continue;
+                    // One prefab can serve two roles; only the catalog's own role is producible.
+                    if (!GateCatalogListsRole(kind, overlay.RoleKind)) continue;
                     state.Available.Add(SkirmishRoleIds.ToId(kind));
                     producible++;
                     string structureId = GateProducerStructure(overlay.Producer);
                     if (structureId != null && !startingStructures.Contains(structureId)) state.Available.Add(structureId);
                 }
                 if (producible == 0) throw new InvalidOperationException("production catalog lists no role");
+                foreach (var id in state.Available)
+                    if (SkirmishRoleIds.TryParse(id, out var supportKind) && GateSupportRole(supportKind))
+                        state.Support.Add(id);
 
                 // Baselines so only later changes count as ARIA's.
                 using (var structures = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishStructureIdentityComponent)))
@@ -123,9 +147,10 @@ namespace Game.Editor
                 EditorApplication.update += GateUnitsTick;
                 Debug.Log(GateUnitsLog + " event=available catalog=" + state.Catalog + " session=" + state.SessionId +
                     " types=" + string.Join(";", state.Available));
-                Debug.Log("[SkirmishGateUnitsModel] catalog=" + state.Catalog + " available=setup.Forces(player)+SkirmishProductionCatalog.TryRole" +
+                Debug.Log("[SkirmishGateUnitsModel] catalog=" + state.Catalog + " available=setup.Forces(player)+SkirmishProductionCatalog.TryRole(overlay.RoleKind==kind)" +
                     "+producerStructuresNotInStartingStructures readinessGating=0 stocksAndCaps=0 used=AriaCommandEvidence.Recorded(verifiedReceipt)" +
-                    "+SelectedManualMove+GroupRoleLedger+ProductionReservation+NewPlayerStructure");
+                    "+SelectedManualMove+GroupRoleLedger+ProductionReservation+NewPlayerStructure support=" + string.Join(";", state.Support) +
+                    " automatic=UnitResourceHaulOrder(player,2s)");
             }
             catch (Exception error)
             {
@@ -141,10 +166,14 @@ namespace Game.Editor
             if (gate == null) return;
             try { GateResolvePending(em, gate, force: true); }
             catch (Exception error) { Debug.LogWarning("[SkirmishGateUnitsModel] catalog=" + gate.Catalog + " pendingResolve=" + error.Message); }
+            try { GatePollSupport(em, gate); }
+            catch (Exception error) { Debug.LogWarning("[SkirmishGateUnitsModel] catalog=" + gate.Catalog + " supportPoll=" + error.Message); }
             var unused = new SortedSet<string>(gate.Available, StringComparer.Ordinal);
             unused.ExceptWith(gate.Used);
+            unused.ExceptWith(gate.Automatic);
             Debug.Log(GateUnitsLog + " event=used catalog=" + gate.Catalog + " session=" + gate.SessionId +
-                " types=" + string.Join(";", gate.Used) + " unused=" + string.Join(";", unused));
+                " types=" + string.Join(";", gate.Used) + " automatic=" + string.Join(";", gate.Automatic) +
+                " unused=" + string.Join(";", unused));
             StopGateUnits();
         }
 
@@ -182,9 +211,22 @@ namespace Game.Editor
         private static void GateUnitsTick()
         {
             var gate = gateUnits;
-            if (gate == null || (!gate.ArmyPending && !gate.PlacementPending)) return;
+            if (gate == null) return;
+            bool supportDue = gate.Support.Count > gate.Automatic.Count && EditorApplication.timeSinceStartup >= gate.NextSupportPoll;
+            if (!gate.ArmyPending && !gate.PlacementPending && !supportDue) return;
             var world = World.DefaultGameObjectInjectionWorld;
             if (world == null || !world.IsCreated) return;
+            if (supportDue)
+            {
+                gate.NextSupportPoll = EditorApplication.timeSinceStartup + 2d; // bounded poll, not per frame
+                try { GatePollSupport(world.EntityManager, gate); }
+                catch (Exception error)
+                {
+                    gate.NextSupportPoll = double.MaxValue;
+                    Debug.LogWarning("[SkirmishGateUnitsModel] catalog=" + gate.Catalog + " supportPoll=" + error.Message);
+                }
+                if (!gate.ArmyPending && !gate.PlacementPending) return;
+            }
             try { GateResolvePending(world.EntityManager, gate, force: false); }
             catch (Exception error)
             {
@@ -219,6 +261,21 @@ namespace Game.Editor
                         found = true;
                     }
                 if (found || now > gate.PlacementUntil || force) gate.PlacementPending = false;
+            }
+        }
+
+        // Support roles working on their own: a player unit of that role carries a resource haul order.
+        private static void GatePollSupport(EntityManager em, GateUnitsState gate)
+        {
+            if (gate.Support.Count == 0 || gate.Automatic.Count >= gate.Support.Count) return;
+            using var query = em.CreateEntityQuery(typeof(UnitResourceHaulOrder), typeof(SkirmishUnitRoleComponent), typeof(SkirmishAttemptOwnedComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var unit in entities)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId != 1 || !owned.SessionId.Equals(gate.SessionKey)) continue;
+                string id = SkirmishRoleIds.ToId(em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role);
+                if (gate.Support.Contains(id)) gate.Automatic.Add(id);
             }
         }
 

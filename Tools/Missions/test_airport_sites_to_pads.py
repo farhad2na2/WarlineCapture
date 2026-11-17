@@ -213,5 +213,67 @@ class DumpHarnessContract(unittest.TestCase):
         self.assertIn('" missingKinds="', text)
 
 
+class AirportDumpAssetFallback(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.draft = json.loads(DRAFT.read_text())
+
+    def asset_dump(self, candidates, **extra):
+        return dump(candidates, definitions=[{'name': 'Airport', 'kind': 'airport', 'scanned': True, 'source': 'asset'}],
+                    airportAssetFallback='Used:Assets/Game/Prefabs/Buildings/Building_Airport.prefab hasRunway=1', **extra)
+
+    def test_asset_source_is_reported_and_noted(self):
+        data = self.asset_dump([dict(cand(1200, 760), definitionSource='asset'), dict(cand(1240, 400), definitionSource='asset')])
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertTrue(any('definitionSource=asset' in line for line in info))
+        picks, _ = tool.pick(self.draft, sites)
+        updated = tool.apply_picks(copy.deepcopy(self.draft), picks, '/logs/dump.json')
+        self.assertIn('airport measured_from=/logs/dump.json definitionSource=asset', updated['notes'])
+        self.assertNotIn('nativeValidated=0', updated['notes'])
+
+    def test_unvalidated_candidates_are_marked_loudly_not_hidden(self):
+        data = self.asset_dump([dict(cand(1200, 760), definitionSource='asset', nativeValidated=False),
+                                dict(cand(1240, 400), definitionSource='asset', nativeValidated=False)],
+                               nativeValidationFailure='NullReferenceException: x')
+        sites, _, info = tool.load_dump_sites(data, 'S027')
+        self.assertTrue(any('nativeValidated=0 for 2 candidate(s)' in line and 'NullReferenceException' in line for line in info))
+        picks, _ = tool.pick(self.draft, sites)
+        updated = tool.apply_picks(copy.deepcopy(self.draft), picks, '/logs/dump.json')
+        self.assertIn('definitionSource=asset nativeValidated=0', updated['notes'])
+
+    def test_old_candidates_default_to_native_validated_configured(self):
+        sites, _, info = tool.load_dump_sites(dump([cand(1200, 760), cand(1240, 400)]), 'S027')
+        self.assertTrue(all(s['native'] and not s['asset'] for s in sites))
+        self.assertEqual(1, len(info))
+
+    def test_failed_asset_fallback_is_named_in_the_error(self):
+        data = dump([], definitions=[{'name': 'Barracks', 'kind': 'barracks', 'scanned': False}], missingKinds='airport',
+                    airportAssetFallback='FailedPrefabNotFound:Assets/x.prefab')
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('asset fallback did not load one (FailedPrefabNotFound', str(ctx.exception))
+
+    def test_zero_candidates_shows_the_reject_counters(self):
+        data = self.asset_dump([], tested=900, rejectedBuilding=300, rejectedNative=600)
+        with self.assertRaises(tool.SiteError) as ctx:
+            tool.load_dump_sites(data, 'S027')
+        self.assertIn('rejectedNative=600', str(ctx.exception))
+
+
+class AssetFallbackHarnessContract(unittest.TestCase):
+    """Pins the C# asset fallback (the harness cannot be compiled in this lane)."""
+
+    def test_fallback_is_read_only_and_marks_candidates(self):
+        text = (checker.ROOT / 'Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.LayoutDump.cs').read_text(encoding='utf-8')
+        self.assertIn('Assets/Game/Prefabs/Buildings/Building_Airport.prefab', text)
+        self.assertIn('BuildingDefinitionPrefabSystemHelper.CreateDefinition(prefab, "Airport"', text)
+        self.assertIn('source.BuildingRunwaySystem', text)  # runway data drives the 210x55 effective rect
+        self.assertNotIn('RebuildConfiguredSpawnableDefinitions', text)  # never registers into the session list
+        self.assertIn('definitionSource = fromAsset ? "asset" : "configured"', text)
+        self.assertIn('nativeValidated = nativeRan', text)
+        self.assertIn('catch (Exception exception) when (fromAsset)', text)  # native failure only tolerated for the asset definition
+        self.assertIn('" notNativeValidated="', text)
+
+
 if __name__ == '__main__':
     unittest.main()

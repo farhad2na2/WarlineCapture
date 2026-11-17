@@ -70,13 +70,16 @@ def load_dump_sites(data, catalog_id=None):
     airport_defs = [d for d in data.get('definitions') or [] if isinstance(d, dict) and 'airport' in str(d.get('name', '')).lower()]
     missing = [k for k in str(data.get('missingKinds') or '').split(',') if k]
     if 'airport' in missing or (not airport_defs and 'definitions' in data):
-        raise SiteError('this session configures no Airport building definition (dump definitions: %s); an airport scan '
+        fallback = str(data.get('airportAssetFallback') or '')
+        raise SiteError('this session configures no Airport building definition (dump definitions: %s)%s; an airport scan '
                         'has nothing to place, so no site was measured' %
-                        (', '.join(str(d.get('name')) for d in data.get('definitions') or []) or 'none'))
+                        (', '.join(str(d.get('name')) for d in data.get('definitions') or []) or 'none',
+                         ' and the asset fallback did not load one (%s)' % fallback if fallback else
+                         ' (a dump from a harness without the asset fallback; rerun with the current one)'))
     if airport_defs and not any(d.get('scanned') for d in airport_defs):
         raise SiteError('the Airport definition was not scanned; rerun with WARLINE_LAYOUT_DUMP_KINDS=airport')
     origin, lo, hi = data.get('gridOrigin') or {}, data.get('playableMin'), data.get('playableMax')
-    sites, not_level, outside, total = [], 0, 0, 0
+    sites, not_level, outside, total, unvalidated, asset = [], 0, 0, 0, 0, 0
     for i, c in enumerate(data['candidates']):
         if not isinstance(c, dict) or c.get('kind') != 'airport':
             continue
@@ -94,15 +97,28 @@ def load_dump_sites(data, catalog_id=None):
                             x0 + w <= float(hi['x']) + 1e-3 and z0 + h <= float(hi['z']) + 1e-3)
             if not playable:
                 outside += 1
-            sites.append({'index': i, 'x': x, 'z': z, 'w': w, 'h': h, 'rotated': bool(c.get('rotated')), 'playable': playable})
+            native = c.get('nativeValidated') is not False
+            from_asset = c.get('definitionSource') == 'asset'
+            unvalidated += 0 if native else 1
+            asset += 1 if from_asset else 0
+            sites.append({'index': i, 'x': x, 'z': z, 'w': w, 'h': h, 'rotated': bool(c.get('rotated')), 'playable': playable,
+                          'native': native, 'asset': from_asset})
         except (KeyError, TypeError, ValueError) as exc:
             raise SiteError('dump candidate %d is malformed: %s' % (i, exc))
     info = ['dump: %d airport candidates (stride %s), %d on non-level ground dropped, %d outside playable%s'
             % (total, data.get('stride', '?'), not_level, outside,
                '; CANDIDATE LIST TRUNCATED (scan order is low z first, picks may be biased; use a larger stride)'
                if data.get('candidatesTruncated') else '')]
+    if asset:
+        info.append('airport definition built from the prefab asset, not the session list (definitionSource=asset)')
+    if unvalidated:
+        info.append('WARNING nativeValidated=0 for %d candidate(s): the native IsPlacementValid could not take the asset '
+                    'definition (%s); only the starting-placement predicates were applied'
+                    % (unvalidated, data.get('nativeValidationFailure') or 'no reason recorded'))
     if not sites:
-        raise SiteError('no airport candidate in the dump (%s)' % info[0])
+        counters = ', '.join('%s=%s' % (k, data[k]) for k in ('tested', 'rejectedCachedInvalid', 'rejectedBuilding', 'rejectedRoad',
+                                                              'rejectedWater', 'rejectedSidewalk', 'rejectedNative') if k in data)
+        raise SiteError('no airport candidate in the dump (%s%s)' % (info[0], '; ' + counters if counters else ''))
     return sites, float(cell), info
 
 
@@ -250,6 +266,11 @@ def apply_picks(draft, picks, measured_from):
     footprints['building.airport'] = [round2(max(picks[s]['w'] for s, _ in SIDES)),
                                       round2(max(picks[s]['h'] for s, _ in SIDES))]
     note = 'airport measured_from=%s' % measured_from
+    chosen = [picks[side] for side, _ in SIDES]
+    if any(site.get('asset') for site in chosen):
+        note += ' definitionSource=asset'
+    if any(site.get('native') is False for site in chosen):
+        note += ' nativeValidated=0'
     notes = draft.get('notes') or ''
     draft['notes'] = (notes + ' | ' if notes else '') + note
     return draft

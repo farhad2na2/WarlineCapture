@@ -88,7 +88,9 @@ namespace Game.Simulation {
  // at a time, through the visible Build button and catalog card. A kind the mission's
  // catalog does not offer is never affordable and is skipped.
  // Kind bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli.
- public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli}
+ // Gunner and Tank (bits 64, 128): producible in some catalogs without being in the starting force
+ // (lane 12 S049 never fielded either).
+ public enum AriaCoverageKind:byte {None,Marksman,ApcFast,Radar,ApcHeavy,Drone,TransportHeli,Gunner,Tank}
  public enum AriaCoverageAction:byte {None,Waiting,Recruit}
  public struct AriaCoverageView {
   // AssaultIssued: the first assault and structure orders were accepted.
@@ -105,14 +107,18 @@ namespace Game.Simulation {
   public float Time;
  }
  // Done: kinds covered or given up for this match. Current: kind being bought (0 none).
- // Batch: 1 while the second purchase of one drawer visit is allowed or in flight.
+ // Batch: purchases already made in this drawer visit beyond the first (0 = first purchase).
  public struct AriaCoverageState {public byte Done,Current,Batch;public float Deadline,Started;public int Actions;}
  public static class AriaCoverageRecruitPolicy {
   // Radar (lane 6): Build, Vehicles tab, scroll, card, produce did not fit in 10 s and gave up at +10.0 s.
   // GapSeconds: between drawer visits, so new groups join the column before the next purchase (lane 8 S050).
-  // PerVisit: two kinds per drawer visit (lane 10 S026 won at 181 s with four kinds still unbought).
-  public const int Kinds=6,All=(1<<Kinds)-1,PerVisit=2;
-  public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=25f;
+  // PerVisit: kinds per drawer visit (lane 12 S026 won at 218 s with six kinds still unbought).
+  public const int Kinds=8,All=(1<<Kinds)-1,PerVisit=3;
+  public const float BuySeconds=10f,StepSeconds=6f,MaxBuySeconds=24f,GapSeconds=12f;
+  // Purchase order: combat kinds first, then support kinds.
+  static readonly byte[] Order={(byte)AriaCoverageKind.Marksman,(byte)AriaCoverageKind.ApcFast,(byte)AriaCoverageKind.Gunner,
+   (byte)AriaCoverageKind.Tank,(byte)AriaCoverageKind.Radar,(byte)AriaCoverageKind.ApcHeavy,(byte)AriaCoverageKind.Drone,
+   (byte)AriaCoverageKind.TransportHeli};
   public static int Bit(AriaCoverageKind kind)=>kind==AriaCoverageKind.None?0:1<<((int)kind-1);
   public static AriaCoverageAction Step(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    // A kind already queued or fielded is covered, whoever bought it.
@@ -123,8 +129,8 @@ namespace Game.Simulation {
     if((plan.Done&bit)!=0){
      plan.Current=0;
      // Landed. The drawer is still open: buy the next affordable kind in the same visit.
-     if(plan.Batch==0&&view.DrawerOpen&&!view.Busy&&view.EnemyAlive){
-      plan.Batch=1;
+     if(plan.Batch<PerVisit-1&&view.DrawerOpen&&!view.Busy&&view.EnemyAlive){
+      plan.Batch++;
       if(TryStart(view,ref plan,out kind))return AriaCoverageAction.Recruit;
      }
      EndVisit(ref plan,view.Time);return AriaCoverageAction.None;
@@ -146,8 +152,8 @@ namespace Game.Simulation {
   }
   static bool TryStart(in AriaCoverageView view,ref AriaCoverageState plan,out AriaCoverageKind kind){
    kind=AriaCoverageKind.None;
-   for(int k=1;k<=Kinds;k++){
-    int bit=1<<(k-1);
+   for(int i=0;i<Order.Length;i++){
+    int k=Order[i],bit=1<<(k-1);
     // Unaffordable kinds wait for materials; the next affordable kind goes first.
     if((plan.Done&bit)!=0||(view.AffordMask&bit)==0||(view.CardMask&bit)==0)continue;
     plan.Current=(byte)k;plan.Deadline=view.Time+BuySeconds;plan.Started=view.Time;plan.Actions=view.CompletedContacts;kind=(AriaCoverageKind)k;

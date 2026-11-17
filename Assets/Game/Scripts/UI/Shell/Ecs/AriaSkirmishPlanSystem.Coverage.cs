@@ -82,7 +82,8 @@ namespace Game.UI.Shell.Ecs
         {
             if (!CoverageEligible(v)) return false;
             int cards = (v.RecruitMarksman.Available ? 1 : 0) | (v.RecruitApcFast.Available ? 2 : 0) | (v.RecruitRadar.Available ? 4 : 0) |
-                (v.RecruitApcHeavy.Available ? 8 : 0) | (v.RecruitDrone.Available ? 16 : 0) | (v.RecruitTransportHeli.Available ? 32 : 0);
+                (v.RecruitApcHeavy.Available ? 8 : 0) | (v.RecruitDrone.Available ? 16 : 0) | (v.RecruitTransportHeli.Available ? 32 : 0) |
+                (v.RecruitGunner.Available ? 64 : 0) | (v.RecruitTank.Available ? 128 : 0);
             // The first accepted assault is latched (see the S002 adapter).
             if (p.AssaultIssued != 0 && p.StructureOrdered != 0) p.CoverageAssaultSeen = 1;
             var facts = new Game.Simulation.AriaCoverageView {
@@ -116,6 +117,8 @@ namespace Game.UI.Shell.Ecs
             Game.Simulation.AriaCoverageKind.ApcHeavy => v.RecruitApcHeavy,
             Game.Simulation.AriaCoverageKind.Drone => v.RecruitDrone,
             Game.Simulation.AriaCoverageKind.TransportHeli => v.RecruitTransportHeli,
+            Game.Simulation.AriaCoverageKind.Gunner => v.RecruitGunner,
+            Game.Simulation.AriaCoverageKind.Tank => v.RecruitTank,
             _ => default
         };
 

@@ -463,7 +463,8 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 plan.AdvanceNavigation != 0 || plan.AssaultInspectStage != 0 || plan.InterceptStage != 0 || plan.PadStage != 0 ||
                 plan.SupportStage != 0 || plan.BreacherStage == 1;
             int cards = (view.RecruitMarksman.Admitted ? 1 : 0) | (view.RecruitApcFast.Admitted ? 2 : 0) | (view.RecruitRadar.Admitted ? 4 : 0) |
-                (view.RecruitApcHeavy.Admitted ? 8 : 0) | (view.RecruitDrone.Admitted ? 16 : 0) | (view.RecruitTransportHeli.Admitted ? 32 : 0);
+                (view.RecruitApcHeavy.Admitted ? 8 : 0) | (view.RecruitDrone.Admitted ? 16 : 0) | (view.RecruitTransportHeli.Admitted ? 32 : 0) |
+                (view.RecruitGunner.Admitted ? 64 : 0) | (view.RecruitTank.Admitted ? 128 : 0);
             // The first accepted assault is latched: a later re-sweep (new roster revision, a skipped
             // page, a bounded search) must not hold the coverage recruits back for the rest of the match.
             if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0) plan.CoverageAssaultSeen = 1;
@@ -545,6 +546,8 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
             Game.Simulation.AriaCoverageKind.ApcHeavy => view.RecruitApcHeavy,
             Game.Simulation.AriaCoverageKind.Drone => view.RecruitDrone,
             Game.Simulation.AriaCoverageKind.TransportHeli => view.RecruitTransportHeli,
+            Game.Simulation.AriaCoverageKind.Gunner => view.RecruitGunner,
+            Game.Simulation.AriaCoverageKind.Tank => view.RecruitTank,
             _ => default
         };
 

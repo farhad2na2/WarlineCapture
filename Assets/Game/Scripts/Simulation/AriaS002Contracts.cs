@@ -2,7 +2,7 @@ using Game.Skirmish.Contracts;
 using System;
 namespace Game.Simulation {
 public enum AriaS002Scope:byte {None,NativeRendered,LogicalPublicData}
-public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview,RecruitBreacher,RecruitMarksman,RecruitApcFast,RecruitRadar,RecruitApcHeavy,RecruitDrone,RecruitTransportHeli,MoveMode,ScanMode}
+public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview,RecruitBreacher,RecruitMarksman,RecruitApcFast,RecruitRadar,RecruitApcHeavy,RecruitDrone,RecruitTransportHeli,MoveMode,ScanMode,RecruitGunner,RecruitTank}
 public readonly struct AriaS002Point {public readonly float X,Y;public AriaS002Point(float x,float y){X=x;Y=y;}}
 public enum AriaS002Intent : byte
     {
@@ -172,6 +172,8 @@ public AriaS002ActionTarget RecruitRadar;
 public AriaS002ActionTarget RecruitApcHeavy;
 public AriaS002ActionTarget RecruitDrone;
 public AriaS002ActionTarget RecruitTransportHeli;
+public AriaS002ActionTarget RecruitGunner;
+public AriaS002ActionTarget RecruitTank;
 // Clear public ground behind / ahead of the presented column (AriaSupportOrderPolicy).
 public AriaS002ActionTarget RearGround;
 public AriaS002ActionTarget FrontGround;

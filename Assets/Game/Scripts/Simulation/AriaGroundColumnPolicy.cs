@@ -44,18 +44,9 @@ namespace Game.Simulation
   {decision=default;return TryStructureColumn(view,ref plan,ref decision);}
   static bool TryStructureColumn(in AriaGroundColumnView view,ref AriaGroundColumnState plan,ref AriaGroundDecision output)
 {
-            // PagesOrdered is the contiguous prefix of publicly accepted pages.
-            // A long/inertial swipe may skip a page; return to the missing page
-            // before accepting later pages or declaring the roster sweep complete.
-            if (plan.PagesOrdered < view.ExpandedPageCount &&
-                view.ExpandedPageIndex > plan.PagesOrdered)
-            {
-                output.Intent = AriaGroundIntent.Inspect;
-                if (view.PreviousAvailable)
-                    output.Action = view.PreviousAvailable ? AriaGroundAction.PreviousPage : AriaGroundAction.Wait;
-                else output.Action = AriaGroundAction.Wait;
-                return true;
-            }
+            // Clear a stale selection before returning to an earlier page (lane 12 S050: on page 0 the
+            // deselect paged to the selected card on page 1, and page 1 paged straight back to page 0
+            // because page 0 was not yet counted; the two rules alternated until the watchdog).
             if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0)
             {
                 // A selection made only of this page's unordered assault groups is exactly what the
@@ -82,6 +73,18 @@ namespace Game.Simulation
                     return true;
                 }
                 plan.AssaultSelecting = 0;
+            }
+            // PagesOrdered is the contiguous prefix of publicly accepted pages.
+            // A long/inertial swipe may skip a page; return to the missing page
+            // before accepting later pages or declaring the roster sweep complete.
+            if (plan.PagesOrdered < view.ExpandedPageCount &&
+                view.ExpandedPageIndex > plan.PagesOrdered)
+            {
+                output.Intent = AriaGroundIntent.Inspect;
+                if (view.PreviousAvailable)
+                    output.Action = view.PreviousAvailable ? AriaGroundAction.PreviousPage : AriaGroundAction.Wait;
+                else output.Action = AriaGroundAction.Wait;
+                return true;
             }
             int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
             bool skipPage = false;

@@ -84,7 +84,7 @@ namespace Game.UI.Shell.Ecs
             var query = ariaObservationQuery;
             if (query.CalculateEntityCount() != 1) { tracedTrayPage = tracedTrayRoster = -1; return; }
             var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
-            if (v.SourceScenarioIndex != 4 || !v.ExpandedBaseAssault || v.ExpandedPageCount <= 0) return;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault || v.ExpandedPageCount <= 0) return;
             int page = v.ExpandedPageIndex; int roster = (int)v.ExpandedRosterRevision;
             if (tracedTrayPage < 0 || roster != tracedTrayRoster) { tracedTrayPage = page; tracedTrayRoster = roster; return; }
             if (page == tracedTrayPage) return;
@@ -115,7 +115,7 @@ namespace Game.UI.Shell.Ecs
         }
         private byte tracedCoverageCurrent; private int tracedCoveragePending, tracedCoverageFielded;
         private byte tracedSupportStage, tracedSupportDone;
-        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli" };
+        private static readonly string[] CoverageKindNames = { "none", "marksman", "apc_fast", "radar", "apc_heavy", "drone", "transport_heli", "gunner", "tank" };
         private static readonly string[] SupportKindNames = { "none", "radar", "drone", "transport_heli" };
         // Evidence only, every expanded base assault (S002 native and generic planners):
         // coverage purchases (event=coverage kind=... state=buying|done|gave_up|pending|fielded) and each

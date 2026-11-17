@@ -73,7 +73,8 @@ namespace Game.UI.Contracts
         // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar, 8 apc_heavy, 16 drone, 32 transport_heli)
         // and their Build -> catalog card targets.
         public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
-        public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar, RecruitApcHeavy, RecruitDrone, RecruitTransportHeli;
+        public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar, RecruitApcHeavy, RecruitDrone, RecruitTransportHeli,
+            RecruitGunner, RecruitTank;
         // Support orders: clear public ground behind the presented column toward home (-20016, radar and
         // transport heli Move) and ahead of it toward the enemy objective (-20017, drone Scan).
         public AriaTouchTarget RearGround, FrontGround;

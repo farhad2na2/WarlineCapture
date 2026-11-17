@@ -237,6 +237,8 @@ namespace Game.UI.Runtime
                 view.RecruitApcHeavy = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_APC_Heavy") : openBuild;
                 view.RecruitDrone = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Drone") : openBuild;
                 view.RecruitTransportHeli = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Transport") : openBuild;
+                view.RecruitGunner = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_01") : openBuild;
+                view.RecruitTank = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Tank_USA") : openBuild;
                 view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
                 view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
                 view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;

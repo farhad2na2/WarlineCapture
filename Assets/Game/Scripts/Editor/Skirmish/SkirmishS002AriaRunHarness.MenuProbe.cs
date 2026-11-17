@@ -13,6 +13,7 @@ namespace Game.Editor
     {
         private static AriaTouchInputUiSystemHelper menuTouch;
         private static int menuStep;
+        private static int atlasMenuStep;
         private static double menuDue;
         private static double menuDeadline;
         private static Button menuStableTarget;
@@ -263,6 +264,12 @@ namespace Game.Editor
             }
             else if (menuStep == 1)
             {
+                foreach (var candidate in UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude))
+                    if (candidate.IsBaseAssaultSetup && candidate.ApprovedAtlas != null)
+                    {
+                        AdvanceAtlasMenu(candidate);
+                        return;
+                    }
                 foreach (var b in buttons)
                     if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
                     { menuScenarioCardSeen = true; if (MenuTap(b)) menuStep = 4; return; }
@@ -336,6 +343,15 @@ namespace Game.Editor
                                 " fontSize=" + label.fontSize + " characters=" + label.textInfo.characterCount +
                                 " visible=" + label.textInfo.characterCount + " overflow=" + label.isTextOverflowing);
                         }
+                    if (setup.ApprovedAtlas != null)
+                    {
+                        if (MenuTap(setup.ApprovedAtlas.PrimaryButton))
+                        {
+                            ScreenCapture.CaptureScreenshot(LiveTracePath() + ".setup.png");
+                            menuStep = 5;
+                        }
+                        return;
+                    }
                     foreach (var b in setup.GetComponentsInChildren<Button>())
                         if ((b.name.Contains("Launch") || b.name.Contains("Start")) && TryPresentedButtonPoint(b, out _))
                         {
@@ -348,6 +364,52 @@ namespace Game.Editor
                             return;
                         }
                 }
+            }
+        }
+
+        private static void AdvanceAtlasMenu(QuickCustomScreenView setup)
+        {
+            var catalog = SkirmishBattleCatalogConfig.Load();
+            if (catalog == null || !catalog.TryGet(catalogId, out var entry)) return;
+            var atlas = setup.ApprovedAtlas;
+            int map = Array.IndexOf(SkirmishBattleLibraryArt.MapIds, entry.MapId);
+            int objective = Array.IndexOf(SkirmishBattleLibraryArt.ObjectiveIds, entry.ObjectiveId);
+            if (map < 0 || objective < 0)
+            {
+                FailMenuJourney(1, "atlasCatalogRouteMissing", null);
+                return;
+            }
+
+            if (!atlas.ShowingMissions)
+            {
+                if (atlasMenuStep == 0)
+                {
+                    if (MenuTap(atlas.NavigationCards[map].Button)) atlasMenuStep = 1;
+                }
+                else if (MenuTap(atlas.PrimaryButton)) atlasMenuStep = 2;
+                return;
+            }
+            if (setup.LibraryViewModel.Battlefield.MapId != entry.MapId)
+            {
+                if (MenuTap(atlas.BackButton)) atlasMenuStep = 0;
+                return;
+            }
+            if (atlasMenuStep < 3)
+            {
+                if (MenuTap(atlas.NavigationCards[objective].Button)) atlasMenuStep = 3;
+                return;
+            }
+            foreach (var card in atlas.Regions[objective].Cards)
+            {
+                if (card.Button.name != SkirmishLibraryControlNames.BattleCard(catalogId)) continue;
+                menuScenarioCardSeen = true;
+                if (MenuTap(card.Button))
+                {
+                    menuStep = 4;
+                    Debug.Log("[ApprovedAtlasNativeJourney] catalog=" + catalogId + " map=" + entry.MapId +
+                        " objective=" + entry.ObjectiveId + " input=Touch");
+                }
+                return;
             }
         }
 

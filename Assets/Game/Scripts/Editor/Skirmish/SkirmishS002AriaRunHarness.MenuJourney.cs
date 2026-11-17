@@ -10,8 +10,7 @@ namespace Game.Editor
 {
     /// <summary>
     /// Generic menu journey (gate 1: the scenario loads from the Skirmish menu). WARLINE_MENU_JOURNEY=1 sends ANY catalog
-    /// through the S004 presented-controls journey (real touches: Skirmish card, the library's ScenarioCard_&lt;id&gt;,
-    /// the setup's launch button) instead of TryQueueExpanded, and the harness then waits for the natively started
+    /// through the S004 presented-controls journey (real touches: Skirmish card, map, objective, mission card and Start Battle) instead of TryQueueExpanded, and the harness then waits for the natively started
     /// match without nudging it (no programmatic enter/play/arm). Logs [SkirmishMenuJourney] catalog=&lt;id&gt; result=Passed|Failed.
     /// WARLINE_S004_MENU_JOURNEY=1 (the S004/S005 editor journeys) keeps its behaviour and also gets the new log line.
     /// A catalog that has no visible, launchable card (absent or still Planned) fails with that reason; nothing is published.
@@ -31,6 +30,7 @@ namespace Game.Editor
         {
             StopS004MenuProbe();
             menuStep = 0;
+            atlasMenuStep = 0;
             menuPath.Clear();
             menuJourneyFailed = menuScenarioCardSeen = menuScrollLogged = menuPreflightDone = false;
         }

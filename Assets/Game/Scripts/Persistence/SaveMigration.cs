@@ -2,7 +2,7 @@ namespace Game.Runtime
 {
     public static class SaveMigration
     {
-        public const int CurrentVersion = 1;
+        public const int CurrentVersion = 2;
 
         public static SaveDataModel Migrate(SaveDataModel saveData)
         {
@@ -17,6 +17,8 @@ namespace Game.Runtime
             data.profile.ownedSupportAbilityUnlocks ??= System.Array.Empty<string>();
             data.profile.ownedCosmetics ??= System.Array.Empty<string>();
             data.profile.campaignMissionProgress ??= System.Array.Empty<CampaignMissionProgressSaveData>();
+            // Existing profiles gain an empty ledger. QuickGameSaveData.lastResult is not a medal source.
+            data.profile.skirmishMedals ??= System.Array.Empty<SkirmishMedalSaveData>();
             return data;
         }
     }

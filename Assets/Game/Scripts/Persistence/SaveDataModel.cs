@@ -57,6 +57,18 @@ namespace Game.Runtime
         public int firstLaunchMissionAttemptOrdinal;
         public CampaignMissionProgressSaveData[] campaignMissionProgress =
             Array.Empty<CampaignMissionProgressSaveData>();
+        // One row per catalog id + difficulty. contentVersion is audit-only; medals stay after a balance update.
+        public SkirmishMedalSaveData[] skirmishMedals = Array.Empty<SkirmishMedalSaveData>();
+    }
+
+    [Serializable]
+    public sealed class SkirmishMedalSaveData
+    {
+        public string catalogId = string.Empty;
+        public byte difficulty;
+        public int contentVersion;
+        public string firstEarnedUtc = string.Empty;
+        public string sessionId = string.Empty;
     }
 
     public static class FirstLaunchProfileState

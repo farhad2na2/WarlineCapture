@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -19,7 +20,20 @@ namespace Game.Editor
     /// </summary>
     public static class SkirmishSetupPrefabBuilder
     {
-        private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab";
+        public const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab";
+        public const float MapPanelX = 14f;
+        public const float MapPanelY = 108f;
+        public const float MapPanelWidth = 1040f;
+        public const float MapPanelHeight = 688f;
+        public const float BriefingPanelX = 1068f;
+        public const float BriefingPanelY = 108f;
+        public const float BriefingPanelWidth = 590f;
+        public const float BriefingPanelHeight = 688f;
+        public const string LibraryRegionsPath = "SkirmishSetupComposition/OperationPreview/MapPreviewClip/LibraryRegions";
+        public const string MedalRowPath = "SkirmishSetupComposition/BaseAssaultRules/BriefingColumn/MedalRow";
+        public const string DifficultyPath = "SkirmishSetupComposition/BaseAssaultRules/BriefingColumn/MedalDifficultySelector";
+        private static bool _sessionPassed;
+        private static string _sessionPrefabHash;
         private const string MainMenuPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
         private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
         private const string PreviewPath = "Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png";
@@ -61,6 +75,10 @@ namespace Game.Editor
         [MenuItem("Game/UI/V3/Rebuild SCN-13 Skirmish Setup")]
         public static void Build()
         {
+            SkirmishSagaShaderSettings.Ensure();
+            _sessionPassed = false;
+            _sessionPrefabHash = null;
+            SkirmishLibrarySpriteRegistryBuilder.Rebuild();
             V3UiFoundationBuilder.EnsureBuilt();
             LoadAssets();
 
@@ -119,6 +137,32 @@ namespace Game.Editor
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
             MenuAccountHeaderAuthoring.Apply(root);
             MenuUiApprovedAuthoring.Apply(root, "skirmish");
+            EnsureLibraryBrand(composition);
+            layout.DisableMenuFrame();
+            screen.EnsureBattleLibraryChrome();
+            RequireLibraryPlate(root.transform);
+            SkirmishLibraryFrame.Resolve(
+                ReferenceResolution.x,
+                ReferenceResolution.y,
+                true,
+                out float mapX,
+                out float mapWidth,
+                out float briefingX,
+                out float briefingWidth,
+                out float panelY,
+                out float panelHeight);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/OperationPreview"), mapX, panelY, mapWidth, panelHeight);
+            SetTopLeft((RectTransform)root.transform.Find("SkirmishSetupComposition/BaseAssaultRules"), briefingX, panelY, briefingWidth, panelHeight);
+            Debug.Log("[SkirmishBattleLibraryPlate] result=Passed");
+            layout.Configure(
+                ReferenceResolution,
+                MainMenuV3SectionAlignment.Center,
+                rightTargets.ToArray(),
+                true,
+                null,
+                widthTargets.ToArray());
+            screen.LockBattleLibraryMedals();
+            screen.ApplySagaPrefabStyle();
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -129,7 +173,45 @@ namespace Game.Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
+            ApprovedMissionAtlasBuilder.BuildSkirmish();
+            _sessionPrefabHash = HashPrefabFile();
+            _sessionPassed = true;
             Debug.Log("[SkirmishSetupPrefabBuilder] result=Passed v3=True reference=1672x941 responsive=True");
+        }
+
+        public static void RequireFreshPrefab()
+        {
+            if (!_sessionPassed || string.IsNullOrEmpty(_sessionPrefabHash))
+                throw new InvalidOperationException("SCN-13 builder did not pass in this session.");
+            string hash = HashPrefabFile();
+            if (!string.Equals(hash, _sessionPrefabHash, StringComparison.Ordinal))
+                throw new InvalidOperationException("SCN-13 prefab hash does not match the fresh build.");
+        }
+
+        private static void RequireLibraryPlate(Transform root)
+        {
+            string missing = FirstMissingPlatePath(root);
+            if (missing != null)
+                throw new InvalidOperationException("SCN-13 battle library plate was not authored. Missing " + missing + ".");
+        }
+
+        private static string FirstMissingPlatePath(Transform root)
+        {
+            if (root.Find(LibraryRegionsPath) == null)
+                return LibraryRegionsPath;
+            if (root.Find(MedalRowPath) == null)
+                return MedalRowPath;
+            if (root.Find(DifficultyPath) == null)
+                return DifficultyPath;
+            return null;
+        }
+
+        private static string HashPrefabFile()
+        {
+            string projectRoot = Directory.GetParent(Application.dataPath)?.FullName ?? Directory.GetCurrentDirectory();
+            string absolute = Path.Combine(projectRoot, PrefabPath);
+            using SHA256 sha = SHA256.Create();
+            return BitConverter.ToString(sha.ComputeHash(File.ReadAllBytes(absolute))).Replace("-", string.Empty);
         }
 
         // Checked executeMethod authoring entry: exactly one existing UI prefab.
@@ -380,6 +462,11 @@ namespace Game.Editor
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null || !layout.ExpandToCanvasWidth || layout.ReferenceResolution != ReferenceResolution)
                 throw new InvalidOperationException("SCN-13 must expand cleanly across 16:9 and 20:9 canvases.");
+            if (layout.UsesMenuFrame)
+                throw new InvalidOperationException("SCN-13 menu frame overrides the library panels.");
+            string missingPlate = FirstMissingPlatePath(prefab.transform);
+            if (missingPlate != null)
+                throw new InvalidOperationException("SCN-13 battle library plate was not authored. Missing " + missingPlate + ".");
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 10)
                 throw new InvalidOperationException($"SCN-13 requires procedural V3 gradients; found {gradients}.");
@@ -470,7 +557,7 @@ namespace Game.Editor
         private static void ConfigureBaseAssaultPreview(RectTransform root)
         {
             var panel = (RectTransform)Require(root, "OperationPreview");
-            SetTopLeft(panel, 14f, 125f, 1080f, 671f);
+            SetTopLeft(panel, MapPanelX, MapPanelY, MapPanelWidth, MapPanelHeight);
             Require(panel, "Metrics").gameObject.SetActive(false);
             var objective = Require(panel, "ObjectiveRow/Objective").GetComponent<TMP_Text>();
             objective.text = "DESTROY THE ENEMY MAIN BASE";
@@ -483,7 +570,7 @@ namespace Game.Editor
 
         private static void BuildBaseAssaultRules(RectTransform root, ICollection<RectTransform> rightTargets, out UISegmentedControlView missionSize)
         {
-            var panel = CreateTopLeft("BaseAssaultRules", root, 1108f, 125f, 550f, 671f);
+            var panel = CreateTopLeft("BaseAssaultRules", root, BriefingPanelX, BriefingPanelY, BriefingPanelWidth, BriefingPanelHeight);
             CreateGradientPanel(panel, DarkTop, DarkBottom, Border, 3f);
             rightTargets.Add(panel);
             void Label(string name, string key, string value, float top, float height, float size, Color color)
@@ -713,6 +800,7 @@ namespace Game.Editor
                     3f);
                 TMP_Text text = CreateText("Label", button.transform, labels[i], fontSize, boldFont, TextAlignmentOptions.Center, selected ? TextPrimary : TextMuted);
                 Stretch(text.rectTransform);
+                if(name=="ArmySize")text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(new[]{"ui.skirmish.size.standard","ui.skirmish.size.war","ui.skirmish.size.large_war"}[i],labels[i]);
                 buttons[i] = button;
                 texts[i] = text;
                 gradients[i] = button.targetGraphic as V3GradientGraphic;
@@ -744,6 +832,7 @@ namespace Game.Editor
                 button.targetGraphic = image;
                 TMP_Text text = CreateText("Label", button.transform, labels[i], 1f, mediumFont, TextAlignmentOptions.Center, Color.clear);
                 Stretch(text.rectTransform);
+                if(name=="ArmySize")text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(new[]{"ui.skirmish.size.standard","ui.skirmish.size.war","ui.skirmish.size.large_war"}[i],labels[i]);
                 buttons[i] = button;
                 texts[i] = text;
             }
@@ -1187,6 +1276,11 @@ namespace Game.Editor
                 if (card == null)
                     throw new InvalidOperationException("Main Menu prefab is missing Card_Skirmish.");
                 Transform hotspot = Find(card, "Hotspot");
+                bool alreadyRouted = hotspot != null &&
+                    hotspot.GetComponent<UIShellRouteButtonView>() != null &&
+                    hotspot.GetComponent<Button>() != null;
+                if (alreadyRouted)
+                    return;
                 GameObject target = hotspot != null
                     ? hotspot.gameObject
                     : CreateRect("Hotspot", card, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero).gameObject;
@@ -1197,8 +1291,7 @@ namespace Game.Editor
                 button.targetGraphic = image;
                 UIShellRouteButtonView route = target.GetComponent<UIShellRouteButtonView>() ?? target.AddComponent<UIShellRouteButtonView>();
                 route.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.QuickCustomSetup, true);
-            MenuAccountHeaderAuthoring.Apply(root);
-
+                MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, MainMenuPrefabPath);
             }
             finally
@@ -1220,10 +1313,28 @@ namespace Game.Editor
             if (content == null)
                 throw new InvalidOperationException("Menu scene is missing UIShellContentView.");
             SerializedObject serialized = new(content);
+            SerializedProperty reference = serialized.FindProperty("skirmishSetupContentPrefab");
+            if (reference != null && reference.objectReferenceValue == prefab)
+                return;
             SetReference(serialized, "skirmishSetupContentPrefab", prefab);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+        }
+
+        private static void EnsureLibraryBrand(Transform composition)
+        {
+            if (composition == null)
+                return;
+            Transform existing = composition.Find("WarlineLogo");
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return;
+            }
+
+            RectTransform logo = CreateTopLeft("WarlineLogo", composition, 14f, 8f, 360f, 86f);
+            V3UiFoundationBuilder.AddMainMenuLogo(logo);
         }
 
         private static Transform Require(Transform root, string path)

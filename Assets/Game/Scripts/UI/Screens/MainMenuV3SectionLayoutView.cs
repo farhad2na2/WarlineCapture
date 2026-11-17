@@ -71,6 +71,11 @@ namespace Game.UI.Runtime
             menuFrameTargets = targets;
             RefreshLayout();
         }
+
+        public void DisableMenuFrame()
+        {
+            useMenuFrame = false;
+        }
         private void ApplyMenuFrame(RectTransform canvasRect)
         {
             Rect safe = Screen.width > 0 && Screen.height > 0 ? Screen.safeArea : new Rect(0, 0, 1, 1);
@@ -126,6 +131,7 @@ namespace Game.UI.Runtime
         public Vector2 ReferenceResolution => referenceResolution;
         public MainMenuV3SectionAlignment Alignment => alignment;
         public bool ExpandToCanvasWidth => expandToCanvasWidth;
+        public bool UsesMenuFrame => useMenuFrame;
         public RectTransform[] RightAnchoredTargets => rightAnchoredTargets;
         public MainMenuV3HorizontalResponsiveTarget[] HorizontalResponsiveTargets => horizontalResponsiveTargets;
         public float LastAppliedScale { get; private set; }
@@ -184,6 +190,9 @@ namespace Game.UI.Runtime
         public void RefreshLayout()
         {
             if (_applying || referenceResolution.x <= 0f || referenceResolution.y <= 0f)
+                return;
+            SkirmishLibrarySafeFrame held = GetComponent<SkirmishLibrarySafeFrame>();
+            if (held != null && held.HoldsLayout)
                 return;
 
             Canvas canvas = GetComponentInParent<Canvas>();

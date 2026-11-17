@@ -75,7 +75,7 @@ namespace Game.Editor
             using (var entities = oldState.ToEntityArray(Allocator.Temp))
                 foreach (var entity in entities) terminalOldBattlefield.Add(entity);
             terminalAction = Environment.GetEnvironmentVariable("WARLINE_TERMINAL_ACTION") ?? "MAIN MENU";
-            if (terminalAction != "MAIN MENU" && terminalAction != "REPLAY" && terminalAction != "ADJUST SETUP")
+            if (terminalAction != "MAIN MENU" && terminalAction != "REPLAY" && terminalAction != "ADJUST SETUP" && terminalAction != "BATTLEFIELD")
                 throw new ArgumentException("Unsupported terminal action: " + terminalAction);
             if (productionCanary?.Request.IsLegacyPreset == true && terminalAction != "MAIN MENU") throw new InvalidOperationException("Legacy production proof uses normal MainMenu return only");
             terminalElapsed = elapsed;
@@ -153,6 +153,7 @@ namespace Game.Editor
                             UiShellRuntimeGateway.Localization.CurrentLocaleCode);
                     }
                     string actionObject = terminalAction == "REPLAY" ? "Replay"
+                        : terminalAction == "BATTLEFIELD" ? "Battlefield"
                         : terminalAction == "ADJUST SETUP" ? "Adjust"
                         : terminalAction == "RETRY" ? "Retry" : "Leave";
                     var button = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult/" + actionObject)?.GetComponent<Button>();
@@ -206,7 +207,8 @@ namespace Game.Editor
                     }
                     else
                     {
-                        UIRoute expected = terminalAction == "ADJUST SETUP" ? UIRoute.QuickCustomSetup : UIRoute.MainMenu;
+                        UIRoute expected = terminalAction is "BATTLEFIELD" or "ADJUST SETUP"
+                            ? UIRoute.QuickCustomSetup : UIRoute.MainMenu;
                         if (shell.ActiveRoute != expected) return;
                         if (SkirmishLaunchProjection.TryGet(em, out _, out _))
                         { EndTerminalProbe(false, "sessionNotCleaned"); return; }
@@ -222,6 +224,22 @@ namespace Game.Editor
                     {
                         terminalMenuPresentation = ReadTerminalMenuPresentation();
                         controlsVisible = terminalMenuPresentation != null;
+                    }
+                    if (terminalAction == "BATTLEFIELD")
+                    {
+                        var setups = UnityEngine.Object.FindObjectsByType<QuickCustomScreenView>(FindObjectsInactive.Exclude);
+                        var setup = SelectMenuSetupForLaunch(setups, catalogId);
+                        if (setup != null && setup.ApprovedAtlas != null && setup.ApprovedAtlas.ShowingMissions &&
+                            setup.LibraryViewModel.Briefing.ScenarioId == catalogId &&
+                            SkirmishBattleCatalogConfig.Load().TryGet(catalogId, out var entry) &&
+                            setup.LibraryViewModel.Battlefield.MapId == entry.MapId)
+                        {
+                            foreach (var region in setup.ApprovedAtlas.Regions)
+                                foreach (var card in region.Cards)
+                                    if (card.Button.name == SkirmishLibraryControlNames.BattleCard(catalogId) &&
+                                        TryPresentedButtonPoint(card.Button, out _))
+                                        controlsVisible = true;
+                        }
                     }
                     if (terminalAction == "ADJUST SETUP")
                     {
@@ -246,6 +264,8 @@ namespace Game.Editor
                             " fuel=" + SkirmishStartingSupplyService.ReadFuel(em, fresh, 1) +
                             " materials=" + SkirmishMaterialsService.Read(em, fresh, 1));
                     }
+                    if (terminalAction == "BATTLEFIELD")
+                        Debug.Log("[ApprovedAtlasNativeReturn] catalog=" + catalogId + " result=Passed selectedCardVisible=1 input=Touch");
                     ScreenCapture.CaptureScreenshot(prefix + "-destination.png");
                     terminalStep = 2;
                     terminalDue = now + 1d;

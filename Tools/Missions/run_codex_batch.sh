@@ -37,9 +37,9 @@ run_one() {
     { note "$name not started: copy failed (see $transcript)"; return 1; }
   ( cd "$dir" && git init -q && git add -A && git -c user.name=codex -c user.email=codex@local \
       commit -q -m baseline ) >>"$transcript" 2>&1
-  note "$name started (effort $effort, limit ${minutes} min)"
+  note "$name started (model ${CODEX_MODEL:-gpt-6.2-sol}, effort $effort, limit ${minutes} min)"
   "$CODEX" exec -C "$dir" -s workspace-write --skip-git-repo-check --color never \
-    -c model_reasoning_effort="$effort" -o "$report" - < "$brief" >>"$transcript" 2>&1 &
+    -m "${CODEX_MODEL:-gpt-6.2-sol}" -c model_reasoning_effort="$effort" -o "$report" - < "$brief" >>"$transcript" 2>&1 &
   local pid=$!
   ( sleep $((minutes * 60)); kill "$pid" 2>/dev/null ) &
   local dog=$!

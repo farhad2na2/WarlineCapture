@@ -206,5 +206,33 @@ namespace Game.Tests.Editor
             Assert.IsTrue(AriaHomeDefensePolicy.Step(view, ref plan, out _));
             Assert.AreEqual(8, plan.HomeDefenseStage, "observe briefly, then a new round");
         }
+
+        // Windows lane batch 4 (17 fps), S002 130365/155923: the re-centre's result was judged in the
+        // frame the focus tap completed; the round gave up while the camera was still arriving.
+        [Test]
+        public void RecentreWaitsForTheCameraBeforeGivingUp()
+        {
+            var plan = default(AriaHomeDefenseState);
+            var view = View(73f); view.HomeGroundAvailable = false; view.ThreatGroundAvailable = false;
+            plan.HomeDefenseStage = 4; plan.HomeDefenseScope = 1; plan.HomeDefenseSlot = 1;
+            view.ExpandedSelectedMask = 1; view.ExpandedSelectedGroups = 1; view.CompletedContacts = 35;
+            Assert.AreEqual(AriaHomeDefenseAction.InspectHome, Step(view, ref plan, out _).Action);
+            Assert.AreEqual(AriaHomeDefensePolicy.StageRecentre, plan.HomeDefenseStage);
+            view.CompletedContacts = 36; view.Time = 74.2f; // focus tap completed, camera still moving
+            Assert.AreEqual(AriaHomeDefenseAction.Waiting, Step(view, ref plan, out _).Action, "wait for the camera");
+            view.Time = 75.5f; view.HomeGroundAvailable = true; // home ground offered once the view settles
+            Assert.AreEqual(AriaHomeDefenseAction.ArmAttack, Step(view, ref plan, out _).Action);
+            view.AttackMode = true; view.CompletedContacts = 37;
+            Assert.AreEqual(AriaHomeDefenseAction.AttackHomeTerrain, Step(view, ref plan, out _).Action, "the defender attack-moves onto home ground");
+
+            plan = default;
+            view = View(73f); view.HomeGroundAvailable = false; view.ThreatGroundAvailable = false;
+            plan.HomeDefenseStage = 4; plan.HomeDefenseScope = 1; plan.HomeDefenseSlot = 1;
+            view.ExpandedSelectedMask = 1; view.ExpandedSelectedGroups = 1; view.CompletedContacts = 35;
+            Step(view, ref plan, out _);
+            view.CompletedContacts = 36; view.Time = 73f + AriaHomeDefensePolicy.RecentreSeconds + .1f;
+            Assert.IsTrue(AriaHomeDefensePolicy.Step(view, ref plan, out _));
+            Assert.AreEqual(8, plan.HomeDefenseStage, "bounded: still nothing after the settle time, the round is given up");
+        }
 }
 }

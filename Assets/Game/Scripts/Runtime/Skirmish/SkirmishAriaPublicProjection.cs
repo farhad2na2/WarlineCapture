@@ -92,9 +92,13 @@ namespace Game.Runtime
                 view.CanAffordBreacher = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
+                // Coverage is affordable only above a materials reserve (lane 8 S050: five coverage
+                // purchases took materials 900 -> 20 and the assault stalled for ~130 s).
+                var coveragePerception = perception;
+                coveragePerception.OwnMaterials = System.Math.Max(0, perception.OwnMaterials - CoverageReserveMaterials);
                 for (int i = 0; i < CoverageRoles.Length; i++)
                     if (SkirmishStrategyScoring.TryAfford(army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays,
-                            perception, SkirmishRoleIds.ToId(CoverageRoles[i]), CoverageRoles[i]))
+                            coveragePerception, SkirmishRoleIds.ToId(CoverageRoles[i]), CoverageRoles[i]))
                         view.CoverageAffordMask |= 1 << i;
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
@@ -182,6 +186,21 @@ namespace Game.Runtime
             return false;
         }
 
+        // Read every frame: created once per World (world-owned, disposed with it), never per call.
+        private static EntityQuery s_unitRoleQuery;
+        private static World s_unitRoleWorld;
+        private static EntityQuery UnitRoleQuery(EntityManager em)
+        {
+            if (s_unitRoleWorld != em.World || !em.IsQueryValid(s_unitRoleQuery))
+            {
+                s_unitRoleQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+                s_unitRoleWorld = em.World;
+            }
+            return s_unitRoleQuery;
+        }
+
+        public const int CoverageReserveMaterials = 250;
+
         // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
         private static readonly SkirmishRoleKind[] CoverageRoles =
             { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar,
@@ -199,7 +218,7 @@ namespace Game.Runtime
         private static int LivingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
         {
             var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            var query = UnitRoleQuery(em);
             using var entities = query.ToEntityArray(Allocator.Temp);
             int mask = 0;
             foreach (var unit in entities)
@@ -228,7 +247,7 @@ namespace Game.Runtime
         {
             var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             int count = 0;
-            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            var query = UnitRoleQuery(em);
             using var actors = query.ToEntityArray(Allocator.Temp);
             foreach (var actor in actors)
             {
@@ -248,7 +267,7 @@ namespace Game.Runtime
         private static bool HasLivingRole(EntityManager em, Entity session, SkirmishRoleKind role)
         {
             var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            var query = UnitRoleQuery(em);
             using var entities = query.ToEntityArray(Allocator.Temp);
             foreach (var unit in entities)
             {

@@ -64,6 +64,8 @@ namespace Game.UI.Contracts
         public AriaTouchTarget InterceptThreat;
         // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
         public AriaTouchTarget HomeGround;
+        // Evidence: why HomeGround was not offered (1 crowded, 2 off screen, 4 covered; 8 not evaluated).
+        public int HomeGroundRefusal;
         public int OwnStructureAttackUnits;
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
@@ -75,6 +77,8 @@ namespace Game.UI.Contracts
         // Support orders: clear public ground behind the presented column toward home (-20016, radar and
         // transport heli Move) and ahead of it toward the enemy objective (-20017, drone Scan).
         public AriaTouchTarget RearGround, FrontGround;
+        // The open full map's "center on HQ" control (an ordinary popup button).
+        public AriaTouchTarget MapCenterHome;
         // Ordinary Move and Scan command buttons and their armed modes.
         public AriaTouchTarget Move, Scan;
         public bool MoveMode, ScanMode;

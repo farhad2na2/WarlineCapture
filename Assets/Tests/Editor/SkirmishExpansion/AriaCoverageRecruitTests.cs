@@ -31,14 +31,16 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "one recruit at a time");
 
             view.PendingMask = 0; view.FieldedMask = 1; view.Time = 90f;
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "purchases are spaced (GapSeconds)");
+            view.Time = 83f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.ApcFast, kind);
-            view.PendingMask = 2; view.Time = 92f;
+            view.PendingMask = 2; view.Time += 2f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
-            view.PendingMask = 0; view.FieldedMask = 3; view.Time = 100f;
+            view.PendingMask = 0; view.FieldedMask = 3; view.Time += AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.Radar, kind);
-            view.FieldedMask = 7; view.Time = 110f;
+            view.FieldedMask = 7; view.Time += 10f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
             Assert.AreEqual(7, plan.Done);
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "each kind once per match");
@@ -71,9 +73,11 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "bounded: no endless drawer taps");
             Assert.AreEqual(2, plan.Done, "apc_fast is not retried this match");
             view.CardMask = AriaCoverageRecruitPolicy.All; view.AffordMask = 7; view.Time = 95f;
+            Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "spaced after the given-up purchase");
+            view.Time = 91f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.Marksman, kind, "the marksman is bought once affordable");
-            view.Busy = true; view.Time = 96f;
+            view.Busy = true; view.Time += 1f;
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "a home threat abandons the purchase");
             Assert.AreEqual(3, plan.Done);
         }
@@ -88,11 +92,12 @@ namespace Game.Tests.Editor
             view.PendingMask = 8; view.Time = 122f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
             Assert.AreEqual(AriaCoverageAction.None, AriaCoverageRecruitPolicy.Step(view, ref plan, out _), "one recruit at a time");
-            view.PendingMask = 0; view.FieldedMask = 15; view.Time = 130f;
+            view.PendingMask = 0; view.FieldedMask = 15; view.Time = 122f + AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.Drone, kind);
-            view.FieldedMask = 31; view.Time = 140f;
+            view.FieldedMask = 31; view.Time += 10f;
             AriaCoverageRecruitPolicy.Step(view, ref plan, out _);
+            view.Time += AriaCoverageRecruitPolicy.GapSeconds + .1f;
             Assert.AreEqual(AriaCoverageAction.Recruit, AriaCoverageRecruitPolicy.Step(view, ref plan, out kind));
             Assert.AreEqual(AriaCoverageKind.TransportHeli, kind);
         }

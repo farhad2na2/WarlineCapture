@@ -654,12 +654,25 @@ namespace Game.UI.Shell.Ecs
             return true;
         }
 
+        // Close the owned full map. Close presses that complete while the map stays open are counted;
+        // after two, the popup's "center on HQ" control is pressed once (a different ordinary control,
+        // so the next Close is a fresh press), then Close again. Never a third Close in a row.
+        static void CloseInspectionMap(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
+            in AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
+        {
+            var step = Game.Simulation.AriaMapCloseRecovery.Step(ref plan.AssaultInspectCloses, ref plan.AssaultInspectCentered,
+                ref plan.AssaultInspectCloseActions, touch.Actions, view.MapCenterHome.Available);
+            if (step == Game.Simulation.AriaMapCloseAction.CenterHome) Target(view.MapCenterHome, false, ref output);
+            else if (step == Game.Simulation.AriaMapCloseAction.Close) Target(view.CloseMap, false, ref output);
+            else output.Kind = AriaPlayObservationKind.Waiting;
+        }
         static void ClearAssaultMapInspection(ref AriaSkirmishPlanComponent plan)
         {
             plan.AssaultInspectStage = 0; plan.AssaultInspectActions = 0; plan.AssaultInspectOpenTarget = 0;
             plan.AssaultInspectMapIdentity = 0; plan.AssaultInspectOpenedFrame = 0;
             plan.AssaultInspectRevision = 0; plan.AssaultInspectDeadline = 0; plan.AssaultInspectReadyAt = 0;
             plan.AssaultInspectObjectiveHudIdentity = 0; plan.AssaultInspectObjectiveWorld = default;
+            plan.AssaultInspectCloses = 0; plan.AssaultInspectCentered = 0; plan.AssaultInspectCloseActions = 0;
         }
         // A completed visible page is enough to inspect the moving cohort on the
         // normal map. Paging itself never renews the objective watchdog.
@@ -778,7 +791,7 @@ namespace Game.UI.Shell.Ecs
                 // The existing input owner bounds attempts; the battle watchdog is unchanged.
                 if (view.AssaultMap.ExpectedIdentity && view.AssaultMap.FullMap &&
                     view.AssaultMap.Identity == plan.AssaultInspectMapIdentity &&
-                    view.CloseMap.Available) Target(view.CloseMap, false, ref output);
+                    view.CloseMap.Available) CloseInspectionMap(view, ref plan, touch, ref output);
                 else if (view.Time > plan.AssaultInspectDeadline) plan.AssaultInspectStage = 4;
                 return true;
             }

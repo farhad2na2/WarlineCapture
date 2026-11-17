@@ -605,6 +605,10 @@ namespace Game.UI.Runtime
                 view.FocusAdvanceDragEnd = (start - point).sqrMagnitude > 25 ? point : point + Vector2.up * 12;
             }
         }
+        // Why the last clear-ground search offered nothing (bits): 1 near a presented contact,
+        // 2 off screen, 4 covered by a HUD control. Evidence only.
+        private const int GroundRefusedCrowded = 1, GroundRefusedOffScreen = 2, GroundRefusedCovered = 4;
+        private int watchGroundRefusal;
         private AriaTouchTarget ObserveClearAttackGround(Vector3 objective, Vector3 approach, int id, float distance = 55)
         {
             approach.y = 0;
@@ -623,10 +627,12 @@ namespace Game.UI.Runtime
                     float clearance = contact.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Enemy ? 15 : 8;
                     if ((contact.Model.Position - ground).sqrMagnitude < clearance * clearance) { clear = false; break; }
                 }
-                if (!clear) continue;
+                if (!clear) { watchGroundRefusal |= GroundRefusedCrowded; continue; }
                 var point = Camera.main.WorldToScreenPoint(ground);
-                if (point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, id, true))
+                if (point.z <= 0 || !Screen.safeArea.Contains(point)) { watchGroundRefusal |= GroundRefusedOffScreen; continue; }
+                if (WatchTargetIsReachable(point, id, true))
                     return new AriaTouchTarget { Id = id, Position = point, Available = true };
+                watchGroundRefusal |= GroundRefusedCovered;
             }
             return default;
         }
@@ -679,8 +685,13 @@ namespace Game.UI.Runtime
             if (watchFullMap == null) watchFullMap = Object.FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
             view.MapOpen = watchFullMap != null && watchFullMap.IsOpen;
             ResolveAssaultObservationMap(view.MapOpen);
-            if (view.MapOpen) view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction);
+            if (view.MapOpen)
+            {
+                view.CloseMap = ObserveWatchButton(watchFullMap.CloseAction);
+                view.MapCenterHome = ObserveWatchButton(watchFullMap.CenterOnHqAction);
+            }
             ObserveAssaultMap(ref view);
+            view.HomeGroundRefusal = 8; // not evaluated (no presented map, camera or friendly contact)
             if (watchMap == null || !watchMap.isActiveAndEnabled || Camera.main == null) return;
             float best = float.MaxValue, bestVisible = float.MaxValue;
             Vector3 armyCenter = Vector3.zero; int friendlies = 0;
@@ -710,7 +721,20 @@ namespace Game.UI.Runtime
                 var home = watchSkirmish.PlayerBaseObjectivePosition;
                 var homeApproach = armyCenter - home;
                 if (homeApproach.sqrMagnitude < 1) homeApproach = objective - home;
+                watchGroundRefusal = 0;
                 view.HomeGround = ObserveClearAttackGround(home, homeApproach, -20006, 25f);
+                // Windows lane (17 fps): a tank shelled the HQ from 26 units for 30 s and no candidate
+                // toward the column was ever offered. Search every direction around home before
+                // giving up: a HUD panel or a crowd on one side must not leave the defence blind.
+                var homeScreen = Camera.main.WorldToScreenPoint(home);
+                // Only when the camera shows home (after the Home focus); otherwise it costs a search per frame.
+                if (!view.HomeGround.Available && homeScreen.z > 0 && Screen.safeArea.Contains(homeScreen))
+                {
+                    var forward = homeApproach; forward.y = 0;
+                    for (int turn = 1; turn < 8 && !view.HomeGround.Available; turn++)
+                        view.HomeGround = ObserveClearAttackGround(home, Quaternion.Euler(0, turn * 45f, 0) * forward, -20006, 25f);
+                }
+                view.HomeGroundRefusal = view.HomeGround.Available ? 0 : watchGroundRefusal;
                 // Support order ground (AriaSupportOrderPolicy), only while a support unit is fielded:
                 // clear public ground 40 units behind the presented front toward home (radar and
                 // transport heli Move), and 60 units ahead of it toward the enemy objective (drone Scan).

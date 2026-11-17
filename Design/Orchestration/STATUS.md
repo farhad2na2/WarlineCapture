@@ -12,7 +12,7 @@ record is `missions.csv`.
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
-| Dispatch worker | Sonnet | Why authored missions abort at startup ("source binding missing or changed"); branch `missions/generic-binding` | Running |
+| Dispatch worker | Sonnet | Authoring writes one measured pad per starting building (branch `missions/generic-binding`) | Running |
 | Codex | gpt-6.1-terra | Batch 6: why seed 155923 is lost (019), result screen shows the real end reason (020) | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
@@ -110,3 +110,9 @@ record is `missions.csv`.
 - 2026-11-17 08:12 probe worker: step 5 done (probe-generic1: S006 and S026 Abort expandedStartupFailure=MissingReference, 'Exact authored generic mission/source binding missing or changed'); probe worker finished, lane idle
 - 2026-11-17 08:15 dispatch worker: started generic-binding investigation
 - 2026-11-17 08:15 orchestrator: probe worker's results checked in the logs. The return-to-menu failure was a test-profile fault, not a game fault: the menu's Skirmish card only appears after Chapter 1 of the campaign, and test runs used a blank profile. With that fixed: S002 130365 en Victory countedWin=1, 130365 fa-IR Victory countedWin=1, 104731 en Victory countedWin=1, 155923 en Defeat at 95.5 s (the enemy tank kills the base; home defence fired at 67 s but its order came 8.5 s later and too far away). Authored missions now dispatch but S006 and S026 abort at startup ("source binding missing or changed"). Three workers started on these.
+- 2026-11-17 08:16 aria worker: started S002 Base Assault home-guard work (opening guard, faster reaction, engage-on-pass)
+- 2026-11-17 08:15 codex: codex-020-hud-end-reasons started (effort high, limit 40 min)
+- 2026-11-17 08:15 codex: codex-019-seed-loss-analysis started (effort high, limit 45 min)
+- 2026-11-17 08:16 dispatch worker: generic-binding done; diagnostic commit + design question reported
+- 2026-11-17 08:17 codex: codex-020-hud-end-reasons finished: exit 0, 3 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-020-hud-end-reasons.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-020-hud-end-reasons-report.txt (not yet verified or merged)
+- 2026-11-17 08:17 orchestrator: authored missions abort at startup most likely because every starting building needs its own exact pad and the authoring entry writes none (inferred from code, not yet proven by a log). Decision: confirm with a diagnostic run at the end of the current Unity task, and build the fix now in parallel: authoring writes one pad per building, from measured pads where the draft has them. The startup check is not relaxed. S006, S026, S049 and S050 will need re-authoring.

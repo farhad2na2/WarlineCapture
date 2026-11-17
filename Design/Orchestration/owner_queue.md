@@ -38,3 +38,8 @@ Nothing here blocks production.
   objectivedeadline, startupfailure, contentfailure, checkpointfailure). Default taken: show the
   existing neutral result text until wording is written; agents will draft both languages for your
   review in the first milestone packet.
+
+- **When authored missions become visible to players (2026-11-17).** Default taken: an authored
+  mission stays hidden ("Planned" in the Skirmish library) while it is being validated; the test
+  harness plays it through a temporary library of its own. Making a mission visible in the game is
+  a separate publication step that waits for the acceptance gates.

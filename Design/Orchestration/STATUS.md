@@ -12,7 +12,7 @@ record is `missions.csv`.
 |---|---|---|---|
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (probe worker) | Fix the return-to-menu check after victory, then S002 in English and Farsi, 3 seeds | Running |
-| Dispatch worker | Sonnet | Make authored missions (S006, S026, S049, S050) launchable by the queue; branch `missions/generic-dispatch` | Running |
+| Dispatch worker | Sonnet | Authored missions launchable by the queue; branch `missions/generic-dispatch` (2836d15fe) | Finished; uncompiled, the probe worker merges and tests it after the S002 runs |
 | Codex | gpt-6.1-terra | Batches 2–5 done (12 tasks today) | Paused: four C# patches (010, 011, 012, 018) wait for a compile, which needs the Unity lane |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
@@ -100,3 +100,5 @@ record is `missions.csv`.
 - 2026-11-17 07:35 dispatch worker: started generic-dispatch investigation
 - 2026-11-17 07:35 probe worker: start step 1 (S002 terminal probe cause)
 - 2026-11-17 07:35 orchestrator: shift 2 reviewed and checked against the logs. S002 seed 130365 en ended Victory at about 236 s in both runs today (player base never damaged, so the new home defence had nothing to do); both recorded as Abort because the return-to-menu check fails (`route=QuickCustomSetup presented=False`). ARIA fix and patches 010, 012, 018 merged and compiled (compile-3 passed). S026, S049, S050 authored (Passed, 12 variants each); they and S006 cannot be launched yet ("no playable generic library dispatch"). Two workers started on those two blockers.
+- 2026-11-17 07:36 dispatch worker: done, branch missions/generic-dispatch (harness-only scoped library row)
+- 2026-11-17 07:37 orchestrator: dispatch branch reviewed (one file). Cause: authoring leaves a mission's library row as "Planned" on purpose, so the queue finds nothing playable. Fix: the harness builds a temporary, unsaved library for the one mission it is about to play; nothing is published to players and the shipped library file is unchanged. Not compiled, not run.

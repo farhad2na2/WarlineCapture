@@ -5,12 +5,13 @@ automated gate, and it does not replace gates 1–4). Each entry is added when t
 and can be played to a result with normal input.
 
 ## How to open (Mac, `/Volumes/T7/Projects/WarlineCapture`; owner choice 2026-11-17)
-The Mac checkout is already on `missions/integration`, compiled by the last agent run. When STATUS.md says
-"lane held for the owner", no agent will start Unity on this project.
+The Mac checkout is on `missions/integration`. Agents keep using Unity on this project until you say you are ready to
+test: then the program lead finishes or stops the current agent run cleanly, leaves the Editor compiled on the
+candidate commit, marks the lane as held for you, and starts no agent Unity run until you say you are done.
 1. Open Unity Hub and open the project `/Volumes/T7/Projects/WarlineCapture` (Unity 6000.5.8f1; existing Library, no rebuild).
-2. Open the start scene and press Play, then follow the menu path given per mission.
+2. Open the scene `Assets/Game/Scenes/Menu.unity` and press Play, then follow the menu path given per mission.
 3. In the match, switch ARIA off (the ARIA Play/Stop control in the match HUD) so you play yourself.
-4. When you are done, close the Editor (or tell the program lead) so agent runs can resume.
+4. When you are done, tell the program lead (agent runs resume after that).
 
 ## 1. Base Assault — S002 (Desert Base, Ground Maneuver, Established Base)
 - **Commit:** the current `missions/integration` head on the Mac (contains `e8ad30c10`).

@@ -39,6 +39,8 @@ Apply the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_PO
 
 **Opening and decisions:** Protect the three designated rifle squads; buy specialist support rather than spending them as the only assault group. Two intended approaches: Open corridor A with ground force and escort the eight survivors, or scout corridor B and use APCs for the longer approach. These describe tactical options, not a mandatory click sequence or AI script.
 
+**Player experience (lead, 2026-11-17, from the owner's designer playtest):** *Sees:* twelve marked riflemen, two corridors and the exit. *First order:* pick a corridor and clear it with the escort while the riflemen wait back. *Mid-match choice:* hold the cleared corridor for 20 s to latch the exit, or switch corridors when the enemy tower makes one costly. *Payoff:* eight riflemen reaching the exit win; losing five makes success impossible.
+
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Field begins R1: buy R2 facilities/readiness through normal costs.
 
 | Size | Player starting combat force | Enemy starting combat force | M / Oil / usable Fuel each | Logistics support each; objective trucks P/E | Starting structures P/E | I/V/logistics queues each | Deadline |

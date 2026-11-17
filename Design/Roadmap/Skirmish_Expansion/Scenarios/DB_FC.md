@@ -39,6 +39,8 @@ Apply the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_PO
 
 **Opening and decisions:** Send dismounted rifles toward two reachable zones and use the APC as movement support only. Two intended approaches: Hold the central and nearer side zone with gunner/rocketeer cover, or concede center and connect the two side zones. These describe tactical options, not a mandatory click sequence or AI script.
 
+**Player experience (lead, 2026-11-17, from the owner's designer playtest):** *Sees:* three marked zones A/B/C on the Desert Base roads and the ticket bars. *First order:* send dismounted infantry to the nearest zone (vehicles cannot capture). *Mid-match choice:* hold two zones safely, or stretch to take the contested third and drain the enemy faster. *Payoff:* holding two drains the enemy one ticket per second; overstretching loses a zone and reverses the drain.
+
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Field begins R1: buy R2 facilities/readiness through normal costs.
 
 | Size | Player starting combat force | Enemy starting combat force | M / Oil / usable Fuel each | Logistics support each; objective trucks P/E | Starting structures P/E | I/V/logistics queues each | Deadline |

@@ -39,6 +39,8 @@ Apply the [Campaign map reuse policy](../../../MapVariants/CAMPAIGN_MAP_REUSE_PO
 
 **Opening and decisions:** Leave trucks at origin until a scout and cheap ground escort check the first exposed segment. Two intended approaches: Use gunner/rocketeer infantry on highway, or send APCs ahead along southern service road and move trucks between holding pockets. These describe tactical options, not a mandatory click sequence or AI script.
 
+**Player experience (lead, 2026-11-17, from the owner's designer playtest):** *Sees:* three marked objective trucks at the bays and two truck routes to the destination. *First order:* choose a route and send the escort ahead of the trucks. *Mid-match choice:* run all three trucks together on one route, or split to the second route when the enemy patrol commits. *Payoff:* two deliveries (five seconds in the destination) win; two truck losses make success impossible.
+
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Field begins R1: buy R2 facilities/readiness through normal costs.
 
 | Size | Player starting combat force | Enemy starting combat force | M / Oil / usable Fuel each | Logistics support each; objective trucks P/E | Starting structures P/E | I/V/logistics queues each | Deadline |

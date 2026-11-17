@@ -133,7 +133,7 @@
     ]
   },
   "pads": {
-    "base.s050.f1.barracks.player": {
+    "base.player": {
       "at": [
         904.0,
         449.5
@@ -142,17 +142,6 @@
       "size": [
         28,
         15
-      ]
-    },
-    "economy.s050.f1.fabrication_depot.player": {
-      "at": [
-        937.5,
-        446.0
-      ],
-      "anchor": "s050.f1.fabrication_depot",
-      "size": [
-        19,
-        16
       ]
     },
     "economy.player": {
@@ -166,28 +155,6 @@
         4
       ]
     },
-    "economy.s050.f1.refinery.player": {
-      "at": [
-        959.5,
-        445.5
-      ],
-      "anchor": "s050.f1.refinery",
-      "size": [
-        25,
-        15
-      ]
-    },
-    "economy.s050.f1.fuel_bladder.player": {
-      "at": [
-        901.0,
-        472.0
-      ],
-      "anchor": "s050.f1.fuel_bladder",
-      "size": [
-        14,
-        10
-      ]
-    },
     "staging.player": {
       "at": [
         915.0,
@@ -199,34 +166,12 @@
         7
       ]
     },
-    "service.s050.f1.satellite_dish.player": {
-      "at": [
-        904.0,
-        462.0
-      ],
-      "anchor": "s050.f1.satellite_dish",
-      "size": [
-        10,
-        10
-      ]
-    },
     "service.player": {
       "at": [
         919.5,
         452.0
       ],
       "anchor": "service.player",
-      "size": [
-        3,
-        4
-      ]
-    },
-    "service.s050.f1.watchtower.approach.player": {
-      "at": [
-        919.5,
-        448.0
-      ],
-      "anchor": "s050.f1.watchtower.approach",
       "size": [
         3,
         4
@@ -243,7 +188,7 @@
         15
       ]
     },
-    "base.s050.f2.barracks.enemy": {
+    "base.enemy": {
       "at": [
         1221.0,
         493.5
@@ -252,17 +197,6 @@
       "size": [
         28,
         15
-      ]
-    },
-    "economy.s050.f2.fabrication_depot.enemy": {
-      "at": [
-        1207.5,
-        451.0
-      ],
-      "anchor": "s050.f2.fabrication_depot",
-      "size": [
-        19,
-        16
       ]
     },
     "economy.enemy": {
@@ -276,28 +210,6 @@
         4
       ]
     },
-    "economy.s050.f2.refinery.enemy": {
-      "at": [
-        1257.5,
-        447.5
-      ],
-      "anchor": "s050.f2.refinery",
-      "size": [
-        25,
-        15
-      ]
-    },
-    "economy.s050.f2.fuel_bladder.enemy": {
-      "at": [
-        1226.0,
-        473.0
-      ],
-      "anchor": "s050.f2.fuel_bladder",
-      "size": [
-        14,
-        10
-      ]
-    },
     "staging.enemy": {
       "at": [
         1246.0,
@@ -309,34 +221,12 @@
         7
       ]
     },
-    "service.s050.f2.satellite_dish.enemy": {
-      "at": [
-        1173.0,
-        447.0
-      ],
-      "anchor": "s050.f2.satellite_dish",
-      "size": [
-        10,
-        10
-      ]
-    },
     "service.enemy": {
       "at": [
         1208.5,
         461.0
       ],
       "anchor": "service.enemy",
-      "size": [
-        3,
-        4
-      ]
-    },
-    "service.s050.f2.watchtower.approach.enemy": {
-      "at": [
-        1211.5,
-        461.0
-      ],
-      "anchor": "s050.f2.watchtower.approach",
       "size": [
         3,
         4

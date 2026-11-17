@@ -28,6 +28,24 @@ class GateUnitsFormat(unittest.TestCase):
                '[SkirmishGateUnits] event=used catalog=S027 session=x types= unused=role.rifle']
         self.assertEqual('', runner.scan_evidence(log)[(1, 1)]['units_used_by_aria'])
 
+    def test_automatic_support_roles_parse_and_are_not_unused(self):
+        # Shape since the support-role model: types= automatic= unused= (automatic may be empty).
+        available = ['role.logistics_truck', 'role.marksman', 'role.rifle', 'role.tanker']
+        log = ['[SkirmishAriaQueue] dispatch job=1/1 catalog=S002 seed=104731 locale=en',
+               '[SkirmishGateUnits] event=available catalog=S002 session=s ' + 'types=' + ';'.join(available),
+               '[SkirmishGateUnits] event=used catalog=S002 session=s types=role.rifle '
+               'automatic=role.logistics_truck;role.tanker unused=role.marksman']
+        row = runner.scan_evidence(log)[(1, 1)]
+        self.assertEqual('role.rifle', row['units_used_by_aria'])
+        empty = ['[SkirmishAriaQueue] dispatch job=1/1 catalog=S002 seed=1 locale=en',
+                 '[SkirmishGateUnits] event=available catalog=S002 session=s types=role.rifle;role.tanker',
+                 '[SkirmishGateUnits] event=used catalog=S002 session=s types=role.rifle automatic= unused=role.tanker']
+        self.assertEqual('role.rifle', runner.scan_evidence(empty)[(1, 1)]['units_used_by_aria'])
+        bad = list(log)
+        bad[2] = bad[2].replace('unused=role.marksman', 'unused=role.marksman;role.tanker')
+        with self.assertRaises(ValueError):
+            runner.scan_evidence(bad)
+
 
 if __name__ == '__main__':
     unittest.main()

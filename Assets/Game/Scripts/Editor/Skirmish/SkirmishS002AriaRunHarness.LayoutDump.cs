@@ -56,6 +56,8 @@ namespace Game.Editor
             public string predicate = "candidate accepted only if: inside logical playable bounds and grid; not cached-invalid; no authored map building/scenery overlap (AuthoredBuildings.Overlaps = StartingGrant _skirmishBuildings.Overlaps); no road (RoadSurfaces.Overlaps) or water (OverlapsWater); no sidewalk cell and inside grid; then the native IsPlacementValid. Same caches and order as the starting-grant validator.";
             public string sourceOperationMapId = "", boundsSource = "OperationMapBoundsComponent", sessionFailure = "none", sessionPhase = "";
             public string missionResult = "NotRecorded";
+            // Requested WARLINE_LAYOUT_DUMP_KINDS with no configured building definition in this session (nothing to scan).
+            public string missingKinds = "";
             public bool surfaceLevelEnforcedByValidator, authoredBuildingsReady, roadSurfacesReady, waterMaskKnown;
             public int rejectedCachedInvalid, rejectedBuilding, rejectedRoad, rejectedWater, rejectedSidewalk, rejectedNative, candidatesNotLevel;
             public bool previewMutated, physicalSourceModified, playerReady, candidatesTruncated;
@@ -436,7 +438,7 @@ namespace Game.Editor
                 " rejectedCachedInvalid=" + dump.rejectedCachedInvalid + " rejectedBuilding=" + dump.rejectedBuilding +
                 " rejectedRoad=" + dump.rejectedRoad + " rejectedWater=" + dump.rejectedWater +
                 " rejectedSidewalk=" + dump.rejectedSidewalk + " rejectedNative=" + dump.rejectedNative +
-                " candidatesNotLevel=" + dump.candidatesNotLevel + " source=" + dump.sourceOperationMapId +
+                " candidatesNotLevel=" + dump.candidatesNotLevel + " missingKinds=" + (dump.missingKinds.Length > 0 ? dump.missingKinds : "none") + " source=" + dump.sourceOperationMapId +
                 " sessionPhase=" + dump.sessionPhase + " sessionFailure=" + dump.sessionFailure +
                 " frames=" + dump.frames + " previewMutated=0 physicalSourceModified=0 playerReady=0 missionResult=NotRecorded path=" + path);
             Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", null);
@@ -505,6 +507,15 @@ namespace Game.Editor
                     footprintX = definition.FootprintCells.x, footprintY = definition.FootprintCells.y, scanned = scan });
                 if (scan) layoutTargets.Add((matched, definition));
             }
+            if (filter != null)
+                foreach (var requested in filter)
+                {
+                    bool found = false;
+                    foreach (var target in layoutTargets) found |= target.kind == requested;
+                    if (found || string.IsNullOrEmpty(requested)) continue;
+                    dump.missingKinds += (dump.missingKinds.Length > 0 ? "," : "") + requested;
+                    Debug.LogWarning("[SkirmishLayoutDump] requested kind '" + requested + "' has no configured building definition in this session; nothing was scanned for it.");
+                }
         }
     }
 }

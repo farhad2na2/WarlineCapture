@@ -125,7 +125,7 @@ namespace Game.Editor
                 for (int i = 0; i < structures.Length; i++)
                 {
                     var structure = structures[i];
-                    var kind = SkirmishMapLayoutBuilder.PadKindForStructure(structure.StructureId);
+                    var kind = Game.Configs.SkirmishMapLayoutBuilder.PadKindForStructure(structure.StructureId);
                     if (!IsInstancePadKind(kind))
                         throw new InstancePadPlanException(scope + ": " + structure.StructureId + " needs a " + kind + " pad, which per-building authoring does not support.");
                     if (structure.FactionId < 1 || structure.FactionId > 2)

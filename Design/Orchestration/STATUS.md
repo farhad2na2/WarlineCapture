@@ -10,13 +10,13 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Unity lane | Sonnet (lane worker, lead subagent) | Cherry-pick airport probe + FC/BT/CE authoring, compile, S002 footprints, re-author S006/S026/S049/S050, play them, Airport probe | Running |
-| aria-intercept | Opus | S002 seed 155923: finish enemies that slip past the army; branch `missions/aria-intercept` (worktree `wt/aria`) | Coding; gets the lane after the current owner |
-| airport-probe | Sonnet | Airport probe done (3b4c598eb, not compiled); now building the layout dump for Industrial Basin / AP | Coding, no Unity |
-| objective-authoring | Sonnet | Typed objective areas and defence/convoy pads in authoring (FC/BT/CE); branch `missions/objective-authoring` (worktree `wt/objectives`) | Coding, no Unity |
-| Codex | gpt-6.1-terra | 022 deadline data for gate 2 (read-only) | Running |
-| Orchestrator | Fable | Daily review and hard decisions only (owner rule) | Idle until the daily cycle |
-| Program lead | Opus | Live loop (`PROGRAM_LEAD_PROMPT.md`) | Running since 09:20 |
+| Unity lane | Sonnet (lane worker 2, lead subagent) | Merge pad-frame fix + probe branches, compile, re-author S006/S026/S049/S050, containment check, play, probes | Running |
+| aria-intercept | Opus | S002 seed 155923: intercept iteration 2 on `missions/aria-intercept` (Blocked aborts, order never landing, Editor closing) | Coding; lane after lane worker 2 |
+| airport-probe | Sonnet | Airport probe, layout dump, gate-3 trace (all on `missions/airport-probe`) | Done; idle |
+| objective-authoring | Sonnet | FC/BT/CE authoring, area probe, save/resume probe (on `missions/objective-authoring`) | Done; idle |
+| Codex | gpt-6.1-terra | 022–026 done today | Idle |
+| Orchestrator | Fable | Daily review and hard decisions only | Idle until the daily cycle |
+| Program lead | Opus | Live loop (`PROGRAM_LEAD_PROMPT.md`) | Running |
 
 ## Log
 
@@ -213,3 +213,13 @@ record is `missions.csv`.
 - 2026-11-17 10:49 aria-intercept worker: intercept traces: triggered 6, pan 4, released 6, ordered 0, contact 24. Cause 1: the tank projects about 2.8 screen heights off view (screen y≈3037 of 1080 at t≈55); clamped drags (≈300 px) cannot reach it before it leaves sight, and repeated drags on the same target count as touch retries (attempts 1-3), which can block ARIA. Cause 2: every release left Attack armed (attackMode=True); in 130365 en the next step (FindBase) then failed 3 times and ARIA was Blocked (115). Result worse than the 4/4 baseline. missions/integration still contains the behaviour (merge 68dfb689f); per the owner pause I made no revert, code change or iteration. Lane returned.
 - 2026-11-17 10:50 program lead: aria-intercept-q1 checked in the log: job 1 S002 155923 en countedWin=1; job 2 155923 fa-IR Abort ariaStopped:Blocked; job 3 130365 en Abort ariaStopped:Blocked; job 4 104731 en interrupted (Editor closed before its result; queue.out 'Completed marker missing', exit 1; cause not yet known); job 5 not run. Intercept triggered 6 times and panned 4 times but never ordered an attack. Worse than the 4/4 baseline; the behaviour is still merged on missions/integration (68dfb689f). Lane idle, no Editor. Paused: no revert made yet.
 - 2026-11-17 11:08 program lead: RESUMED on the owner's instruction. Reverted the S002 intercept merge (3e9c744b7; integration back on the 4/4 baseline, Assets identical to bc26ea966). aria-intercept iterates on its branch (Blocked aborts, order never landing, Editor closing in job 4). Lane goes to integration shift 2 (brief `program-logs/briefs/lane-integration2-2026-11-17.md`).
+- 2026-11-17 11:09 lane worker 2: lane taken (idle, no Editor, no LibraryInitializing); starting merges
+- 2026-11-17 11:13 lane worker 2: step1 merged pad-frame-fix, airport-probe, objective-authoring (007ffc3ee); python tests 51 OK; compile Passed (lane2-compile, exit 0)
+- 2026-11-17 11:14 lane worker 2: step2 authoring all 4 Passed (lane2-author, exit 0)
+- 2026-11-17 11:15 aria-intercept worker: iteration 2 code committed e3387c8ae on missions/aria-intercept (Attack disarmed before hand-back; contacts offered only when tappable or one drag away; 11 policy tests pass standalone). Diagnosis in daily/aria-intercept-2026-11-17.md. READY FOR LANE.
+- 2026-11-17 11:15 program lead: aria-intercept iteration 2 (e3387c8ae) reviewed: Blocked 115 caused by the intercept handing back with Attack armed (fixed); the rule cannot order at the 55 s crossing because ARIA's camera sits ~2.8 screens ahead of the column and the tank is visible ~4.5 s. Decision (lead, within ARIA skill scope): during the march ARIA keeps the camera on its column with ordinary drags, so a crossing vehicle is on screen. q1 job 4 (104731) was a normal Editor shutdown 44 s after the pause, not a code fault.
+- 2026-11-17 11:17 program lead: approved aria-intercept's column camera via one HUD Home tap after the assault orders (ordinary visible control, already used by home defence) plus bounded re-centring drags; drags alone cannot cover the ~600-unit gap in the tank's 4.5 s window.
+- 2026-11-17 11:21 lane worker 2: step3 containment S049 Passed (lane2-cont-S049:485); S026/S050 first failed (helipad footprint missing from drafts), added building.helipad 16x15, re-authored Passed (lane2-author2) and containment Passed (lane2-cont2-S026:487, S050:488); S006 Failed (draft lives in examples/, no instance_pads; checker found no draft in drafts/)
+- 2026-11-17 11:22 aria-intercept worker: column camera (Home once + paced re-centring drags, lead-approved) committed 481eacbac on missions/aria-intercept on top of e3387c8ae; 14 policy tests pass standalone. READY FOR LANE.
+- 2026-11-17 11:22 lane worker 2: step4 play queue started lane2-play (S026,S050,S049 130365 en; order S026,S050,S049). S006 containment skipped: check has no draft-path option (draft dir fixed Tools/Missions/drafts), no code change
+- 2026-11-17 11:27 lane worker 2: step4 result lane2-play: S026/S050/S049 130365 en all Abort expandedStartupFailure=BlockedSpawn countedWin=0 (unity.log 3726/4644/5527), exit 0; lane returned idle; steps 5-7 remain

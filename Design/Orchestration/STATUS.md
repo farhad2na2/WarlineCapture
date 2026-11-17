@@ -13,7 +13,7 @@ record is `missions.csv`.
 | Shift lead | Sonnet | Shift 2: S002 + S006 trace run, apply Codex patches, author S026/S049/S050 | Applying script-only patches; Unity run waits on the dialog |
 | Unity lane | — | One Editor at a time | **BLOCKED: needs the owner to click "Don't rebuild Library" in the Unity dialog** |
 | ARIA worker | Opus | Home-defence fix for S002 on branch `missions/aria-home-defense` (no Unity needed) | Running |
-| Codex | gpt-6.1-terra | Batch 4: readiness of the three other objectives (015), offline draft checker (016) | Running |
+| Codex | gpt-6.1-terra | Batch 5: fix duplicate pads in 11 drafts (017), real end reasons for the three other objectives (018) | Running |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -72,3 +72,10 @@ record is `missions.csv`.
 - 2026-11-17 06:56 aria worker: started S002 home-defense fix on missions/aria-home-defense (authoring worktree)
 - 2026-11-17 06:56 orchestrator: Codex batch 3 reviewed. 011: ARIA home defence exists but needs an enemy minimap contact near the base and never saw one (trace only, no fix). 012: enemy trace added; one tank at 28 damage per second explains the base loss. 013 and 014: could not measure Airport sites or layouts without a running match; not applied. Behaviour fixes are no longer routed to Codex (four misses); an Opus worker now owns the home-defence fix.
 - 2026-11-17 06:56 orchestrator: Codex batch 4 started (015, 016).
+- 2026-11-17 06:56 codex: codex-016-draft-checker started (effort high, limit 50 min)
+- 2026-11-17 06:56 codex: codex-015-objective-readiness started (effort high, limit 50 min)
+- 2026-11-17 06:59 codex: codex-015-objective-readiness finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-015-objective-readiness.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-015-objective-readiness-report.txt (not yet verified or merged)
+- 2026-11-17 06:59 codex: codex-016-draft-checker finished: exit 0, 2 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-016-draft-checker.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-016-draft-checker-report.txt (not yet verified or merged)
+- 2026-11-17 06:59 codex: batch finished: codex-015-objective-readiness:high:50 codex-016-draft-checker:high:50
+- 2026-11-17 07:00 orchestrator: Codex batch 4 reviewed. 016: offline draft checker written (partial port); it passes the S006 example and FAILS all 16 drafts: 11 (S026–S030, S049–S054) for duplicate pads, 5 (S074–S078) for missing layout. So S026/S049/S050 are not ready to author. 015: survey saved in `notes/objective-readiness-2026-11-17.md`: reducers, HUD and enemy/ARIA policy exist for the three other objectives; missing are draft areas, real end reasons and any play.
+- 2026-11-17 07:00 orchestrator: Codex batch 5 started (017, 018). Unity lane still waits on the owner's click.

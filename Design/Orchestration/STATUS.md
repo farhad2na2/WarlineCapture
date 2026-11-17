@@ -457,3 +457,5 @@ record is `missions.csv`.
 - 2026-11-17 22:20 airport-probe worker: menu-validation-candidate 2aac5a984 = [MatchSceneInventory] line once per match at first Playing frame (Editor harness, read-only); C# uncompiled
 - 2026-11-17 22:03 lane worker 15: r1b running (no segv after 90 s)
 - 2026-11-17 22:00 program lead: owner request: Codex tasks now run on gpt-6.2-sol — `run_codex_batch.sh` passes `-m ${CODEX_MODEL:-gpt-6.2-sol}` (the global Codex config, gpt-6.2-astra, is unchanged; Codex 031/032 already running on astra finish as they are).
+- 2026-11-17 22:07 lane worker 15: r1b done: S002 155923 en Victory (frozen clock 230.886 s, playerBaseHp=800), menu journey Passed; starting r2
+- 2026-11-17 22:20 lane worker 15: steps 3-5 done; S002 155923 en 0 of 2 losses: r1b Victory 230.9 s, r2 Abort ariaStopped:Blocked 204 s (r1 startup segfault kept); lane returned idle. Details daily/lane-repro15-2026-11-17.md

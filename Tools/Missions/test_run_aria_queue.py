@@ -2,6 +2,7 @@
 import csv
 from datetime import date
 import io
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -188,7 +189,8 @@ class QueueTests(unittest.TestCase):
     def test_log_parser_ignores_noise(self):
         jobs, completed = runner.parse_log(FIXTURE)
         self.assertEqual(len(jobs), 6)
-        self.assertEqual(jobs[0], ('S002', '1', 'en', 'Victory', 10.5))
+        self.assertEqual(jobs[0][:5], ('S002', '1', 'en', 'Victory', None))
+        self.assertEqual(jobs[0].job_seconds, 10.5)
         self.assertEqual(jobs[1][3], 'Defeat')
         self.assertEqual(jobs[2][3], 'Abort')
         self.assertEqual(completed, (6, 6, 4))
@@ -208,8 +210,8 @@ class QueueTests(unittest.TestCase):
         actual = table.read_bytes().decode()
         self.assertTrue(actual.startswith(header))
         self.assertTrue(actual.endswith(row3))
-        self.assertIn('S002,"a, note",W1 L0 A1,W0 L1 A0,10,abort,', actual)
-        self.assertIn('S003,"two\nlines",W2 L0 A0,W1 L0 A0,12,win,', actual)
+        self.assertIn('S002,"a, note",W1 L0 A1,W0 L1 A0,unproven,abort,', actual)
+        self.assertIn('S003,"two\nlines",W2 L0 A0,W1 L0 A0,unproven,win,', actual)
         self.assertIn(',"keep ""quotes"""\r\n', actual)
         rows = list(csv.DictReader(io.StringIO(actual, newline='')))
         self.assertEqual(rows[0]['last_log'], str(log.resolve()))
@@ -251,7 +253,7 @@ class QueueTests(unittest.TestCase):
         proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)), '--rescan', str(log)], capture_output=True, text=True)
         self.assertEqual(proc.returncode, 0, proc.stderr)
         self.assertIn('units_available=unproven units_used_by_aria=unproven result_return_ok=yes checkpoint_ok=unproven', proc.stdout)
-        self.assertIn('locale=en units_available=unproven units_used_by_aria=unproven result_return_ok=unproven', proc.stdout)
+        self.assertIn('result_return_ok=unproven', proc.stdout.splitlines()[1])
         evidence = runner.scan_evidence(log.read_text().splitlines())
         lookup = {(e['mission'], e['seed'], e['locale']): e for e in evidence.values()}
         jobs, _ = runner.parse_log(log.read_text())
@@ -322,6 +324,130 @@ class QueueTests(unittest.TestCase):
         with table.open() as stream:
             row = next(csv.DictReader(stream))
         self.assertEqual((row['units_available'], row['units_used_by_aria']), ('unproven', 'unproven'))
+
+    def test_frozen_clocks_match_attempt_and_dispatch(self):
+        jobs, _ = runner.parse_log("""[SkirmishAriaQueue] dispatch job=1/2 catalog=S026 seed=13 locale=en
+[SkirmishTerminalFrozen] result=Passed initial={attempt=expanded-s026-130-x elapsed=777}
+[SkirmishTerminalFrozen] result=Passed initial={attempt=expanded-s002-13-x elapsed=888}
+[SkirmishTerminalFrozen] result=Passed initial={found=1 attempt=expanded-s026-13-abc elapsed=147.868} delayed={attempt=expanded-s026-13-abc elapsed=900}
+[SkirmishTerminalFrozen] result=Passed initial={attempt=expanded-s026-13-abc elapsed=456}
+[SkirmishAriaQueue] dispatch job=2/2 catalog=S026 seed=13 locale=fa-IR
+[SkirmishTerminalFrozen] result=Failed attempt=expanded-s026-13-def elapsed=13.25
+[SkirmishAriaQueue] job=1/2 catalog=S026 seed=13 locale=en result=Victory seconds=218.3
+[SkirmishAriaQueue] job=2/2 catalog=S026 seed=13 locale=fa-IR result=Defeat seconds=210
+""")
+        self.assertEqual([(j.match_seconds, j.line, j.job_seconds) for j in jobs],
+                         [(147.868, 4, 218.3), (13.25, 7, 210.0)])
+
+    def test_dispatchless_repeated_seed_needs_one_attempt_per_locale(self):
+        frozen = '[SkirmishTerminalFrozen] attempt=expanded-s002-1-'
+        summaries = ('[SkirmishAriaQueue] job=1/2 catalog=S002 seed=1 locale=en result=Victory seconds=20\n'
+                     '[SkirmishAriaQueue] job=2/2 catalog=S002 seed=1 locale=fa-IR result=Victory seconds=21')
+        first = frozen + 'abc elapsed=2\n' + frozen + 'abc elapsed=3\n'
+        jobs, _ = runner.parse_log(first + frozen + 'def elapsed=4\n' + summaries)
+        self.assertEqual([job.match_seconds for job in jobs], [2, 4])
+        jobs, _ = runner.parse_log(first + summaries)
+        self.assertEqual([job.match_seconds for job in jobs], [None, None])
+
+    def test_missing_elapsed_uses_matching_candidate_row_only(self):
+        sha = 'a' * 64
+        base = self.root / 'Design/AgentReports/SkirmishExpansion/S026/_Evidence/candidates'
+        path = base / sha / 'runs.csv'
+        path.parent.mkdir(parents=True)
+        header = 'run_id,catalog_id,seed,locale,result,duration_seconds\n'
+        rows = ('S026-aria-rs-1-en-1,S026,1,en,Victory,300\n'
+                'S026-aria-rs-1-en-2,S026,1,en,Victory,147.868\n')
+        path.write_text(header + rows)
+        log = f"""[SkirmishAriaQueue] result=Started jobs=1 sha256={sha}
+[SkirmishAriaQueue] dispatch job=1/1 catalog=S026 seed=1 locale=en
+[SkirmishTerminalFrozen] result=Passed initial={{attempt=expanded-s026-1-abc}} delayed={{attempt=expanded-s026-1-abc elapsed=999}}
+[SkirmishTerminalFrozen] result=Passed initial={{attempt=expanded-s026-1-abc elapsed=888}}
+S026-aria-rs-1-en-2,S026,more fields
+[SkirmishAriaQueue] job=1/1 catalog=S026 seed=1 locale=en result=Victory seconds=218.3 recorded=1 countedWin=1
+"""
+        def score(snippet):
+            return runner.scan_queue(snippet.splitlines(), self.root)[0][0]
+        job = score(log)
+        self.assertEqual((job.match_seconds, job.line, job.clock_source), (147.868, 6, f'{path}:3'))
+        self.assertEqual(score(log.replace('abc}', 'abc elapsed=12.34}')).match_seconds, 12.34)
+        for changed in (log.replace(sha, 'b' * 64), log.replace('recorded=1', 'recorded=0'),
+                        log.replace('locale=en', 'locale=fa-IR'), log.replace('result=Victory', 'result=Abort'),
+                        log.replace('S026-aria-rs-1-en-2,', 'no echoed id,')):
+            with self.subTest(changed=changed):
+                self.assertIsNone(score(changed).match_seconds)
+        path.write_text(header + rows.replace('147.868', 'NaN'))
+        self.assertIsNone(score(log).match_seconds)
+        path.write_text(header + rows.splitlines()[0] + '\n')
+        self.assertEqual(score(log.replace('S026-aria-rs-1-en-2,', 'no echoed id,')).match_seconds, 300)
+
+    def test_warmup_requires_flag_unique_catalog_and_first_job(self):
+        log = self.root / 'unity.log'
+        snippet = """[SkirmishAriaQueue] job=1/2 catalog=S004 seed=1 locale=en result=Victory seconds=200
+[SkirmishAriaQueue] job=2/2 catalog=S002 seed=2 locale=en result=Abort seconds=150
+"""
+        log.write_text(snippet)
+        table = self.root / 'table.csv'
+        header = ','.join(('mission_id', *runner.COLUMNS))
+        untouched = 'S004' + ',old' * len(runner.COLUMNS)
+        table.write_text(header + '\n' + untouched + '\nS002' + ',old' * len(runner.COLUMNS) + '\n')
+        args = ['--rescan', str(log), '--table', str(table)]
+        with mock.patch('sys.stdout', new_callable=io.StringIO) as out:
+            self.assertEqual(runner.main(args), 0)
+            self.assertEqual(out.getvalue().count('class=counted'), 2)
+        with mock.patch('sys.stdout', new_callable=io.StringIO) as out:
+            self.assertEqual(runner.main(args + ['--warmup-first', '--write']), 0)
+            self.assertIn('class=warmup job=1/2 catalog=S004', out.getvalue())
+            self.assertIn('class=counted job=2/2 catalog=S002', out.getvalue())
+        self.assertEqual(table.read_text().splitlines()[1], untouched)
+        self.assertIn('W0 L0 A1', table.read_text().splitlines()[2])
+        log.write_text(snippet.replace('S004', 'S002'))
+        with mock.patch('sys.stdout', new_callable=io.StringIO) as out:
+            self.assertEqual(runner.main(args + ['--warmup-first']), 0)
+            self.assertEqual(out.getvalue().count('class=counted'), 2)
+
+    def test_rescan_all_orders_by_mtime_and_replaces_only_latest_mission_sets(self):
+        date_dir = self.root / 'date'
+        old = date_dir / 'z' / 'unity.log'
+        latest = date_dir / 'a' / 'queue' / 'unity.log'
+        probe = date_dir / 'resume' / 'unity.log'
+        deep = date_dir / 'a' / 'b' / 'c' / 'unity.log'
+        for path in (old, latest, probe, deep):
+            path.parent.mkdir(parents=True)
+        old.write_text("""[SkirmishTerminalFrozen] attempt=expanded-s002-1-abc elapsed=12.5
+[SkirmishAriaQueue] job=1/2 catalog=S002 seed=1 locale=fa-IR result=Victory seconds=90
+[SkirmishAriaQueue] job=2/2 catalog=S004 seed=1 locale=en result=Draw seconds=40
+""")
+        latest.write_text("""[SkirmishTerminalFrozen] result=Passed initial={attempt=expanded-s002-2-abc elapsed=11.75}
+[SkirmishTerminalFrozen] result=Passed initial={attempt=expanded-s002-3-def elapsed=14.75}
+[SkirmishAriaQueue] job=1/3 catalog=S002 seed=2 locale=en result=Victory seconds=50
+[SkirmishAriaQueue] job=2/3 catalog=S002 seed=3 locale=en result=Victory seconds=75
+[SkirmishAriaQueue] job=3/3 catalog=S002 seed=4 locale=en result=Abort seconds=30
+""")
+        probe.write_text('[SkirmishTerminalFrozen] attempt=expanded-s002-1-abc elapsed=1000\n')
+        deep.write_text(old.read_text())
+        for index, path in enumerate((old, latest, probe, deep), 1):
+            os.utime(path, (index, index))
+        table = self.root / 'table.csv'
+        header = ','.join(('mission_id', 'deadline_s', *runner.COLUMNS))
+        original = header + '\n' + ''.join(mission + ',100' + ',old' * len(runner.COLUMNS) + '\n'
+                                             for mission in ('S002', 'S004'))
+        table.write_text(original)
+        args = ['--rescan-all', str(date_dir), '--table', str(table)]
+        with mock.patch('sys.stdout', new_callable=io.StringIO) as out:
+            self.assertEqual(runner.main(args), 0)
+        lines = out.getvalue().splitlines()
+        self.assertEqual(len(lines), 5)
+        self.assertIn(f'log={old}:1', lines[0])
+        self.assertIn(f'log={latest}:1', lines[2])
+        self.assertIn('match_seconds=11.75 job_seconds=50.0 deadline_pct=11.75% unused=unproven', lines[2])
+        self.assertEqual(table.read_text(), original)
+        with mock.patch('sys.stdout', new_callable=io.StringIO):
+            self.assertEqual(runner.main(args + ['--write']), 0)
+        with table.open() as stream:
+            updated, older = csv.DictReader(stream)
+        self.assertEqual((updated['aria_en'], updated['aria_fa'], updated['aria_time_s'], updated['unity_result'],
+                          updated['last_log']), ('W2 L0 A1', '', '13', 'abort', str(latest)))
+        self.assertEqual((older['aria_en'], older['aria_time_s'], older['last_log']), ('W0 L1 A0', '', str(old)))
 
     def test_draw_and_no_victory(self):
         table = self.root / 'table.csv'

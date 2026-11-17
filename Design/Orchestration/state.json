@@ -2,9 +2,9 @@
   "schema": 1,
   "cycle_active": false,
   "cycle_owner": "",
-  "cycle_started": "2026-11-17T20:38:00+01:00",
+  "cycle_started": "2026-11-17T21:41:00+01:00",
   "unity_lane": "idle",
-  "phase": "lane worker 14 done: menu journey, coverage-7/8, S006 re-authored, queues A/B run",
+  "phase": "lane worker 15 done: S002 155923 repro 0/2 losses (Victory, Abort Blocked)",
   "integration_branch": "missions/integration",
   "notes": "A cycle is stale if cycle_started is more than 3 hours old and no Unity Editor owns this project. A stale cycle may be taken over."
 }

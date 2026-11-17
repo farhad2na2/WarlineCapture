@@ -304,9 +304,14 @@ def check(draft, catalog, matrix, bounds='auto'):
     if not isinstance(draft, dict):
         return [('draft', 'JSON root must be an object')]
     for key in draft.keys() - {'catalog_id', 'campaign_source', 'anchors', 'pads', 'routes', 'notes',
-                               'instance_pads', 'structure_footprints',
+                               'instance_pads', 'structure_footprints', 'pad_slack_m',
                                'objective_areas', 'area_measurement'}:
         fail('draft', 'unknown key ' + key)
+    # SkirmishMissionAuthoringEntry.ReadPadSlack: optional relocation slack in metres per side, 0..64 (default 12).
+    slack = draft.get('pad_slack_m')
+    if slack is not None and (isinstance(slack, bool) or not isinstance(slack, (int, float)) or
+                              not math.isfinite(slack) or slack < 0 or slack > 64):
+        fail('pad_slack_m', 'must be a number of metres between 0 and 64')
     # SkirmishMissionDispatch.cs:61-72; SkirmishMissionAuthoringEntry.cs:128-135.
     cid = draft.get('catalog_id')
     canonical = isinstance(cid, str) and re.fullmatch(r'S[0-9]{3}', cid) and 1 <= int(cid[1:]) <= 120

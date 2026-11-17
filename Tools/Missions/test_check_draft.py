@@ -59,6 +59,10 @@ class DraftChecks(unittest.TestCase):
             ('route.width', bad_route_width), ('route.repeat', repeated_route_point),
             ('route.backtrack', backtrack), ('route.distinct', duplicate_route),
             ('route.main', no_main),
+            ('pad_slack_m', lambda d: d.update(pad_slack_m=-1)),
+            ('pad_slack_m', lambda d: d.update(pad_slack_m=65)),
+            ('pad_slack_m', lambda d: d.update(pad_slack_m='12')),
+            ('pad_slack_m', lambda d: d.update(pad_slack_m=True)),
         ]
         for rule, mutate in cases:
             with self.subTest(rule=rule):
@@ -66,6 +70,12 @@ class DraftChecks(unittest.TestCase):
                 mutate(draft)
                 self.assertIn(rule, [r for r, _ in checker.check(draft, self.catalog, self.matrix)])
         self.assertIn('matrix', [r for r, _ in checker.check(self.example, self.catalog, [])])
+
+    def test_pad_slack_accepted(self):
+        for value in (0, 12, 12.5, 64):
+            draft = copy.deepcopy(self.example)
+            draft['pad_slack_m'] = value
+            self.assertEqual([], checker.check(draft, self.catalog, self.matrix), value)
 
     def with_instance_pads(self):
         draft = copy.deepcopy(self.example)

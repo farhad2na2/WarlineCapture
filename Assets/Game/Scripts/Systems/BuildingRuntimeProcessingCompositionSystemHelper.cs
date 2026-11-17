@@ -438,6 +438,7 @@ namespace Game.Runtime
 
                 var requestSpawnContext = runtimeSpawnContext;
                 int grantBuildingRejected = 0, grantSurfaceRejected = 0, grantSidewalkRejected = 0, grantOriginalRejected = 0;
+                int grantPadRejected = 0, grantAdmittedByPad = 0; string grantPreferredFirstReject = null; // diagnostic only
                 if ((startingGrant || enemyConstruction) && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
                 {
                     using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
@@ -454,24 +455,33 @@ namespace Game.Runtime
                     requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
                     {
                         var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        bool diagPreferred = origin.x == request.PreferredOrigin.x && origin.y == request.PreferredOrigin.y;
                         if (!SkirmishStartingGrantPlacementConstraint.AllowsCandidate(typedGrantRequired,
                             typedGrantLayout, typedGrantPad, g, typedGrantSourceBounds,
                             new RectInt(rect.x, rect.y, rect.width, rect.height)))
+                        {
+                            grantPadRejected++;
+                            if (diagPreferred && grantPreferredFirstReject == null)
+                                grantPreferredFirstReject = "typedPad:" + SkirmishStartingGrantPlacementConstraint.DescribeFirstReject(
+                                    typedGrantLayout, typedGrantPad, g, typedGrantSourceBounds, new RectInt(rect.x, rect.y, rect.width, rect.height));
                             return false;
+                        }
+                        grantAdmittedByPad++;
                         if (enemyConstruction && !SkirmishEnemyConstructionAdapter.NativeRectFits(em,request,
-                            new int2(rect.x,rect.y),new int2(rect.width,rect.height))) { grantOriginalRejected++;return false; }
-                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; return false; }
+                            new int2(rect.x,rect.y),new int2(rect.width,rect.height))) { grantOriginalRejected++; if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = "enemyConstruction"; return false; }
+                        if (_skirmishBuildings.Overlaps(g, rect.position, rect.size)) { grantBuildingRejected++; if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = "sourceBuildings"; return false; }
                         bool authoredRoad=_skirmishRoads.Overlaps(g,rect.position,rect.size),water=_skirmishRoads.OverlapsWater(g,rect.position,rect.size);
                         if(authoredRoad||water)
-                        {grantSurfaceRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
+                        {grantSurfaceRejected++; if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = authoredRoad ? "road" : "water";if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-surface road={authoredRoad} water={water} rect={rect}");return false;}
                         var sidewalks = _skirmishRoads.GetSidewalks();
                         for (int y = rect.yMin; y < rect.yMax; y++)
                             for (int x = rect.xMin; x < rect.xMax; x++)
                                 if (x < 0 || y < 0 || x >= g.Width || y >= g.Height ||
                                     sidewalks != null && sidewalks[y * g.Width + x])
-                                {grantSidewalkRejected++;if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
+                                {grantSidewalkRejected++; if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = "sidewalkOrBounds";if(citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=grant-sidewalk-or-bounds cell=({x},{y}) rect={rect}");return false;}
                         bool valid=originalContext.IsPlacementValid(d,origin,footprint,rotated,g,roads,blockers);
-                        if (!valid) grantOriginalRejected++;
+                        if (!valid) { grantOriginalRejected++; if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = "originalContext(campaignPolicy|surface|occupant|invalidCell)"; }
+                        else if (diagPreferred && grantPreferredFirstReject == null) grantPreferredFirstReject = "none(valid)";
                         if(!valid&&citywideDiagnostic)UnityEngine.Debug.LogError($"[CitywidePlacement] request={request.RequestId} reject=original-placement-context rect={rect}");
                         return valid;
                     });
@@ -708,7 +718,7 @@ namespace Game.Runtime
                     ? BuildingRuntimeSpawnRequest.Succeeded
                     : BuildingRuntimeSpawnRequest.Failed;
                 if (!placed && startingGrant)
-                    UnityEngine.Debug.LogWarning($"[StartingGrantPlacement] failed building={request.BuildingId} faction={request.FactionId} sourceBuildings={grantBuildingRejected} roadOrWater={grantSurfaceRejected} sidewalkOrBounds={grantSidewalkRejected} originalContext={grantOriginalRejected}");
+                    UnityEngine.Debug.LogWarning($"[StartingGrantPlacement] failed building={request.BuildingId} faction={request.FactionId} sourceBuildings={grantBuildingRejected} roadOrWater={grantSurfaceRejected} sidewalkOrBounds={grantSidewalkRejected} originalContext={grantOriginalRejected} typedPad={grantPadRejected} admittedByPad={grantAdmittedByPad} preferredFirstReject={grantPreferredFirstReject ?? "notEvaluated"} preferred=({request.PreferredOrigin.x},{request.PreferredOrigin.y})");
                 if (placed)
                     _forcePublishNextUpdate = true;
                 request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;

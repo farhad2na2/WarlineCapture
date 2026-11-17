@@ -93,13 +93,54 @@ namespace Game.Editor
         /// The pad centre is unchanged.
         /// </summary>
         public static void EncloseWorldAlignedFootprint(float forwardX, float forwardZ, float acrossX, float acrossZ,
-            float footprintWidth, float footprintDepth, float cellSize, out float padWidth, out float padDepth)
+            float footprintWidth, float footprintDepth, float cellSize, out float padWidth, out float padDepth,
+            float slackMetres = 0f)
         {
             float cell = cellSize > 0f ? cellSize : 1f;
-            float w = footprintWidth + 2f * cell + EnvelopeEpsilonMetres;
-            float d = footprintDepth + 2f * cell + EnvelopeEpsilonMetres;
+            float slack = slackMetres > 0f ? slackMetres : 0f;
+            float w = footprintWidth + 2f * (cell + slack) + EnvelopeEpsilonMetres;
+            float d = footprintDepth + 2f * (cell + slack) + EnvelopeEpsilonMetres;
             padWidth = Math.Abs(forwardX) * w + Math.Abs(forwardZ) * d;
             padDepth = Math.Abs(acrossX) * w + Math.Abs(acrossZ) * d;
+        }
+
+        /// <summary>
+        /// Relocation slack (metres per side, draft key pad_slack_m). With the one-cell snap margin alone a pad admits
+        /// only a 3x3 block of grid origins (the S026/S050/S049 BlockedSpawn finding: 9 origins, all on road, water or
+        /// map buildings), so the shared placement search cannot move a building off blocked ground. 12 m is about one
+        /// 12 m road width (routes use 12 m): a building can step clear of a road or a map building and still stay
+        /// within about one building width of the measured centre. Pads may overlap each other: the exact
+        /// StructureInstancePads row picks the pad, and the shared placement still rejects overlap with any building.
+        /// </summary>
+        public const float DefaultPadSlackMetres = 12f;
+        public const float MaxPadSlackMetres = 64f;
+
+        /// <summary>
+        /// The largest slack in [0, requested] (0.25 m steps) for which all four corners of the stored pad stay inside
+        /// the playable rectangle [min, max] (map x/z). Slack never grows a pad past what the runtime would accept
+        /// anyway (candidates must lie in the playable bounds). If the pad is outside even without slack, returns 0.
+        /// </summary>
+        public static float CapSlackToBounds(float centerX, float centerZ, float forwardX, float forwardZ, float acrossX, float acrossZ,
+            float footprintWidth, float footprintDepth, float cellSize, float requestedSlack,
+            float minX, float minZ, float maxX, float maxZ)
+        {
+            for (float slack = requestedSlack > 0f ? requestedSlack : 0f; slack > 0f; slack -= 0.25f)
+                if (CornersInside(centerX, centerZ, forwardX, forwardZ, acrossX, acrossZ, footprintWidth, footprintDepth, cellSize, slack,
+                        minX, minZ, maxX, maxZ)) return slack;
+            return 0f;
+        }
+
+        private static bool CornersInside(float cx, float cz, float fx, float fz, float ax, float az,
+            float width, float depth, float cell, float slack, float minX, float minZ, float maxX, float maxZ)
+        {
+            EncloseWorldAlignedFootprint(fx, fz, ax, az, width, depth, cell, out float pw, out float pd, slack);
+            foreach (float sf in new[] { -.5f, .5f })
+                foreach (float sa in new[] { -.5f, .5f })
+                {
+                    float x = cx + fx * pw * sf + ax * pd * sa, z = cz + fz * pw * sf + az * pd * sa;
+                    if (x < minX || x > maxX || z < minZ || z > maxZ) return false;
+                }
+            return true;
         }
 
         public delegate bool FootprintResolver(string structureId, out float widthMetres, out float depthMetres);

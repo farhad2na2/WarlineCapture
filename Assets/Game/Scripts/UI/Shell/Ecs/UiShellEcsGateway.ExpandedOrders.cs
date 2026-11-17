@@ -54,6 +54,7 @@ namespace Game.UI.Shell.Ecs
                     SourceMembers=receipt.SourceMembers,ScreenPosition=new UnityEngine.Vector2(receipt.ScreenPosition.x,receipt.ScreenPosition.y)};
             }
             page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3) | AirBit(slot4, 4);
+            page.RadarMask = RadarBit(slot0, 0) | RadarBit(slot1, 1) | RadarBit(slot2, 2) | RadarBit(slot3, 3) | RadarBit(slot4, 4);
             return true;
         }
 
@@ -100,6 +101,11 @@ namespace Game.UI.Shell.Ecs
         private static int OrderBit(in SkirmishPresentedSlot slot, int index)
         {
             return slot.Occupied && slot.AttackOrdered ? 1 << index : 0;
+        }
+
+        private static int RadarBit(in SkirmishPresentedSlot slot, int index)
+        {
+            return slot.Occupied && slot.Role == Game.Skirmish.Contracts.SkirmishRoleKind.Radar ? 1 << index : 0;
         }
 
         private static int AirBit(in SkirmishPresentedSlot slot, int index)

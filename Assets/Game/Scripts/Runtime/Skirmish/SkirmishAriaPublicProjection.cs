@@ -52,6 +52,8 @@ namespace Game.Runtime
                 view.RocketeerRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rocketeer);
                 view.BreacherRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Breacher);
                 view.BreacherFielded = HasLivingRole(em, session, SkirmishRoleKind.Breacher);
+                view.CoveragePendingMask = PendingRoleMask(em, session, CoverageRoles);
+                view.CoverageFieldedMask = LivingRoleMask(em, session, CoverageRoles);
                 view.OwnStructureAttackUnits = CountPlayerStructureAttackUnits(em, session);
                 view.LogisticsTruckCommitted = HasPendingRecruit(em, session, SkirmishRoleKind.LogisticsTruck) ||
                     HasLivingRole(em, session, SkirmishRoleKind.LogisticsTruck);
@@ -90,6 +92,10 @@ namespace Game.Runtime
                 view.CanAffordBreacher = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
+                for (int i = 0; i < CoverageRoles.Length; i++)
+                    if (SkirmishStrategyScoring.TryAfford(army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays,
+                            perception, SkirmishRoleIds.ToId(CoverageRoles[i]), CoverageRoles[i]))
+                        view.CoverageAffordMask |= 1 << i;
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
@@ -174,6 +180,36 @@ namespace Game.Runtime
                 if (BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(item.BuildingId.ToString()) == key)
                     return item.CanRequest != 0 && materials >= item.MaterialsCost;
             return false;
+        }
+
+        // Gate-3 coverage kinds, in purchase order; bit i of the coverage masks is CoverageRoles[i].
+        private static readonly SkirmishRoleKind[] CoverageRoles =
+            { SkirmishRoleKind.Marksman, SkirmishRoleKind.ApcFast, SkirmishRoleKind.Radar };
+
+        private static int PendingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
+        {
+            int mask = 0;
+            for (int i = 0; i < roles.Length; i++)
+                if (HasPendingRecruit(em, session, roles[i])) mask |= 1 << i;
+            return mask;
+        }
+
+        // One pass over the player's units for several roles.
+        private static int LivingRoleMask(EntityManager em, Entity session, SkirmishRoleKind[] roles)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            int mask = 0;
+            foreach (var unit in entities)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId != 1 || !owned.SessionId.Equals(id)) continue;
+                var role = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role;
+                for (int i = 0; i < roles.Length; i++)
+                    if (role == roles[i] && (mask & (1 << i)) == 0 && SkirmishArmyGroupSystem.IsAlive(em, unit)) mask |= 1 << i;
+            }
+            return mask;
         }
 
         private static bool HasPendingRecruit(EntityManager em, Entity session, SkirmishRoleKind role)

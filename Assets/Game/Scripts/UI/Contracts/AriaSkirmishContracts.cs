@@ -68,6 +68,11 @@ namespace Game.UI.Contracts
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public AriaTouchTarget RecruitBreacher;
+        // Coverage recruits (bits: 1 marksman, 2 apc_fast, 4 radar) and their Build -> catalog card targets.
+        public int CoverageAffordMask, CoveragePendingMask, CoverageFieldedMask;
+        public AriaTouchTarget RecruitMarksman, RecruitApcFast, RecruitRadar;
+        // Clear public ground behind the presented column, toward home (-20016): the radar order.
+        public AriaTouchTarget RearGround;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
@@ -102,6 +107,7 @@ public SkirmishPublicArmyOrderGoal CurrentAssaultGoal, AdvanceOrderGoal, Visible
         public uint ExpandedGroup(int slot) => slot switch {
             0=>ExpandedGroup0,1=>ExpandedGroup1,2=>ExpandedGroup2,3=>ExpandedGroup3,4=>ExpandedGroup4,_=>0 };
         public int ExpandedAirMask;
+        public int ExpandedRadarMask;
         public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;
         public int ExpandedPageCount, ExpandedTotalGroups, ExpandedSelectedGroups, ExpandedSelectedOffPage;

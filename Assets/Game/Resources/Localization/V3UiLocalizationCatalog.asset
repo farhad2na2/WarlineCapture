@@ -7252,6 +7252,8 @@ MonoBehaviour:
       value: Your main base is still standing.
     - key: ui.skirmish.result.buildings
       value: BUILDINGS LOST / DESTROYED
+    - key: ui.skirmish.result.buildings_lost_count
+      value: "{0} BUILDINGS LOST"
     - key: ui.skirmish.result.complete
       value: Complete
     - key: ui.skirmish.result.defeat
@@ -7268,8 +7270,12 @@ MonoBehaviour:
       value: Held
     - key: ui.skirmish.result.low_losses
       value: Keep squad losses low
+    - key: ui.skirmish.result.low_losses_limit
+      value: "Keep squad losses low ({0} or fewer)"
     - key: ui.skirmish.result.match_complete
       value: MATCH COMPLETE
+    - key: ui.skirmish.result.met_needs_victory
+      value: "MET \u00B7 NEEDS A WIN"
     - key: ui.skirmish.result.mode
       value: SKIRMISH
     - key: ui.skirmish.result.protect_base
@@ -7280,6 +7286,8 @@ MonoBehaviour:
       value: UNITS DEFEATED
     - key: ui.skirmish.result.units_lost
       value: UNITS LOST
+    - key: ui.skirmish.result.units_lost_over_limit
+      value: "{0} LOST \u00B7 LIMIT {1}"
     - key: ui.skirmish.result.victory
       value: VICTORY
     - key: ui.skirmish.retry
@@ -22472,6 +22480,8 @@ MonoBehaviour:
     - key: ui.skirmish.result.buildings
       value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
         \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647 / \u0646\u0627\u0628\u0648\u062F\u0634\u062F\u0647"
+    - key: ui.skirmish.result.buildings_lost_count
+      value: "{0} \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
     - key: ui.skirmish.result.complete
       value: "\u062A\u06A9\u0645\u06CC\u0644 \u0634\u062F"
     - key: ui.skirmish.result.defeat
@@ -22491,8 +22501,12 @@ MonoBehaviour:
     - key: ui.skirmish.result.low_losses
       value: "\u062A\u0644\u0641\u0627\u062A \u0646\u06CC\u0631\u0648\u0647\u0627
         \u0631\u0627 \u06A9\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: ui.skirmish.result.low_losses_limit
+      value: "\u062A\u0644\u0641\u0627\u062A \u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0627 \u06A9\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631 ({0} \u06CC\u0627 \u06A9\u0645\u062A\u0631)"
     - key: ui.skirmish.result.match_complete
       value: "\u0646\u0628\u0631\u062F \u067E\u0627\u06CC\u0627\u0646 \u06CC\u0627\u0641\u062A"
+    - key: ui.skirmish.result.met_needs_victory
+      value: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F \u00B7 \u0646\u06CC\u0627\u0632 \u0628\u0647 \u067E\u06CC\u0631\u0648\u0632\u06CC"
     - key: ui.skirmish.result.mode
       value: "\u0646\u0628\u0631\u062F"
     - key: ui.skirmish.result.protect_base
@@ -22505,6 +22519,8 @@ MonoBehaviour:
         \u062F\u0634\u0645\u0646"
     - key: ui.skirmish.result.units_lost
       value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632\u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: ui.skirmish.result.units_lost_over_limit
+      value: "{0} \u062A\u0644\u0641\u0627\u062A \u00B7 \u0633\u0642\u0641 {1}"
     - key: ui.skirmish.result.victory
       value: "\u067E\u06CC\u0631\u0648\u0632\u06CC"
     - key: ui.skirmish.retry

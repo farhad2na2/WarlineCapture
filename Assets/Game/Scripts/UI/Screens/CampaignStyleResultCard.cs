@@ -22,6 +22,8 @@ namespace Game.UI.Runtime
         public string Objective3State;
         public bool HasObjectiveFacts;
         public byte CompletedObjectives;
+        // Bit i: objective i met its own condition, but its star needs a victory. Shown in gold, not red.
+        public byte MetNeedsVictoryObjectives;
         public string Performance1;
         public string Performance1Value;
         public string Performance2;
@@ -59,6 +61,9 @@ namespace Game.UI.Runtime
         private TMP_Text[] performanceLabels;
         private TMP_Text[] performanceValues;
         private TMP_Text missionHeading;
+        private V3GradientGraphic emblemPanel;
+        private V3StarGraphic emblemStar;
+        private TMP_Text objectivesHeading;
         private RectTransform[] filledStars;
         private V3StarGraphic[] outlinedStars;
         private Button retryButton, replayButton, leaveButton, adjustButton;
@@ -68,17 +73,8 @@ namespace Game.UI.Runtime
         public static byte OperationsStars(bool victory, bool partial) =>
             victory ? (byte)3 : partial ? (byte)2 : (byte)0;
 
-        public static byte SkirmishStars(bool victory, int buildingsLost, int unitsLost)
-        {
-            if (!victory)
-                return 0;
-            int earned = 1;
-            if (buildingsLost == 0)
-                earned++;
-            if (unitsLost <= 2)
-                earned++;
-            return (byte)earned;
-        }
+        public static byte SkirmishStars(bool victory, int buildingsLost, int unitsLost) =>
+            new SkirmishStarCriteria(victory, buildingsLost, unitsLost).Stars;
 
         public static CampaignStyleResultCard Mount(Transform parent, TMP_FontAsset fontAsset)
         {
@@ -105,6 +101,13 @@ namespace Game.UI.Runtime
         public void Present(in ModeResultContent content)
         {
             Color accent = content.Victory ? Green : Loss;
+            // The emblem follows the result: a green filled star only for a victory.
+            emblemPanel.Configure(
+                content.Victory ? (Color)new Color32(29, 76, 20, 255) : new Color32(91, 19, 14, 255),
+                content.Victory ? (Color)new Color32(8, 29, 9, 255) : new Color32(31, 5, 5, 255),
+                accent, 3f);
+            emblemStar.Configure(accent, !content.Victory, DarkBottom);
+            objectivesHeading.color = accent;
             Set(title, content.Title);
             title.color = accent;
             Set(identity, content.Identity);
@@ -126,7 +129,8 @@ namespace Game.UI.Runtime
                 Set(objectiveStates[i], state);
                 bool completed = content.HasObjectiveFacts
                     ? (content.CompletedObjectives & (1 << i)) != 0 : IsComplete(state);
-                objectiveStates[i].color = completed ? Green : Loss;
+                bool metNeedsVictory = (content.MetNeedsVictoryObjectives & (1 << i)) != 0;
+                objectiveStates[i].color = completed ? Green : metNeedsVictory ? Gold : Loss;
             }
             Set(performanceLabels[0], content.Performance1);
             Set(performanceLabels[1], content.Performance2);
@@ -164,7 +168,8 @@ namespace Game.UI.Runtime
         {
             Panel("Board", transform, Vector2.zero, new Vector2(1672f, 941f), DarkTop, DarkBottom, Line);
             var emblem = Panel("Emblem", transform, new Vector2(15f, -16f), new Vector2(165f, 171f), new Color32(29, 76, 20, 255), new Color32(8, 29, 9, 255), Green);
-            var emblemStar = Star(emblem, new Vector2(28f, -24f), new Vector2(109f, 123f), false);
+            emblemPanel = emblem.GetComponent<V3GradientGraphic>();
+            emblemStar = Star(emblem, new Vector2(28f, -24f), new Vector2(109f, 123f), false);
             emblemStar.Configure(Green, false, DarkBottom);
             var titlePanel = Panel("Title", transform, new Vector2(180f, -16f), new Vector2(485f, 171f), DarkTop, DarkBottom, Line);
             title = MakeLabel(titlePanel, new Vector2(28f, -27f), new Vector2(430f, 116f), 68f, Green, TextAlignmentOptions.MidlineLeft);
@@ -188,7 +193,8 @@ namespace Game.UI.Runtime
             elapsed = MakeLabel(timePanel, new Vector2(15f, -58f), new Vector2(163f, 56f), 32f, Blue, TextAlignmentOptions.Center);
 
             var objectives = Panel("Objectives", transform, new Vector2(15f, -203f), new Vector2(980f, 430f), DarkTop, DarkBottom, Line);
-            Set(MakeLabel(objectives, new Vector2(28f, -16f), new Vector2(400f, 48f), 29f, Green, TextAlignmentOptions.MidlineLeft), "OBJECTIVES");
+            objectivesHeading = MakeLabel(objectives, new Vector2(28f, -16f), new Vector2(400f, 48f), 29f, Green, TextAlignmentOptions.MidlineLeft);
+            Set(objectivesHeading, "OBJECTIVES");
             objectiveLabels = new TMP_Text[3];
             objectiveStates = new TMP_Text[3];
             for (int i = 0; i < 3; i++)

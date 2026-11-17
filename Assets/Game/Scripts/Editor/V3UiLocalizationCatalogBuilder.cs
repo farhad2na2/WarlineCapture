@@ -946,6 +946,10 @@ namespace Game.Editor
             AddRuntimeText("ui.skirmish.aggression", "Aggression", "تهاجم");
             AddRuntimeText("ui.skirmish.fog_of_war", "FOG OF WAR", "مه جنگ");
             AddRuntimeText("ui.skirmish.intel_reveal", "INTEL REVEAL", "افشای اطلاعات");
+            AddRuntimeText("ui.skirmish.result.met_needs_victory", "MET · NEEDS A WIN", "انجام شد · نیاز به پیروزی");
+            AddRuntimeText("ui.skirmish.result.buildings_lost_count", "{0} BUILDINGS LOST", "{0} ساختمان از دست رفت");
+            AddRuntimeText("ui.skirmish.result.units_lost_over_limit", "{0} LOST · LIMIT {1}", "{0} تلفات · سقف {1}");
+            AddRuntimeText("ui.skirmish.result.low_losses_limit", "Keep squad losses low ({0} or fewer)", "تلفات نیروها را کم نگه دار ({0} یا کمتر)");
             AddRuntimeText("ui.store.purchase_price", "PURCHASE {0}", "خرید {0}");
             AddRuntimeText("ui.inbox.open_via_intel", "OPEN VIA INTEL", "بازکردن از بخش اطلاعات");
             AddRuntimeText("ui.inbox.from", "From: {0}", "از: {0}");

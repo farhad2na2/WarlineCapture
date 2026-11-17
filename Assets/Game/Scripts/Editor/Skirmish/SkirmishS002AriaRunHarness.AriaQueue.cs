@@ -80,6 +80,10 @@ namespace Game.Editor
                 error = "Catalog " + catalog + " does not resolve to a definition in the expansion catalog.";
                 return false;
             }
+            // Harness-only: authored missions stay library=Planned (SkirmishMissionAuthoringEntry
+            // never publishes). Expose exactly this mission through a scoped Editor candidate
+            // library so the unchanged runtime dispatch can resolve it; the shipped asset is untouched.
+            EnsureHarnessGenericLibrary(catalog, definition);
             // The harness queues through the published library index; counterparts
             // with legacy indices <= 7 (S001/S025/S073) launch a different path.
             if (!SkirmishMissionDispatch.TryGetGenericById(SkirmishBattleCatalogConfig.Load(), catalog, out entry) ||
@@ -91,6 +95,58 @@ namespace Game.Editor
             }
             error = null;
             return true;
+        }
+
+        private const int HarnessGenericIndexBase = 200;
+        private static IDisposable harnessGenericLibraryScope;
+        private static SkirmishBattleCatalogConfig harnessGenericLibrary;
+        private static string harnessGenericLibraryCatalog;
+
+        private static void DisposeHarnessGenericLibrary()
+        {
+            harnessGenericLibraryScope?.Dispose();
+            harnessGenericLibraryScope = null;
+            if (harnessGenericLibrary != null) UnityEngine.Object.DestroyImmediate(harnessGenericLibrary);
+            harnessGenericLibrary = null;
+            harnessGenericLibraryCatalog = null;
+        }
+
+        // Idempotent and domain-reload safe (re-run on each resolve). Only flips the single shipped
+        // row of an authored, still-Planned mission whose definition is bound by id and version;
+        // missing rows, duplicate rows, rows already Playable and mismatched definitions are left
+        // untouched so the normal lookup and MatchesDefinition keep refusing them.
+        private static void EnsureHarnessGenericLibrary(string catalog, SkirmishScenarioDefinitionConfig definition)
+        {
+            if (harnessGenericLibraryCatalog == catalog && harnessGenericLibraryScope != null) return;
+            DisposeHarnessGenericLibrary();
+            var shipped = Resources.Load<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogConfig.ResourceName);
+            if (shipped == null || definition == null || !SkirmishMissionDispatch.Canonical(catalog) ||
+                definition.CatalogId != catalog || definition.ContentVersion <= 0 ||
+                definition.DefinitionId != SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(catalog)).Value)
+                return;
+            int index = HarnessGenericIndexBase + int.Parse(catalog.Substring(1), CultureInfo.InvariantCulture);
+            var rows = new SkirmishBattleCatalogEntry[shipped.Entries.Count];
+            int matches = 0, row = -1;
+            for (int i = 0; i < rows.Length; i++)
+            {
+                rows[i] = shipped.Entries[i];
+                if (rows[i].IsPlayable && rows[i].PlayableScenarioIndex == index) return;
+                if (rows[i].ScenarioId == catalog) { matches++; row = i; }
+            }
+            if (matches != 1 || rows[row].Status != SkirmishBattleCatalogStatus.Planned) return;
+            rows[row].Status = SkirmishBattleCatalogStatus.Playable;
+            rows[row].PlayableScenarioIndex = index;
+            rows[row].DefinitionId = definition.DefinitionId;
+            rows[row].ContentVersion = definition.ContentVersion;
+            var candidate = ScriptableObject.CreateInstance<SkirmishBattleCatalogConfig>();
+            candidate.hideFlags = HideFlags.HideAndDontSave;
+            candidate.Configure(rows);
+            try { harnessGenericLibraryScope = SkirmishBattleCatalogConfig.UseEditorValidationCatalog(candidate); }
+            catch (InvalidOperationException) { UnityEngine.Object.DestroyImmediate(candidate); return; }
+            harnessGenericLibrary = candidate;
+            harnessGenericLibraryCatalog = catalog;
+            Debug.Log(AriaQueueLog + " harnessLibrary=1 catalog=" + catalog + " index=" + index + " definition=" +
+                definition.DefinitionId + " v" + definition.ContentVersion.ToString(CultureInfo.InvariantCulture) + " published=0");
         }
 
         private static bool TryCreateGenericAriaPayload(string catalog, int selectedSeed, string selectedLocale,
@@ -298,6 +354,7 @@ namespace Game.Editor
             if (!SessionState.GetBool(AriaQueueActiveKey, false))
             {
                 EditorApplication.update -= AriaQueueUpdate;
+                DisposeHarnessGenericLibrary();
                 return;
             }
             bool idle = !EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isCompiling &&

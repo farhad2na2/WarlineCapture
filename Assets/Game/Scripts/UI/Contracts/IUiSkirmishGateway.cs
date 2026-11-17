@@ -61,6 +61,8 @@ namespace Game.UI.Contracts
         // Support unit kind per slot (2 bits per slot: 1 radar, 2 drone, 3 transport heli); not assault roles,
         // ordered once by AriaSupportOrderPolicy.
         public int SupportSlots;
+        // Cards whose presented role fights armour (rocketeer, tank, siege): home defence against a shelling tank.
+        public int AntiArmorMask;
         public bool NextPage;
     }
 

@@ -66,6 +66,13 @@ namespace Game.UI.Contracts
         public AriaTouchTarget HomeGround;
         // Evidence: why HomeGround was not offered (1 crowded, 2 off screen, 4 covered; 8 not evaluated).
         public int HomeGroundRefusal;
+        // Ranged raid on home (AriaHomeDefensePolicy.DefenseTarget): the nearest presented enemy minimap marker
+        // within AriaPublicHomeThreatPolicy.RangedRadius of home that is not already a presented home threat.
+        // HomeAttackerSight: 0 none, 1 fog-visible unit, 2 last-seen ghost marker. HomeAttacker is that visible
+        // unit's on-screen attack tap (-20002); HomeAttackerGround the clear ground beside it (-20006).
+        // HomeGroundFar: clear home ground on the side away from the column (-20006).
+        public AriaTouchTarget HomeAttacker, HomeAttackerGround, HomeGroundFar;
+        public int HomeAttackerSight; public float HomeAttackerDistance;
         public int OwnStructureAttackUnits;
         // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
         public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
@@ -124,6 +131,8 @@ public SkirmishPublicArmyOrderGoal CurrentAssaultGoal, AdvanceOrderGoal, Visible
         public int ExpandedAirMask;
         // Support unit kind per roster slot on this page (2 bits per slot: 1 radar, 2 drone, 3 transport heli).
         public int ExpandedSupportSlots;
+        // Roster cards on this page whose presented role fights armour (rocketeer, tank, siege).
+        public int ExpandedAntiArmorMask;
         public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;
         public int ExpandedPageCount, ExpandedTotalGroups, ExpandedSelectedGroups, ExpandedSelectedOffPage;

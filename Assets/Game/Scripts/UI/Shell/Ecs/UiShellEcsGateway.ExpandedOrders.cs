@@ -54,6 +54,7 @@ namespace Game.UI.Shell.Ecs
                     SourceMembers=receipt.SourceMembers,ScreenPosition=new UnityEngine.Vector2(receipt.ScreenPosition.x,receipt.ScreenPosition.y)};
             }
             page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3) | AirBit(slot4, 4);
+            page.AntiArmorMask = AntiArmorBit(slot0, 0) | AntiArmorBit(slot1, 1) | AntiArmorBit(slot2, 2) | AntiArmorBit(slot3, 3) | AntiArmorBit(slot4, 4);
             page.SupportSlots = Game.Simulation.AriaSupportOrderPolicy.Slots(PresentedSupportKind(slot0), PresentedSupportKind(slot1), PresentedSupportKind(slot2), PresentedSupportKind(slot3), PresentedSupportKind(slot4));
             return true;
         }
@@ -113,6 +114,13 @@ namespace Game.UI.Shell.Ecs
                 Game.Skirmish.Contracts.SkirmishRoleKind.TransportHeli => Game.Simulation.AriaSupportKind.TransportHeli,
                 _ => Game.Simulation.AriaSupportKind.None
             };
+        }
+
+        private static int AntiArmorBit(in SkirmishPresentedSlot slot, int index)
+        {
+            if (!slot.Occupied) return 0;
+            return slot.Role is Game.Skirmish.Contracts.SkirmishRoleKind.Rocketeer or Game.Skirmish.Contracts.SkirmishRoleKind.Tank
+                or Game.Skirmish.Contracts.SkirmishRoleKind.Siege ? 1 << index : 0;
         }
 
         private static int AirBit(in SkirmishPresentedSlot slot, int index)

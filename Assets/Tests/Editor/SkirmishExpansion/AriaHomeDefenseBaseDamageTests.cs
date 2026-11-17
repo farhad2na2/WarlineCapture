@@ -43,7 +43,9 @@ namespace Game.Tests.Editor
             Assert.IsFalse(AriaBaseDamagePolicy.Observe(60f, 800f, ref plan));
             Assert.IsTrue(AriaBaseDamagePolicy.Observe(61f, 772f, ref plan));
             Assert.IsTrue(AriaBaseDamagePolicy.Observe(65f, 772f, ref plan), "damage is remembered briefly");
-            var decision = Step(View(65f), ref plan, out bool handled);
+            // The camera is with the column: no home ground is on screen yet, so Home is tapped first.
+            var away = View(65f); away.HomeGroundAvailable = away.ThreatGroundAvailable = false;
+            var decision = Step(away, ref plan, out bool handled);
             Assert.IsTrue(handled);
             Assert.IsTrue(decision.Defend);
             Assert.AreEqual(AriaHomeDefenseAction.InspectHome, decision.Action);
@@ -56,9 +58,9 @@ namespace Game.Tests.Editor
         public void ProportionateDefenderIsOneGroupOnHomeGround()
         {
             var plan = default(AriaHomeDefenseState);
-            var view = View(70f);
+            var view = View(70f); view.HomeGroundAvailable = view.ThreatGroundAvailable = false;
             Assert.AreEqual(AriaHomeDefenseAction.InspectHome, Step(view, ref plan, out _).Action);
-            view.CompletedContacts = 1;
+            view.CompletedContacts = 1; view.HomeGroundAvailable = view.ThreatGroundAvailable = true;
             var decision = Step(view, ref plan, out _);
             Assert.AreEqual(AriaHomeDefenseAction.SelectSlot, decision.Action);
             Assert.AreEqual(0, decision.Slot);
@@ -82,7 +84,7 @@ namespace Game.Tests.Editor
         {
             var plan = new AriaHomeDefenseState { HomeDefenseStage = 8, HomeDefenseScope = 1, HomeDefenseRounds = 1,
                 HomeDefenseReason = AriaHomeDefensePolicy.ReasonBaseDamage, HomeDefenseObserveUntil = 100f };
-            var view = View(80f); view.BaseCritical = true;
+            var view = View(80f); view.BaseCritical = true; view.HomeGroundAvailable = view.ThreatGroundAvailable = false;
             Step(view, ref plan, out bool handled);
             Assert.IsTrue(handled);
             Assert.AreEqual(0, plan.HomeDefenseStage);

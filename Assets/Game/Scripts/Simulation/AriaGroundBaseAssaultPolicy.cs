@@ -638,6 +638,8 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 ToggleAvailable=view.SelectedSquadToToggle.Admitted,AttackAvailable=view.Attack.Admitted,
                 ThreatGroundAvailable=view.ThreatGround.Admitted,ThreatVisibleAvailable=view.Threat.Admitted,
                 BaseDamageOnly=view.BaseDamageHomeThreat,ProportionateDefense=true,HomeGroundAvailable=view.HomeGround.Admitted,
+                AttackerVisibleAvailable=view.HomeAttacker.Admitted,AttackerGroundAvailable=view.HomeAttackerGround.Admitted,
+                HomeGroundFarAvailable=view.HomeGroundFar.Admitted,AntiArmorMask=view.ExpandedAntiArmorMask,
                 BaseCritical=Game.Simulation.AriaBaseDamagePolicy.Critical(plan.HomeHealthPeak,view.PlayerHealth),
                 ExpandedPageIndex=view.ExpandedPageIndex,ExpandedSelectedGroups=view.ExpandedSelectedGroups,ExpandedAssaultMask=view.ExpandedAssaultMask,ExpandedSelectedMask=view.ExpandedSelectedMask,
                 CompletedContacts=touch.Actions,Time=view.Time };
@@ -667,6 +669,9 @@ private static void StepCoreObserved(in AriaS002Observation view,ref AriaS002Pla
                 case Game.Simulation.AriaHomeDefenseAction.AttackThreatTerrain:Target(view.ThreatGround,true,ref output);break;
                 case Game.Simulation.AriaHomeDefenseAction.AttackThreatVisible:Target(view.Threat,true,ref output);break;
                 case Game.Simulation.AriaHomeDefenseAction.AttackHomeTerrain:Target(view.HomeGround,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackAttackerVisible:Target(view.HomeAttacker,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackAttackerTerrain:Target(view.HomeAttackerGround,true,ref output);break;
+                case Game.Simulation.AriaHomeDefenseAction.AttackHomeFarTerrain:Target(view.HomeGroundFar,true,ref output);break;
             }
             return handled;
         }

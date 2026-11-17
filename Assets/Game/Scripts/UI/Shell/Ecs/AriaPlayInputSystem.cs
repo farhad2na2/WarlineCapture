@@ -41,13 +41,16 @@ namespace Game.UI.Shell.Ecs
             tracedHomeDefenseStage = p.HomeDefenseStage; tracedHomeDefenseReason = p.HomeDefenseReason;
             string state = priorStage == 0 && p.HomeDefenseStage != 0 ? "triggered"
                 : priorStage != 5 && p.HomeDefenseStage == 5 ? "ordered"
+                : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageRecentre && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageRecentre ? "recentre"
+                : priorStage != Game.Simulation.AriaHomeDefensePolicy.StageDisarm && p.HomeDefenseStage == Game.Simulation.AriaHomeDefensePolicy.StageDisarm ? "gave_up_disarm"
+                : priorStage == 4 && p.HomeDefenseStage == 8 ? "gave_up"
                 : priorReason != 0 && p.HomeDefenseReason == 0 ? "cleared" : null;
             if (state == null) return;
             int reasonCode = p.HomeDefenseReason != 0 ? p.HomeDefenseReason : priorReason;
             string reason = reasonCode == 2 ? "baseDamage" : reasonCode == 1 ? "minimap" : "none";
             string group = p.HomeDefenseReason == 0 ? "none" : p.HomeDefenseScope == 1 ? (p.HomeDefenseSlot - 1).ToString() : "all";
             float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
-            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} t={matchSeconds:F2}");
+            Debug.Log($"[AriaS002Trace] event=home_defense state={state} baseHealth={v.PlayerHealth} group={group} reason={reason} round={p.HomeDefenseRounds} stage={p.HomeDefenseStage} recovery={p.HomeDefenseRecovery} attackMode={v.AttackMode} homeGround={v.HomeGround.Available} threatGround={v.ThreatGround.Available} threat={v.Threat.Available} focus={v.FocusPlayer.Available} t={matchSeconds:F2}");
         }
         private int tracedInterceptStage; private bool tracedInterceptKnown, tracedInterceptOffered;
         // Evidence only: reports intercept transitions ("finish what slips past") of the
@@ -150,6 +153,25 @@ namespace Game.UI.Shell.Ecs
                 tracedSupportStage = p.SupportStage; tracedSupportDone = p.SupportDone;
             }
         }
+        private int tracedColumnSkips, tracedFindBaseGiveUps;
+        // Evidence only: a roster page given up by the column stall guard (card never offered, or an
+        // order that never shows) and a bounded base search that disarmed Attack, any expanded base assault.
+        private void TraceColumnRecovery()
+        {
+            if (!AriaCommandEvidence.Active) return;
+            using var query = EntityManager.CreateEntityQuery(ComponentType.ReadOnly<AriaSkirmishObservationComponent>(), ComponentType.ReadOnly<AriaSkirmishPlanComponent>());
+            if (query.CalculateEntityCount() != 1) { tracedColumnSkips = tracedFindBaseGiveUps = 0; return; }
+            var v = query.GetSingleton<AriaSkirmishObservationComponent>().Value;
+            if (!v.ExpandedSession || !v.ExpandedBaseAssault) return;
+            var p = query.GetSingleton<AriaSkirmishPlanComponent>();
+            if (p.ColumnSkips == tracedColumnSkips && p.FindBaseGiveUps == tracedFindBaseGiveUps) return;
+            string state = p.FindBaseGiveUps != tracedFindBaseGiveUps ? "find_base_given_up" : "page_skipped";
+            int cards = 0;
+            for (int i = 0; i < 5; i++) if (v.Squad(i).Available) cards |= 1 << i;
+            float matchSeconds = skirmishQuery.CalculateEntityCount() == 1 ? skirmishQuery.GetSingleton<SkirmishMatchState>().ElapsedSeconds : v.Time;
+            Debug.Log($"[AriaS002Trace] event=column_recovery state={state} scenario={v.SourceScenarioIndex} skips={p.ColumnSkips} findBaseGiveUps={p.FindBaseGiveUps} page={v.ExpandedPageIndex} pages={v.ExpandedPageCount} assaultMask={v.ExpandedAssaultMask} attackMask={v.ExpandedAttackOrderMask} selectedMask={v.ExpandedSelectedMask} structureMask={v.ExpandedStructureMask} squadTargets={cards} attackMode={v.AttackMode} enemyBase={v.EnemyBase.Available} advanceGround={v.AdvanceGround.Available} frame={v.Frame} time={v.Time} t={matchSeconds:F2}");
+            tracedColumnSkips = p.ColumnSkips; tracedFindBaseGiveUps = p.FindBaseGiveUps;
+        }
         private void ClearGoalContext(){if(goalSession!=null)AriaCommandEvidence.RetirePublicGoals(goalSession,goalWorld);goalSession=null;goalWorld=0;gestureGoal=default;}
         private void CaptureGoal(int targetId)
         {
@@ -213,6 +235,7 @@ namespace Game.UI.Shell.Ecs
             TraceIntercept();
             TraceBreacher();
             TraceCoverage();
+            TraceColumnRecovery();
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;

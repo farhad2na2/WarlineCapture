@@ -394,6 +394,12 @@ namespace Game.Editor
             public int campaignPolicyRejected, surfaceRejected, sceneryRejected, roadRejected, waterRejected, occupantRejected, otherRejected;
             public bool previewMutated, physicalSourceModified, capacityCertified, playerReady, logicalPlayableOnly;
             public string scope = "ReadOnlyWholeExistingSourceCoarseNativeValidator";
+            // Context for tools that choose sites (airport_sites_to_pads.py). Filled at completion only.
+            public string catalog;
+            public float cellSize;
+            public int gridWidth, gridHeight;
+            public Vector3 gridOrigin, playableMin, playableMax;
+            public Vector2Int logicalMinCell, logicalMaxCell;
             public string limitation = "Coarse sampled sites are not an exhaustive impossibility proof. Non-overlapping footprints do not certify bilateral parking, taxi, launch or return capacity.";
             public List<AirportSourceFitSite> sites = new();
             public List<Vector2Int> playablePairs = new();
@@ -420,7 +426,21 @@ namespace Game.Editor
         public static void RunExistingCampaignAirfieldWholeSourceFitAndExit()
             => RunExistingCampaignAirfieldSourceFit(false);
 
-        private static void RunExistingCampaignAirfieldSourceFit(bool logicalPlayableOnly)
+        /// <summary>
+        /// Read-only Airport source-fit scan for ANY authored catalog named by WARLINE_SKIRMISH_CATALOG
+        /// (generic dispatch, startup-only map review; no ARIA play, no touches). Same scan as the S004
+        /// entries. Writes &lt;trace&gt;.airport-source-fit.json and, when WARLINE_AIRPORT_SITES_OUT is set,
+        /// a copy at that path. Run WITHOUT -quit (the harness quits after the scan).
+        /// </summary>
+        public static void RunCatalogAirportSourceFitAndExit()
+        {
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG")))
+                throw new InvalidOperationException("RunCatalogAirportSourceFitAndExit requires WARLINE_SKIRMISH_CATALOG.");
+            RunExistingCampaignAirfieldSourceFit(true, RunFocusedAriaAndExit,
+                "ReadOnlyLogicalPlayableCoarseNativeValidatorViaGenericCatalogDispatch");
+        }
+
+        private static void RunExistingCampaignAirfieldSourceFit(bool logicalPlayableOnly, Action launch = null, string scopeOverride = null)
         {
             // Observe S004's existing Campaign airfield binding before making
             // any S005 logical-source change. No Campaign asset is modified.
@@ -432,7 +452,7 @@ namespace Game.Editor
             AssetDatabase.DisallowAutoRefresh();
             SessionState.SetBool("Warline.MissionValidation.ResumeRefresh", true);
             airportSourceFitScan = new AirportSourceFitScan { stride = 16, logicalPlayableOnly = logicalPlayableOnly,
-                scope = logicalPlayableOnly ? "ReadOnlyExistingCampaignAirfieldViaProtectedS004Binding" : "ReadOnlyWholeExistingCampaignAirfieldViaProtectedS004Binding" };
+                scope = scopeOverride ?? (logicalPlayableOnly ? "ReadOnlyExistingCampaignAirfieldViaProtectedS004Binding" : "ReadOnlyWholeExistingCampaignAirfieldViaProtectedS004Binding") };
             airportSourceFitCursor = 0;
             nativeReviewStage = 0;
             nativeReviewSizeApplied = false;
@@ -441,9 +461,10 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable("WARLINE_S005_READONLY_AIR_SOURCE_FIT", "1");
             Environment.SetEnvironmentVariable("WARLINE_SKIRMISH_STARTUP_ONLY", "1");
             Environment.SetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY", null);
-            Environment.SetEnvironmentVariable("WARLINE_S002_SEED", "104733");
+            if (launch == null || string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_SEED")))
+                Environment.SetEnvironmentVariable("WARLINE_S002_SEED", "104733");
             Environment.SetEnvironmentVariable("WARLINE_S002_LOCALE", "en");
-            try { RunS004AriaAndExit(); }
+            try { (launch ?? new Action(RunS004AriaAndExit))(); }
             catch
             {
                 AssetDatabase.AllowAutoRefresh();
@@ -545,8 +566,27 @@ namespace Game.Editor
                     !scan.sites[a].effectiveRect.Overlaps(scan.sites[b].effectiveRect))
                     scan.playablePairs.Add(new Vector2Int(a, b));
             }
+            scan.catalog = catalogId;
+            scan.cellSize = grid.CellSize;
+            scan.gridWidth = grid.Width;
+            scan.gridHeight = grid.Height;
+            scan.gridOrigin = grid.Origin;
+            scan.playableMin = map.Bounds.PlayableMin;
+            scan.playableMax = map.Bounds.PlayableMax;
+            scan.logicalMinCell = new Vector2Int(logicalMin.x, logicalMin.y);
+            scan.logicalMaxCell = new Vector2Int(logicalMax.x, logicalMax.y);
             string path = LiveTracePath() + ".airport-source-fit.json";
-            System.IO.File.WriteAllText(path, JsonUtility.ToJson(scan, true));
+            string json = JsonUtility.ToJson(scan, true);
+            System.IO.File.WriteAllText(path, json);
+            string outPath = Environment.GetEnvironmentVariable("WARLINE_AIRPORT_SITES_OUT");
+            if (!string.IsNullOrEmpty(outPath))
+            {
+                outPath = System.IO.Path.GetFullPath(outPath);
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(outPath));
+                System.IO.File.WriteAllText(outPath, json);
+                Debug.Log("[SkirmishReadOnlyAirSourceFit] catalog=" + catalogId + " copy=" + outPath);
+                Environment.SetEnvironmentVariable("WARLINE_AIRPORT_SITES_OUT", null);
+            }
             Debug.Log("[SkirmishReadOnlyAirSourceFit] catalog=" + catalogId + " result=Completed stride=" + scan.stride + " samples=" + scan.samples +
                 " tested=" + scan.tested + " nativeValid=" + scan.sites.Count + " playableNonOverlappingPairs=" + scan.playablePairs.Count +
                 " frames=" + scan.frames + " previewMutated=0 physicalSourceModified=0 capacityCertified=0 playerReady=0 path=" + path);

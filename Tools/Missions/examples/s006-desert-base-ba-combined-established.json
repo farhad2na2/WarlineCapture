@@ -3,54 +3,221 @@
   "campaign_source": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
   "notes": "Desert Base / Base Assault / Combined Arms / Established. Positions are the measured Desert Base BA layout (Scenarios/S005/SkirmishLayout_S005.asset) projected into source-map world X/Z. S001 was not used: it keeps its coded legacy preset (index 0).",
   "anchors": {
-    "base.player": [935.0, 650.0],
-    "base.enemy": [1387.8, 650.0],
-    "staging.player": [970.75, 650.0],
-    "staging.enemy": [1352.05, 650.0],
-    "economy.player": [923.08, 608.4],
-    "economy.enemy": [1430.0, 650.0],
-    "service.player": [935.0, 678.8],
-    "service.enemy": [1387.8, 621.2],
-    "air.player": [905.21, 694.8],
-    "air.enemy": [1417.59, 605.2],
-    "supply.expansion.a": [1077.99, 605.2],
-    "supply.expansion.b": [1244.81, 694.8],
-    "highway.near": [1054.16, 650.0],
-    "highway.mid": [1161.4, 650.0],
-    "highway.far": [1268.64, 650.0],
-    "ruins.own": [982.66, 706.0],
-    "ruins.west": [1072.03, 717.2],
-    "ruins.north": [1161.4, 722.0],
-    "ruins.east": [1250.77, 717.2],
-    "ruins.far": [1340.14, 706.0],
-    "sweep.own": [1006.49, 598.8],
-    "sweep.west": [1101.82, 582.8],
-    "sweep.south": [1220.98, 582.8],
-    "sweep.east": [1316.31, 598.8]
+    "base.player": [
+      935.0,
+      650.0
+    ],
+    "base.enemy": [
+      1387.8,
+      650.0
+    ],
+    "staging.player": [
+      970.75,
+      650.0
+    ],
+    "staging.enemy": [
+      1352.05,
+      650.0
+    ],
+    "economy.player": [
+      923.08,
+      608.4
+    ],
+    "economy.enemy": [
+      1430.0,
+      650.0
+    ],
+    "service.player": [
+      935.0,
+      678.8
+    ],
+    "service.enemy": [
+      1387.8,
+      621.2
+    ],
+    "air.player": [
+      905.21,
+      694.8
+    ],
+    "air.enemy": [
+      1417.59,
+      605.2
+    ],
+    "supply.expansion.a": [
+      1077.99,
+      605.2
+    ],
+    "supply.expansion.b": [
+      1244.81,
+      694.8
+    ],
+    "highway.near": [
+      1054.16,
+      650.0
+    ],
+    "highway.mid": [
+      1161.4,
+      650.0
+    ],
+    "highway.far": [
+      1268.64,
+      650.0
+    ],
+    "ruins.own": [
+      982.66,
+      706.0
+    ],
+    "ruins.west": [
+      1072.03,
+      717.2
+    ],
+    "ruins.north": [
+      1161.4,
+      722.0
+    ],
+    "ruins.east": [
+      1250.77,
+      717.2
+    ],
+    "ruins.far": [
+      1340.14,
+      706.0
+    ],
+    "sweep.own": [
+      1006.49,
+      598.8
+    ],
+    "sweep.west": [
+      1101.82,
+      582.8
+    ],
+    "sweep.south": [
+      1220.98,
+      582.8
+    ],
+    "sweep.east": [
+      1316.31,
+      598.8
+    ]
   },
   "pads": {
-    "spawn.infantry.player": [956.85, 635.0],
-    "spawn.infantry.enemy": [1365.95, 665.0],
-    "spawn.vehicle.player": [914.5, 650.5],
-    "spawn.vehicle.enemy": [1410.5, 650.5],
-    "rally.player": [1014.44, 650.0],
-    "rally.enemy": [1308.36, 650.0]
+    "spawn.infantry.player": [
+      956.85,
+      635.0
+    ],
+    "spawn.infantry.enemy": [
+      1365.95,
+      665.0
+    ],
+    "spawn.vehicle.player": [
+      914.5,
+      650.5
+    ],
+    "spawn.vehicle.enemy": [
+      1410.5,
+      650.5
+    ],
+    "rally.player": [
+      1014.44,
+      650.0
+    ],
+    "rally.enemy": [
+      1308.36,
+      650.0
+    ]
   },
   "routes": [
     {
       "kind": "MainHighway",
-      "via": ["staging.player", "highway.near", "highway.mid", "highway.far", "staging.enemy"],
-      "width": 12, "vehicles": true, "aircraft": true
+      "via": [
+        "staging.player",
+        "highway.near",
+        "highway.mid",
+        "highway.far",
+        "staging.enemy"
+      ],
+      "width": 12,
+      "vehicles": true,
+      "aircraft": true
     },
     {
       "kind": "FlankNorthRuins",
-      "via": ["staging.player", "ruins.own", "ruins.west", "ruins.north", "ruins.east", "ruins.far", "staging.enemy"],
-      "width": 6, "vehicles": true, "aircraft": false
+      "via": [
+        "staging.player",
+        "ruins.own",
+        "ruins.west",
+        "ruins.north",
+        "ruins.east",
+        "ruins.far",
+        "staging.enemy"
+      ],
+      "width": 6,
+      "vehicles": true,
+      "aircraft": false
     },
     {
       "kind": "FlankSouthSweep",
-      "via": ["staging.player", "sweep.own", "sweep.west", "sweep.south", "sweep.east", "staging.enemy"],
-      "width": 12, "vehicles": true, "aircraft": true
+      "via": [
+        "staging.player",
+        "sweep.own",
+        "sweep.west",
+        "sweep.south",
+        "sweep.east",
+        "staging.enemy"
+      ],
+      "width": 12,
+      "vehicles": true,
+      "aircraft": true
     }
-  ]
+  ],
+  "structure_footprints": {
+    "building.barracks": [
+      28.0,
+      15.0
+    ],
+    "building.fabrication_depot": [
+      19.0,
+      16.0
+    ],
+    "building.fuel_bladder": [
+      14.0,
+      10.0
+    ],
+    "building.ground_staging": [
+      14.0,
+      7.0
+    ],
+    "building.oil_pump": [
+      15.0,
+      4.0
+    ],
+    "building.refinery": [
+      25.0,
+      15.0
+    ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
+    "building.satellite_dish": [
+      10.0,
+      10.0
+    ],
+    "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
+      3.0,
+      4.0
+    ]
+  }
 }

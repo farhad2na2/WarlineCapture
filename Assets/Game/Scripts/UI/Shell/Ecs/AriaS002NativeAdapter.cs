@@ -123,6 +123,7 @@ EnemyBase=Target(v.EnemyBase,AriaS002Action.AttackVisibleObjective,-1),
 Recruit=Target(v.Recruit,AriaS002Action.RecruitRifle,-1),
 CloseDrawer=Target(v.CloseDrawer,AriaS002Action.CloseCatalog,-1),
 Threat=Target(v.Threat,AriaS002Action.AttackVisibleObjective,-1),
+InterceptThreat=Target(v.InterceptThreat,AriaS002Action.AttackVisibleObjective,-1),
 FocusThreat=Target(v.FocusThreat,AriaS002Action.UnsupportedAir,-1),
 FocusGroup=Target(v.FocusGroup,AriaS002Action.InspectCohort,-1),
 CloseMap=Target(v.CloseMap,AriaS002Action.CloseInspection,-1),
@@ -264,6 +265,13 @@ AirCycleCount=v.AirCycleCount,
 AirSortieObservedAt=v.AirSortieObservedAt,
 AirCycleDeadline=v.AirCycleDeadline,
 AirServiceReadyAt=v.AirServiceReadyAt,
+InterceptStage=v.InterceptStage,
+InterceptCount=v.InterceptCount,
+InterceptSlot=v.InterceptSlot,
+InterceptActions=v.InterceptActions,
+InterceptDeadline=v.InterceptDeadline,
+InterceptLastSeenAt=v.InterceptLastSeenAt,
+InterceptReadyAt=v.InterceptReadyAt,
 };
 static void Apply(in AriaS002PlanState v,ref AriaSkirmishPlanComponent target){
 target.Intent=(AriaSkirmishIntent)v.Intent;
@@ -372,6 +380,13 @@ target.AirCycleCount=v.AirCycleCount;
 target.AirSortieObservedAt=v.AirSortieObservedAt;
 target.AirCycleDeadline=v.AirCycleDeadline;
 target.AirServiceReadyAt=v.AirServiceReadyAt;
+target.InterceptStage=v.InterceptStage;
+target.InterceptCount=v.InterceptCount;
+target.InterceptSlot=v.InterceptSlot;
+target.InterceptActions=v.InterceptActions;
+target.InterceptDeadline=v.InterceptDeadline;
+target.InterceptLastSeenAt=v.InterceptLastSeenAt;
+target.InterceptReadyAt=v.InterceptReadyAt;
 }
 internal static AriaS002ContactState Contact(in AriaPlaySessionComponent v)=>new AriaS002ContactState {
 Phase=(AriaS002ContactPhase)v.Phase,

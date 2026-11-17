@@ -174,9 +174,11 @@ namespace Game.Editor
 
         private static bool EnterS004ThroughPresentedControls()
         {
+            if (menuJourneyFailed) return false;
             if (menuStep == 6) return true;
             if (menuTouch == null)
             {
+                if (!MenuJourneyPreflightPasses()) return false;
                 ConfigureBackgroundInput();
                 menuStep = 0;
                 menuDeadline = EditorApplication.timeSinceStartup + 90d;
@@ -200,7 +202,7 @@ namespace Game.Editor
             if (EditorApplication.timeSinceStartup > menuDeadline)
             {
                 Debug.LogError("[S004MenuJourney] result=Failed reason=controlsTimeout step=" + menuStep);
-                Finish(true, "menuControlsTimeout");
+                FailMenuJourney(menuStep, SkirmishMenuJourneyLog.TimeoutReason(menuStep, menuScenarioCardSeen), "menuControlsTimeout");
                 return;
             }
             menuTouch.Tick(Time.unscaledTime);
@@ -232,6 +234,7 @@ namespace Game.Editor
                         Game.Composition.SkirmishLaunchProjection.ReadMatchElapsedSeconds(world.EntityManager, observedSession, in observedMatch),
                         "NormalMenuLaunchObserved");
                     if(codedSizeCameraActive) ValidateCodedSizeNativeIdentity(world.EntityManager,observedSession);
+                    if (!CompleteMenuJourney(world.EntityManager)) return;
                     Debug.Log("[S004MenuJourney] result=Passed input=Touch controls=Skirmish,Scroll," +
                         catalogId + ",Launch seedFixture=" + seed + " nativeSessionObserved=1");
                     menuStep = 6;
@@ -262,7 +265,7 @@ namespace Game.Editor
             {
                 foreach (var b in buttons)
                     if (b.name == "ScenarioCard_" + catalogId && TryPresentedButtonPoint(b, out _))
-                    { if (MenuTap(b)) menuStep = 4; return; }
+                    { menuScenarioCardSeen = true; if (MenuTap(b)) menuStep = 4; return; }
                 if (EditorApplication.timeSinceStartup - menuLastTapAt >= 2d)
                     foreach (var b in buttons)
                         if ((b.name == "Card_Skirmish" || b.transform.parent.name == "Card_Skirmish") &&
@@ -290,7 +293,10 @@ namespace Game.Editor
                             break;
                         }
                     if (menuTouch.TryGesture(from, to, .15f, .75f, Time.unscaledTime))
+                    {
                         menuDue = EditorApplication.timeSinceStartup + 1d;
+                        if (!menuScrollLogged) { menuScrollLogged = true; menuPath.Add("BattleLibrary(scroll)"); }
+                    }
                     return;
                 }
             }
@@ -375,6 +381,7 @@ namespace Game.Editor
                 menuLastTapAt = now;
                 menuDue = now + 1d;
                 menuStableTarget = null;
+                menuPath.Add(b.name);
                 Debug.Log("[S004MenuJourney] phase=Touch step=" + menuStep + " button=" + b.name +
                     " point=" + p + " stableBeforeTouch=1 transitionAcceptance=Pending");
             }

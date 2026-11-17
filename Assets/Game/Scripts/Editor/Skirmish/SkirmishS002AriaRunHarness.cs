@@ -554,6 +554,7 @@ namespace Game.Editor
             RecordProductionBatchFingerprint("Begin",launchFingerprint,launchFingerprintTimer.Elapsed.TotalMilliseconds);
             SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
+            if (GenericMenuJourney) ResetMenuJourneyState();
             finishingEvidence = false;
             terminalSnapshotValid = terminalProbeActive = false;
             terminalInterventions = terminalUnexpectedSamples = 0;
@@ -720,7 +721,7 @@ namespace Game.Editor
                 if (stage == 0)
                 {
                     GameLocalization.SetLocale(locale, false);
-                    bool menuJourney = Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                    bool menuJourney = AnyMenuJourney;
                     if ((!menuJourney || menuStep == 0) && !SkirmishLaunchProjection.IsShellReadyToEnterMatch(em))
                     {
                         next = now + 0.5d;
@@ -747,7 +748,7 @@ namespace Game.Editor
 
                 if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
-                bool nativeS005MenuJourney = (catalogId == "S005" || productionCanary != null || codedSizeCameraActive) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1";
+                bool nativeS005MenuJourney = ((catalogId == "S005" || productionCanary != null || codedSizeCameraActive) && Environment.GetEnvironmentVariable("WARLINE_S004_MENU_JOURNEY") == "1") || GenericMenuJourney;
                 if (stage <= 1 && !nativeS005MenuJourney)
                 {
                     SkirmishLaunchProjection.TryEnterMatch(em);

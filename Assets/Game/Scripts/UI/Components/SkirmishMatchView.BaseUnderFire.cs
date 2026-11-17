@@ -78,13 +78,14 @@ namespace Game.UI.Runtime
             PositionBaseFireRow();
 
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
-            string focusSignature = (model.BaseAttackerVisible ? "seen" : "base") + fa;
+            bool hit = baseFire.UnderFire || model.PlayerBaseRecentlyHit;
+            string focusSignature = (model.BaseAttackerVisible ? "seen" : "base") + hit + fa;
             if (baseFireFocusShown != focusSignature)
             {
                 baseFireFocusShown = focusSignature;
-                HudIconButtonView.Apply(baseFireFocus, HudButtonIcon.Alert, HudButtonRole.Alert,
-                    model.BaseAttackerVisible ? "BASE UNDER FIRE · ATTACKER IN SIGHT" : "BASE UNDER FIRE · SOURCE UNKNOWN",
-                    model.BaseAttackerVisible ? "پایگاه زیر آتش · مهاجم در دید" : "پایگاه زیر آتش · منبع نامعلوم");
+                string en = (hit ? "BASE UNDER FIRE · " : "ENEMY AT BASE · ") + (model.BaseAttackerVisible ? "ATTACKER IN SIGHT" : "SOURCE UNKNOWN");
+                string persian = (hit ? "پایگاه زیر آتش · " : "دشمن در پایگاه · ") + (model.BaseAttackerVisible ? "مهاجم در دید" : "منبع نامعلوم");
+                HudIconButtonView.Apply(baseFireFocus, HudButtonIcon.Alert, HudButtonRole.Alert, en, persian);
             }
 
             baseFireDefenderGroup = model.BaseDefenderGroupId;

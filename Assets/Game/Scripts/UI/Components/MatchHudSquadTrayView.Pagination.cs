@@ -406,14 +406,8 @@ namespace Game.UI.Runtime
         {
             UpdateScrollEdges();
             if (_syncingScroll || !_rosterActive || _changePage == null || MaximumScroll <= 0) return;
-            int pages = Mathf.Max(1, (_rosterModels.Count + 4) / 5);
-            int nearest = 0; float distance = float.MaxValue;
-            for (int i = 0; i < pages; i++)
-            {
-                // Last page may have fewer than five cards; its aligned position is clamped.
-                float d = Mathf.Abs(LogicalScroll - Mathf.Min(i * 5 * CardStride, MaximumScroll));
-                if (d < distance) { distance = d; nearest = i; }
-            }
+            // Last page may have fewer than five cards; its aligned position is clamped.
+            int nearest = MatchHudSquadTouchNavigation.NearestPage(LogicalScroll, _rosterModels.Count, CardStride, MaximumScroll);
             if (nearest == _logicalPage) return;
             int delta = nearest > _logicalPage ? 1 : -1;
             while (_logicalPage != nearest) { _changePage(delta); _logicalPage += delta; }

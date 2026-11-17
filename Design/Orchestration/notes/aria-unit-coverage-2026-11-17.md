@@ -31,3 +31,21 @@ affordability and pending flags in `SkirmishAriaPublicProjection`, observation a
 also needs a non-assault order path. The paging fix needs Unity to verify the tray scroll distance. Suggested order: paging
 fix (restores fielded vehicles), then breacher (structure value), then marksman and apc_fast, then radar. One recruit at a
 time, only after `AssaultIssued`, so the opening and the first assault are not delayed.
+
+## 3. Implemented (commit after b68ce6ba5)
+- Tray paging: `MatchHudSquadTouchNavigation.PageTarget` taps the tray's presented page chevron (`NextSquads`/`PreviousSquads`,
+  `ScrollPage(±1)`: exactly one page) and keeps the old swipe only as a fallback when no chevron is shown. Cause: with 11 groups
+  in a 5-card viewport, page 1 aligns at 5 strides and the clamped last page at 6, so page 1 owns only the band 2.5–5.5
+  strides; the 0.8-viewport swipe (~4 strides) plus ScrollRect inertia landed on page 2 going forward and page 0 going back.
+  The tray's snap rule now lives in `NearestPage` (same arithmetic). The S005 observer already pages with these chevrons.
+  Overshoot recovery is unchanged (the column policy pages back to the first unordered page), now one exact step per tap.
+  Trace: `[AriaS002Trace] event=tray_page from= to= gesture=tap|swipe target= skipped=0|1 ... t=`.
+- Breacher: `AriaBreacherPolicy` buys one breacher squad (Build, then the catalog card) once the first assault is issued (assault
+  and structure orders accepted), only when affordable, with no rifle/rocketeer recruit pending, yielding to every other owner,
+  bounded to 10 s, once per match; the roster sweep orders the new group. `AriaStructureReplacementPolicy` prefers a breacher,
+  then a rocketeer, when the whole structure force is gone.
+- Fixed with it: the structure-force replacement used to run only with the drawer closed, so its first tap (Build) opened the
+  drawer and the drawer step then closed it or bought rifles; no replacement was ever bought (155923 fa-IR q1: rifles only at
+  the base, watchdog stop). It now continues inside the drawer it opened.
+  Trace: `[AriaS002Trace] event=breacher state=buying|done|pending|fielded reason=coverage|replacement ...`.
+- Note: PageTarget is shared by all ARIA skirmishes, so every roster paging now taps the chevron when one is shown.

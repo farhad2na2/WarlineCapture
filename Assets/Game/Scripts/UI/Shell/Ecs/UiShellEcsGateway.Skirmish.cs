@@ -204,6 +204,9 @@ namespace Game.UI.Shell.Ecs
                         setup.StartPackageId == Game.Skirmish.Contracts.SkirmishStartPackageId.FieldBase;
                     model.CanAffordRocketeer = publicView.CanAffordRocketeer;
                     model.RocketeerRecruitPending = publicView.RocketeerRecruitPending;
+                    model.CanAffordBreacher = publicView.CanAffordBreacher;
+                    model.BreacherRecruitPending = publicView.BreacherRecruitPending;
+                    model.BreacherFielded = publicView.BreacherFielded;
                     model.OwnStructureAttackUnits = publicView.OwnStructureAttackUnits;
                     model.CanAffordAntiAir = publicView.CanAffordAntiAir;
                     model.CanAffordLogisticsTruck = publicView.CanAffordLogisticsTruck;

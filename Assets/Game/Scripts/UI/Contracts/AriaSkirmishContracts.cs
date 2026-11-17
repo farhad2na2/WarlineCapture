@@ -65,6 +65,9 @@ namespace Game.UI.Contracts
         // Public attack-move ground beside the labelled home objective (shares -20006 with threat ground).
         public AriaTouchTarget HomeGround;
         public int OwnStructureAttackUnits;
+        // Breacher coverage: affordability, pending/fielded, and the Build -> catalog card target.
+        public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
+        public AriaTouchTarget RecruitBreacher;
         public bool CanBuildAirPad;
         public bool AirRecruitPending, SelectedAircraft;
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;

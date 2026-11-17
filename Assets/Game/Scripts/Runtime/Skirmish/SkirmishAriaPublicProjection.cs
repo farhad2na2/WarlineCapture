@@ -50,6 +50,8 @@ namespace Game.Runtime
                 view.TankersCommitted = CountCommittedPlayerRole(em, session, SkirmishRoleKind.Tanker);
                 view.RifleRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rifle);
                 view.RocketeerRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rocketeer);
+                view.BreacherRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Breacher);
+                view.BreacherFielded = HasLivingRole(em, session, SkirmishRoleKind.Breacher);
                 view.OwnStructureAttackUnits = CountPlayerStructureAttackUnits(em, session);
                 view.LogisticsTruckCommitted = HasPendingRecruit(em, session, SkirmishRoleKind.LogisticsTruck) ||
                     HasLivingRole(em, session, SkirmishRoleKind.LogisticsTruck);
@@ -85,6 +87,9 @@ namespace Game.Runtime
                 view.CanAffordRocketeer = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer);
+                view.CanAffordBreacher = SkirmishStrategyScoring.TryAfford(
+                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
+                    SkirmishRoleIds.Breacher, SkirmishRoleKind.Breacher);
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);

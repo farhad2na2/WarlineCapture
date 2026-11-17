@@ -113,6 +113,20 @@ namespace Game.UI.Runtime
 
         public static AriaTouchTarget PageTarget(MatchHudSquadTrayView tray, bool forward)
         {
+            // One page per gesture: tap the tray's presented page chevron (ScrollPage(+-1) moves exactly one
+            // page). A swipe drags 0.8 viewport and snaps to the nearest page after inertia; with 11 groups in a
+            // 5-card viewport the last page is clamped one stride after page 1, leaving page 1 a narrow band
+            // that swipes overshot (S002 104731 gate 3: page 0 -> 2 -> 0 loop, page-1 vehicles never ordered).
+            // The swipe stays as the fallback.
+            if (tray != null && tray.ExpandedScrollViewport != null)
+            {
+                var edge = forward ? tray.NextPageButton : tray.PreviousPageButton;
+                if (PreferPageButton(edge != null && edge.gameObject.activeInHierarchy))
+                {
+                    var tap = ButtonTarget(edge, 0);
+                    if (tap.Available) return tap;
+                }
+            }
             if (tray == null || !tray.TryGetExpandedPageSwipe(forward ? 1 : -1, out var from, out var to) ||
                 !SwipeReachable(tray, from, to)) return default;
             var viewport = tray.ExpandedScrollViewport;
@@ -127,6 +141,24 @@ namespace Game.UI.Runtime
                 ScrollTargetId = 0x20000000 | (tray.LogicalPageIndex + (forward ? 1 : -1) + 1),
                 ScrollDistanceViewports = Mathf.Max(0f, distance)
             };
+        }
+
+        /// <summary>A presented page chevron always wins over a page swipe.</summary>
+        public static bool PreferPageButton(bool chevronPresented) => chevronPresented;
+
+        /// <summary>Roster page whose aligned scroll position is nearest (the tray's own snap rule).
+        /// The last page is clamped to the maximum scroll, so it can sit one card stride after the
+        /// previous page.</summary>
+        public static int NearestPage(float logicalScroll, int rosterCount, float cardStride, float maximumScroll)
+        {
+            int pages = Mathf.Max(1, (rosterCount + 4) / 5);
+            int nearest = 0; float distance = float.MaxValue;
+            for (int i = 0; i < pages; i++)
+            {
+                float d = Mathf.Abs(logicalScroll - Mathf.Min(i * 5 * cardStride, maximumScroll));
+                if (d < distance) { distance = d; nearest = i; }
+            }
+            return nearest;
         }
 
         private static AriaTouchTarget CardOrSwipe(MatchHudSquadTrayView tray, uint group,

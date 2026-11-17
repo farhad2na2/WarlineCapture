@@ -52,6 +52,10 @@ namespace Game.UI.Shell.Contracts.Ecs
         public float PadDeadline, PadReadyAt;
         public int AirCycleStage, AirCycleAction, AirCycleCount;
         public float AirSortieObservedAt, AirCycleDeadline, AirServiceReadyAt;
+        // AriaBreacherPolicy: one breacher squad after the first assault order.
+        public byte BreacherStage;
+        public int BreacherActions;
+        public float BreacherDeadline;
         // AriaInterceptPolicy: finish a visible vehicle slipping past the column.
         public byte InterceptStage, InterceptCount;
         public int InterceptSlot, InterceptActions;

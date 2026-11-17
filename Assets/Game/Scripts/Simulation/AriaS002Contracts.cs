@@ -2,7 +2,7 @@ using Game.Skirmish.Contracts;
 using System;
 namespace Game.Simulation {
 public enum AriaS002Scope:byte {None,NativeRendered,LogicalPublicData}
-public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview}
+public enum AriaS002Action:byte {None,InspectHome,InspectObjective,InspectCohort,OpenInspection,CloseInspection,SelectMode,SelectSquad,PreviousPage,NextPage,ToggleSelected,ArmAttack,AttackVisibleObjective,AttackPublicTerrain,Hold,RecruitRifle,RecruitAntiAir,RecruitRocketeer,RecruitLogisticsTruck,RecruitTanker,CloseCatalog,CancelPlacement,UpgradeReadiness,UnsupportedAir,OpenDefensePreview,SelectDefenseSite,ConfirmDefensePreview,RecruitBreacher}
 public readonly struct AriaS002Point {public readonly float X,Y;public AriaS002Point(float x,float y){X=x;Y=y;}}
 public enum AriaS002Intent : byte
     {
@@ -77,6 +77,9 @@ public bool CombinedArmsField;
 public bool RocketeerRecruitPending;
 public bool PublicHomeThreat;
 public int OwnStructureAttackUnits;
+public bool CanAffordBreacher;
+public bool BreacherRecruitPending;
+public bool BreacherFielded;
 public bool CanBuildAirPad;
 public bool AirRecruitPending;
 public bool SelectedAircraft;
@@ -158,6 +161,7 @@ public AriaS002ActionTarget ReturnAircraft;
 public AriaS002ActionTarget RecruitLogisticsTruck;
 public AriaS002ActionTarget RecruitTanker;
 public AriaS002ActionTarget RecruitRocketeer;
+public AriaS002ActionTarget RecruitBreacher;
 public int ExpandedAssaultMask;
 public int ExpandedSelectedMask;
 public int ExpandedStructureMask;
@@ -299,6 +303,9 @@ public int InterceptActions;
 public float InterceptDeadline;
 public float InterceptLastSeenAt;
 public float InterceptReadyAt;
+public byte BreacherStage;
+public int BreacherActions;
+public float BreacherDeadline;
 }
 public struct AriaS002ContactState {
 public AriaS002ContactPhase Phase;

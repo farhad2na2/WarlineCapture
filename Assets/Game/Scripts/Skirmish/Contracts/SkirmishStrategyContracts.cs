@@ -87,6 +87,8 @@ namespace Game.Skirmish.Contracts
         public bool CanAffordRifle;
         public bool CanAffordRocketeer;
         public bool RocketeerRecruitPending;
+        // Breacher coverage (structure-capable infantry, Barracks).
+        public bool CanAffordBreacher, BreacherRecruitPending, BreacherFielded;
         public int OwnStructureAttackUnits;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;

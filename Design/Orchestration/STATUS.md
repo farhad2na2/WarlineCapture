@@ -13,7 +13,7 @@ record is `missions.csv`.
 | Shift lead | Sonnet | Shift 2 | Finished 07:33; report in `daily/shift-2026-11-17b.md` |
 | Unity lane | Opus (ARIA worker) | Base guard and faster home defence, then S002 on 3 seeds in English and Farsi | Running |
 | Binding worker | Sonnet | Authoring writes one exact pad per starting building for all 12 variants; branch `missions/generic-binding` | Running (code only; Unity confirms later) |
-| Codex | gpt-6.1-terra | Batch 6: why seed 155923 is lost (019), result screen shows the real end reason (020) | Running |
+| Codex | gpt-6.1-terra | Batch 6 done (14 tasks today) | Idle: patch 020 waits for the Unity lane; next batch after the ARIA and binding results |
 | Orchestrator | Fable | Reviews Codex batch 2 when it ends; daily review at 08:33 | Idle between reviews |
 
 ## Log
@@ -121,3 +121,5 @@ record is `missions.csv`.
 - 2026-11-17 08:18 codex: codex-019-seed-loss-analysis finished: exit 0, 0 files changed, patch /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-019-seed-loss-analysis.patch, report /Volumes/T7/Projects/WarlineCapture-program-logs/briefs/codex-019-seed-loss-analysis-report.txt (not yet verified or merged)
 - 2026-11-17 08:18 codex: batch finished: codex-019-seed-loss-analysis:high:45 codex-020-hud-end-reasons:high:40
 - 2026-11-17 08:19 orchestrator: decision on authored-mission startup: keep all 12 size and difficulty variants and do not relax the startup check. The layout binder gets one narrow exemption (pads that belong to a single building may share a kind), and authoring writes one pad per starting building, from the measured pads that the City Crossroads and Mountain Pass drafts used to carry. A new worker is building it; the cause is still to be confirmed by the diagnostic run.
+- 2026-11-17 08:19 binding worker: started instance-pad authoring work in worktree authoring (branch missions/generic-binding)
+- 2026-11-17 08:19 orchestrator: Codex batch 6 reviewed. 019 (traces): the enemy tank starts with 420 health and crosses ARIA's advancing army at about 55 s. On seed 104731 the army kills it there (dead at 59 s); on seed 155923 it escapes with 86 health, reaches the base at 67 s and destroys it by 95.5 s. The group ARIA sent home was 4 riflemen, 170–190 units away, needing 24–29 s just to arrive. So the fix must be a guard at home or finishing the tank when it passes, not a faster recall; the ARIA worker has this report. 020: result screen now forwards the real end reason for the other three objectives; proposed English and Farsi wording is in the patch for owner review. Not compiled.

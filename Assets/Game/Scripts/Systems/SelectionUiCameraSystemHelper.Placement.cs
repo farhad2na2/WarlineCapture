@@ -33,13 +33,17 @@ namespace Game.Runtime
             if(sameOwner&&(_cameraSystem.PlacementPreviewManuallyAdjusted||sameGeometry))
                 return SkirmishPlacementCameraFit.Contains(points,_worldCamera.transform.position,_worldCamera.transform.rotation,
                     _worldCamera.fieldOfView,_worldCamera.aspect,viewport,_worldCamera.nearClipPlane,_worldCamera.farClipPlane);
-            var rotation=Quaternion.Euler(profile.Pitch,profile.Yaw,0);
-            if(!SkirmishPlacementCameraFit.TryFit(points,rotation,profile.BuildFieldOfView,_worldCamera.aspect,viewport,
+            // Same pitch/yaw as the Skirmish ground framing, so placement never rotates the view.
+            var framing=SkirmishMissionViewProfileApplication.ResolveFraming(em,profile);
+            float pitch=framing.IsValid?framing.Pitch:profile.Pitch,yaw=framing.IsValid?framing.Yaw:profile.Yaw;
+            float buildFov=framing.IsValid?framing.BuildFieldOfView:profile.BuildFieldOfView;
+            var rotation=Quaternion.Euler(pitch,yaw,0);
+            if(!SkirmishPlacementCameraFit.TryFit(points,rotation,buildFov,_worldCamera.aspect,viewport,
                 _worldCamera.nearClipPlane,_worldCamera.farClipPlane,out var position,profile.BuildHeight))return false;
             placementToken=token;placementWorld=em.World.SequenceNumber;
             DeactivateMatchHudZoomTransition();
             _cameraRequestSystem.QueueSetWasBuildModeActive(em,true);
-            _cameraRequestSystem.QueuePlacementPreviewPose(em,token,position,rotation,profile.BuildFieldOfView);
+            _cameraRequestSystem.QueuePlacementPreviewPose(em,token,position,rotation,buildFov);
             ProcessCameraRequests(em);
             if(!_cameraSystem.HasPlacementPreviewPose||!SkirmishPlacementCameraFit.Contains(points,_worldCamera.transform.position,
                 _worldCamera.transform.rotation,_worldCamera.fieldOfView,_worldCamera.aspect,viewport,_worldCamera.nearClipPlane,_worldCamera.farClipPlane))

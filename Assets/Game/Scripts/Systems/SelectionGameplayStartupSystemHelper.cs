@@ -1063,7 +1063,12 @@ namespace Game.Runtime
                     if (hasMissionView)
                     {
                         SkirmishMissionViewProfileApplication.Apply(missionView, ref profile);
+                        // Skirmish-wide wider framing (and any mission opening yaw) on top
+                        // of the authored floor; presentation only.
+                        var framing = SkirmishMissionViewProfileApplication.ResolveFraming(cameraEm, missionView);
+                        SkirmishMissionViewProfileApplication.ApplyFraming(framing, ref profile);
                         generation = unchecked(generation * 397 ^ missionView.ContentVersion);
+                        generation = unchecked(generation * 397 ^ (Game.Configs.SkirmishCameraFraming.Version * 7919 + (framing.HasMissionYaw ? 1 : 0)));
                         found = true;
                     }
                     if (found && (!hasAuthoredCameraProfile || authoredCameraGeneration != generation || hasMissionCameraZoomLimits != hasMissionView))

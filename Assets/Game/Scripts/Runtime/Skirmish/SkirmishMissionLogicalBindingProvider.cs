@@ -143,16 +143,17 @@ namespace Game.Runtime
                 found=actor;
             }
             if(found==Entity.Null)return false;
-            if(!TryProjectRoleFocus(position,compiled.View.NormalHeight,compiled.View.Pitch,compiled.View.Yaw,out var groundRequest))return false;
+            // Skirmish framing: composed opening (group + measured landmarks) when the
+            // mission has an opening camera config, otherwise the group at tactical height.
+            if(!SkirmishMissionViewProfileApplication.TryResolveOpeningRequest(em,compiled.View,position,out var groundRequest,out var perspective,out _))return false;
             // Existing World-owned one-shot request and its existing shell consumer.
             // This changes camera presentation only; no selection or troop request.
             var facade=new RuntimeGameplayStateSystem(em);facade.ReadCameraFocusRequest();
             using var requests=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if(requests.CalculateEntityCount()!=1)return false;
-            var view=compiled.View;
             em.SetComponentData(requests.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {
                 Requested=1,Smooth=1,UseExplicitPerspective=1,World=groundRequest,
-                Perspective=new float4(view.NormalHeight,view.Pitch,view.Yaw,view.NormalFieldOfView),
+                Perspective=perspective,
                 SmoothTimeSeconds=RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(compiled.OpeningFocusSmoothSeconds) });
             record.OpeningFocusQueued=true;record.OpeningFocusActorId=compiled.OpeningFocusStableActorId;
             record.OpeningFocusWorld=position;record.OpeningFocusRequestFrame=Time.frameCount;

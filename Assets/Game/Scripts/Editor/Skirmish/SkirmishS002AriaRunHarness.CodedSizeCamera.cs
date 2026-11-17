@@ -194,14 +194,16 @@ namespace Game.Editor
             var owner=em.GetComponentData<SkirmishS005OpeningFocusOwner>(session);var camera=Camera.main;
             using var requests=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if(camera==null||requests.CalculateEntityCount()!=1){codedSettledState.Reset();return false;}
-            var request=requests.GetSingleton<RuntimeCameraFocusRequestComponent>();var forward=Quaternion.Euler(profile.Pitch,profile.Yaw,0)*Vector3.forward;
-            var expected=(Vector3)owner.GroundRequest-forward*(profile.NormalHeight/-forward.y);
+            // The opening pose is the Skirmish framing request (wider than the authored
+            // profile floor since 2026-11-17); settle against the request itself.
+            var request=requests.GetSingleton<RuntimeCameraFocusRequestComponent>();var perspective=request.Perspective;
+            var forward=Quaternion.Euler(perspective.y,perspective.z,0)*Vector3.forward;
+            var expected=(Vector3)owner.GroundRequest-forward*(perspective.x/-forward.y);
             bool same=request.UseExplicitPerspective==1&&Vector3.Distance((Vector3)request.World,(Vector3)owner.GroundRequest)<.001f&&
-                Mathf.Abs(request.Perspective.x-profile.NormalHeight)<.001f&&Mathf.Abs(request.Perspective.y-profile.Pitch)<.001f&&
-                Mathf.Abs(request.Perspective.z-profile.Yaw)<.001f&&Mathf.Abs(request.Perspective.w-profile.NormalFieldOfView)<.001f;
+                perspective.x>=profile.NormalHeight-.001f&&float.IsFinite(perspective.y)&&float.IsFinite(perspective.z)&&perspective.w>1;
             bool ready=same&&request.Requested==0&&!camera.orthographic&&camera.pixelWidth>0&&camera.pixelHeight>0;
             if(!codedSettledState.Step(Time.frameCount,ready,camera.transform.position,camera.transform.rotation,camera.fieldOfView,
-                expected,Quaternion.Euler(profile.Pitch,profile.Yaw,0),profile.NormalFieldOfView))return false;
+                expected,Quaternion.Euler(perspective.y,perspective.z,0),perspective.w))return false;
             codedSettledReason="Complete original group/current posed geometry pending";
             if(!TryReadCodedSettledGroup(em,session,profile,owner,camera,out var group))return false;
             string profilePath=AssetDatabase.GetAssetPath(profile);

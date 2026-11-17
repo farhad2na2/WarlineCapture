@@ -648,7 +648,7 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying)
                 return;
-            if (playerResumeProbeActive) return;
+            if (playerResumeProbeActive || catalogSaveResumeActive) return;
             if (terminalProbeActive)
             {
                 if (EditorApplication.timeSinceStartup > terminalDeadline) EndTerminalProbe(false, "playerFrameTimeout");
@@ -983,6 +983,7 @@ namespace Game.Editor
                     return;
                 }
 
+                if (TryStartCatalogSaveResume(em, session, in match, simulationActive, elapsed, now)) return;
                 if (OwnedPadBoundaryDiagnostic.TryFinish()) return;
                 if (elapsed >= 180f && !OwnedPadBoundaryDiagnostic.Active && Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_INPUT_DIAGNOSTIC") == "1")
                 {

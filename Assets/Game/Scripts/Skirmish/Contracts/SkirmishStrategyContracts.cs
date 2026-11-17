@@ -104,6 +104,10 @@ namespace Game.Skirmish.Contracts
         public bool AirPadControlAvailable;
         public int VisibleHostileCombat;
         public int VisibleHostileAir;
+        // Fog-visible hostile vehicle behind most of the player's mobile army and within
+        // reach of an own unit (AriaInterceptPolicy.Slipping). World position, public view only.
+        public bool SlippingHostile;
+        public float SlippingHostileX, SlippingHostileY, SlippingHostileZ;
         public int OwnInfantry;
         public int OwnMaterials;
         public int FailedAttempts;

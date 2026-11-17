@@ -144,6 +144,8 @@ public AriaS002ActionTarget EnemyBase;
 public AriaS002ActionTarget Recruit;
 public AriaS002ActionTarget CloseDrawer;
 public AriaS002ActionTarget Threat;
+// Fog-visible hostile vehicle slipping behind the advancing army (AriaInterceptPolicy).
+public AriaS002ActionTarget InterceptThreat;
 public AriaS002ActionTarget FocusThreat;
 public AriaS002ActionTarget FocusGroup;
 public AriaS002ActionTarget CloseMap;
@@ -290,6 +292,13 @@ public int AirCycleCount;
 public float AirSortieObservedAt;
 public float AirCycleDeadline;
 public float AirServiceReadyAt;
+public byte InterceptStage;
+public byte InterceptCount;
+public int InterceptSlot;
+public int InterceptActions;
+public float InterceptDeadline;
+public float InterceptLastSeenAt;
+public float InterceptReadyAt;
 }
 public struct AriaS002ContactState {
 public AriaS002ContactPhase Phase;

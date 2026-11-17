@@ -180,12 +180,20 @@ namespace Game.Editor
             return started;
         }
 
+        private static string CatalogSaveResumePath(Transform transform)
+        {
+            string path = transform.name;
+            for (var parent = transform.parent; parent != null && path.Length < 120; parent = parent.parent) path = parent.name + "/" + path;
+            return path;
+        }
+
         private static string CatalogSaveResumeButtonsLike(string fragment)
         {
             var names = new List<string>();
             foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 if (button.name.IndexOf(fragment, StringComparison.OrdinalIgnoreCase) >= 0)
-                    names.Add(button.name + "(active=" + button.IsActive() + ",interactable=" + button.IsInteractable() + ")");
+                    names.Add(CatalogSaveResumePath(button.transform) + "(activeInHierarchy=" + button.gameObject.activeInHierarchy +
+                        ",ownInteractable=" + button.interactable + ",effectiveInteractable=" + button.IsInteractable() + ")");
             return names.Count == 0 ? "none" : string.Join(",", names);
         }
 
@@ -284,18 +292,26 @@ namespace Game.Editor
                         catalogSaveResumeStep = 2;
                         return;
                     }
+                    // Several objects are named PauseButton (match header, popups, narrative controls). The old S005 loop tried each
+                    // one; taking the first (an inactive-looking duplicate, interactable=False) starved the real header control.
+                    Button pauseButton = null; int pauseCandidates = 0;
                     foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (button.name == "PauseButton")
                         {
-                            if (catalogSaveResumePauseTaps >= CatalogSaveResumeMaxPauseTaps)
-                                throw new InvalidOperationException("pauseNotReached: " + catalogSaveResumePauseTaps + " Pause taps did not pause the match (aria=" +
-                                    UiShellRuntimeGateway.ReadAriaPlay().Phase + ", interruptions=" + catalogSaveResumeInterruptions + ")");
-                            if (CatalogSaveResumeTap(button)) { catalogSaveResumePauseTaps++; Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=PauseTap n=" + catalogSaveResumePauseTaps + " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase); }
-                            return;
+                            pauseCandidates++;
+                            if (TryPresentedButtonPoint(button, out _)) { pauseButton = button; break; }
                         }
+                    if (pauseButton != null)
+                    {
+                        if (catalogSaveResumePauseTaps >= CatalogSaveResumeMaxPauseTaps)
+                            throw new InvalidOperationException("pauseNotReached: " + catalogSaveResumePauseTaps + " Pause taps did not pause the match (aria=" +
+                                UiShellRuntimeGateway.ReadAriaPlay().Phase + ", interruptions=" + catalogSaveResumeInterruptions + ")");
+                        if (CatalogSaveResumeTap(pauseButton)) { catalogSaveResumePauseTaps++; Debug.Log("[SkirmishSaveResume] catalog=" + catalogId + " phase=PauseTap n=" + catalogSaveResumePauseTaps + " path=" + CatalogSaveResumePath(pauseButton.transform) + " aria=" + UiShellRuntimeGateway.ReadAriaPlay().Phase); }
+                        return;
+                    }
                     if (now - catalogSaveResumeStepSince > CatalogSaveResumePauseVisibleSeconds)
-                        throw new InvalidOperationException("pauseNotPresented: no active PauseButton in the HUD after " + CatalogSaveResumePauseVisibleSeconds +
-                            " s; Pause-like buttons: " + CatalogSaveResumeButtonsLike("pause"));
+                        throw new InvalidOperationException("pauseNotPresented: " + pauseCandidates + " active PauseButton(s), none presented and reachable after " +
+                            CatalogSaveResumePauseVisibleSeconds + " s; Pause-like buttons: " + CatalogSaveResumeButtonsLike("pause"));
                     return;
                 }
                 if (catalogSaveResumeStep == 2) // Save & Exit

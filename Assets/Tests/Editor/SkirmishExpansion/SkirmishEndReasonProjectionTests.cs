@@ -39,6 +39,41 @@ namespace Game.Tests.Editor
                 Assert.AreNotEqual(SkirmishEndReason.None, projected);
         }
 
+        [TestCase(SkirmishEndReason.TicketsDepleted, SkirmishObjectiveKind.FrontlineControl, "ui.skirmish.reason.ticketsdepleted")]
+        [TestCase(SkirmishEndReason.TicketsAtDeadline, SkirmishObjectiveKind.FrontlineControl, "ui.skirmish.reason.ticketsatdeadline")]
+        [TestCase(SkirmishEndReason.BreakthroughEvacuated, SkirmishObjectiveKind.Breakthrough, "ui.skirmish.reason.breakthroughevacuated")]
+        [TestCase(SkirmishEndReason.BreakthroughImpossible, SkirmishObjectiveKind.Breakthrough, "ui.skirmish.reason.breakthroughimpossible")]
+        [TestCase(SkirmishEndReason.ConvoyDelivered, SkirmishObjectiveKind.ConvoyEscort, "ui.skirmish.reason.convoydelivered")]
+        [TestCase(SkirmishEndReason.ConvoyImpossible, SkirmishObjectiveKind.ConvoyEscort, "ui.skirmish.reason.convoyimpossible")]
+        [TestCase(SkirmishEndReason.ObjectiveDeadline, SkirmishObjectiveKind.Breakthrough, "ui.skirmish.reason.objectivedeadline")]
+        [TestCase(SkirmishEndReason.StartupFailure, SkirmishObjectiveKind.FrontlineControl, "ui.skirmish.reason.startupfailure")]
+        [TestCase(SkirmishEndReason.ContentFailure, SkirmishObjectiveKind.Breakthrough, "ui.skirmish.reason.contentfailure")]
+        [TestCase(SkirmishEndReason.CheckpointFailure, SkirmishObjectiveKind.ConvoyEscort, "ui.skirmish.reason.checkpointfailure")]
+        public void HudForwardsReasonKeyAndUsesNeutralFallback(
+            SkirmishEndReason matchReason, SkirmishObjectiveKind objective, string expectedKey)
+        {
+            var setup = new SkirmishResolvedSetup
+                { CatalogId = "S999", ObjectiveKind = objective, ObjectiveKey = "missing.objective" };
+            var match = new SkirmishMatchState { Outcome = SkirmishOutcome.Defeat, Reason = matchReason };
+            using var world = new World(nameof(HudForwardsReasonKeyAndUsesNeutralFallback));
+            var em = world.EntityManager;
+            var session = em.CreateEntity();
+            em.AddComponentObject(session, new SkirmishResolvedSetupRecord { Setup = setup });
+
+            SkirmishExpandedHudCopy.MapOutcome(match, out var outcome, out var reason);
+            foreach (string locale in new[] { GameLocalization.EnglishLocaleCode, GameLocalization.PersianLocaleCode })
+            {
+                Assert.AreEqual("missing", SkirmishExpandedCopyProjection.Resolve(expectedKey, locale, "missing"));
+                Assert.IsTrue(SkirmishExpandedCopyProjection.TryResolveHud(setup, outcome, reason, locale, out var copy));
+                Assert.AreEqual(expectedKey, copy.ResultKey);
+                string neutral = SkirmishExpandedCopyProjection.Resolve("ui.skirmish.result.match_complete", locale, "MATCH COMPLETE");
+                Assert.AreEqual(neutral, copy.Result);
+                Assert.IsTrue(SkirmishExpandedHudCopy.TryResolve(em, session, match, locale,
+                    out _, out _, out string detail));
+                Assert.AreEqual(neutral, detail);
+            }
+        }
+
         [TestCase(SkirmishObjectiveKind.FrontlineControl)]
         [TestCase(SkirmishObjectiveKind.Breakthrough)]
         [TestCase(SkirmishObjectiveKind.ConvoyEscort)]

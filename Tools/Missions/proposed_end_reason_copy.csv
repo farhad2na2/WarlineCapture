@@ -1,0 +1,11 @@
+key,en,fa
+ui.skirmish.reason.ticketsdepleted,One side ran out of tickets.,امتیاز یکی از طرفین تمام شد.
+ui.skirmish.reason.ticketsatdeadline,Time expired. Remaining tickets decided the result.,زمان تمام شد. امتیازهای باقی‌مانده نتیجه را تعیین کردند.
+ui.skirmish.reason.breakthroughevacuated,The required forces were evacuated.,نیروهای موردنیاز تخلیه شدند.
+ui.skirmish.reason.breakthroughimpossible,The required forces could no longer be evacuated.,تخلیه نیروهای موردنیاز دیگر ممکن نبود.
+ui.skirmish.reason.convoydelivered,The required convoy vehicles reached their destination.,خودروهای موردنیاز کاروان به مقصد رسیدند.
+ui.skirmish.reason.convoyimpossible,The required convoy vehicles could no longer reach their destination.,رسیدن خودروهای موردنیاز کاروان به مقصد دیگر ممکن نبود.
+ui.skirmish.reason.objectivedeadline,Time expired before the objective was completed.,زمان پیش از تکمیل هدف تمام شد.
+ui.skirmish.reason.startupfailure,The mission could not start.,ماموریت شروع نشد.
+ui.skirmish.reason.contentfailure,The mission could not continue.,ماموریت ادامه پیدا نکرد.
+ui.skirmish.reason.checkpointfailure,The mission could not resume from the checkpoint.,ماموریت از نقطه ذخیره ادامه پیدا نکرد.

@@ -28,23 +28,11 @@ namespace Game.Simulation {
   // Reason: 0 none, 1 minimap contact, 2 HUD base damage. Slot: chosen roster slot + 1 (0 none).
   // Scope: 0 all assault groups (legacy sweep), 1 single proportionate defender. Rounds: triggers since the last clear.
   public int HomeDefenseReason,HomeDefenseSlot,HomeDefenseScope,HomeDefenseRounds;
-  // Recovery bits: 1 the camera was re-centred once this round, 2 the ground tap was repeated once this round,
-  // 4 (kept across rounds) the last new press of this policy was the home focus control,
-  // 8 Attack was toggled off once for the re-centre this round.
-  // RecoveryAction: completed-contact count when the recovery touch was issued.
-  public int HomeDefenseRecovery,HomeDefenseRecoveryAction;
   // Public HUD base-health history (see AriaBaseDamagePolicy).
   public float HomeHealthSeen,HomeHealthPeak,HomeDamageAt;}
  public struct AriaHomeDefenseDecision {public AriaHomeDefenseAction Action;public int Slot;public bool Defend;}
  public static class AriaHomeDefensePolicy {
-  public static bool Step(in AriaHomeDefenseView view,ref AriaHomeDefenseState plan,out AriaHomeDefenseDecision output){
-   output=default;bool handled=StepSource(view,ref plan,ref output);
-   // Remember whether the newest press was the home focus, so a focus is never pressed twice in a row.
-   if(output.Action==AriaHomeDefenseAction.InspectHome)plan.HomeDefenseRecovery|=RecoveryLastFocus;
-   else if(output.Action>AriaHomeDefenseAction.Unavailable)plan.HomeDefenseRecovery&=~RecoveryLastFocus;
-   if(!view.PresentedHomeThreat)plan.HomeDefenseRecovery=0;
-   return handled;
-  }
+  public static bool Step(in AriaHomeDefenseView view,ref AriaHomeDefenseState plan,out AriaHomeDefenseDecision output){output=default;return StepSource(view,ref plan,ref output);}
   static bool StepSource(in AriaHomeDefenseView view,ref AriaHomeDefenseState plan,ref AriaHomeDefenseDecision output)
 {
             if (!view.PresentedHomeThreat)
@@ -74,18 +62,10 @@ namespace Game.Simulation {
                 // the base is about to fall or a first defender did not stop it.
                 plan.HomeDefenseScope = view.ProportionateDefense && !view.BaseCritical && plan.HomeDefenseRounds <= 1 ? 1 : 0;
                 plan.DefenseStage = 4;
-                plan.HomeDefenseRecovery &= RecoveryLastFocus;
+                plan.HomeDefenseAction = view.CompletedContacts;
                 plan.HomeDefenseStage = 1;
-                if ((plan.HomeDefenseRecovery & RecoveryLastFocus) == 0)
-                {
-                    plan.HomeDefenseAction = view.CompletedContacts;
-                    Target(view.FocusPlayer, false, ref output);
-                    return true;
-                }
-                // The last press was already this focus (a round given up without a target):
-                // the camera is on home; do not press the same control again.
-                plan.HomeDefenseRecovery |= RecoveryRecentred;
-                plan.HomeDefenseAction = view.CompletedContacts - 1;
+                Target(view.FocusPlayer, false, ref output);
+                return true;
             }
             if (plan.HomeDefenseStage == 1)
             {
@@ -128,46 +108,11 @@ namespace Game.Simulation {
                 { Target(view.Squad(LowestSetBit(pending)), false, ref output); return true; }
                 plan.HomeDefenseStage = view.ExpandedAssaultMask == 0 ? 6 : 4;
             }
-            if (plan.HomeDefenseStage == StageRecentre)
-            {
-                // One camera re-centre on home, with Attack off, before arming it again.
-                if (view.CompletedContacts <= plan.HomeDefenseRecoveryAction && view.FocusPlayer.Available)
-                { Target(view.FocusPlayer, false, ref output); return true; }
-                plan.HomeDefenseStage = 4;
-            }
             if (plan.HomeDefenseStage == 4)
             {
-                var threat = DefenseTarget(view);
-                if (!threat.Available)
-                {
-                    // A focus control pressed with Attack armed does not move the camera
-                    // (Windows fa-IR 130365: four Focus taps with Attack armed, Blocked 115).
-                    // Re-centre once with Attack off; if the ground is still not offered, give
-                    // this round up and retry later instead of repeating a control.
-                    if ((plan.HomeDefenseRecovery & (RecoveryRecentred | RecoveryLastFocus)) == 0 && view.FocusPlayer.Available)
-                    {
-                        if (view.AttackMode)
-                        {
-                            // One Attack toggle to disarm before the focus; if it did not disarm, give up.
-                            if ((plan.HomeDefenseRecovery & RecoveryDisarmed) == 0 && view.AttackAvailable)
-                            {
-                                plan.HomeDefenseRecovery |= RecoveryDisarmed;
-                                plan.HomeDefenseRecoveryAction = view.CompletedContacts;
-                                Target(view.Attack, false, ref output); return true;
-                            }
-                            if (view.CompletedContacts <= plan.HomeDefenseRecoveryAction && view.AttackAvailable)
-                            { Target(view.Attack, false, ref output); return true; }
-                            return GiveUpRound(view, ref plan, ref output);
-                        }
-                        plan.HomeDefenseRecovery |= RecoveryRecentred;
-                        plan.HomeDefenseRecoveryAction = view.CompletedContacts;
-                        plan.HomeDefenseStage = StageRecentre;
-                        Target(view.FocusPlayer, false, ref output);
-                        return true;
-                    }
-                    return GiveUpRound(view, ref plan, ref output);
-                }
                 if (!view.AttackMode) { Target(view.Attack, false, ref output); return true; }
+                var threat = DefenseTarget(view);
+                if (!threat.Available) { Target(view.FocusPlayer, false, ref output); return true; }
                 plan.HomeDefenseAction = view.CompletedContacts;
                 plan.HomeDefenseStage = 5;
                 Target(threat, true, ref output);
@@ -175,33 +120,9 @@ namespace Game.Simulation {
             }
             if (plan.HomeDefenseStage == 5)
             {
-                if (view.CompletedContacts <= plan.HomeDefenseAction)
+                if (view.CompletedContacts <= plan.HomeDefenseAction || view.AttackMode)
                 { Target(DefenseTarget(view), true, ref output); return true; }
-                if (view.AttackMode)
-                {
-                    // The ground tap completed but Attack stayed armed: repeat it once, then
-                    // give the round up rather than pressing the same ground a third time.
-                    var again = DefenseTarget(view);
-                    if ((plan.HomeDefenseRecovery & RecoveryRetapped) == 0 && again.Available)
-                    {
-                        plan.HomeDefenseRecovery |= RecoveryRetapped;
-                        plan.HomeDefenseAction = view.CompletedContacts;
-                        Target(again, true, ref output);
-                        return true;
-                    }
-                    return GiveUpRound(view, ref plan, ref output);
-                }
                 plan.HomeDefenseStage = 6;
-            }
-            if (plan.HomeDefenseStage == StageDisarm)
-            {
-                // Never leave Attack armed for the next owner: one toggle, then observe.
-                if (view.AttackMode && view.AttackAvailable && view.CompletedContacts <= plan.HomeDefenseRecoveryAction &&
-                    view.Time < plan.HomeDefenseObserveUntil)
-                { Target(view.Attack, false, ref output); return true; }
-                plan.HomeDefenseObserveUntil = view.Time + RetrySeconds;
-                plan.HomeDefenseStage = 8;
-                return true;
             }
             if (plan.HomeDefenseStage == 6 && plan.HomeDefenseScope == 1)
             {
@@ -238,25 +159,9 @@ namespace Game.Simulation {
             return true;
         }
  public const int ReasonNone=0,ReasonMinimap=1,ReasonBaseDamage=2;
- public const int StageDisarm=9,StageRecentre=10,RecoveryRecentred=1,RecoveryRetapped=2,RecoveryLastFocus=4,RecoveryDisarmed=8;
- public const float SingleDefenderObserveSeconds=20f,RetrySeconds=4f,DisarmSeconds=3f;
+ public const float SingleDefenderObserveSeconds=20f;
  // A presented contact is fought where it is; base damage alone sends defenders onto the home ground.
- // When the preferred ground is not offered, any other offered defence target is used.
- public static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view){
-  if(view.BaseDamageOnly)return view.HomeGround.Available?view.HomeGround:view.ThreatGround.Available?view.ThreatGround:view.Threat.Available?view.Threat:view.HomeGround;
-  return view.ThreatGround.Available?view.ThreatGround:view.Threat.Available?view.Threat:view.HomeGround;
- }
- // No defence target after the one re-centre (or a ground tap that left Attack armed twice):
- // toggle Attack off, observe briefly, then a new round starts from the home focus. Different
- // controls alternate, so no control is pressed three times in a row and ARIA keeps playing.
- static bool GiveUpRound(in AriaHomeDefenseView view,ref AriaHomeDefenseState plan,ref AriaHomeDefenseDecision output){
-  plan.HomeDefenseRecoveryAction=view.CompletedContacts;
-  plan.HomeDefenseObserveUntil=view.Time+DisarmSeconds;
-  plan.HomeDefenseStage=StageDisarm;
-  if(view.AttackMode&&view.AttackAvailable&&(plan.HomeDefenseRecovery&RecoveryDisarmed)==0)
-  {plan.HomeDefenseRecovery|=RecoveryDisarmed;Target(view.Attack,false,ref output);return true;}
-  plan.HomeDefenseObserveUntil=view.Time+RetrySeconds;plan.HomeDefenseStage=8;output.Action=AriaHomeDefenseAction.Waiting;return true;
- }
+ static AriaStrategyTarget DefenseTarget(in AriaHomeDefenseView view)=>view.BaseDamageOnly?view.HomeGround:view.ThreatGround.Available?view.ThreatGround:view.Threat;
  static bool TryDeselectSquads(in AriaHomeDefenseView view,ref AriaHomeDefenseDecision output){if(view.ExpandedSelectedGroups<=0)return false;if(view.SelectedSquadToToggle.Available)Target(view.SelectedSquadToToggle,false,ref output);else output.Action=AriaHomeDefenseAction.Waiting;return true;}
  static int LowestSetBit(int mask){int bit=0,value=mask;while((value&1)==0){value>>=1;bit++;}return bit;}
  static void Target(AriaStrategyTarget target,bool world,ref AriaHomeDefenseDecision output){if(!target.Available){output.Action=AriaHomeDefenseAction.Unavailable;return;}output.Action=target.Action;output.Slot=target.Slot;}

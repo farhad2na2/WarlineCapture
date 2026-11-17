@@ -9,18 +9,12 @@ namespace Game.Simulation
   public bool EnemyDesignatedAlive,ExpandedCanPreviousPage,ExpandedCanNextPage;
   public int ExpandedAssaultMask,ExpandedAttackOrderMask,ExpandedSelectedMask,ExpandedStructureMask,AvailableSquadMask;
   public bool PreviousAvailable,NextAvailable,ToggleAvailable,AttackAvailable;
-  // Observation clock for the stall guard (0 in legacy callers disables it).
-  public float Time;
   public bool SquadAvailable(int slot)=>slot>=0&&slot<5&&(AvailableSquadMask&(1<<slot))!=0;
  }
  public struct AriaGroundColumnState
  {
   public int PagesOrdered,SelectionResetPage,AssaultPageSeen;
   public byte AssaultSelecting,StructureOrdered,PagedToAssault,AssaultIssued;
-  // Stall guard: the same unresolved column state (StallKey) since StallSince; Skips counts pages given up.
-  public int StallKey,Skips;public float StallSince;
-  // The last two pages given up (page*64 + unordered assault mask); they do not restart the sweep.
-  public int SkipKeyA,SkipKeyB;
  }
  public struct AriaGroundDecision{public AriaGroundIntent Intent;public AriaGroundAction Action;public int Slot;}
  // One source-owned strategic subtree. Availability means admitted action in the host's
@@ -76,23 +70,12 @@ namespace Game.Simulation
                 plan.AssaultSelecting = 0;
             }
             int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
-            bool skipPage = false;
             if (pending != 0)
             {
                 int slot = LowestSetBit(pending);
                 bool cardAvailable = view.SquadAvailable(slot);
-                // A card that is never offered (S002 155923: page 1 cards unresolved for 147 s)
-                // must not hold the sweep: after CardStallSeconds the page is given up.
                 if (!cardAvailable)
-                {
-                    if (!Stalled(view, ref plan, KeyCardUnavailable + view.ExpandedPageIndex * 64 + pending, CardStallSeconds))
-                        return false;
-                    skipPage = true;
-                }
-            }
-            if (pending != 0 && !skipPage)
-            {
-                int slot = LowestSetBit(pending);
+                    return false;
                 plan.AssaultSelecting = 1;
                 output.Intent = AriaGroundIntent.SelectSquad;
                 output.Action = AriaGroundAction.SelectSlot; output.Slot = slot;
@@ -102,7 +85,7 @@ namespace Game.Simulation
             if ((view.ExpandedStructureMask & view.ExpandedAttackOrderMask) != 0)
                 plan.StructureOrdered = 1;
 
-            bool assaultOrdered = skipPage || view.ExpandedAssaultMask == 0 ||
+            bool assaultOrdered = view.ExpandedAssaultMask == 0 ||
                 (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) == 0;
             // Already accepted groups keep fighting while the remaining cohort is selected.
             // Selection above deliberately excludes their AttackOrder bits, so requiring them
@@ -115,31 +98,16 @@ namespace Game.Simulation
                 // Keep pressing Attack until the drawer shows the order.
                 // Latching on the request left the tank unselected when the tap missed.
                 // Paging away while Attack is covered clears that selection.
-                // Bounded: an order that never shows (S049: Attack / tap base alternating for
-                // 170 s until the progress watchdog stopped ARIA) gives the page up.
-                if (Stalled(view, ref plan, KeyOrderNotShown + view.ExpandedPageIndex * 64 + remainingAssault, OrderStallSeconds))
-                    assaultOrdered = skipPage = true;
-                else
+                if (!view.AttackAvailable)
                 {
-                    if (!view.AttackAvailable)
-                    {
-                        output.Intent = AriaGroundIntent.Inspect;
-                        output.Action = AriaGroundAction.Wait;
-                        return true;
-                    }
-
-                    output.Intent = AriaGroundIntent.Attack;
-                    output.Action = AriaGroundAction.ArmAttack;
+                    output.Intent = AriaGroundIntent.Inspect;
+                    output.Action = AriaGroundAction.Wait;
                     return true;
                 }
-            }
-            if (!skipPage && plan.StallKey != 0) plan.StallKey = 0;
-            if (skipPage)
-            {
-                // The page counts as inspected; the sweep may complete without its structure order.
-                plan.Skips++; plan.StallKey = 0; plan.StructureOrdered = 1;
-                plan.SkipKeyB = plan.SkipKeyA;
-                plan.SkipKeyA = SkipKey(view.ExpandedPageIndex, view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask);
+
+                output.Intent = AriaGroundIntent.Attack;
+                output.Action = AriaGroundAction.ArmAttack;
+                return true;
             }
 
             bool pageInspected = assaultOrdered;
@@ -185,52 +153,9 @@ namespace Game.Simulation
             }
             return false;
         }
-  public const int KeyCardUnavailable=1<<20,KeyOrderNotShown=2<<20;
-  public static int SkipKey(int page,int unorderedAssault)=>unorderedAssault==0?0:(page+1)*64+unorderedAssault;
-  // A page given up earlier (same unordered groups) does not reopen a completed sweep.
-  public static bool Skipped(int skipKeyA,int skipKeyB,int page,int unorderedAssault){
-   int key=SkipKey(page,unorderedAssault);return key!=0&&(key==skipKeyA||key==skipKeyB);
-  }
-  public const float CardStallSeconds=8f,OrderStallSeconds=20f;
-  // True once the same unresolved column state has lasted `seconds` on the observation clock.
-  static bool Stalled(in AriaGroundColumnView view,ref AriaGroundColumnState plan,int key,float seconds){
-   if(view.Time<=0f)return false;
-   if(plan.StallKey!=key){plan.StallKey=key;plan.StallSince=view.Time;return false;}
-   return view.Time-plan.StallSince>=seconds;
-  }
   static bool TryDeselectSquads(in AriaGroundColumnView view,ref AriaGroundDecision output)
   {if(view.ExpandedSelectedGroups<=0)return false;output.Action=view.ToggleAvailable?AriaGroundAction.ToggleSelected:AriaGroundAction.Wait;return true;}
   static int LowestSetBit(int mask){int bit=0,value=mask;while((value&1)==0){value>>=1;bit++;}return bit;}
- }
- // Attack armed with a selection but neither the enemy base nor its approach ground offered:
- // the planner searches (map navigation or the enemy focus control). S026 lane 6: this search
- // looped for 50+ s with Attack armed, so the column never latched and nothing else could act;
- // q1: the enemy focus pressed three times with Attack armed stopped ARIA (115). Bounded here.
- public struct AriaFindBaseState {public byte Active,Taps,Run;public int Actions,LastTarget;}
- public static class AriaFindBasePolicy
- {
-  public const int MaxTaps=4,MaxSameControl=2;
-  public static void Reset(ref AriaFindBaseState s){s=default;}
-  // Called each step the search branch is taken. nextTarget: the control the branch would press
-  // (0 for map navigation). continuing: the previous step was this search (or its map navigation);
-  // touches made by other owners in between are not counted as search taps.
-  // True: give the search up (disarm Attack, latch the column).
-  public static bool GiveUp(ref AriaFindBaseState s,int completedActions,int nextTarget,bool continuing=true)
-  {
-   if(s.Active==0){s.Active=1;s.Actions=completedActions;s.Taps=0;s.Run=0;s.LastTarget=0;}
-   else if(!continuing){s.Actions=completedActions;s.Run=0;}
-   else if(completedActions>s.Actions)
-   {
-    s.Taps=(byte)Math.Min(255,s.Taps+completedActions-s.Actions);s.Actions=completedActions;
-    s.Run=(byte)(nextTarget!=0&&nextTarget==s.LastTarget?s.Run+1:0);
-   }
-   if(nextTarget!=0)s.LastTarget=nextTarget;
-   return s.Taps>=MaxTaps||s.Run>=MaxSameControl;
-  }
-  // The search gave up: the current page's unordered groups are remembered as skipped so the
-  // completed sweep is not reopened, and the column counts as issued.
-  public static void LatchGivenUp(ref int skipKeyA,ref int skipKeyB,ref int skips,int page,int unorderedAssault)
-  {skipKeyB=skipKeyA;skipKeyA=AriaGroundColumnPolicy.SkipKey(page,unorderedAssault);skips++;}
  }
  public struct AriaGroundProgressState{public float LastProgressAt;public float EnemyHealth,PlayerHealth;public int Infantry;}
  public static class AriaGroundProgressPolicy

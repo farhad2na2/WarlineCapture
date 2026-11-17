@@ -10,7 +10,7 @@ record is `missions.csv`.
 
 | Worker | Model | Job | State |
 |---|---|---|---|
-| Unity lane | Opus (ARIA worker, earlier session) | Last step: merge generic-binding + Codex 020/021, compile, S006/S026 diagnostic | CS0117 fixed in place at 09:28 (same one-line qualification as 5a56c2dfe); S006/S026 queue running |
+| Unity lane | Sonnet (lane worker, lead subagent) | Cherry-pick airport probe + FC/BT/CE authoring, compile, S002 footprints, re-author S006/S026/S049/S050, play them, Airport probe | Running |
 | aria-intercept | Opus | S002 seed 155923: finish enemies that slip past the army; branch `missions/aria-intercept` (worktree `wt/aria`) | Coding; gets the lane after the current owner |
 | airport-probe | Sonnet | Airport probe done (3b4c598eb, not compiled); now building the layout dump for Industrial Basin / AP | Coding, no Unity |
 | objective-authoring | Sonnet | Typed objective areas and defence/convoy pads in authoring (FC/BT/CE); branch `missions/objective-authoring` (worktree `wt/objectives`) | Coding, no Unity |
@@ -158,3 +158,5 @@ record is `missions.csv`.
 - 2026-11-17 09:30 program lead: objective-authoring c8d92c7ef reviewed (authoring entry + checker for FC/BT/CE areas and defence/convoy pads; BA path keeps its shared objective; FC/BT/CE get per-scenario objective assets with matrix deadlines; 8 tests): accepted pending compile. Worker now builds the area-measurement probe and candidate S007/S013/S019 Desert Base drafts.
 - 2026-11-17 09:30 objective-authoring worker: started area-measurement probe + S007/S013/S019 candidate drafts
 - 2026-11-17 09:32 aria worker: finished, report in daily/aria-worker-2026-11-17.md
+- 2026-11-17 09:34 airport-probe worker: layout dump done. missions/airport-probe c22dcaea2 (RunCatalogLayoutDumpAndExit, RunExistingCampaignLayoutDumpAndExit, layout_dump_to_draft.py, 17 unittests OK, C# not compiled); IB legacy route not built, see notes
+- 2026-11-17 09:34 program lead: ARIA worker report read (`daily/aria-worker-2026-11-17.md`): guard approach 1/6 and reverted; S006/S026 startup cause confirmed `noExactStructurePad ... instancePadRows=0` (not re-authored yet); no footprint dump because both aborted. Footprints will come from an S002 match start (the dump lists every configured building). Lane given to a Sonnet lane worker (brief `program-logs/briefs/lane-authored-start-2026-11-17.md`); aria-intercept is next in line.

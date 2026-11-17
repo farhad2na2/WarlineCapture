@@ -195,11 +195,27 @@
       25.0,
       15.0
     ],
+    "building.refinery.module": [
+      25.0,
+      15.0
+    ],
     "building.satellite_dish": [
       10.0,
       10.0
     ],
     "building.watchtower": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.approach": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_a": [
+      3.0,
+      4.0
+    ],
+    "building.watchtower.defense_approach_b": [
       3.0,
       4.0
     ]

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from footprints_from_log import extract
+from footprints_from_log import extract, with_aliases
 
 ROW = "[SkirmishFootprintTrace] structure={} width={} depth=4.000 rotatable=0 source=BuildingConfiguredSpawnableReadModel\n"
 DONE = "[SkirmishFootprintTrace] result=Completed count={}\n"
@@ -31,6 +31,14 @@ class FootprintsTest(unittest.TestCase):
         self.assertEqual(extract((row + DONE.format(1) + row + DONE.format(1)).splitlines()), {"a": [2.0, 4.0]})
         with self.assertRaises(ValueError):
             extract((row + ROW.format("a", "3.000") + DONE.format(2)).splitlines())
+
+    def test_aliases_share_measured_model(self):
+        out = with_aliases({"building.refinery": [25.0, 15.0], "building.watchtower": [3.0, 4.0]})
+        self.assertEqual(out["building.refinery.module"], [25.0, 15.0])
+        self.assertEqual(out["building.watchtower.approach"], [3.0, 4.0])
+        self.assertEqual(out["building.watchtower.defense_approach_b"], [3.0, 4.0])
+        self.assertEqual(with_aliases({"building.refinery": [1.0, 2.0], "building.refinery.module": [5.0, 6.0]})["building.refinery.module"], [5.0, 6.0])
+        self.assertNotIn("building.watchtower.approach", with_aliases({"building.refinery": [1.0, 2.0]}))
 
     def test_cli_failure(self):
         with tempfile.TemporaryDirectory() as directory:

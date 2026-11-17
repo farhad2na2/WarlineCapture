@@ -17,7 +17,8 @@ INSTANCE_KINDS = ('BaseBarracks', 'GroundStaging', 'AirReturn', 'Supply', 'Servi
 STRUCTURES = ('building.barracks', 'building.ground_staging', 'building.helipad', 'building.airport',
               'building.oil_pump', 'building.refinery', 'building.refinery.module', 'building.fuel_bladder',
               'building.fabrication_depot', 'building.watchtower', 'building.watchtower.approach',
-              'building.satellite_dish')
+              'building.satellite_dish', 'building.watchtower.defense_approach_a',
+              'building.watchtower.defense_approach_b')
 FRAME_MARGIN = 32.0  # SkirmishMissionAuthoringEntry.FrameMarginMetres
 OBJECTIVES = ('BA', 'FC', 'BT', 'CE')
 # SkirmishObjectiveAreaCompiler.RequiredRoles: exact role set per objective (BA takes none).

@@ -303,6 +303,10 @@ def main(argv=None):
     parser.add_argument('--gui-licensing', action='store_true',
                         help='kept for compatibility; Windows ARIA queues always pass -GuiLicensing')
     parser.add_argument('--no-table', action='store_true', help='Print results without writing the table')
+    parser.add_argument('--validation-library', action='store_true',
+                        help='Editor-only: present Planned authored missions as launchable [VALIDATION] cards so --menu-journey '
+                             'can start them before publication (sets WARLINE_VALIDATION_LIBRARY=1; nothing is published; '
+                             'log line [SkirmishValidationLibrary] enabled=1 planned=<ids>)')
     parser.add_argument('--menu-journey', action='store_true',
                         help='start every job from the main menu through presented touch controls (sets WARLINE_MENU_JOURNEY=1); '
                              'the log shows [SkirmishMenuJourney] catalog=<id> result=Passed|Failed. Without the flag the '
@@ -366,6 +370,8 @@ def main(argv=None):
             env['WARLINE_ARIA_QUEUE'] = str(queue)
             if args.menu_journey:
                 env['WARLINE_MENU_JOURNEY'] = '1'
+            if args.validation_library:
+                env['WARLINE_VALIDATION_LIBRARY'] = '1'
             if args.launcher == 'windows':
                 result = subprocess.run(windows_command(repo, log, args.timeout, args.gui_licensing), env=env, cwd=repo)
                 launch_failed = result.returncode != 0

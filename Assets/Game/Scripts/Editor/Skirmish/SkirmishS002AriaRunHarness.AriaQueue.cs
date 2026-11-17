@@ -355,6 +355,7 @@ namespace Game.Editor
             {
                 EditorApplication.update -= AriaQueueUpdate;
                 DisposeHarnessGenericLibrary();
+                SkirmishValidationLibrary.Disable();
                 return;
             }
             bool idle = !EditorApplication.isPlayingOrWillChangePlaymode && !EditorApplication.isCompiling &&
@@ -404,6 +405,7 @@ namespace Game.Editor
                 " seed=" + fields[1] + " locale=" + fields[2]);
             try
             {
+                EnsureValidationLibrary("queueDispatch");
                 int jobSeed = int.Parse(fields[1], NumberStyles.Integer, CultureInfo.InvariantCulture);
                 // Validate before touching Editor state; an unsupported job is an Abort, not a queue stop.
                 if (!TryCreateSelectedPayload(fields[0], jobSeed, fields[2], out _, out string payloadError))
@@ -492,6 +494,9 @@ namespace Game.Editor
             SessionState.SetBool(AriaQueuePendingKey, false);
             SessionState.SetBool(AriaQueueInFlightKey, false);
             EditorApplication.update -= AriaQueueUpdate;
+            // AriaQueueUpdate is unhooked above, so release the Editor catalog slots here: a reused Editor must not keep them.
+            DisposeHarnessGenericLibrary();
+            SkirmishValidationLibrary.Disable();
             string endHash = string.Empty;
             try
             {

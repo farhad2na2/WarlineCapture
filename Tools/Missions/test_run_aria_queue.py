@@ -105,6 +105,29 @@ class QueueTests(unittest.TestCase):
             self.assertEqual('1' if flag else None, env.get('WARLINE_MENU_JOURNEY'))
             self.assertEqual(str(logs / 'queue.csv'), env['WARLINE_ARIA_QUEUE'])
 
+    def test_validation_library_flag_sets_the_environment_only_when_asked(self):
+        repo = self.root / 'repo'
+        (repo / 'ProjectSettings').mkdir(parents=True)
+        logs = self.root / 'logs'
+        fixture = ('[SkirmishAriaQueue] job=1/1 catalog=S026 seed=1 locale=en result=Victory seconds=5\n'
+                   '[SkirmishAriaQueue] result=Completed jobs=1 recorded=1 wins=1\n')
+        common = ['--jobs', 'S026:1:en', '--repo', str(repo), '--log-dir', str(logs), '--no-table', '--launcher', 'macos',
+                  '--menu-journey']
+        for flag in (False, True):
+            calls = []
+            def run(command, **kwargs):
+                calls.append(kwargs)
+                (logs / 'unity.log').write_text(fixture)
+                return subprocess.CompletedProcess(command, 0)
+            with self.subTest(validation_library=flag), mock.patch.object(runner.subprocess, 'run', side_effect=run), \
+                 mock.patch.object(runner, 'check_editor_and_hub'), mock.patch('sys.stdout', new_callable=io.StringIO), \
+                 mock.patch.dict(runner.os.environ, {}, clear=False):
+                runner.os.environ.pop('WARLINE_VALIDATION_LIBRARY', None)
+                self.assertEqual(runner.main(common + (['--validation-library'] if flag else [])), 0)
+            env = calls[-1]['env']
+            self.assertEqual('1' if flag else None, env.get('WARLINE_VALIDATION_LIBRARY'))
+            self.assertEqual('1', env.get('WARLINE_MENU_JOURNEY'))
+
     def test_menu_journey_flag_is_accepted_in_dry_run_and_does_not_touch_the_queue_file(self):
         logs = self.root / 'logs'
         proc = subprocess.run([sys.executable, '-B', str(Path(runner.__file__)), '--jobs', 'S002:1:en', '--log-dir', str(logs),

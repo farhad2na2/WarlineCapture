@@ -49,6 +49,7 @@ namespace Game.Editor
         {
             if (!GenericMenuJourney || menuPreflightDone) return !menuJourneyFailed;
             menuPreflightDone = true;
+            EnsureValidationLibrary("menuPreflight");
             var catalog = SkirmishBattleCatalogConfig.Load();
             string reason = SkirmishMenuJourneyLog.Preflight(catalog != null ? catalog.Entries : null, catalogId);
             if (reason == null) return true;
@@ -86,8 +87,24 @@ namespace Game.Editor
                     return false;
                 }
             }
-            Debug.Log(SkirmishMenuJourneyLog.FormatPassed(catalogId, menuPath, read ? actualSeed : seed, size, difficulty));
+            Debug.Log(SkirmishMenuJourneyLog.FormatPassed(catalogId, menuPath, read ? actualSeed : seed, size, difficulty,
+                SkirmishValidationLibrary.IsCandidate(catalogId)));
             return true;
+        }
+
+        // WARLINE_VALIDATION_LIBRARY=1: present Planned authored missions in an Editor-memory library so the menu path can
+        // launch them before publication. Idempotent; re-run after every domain reload because the scope is static.
+        private static void EnsureValidationLibrary(string trigger)
+        {
+            if (!SkirmishValidationLibrary.Requested || SkirmishValidationLibrary.Active) return;
+            if (candidateCatalogScope != null)
+            {
+                Debug.LogWarning(SkirmishValidationLibraryPlan.FormatDisabled("editorJourneyCatalogScopeActive"));
+                return;
+            }
+            // A single-mission harness library (EnsureHarnessGenericLibrary) would hold the one Editor catalog slot.
+            DisposeHarnessGenericLibrary();
+            SkirmishValidationLibrary.Enable(trigger);
         }
     }
 }

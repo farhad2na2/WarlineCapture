@@ -555,6 +555,7 @@ namespace Game.Editor
             SessionState.SetString(CandidateHashKey, launchFingerprint);
             stage = 0;
             if (GenericMenuJourney) ResetMenuJourneyState();
+            EnsureValidationLibrary("launchCatalog");
             finishingEvidence = false;
             terminalSnapshotValid = terminalProbeActive = false;
             terminalInterventions = terminalUnexpectedSamples = 0;

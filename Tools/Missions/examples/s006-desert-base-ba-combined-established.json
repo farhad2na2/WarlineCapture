@@ -99,21 +99,25 @@
       1316.31,
       598.8
     ],
-    "s006.f1.refinery": [
-      924.5,
+    "s006.f1.barracks": [
+      926.0,
       607.5
     ],
+    "s006.f1.refinery": [
+      972.5,
+      727.5
+    ],
     "s006.f1.fabrication_depot": [
-      969.5,
-      728.0
+      825.5,
+      656.0
     ],
     "s006.f1.fuel_bladder": [
       967.0,
       677.0
     ],
     "s006.f1.satellite_dish": [
-      945.5,
-      608.0
+      830.0,
+      631.5
     ],
     "s006.f1.ground_staging": [
       943.0,
@@ -124,16 +128,20 @@
       578.0
     ],
     "s006.f1.watchtower": [
-      847.0,
-      629.0
+      945.5,
+      608.0
     ],
     "s006.f1.watchtower.approach": [
       847.0,
-      603.5
+      629.0
     ],
     "s006.f2.refinery": [
       1428.5,
       607.5
+    ],
+    "s006.f2.fabrication_depot": [
+      1425.5,
+      488.0
     ],
     "s006.f2.fuel_bladder": [
       1375.0,
@@ -286,6 +294,76 @@
   },
   "instance_pads": [
     {
+      "id": "s006.f1.barracks",
+      "kind": "BaseBarracks",
+      "faction": 1,
+      "at": [
+        926.0,
+        607.5
+      ],
+      "size": [
+        28,
+        15
+      ],
+      "anchor": "s006.f1.barracks"
+    },
+    {
+      "id": "s006.f1.refinery",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        972.5,
+        727.5
+      ],
+      "size": [
+        25,
+        15
+      ],
+      "anchor": "s006.f1.refinery"
+    },
+    {
+      "id": "s006.f1.fabrication_depot",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        825.5,
+        656.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s006.f1.fabrication_depot"
+    },
+    {
+      "id": "s006.f1.fuel_bladder",
+      "kind": "Supply",
+      "faction": 1,
+      "at": [
+        967.0,
+        677.0
+      ],
+      "size": [
+        14,
+        10
+      ],
+      "anchor": "s006.f1.fuel_bladder"
+    },
+    {
+      "id": "s006.f1.satellite_dish",
+      "kind": "Service",
+      "faction": 1,
+      "at": [
+        830.0,
+        631.5
+      ],
+      "size": [
+        10,
+        10
+      ],
+      "anchor": "s006.f1.satellite_dish"
+    },
+    {
       "id": "s006.f1.ground_staging",
       "kind": "GroundStaging",
       "faction": 1,
@@ -314,54 +392,12 @@
       "anchor": "s006.f1.oil_pump"
     },
     {
-      "id": "s006.f1.refinery",
-      "kind": "Supply",
-      "faction": 1,
-      "at": [
-        924.5,
-        607.5
-      ],
-      "size": [
-        25,
-        15
-      ],
-      "anchor": "s006.f1.refinery"
-    },
-    {
-      "id": "s006.f1.fuel_bladder",
-      "kind": "Supply",
-      "faction": 1,
-      "at": [
-        967.0,
-        677.0
-      ],
-      "size": [
-        14,
-        10
-      ],
-      "anchor": "s006.f1.fuel_bladder"
-    },
-    {
-      "id": "s006.f1.fabrication_depot",
-      "kind": "Supply",
-      "faction": 1,
-      "at": [
-        969.5,
-        728.0
-      ],
-      "size": [
-        19,
-        16
-      ],
-      "anchor": "s006.f1.fabrication_depot"
-    },
-    {
       "id": "s006.f1.watchtower",
       "kind": "Service",
       "faction": 1,
       "at": [
-        847.0,
-        629.0
+        945.5,
+        608.0
       ],
       "size": [
         3,
@@ -375,7 +411,7 @@
       "faction": 1,
       "at": [
         847.0,
-        603.5
+        629.0
       ],
       "size": [
         3,
@@ -384,18 +420,46 @@
       "anchor": "s006.f1.watchtower.approach"
     },
     {
-      "id": "s006.f1.satellite_dish",
-      "kind": "Service",
-      "faction": 1,
+      "id": "s006.f2.refinery",
+      "kind": "Supply",
+      "faction": 2,
       "at": [
-        945.5,
-        608.0
+        1428.5,
+        607.5
       ],
       "size": [
-        10,
+        25,
+        15
+      ],
+      "anchor": "s006.f2.refinery"
+    },
+    {
+      "id": "s006.f2.fabrication_depot",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1425.5,
+        488.0
+      ],
+      "size": [
+        19,
+        16
+      ],
+      "anchor": "s006.f2.fabrication_depot"
+    },
+    {
+      "id": "s006.f2.fuel_bladder",
+      "kind": "Supply",
+      "faction": 2,
+      "at": [
+        1375.0,
+        677.0
+      ],
+      "size": [
+        14,
         10
       ],
-      "anchor": "s006.f1.satellite_dish"
+      "anchor": "s006.f2.fuel_bladder"
     },
     {
       "id": "s006.f2.ground_staging",
@@ -424,34 +488,6 @@
         4
       ],
       "anchor": "s006.f2.oil_pump"
-    },
-    {
-      "id": "s006.f2.refinery",
-      "kind": "Supply",
-      "faction": 2,
-      "at": [
-        1428.5,
-        607.5
-      ],
-      "size": [
-        25,
-        15
-      ],
-      "anchor": "s006.f2.refinery"
-    },
-    {
-      "id": "s006.f2.fuel_bladder",
-      "kind": "Supply",
-      "faction": 2,
-      "at": [
-        1375.0,
-        677.0
-      ],
-      "size": [
-        14,
-        10
-      ],
-      "anchor": "s006.f2.fuel_bladder"
     },
     {
       "id": "s006.f2.watchtower",

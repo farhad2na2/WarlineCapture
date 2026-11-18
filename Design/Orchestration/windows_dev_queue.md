@@ -49,7 +49,7 @@ codex effort: high
 templates: the S007 FC draft and `s049-mountain-pass-ba-ground-field.json`. Same method as W4. Branch `missions/win-w5-mp-fc`.
 
 ## W6 — Author and contain the 15 Desert Base sibling drafts (2026-11-18)
-status: READY
+status: DONE (merged 652e88722 + results fb12cdaaa; CE-E startup failure -> W14)
 codex effort: medium (scripting the runs); you run Unity yourself, serially, in the main Windows checkout
 drafts: S008–S012, S014–S018, S020–S024 (on missions/integration since 6c1ff8fcd)
 deliverable per row, in this order, each with its marker (Windows wrappers; same methods as the Mac steps in
@@ -133,6 +133,18 @@ runway/BuildingPlacement-bit check to `Tools/Missions/pad_preflight.py`. Tests: 
 case (refused on runway cells, placed clear of them), plus `RunFocusedValidation` for the placement tests you touch, the compile check, and
 the Python tests. Report which other catalog rows' starting structures move (any whose actual origin changes). Counted matches stay on the Mac.
 Branch `missions/win-w13-runway-placement`.
+
+## W14 — Convoy Escort established starts abort: player convoy truck BlockedSpawn, S020/S022/S024 (2026-11-18)
+status: READY
+codex effort: xhigh
+Evidence (Windows W6 menu launches, `windows_dev_results/2026-11-18.md`): ce\unity.log:1491/7739/13898
+`[SkirmishStartingForce] failed prefab=Unit_Veh_Truck_Tray faction=1 member=0`, then `expandedStartupFailure=BlockedSpawn`. Only the three
+established (E) CE rows fail; field (F) CE rows S021/S023 and all FC/BT E rows start. Find with evidence why the convoy truck has no legal
+spawn in CE-E (compiler-derived established pads, the larger established force taking the vehicle spawn pad / convoy.origin cells first,
+or the established structures' footprints), and fix it minimally in the draft / authoring data or the shared compiler — using only measured
+positions, no map changes, no starting-force or stat changes. Check whether S019 (Mac-authored CE-G-F template) is affected the same way at
+established start. Re-author the affected rows (W6 steps b–c), then a menu launch for S020/S022/S024 with `result=Passed` menu journey and no
+`expandedStartupFailure`. Add an EditMode or authoring test that fails on today's S020 layout. Branch `missions/win-w14-ce-established-spawn`.
 
 ## Not yet (HOLD until the Mac lead decides)
 - Industrial Basin (S079–S096) and Airport (S097–S120) rows: open source-fit decisions in `decisions_pending.md`.
